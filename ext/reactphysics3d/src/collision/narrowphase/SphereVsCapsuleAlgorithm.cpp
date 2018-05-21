@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,6 +27,7 @@
 #include "SphereVsCapsuleAlgorithm.h"
 #include "collision/shapes/SphereShape.h"
 #include "collision/shapes/CapsuleShape.h"
+#include "collision/NarrowPhaseInfo.h"
 
 // We want to use the ReactPhysics3D namespace
 using namespace reactphysics3d;  
@@ -120,6 +121,10 @@ bool SphereVsCapsuleAlgorithm::testCollision(NarrowPhaseInfo* narrowPhaseInfo, b
 				contactPointSphereLocal = sphereToCapsuleSpaceTransform.getInverse() * (sphereCenter + normalCapsuleSpace * sphereShape->getRadius());
 				contactPointCapsuleLocal = sphereCenter - normalCapsuleSpace * capsuleShape->getRadius();
 			}
+
+            if (penetrationDepth <= decimal(0.0)) {
+                return false;
+            }
 
             // Create the contact info object
             narrowPhaseInfo->addContactPoint(normalWorld, penetrationDepth,

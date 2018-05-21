@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,18 +27,18 @@
 #define	REACTPHYSICS3D_CONTACT_MANIFOLD_H
 
 // Libraries
-#include <vector>
-#include "body/CollisionBody.h"
 #include "collision/ProxyShape.h"
-#include "constraint/ContactPoint.h"
-#include "collision/ContactManifoldInfo.h"
-#include "memory/PoolAllocator.h"
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
 
 // Class declarations
 class ContactManifold;
+class ContactManifoldInfo;
+struct ContactPointInfo;
+class CollisionBody;
+class ContactPoint;
+class PoolAllocator;
 
 // Structure ContactManifoldListElement
 /**
@@ -83,7 +83,7 @@ struct ContactManifoldListElement {
  * This class represents a set of contact points between two bodies that
  * all have a similar contact normal direction. Usually, there is a single
  * contact manifold when two convex shapes are in contact. However, when
- * a convex shape collides with a concave shape, there can be several
+ * a convex shape collides with a concave shape, there might be several
  * contact manifolds with different normal directions.
  * The contact manifold is implemented in a way to cache the contact
  * points among the frames for better stability (warm starting of the
@@ -139,6 +139,9 @@ class ContactManifold {
 
         /// True if the contact manifold is obsolete
         bool mIsObsolete;
+
+        /// World settings
+        const WorldSettings& mWorldSettings;
 
         // -------------------- Methods -------------------- //
 
@@ -217,7 +220,7 @@ class ContactManifold {
 
         /// Constructor
         ContactManifold(const ContactManifoldInfo* manifoldInfo, ProxyShape* shape1, ProxyShape* shape2,
-                        MemoryAllocator& memoryAllocator);
+                        MemoryAllocator& memoryAllocator, const WorldSettings& worldSettings);
 
         /// Destructor
         ~ContactManifold();
@@ -351,25 +354,6 @@ inline bool ContactManifold::isAlreadyInIsland() const {
     return mIsAlreadyInIsland;
 }
 
-// Return the largest depth of all the contact points
-inline decimal ContactManifold::getLargestContactDepth() const {
-    decimal largestDepth = 0.0f;
-
-    assert(mNbContactPoints > 0);
-
-    ContactPoint* contactPoint = mContactPoints;
-    while(contactPoint != nullptr){
-        decimal depth = contactPoint->getPenetrationDepth();
-        if (depth > largestDepth) {
-            largestDepth = depth;
-        }
-
-        contactPoint = contactPoint->getNext();
-    }
-
-    return largestDepth;
-}
-
 // Return a pointer to the previous element in the linked-list
 inline ContactManifold* ContactManifold::getPrevious() const {
     return mPrevious;
@@ -393,20 +377,6 @@ inline void ContactManifold::setNext(ContactManifold* nextManifold) {
 // Return true if the manifold is obsolete
 inline bool ContactManifold::getIsObsolete() const {
     return mIsObsolete;
-}
-
-// Set to true to make the manifold obsolete
-inline void ContactManifold::setIsObsolete(bool isObsolete, bool setContactPoints) {
-    mIsObsolete = isObsolete;
-
-    if (setContactPoints) {
-        ContactPoint* contactPoint = mContactPoints;
-        while (contactPoint != nullptr) {
-            contactPoint->setIsObsolete(isObsolete);
-
-            contactPoint = contactPoint->getNext();
-        }
-    }
 }
 
 }

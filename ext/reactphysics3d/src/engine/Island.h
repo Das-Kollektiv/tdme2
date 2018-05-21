@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,12 +27,14 @@
 #define REACTPHYSICS3D_ISLAND_H
 
 // Libraries
-#include "memory/SingleFrameAllocator.h"
-#include "body/RigidBody.h"
 #include "constraint/Joint.h"
-#include "collision/ContactManifold.h"
 
 namespace reactphysics3d {
+
+// Declarations
+class RigidBody;
+class SingleFrameAllocator;
+class ContactManifold;
 
 // Class Island
 /**

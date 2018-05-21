@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -29,13 +29,15 @@
 // Libraries
 #include "ConcaveShape.h"
 #include "collision/broadphase/DynamicAABBTree.h"
-#include "collision/TriangleMesh.h"
-#include "collision/shapes/TriangleShape.h"
-#include "engine/Profiler.h"
+#include "containers/List.h"
 
 namespace reactphysics3d {
 
+// Declarations
 class ConcaveMeshShape;
+class Profiler;
+class TriangleShape;
+class TriangleMesh;
 
 // class ConvexTriangleAABBOverlapCallback
 class ConvexTriangleAABBOverlapCallback : public DynamicAABBTreeOverlapCallback {
@@ -70,7 +72,7 @@ class ConcaveMeshRaycastCallback : public DynamicAABBTreeRaycastCallback {
 
     private :
 
-        std::vector<int32> mHitAABBNodes;
+        List<int32> mHitAABBNodes;
         const DynamicAABBTree& mDynamicAABBTree;
         const ConcaveMeshShape& mConcaveMeshShape;
         ProxyShape* mProxyShape;
@@ -91,7 +93,7 @@ class ConcaveMeshRaycastCallback : public DynamicAABBTreeRaycastCallback {
         // Constructor
         ConcaveMeshRaycastCallback(const DynamicAABBTree& dynamicAABBTree, const ConcaveMeshShape& concaveMeshShape,
                                    ProxyShape* proxyShape, RaycastInfo& raycastInfo, const Ray& ray, MemoryAllocator& allocator)
-            : mDynamicAABBTree(dynamicAABBTree), mConcaveMeshShape(concaveMeshShape), mProxyShape(proxyShape),
+            : mHitAABBNodes(allocator), mDynamicAABBTree(dynamicAABBTree), mConcaveMeshShape(concaveMeshShape), mProxyShape(proxyShape),
               mRaycastInfo(raycastInfo), mRay(ray), mIsHit(false), mAllocator(allocator) {
 
         }
@@ -139,6 +141,9 @@ class ConcaveMeshShape : public ConcaveShape {
         /// if the user did not provide its own vertices normals)
         Vector3** mComputedVerticesNormals;
 
+        /// Scaling
+        const Vector3 mScaling;
+
         // -------------------- Methods -------------------- //
 
         /// Raycast method with feedback information
@@ -162,7 +167,7 @@ class ConcaveMeshShape : public ConcaveShape {
     public:
 
         /// Constructor
-        ConcaveMeshShape(TriangleMesh* triangleMesh);
+        ConcaveMeshShape(TriangleMesh* triangleMesh, const Vector3& scaling = Vector3(1, 1, 1));
 
         /// Destructor
         virtual ~ConcaveMeshShape() = default;
@@ -173,17 +178,20 @@ class ConcaveMeshShape : public ConcaveShape {
         /// Deleted assignment operator
         ConcaveMeshShape& operator=(const ConcaveMeshShape& shape) = delete;
 
+        /// Return the scaling vector
+        const Vector3& getScaling() const;
+
         /// Return the local bounds of the shape in x, y and z directions.
         virtual void getLocalBounds(Vector3& min, Vector3& max) const override;
-
-        /// Set the local scaling vector of the collision shape
-        virtual void setLocalScaling(const Vector3& scaling) override;
 
         /// Return the local inertia tensor of the collision shape
         virtual void computeLocalInertiaTensor(Matrix3x3& tensor, decimal mass) const override;
 
         /// Use a callback method on all triangles of the concave shape inside a given AABB
         virtual void testAllTriangles(TriangleCallback& callback, const AABB& localAABB) const override;
+
+        /// Return the string representation of the shape
+        virtual std::string to_string() const override;
 
 #ifdef IS_PROFILING_ACTIVE
 
@@ -203,6 +211,11 @@ inline size_t ConcaveMeshShape::getSizeInBytes() const {
     return sizeof(ConcaveMeshShape);
 }
 
+// Return the scaling vector
+inline const Vector3& ConcaveMeshShape::getScaling() const {
+    return mScaling;
+}
+
 // Return the local bounds of the shape in x, y and z directions.
 // This method is used to compute the AABB of the box
 /**
@@ -216,18 +229,6 @@ inline void ConcaveMeshShape::getLocalBounds(Vector3& min, Vector3& max) const {
 
     min = treeAABB.getMin();
     max = treeAABB.getMax();
-}
-
-// Set the local scaling vector of the collision shape
-inline void ConcaveMeshShape::setLocalScaling(const Vector3& scaling) {
-
-    CollisionShape::setLocalScaling(scaling);
-
-    // Reset the Dynamic AABB Tree
-    mDynamicAABBTree.reset();
-
-    // Rebuild Dynamic AABB Tree here
-    initBVHTree();
 }
 
 // Return the local inertia tensor of the shape
@@ -275,6 +276,7 @@ inline void ConcaveMeshShape::setProfiler(Profiler* profiler) {
 
     mDynamicAABBTree.setProfiler(profiler);
 }
+
 
 #endif
 

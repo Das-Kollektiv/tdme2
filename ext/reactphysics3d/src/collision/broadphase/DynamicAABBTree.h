@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -29,7 +29,6 @@
 // Libraries
 #include "configuration.h"
 #include "collision/shapes/AABB.h"
-#include "body/CollisionBody.h"
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
@@ -38,7 +37,12 @@ namespace reactphysics3d {
 class BroadPhaseAlgorithm;
 class BroadPhaseRaycastTestCallback;
 class DynamicAABBTreeOverlapCallback;
+class CollisionBody;
 struct RaycastTest;
+class AABB;
+class Profiler;
+class MemoryAllocator;
+
 
 // Structure TreeNode
 /**
@@ -136,6 +140,9 @@ class DynamicAABBTree {
 
         // -------------------- Attributes -------------------- //
 
+        /// Memory allocator
+        MemoryAllocator& mAllocator;
+
         /// Pointer to the memory location of the nodes of the tree
         TreeNode* mNodes;
 
@@ -203,7 +210,7 @@ class DynamicAABBTree {
         // -------------------- Methods -------------------- //
 
         /// Constructor
-        DynamicAABBTree(decimal extraAABBGap = decimal(0.0));
+        DynamicAABBTree(MemoryAllocator& allocator, decimal extraAABBGap = decimal(0.0));
 
         /// Destructor
         ~DynamicAABBTree();

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,13 +27,14 @@
 #define REACTPHYSICS3D_QUATERNION_H
 
 // Libraries
-#include <cmath>
-#include "Vector3.h"
-#include "Matrix3x3.h"
 #include "decimal.h"
+#include "Vector3.h"
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
+
+// Declarations
+class Matrix3x3;
 
 // Class Quaternion
 /**
@@ -162,6 +163,9 @@ struct Quaternion {
 
         /// Overloaded operator for equality condition
         bool operator==(const Quaternion& quaternion) const;
+
+        /// Return the string representation
+        std::string to_string() const;
 
     private:
 
@@ -377,6 +381,12 @@ inline Quaternion& Quaternion::operator=(const Quaternion& quaternion) {
 inline bool Quaternion::operator==(const Quaternion& quaternion) const {
     return (x == quaternion.x && y == quaternion.y &&
             z == quaternion.z && w == quaternion.w);
+}
+
+// Get the string representation
+inline std::string Quaternion::to_string() const {
+    return "Quaternion(" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "," +
+            std::to_string(w) + ")";
 }
 
 }

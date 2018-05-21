@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,12 +28,13 @@
 
 // Libraries
 #include "ConcaveShape.h"
-#include "collision/shapes/TriangleShape.h"
-#include "engine/Profiler.h"
+#include "collision/shapes/AABB.h"
 
 namespace reactphysics3d {
 
 class HeightFieldShape;
+class Profiler;
+class TriangleShape;
 
 // Class TriangleOverlapCallback
 /**
@@ -141,6 +142,9 @@ class HeightFieldShape : public ConcaveShape {
         /// Local AABB of the height field (without scaling)
         AABB mAABB;
 
+        /// Scaling vector
+        const Vector3 mScaling;
+
         // -------------------- Methods -------------------- //
 
         /// Raycast method with feedback information
@@ -177,7 +181,8 @@ class HeightFieldShape : public ConcaveShape {
         /// Constructor
         HeightFieldShape(int nbGridColumns, int nbGridRows, decimal minHeight, decimal maxHeight,
                          const void* heightFieldData, HeightDataType dataType,
-                         int upAxis = 1, decimal integerHeightScale = 1.0f);
+                         int upAxis = 1, decimal integerHeightScale = 1.0f,
+                         const Vector3& scaling = Vector3(1,1,1));
 
         /// Destructor
         virtual ~HeightFieldShape() override = default;
@@ -187,6 +192,9 @@ class HeightFieldShape : public ConcaveShape {
 
         /// Deleted assignment operator
         HeightFieldShape& operator=(const HeightFieldShape& shape) = delete;
+
+        /// Return the scaling factor
+        const Vector3& getScaling() const;
 
         /// Return the number of rows in the height field
         int getNbRows() const;
@@ -200,20 +208,25 @@ class HeightFieldShape : public ConcaveShape {
         /// Return the local bounds of the shape in x, y and z directions.
         virtual void getLocalBounds(Vector3& min, Vector3& max) const override;
 
-        /// Set the local scaling vector of the collision shape
-        virtual void setLocalScaling(const Vector3& scaling) override;
-
         /// Return the local inertia tensor of the collision shape
         virtual void computeLocalInertiaTensor(Matrix3x3& tensor, decimal mass) const override;
 
         /// Use a callback method on all triangles of the concave shape inside a given AABB
         virtual void testAllTriangles(TriangleCallback& callback, const AABB& localAABB) const override;
 
+        /// Return the string representation of the shape
+        virtual std::string to_string() const override;
+
         // ---------- Friendship ----------- //
 
         friend class ConvexTriangleAABBOverlapCallback;
         friend class ConcaveMeshRaycastCallback;
 };
+
+// Return the scaling factor
+inline const Vector3& HeightFieldShape::getScaling() const {
+    return mScaling;
+}
 
 // Return the number of rows in the height field
 inline int HeightFieldShape::getNbRows() const {
@@ -233,11 +246,6 @@ inline HeightFieldShape::HeightDataType HeightFieldShape::getHeightDataType() co
 // Return the number of bytes used by the collision shape
 inline size_t HeightFieldShape::getSizeInBytes() const {
     return sizeof(HeightFieldShape);
-}
-
-// Set the local scaling vector of the collision shape
-inline void HeightFieldShape::setLocalScaling(const Vector3& scaling) {
-    CollisionShape::setLocalScaling(scaling);
 }
 
 // Return the height of a given (x,y) point in the height field

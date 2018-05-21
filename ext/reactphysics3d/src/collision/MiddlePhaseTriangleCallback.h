@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -26,12 +26,23 @@
 #ifndef REACTPHYSICS3D_MIDDLE_PHASE_TRIANGLE_CALLBACK_H
 #define REACTPHYSICS3D_MIDDLE_PHASE_TRIANGLE_CALLBACK_H
 
-// Libraries
+#include "configuration.h"
 #include "collision/shapes/ConcaveShape.h"
-#include "collision/narrowphase/NarrowPhaseAlgorithm.h"
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
+
+// Libraries
+
+// Declarations
+class ConcaveShape;
+class OverlappingPair;
+class NarrowPhaseAlgorithm;
+class ProxyShape;
+class MemoryAllocator;
+class Profiler;
+struct NarrowPhaseInfo;
+struct Vector3;
 
 // Class ConvexVsTriangleCallback
 /**

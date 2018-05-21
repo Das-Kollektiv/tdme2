@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -29,12 +29,13 @@
 // Libraries
 #include "configuration.h"
 #include "mathematics/mathematics.h"
-#include "constraint/Joint.h"
-#include "Island.h"
-#include <map>
-#include <set>
 
 namespace reactphysics3d {
+
+// Declarations
+class Joint;
+class Island;
+class Profiler;
 
 // Structure ConstraintSolverData
 /**

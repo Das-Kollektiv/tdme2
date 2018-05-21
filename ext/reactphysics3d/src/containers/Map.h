@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -29,14 +29,19 @@
 // Libraries
 #include "memory/MemoryAllocator.h"
 #include "mathematics/mathematics_functions.h"
+#include "containers/Pair.h"
 #include <cstring>
+#include <stdexcept>
+#include <functional>
 #include <limits>
+
 
 namespace reactphysics3d {
 
 // Class Map
 /**
- * This class represents a simple generic associative map
+ * This class represents a simple generic associative map. This map is
+ * implemented with a hash table.
   */
 template<typename K, typename V>
 class Map {
@@ -48,7 +53,7 @@ class Map {
 
             size_t hashCode;			// Hash code of the entry
             int next;					// Index of the next entry
-            std::pair<K, V>* keyValue;	// Pointer to the pair with key and value
+            Pair<K, V>* keyValue;	    // Pointer to the pair with key and value
 
             /// Constructor
             Entry() {
@@ -56,10 +61,23 @@ class Map {
                 keyValue = nullptr;
             }
 
+            /// Constructor
+            Entry(size_t hashcode, int nextEntry) {
+                hashCode = hashcode;
+                next = nextEntry;
+                keyValue = nullptr;
+            }
+
+            /// Copy-constructor
+            Entry(const Entry& entry) {
+                hashCode = entry.hashCode;
+                next = entry.next;
+                keyValue = entry.keyValue;
+            }
+
             /// Destructor
             ~Entry() {
 
-                assert(keyValue == nullptr);
             }
 
         };
@@ -143,8 +161,16 @@ class Map {
                 newBuckets[i] = -1;
             }
 
-            // Copy the old entries to the new allocated memory location
-            std::memcpy(newEntries, mEntries, mNbUsedEntries * sizeof(Entry));
+            if (mNbUsedEntries > 0) {
+
+                // Copy the old entries to the new allocated memory location
+                std::uninitialized_copy(mEntries, mEntries + mNbUsedEntries, newEntries);
+
+                // Destruct the old entries in the previous location
+                for (int i=0; i < mNbUsedEntries; i++) {
+                    mEntries[i].~Entry();
+                }
+            }
 
             // Construct the new entries
             for (int i=mNbUsedEntries; i<newCapacity; i++) {
@@ -157,7 +183,7 @@ class Map {
             for (int i=0; i<mNbUsedEntries; i++) {
 
                 // If the entry is not free
-                if (newEntries[i].hashCode != -1) {
+                if (newEntries[i].keyValue != nullptr) {
 
                     // Get the corresponding bucket
                     int bucket = newEntries[i].hashCode % newCapacity;
@@ -220,7 +246,7 @@ class Map {
             // If elements have been allocated
             if (mCapacity > 0) {
 
-                // Clear the list
+                // Clear the map
                 clear();
 
                 // Destroy the entries
@@ -241,6 +267,109 @@ class Map {
         }
 
     public:
+
+        /// Class Iterator
+        /**
+         * This class represents an iterator for the Map
+         */
+        class Iterator {
+
+            private:
+
+                /// Array of entries
+                const Entry* mEntries;
+
+                /// Capacity of the map
+                int mCapacity;
+
+                /// Number of used entries in the map
+                int mNbUsedEntries;
+
+                /// Index of the current entry
+                int mCurrentEntry;
+
+                /// Advance the iterator
+                void advance() {
+
+                    // If we are trying to move past the end
+                    assert(mCurrentEntry < mNbUsedEntries);
+
+                    for (mCurrentEntry += 1; mCurrentEntry < mNbUsedEntries; mCurrentEntry++) {
+
+                        // If the entry is not empty
+                        if (mEntries[mCurrentEntry].keyValue != nullptr) {
+
+                           // We have found the next non empty entry
+                           return;
+                        }
+                    }
+
+                    // We have not find a non empty entry, we return an iterator to the end
+                    mCurrentEntry = mCapacity;
+                }
+
+            public:
+
+                // Iterator traits
+                using value_type = Pair<K,V>;
+                using difference_type = std::ptrdiff_t;
+                using pointer = Pair<K, V>*;
+                using reference = Pair<K,V>&;
+                using iterator_category = std::forward_iterator_tag;
+
+                /// Constructor
+                Iterator() = default;
+
+                /// Constructor
+                Iterator(const Entry* entries, int capacity, int nbUsedEntries, int currentEntry)
+                     :mEntries(entries), mCapacity(capacity), mNbUsedEntries(nbUsedEntries), mCurrentEntry(currentEntry) {
+
+                }
+
+                /// Copy constructor
+                Iterator(const Iterator& it)
+                     :mEntries(it.mEntries), mCapacity(it.mCapacity), mNbUsedEntries(it.mNbUsedEntries), mCurrentEntry(it.mCurrentEntry) {
+
+                }
+
+                /// Deferencable
+                reference operator*() const {
+                    assert(mCurrentEntry >= 0 && mCurrentEntry < mNbUsedEntries);
+                    assert(mEntries[mCurrentEntry].keyValue != nullptr);
+                    return *(mEntries[mCurrentEntry].keyValue);
+                }
+
+                /// Deferencable
+                pointer operator->() const {
+                    assert(mCurrentEntry >= 0 && mCurrentEntry < mNbUsedEntries);
+                    assert(mEntries[mCurrentEntry].keyValue != nullptr);
+                    return mEntries[mCurrentEntry].keyValue;
+                }
+
+                /// Post increment (it++)
+                Iterator& operator++() {
+                    advance();
+                    return *this;
+                }
+
+                /// Pre increment (++it)
+                Iterator operator++(int number) {
+                    Iterator tmp = *this;
+                    advance();
+                    return tmp;
+                }
+
+                /// Equality operator (it == end())
+                bool operator==(const Iterator& iterator) const {
+                    return mCurrentEntry == iterator.mCurrentEntry && mEntries == iterator.mEntries;
+                }
+
+                /// Inequality operator (it != end())
+                bool operator!=(const Iterator& iterator) const {
+                    return !(*this == iterator);
+                }
+        };
+
 
         // -------------------- Methods -------------------- //
 
@@ -265,19 +394,30 @@ class Map {
         /// Copy constructor
         Map(const Map<K, V>& map)
           :mNbUsedEntries(map.mNbUsedEntries), mNbFreeEntries(map.mNbFreeEntries), mCapacity(map.mCapacity),
-           mAllocator(map.mAllocator), mFreeIndex(map.mFreeIndex) {
+           mBuckets(nullptr), mEntries(nullptr), mAllocator(map.mAllocator), mFreeIndex(map.mFreeIndex) {
 
-            // Allocate memory for the buckets
-            mBuckets = static_cast<int*>(mAllocator.allocate(mCapacity * sizeof(int)));
+            if (mCapacity > 0) {
 
-            // Allocate memory for the entries
-            mEntries = static_cast<Entry*>(mAllocator.allocate(mCapacity * sizeof(Entry)));
+                // Allocate memory for the buckets
+                mBuckets = static_cast<int*>(mAllocator.allocate(mCapacity * sizeof(int)));
 
-            // Copy the buckets
-            std::memcpy(mBuckets, map.mBuckets, mCapacity * sizeof(int));
+                // Allocate memory for the entries
+                mEntries = static_cast<Entry*>(mAllocator.allocate(mCapacity * sizeof(Entry)));
 
-            // Copy the entries
-            std::memcpy(mEntries, map.mEntries, mCapacity * sizeof(Entry));
+                // Copy the buckets
+                std::uninitialized_copy(map.mBuckets, map.mBuckets + mCapacity, mBuckets); 
+
+                // Copy the entries
+                for (int i=0; i < mCapacity; i++) {
+
+                    new (&mEntries[i]) Entry(map.mEntries[i].hashCode, map.mEntries[i].next);
+
+                    if (map.mEntries[i].keyValue != nullptr) {
+                       mEntries[i].keyValue = static_cast<Pair<K,V>*>(mAllocator.allocate(sizeof(Pair<K, V>)));
+                       new (mEntries[i].keyValue) Pair<K,V>(*(map.mEntries[i].keyValue));
+                    }
+                }
+            }
         }
 
         /// Destructor
@@ -287,7 +427,7 @@ class Map {
         }
 
         /// Allocate memory for a given number of elements
-        void reserve(size_t capacity) {
+        void reserve(int capacity) {
 
            if (capacity <= mCapacity) return;
 
@@ -307,7 +447,7 @@ class Map {
         }
 
         /// Add an element into the map
-        void add(const std::pair<K,V>& keyValue) {
+        void add(const Pair<K,V>& keyValue, bool insertIfAlreadyPresent = false) {
 
             if (mCapacity == 0) {
                 initialize(0);
@@ -325,7 +465,19 @@ class Map {
                 // If there is already an item with the same key in the map
                 if (mEntries[i].hashCode == hashCode && mEntries[i].keyValue->first == keyValue.first) {
 
-                    throw std::runtime_error("The key and value pair already exists in the map");
+                    if (insertIfAlreadyPresent) {
+
+                        // Destruct the previous key/value
+                        mEntries[i].keyValue->~Pair<K, V>();
+
+                        // Copy construct the new key/value
+                        new (mEntries[i].keyValue) Pair<K,V>(keyValue);
+
+                        return;
+                    }
+                    else {
+                        throw std::runtime_error("The key and value pair already exists in the map");
+                    }
                 }
             }
 
@@ -357,14 +509,25 @@ class Map {
             assert(mEntries[entryIndex].keyValue == nullptr);
             mEntries[entryIndex].hashCode = hashCode;
             mEntries[entryIndex].next = mBuckets[bucket];
-            mEntries[entryIndex].keyValue = static_cast<std::pair<K,V>*>(mAllocator.allocate(sizeof(std::pair<K,V>)));
+            mEntries[entryIndex].keyValue = static_cast<Pair<K,V>*>(mAllocator.allocate(sizeof(Pair<K,V>)));
             assert(mEntries[entryIndex].keyValue != nullptr);
-            new (mEntries[entryIndex].keyValue) std::pair<K,V>(keyValue);
+            new (mEntries[entryIndex].keyValue) Pair<K,V>(keyValue);
             mBuckets[bucket] = entryIndex;
         }
 
+        /// Remove the element pointed by some iterator
+        /// This method returns an iterator pointing to the element after
+        /// the one that has been removed
+        Iterator remove(const Iterator& it) {
+
+            const K& key = it->first;
+            return remove(key);
+        }
+
         /// Remove the element from the map with a given key
-        bool remove(const K& key) {
+        /// This method returns an iterator pointing to the element after
+        /// the one that has been removed
+        Iterator remove(const K& key) {
 
             if (mCapacity > 0) {
 
@@ -384,24 +547,36 @@ class Map {
 
                         // Release memory for the key/value pair if any
                         if (mEntries[i].keyValue != nullptr) {
-                            mEntries[i].keyValue->~pair<K,V>();
-                            mAllocator.release(mEntries[i].keyValue, sizeof(std::pair<K,V>));
+                            mEntries[i].keyValue->~Pair<K,V>();
+                            mAllocator.release(mEntries[i].keyValue, sizeof(Pair<K,V>));
                             mEntries[i].keyValue = nullptr;
                         }
-                        mEntries[i].hashCode = -1;
+                        assert(mEntries[i].keyValue == nullptr);
                         mEntries[i].next = mFreeIndex;
                         mFreeIndex = i;
                         mNbFreeEntries++;
 
-                        return true;
+                        // Find the next entry to return the iterator
+                        for (i += 1; i < mNbUsedEntries; i++) {
+
+                            // If the entry is not empty
+                            if (mEntries[i].keyValue != nullptr) {
+
+                               // We have found the next non empty entry
+                               return Iterator(mEntries, mCapacity, mNbUsedEntries, i);
+                            }
+                        }
+
+                        return end();
                     }
                 }
             }
 
-            return false;
+            // Return the end iterator
+            return end();
         }
 
-        /// Clear the list
+        /// Clear the map
         void clear() {
 
             if (mNbUsedEntries > 0) {
@@ -410,8 +585,8 @@ class Map {
                     mBuckets[i] = -1;
                     mEntries[i].next = -1;
                     if (mEntries[i].keyValue != nullptr) {
-                        mEntries[i].keyValue->~pair<K,V>();
-                        mAllocator.release(mEntries[i].keyValue, sizeof(std::pair<K,V>));
+                        mEntries[i].keyValue->~Pair<K,V>();
+                        mAllocator.release(mEntries[i].keyValue, sizeof(Pair<K,V>));
                         mEntries[i].keyValue = nullptr;
                     }
                 }
@@ -432,6 +607,36 @@ class Map {
         /// Return the capacity of the map
         int capacity() const {
             return mCapacity;
+        }
+
+        /// Try to find an item of the map given a key.
+        /// The method returns an iterator to the found item or
+        /// an iterator pointing to the end if not found
+        Iterator find(const K& key) const {
+
+            int bucket;
+            int entry = -1;
+
+            if (mCapacity > 0) {
+
+               size_t hashCode = std::hash<K>()(key);
+               bucket = hashCode % mCapacity;
+
+               for (int i = mBuckets[bucket]; i >= 0; i = mEntries[i].next) {
+                   if (mEntries[i].hashCode == hashCode && mEntries[i].keyValue->first == key) {
+                       entry = i;
+                       break;
+                   }
+               }
+            }
+
+            if (entry == -1) {
+                return end();
+            }
+
+            assert(mEntries[entry].keyValue != nullptr);
+
+            return Iterator(mEntries, mCapacity, mNbUsedEntries, entry);
         }
 
         /// Overloaded index operator
@@ -465,14 +670,31 @@ class Map {
                 throw std::runtime_error("No item with given key has been found in the map");
             }
 
-            return mEntries[entry];
+            assert(mEntries[entry].keyValue != nullptr);
+
+            return mEntries[entry].keyValue->second;
         }
 
         /// Overloaded equality operator
         bool operator==(const Map<K,V>& map) const {
 
-            // TODO : Implement this
-            return false;
+            if (size() != map.size()) return false;
+
+            for (auto it = begin(); it != end(); ++it) {
+                auto it2 = map.find(it->first);
+                if (it2 == map.end() || it2->second != it->second) {
+                    return false;
+                }
+            }
+
+            for (auto it = map.begin(); it != map.end(); ++it) {
+                auto it2 = find(it->first);
+                if (it2 == end() || it2->second != it->second) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// Overloaded not equal operator
@@ -502,10 +724,18 @@ class Map {
                     mEntries = static_cast<Entry*>(mAllocator.allocate(mCapacity * sizeof(Entry)));
 
                     // Copy the buckets
-                    std::memcpy(mBuckets, map.mBuckets, mCapacity * sizeof(int));
+                    std::uninitialized_copy(map.mBuckets, map.mBuckets + mCapacity, mBuckets);
 
                     // Copy the entries
-                    std::memcpy(mEntries, map.mEntries, mCapacity * sizeof(Entry));
+                    for (int i=0; i < mCapacity; i++) {
+
+                        new (&mEntries[i]) Entry(map.mEntries[i].hashCode, map.mEntries[i].next);
+
+                        if (map.mEntries[i].keyValue != nullptr) {
+                           mEntries[i].keyValue = static_cast<Pair<K,V>*>(mAllocator.allocate(sizeof(Pair<K, V>)));
+                           new (mEntries[i].keyValue) Pair<K,V>(*(map.mEntries[i].keyValue));
+                        }
+                    }
 
                     mNbUsedEntries = map.mNbUsedEntries;
                     mNbFreeEntries = map.mNbFreeEntries;
@@ -514,6 +744,33 @@ class Map {
             }
 
             return *this;
+        }
+
+        /// Return a begin iterator
+        Iterator begin() const {
+
+            // If the map is empty
+            if (size() == 0) {
+
+                // Return an iterator to the end
+                return end();
+            }
+
+            // Find the first used entry
+            int entry;
+            for (entry=0; entry < mNbUsedEntries; entry++) {
+                if (mEntries[entry].keyValue != nullptr) {
+                    return Iterator(mEntries, mCapacity, mNbUsedEntries, entry);
+                }
+            }
+
+            assert(false);
+            return end();
+        }
+
+        /// Return a end iterator
+        Iterator end() const {
+            return Iterator(mEntries, mCapacity, mNbUsedEntries, mCapacity);
         }
 };
 

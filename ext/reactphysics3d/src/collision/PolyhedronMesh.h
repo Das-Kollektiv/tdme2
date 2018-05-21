@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -29,11 +29,12 @@
 // Libraries
 #include "mathematics/mathematics.h"
 #include "HalfEdgeStructure.h"
-#include "collision/PolygonVertexArray.h"
-#include "memory/DefaultAllocator.h"
-#include <vector>
 
 namespace reactphysics3d {
+
+// Declarations
+class DefaultAllocator;
+class PolygonVertexArray;
 
 // Class PolyhedronMesh
 /**
@@ -86,6 +87,9 @@ class PolyhedronMesh {
         /// Return a vertex
         Vector3 getVertex(uint index) const;
 
+        /// Return the number of faces
+        uint getNbFaces() const;
+
         /// Return a face normal
         Vector3 getFaceNormal(uint faceIndex) const;
 
@@ -97,22 +101,43 @@ class PolyhedronMesh {
 };
 
 // Return the number of vertices
+/**
+ * @return The number of vertices in the mesh
+ */
 inline uint PolyhedronMesh::getNbVertices() const {
     return mHalfEdgeStructure.getNbVertices();
 }
 
+// Return the number of faces
+/**
+ * @return The number of faces in the mesh
+ */
+inline uint PolyhedronMesh::getNbFaces() const {
+   return mHalfEdgeStructure.getNbFaces();
+}
+
 // Return a face normal
+/**
+ * @param faceIndex The index of a given face of the mesh
+ * @return The normal vector of a given face of the mesh
+ */
 inline Vector3 PolyhedronMesh::getFaceNormal(uint faceIndex) const {
     assert(faceIndex < mHalfEdgeStructure.getNbFaces());
     return mFacesNormals[faceIndex];
 }
 
 // Return the half-edge structure of the mesh
+/**
+ * @return The Half-Edge structure of the mesh
+ */
 inline const HalfEdgeStructure& PolyhedronMesh::getHalfEdgeStructure() const {
     return mHalfEdgeStructure;
 }
 
 // Return the centroid of the polyhedron
+/**
+ * @return The centroid of the mesh
+ */
 inline Vector3 PolyhedronMesh::getCentroid() const {
     return mCentroid;
 }

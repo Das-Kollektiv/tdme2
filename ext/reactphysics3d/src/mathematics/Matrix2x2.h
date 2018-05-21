@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -145,6 +145,9 @@ class Matrix2x2 {
 
         /// Overloaded operator to read/write element of the matrix.
         Vector2& operator[](int row);
+
+        /// Return the string representation
+        std::string to_string() const;
 };
 
 // Constructor of the class Matrix2x2
@@ -338,6 +341,12 @@ inline const Vector2& Matrix2x2::operator[](int row) const {
 /// matrix[row][col].
 inline Vector2& Matrix2x2::operator[](int row) {
     return mRows[row];
+}
+
+// Get the string representation
+inline std::string Matrix2x2::to_string() const {
+    return "Matrix2x2(" + std::to_string(mRows[0][0]) + "," + std::to_string(mRows[0][1]) + "," +
+           std::to_string(mRows[1][0]) + "," + std::to_string(mRows[1][1]) + ")";
 }
 
 }

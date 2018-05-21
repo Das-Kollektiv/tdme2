@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -127,9 +127,6 @@ class TriangleShape : public ConvexPolyhedronShape {
         /// Return the local bounds of the shape in x, y and z directions.
         virtual void getLocalBounds(Vector3& min, Vector3& max) const override;
 
-        /// Set the local scaling vector of the collision shape
-        virtual void setLocalScaling(const Vector3& scaling) override;
-
         /// Return the local inertia tensor of the collision shape
         virtual void computeLocalInertiaTensor(Matrix3x3& tensor, decimal mass) const override;
 
@@ -175,6 +172,9 @@ class TriangleShape : public ConvexPolyhedronShape {
                                                      const Transform& shape1ToWorld, const Transform& shape2ToWorld,
                                                      decimal penetrationDepth, Vector3& outSmoothVertexNormal);
 
+        /// Return the string representation of the shape
+        virtual std::string to_string() const override;
+
         // ---------- Friendship ---------- //
 
         friend class ConcaveMeshRaycastCallback;
@@ -211,16 +211,6 @@ inline void TriangleShape::getLocalBounds(Vector3& min, Vector3& max) const {
     max += Vector3(mMargin, mMargin, mMargin);
 }
 
-// Set the local scaling vector of the collision shape
-inline void TriangleShape::setLocalScaling(const Vector3& scaling) {
-
-    mPoints[0] = (mPoints[0] / mScaling) * scaling;
-    mPoints[1] = (mPoints[1] / mScaling) * scaling;
-    mPoints[2] = (mPoints[2] / mScaling) * scaling;
-
-    CollisionShape::setLocalScaling(scaling);
-}
-
 // Return the local inertia tensor of the triangle shape
 /**
  * @param[out] tensor The 3x3 inertia tensor matrix of the shape in local-space
@@ -229,25 +219,6 @@ inline void TriangleShape::setLocalScaling(const Vector3& scaling) {
  */
 inline void TriangleShape::computeLocalInertiaTensor(Matrix3x3& tensor, decimal mass) const {
     tensor.setToZero();
-}
-
-// Update the AABB of a body using its collision shape
-/**
- * @param[out] aabb The axis-aligned bounding box (AABB) of the collision shape
- *                  computed in world-space coordinates
- * @param transform Transform used to compute the AABB of the collision shape
- */
-inline void TriangleShape::computeAABB(AABB& aabb, const Transform& transform) const {
-
-    const Vector3 worldPoint1 = transform * mPoints[0];
-    const Vector3 worldPoint2 = transform * mPoints[1];
-    const Vector3 worldPoint3 = transform * mPoints[2];
-
-    const Vector3 xAxis(worldPoint1.x, worldPoint2.x, worldPoint3.x);
-    const Vector3 yAxis(worldPoint1.y, worldPoint2.y, worldPoint3.y);
-    const Vector3 zAxis(worldPoint1.z, worldPoint2.z, worldPoint3.z);
-    aabb.setMin(Vector3(xAxis.getMinValue(), yAxis.getMinValue(), zAxis.getMinValue()));
-    aabb.setMax(Vector3(xAxis.getMaxValue(), yAxis.getMaxValue(), zAxis.getMaxValue()));
 }
 
 // Return true if a point is inside the collision shape
@@ -323,6 +294,12 @@ inline TriangleRaycastSide TriangleShape::getRaycastTestType() const {
  */
 inline void TriangleShape::setRaycastTestType(TriangleRaycastSide testType) {
     mRaycastTestType = testType;
+}
+
+// Return the string representation of the shape
+inline std::string TriangleShape::to_string() const {
+    return "TriangleShape{v1=" + mPoints[0].to_string() + ", v2=" + mPoints[1].to_string() + "," +
+            "v3=" + mPoints[2].to_string() + "}";
 }
 
 }

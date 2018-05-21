@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -33,7 +33,7 @@ using namespace reactphysics3d;
 
 // Constructor
 SingleFrameAllocator::SingleFrameAllocator()
-    : mTotalSizeBytes(INIT_SINGLE_FRAME_ALLOCATOR_BYTES),
+    : mTotalSizeBytes(INIT_SINGLE_FRAME_ALLOCATOR_NB_BYTES),
       mCurrentOffset(0), mNbFramesTooMuchAllocated(0), mNeedToAllocatedMore(false) {
 
     // Allocate a whole block of memory at the beginning
@@ -100,7 +100,7 @@ void SingleFrameAllocator::reset() {
 
             // Divide the total memory to allocate by two
             mTotalSizeBytes /= 2;
-            if (mTotalSizeBytes <= 0) mTotalSizeBytes = 1;
+            if (mTotalSizeBytes == 0) mTotalSizeBytes = 1;
 
             // Allocate a whole block of memory at the beginning
             mMemoryBufferStart = static_cast<char*>(MemoryManager::getBaseAllocator().allocate(mTotalSizeBytes));

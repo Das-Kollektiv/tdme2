@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,14 +27,16 @@
 #define REACTPHYSICS3D_NARROW_PHASE_INFO_H
 
 // Libraries
-#include "shapes/CollisionShape.h"
-#include "collision/ContactManifoldInfo.h"
 #include "engine/OverlappingPair.h"
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
 
+// Declarations
+class CollisionShape;
 struct LastFrameCollisionInfo;
+class ContactManifoldInfo;
+struct ContactPointInfo;
 
 // Class NarrowPhaseInfo
 /**

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,7 +28,6 @@
 
 // Libraries
 #include "mathematics/Vector3.h"
-#include "mathematics/Ray.h"
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
@@ -37,6 +36,7 @@ namespace reactphysics3d {
 class CollisionBody;
 class ProxyShape;
 class CollisionShape;
+struct Ray;
 
 // Structure RaycastInfo
 /**

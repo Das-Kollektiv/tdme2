@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -190,6 +190,10 @@ void TriangleVertexArray::computeVerticesNormals() {
 }
 
 // Return the indices of the three vertices of a given triangle in the array
+/**
+ * @param triangleIndex Index of a given triangle in the array
+ * @param[out] outVerticesIndices Pointer to the three output vertex indices
+ */
 void TriangleVertexArray::getTriangleVerticesIndices(uint triangleIndex, uint* outVerticesIndices) const {
 
     assert(triangleIndex >= 0 && triangleIndex < mNbTriangles);
@@ -213,7 +217,11 @@ void TriangleVertexArray::getTriangleVerticesIndices(uint triangleIndex, uint* o
     }
 }
 
-// Return the vertices coordinates of a triangle
+// Return the three vertices coordinates of a triangle
+/**
+ * @param triangleIndex Index of a given triangle in the array
+ * @param[out] outTriangleVertices Pointer to the three output vertex coordinates
+ */
 void TriangleVertexArray::getTriangleVertices(uint triangleIndex, Vector3* outTriangleVertices) const {
 
     assert(triangleIndex >= 0 && triangleIndex < mNbTriangles);
@@ -248,6 +256,10 @@ void TriangleVertexArray::getTriangleVertices(uint triangleIndex, Vector3* outTr
 }
 
 // Return the three vertices normals of a triangle
+/**
+ * @param triangleIndex Index of a given triangle in the array
+ * @param[out] outTriangleVerticesNormals Pointer to the three output vertex normals
+ */
 void TriangleVertexArray::getTriangleVerticesNormals(uint triangleIndex, Vector3* outTriangleVerticesNormals) const {
 
     assert(triangleIndex >= 0 && triangleIndex < mNbTriangles);
@@ -278,5 +290,65 @@ void TriangleVertexArray::getTriangleVerticesNormals(uint triangleIndex, Vector3
         else {
             assert(false);
         }
+    }
+}
+
+// Return a vertex of the array
+/**
+ * @param vertexIndex Index of a given vertex of the array
+ * @param[out] outVertex Pointer to the output vertex coordinates
+ */
+void TriangleVertexArray::getVertex(uint vertexIndex, Vector3* outVertex) {
+
+    assert(vertexIndex < mNbVertices);
+
+    const uchar* vertexPointerChar = mVerticesStart + vertexIndex * mVerticesStride;
+    const void* vertexPointer = static_cast<const void*>(vertexPointerChar);
+
+    // Get the vertices components of the triangle
+    if (mVertexDataType == TriangleVertexArray::VertexDataType::VERTEX_FLOAT_TYPE) {
+        const float* vertices = static_cast<const float*>(vertexPointer);
+        (*outVertex)[0] = decimal(vertices[0]);
+        (*outVertex)[1] = decimal(vertices[1]);
+        (*outVertex)[2] = decimal(vertices[2]);
+    }
+    else if (mVertexDataType == TriangleVertexArray::VertexDataType::VERTEX_DOUBLE_TYPE) {
+        const double* vertices = static_cast<const double*>(vertexPointer);
+        (*outVertex)[0] = decimal(vertices[0]);
+        (*outVertex)[1] = decimal(vertices[1]);
+        (*outVertex)[2] = decimal(vertices[2]);
+    }
+    else {
+        assert(false);
+    }
+}
+
+// Return a vertex normal of the array
+/**
+ * @param vertexIndex Index of a given vertex of the array
+ * @param[out] outNormal Pointer to the output vertex normal
+ */
+void TriangleVertexArray::getNormal(uint vertexIndex, Vector3* outNormal) {
+
+    assert(vertexIndex < mNbVertices);
+
+    const uchar* vertexNormalPointerChar = mVerticesNormalsStart + vertexIndex * mVerticesNormalsStride;
+    const void* vertexNormalPointer = static_cast<const void*>(vertexNormalPointerChar);
+
+    // Get the normals from the array
+    if (mVertexNormaldDataType == TriangleVertexArray::NormalDataType::NORMAL_FLOAT_TYPE) {
+        const float* normal = static_cast<const float*>(vertexNormalPointer);
+        (*outNormal)[0] = decimal(normal[0]);
+        (*outNormal)[1] = decimal(normal[1]);
+        (*outNormal)[2] = decimal(normal[2]);
+    }
+    else if (mVertexNormaldDataType == TriangleVertexArray::NormalDataType::NORMAL_DOUBLE_TYPE) {
+        const double* normal = static_cast<const double*>(vertexNormalPointer);
+        (*outNormal)[0] = decimal(normal[0]);
+        (*outNormal)[1] = decimal(normal[1]);
+        (*outNormal)[2] = decimal(normal[2]);
+    }
+    else {
+        assert(false);
     }
 }

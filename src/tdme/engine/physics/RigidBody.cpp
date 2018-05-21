@@ -22,7 +22,6 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionListener.h>
-#include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
@@ -280,7 +279,6 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	);
 	// set local to body transform, proxy shape scaling
 	proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
-	proxyShape->setLocalScaling(scaleVectorTransformed);
 	// rigig body transform
 	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
 	reactphysics3d::Transform transform;
@@ -329,140 +327,6 @@ void RigidBody::addTorque(const Vector3& torque)
 	rigidBody->applyForceToCenterOfMass(
 		reactphysics3d::Vector3(torque.getX(), torque.getY(), torque.getZ())
 	);
-}
-
-bool RigidBody::doesCollideWith(BoundingVolume* boundingVolume, CollisionResponse* collision) {
-	// callback
-	class CustomCollisionCallbackInfo: public reactphysics3d::CollisionCallback::CollisionCallbackInfo {
-	    public:
-			CustomCollisionCallbackInfo(reactphysics3d::OverlappingPair* pair, reactphysics3d::MemoryManager& memoryManager, CollisionResponse* collision):
-				reactphysics3d::CollisionCallback::CollisionCallbackInfo(pair, memoryManager),
-				collision(collision) {
-			}
-
-			void notifyContact(const CollisionCallbackInfo& collisionCallbackInfo) {
-				auto contactManifoldElement = collisionCallbackInfo.contactManifoldElements;
-				while (contactManifoldElement != nullptr) {
-					auto entity = collision->addResponse(-contactManifoldElement->getContactManifold()->getContactPoints()->getPenetrationDepth());
-					auto normal = contactManifoldElement->getContactManifold()->getContactPoints()->getNormal();
-					entity->getNormal().set(normal.x, normal.y, normal.z);
-					auto shape1 = contactManifoldElement->getContactManifold()->getShape1();
-					auto shape2 = contactManifoldElement->getContactManifold()->getShape2();
-					auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
-					auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
-					auto& localPoint1 = contactManifoldElement->getContactManifold()->getContactPoints()->getLocalPointOnShape1();
-					auto& localPoint2 = contactManifoldElement->getContactManifold()->getContactPoints()->getLocalPointOnShape2();
-					auto worldPoint1 = shapeLocalToWorldTransform1 * (localPoint1 * shape1->getLocalScaling());
-					auto worldPoint2 = shapeLocalToWorldTransform2 * (localPoint2 * shape2->getLocalScaling());
-					entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));
-					entity->addHitPoint(Vector3(worldPoint2.x, worldPoint2.y, worldPoint2.z));
-					contactManifoldElement = contactManifoldElement->getNext();
-				}
-			}
-	    private:
-			CollisionResponse* collision;
-	};
-
-	//
-	collision->reset();
-
-	// do broad test
-	auto rigidBodyAABB = rigidBody->getProxyShapesList()->getWorldAABB();
-	if (rigidBodyAABB.testCollision(boundingVolume->collisionShapeAABB) == false) return false;
-
-	// do narrow test
-	auto collisionShape1 = getBoundingVolume()->collisionShape;
-	auto collisionShape2 = boundingVolume->collisionShape;
-	auto& collisionShapeTransform2 = boundingVolume->collisionShapeTransform;
-	reactphysics3d::MemoryManager memoryManager;
-	reactphysics3d::DefaultCollisionDispatch collisionDispatch;
-	reactphysics3d::CollisionWorld world;
-	reactphysics3d::CollisionBody body2(collisionShapeTransform2, world, rigidBody->getID() + 1);
-	auto proxyShape1 = rigidBody->getProxyShapesList();
-	reactphysics3d::ProxyShape proxyShape2(&body2, collisionShape2, boundingVolume->collisionShapeLocalTransform, 0.0, memoryManager);
-	reactphysics3d::OverlappingPair pair(proxyShape1, &proxyShape2, memoryManager.getPoolAllocator(), memoryManager.getSingleFrameAllocator());
-    auto narrowPhaseInfo = new (
-		memoryManager.allocate(
-			reactphysics3d::MemoryManager::AllocationType::Pool,
-			sizeof(reactphysics3d::NarrowPhaseInfo)
-		)
-	) reactphysics3d::NarrowPhaseInfo(
-		&pair,
-		collisionShape1,
-		collisionShape2,
-		proxyShape1->getLocalToWorldTransform(),
-		proxyShape2.getLocalToWorldTransform(),
-		memoryManager.getPoolAllocator()
-	);
-    while (narrowPhaseInfo != nullptr) {
-		auto narrowPhaseAlgorithm = collisionDispatch.selectAlgorithm(
-			Math::min(static_cast<int>(collisionShape1->getType()), static_cast<int>(collisionShape2->getType())),
-			Math::max(static_cast<int>(collisionShape1->getType()), static_cast<int>(collisionShape2->getType()))
-		);
-		if (narrowPhaseAlgorithm != nullptr) {
-			if (narrowPhaseAlgorithm->testCollision(narrowPhaseInfo, true, memoryManager.getPoolAllocator())) {
-				narrowPhaseInfo->addContactPointsAsPotentialContactManifold();
-			}
-		}
-        auto currentNarrowPhaseInfo = narrowPhaseInfo;
-        narrowPhaseInfo = narrowPhaseInfo->next;
-        currentNarrowPhaseInfo->~NarrowPhaseInfo();
-        memoryManager.release(reactphysics3d::MemoryManager::AllocationType::Pool, currentNarrowPhaseInfo, sizeof(reactphysics3d::NarrowPhaseInfo));
-    }
-    pair.reducePotentialContactManifolds();
-    pair.addContactPointsFromPotentialContactPoints();
-    pair.clearObsoleteManifoldsAndContactPoints();
-    pair.reduceContactManifolds();
-    pair.clearPotentialContactManifolds();
-	if (pair.hasContacts()) {
-		CustomCollisionCallbackInfo customCollisionCallbackInfo(&pair, memoryManager, collision);
-        reactphysics3d::CollisionCallback::CollisionCallbackInfo collisionInfo(&pair, memoryManager);
-        customCollisionCallbackInfo.notifyContact(collisionInfo);
-	}
-
-	// done
-	return collision->hasEntitySelected();
-}
-
-bool RigidBody::doesCollideWith(RigidBody* rigidBody, CollisionResponse* collision) {
-	// callback
-	class CustomCollisionCallback: public reactphysics3d::CollisionCallback {
-	    public:
-			CustomCollisionCallback(CollisionResponse* collision): collision(collision)  {
-			}
-
-			void notifyContact(const CollisionCallbackInfo& collisionCallbackInfo) {
-				auto contactManifoldElement = collisionCallbackInfo.contactManifoldElements;
-				while (contactManifoldElement != nullptr) {
-					auto entity = collision->addResponse(-contactManifoldElement->getContactManifold()->getContactPoints()->getPenetrationDepth());
-					auto normal = contactManifoldElement->getContactManifold()->getContactPoints()->getNormal();
-					entity->getNormal().set(normal.x, normal.y, normal.z);
-					auto shape1 = contactManifoldElement->getContactManifold()->getShape1();
-					auto shape2 = contactManifoldElement->getContactManifold()->getShape2();
-					auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
-					auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
-					auto& localPoint1 = contactManifoldElement->getContactManifold()->getContactPoints()->getLocalPointOnShape1();
-					auto& localPoint2 = contactManifoldElement->getContactManifold()->getContactPoints()->getLocalPointOnShape2();
-					auto worldPoint1 = shapeLocalToWorldTransform1 * (localPoint1 * shape1->getLocalScaling());
-					auto worldPoint2 = shapeLocalToWorldTransform2 * (localPoint2 * shape2->getLocalScaling());
-					entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));
-					entity->addHitPoint(Vector3(worldPoint2.x, worldPoint2.y, worldPoint2.z));
-					contactManifoldElement = contactManifoldElement->getNext();
-				}
-			}
-	    private:
-			CollisionResponse* collision;
-	};
-
-	//
-	collision->reset();
-
-	// do the test
-	CustomCollisionCallback customCollisionCallback(collision);
-	world->world.testCollision(this->rigidBody, rigidBody->rigidBody, &customCollisionCallback);
-
-	// done
-	return collision->hasEntitySelected();
 }
 
 void RigidBody::addCollisionListener(CollisionListener* listener)

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,7 +27,6 @@
 #define REACTPHYSICS3D_VECTOR2_H
 
 // Libraries
-#include <cmath>
 #include <cassert>
 #include "mathematics_functions.h"
 #include "decimal.h"
@@ -54,7 +53,7 @@ struct Vector2 {
 
         // -------------------- Methods -------------------- //
 
-        /// Constructor of the class Vector3D
+        /// Constructor of the struct Vector2
         Vector2();
 
         /// Constructor with arguments
@@ -134,6 +133,9 @@ struct Vector2 {
 
         /// Overloaded less than operator for ordering to be used inside std::set for instance
         bool operator<(const Vector2& vector) const;
+
+        /// Return the string representation
+        std::string to_string() const;
 
         /// Return a vector taking the minimum components of two vectors
         static Vector2 min(const Vector2& vector1, const Vector2& vector2);
@@ -350,6 +352,11 @@ inline Vector2 Vector2::min(const Vector2& vector1, const Vector2& vector2) {
 inline Vector2 Vector2::max(const Vector2& vector1, const Vector2& vector2) {
     return Vector2(std::max(vector1.x, vector2.x),
                    std::max(vector1.y, vector2.y));
+}
+
+// Get the string representation
+inline std::string Vector2::to_string() const {
+    return "Vector2(" + std::to_string(x) + "," + std::to_string(y) + ")";
 }
 
 // Return the zero vector

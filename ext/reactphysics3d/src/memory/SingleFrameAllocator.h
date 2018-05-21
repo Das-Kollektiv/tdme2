@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -47,6 +47,9 @@ class SingleFrameAllocator : public MemoryAllocator {
         /// Number of frames to wait before shrinking the allocated
         /// memory if too much is allocated
         static const int NB_FRAMES_UNTIL_SHRINK = 120;
+
+        /// Initial size (in bytes) of the single frame allocator
+        size_t INIT_SINGLE_FRAME_ALLOCATOR_NB_BYTES = 1048576; // 1Mb
 
         // -------------------- Attributes -------------------- //
 

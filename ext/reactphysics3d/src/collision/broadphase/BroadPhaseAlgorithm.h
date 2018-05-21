@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,11 +27,7 @@
 #define REACTPHYSICS3D_BROAD_PHASE_ALGORITHM_H
 
 // Libraries
-#include <vector>
-#include "body/CollisionBody.h"
-#include "collision/ProxyShape.h"
 #include "DynamicAABBTree.h"
-#include "engine/Profiler.h"
 #include "containers/LinkedList.h"
 
 /// Namespace ReactPhysics3D
@@ -40,6 +36,10 @@ namespace reactphysics3d {
 // Declarations
 class CollisionDetection;
 class BroadPhaseAlgorithm;
+class CollisionBody;
+class ProxyShape;
+class MemoryManager;
+class Profiler;
 
 // Structure BroadPhasePair
 /**
@@ -243,34 +243,9 @@ inline bool BroadPhasePair::smallerThan(const BroadPhasePair& pair1, const Broad
     return false;
 }
 
-// Return true if the two broad-phase collision shapes are overlapping
-inline bool BroadPhaseAlgorithm::testOverlappingShapes(const ProxyShape* shape1,
-                                                       const ProxyShape* shape2) const {
-
-    if (shape1->mBroadPhaseID == -1 || shape2->mBroadPhaseID == -1) return false;
-
-    // Get the two AABBs of the collision shapes
-    const AABB& aabb1 = mDynamicAABBTree.getFatAABB(shape1->mBroadPhaseID);
-    const AABB& aabb2 = mDynamicAABBTree.getFatAABB(shape2->mBroadPhaseID);
-
-    // Check if the two AABBs are overlapping
-    return aabb1.testCollision(aabb2);
-}
-
 // Return the fat AABB of a given broad-phase shape
 inline const AABB& BroadPhaseAlgorithm::getFatAABB(int broadPhaseId) const  {
     return mDynamicAABBTree.getFatAABB(broadPhaseId);
-}
-
-// Ray casting method
-inline void BroadPhaseAlgorithm::raycast(const Ray& ray, RaycastTest& raycastTest,
-                                         unsigned short raycastWithCategoryMaskBits) const {
-
-    PROFILE("BroadPhaseAlgorithm::raycast()", mProfiler);
-
-    BroadPhaseRaycastCallback broadPhaseRaycastCallback(mDynamicAABBTree, raycastWithCategoryMaskBits, raycastTest);
-
-    mDynamicAABBTree.raycast(ray, broadPhaseRaycastCallback);
 }
 
 // Return the proxy shape corresponding to the broad-phase node id in parameter

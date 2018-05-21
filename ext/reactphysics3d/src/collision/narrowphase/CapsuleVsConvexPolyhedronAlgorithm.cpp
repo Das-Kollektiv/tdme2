@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -29,6 +29,8 @@
 #include "GJK/GJKAlgorithm.h"
 #include "collision/shapes/CapsuleShape.h"
 #include "collision/shapes/ConvexPolyhedronShape.h"
+#include "collision/NarrowPhaseInfo.h"
+#include "collision/ContactPointInfo.h"
 #include <cassert>
 
 // We want to use the ReactPhysics3D namespace

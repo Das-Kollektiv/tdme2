@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -136,13 +136,16 @@ class FixedJoint : public Joint {
         // -------------------- Methods -------------------- //
 
         /// Constructor
-        FixedJoint(const FixedJointInfo& jointInfo);
+        FixedJoint(uint id, const FixedJointInfo& jointInfo);
 
         /// Destructor
         virtual ~FixedJoint() override = default;
 
         /// Deleted copy-constructor
         FixedJoint(const FixedJoint& constraint) = delete;
+
+        /// Return a string representation
+        virtual std::string to_string() const override;
 
         /// Deleted assignment operator
         FixedJoint& operator=(const FixedJoint& constraint) = delete;
@@ -151,6 +154,14 @@ class FixedJoint : public Joint {
 // Return the number of bytes used by the joint
 inline size_t FixedJoint::getSizeInBytes() const {
     return sizeof(FixedJoint);
+}
+
+// Return a string representation
+inline std::string FixedJoint::to_string() const {
+    return "FixedJoint{ localAnchorPointBody1=" + mLocalAnchorPointBody1.to_string() +
+                        ", localAnchorPointBody2=" + mLocalAnchorPointBody2.to_string() +
+                        ", initOrientationDifferenceInv=" + mInitOrientationDifferenceInv.to_string() +
+                        "}";
 }
 
 }

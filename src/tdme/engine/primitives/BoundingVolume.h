@@ -13,7 +13,6 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::Transformations;
-using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
@@ -55,23 +54,6 @@ public:
 	 * @param transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations);
-
-	/** 
-	 * Checks if point is in bounding volume
-	 * @param point
-	 * @return bool if point is in bounding volume
-	 */
-	virtual bool containsPoint(const Vector3& point);
-
-	/** 
-	 * Check if this bounding volume collides with bounding volume 2
-	 * @deprecated this method is deprecated, please try to avoid it
-	 * @param bounding volume 2
-	 * @param movement
-	 * @param collision
-	 * @return collision
-	 */
-	bool doesCollideWith(BoundingVolume* bv2, CollisionResponse* collision);
 
 	/**
 	 * @return center

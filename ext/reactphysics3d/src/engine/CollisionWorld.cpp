@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -25,38 +25,110 @@
 
 // Libraries
 #include "CollisionWorld.h"
-#include <algorithm>
+#include "utils/Profiler.h"
+#include "utils/Logger.h"
 
 // Namespaces
 using namespace reactphysics3d;
 using namespace std;
 
+// Initialization of static fields
+uint CollisionWorld::mNbWorlds = 0;
+
 // Constructor
-CollisionWorld::CollisionWorld()
-               : mCollisionDetection(this, mMemoryManager), mCurrentBodyID(0),
-                 mEventListener(nullptr) {
+CollisionWorld::CollisionWorld(const WorldSettings& worldSettings, Logger* logger, Profiler* profiler)
+               : mConfig(worldSettings), mCollisionDetection(this, mMemoryManager), mBodies(mMemoryManager.getPoolAllocator()), mCurrentBodyId(0),
+                 mFreeBodiesIds(mMemoryManager.getPoolAllocator()), mEventListener(nullptr), mName(worldSettings.worldName),
+                 mIsProfilerCreatedByUser(profiler != nullptr),
+                 mIsLoggerCreatedByUser(logger != nullptr) {
+
+    // Automatically generate a name for the world
+    if (mName == "") {
+
+        std::stringstream ss;
+        ss << "world";
+
+        if (mNbWorlds > 0) {
+            ss << mNbWorlds;
+        }
+
+        mName = ss.str();
+    }
 
 #ifdef IS_PROFILING_ACTIVE
 
-	// Set the profiler
-	mCollisionDetection.setProfiler(&mProfiler);
+    mProfiler = profiler;
+
+    // If the user has not provided its own profiler, we create one
+    if (mProfiler == nullptr) {
+
+       mProfiler = new Profiler();
+
+        // Add a destination file for the profiling data
+        mProfiler->addFileDestination("rp3d_profiling_" + mName + ".txt", Profiler::Format::Text);
+    }
+
+
+    // Set the profiler
+    mCollisionDetection.setProfiler(mProfiler);
 
 #endif
 
+#ifdef IS_LOGGING_ACTIVE
+
+    mLogger = logger;
+
+    // If the user has not provided its own logger, we create one
+    if (mLogger == nullptr) {
+
+       mLogger = new Logger();
+
+        // Add a log destination file
+        uint logLevel = static_cast<uint>(Logger::Level::Information) | static_cast<uint>(Logger::Level::Warning) |
+                static_cast<uint>(Logger::Level::Error);
+        mLogger->addFileDestination("rp3d_log_" + mName + ".html", logLevel, Logger::Format::HTML);
+    }
+
+#endif
+
+    mNbWorlds++;
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::World,
+             "Collision World: Collision world " + mName + " has been created");
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::World,
+             "Collision World: Initial world settings: " + worldSettings.to_string());
 }
 
 // Destructor
 CollisionWorld::~CollisionWorld() {
 
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::World,
+             "Collision World: Collision world " + mName + " has been destroyed");
+
     // Destroy all the collision bodies that have not been removed
-    std::set<CollisionBody*>::iterator itBodies;
-    for (itBodies = mBodies.begin(); itBodies != mBodies.end(); ) {
-         std::set<CollisionBody*>::iterator itToRemove = itBodies;
-         ++itBodies;
-        destroyCollisionBody(*itToRemove);
+    for (int i=mBodies.size() - 1 ; i >= 0; i--) {
+        destroyCollisionBody(mBodies[i]);
     }
 
-    assert(mBodies.empty());
+#ifdef IS_PROFILING_ACTIVE
+
+    /// Delete the profiler
+    if (!mIsProfilerCreatedByUser) {
+        delete mProfiler;
+    }
+
+#endif
+
+#ifdef IS_LOGGING_ACTIVE
+
+    /// Delete the logger
+    if (!mIsLoggerCreatedByUser) {
+        delete mLogger;
+    }
+
+#endif
+
+    assert(mBodies.size() == 0);
 }
 
 // Create a collision body and add it to the world
@@ -67,7 +139,7 @@ CollisionWorld::~CollisionWorld() {
 CollisionBody* CollisionWorld::createCollisionBody(const Transform& transform) {
 
     // Get the next available body ID
-    bodyindex bodyID = computeNextAvailableBodyID();
+    bodyindex bodyID = computeNextAvailableBodyId();
 
     // Largest index cannot be used (it is used for invalid index)
     assert(bodyID < std::numeric_limits<reactphysics3d::bodyindex>::max());
@@ -80,13 +152,20 @@ CollisionBody* CollisionWorld::createCollisionBody(const Transform& transform) {
     assert(collisionBody != nullptr);
 
     // Add the collision body to the world
-    mBodies.insert(collisionBody);
+    mBodies.add(collisionBody);
 
 #ifdef IS_PROFILING_ACTIVE
 
-	collisionBody->setProfiler(&mProfiler);
+    collisionBody->setProfiler(mProfiler);
 
 #endif
+
+#ifdef IS_LOGGING_ACTIVE
+   collisionBody->setLogger(mLogger);
+#endif
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::Body,
+             "Body " + std::to_string(bodyID) + ": New collision body created");
 
     // Return the pointer to the rigid body
     return collisionBody;
@@ -98,34 +177,37 @@ CollisionBody* CollisionWorld::createCollisionBody(const Transform& transform) {
  */
 void CollisionWorld::destroyCollisionBody(CollisionBody* collisionBody) {
 
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::Body,
+             "Body " + std::to_string(collisionBody->getId()) + ": collision body destroyed");
+
     // Remove all the collision shapes of the body
     collisionBody->removeAllCollisionShapes();
 
     // Add the body ID to the list of free IDs
-    mFreeBodiesIDs.push_back(collisionBody->getID());
+    mFreeBodiesIds.add(collisionBody->getId());
 
     // Call the destructor of the collision body
     collisionBody->~CollisionBody();
 
     // Remove the collision body from the list of bodies
-    mBodies.erase(collisionBody);
+    mBodies.remove(collisionBody);
 
     // Free the object from the memory allocator
     mMemoryManager.release(MemoryManager::AllocationType::Pool, collisionBody, sizeof(CollisionBody));
 }
 
 // Return the next available body ID
-bodyindex CollisionWorld::computeNextAvailableBodyID() {
+bodyindex CollisionWorld::computeNextAvailableBodyId() {
 
     // Compute the body ID
     bodyindex bodyID;
-    if (!mFreeBodiesIDs.empty()) {
-        bodyID = mFreeBodiesIDs.back();
-        mFreeBodiesIDs.pop_back();
+    if (mFreeBodiesIds.size() != 0) {
+        bodyID = mFreeBodiesIds[mFreeBodiesIds.size() - 1];
+        mFreeBodiesIds.removeAt(mFreeBodiesIds.size() - 1);
     }
     else {
-        bodyID = mCurrentBodyID;
-        mCurrentBodyID++;
+        bodyID = mCurrentBodyId;
+        mCurrentBodyId++;
     }
 
     return bodyID;
@@ -135,7 +217,7 @@ bodyindex CollisionWorld::computeNextAvailableBodyID() {
 void CollisionWorld::resetContactManifoldListsOfBodies() {
 
     // For each rigid body of the world
-    for (std::set<CollisionBody*>::iterator it = mBodies.begin(); it != mBodies.end(); ++it) {
+    for (List<CollisionBody*>::Iterator it = mBodies.begin(); it != mBodies.end(); ++it) {
 
         // Reset the contact manifold list of the body
         (*it)->resetContactManifoldsList();
@@ -162,16 +244,34 @@ bool CollisionWorld::testAABBOverlap(const CollisionBody* body1,
     return body1AABB.testCollision(body2AABB);
 }
 
+// Report all the bodies that overlap with the aabb in parameter
+/**
+ * @param aabb AABB used to test for overlap
+ * @param overlapCallback Pointer to the callback class to report overlap
+ * @param categoryMaskBits bits mask used to filter the bodies to test overlap with
+ */
+void CollisionWorld::testAABBOverlap(const AABB& aabb, OverlapCallback* overlapCallback, unsigned short categoryMaskBits) {
+    mCollisionDetection.testAABBOverlap(aabb, overlapCallback, categoryMaskBits);
+}
+
 // Return true if two bodies overlap
+/**
+ * @param body1 Pointer to the first body
+ * @param body2 Pointer to a second body
+ * @return True if the two bodies overlap
+ */
 bool CollisionWorld::testOverlap(CollisionBody* body1, CollisionBody* body2) {
     return mCollisionDetection.testOverlap(body1, body2);
 }
 
-
 // Return the current world-space AABB of given proxy shape
+/**
+ * @param proxyShape Pointer to a proxy shape
+ * @return The AAABB of the proxy shape in world-space
+ */
 AABB CollisionWorld::getWorldAABB(const ProxyShape* proxyShape) const {
 
-    if (proxyShape->mBroadPhaseID == -1) {
+    if (proxyShape->getBroadPhaseId() == -1) {
         return AABB();
     }
 

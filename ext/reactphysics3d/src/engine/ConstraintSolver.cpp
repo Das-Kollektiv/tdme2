@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -25,7 +25,8 @@
 
 // Libraries
 #include "ConstraintSolver.h"
-#include "Profiler.h"
+#include "utils/Profiler.h"
+#include "engine/Island.h"
 
 using namespace reactphysics3d;
 
@@ -43,7 +44,7 @@ ConstraintSolver::ConstraintSolver() : mIsWarmStartingActive(true) {
 // Initialize the constraint solver for a given island
 void ConstraintSolver::initializeForIsland(decimal dt, Island* island) {
 
-    PROFILE("ConstraintSolver::initializeForIsland()", mProfiler);
+    RP3D_PROFILE("ConstraintSolver::initializeForIsland()", mProfiler);
 
     assert(island != nullptr);
     assert(island->getNbBodies() > 0);
@@ -73,7 +74,7 @@ void ConstraintSolver::initializeForIsland(decimal dt, Island* island) {
 // Solve the velocity constraints
 void ConstraintSolver::solveVelocityConstraints(Island* island) {
 
-    PROFILE("ConstraintSolver::solveVelocityConstraints()", mProfiler);
+    RP3D_PROFILE("ConstraintSolver::solveVelocityConstraints()", mProfiler);
 
     assert(island != nullptr);
     assert(island->getNbJoints() > 0);
@@ -90,7 +91,7 @@ void ConstraintSolver::solveVelocityConstraints(Island* island) {
 // Solve the position constraints
 void ConstraintSolver::solvePositionConstraints(Island* island) {
 
-    PROFILE("ConstraintSolver::solvePositionConstraints()", mProfiler);
+    RP3D_PROFILE("ConstraintSolver::solvePositionConstraints()", mProfiler);
 
     assert(island != nullptr);
     assert(island->getNbJoints() > 0);

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -25,12 +25,18 @@
 
 // Libraries
 #include "ConcaveMeshShape.h"
+#include "memory/MemoryManager.h"
+#include "collision/RaycastInfo.h"
+#include "collision/TriangleMesh.h"
+#include "utils/Profiler.h"
+#include "collision/TriangleVertexArray.h"
 
 using namespace reactphysics3d;
 
 // Constructor
-ConcaveMeshShape::ConcaveMeshShape(TriangleMesh* triangleMesh)
-                 : ConcaveShape(CollisionShapeName::TRIANGLE_MESH) {
+ConcaveMeshShape::ConcaveMeshShape(TriangleMesh* triangleMesh, const Vector3& scaling)
+                 : ConcaveShape(CollisionShapeName::TRIANGLE_MESH), mDynamicAABBTree(MemoryManager::getBaseAllocator()),
+                   mScaling(scaling) {
     mTriangleMesh = triangleMesh;
     mRaycastTestType = TriangleRaycastSide::FRONT;
 
@@ -113,7 +119,7 @@ void ConcaveMeshShape::testAllTriangles(TriangleCallback& callback, const AABB& 
 /// the ray hits many triangles.
 bool ConcaveMeshShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxyShape* proxyShape, MemoryAllocator& allocator) const {
 
-    PROFILE("ConcaveMeshShape::raycast()", mProfiler);
+    RP3D_PROFILE("ConcaveMeshShape::raycast()", mProfiler);
 
     // Create the callback object that will compute ray casting against triangles
     ConcaveMeshRaycastCallback raycastCallback(mDynamicAABBTree, *this, proxyShape, raycastInfo, ray, allocator);
@@ -155,7 +161,7 @@ uint ConcaveMeshShape::computeTriangleShapeId(uint subPart, uint triangleIndex) 
 decimal ConcaveMeshRaycastCallback::raycastBroadPhaseShape(int32 nodeId, const Ray& ray) {
 
     // Add the id of the hit AABB node into
-    mHitAABBNodes.push_back(nodeId);
+    mHitAABBNodes.add(nodeId);
 
     return ray.maxFraction;
 }
@@ -163,7 +169,7 @@ decimal ConcaveMeshRaycastCallback::raycastBroadPhaseShape(int32 nodeId, const R
 // Raycast all collision shapes that have been collected
 void ConcaveMeshRaycastCallback::raycastTriangles() {
 
-    std::vector<int>::const_iterator it;
+    List<int>::Iterator it;
     decimal smallestHitFraction = mRay.maxFraction;
 
     for (it = mHitAABBNodes.begin(); it != mHitAABBNodes.end(); ++it) {
@@ -212,4 +218,69 @@ void ConcaveMeshRaycastCallback::raycastTriangles() {
         }
 
     }
+}
+
+// Return the string representation of the shape
+std::string ConcaveMeshShape::to_string() const {
+
+    std::stringstream ss;
+
+    ss << "ConcaveMeshShape{" << std::endl;
+    ss << "nbSubparts=" << mTriangleMesh->getNbSubparts() << std::endl;
+
+    // Vertices array
+    for (uint subPart=0; subPart<mTriangleMesh->getNbSubparts(); subPart++) {
+
+        // Get the triangle vertex array of the current sub-part
+        TriangleVertexArray* triangleVertexArray = mTriangleMesh->getSubpart(subPart);
+
+        ss << "subpart" << subPart << "={" << std::endl;
+        ss << "nbVertices=" << triangleVertexArray->getNbVertices() << std::endl;
+        ss << "nbTriangles=" << triangleVertexArray->getNbTriangles() << std::endl;
+
+        ss << "vertices=[";
+
+        // For each triangle of the concave mesh
+        for (uint v=0; v<triangleVertexArray->getNbVertices(); v++) {
+
+            Vector3 vertex;
+            triangleVertexArray->getVertex(v, &vertex);
+
+            ss << vertex.to_string() << ", ";
+        }
+
+        ss << "], " << std::endl;
+
+        ss << "normals=[";
+
+        // For each triangle of the concave mesh
+        for (uint v=0; v<triangleVertexArray->getNbVertices(); v++) {
+
+            Vector3 normal;
+            triangleVertexArray->getNormal(v, &normal);
+
+            ss << normal.to_string() << ", ";
+        }
+
+        ss << "], " << std::endl;
+
+        ss << "triangles=[";
+
+        // For each triangle of the concave mesh
+        // For each triangle of the concave mesh
+        for (uint triangleIndex=0; triangleIndex<triangleVertexArray->getNbTriangles(); triangleIndex++) {
+
+            uint indices[3];
+
+            triangleVertexArray->getTriangleVerticesIndices(triangleIndex, indices);
+
+            ss << "(" << indices[0] << "," << indices[1] << "," << indices[2] << "), ";
+        }
+
+        ss << "], " << std::endl;
+
+        ss << "}" << std::endl;
+    }
+
+    return ss.str();
 }

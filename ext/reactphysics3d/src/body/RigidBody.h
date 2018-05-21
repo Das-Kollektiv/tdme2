@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -31,7 +31,6 @@
 #include "CollisionBody.h"
 #include "engine/Material.h"
 #include "mathematics/mathematics.h"
-#include "memory/MemoryManager.h"
 
 /// Namespace reactphysics3d
 namespace reactphysics3d {
@@ -40,6 +39,7 @@ namespace reactphysics3d {
 struct JointListElement;
 class Joint;
 class DynamicsWorld;
+class MemoryManager;
 
 // Class RigidBody
 /**
@@ -319,28 +319,12 @@ inline bool RigidBody::isGravityEnabled() const {
     return mIsGravityEnabled;
 }
 
-// Set the variable to know if the gravity is applied to this rigid body
-/**
- * @param isEnabled True if you want the gravity to be applied to this body
- */
-inline void RigidBody::enableGravity(bool isEnabled) {
-    mIsGravityEnabled = isEnabled;
-}
-
 // Return a reference to the material properties of the rigid body
 /**
  * @return A reference to the material of the body
  */
 inline Material& RigidBody::getMaterial() {
     return mMaterial;
-}
-
-// Set a new material for this rigid body
-/**
- * @param material The material you want to set to the body
- */
-inline void RigidBody::setMaterial(const Material& material) {
-    mMaterial = material;
 }
 
 // Return the linear velocity damping factor
@@ -351,32 +335,12 @@ inline decimal RigidBody::getLinearDamping() const {
     return mLinearDamping;
 }
 
-// Set the linear damping factor. This is the ratio of the linear velocity
-// that the body will lose every at seconds of simulation.
-/**
- * @param linearDamping The linear damping factor of this body
- */
-inline void RigidBody::setLinearDamping(decimal linearDamping) {
-    assert(linearDamping >= decimal(0.0));
-    mLinearDamping = linearDamping;
-}
-
 // Return the angular velocity damping factor
 /**
  * @return The angular damping factor of this body
  */
 inline decimal RigidBody::getAngularDamping() const {
     return mAngularDamping;
-}
-
-// Set the angular damping factor. This is the ratio of the angular velocity
-// that the body will lose at every seconds of simulation.
-/**
- * @param angularDamping The angular damping factor of this body
- */
-inline void RigidBody::setAngularDamping(decimal angularDamping) {
-    assert(angularDamping >= decimal(0.0));
-    mAngularDamping = angularDamping;
 }
 
 // Return the first element of the linked list of joints involving this body

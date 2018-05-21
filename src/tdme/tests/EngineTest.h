@@ -10,8 +10,6 @@
 #include <tdme/application/Application.h>
 #include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -25,8 +23,6 @@ using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::Transformations;
 using tdme::engine::model::Model;
-using tdme::engine::physics::CollisionResponse;
-using tdme::engine::primitives::BoundingVolume;
 
 /** 
  * Engine test
@@ -40,18 +36,8 @@ class tdme::tests::EngineTest final
 private:
 	Engine* engine {  };
 	Engine* osEngine {  };
-	CollisionResponse* collision {  };
 	vector<Object3D*> players {  };
-	vector<Object3D*> playersBoundingVolumeModel {  };
-	BoundingVolume* playerBoundingVolume {  };
-	Model* playerBoundingVolumeModel {  };
-	vector<BoundingVolume*> playerBoundingVolumesTransformed {  };
 	Object3D* cube {  };
-	Model* cubeBoundingVolumeModel {  };
-	BoundingVolume* cubeBoundingVolume {  };
-	BoundingVolume* cubeBoundingVolumeTransformed {  };
-	BoundingVolume* barrelBoundingVolume {  };
-	BoundingVolume* barrelBoundingVolumeTransformed {  };
 	Transformations circleTransformations {  };
 
 public: /* package */

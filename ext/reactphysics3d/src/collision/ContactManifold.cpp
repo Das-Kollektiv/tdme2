@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -24,17 +24,20 @@
 ********************************************************************************/
 
 // Libraries
-#include <iostream>
 #include "ContactManifold.h"
+#include "constraint/ContactPoint.h"
+#include "collision/ContactManifoldInfo.h"
 
 using namespace reactphysics3d;
 
 // Constructor
-ContactManifold::ContactManifold(const ContactManifoldInfo* manifoldInfo, ProxyShape* shape1, ProxyShape* shape2, MemoryAllocator& memoryAllocator)
+ContactManifold::ContactManifold(const ContactManifoldInfo* manifoldInfo, ProxyShape* shape1, ProxyShape* shape2,
+                                 MemoryAllocator& memoryAllocator, const WorldSettings& worldSettings)
                 : mShape1(shape1), mShape2(shape2), mContactPoints(nullptr),
                   mNbContactPoints(0), mFrictionImpulse1(0.0), mFrictionImpulse2(0.0),
                   mFrictionTwistImpulse(0.0), mIsAlreadyInIsland(false),
-                  mMemoryAllocator(memoryAllocator), mNext(nullptr), mPrevious(nullptr), mIsObsolete(false) {
+                  mMemoryAllocator(memoryAllocator), mNext(nullptr), mPrevious(nullptr), mIsObsolete(false),
+                  mWorldSettings(worldSettings) {
     
     // For each contact point info in the manifold
     const ContactPointInfo* pointInfo = manifoldInfo->getFirstContactPointInfo();
@@ -96,13 +99,32 @@ void ContactManifold::removeContactPoint(ContactPoint* contactPoint) {
     assert(mNbContactPoints >= 0);
 }
 
+// Return the largest depth of all the contact points
+decimal ContactManifold::getLargestContactDepth() const {
+    decimal largestDepth = 0.0f;
+
+    assert(mNbContactPoints > 0);
+
+    ContactPoint* contactPoint = mContactPoints;
+    while(contactPoint != nullptr){
+        decimal depth = contactPoint->getPenetrationDepth();
+        if (depth > largestDepth) {
+            largestDepth = depth;
+        }
+
+        contactPoint = contactPoint->getNext();
+    }
+
+    return largestDepth;
+}
+
 // Add a contact point
 void ContactManifold::addContactPoint(const ContactPointInfo* contactPointInfo) {
 
     assert(contactPointInfo != nullptr);
 
     // Create the new contact point
-    ContactPoint* contactPoint = new (mMemoryAllocator.allocate(sizeof(ContactPoint))) ContactPoint(contactPointInfo);
+    ContactPoint* contactPoint = new (mMemoryAllocator.allocate(sizeof(ContactPoint))) ContactPoint(contactPointInfo, mWorldSettings);
 
     // Add the new contact point into the manifold
     contactPoint->setNext(mContactPoints);
@@ -113,6 +135,20 @@ void ContactManifold::addContactPoint(const ContactPointInfo* contactPointInfo) 
     mContactPoints = contactPoint;
 
     mNbContactPoints++;
+}
+
+// Set to true to make the manifold obsolete
+void ContactManifold::setIsObsolete(bool isObsolete, bool setContactPoints) {
+    mIsObsolete = isObsolete;
+
+    if (setContactPoints) {
+        ContactPoint* contactPoint = mContactPoints;
+        while (contactPoint != nullptr) {
+            contactPoint->setIsObsolete(isObsolete);
+
+            contactPoint = contactPoint->getNext();
+        }
+    }
 }
 
 // Clear the obsolete contact points

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,18 +27,28 @@
 #define REACTPHYSICS3D_SAT_ALGORITHM_H
 
 // Libraries
-#include "collision/ContactManifoldInfo.h"
-#include "collision/NarrowPhaseInfo.h"
-#include "collision/shapes/ConvexPolyhedronShape.h"
-
+#include "decimal.h"
+#include "collision/HalfEdgeStructure.h"
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
 
+// Declarations
 class CapsuleShape;
 class SphereShape;
+class ContactManifoldInfo;
+struct NarrowPhaseInfo;
+class ConvexPolyhedronShape;
+class MemoryAllocator;
+class Profiler;
 
 // Class SATAlgorithm
+/**
+ * This class implements the Separating Axis Theorem algorithm (SAT).
+ * This algorithm is used to find the axis of minimum penetration between two convex polyhedra.
+ * If none is found, the objects are separated. Otherwise, the two objects are
+ * in contact and we use clipping to get the contact points.
+ */
 class SATAlgorithm {
 
     private :

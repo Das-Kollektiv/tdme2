@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -25,6 +25,9 @@
 
 // Libraries
 #include "ProxyShape.h"
+#include "utils/Logger.h"
+#include "collision/RaycastInfo.h"
+#include "memory/MemoryManager.h"
 
 using namespace reactphysics3d;
 
@@ -37,7 +40,7 @@ using namespace reactphysics3d;
  */
 ProxyShape::ProxyShape(CollisionBody* body, CollisionShape* shape, const Transform& transform, decimal mass, MemoryManager& memoryManager)
            :mMemoryManager(memoryManager), mBody(body), mCollisionShape(shape), mLocalToBodyTransform(transform), mMass(mass),
-            mNext(nullptr), mBroadPhaseID(-1), mCollisionCategoryBits(0x0001), mCollideWithMaskBits(0xFFFF) {
+            mNext(nullptr), mBroadPhaseID(-1), mUserData(nullptr), mCollisionCategoryBits(0x0001), mCollideWithMaskBits(0xFFFF) {
 
 }
 
@@ -57,12 +60,51 @@ bool ProxyShape::testPointInside(const Vector3& worldPoint) {
     return mCollisionShape->testPointInside(localPoint, this);
 }
 
+// Set the collision category bits
+/**
+ * @param collisionCategoryBits The collision category bits mask of the proxy shape
+ */
+void ProxyShape::setCollisionCategoryBits(unsigned short collisionCategoryBits) {
+    mCollisionCategoryBits = collisionCategoryBits;
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::ProxyShape,
+             "ProxyShape " + std::to_string(mBroadPhaseID) + ": Set collisionCategoryBits=" +
+             std::to_string(mCollisionCategoryBits));
+}
+
+// Set the collision bits mask
+/**
+ * @param collideWithMaskBits The bits mask that specifies with which collision category this shape will collide
+ */
+void ProxyShape::setCollideWithMaskBits(unsigned short collideWithMaskBits) {
+    mCollideWithMaskBits = collideWithMaskBits;
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::ProxyShape,
+             "ProxyShape " + std::to_string(mBroadPhaseID) + ": Set collideWithMaskBits=" +
+             std::to_string(mCollideWithMaskBits));
+}
+
+// Set the local to parent body transform
+void ProxyShape::setLocalToBodyTransform(const Transform& transform) {
+
+    mLocalToBodyTransform = transform;
+
+    mBody->setIsSleeping(false);
+
+    // Notify the body that the proxy shape has to be updated in the broad-phase
+    mBody->updateProxyShapeInBroadPhase(this, true);
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::ProxyShape,
+             "ProxyShape " + std::to_string(mBroadPhaseID) + ": Set localToBodyTransform=" +
+             mLocalToBodyTransform.to_string());
+}
+
 // Raycast method with feedback information
 /**
  * @param ray Ray to use for the raycasting
  * @param[out] raycastInfo Result of the raycasting that is valid only if the
  *             methods returned true
- * @return True if the ray hit the collision shape
+ * @return True if the ray hits the collision shape
  */
 bool ProxyShape::raycast(const Ray& ray, RaycastInfo& raycastInfo) {
 

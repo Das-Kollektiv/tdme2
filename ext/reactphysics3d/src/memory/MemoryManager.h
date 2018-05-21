@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,13 +27,15 @@
 #define REACTPHYSICS3D_MEMORY_MANAGER_H
 
 // Libraries
-#include "memory/MemoryAllocator.h"
 #include "memory/DefaultAllocator.h"
 #include "memory/PoolAllocator.h"
 #include "memory/SingleFrameAllocator.h"
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
+
+// Declarations
+class MemoryAllocator;
 
 // Class MemoryManager
 /**
@@ -97,10 +99,12 @@ class MemoryManager {
 inline void* MemoryManager::allocate(AllocationType allocationType, size_t size) {
 
     switch (allocationType) {
-       case AllocationType::Base: return mBaseAllocator->allocate(size); break;
-       case AllocationType::Pool: return mPoolAllocator.allocate(size); break;
-       case AllocationType::Frame: return mSingleFrameAllocator.allocate(size); break;
+       case AllocationType::Base: return mBaseAllocator->allocate(size);
+       case AllocationType::Pool: return mPoolAllocator.allocate(size);
+       case AllocationType::Frame: return mSingleFrameAllocator.allocate(size);
     }
+
+    return nullptr;
 }
 
 // Release previously allocated memory.

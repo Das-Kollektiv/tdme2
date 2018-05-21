@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -26,12 +26,13 @@
 // Libraries
 #include "PolyhedronMesh.h"
 #include "memory/MemoryManager.h"
+#include "collision/PolygonVertexArray.h"
 
 using namespace reactphysics3d;
 
 
 // Constructor
-/*
+/**
  * Create a polyhedron mesh given an array of polygons.
  * @param polygonVertexArray Pointer to the array of polygons and their vertices
  */
@@ -93,6 +94,10 @@ void PolyhedronMesh::createHalfEdgeStructure() {
 }
 
 /// Return a vertex
+/**
+ * @param index Index of a given vertex in the mesh
+ * @return The coordinates of a given vertex in the mesh
+ */
 Vector3 PolyhedronMesh::getVertex(uint index) const {
     assert(index < getNbVertices());
 

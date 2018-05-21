@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,13 +27,17 @@
 #define REACTPHYSICS3D_GJK_ALGORITHM_H
 
 // Libraries
-#include "collision/ContactManifoldInfo.h"
-#include "collision/NarrowPhaseInfo.h"
-#include "collision/shapes/ConvexShape.h"
-#include "VoronoiSimplex.h"
+#include "decimal.h"
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
+
+// Declarations
+class ContactManifoldInfo;
+struct NarrowPhaseInfo;
+class ConvexShape;
+class Profiler;
+class VoronoiSimplex;
 
 // Constants
 constexpr decimal REL_ERROR = decimal(1.0e-3);
@@ -43,18 +47,15 @@ constexpr int MAX_ITERATIONS_GJK_RAYCAST = 32;
 // Class GJKAlgorithm
 /**
  * This class implements a narrow-phase collision detection algorithm. This
- * algorithm uses the ISA-GJK algorithm and the EPA algorithm. This
+ * algorithm uses the ISA-GJK algorithm. This
  * implementation is based on the implementation discussed in the book
  * "Collision Detection in Interactive 3D Environments" by Gino van den Bergen.
  * This method implements the Hybrid Technique for calculating the
  * penetration depth. The two objects are enlarged with a small margin. If
  * the object intersects in their margins, the penetration depth is quickly
  * computed using the GJK algorithm on the original objects (without margin).
- * If the original objects (without margin) intersect, we run again the GJK
- * algorithm on the enlarged objects (with margin) to compute simplex
- * polytope that contains the origin and give it to the EPA (Expanding
- * Polytope Algorithm) to compute the correct penetration depth between the
- * enlarged objects.
+ * If the original objects (without margin) intersect, we exit GJK and run
+ * the SAT algorithm to get contacts and collision data.
  */
 class GJKAlgorithm {
 
@@ -95,12 +96,6 @@ class GJKAlgorithm {
 
         /// Compute a contact info if the two bounding volumes collide.
         GJKResult testCollision(NarrowPhaseInfo* narrowPhaseInfo, bool reportContacts);
-
-        /// Use the GJK Algorithm to find if a point is inside a convex collision shape
-        bool testPointInside(const Vector3& localPoint, ProxyShape* proxyShape);
-
-        /// Ray casting algorithm agains a convex collision shape using the GJK Algorithm
-        bool raycast(const Ray& ray, ProxyShape* proxyShape, RaycastInfo& raycastInfo);
 
 #ifdef IS_PROFILING_ACTIVE
 

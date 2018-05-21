@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -31,6 +31,7 @@
 
 namespace reactphysics3d {
 
+// Declarations
 struct Vector3;
 
 // Class TriangleVertexArray
@@ -169,59 +170,98 @@ class TriangleVertexArray {
 
         /// Return the indices of the three vertices of a given triangle in the array
         void getTriangleVerticesIndices(uint triangleIndex, uint* outVerticesIndices) const;
+
+        /// Return a vertex of the array
+        void getVertex(uint vertexIndex, Vector3* outVertex);
+
+        /// Return a vertex normal of the array
+        void getNormal(uint vertexIndex, Vector3* outNormal);
 };
 
 // Return the vertex data type
+/**
+ * @return The data type of the vertices in the array
+ */
 inline TriangleVertexArray::VertexDataType TriangleVertexArray::getVertexDataType() const {
     return mVertexDataType;
 }
 
 // Return the vertex normal data type
+/**
+ * @return The data type of the normals in the array
+ */
 inline TriangleVertexArray::NormalDataType TriangleVertexArray::getVertexNormalDataType() const {
     return mVertexNormaldDataType;
 }
 
 // Return the index data type
+/**
+ * @return The data type of the face indices in the array
+ */
 inline TriangleVertexArray::IndexDataType TriangleVertexArray::getIndexDataType() const {
    return mIndexDataType;
 }
 
 // Return the number of vertices
+/**
+ * @return The number of vertices in the array
+ */
 inline uint TriangleVertexArray::getNbVertices() const {
     return mNbVertices;
 }
 
 // Return the number of triangles
+/**
+ * @return The number of triangles in the array
+ */
 inline uint TriangleVertexArray::getNbTriangles() const {
     return mNbTriangles;
 }
 
 // Return the vertices stride (number of bytes)
+/**
+ * @return The number of bytes separating two consecutive vertices in the array
+ */
 inline uint TriangleVertexArray::getVerticesStride() const {
     return mVerticesStride;
 }
 
 // Return the vertex normals stride (number of bytes)
+/**
+ * @return The number of bytes separating two consecutive normals in the array
+ */
 inline uint TriangleVertexArray::getVerticesNormalsStride() const {
     return mVerticesNormalsStride;
 }
 
 // Return the indices stride (number of bytes)
+/**
+ * @return The number of bytes separating two consecutive face indices in the array
+ */
 inline uint TriangleVertexArray::getIndicesStride() const {
     return mIndicesStride;
 }
 
 // Return the pointer to the start of the vertices array
+/**
+ * @return A pointer to the start of the vertices data in the array
+ */
 inline const void* TriangleVertexArray::getVerticesStart() const {
     return mVerticesStart;
 }
 
 // Return the pointer to the start of the vertex normals array
+/**
+ * @return A pointer to the start of the normals data in the array
+ */
 inline const void* TriangleVertexArray::getVerticesNormalsStart() const {
     return mVerticesNormalsStart;
 }
 
 // Return the pointer to the start of the indices array
+/**
+ * @return A pointer to the start of the face indices data in the array
+ */
 inline const void* TriangleVertexArray::getIndicesStart() const {
     return mIndicesStart;
 }

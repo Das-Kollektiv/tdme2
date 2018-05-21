@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,16 +27,19 @@
 #define REACTPHYSICS3D_NARROW_PHASE_ALGORITHM_H
 
 // Libraries
-#include "body/Body.h"
-#include "collision/ContactManifoldInfo.h"
-#include "memory/PoolAllocator.h"
-#include "engine/OverlappingPair.h"
-#include "collision/NarrowPhaseInfo.h"
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
 
 class CollisionDetection;
+class Body;
+class ContactManifoldInfo;
+class PoolAllocator;
+class OverlappingPair;
+struct NarrowPhaseInfo;
+struct ContactPointInfo;
+class Profiler;
+class MemoryAllocator;
 
 // Class NarrowPhaseCallback
 /**

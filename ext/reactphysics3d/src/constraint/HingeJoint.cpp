@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -26,7 +26,6 @@
 // Libraries
 #include "HingeJoint.h"
 #include "engine/ConstraintSolver.h"
-#include <cmath>
 
 using namespace reactphysics3d;
 
@@ -34,16 +33,16 @@ using namespace reactphysics3d;
 const decimal HingeJoint::BETA = decimal(0.2);
 
 // Constructor
-HingeJoint::HingeJoint(const HingeJointInfo& jointInfo)
-           : Joint(jointInfo), mImpulseTranslation(0, 0, 0), mImpulseRotation(0, 0),
+HingeJoint::HingeJoint(uint id, const HingeJointInfo& jointInfo)
+           : Joint(id, jointInfo), mImpulseTranslation(0, 0, 0), mImpulseRotation(0, 0),
              mImpulseLowerLimit(0), mImpulseUpperLimit(0), mImpulseMotor(0),
              mIsLimitEnabled(jointInfo.isLimitEnabled), mIsMotorEnabled(jointInfo.isMotorEnabled),
              mLowerLimit(jointInfo.minAngleLimit), mUpperLimit(jointInfo.maxAngleLimit),
              mIsLowerLimitViolated(false), mIsUpperLimitViolated(false),
              mMotorSpeed(jointInfo.motorSpeed), mMaxMotorTorque(jointInfo.maxMotorTorque) {
 
-    assert(mLowerLimit <= 0 && mLowerLimit >= -2.0 * PI);
-    assert(mUpperLimit >= 0 && mUpperLimit <= 2.0 * PI);
+    assert(mLowerLimit <= decimal(0) && mLowerLimit >= decimal(-2.0) * PI);
+    assert(mUpperLimit >= decimal(0) && mUpperLimit <= decimal(2.0) * PI);
 
     // Compute the local-space anchor point for each body
     Transform transform1 = mBody1->getTransform();

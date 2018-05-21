@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,6 +27,8 @@
 #include "CollisionBody.h"
 #include "engine/CollisionWorld.h"
 #include "collision/ContactManifold.h"
+#include "collision/RaycastInfo.h"
+#include "utils/Logger.h"
 
 // We want to use the ReactPhysics3D namespace
 using namespace reactphysics3d;
@@ -40,6 +42,10 @@ using namespace reactphysics3d;
 CollisionBody::CollisionBody(const Transform& transform, CollisionWorld& world, bodyindex id)
               : Body(id), mType(BodyType::DYNAMIC), mTransform(transform), mProxyCollisionShapes(nullptr),
                 mNbCollisionShapes(0), mContactManifoldsList(nullptr), mWorld(world) {
+
+#ifdef IS_PROFILING_ACTIVE
+        mProfiler = nullptr;
+#endif
 
 }
 
@@ -81,6 +87,13 @@ ProxyShape* CollisionBody::addCollisionShape(CollisionShape* collisionShape,
 
 #endif
 
+#ifdef IS_LOGGING_ACTIVE
+
+    // Set the logger
+    proxyShape->setLogger(mLogger);
+
+#endif
+
     // Add it to the list of proxy collision shapes of the body
     if (mProxyCollisionShapes == nullptr) {
         mProxyCollisionShapes = proxyShape;
@@ -99,6 +112,13 @@ ProxyShape* CollisionBody::addCollisionShape(CollisionShape* collisionShape,
 
     mNbCollisionShapes++;
 
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::Body,
+             "Body " + std::to_string(mID) + ": Proxy shape " + std::to_string(proxyShape->getBroadPhaseId()) + " added to body");
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::ProxyShape,
+             "ProxyShape " + std::to_string(proxyShape->getBroadPhaseId()) + ":  collisionShape=" +
+             proxyShape->getCollisionShape()->to_string());
+
     // Return a pointer to the collision shape
     return proxyShape;
 }
@@ -114,11 +134,14 @@ void CollisionBody::removeCollisionShape(const ProxyShape* proxyShape) {
 
     ProxyShape* current = mProxyCollisionShapes;
 
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::Body,
+             "Body " + std::to_string(mID) + ": Proxy shape " + std::to_string(proxyShape->getBroadPhaseId()) + " removed from body");
+
     // If the the first proxy shape is the one to remove
     if (current == proxyShape) {
         mProxyCollisionShapes = current->mNext;
 
-        if (mIsActive && proxyShape->mBroadPhaseID != -1) {
+        if (mIsActive && proxyShape->getBroadPhaseId() != -1) {
             mWorld.mCollisionDetection.removeProxyCollisionShape(current);
         }
 
@@ -138,7 +161,7 @@ void CollisionBody::removeCollisionShape(const ProxyShape* proxyShape) {
             ProxyShape* elementToRemove = current->mNext;
             current->mNext = elementToRemove->mNext;
 
-            if (mIsActive && proxyShape->mBroadPhaseID != -1) {
+            if (mIsActive && proxyShape->getBroadPhaseId() != -1) {
                 mWorld.mCollisionDetection.removeProxyCollisionShape(elementToRemove);
             }
 
@@ -164,7 +187,7 @@ void CollisionBody::removeAllCollisionShapes() {
         // Remove the proxy collision shape
         ProxyShape* nextElement = current->mNext;
 
-        if (mIsActive && current->mBroadPhaseID != -1) {
+        if (mIsActive && current->getBroadPhaseId() != -1) {
             mWorld.mCollisionDetection.removeProxyCollisionShape(current);
         }
 
@@ -209,7 +232,7 @@ void CollisionBody::updateBroadPhaseState() const {
 // Update the broad-phase state of a proxy collision shape of the body
 void CollisionBody::updateProxyShapeInBroadPhase(ProxyShape* proxyShape, bool forceReinsert) const {
 
-    if (proxyShape->mBroadPhaseID != -1) {
+    if (proxyShape->getBroadPhaseId() != -1) {
 
         // Recompute the world-space AABB of the collision shape
         AABB aabb;
@@ -250,7 +273,7 @@ void CollisionBody::setIsActive(bool isActive) {
         // For each proxy shape of the body
         for (ProxyShape* shape = mProxyCollisionShapes; shape != nullptr; shape = shape->mNext) {
 
-            if (shape->mBroadPhaseID != -1) {
+            if (shape->getBroadPhaseId() != -1) {
 
                 // Remove the proxy shape from the collision detection
                 mWorld.mCollisionDetection.removeProxyCollisionShape(shape);
@@ -260,6 +283,10 @@ void CollisionBody::setIsActive(bool isActive) {
         // Reset the contact manifold list of the body
         resetContactManifoldsList();
     }
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::Body,
+             "Body " + std::to_string(mID) + ": Set isActive=" +
+             (mIsActive ? "true" : "false"));
 }
 
 // Ask the broad-phase to test again the collision shapes of the body for collision
@@ -365,3 +392,49 @@ AABB CollisionBody::getAABB() const {
 
     return bodyAABB;
 }
+
+// Set the current position and orientation
+/**
+ * @param transform The transformation of the body that transforms the local-space
+ *                  of the body into world-space
+ */
+void CollisionBody::setTransform(const Transform& transform) {
+
+    // Update the transform of the body
+    mTransform = transform;
+
+    // Update the broad-phase state of the body
+    updateBroadPhaseState();
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::Body,
+             "Body " + std::to_string(mID) + ": Set transform=" + mTransform.to_string());
+}
+
+
+// Set the type of the body
+/// The type of the body can either STATIC, KINEMATIC or DYNAMIC as described bellow:
+/// STATIC : A static body has infinite mass, zero velocity but the position can be
+///          changed manually. A static body does not collide with other static or kinematic bodies.
+/// KINEMATIC : A kinematic body has infinite mass, the velocity can be changed manually and its
+///             position is computed by the physics engine. A kinematic body does not collide with
+///             other static or kinematic bodies.
+/// DYNAMIC : A dynamic body has non-zero mass, non-zero velocity determined by forces and its
+///           position is determined by the physics engine. A dynamic body can collide with other
+///           dynamic, static or kinematic bodies.
+/**
+ * @param type The type of the body (STATIC, KINEMATIC, DYNAMIC)
+ */
+void CollisionBody::setType(BodyType type) {
+    mType = type;
+
+    if (mType == BodyType::STATIC) {
+
+        // Update the broad-phase state of the body
+        updateBroadPhaseState();
+    }
+
+    RP3D_LOG(mLogger, Logger::Level::Information, Logger::Category::Body,
+             "Body " + std::to_string(mID) + ": Set type=" +
+             (mType == BodyType::STATIC ? "Static" : (mType == BodyType::DYNAMIC ? "Dynamic" : "Kinematic")));
+}
+

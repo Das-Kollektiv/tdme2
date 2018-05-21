@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,18 +27,22 @@
 #define	REACTPHYSICS3D_SPHERE_VS_SPHERE_ALGORITHM_H
 
 // Libraries
-#include "body/Body.h"
-#include "constraint/ContactPoint.h"
 #include "NarrowPhaseAlgorithm.h"
-
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
 
+// Declarations
+class ContactPoint;
+class Body;
+
 // Class SphereVsSphereAlgorithm
 /**
  * This class is used to compute the narrow-phase collision detection
- * between two sphere collision shapes.
+ * between two sphere collision shapes. This algorithm finds the contact
+ * point and contact normal between two spheres if they are colliding.
+ * This case is simple, we do not need to use GJK or SAT algorithm. We
+ * directly compute the contact points if any.
  */
 class SphereVsSphereAlgorithm : public NarrowPhaseAlgorithm {
 

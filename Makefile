@@ -575,7 +575,6 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/engine/Island.cpp \
 	ext/reactphysics3d/src/engine/Material.cpp \
 	ext/reactphysics3d/src/engine/OverlappingPair.cpp \
-	ext/reactphysics3d/src/engine/Profiler.cpp \
 	ext/reactphysics3d/src/engine/Timer.cpp \
 	ext/reactphysics3d/src/collision/CollisionCallback.cpp \
 	ext/reactphysics3d/src/mathematics/mathematics_functions.cpp \

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -31,11 +31,9 @@
 #include "collision/shapes/SphereShape.h"
 #include "engine/OverlappingPair.h"
 #include "collision/shapes/TriangleShape.h"
+#include "collision/NarrowPhaseInfo.h"
 #include "configuration.h"
-#include "engine/Profiler.h"
-#include <algorithm>
-#include <cmath>
-#include <cfloat>
+#include "utils/Profiler.h"
 #include <cassert>
 
 // We want to use the ReactPhysics3D namespace
@@ -47,12 +45,16 @@ const decimal SATAlgorithm::SAME_SEPARATING_AXIS_BIAS = decimal(0.001);
 // Constructor
 SATAlgorithm::SATAlgorithm(MemoryAllocator& memoryAllocator) : mMemoryAllocator(memoryAllocator) {
 
+#ifdef IS_PROFILING_ACTIVE
+        mProfiler = nullptr;
+#endif
+
 }
 
 // Test collision between a sphere and a convex mesh
 bool SATAlgorithm::testCollisionSphereVsConvexPolyhedron(NarrowPhaseInfo* narrowPhaseInfo, bool reportContacts) const {
 
-    PROFILE("SATAlgorithm::testCollisionSphereVsConvexPolyhedron()", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::testCollisionSphereVsConvexPolyhedron()", mProfiler);
 
     bool isSphereShape1 = narrowPhaseInfo->collisionShape1->getType() == CollisionShapeType::SPHERE;
 
@@ -127,7 +129,7 @@ bool SATAlgorithm::testCollisionSphereVsConvexPolyhedron(NarrowPhaseInfo* narrow
 decimal SATAlgorithm::computePolyhedronFaceVsSpherePenetrationDepth(uint faceIndex, const ConvexPolyhedronShape* polyhedron,
                                                                     const SphereShape* sphere, const Vector3& sphereCenter) const {
 
-    PROFILE("SATAlgorithm::computePolyhedronFaceVsSpherePenetrationDepth)", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::computePolyhedronFaceVsSpherePenetrationDepth)", mProfiler);
 
     // Get the face
     const HalfEdgeStructure::Face& face = polyhedron->getFace(faceIndex);
@@ -144,7 +146,7 @@ decimal SATAlgorithm::computePolyhedronFaceVsSpherePenetrationDepth(uint faceInd
 // Test collision between a capsule and a convex mesh
 bool SATAlgorithm::testCollisionCapsuleVsConvexPolyhedron(NarrowPhaseInfo* narrowPhaseInfo, bool reportContacts) const {
 
-    PROFILE("SATAlgorithm::testCollisionCapsuleVsConvexPolyhedron()", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::testCollisionCapsuleVsConvexPolyhedron()", mProfiler);
 
     bool isCapsuleShape1 = narrowPhaseInfo->collisionShape1->getType() == CollisionShapeType::CAPSULE;
 
@@ -170,7 +172,6 @@ bool SATAlgorithm::testCollisionCapsuleVsConvexPolyhedron(NarrowPhaseInfo* narro
     // Minimum penetration depth
     decimal minPenetrationDepth = DECIMAL_LARGEST;
     uint minFaceIndex = 0;
-    uint minEdgeIndex = 0;
     bool isMinPenetrationFaceNormal = false;
     Vector3 separatingAxisCapsuleSpace;
     Vector3 separatingPolyhedronEdgeVertex1;
@@ -235,7 +236,6 @@ bool SATAlgorithm::testCollisionCapsuleVsConvexPolyhedron(NarrowPhaseInfo* narro
             // Check if we have found a new minimum penetration axis
             if (penetrationDepth < minPenetrationDepth) {
                 minPenetrationDepth = penetrationDepth;
-                minEdgeIndex = e;
                 isMinPenetrationFaceNormal = false;
                 separatingAxisCapsuleSpace = outAxis;
                 separatingPolyhedronEdgeVertex1 = edgeVertex1;
@@ -304,7 +304,7 @@ decimal SATAlgorithm::computeEdgeVsCapsuleInnerSegmentPenetrationDepth(const Con
                                                                        const Vector3& edgeDirectionCapsuleSpace,
                                                                        const Transform& polyhedronToCapsuleTransform, Vector3& outAxis) const {
 
-    PROFILE("SATAlgorithm::computeEdgeVsCapsuleInnerSegmentPenetrationDepth)", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::computeEdgeVsCapsuleInnerSegmentPenetrationDepth)", mProfiler);
 
     decimal penetrationDepth = DECIMAL_LARGEST;
 
@@ -338,7 +338,7 @@ decimal SATAlgorithm::computePolyhedronFaceVsCapsulePenetrationDepth(uint polyhe
                                                                      const CapsuleShape* capsule, const Transform& polyhedronToCapsuleTransform,
                                                                      Vector3& outFaceNormalCapsuleSpace) const {
 
-    PROFILE("SATAlgorithm::computePolyhedronFaceVsCapsulePenetrationDepth", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::computePolyhedronFaceVsCapsulePenetrationDepth", mProfiler);
 
     // Get the face
     const HalfEdgeStructure::Face& face = polyhedron->getFace(polyhedronFaceIndex);
@@ -364,7 +364,7 @@ bool SATAlgorithm::computeCapsulePolyhedronFaceContactPoints(uint referenceFaceI
                                                              const Vector3& capsuleSegAPolyhedronSpace, const Vector3& capsuleSegBPolyhedronSpace,
                                                              NarrowPhaseInfo* narrowPhaseInfo, bool isCapsuleShape1) const {
 
-    PROFILE("SATAlgorithm::computeCapsulePolyhedronFaceContactPoints", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::computeCapsulePolyhedronFaceContactPoints", mProfiler);
 
     const HalfEdgeStructure::Face& face = polyhedron->getFace(referenceFaceIndex);
 
@@ -459,7 +459,7 @@ bool SATAlgorithm::isMinkowskiFaceCapsuleVsEdge(const Vector3& capsuleSegment, c
 // Test collision between two convex polyhedrons
 bool SATAlgorithm::testCollisionConvexPolyhedronVsConvexPolyhedron(NarrowPhaseInfo* narrowPhaseInfo, bool reportContacts) const {
 
-    PROFILE("SATAlgorithm::testCollisionConvexPolyhedronVsConvexPolyhedron()", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::testCollisionConvexPolyhedronVsConvexPolyhedron()", mProfiler);
 
     assert(narrowPhaseInfo->collisionShape1->getType() == CollisionShapeType::CONVEX_POLYHEDRON);
     assert(narrowPhaseInfo->collisionShape2->getType() == CollisionShapeType::CONVEX_POLYHEDRON);
@@ -474,7 +474,8 @@ bool SATAlgorithm::testCollisionConvexPolyhedronVsConvexPolyhedron(NarrowPhaseIn
     uint minFaceIndex = 0;
     bool isMinPenetrationFaceNormal = false;
     bool isMinPenetrationFaceNormalPolyhedron1 = false;
-    uint minSeparatingEdge1Index, minSeparatingEdge2Index;
+    uint minSeparatingEdge1Index = 0;
+    uint minSeparatingEdge2Index = 0;
     Vector3 separatingEdge1A, separatingEdge1B;
     Vector3 separatingEdge2A, separatingEdge2B;
     Vector3 minEdgeVsEdgeSeparatingAxisPolyhedron2Space;
@@ -804,7 +805,7 @@ bool SATAlgorithm::computePolyhedronVsPolyhedronFaceContactPoints(bool isMinPene
                                                                   const Transform& polyhedron1ToPolyhedron2, const Transform& polyhedron2ToPolyhedron1,
                                                                   uint minFaceIndex, NarrowPhaseInfo* narrowPhaseInfo, decimal minPenetrationDepth) const {
 
-    PROFILE("SATAlgorithm::computePolyhedronVsPolyhedronFaceContactPoints", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::computePolyhedronVsPolyhedronFaceContactPoints", mProfiler);
 
     const ConvexPolyhedronShape* referencePolyhedron = isMinPenetrationFaceNormalPolyhedron1 ? polyhedron1 : polyhedron2;
     const ConvexPolyhedronShape* incidentPolyhedron = isMinPenetrationFaceNormalPolyhedron1 ? polyhedron2 : polyhedron1;
@@ -919,7 +920,7 @@ decimal SATAlgorithm::computeDistanceBetweenEdges(const Vector3& edge1A, const V
                                                   const Vector3& edge1Direction, const Vector3& edge2Direction,
                                                   Vector3& outSeparatingAxisPolyhedron2Space) const {
 
-    PROFILE("SATAlgorithm::computeDistanceBetweenEdges", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::computeDistanceBetweenEdges", mProfiler);
 
     // If the two edges are parallel
     if (areParallelVectors(edge1Direction, edge2Direction)) {
@@ -948,7 +949,7 @@ decimal SATAlgorithm::testSingleFaceDirectionPolyhedronVsPolyhedron(const Convex
                                                                     const Transform& polyhedron1ToPolyhedron2,
                                                                     uint faceIndex) const {
 
-    PROFILE("SATAlgorithm::testSingleFaceDirectionPolyhedronVsPolyhedron", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::testSingleFaceDirectionPolyhedronVsPolyhedron", mProfiler);
 
     const HalfEdgeStructure::Face& face = polyhedron1->getFace(faceIndex);
 
@@ -974,7 +975,7 @@ decimal SATAlgorithm::testFacesDirectionPolyhedronVsPolyhedron(const ConvexPolyh
                                                                const Transform& polyhedron1ToPolyhedron2,
                                                                uint& minFaceIndex) const {
 
-    PROFILE("SATAlgorithm::testFacesDirectionPolyhedronVsPolyhedron", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::testFacesDirectionPolyhedronVsPolyhedron", mProfiler);
 
     decimal minPenetrationDepth = DECIMAL_LARGEST;
 
@@ -1006,7 +1007,7 @@ bool SATAlgorithm::testEdgesBuildMinkowskiFace(const ConvexPolyhedronShape* poly
                                                const ConvexPolyhedronShape* polyhedron2, const HalfEdgeStructure::Edge& edge2,
                                                const Transform& polyhedron1ToPolyhedron2) const {
 
-    PROFILE("SATAlgorithm::testEdgesBuildMinkowskiFace", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::testEdgesBuildMinkowskiFace", mProfiler);
 
     const Vector3 a = polyhedron1ToPolyhedron2.getOrientation() * polyhedron1->getFaceNormal(edge1.faceIndex);
     const Vector3 b = polyhedron1ToPolyhedron2.getOrientation() * polyhedron1->getFaceNormal(polyhedron1->getHalfEdge(edge1.twinEdgeIndex).faceIndex);
@@ -1039,7 +1040,7 @@ bool SATAlgorithm::testEdgesBuildMinkowskiFace(const ConvexPolyhedronShape* poly
 bool SATAlgorithm::testGaussMapArcsIntersect(const Vector3& a, const Vector3& b, const Vector3& c, const Vector3& d,
                                              const Vector3& bCrossA, const Vector3& dCrossC) const {
 
-    PROFILE("SATAlgorithm::testGaussMapArcsIntersect", mProfiler);
+    RP3D_PROFILE("SATAlgorithm::testGaussMapArcsIntersect", mProfiler);
 
     const decimal cba = c.dot(bCrossA);
     const decimal dba = d.dot(bCrossA);

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,11 +28,13 @@
 
 // Libraries
 #include "ConvexShape.h"
-#include "body/CollisionBody.h"
 #include "mathematics/mathematics.h"
 
 // ReactPhysics3D namespace
 namespace reactphysics3d {
+
+// Declarations
+class CollisionBody;
 
 // Class SphereShape
 /**
@@ -82,9 +84,6 @@ class SphereShape : public ConvexShape {
         /// Return true if the collision shape is a polyhedron
         virtual bool isPolyhedron() const override;
 
-        /// Set the scaling vector of the collision shape
-        virtual void setLocalScaling(const Vector3& scaling) override;
-
         /// Return the local bounds of the shape in x, y and z directions.
         virtual void getLocalBounds(Vector3& min, Vector3& max) const override;
 
@@ -93,6 +92,9 @@ class SphereShape : public ConvexShape {
 
         /// Update the AABB of a body using its collision shape
         virtual void computeAABB(AABB& aabb, const Transform& transform) const override;
+
+        /// Return the string representation of the shape
+        virtual std::string to_string() const override;
 };
 
 // Get the radius of the sphere
@@ -104,19 +106,17 @@ inline decimal SphereShape::getRadius() const {
 }
 
 // Return true if the collision shape is a polyhedron
+/**
+ * @return False because the sphere shape is not a polyhedron
+ */
 inline bool SphereShape::isPolyhedron() const {
         return false;
 }
 
-// Set the scaling vector of the collision shape
-inline void SphereShape::setLocalScaling(const Vector3& scaling) {
-
-    mMargin = (mMargin / mScaling.x) * scaling.x;
-
-    CollisionShape::setLocalScaling(scaling);
-}
-
 // Return the number of bytes used by the collision shape
+/**
+ * @return The size (in bytes) of the sphere shape
+ */
 inline size_t SphereShape::getSizeInBytes() const {
     return sizeof(SphereShape);
 }
@@ -160,25 +160,14 @@ inline void SphereShape::computeLocalInertiaTensor(Matrix3x3& tensor, decimal ma
                         0.0, 0.0, diag);
 }
 
-// Update the AABB of a body using its collision shape
-/**
- * @param[out] aabb The axis-aligned bounding box (AABB) of the collision shape
- *                  computed in world-space coordinates
- * @param transform Transform used to compute the AABB of the collision shape
- */
-inline void SphereShape::computeAABB(AABB& aabb, const Transform& transform) const {
-
-    // Get the local extents in x,y and z direction
-    Vector3 extents(mMargin, mMargin, mMargin);
-
-    // Update the AABB with the new minimum and maximum coordinates
-    aabb.setMin(transform.getPosition() - extents);
-    aabb.setMax(transform.getPosition() + extents);
-}
-
 // Return true if a point is inside the collision shape
 inline bool SphereShape::testPointInside(const Vector3& localPoint, ProxyShape* proxyShape) const {
     return (localPoint.lengthSquare() < mMargin * mMargin);
+}
+
+// Return the string representation of the shape
+inline std::string SphereShape::to_string() const {
+    return "SphereShape{radius=" + std::to_string(getRadius()) + "}";
 }
 
 }

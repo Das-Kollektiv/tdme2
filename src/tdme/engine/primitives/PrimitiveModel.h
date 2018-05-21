@@ -53,7 +53,7 @@ private:
 	 * @return transformed vector
 	 */
 	inline static Vector3 transformVector3(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& vector) {
-		auto vectorTransformed = boundingVolume->collisionShapeTransform * (vector * boundingVolume->collisionShape->getLocalScaling());
+		auto vectorTransformed = boundingVolume->collisionShapeTransform * vector;
 		return Vector3(vectorTransformed.x, vectorTransformed.y, vectorTransformed.z);
 	}
 

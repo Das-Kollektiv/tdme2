@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -26,10 +26,15 @@
 #ifndef REACTPHYSICS3D_CONTACT_MANIFOLD_SET_H
 #define REACTPHYSICS3D_CONTACT_MANIFOLD_SET_H
 
-// Libraries
-#include "ContactManifold.h"
-
 namespace reactphysics3d {
+
+// Declarations
+class ContactManifold;
+class ContactManifoldInfo;
+class ProxyShape;
+class MemoryAllocator;
+struct WorldSettings;
+class CollisionShape;
 
 // Constants
 const int MAX_MANIFOLDS_IN_CONTACT_MANIFOLD_SET = 3;   // Maximum number of contact manifolds in the set
@@ -66,6 +71,9 @@ class ContactManifoldSet {
         /// Contact manifolds of the set
         ContactManifold* mManifolds;
 
+        /// World settings
+        const WorldSettings& mWorldSettings;
+
         // -------------------- Methods -------------------- //
 
         /// Create a new contact manifold and add it to the set
@@ -95,7 +103,7 @@ class ContactManifoldSet {
 
         /// Constructor
         ContactManifoldSet(ProxyShape* shape1, ProxyShape* shape2,
-                           MemoryAllocator& memoryAllocator);
+                           MemoryAllocator& memoryAllocator, const WorldSettings& worldSettings);
 
         /// Destructor
         ~ContactManifoldSet();
@@ -146,33 +154,6 @@ inline int ContactManifoldSet::getNbContactManifolds() const {
 // Return a pointer to the first element of the linked-list of contact manifolds
 inline ContactManifold* ContactManifoldSet::getContactManifolds() const {
     return mManifolds;
-}
-
-// Return the total number of contact points in the set of manifolds
-inline int ContactManifoldSet::getTotalNbContactPoints() const {
-    int nbPoints = 0;
-
-    ContactManifold* manifold = mManifolds;
-    while (manifold != nullptr) {
-        nbPoints += manifold->getNbContactPoints();
-
-        manifold = manifold->getNext();
-    }
-
-    return nbPoints;
-}
-
-// Return the maximum number of contact manifolds allowed between to collision shapes
-inline int ContactManifoldSet::computeNbMaxContactManifolds(const CollisionShape* shape1, const CollisionShape* shape2) {
-
-    // If both shapes are convex
-    if (shape1->isConvex() && shape2->isConvex()) {
-        return NB_MAX_CONTACT_MANIFOLDS_CONVEX_SHAPE;
-
-    }   // If there is at least one concave shape
-    else {
-        return NB_MAX_CONTACT_MANIFOLDS_CONCAVE_SHAPE;
-    }
 }
 
 }

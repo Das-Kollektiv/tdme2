@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -32,7 +32,6 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <vector>
 #include "containers/List.h"
 
 /// ReactPhysics3D namespace
@@ -123,6 +122,9 @@ List<Vector3> clipPolygonWithPlanes(const List<Vector3>& polygonVertices, const 
 
 /// Project a point onto a plane that is given by a point and its unit length normal
 Vector3 projectPointOntoPlane(const Vector3& point, const Vector3& planeNormal, const Vector3& planePoint);
+
+/// Return the distance between a point and a plane (the plane normal must be normalized)
+decimal computePointToPlaneDistance(const Vector3& point, const Vector3& planeNormal, const Vector3& planePoint);
 
 /// Return true if the given number is prime
 bool isPrimeNumber(int number);

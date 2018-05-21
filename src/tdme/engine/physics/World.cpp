@@ -6,19 +6,22 @@
 #include <unordered_set>
 #include <string>
 
-#include <ext/reactphysics3d/src/collision/ProxyShape.h>
+#include <ext/reactphysics3d/src/collision/ContactManifold.h>
 #include <ext/reactphysics3d/src/collision/OverlapCallback.h>
+#include <ext/reactphysics3d/src/collision/RaycastInfo.h>
 #include <ext/reactphysics3d/src/collision/shapes/AABB.h>
+#include <ext/reactphysics3d/src/constraint/ContactPoint.h>
 #include <ext/reactphysics3d/src/engine/CollisionWorld.h>
+#include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
 #include <ext/reactphysics3d/src/engine/EventListener.h>
 #include <ext/reactphysics3d/src/mathematics/Ray.h>
 #include <ext/reactphysics3d/src/mathematics/Vector3.h>
-
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionResponse.h>
+#include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -45,6 +48,7 @@ using tdme::engine::Entity;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
+using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::ConvexMeshBoundingVolume;
@@ -178,8 +182,8 @@ void World::update(float deltaTime)
 					auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
 					auto& localPoint1 = contactPoint->getLocalPointOnShape1();
 					auto& localPoint2 = contactPoint->getLocalPointOnShape2();
-					auto worldPoint1 = shapeLocalToWorldTransform1 * (localPoint1 * shape1->getLocalScaling());
-					auto worldPoint2 = shapeLocalToWorldTransform2 * (localPoint2 * shape2->getLocalScaling());
+					auto worldPoint1 = shapeLocalToWorldTransform1 * localPoint1;
+					auto worldPoint2 = shapeLocalToWorldTransform2 * localPoint2;
 					entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));
 					entity->addHitPoint(Vector3(worldPoint2.x, worldPoint2.y, worldPoint2.z));
 					contactPoint = contactPoint->getNext();

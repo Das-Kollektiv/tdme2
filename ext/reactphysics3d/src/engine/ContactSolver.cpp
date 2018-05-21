@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,8 +27,10 @@
 #include "ContactSolver.h"
 #include "DynamicsWorld.h"
 #include "body/RigidBody.h"
-#include "Profiler.h"
-#include <limits>
+#include "constraint/ContactPoint.h"
+#include "utils/Profiler.h"
+#include "engine/Island.h"
+#include "collision/ContactManifold.h"
 
 using namespace reactphysics3d;
 using namespace std;
@@ -39,18 +41,22 @@ const decimal ContactSolver::BETA_SPLIT_IMPULSE = decimal(0.2);
 const decimal ContactSolver::SLOP = decimal(0.01);
 
 // Constructor
-ContactSolver::ContactSolver(MemoryManager& memoryManager)
+ContactSolver::ContactSolver(MemoryManager& memoryManager, const WorldSettings& worldSettings)
               :mMemoryManager(memoryManager), mSplitLinearVelocities(nullptr),
                mSplitAngularVelocities(nullptr), mContactConstraints(nullptr),
-               mLinearVelocities(nullptr), mAngularVelocities(nullptr),
-               mIsSplitImpulseActive(true) {
+               mContactPoints(nullptr), mLinearVelocities(nullptr), mAngularVelocities(nullptr),
+               mIsSplitImpulseActive(true), mWorldSettings(worldSettings) {
+
+#ifdef IS_PROFILING_ACTIVE
+        mProfiler = nullptr;
+#endif
 
 }
 
 // Initialize the contact constraints
 void ContactSolver::init(Island** islands, uint nbIslands, decimal timeStep) {
 
-    PROFILE("ContactSolver::init()", mProfiler);
+    RP3D_PROFILE("ContactSolver::init()", mProfiler);
 
     mTimeStep = timeStep;
 
@@ -98,7 +104,7 @@ void ContactSolver::init(Island** islands, uint nbIslands, decimal timeStep) {
 // Initialize the constraint solver for a given island
 void ContactSolver::initializeForIsland(Island* island) {
 
-    PROFILE("ContactSolver::initializeForIsland()", mProfiler);
+    RP3D_PROFILE("ContactSolver::initializeForIsland()", mProfiler);
 
     assert(island != nullptr);
     assert(island->getNbBodies() > 0);
@@ -225,7 +231,7 @@ void ContactSolver::initializeForIsland(Island* island) {
                                  deltaV.y * mContactPoints[mNbContactPoints].normal.y +
                                  deltaV.z * mContactPoints[mNbContactPoints].normal.z;
             const decimal restitutionFactor = computeMixedRestitutionFactor(body1, body2);
-            if (deltaVDotN < -RESTITUTION_VELOCITY_THRESHOLD) {
+            if (deltaVDotN < -mWorldSettings.restitutionVelocityThreshold) {
                 mContactPoints[mNbContactPoints].restitutionBias = restitutionFactor * deltaVDotN;
             }
 
@@ -326,7 +332,7 @@ void ContactSolver::initializeForIsland(Island* island) {
 /// the solution of the linear system
 void ContactSolver::warmStart() {
 
-    PROFILE("ContactSolver::warmStart()", mProfiler);
+    RP3D_PROFILE("ContactSolver::warmStart()", mProfiler);
 
     uint contactPointIndex = 0;
 
@@ -479,7 +485,7 @@ void ContactSolver::warmStart() {
 // Solve the contacts
 void ContactSolver::solve() {
 
-    PROFILE("ContactSolver::solve()", mProfiler);
+    RP3D_PROFILE("ContactSolver::solve()", mProfiler);
 
     decimal deltaLambda;
     decimal lambdaTemp;
@@ -754,11 +760,35 @@ void ContactSolver::solve() {
     }
 }
 
+// Compute the collision restitution factor from the restitution factor of each body
+decimal ContactSolver::computeMixedRestitutionFactor(RigidBody* body1,
+                                                            RigidBody* body2) const {
+    decimal restitution1 = body1->getMaterial().getBounciness();
+    decimal restitution2 = body2->getMaterial().getBounciness();
+
+    // Return the largest restitution factor
+    return (restitution1 > restitution2) ? restitution1 : restitution2;
+}
+
+// Compute the mixed friction coefficient from the friction coefficient of each body
+decimal ContactSolver::computeMixedFrictionCoefficient(RigidBody *body1,
+                                                              RigidBody *body2) const {
+    // Use the geometric mean to compute the mixed friction coefficient
+    return std::sqrt(body1->getMaterial().getFrictionCoefficient() *
+                body2->getMaterial().getFrictionCoefficient());
+}
+
+// Compute th mixed rolling resistance factor between two bodies
+inline decimal ContactSolver::computeMixedRollingResistance(RigidBody* body1,
+                                                            RigidBody* body2) const {
+    return decimal(0.5f) * (body1->getMaterial().getRollingResistance() + body2->getMaterial().getRollingResistance());
+}
+
 // Store the computed impulses to use them to
 // warm start the solver at the next iteration
 void ContactSolver::storeImpulses() {
 
-    PROFILE("ContactSolver::storeImpulses()", mProfiler);
+    RP3D_PROFILE("ContactSolver::storeImpulses()", mProfiler);
 
     uint contactPointIndex = 0;
 
@@ -786,7 +816,7 @@ void ContactSolver::storeImpulses() {
 void ContactSolver::computeFrictionVectors(const Vector3& deltaVelocity,
                                            ContactManifoldSolver& contact) const {
 
-    PROFILE("ContactSolver::computeFrictionVectors()", mProfiler);
+    RP3D_PROFILE("ContactSolver::computeFrictionVectors()", mProfiler);
 
     assert(contact.normal.length() > decimal(0.0));
 

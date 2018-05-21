@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,7 +28,6 @@
 
 // Libraries
 #include "mathematics/mathematics.h"
-#include <vector>
 
 namespace reactphysics3d {
 
@@ -42,6 +41,9 @@ class HalfEdgeStructure {
 
     public:
 
+        using VerticesPair = Pair<uint, uint>;
+
+        /// Edge
         struct Edge {
             uint vertexIndex;       // Index of the vertex at the beginning of the edge
             uint twinEdgeIndex;     // Index of the twin edge
@@ -49,6 +51,7 @@ class HalfEdgeStructure {
             uint nextEdgeIndex;     // Index of the next edge
         };
 
+        /// Face
         struct Face {
             uint edgeIndex;             // Index of an half-edge of the face
             List<uint> faceVertices;	// Index of the vertices of the face
@@ -60,6 +63,7 @@ class HalfEdgeStructure {
             Face(List<uint> vertices) : faceVertices(vertices) {}
         };
 
+        /// Vertex
         struct Vertex {
             uint vertexPointIndex;  // Index of the vertex point in the origin vertex array
             uint edgeIndex;         // Index of one edge emanting from this vertex
@@ -122,6 +126,9 @@ class HalfEdgeStructure {
 };
 
 // Add a vertex
+/**
+ * @param vertexPointIndex Index of the vertex in the vertex data array
+ */
 inline uint HalfEdgeStructure::addVertex(uint vertexPointIndex) {
     Vertex vertex(vertexPointIndex);
     mVertices.add(vertex);
@@ -129,6 +136,10 @@ inline uint HalfEdgeStructure::addVertex(uint vertexPointIndex) {
 }
 
 // Add a face
+/**
+ * @param faceVertices List of the vertices in a face (ordered in CCW order as seen from outside
+ *                     the polyhedron
+ */
 inline void HalfEdgeStructure::addFace(List<uint> faceVertices) {
 
     // Create a new face
@@ -137,33 +148,51 @@ inline void HalfEdgeStructure::addFace(List<uint> faceVertices) {
 }
 
 // Return the number of faces
+/**
+ * @return The number of faces in the polyhedron
+ */
 inline uint HalfEdgeStructure::getNbFaces() const {
     return static_cast<uint>(mFaces.size());
 }
 
 // Return the number of edges
+/**
+ * @return The number of edges in the polyhedron
+ */
 inline uint HalfEdgeStructure::getNbHalfEdges() const {
     return static_cast<uint>(mEdges.size());
 }
 
 // Return the number of vertices
+/**
+ * @return The number of vertices in the polyhedron
+ */
 inline uint HalfEdgeStructure::getNbVertices() const {
     return static_cast<uint>(mVertices.size());
 }
 
 // Return a given face
+/**
+ * @return A given face of the polyhedron
+ */
 inline const HalfEdgeStructure::Face& HalfEdgeStructure::getFace(uint index) const {
     assert(index < mFaces.size());
     return mFaces[index];
 }
 
 // Return a given edge
+/**
+ * @return A given edge of the polyhedron
+ */
 inline const HalfEdgeStructure::Edge& HalfEdgeStructure::getHalfEdge(uint index) const {
     assert(index < mEdges.size());
     return mEdges[index];
 }
 
 // Return a given vertex
+/**
+ * @return A given vertex of the polyhedron
+ */
 inline const HalfEdgeStructure::Vertex& HalfEdgeStructure::getVertex(uint index) const {
     assert(index < mVertices.size());
     return mVertices[index];

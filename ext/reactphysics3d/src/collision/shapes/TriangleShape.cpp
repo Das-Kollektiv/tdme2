@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,7 +27,8 @@
 #include "TriangleShape.h"
 #include "collision/ProxyShape.h"
 #include "mathematics/mathematics_functions.h"
-#include "engine/Profiler.h"
+#include "collision/RaycastInfo.h"
+#include "utils/Profiler.h"
 #include "configuration.h"
 #include <cassert>
 
@@ -208,12 +209,31 @@ Vector3 TriangleShape::computeSmoothLocalContactNormalForTriangle(const Vector3&
     return (u * mVerticesNormals[0] + v * mVerticesNormals[1] + w * mVerticesNormals[2]).getUnit();
 }
 
+// Update the AABB of a body using its collision shape
+/**
+ * @param[out] aabb The axis-aligned bounding box (AABB) of the collision shape
+ *                  computed in world-space coordinates
+ * @param transform Transform used to compute the AABB of the collision shape
+ */
+void TriangleShape::computeAABB(AABB& aabb, const Transform& transform) const {
+
+    const Vector3 worldPoint1 = transform * mPoints[0];
+    const Vector3 worldPoint2 = transform * mPoints[1];
+    const Vector3 worldPoint3 = transform * mPoints[2];
+
+    const Vector3 xAxis(worldPoint1.x, worldPoint2.x, worldPoint3.x);
+    const Vector3 yAxis(worldPoint1.y, worldPoint2.y, worldPoint3.y);
+    const Vector3 zAxis(worldPoint1.z, worldPoint2.z, worldPoint3.z);
+    aabb.setMin(Vector3(xAxis.getMinValue(), yAxis.getMinValue(), zAxis.getMinValue()));
+    aabb.setMax(Vector3(xAxis.getMaxValue(), yAxis.getMaxValue(), zAxis.getMaxValue()));
+}
+
 // Raycast method with feedback information
 /// This method use the line vs triangle raycasting technique described in
 /// Real-time Collision Detection by Christer Ericson.
 bool TriangleShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxyShape* proxyShape, MemoryAllocator& allocator) const {
 
-    PROFILE("TriangleShape::raycast()", mProfiler);
+    RP3D_PROFILE("TriangleShape::raycast()", mProfiler);
 
     const Vector3 pq = ray.point2 - ray.point1;
     const Vector3 pa = mPoints[0] - ray.point1;

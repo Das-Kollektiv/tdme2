@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -29,8 +29,10 @@
 // Libraries
 #include "configuration.h"
 #include "memory/MemoryAllocator.h"
+#include <cassert>
 #include <cstring>
 #include <iterator>
+#include <memory>
 
 namespace reactphysics3d {
 
@@ -56,9 +58,6 @@ class List {
 
         /// Memory allocator
         MemoryAllocator& mAllocator;
-
-        // -------------------- Methods -------------------- //
-
 
     public:
 
@@ -87,14 +86,14 @@ class List {
                 Iterator() = default;
 
                 /// Constructor
-                Iterator(T* buffer, size_t index, size_t size)
-                     :mCurrentIndex(index), mBuffer(buffer), mSize(size) {
+                Iterator(void* buffer, size_t index, size_t size)
+                     :mCurrentIndex(index), mBuffer(static_cast<T*>(buffer)), mSize(size) {
 
                 }
 
                 /// Copy constructor
                 Iterator(const Iterator& it)
-                     :mCurrentIndex(it.mCurrentIndex), mBuffer(it.mBuffer), mSize(it.size) {
+                     :mCurrentIndex(it.mCurrentIndex), mBuffer(it.mBuffer), mSize(it.mSize) {
 
                 }
 
@@ -112,14 +111,14 @@ class List {
 
                 /// Post increment (it++)
                 Iterator& operator++() {
-                    assert(mCurrentIndex < mSize - 1);
+                    assert(mCurrentIndex < mSize);
                     mCurrentIndex++;
                     return *this;
                 }
 
                 /// Pre increment (++it)
                 Iterator operator++(int number) {
-                    assert(mCurrentIndex < mSize - 1);
+                    assert(mCurrentIndex < mSize);
                     Iterator tmp = *this;
                     mCurrentIndex++;
                     return tmp;
@@ -149,13 +148,17 @@ class List {
                         return true;
                     }
 
-                    return &(mBuffer[mCurrentIndex]) == &(iterator.mBuffer[mCurrentIndex]);
+                    return &(mBuffer[mCurrentIndex]) == &(iterator.mBuffer[iterator.mCurrentIndex]);
                 }
 
                 /// Inequality operator (it != end())
                 bool operator!=(const Iterator& iterator) const {
                     return !(*this == iterator);
                 }
+
+                /// Frienship
+                friend class List;
+
         };
 
         // -------------------- Methods -------------------- //
@@ -202,8 +205,18 @@ class List {
 
             if (mBuffer != nullptr) {
 
-                // Copy the elements to the new allocated memory location
-                std::memcpy(newMemory, mBuffer, mSize * sizeof(T));
+                if (mSize > 0) {
+
+                    // Copy the elements to the new allocated memory location
+                    T* destination = static_cast<T*>(newMemory);
+                    T* items = static_cast<T*>(mBuffer);
+                    std::uninitialized_copy(items, items + mSize, destination);
+
+                    // Destruct the previous items
+                    for (size_t i=0; i<mSize; i++) {
+                        items[i].~T();
+                    }
+                }
 
                 // Release the previously allocated memory
                 mAllocator.release(mBuffer, mCapacity * sizeof(T));
@@ -229,8 +242,35 @@ class List {
             mSize++;
         }
 
-        /// Remove an element from the list at a given index
-        void remove(uint index) {
+        /// Try to find a given item of the list and return an iterator
+        /// pointing to that element if it exists in the list. Otherwise,
+        /// this method returns the end() iterator
+        Iterator find(const T& element) {
+
+            for (uint i=0; i<mSize; i++) {
+                if (element == static_cast<T*>(mBuffer)[i]) {
+                    return Iterator(mBuffer, i, mSize);
+                }
+            }
+
+            return end();
+        }
+
+        /// Look for an element in the list and remove it
+        Iterator remove(const T& element) {
+           return remove(find(element));
+        }
+
+        /// Remove an element from the list and return a iterator
+        /// pointing to the element after the removed one (or end() if none)
+        Iterator remove(const Iterator& it) {
+           assert(it.mBuffer == mBuffer);
+           return removeAt(it.mCurrentIndex);
+        }
+
+        /// Remove an element from the list at a given index and return an
+        /// iterator pointing to the element after the removed one (or end() if none)
+        Iterator removeAt(uint index) {
 
           assert(index >= 0 && index < mSize);
 
@@ -244,8 +284,11 @@ class List {
               // Move the elements to fill in the empty slot
               char* dest = static_cast<char*>(mBuffer) + index * sizeof(T);
               char* src = dest + sizeof(T);
-              std::memcpy(static_cast<void*>(dest), static_cast<void*>(src), (mSize - index) * sizeof(T));
+              std::memmove(static_cast<void*>(dest), static_cast<void*>(src), (mSize - index) * sizeof(T));
           }
+
+          // Return an iterator pointing to the element after the removed one
+          return Iterator(mBuffer, index, mSize);
         }
 
         /// Append another list at the end of the current one
@@ -305,7 +348,7 @@ class List {
            if (mSize != list.mSize) return false;
 
            T* items = static_cast<T*>(mBuffer);
-            for (int i=0; i < mSize; i++) {
+            for (size_t i=0; i < mSize; i++) {
                 if (items[i] != list[i]) {
                     return false;
                 }
@@ -333,6 +376,16 @@ class List {
             }
 
             return *this;
+        }
+
+        /// Return a begin iterator
+        Iterator begin() const {
+            return Iterator(mBuffer, 0, mSize);
+        }
+
+        /// Return a end iterator
+        Iterator end() const {
+            return Iterator(mBuffer, mSize, mSize);
         }
 };
 

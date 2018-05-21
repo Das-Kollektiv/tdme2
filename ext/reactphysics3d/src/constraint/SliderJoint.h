@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -28,9 +28,13 @@
 
 // Libraries
 #include "mathematics/mathematics.h"
-#include "engine/ConstraintSolver.h"
+#include "body/RigidBody.h"
+#include "Joint.h"
 
 namespace reactphysics3d {
+
+// Declarations
+class ConstraintSolver;
 
 // Structure SliderJointInfo
 /**
@@ -285,7 +289,7 @@ class SliderJoint : public Joint {
         // -------------------- Methods -------------------- //
 
         /// Constructor
-        SliderJoint(const SliderJointInfo& jointInfo);
+        SliderJoint(uint id, const SliderJointInfo& jointInfo);
 
         /// Destructor
         virtual ~SliderJoint() override = default;
@@ -337,6 +341,9 @@ class SliderJoint : public Joint {
 
         /// Return the intensity of the current force applied for the joint motor
         decimal getMotorForce(decimal timeStep) const;
+
+        /// Return a string representation
+        virtual std::string to_string() const override;
 };
 
 // Return true if the limits or the joint are enabled
@@ -399,6 +406,17 @@ inline decimal SliderJoint::getMotorForce(decimal timeStep) const {
 // Return the number of bytes used by the joint
 inline size_t SliderJoint::getSizeInBytes() const {
     return sizeof(SliderJoint);
+}
+
+// Return a string representation
+inline std::string SliderJoint::to_string() const {
+    return "SliderJoint{ lowerLimit=" + std::to_string(mLowerLimit) + ", upperLimit=" + std::to_string(mUpperLimit) +
+            "localAnchorPointBody1=" + mLocalAnchorPointBody1.to_string() + ", localAnchorPointBody2=" +
+            mLocalAnchorPointBody2.to_string() + ", sliderAxisBody1=" + mSliderAxisBody1.to_string() +
+            ", initOrientationDifferenceInv=" +
+            mInitOrientationDifferenceInv.to_string() + ", motorSpeed=" + std::to_string(mMotorSpeed) +
+            ", maxMotorForce=" + std::to_string(mMaxMotorForce) + ", isLimitEnabled=" +
+            (mIsLimitEnabled ? "true" : "false") + ", isMotorEnabled=" + (mIsMotorEnabled ? "true" : "false") + "}";
 }
 
 }

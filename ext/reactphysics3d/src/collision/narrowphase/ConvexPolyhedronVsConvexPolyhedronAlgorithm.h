@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,18 +27,22 @@
 #define	REACTPHYSICS3D_CONVEX_POLYHEDRON_VS_CONVEX_POLYHEDRON_ALGORITHM_H
 
 // Libraries
-#include "body/Body.h"
-#include "constraint/ContactPoint.h"
 #include "NarrowPhaseAlgorithm.h"
-
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
 
+// Declarations
+class Body;
+class ContactPoint;
+
 // Class ConvexPolyhedronVsConvexPolyhedronAlgorithm
 /**
  * This class is used to compute the narrow-phase collision detection
- * between two convex polyhedra.
+ * between two convex polyhedra. Here we do not use the GJK algorithm but
+ * we run the SAT algorithm to get the contact points and normal.
+ * This is based on the "Robust Contact Creation for Physics Simulation"
+ * presentation by Dirk Gregorius.
  */
 class ConvexPolyhedronVsConvexPolyhedronAlgorithm : public NarrowPhaseAlgorithm {
 

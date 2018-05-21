@@ -1,4 +1,0 @@
-/home/andreas/Development/extern/reactphysics3d-develop/build3/CMakeFiles/rebuild_cache.dir
-/home/andreas/Development/extern/reactphysics3d-develop/build3/CMakeFiles/edit_cache.dir
-/home/andreas/Development/extern/reactphysics3d-develop/build3/CMakeFiles/reactphysics3d.dir
-/home/andreas/Development/extern/reactphysics3d-develop/build3/CMakeFiles/test.dir

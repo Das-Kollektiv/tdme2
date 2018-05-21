@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,11 +27,14 @@
 #define REACTPHYSICS3D_TRIANGLE_MESH_H
 
 // Libraries
-#include <vector>
 #include <cassert>
-#include "TriangleVertexArray.h"
+#include "containers/List.h"
 
 namespace reactphysics3d {
+
+// Declarations
+class TriangleVertexArray;
+class MemoryManager;
 
 // Class TriangleMesh
 /**
@@ -46,12 +49,12 @@ class TriangleMesh {
     protected:
 
         /// All the triangle arrays of the mesh (one triangle array per part)
-        std::vector<TriangleVertexArray*> mTriangleArrays;
+        List<TriangleVertexArray*> mTriangleArrays;
 
     public:
 
         /// Constructor
-        TriangleMesh() = default;
+        TriangleMesh();
 
         /// Destructor
         ~TriangleMesh() = default;
@@ -67,17 +70,27 @@ class TriangleMesh {
 };
 
 // Add a subpart of the mesh
+/**
+ * @param triangleVertexArray Pointer to the TriangleVertexArray to add into the mesh
+ */
 inline void TriangleMesh::addSubpart(TriangleVertexArray* triangleVertexArray) {
-    mTriangleArrays.push_back(triangleVertexArray );
+    mTriangleArrays.add(triangleVertexArray );
 }
 
 // Return a pointer to a given subpart (triangle vertex array) of the mesh
+/**
+ * @param indexSubpart The index of the sub-part of the mesh
+ * @return A pointer to the triangle vertex array of a given sub-part of the mesh
+ */
 inline TriangleVertexArray* TriangleMesh::getSubpart(uint indexSubpart) const {
    assert(indexSubpart < mTriangleArrays.size());
    return mTriangleArrays[indexSubpart];
 }
 
-// Return the number of subparts of the mesh
+// Return the number of sub-parts of the mesh
+/**
+ * @return The number of sub-parts of the mesh
+ */
 inline uint TriangleMesh::getNbSubparts() const {
     return mTriangleArrays.size();
 }

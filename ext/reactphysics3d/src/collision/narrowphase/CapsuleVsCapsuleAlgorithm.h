@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2016 Daniel Chappuis                                       *
+* Copyright (c) 2010-2018 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -27,18 +27,22 @@
 #define	REACTPHYSICS3D_CAPSULE_VS_CAPSULE_ALGORITHM_H
 
 // Libraries
-#include "body/Body.h"
-#include "constraint/ContactPoint.h"
 #include "NarrowPhaseAlgorithm.h"
-
 
 /// Namespace ReactPhysics3D
 namespace reactphysics3d {
 
+// Declarations
+class Body;
+class ContactPoint;
+
 // Class CapsuleVsCapsuleAlgorithm
 /**
  * This class is used to compute the narrow-phase collision detection
- * between two capsules collision shapes.
+ * between two capsules collision shapes. We do not use the GJK or SAT
+ * algorithm here. We directly compute the contact points and contact normal.
+ * This is based on the "Robust Contact Creation for Physics Simulation"
+ * presentation by Dirk Gregorius.
  */
 class CapsuleVsCapsuleAlgorithm : public NarrowPhaseAlgorithm {
 
