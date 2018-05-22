@@ -31,28 +31,20 @@ float Sphere::getRadius() const
 	return radius;
 }
 
-bool Sphere::setScale(const Vector3& scale) {
-	if (this->scale.equals(scale) == false) {
-		// store new scale
-		this->scale.set(scale);
+void Sphere::setScale(const Vector3& scale) {
+	// store new scale
+	this->scale.set(scale);
 
-		// remove old collision shape
-		if (collisionShape != nullptr) delete collisionShape;
+	// remove old collision shape
+	if (collisionShape != nullptr) delete collisionShape;
 
-		collisionShapeLocalTranslation.set(center).scale(scale);
-		collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
-		collisionShape = new reactphysics3d::SphereShape(
-			Math::max(Math::EPSILON, radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY())))
-		);
-		// compute bounding box
-		computeBoundingBox();
-
-		//
-		return true;
-	}
-
-	//
-	return false;
+	collisionShapeLocalTranslation.set(center).scale(scale);
+	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
+	collisionShape = new reactphysics3d::SphereShape(
+		Math::max(Math::EPSILON, radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY())))
+	);
+	// compute bounding box
+	computeBoundingBox();
 }
 
 BoundingVolume* Sphere::clone() const

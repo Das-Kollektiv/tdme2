@@ -221,17 +221,11 @@ ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& faces
 	setScale(scale);
 }
 
-bool ConvexMesh::setScale(const Vector3& scale) {
-	if (this->scale.equals(scale) == false) {
-		// store new scale
-		this->scale.set(scale);
-		// recreate convex mesh
-		createConvexMesh(vertices, facesVerticesCount, indices, scale);
-		//
-		return true;
-	}
-	//
-	return false;
+void ConvexMesh::setScale(const Vector3& scale) {
+	// store new scale
+	this->scale.set(scale);
+	// recreate convex mesh
+	createConvexMesh(vertices, facesVerticesCount, indices, scale);
 }
 
 BoundingVolume* ConvexMesh::clone() const

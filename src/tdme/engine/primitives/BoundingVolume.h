@@ -66,7 +66,7 @@ public:
 	 * Set local scale
 	 * @return if collision shape had been recreated
 	 */
-	virtual bool setScale(const Vector3& scale) = 0;
+	virtual void setScale(const Vector3& scale) = 0;
 
 	/**
 	 * @return center

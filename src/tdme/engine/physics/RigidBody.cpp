@@ -103,9 +103,6 @@ RigidBody::~RigidBody() {
 }
 
 void RigidBody::updateProxyShape(float mass, uint16_t collideWithMaskBits, uint16_t collisionCategoryBits) {
-	if (proxyShape != nullptr) {
-		rigidBody->removeCollisionShape(proxyShape);
-	}
 	proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
 	proxyShape->setCollideWithMaskBits(collideWithMaskBits);
 	proxyShape->setCollisionCategoryBits(collisionCategoryBits);
@@ -287,8 +284,13 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
 	if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
 	// scale bounding volume and recreate it if nessessary
-	if (boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == true) {
-		updateProxyShape(proxyShape->getMass(), proxyShape->getCollideWithMaskBits(), proxyShape->getCollisionCategoryBits());
+	if (boundingVolume->getScale().equals(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == false) {
+		auto proxyShapeMass = proxyShape->getMass();
+		auto proxyShapeCollideWithMaskBits = proxyShape->getCollideWithMaskBits();
+		auto proxyShapeCollisionCategoryBits = proxyShape->getCollisionCategoryBits();
+		rigidBody->removeCollisionShape(proxyShape);
+		boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
+		updateProxyShape(proxyShapeMass, proxyShapeCollideWithMaskBits, proxyShapeCollisionCategoryBits);
 	}
 	// set local to body transform, proxy shape scaling
 	proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
