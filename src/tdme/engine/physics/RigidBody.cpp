@@ -97,6 +97,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 }
 
 RigidBody::~RigidBody() {
+	// TODO: on cloned terrain bounding volumes we would delete the bv twice
 	delete boundingVolume;
 }
 

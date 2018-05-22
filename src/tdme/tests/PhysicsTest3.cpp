@@ -85,16 +85,6 @@ void PhysicsTest3::main(int argc, char** argv)
 
 void PhysicsTest3::display()
 {
-	for (auto i = 0; i < BOX_COUNT; i++) {
-		auto body = world->getRigidBody("box" + to_string(i));
-		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
-		body->getLinearVelocity().setZ(body->getLinearVelocity().getZ() * (1.0f - 1.0f / 10.0f));
-	}
-	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
-		auto body = world->getRigidBody("box" + to_string(BOX_COUNT + i));
-		body->getLinearVelocity().setX(body->getLinearVelocity().getX() * (1.0f - 1.0f / 10.0f));
-		body->getLinearVelocity().setZ(body->getLinearVelocity().getZ() * (1.0f - 1.0f / 10.0f));
-	}
 	auto capsuleBig1 = world->getRigidBody("capsulebig1");
 	if (keyLeft)
 		capsuleBig1->getLinearVelocity().setX(8.0f);
