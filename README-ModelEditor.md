@@ -37,6 +37,9 @@ TDMEModelEditor
             - transparent faces
             - material count
 
+    - What is WIP
+        - setting up physic properties
+
     - Technology
         - uses TDME2
 

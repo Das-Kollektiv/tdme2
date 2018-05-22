@@ -58,20 +58,7 @@ TDME2
             - multiple renderer
               - GL2, GL3(core) and GLES2
         - physics
-            - discrete collision detection
-                - sphere
-                - capsule
-                - axis aligned bounding boxes
-                - oriented bounding boxes
-                - triangle
-                - convex mesh
-            - rigid body simulator
-              - broadphase collision detection
-                  - uses oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
-                  - additional bounding box <> bounding box test
-              - narrowphase collision detection
-              - collision filtering by type
-              - sleeping technology
+            - uses ReactPhysics3D 0.7.0, needs some more integration still
         - path finding
             - uses A*
             - is paired with physics world to determine if a "cell" is walkable
@@ -123,15 +110,12 @@ TDME2
     - What does it (maybe still) lack
         - animation blending
         - physics
-          - bounding volume hierarchies
-          - multiple bounding volumes for a rigid body
-          - rag doll / joints / springs
+          - some more RP3D integration
         - example games
         - documentation
 
     - What is WIP or planned
         - LOD
-        - rigid body simulator(needs to be updated to newer "ReactPhysics3D 0.5")
         - GUI system port needs to be finished(Memory Management and other minor things)
         - Logic documentation/comments need to be imported from TDME(-JAVA)
         - A demonstration video
@@ -157,7 +141,7 @@ TDME2
 	            - zlib
 	            - libpng
 	            - tinyxml
-	            - (collision resolving of) ReactPhysics3D
+	            - ReactPhysics3D
 	            - FBXSDK
 	            - V-HACD
         - targeted platforms and its current state
