@@ -7,11 +7,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 
 using std::vector;
 
+using tdme::engine::Transformations;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::Object3DModel;
@@ -38,9 +40,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param model
-	 * @param scale
+	 * @param transformations
 	 */
-	TerrainMesh(Object3DModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+	TerrainMesh(Object3DModel* model, const Transformations& transformations = Transformations());
 
 	/**
 	 * Destructor

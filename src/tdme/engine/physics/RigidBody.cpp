@@ -54,7 +54,7 @@ constexpr uint16_t RigidBody::TYPEIDS_ALL;
 constexpr uint16_t RigidBody::TYPEID_STATIC;
 constexpr uint16_t RigidBody::TYPEID_DYNAMIC;
 
-RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix)
+RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix)
 {
 	this->world = world;
 	this->id = id;
@@ -62,6 +62,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
 	this->boundingVolume = dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr?boundingVolume:boundingVolume->clone();
 	this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
+	this->type = type;
 	switch (type) {
 		case TYPE_STATIC:
 			rigidBody->setType(reactphysics3d::BodyType::STATIC);
@@ -91,7 +92,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	rigidBody->getMaterial().setBounciness(restitution);
 	rigidBody->setMass(mass);
 	rigidBody->setUserData(this);
-	updateProxyShape(mass, ~0, typeId);
+	updateProxyShape(mass, ~0, collisionTypeId);
 	fromTransformations(transformations);
 	setEnabled(enabled);
 }
@@ -143,12 +144,16 @@ void RigidBody::setRootId(const string& rootId) {
 	this->rootId = rootId;
 }
 
-uint16_t RigidBody::getTypeId()
+int32_t RigidBody::getType() {
+	return type;
+}
+
+uint16_t RigidBody::getCollisionTypeId()
 {
 	return this->proxyShape->getCollisionCategoryBits();
 }
 
-void RigidBody::setTypeId(uint16_t typeId)
+void RigidBody::setCollisionTypeId(uint16_t typeId)
 {
 	this->proxyShape->setCollisionCategoryBits(typeId);
 }
@@ -267,6 +272,7 @@ const Transformations& RigidBody::getTransformations() {
 
 void RigidBody::fromTransformations(const Transformations& transformations)
 {
+	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) return;
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
 	// "scale vector transformed" which takes transformations scale and orientation into account
@@ -277,6 +283,9 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 			transformations.getScale().getY(),
 			transformations.getScale().getZ()
 		);
+	if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
+	if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
+	if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
 	// scale bounding volume and recreate it if nessessary
 	if (boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == true) {
 		updateProxyShape(proxyShape->getMass(), proxyShape->getCollideWithMaskBits(), proxyShape->getCollisionCategoryBits());

@@ -157,8 +157,9 @@ public:
 
 	/** 
 	 * Clone this world
+	 * @param collision type ids to clone
 	 */
-	World* clone();
+	World* clone(uint16_t collisionTypeIds);
 
 	/** 
 	 * Updates given world with this world

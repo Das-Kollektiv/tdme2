@@ -58,6 +58,7 @@ private:
 	reactphysics3d::ProxyShape* proxyShape { nullptr };
 	string id {  };
 	string rootId {  };
+	int32_t type {  };
 	bool enabled {  };
 	Matrix4x4 inverseInertiaMatrix;
 	Vector3 linearVelocity;
@@ -99,7 +100,7 @@ private:
 	 * @param restitution
 	 * @param mass in kg
 	 */
-	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t typeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/**
 	 * Destructor
@@ -149,15 +150,20 @@ public:
 	void setRootId(const string& rootId);
 
 	/**
+	 * @return type
+	 */
+	int32_t getType();
+
+	/**
 	 * @return type id
 	 */
-	uint16_t getTypeId();
+	uint16_t getCollisionTypeId();
 
 	/**
 	 * Set collision type id
 	 * @param type id
 	 */
-	void setTypeId(uint16_t typeId);
+	void setCollisionTypeId(uint16_t typeId);
 
 	/** 
 	 * @return collision type ids bitmask

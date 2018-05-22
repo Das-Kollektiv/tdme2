@@ -23,29 +23,33 @@ TerrainMesh::TerrainMesh()
 {
 }
 
-TerrainMesh::TerrainMesh(Object3DModel* model, const Vector3& scale)
+TerrainMesh::TerrainMesh(Object3DModel* model, const Transformations& transformations)
 {
 	// fetch vertices and indices
 	vector<Triangle> triangles;
 	model->getFaceTriangles(&triangles);
+	Vector3 vertexTransformed;
 	for (auto& triangle: triangles) {
 		auto verticesIdx = vertices.size() / 3;
-		vertices.push_back(triangle.getVertices()[0][0]);
-		vertices.push_back(triangle.getVertices()[0][1]);
-		vertices.push_back(triangle.getVertices()[0][2]);
-		vertices.push_back(triangle.getVertices()[1][0]);
-		vertices.push_back(triangle.getVertices()[1][1]);
-		vertices.push_back(triangle.getVertices()[1][2]);
-		vertices.push_back(triangle.getVertices()[2][0]);
-		vertices.push_back(triangle.getVertices()[2][1]);
-		vertices.push_back(triangle.getVertices()[2][2]);
+		transformations.getTransformationsMatrix().multiply(triangle.getVertices()[0], vertexTransformed);
+		vertices.push_back(vertexTransformed[0]);
+		vertices.push_back(vertexTransformed[1]);
+		vertices.push_back(vertexTransformed[2]);
+		transformations.getTransformationsMatrix().multiply(triangle.getVertices()[1], vertexTransformed);
+		vertices.push_back(vertexTransformed[0]);
+		vertices.push_back(vertexTransformed[1]);
+		vertices.push_back(vertexTransformed[2]);
+		transformations.getTransformationsMatrix().multiply(triangle.getVertices()[2], vertexTransformed);
+		vertices.push_back(vertexTransformed[0]);
+		vertices.push_back(vertexTransformed[1]);
+		vertices.push_back(vertexTransformed[2]);
 		indices.push_back(verticesIdx + 0);
 		indices.push_back(verticesIdx + 1);
 		indices.push_back(verticesIdx + 2);
 	}
 	vertices.shrink_to_fit();
 	indices.shrink_to_fit();
-	setScale(scale);
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 TerrainMesh::~TerrainMesh() {
@@ -81,7 +85,7 @@ bool TerrainMesh::setScale(const Vector3& scale) {
 		triangleMesh->addSubpart(triangleVertexArray);
 
 		// create the concave mesh shape
-		collisionShape = new reactphysics3d::ConcaveMeshShape(triangleMesh, reactphysics3d::Vector3(scale.getX(), scale.getY(), scale.getZ()));
+		collisionShape = new reactphysics3d::ConcaveMeshShape(triangleMesh);
 
 		// compute bounding box
 		computeBoundingBox();

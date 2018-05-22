@@ -240,11 +240,12 @@ void PhysicsTest3::initialize()
 		auto _terrainModel = ModelReader::read("resources/tests/environment/terrain_test", "terrain_test4.dae");
 		entity = new Object3D("terrain", _terrainModel);
 		entity->setTranslation(Vector3(0.0f, -4.0f, 0.0f));
+		entity->setScale(Vector3(2.0f, 2.0f, 1.0f));
 		entity->update();
 		engine->addEntity(entity);
 		Object3DModel terrainModel(_terrainModel);
-		auto terrainMesh = new TerrainMesh(&terrainModel);
-		world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), terrainMesh, 0.5f);
+		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransformations());
+		world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, Transformations(), terrainMesh, 0.5f);
 		auto _barrel = ModelReader::read("resources/tests/models/barrel", "barrel.dae");
 		auto barrelBoundingVolume = new ConvexMesh(new Object3DModel(_barrel));
 		entity = new Object3D("barrel1", _barrel);

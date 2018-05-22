@@ -336,13 +336,13 @@ void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& 
 
 		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::MODEL &&
 			object->getEntity()->getModelSettings()->isTerrainMesh() == true) {
-			Object3DModel terrainModel(object->getEntity()->getModel());
-			auto terrainMesh = new TerrainMesh(&terrainModel);
 			Transformations transformations;
 			transformations.fromTransformations(object->getTransformations());
 			transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 			transformations.update();
-			auto rigidBody = world->addStaticRigidBody(object->getId(), true, RIGIDBODY_TYPEID_STATIC, transformations, terrainMesh, 1.0f);
+			Object3DModel terrainModel(object->getEntity()->getModel());
+			auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
+			auto rigidBody = world->addStaticRigidBody(object->getId(), true, RIGIDBODY_TYPEID_STATIC, Transformations(), terrainMesh, 1.0f);
 			rigidBodies.push_back(rigidBody);
 		} else {
 			for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
