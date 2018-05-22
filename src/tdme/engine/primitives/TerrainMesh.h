@@ -28,7 +28,7 @@ private:
 	vector<float> vertices;
 	vector<int32_t> indices;
 	reactphysics3d::TriangleVertexArray* triangleVertexArray { nullptr };
-	reactphysics3d::TriangleMesh triangleMesh;
+	reactphysics3d::TriangleMesh* triangleMesh { nullptr };
 public:
 	/**
 	 * Public constructor
@@ -47,5 +47,6 @@ public:
 	~TerrainMesh();
 
 	// overrides
+	bool setScale(const Vector3& scale) override;
 	BoundingVolume* clone() const override;
 };

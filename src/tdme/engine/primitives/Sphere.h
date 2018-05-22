@@ -26,6 +26,7 @@ public:
 	float getRadius() const;
 
 	// overrides
+	bool setScale(const Vector3& scale) override;
 	BoundingVolume* clone() const override;
 
 	/**

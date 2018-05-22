@@ -23,18 +23,36 @@ Sphere::Sphere(const Vector3& center, float radius)
 {
 	this->center.set(center);
 	this->radius = radius;
-	collisionShapeLocalTranslation.set(center);
-	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
-	collisionShape = new reactphysics3d::SphereShape(
-		Math::max(Math::EPSILON, radius)
-	);
-	// compute bounding box
-	computeBoundingBox();
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 float Sphere::getRadius() const
 {
 	return radius;
+}
+
+bool Sphere::setScale(const Vector3& scale) {
+	if (this->scale.equals(scale) == false) {
+		// store new scale
+		this->scale.set(scale);
+
+		// remove old collision shape
+		if (collisionShape != nullptr) delete collisionShape;
+
+		collisionShapeLocalTranslation.set(center).scale(scale);
+		collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
+		collisionShape = new reactphysics3d::SphereShape(
+			Math::max(Math::EPSILON, radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY())))
+		);
+		// compute bounding box
+		computeBoundingBox();
+
+		//
+		return true;
+	}
+
+	//
+	return false;
 }
 
 BoundingVolume* Sphere::clone() const

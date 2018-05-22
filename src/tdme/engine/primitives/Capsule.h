@@ -32,7 +32,9 @@ public:
 	 */
 	const Vector3& getB() const;
 
+
 	// overrides
+	bool setScale(const Vector3& scale) override;
 	BoundingVolume* clone() const override;
 
 	/**
@@ -48,5 +50,4 @@ private:
 	Vector3 a {  };
 	Vector3 b {  };
 	float radius {  };
-
 };

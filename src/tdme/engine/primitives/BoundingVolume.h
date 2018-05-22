@@ -33,9 +33,10 @@ class tdme::engine::primitives::BoundingVolume
 	friend class PrimitiveModel;
 
 protected:
+	Vector3 scale {  };
 	Vector3 center {  };
 	Vector3 collisionShapeLocalTranslation {  };
-	reactphysics3d::CollisionShape* collisionShape {  };
+	reactphysics3d::CollisionShape* collisionShape { nullptr };
 	reactphysics3d::Transform collisionShapeLocalTransform {  };
 	reactphysics3d::Transform collisionShapeTransform {  };
 	reactphysics3d::AABB collisionShapeAABB {  };
@@ -54,6 +55,18 @@ public:
 	 * @param transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations);
+
+	/**
+	 * Get local scale
+	 * @return scale
+	 */
+	const Vector3& getScale();
+
+	/**
+	 * Set local scale
+	 * @return if collision shape had been recreated
+	 */
+	virtual bool setScale(const Vector3& scale) = 0;
 
 	/**
 	 * @return center

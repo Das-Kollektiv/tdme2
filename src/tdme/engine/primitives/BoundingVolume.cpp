@@ -39,18 +39,28 @@ void BoundingVolume::computeBoundingBox() {
 
 void BoundingVolume::fromTransformations(const Transformations& transformations) {
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
-	//reactphysics3d::Vector3 scaleVector = reactphysics3d::Vector3(transformations.getScale().getX(), transformations.getScale().getY(), transformations.getScale().getZ());
-	// TODO: a.drewke
-	// collisionShape->setLocalScaling(scaleVector);
-	collisionShapeTransform.setFromOpenGL(transformationsMatrix.getArray().data());
-	collisionShapeLocalTransform.setPosition(
+
+	//
+	auto scaleVectorTransformed =
+		collisionShapeLocalTransform.getOrientation() *
 		reactphysics3d::Vector3(
-			collisionShapeLocalTranslation.getX(),
-			collisionShapeLocalTranslation.getY(),
-			collisionShapeLocalTranslation.getZ()
-		)
-	);
+			transformations.getScale().getX(),
+			transformations.getScale().getY(),
+			transformations.getScale().getZ()
+		);
+
+	// set bounding volume scale
+	setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
+
+	// apply rotation
+	collisionShapeTransform.setFromOpenGL(transformationsMatrix.getArray().data());
+
+	// compute bounding box
 	computeBoundingBox();
+}
+
+const Vector3& BoundingVolume::getScale() {
+	return scale;
 }
 
 const Vector3& BoundingVolume::getCenter() const {

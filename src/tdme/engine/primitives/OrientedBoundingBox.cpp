@@ -47,32 +47,7 @@ OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& a
 	this->axes[1].set(axis1);
 	this->axes[2].set(axis2);
 	this->halfExtension.set(halfExtension);
-	collisionShapeLocalTranslation.set(center);
-	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
-	collisionShapeLocalTransform.setOrientation(
-		reactphysics3d::Quaternion(
-			reactphysics3d::Matrix3x3(
-				this->axes[0].getX(),
-				this->axes[0].getY(),
-				this->axes[0].getZ(),
-				this->axes[1].getX(),
-				this->axes[1].getY(),
-				this->axes[1].getZ(),
-				this->axes[2].getX(),
-				this->axes[2].getY(),
-				this->axes[2].getZ()
-			)
-		)
-	);
-	collisionShape = new reactphysics3d::BoxShape(
-		reactphysics3d::Vector3(
-			Math::max(Math::EPSILON, halfExtension.getX()),
-			Math::max(Math::EPSILON, halfExtension.getY()),
-			Math::max(Math::EPSILON, halfExtension.getZ())
-		)
-	);
-	// compute bounding box
-	computeBoundingBox();
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
@@ -82,32 +57,7 @@ OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
 	this->axes[0].set(AABB_AXIS_X);
 	this->axes[1].set(AABB_AXIS_Y);
 	this->axes[2].set(AABB_AXIS_Z);
-	collisionShapeLocalTranslation.set(center);
-	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
-	collisionShapeLocalTransform.setOrientation(
-		reactphysics3d::Quaternion(
-			reactphysics3d::Matrix3x3(
-				this->axes[0].getX(),
-				this->axes[0].getY(),
-				this->axes[0].getZ(),
-				this->axes[1].getX(),
-				this->axes[1].getY(),
-				this->axes[1].getZ(),
-				this->axes[2].getX(),
-				this->axes[2].getY(),
-				this->axes[2].getZ()
-			)
-		)
-	);
-	collisionShape = new reactphysics3d::BoxShape(
-		reactphysics3d::Vector3(
-			Math::max(0.1f, halfExtension.getX()),
-			Math::max(0.1f, halfExtension.getY()),
-			Math::max(0.1f, halfExtension.getZ())
-		)
-	);
-	// compute bounding box
-	computeBoundingBox();
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 OrientedBoundingBox::OrientedBoundingBox() 
@@ -117,32 +67,7 @@ OrientedBoundingBox::OrientedBoundingBox()
 	this->axes[1].set(AABB_AXIS_Y);
 	this->axes[2].set(AABB_AXIS_Z);
 	this->halfExtension.set(0.0f, 0.0f, 0.0f);
-	collisionShapeLocalTranslation.set(center);
-	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
-	collisionShapeLocalTransform.setOrientation(
-		reactphysics3d::Quaternion(
-			reactphysics3d::Matrix3x3(
-				this->axes[0].getX(),
-				this->axes[0].getY(),
-				this->axes[0].getZ(),
-				this->axes[1].getX(),
-				this->axes[1].getY(),
-				this->axes[1].getZ(),
-				this->axes[2].getX(),
-				this->axes[2].getY(),
-				this->axes[2].getZ()
-			)
-		)
-	);
-	collisionShape = new reactphysics3d::BoxShape(
-		reactphysics3d::Vector3(
-			Math::max(0.1f, halfExtension.getX()),
-			Math::max(0.1f, halfExtension.getY()),
-			Math::max(0.1f, halfExtension.getZ())
-		)
-	);
-	// compute bounding box
-	computeBoundingBox();
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 const array<Vector3, 8> OrientedBoundingBox::getVertices() const {
@@ -216,6 +141,49 @@ const array<Vector3, 3>* OrientedBoundingBox::getAxes() const
 const Vector3& OrientedBoundingBox::getHalfExtension() const
 {
 	return halfExtension;
+}
+
+bool OrientedBoundingBox::setScale(const Vector3& scale) {
+	if (this->scale.equals(scale) == false) {
+		// store new scale
+		this->scale.set(scale);
+
+		// remove old collision shape
+		if (collisionShape != nullptr) delete collisionShape;
+
+		//
+		collisionShapeLocalTranslation.set(center).scale(scale);
+		collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
+		collisionShapeLocalTransform.setOrientation(
+			reactphysics3d::Quaternion(
+				reactphysics3d::Matrix3x3(
+					this->axes[0].getX(),
+					this->axes[0].getY(),
+					this->axes[0].getZ(),
+					this->axes[1].getX(),
+					this->axes[1].getY(),
+					this->axes[1].getZ(),
+					this->axes[2].getX(),
+					this->axes[2].getY(),
+					this->axes[2].getZ()
+				)
+			)
+		);
+		collisionShape = new reactphysics3d::BoxShape(
+			reactphysics3d::Vector3(
+				Math::max(Math::EPSILON, halfExtension.getX() * scale.getX()),
+				Math::max(Math::EPSILON, halfExtension.getY() * scale.getY()),
+				Math::max(Math::EPSILON, halfExtension.getZ() * scale.getZ())
+			)
+		);
+		// compute bounding box
+		computeBoundingBox();
+		//
+		return true;
+	}
+
+	//
+	return false;
 }
 
 BoundingVolume* OrientedBoundingBox::clone() const

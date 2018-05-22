@@ -53,9 +53,9 @@ public:
 	static constexpr uint16_t TYPEIDS_ALL { 65535 };
 
 private:
-	World* world {  };
-	reactphysics3d::RigidBody* rigidBody;
-	reactphysics3d::ProxyShape* proxyShape;
+	World* world { nullptr };
+	reactphysics3d::RigidBody* rigidBody { nullptr };
+	reactphysics3d::ProxyShape* proxyShape { nullptr };
 	string id {  };
 	string rootId {  };
 	bool enabled {  };
@@ -105,6 +105,14 @@ private:
 	 * Destructor
 	 */
 	~RigidBody();
+
+	/**
+	 * Update proxy shape
+	 * @param mass
+	 * @param collide with mask bits
+	 * @param collision category bits
+	 */
+	void updateProxyShape(float mass, uint16_t collideWithMaskBits, uint16_t collisionCategoryBits);
 
 public:
 

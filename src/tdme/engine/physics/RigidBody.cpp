@@ -90,16 +90,23 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	rigidBody->getMaterial().setFrictionCoefficient(friction);
 	rigidBody->getMaterial().setBounciness(restitution);
 	rigidBody->setMass(mass);
-	this->proxyShape = rigidBody->addCollisionShape(this->boundingVolume->collisionShape, this->boundingVolume->collisionShapeLocalTransform, mass);
-	this->proxyShape->setCollideWithMaskBits(~0);
-	this->proxyShape->setCollisionCategoryBits(typeId);
-	this->rigidBody->setUserData(this);
+	rigidBody->setUserData(this);
+	updateProxyShape(mass, ~0, typeId);
 	fromTransformations(transformations);
 	setEnabled(enabled);
 }
 
 RigidBody::~RigidBody() {
 	delete boundingVolume;
+}
+
+void RigidBody::updateProxyShape(float mass, uint16_t collideWithMaskBits, uint16_t collisionCategoryBits) {
+	if (proxyShape != nullptr) {
+		rigidBody->removeCollisionShape(proxyShape);
+	}
+	proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
+	proxyShape->setCollideWithMaskBits(collideWithMaskBits);
+	proxyShape->setCollisionCategoryBits(collisionCategoryBits);
 }
 
 Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
@@ -269,14 +276,10 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 			transformations.getScale().getY(),
 			transformations.getScale().getZ()
 		);
-	// set bv local translation
-	boundingVolume->collisionShapeLocalTransform.setPosition(
-		reactphysics3d::Vector3(
-			boundingVolume->collisionShapeLocalTranslation.getX(),
-			boundingVolume->collisionShapeLocalTranslation.getY(),
-			boundingVolume->collisionShapeLocalTranslation.getZ()
-		) * scaleVectorTransformed
-	);
+	// scale bounding volume and recreate it if nessessary
+	if (boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == true) {
+		updateProxyShape(proxyShape->getMass(), proxyShape->getCollideWithMaskBits(), proxyShape->getCollisionCategoryBits());
+	}
 	// set local to body transform, proxy shape scaling
 	proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
 	// rigig body transform

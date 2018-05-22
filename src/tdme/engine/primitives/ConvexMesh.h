@@ -46,6 +46,7 @@ private:
 
 public:
 	// overriden methods
+	bool setScale(const Vector3& scale) override;
 	BoundingVolume* clone() const override;
 
 	/**

@@ -22,7 +22,7 @@ using tdme::utils::Console;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 
-void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, bool haveLocalTranslation, const Vector3& localTranslation) {
+void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
 	// delete old collision shape if we have any
 	if (collisionShape != nullptr) delete collisionShape;
 	if (polyhedronMesh != nullptr) delete polyhedronMesh;
@@ -31,20 +31,19 @@ void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices,
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
 
 	// check if local translation is given
-	if (haveLocalTranslation == true) {
-		collisionShapeLocalTranslation.set(localTranslation);
-	} else {
-		// determine center/position transformed
-		collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
-		for (auto vertexIdx: indices) {
-			auto& vertex = vertices[vertexIdx];
-			collisionShapeLocalTranslation.add(vertex);
-		}
-		collisionShapeLocalTranslation.scale(1.0f / indices.size());
+	// determine center/position transformed
+	collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
+	for (auto vertexIdx: indices) {
+		auto& vertex = vertices[vertexIdx];
+		collisionShapeLocalTranslation.add(vertex);
 	}
+	collisionShapeLocalTranslation.scale(1.0f / indices.size());
 
 	// center
 	center.set(collisionShapeLocalTranslation);
+
+	// scale collision shape local translation
+	collisionShapeLocalTranslation.scale(scale);
 
 	// local transformations
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
@@ -57,7 +56,8 @@ void ConvexMeshBoundingVolume::createConvexMesh(const vector<Vector3>& vertices,
 	Vector3 vertexTransformed;
 	for (auto& vertex: vertices) {
 		vertexTransformed.set(vertex);
-		vertexTransformed.sub(collisionShapeLocalTranslation);
+		vertexTransformed.sub(center);
+		vertexTransformed.scale(scale);
 		verticesBuffer.put(vertexTransformed.getArray());
 	}
 	for (auto& index: indices) {

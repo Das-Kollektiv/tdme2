@@ -45,32 +45,53 @@ TerrainMesh::TerrainMesh(Object3DModel* model)
 	}
 	vertices.shrink_to_fit();
 	indices.shrink_to_fit();
-
-	// RP3D triangle vertex array
-	triangleVertexArray = new reactphysics3d::TriangleVertexArray(
-		vertices.size() / 3,
-		vertices.data(),
-		3 * sizeof(float),
-		vertices.size() / 3 / 3,
-		indices.data(),
-		3 * sizeof(int),
-		reactphysics3d::TriangleVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
-		reactphysics3d::TriangleVertexArray::IndexDataType::INDEX_INTEGER_TYPE
-	);
-
-	// add the triangle vertex array to the triangle mesh
-	triangleMesh.addSubpart(triangleVertexArray);
-
-	// create the concave mesh shape
-	collisionShape = new reactphysics3d::ConcaveMeshShape(&triangleMesh);
-
-	// compute bounding box
-	computeBoundingBox();
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 TerrainMesh::~TerrainMesh() {
-	delete triangleVertexArray;
-	delete collisionShape;
+	if (collisionShape != nullptr) delete collisionShape;
+	if (triangleMesh != nullptr) delete triangleMesh;
+	if (triangleVertexArray != nullptr) delete triangleVertexArray;
+}
+
+bool TerrainMesh::setScale(const Vector3& scale) {
+	if (this->scale.equals(scale) == false) {
+		// store new scale
+		this->scale.set(scale);
+
+		// delete old collision shape
+		if (collisionShape != nullptr) delete collisionShape;
+		if (triangleMesh != nullptr) delete triangleMesh;
+		if (triangleVertexArray != nullptr) delete triangleVertexArray;
+
+		// RP3D triangle vertex array
+		triangleVertexArray = new reactphysics3d::TriangleVertexArray(
+			vertices.size() / 3,
+			vertices.data(),
+			3 * sizeof(float),
+			vertices.size() / 3 / 3,
+			indices.data(),
+			3 * sizeof(int),
+			reactphysics3d::TriangleVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
+			reactphysics3d::TriangleVertexArray::IndexDataType::INDEX_INTEGER_TYPE
+		);
+
+		// add the triangle vertex array to the triangle mesh
+		triangleMesh = new reactphysics3d::TriangleMesh();
+		triangleMesh->addSubpart(triangleVertexArray);
+
+		// create the concave mesh shape
+		collisionShape = new reactphysics3d::ConcaveMeshShape(triangleMesh, reactphysics3d::Vector3(scale.getX(), scale.getY(), scale.getZ()));
+
+		// compute bounding box
+		computeBoundingBox();
+
+		//
+		return true;
+	}
+
+	//
+	return false;
 }
 
 TerrainMesh::BoundingVolume* TerrainMesh::clone() const {

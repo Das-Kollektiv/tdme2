@@ -211,16 +211,27 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 	}
 
 	// create convex mesh
-	createConvexMesh(vertices, facesVerticesCount, indices);
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
 ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices) {
 	this->vertices = vertices;
 	this->facesVerticesCount = facesVerticesCount;
 	this->indices = indices;
+	setScale(Vector3(1.0f, 1.0f, 1.0f));
+}
 
-	// create convex mesh
-	createConvexMesh(vertices, facesVerticesCount, indices);
+bool ConvexMesh::setScale(const Vector3& scale) {
+	if (this->scale.equals(scale) == false) {
+		// store new scale
+		this->scale.set(scale);
+		// recreate convex mesh
+		createConvexMesh(vertices, facesVerticesCount, indices, scale);
+		//
+		return true;
+	}
+	//
+	return false;
 }
 
 BoundingVolume* ConvexMesh::clone() const

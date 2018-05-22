@@ -41,10 +41,9 @@ protected:
 	 * @param vertices
 	 * @param faces vertices count
 	 * @param indices
-	 * @param have local translation
-	 * @param local translation
+	 * @param scale
 	 */
-	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, bool haveLocalTranslation = false, const Vector3& localTranslation = Vector3());
+	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
 
 	/**
 	 * Destructor
