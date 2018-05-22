@@ -511,10 +511,8 @@ World* World::clone()
 
 void World::synch(RigidBody* clonedRigidBody, RigidBody* rigidBody)
 {
-	Console::println("World::synch()");
 	clonedRigidBody->setCollisionTypeIds(rigidBody->getCollisionTypeIds());
 	clonedRigidBody->setEnabled(rigidBody->isEnabled());
-	clonedRigidBody->setMass(rigidBody->getMass());
 	clonedRigidBody->setMass(rigidBody->getMass());
 	clonedRigidBody->getAngularVelocity().set(rigidBody->angularVelocity);
 	clonedRigidBody->getLinearVelocity().set(rigidBody->linearVelocity);

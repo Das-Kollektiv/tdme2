@@ -95,7 +95,7 @@ bool Capsule::setScale(const Vector3& scale) {
 
 		// create capsule
 		collisionShape = new reactphysics3d::CapsuleShape(
-			Math::max(Math::EPSILON, radius),
+			Math::max(Math::EPSILON, radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY()))),
 			Math::max(Math::EPSILON, bScaled.clone().sub(aScaled).computeLength())
 		);
 
