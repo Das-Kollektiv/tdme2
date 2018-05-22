@@ -21,6 +21,7 @@ using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Matrix4x4;
@@ -47,6 +48,14 @@ private:
 	vector<RigidBody*> rigidBodiesDynamic {  };
 	map<string, RigidBody*> rigidBodiesById {  };
 	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
+	vector<WorldListener*> worldListeners { };
+
+	/**
+	 * Synch into cloned rigid body from rigid body
+	 * @param cloned rigid body
+	 * @param rigid body
+	 */
+	void synch(RigidBody* clonedRigidBody, RigidBody* rigidBody);
 
 public:
 
@@ -107,8 +116,6 @@ public:
 	 */
 	void synch(Engine* engine);
 
-public:
-
 	/** 
 	 * Determine height on x,y,u while respecting step up max
 	 * @param type ids
@@ -153,23 +160,24 @@ public:
 	 */
 	World* clone();
 
-private:
-
-	/** 
-	 * Synch into cloned rigid body from rigid body
-	 * @param cloned rigid body
-	 * @param rigid body
-	 */
-	void synch(RigidBody* clonedRigidBody, RigidBody* rigidBody);
-
-public:
-
 	/** 
 	 * Updates given world with this world
 	 * Given world should be a clone of this world
 	 * @param world
 	 */
 	void synch(World* world);
+
+	/**
+	 * Add a world listener
+	 * @param listener
+	 */
+	void addWorldListener(WorldListener* listener);
+
+	/**
+	 * Remove a world listener
+	 * @param listener
+	 */
+	void removeWorldListener(WorldListener* listener);
 
 	/**
 	 * Public constructor
@@ -180,4 +188,5 @@ public:
 	 * Destructor
 	 */
 	~World();
+
 };

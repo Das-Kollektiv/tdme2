@@ -10,6 +10,7 @@ namespace physics {
 			class CollisionResponse_Entity;
 			class RigidBody;
 			class World;
+			class WorldListener;
 }  // namespace physics
 }  // namespace engine
 }  // namespace tdme

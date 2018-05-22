@@ -23,6 +23,7 @@
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
 #include <tdme/engine/physics/RigidBody.h>
+#include <tdme/engine/physics/WorldListener.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/ConvexMeshBoundingVolume.h>
@@ -50,6 +51,7 @@ using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::CollisionResponse_Entity;
 using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::ConvexMeshBoundingVolume;
 using tdme::engine::primitives::BoundingVolume;
@@ -83,15 +85,22 @@ RigidBody* World::addRigidBody(const string& id, bool enabled, uint16_t typeId, 
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesDynamic.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
+	for (auto listener: worldListeners) {
+		listener->onAddedRigidBody(id, RigidBody::TYPE_DYNAMIC, enabled, typeId, boundingVolume, transformations, restitution, friction, mass, inertiaMatrix);
+	}
 	return rigidBody;
 }
 
 RigidBody* World::addStaticRigidBody(const string& id, bool enabled, uint16_t typeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction)
 {
 	removeRigidBody(id);
-	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_STATIC, enabled, typeId, boundingVolume, transformations, 0.0f, friction, 1000000.0f, RigidBody::computeInertiaMatrix(boundingVolume, 0.0f, 0.0f, 0.0f, 0.0f));
+	auto inertiaMatrix = RigidBody::computeInertiaMatrix(boundingVolume, 0.0f, 0.0f, 0.0f, 0.0f);
+	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_STATIC, enabled, typeId, boundingVolume, transformations, 0.0f, friction, 0.0f, inertiaMatrix);
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
+	for (auto listener: worldListeners) {
+		listener->onAddedRigidBody(id, RigidBody::TYPE_STATIC, enabled, typeId, boundingVolume, transformations, 0.0f, friction, 0.0f, inertiaMatrix);
+	}
 	return rigidBody;
 }
 
@@ -112,6 +121,9 @@ void World::removeRigidBody(const string& id) {
 		rigidBodies.erase(remove(rigidBodies.begin(), rigidBodies.end(), rigidBody), rigidBodies.end());
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), rigidBody), rigidBodiesDynamic.end());
 		rigidBodiesById.erase(rididBodyByIdIt);
+		for (auto listener: worldListeners) {
+			listener->onRemovedRigidBody(id);
+		}
 		delete rigidBody;
 	}
 }
@@ -535,4 +547,15 @@ void World::synch(World* world)
 		// synch rigid bodies
 		synch(clonedRigidBody, rigidBody);
 	}
+}
+
+void World::addWorldListener(WorldListener* listener)
+{
+	worldListeners.push_back(listener);
+}
+
+void World::removeWorldListener(WorldListener* listener)
+{
+	worldListeners.erase(remove(worldListeners.begin(), worldListeners.end(), listener), worldListeners.end());
+	delete listener;
 }
