@@ -38,7 +38,8 @@ public:
 	 * Public constructor
 	 * @param center
 	 * @param radius
+	 * @param scale
 	 */
-	Sphere(const Vector3& center, float radius);
+	Sphere(const Vector3& center, float radius, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 };

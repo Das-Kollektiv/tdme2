@@ -78,14 +78,16 @@ public:
 	 * @param axis1
 	 * @param axis2
 	 * @param half extension
+	 * @param scale
 	 */
-	OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+	OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Public constructor
 	 * @param bounding box
+	 * @param scale
 	 */
-	OrientedBoundingBox(BoundingBox* bb);
+	OrientedBoundingBox(BoundingBox* bb, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Public constructor

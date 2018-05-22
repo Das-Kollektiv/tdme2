@@ -19,11 +19,11 @@ Sphere::Sphere()
 	collisionShape = new reactphysics3d::SphereShape(radius);
 }
 
-Sphere::Sphere(const Vector3& center, float radius)
+Sphere::Sphere(const Vector3& center, float radius, const Vector3& scale)
 {
 	this->center.set(center);
 	this->radius = radius;
-	setScale(Vector3(1.0f, 1.0f, 1.0f));
+	setScale(scale);
 }
 
 float Sphere::getRadius() const
@@ -57,6 +57,6 @@ bool Sphere::setScale(const Vector3& scale) {
 
 BoundingVolume* Sphere::clone() const
 {
-	return new Sphere(center, radius);
+	return new Sphere(center, radius, scale);
 }
 

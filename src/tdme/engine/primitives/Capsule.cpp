@@ -22,13 +22,13 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Capsule::Capsule(const Vector3& a, const Vector3& b, float radius)
+Capsule::Capsule(const Vector3& a, const Vector3& b, float radius, const Vector3& scale)
 {
 	this->a.set(a);
 	this->b.set(b);
 	this->radius = radius;
 	center.set(a).add(b).scale(0.5f);
-	setScale(Vector3(1.0, 1.0f, 1.0f));
+	setScale(scale);
 }
 
 float Capsule::getRadius() const
@@ -112,5 +112,5 @@ bool Capsule::setScale(const Vector3& scale) {
 
 BoundingVolume* Capsule::clone() const
 {
-	return new Capsule(a, b, radius);
+	return new Capsule(a, b, radius, scale);
 }

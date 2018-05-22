@@ -56,7 +56,7 @@ bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vert
 	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
 }
 
-ConvexMesh::ConvexMesh(Object3DModel* model)
+ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 {
 	vector<Triangle> triangles;
 	model->getFaceTriangles(&triangles);
@@ -211,14 +211,14 @@ ConvexMesh::ConvexMesh(Object3DModel* model)
 	}
 
 	// create convex mesh
-	setScale(Vector3(1.0f, 1.0f, 1.0f));
+	setScale(scale);
 }
 
-ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices) {
+ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
 	this->vertices = vertices;
 	this->facesVerticesCount = facesVerticesCount;
 	this->indices = indices;
-	setScale(Vector3(1.0f, 1.0f, 1.0f));
+	setScale(scale);
 }
 
 bool ConvexMesh::setScale(const Vector3& scale) {
@@ -236,7 +236,7 @@ bool ConvexMesh::setScale(const Vector3& scale) {
 
 BoundingVolume* ConvexMesh::clone() const
 {
-	return new ConvexMesh(vertices, facesVerticesCount, indices);
+	return new ConvexMesh(vertices, facesVerticesCount, indices, scale);
 }
 
 const vector<Vector3>& ConvexMesh::getVertices() {

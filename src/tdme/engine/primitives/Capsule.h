@@ -42,8 +42,9 @@ public:
 	 * @param a
 	 * @param b
 	 * @param radius
+	 * @param scale
 	 */
-	Capsule(const Vector3& a, const Vector3& b, float radius);
+	Capsule(const Vector3& a, const Vector3& b, float radius, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 private:
 	//

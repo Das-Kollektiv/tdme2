@@ -40,24 +40,24 @@ const Vector3 OrientedBoundingBox::AABB_AXIS_X(1.0f, 0.0f, 0.0f);
 const Vector3 OrientedBoundingBox::AABB_AXIS_Y(0.0f, 1.0f, 0.0f);
 const Vector3 OrientedBoundingBox::AABB_AXIS_Z(0.0f, 0.0f, 1.0f);
 
-OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
+OrientedBoundingBox::OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension, const Vector3& scale)
 {
 	this->center.set(center);
 	this->axes[0].set(axis0);
 	this->axes[1].set(axis1);
 	this->axes[2].set(axis2);
 	this->halfExtension.set(halfExtension);
-	setScale(Vector3(1.0f, 1.0f, 1.0f));
+	setScale(scale);
 }
 
-OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb)
+OrientedBoundingBox::OrientedBoundingBox(BoundingBox* bb, const Vector3& scale)
 {
 	this->halfExtension.set(bb->getMax()).sub(bb->getMin()).scale(0.5f);
 	this->center.set(bb->getMin()).add(halfExtension);
 	this->axes[0].set(AABB_AXIS_X);
 	this->axes[1].set(AABB_AXIS_Y);
 	this->axes[2].set(AABB_AXIS_Z);
-	setScale(Vector3(1.0f, 1.0f, 1.0f));
+	setScale(scale);
 }
 
 OrientedBoundingBox::OrientedBoundingBox() 
@@ -193,6 +193,7 @@ BoundingVolume* OrientedBoundingBox::clone() const
 		axes[0],
 		axes[1],
 		axes[2],
-		halfExtension
+		halfExtension,
+		scale
 	);
 }

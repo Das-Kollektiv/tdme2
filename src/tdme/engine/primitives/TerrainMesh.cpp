@@ -23,7 +23,7 @@ TerrainMesh::TerrainMesh()
 {
 }
 
-TerrainMesh::TerrainMesh(Object3DModel* model)
+TerrainMesh::TerrainMesh(Object3DModel* model, const Vector3& scale)
 {
 	// fetch vertices and indices
 	vector<Triangle> triangles;
@@ -45,7 +45,7 @@ TerrainMesh::TerrainMesh(Object3DModel* model)
 	}
 	vertices.shrink_to_fit();
 	indices.shrink_to_fit();
-	setScale(Vector3(1.0f, 1.0f, 1.0f));
+	setScale(scale);
 }
 
 TerrainMesh::~TerrainMesh() {

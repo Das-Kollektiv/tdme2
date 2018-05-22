@@ -38,8 +38,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param model
+	 * @param scale
 	 */
-	TerrainMesh(Object3DModel* model);
+	TerrainMesh(Object3DModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Destructor
