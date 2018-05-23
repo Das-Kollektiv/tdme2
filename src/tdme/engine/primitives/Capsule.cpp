@@ -1,6 +1,5 @@
 #include <tdme/engine/primitives/Capsule.h>
 
-#include <string>
 #include <vector>
 
 #include <ext/reactphysics3d/src/collision/shapes/CapsuleShape.h>
@@ -11,8 +10,6 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-
-using std::to_string;
 
 using tdme::engine::primitives::Capsule;
 

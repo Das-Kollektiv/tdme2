@@ -49,6 +49,11 @@ void BoundingVolume::fromTransformations(const Transformations& transformations)
 			transformations.getScale().getZ()
 		);
 
+	//
+	if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
+	if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
+	if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
+
 	// set bounding volume scale
 	setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
 
