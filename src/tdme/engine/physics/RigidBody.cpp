@@ -106,6 +106,7 @@ void RigidBody::updateProxyShape(float mass, uint16_t collideWithMaskBits, uint1
 	proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
 	proxyShape->setCollideWithMaskBits(collideWithMaskBits);
 	proxyShape->setCollisionCategoryBits(collisionCategoryBits);
+	proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
 }
 
 Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
@@ -292,8 +293,6 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 		boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
 		updateProxyShape(proxyShapeMass, proxyShapeCollideWithMaskBits, proxyShapeCollisionCategoryBits);
 	}
-	// set local to body transform, proxy shape scaling
-	proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
 	// rigig body transform
 	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
 	reactphysics3d::Transform transform;
