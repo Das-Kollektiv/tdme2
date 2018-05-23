@@ -63,6 +63,10 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	this->boundingVolume = dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr?boundingVolume:boundingVolume->clone();
 	this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
 	this->type = type;
+	this->mass = mass;
+	this->collideTypeIds = ~0;
+	this->collisionTypeId = collisionTypeId;
+	this->proxyShape = nullptr;
 	switch (type) {
 		case TYPE_STATIC:
 			rigidBody->setType(reactphysics3d::BodyType::STATIC);
@@ -92,7 +96,6 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	rigidBody->getMaterial().setBounciness(restitution);
 	rigidBody->setMass(mass);
 	rigidBody->setUserData(this);
-	updateProxyShape(mass, ~0, collisionTypeId);
 	fromTransformations(transformations);
 	setEnabled(enabled);
 }
@@ -100,13 +103,6 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 RigidBody::~RigidBody() {
 	// TODO: on cloned terrain bounding volumes we would delete the bv twice
 	delete boundingVolume;
-}
-
-void RigidBody::updateProxyShape(float mass, uint16_t collideWithMaskBits, uint16_t collisionCategoryBits) {
-	proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
-	proxyShape->setCollideWithMaskBits(collideWithMaskBits);
-	proxyShape->setCollisionCategoryBits(collisionCategoryBits);
-	proxyShape->setLocalToBodyTransform(boundingVolume->collisionShapeLocalTransform);
 }
 
 Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
@@ -148,21 +144,23 @@ int32_t RigidBody::getType() {
 
 uint16_t RigidBody::getCollisionTypeId()
 {
-	return this->proxyShape->getCollisionCategoryBits();
+	return collisionTypeId;
 }
 
 void RigidBody::setCollisionTypeId(uint16_t typeId)
 {
+	this->collisionTypeId = typeId;
 	this->proxyShape->setCollisionCategoryBits(typeId);
 }
 
 uint16_t RigidBody::getCollisionTypeIds()
 {
-	return this->proxyShape->getCollideWithMaskBits();
+	return collideTypeIds;
 }
 
 void RigidBody::setCollisionTypeIds(uint16_t collisionTypeIds)
 {
+	this->collideTypeIds = collisionTypeIds;
 	this->proxyShape->setCollideWithMaskBits(collisionTypeIds);
 }
 
@@ -270,7 +268,12 @@ const Transformations& RigidBody::getTransformations() {
 
 void RigidBody::fromTransformations(const Transformations& transformations)
 {
-	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) return;
+	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) {
+		proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
+		proxyShape->setCollideWithMaskBits(collideTypeIds);
+		proxyShape->setCollisionCategoryBits(collisionTypeId);
+		return;
+	}
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
 	// "scale vector transformed" which takes transformations scale and orientation into account
@@ -285,13 +288,12 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
 	if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
 	// scale bounding volume and recreate it if nessessary
-	if (boundingVolume->getScale().equals(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == false) {
-		auto proxyShapeMass = proxyShape->getMass();
-		auto proxyShapeCollideWithMaskBits = proxyShape->getCollideWithMaskBits();
-		auto proxyShapeCollisionCategoryBits = proxyShape->getCollisionCategoryBits();
-		rigidBody->removeCollisionShape(proxyShape);
+	if (proxyShape == nullptr || boundingVolume->getScale().equals(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == false) {
+		if (proxyShape != nullptr) rigidBody->removeCollisionShape(proxyShape);
 		boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
-		updateProxyShape(proxyShapeMass, proxyShapeCollideWithMaskBits, proxyShapeCollisionCategoryBits);
+		proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
+		proxyShape->setCollideWithMaskBits(collideTypeIds);
+		proxyShape->setCollisionCategoryBits(collisionTypeId);
 	}
 	// rigig body transform
 	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();

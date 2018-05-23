@@ -60,7 +60,10 @@ private:
 	string rootId {  };
 	int32_t type {  };
 	bool enabled {  };
-	Matrix4x4 inverseInertiaMatrix;
+	float mass {  };
+	uint16_t collideTypeIds {  };
+	uint16_t collisionTypeId {  };
+	Matrix4x4 inverseInertiaMatrix {  };
 	Vector3 linearVelocity;
 	Vector3 angularVelocity;
 	Transformations transformations {  };
@@ -106,14 +109,6 @@ private:
 	 * Destructor
 	 */
 	~RigidBody();
-
-	/**
-	 * Update proxy shape
-	 * @param mass
-	 * @param collide with mask bits
-	 * @param collision category bits
-	 */
-	void updateProxyShape(float mass, uint16_t collideWithMaskBits, uint16_t collisionCategoryBits);
 
 public:
 
