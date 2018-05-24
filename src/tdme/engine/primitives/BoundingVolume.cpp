@@ -60,6 +60,11 @@ void BoundingVolume::fromTransformations(const Transformations& transformations)
 	// apply rotation
 	collisionShapeTransform.setFromOpenGL(transformationsMatrix.getArray().data());
 
+	// normalize orientation to remove scale
+	auto collisionShapeTransformOrientation = collisionShapeTransform.getOrientation();
+	collisionShapeTransformOrientation.normalize();
+	collisionShapeTransform.setOrientation(collisionShapeTransformOrientation);
+
 	// compute bounding box
 	computeBoundingBox();
 }

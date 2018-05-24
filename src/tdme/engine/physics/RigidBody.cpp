@@ -273,8 +273,10 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 		proxyShape->setCollisionCategoryBits(collisionTypeId);
 		return;
 	}
+
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
+
 	// "scale vector transformed" which takes transformations scale and orientation into account
 	auto scaleVectorTransformed =
 		boundingVolume->collisionShapeLocalTransform.getOrientation() *
@@ -286,6 +288,7 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
 	if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
 	if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
+
 	// scale bounding volume and recreate it if nessessary
 	if (proxyShape == nullptr || boundingVolume->getScale().equals(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == false) {
 		if (proxyShape != nullptr) rigidBody->removeCollisionShape(proxyShape);
@@ -294,11 +297,17 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 		proxyShape->setCollideWithMaskBits(collideTypeIds);
 		proxyShape->setCollisionCategoryBits(collisionTypeId);
 	}
+
 	// rigig body transform
 	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
 	reactphysics3d::Transform transform;
 	// take from transformations matrix
 	transform.setFromOpenGL(transformationsMatrix.getArray().data());
+	// normalize orientation to remove scale
+	auto transformOrientation = transform.getOrientation();
+	transformOrientation.normalize();
+	transform.setOrientation(transformOrientation);
+
 	/*
 	// TODO: center of mass ~ pivot
 	// set center of mass which is basically center of bv for now
@@ -318,14 +327,6 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 		)
 	);
 	*/
-	if (dynamic_cast<Capsule*>(boundingVolume) != nullptr) {
-		Console::println(
-			"rb: " + id + ", " +
-			"position: " + to_string(transform.getPosition().x) + ", " + to_string(transform.getPosition().y) + ", " + to_string(transform.getPosition().z) + "; " +
-			"orientation: " + to_string(transform.getOrientation().x) + ", " + to_string(transform.getOrientation().y) + ", " + to_string(transform.getOrientation().z) + ", " + to_string(transform.getOrientation().w)
-		);
-		Console::println();
-	}
 
 	// set transform
 	rigidBody->setTransform(transform);
