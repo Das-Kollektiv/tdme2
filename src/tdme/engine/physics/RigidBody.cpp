@@ -24,6 +24,7 @@
 #include <tdme/engine/physics/CollisionListener.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Math.h>
@@ -42,6 +43,7 @@ using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::math::Math;
@@ -176,11 +178,7 @@ void RigidBody::setEnabled(bool enabled)
 		return;
 
 	//
-	if (enabled == true) {
-		rigidBody->setIsActive(true);
-	} else {
-		rigidBody->setIsActive(false);
-	}
+	rigidBody->setIsActive(enabled);
 
 	//
 	this->enabled = enabled;
@@ -244,12 +242,13 @@ void RigidBody::setRestitution(float restitution)
 
 float RigidBody::getMass()
 {
-	return rigidBody->getMass();
+	return mass;
 }
 
 void RigidBody::setMass(float mass)
 {
-	rigidBody->getMass();
+	this->mass = mass;
+	rigidBody->setMass(mass);
 }
 
 Vector3& RigidBody::getLinearVelocity()
@@ -319,6 +318,15 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 		)
 	);
 	*/
+	if (dynamic_cast<Capsule*>(boundingVolume) != nullptr) {
+		Console::println(
+			"rb: " + id + ", " +
+			"position: " + to_string(transform.getPosition().x) + ", " + to_string(transform.getPosition().y) + ", " + to_string(transform.getPosition().z) + "; " +
+			"orientation: " + to_string(transform.getOrientation().x) + ", " + to_string(transform.getOrientation().y) + ", " + to_string(transform.getOrientation().z) + ", " + to_string(transform.getOrientation().w)
+		);
+		Console::println();
+	}
+
 	// set transform
 	rigidBody->setTransform(transform);
 }

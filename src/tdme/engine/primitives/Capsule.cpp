@@ -1,5 +1,6 @@
 #include <tdme/engine/primitives/Capsule.h>
 
+#include <string>
 #include <vector>
 
 #include <ext/reactphysics3d/src/collision/shapes/CapsuleShape.h>
@@ -10,6 +11,9 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
+
+using std::to_string;
 
 using tdme::engine::primitives::Capsule;
 
@@ -18,6 +22,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 Capsule::Capsule(const Vector3& a, const Vector3& b, float radius, const Vector3& scale)
 {
@@ -87,6 +92,13 @@ void Capsule::setScale(const Vector3& scale) {
 			collisionShapeLocalTranslation.getY(),
 			collisionShapeLocalTranslation.getZ()
 		)
+	);
+
+	Console::println(
+		"capsule: " + to_string(radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY()))) + "; " +
+		"length: " + to_string(bScaled.clone().sub(aScaled).computeLength()) + "; " +
+		"position: " + to_string(collisionShapeLocalTransform.getPosition().x) + ", " + to_string(collisionShapeLocalTransform.getPosition().y) + ", " + to_string(collisionShapeLocalTransform.getPosition().z) + "; " +
+		"orientation: " + to_string(collisionShapeLocalTransform.getOrientation().x) + ", " + to_string(collisionShapeLocalTransform.getOrientation().y) + ", " + to_string(collisionShapeLocalTransform.getOrientation().z) + ", " + to_string(collisionShapeLocalTransform.getOrientation().w)
 	);
 
 	// create capsule
