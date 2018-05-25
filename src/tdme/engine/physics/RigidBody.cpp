@@ -103,7 +103,9 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 }
 
 RigidBody::~RigidBody() {
-	// TODO: on cloned terrain bounding volumes we would delete the bv twice
+	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr && cloned == true) {
+		return;
+	}
 	delete boundingVolume;
 }
 
@@ -124,6 +126,14 @@ Matrix4x4 RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float 
 			0.0f, 0.0f, scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height), 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		)).invert();
+}
+
+bool RigidBody::isCloned() {
+	return cloned;
+}
+
+void RigidBody::setCloned(bool cloned) {
+	this->cloned = cloned;
 }
 
 const string& RigidBody::getId()

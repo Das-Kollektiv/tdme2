@@ -56,6 +56,7 @@ private:
 	World* world { nullptr };
 	reactphysics3d::RigidBody* rigidBody { nullptr };
 	reactphysics3d::ProxyShape* proxyShape { nullptr };
+	bool cloned { false };
 	string id {  };
 	string rootId {  };
 	int32_t type {  };
@@ -127,6 +128,17 @@ public:
 	 * @return inertia matrix
 	 */
 	static Matrix4x4 computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
+
+	/**
+	 * @return if rigid body has been cloned from another rigid body
+	 */
+	bool isCloned();
+
+	/**
+	 * Set cloned
+	 * @param cloned
+	 */
+	void setCloned(bool cloned);
 
 	/** 
 	 * @return id

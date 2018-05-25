@@ -512,6 +512,8 @@ World* World::clone(uint16_t collisionTypeIds)
 			// update dynamic rigid body
 			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
 		}
+		// set cloned
+		clonedRigidBody->setCloned(true);
 
 		// synch additional properties
 		synch(clonedRigidBody, clonedRigidBody);
