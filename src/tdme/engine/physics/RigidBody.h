@@ -47,6 +47,7 @@ public:
 	static constexpr int32_t TYPE_STATIC { 0 };
 	static constexpr int32_t TYPE_DYNAMIC { 2 };
 	static constexpr int32_t TYPE_KINEMATIC { 1 };
+	static constexpr int32_t TYPE_COLLISION { 3 };
 
 	static constexpr uint16_t TYPEID_STATIC { 1 };
 	static constexpr uint16_t TYPEID_DYNAMIC { 2 };
@@ -55,6 +56,7 @@ public:
 private:
 	World* world { nullptr };
 	reactphysics3d::RigidBody* rigidBody { nullptr };
+	reactphysics3d::CollisionBody* collisionBody { nullptr };
 	reactphysics3d::ProxyShape* proxyShape { nullptr };
 	bool cloned { false };
 	string id {  };
@@ -157,9 +159,10 @@ public:
 	void setRootId(const string& rootId);
 
 	/**
+	 * Return type, see TYPE_*
 	 * @return type
 	 */
-	int32_t getType();
+	int getType();
 
 	/**
 	 * @return type id

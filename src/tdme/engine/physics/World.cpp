@@ -89,6 +89,17 @@ RigidBody* World::addRigidBody(const string& id, bool enabled, uint16_t collisio
 	return rigidBody;
 }
 
+RigidBody* World::addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume) {
+	removeRigidBody(id);
+	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_COLLISION, enabled, collisionTypeId, boundingVolume, transformations, 0.0f, 0.0f, 0.0f, RigidBody::getNoRotationInertiaMatrix());
+	rigidBodies.push_back(rigidBody);
+	rigidBodiesById[id] = rigidBody;
+	for (auto listener: worldListeners) {
+		listener->onAddedRigidBody(id, RigidBody::TYPE_COLLISION, enabled, collisionTypeId, boundingVolume, transformations, 0.0f, 0.0f, 0.0f, RigidBody::getNoRotationInertiaMatrix());
+	}
+	return rigidBody;
+}
+
 RigidBody* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction)
 {
 	removeRigidBody(id);
@@ -114,7 +125,11 @@ void World::removeRigidBody(const string& id) {
 	auto rididBodyByIdIt = rigidBodiesById.find(id);
 	if (rididBodyByIdIt != rigidBodiesById.end()) {
 		auto rigidBody = rididBodyByIdIt->second;
-		world.destroyRigidBody(rigidBody->rigidBody);
+		if (rigidBody->rigidBody != nullptr) {
+			world.destroyRigidBody(rigidBody->rigidBody);
+		} else {
+			world.destroyCollisionBody(rigidBody->collisionBody);
+		}
 		rigidBodies.erase(remove(rigidBodies.begin(), rigidBodies.end(), rigidBody), rigidBodies.end());
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), rigidBody), rigidBodiesDynamic.end());
 		rigidBodiesById.erase(rididBodyByIdIt);
@@ -302,7 +317,7 @@ void World::synch(Engine* engine)
 	}
 }
 
-RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector3& point, Vector3& dest)
+RigidBody* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& dest)
 {
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
@@ -332,7 +347,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 	reactphysics3d::Vector3 endPoint(point.getX(), -10000.0f, point.getZ());
 	reactphysics3d::Ray ray(startPoint, endPoint);
 	CustomCallbackClass customCallbackObject(stepUpMax, point);
-	world.raycast(ray, &customCallbackObject, typeIds);
+	world.raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getRigidBody() != nullptr) {
 		dest.set(point);
 		dest.setY(customCallbackObject.getHeight());
@@ -342,7 +357,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, const Vector
 	}
 }
 
-RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest)
+RigidBody* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest)
 {
 	auto determinedHeight = -10000.0f;
 	Vector3 heightPoint;
@@ -356,7 +371,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	// center, center
 	heightPoint.set(boundingVolume->getBoundingBoxTransformed().getCenter());
 	heightPoint.addY(-height / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
+	rigidBody = determineHeight(collisionTypeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -369,7 +384,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
+	rigidBody = determineHeight(collisionTypeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -382,7 +397,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(-width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
+	rigidBody = determineHeight(collisionTypeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -395,7 +410,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(-depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
+	rigidBody = determineHeight(collisionTypeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -408,7 +423,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	heightPoint.addX(+width / 2.0f);
 	heightPoint.addY(-height / 2.0f);
 	heightPoint.addZ(+depth / 2.0f);
-	rigidBody = determineHeight(typeIds, stepUpMax, heightPoint, heightPointDest);
+	rigidBody = determineHeight(collisionTypeIds, stepUpMax, heightPoint, heightPointDest);
 	if (rigidBody != nullptr) {
 		heightPointDestY = heightPointDest.getY();
 		if (heightPointDestY > determinedHeight) {
@@ -426,7 +441,7 @@ RigidBody* World::determineHeight(int32_t typeIds, float stepUpMax, BoundingVolu
 	}
 }
 
-bool World::doesCollideWith(int32_t typeIds, BoundingBox* boundingBox, vector<RigidBody*>& rigidBodies) {
+bool World::doesCollideWith(uint16_t collisionTypeIds, BoundingBox* boundingBox, vector<RigidBody*>& rigidBodies) {
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
 	    public:
@@ -458,43 +473,48 @@ bool World::doesCollideWith(int32_t typeIds, BoundingBox* boundingBox, vector<Ri
 
 	// do the test
 	CustomOverlapCallback customOverlapCallback(rigidBodies);
-	world.testAABBOverlap(aabb, &customOverlapCallback, typeIds);
+	world.testAABBOverlap(aabb, &customOverlapCallback, collisionTypeIds);
 
 	// done
 	return rigidBodies.size() > 0;
 }
 
-bool World::doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies)
+bool World::doesCollideWith(uint16_t collisionTypeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies)
 {
 	// do a simple AABB test
 	auto boundingBox = boundingVolume->getBoundingBoxTransformed();
-	if (doesCollideWith(typeIds, &boundingBox, rigidBodies) == false) {
+	if (doesCollideWith(collisionTypeIds, &boundingBox, rigidBodies) == false) {
 		return false;
 	}
 
 	// done
 	return rigidBodies.size() > 0;
+}
 
-	/*
-	vector<RigidBody*> rigidBodyCandidates;
-	auto boundingBox = boundingVolume->getBoundingBoxTransformed();
-	if (doesCollideWith(typeIds, &boundingBox, rigidBodyCandidates) == false) {
-		return false;
-	}
-
-	// check if they collide
-	CollisionResponse response;
-	for (auto rigidBody: rigidBodyCandidates) {
-		if (rigidBody->doesCollideWith(boundingVolume, &response) == true) {
-			if (find(rigidBodies.begin(), rigidBodies.end(), rigidBody) == rigidBodies.end()) {
-				rigidBodies.push_back(rigidBody);
+bool World::doesCollideWith(uint16_t collisionTypeIds, RigidBody* rigidBody, vector<RigidBody*>& rigidBodies) {
+	// callback
+	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
+	    public:
+			CustomOverlapCallback(vector<RigidBody*>& rigidBodies): rigidBodies(rigidBodies) {
 			}
-		}
-	}
+
+			virtual void notifyOverlap(reactphysics3d::CollisionBody* collisionBody) {
+				rigidBodies.push_back(static_cast<RigidBody*>(collisionBody->getUserData()));
+			}
+	    private:
+			vector<RigidBody*>& rigidBodies;
+	};
+
+	// do the test
+	CustomOverlapCallback customOverlapCallback(rigidBodies);
+	world.testOverlap(rigidBody->collisionBody, &customOverlapCallback, collisionTypeIds);
 
 	// done
 	return rigidBodies.size() > 0;
-	*/
+}
+
+bool World::doesCollideWith(RigidBody* rigidBody1, RigidBody* rigidBody2) {
+	return world.testOverlap(rigidBody1->collisionBody, rigidBody2->collisionBody);
 }
 
 World* World::clone(uint16_t collisionTypeIds)
@@ -504,14 +524,26 @@ World* World::clone(uint16_t collisionTypeIds)
 		auto rigidBody = rigidBodies[i];
 		// clone obv
 		RigidBody* clonedRigidBody = nullptr;
+		auto rigidBodyType = rigidBody->getType();
+
+		// test type
 		if (((rigidBody->getCollisionTypeId() & collisionTypeIds) == rigidBody->getCollisionTypeId()) == false) continue;
-		if (rigidBody->isStatic() == true) {
-			// clone static rigid body
-			clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getFriction());
-		} else {
-			// update dynamic rigid body
-			clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
+
+		// clone rigid body
+		switch(rigidBodyType) {
+			case RigidBody::TYPE_STATIC:
+				clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getFriction());
+				break;
+			case RigidBody::TYPE_DYNAMIC:
+				clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
+				break;
+			case RigidBody::TYPE_COLLISION:
+				clonedRigidBody = clonedWorld->addCollisionBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume);
+				break;
+			default:
+				Console::println("World::clone(): Unsupported type: " + to_string(rigidBodyType));
 		}
+
 		// set cloned
 		clonedRigidBody->setCloned(true);
 

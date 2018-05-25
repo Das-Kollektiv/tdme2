@@ -77,9 +77,20 @@ public:
 	 * @param inertia matrix
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t typeId, const Transformations& transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
 
 	/** 
+	 * Add a collision body
+	 * @param id
+	 * @param enabled
+	 * @param type id
+	 * @param transformations
+	 * @param bounding volume
+	 * @return rigid body
+	 */
+	RigidBody* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume);
+
+	/**
 	 * Add a static rigid body
 	 * @param id
 	 * @param enabled
@@ -89,7 +100,7 @@ public:
 	 * @param friction
 	 * @return rigid body
 	 */
-	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t typeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction);
+	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction);
 
 	/** 
 	 * Returns rigid body identified by id 
@@ -118,42 +129,59 @@ public:
 
 	/** 
 	 * Determine height on x,y,u while respecting step up max
-	 * @param type ids
+	 * @param collision type ids
 	 * @param step up max
 	 * @param point on which height should be calculated
 	 * @param point where height has been determined
 	 * @return rigid body from which height was determined or null
 	 */
-	RigidBody* determineHeight(int32_t typeIds, float stepUpMax, const Vector3& point, Vector3& dest);
+	RigidBody* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest);
 
 	/** 
 	 * Determine height of bounding volume
-	 * @param type ids
+	 * @param collision type ids
 	 * @param step up max
 	 * @param bounding volume
 	 * @param point
 	 * @param dest
 	 * @return rigid body from which height was determined or null
 	 */
-	RigidBody* determineHeight(int32_t typeIds, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest);
+	RigidBody* determineHeight(uint16_t collisionTypeId, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest);
 
 	/** 
 	 * Check if world collides with given bounding box
-	 * @param type ids
+	 * @param collision type ids
 	 * @param bounding volume
 	 * @param rigid bodies that collide with bounding volume
 	 * @return if collision happpened or not
 	 */
-	bool doesCollideWith(int32_t typeIds, BoundingBox* boundingBox, vector<RigidBody*>& rigidBodies);
+	bool doesCollideWith(uint16_t collisionTypeId, BoundingBox* boundingBox, vector<RigidBody*>& rigidBodies);
 
 	/**
 	 * Check if world collides with given bounding volume
-	 * @param type ids
+	 * @param collision type ids
 	 * @param bounding volume
 	 * @param rigid bodies that collide with bounding volume
 	 * @return if collision happpened or not
 	 */
-	bool doesCollideWith(int32_t typeIds, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies);
+	bool doesCollideWith(uint16_t collisionTypeId, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies);
+
+	/**
+	 * Check if world collides with given rigid body
+	 * @param collision type ids
+	 * @param rigid body
+	 * @param rigid bodies that collide with given rigid body
+	 * @return if collision happpened or not
+	 */
+	bool doesCollideWith(uint16_t collisionTypeId, RigidBody* rigidBody, vector<RigidBody*>& rigidBodies);
+
+	/**
+	 * Check if rigid body 1 collides with rigid body 2
+	 * @param rigid body 1
+	 * @param rigid body 2
+	 * @return if collision happpened or not
+	 */
+	bool doesCollideWith(RigidBody* rigidBody1, RigidBody* rigidBody2);
 
 	/** 
 	 * Clone this world
