@@ -72,18 +72,18 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	switch (type) {
 		case TYPE_STATIC:
 			this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
+			this->rigidBody->setType(reactphysics3d::BodyType::STATIC);
 			this->collisionBody = rigidBody;
-			collisionBody->setType(reactphysics3d::BodyType::STATIC);
 			break;
 		case TYPE_DYNAMIC:
 			this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
+			this->rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
 			this->collisionBody = rigidBody;
-			rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
 			break;
 		case TYPE_KINEMATIC:
 			this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
+			this->rigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
 			this->collisionBody = rigidBody;
-			rigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
 			break;
 		case TYPE_COLLISION:
 			this->rigidBody = nullptr;
