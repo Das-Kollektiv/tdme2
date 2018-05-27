@@ -38,21 +38,6 @@ CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t c
 	this->axis1Transformed.set(axis1).normalize();
 }
 
-int32_t CircleParticleEmitterPlaneVelocity::getCount()
-{
-	return count;
-}
-
-Color4& CircleParticleEmitterPlaneVelocity::getColorStart()
-{
-	return colorStart;
-}
-
-Color4& CircleParticleEmitterPlaneVelocity::getColorEnd()
-{
-	return colorEnd;
-}
-
 void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 {
 	Vector3 cosOnAxis0;

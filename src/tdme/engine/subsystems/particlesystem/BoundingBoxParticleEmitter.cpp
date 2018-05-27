@@ -39,31 +39,6 @@ BoundingBoxParticleEmitter::~BoundingBoxParticleEmitter() {
 	delete obbTransformed;
 }
 
-int32_t BoundingBoxParticleEmitter::getCount()
-{
-	return count;
-}
-
-Vector3& BoundingBoxParticleEmitter::getVelocity()
-{
-	return velocity;
-}
-
-Vector3& BoundingBoxParticleEmitter::getVelocityRnd()
-{
-	return velocityRnd;
-}
-
-Color4& BoundingBoxParticleEmitter::getColorStart()
-{
-	return colorStart;
-}
-
-Color4& BoundingBoxParticleEmitter::getColorEnd()
-{
-	return colorEnd;
-}
-
 void BoundingBoxParticleEmitter::emit(Particle* particle)
 {
 	Vector3 tmpAxis;

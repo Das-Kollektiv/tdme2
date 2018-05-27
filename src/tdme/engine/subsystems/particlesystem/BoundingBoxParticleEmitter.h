@@ -38,11 +38,35 @@ private:
 	Color4 colorStart {  };
 	Color4 colorEnd {  };
 public:
-	int32_t getCount() override;
-	Vector3& getVelocity();
-	Vector3& getVelocityRnd();
-	Color4& getColorStart() override;
-	Color4& getColorEnd() override;
+	// override methods
+	inline int32_t getCount() const override {
+		return count;
+	}
+
+	inline const Vector3& getVelocity() const {
+		return velocity;
+	}
+
+	inline const Vector3& getVelocityRnd() const {
+		return velocityRnd;
+	}
+
+	inline const Color4& getColorStart() const override {
+		return colorStart;
+	}
+
+	inline void setColorStart(const Color4& colorStart) override {
+		this->colorStart = colorStart;
+	}
+
+	inline const Color4& getColorEnd() const override {
+		return colorEnd;
+	}
+
+	inline void setColorEnd(const Color4& colorEnd) override {
+		this->colorEnd = colorEnd;
+	}
+
 	void emit(Particle* particle) override;
 	void fromTransformations(const Transformations& transformations) override;
 

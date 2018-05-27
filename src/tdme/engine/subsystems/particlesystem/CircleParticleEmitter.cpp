@@ -38,31 +38,6 @@ CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->colorEnd.set(colorEnd);
 }
 
-int32_t CircleParticleEmitter::getCount()
-{
-	return count;
-}
-
-Vector3& CircleParticleEmitter::getVelocity()
-{
-	return velocity;
-}
-
-Vector3& CircleParticleEmitter::getVelocityRnd()
-{
-	return velocityRnd;
-}
-
-Color4& CircleParticleEmitter::getColorStart()
-{
-	return colorStart;
-}
-
-Color4& CircleParticleEmitter::getColorEnd()
-{
-	return colorEnd;
-}
-
 void CircleParticleEmitter::emit(Particle* particle)
 {
 	Vector3 cosOnAxis0;
