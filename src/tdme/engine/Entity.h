@@ -94,13 +94,25 @@ struct tdme::engine::Entity
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
-	virtual Color4& getEffectColorMul() = 0;
+	virtual const Color4& getEffectColorMul() const = 0;
 
 	/** 
+	 * Set effect color that will be multiplied with fragment color
+	 * @param effect color
+	 */
+	virtual void setEffectColorMul(const Color4& effectColorMul) = 0;
+
+	/**
 	 * The effect color will be added to fragment color
 	 * @return effect color
 	 */
-	virtual Color4& getEffectColorAdd() = 0;
+	virtual const Color4& getEffectColorAdd() const = 0;
+
+	/**
+	 * Set effect color that will be added to fragment color
+	 * @return effect color
+	 */
+	virtual void setEffectColorAdd(const Color4& effectColorAdd) = 0;
 
 	/** 
 	 * Initiates this object 3d 

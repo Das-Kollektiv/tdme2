@@ -67,12 +67,20 @@ public:
 	virtual void setRenderer(GLRenderer* renderer) override;
 	virtual void dispose() override;
 
-	inline virtual Color4& getEffectColorAdd() override {
+	inline virtual const Color4& getEffectColorAdd() const override {
 		return PointsParticleSystemEntityInternal::getEffectColorAdd();
 	}
 
-	inline virtual Color4& getEffectColorMul() override {
+	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+		PointsParticleSystemEntityInternal::setEffectColorAdd(effectColorAdd);
+	}
+
+	inline virtual const Color4& getEffectColorMul() const override {
 		return PointsParticleSystemEntityInternal::getEffectColorMul();
+	}
+
+	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+		PointsParticleSystemEntityInternal::setEffectColorMul(effectColorMul);
 	}
 
 	inline virtual const string& getId() override {

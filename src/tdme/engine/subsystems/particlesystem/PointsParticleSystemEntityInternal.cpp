@@ -99,14 +99,24 @@ void PointsParticleSystemEntityInternal::setEnabled(bool enabled)
 	this->enabled = enabled;
 }
 
-Color4& PointsParticleSystemEntityInternal::getEffectColorMul()
+const Color4& PointsParticleSystemEntityInternal::getEffectColorMul() const
 {
 	return effectColorMul;
 }
 
-Color4& PointsParticleSystemEntityInternal::getEffectColorAdd()
+void PointsParticleSystemEntityInternal::setEffectColorMul(const Color4& effectColorMul)
+{
+	this->effectColorMul = effectColorMul;
+}
+
+const Color4& PointsParticleSystemEntityInternal::getEffectColorAdd() const
 {
 	return effectColorAdd;
+}
+
+void PointsParticleSystemEntityInternal::setEffectColorAdd(const Color4& effectColorAdd)
+{
+	this->effectColorAdd = effectColorAdd;
 }
 
 bool PointsParticleSystemEntityInternal::isPickable()

@@ -81,13 +81,20 @@ public:
 	virtual void setEngine(Engine* engine) override;
 	virtual void setRenderer(GLRenderer* renderer) override;
 
-	//
-	inline virtual Color4& getEffectColorAdd() override {
+	inline virtual const Color4& getEffectColorAdd() const override {
 		return ObjectParticleSystemEntityInternal::getEffectColorAdd();
 	}
 
-	inline virtual Color4& getEffectColorMul() override {
+	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+		ObjectParticleSystemEntityInternal::setEffectColorAdd(effectColorAdd);
+	}
+
+	inline virtual const Color4& getEffectColorMul() const override {
 		return ObjectParticleSystemEntityInternal::getEffectColorMul();
+	}
+
+	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+		ObjectParticleSystemEntityInternal::setEffectColorMul(effectColorMul);
 	}
 
 	inline virtual const string& getId() override {

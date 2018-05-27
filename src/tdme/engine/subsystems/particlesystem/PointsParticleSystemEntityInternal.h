@@ -68,8 +68,10 @@ public:
 	bool isEnabled() override;
 	bool isActive() override;
 	void setEnabled(bool enabled) override;
-	Color4& getEffectColorMul() override;
-	Color4& getEffectColorAdd() override;
+	const Color4& getEffectColorMul() const override;
+	void setEffectColorMul(const Color4& effectColorMul) override;
+	const Color4& getEffectColorAdd() const override;
+	void setEffectColorAdd(const Color4& effectColorAdd) override;
 	bool isPickable() override;
 	void setPickable(bool pickable) override;
 	bool isAutoEmit() override;

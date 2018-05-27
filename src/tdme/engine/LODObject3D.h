@@ -123,18 +123,22 @@ public:
 			// set effect colors
 			if (objectLOD != nullptr) {
 				if (levelLOD == 3) {
-					objectLOD->getEffectColorAdd().set(effectColorAddLOD3);
-					objectLOD->getEffectColorMul().set(effectColorMulLOD3);
+					objectLOD->setEffectColorAdd(effectColorAddLOD3);
+					objectLOD->setEffectColorMul(effectColorMulLOD3);
 				} else
 				if (levelLOD == 2) {
-					objectLOD->getEffectColorAdd().set(effectColorAddLOD2);
-					objectLOD->getEffectColorMul().set(effectColorMulLOD2);
+					objectLOD->setEffectColorAdd(effectColorAddLOD2);
+					objectLOD->setEffectColorMul(effectColorMulLOD2);
 				} else {
-					objectLOD->getEffectColorAdd().set(0.0f, 0.0f, 0.0f, 0.0f);
-					objectLOD->getEffectColorMul().set(1.0f, 1.0f, 1.0f, 1.0f);
+					objectLOD->setEffectColorAdd(Color4(0.0f, 0.0f, 0.0f, 0.0f));
+					objectLOD->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 				}
-				objectLOD->getEffectColorAdd().add(effectColorAdd);
-				objectLOD->getEffectColorMul().scale(effectColorMul);
+				auto effectColorAdd = objectLOD->getEffectColorAdd();
+				auto effectColorMul = objectLOD->getEffectColorMul();
+				effectColorAdd.add(effectColorAdd);
+				effectColorMul.scale(effectColorMul);
+				objectLOD->setEffectColorAdd(effectColorAdd);
+				objectLOD->setEffectColorMul(effectColorMul);
 			}
 		}
 
@@ -192,18 +196,22 @@ public:
 		// set effect colors
 		if (objectLOD != nullptr) {
 			if (levelLOD == 3) {
-				objectLOD->getEffectColorAdd().set(effectColorAddLOD3);
-				objectLOD->getEffectColorMul().set(effectColorMulLOD3);
+				objectLOD->setEffectColorAdd(effectColorAddLOD3);
+				objectLOD->setEffectColorMul(effectColorMulLOD3);
 			} else
 			if (levelLOD == 2) {
-				objectLOD->getEffectColorAdd().set(effectColorAddLOD2);
-				objectLOD->getEffectColorMul().set(effectColorMulLOD2);
+				objectLOD->setEffectColorAdd(effectColorAddLOD2);
+				objectLOD->setEffectColorMul(effectColorMulLOD2);
 			} else {
-				objectLOD->getEffectColorAdd().set(0.0f, 0.0f, 0.0f, 0.0f);
-				objectLOD->getEffectColorMul().set(1.0f, 1.0f, 1.0f, 1.0f);
+				objectLOD->setEffectColorAdd(Color4(0.0f, 0.0f, 0.0f, 0.0f));
+				objectLOD->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 			}
-			objectLOD->getEffectColorAdd().add(effectColorAdd);
-			objectLOD->getEffectColorMul().scale(effectColorMul);
+			auto effectColorAdd = objectLOD->getEffectColorAdd();
+			auto effectColorMul = objectLOD->getEffectColorMul();
+			effectColorAdd.add(effectColorAdd);
+			effectColorMul.scale(effectColorMul);
+			objectLOD->setEffectColorAdd(effectColorAdd);
+			objectLOD->setEffectColorMul(effectColorMul);
 		}
 
 		// done
@@ -221,12 +229,20 @@ public:
 		return objectLOD1->getBoundingBoxTransformed();
 	}
 
-	inline virtual Color4& getEffectColorAdd() override {
+	inline virtual const Color4& getEffectColorMul() const override {
+		return effectColorMul;
+	}
+
+	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+		this->effectColorMul = effectColorMul;
+	}
+
+	inline virtual const Color4& getEffectColorAdd() const override {
 		return effectColorAdd;
 	}
 
-	inline virtual Color4& getEffectColorMul() override {
-		return effectColorMul;
+	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+		this->effectColorAdd = effectColorAdd;
 	}
 
 	inline virtual Color4& getEffectColorAddLOD2() {
