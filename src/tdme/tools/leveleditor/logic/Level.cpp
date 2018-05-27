@@ -237,11 +237,11 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject) {
 				lodLevel3 != nullptr?lodLevel3->getPlaneRotationY():0.0f
 			);
 			auto lodObject = dynamic_cast<LODObject3D*>(entity);
-			lodObject->getEffectColorAddLOD2().set(lodLevel2->getColorAdd());
-			lodObject->getEffectColorMulLOD2().set(lodLevel2->getColorMul());
+			lodObject->setEffectColorAddLOD2(lodLevel2->getColorAdd());
+			lodObject->setEffectColorMulLOD2(lodLevel2->getColorMul());
 			if (lodLevel3 != nullptr) {
-				lodObject->getEffectColorAddLOD3().set(lodLevel3->getColorAdd());
-				lodObject->getEffectColorMulLOD3().set(lodLevel3->getColorMul());
+				lodObject->setEffectColorAddLOD3(lodLevel3->getColorAdd());
+				lodObject->setEffectColorMulLOD3(lodLevel3->getColorMul());
 			}
 		} else {
 			// single

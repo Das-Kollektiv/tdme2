@@ -135,8 +135,8 @@ public:
 				}
 				auto effectColorAdd = objectLOD->getEffectColorAdd();
 				auto effectColorMul = objectLOD->getEffectColorMul();
-				effectColorAdd.add(effectColorAdd);
-				effectColorMul.scale(effectColorMul);
+				effectColorAdd.add(this->effectColorAdd);
+				effectColorMul.scale(this->effectColorMul);
 				objectLOD->setEffectColorAdd(effectColorAdd);
 				objectLOD->setEffectColorMul(effectColorMul);
 			}
@@ -208,14 +208,74 @@ public:
 			}
 			auto effectColorAdd = objectLOD->getEffectColorAdd();
 			auto effectColorMul = objectLOD->getEffectColorMul();
-			effectColorAdd.add(effectColorAdd);
-			effectColorMul.scale(effectColorMul);
+			effectColorAdd.add(this->effectColorAdd);
+			effectColorMul.scale(this->effectColorMul);
 			objectLOD->setEffectColorAdd(effectColorAdd);
 			objectLOD->setEffectColorMul(effectColorMul);
 		}
 
 		// done
 		return objectLOD;
+	}
+
+	/**
+	 * @return effect color add for LOD2 level
+	 */
+	inline virtual const Color4& getEffectColorAddLOD2() const {
+		return effectColorAddLOD2;
+	}
+
+	/**
+	 * Set effect color add for LOD2 level
+	 * @param effect color add for LOD2 level
+	 */
+	inline void setEffectColorAddLOD2(const Color4& effectColorAddLOD2) {
+		this->effectColorAddLOD2 = effectColorAddLOD2;
+	}
+
+	/**
+	 * @return effect color mul for LOD2 level
+	 */
+	inline virtual const Color4& getEffectColorMulLOD2() const {
+		return effectColorMulLOD2;
+	}
+
+	/**
+	 * Set effect color mul for LOD2 level
+	 * @param effect color mul for LOD2 level
+	 */
+	inline void setEffectColorMulLOD2(const Color4& effectColorMulLOD2) {
+		this->effectColorMulLOD2 = effectColorMulLOD2;
+	}
+
+	/**
+	 * @return effect color add for LOD3 level
+	 */
+	inline virtual const Color4& getEffectColorAddLOD3() const {
+		return effectColorAddLOD3;
+	}
+
+	/**
+	 * Set effect color add for LOD3 level
+	 * @param effect color add for LOD3 level
+	 */
+	inline void setEffectColorAddLOD3(const Color4& effectColorAddLOD3) {
+		this->effectColorAddLOD3 = effectColorAddLOD3;
+	}
+
+	/**
+	 * @return effect color mul for LOD3 level
+	 */
+	inline virtual const Color4& getEffectColorMulLOD3() const {
+		return effectColorMulLOD3;
+	}
+
+	/**
+	 * Set effect color mul for LOD3 level
+	 * @param effect color mul for LOD3 level
+	 */
+	inline void setEffectColorMulLOD3(const Color4& effectColorMulLOD3) {
+		this->effectColorMulLOD3 = effectColorMulLOD3;
 	}
 
 	// overriden methods
@@ -243,22 +303,6 @@ public:
 
 	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
 		this->effectColorAdd = effectColorAdd;
-	}
-
-	inline virtual Color4& getEffectColorAddLOD2() {
-		return effectColorAddLOD2;
-	}
-
-	inline virtual Color4& getEffectColorMulLOD2() {
-		return effectColorMulLOD2;
-	}
-
-	inline virtual Color4& getEffectColorAddLOD3() {
-		return effectColorAddLOD3;
-	}
-
-	inline virtual Color4& getEffectColorMulLOD3() {
-		return effectColorMulLOD3;
 	}
 
 	inline virtual const string& getId() override {
