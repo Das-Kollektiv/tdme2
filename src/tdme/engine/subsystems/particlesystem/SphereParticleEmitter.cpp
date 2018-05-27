@@ -37,31 +37,6 @@ SphereParticleEmitter::~SphereParticleEmitter() {
 	delete sphereTransformed;
 }
 
-int32_t SphereParticleEmitter::getCount()
-{
-	return count;
-}
-
-Vector3& SphereParticleEmitter::getVelocity()
-{
-	return velocity;
-}
-
-Vector3& SphereParticleEmitter::getVelocityRnd()
-{
-	return velocityRnd;
-}
-
-Color4& SphereParticleEmitter::getColorStart()
-{
-	return colorStart;
-}
-
-Color4& SphereParticleEmitter::getColorEnd()
-{
-	return colorEnd;
-}
-
 void SphereParticleEmitter::emit(Particle* particle)
 {
 	auto& velocityXYZ = velocity.getArray();

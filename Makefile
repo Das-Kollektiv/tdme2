@@ -78,8 +78,9 @@ else
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP -DNDEBUG
 CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP -DNDEBUG
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 
 BIN := bin

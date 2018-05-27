@@ -44,9 +44,35 @@ private:
 	Vector3 axis1Transformed {  };
 
 public:
-	int32_t getCount() override;
-	Color4& getColorStart() override;
-	Color4& getColorEnd() override;
+	// override methods
+	inline int32_t getCount() const override {
+		return count;
+	}
+
+	inline float getVelocity() const {
+		return velocity;
+	}
+
+	inline float getVelocityRnd() const {
+		return velocityRnd;
+	}
+
+	inline const Color4& getColorStart() const override {
+		return colorStart;
+	}
+
+	inline void setColorStart(const Color4& colorStart) override {
+		this->colorStart = colorStart;
+	}
+
+	inline const Color4& getColorEnd() const override {
+		return colorEnd;
+	}
+
+	inline void setColorEnd(const Color4& colorEnd) override {
+		this->colorEnd = colorEnd;
+	}
+
 	void emit(Particle* particle) override;
 	void fromTransformations(const Transformations& transformations) override;
 

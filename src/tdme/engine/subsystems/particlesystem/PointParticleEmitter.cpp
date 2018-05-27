@@ -32,31 +32,6 @@ PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int6
 	this->colorEnd.set(colorEnd);
 }
 
-int32_t PointParticleEmitter::getCount()
-{
-	return count;
-}
-
-Vector3& PointParticleEmitter::getVelocity()
-{
-	return velocity;
-}
-
-Vector3& PointParticleEmitter::getVelocityRnd()
-{
-	return velocityRnd;
-}
-
-Color4& PointParticleEmitter::getColorStart()
-{
-	return colorStart;
-}
-
-Color4& PointParticleEmitter::getColorEnd()
-{
-	return colorEnd;
-}
-
 void PointParticleEmitter::emit(Particle* particle)
 {
 	auto& velocityXYZ = velocity.getArray();

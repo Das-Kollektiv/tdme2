@@ -24,19 +24,31 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	/** 
 	 * @return number of particles to emit in one second
 	 */
-	virtual int32_t getCount() = 0;
+	virtual int32_t getCount() const = 0;
 
 	/** 
 	 * @return color start
 	 */
-	virtual Color4& getColorStart() = 0;
+	virtual const Color4& getColorStart() const = 0;
 
 	/** 
+	 * Set start color
+	 * @param color start
+	 */
+	virtual void setColorStart(const Color4& colorStart) = 0;
+
+	/**
 	 * @return color end
 	 */
-	virtual Color4& getColorEnd() = 0;
+	virtual const Color4& getColorEnd() const = 0;
 
 	/** 
+	 * Set end color
+	 * @param color end
+	 */
+	virtual void setColorEnd(const Color4& colorEnd) = 0;
+
+	/**
 	 * Emits particles
 	 * @param particle
 	 */
