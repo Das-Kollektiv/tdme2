@@ -60,7 +60,7 @@ void Application::setMousePosition(int x, int y) {
 	#if defined(__APPLE__)
 		CGPoint point;
 		point.x = glutGet((GLenum)GLUT_WINDOW_X) + x;
-		point.y = glutGet((GLenum)GLUT_WINDOW_X) + y;
+		point.y = glutGet((GLenum)GLUT_WINDOW_Y) + y;
 		CGWarpMouseCursorPosition(point);
 		CGAssociateMouseAndMouseCursorPosition(true);
 	#else
