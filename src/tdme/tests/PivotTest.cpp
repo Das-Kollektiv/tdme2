@@ -109,12 +109,9 @@ void PivotTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 10.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
-	Console::println("bbb");
 	// auto box = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.5f);
 	// auto box = new Sphere(Vector3(0.0f, 2.0f, 0.0f), 1.0f);
-	Console::println("ccc");
 	auto boxModel = PrimitiveModel::createModel(box, "box_model");
-	Console::println("ddd");
 	(*boxModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	(*boxModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("box", boxModel);
