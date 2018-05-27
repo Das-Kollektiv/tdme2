@@ -64,16 +64,19 @@ void LODTest::main(int argc, char** argv)
 
 void LODTest::display()
 {
-	if (keyA == true) engine->getCamera()->getLookFrom().addX(-20.0f / 60.0f);
-	if (keyD == true) engine->getCamera()->getLookFrom().addX(+20.0f / 60.0f);
-	if (keyW == true) engine->getCamera()->getLookFrom().addZ(-20.0f / 60.0f);
-	if (keyS == true) engine->getCamera()->getLookFrom().addZ(+20.0f / 60.0f);
+	auto camLookFrom = engine->getCamera()->getLookFrom();
+	if (keyA == true) camLookFrom.addX(-20.0f / 60.0f);
+	if (keyD == true) camLookFrom.addX(+20.0f / 60.0f);
+	if (keyW == true) camLookFrom.addZ(-20.0f / 60.0f);
+	if (keyS == true) camLookFrom.addZ(+20.0f / 60.0f);
 	if (keyLeft == true) camRotationY+= 1.0f;
 	if (keyRight == true) camRotationY-= 1.0f;
 	Quaternion camRotationYQuaternion;
 	camRotationYQuaternion.rotate(camRotationY, Rotation::Y_AXIS);
-	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), engine->getCamera()->getLookAt());
-	engine->getCamera()->getLookAt().add(engine->getCamera()->getLookFrom());
+	auto camLookAt = engine->getCamera()->getLookAt();
+	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
+	engine->getCamera()->setLookFrom(camLookFrom);
+	engine->getCamera()->setLookAt(camLookAt.add(engine->getCamera()->getLookFrom()));
 	auto start = Time::getCurrentMillis();
 	engine->display();
 	auto end = Time::getCurrentMillis();
@@ -92,8 +95,9 @@ void LODTest::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
-	cam->getLookFrom().set(0.0f, 30.0f, 280.0f);
-	cam->getLookAt().set(0.0f, 2.5f, 0.0f);
+	cam->setLookFrom(Vector3(0.0f, 30.0f, 280.0f));
+	cam->setLookAt(Vector3(0.0f, 2.5f, 0.0f));
+	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);

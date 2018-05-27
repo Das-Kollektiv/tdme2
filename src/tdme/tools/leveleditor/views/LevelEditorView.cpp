@@ -534,7 +534,7 @@ void LevelEditorView::display()
 		camLookRotationX->update();
 		camLookRotationY->setAngle(0.0f);
 		camLookRotationY->update();
-		cam->getLookAt().set(level->getCenter());
+		cam->setLookAt(level->getCenter());
 		camScale = 1.0f;
 	}
 	if (keyA || keyD)
@@ -561,28 +561,31 @@ void LevelEditorView::display()
 	auto timing = engine->getTiming();
 	camLookRotationY->getQuaternion().multiply(FORWARD_VECTOR, camForwardVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
 	camLookRotationY->getQuaternion().multiply(SIDE_VECTOR, camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
+
+	auto camLookAt = cam->getLookAt();
 	if (keyUp)
-		cam->getLookAt().sub(tmpVector3.set(camForwardVector).scale(0.1f));
+		camLookAt.sub(tmpVector3.set(camForwardVector).scale(0.1f));
 
 	if (keyDown)
-		cam->getLookAt().add(tmpVector3.set(camForwardVector).scale(0.1f));
+		camLookAt.add(tmpVector3.set(camForwardVector).scale(0.1f));
 
 	if (keyLeft)
-		cam->getLookAt().sub(tmpVector3.set(camSideVector).scale(0.1f));
+		camLookAt.sub(tmpVector3.set(camSideVector).scale(0.1f));
 
 	if (keyRight)
-		cam->getLookAt().add(tmpVector3.set(camSideVector).scale(0.1f));
+		camLookAt.add(tmpVector3.set(camSideVector).scale(0.1f));
 
 	if (mousePanningForward != MOUSE_PANNING_NONE) {
-		cam->getLookAt().sub(tmpVector3.set(camForwardVector).scale(mousePanningForward / 30.0f * camScale));
+		camLookAt.sub(tmpVector3.set(camForwardVector).scale(mousePanningForward / 30.0f * camScale));
 		mousePanningForward = MOUSE_PANNING_NONE;
 	}
 	if (mousePanningSide != MOUSE_PANNING_NONE) {
-		cam->getLookAt().sub(tmpVector3.set(camSideVector).scale(mousePanningSide / 30.0f * camScale));
+		camLookAt.sub(tmpVector3.set(camSideVector).scale(mousePanningSide / 30.0f * camScale));
 		mousePanningSide = MOUSE_PANNING_NONE;
 	}
-	cam->getLookFrom().set(cam->getLookAt()).add(camLookAtToFromVector);
-	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
+	cam->setLookAt(camLookAt);
+	cam->setLookFrom(cam->getLookAt().clone().add(camLookAtToFromVector));
+	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	gridCenter.set(cam->getLookAt());
 	updateGrid();
 	engine->getGUI()->handleEvents();
@@ -717,7 +720,7 @@ void LevelEditorView::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(1.0f);
 	cam->setZFar(1000.0f);
-	cam->getLookAt().set(level->getCenter());
+	cam->setLookAt(level->getCenter());
 	gridCenter.set(cam->getLookAt());
 	camLookAt.set(engine->getCamera()->getLookAt());
 }
@@ -733,7 +736,7 @@ void LevelEditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 	loadLevel();
-	engine->getCamera()->getLookAt().set(camLookAt);
+	engine->getCamera()->setLookAt(camLookAt);
 }
 
 void LevelEditorView::deactivate()
@@ -1108,7 +1111,7 @@ void LevelEditorView::centerObject()
 		if (selectedEntity == nullptr) continue;
 		center.add(selectedEntity->getBoundingBoxTransformed()->getMin().clone().add(selectedEntity->getBoundingBoxTransformed()->getMax()).scale(0.5f));
 	}
-	engine->getCamera()->getLookAt().set(center.scale(1.0f / selectedEntityIds.size()));
+	engine->getCamera()->setLookAt(center.scale(1.0f / selectedEntityIds.size()));
 }
 
 void LevelEditorView::objectTranslationApply(float x, float y, float z)
@@ -1344,7 +1347,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 		levelEditorScreenController->unsetObjectProperties();
 		levelEditorScreenController->unsetObject();
 		loadLevel();
-		engine->getCamera()->getLookAt().set(level->getCenter());
+		engine->getCamera()->setLookAt(level->getCenter());
 		camLookRotationX->setAngle(-45.0f);
 		camLookRotationX->update();
 		camLookRotationY->setAngle(0.0f);

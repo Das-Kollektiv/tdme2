@@ -186,9 +186,9 @@ void PathFindingTest::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
-	cam->getLookFrom().set(0.0f, 10.0f, -6.0f);
-	cam->getLookAt().set(level.getCenter());
-	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
+	cam->setLookFrom(Vector3(0.0f, 10.0f, -6.0f));
+	cam->setLookAt(level.getCenter());
+	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	playerModelEntity = ModelMetaDataFileImport::doImport(-1, "resources/tests/models/mementoman", "mementoman.dae.tmm");
 	playerModelEntity->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelEntity->getModel()->addAnimationSetup("still", 24, 99, true);

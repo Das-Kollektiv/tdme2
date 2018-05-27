@@ -140,9 +140,9 @@ void PhysicsTest3::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
-	cam->getLookFrom().set(0.0f, 4.0f * 4.0f, -6.0f * 6.0f);
-	cam->getLookAt().set(0.0f, 0.0f, 0.0f);
-	cam->computeUpVector(cam->getLookFrom(), cam->getLookAt(), cam->getUpVector());
+	cam->setLookFrom(Vector3(0.0f, 4.0f * 4.0f, -6.0f * 6.0f));
+	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
+	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
 	light0->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);

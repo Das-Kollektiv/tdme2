@@ -34,67 +34,19 @@ Camera::~Camera() {
 
 Vector3 Camera::defaultUp(0.0f, 1.0f, 0.0f);
 
-float Camera::getFovY()
-{
-	return fovY;
-}
-
-void Camera::setFovY(float fovY)
-{
-	this->fovY = fovY;
-}
-
-float Camera::getZNear()
-{
-	return zNear;
-}
-
-void Camera::setZNear(float zNear)
-{
-	this->zNear = zNear;
-}
-
-float Camera::getZFar()
-{
-	return zFar;
-}
-
-void Camera::setZFar(float zFar)
-{
-	this->zFar = zFar;
-}
-
-Vector3& Camera::getUpVector()
-{
-	return upVector;
-}
-
-Vector3& Camera::getLookFrom()
-{
-	return lookFrom;
-}
-
-Vector3& Camera::getLookAt()
-{
-	return lookAt;
-}
-
-Frustum* Camera::getFrustum()
-{
-	return frustum;
-}
-
-void Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt, Vector3& upVector)
+Vector3 Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt)
 {
 	Vector3 tmpForward;
 	Vector3 tmpSide;
+	Vector3 tmpUpVector;
 	tmpForward.set(lookAt).sub(lookFrom).normalize();
 	if (Math::abs(tmpForward.getX()) < Math::EPSILON && Math::abs(tmpForward.getZ()) < Math::EPSILON) {
-		upVector.set(0.0f, 0.0f, tmpForward.getY()).normalize();
-		return;
+		tmpUpVector.set(0.0f, 0.0f, tmpForward.getY()).normalize();
+		return tmpUpVector;
 	}
 	Vector3::computeCrossProduct(tmpForward, defaultUp, tmpSide).normalize();
-	Vector3::computeCrossProduct(tmpSide, tmpForward, upVector).normalize();
+	Vector3::computeCrossProduct(tmpSide, tmpForward, tmpUpVector).normalize();
+	return tmpUpVector;
 }
 
 Matrix4x4& Camera::computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar)

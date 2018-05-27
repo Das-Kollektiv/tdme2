@@ -108,9 +108,9 @@ void ShadowMap::render(Light* light)
 	// set up light camera from view of light
 	lightCamera->setZNear(camera->getZNear());
 	lightCamera->setZFar(lightCameraZFar);
-	lightCamera->getLookFrom().set(lightLookFrom);
-	lightCamera->getLookAt().set(lightLookAt);
-	lightCamera->computeUpVector(lightCamera->getLookFrom(), lightCamera->getLookAt(), lightCamera->getUpVector());
+	lightCamera->setLookFrom(lightLookFrom);
+	lightCamera->setLookAt(lightLookAt);
+	lightCamera->setUpVector(lightCamera->computeUpVector(lightCamera->getLookFrom(), lightCamera->getLookAt()));
 	lightCamera->update(frameBuffer->getWidth(), frameBuffer->getHeight());
 	// Bind frame buffer to shadow map fbo id
 	frameBuffer->enableFrameBuffer();
