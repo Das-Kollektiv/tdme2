@@ -365,10 +365,10 @@ void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 
 Material* ModelHelper::cloneMaterial(Material* material) {
 	auto clonedMaterial = new Material(material->getId());
-	clonedMaterial->getAmbientColor().set(material->getAmbientColor());
-	clonedMaterial->getDiffuseColor().set(material->getDiffuseColor());
-	clonedMaterial->getEmissionColor().set(material->getEmissionColor());
-	clonedMaterial->getSpecularColor().set(material->getSpecularColor());
+	clonedMaterial->setAmbientColor(material->getAmbientColor());
+	clonedMaterial->setDiffuseColor(material->getDiffuseColor());
+	clonedMaterial->setEmissionColor(material->getEmissionColor());
+	clonedMaterial->setSpecularColor(material->getSpecularColor());
 	clonedMaterial->setShininess(material->getShininess());
 	clonedMaterial->setDiffuseTextureMaskedTransparency(material->hasDiffuseTextureTransparency());
 	clonedMaterial->setDiffuseTextureMaskedTransparencyThreshold(material->getDiffuseTextureMaskedTransparencyThreshold());

@@ -136,20 +136,20 @@ void PhysicsTest4::initialize()
 	light0->setEnabled(true);
 	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(8.0f, 1.0f, 8.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
-	(*groundModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*groundModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*groundModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	(*groundModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), ground, 0.5f);
 	auto side = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 16.0f, 8.0f));
 	auto sideModel = PrimitiveModel::createModel(side, "side_model");
-	(*sideModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*sideModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*sideModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	(*sideModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	auto nearFar = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(8.0f, 16.0f, 1.0f));
 	auto nearFarModel = PrimitiveModel::createModel(nearFar, "far_model");
-	(*nearFarModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.8f, 0.8f, 1.0f);
-	(*nearFarModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	(*nearFarModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	(*nearFarModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("far", nearFarModel);
 	entity->setTranslation(Vector3(0.0f, 0.0f, +9.0f));
 	entity->update();
@@ -173,8 +173,8 @@ void PhysicsTest4::initialize()
 	world->addStaticRigidBody("sideleft", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), side, 0.5f);
 	auto capsule = new Capsule(Vector3(0.0f, 0.25f, 0.0f), Vector3(0.0f, 9.75f, 0.0f), 0.25f);
 	auto capsuleModel = PrimitiveModel::createModel(capsule, "capsule_model");
-	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(0.8f, 0.0f, 0.8f, 1.0f);
-	(*capsuleModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 1.0f, 1.0f);
+	(*capsuleModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.0f, 0.8f, 1.0f));
+	(*capsuleModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 1.0f, 1.0f));
 	for (auto i = 0; i < CAPSULE_COUNT; i++) {
 		entity = new Object3D("capsule" + to_string(i), capsuleModel);
 		entity->setDynamicShadowingEnabled(true);
@@ -186,8 +186,8 @@ void PhysicsTest4::initialize()
 	}
 	auto capsuleBig = new Capsule(Vector3(0.0f, 0.8f, 0.0f), Vector3(0.0f, 3.2f, 0.0f), 0.8f);
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, "capsulebig_model");
-	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->getAmbientColor().set(1.0f, 0.8f, 0.8f, 1.0f);
-	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->getDiffuseColor().set(1.0f, 0.0f, 0.0f, 1.0f);
+	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
+	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("capsulebig1", capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->setTranslation(Vector3(+2.0f, 5.0f, 0.0f));

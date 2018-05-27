@@ -598,10 +598,10 @@ void ModelEditorScreenController::onMaterialApply() {
 
 	try {
 		view->resetEntity();
-		material->getAmbientColor().set(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
-		material->getDiffuseColor().set(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
-		material->getSpecularColor().set(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
-		material->getEmissionColor().set(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
+		material->setAmbientColor(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
+		material->setDiffuseColor(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
+		material->setSpecularColor(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
+		material->setEmissionColor(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
 		material->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue().getString()));
 		material->setDiffuseTexture(
 			Tools::getPath(materialsMaterialDiffuseTexture->getController()->getValue().getString()),

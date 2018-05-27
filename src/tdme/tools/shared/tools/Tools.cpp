@@ -239,7 +239,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 {
 	auto ground = new Model("ground", "ground", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material("ground");
-	groundMaterial->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	groundMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*ground->getMaterials())["ground"] = groundMaterial;
 	auto groundGroup = new Group(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;

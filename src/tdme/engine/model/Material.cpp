@@ -41,66 +41,6 @@ Material::~Material() {
 	if (displacementTexture != nullptr) delete displacementTexture;
 }
 
-Material* Material::getDefaultMaterial()
-{
-	return defaultMaterial;
-}
-
-const string& Material::getId()
-{
-	return id;
-}
-
-Color4& Material::getAmbientColor()
-{
-	return ambientColor;
-}
-
-Color4& Material::getDiffuseColor()
-{
-	return diffuseColor;
-}
-
-Color4& Material::getSpecularColor()
-{
-	return specularColor;
-}
-
-Color4& Material::getEmissionColor()
-{
-	return emissionColor;
-}
-
-float Material::getShininess()
-{
-	return shininess;
-}
-
-void Material::setShininess(float shininess)
-{
-	this->shininess = shininess;
-}
-
-const string& Material::getDiffuseTexturePathName()
-{
-	return diffuseTexturePathName;
-}
-
-const string& Material::getDiffuseTextureFileName()
-{
-	return diffuseTextureFileName;
-}
-
-const string& Material::getDiffuseTransparencyTexturePathName()
-{
-	return diffuseTransparencyTexturePathName;
-}
-
-const string& Material::getDiffuseTransparencyTextureFileName()
-{
-	return diffuseTransparencyTextureFileName;
-}
-
 void Material::setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName, const string& transparencyFileName)
 {
 	// load diffuse texture
@@ -157,37 +97,6 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 	checkDiffuseTextureTransparency();
 }
 
-bool Material::hasDiffuseTexture()
-{
-	return diffuseTexture != nullptr;
-}
-
-Texture* Material::getDiffuseTexture()
-{
-	return diffuseTexture;
-}
-
-bool Material::hasDiffuseTextureTransparency()
-{
-	return diffuseTextureTransparency;
-}
-
-bool Material::hasDiffuseTextureMaskedTransparency() {
-	return diffuseTextureMaskedTransparency;
-}
-
-void Material::setDiffuseTextureMaskedTransparency(bool maskedTransparency) {
-	diffuseTextureMaskedTransparency = maskedTransparency;
-}
-
-float Material::getDiffuseTextureMaskedTransparencyThreshold() {
-	return diffuseTextureMaskedTransparencyThreshold;
-}
-
-void Material::setDiffuseTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold) {
-	diffuseTextureMaskedTransparencyThreshold = maskedTransparencyThreshold;
-}
-
 void Material::checkDiffuseTextureTransparency()
 {
 	// TODO: check if masked transparency is used
@@ -204,41 +113,11 @@ void Material::checkDiffuseTextureTransparency()
 	}
 }
 
-const string& Material::getSpecularTexturePathName()
-{
-	return specularTexturePathName;
-}
-
-const string& Material::getSpecularTextureFileName()
-{
-	return specularTextureFileName;
-}
-
 void Material::setSpecularTexture(const string& pathName, const string& fileName)
 {
 	specularTexturePathName = pathName;
 	specularTextureFileName = fileName;
 	specularTexture = TextureLoader::loadTexture(pathName, fileName);
-}
-
-bool Material::hasSpecularTexture()
-{
-	return specularTexture != nullptr;
-}
-
-Texture* Material::getSpecularTexture()
-{
-	return specularTexture;
-}
-
-const string& Material::getNormalTexturePathName()
-{
-	return normalTexturePathName;
-}
-
-const string& Material::getNormalTextureFileName()
-{
-	return normalTextureFileName;
 }
 
 void Material::setNormalTexture(const string& pathName, const string& fileName)
@@ -248,51 +127,11 @@ void Material::setNormalTexture(const string& pathName, const string& fileName)
 	normalTexture = TextureLoader::loadTexture(pathName, fileName);
 }
 
-bool Material::hasNormalTexture()
-{
-	return normalTexture != nullptr;
-}
-
-Texture* Material::getNormalTexture()
-{
-	return normalTexture;
-}
-
-const string& Material::getDisplacementTexturePathName()
-{
-	return displacementTexturePathName;
-}
-
-const string& Material::getDisplacementTextureFileName()
-{
-	return displacementTextureFileName;
-}
-
 void Material::setDisplacementTexture(const string& pathName, const string& fileName)
 {
 	displacementTexturePathName = pathName;
 	displacementTextureFileName = fileName;
 	displacementTexture = TextureLoader::loadTexture(pathName, fileName);
-}
-
-bool Material::hasDisplacementTexture()
-{
-	return displacementTexture != nullptr;
-}
-
-Texture* Material::getDisplacementTexture()
-{
-	return displacementTexture;
-}
-
-bool Material::hasColorTransparency()
-{
-	return diffuseColor.getAlpha() < 1.0f - Math::EPSILON;
-}
-
-bool Material::hasTextureTransparency()
-{
-	return diffuseTextureTransparency == true && diffuseTextureMaskedTransparency == false;
 }
 
 string Material::defaultMaterialId = "tdme.default_material";

@@ -267,9 +267,9 @@ void EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConve
 Model* EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::createModel(const string& id, double* points, uint32_t* triangles, uint32_t pointCount, uint32_t triangleCount) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*model->getMaterials())[material->getId()] = material;
 	auto group = new Group(model, nullptr, "group", "group");
 	vector<Vector3> vertices;

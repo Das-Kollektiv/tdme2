@@ -393,39 +393,47 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					FbxPropertyT<FbxDouble3> fbxDouble3;
 					FbxPropertyT<FbxDouble> fbxDouble;
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Ambient;
-					material->getAmbientColor().set(
-						static_cast<float>(fbxDouble3.Get()[0]),
-						static_cast<float>(fbxDouble3.Get()[1]),
-						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f
+					material->setAmbientColor(
+						Color4(
+							static_cast<float>(fbxDouble3.Get()[0]),
+							static_cast<float>(fbxDouble3.Get()[1]),
+							static_cast<float>(fbxDouble3.Get()[2]),
+							1.0f
+						)
 					);
 					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->TransparencyFactor;
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Diffuse;
-					material->getDiffuseColor().set(
-						static_cast<float>(fbxDouble3.Get()[0]),
-						static_cast<float>(fbxDouble3.Get()[1]),
-						static_cast<float>(fbxDouble3.Get()[2]),
-						model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER?
-							(
-								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
-									1.0f:
-									1.0f - static_cast<float>(fbxDouble)
-							):
-							1.0f - static_cast<float>(fbxDouble)
+					material->setDiffuseColor(
+						Color4(
+							static_cast<float>(fbxDouble3.Get()[0]),
+							static_cast<float>(fbxDouble3.Get()[1]),
+							static_cast<float>(fbxDouble3.Get()[2]),
+							model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER?
+								(
+									1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+										1.0f:
+										1.0f - static_cast<float>(fbxDouble)
+								):
+								1.0f - static_cast<float>(fbxDouble)
+						)
 					);
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
-					material->getSpecularColor().set(
-						static_cast<float>(fbxDouble3.Get()[0]),
-						static_cast<float>(fbxDouble3.Get()[1]),
-						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f
+					material->setSpecularColor(
+						Color4(
+							static_cast<float>(fbxDouble3.Get()[0]),
+							static_cast<float>(fbxDouble3.Get()[1]),
+							static_cast<float>(fbxDouble3.Get()[2]),
+							1.0f
+						)
 					);
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Emissive;
-					material->getEmissionColor().set(
-						static_cast<float>(fbxDouble3.Get()[0]),
-						static_cast<float>(fbxDouble3.Get()[1]),
-						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f
+					material->setEmissionColor(
+						Color4(
+							static_cast<float>(fbxDouble3.Get()[0]),
+							static_cast<float>(fbxDouble3.Get()[1]),
+							static_cast<float>(fbxDouble3.Get()[2]),
+							1.0f
+						)
 					);
 					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->Shininess;
 					material->setShininess(
@@ -437,26 +445,32 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					FbxPropertyT<FbxDouble3> fbxDouble3;
 					FbxPropertyT<FbxDouble> fbxDouble;
 					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Ambient;
-					material->getAmbientColor().set(
-						static_cast<float>(fbxDouble3.Get()[0]),
-						static_cast<float>(fbxDouble3.Get()[1]),
-						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f
+					material->setAmbientColor(
+						Color4(
+							static_cast<float>(fbxDouble3.Get()[0]),
+							static_cast<float>(fbxDouble3.Get()[1]),
+							static_cast<float>(fbxDouble3.Get()[2]),
+							1.0f
+						)
 					);
 					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Diffuse;
 					fbxDouble = ((FbxSurfaceLambert*)fbxMaterial)->TransparencyFactor;
-					material->getDiffuseColor().set(
-						static_cast<float>(fbxDouble3.Get()[0]),
-						static_cast<float>(fbxDouble3.Get()[1]),
-						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f - static_cast<float>(fbxDouble)
+					material->setDiffuseColor(
+						Color4(
+							static_cast<float>(fbxDouble3.Get()[0]),
+							static_cast<float>(fbxDouble3.Get()[1]),
+							static_cast<float>(fbxDouble3.Get()[2]),
+							1.0f - static_cast<float>(fbxDouble)
+						)
 					);
 					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Emissive;
-					material->getEmissionColor().set(
-						static_cast<float>(fbxDouble3.Get()[0]),
-						static_cast<float>(fbxDouble3.Get()[1]),
-						static_cast<float>(fbxDouble3.Get()[2]),
-						1.0f
+					material->setEmissionColor(
+						Color4(
+							static_cast<float>(fbxDouble3.Get()[0]),
+							static_cast<float>(fbxDouble3.Get()[1]),
+							static_cast<float>(fbxDouble3.Get()[2]),
+							1.0f
+						)
 					);
 				}
 				FbxProperty fbxProperty;

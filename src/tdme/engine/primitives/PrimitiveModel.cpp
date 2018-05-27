@@ -63,9 +63,9 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*model->getMaterials())[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -132,9 +132,9 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*model->getMaterials())[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -205,9 +205,9 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*model->getMaterials())[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -315,9 +315,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*model->getMaterials())[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -431,9 +431,9 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 	//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
 	model->getImportTransformationsMatrix().scale(1.01f);
 	auto material = new Material("tdme.primitive.material");
-	material->getAmbientColor().set(0.5f, 0.5f, 0.5f, 1.0f);
-	material->getDiffuseColor().set(1.0f, 0.5f, 0.5f, 0.5f);
-	material->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*model->getMaterials())[material->getId()] = material;
 	setupConvexMeshMaterial(model->getSubGroups(), material);
 }
