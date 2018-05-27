@@ -858,7 +858,7 @@ void Object3DVBORenderer::clearMaterial()
 	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
 }
 
-const string Object3DVBORenderer::createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort)
+const string Object3DVBORenderer::createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, bool depthBuffer, bool sort)
 {
 	auto& efcaData = effectColorAdd.getArray();
 	auto& efcmData = effectColorMul.getArray();

@@ -110,14 +110,24 @@ void ObjectParticleSystemEntityInternal::setEnabled(bool enabled)
 	this->enabled = enabled;
 }
 
-Color4& ObjectParticleSystemEntityInternal::getEffectColorMul()
+const Color4& ObjectParticleSystemEntityInternal::getEffectColorMul() const
 {
 	return effectColorMul;
 }
 
-Color4& ObjectParticleSystemEntityInternal::getEffectColorAdd()
+void ObjectParticleSystemEntityInternal::setEffectColorMul(const Color4& effectColorMul)
+{
+	this->effectColorMul = effectColorMul;
+}
+
+const Color4& ObjectParticleSystemEntityInternal::getEffectColorAdd() const
 {
 	return effectColorAdd;
+}
+
+void ObjectParticleSystemEntityInternal::setEffectColorAdd(const Color4& effectColorAdd)
+{
+	this->effectColorAdd = effectColorAdd;
 }
 
 bool ObjectParticleSystemEntityInternal::isPickable()
@@ -207,8 +217,8 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 		object->setTranslation(particle.position);
 		object->update();
 		object->setEnabled(true);
-		object->getEffectColorAdd().set(effectColorAdd);
-		object->getEffectColorMul().set(effectColorMul);
+		object->setEffectColorAdd(effectColorAdd);
+		object->setEffectColorMul(effectColorMul);
 		enabledObjects.push_back(object);
 		// all particles spawned?
 		particlesSpawned++;
@@ -248,8 +258,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
 		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
 		// update up effect colors
-		object->getEffectColorAdd().set(effectColorAdd);
-		object->getEffectColorMul().set(effectColorMul);
+		object->setEffectColorAdd(effectColorAdd);
+		object->setEffectColorMul(effectColorMul);
 		// translation
 		object->setTranslation(object->getTranslation().clone().add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f)));
 		object->update();

@@ -165,12 +165,20 @@ public:
 		return &boundingBoxTransformed;
 	}
 
-	inline virtual Color4& getEffectColorAdd() override {
+	inline virtual const Color4& getEffectColorMul() const override {
+		return effectColorMul;
+	}
+
+	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+		this->effectColorMul = effectColorMul;
+	}
+
+	inline virtual const Color4& getEffectColorAdd() const override {
 		return effectColorAdd;
 	}
 
-	inline virtual Color4& getEffectColorMul() override {
-		return effectColorMul;
+	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+		this->effectColorAdd = effectColorAdd;
 	}
 
 	inline virtual const string& getId() override {

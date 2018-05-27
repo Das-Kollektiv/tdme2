@@ -170,15 +170,11 @@ void EngineTest::display()
 	engine->display();
 	if (mouseClicked == true) {
 		if (entityClicked != nullptr) {
-			entityClicked->getEffectColorMul().setRed(1.0f);
-			entityClicked->getEffectColorMul().setGreen(1.0f);
-			entityClicked->getEffectColorMul().setBlue(1.0f);
+			entityClicked->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
 		auto _object3DClicked = engine->getEntityByMousePosition(mouseClickedXY[0], mouseClickedXY[1]);
 		if (_object3DClicked != nullptr) {
-			_object3DClicked->getEffectColorMul().setRed(2.0f);
-			_object3DClicked->getEffectColorMul().setGreen(2.0f);
-			_object3DClicked->getEffectColorMul().setBlue(2.0f);
+			_object3DClicked->setEffectColorMul(Color4(2.0f, 2.0f, 2.0f, 1.0f));
 		}
 		entityClicked = _object3DClicked;
 		mouseClicked = false;

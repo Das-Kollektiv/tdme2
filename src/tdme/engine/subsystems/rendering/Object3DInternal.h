@@ -98,16 +98,32 @@ public:
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
-	inline virtual Color4& getEffectColorMul() {
+	inline virtual const Color4& getEffectColorMul() const {
 		return effectColorMul;
 	}
 
 	/** 
+	 * The effect color that will be multiplied with fragment color
+	 * @param effect color
+	 */
+	inline virtual void setEffectColorMul(const Color4& effectColorMul) {
+		this->effectColorMul = effectColorMul;
+	}
+
+	/**
 	 * The effect color will be added to fragment color
 	 * @return effect color
 	 */
-	inline virtual Color4& getEffectColorAdd() {
+	inline virtual const Color4& getEffectColorAdd() const {
 		return effectColorAdd;
+	}
+
+	/**
+	 * The effect color will be added to fragment color
+	 * @return effect color
+	 */
+	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) {
+		this->effectColorAdd = effectColorAdd;
 	}
 
 	/** 

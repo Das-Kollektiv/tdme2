@@ -70,12 +70,20 @@ public:
 		return Object3DInternal::getBoundingBoxTransformed();
 	}
 
-	inline virtual Color4& getEffectColorAdd() override {
+	inline virtual const Color4& getEffectColorAdd() const override {
 		return Object3DInternal::getEffectColorAdd();
 	}
 
-	inline virtual Color4& getEffectColorMul() override {
+	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+		return Object3DInternal::setEffectColorAdd(effectColorAdd);
+	}
+
+	inline virtual const Color4& getEffectColorMul() const override {
 		return Object3DInternal::getEffectColorMul();
+	}
+
+	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+		return Object3DInternal::setEffectColorMul(effectColorMul);
 	}
 
 	inline virtual const string& getId() override {

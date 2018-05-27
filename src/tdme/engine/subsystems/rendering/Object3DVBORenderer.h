@@ -148,7 +148,7 @@ private:
 	 * @param depthBuffer
 	 * @param sort
 	 */
-	static const string createPseKey(Color4& effectColorAdd, Color4& effectColorMul, bool depthBuffer, bool sort);
+	static const string createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, bool depthBuffer, bool sort);
 
 public:
 	static constexpr int32_t RENDERTYPE_NORMALS { 1 };

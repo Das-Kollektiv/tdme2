@@ -320,8 +320,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 		if (model != nullptr) {
 			modelEntity = new Object3D("model", model);
 			modelEntity->setDynamicShadowingEnabled(true);
-			modelEntity->getEffectColorMul().set(colorMul);
-			modelEntity->getEffectColorAdd().set(colorAdd);
+			modelEntity->setEffectColorMul(colorMul);
+			modelEntity->setEffectColorAdd(colorAdd);
 			engine->addEntity(modelEntity);
 		}
 	}
