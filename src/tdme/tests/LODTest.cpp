@@ -134,7 +134,7 @@ void LODTest::initialize()
 			nullptr
 		);
 		// try to fix missing/different lighting of LOD2 object plane
-		entity->getEffectColorMulLOD2().set(3.7f, 3.7f, 3.7f, 1.0f);
+		entity->setEffectColorMulLOD2(Color4(3.7f, 3.7f, 3.7f, 1.0f));
 		entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), Math::random() * 360.0f);
 		float scale = 1.0f + Math::random() / 3.0f;
 		entity->setScale(Vector3(scale, scale, scale));
