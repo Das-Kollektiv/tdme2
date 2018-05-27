@@ -47,61 +47,107 @@ public:
 	/** 
 	 * @return field of view Y
 	 */
-	float getFovY();
+	inline float getFovY() const {
+		return fovY;
+	}
 
 	/** 
 	 * Set field of view Y
 	 * @param field of view y
 	 */
-	void setFovY(float fovY);
+	inline void setFovY(float fovY) {
+		this->fovY = fovY;
+	}
 
 	/** 
 	 * @return float
 	 */
-	float getZNear();
+	inline float getZNear() const {
+		return zNear;
+	}
 
-	/** 
+	/**
+	 * Set z near
 	 * @param zNear
 	 */
-	void setZNear(float zNear);
+	inline void setZNear(float zNear) {
+		this->zNear = zNear;
+	}
 
 	/** 
 	 * @return float
 	 */
-	float getZFar();
+	inline float getZFar() const {
+		return zFar;
+	}
 
 	/** 
+	 * Set z far
 	 * @param zFar
 	 */
-	void setZFar(float zFar);
+	inline void setZFar(float zFar) {
+		this->zFar = zFar;
+	}
 
 	/** 
 	 * @return up vector
 	 */
-	Vector3& getUpVector();
+	inline const Vector3& getUpVector() const {
+		return upVector;
+	}
+
+	/**
+	 * Set up vector
+	 * @param up vector
+	 */
+	inline void setUpVector(const Vector3& upVector) {
+		this->upVector = upVector;
+	}
 
 	/** 
 	 * @return look from vector
 	 */
-	Vector3& getLookFrom();
+	inline const Vector3& getLookFrom() const {
+		return lookFrom;
+	}
+
+	/**
+	 * Set look from
+	 * @param look from
+	 */
+	inline void setLookFrom(const Vector3& lookFrom) {
+		this->lookFrom = lookFrom;
+	}
 
 	/** 
 	 * @return look at vector
 	 */
-	Vector3& getLookAt();
+	inline const Vector3& getLookAt() const {
+		return lookAt;
+	}
+
+	/**
+	 * Set look at
+	 * @param look at
+	 */
+	inline void setLookAt(const Vector3& lookAt) {
+		this->lookAt = lookAt;
+	}
 
 	/** 
 	 * @return frustum
 	 */
-	Frustum* getFrustum();
+	inline Frustum* getFrustum() {
+		return frustum;
+	}
 
 	/** 
 	 * Computes the up vector for given look from and look at vectors
 	 * @param look from
 	 * @param look at
-	 * @param up vector
+	 * @return up vector
 	 */
-	void computeUpVector(const Vector3& lookFrom, const Vector3& lookAt, Vector3& upVector);
+	Vector3 computeUpVector(const Vector3& lookFrom, const Vector3& lookAt);
 
 private:
 
