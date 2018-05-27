@@ -181,11 +181,11 @@ int32_t Tools::convertToIntSilent(const string& text)
 
 void Tools::setDefaultLight(Light* light)
 {
-	light->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
-	light->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
-	light->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
-	light->getPosition().set(0.0f, 20000.0f, 0.0f, 1.0f);
-	light->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ()));
+	light->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	light->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
+	light->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light->getPosition().getX(), light->getPosition().getY(), light->getPosition().getZ())));
 	light->setConstantAttenuation(0.5f);
 	light->setLinearAttenuation(0.0f);
 	light->setQuadraticAttenuation(0.0f);
@@ -357,15 +357,18 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
 	auto light0 = engine->getLightAt(0);
-	light0->getAmbient().set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getDiffuse().set(0.5f, 0.5f, 0.5f, 1.0f);
-	light0->getSpecular().set(1.0f, 1.0f, 1.0f, 1.0f);
-	light0->getPosition().set(
-		entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f),
-		entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f),
-		-entityBoundingBox->getMin().getZ() * 4.0f, 1.0f
+	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light0->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light0->setPosition(
+		Vector4(
+			entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f),
+			entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f),
+			-entityBoundingBox->getMin().getZ() * 4.0f,
+			1.0f
+		)
 	);
-	light0->getSpotDirection().set(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ()));
+	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
 	light0->setConstantAttenuation(0.5f);
 	light0->setLinearAttenuation(0.0f);
 	light0->setQuadraticAttenuation(0.0f);

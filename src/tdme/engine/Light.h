@@ -40,99 +40,174 @@ public:
 	/** 
 	 * @return light id
 	 */
-	int32_t getId();
+	inline int32_t getId() const {
+		return id;
+	}
 
 	/** 
 	 * @return enabled
 	 */
-	bool isEnabled();
+	inline bool isEnabled() const {
+		return enabled;
+	}
 
 	/** 
 	 * Set enabled
 	 * @param enabled
 	 */
-	void setEnabled(bool enabled);
+	inline void setEnabled(bool enabled) {
+		this->enabled = enabled;
+	}
 
 	/** 
-	 * @return ambient light
+	 * @return ambient light component
 	 */
-	Color4& getAmbient();
+	inline const Color4& getAmbient() const {
+		return ambient;
+	}
 
 	/** 
-	 * Diffuse light 
-	 * @return diffuse light
+	 * Set ambient light component
+	 * @param ambient light component
 	 */
-	Color4& getDiffuse();
+	inline void setAmbient(const Color4& ambient) {
+		this->ambient = ambient;
+	}
 
-	/** 
-	 * @return specular light
+	/**
+	 * @return diffuse light component
 	 */
-	Color4& getSpecular();
+	inline const Color4& getDiffuse() const {
+		return diffuse;
+	}
 
 	/** 
+	 * Set diffuse light component
+	 * @param diffuse light
+	 */
+	inline void setDiffuse(const Color4& diffuse) {
+		this->diffuse = diffuse;
+	}
+
+	/**
+	 * @return specular light component
+	 */
+	inline const Color4& getSpecular() const {
+		return specular;
+	}
+
+	/** 
+	 * Set specular light component
+	 * @param specular light
+	 */
+	inline void setSpecular(const Color4& specular) {
+		this->specular = specular;
+	}
+
+	/**
 	 * @return position of light
 	 */
-	Vector4& getPosition();
+	inline const Vector4& getPosition() const {
+		return position;
+	}
+
+	/**
+	 * Set light position
+	 * @param position of light
+	 */
+	inline void setPosition(const Vector4& position) {
+		this->position = position;
+	}
 
 	/** 
 	 * @return spot direction
 	 */
-	Vector3& getSpotDirection();
+	inline const Vector3& getSpotDirection() const {
+		return spotDirection;
+	}
+
+	/**
+	 * Set spot direction
+	 * @param spot direction
+	 */
+	inline void setSpotDirection(const Vector3& spotDirection) {
+		this->spotDirection = spotDirection;
+	}
 
 	/** 
 	 * @return spot exponent
 	 */
-	float getSpotExponent();
+	inline float getSpotExponent() const {
+		return spotExponent;
+	}
 
 	/** 
-	 * set up spot exponent 
+	 * Set up spot exponent
 	 * @param spot exponent
 	 */
-	void setSpotExponent(float spotExponent);
+	inline void setSpotExponent(float spotExponent) {
+		this->spotExponent = spotExponent;
+	}
 
 	/** 
 	 * @return spot cutoff
 	 */
-	float getSpotCutOff();
+	inline float getSpotCutOff() const {
+		return spotCutOff;
+	}
 
 	/** 
-	 * set spot cut off
+	 * Set spot cut off
 	 * @param spot cut off
 	 */
-	void setSpotCutOff(float spotCutOff);
+	inline void setSpotCutOff(float spotCutOff) {
+		this->spotCutOff = spotCutOff;
+	}
 
 	/** 
 	 * @return constant attenuation
 	 */
-	float getConstantAttenuation();
+	inline float getConstantAttenuation() const {
+		return constantAttenuation;
+	}
 
 	/** 
-	 * set up constant attenuation
+	 * Set up constant attenuation
 	 * @param constant attenuation
 	 */
-	void setConstantAttenuation(float constantAttenuation);
+	inline void setConstantAttenuation(float constantAttenuation) {
+		this->constantAttenuation = constantAttenuation;
+	}
 
 	/** 
 	 * @return linear attenuation
 	 */
-	float getLinearAttenuation();
+	inline float getLinearAttenuation() const {
+		return linearAttenuation;
+	}
 
 	/** 
-	 * set up linear attenuation
-	 * @param linarAttenuation
+	 * Set up linear attenuation
+	 * @param linear attenuation
 	 */
-	void setLinearAttenuation(float linarAttenuation);
+	inline void setLinearAttenuation(float linearAttenuation) {
+		this->linearAttenuation = linearAttenuation;
+	}
 
 	/** 
 	 * @return quadratic attenuation
 	 */
-	float getQuadraticAttenuation();
+	inline float getQuadraticAttenuation() const {
+		return quadraticAttenuation;
+	}
 
 	/** 
-	 * set up quadratic attenuation
+	 * Set up quadratic attenuation
 	 * @param quadraticAttenuation
 	 */
-	void setQuadraticAttenuation(float quadraticAttenuation);
+	inline void setQuadraticAttenuation(float quadraticAttenuation) {
+		this->quadraticAttenuation = quadraticAttenuation;
+	}
 
 	/** 
 	 * Update light
