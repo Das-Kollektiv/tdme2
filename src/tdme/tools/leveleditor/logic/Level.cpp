@@ -121,20 +121,24 @@ constexpr int32_t Level::RIGIDBODY_TYPEID_PLAYER;
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getLightCount(); i++) {
-		engine->getLightAt(i)->getAmbient().set(level->getLightAt(i)->getAmbient());
-		engine->getLightAt(i)->getDiffuse().set(level->getLightAt(i)->getDiffuse());
-		engine->getLightAt(i)->getSpecular().set(level->getLightAt(i)->getSpecular());
-		engine->getLightAt(i)->getPosition().set(level->getLightAt(i)->getPosition());
-		engine->getLightAt(i)->getSpotDirection().set(level->getLightAt(i)->getSpotDirection());
+		engine->getLightAt(i)->setAmbient(Color4(level->getLightAt(i)->getAmbient()));
+		engine->getLightAt(i)->setDiffuse(Color4(level->getLightAt(i)->getDiffuse()));
+		engine->getLightAt(i)->setSpecular(Color4(level->getLightAt(i)->getSpecular()));
+		engine->getLightAt(i)->setSpotDirection(level->getLightAt(i)->getSpotDirection());
 		engine->getLightAt(i)->setSpotExponent(level->getLightAt(i)->getSpotExponent());
 		engine->getLightAt(i)->setSpotCutOff(level->getLightAt(i)->getSpotCutOff());
 		engine->getLightAt(i)->setConstantAttenuation(level->getLightAt(i)->getConstantAttenuation());
 		engine->getLightAt(i)->setLinearAttenuation(level->getLightAt(i)->getLinearAttenuation());
 		engine->getLightAt(i)->setQuadraticAttenuation(level->getLightAt(i)->getQuadraticAttenuation());
 		engine->getLightAt(i)->setEnabled(level->getLightAt(i)->isEnabled());
-		engine->getLightAt(i)->getPosition().setX(engine->getLightAt(i)->getPosition().getX() + translation.getX());
-		engine->getLightAt(i)->getPosition().setY(engine->getLightAt(i)->getPosition().getY() + translation.getY());
-		engine->getLightAt(i)->getPosition().setZ(engine->getLightAt(i)->getPosition().getZ() + translation.getZ());
+		engine->getLightAt(i)->setPosition(
+			Vector4(
+				level->getLightAt(i)->getPosition().getX() + translation.getX(),
+				level->getLightAt(i)->getPosition().getY() + translation.getY(),
+				level->getLightAt(i)->getPosition().getZ() + translation.getZ(),
+				1.0f
+			)
+		);
 	}
 }
 
