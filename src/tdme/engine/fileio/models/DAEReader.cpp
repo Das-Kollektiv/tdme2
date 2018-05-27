@@ -1035,7 +1035,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getDiffuseColor().set(colorArray);
+							material->setDiffuseColor(Color4(colorArray));
 						}
 						// texture
 						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
@@ -1068,7 +1068,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getAmbientColor().set(colorArray);
+							material->setAmbientColor(Color4(colorArray));
 						}
 					}
 					// emission
@@ -1081,7 +1081,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getEmissionColor().set(colorArray);
+							material->setEmissionColor(Color4(colorArray));
 						}
 					}
 					// specular
@@ -1118,12 +1118,12 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->getSpecularColor().set(colorArray);
+							material->setSpecularColor(Color4(colorArray));
 							hasSpecularColor = true;
 						}
 					}
 					if (hasSpecularMap == true && hasSpecularColor == false) {
-						material->getSpecularColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+						material->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 					}
 					// shininess
 					for (auto xmlShininess: getChildrenByTagName(xmlTechniqueNode, "shininess"))
@@ -1221,17 +1221,21 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 
 	// adjust ambient light with blender
 	if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
-		material->getAmbientColor().set(
-			material->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-			material->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-			material->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-			1.0f
+		material->setAmbientColor(
+			Color4(
+				material->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+				material->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+				material->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+				1.0f
+			)
 		);
-		material->getDiffuseColor().set(
-			material->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
-			material->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
-			material->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
-			material->getDiffuseColor().getAlpha()
+		material->setDiffuseColor(
+			Color4(
+				material->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
+				material->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
+				material->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
+				material->getDiffuseColor().getAlpha()
+			)
 		);
 	}
 

@@ -114,8 +114,8 @@ Model* EngineTest::createWallModel()
 {
 	auto wall = new Model("wall", "wall", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto wallMaterial = new Material("wall");
-	wallMaterial->getAmbientColor().set(1.0f, 1.0f, 1.0f, 1.0f);
-	wallMaterial->getDiffuseColor().set(1.0f, 1.0f, 1.0f, 1.0f);
+	wallMaterial->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	wallMaterial->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	(*wall->getMaterials())["wall"] = wallMaterial;
 	auto wallGroup = new Group(wall, nullptr, "wall", "wall");
 	vector<FacesEntity> groupFacesEntities;

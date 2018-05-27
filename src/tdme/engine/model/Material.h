@@ -28,7 +28,9 @@ public:
 	/** 
 	 * @return default material
 	 */
-	static Material* getDefaultMaterial();
+	inline static Material* getDefaultMaterial() {
+		return defaultMaterial;
+	}
 
 private:
 	string id {  };
@@ -55,63 +57,122 @@ private:
 	string displacementTextureFileName {  };
 	Texture* displacementTexture {  };
 
+	/**
+	 * Checks and set ups diffuse texture transparency
+	 */
+	void checkDiffuseTextureTransparency();
+
 public:
 
 	/** 
 	 * @return material id
 	 */
-	const string& getId();
+	inline const string& getId() const {
+		return id;
+	}
 
 	/** 
 	 * @return ambient color
 	 */
-	Color4& getAmbientColor();
+	inline const Color4& getAmbientColor() const {
+		return ambientColor;
+	}
+
+	/**
+	 * Set ambient color component
+	 * @param ambient color
+	 */
+	inline void setAmbientColor(const Color4& ambientColor) {
+		this->ambientColor = ambientColor;
+	}
 
 	/** 
 	 * @return diffuse color
 	 */
-	Color4& getDiffuseColor();
+	inline const Color4& getDiffuseColor() const {
+		return diffuseColor;
+	}
+
+	/**
+	 * Set diffuse color component
+	 * @param diffuse color
+	 */
+	inline void setDiffuseColor(const Color4& diffuseColor) {
+		this->diffuseColor = diffuseColor;
+	}
 
 	/** 
 	 * @return specular color
 	 */
-	Color4& getSpecularColor();
+	inline const Color4& getSpecularColor() const {
+		return specularColor;
+	}
+
+	/**
+	 * Set specular color component
+	 * @param specular color
+	 */
+	inline void setSpecularColor(const Color4& specularColor) {
+		this->specularColor = specularColor;
+	}
 
 	/** 
 	 * @return emission color
 	 */
-	Color4& getEmissionColor();
+	inline const Color4& getEmissionColor() const {
+		return emissionColor;
+	}
+
+	/**
+	 * Set emission color component
+	 * @param emission color
+	 */
+	inline void setEmissionColor(const Color4& emissionColor) {
+		this->emissionColor = emissionColor;
+	}
 
 	/** 
 	 * @return shininess
 	 */
-	float getShininess();
+	inline float getShininess() const {
+		return shininess;
+	}
 
 	/** 
 	 * Set up material shininess
 	 * @param shininess
 	 */
-	void setShininess(float shininess);
+	inline void setShininess(float shininess) {
+		this->shininess = shininess;
+	}
 
 	/** 
 	 * @return diffuse texture path name
 	 */
-	const string& getDiffuseTexturePathName();
+	inline const string& getDiffuseTexturePathName() const {
+		return diffuseTexturePathName;
+	}
 
 	/** 
 	 * @return diffuse texture file name
 	 */
-	const string& getDiffuseTextureFileName();
+	inline const string& getDiffuseTextureFileName() const {
+		return diffuseTextureFileName;
+	}
 
 	/** 
 	 * @return diffuse transparency texture path name
 	 */
-	const string& getDiffuseTransparencyTexturePathName();
+	inline const string& getDiffuseTransparencyTexturePathName() const {
+		return diffuseTransparencyTexturePathName;
+	}
 
 	/**
 	 * @return diffuse transparency texture file name
 	 */
-	const string& getDiffuseTransparencyTextureFileName();
+	inline const string& getDiffuseTransparencyTextureFileName() const {
+		return diffuseTransparencyTextureFileName;
+	}
 
 	/**
 	 * Set up a diffuse texture
@@ -125,58 +186,67 @@ public:
 	/**
 	 * @return if material has a diffuse texture
 	 */
-	bool hasDiffuseTexture();
+	inline bool hasDiffuseTexture() const {
+		return diffuseTexture != nullptr;
+	}
 
 	/** 
 	 * @return the material's diffuse texture
 	 */
-	Texture* getDiffuseTexture();
+	inline Texture* getDiffuseTexture() {
+		return diffuseTexture;
+	}
 
 	/** 
 	 * @return diffuse texture has transparent pixels
 	 */
-	bool hasDiffuseTextureTransparency();
+	inline bool hasDiffuseTextureTransparency() const {
+		return diffuseTextureTransparency;
+	}
 
 	/**
 	 * @return diffuse texture has masked transparency, means pixel are eighter opaque or not visible
 	 */
-	bool hasDiffuseTextureMaskedTransparency();
+	inline bool hasDiffuseTextureMaskedTransparency() const {
+		return diffuseTextureMaskedTransparency;
+	}
 
 	/**
 	 * Set if diffuse texture uses masked transparency(means pixel are eighter opaque or not visible)
 	 * @param masked transparency
 	 */
-	void setDiffuseTextureMaskedTransparency(bool maskedTransparency);
+	inline void setDiffuseTextureMaskedTransparency(bool maskedTransparency) {
+		diffuseTextureMaskedTransparency = maskedTransparency;
+	}
 
 	/**
 	 * @return diffuse masked transparency threshold
 	 */
-	float getDiffuseTextureMaskedTransparencyThreshold();
+	inline float getDiffuseTextureMaskedTransparencyThreshold() const {
+		return diffuseTextureMaskedTransparencyThreshold;
+	}
 
 	/**
 	 * Set diffuse texture masked transparency threshold
 	 * @param diffuse texture masked transparency threshold
 	 */
-	void setDiffuseTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold);
-
-private:
-
-	/** 
-	 * Checks and set ups diffuse texture transparency
-	 */
-	void checkDiffuseTextureTransparency();
-
-public:
+	inline void setDiffuseTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold) {
+		diffuseTextureMaskedTransparencyThreshold = maskedTransparencyThreshold;
+	}
 
 	/** 
 	 * @return specular texture path name
 	 */
-	const string& getSpecularTexturePathName();
+	inline const string& getSpecularTexturePathName() const {
+		return specularTexturePathName;
+	}
 
 	/** 
 	 * @return specular texture file name
 	 */
-	const string& getSpecularTextureFileName();
+	inline const string& getSpecularTextureFileName() const {
+		return specularTextureFileName;
+	}
 
 	/** 
 	 * Set up a specular texture
@@ -188,22 +258,30 @@ public:
 	/** 
 	 * @return if material has a specular texture
 	 */
-	bool hasSpecularTexture();
+	inline bool hasSpecularTexture() const {
+		return specularTexture != nullptr;
+	}
 
 	/** 
 	 * @return the material's specular texture
 	 */
-	Texture* getSpecularTexture();
+	inline Texture* getSpecularTexture() {
+		return specularTexture;
+	}
 
 	/** 
 	 * @return normal texture path name
 	 */
-	const string& getNormalTexturePathName();
+	inline const string& getNormalTexturePathName() const {
+		return normalTexturePathName;
+	}
 
 	/** 
 	 * @return normal texture file name
 	 */
-	const string& getNormalTextureFileName();
+	inline const string& getNormalTextureFileName() const {
+		return normalTextureFileName;
+	}
 
 	/** 
 	 * Set up a normal texture
@@ -215,22 +293,30 @@ public:
 	/** 
 	 * @return if material has a normal texture
 	 */
-	bool hasNormalTexture();
+	inline bool hasNormalTexture() const {
+		return normalTexture != nullptr;
+	}
 
 	/** 
 	 * @return the material's normal texture
 	 */
-	Texture* getNormalTexture();
+	inline Texture* getNormalTexture() {
+		return normalTexture;
+	}
 
 	/** 
 	 * @return displacement texture path name
 	 */
-	const string& getDisplacementTexturePathName();
+	inline const string& getDisplacementTexturePathName() const {
+		return displacementTexturePathName;
+	}
 
 	/** 
 	 * @return displacement texture file name
 	 */
-	const string& getDisplacementTextureFileName();
+	inline const string& getDisplacementTextureFileName() const {
+		return displacementTextureFileName;
+	}
 
 	/** 
 	 * Set up a displacement texture
@@ -242,22 +328,30 @@ public:
 	/** 
 	 * @return if material has a displacement texture
 	 */
-	bool hasDisplacementTexture();
+	inline bool hasDisplacementTexture() const {
+		return displacementTexture != nullptr;
+	}
 
 	/** 
 	 * @return the material's displacement texture
 	 */
-	Texture* getDisplacementTexture();
+	inline Texture* getDisplacementTexture() {
+		return displacementTexture;
+	}
 
 	/** 
 	 * @return if color is transparent
 	 */
-	bool hasColorTransparency();
+	inline bool hasColorTransparency() const {
+		return diffuseColor.getAlpha() < 1.0f - Math::EPSILON;
+	}
 
 	/**
 	 * @return if texture has transparency with masked transparency disabled
 	 */
-	bool hasTextureTransparency();
+	inline bool hasTextureTransparency() const {
+		return diffuseTextureTransparency == true && diffuseTextureMaskedTransparency == false;
+	}
 
 	/**
 	 * Public constructor

@@ -892,9 +892,11 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
 	auto groundPlate = new Model("leveleditor.ground", "leveleditor.ground", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
 	auto groundPlateMaterial = new Material("ground");
-	groundPlateMaterial->getDiffuseColor().setAlpha(0.75f);
+	auto groundPlateMaterialDiffuseColor = groundPlateMaterial->getDiffuseColor();
+	groundPlateMaterialDiffuseColor.setAlpha(0.75f);
+	groundPlateMaterial->setDiffuseColor(groundPlateMaterialDiffuseColor);
 	groundPlateMaterial->setDiffuseTexture("resources/tools/leveleditor/textures", "groundplate.png");
-	groundPlateMaterial->getSpecularColor().set(0.0f, 0.0f, 0.0f, 1.0f);
+	groundPlateMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*groundPlate->getMaterials())["ground"] = groundPlateMaterial;
 	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;

@@ -136,13 +136,13 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	auto m = new Material(id);
 	array<float, 4> colorRGBAArray;
 	is->readFloatArray(&colorRGBAArray);
-	m->getAmbientColor().set(colorRGBAArray);
+	m->setAmbientColor(Color4(colorRGBAArray));
 	is->readFloatArray(&colorRGBAArray);
-	m->getDiffuseColor().set(colorRGBAArray);
+	m->setDiffuseColor(Color4(colorRGBAArray));
 	is->readFloatArray(&colorRGBAArray);
-	m->getSpecularColor().set(colorRGBAArray);
+	m->setSpecularColor(Color4(colorRGBAArray));
 	is->readFloatArray(&colorRGBAArray);
-	m->getEmissionColor().set(colorRGBAArray);
+	m->setEmissionColor(Color4(colorRGBAArray));
 	m->setShininess(is->readFloat());
 	auto diffuseTexturePathName = is->readString();
 	auto diffuseTextureFileName = is->readString();
