@@ -68,39 +68,39 @@ public:
 	 * Add a rigid body
 	 * @param id
 	 * @param enabled
-	 * @param type id
+	 * @param collision type id
 	 * @param transformations
-	 * @param bounding volume
 	 * @param restitution
 	 * @param friction
 	 * @param mass
 	 * @param inertia matrix
+	 * @param bounding volumes
 	 * @return rigid body
 	 */
-	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix, vector<BoundingVolume*> boundingVolumes);
 
 	/** 
 	 * Add a collision body
 	 * @param id
 	 * @param enabled
-	 * @param type id
+	 * @param collision type id
 	 * @param transformations
-	 * @param bounding volume
+	 * @param bounding volumes
 	 * @return rigid body
 	 */
-	RigidBody* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume);
+	RigidBody* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Add a static rigid body
 	 * @param id
 	 * @param enabled
-	 * @param type id
+	 * @param collision type id
 	 * @param transformations
-	 * @param bounding volume
 	 * @param friction
+	 * @param bounding volumes
 	 * @return rigid body
 	 */
-	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction);
+	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes);
 
 	/** 
 	 * Returns rigid body identified by id 
@@ -187,7 +187,7 @@ public:
 	 * Clone this world
 	 * @param collision type ids to clone
 	 */
-	World* clone(uint16_t collisionTypeIds);
+	World* clone(uint16_t collisionTypeIds = ~0);
 
 	/** 
 	 * Updates given world with this world

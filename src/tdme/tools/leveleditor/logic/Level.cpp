@@ -46,6 +46,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
@@ -103,6 +105,8 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleS
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::LevelEditorEntityPhysics;
+using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
@@ -111,14 +115,6 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
-
-Level::Level()
-{
-}
-
-constexpr int32_t Level::RIGIDBODY_TYPEID_STATIC;
-
-constexpr int32_t Level::RIGIDBODY_TYPEID_PLAYER;
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
@@ -265,12 +261,7 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject) {
 	return entity;
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation)
-{
-	addLevel(engine, level, addEmpties, addTrigger, pickable, translation, true);
-}
-
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, const Vector3& translation, bool enable)
+void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation)
 {
 	map<string, map<string, vector<Object3D*>>> renderGroupEntitiesByModelAndPartition;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
@@ -320,47 +311,115 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation)
-{
-	addLevel(world, level, rigidBodies, translation, true);
+RigidBody* Level::createRigidBody(World* world, LevelEditorObject* levelEditorObject) {
+	if (levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) return nullptr;
+
+	if (levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+		vector<BoundingVolume*> boundingVolumes;
+		for (auto j = 0; j < levelEditorObject->getEntity()->getBoundingVolumeCount(); j++) {
+			auto entityBv = levelEditorObject->getEntity()->getBoundingVolumeAt(j);
+			boundingVolumes.push_back(entityBv->getBoundingVolume());
+		}
+		return world->addCollisionBody(
+			levelEditorObject->getId(),
+			true,
+			RIGIDBODY_TYPEID_TRIGGER,
+			levelEditorObject->getTransformations(),
+			boundingVolumes
+		);
+	} else
+	if (levelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::MODEL &&
+		levelEditorObject->getEntity()->getModelSettings()->isTerrainMesh() == true) {
+		Object3DModel terrainModel(levelEditorObject->getEntity()->getModel());
+		auto terrainMesh = new TerrainMesh(&terrainModel, levelEditorObject->getTransformations());
+		if (levelEditorObject->getEntity()->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+			return world->addCollisionBody(
+				levelEditorObject->getId(),
+				true,
+				RIGIDBODY_TYPEID_COLLISION,
+				Transformations(),
+				{terrainMesh}
+			);
+		} else
+		if (levelEditorObject->getEntity()->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+			return world->addStaticRigidBody(
+				levelEditorObject->getId(),
+				true,
+				RIGIDBODY_TYPEID_STATIC,
+				Transformations(),
+				levelEditorObject->getEntity()->getPhysics()->getFriction(),
+				{terrainMesh}
+			);
+		} else
+		if (levelEditorObject->getEntity()->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+			return world->addRigidBody(
+				levelEditorObject->getId(),
+				true,
+				RIGIDBODY_TYPEID_DYNAMIC,
+				Transformations(),
+				levelEditorObject->getEntity()->getPhysics()->getRestitution(),
+				levelEditorObject->getEntity()->getPhysics()->getFriction(),
+				levelEditorObject->getEntity()->getPhysics()->getMass(),
+				RigidBody::getNoRotationInertiaMatrix(), // TODO: rotation inertia matrix
+				{terrainMesh}
+			);
+		}
+	} else {
+		vector<BoundingVolume*> boundingVolumes;
+		for (auto j = 0; j < levelEditorObject->getEntity()->getBoundingVolumeCount(); j++) {
+			auto entityBv = levelEditorObject->getEntity()->getBoundingVolumeAt(j);
+			boundingVolumes.push_back(entityBv->getBoundingVolume());
+		}
+		if (levelEditorObject->getEntity()->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+			return world->addCollisionBody(
+				levelEditorObject->getId(),
+				true,
+				RIGIDBODY_TYPEID_COLLISION,
+				levelEditorObject->getTransformations(),
+				boundingVolumes
+			);
+		} else
+		if (levelEditorObject->getEntity()->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+			return world->addStaticRigidBody(
+				levelEditorObject->getId(),
+				true,
+				RIGIDBODY_TYPEID_STATIC,
+				levelEditorObject->getTransformations(),
+				levelEditorObject->getEntity()->getPhysics()->getFriction(),
+				boundingVolumes
+			);
+		} else
+		if (levelEditorObject->getEntity()->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+			return world->addRigidBody(
+				levelEditorObject->getId(),
+				true,
+				RIGIDBODY_TYPEID_DYNAMIC,
+				levelEditorObject->getTransformations(),
+				levelEditorObject->getEntity()->getPhysics()->getRestitution(),
+				levelEditorObject->getEntity()->getPhysics()->getFriction(),
+				levelEditorObject->getEntity()->getPhysics()->getMass(),
+				RigidBody::getNoRotationInertiaMatrix(), // TODO: rotation inertia matrix
+				boundingVolumes
+			);
+		}
+	}
+	return nullptr;
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation, bool enable)
+void Level::addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, bool enable, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
-		auto object = level->getObjectAt(i);
-		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY)
-			continue;
-
-		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER)
-			continue;
-
-		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM)
-			continue;
-
-		if (object->getEntity()->getType() == LevelEditorEntity_EntityType::MODEL &&
-			object->getEntity()->getModelSettings()->isTerrainMesh() == true) {
-			Transformations transformations;
-			transformations.fromTransformations(object->getTransformations());
+		auto levelEditorObject = level->getObjectAt(i);
+		auto rigidBody = createRigidBody(world, levelEditorObject);
+		if (rigidBody == nullptr) continue;
+		if (translation.equals(Vector3()) == false) {
+			auto transformations = levelEditorObject->getTransformations();
 			transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 			transformations.update();
-			Object3DModel terrainModel(object->getEntity()->getModel());
-			auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
-			auto rigidBody = world->addStaticRigidBody(object->getId(), true, RIGIDBODY_TYPEID_STATIC, Transformations(), terrainMesh, 1.0f);
-			rigidBodies.push_back(rigidBody);
-		} else {
-			for (auto j = 0; j < object->getEntity()->getBoundingVolumeCount(); j++) {
-				auto entityBv = object->getEntity()->getBoundingVolumeAt(j);
-				string worldId = object->getId() + ".bv." + to_string(j);
-				Transformations transformations;
-				transformations.fromTransformations(object->getTransformations());
-				transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-				transformations.update();
-				auto rigidBody = world->addStaticRigidBody(worldId, enable, RIGIDBODY_TYPEID_STATIC, transformations, entityBv->getBoundingVolume(), 1.0f);
-				rigidBody->setRootId(object->getId());
-				rigidBodies.push_back(rigidBody);
-			}
+			rigidBody->fromTransformations(transformations);
 		}
+		rigidBody->setEnabled(enable);
+		rigidBodies.push_back(rigidBody);
 	}
 }
 

@@ -76,38 +76,38 @@ void World::reset()
 	// TODO
 }
 
-RigidBody* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix)
+RigidBody* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix, vector<BoundingVolume*> boundingVolumes)
 {
 	removeRigidBody(id);
-	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_DYNAMIC, enabled, collisionTypeId, boundingVolume, transformations, restitution, friction, mass, inertiaMatrix);
+	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_DYNAMIC, enabled, collisionTypeId, transformations, restitution, friction, mass, inertiaMatrix, boundingVolumes);
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesDynamic.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
 	for (auto listener: worldListeners) {
-		listener->onAddedRigidBody(id, RigidBody::TYPE_DYNAMIC, enabled, collisionTypeId, boundingVolume, transformations, restitution, friction, mass, inertiaMatrix);
+		listener->onAddedRigidBody(id, RigidBody::TYPE_DYNAMIC, enabled, collisionTypeId, transformations, restitution, friction, mass, inertiaMatrix, boundingVolumes);
 	}
 	return rigidBody;
 }
 
-RigidBody* World::addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume) {
+RigidBody* World::addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes) {
 	removeRigidBody(id);
-	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_COLLISION, enabled, collisionTypeId, boundingVolume, transformations, 0.0f, 0.0f, 0.0f, RigidBody::getNoRotationInertiaMatrix());
+	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_COLLISION, enabled, collisionTypeId, transformations, 0.0f, 0.0f, 0.0f, RigidBody::getNoRotationInertiaMatrix(), boundingVolumes);
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
 	for (auto listener: worldListeners) {
-		listener->onAddedRigidBody(id, RigidBody::TYPE_COLLISION, enabled, collisionTypeId, boundingVolume, transformations, 0.0f, 0.0f, 0.0f, RigidBody::getNoRotationInertiaMatrix());
+		listener->onAddedRigidBody(id, RigidBody::TYPE_COLLISION, enabled, collisionTypeId, transformations, 0.0f, 0.0f, 0.0f, RigidBody::getNoRotationInertiaMatrix(), boundingVolumes);
 	}
 	return rigidBody;
 }
 
-RigidBody* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, BoundingVolume* boundingVolume, float friction)
+RigidBody* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes)
 {
 	removeRigidBody(id);
-	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_STATIC, enabled, collisionTypeId, boundingVolume, transformations, 0.0f, friction, 0.0f, RigidBody::getNoRotationInertiaMatrix());
+	auto rigidBody = new RigidBody(this, id, RigidBody::TYPE_STATIC, enabled, collisionTypeId, transformations, 0.0f, friction, 0.0f, RigidBody::getNoRotationInertiaMatrix(), boundingVolumes);
 	rigidBodies.push_back(rigidBody);
 	rigidBodiesById[id] = rigidBody;
 	for (auto listener: worldListeners) {
-		listener->onAddedRigidBody(id, RigidBody::TYPE_STATIC, enabled, collisionTypeId, boundingVolume, transformations, 0.0f, friction, 0.0f, RigidBody::getNoRotationInertiaMatrix());
+		listener->onAddedRigidBody(id, RigidBody::TYPE_STATIC, enabled, collisionTypeId, transformations, 0.0f, friction, 0.0f, RigidBody::getNoRotationInertiaMatrix(), boundingVolumes);
 	}
 	return rigidBody;
 }
@@ -532,13 +532,13 @@ World* World::clone(uint16_t collisionTypeIds)
 		// clone rigid body
 		switch(rigidBodyType) {
 			case RigidBody::TYPE_STATIC:
-				clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getFriction());
+				clonedRigidBody = clonedWorld->addStaticRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->getFriction(), rigidBody->boundingVolumes);
 				break;
 			case RigidBody::TYPE_DYNAMIC:
-				clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix);
+				clonedRigidBody = clonedWorld->addRigidBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->getRestitution(), rigidBody->getFriction(), rigidBody->getMass(), rigidBody->inverseInertiaMatrix, rigidBody->boundingVolumes);
 				break;
 			case RigidBody::TYPE_COLLISION:
-				clonedRigidBody = clonedWorld->addCollisionBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolume);
+				clonedRigidBody = clonedWorld->addCollisionBody(rigidBody->id, rigidBody->enabled, rigidBody->getCollisionTypeId(), rigidBody->transformations, rigidBody->boundingVolumes);
 				break;
 			default:
 				Console::println("World::clone(): Unsupported type: " + to_string(rigidBodyType));

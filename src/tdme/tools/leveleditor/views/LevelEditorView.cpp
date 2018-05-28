@@ -798,7 +798,7 @@ void LevelEditorView::loadLevel()
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	Level::setLight(engine, level, Vector3());
-	Level::addLevel(engine, level, true, true, true, Vector3());
+	Level::addLevel(engine, level, true, true, true);
 	setObjectsListBox();
 	unselectLightPresets();
 	updateGrid();

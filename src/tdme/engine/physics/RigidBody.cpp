@@ -57,18 +57,16 @@ constexpr uint16_t RigidBody::TYPEIDS_ALL;
 constexpr uint16_t RigidBody::TYPEID_STATIC;
 constexpr uint16_t RigidBody::TYPEID_DYNAMIC;
 
-RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix)
+RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix, vector<BoundingVolume*> boundingVolumes)
 {
 	this->world = world;
 	this->id = id;
 	this->rootId = id;
 	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
-	this->boundingVolume = dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr?boundingVolume:boundingVolume->clone();
 	this->type = type;
 	this->mass = mass;
 	this->collideTypeIds = ~0;
 	this->collisionTypeId = collisionTypeId;
-	this->proxyShape = nullptr;
 	switch (type) {
 		case TYPE_STATIC:
 			this->rigidBody = this->world->world.createRigidBody(reactphysics3d::Transform());
@@ -115,15 +113,18 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 		rigidBody->setMass(mass);
 	}
 	collisionBody->setUserData(this);
+	for (auto boundingVolume: boundingVolumes) {
+		this->boundingVolumes.push_back(dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr?boundingVolume:boundingVolume->clone());
+	}
 	fromTransformations(transformations);
 	setEnabled(enabled);
 }
 
 RigidBody::~RigidBody() {
-	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr && cloned == true) {
-		return;
+	for (auto boundingVolume: boundingVolumes) {
+		if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr && cloned == true) continue;
+		delete boundingVolume;
 	}
-	delete boundingVolume;
 }
 
 Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
@@ -179,7 +180,9 @@ uint16_t RigidBody::getCollisionTypeId()
 void RigidBody::setCollisionTypeId(uint16_t typeId)
 {
 	this->collisionTypeId = typeId;
-	this->proxyShape->setCollisionCategoryBits(typeId);
+	for (auto proxyShape: proxyShapes) {
+		proxyShape->setCollisionCategoryBits(typeId);
+	}
 }
 
 uint16_t RigidBody::getCollisionTypeIds()
@@ -190,7 +193,9 @@ uint16_t RigidBody::getCollisionTypeIds()
 void RigidBody::setCollisionTypeIds(uint16_t collisionTypeIds)
 {
 	this->collideTypeIds = collisionTypeIds;
-	this->proxyShape->setCollideWithMaskBits(collisionTypeIds);
+	for (auto proxyShape: proxyShapes) {
+		proxyShape->setCollideWithMaskBits(collisionTypeIds);
+	}
 }
 
 bool RigidBody::isEnabled()
@@ -216,13 +221,83 @@ bool RigidBody::isSleeping()
 	return collisionBody->isSleeping();
 }
 
-BoundingVolume* RigidBody::getBoundingVolume()
-{
-	return boundingVolume;
+vector<BoundingVolume*>& RigidBody::getBoundingVolumes() {
+	return boundingVolumes;
+}
+
+void RigidBody::resetProxyShapes() {
+	// remove proxy shapes
+	for (auto proxyShape: proxyShapes) {
+		if (rigidBody != nullptr) {
+			rigidBody->removeCollisionShape(proxyShape);
+		} else {
+			collisionBody->removeCollisionShape(proxyShape);
+		}
+	}
+	proxyShapes.clear();
+
+	// set up scale
+	for (auto boundingVolume: boundingVolumes) {
+		// "scale vector transformed" which takes transformations scale and orientation into account
+		auto scaleVectorTransformed =
+			boundingVolume->collisionShapeLocalTransform.getOrientation() *
+			reactphysics3d::Vector3(transformations.getScale().getX(), transformations.getScale().getY(), transformations.getScale().getZ());
+		if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
+		if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
+		if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
+
+		// scale bounding volume and recreate it if nessessary
+		if (boundingVolume->getScale().equals(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == false) {
+			boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
+		}
+	}
+
+	// reset proxy shapes with mass
+	if (mass > Math::EPSILON) {
+		// determine total volume
+		float volumeTotal = 0.0f;
+		for (auto boundingVolume: boundingVolumes) {
+			volumeTotal+=
+				boundingVolume->boundingBoxTransformed.getDimensions().getX() *
+				boundingVolume->boundingBoxTransformed.getDimensions().getY() *
+				boundingVolume->boundingBoxTransformed.getDimensions().getZ();
+		}
+		// add bounding volumes with mass
+		for (auto boundingVolume: boundingVolumes) {
+			reactphysics3d::ProxyShape* proxyShape = nullptr;
+			float volumeBoundingVolume =
+				boundingVolume->boundingBoxTransformed.getDimensions().getX() *
+				boundingVolume->boundingBoxTransformed.getDimensions().getY() *
+				boundingVolume->boundingBoxTransformed.getDimensions().getZ();
+			if (rigidBody != nullptr) {
+				proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass / volumeTotal * volumeBoundingVolume);
+			} else {
+				proxyShape = collisionBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
+			}
+			proxyShapes.push_back(proxyShape);
+		}
+	} else {
+		// add bounding volumes without mass
+		for (auto boundingVolume: boundingVolumes) {
+			reactphysics3d::ProxyShape* proxyShape = nullptr;
+			if (rigidBody != nullptr) {
+				proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, 0.0f);
+			} else {
+				proxyShape = collisionBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
+			}
+			proxyShapes.push_back(proxyShape);
+		}
+	}
+
+	// set up collisioin type ids and type id
+	for (auto proxyShape: proxyShapes) {
+		proxyShape->setCollideWithMaskBits(collideTypeIds);
+		proxyShape->setCollisionCategoryBits(collisionTypeId);
+	}
 }
 
 BoundingBox RigidBody::computeBoundingBoxTransformed() {
-	auto aabb = proxyShape->getWorldAABB();
+	auto aabb = rigidBody->getAABB();
 	return BoundingBox(
 		Vector3(
 			aabb.getMin().x,
@@ -235,11 +310,6 @@ BoundingBox RigidBody::computeBoundingBoxTransformed() {
 			aabb.getMax().z
 		)
 	);
-}
-
-const Vector3& RigidBody::getPosition() const
-{
-	return transformations.getTranslation();
 }
 
 float RigidBody::getFriction()
@@ -315,43 +385,13 @@ const Transformations& RigidBody::getTransformations() {
 
 void RigidBody::fromTransformations(const Transformations& transformations)
 {
-	if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr) {
-		if (rigidBody != nullptr) {
-			proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
-		} else {
-			proxyShape = collisionBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
-		}
-		proxyShape->setCollideWithMaskBits(collideTypeIds);
-		proxyShape->setCollisionCategoryBits(collisionTypeId);
-		return;
-	}
-
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
 
-	// "scale vector transformed" which takes transformations scale and orientation into account
-	auto scaleVectorTransformed =
-		boundingVolume->collisionShapeLocalTransform.getOrientation() *
-		reactphysics3d::Vector3(
-			transformations.getScale().getX(),
-			transformations.getScale().getY(),
-			transformations.getScale().getZ()
-		);
-	if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
-	if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
-	if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
-
-	// scale bounding volume and recreate it if nessessary
-	if (proxyShape == nullptr || boundingVolume->getScale().equals(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == false) {
-		if (proxyShape != nullptr) collisionBody->removeCollisionShape(proxyShape);
-		boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
-		if (rigidBody != nullptr) {
-			proxyShape = rigidBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform, mass);
-		} else {
-			proxyShape = collisionBody->addCollisionShape(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
-		}
-		proxyShape->setCollideWithMaskBits(collideTypeIds);
-		proxyShape->setCollisionCategoryBits(collisionTypeId);
+	// reset proxy shapes if bounding volumes do not match proxy shapes or if scaling has changed
+	if (proxyShapes.size() != boundingVolumes.size() || transformationsScale.equals(transformations.getScale()) == false) {
+		resetProxyShapes();
+		transformationsScale.set(transformations.getScale());
 	}
 
 	// rigig body transform

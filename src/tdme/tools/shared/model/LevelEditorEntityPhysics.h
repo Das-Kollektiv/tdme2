@@ -19,7 +19,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 class tdme::tools::shared::model::LevelEditorEntityPhysics
 {
 private:
-	LevelEditorEntityPhysics_BodyType* type { LevelEditorEntityPhysics_BodyType::NONE };
+	LevelEditorEntityPhysics_BodyType* type { LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY };
 	float mass { 0.0f };
 	float restitution { 0.5f };
 	float friction { 0.5f };

@@ -57,7 +57,6 @@ private:
 	World* world { nullptr };
 	reactphysics3d::RigidBody* rigidBody { nullptr };
 	reactphysics3d::CollisionBody* collisionBody { nullptr };
-	reactphysics3d::ProxyShape* proxyShape { nullptr };
 	bool cloned { false };
 	string id {  };
 	string rootId {  };
@@ -70,8 +69,15 @@ private:
 	Vector3 linearVelocity;
 	Vector3 angularVelocity;
 	Transformations transformations {  };
-	BoundingVolume* boundingVolume {  };
+	Vector3 transformationsScale {  };
+	vector<BoundingVolume*> boundingVolumes {  };
+	vector<reactphysics3d::ProxyShape*> proxyShapes {  };
 	vector<CollisionListener*> collisionListener {  };
+
+	/**
+	 * Reset proxy shapes
+	 */
+	void resetProxyShapes();
 
 	/**
 	 * Fire on collision
@@ -96,17 +102,17 @@ private:
 
 	/**
 	 * Protected constructor
-	 * @param partition
+	 * @param world
 	 * @param id
 	 * @param type
 	 * @param enabled
 	 * @param type id
-	 * @param bounding volume
 	 * @param transformations
 	 * @param restitution
 	 * @param mass in kg
+	 * @param bounding volumes
 	 */
-	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, BoundingVolume* boundingVolume, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix);
+	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Destructor
@@ -114,8 +120,7 @@ private:
 	~RigidBody();
 
 public:
-
-	/** 
+	/**
 	 * No rotation inertia matrix
 	 * @param bv
 	 * @param mass
@@ -208,19 +213,20 @@ public:
 	bool isSleeping();
 
 	/**
-	 * @return original bounding volume
+	 * @return bounding volumes
 	 */
-	BoundingVolume* getBoundingVolume();
+	vector<BoundingVolume*>& getBoundingVolumes();
+
+	/**
+	 * Add bounding volume
+	 * @param bounding volume
+	 */
+	void addBoundingVolume(BoundingVolume* boundingVolume);
 
 	/**
 	 * Compute bounding box transformed
 	 */
 	BoundingBox computeBoundingBoxTransformed();
-
-	/**
-	 * @return position
-	 */
-	const Vector3& getPosition() const;
 
 	/** 
 	 * @return friction
