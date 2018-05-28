@@ -34,10 +34,10 @@ struct tdme::engine::physics::WorldListener
 	 * @oaram restitution
 	 * @param friction
 	 * @param mass
-	 * @param inertia matrix
+	 * @param inertia tensor
 	 * @param bounding volumes
 	 */
-	virtual void onAddedRigidBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix, vector<BoundingVolume*>& boundingVolumes) = 0;
+	virtual void onAddedRigidBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*>& boundingVolumes) = 0;
 
 	/** 
 	 * Event fired when rigid body was removed

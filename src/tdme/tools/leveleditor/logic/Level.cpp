@@ -360,7 +360,7 @@ RigidBody* Level::createRigidBody(World* world, LevelEditorObject* levelEditorOb
 				levelEditorObject->getEntity()->getPhysics()->getRestitution(),
 				levelEditorObject->getEntity()->getPhysics()->getFriction(),
 				levelEditorObject->getEntity()->getPhysics()->getMass(),
-				RigidBody::getNoRotationInertiaMatrix(), // TODO: rotation inertia matrix
+				RigidBody::getNoRotationInertiaTensor(), // TODO: rotation inertia tensor
 				{terrainMesh}
 			);
 		}
@@ -398,7 +398,7 @@ RigidBody* Level::createRigidBody(World* world, LevelEditorObject* levelEditorOb
 				levelEditorObject->getEntity()->getPhysics()->getRestitution(),
 				levelEditorObject->getEntity()->getPhysics()->getFriction(),
 				levelEditorObject->getEntity()->getPhysics()->getMass(),
-				RigidBody::getNoRotationInertiaMatrix(), // TODO: rotation inertia matrix
+				RigidBody::getNoRotationInertiaTensor(), // TODO: rotation inertia tensor
 				boundingVolumes
 			);
 		}

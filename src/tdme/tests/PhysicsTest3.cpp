@@ -186,7 +186,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(-2.0f + i * 0.1f, 10.0f + i * 3.0f, 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f), {box});
+		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
 		entity = new Object3D("box" + to_string(BOX_COUNT + i), boxModel);
@@ -194,7 +194,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(+3.0f, 1.6f + (i * 1.2f), -5.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f), {box});
+		world->addRigidBody("box" + to_string(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 	auto sphere = new Sphere(Vector3(0.0f, 0.0f, 0.0f), 0.4f);
 	auto sphereModel = PrimitiveModel::createModel(sphere, "sphere_model");
@@ -206,7 +206,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(0.45f * i - 3.0f, 12.0f + (i * 1.0f), 0.1f * i - 3.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.75f, 0.4f, 10.0f, RigidBody::computeInertiaMatrix(sphere, 10.0f, 1.0f, 1.0f, 1.0f), {sphere});
+		world->addRigidBody("sphere" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.75f, 0.4f, 10.0f, Vector3(1.0f, 1.0f, 1.0f), {sphere});
 	}
 	auto capsule = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, -0.5f, 0.0f), 0.25f);
 	auto capsuleModel = PrimitiveModel::createModel(capsule, "capsule_model");
@@ -218,7 +218,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3((i * 0.5f), 14.0f + (i * 2.0f), 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 0.4f, 3.0f, RigidBody::computeInertiaMatrix(capsule, 3.0f, 1.0f, 1.0f, 1.0f), {capsule});
+		world->addRigidBody("capsule" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 0.4f, 3.0f, Vector3(1.0f, 1.0f, 1.0f), {capsule});
 	}
 	auto capsuleBig = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.5f, 1.0f, 0.5f));
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, "capsulebig_model");
@@ -229,13 +229,13 @@ void PhysicsTest3::initialize()
 	entity->setTranslation(Vector3(-2.0f, 5.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 80.0f, RigidBody::getNoRotationInertiaMatrix(), {capsuleBig});
+	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 80.0f, RigidBody::getNoRotationInertiaTensor(), {capsuleBig});
 	entity = new Object3D("capsulebig2", capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->setTranslation(Vector3(+2.0f, 5.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaMatrix(), {capsuleBig});
+	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaTensor(), {capsuleBig});
 	try {
 		auto _terrainModel = ModelReader::read("resources/tests/environment/terrain_test", "terrain_test4.dae");
 		entity = new Object3D("terrain", _terrainModel);
@@ -254,14 +254,14 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("barrel1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(barrelBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
+		world->addRigidBody("barrel1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
 		entity = new Object3D("barrel2", _barrel);
 		entity->setDynamicShadowingEnabled(true);
 		entity->setTranslation(Vector3(+6.0f, 5.0f, 0.0f));
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("barrel2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(barrelBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
+		world->addRigidBody("barrel2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
 		auto _cone = ModelReader::read("resources/tests/models/cone", "cone.dae");
 		auto coneBoundingVolume = new ConvexMesh(new Object3DModel(_cone));
 		entity = new Object3D("cone1", _cone);
@@ -270,14 +270,14 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(3.0f, 3.0f, 3.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("cone1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(coneBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f), {coneBoundingVolume});
+		world->addRigidBody("cone1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
 		entity = new Object3D("cone2", _cone);
 		entity->setDynamicShadowingEnabled(true);
 		entity->setTranslation(Vector3(-5.0f, 5.0f, 0.0f));
 		entity->setScale(Vector3(3.0f, 3.0f, 3.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("cone2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(coneBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f), {coneBoundingVolume});
+		world->addRigidBody("cone2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
 		auto _tire = ModelReader::read("resources/tests/models/tire", "tire.dae");
 		auto tireBoundingVolume = new ConvexMesh(new Object3DModel(_tire));
 		entity = new Object3D("tire1", _tire);
@@ -287,7 +287,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("tire1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f), {tireBoundingVolume});
+		world->addRigidBody("tire1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
 		entity = new Object3D("tire2", _tire);
 		entity->setDynamicShadowingEnabled(true);
 		entity->addRotation(Vector3(1.0f, 0.0f, 0.0f), 90.0f);
@@ -295,7 +295,7 @@ void PhysicsTest3::initialize()
 		entity->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("tire2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::computeInertiaMatrix(tireBoundingVolume, 100.0f, 1.0f, 1.0f, 1.0f), {tireBoundingVolume});
+		world->addRigidBody("tire2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest3::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

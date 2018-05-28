@@ -53,6 +53,11 @@ public:
 	static constexpr uint16_t TYPEID_DYNAMIC { 2 };
 	static constexpr uint16_t TYPEIDS_ALL { 65535 };
 
+	/**
+	 * @return no rotation inertia tensor
+	 */
+	static const Vector3 getNoRotationInertiaTensor();
+
 private:
 	World* world { nullptr };
 	reactphysics3d::RigidBody* rigidBody { nullptr };
@@ -65,7 +70,7 @@ private:
 	float mass {  };
 	uint16_t collideTypeIds {  };
 	uint16_t collisionTypeId {  };
-	Matrix4x4 inverseInertiaMatrix {  };
+	Vector3 inertiaTensor {  };
 	Vector3 linearVelocity;
 	Vector3 angularVelocity;
 	Transformations transformations {  };
@@ -101,6 +106,17 @@ private:
 	void fireOnCollisionEnd(RigidBody* other);
 
 	/**
+	 * Computes the inverse inertia matrix
+	 * @param bounding box
+	 * @param mass
+	 * @param scale x axis
+	 * @param scale y axis
+	 * @param scale z axis
+	 * @return inverse inertia matrix
+	 */
+	static Matrix4x4 computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
+
+	/**
 	 * Protected constructor
 	 * @param world
 	 * @param id
@@ -112,7 +128,7 @@ private:
 	 * @param mass in kg
 	 * @param bounding volumes
 	 */
-	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inertiaMatrix, vector<BoundingVolume*> boundingVolumes);
+	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Destructor
@@ -120,22 +136,6 @@ private:
 	~RigidBody();
 
 public:
-	/**
-	 * No rotation inertia matrix
-	 * @param bv
-	 * @param mass
-	 * @return inertia matrix
-	 */
-	static Matrix4x4 getNoRotationInertiaMatrix();
-
-	/** 
-	 * Computes the inertia matrix
-	 * @param bv
-	 * @param mass
-	 * @return inertia matrix
-	 */
-	static Matrix4x4 computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
-
 	/**
 	 * @return if rigid body has been cloned from another rigid body
 	 */

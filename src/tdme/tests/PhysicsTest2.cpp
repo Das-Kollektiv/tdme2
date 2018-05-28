@@ -112,7 +112,7 @@ void PhysicsTest2::initialize()
 		entity->setTranslation(Vector3(0.0f, i * 2.0f + 1.0f, 0.0f));
 		entity->update();
 		engine->addEntity(entity);
-		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 0.8f, 100.0f, RigidBody::computeInertiaMatrix(box, 100.0f, 1.0f, 1.0f, 1.0f), {box});
+		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 0.8f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 }
 

@@ -25,6 +25,7 @@
 #include <tdme/engine/physics/CollisionListener.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -43,6 +44,7 @@ using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
 using tdme::engine::physics::World;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -57,12 +59,12 @@ constexpr uint16_t RigidBody::TYPEIDS_ALL;
 constexpr uint16_t RigidBody::TYPEID_STATIC;
 constexpr uint16_t RigidBody::TYPEID_DYNAMIC;
 
-RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Matrix4x4& inverseInertiaMatrix, vector<BoundingVolume*> boundingVolumes)
+RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes)
 {
 	this->world = world;
 	this->id = id;
 	this->rootId = id;
-	this->inverseInertiaMatrix.set(inverseInertiaMatrix);
+	this->inertiaTensor = inertiaTensor;
 	this->type = type;
 	this->mass = mass;
 	this->collideTypeIds = ~0;
@@ -94,20 +96,6 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 			break;
 	}
 	if (rigidBody != nullptr) {
-		auto& inverseInertiaMatrixArray = inverseInertiaMatrix.getArray();
-		rigidBody->setInverseInertiaTensorLocal(
-			reactphysics3d::Matrix3x3(
-				inverseInertiaMatrixArray[0],
-				inverseInertiaMatrixArray[1],
-				inverseInertiaMatrixArray[2],
-				inverseInertiaMatrixArray[4],
-				inverseInertiaMatrixArray[5],
-				inverseInertiaMatrixArray[6],
-				inverseInertiaMatrixArray[8],
-				inverseInertiaMatrixArray[9],
-				inverseInertiaMatrixArray[10]
-			)
-		);
 		rigidBody->getMaterial().setFrictionCoefficient(friction);
 		rigidBody->getMaterial().setBounciness(restitution);
 		rigidBody->setMass(mass);
@@ -127,23 +115,34 @@ RigidBody::~RigidBody() {
 	}
 }
 
-Matrix4x4 RigidBody::getNoRotationInertiaMatrix()
-{
-	return Matrix4x4(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+const Vector3 RigidBody::getNoRotationInertiaTensor() {
+	return Vector3(0.0f, 0.0f, 0.0f);
 }
 
-Matrix4x4 RigidBody::computeInertiaMatrix(BoundingVolume* bv, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
+Matrix4x4 RigidBody::computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
 {
-	auto width = bv->getBoundingBoxTransformed().getDimensions().getX();
-	auto height = bv->getBoundingBoxTransformed().getDimensions().getY();
-	auto depth = bv->getBoundingBoxTransformed().getDimensions().getZ();
+	auto width = boundingBox->getDimensions().getX();
+	auto height = boundingBox->getDimensions().getY();
+	auto depth = boundingBox->getDimensions().getZ();
 	return
 		(Matrix4x4(
-			scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth), 0.0f, 0.0f, 0.0f,
-			0.0f, scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth), 0.0f, 0.0f,
-			0.0f, 0.0f, scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height), 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		)).invert();
+			scaleXAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth)):0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			scaleYAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth)):0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			scaleZAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height)):0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			1.0f
+		));
 }
 
 bool RigidBody::isCloned() {
@@ -294,6 +293,31 @@ void RigidBody::resetProxyShapes() {
 		proxyShape->setCollideWithMaskBits(collideTypeIds);
 		proxyShape->setCollisionCategoryBits(collisionTypeId);
 	}
+
+	// set up inverse inertia tensor local
+	if (rigidBody != nullptr) {
+		// set inverse inertia tensor local
+		// 	TODO: transform with identity transform, this is a bit sub optimal but currently required to get rigid body dimensions
+		// 	this method is only used when setting TDME2 transform, so no need to transform back
+		reactphysics3d::Transform transform;
+		collisionBody->setTransform(transform);
+
+		auto boundingBoxTransformed = computeBoundingBoxTransformed();
+		auto& inverseInertiaMatrixArray = computeInverseInertiaMatrix(&boundingBoxTransformed, mass, inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()).getArray();
+		rigidBody->setInverseInertiaTensorLocal(
+			reactphysics3d::Matrix3x3(
+				inverseInertiaMatrixArray[0],
+				inverseInertiaMatrixArray[1],
+				inverseInertiaMatrixArray[2],
+				inverseInertiaMatrixArray[4],
+				inverseInertiaMatrixArray[5],
+				inverseInertiaMatrixArray[6],
+				inverseInertiaMatrixArray[8],
+				inverseInertiaMatrixArray[9],
+				inverseInertiaMatrixArray[10]
+			)
+		);
+	};
 }
 
 BoundingBox RigidBody::computeBoundingBoxTransformed() {
