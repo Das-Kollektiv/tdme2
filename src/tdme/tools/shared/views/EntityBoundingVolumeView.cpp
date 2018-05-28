@@ -298,3 +298,11 @@ void EntityBoundingVolumeView::unsetConvexMeshes() {
 void EntityBoundingVolumeView::setConvexMeshes(LevelEditorEntity* entity) {
 	boundingVolumeSubScreenController->setConvexMeshes(entity);
 }
+
+void EntityBoundingVolumeView::unsetPhysics() {
+	boundingVolumeSubScreenController->unsetPhysics();
+}
+
+void EntityBoundingVolumeView::setPhysics(LevelEditorEntity* entity) {
+	boundingVolumeSubScreenController->setPhysics(entity);
+}

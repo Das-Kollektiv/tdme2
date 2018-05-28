@@ -83,6 +83,12 @@ private:
 	GUIElementNode* convexMeshesPCA {  };
 	GUIElementNode* convexMeshesRemove {  };
 	GUIElementNode* convexMeshesGenerate {  };
+	GUIElementNode* bodyTypeDropdown {  };
+	GUIElementNode* bodyTypeDropdownApply {  };
+	GUIElementNode* bodyMass {  };
+	GUIElementNode* bodyBounciness {  };
+	GUIElementNode* bodyFriction {  };
+	GUIElementNode* bodyApply {  };
 
 public:
 
@@ -271,6 +277,29 @@ public:
 	 * Unset convex meshes
 	 */
 	virtual void unsetConvexMeshes();
+
+	/**
+	 * Unset physics
+	 */
+	virtual void unsetPhysics();
+
+	/**
+	 * Set physics
+	 * @param entity
+	 */
+	virtual void setPhysics(LevelEditorEntity* entity);
+
+	/**
+	 * On physics body type apply
+	 * @param entity
+	 */
+	virtual void onPhysicsBodyTypeApply(LevelEditorEntity* entity);
+
+	/**
+	 * On physics body apply
+	 * @param entity
+	 */
+	virtual void onPhysicsBodyApply(LevelEditorEntity* entity);
 
 	/**
 	 * Shows the error pop up

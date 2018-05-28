@@ -394,6 +394,8 @@ SRCS = \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.cpp \
+	src/tdme/tools/shared/model/LevelEditorEntityPhysics.cpp \
+	src/tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntity_EntityType.cpp \
 	src/tdme/tools/shared/model/LevelEditorLevel.cpp \
 	src/tdme/tools/shared/model/LevelEditorLight.cpp \

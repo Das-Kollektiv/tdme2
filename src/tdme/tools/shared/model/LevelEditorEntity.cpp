@@ -8,6 +8,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
 
 using std::vector;
 
@@ -34,13 +35,16 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->pivot.set(pivot);
 	this->lodLevel2 = nullptr;
 	this->lodLevel3 = nullptr;
+	this->physics = nullptr;
 	this->particleSystem = nullptr;
 	this->modelSettings = nullptr;
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		this->particleSystem = new LevelEditorEntityParticleSystem();
+		this->physics = new LevelEditorEntityPhysics();
 	} else
 	if (this->type == LevelEditorEntity_EntityType::MODEL) {
 		this->modelSettings = new LevelEditorEntityModel(this);
+		this->physics = new LevelEditorEntityPhysics();
 	}
 	renderGroups = false;
 	applyAnimations = false;
@@ -51,6 +55,7 @@ LevelEditorEntity::~LevelEditorEntity() {
 	if (model != nullptr) delete model;
 	if (lodLevel2 != nullptr) delete lodLevel2;
 	if (lodLevel3 != nullptr) delete lodLevel3;
+	if (physics != nullptr) delete physics;
 	if (particleSystem != nullptr) delete particleSystem;
 	if (modelSettings != nullptr) delete modelSettings;
 	for (auto i = 0; i < boundingVolumes.size(); i++) {

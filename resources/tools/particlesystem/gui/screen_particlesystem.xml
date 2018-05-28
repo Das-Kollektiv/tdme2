@@ -13,6 +13,7 @@
 					<tab id="tab_properties_type" text="Type" />
 					<tab id="tab_properties_emitter" text="Emitter" />
 					<tab id="tab_properties_boundingvolume" text="Bounding Volumes" />
+					<tab id="tab_properties_physics" text="Physics" />
 				</tabs-header>
 				<tabs-content>
 					<tab-content tab-id="tab_properties_display" vertical-align="center">
@@ -1463,6 +1464,52 @@
 								</tab-content>
 							</tabs-content>
 						</tabs>	
+					</tab-content>
+					<tab-content tab-id="tab_properties_physics">
+						<scrollarea-vertical width="100%" height="100%">
+							<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="horizontal">
+									<dropdown id="physics_bodytype_dropdown" name="physics_bodytype_dropdown" width="530" height="auto" text="None">
+										<dropdown-option text="None" value="none" />
+										<dropdown-option text="Collision body" value="collisionbody" />
+										<dropdown-option text="Dynamic rigid body" value="dynamicrigidbody" />
+										<dropdown-option text="Static rigid body" value="staticrigidbody" />
+									</dropdown>
+									<space width="10" />
+									<button id="physics_bodytype_dropdown_apply" name="physics_bodytype_dropdown_apply" text="Apply" width="80" />
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
+										<space width="5" />
+										<input id="physics_body_mass" name="physics_body_mass" width="450" height="auto" text="Name" disabled="true" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Bounciness" width="145" height="auto"/>
+										<space width="5" />
+										<input id="physics_body_bounciness" name="physics_body_bounciness" width="450" height="auto" text="Name" disabled="true" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Friction" width="145" height="auto"/>
+										<space width="5" />
+										<input id="physics_body_friction" name="physics_body_friction" width="450" height="auto" text="Name" disabled="true" />
+									</layout>
+								</layout>
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="none" horizontal-align="center">
+									<button id="physics_body_apply" name="physics_body_apply" text="Apply" />
+								</layout>
+								<space height="20" />
+							</layout>
+						</scrollarea-vertical>
 					</tab-content>
 				</tabs-content>
 			</tabs>

@@ -89,6 +89,17 @@ public:
 	 */
 	virtual void unsetConvexMeshes();
 
+	/**
+	 * Unset physics
+	 */
+	virtual void unsetPhysics();
+
+	/**
+	 * Set physics
+	 * @param entity
+	 */
+	virtual void setPhysics(LevelEditorEntity* entity);
+
 private:
 
 	/** 

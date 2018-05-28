@@ -12,6 +12,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
+#include <tdme/tools/shared/model/ModelProperties.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 
 using std::vector;
@@ -24,6 +25,7 @@ using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 
@@ -53,6 +55,7 @@ private:
 	LevelEditorEntityLODLevel* lodLevel2;
 	LevelEditorEntityLODLevel* lodLevel3;
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
+	LevelEditorEntityPhysics* physics {  };
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	LevelEditorEntityModel* modelSettings;
 	bool renderGroups {  };
@@ -184,6 +187,13 @@ public:
 	 * Set default (up to 8) bounding volumes, to be used with LevelEditor
 	 */
 	void setDefaultBoundingVolumes();
+
+	/**
+	 * @return physics
+	 */
+	inline LevelEditorEntityPhysics* getPhysics() {
+		return physics;
+	}
 
 	/**
 	 * @return lod level 2

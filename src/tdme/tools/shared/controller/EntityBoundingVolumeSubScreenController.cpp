@@ -30,6 +30,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -70,6 +72,8 @@ using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::tools::shared::model::LevelEditorEntityPhysics;
+using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::PopUps;
@@ -129,6 +133,12 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 			boundingvolumeObbRotationZ[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_obb_rotation_z_" + to_string(i)));
 			boundingvolumeConvexMeshFile[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmesh_file_" + to_string(i)));
 		}
+		bodyTypeDropdown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_bodytype_dropdown"));
+		bodyTypeDropdownApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_bodytype_dropdown_apply"));
+		bodyMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_mass"));
+		bodyBounciness = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_bounciness"));
+		bodyFriction = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_friction"));
+		bodyApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_apply"));
 		if (isModelBoundingVolumes == true) {
 			terrainMesh = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_mesh"));
 			terrainMeshApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_terrain_mesh_apply"));
@@ -531,6 +541,109 @@ void EntityBoundingVolumeSubScreenController::setConvexMeshes(LevelEditorEntity*
 	convexMeshesGenerate->getController()->setDisabled(false);
 }
 
+void EntityBoundingVolumeSubScreenController::unsetPhysics() {
+	bodyTypeDropdown->getController()->setValue(MutableString("none"));
+	bodyTypeDropdown->getController()->setDisabled(true);
+	bodyTypeDropdownApply->getController()->setDisabled(true);
+	bodyMass->getController()->setValue(MutableString());
+	bodyMass->getController()->setDisabled(true);
+	bodyBounciness->getController()->setValue(MutableString());
+	bodyBounciness->getController()->setDisabled(true);
+	bodyFriction->getController()->setValue(MutableString());
+	bodyFriction->getController()->setDisabled(true);
+	bodyApply->getController()->setDisabled(true);
+}
+
+void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* entity) {
+	auto physics = entity->getPhysics();
+	if (physics->getType() == LevelEditorEntityPhysics_BodyType::NONE) {
+		bodyTypeDropdown->getController()->setValue(MutableString("none"));
+	} else
+	if (physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
+		bodyTypeDropdown->getController()->setValue(MutableString("collisionbody"));
+	} else
+	if (physics->getType() == LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY) {
+		bodyTypeDropdown->getController()->setValue(MutableString("dynamicrigidbody"));
+	} else
+	if (physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
+		bodyTypeDropdown->getController()->setValue(MutableString("staticrigidbody"));
+	}
+	bodyTypeDropdown->getController()->setDisabled(false);
+	bodyTypeDropdownApply->getController()->setDisabled(false);
+	bodyMass->getController()->setValue(
+		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY?
+			"":
+			Tools::formatFloat(physics->getMass())
+	);
+	bodyMass->getController()->setDisabled(
+		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY
+	);
+	bodyBounciness->getController()->setValue(
+		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY?
+			"":
+			Tools::formatFloat(physics->getRestitution())
+	);
+	bodyBounciness->getController()->setDisabled(
+		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY
+	);
+	bodyFriction->getController()->setValue(
+		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY?
+			"":
+			Tools::formatFloat(physics->getFriction())
+	);
+	bodyFriction->getController()->setDisabled(
+		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY
+	);
+	bodyApply->getController()->setDisabled(
+		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY
+	);
+}
+
+void EntityBoundingVolumeSubScreenController::onPhysicsBodyTypeApply(LevelEditorEntity* entity) {
+	auto physics = entity->getPhysics();
+	auto type = bodyTypeDropdown->getController()->getValue().getString();
+	if (type == "none") {
+		physics->setType(LevelEditorEntityPhysics_BodyType::NONE);
+	} else
+	if (type == "collisionbody") {
+		physics->setType(LevelEditorEntityPhysics_BodyType::COLLISION_BODY);
+	} else
+	if (type == "dynamicrigidbody") {
+		physics->setType(LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY);
+	} else
+	if (type == "staticrigidbody") {
+		physics->setType(LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY);
+	}
+	setPhysics(entity);
+}
+
+void EntityBoundingVolumeSubScreenController::onPhysicsBodyApply(LevelEditorEntity* entity) {
+	auto physics = entity->getPhysics();
+	try {
+		auto mass = Float::parseFloat(bodyMass->getController()->getValue().getString());
+		auto bounciness = Float::parseFloat(bodyBounciness->getController()->getValue().getString());
+		auto friction = Float::parseFloat(bodyFriction->getController()->getValue().getString());
+		if (mass < 0.0f || mass > 1000000000.0f) throw ExceptionBase("mass must be within 0 .. 1,000,000,000");
+		if (bounciness < 0.0f || bounciness > 1.0f) throw ExceptionBase("bounciness must be within 0 .. 1");
+		if (friction < 0.0f || friction > 1.0f) throw ExceptionBase("friction must be within 0 .. 1");
+		physics->setType(LevelEditorEntityPhysics_BodyType::valueOf(bodyTypeDropdown->getController()->getValue().getString()));
+		physics->setMass(mass);
+		physics->setRestitution(bounciness);
+		physics->setFriction(friction);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void EntityBoundingVolumeSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
@@ -568,6 +681,12 @@ void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListene
 			} else
 			if (node->getId() == "button_boundingvolume_convexmeshes_generate") {
 				onBoundingVolumeConvexMeshesGenerate(entity);
+			} else
+			if (node->getId() == "physics_bodytype_dropdown_apply") {
+				onPhysicsBodyTypeApply(entity);
+			} else
+			if (node->getId() == "physics_body_apply") {
+				onPhysicsBodyApply(entity);
 			} else {
 				Console::println(
 					string(

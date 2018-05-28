@@ -8,17 +8,17 @@ Enum::Enum(const string& name, int32_t ordinal)
 	this->ordinal = ordinal;
 }
 
-bool Enum::equals(Enum* enumObject)
+bool Enum::equals(Enum* enumObject) const
 {
 	return this == enumObject;
 }
 
-const string& Enum::getName()
+const string& Enum::getName() const
 {
 	return name;
 }
 
-int32_t Enum::getOrdinal()
+int32_t Enum::getOrdinal() const
 {
 	return ordinal;
 }

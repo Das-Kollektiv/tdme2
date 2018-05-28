@@ -19,18 +19,18 @@ public:
 	/**
 	 * @return name
 	 */
-	const string& getName();
+	const string& getName() const;
 
 	/**
 	 * @return ordinal or index
 	 */
-	int32_t getOrdinal();
+	int32_t getOrdinal() const;
 
 	/**
 	 * Compare enum with another enum
 	 * @return equality
 	 */
-	bool equals(Enum* enumObject);
+	bool equals(Enum* enumObject) const;
 
 	/**
 	 * Public constructor

@@ -198,11 +198,13 @@ void SharedParticleSystemView::updateGUIElements()
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
+		entityBoundingVolumeView->setPhysics(entity);
 	} else {
 		particleSystemScreenController->setScreenCaption("Particle System - no entity loaded");
 		particleSystemScreenController->unsetEntityProperties();
 		particleSystemScreenController->unsetEntityData();
 		entityBoundingVolumeView->unsetBoundingVolumes();
+		entityBoundingVolumeView->unsetPhysics();
 	}
 }
 
