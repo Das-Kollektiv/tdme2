@@ -23,7 +23,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
@@ -35,12 +35,12 @@ using tdme::utils::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController
+class tdme::tools::shared::controller::EntityPhysicsSubScreenController
 {
-	friend class EntityBoundingVolumeSubScreenController_BoundingVolumeType;
-	friend class EntityBoundingVolumeSubScreenController_GenerateConvexMeshes;
-	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile;
-	friend class EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
+	friend class EntityPhysicsSubScreenController_BoundingVolumeType;
+	friend class EntityPhysicsSubScreenController_GenerateConvexMeshes;
+	friend class EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile;
+	friend class EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile;
 
 public:
 	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 8 };
@@ -132,7 +132,7 @@ public:
 	 * Display given bounding volume GUI elements
 	 * @param bvType
 	 */
-	virtual void selectBoundingVolume(int32_t idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType* bvType);
+	virtual void selectBoundingVolume(int32_t idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
 
 	/** 
 	 * Setup sphere bounding volume
@@ -320,10 +320,10 @@ public:
 	 * @param model editor screen controller
 	 * @param is model bounding volumes
 	 */
-	EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
+	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~EntityBoundingVolumeSubScreenController();
+	virtual ~EntityPhysicsSubScreenController();
 };

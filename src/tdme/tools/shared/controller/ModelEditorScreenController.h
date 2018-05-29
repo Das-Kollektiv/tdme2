@@ -28,7 +28,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -54,7 +54,7 @@ class tdme::tools::shared::controller::ModelEditorScreenController final
 private:
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
-	EntityBoundingVolumeSubScreenController* entityBoundingVolumeSubScreenController {  };
+	EntityPhysicsSubScreenController* entityPhysicsSubScreenController {  };
 	SharedModelEditorView* view {  };
 	GUIScreenNode* screenNode {  };
 	GUITextNode* screenCaption {  };
@@ -141,7 +141,7 @@ public:
 	/** 
 	 * @return entity bounding volume sub screen controller
 	 */
-	EntityBoundingVolumeSubScreenController* getEntityBoundingVolumeSubScreenController();
+	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
 	GUIScreenNode* getScreenNode() override;
 
 	/** 

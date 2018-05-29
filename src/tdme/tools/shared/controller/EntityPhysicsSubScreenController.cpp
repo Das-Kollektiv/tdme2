@@ -1,4 +1,4 @@
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_GenerateConvexMeshes.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -43,7 +43,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::Transformations;
@@ -63,10 +63,10 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_GenerateConvexMeshes;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController_BoundingVolumeType;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController_GenerateConvexMeshes;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -82,9 +82,9 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-constexpr int32_t EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_COUNT;
+constexpr int32_t EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT;
 
-vector<string> EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS = {
+vector<string> EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_IDS = {
 	"model_bv.0",
 	"model_bv.1",
 	"model_bv.2",
@@ -95,23 +95,23 @@ vector<string> EntityBoundingVolumeSubScreenController::MODEL_BOUNDINGVOLUME_IDS
 	"model_bv.7"
 };
 
-EntityBoundingVolumeSubScreenController::EntityBoundingVolumeSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
+EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
 {
 	this->modelPath = modelPath;
 	this->view = new EntityBoundingVolumeView(this, popUps);
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 }
 
-EntityBoundingVolumeSubScreenController::~EntityBoundingVolumeSubScreenController() {
+EntityPhysicsSubScreenController::~EntityPhysicsSubScreenController() {
 	delete view;
 }
 
-EntityBoundingVolumeView* EntityBoundingVolumeSubScreenController::getView()
+EntityBoundingVolumeView* EntityPhysicsSubScreenController::getView()
 {
 	return view;
 }
 
-void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNode)
+void EntityPhysicsSubScreenController::initialize(GUIScreenNode* screenNode)
 {
 	try {
 		for (auto i = 0; i < 8; i++) {
@@ -159,25 +159,25 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 			convexMeshesGenerate = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_convexmeshes_generate"));
 		}
 	} catch (Exception& exception) {
-		Console::print(string("EntityBoundingVolumeSubScreenController::initialize(): An error occurred: "));
+		Console::print(string("EntityPhysicsSubScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::disableBoundingVolume(int32_t idx)
+void EntityPhysicsSubScreenController::disableBoundingVolume(int32_t idx)
 {
 	view->selectBoundingVolumeType(idx, 0);
 	boundingVolumeTypeDropDown[idx]->getController()->setDisabled(true);
 	boundingVolumeNoneApply[idx]->getController()->setDisabled(true);
 }
 
-void EntityBoundingVolumeSubScreenController::enableBoundingVolume(int32_t idx)
+void EntityPhysicsSubScreenController::enableBoundingVolume(int32_t idx)
 {
 	boundingVolumeTypeDropDown[idx]->getController()->setDisabled(false);
 	boundingVolumeNoneApply[idx]->getController()->setDisabled(false);
 }
 
-void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(LevelEditorEntity* entity, int32_t idx)
 {
 	if (entity == nullptr) {
 		view->selectBoundingVolumeType(idx, 0);
@@ -211,7 +211,7 @@ void EntityBoundingVolumeSubScreenController::setupModelBoundingVolumeType(Level
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t idx, vector<string>* boundingVolumeTypes)
+void EntityPhysicsSubScreenController::setupBoundingVolumeTypes(int32_t idx, vector<string>* boundingVolumeTypes)
 {
 	auto boundingVolumeTypeDropDownInnerNode = dynamic_cast< GUIParentNode* >((boundingVolumeTypeDropDown[idx]->getScreenNode()->getNodeById(boundingVolumeTypeDropDown[idx]->getId() + "_inner")));
 	auto bvIdx = 0;
@@ -234,12 +234,12 @@ void EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(int32_t i
 	try {
 		boundingVolumeTypeDropDownInnerNode->replaceSubNodes(boundingVolumeTypeDropDownSubNodesXML, true);
 	} catch (Exception& exception) {
-		Console::print(string("EntityBoundingVolumeSubScreenController::setupBoundingVolumeTypes(): An error occurred: "));
+		Console::print(string("EntityPhysicsSubScreenController::setupBoundingVolumeTypes(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType* bvType)
+void EntityPhysicsSubScreenController::selectBoundingVolume(int32_t idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType)
 {
 	boundingVolume[idx]->getActiveConditions().remove("sphere");
 	boundingVolume[idx]->getActiveConditions().remove("capsule");
@@ -248,26 +248,26 @@ void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, 
 	boundingVolume[idx]->getActiveConditions().remove("convexmesh");
 	{
 		auto v = bvType;
-		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::NONE) {
+		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::NONE) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("0"));
 		} else
-		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE) {
+		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::SPHERE) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("1"));
 			boundingVolume[idx]->getActiveConditions().add("sphere");
 		} else
-		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE) {
+		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::CAPSULE) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("2"));
 			boundingVolume[idx]->getActiveConditions().add("capsule");
 		} else
-		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX) {
+		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::BOUNDINGBOX) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("3"));
 			boundingVolume[idx]->getActiveConditions().add("aabb");
 		} else
-		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX) {
+		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("4"));
 			boundingVolume[idx]->getActiveConditions().add("obb");
 		} else
-		if (v == EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH) {
+		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::CONVEXMESH) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("5"));
 			boundingVolume[idx]->getActiveConditions().add("convexmesh");
 		}
@@ -275,36 +275,36 @@ void EntityBoundingVolumeSubScreenController::selectBoundingVolume(int32_t idx, 
 
 }
 
-void EntityBoundingVolumeSubScreenController::setupSphere(int32_t idx, const Vector3& center, float radius)
+void EntityPhysicsSubScreenController::setupSphere(int32_t idx, const Vector3& center, float radius)
 {
-	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::SPHERE);
+	selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::SPHERE);
 	boundingvolumeSphereCenter[idx]->getController()->setValue(MutableString(Tools::formatFloat(center.getX())).append(", ").append(Tools::formatFloat(center.getY())).append(", ").append(Tools::formatFloat(center.getZ())));
 	boundingvolumeSphereRadius[idx]->getController()->setValue(MutableString(Tools::formatFloat(radius)));
 }
 
-void EntityBoundingVolumeSubScreenController::setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius)
+void EntityPhysicsSubScreenController::setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius)
 {
-	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CAPSULE);
+	selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::CAPSULE);
 	boundingvolumeCapsuleA[idx]->getController()->setValue(MutableString(Tools::formatFloat(a.getX())).append(", ").append(Tools::formatFloat(a.getY())).append(", ").append(Tools::formatFloat(a.getZ())));
 	boundingvolumeCapsuleB[idx]->getController()->setValue(MutableString(Tools::formatFloat(b.getX())).append(", ").append(Tools::formatFloat(b.getY())).append(", ").append(Tools::formatFloat(b.getZ())));
 	boundingvolumeCapsuleRadius[idx]->getController()->setValue(MutableString(Tools::formatFloat(radius)));
 }
 
-void EntityBoundingVolumeSubScreenController::setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max)
+void EntityPhysicsSubScreenController::setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max)
 {
-	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::BOUNDINGBOX);
+	selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::BOUNDINGBOX);
 	boundingvolumeBoundingBoxMin[idx]->getController()->setValue(MutableString(Tools::formatFloat(min.getX())).append(", ").append(Tools::formatFloat(min.getY())).append(", ").append(Tools::formatFloat(min.getZ())));
 	boundingvolumeBoundingBoxMax[idx]->getController()->setValue(MutableString(Tools::formatFloat(max.getX())).append(", ").append(Tools::formatFloat(max.getY())).append(", ").append(Tools::formatFloat(max.getZ())));
 }
 
-void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
+void EntityPhysicsSubScreenController::setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
 {
 	Vector3 rotation;
 	Matrix4x4 rotationMatrix;
 	rotationMatrix.identity();
 	rotationMatrix.setAxes(axis0, axis1, axis2);
 	rotationMatrix.computeEulerAngles(rotation);
-	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
+	selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
 	boundingvolumeObbCenter[idx]->getController()->setValue(MutableString(Tools::formatFloat(center.getX())).append(", ").append(Tools::formatFloat(center.getY())).append(", ").append(Tools::formatFloat(center.getZ())));
 	boundingvolumeObbHalfextension[idx]->getController()->setValue(MutableString(Tools::formatFloat(halfExtension.getX())).append(", ").append(Tools::formatFloat(halfExtension.getY())).append(", ").append(Tools::formatFloat(halfExtension.getZ())));
 	boundingvolumeObbRotationX[idx]->getController()->setValue(MutableString(Tools::formatFloat(rotation.getX())));
@@ -312,13 +312,13 @@ void EntityBoundingVolumeSubScreenController::setupOrientedBoundingBox(int32_t i
 	boundingvolumeObbRotationZ[idx]->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
 }
 
-void EntityBoundingVolumeSubScreenController::setupConvexMesh(int32_t idx, const string& file)
+void EntityPhysicsSubScreenController::setupConvexMesh(int32_t idx, const string& file)
 {
-	selectBoundingVolume(idx, EntityBoundingVolumeSubScreenController_BoundingVolumeType::CONVEXMESH);
+	selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::CONVEXMESH);
 	boundingvolumeConvexMeshFile[idx]->getController()->setValue(MutableString(file));
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx)
 {
 	auto boundingVolumeTypeId = Tools::convertToIntSilent(boundingVolumeTypeDropDown[idx]->getController()->getValue().getString());
 	view->selectBoundingVolumeType(idx, boundingVolumeTypeId);
@@ -344,13 +344,13 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeTypeApply(LevelEdi
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeNoneApply(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeNoneApply(LevelEditorEntity* entity, int32_t idx)
 {
 	view->applyBoundingVolumeNone(entity, idx);
 	view->resetBoundingVolume(entity, idx);
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeSphereApply(LevelEditorEntity* entity, int32_t idx)
 {
 	try {
 		view->applyBoundingVolumeSphere(
@@ -364,7 +364,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeSphereApply(LevelE
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx)
 {
 	try {
 		view->applyBoundingVolumeCapsule(
@@ -379,7 +379,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeCapsuleApply(Level
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx)
 {
 	try {
 		view->applyBoundingVolumeAabb(
@@ -393,7 +393,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeAabbApply(LevelEdi
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx)
 {
 	try {
 		Transformations rotations;
@@ -419,7 +419,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeObbApply(LevelEdit
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx)
 {
 	view->applyBoundingVolumeConvexMesh(
 		entity,
@@ -428,7 +428,7 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshApply(Le
 	);
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx)
 {
 	auto const idxFinal = idx;
 	auto const entityFinal = entity;
@@ -438,11 +438,11 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshFile(Lev
 		"Load from: ",
 		&extensions,
 		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolumeAt(idx)->getModelMeshFile() : entity->getFileName(),
-		new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1(this, idxFinal, entityFinal)
+		new EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile(this, idxFinal, entityFinal)
 	);
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity)
 {
 	auto const entityFinal = entity;
 	vector<string> extensions = ModelReader::getModelExtensions();
@@ -451,43 +451,43 @@ void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesFile(L
 		"Load from: ",
 		&extensions,
 		Tools::getFileName(convexMeshesFile->getController()->getValue().getString()),
-		new EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile(this, entityFinal)
+		new EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile(this, entityFinal)
 	);
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity)
 {
-	EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::removeConvexMeshes(
+	EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(
 		this,
 		entity
 	);
 }
 
-void EntityBoundingVolumeSubScreenController::onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity)
 {
-	EntityBoundingVolumeSubScreenController_GenerateConvexMeshes::generateConvexMeshes(
+	EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(
 		this,
 		entity
 	);
 }
 
-void EntityBoundingVolumeSubScreenController::setTerrainMesh(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::setTerrainMesh(LevelEditorEntity* entity) {
 	terrainMesh->getController()->setValue(MutableString(entity->getModelSettings()->isTerrainMesh() == true?"1":""));
 	terrainMesh->getController()->setDisabled(false);
 	terrainMeshApply->getController()->setDisabled(false);
 }
 
-void EntityBoundingVolumeSubScreenController::onSetTerrainMesh(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::onSetTerrainMesh(LevelEditorEntity* entity) {
 	entity->getModelSettings()->setTerrainMesh(terrainMesh->getController()->getValue().equals("1"));
 }
 
-void EntityBoundingVolumeSubScreenController::unsetTerrainMesh() {
+void EntityPhysicsSubScreenController::unsetTerrainMesh() {
 	terrainMesh->getController()->setValue(MutableString(""));
 	terrainMesh->getController()->setDisabled(true);
 	terrainMeshApply->getController()->setDisabled(true);
 }
 
-void EntityBoundingVolumeSubScreenController::unsetConvexMeshes() {
+void EntityPhysicsSubScreenController::unsetConvexMeshes() {
 	convexMeshesFile->getController()->setDisabled(true);
 	convexMeshesLoad->getController()->setDisabled(true);
 	convexMeshesResolution->getController()->setDisabled(true);
@@ -514,7 +514,7 @@ void EntityBoundingVolumeSubScreenController::unsetConvexMeshes() {
 	convexMeshesGenerate->getController()->setDisabled(true);
 }
 
-void EntityBoundingVolumeSubScreenController::setConvexMeshes(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::setConvexMeshes(LevelEditorEntity* entity) {
 	convexMeshesFile->getController()->setValue(MutableString(entity->getFileName()));
 	convexMeshesFile->getController()->setDisabled(false);
 	convexMeshesLoad->getController()->setDisabled(false);
@@ -542,7 +542,7 @@ void EntityBoundingVolumeSubScreenController::setConvexMeshes(LevelEditorEntity*
 	convexMeshesGenerate->getController()->setDisabled(false);
 }
 
-void EntityBoundingVolumeSubScreenController::unsetPhysics() {
+void EntityPhysicsSubScreenController::unsetPhysics() {
 	bodyTypeDropdown->getController()->setValue(MutableString("none"));
 	bodyTypeDropdown->getController()->setDisabled(true);
 	bodyTypeDropdownApply->getController()->setDisabled(true);
@@ -557,7 +557,7 @@ void EntityBoundingVolumeSubScreenController::unsetPhysics() {
 	bodyApply->getController()->setDisabled(true);
 }
 
-void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::setPhysics(LevelEditorEntity* entity) {
 	auto physics = entity->getPhysics();
 	if (physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("collisionbody"));
@@ -620,7 +620,7 @@ void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* enti
 	);
 }
 
-void EntityBoundingVolumeSubScreenController::onPhysicsBodyTypeApply(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::onPhysicsBodyTypeApply(LevelEditorEntity* entity) {
 	auto physics = entity->getPhysics();
 	auto type = bodyTypeDropdown->getController()->getValue().getString();
 	if (type == "collisionbody") {
@@ -637,7 +637,7 @@ void EntityBoundingVolumeSubScreenController::onPhysicsBodyTypeApply(LevelEditor
 	setPhysics(entity);
 }
 
-void EntityBoundingVolumeSubScreenController::onPhysicsBodyApply(LevelEditorEntity* entity) {
+void EntityPhysicsSubScreenController::onPhysicsBodyApply(LevelEditorEntity* entity) {
 	auto physics = entity->getPhysics();
 	try {
 		auto mass = Float::parseFloat(bodyMass->getController()->getValue().getString());
@@ -656,12 +656,12 @@ void EntityBoundingVolumeSubScreenController::onPhysicsBodyApply(LevelEditorEnti
 	}
 }
 
-void EntityBoundingVolumeSubScreenController::showErrorPopUp(const string& caption, const string& message)
+void EntityPhysicsSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EntityBoundingVolumeSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)
+void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)
 {
 	{
 		auto v = type;

@@ -354,11 +354,11 @@ SRCS = \
 	src/tdme/tools/leveleditor/views/TriggerView.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem.cpp \
 	src/tdme/tools/shared/controller/EntityBaseSubScreenController.cpp \
-	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.cpp \
-	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_BoundingVolumeType.cpp \
-	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_GenerateConvexMeshes.cpp \
-	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshesFile.cpp \
-	src/tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController_onBoundingVolumeConvexMeshFile_1.cpp \
+	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController.cpp \
+	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.cpp \
+	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.cpp \
+	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile.cpp \
+	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile.cpp \
 	src/tdme/tools/shared/controller/EntityDisplaySubScreenController.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \

@@ -14,12 +14,12 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
 /** 
- * Entity bounding volume view
+ * Entity physics sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -27,7 +27,7 @@ class tdme::tools::shared::views::EntityBoundingVolumeView
 {
 private:
 	Engine* engine {  };
-	EntityBoundingVolumeSubScreenController* boundingVolumeSubScreenController {  };
+	EntityPhysicsSubScreenController* entityPhysicsSubScreenController {  };
 	PopUps* popUps {  };
 
 public:
@@ -171,5 +171,5 @@ public:
 	 * @param pop ups
 	 * @param model editor screen controller
 	 */
-	EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelEditorScreenController, PopUps* popUps);
+	EntityBoundingVolumeView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps);
 };
