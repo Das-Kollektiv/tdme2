@@ -493,6 +493,9 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		jPhysics["mass"] = static_cast< double >(physics->getMass());
 		jPhysics["restitution"] = static_cast< double >(physics->getRestitution());
 		jPhysics["friction"] = static_cast< double >(physics->getFriction());
+		jPhysics["itx"] = static_cast< double >(physics->getInertiaTensor().getX());
+		jPhysics["ity"] = static_cast< double >(physics->getInertiaTensor().getY());
+		jPhysics["itz"] = static_cast< double >(physics->getInertiaTensor().getZ());
 		jEntityRoot["p"] = jPhysics;
 	}
 	ext::jsonbox::Array jModelProperties;

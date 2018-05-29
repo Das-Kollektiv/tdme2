@@ -4,11 +4,13 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 
 using std::string;
 
+using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
 
 /** 
@@ -23,13 +25,14 @@ private:
 	float mass { 0.0f };
 	float restitution { 0.5f };
 	float friction { 0.5f };
+	Vector3 inertiaTensor { };
 
 public:
 
 	/**
 	 * Public constructor
 	 */
-	inline LevelEditorEntityPhysics() {
+	inline LevelEditorEntityPhysics(): inertiaTensor(1.0f, 1.0f, 1.0f) {
 	}
 
 	/**
@@ -95,6 +98,21 @@ public:
 	 */
 	inline void setRestitution(float restitution) {
 		this->restitution = restitution;
+	}
+
+	/**
+	 * @return inertia tensor
+	 */
+	inline const Vector3& getInertiaTensor() const {
+		return inertiaTensor;
+	}
+
+	/**
+	 * Set inertia tensor
+	 * @param inertia tensor
+	 */
+	inline void setInertiaTensor(const Vector3& inertiaTensor) {
+		this->inertiaTensor = inertiaTensor;
 	}
 
 };

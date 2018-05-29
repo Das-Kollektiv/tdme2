@@ -1504,6 +1504,14 @@
 									</layout>
 								</layout>
 								<space height="20" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui/fonts/Foo_20.fnt" text="Inertia tensor" width="145" height="auto"/>
+										<space width="5" />
+										<input id="physics_body_inertiatensor" name="physics_body_inertiatensor" width="450" height="auto" text="Name" disabled="true" />
+									</layout>
+								</layout>
+								<space height="20" />
 								<layout width="auto" height="auto" alignment="none" horizontal-align="center">
 									<button id="physics_body_apply" name="physics_body_apply" text="Apply" />
 								</layout>

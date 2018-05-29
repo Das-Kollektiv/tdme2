@@ -161,6 +161,13 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		physics->setMass(static_cast<float>(jPhysics["mass"].getDouble()));
 		physics->setRestitution(static_cast<float>(jPhysics["restitution"].getDouble()));
 		physics->setFriction(static_cast<float>(jPhysics["friction"].getDouble()));
+		physics->setInertiaTensor(
+			Vector3(
+				static_cast<float>(jPhysics["itx"].getDouble()),
+				static_cast<float>(jPhysics["ity"].getDouble()),
+				static_cast<float>(jPhysics["itz"].getDouble())
+			)
+		);
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
 		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());

@@ -138,6 +138,7 @@ void EntityBoundingVolumeSubScreenController::initialize(GUIScreenNode* screenNo
 		bodyMass = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_mass"));
 		bodyBounciness = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_bounciness"));
 		bodyFriction = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_friction"));
+		bodyInertiaTensor = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_inertiatensor"));
 		bodyApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("physics_body_apply"));
 		if (isModelBoundingVolumes == true) {
 			terrainMesh = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_mesh"));
@@ -545,12 +546,14 @@ void EntityBoundingVolumeSubScreenController::unsetPhysics() {
 	bodyTypeDropdown->getController()->setValue(MutableString("none"));
 	bodyTypeDropdown->getController()->setDisabled(true);
 	bodyTypeDropdownApply->getController()->setDisabled(true);
-	bodyMass->getController()->setValue(MutableString());
+	bodyMass->getController()->setValue(Tools::formatFloat(0.0f));
 	bodyMass->getController()->setDisabled(true);
-	bodyBounciness->getController()->setValue(MutableString());
+	bodyBounciness->getController()->setValue(Tools::formatFloat(0.0f));
 	bodyBounciness->getController()->setDisabled(true);
-	bodyFriction->getController()->setValue(MutableString());
+	bodyFriction->getController()->setValue(Tools::formatFloat(0.0f));
 	bodyFriction->getController()->setDisabled(true);
+	bodyInertiaTensor->getController()->setValue(Tools::formatVector3(Vector3()));
+	bodyInertiaTensor->getController()->setDisabled(true);
 	bodyApply->getController()->setDisabled(true);
 }
 
@@ -574,7 +577,7 @@ void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* enti
 		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
 		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
 		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY?
-			"":
+			Tools::formatFloat(0.0f):
 			Tools::formatFloat(physics->getMass())
 	);
 	bodyMass->getController()->setDisabled(
@@ -584,23 +587,33 @@ void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* enti
 	);
 	bodyBounciness->getController()->setValue(
 		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY?
-			"":
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY?
+			Tools::formatFloat(0.0f):
 			Tools::formatFloat(physics->getRestitution())
 	);
 	bodyBounciness->getController()->setDisabled(
 		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
-		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY
+		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY ||
+		physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY
 	);
 	bodyFriction->getController()->setValue(
 		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
 		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY?
-			"":
+			Tools::formatFloat(0.0f):
 			Tools::formatFloat(physics->getFriction())
 	);
 	bodyFriction->getController()->setDisabled(
 		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||
 		physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY
+	);
+	bodyInertiaTensor->getController()->setValue(
+		physics->getType() != LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY?
+			Tools::formatVector3(Vector3()):
+			Tools::formatVector3(physics->getInertiaTensor())
+	);
+	bodyInertiaTensor->getController()->setDisabled(
+		physics->getType() != LevelEditorEntityPhysics_BodyType::DYNAMIC_RIGIDBODY
 	);
 	bodyApply->getController()->setDisabled(
 		physics->getType() == LevelEditorEntityPhysics_BodyType::NONE ||

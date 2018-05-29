@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -88,6 +87,7 @@ private:
 	GUIElementNode* bodyMass {  };
 	GUIElementNode* bodyBounciness {  };
 	GUIElementNode* bodyFriction {  };
+	GUIElementNode* bodyInertiaTensor {  };
 	GUIElementNode* bodyApply {  };
 
 public:
