@@ -559,9 +559,6 @@ void EntityBoundingVolumeSubScreenController::unsetPhysics() {
 
 void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* entity) {
 	auto physics = entity->getPhysics();
-	if (physics->getType() == LevelEditorEntityPhysics_BodyType::NONE) {
-		bodyTypeDropdown->getController()->setValue(MutableString("none"));
-	} else
 	if (physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("collisionbody"));
 	} else
@@ -570,6 +567,8 @@ void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* enti
 	} else
 	if (physics->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("staticrigidbody"));
+	} else {
+		bodyTypeDropdown->getController()->setValue(MutableString("none"));
 	}
 	bodyTypeDropdown->getController()->setDisabled(false);
 	bodyTypeDropdownApply->getController()->setDisabled(false);
@@ -624,9 +623,6 @@ void EntityBoundingVolumeSubScreenController::setPhysics(LevelEditorEntity* enti
 void EntityBoundingVolumeSubScreenController::onPhysicsBodyTypeApply(LevelEditorEntity* entity) {
 	auto physics = entity->getPhysics();
 	auto type = bodyTypeDropdown->getController()->getValue().getString();
-	if (type == "none") {
-		physics->setType(LevelEditorEntityPhysics_BodyType::NONE);
-	} else
 	if (type == "collisionbody") {
 		physics->setType(LevelEditorEntityPhysics_BodyType::COLLISION_BODY);
 	} else
@@ -635,6 +631,8 @@ void EntityBoundingVolumeSubScreenController::onPhysicsBodyTypeApply(LevelEditor
 	} else
 	if (type == "staticrigidbody") {
 		physics->setType(LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY);
+	} else {
+		physics->setType(LevelEditorEntityPhysics_BodyType::NONE);
 	}
 	setPhysics(entity);
 }
@@ -648,7 +646,6 @@ void EntityBoundingVolumeSubScreenController::onPhysicsBodyApply(LevelEditorEnti
 		if (mass < 0.0f || mass > 1000000000.0f) throw ExceptionBase("mass must be within 0 .. 1,000,000,000");
 		if (bounciness < 0.0f || bounciness > 1.0f) throw ExceptionBase("bounciness must be within 0 .. 1");
 		if (friction < 0.0f || friction > 1.0f) throw ExceptionBase("friction must be within 0 .. 1");
-		physics->setType(LevelEditorEntityPhysics_BodyType::valueOf(bodyTypeDropdown->getController()->getValue().getString()));
 		physics->setMass(mass);
 		physics->setRestitution(bounciness);
 		physics->setFriction(friction);

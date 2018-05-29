@@ -179,8 +179,7 @@ void PathFindingTest::initialize()
 	LevelFileImport::doImport("resources/tests/levels/pathfinding", "test.tl", &level);
 	Level::setLight(engine, &level);
 	Level::addLevel(engine, &level, false, false, false);
-	vector<RigidBody*> rigidBodies;
-	Level::addLevel(world, &level, rigidBodies);
+	Level::addLevel(world, &level);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);

@@ -20,6 +20,7 @@ using tdme::engine::Transformations;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
+using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
@@ -60,10 +61,19 @@ public:
 
 	/**
 	 * Create engine entity
+	 * @param level editor entity
+	 * @param id
+	 * @param transformations
+	 * @return entity
+	 */
+	static Entity* createEntity(LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations);
+
+	/**
+	 * Create engine entity
 	 * @param level editor object
 	 * @return entity
 	 */
-	static Entity* createEntity(LevelEditorObject* levelEditorEntity);
+	static Entity* createEntity(LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/** 
 	 * Add level to engine
@@ -81,20 +91,29 @@ public:
 	/**
 	 * Create rigid body
 	 * @param world
+	 * @param level editor entity
+	 * @param id
+	 * @param transformations
+	 * @return rigid body
+	 */
+	static RigidBody* createRigidBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations);
+
+	/**
+	 * Create rigid body
+	 * @param world
 	 * @param level editor object
 	 * @return rigid body
 	 */
-	static RigidBody* createRigidBody(World* world, LevelEditorObject* levelEditorObject);
+	static RigidBody* createRigidBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/** 
 	 * Add level to physics world
 	 * @param world
 	 * @param level
-	 * @param rigid bodies (will be filled by logic)
 	 * @param enable
 	 * @param translation
 	 */
-	static void addLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>&, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void addLevel(World* world, LevelEditorLevel* level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 	/** 
 	 * Disable level in engine
@@ -106,9 +125,9 @@ public:
 	/** 
 	 * Disable level in physics world
 	 * @param world
-	 * @param rigid bodies
+	 * @param level
 	 */
-	static void disableLevel(World* world, vector<RigidBody*>& rigidBodies);
+	static void disableLevel(World* world, LevelEditorLevel* level);
 
 	/** 
 	 * Enable disabled level in engine
@@ -122,9 +141,8 @@ public:
 	 * Enable disabled level in physics world
 	 * @param world
 	 * @param level
-	 * @param rigid bodies
 	 * @param translation
 	 */
-	static void enableLevel(World* world, LevelEditorLevel* level, vector<RigidBody*>& rigidBodies, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void enableLevel(World* world, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
 };
