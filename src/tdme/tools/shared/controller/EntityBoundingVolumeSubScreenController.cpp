@@ -643,12 +643,14 @@ void EntityBoundingVolumeSubScreenController::onPhysicsBodyApply(LevelEditorEnti
 		auto mass = Float::parseFloat(bodyMass->getController()->getValue().getString());
 		auto bounciness = Float::parseFloat(bodyBounciness->getController()->getValue().getString());
 		auto friction = Float::parseFloat(bodyFriction->getController()->getValue().getString());
+		auto inertiaTensor = Tools::convertToVector3(bodyInertiaTensor->getController()->getValue().getString());
 		if (mass < 0.0f || mass > 1000000000.0f) throw ExceptionBase("mass must be within 0 .. 1,000,000,000");
 		if (bounciness < 0.0f || bounciness > 1.0f) throw ExceptionBase("bounciness must be within 0 .. 1");
 		if (friction < 0.0f || friction > 1.0f) throw ExceptionBase("friction must be within 0 .. 1");
 		physics->setMass(mass);
 		physics->setRestitution(bounciness);
 		physics->setFriction(friction);
+		physics->setInertiaTensor(inertiaTensor);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
