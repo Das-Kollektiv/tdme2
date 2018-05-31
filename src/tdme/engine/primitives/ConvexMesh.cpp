@@ -141,50 +141,23 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 		// as long as we have vertices left
 		while (polygonVerticesOrdered.size() != polygonVertices.size()) {
 			auto& polygonVerticesOrderedLast = polygonVertices[polygonVerticesOrdered[polygonVerticesOrdered.size() - 1]];
-			// iterate polygon vertices to find next match to last vertex
-			vector<int> hitVerticesNoMatch;
-			while (true == true) {
-				// find next closest vertex
-				float hitVertexMinDistance;
-				float hitVertexIdx = -1;
-				for (int i = 0; i < polygonVertices.size(); i++) {
-					// check if already add to ordered vertices list
-					if (find(polygonVerticesOrdered.begin(), polygonVerticesOrdered.end(), i) != polygonVerticesOrdered.end()) continue;
-					// check if its a no match
-					if (find(hitVerticesNoMatch.begin(), hitVerticesNoMatch.end(), i) != hitVerticesNoMatch.end()) continue;
+			// find next vertex with most little
+			auto hitVertexAngle = 0.0f;
+			auto hitVertexIdx = -1;
+			for (int i = 0; i < polygonVertices.size(); i++) {
+				// check if already add to ordered vertices list
+				if (find(polygonVerticesOrdered.begin(), polygonVerticesOrdered.end(), i) != polygonVerticesOrdered.end()) continue;
 
-					// otherwise check if its closer than previous hit
-					auto distanceCurrent = distanceVector.set(polygonVertices[i]).sub(polygonVerticesOrderedLast).computeLength();
-					if (hitVertexIdx == -1 || distanceCurrent < hitVertexMinDistance) {
-						hitVertexMinDistance = distanceCurrent;
-						hitVertexIdx = i;
-					}
-				}
-				// exit if no hit was found, should never happen
-				if (hitVertexIdx == -1) {
-					Console::println("ConvexMesh::ConvexMesh(): did not found a vertex in right order. Exiting.");
-					exit(0);
-				}
-
-				// vertex order
-				// 	https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
-				auto& polygonVertexHit = polygonVertices[hitVertexIdx];
-				Vector3 ac;
-				Vector3 bc;
-				Vector3 acbcCross;
-				ac.set(polygonVerticesOrderedLast).sub(polygonCenter);
-				bc.set(polygonVertexHit).sub(polygonCenter);
-				Vector3::computeCrossProduct(ac, bc, acbcCross);
-				// counter clockwise???
-				if (Vector3::computeDotProduct(polygonNormal, acbcCross) > 0.0f) {
-					// yep
-					polygonVerticesOrdered.push_back(hitVertexIdx);
-					break;
-				} else {
-					// otherwise add to list of no matches
-					hitVerticesNoMatch.push_back(hitVertexIdx);
+				// otherwise check if angle is smaller
+				auto angleCurrent = Vector3::computeAngle(polygonVerticesOrderedLast, polygonVertices[i], polygonNormal);
+				if (hitVertexIdx == -1 || angleCurrent < hitVertexAngle) {
+					hitVertexAngle = angleCurrent;
+					hitVertexIdx = i;
 				}
 			}
+
+			// yep
+			polygonVerticesOrdered.push_back(hitVertexIdx);
 		}
 
 		// add face
