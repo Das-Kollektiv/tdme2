@@ -64,15 +64,15 @@ void ConcaveMeshShape::initBVHTree() {
             triangleVertexArray->getTriangleVertices(triangleIndex, trianglePoints);
 
             // Apply the scaling factor to the vertices
-            trianglePoints[0][0] *= mScaling.x;
-            trianglePoints[0][1] *= mScaling.y;
-            trianglePoints[0][2] *= mScaling.z;
-            trianglePoints[1][0] *= mScaling.x;
-            trianglePoints[1][1] *= mScaling.y;
-            trianglePoints[1][2] *= mScaling.z;
-            trianglePoints[2][0] *= mScaling.x;
-            trianglePoints[2][1] *= mScaling.y;
-            trianglePoints[2][2] *= mScaling.z;
+            trianglePoints[0].x *= mScaling.x;
+            trianglePoints[0].y *= mScaling.y;
+            trianglePoints[0].z *= mScaling.z;
+            trianglePoints[1].x *= mScaling.x;
+            trianglePoints[1].y *= mScaling.y;
+            trianglePoints[1].z *= mScaling.z;
+            trianglePoints[2].x *= mScaling.x;
+            trianglePoints[2].y *= mScaling.y;
+            trianglePoints[2].z *= mScaling.z;
 
             // Create the AABB for the triangle
             AABB aabb = AABB::createAABBForTriangle(trianglePoints);
@@ -94,15 +94,15 @@ void ConcaveMeshShape::getTriangleVertices(uint subPart, uint triangleIndex,
     triangleVertexArray->getTriangleVertices(triangleIndex, outTriangleVertices);
 
     // Apply the scaling factor to the vertices
-    outTriangleVertices[0][0] *= mScaling.x;
-    outTriangleVertices[0][1] *= mScaling.y;
-    outTriangleVertices[0][2] *= mScaling.z;
-    outTriangleVertices[1][0] *= mScaling.x;
-    outTriangleVertices[1][1] *= mScaling.y;
-    outTriangleVertices[1][2] *= mScaling.z;
-    outTriangleVertices[2][0] *= mScaling.x;
-    outTriangleVertices[2][1] *= mScaling.y;
-    outTriangleVertices[2][2] *= mScaling.z;
+    outTriangleVertices[0].x *= mScaling.x;
+    outTriangleVertices[0].y *= mScaling.y;
+    outTriangleVertices[0].z *= mScaling.z;
+    outTriangleVertices[1].x *= mScaling.x;
+    outTriangleVertices[1].y *= mScaling.y;
+    outTriangleVertices[1].z *= mScaling.z;
+    outTriangleVertices[2].x *= mScaling.x;
+    outTriangleVertices[2].y *= mScaling.y;
+    outTriangleVertices[2].z *= mScaling.z;
 }
 
 // Return the three vertex normals (in the array outVerticesNormals) of a triangle
