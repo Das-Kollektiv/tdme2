@@ -159,6 +159,7 @@ public:
 
 	/**
 	 * Check if world collides with given bounding volume
+	 * 	Note: this uses the bounding volume AABB to detect collision, so no exact collision is computed
 	 * @param collision type ids
 	 * @param bounding volume
 	 * @param rigid bodies that collide with bounding volume
