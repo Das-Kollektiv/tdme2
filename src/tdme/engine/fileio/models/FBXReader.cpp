@@ -490,6 +490,16 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 							""
 						):
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				if (diffuseTransparencyTextureFileName.length() == 0) {
+					fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sTransparencyFactor);
+					diffuseTransparencyTextureFileName =
+						fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
+							(fbxProperty.GetSrcObjectCount<FbxTexture>() > 0?
+								FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0))->GetFileName():
+								""
+							):
+						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				}
 				if (diffuseTextureFileName.length() > 0) {
 					material->setDiffuseTexture(
 						FileSystem::getInstance()->fileExists(
