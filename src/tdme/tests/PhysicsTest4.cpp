@@ -78,7 +78,6 @@ void PhysicsTest4::main(int argc, char** argv)
 void PhysicsTest4::display()
 {
 	auto box = world->getRigidBody("box");
-	box->getLinearVelocity().setX(1.0f);
 	auto start = Time::getCurrentMillis();
 	world->update(1.0f / 60.0f);
 	world->synch(engine);
@@ -124,6 +123,7 @@ void PhysicsTest4::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("box", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
+	world->getRigidBody("box")->getLinearVelocity().setX(1.0f);
 	try {
 		auto _terrainModel = ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm");
 		entity = new Object3D("terrain", _terrainModel);
