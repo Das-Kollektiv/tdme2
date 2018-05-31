@@ -65,7 +65,6 @@ public:
 	 * @param end position
 	 * @param collision type ids
 	 * @param path from actor to target
-	 * @param actor rigibody id
 	 * @return success
 	 */
 	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path);
