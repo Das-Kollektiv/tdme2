@@ -182,7 +182,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 		{
 			Object3DModel meshObject3DModel(meshModel);
 			vector<Triangle> meshFaceTriangles;
-			meshObject3DModel.getFaceTriangles(&meshFaceTriangles);
+			meshObject3DModel.getTriangles(meshFaceTriangles);
 			for (auto& triangle: meshFaceTriangles) {
 				meshTriangles.push_back(meshPoints.size() / 3 + 0);
 				meshTriangles.push_back(meshPoints.size() / 3 + 1);

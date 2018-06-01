@@ -59,7 +59,7 @@ bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vert
 ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 {
 	vector<Triangle> triangles;
-	model->getFaceTriangles(&triangles);
+	model->getTriangles(triangles);
 
 	// determine coplanar faces of model
 	map<int, vector<Triangle*>> trianglesCoplanar;

@@ -365,14 +365,34 @@ void Object3DBase::computeTransformations()
 	}
 }
 
-void Object3DBase::getFaceTriangles(vector<Triangle>* faceTriangles)
+int Object3DBase::getGroupCount() const {
+	return object3dGroups.size();
+}
+
+void Object3DBase::getTriangles(vector<Triangle>& triangles, int groupIdx)
 {
-	for (auto object3DGroup : object3dGroups) {
+	if (groupIdx == -1) {
+		for (auto object3DGroup : object3dGroups) {
+			auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
+			for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
+			for (auto& face : *facesEntity.getFaces()) {
+				auto faceVertexIndices = face.getVertexIndices();
+				triangles.push_back(
+					Triangle(
+						(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
+						(*groupVerticesTransformed)[(*faceVertexIndices)[1]],
+						(*groupVerticesTransformed)[(*faceVertexIndices)[2]]
+					)
+				);
+			}
+		}
+	} else {
+		auto object3DGroup = object3dGroups[groupIdx];
 		auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
 		for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
 		for (auto& face : *facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
-			faceTriangles->push_back(
+			triangles.push_back(
 				Triangle(
 					(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
 					(*groupVerticesTransformed)[(*faceVertexIndices)[1]],

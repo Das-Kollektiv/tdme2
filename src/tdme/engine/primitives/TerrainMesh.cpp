@@ -27,7 +27,7 @@ TerrainMesh::TerrainMesh(Object3DModel* model, const Transformations& transforma
 {
 	// fetch vertices and indices
 	vector<Triangle> triangles;
-	model->getFaceTriangles(&triangles);
+	model->getTriangles(triangles);
 	Vector3 vertexTransformed;
 	for (auto& triangle: triangles) {
 		auto verticesIdx = vertices.size() / 3;
