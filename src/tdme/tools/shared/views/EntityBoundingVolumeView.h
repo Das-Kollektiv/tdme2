@@ -102,12 +102,18 @@ public:
 
 private:
 
+	/**
+	 * Clear model bounding volume
+	 * @param idx
+	 */
+	void clearModelBoundingVolume(int32_t idx);
+
 	/** 
-	 * Update model bounding volume
+	 * Setup model bounding volume
 	 * @param entity
 	 * @param idx
 	 */
-	void updateModelBoundingVolume(LevelEditorEntity* entity, int32_t idx);
+	void setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx);
 
 public:
 

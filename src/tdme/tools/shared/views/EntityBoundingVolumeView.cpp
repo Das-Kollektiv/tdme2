@@ -193,19 +193,22 @@ void EntityBoundingVolumeView::selectBoundingVolumeType(int32_t idx, int32_t bvT
 
 }
 
-void EntityBoundingVolumeView::updateModelBoundingVolume(LevelEditorEntity* entity, int32_t idx)
-{
-	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+void EntityBoundingVolumeView::clearModelBoundingVolume(int32_t idx) {
 	auto modelBoundingVolumeEntityId = EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_IDS[idx];
-	auto modelEntity = engine->getEntity("model");
 	auto modelBoundingVolumeEntity = engine->getEntity(modelBoundingVolumeEntityId);
 	if (modelBoundingVolumeEntity != nullptr) {
 		engine->removeEntity(modelBoundingVolumeEntityId);
 	}
-	if (entityBoundingVolume->getModel() == nullptr)
-		return;
+}
 
-	modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
+void EntityBoundingVolumeView::setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx)
+{
+	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	auto modelBoundingVolumeEntityId = EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_IDS[idx];
+	auto modelEntity = engine->getEntity("model");
+	if (entityBoundingVolume->getModel() == nullptr) return;
+
+	auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
 	modelBoundingVolumeEntity->setEnabled(false);
 	if (modelEntity != nullptr) {
 		modelBoundingVolumeEntity->setScale(modelEntity->getScale());
@@ -222,9 +225,10 @@ void EntityBoundingVolumeView::applyBoundingVolumeNone(LevelEditorEntity* entity
 	if (entity == nullptr)
 		return;
 
+	clearModelBoundingVolume(idx);
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupNone();
-	updateModelBoundingVolume(entity, idx);
+	setupModelBoundingVolume(entity, idx);
 }
 
 void EntityBoundingVolumeView::applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, const Vector3& center, float radius)
@@ -232,9 +236,10 @@ void EntityBoundingVolumeView::applyBoundingVolumeSphere(LevelEditorEntity* enti
 	if (entity == nullptr)
 		return;
 
+	clearModelBoundingVolume(idx);
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupSphere(center, radius);
-	updateModelBoundingVolume(entity, idx);
+	setupModelBoundingVolume(entity, idx);
 }
 
 void EntityBoundingVolumeView::applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, const Vector3& a, const Vector3& b, float radius)
@@ -242,9 +247,10 @@ void EntityBoundingVolumeView::applyBoundingVolumeCapsule(LevelEditorEntity* ent
 	if (entity == nullptr)
 		return;
 
+	clearModelBoundingVolume(idx);
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupCapsule(a, b, radius);
-	updateModelBoundingVolume(entity, idx);
+	setupModelBoundingVolume(entity, idx);
 }
 
 void EntityBoundingVolumeView::applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, const Vector3& min, const Vector3& max)
@@ -252,9 +258,10 @@ void EntityBoundingVolumeView::applyBoundingVolumeAabb(LevelEditorEntity* entity
 	if (entity == nullptr)
 		return;
 
+	clearModelBoundingVolume(idx);
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupAabb(min, max);
-	updateModelBoundingVolume(entity, idx);
+	setupModelBoundingVolume(entity, idx);
 }
 
 void EntityBoundingVolumeView::applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
@@ -262,9 +269,10 @@ void EntityBoundingVolumeView::applyBoundingVolumeObb(LevelEditorEntity* entity,
 	if (entity == nullptr)
 		return;
 
+	clearModelBoundingVolume(idx);
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupObb(center, axis0, axis1, axis2, halfExtension);
-	updateModelBoundingVolume(entity, idx);
+	setupModelBoundingVolume(entity, idx);
 }
 
 void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const string& fileName)
@@ -272,12 +280,13 @@ void EntityBoundingVolumeView::applyBoundingVolumeConvexMesh(LevelEditorEntity* 
 	if (entity == nullptr)
 		return;
 
+	clearModelBoundingVolume(idx);
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
 	entityBoundingVolume->setupConvexMesh(
 		FileSystem::getInstance()->getPathName(fileName),
 		FileSystem::getInstance()->getFileName(fileName)
 	);
-	updateModelBoundingVolume(entity, idx);
+	setupModelBoundingVolume(entity, idx);
 }
 
 void EntityBoundingVolumeView::setTerrainMesh(LevelEditorEntity* entity) {
