@@ -1035,6 +1035,16 @@
 												<button id="button_boundingvolume_convexmeshes_file" name="button_boundingvolume_convexmeshes_file" text="Load" width="60" height="auto" />
 											</layout>
 											<space height="20" />
+											<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+												<radiobutton id="boundingvolume_convexmeshes_mode_generate" name="boundingvolume_convexmeshes_mode" value="vhacd" selected="true" />
+												<space width="5" />
+												<text font="resources/gui/fonts/Foo_20.fnt" text="Generate" width="120" height="auto"/>
+												<space width="20" />
+												<radiobutton id="boundingvolume_convexmeshes_mode_model" name="boundingvolume_convexmeshes_mode" value="model" />
+												<space width="5" />
+												<text font="resources/gui/fonts/Foo_20.fnt" text="Import" width="120" height="auto"/>
+											</layout>
+											<space height="20" />
 											<layout alignment="horizontal" width="auto" height="auto">
 												<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 													<text font="resources/gui/fonts/Foo_20.fnt" text="Resolution" width="140" height="auto"/>

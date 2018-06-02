@@ -111,8 +111,13 @@ EntityBoundingVolumeView* EntityPhysicsSubScreenController::getView()
 	return view;
 }
 
+GUIScreenNode* EntityPhysicsSubScreenController::getScreenNode() {
+	return screenNode;
+}
+
 void EntityPhysicsSubScreenController::initialize(GUIScreenNode* screenNode)
 {
+	this->screenNode = screenNode;
 	try {
 		for (auto i = 0; i < 8; i++) {
 			boundingVolumeTypeDropDown[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_type_" + to_string(i)));
@@ -143,6 +148,8 @@ void EntityPhysicsSubScreenController::initialize(GUIScreenNode* screenNode)
 		if (isModelBoundingVolumes == true) {
 			terrainMesh = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("terrain_mesh"));
 			terrainMeshApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_terrain_mesh_apply"));
+			convexmeshesModeGenerate = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_mode_generate"));
+			convexmeshesModeModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_mode_model"));
 			convexMeshesFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_file"));
 			convexMeshesLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_convexmeshes_file"));
 			convexMeshesResolution = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_convexmeshes_resolution"));
@@ -488,58 +495,25 @@ void EntityPhysicsSubScreenController::unsetTerrainMesh() {
 }
 
 void EntityPhysicsSubScreenController::unsetConvexMeshes() {
+	convexMeshesFile->getController()->setValue(MutableString("model.tm"));
 	convexMeshesFile->getController()->setDisabled(true);
 	convexMeshesLoad->getController()->setDisabled(true);
-	convexMeshesResolution->getController()->setDisabled(true);
-	convexMeshesResolution->getController()->setValue(MutableString("1000000"));
-	convexMeshesDepth->getController()->setDisabled(true);
-	convexMeshesDepth->getController()->setValue(MutableString("20"));
-	convexMeshesConcavity->getController()->setDisabled(true);
-	convexMeshesConcavity->getController()->setValue(MutableString("0.0025"));
-	convexMeshesPlaneDownSampling->getController()->setDisabled(true);
-	convexMeshesPlaneDownSampling->getController()->setValue(MutableString("4"));
-	convexMeshesConvexHullDownSampling->getController()->setDisabled(true);
-	convexMeshesConvexHullDownSampling->getController()->setValue(MutableString("4"));
-	convexMeshesAlpha->getController()->setDisabled(true);
-	convexMeshesAlpha->getController()->setValue(MutableString("0.05"));
-	convexMeshesBeta->getController()->setDisabled(true);
-	convexMeshesBeta->getController()->setValue(MutableString("0.05"));
-	convexMeshesMaxVerticesPerConvexHull->getController()->setDisabled(true);
-	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(MutableString("256"));
-	convexMeshesMinVolumePerConvexHull->getController()->setDisabled(true);
-	convexMeshesMinVolumePerConvexHull->getController()->setValue(MutableString("0.0001"));
-	convexMeshesPCA->getController()->setDisabled(true);
-	convexMeshesPCA->getController()->setValue(MutableString("0"));
+	convexmeshesModeGenerate->getController()->setDisabled(true);
+	convexmeshesModeModel->getController()->setDisabled(true);
 	convexMeshesRemove->getController()->setDisabled(true);
 	convexMeshesGenerate->getController()->setDisabled(true);
+	onConvexMeshModeChanged(true);
 }
 
 void EntityPhysicsSubScreenController::setConvexMeshes(LevelEditorEntity* entity) {
 	convexMeshesFile->getController()->setValue(MutableString(entity->getFileName()));
 	convexMeshesFile->getController()->setDisabled(false);
 	convexMeshesLoad->getController()->setDisabled(false);
-	convexMeshesResolution->getController()->setDisabled(false);
-	convexMeshesResolution->getController()->setValue(MutableString("1000000"));
-	convexMeshesDepth->getController()->setDisabled(false);
-	convexMeshesDepth->getController()->setValue(MutableString("20"));
-	convexMeshesConcavity->getController()->setDisabled(false);
-	convexMeshesConcavity->getController()->setValue(MutableString("0.0025"));
-	convexMeshesPlaneDownSampling->getController()->setDisabled(false);
-	convexMeshesPlaneDownSampling->getController()->setValue(MutableString("4"));
-	convexMeshesConvexHullDownSampling->getController()->setDisabled(false);
-	convexMeshesConvexHullDownSampling->getController()->setValue(MutableString("4"));
-	convexMeshesAlpha->getController()->setDisabled(false);
-	convexMeshesAlpha->getController()->setValue(MutableString("0.05f"));
-	convexMeshesBeta->getController()->setDisabled(false);
-	convexMeshesBeta->getController()->setValue(MutableString("0.05f"));
-	convexMeshesMaxVerticesPerConvexHull->getController()->setDisabled(false);
-	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(MutableString("256"));
-	convexMeshesMinVolumePerConvexHull->getController()->setDisabled(false);
-	convexMeshesMinVolumePerConvexHull->getController()->setValue(MutableString("0.0001"));
-	convexMeshesPCA->getController()->setDisabled(false);
-	convexMeshesPCA->getController()->setValue(MutableString("0"));
+	convexmeshesModeGenerate->getController()->setDisabled(false);
+	convexmeshesModeModel->getController()->setDisabled(false);
 	convexMeshesRemove->getController()->setDisabled(false);
 	convexMeshesGenerate->getController()->setDisabled(false);
+	onConvexMeshModeChanged(false);
 }
 
 void EntityPhysicsSubScreenController::unsetPhysics() {
@@ -656,9 +630,40 @@ void EntityPhysicsSubScreenController::onPhysicsBodyApply(LevelEditorEntity* ent
 	}
 }
 
+void EntityPhysicsSubScreenController::onConvexMeshModeChanged(bool disabled) {
+	map<string, MutableString> values;
+	screenNode->getValues(values);
+	auto convexMeshMode = values["boundingvolume_convexmeshes_mode"].getString();
+	auto disableVHACDSettings = disabled == true || convexMeshMode != "vhacd";
+	convexMeshesResolution->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesResolution->getController()->setValue(MutableString("1000000"));
+	convexMeshesDepth->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesDepth->getController()->setValue(MutableString("20"));
+	convexMeshesConcavity->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesConcavity->getController()->setValue(MutableString("0.0025"));
+	convexMeshesPlaneDownSampling->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesPlaneDownSampling->getController()->setValue(MutableString("4"));
+	convexMeshesConvexHullDownSampling->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesConvexHullDownSampling->getController()->setValue(MutableString("4"));
+	convexMeshesAlpha->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesAlpha->getController()->setValue(MutableString("0.05"));
+	convexMeshesBeta->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesBeta->getController()->setValue(MutableString("0.05"));
+	convexMeshesMaxVerticesPerConvexHull->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesMaxVerticesPerConvexHull->getController()->setValue(MutableString("256"));
+	convexMeshesMinVolumePerConvexHull->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesMinVolumePerConvexHull->getController()->setValue(MutableString("0.0001"));
+	convexMeshesPCA->getController()->setDisabled(disableVHACDSettings);
+	convexMeshesPCA->getController()->setValue(MutableString("0"));
+}
+
 void EntityPhysicsSubScreenController::showErrorPopUp(const string& caption, const string& message)
 {
 	view->getPopUpsViews()->getInfoDialogScreenController()->show(caption, message);
+}
+
+void EntityPhysicsSubScreenController::onValueChanged(GUIElementNode* node, LevelEditorEntity* entity) {
+	onConvexMeshModeChanged(false);
 }
 
 void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)

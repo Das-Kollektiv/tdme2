@@ -989,6 +989,7 @@ void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 		onAnimationDropDownValueChanged();
 	} else {
 		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
+		entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
 	}
 }
 

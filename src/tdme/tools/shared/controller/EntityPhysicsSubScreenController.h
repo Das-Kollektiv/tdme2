@@ -47,6 +47,7 @@ public:
 	static vector<string> MODEL_BOUNDINGVOLUME_IDS;
 
 private:
+	GUIScreenNode* screenNode {  };
 	FileDialogPath* modelPath {  };
 	EntityBoundingVolumeView* view {  };
 	array<GUIElementNode*, 8> boundingVolumeTypeDropDown {  };
@@ -68,6 +69,8 @@ private:
 	bool isModelBoundingVolumes;
 	GUIElementNode* terrainMesh {  };
 	GUIElementNode* terrainMeshApply {  };
+	GUIElementNode* convexmeshesModeGenerate {  };
+	GUIElementNode* convexmeshesModeModel {  };
 	GUIElementNode* convexMeshesFile {  };
 	GUIElementNode* convexMeshesLoad {  };
 	GUIElementNode* convexMeshesResolution {  };
@@ -96,6 +99,11 @@ public:
 	 * @return view
 	 */
 	virtual EntityBoundingVolumeView* getView();
+
+	/**
+	 * @return screen node
+	 */
+	virtual GUIScreenNode* getScreenNode();
 
 	/** 
 	 * Init
@@ -302,9 +310,22 @@ public:
 	virtual void onPhysicsBodyApply(LevelEditorEntity* entity);
 
 	/**
+	 * On convex mesh mode changed
+	 * @param disabled
+	 */
+	virtual void onConvexMeshModeChanged(bool disabled);
+
+	/**
 	 * Shows the error pop up
 	 */
 	virtual void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * On value changed
+	 * @param node
+	 * @param entity
+	 */
+	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
 
 	/** 
 	 * On action performed

@@ -21,6 +21,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/StandardFileSystem.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
@@ -60,6 +61,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::StandardFileSystem;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
@@ -127,136 +129,181 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		entityPhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
 	}
-	IVHACD* vhacd = CreateVHACD();
+	map<string, MutableString> values;
+	entityPhysicsSubScreenController->getScreenNode()->getValues(values);
+	auto convexMeshMode = values["boundingvolume_convexmeshes_mode"].getString();
 	vector<string> convexMeshFileNames;
-	try {
-		IVHACD::Parameters vhacdParams;
-		vhacdParams.m_resolution = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesResolution->getController()->getValue().getString());
-		vhacdParams.m_concavity = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesConcavity->getController()->getValue().getString());
-		vhacdParams.m_planeDownsampling = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesPlaneDownSampling->getController()->getValue().getString());
-		vhacdParams.m_convexhullDownsampling = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesConvexHullDownSampling->getController()->getValue().getString());
-		vhacdParams.m_alpha = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesAlpha->getController()->getValue().getString());
-		vhacdParams.m_beta = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesBeta->getController()->getValue().getString());
-		vhacdParams.m_maxNumVerticesPerCH = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesMaxVerticesPerConvexHull->getController()->getValue().getString());
-		vhacdParams.m_minVolumePerCH = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesMinVolumePerConvexHull->getController()->getValue().getString());
-		vhacdParams.m_pca = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesPCA->getController()->getValue().getString());
-		if (vhacdParams.m_resolution < 10000 || vhacdParams.m_resolution > 64000000) {
-			throw ExceptionBase("Resolution must be between 10000 and 64000000");
-		}
-		if (vhacdParams.m_concavity < 0.0f || vhacdParams.m_concavity > 1.0f) {
-			throw ExceptionBase("Concavity must be between 0.0 and 1.0");
-		}
-		if (vhacdParams.m_planeDownsampling < 1 || vhacdParams.m_planeDownsampling > 16) {
-			throw ExceptionBase("Plane down sampling must be between 1 and 16");
-		}
-		if (vhacdParams.m_convexhullDownsampling < 1 || vhacdParams.m_convexhullDownsampling > 16) {
-			throw ExceptionBase("Convex hull down sampling must be between 1 and 16");
-		}
-		if (vhacdParams.m_alpha < 0.0f || vhacdParams.m_alpha > 1.0f) {
-			throw ExceptionBase("Alpha must be between 0.0 and 1.0");
-		}
-		if (vhacdParams.m_beta < 0.0f || vhacdParams.m_beta > 1.0f) {
-			throw ExceptionBase("Beta must be between 0.0 and 1.0");
-		}
-		if (vhacdParams.m_maxNumVerticesPerCH < 4 || vhacdParams.m_maxNumVerticesPerCH > 1024) {
-			throw ExceptionBase("Max number of vertices per convex hull must be between 4 and 1024");
-		}
-		if (vhacdParams.m_minVolumePerCH < 0.0f || vhacdParams.m_minVolumePerCH > 0.01f) {
-			throw ExceptionBase("Min volume per convex hull must be between 0.0 and 0.01");
-		}
-		if (vhacdParams.m_pca > 1) {
-			throw ExceptionBase("PCA must be between 0 and 1");
-		}
-		VHACDCallback vhacdCallback;
-		VHACDLogger vhacdLogger;
-		vhacdParams.m_logger = &vhacdLogger;
-		vhacdParams.m_callback = &vhacdCallback;
-		vector<float> meshPoints;
-		vector<int> meshTriangles;
-		string meshPathName = Tools::getPath(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
-		string meshFileName = Tools::getFileName(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
-		auto meshModel = ModelReader::read(
-			meshPathName,
-			meshFileName
-		);
-		{
-			Object3DModel meshObject3DModel(meshModel);
-			vector<Triangle> meshFaceTriangles;
-			meshObject3DModel.getTriangles(meshFaceTriangles);
-			for (auto& triangle: meshFaceTriangles) {
-				meshTriangles.push_back(meshPoints.size() / 3 + 0);
-				meshTriangles.push_back(meshPoints.size() / 3 + 1);
-				meshTriangles.push_back(meshPoints.size() / 3 + 2);
-				for (auto i = 0; i < triangle.getVertices().size(); i++) {
-					meshPoints.push_back(triangle.getVertices()[i].getX());
-					meshPoints.push_back(triangle.getVertices()[i].getY());
-					meshPoints.push_back(triangle.getVertices()[i].getZ());
+	if (convexMeshMode == "vhacd") {
+		IVHACD* vhacd = CreateVHACD();
+		try {
+			IVHACD::Parameters vhacdParams;
+			vhacdParams.m_resolution = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesResolution->getController()->getValue().getString());
+			vhacdParams.m_concavity = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesConcavity->getController()->getValue().getString());
+			vhacdParams.m_planeDownsampling = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesPlaneDownSampling->getController()->getValue().getString());
+			vhacdParams.m_convexhullDownsampling = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesConvexHullDownSampling->getController()->getValue().getString());
+			vhacdParams.m_alpha = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesAlpha->getController()->getValue().getString());
+			vhacdParams.m_beta = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesBeta->getController()->getValue().getString());
+			vhacdParams.m_maxNumVerticesPerCH = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesMaxVerticesPerConvexHull->getController()->getValue().getString());
+			vhacdParams.m_minVolumePerCH = Tools::convertToFloat(entityPhysicsSubScreenController->convexMeshesMinVolumePerConvexHull->getController()->getValue().getString());
+			vhacdParams.m_pca = Tools::convertToInt(entityPhysicsSubScreenController->convexMeshesPCA->getController()->getValue().getString());
+			if (vhacdParams.m_resolution < 10000 || vhacdParams.m_resolution > 64000000) {
+				throw ExceptionBase("Resolution must be between 10000 and 64000000");
+			}
+			if (vhacdParams.m_concavity < 0.0f || vhacdParams.m_concavity > 1.0f) {
+				throw ExceptionBase("Concavity must be between 0.0 and 1.0");
+			}
+			if (vhacdParams.m_planeDownsampling < 1 || vhacdParams.m_planeDownsampling > 16) {
+				throw ExceptionBase("Plane down sampling must be between 1 and 16");
+			}
+			if (vhacdParams.m_convexhullDownsampling < 1 || vhacdParams.m_convexhullDownsampling > 16) {
+				throw ExceptionBase("Convex hull down sampling must be between 1 and 16");
+			}
+			if (vhacdParams.m_alpha < 0.0f || vhacdParams.m_alpha > 1.0f) {
+				throw ExceptionBase("Alpha must be between 0.0 and 1.0");
+			}
+			if (vhacdParams.m_beta < 0.0f || vhacdParams.m_beta > 1.0f) {
+				throw ExceptionBase("Beta must be between 0.0 and 1.0");
+			}
+			if (vhacdParams.m_maxNumVerticesPerCH < 4 || vhacdParams.m_maxNumVerticesPerCH > 1024) {
+				throw ExceptionBase("Max number of vertices per convex hull must be between 4 and 1024");
+			}
+			if (vhacdParams.m_minVolumePerCH < 0.0f || vhacdParams.m_minVolumePerCH > 0.01f) {
+				throw ExceptionBase("Min volume per convex hull must be between 0.0 and 0.01");
+			}
+			if (vhacdParams.m_pca > 1) {
+				throw ExceptionBase("PCA must be between 0 and 1");
+			}
+			VHACDCallback vhacdCallback;
+			VHACDLogger vhacdLogger;
+			vhacdParams.m_logger = &vhacdLogger;
+			vhacdParams.m_callback = &vhacdCallback;
+			vector<float> meshPoints;
+			vector<int> meshTriangles;
+			string meshPathName = Tools::getPath(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshFileName = Tools::getFileName(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			auto meshModel = ModelReader::read(
+				meshPathName,
+				meshFileName
+			);
+			{
+				Object3DModel meshObject3DModel(meshModel);
+				vector<Triangle> meshFaceTriangles;
+				meshObject3DModel.getTriangles(meshFaceTriangles);
+				for (auto& triangle: meshFaceTriangles) {
+					meshTriangles.push_back(meshPoints.size() / 3 + 0);
+					meshTriangles.push_back(meshPoints.size() / 3 + 1);
+					meshTriangles.push_back(meshPoints.size() / 3 + 2);
+					for (auto i = 0; i < triangle.getVertices().size(); i++) {
+						meshPoints.push_back(triangle.getVertices()[i].getX());
+						meshPoints.push_back(triangle.getVertices()[i].getY());
+						meshPoints.push_back(triangle.getVertices()[i].getZ());
+					}
 				}
 			}
-		}
-		delete meshModel;
-		bool vhacdResult =
-			vhacd->Compute(
-				&meshPoints[0],
-				(unsigned int)meshPoints.size() / 3,
-				(const uint32_t *)&meshTriangles[0],
-				(unsigned int)meshTriangles.size() / 3,
-				vhacdParams
-			);
-		if (vhacdResult == true) {
-			auto convexHulls = vhacd->GetNConvexHulls();
-			if (convexHulls > EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT) {
-				throw ExceptionBase(
-					"More than " +
-					to_string(EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT) +
-					" convex hulls: " + to_string(convexHulls)
+			delete meshModel;
+			bool vhacdResult =
+				vhacd->Compute(
+					&meshPoints[0],
+					(unsigned int)meshPoints.size() / 3,
+					(const uint32_t *)&meshTriangles[0],
+					(unsigned int)meshTriangles.size() / 3,
+					vhacdParams
 				);
-			}
-			// delete old convex meshes
-			for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-				auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
-				if (FileSystem::getInstance()->fileExists(meshPathName + "/" + convexHullFileName) == false) {
-					break;
-				} else {
-					FileSystem::getInstance()->removeFile(
-						meshPathName,
-						convexHullFileName
+			if (vhacdResult == true) {
+				auto convexHulls = vhacd->GetNConvexHulls();
+				if (convexHulls > EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT) {
+					throw ExceptionBase(
+						"More than " +
+						to_string(EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT) +
+						" convex hulls: " + to_string(convexHulls)
 					);
 				}
+				// delete old convex meshes
+				for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+					auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
+					if (FileSystem::getInstance()->fileExists(meshPathName + "/" + convexHullFileName) == false) {
+						break;
+					} else {
+						FileSystem::getInstance()->removeFile(
+							meshPathName,
+							convexHullFileName
+						);
+					}
+				}
+				IVHACD::ConvexHull convexHull;
+				for (auto i = 0; i < convexHulls; i++) {
+					vhacd->GetConvexHull(i, convexHull);
+					auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
+					Console::println(
+						"EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(): VHACD: Saving convex hull@" +
+						to_string(i) +
+						": " + convexHullFileName +
+						", points = " + to_string(convexHull.m_nPoints) +
+						", triangles = " + to_string(convexHull.m_nTriangles)
+					);
+					auto convexHullModel = createModel(
+						meshPathName + "/" + convexHullFileName,
+						convexHull.m_points,
+						convexHull.m_triangles,
+						convexHull.m_nPoints,
+						convexHull.m_nTriangles
+					);
+					TMWriter::write(convexHullModel, meshPathName, convexHullFileName);
+					delete convexHullModel;
+					convexMeshFileNames.push_back(meshPathName + "/" + convexHullFileName);
+				}
 			}
-			IVHACD::ConvexHull convexHull;
-			for (auto i = 0; i < convexHulls; i++) {
-				vhacd->GetConvexHull(i, convexHull);
-				auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
-				Console::println(
-					"Saving convex hull@" +
-					to_string(i) +
-					": " + convexHullFileName +
-					", points = " + to_string(convexHull.m_nPoints) +
-					", triangles = " + to_string(convexHull.m_nTriangles)
-				);
-				auto convexHullModel = createModel(
-					meshPathName + "/" + convexHullFileName,
-					convexHull.m_points,
-					convexHull.m_triangles,
-					convexHull.m_nPoints,
-					convexHull.m_nTriangles
-				);
-				TMWriter::write(convexHullModel, meshPathName, convexHullFileName);
-				delete convexHullModel;
-				convexMeshFileNames.push_back(meshPathName + "/" + convexHullFileName);
-			}
+		} catch (Exception &exception) {
+			convexMeshFileNames.clear();
+			entityPhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
+				"Warning: Could not create convex hulls",
+				exception.what()
+			);
+			Console::println(string("Could not create convex hulls: ") + exception.what());
 		}
-	} catch (Exception &exception) {
-		convexMeshFileNames.clear();
-		entityPhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
-			"Warning: Could not create convex hulls",
-			exception.what()
-		);
-		Console::println(string("Could not create convex hulls: ") + exception.what());
+		vhacd->Clean();
+		vhacd->Release();
+	} else
+	if (convexMeshMode == "model") {
+		try {
+			string meshPathName = Tools::getPath(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			string meshFileName = Tools::getFileName(entityPhysicsSubScreenController->convexMeshesFile->getController()->getValue().getString());
+			auto meshModel = ModelReader::read(
+				meshPathName,
+				meshFileName
+			);
+			{
+				Object3DModel meshObject3DModel(meshModel);
+				for (auto i = 0; i < meshObject3DModel.getGroupCount(); i++) {
+					vector<Triangle> groupTriangles;
+					meshObject3DModel.getTriangles(groupTriangles, i);
+					auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
+					Console::println(
+						"EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(): Model: Saving convex hull@" +
+						to_string(i) +
+						": " + convexHullFileName +
+						", triangles = " + to_string(groupTriangles.size())
+					);
+					auto convexHullModel = createModel(
+						meshPathName + "/" + convexHullFileName,
+						groupTriangles
+					);
+					TMWriter::write(convexHullModel, meshPathName, convexHullFileName);
+					delete convexHullModel;
+					convexMeshFileNames.push_back(meshPathName + "/" + convexHullFileName);
+
+				}
+			}
+			delete meshModel;
+		} catch (Exception &exception) {
+			convexMeshFileNames.clear();
+			entityPhysicsSubScreenController->view->getPopUpsViews()->getInfoDialogScreenController()->show(
+				"Warning: Could not create convex hulls",
+				exception.what()
+			);
+			Console::println(string("Could not create convex hulls: ") + exception.what());
+		}
 	}
-	vhacd->Clean();
-	vhacd->Release();
 	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT && i < convexMeshFileNames.size(); i++) {
 		entityPhysicsSubScreenController->boundingvolumeConvexMeshFile[i]->getController()->setValue(MutableString(convexMeshFileNames[i]));
 		entityPhysicsSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, i);
@@ -310,6 +357,62 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 				normalIndex + 2
 			)
 		);
+	}
+	FacesEntity groupFacesEntity(group, "faces entity");
+	groupFacesEntity.setMaterial(material);
+	groupFacesEntity.setFaces(&faces);
+	vector<FacesEntity> groupFacesEntities;
+	groupFacesEntities.push_back(groupFacesEntity);
+	group->setVertices(&vertices);
+	group->setNormals(&normals);
+	group->setFacesEntities(&groupFacesEntities);
+	group->determineFeatures();
+	(*model->getGroups())["group"] = group;
+	(*model->getSubGroups())["group"] = group;
+	ModelHelper::prepareForIndexedRendering(model);
+	return model;
+}
+
+Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& triangles) {
+	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto material = new Material("tdme.primitive.material");
+	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	(*model->getMaterials())[material->getId()] = material;
+	auto group = new Group(model, nullptr, "group", "group");
+	vector<Vector3> vertices;
+	vector<Vector3> normals;
+	vector<Face> faces;
+	auto index = 0;
+	for (auto& triangle: triangles) {
+		for (auto& vertex: triangle.getVertices()) {
+			vertices.push_back(vertex);
+		}
+		{
+			array<Vector3, 3> faceVertices = {
+				triangle.getVertices()[0],
+				triangle.getVertices()[1],
+				triangle.getVertices()[2],
+			};
+			array<Vector3, 3> faceNormals;
+			ModelHelper::computeNormals(&faceVertices, &faceNormals);
+			for (auto& normal : faceNormals) {
+				normals.push_back(normal);
+			}
+		}
+		faces.push_back(
+			Face(
+				group,
+				index + 0,
+				index + 1,
+				index + 2,
+				index + 0,
+				index + 1,
+				index + 2
+			)
+		);
+		index+= 3;
 	}
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
