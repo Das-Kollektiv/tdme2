@@ -277,7 +277,8 @@ public:
 	 * @return
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b) {
-		return 180.0 / Math::PI * Math::acos(Vector3::computeDotProduct(a, b));
+		auto result = 180.0 / Math::PI * Math::acos(Math::clamp(Vector3::computeDotProduct(a, b), -1.0f, 1.0f));
+		return result;
 	}
 
 	/**
