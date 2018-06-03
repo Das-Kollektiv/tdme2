@@ -301,7 +301,7 @@ void SharedParticleSystemView::deactivate()
 
 void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
-	delete entity;
+	delete oldEntity;
 }
 
 void SharedParticleSystemView::loadParticleSystem()
