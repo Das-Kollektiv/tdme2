@@ -134,13 +134,11 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 		triangle1Edge1.set(polygonVertices[1]).sub(polygonVertices[0]);
 		triangle1Edge2.set(polygonVertices[2]).sub(polygonVertices[0]);
 		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
-
 		// then check vertex order if it matches
 		// if it matches we have the next vertex
 		Vector3 distanceVector;
 		// as long as we have vertices left
 		while (polygonVerticesOrdered.size() != polygonVertices.size()) {
-			auto& polygonVerticesOrderedLast = polygonVertices[polygonVerticesOrdered[polygonVerticesOrdered.size() - 1]];
 			// find next vertex with most little
 			auto hitVertexAngle = 0.0f;
 			auto hitVertexIdx = -1;
@@ -149,7 +147,11 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 				if (find(polygonVerticesOrdered.begin(), polygonVerticesOrdered.end(), i) != polygonVerticesOrdered.end()) continue;
 
 				// otherwise check if angle is smaller
-				auto angleCurrent = Vector3::computeAngle(polygonVerticesOrderedLast, polygonVertices[i], polygonNormal);
+				auto angleCurrent = Vector3::computeAngle(
+					polygonVertices[0].clone().sub(polygonCenter).normalize(),
+					polygonVertices[i].clone().sub(polygonCenter).normalize(),
+					polygonNormal
+				);
 				if (hitVertexIdx == -1 || angleCurrent < hitVertexAngle) {
 					hitVertexAngle = angleCurrent;
 					hitVertexIdx = i;
@@ -158,6 +160,24 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 
 			// yep
 			polygonVerticesOrdered.push_back(hitVertexIdx);
+		}
+
+		{
+			// vertex order
+			// 	https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
+			auto& polygonVertexOrderedFirst = polygonVertices[polygonVerticesOrdered[0]];
+			auto& polygonVertexOrderedLast = polygonVertices[polygonVerticesOrdered[1]];
+			Vector3 ac;
+			Vector3 bc;
+			Vector3 acbcCross;
+			ac.set(polygonVertexOrderedFirst).sub(polygonCenter);
+			bc.set(polygonVertexOrderedLast).sub(polygonCenter);
+			Vector3::computeCrossProduct(ac, bc, acbcCross);
+			// counter clockwise???
+			if ((Vector3::computeDotProduct(polygonNormal, acbcCross) > 0.0f) == false) {
+				// yep, reverse
+				reverse(begin(polygonVerticesOrdered), end(polygonVerticesOrdered));
+			}
 		}
 
 		// add face
