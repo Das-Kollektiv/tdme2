@@ -663,7 +663,9 @@ void EntityPhysicsSubScreenController::showErrorPopUp(const string& caption, con
 }
 
 void EntityPhysicsSubScreenController::onValueChanged(GUIElementNode* node, LevelEditorEntity* entity) {
-	onConvexMeshModeChanged(false);
+	if (StringUtils::startsWith(node->getId(), "boundingvolume_convexmeshes_mode") == true) {
+		onConvexMeshModeChanged(false);
+	}
 }
 
 void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity)
