@@ -4,6 +4,7 @@
 
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/model/RotationOrder.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -12,6 +13,7 @@
 using std::vector;
 
 using tdme::engine::Rotation;
+using tdme::engine::model::RotationOrder;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
@@ -165,6 +167,13 @@ public:
 	virtual void fromTransformations(const Transformations& transformations);
 
 	/** 
+	 * Set up this transformations from given matrix and rotation order
+	 * @param matrix
+	 * @param rotation order
+	 */
+	virtual void fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder);
+
+	/**
 	 * Computes transformation matrix
 	 */
 	virtual void update();
