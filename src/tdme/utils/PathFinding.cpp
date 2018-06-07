@@ -361,7 +361,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 						nodesCount++;
 					}
 					reverse(path.begin(), path.end());
-					if (path.size() > 0) path.erase(path.begin());
+					if (path.size() > 1) path.erase(path.begin());
 					done = true;
 					success = true;
 					break;
