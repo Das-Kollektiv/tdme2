@@ -222,3 +222,7 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matr
 bool Model::computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame) {
 	return computeTransformationsMatrix(&subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
 }
+
+bool Model::computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame) {
+	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
+}

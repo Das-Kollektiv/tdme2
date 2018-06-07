@@ -206,6 +206,14 @@ public:
 	bool computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame = 0);
 
 	/**
+	 * Computes a transformations matrix at a given frame for a given group id recursivly
+	 * @param group id
+	 * @param target group transformations matrix
+	 * @param frame
+	 */
+	bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0);
+
+	/**
 	 * Public constructor
 	 * @param id
 	 * @param name
