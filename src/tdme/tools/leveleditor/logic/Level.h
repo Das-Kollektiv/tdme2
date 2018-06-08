@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/physics/RigidBody.h>
 #include <tdme/math/fwd-tdme.h>
@@ -17,6 +18,7 @@ using std::vector;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transformations;
+using tdme::engine::model::Model;
 using tdme::engine::physics::RigidBody;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
@@ -58,6 +60,14 @@ public:
 	 * @return engine particle system entity
 	 */
 	static Entity* createParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& id, bool enableDynamicShadows = true);
+
+	/**
+	 * Create engine entity
+	 * @param id
+	 * @param transformations
+	 * @return entity
+	 */
+	static Entity* createEmpty(const string& id, const Transformations& transformations);
 
 	/**
 	 * Create engine entity
@@ -148,4 +158,6 @@ public:
 	 */
 	static void enableLevel(World* world, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
+private:
+	static Model* emptyModel;
 };

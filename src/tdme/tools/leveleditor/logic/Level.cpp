@@ -14,6 +14,7 @@
 #include <tdme/engine/ObjectParticleSystemEntity.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Model.h>
@@ -73,6 +74,7 @@ using tdme::engine::Object3DModel;
 using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::PointsParticleSystemEntity;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Model;
@@ -115,6 +117,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
+
+Model* Level::emptyModel = nullptr;
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
@@ -209,6 +213,18 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 		}
 	}
 
+}
+
+Entity* Level::createEmpty(const string& id, const Transformations& transformations) {
+	if (emptyModel == nullptr) {
+		emptyModel = ModelReader::read("resources/tools/leveleditor/models", "arrow.dae");
+	}
+	auto entity = new Object3D(
+		id,
+		Level::emptyModel
+	);
+	entity->fromTransformations(transformations);
+	return entity;
 }
 
 Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations) {
