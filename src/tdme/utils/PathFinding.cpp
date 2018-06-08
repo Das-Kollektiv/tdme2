@@ -72,14 +72,11 @@ void PathFinding::reset() {
 
 bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& height) {
 	// determine y height of ground plate of actor bounding volume
-	// TODO: a.drewke, actorBoundingVolume is not in world space
-	float xHalfExtension = actorBoundingVolume->getBoundingBoxTransformed().getDimensions().getX() / 2.0f;
-	float zHalfExtension = actorBoundingVolume->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f;
-	float _z = z - zHalfExtension;
+	float _z = z - actorZHalfExtension;
 	height = -10000.0f;
 	Vector3 actorPosition;
 	for (int i = 0; i < 2; i++) {
-		float _x = x - xHalfExtension;
+		float _x = x - actorXHalfExtension;
 		for (int j = 0; j < 2; j++) {
 			Vector3 actorPositionCandidate;
 			if (world->determineHeight(
@@ -93,9 +90,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& 
 			if (customTest != nullptr && customTest->isWalkable(actorBoundingVolume, actorPosition.getX(), actorPosition.getY(), actorPosition.getZ()) == false) {
 				return false;
 			}
-			_x+= xHalfExtension * 2.0f;
+			_x+= actorXHalfExtension * 2.0f;
 		}
-		_z+= zHalfExtension * 2.0f;
+		_z+= actorZHalfExtension * 2.0f;
 	}
 
 	// set up transformations
@@ -280,6 +277,13 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 
 	//
 	this->collisionTypeIds = collisionTypeIds;
+
+	// TODO: try to avoid cloning actor bv
+	auto actorBoundingVolumeTransformed = actorBoundingVolume->clone();
+	actorBoundingVolumeTransformed->fromTransformations(actorTransformations);
+	this->actorXHalfExtension = actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getX() / 2.0f;
+	this->actorZHalfExtension = actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f;
+	delete actorBoundingVolumeTransformed;
 
 	// init bounding volume, transformations, collision body
 	this->actorBoundingVolume = actorBoundingVolume;

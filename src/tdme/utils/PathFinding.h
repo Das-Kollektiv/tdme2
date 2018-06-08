@@ -160,4 +160,6 @@ private:
 	Vector3 forwardVector { 0.0f, 0.0f, 1.0f };
 	Transformations actorTransformations;
 	BoundingVolume* actorBoundingVolume;
+	float actorXHalfExtension;
+	float actorZHalfExtension;
 };
