@@ -94,17 +94,20 @@ public:
 	 * @param level editor entity
 	 * @param id
 	 * @param transformations
+	 * @param collision type id or 0 for default
 	 * @return rigid body
 	 */
-	static RigidBody* createRigidBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations);
+	static RigidBody* createRigidBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0);
 
 	/**
 	 * Create rigid body
 	 * @param world
 	 * @param level editor object
+	 * @param translation
+	 * @param collision type id or 0 for default
 	 * @return rigid body
 	 */
-	static RigidBody* createRigidBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static RigidBody* createRigidBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0);
 
 	/** 
 	 * Add level to physics world
