@@ -1,4 +1,3 @@
-
 #include <tdme/engine/physics/RigidBody.h>
 
 #include <string>
