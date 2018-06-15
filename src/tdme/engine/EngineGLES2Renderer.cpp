@@ -70,6 +70,14 @@ void EngineGLES2Renderer::onBindTexture(int32_t textureId)
 
 void EngineGLES2Renderer::onUpdateTextureMatrix()
 {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->updateTextureMatrix(this);
+
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->updateTextureMatrix(this);
+
+	if (Engine::guiShader != nullptr)
+		Engine::guiShader->updateTextureMatrix(this);
 }
 
 void EngineGLES2Renderer::onUpdateEffect()

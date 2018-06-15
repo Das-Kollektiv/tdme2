@@ -77,6 +77,10 @@ Matrix4x4& GLRenderer::getViewportMatrix()
 	return viewportMatrix;
 }
 
+Matrix2D3x3& GLRenderer::getTextureMatrix() {
+	return textureMatrix;
+}
+
 void GLRenderer::setLightEnabled(int32_t lightId)
 {
 	lights[lightId].enabled = 1;

@@ -69,6 +69,14 @@ void EngineGL2Renderer::onBindTexture(int32_t textureId)
 
 void EngineGL2Renderer::onUpdateTextureMatrix()
 {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->updateTextureMatrix(this);
+
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->updateTextureMatrix(this);
+
+	if (Engine::guiShader != nullptr)
+		Engine::guiShader->updateTextureMatrix(this);
 }
 
 void EngineGL2Renderer::onUpdateEffect()
@@ -81,7 +89,6 @@ void EngineGL2Renderer::onUpdateEffect()
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateEffect(this);
-
 }
 
 void EngineGL2Renderer::onUpdateLight(int32_t lightId)

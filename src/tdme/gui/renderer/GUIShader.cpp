@@ -63,6 +63,10 @@ void GUIShader::initialize()
 	if (uniformEffectColorAdd == -1)
 		return;
 
+	// texture matrix
+	uniformTextureMatrix = renderer->getProgramUniformLocation(programGlId, "textureMatrix");
+	if (uniformTextureMatrix == -1) return;
+
 	initialized = true;
 }
 
@@ -95,3 +99,10 @@ void GUIShader::updateEffect(GLRenderer* renderer)
 	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
 }
 
+
+void GUIShader::updateTextureMatrix(GLRenderer* renderer) {
+	if (isRunning == false)
+		return;
+
+	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
+}

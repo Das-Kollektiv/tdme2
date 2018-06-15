@@ -65,6 +65,8 @@ void ShadowMappingShaderPre::initialize()
 		uniformMVPMatrix = renderer->getProgramUniformLocation(programGlId, "mvpMatrix");
 		if (uniformMVPMatrix == -1) return;
 	}
+	uniformTextureMatrix = renderer->getProgramUniformLocation(programGlId, "textureMatrix");
+	if (uniformTextureMatrix == -1) return;
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1) return;
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, "diffuseTextureAvailable");
@@ -95,6 +97,10 @@ void ShadowMappingShaderPre::updateMatrices(const Matrix4x4& mvpMatrix)
 	} else {
 		renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
 	}
+}
+
+void ShadowMappingShaderPre::updateTextureMatrix(GLRenderer* renderer) {
+	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
 }
 
 void ShadowMappingShaderPre::updateMaterial(GLRenderer* renderer)

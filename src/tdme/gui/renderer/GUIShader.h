@@ -23,6 +23,7 @@ private:
 	int32_t uniformDiffuseTextureAvailable {  };
 	int32_t uniformEffectColorMul {  };
 	int32_t uniformEffectColorAdd {  };
+	int32_t uniformTextureMatrix {  };
 	bool initialized {  };
 	bool isRunning {  };
 
@@ -61,5 +62,14 @@ public:
 	 */
 	void updateEffect(GLRenderer* renderer);
 
+	/**
+	 * Update texure matrix to program
+	 * @param renderer
+	 */
+	void updateTextureMatrix(GLRenderer* renderer);
+
+	/**
+	 * Public constructor
+	 */
 	GUIShader(GLRenderer* renderer);
 };

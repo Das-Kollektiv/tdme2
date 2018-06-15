@@ -241,6 +241,34 @@ void ShadowMapping::endObjectTransformations()
 	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
+void ShadowMapping::updateTextureMatrix(GLRenderer* renderer)
+{
+	if (runState == ShadowMapping_RunState::NONE) return;
+
+	// upload
+	{
+		auto v = runState;
+		if (v == ShadowMapping_RunState::PRE) {
+			{
+				Engine::getShadowMappingShaderPre()->updateTextureMatrix(renderer);
+				goto end_switch0;
+			}
+		} else
+		if (v == ShadowMapping_RunState::RENDER) {
+			{
+				Engine::getShadowMappingShaderRender()->updateTextureMatrix(renderer);
+				goto end_switch0;
+			}
+		} else {
+			{
+				Console::println(string("ShadowMapping::updateTextureMatrix(): unsupported run state '" + to_string(runState)));
+				goto end_switch0;;
+			}
+		}
+		end_switch0:;
+	}
+}
+
 void ShadowMapping::updateMatrices(GLRenderer* renderer)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
@@ -276,7 +304,6 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 		}
 		end_switch0:;
 	}
-
 }
 
 void ShadowMapping::updateMaterial(GLRenderer* renderer) {

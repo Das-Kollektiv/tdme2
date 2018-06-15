@@ -14,6 +14,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIShader.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utils/Console.h>
 
 using tdme::gui::renderer::GUIRenderer;
@@ -31,6 +32,7 @@ using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIShader;
+using tdme::math::Matrix2D3x3;
 using tdme::utils::Console;
 
 GUIRenderer::GUIRenderer(GLRenderer* renderer) 
@@ -135,6 +137,7 @@ void GUIRenderer::initRendering()
 	renderer->bindVerticesBufferObject((*vboIds)[1]);
 	renderer->bindColorsBufferObject((*vboIds)[2]);
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[3]);
+	renderer->getTextureMatrix().identity();
 }
 
 void GUIRenderer::doneRendering()
@@ -315,6 +318,10 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	quadCount++;
 }
 
+void GUIRenderer::setTexureMatrix(const Matrix2D3x3& textureMatrix) {
+	renderer->getTextureMatrix().set(textureMatrix);
+}
+
 void GUIRenderer::bindTexture(int32_t textureId)
 {
 	renderer->bindTexture(textureId);
@@ -342,6 +349,7 @@ void GUIRenderer::render()
 	renderer->setEffectColorMul(effectColorMulFinal);
 	renderer->setEffectColorAdd(effectColorAddFinal);
 	renderer->onUpdateEffect();
+	renderer->onUpdateTextureMatrix();
 	renderer->drawIndexedTrianglesFromBufferObjects(quadCount * 2, 0);
 	quadCount = 0;
 	fbVertices.clear();

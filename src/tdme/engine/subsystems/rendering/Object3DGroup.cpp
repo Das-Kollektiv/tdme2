@@ -19,6 +19,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::map;
@@ -42,6 +43,7 @@ using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
 int64_t Object3DGroup::counter = 0;
@@ -106,6 +108,8 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 			} else {
 				object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, group, &object3D->transformationsMatrices, object3D->getSkinningGroupsMatrices(group));
 			}
+			object3DGroup->textureMatricesByEntities.resize(group->getFacesEntities()->size());
+			for (auto& textureMatrix: object3DGroup->textureMatricesByEntities) textureMatrix.identity();
 			object3DGroup->materialDiffuseTextureIdsByEntities.resize(group->getFacesEntities()->size());
 			object3DGroup->dynamicDiffuseTextureIdsByEntities.resize(group->getFacesEntities()->size());
 			object3DGroup->materialSpecularTextureIdsByEntities.resize(group->getFacesEntities()->size());

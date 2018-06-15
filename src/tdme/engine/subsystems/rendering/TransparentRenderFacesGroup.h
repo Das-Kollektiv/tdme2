@@ -11,6 +11,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -28,6 +29,7 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
@@ -87,7 +89,7 @@ private:
 	 * @param normal
 	 * @param texture coordinate
 	 */
-	inline void addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate) {
+	inline void addVertex(const Vector3& vertex, const Vector3& normal, const Vector2& textureCoordinate) {
 		// check if we have a batch renderer already?
 		if (batchVBORenderers.size() == 0) {
 			// nope, add first one

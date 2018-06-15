@@ -24,6 +24,7 @@ private:
 	int32_t uniformProjectionMatrix { -1 };
 	int32_t uniformCameraMatrix { -1 };
 	int32_t uniformMVPMatrix { -1 };
+	int32_t uniformTextureMatrix { -1 };
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformDiffuseTextureAvailable { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
@@ -57,6 +58,12 @@ public:
 	 * @param mvp matrix
 	 */
 	virtual void updateMatrices(const Matrix4x4& mvpMatrix);
+
+	/**
+	 * Set up pre program texture matrix
+	 * @param renderer
+	 */
+	virtual void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
 	 * Update material

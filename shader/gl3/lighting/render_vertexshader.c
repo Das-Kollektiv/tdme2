@@ -58,6 +58,7 @@ layout (location = 11) in vec4 inEffectColorAdd;
 // uniforms
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
+uniform mat3 textureMatrix;
 uniform sampler2D displacementTextureUnit;
 uniform int displacementTextureAvailable;
 uniform int normalTextureAvailable;
@@ -73,13 +74,13 @@ out vec4 vsEffectColorAdd;
 
 void main(void) {
 	// pass to fragment shader
-	vsFragTextureUV = inTextureUV;
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 	vsEffectColorMul = inEffectColorMul;
 	vsEffectColorAdd = inEffectColorAdd;
 
 	// compute gl position
 	if (displacementTextureAvailable == 1) {
-		vec3 displacementVector = texture(displacementTextureUnit, inTextureUV).rgb * 2.0 - 1.0;
+		vec3 displacementVector = texture(displacementTextureUnit, vsFragTextureUV).rgb * 2.0 - 1.0;
 		/*
 		float displacementLength = (displacementVector.x + displacementVector.y + displacementVector.z) / 3.0;
 		skinnedInVertex-=

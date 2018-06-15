@@ -33,6 +33,7 @@ private:
 	int32_t renderUniformMVMatrix { -1 };
 	int32_t renderUniformMVPMatrix { -1 };
 	int32_t renderUniformNormalMatrix { -1 };
+	int32_t uniformTextureMatrix { -1 };
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformDiffuseTextureAvailable { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
@@ -101,6 +102,12 @@ public:
 	 * @param normal matrix
 	 */
 	void setProgramNormalMatrix(const Matrix4x4& normalMatrix);
+
+	/**
+	 * Set up pre program texture matrix
+	 * @param renderer
+	 */
+	virtual void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
 	 * Update material

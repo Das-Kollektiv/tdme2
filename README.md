@@ -16,25 +16,25 @@ TDME2
                     - this is a much more efficient model file format for TDME
                     - can be read and written
                 - DAE and WaveFront OBJ files require triangulated meshes for now
+            - animations
+                - supports model object base animation and animation overlays
             - object transformations
                 - scaling
                 - rotations
                 - translation
-            - animations
-                - supports base animation and animation overlays
-                - supports attaching objects to bones of another objects
-            - color effects on objects
-                - via shader
+            - color effects on objects, particles, ...
                 - color addition
                 - color multiplication
-            - lighting via shaders
+			- texture transformations/animations
+				- via texture matrices
+            - lighting
                 - supports phong lighting
                 - supports phong shading on GL3, GL2
                 - supports gouraud shading on GLES2
                 - supports diffuse mapping on GL3, GL2, GLES2
                 - supports specular shininess mapping on GL3
                 - supports normal mapping on GL3
-            - dynamic shadows via shaders
+            - shadow mapping
             - particle system which
               - is object based
               - or point based

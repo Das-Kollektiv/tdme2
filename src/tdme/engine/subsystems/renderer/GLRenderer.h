@@ -11,6 +11,7 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::array;
@@ -24,6 +25,7 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -62,6 +64,7 @@ protected:
 	Matrix4x4 cameraMatrix {  };
 	Matrix4x4 modelViewMatrix {  };
 	Matrix4x4 viewportMatrix {  };
+	Matrix2D3x3 textureMatrix {  };
 
 public:
 	float pointSize {  };
@@ -188,6 +191,13 @@ public:
 	virtual void setProgramUniformFloat(int32_t uniformId, float value) = 0;
 
 	/** 
+	 * Set up a float matrix 3x3 uniform value
+	 * @param uniform id
+	 * @param value
+	 */
+	virtual void setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& value) = 0;
+
+	/**
 	 * Set up a float matrix 4x4 uniform value
 	 * @param uniform id
 	 * @param value
@@ -274,6 +284,11 @@ public:
 	virtual Matrix4x4& getViewportMatrix();
 
 	/** 
+	 * @return texture matrix
+	 */
+	virtual Matrix2D3x3& getTextureMatrix();
+
+	/**
 	 * Update texture matrix for active texture unit event
 	 */
 	virtual void onUpdateTextureMatrix() = 0;

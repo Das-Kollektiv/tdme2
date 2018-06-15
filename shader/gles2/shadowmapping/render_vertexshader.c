@@ -11,6 +11,7 @@ attribute vec2 inTextureUV;
 uniform mat4 depthBiasMVPMatrix;
 uniform mat4 mvpMatrix;
 uniform mat4 normalMatrix;
+uniform mat3 textureMatrix;
 uniform vec3 lightDirection;
 
 // will be passed to fragment shader
@@ -21,7 +22,7 @@ varying vec3 vsPosition;
 
 void main() {
 	// pass texture uv to fragment shader
-	vsFragTextureUV = inTextureUV;
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 
 	// shadow coord
 	vsShadowCoord = depthBiasMVPMatrix * vec4(inVertex, 1.0);

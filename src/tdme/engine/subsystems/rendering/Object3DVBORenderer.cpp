@@ -40,6 +40,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
@@ -269,6 +270,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	auto textureCoordinates = false;
 	Vector3 transformedVector;
 	Vector3 transformedNormal;
+	Vector2 transformedTextureCoordinate;
 	// render transparent faces
 	for (auto i = 0; i < transparentRenderFaces.size(); i++) {
 		auto transparentRenderFace = transparentRenderFaces[i];
@@ -298,9 +300,12 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 			trfGroup->addVertex(
 				modelViewMatrix.multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVector),
 				modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
-				transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
-					&(*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx] :
-					nullptr
+				transparentRenderFace->object3DGroup->textureMatricesByEntities[facesEntityIdx].multiply(
+					transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
+						Vector2((*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx].getArray()):
+						Vector2(0.0f, 0.0f),
+						transformedTextureCoordinate
+				)
 			);
 		}
 	}
@@ -491,6 +496,13 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
 						).multiply(object->getTransformationsMatrix()));
 				}
+				// set up texture matrix
+				//	TODO: check if texture is in use
+				if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
+					(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
+					renderer->getTextureMatrix().set(_object3DGroup->textureMatricesByEntities[faceEntityIdx]);
+					renderer->onUpdateTextureMatrix();
+				}
 				// draw
 				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
 				// do transformations end to shadow mapping
@@ -605,6 +617,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				vector<int32_t>* boundVBOBaseIds = nullptr;
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				auto objectCount = objectsToRender.size();
+				auto currentTextureMatrix = objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 					auto object = objectsToRender[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
@@ -630,6 +643,12 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 
 					// limit objects to render to INSTANCEDRENDERING_OBJECTS_MAX
 					if (objectsToRender.size() == INSTANCEDRENDERING_OBJECTS_MAX) {
+						objectsNotRendered.push_back(object);
+						continue;
+					}
+
+					// check if texture matrix did change
+					if (_object3DGroup->textureMatricesByEntities[faceEntityIdx].equals(currentTextureMatrix) == false) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
@@ -740,6 +759,14 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
 					renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
 					renderer->bindEffectColorAddsBufferObject((*vboInstancedRenderingIds)[2]);
+				}
+
+				// set up texture matrix
+				//	TODO: check if texture is in use
+				if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
+					(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
+					renderer->getTextureMatrix().set(currentTextureMatrix);
+					renderer->onUpdateTextureMatrix();
 				}
 
 				// draw

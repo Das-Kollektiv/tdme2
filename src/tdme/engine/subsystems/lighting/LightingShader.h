@@ -47,6 +47,7 @@ private:
 	int32_t uniformMVPMatrix { -1 };
 	int32_t uniformMVMatrix { -1 };
 	int32_t uniformNormalMatrix { -1 };
+	int32_t uniformTextureMatrix { -1 };
 	int32_t uniformSceneColor { -1 };
 	int32_t uniformEffectColorMul { -1 };
 	int32_t uniformEffectColorAdd { -1 };
@@ -122,6 +123,12 @@ public:
 	void updateMatrices(GLRenderer* renderer);
 
 	/** 
+	 * Update texture matrix to program
+	 * @param renderer
+	 */
+	void updateTextureMatrix(GLRenderer* renderer);
+
+	/**
 	 * Bind texture
 	 * @param renderer
 	 * @param texture id

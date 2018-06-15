@@ -27,7 +27,6 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Vector3;
 
 constexpr int32_t BatchVBORendererTriangles::VERTEX_COUNT;
-array<float, 2> BatchVBORendererTriangles::TEXTURECOORDINATE_NONE = {{ 0.0f, 0.0f }};
 
 BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32_t id) 
 {

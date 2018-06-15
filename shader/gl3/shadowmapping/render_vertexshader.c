@@ -14,6 +14,7 @@ layout (location = 6) in mat4 inModelMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
 uniform mat4 depthBiasMVPMatrix;
+uniform mat3 textureMatrix;
 uniform vec3 lightPosition;
 uniform vec3 lightDirection;
 
@@ -25,7 +26,7 @@ out vec3 vsPosition;
 
 void main() {
 	// pass texture uv to fragment shader
-	vsFragTextureUV = inTextureUV;
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 
 	// shadow coord
 	vsShadowCoord = (depthBiasMVPMatrix * inModelMatrix) * vec4(inVertex, 1.0);

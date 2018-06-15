@@ -121,6 +121,11 @@ public:
 	void updateMatrices(GLRenderer* renderer);
 
 	/**
+	 * Update texture matrix
+	 */
+	void updateTextureMatrix(GLRenderer* renderer);
+
+	/**
 	 * Update material
 	 * @param renderer
 	 */

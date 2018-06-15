@@ -66,29 +66,9 @@ void Object3DInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 	this->dynamicShadowing = dynamicShadowing;
 }
 
-void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer)
-{
-	setDynamicDiffuseTexture("", "", frameBuffer->getColorBufferTextureId());
-}
-
-void Object3DInternal::bindDiffuseTexture(const string& groupId, FrameBuffer* frameBuffer)
-{
-	setDynamicDiffuseTexture(groupId, "", frameBuffer->getColorBufferTextureId());
-}
-
-void Object3DInternal::bindDiffuseTexture(const string& groupId, const string& facesEntityId, FrameBuffer* frameBuffer)
+void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId, const string& facesEntityId)
 {
 	setDynamicDiffuseTexture(groupId, facesEntityId, frameBuffer->getColorBufferTextureId());
-}
-
-void Object3DInternal::unbindDiffuseTexture()
-{
-	setDynamicDiffuseTexture("", "", Object3DGroup::GLTEXTUREID_NONE);
-}
-
-void Object3DInternal::unbindDiffuseTexture(const string& groupId)
-{
-	setDynamicDiffuseTexture(groupId, "", Object3DGroup::GLTEXTUREID_NONE);
 }
 
 void Object3DInternal::unbindDiffuseTexture(const string& groupId, const string& facesEntityId)
@@ -112,6 +92,25 @@ void Object3DInternal::setDynamicDiffuseTexture(const string& groupId, const str
 				continue;
 			// set dynamic texture id
 			object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
+		}
+	}
+}
+
+void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId, const string& facesEntityId) {
+	for (auto i = 0; i < object3dGroups.size(); i++) {
+		auto object3DGroup = object3dGroups[i];
+		// skip if a group is desired but not matching
+		if (groupId != "" && groupId != object3DGroup->group->getId())
+			continue;
+
+		auto facesEntities = object3DGroup->group->getFacesEntities();
+		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities->size(); facesEntityIdx++) {
+			auto& facesEntity = (*facesEntities)[facesEntityIdx];
+			// skip if a faces entity is desired but not matching
+			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
+				continue;
+			// set dynamic texture id
+			object3DGroup->textureMatricesByEntities[facesEntityIdx].set(textureMatrix);
 		}
 	}
 }

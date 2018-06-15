@@ -71,6 +71,14 @@ void EngineGL3Renderer::onBindTexture(int32_t textureId)
 
 void EngineGL3Renderer::onUpdateTextureMatrix()
 {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->updateTextureMatrix(this);
+
+	if (engine->shadowMapping != nullptr)
+		engine->shadowMapping->updateTextureMatrix(this);
+
+	if (Engine::guiShader != nullptr)
+		Engine::guiShader->updateTextureMatrix(this);
 }
 
 void EngineGL3Renderer::onUpdateEffect()

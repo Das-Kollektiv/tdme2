@@ -30,7 +30,9 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/Exception.h>
@@ -67,7 +69,9 @@ using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Quaternion;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
@@ -276,7 +280,13 @@ void EngineTest::initialize()
 		engine->addEntity(barrel);
 		auto _farPlane = createWallModel();
 		auto farPlane = new Object3D("wall", _farPlane);
-		farPlane->bindDiffuseTexture("wall", "wall", osEngine->getFrameBuffer());
+		farPlane->setTextureMatrix(
+			(Matrix2D3x3()).identity().scale(Vector2(1.0f, -1.0f)),
+			"wall",
+			"wall"
+		);
+
+		farPlane->bindDiffuseTexture(osEngine->getFrameBuffer(), "wall", "wall");
 		engine->addEntity(farPlane);
 		auto _grass = ModelReader::read("resources/tests/models/grass", "grass.dae");
 		auto grass = new Object3D("ground", _grass);

@@ -114,6 +114,10 @@ void LightingShader::initialize()
 		if (uniformNormalTextureAvailable == -1) return;
 	}
 
+	// texture matrix
+	uniformTextureMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "textureMatrix");
+	if (uniformTextureMatrix == -1) return;
+
 	// matrices as uniform only if not using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		uniformMVPMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "mvpMatrix");
@@ -314,6 +318,14 @@ void LightingShader::updateMatrices(GLRenderer* renderer)
 		renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix.getArray());
 		renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix.getArray());
 	}
+}
+
+void LightingShader::updateTextureMatrix(GLRenderer* renderer) {
+	// skip if not running
+	if (isRunning == false) return;
+
+	//
+	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
 }
 
 void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)
