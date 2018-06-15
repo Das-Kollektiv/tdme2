@@ -25,8 +25,8 @@ TDME2
             - color effects on objects, particles, ...
                 - color addition
                 - color multiplication
-			- texture transformations/animations
-				- via texture matrices
+            - texture transformations/animations
+                - via texture matrices
             - lighting
                 - supports phong lighting
                 - supports phong shading on GL3, GL2
