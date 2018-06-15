@@ -130,16 +130,16 @@ public:
 		auto r = angle * 3.1415927f / 180.0f;
 		float c = Math::cos(r);
 		float s = Math::sin(r);
-	    data[0] = c;
-	    data[1] = s;
-	    data[2] = 0.0f;
-	    data[3] = -s;
-	    data[4] = c;
-	    data[5] = 0.0f;
-	    data[6] = 0.0f;
-	    data[7] = 0.0f;
-	    data[8] = 1.0f;
-	    return *this;
+		data[0] = c;
+		data[1] = s;
+		data[2] = 0.0f;
+		data[3] = -s;
+		data[4] = c;
+		data[5] = 0.0f;
+		data[6] = 0.0f;
+		data[7] = 0.0f;
+		data[8] = 1.0f;
+		return *this;
 	}
 
 	/**
@@ -173,15 +173,15 @@ public:
 	 */
 	inline Matrix2D3x3& multiply(const Matrix2D3x3& m) {
 		array<float, 9> _data;
-	    _data[0] = data[0] * m.data[0]  + data[3] * m.data[1]  + data[6] * m.data[2];
-	    _data[1] = data[1] * m.data[0]  + data[4] * m.data[1]  + data[7] * m.data[2];
-	    _data[2] = data[2] * m.data[0]  + data[5] * m.data[1]  + data[8] * m.data[2];
-	    _data[3] = data[0] * m.data[3]  + data[3] * m.data[4]  + data[6] * m.data[5];
-	    _data[4] = data[1] * m.data[3]  + data[4] * m.data[4]  + data[7] * m.data[5];
-	    _data[5] = data[2] * m.data[3]  + data[5] * m.data[4]  + data[8] * m.data[5];
-	    _data[6] = data[0] * m.data[6]  + data[3] * m.data[7]  + data[6] * m.data[8];
-	    _data[7] = data[1] * m.data[6]  + data[4] * m.data[7]  + data[7] * m.data[8];
-	    _data[8] = data[2] * m.data[6]  + data[5] * m.data[7]  + data[8] * m.data[8];
+		_data[0] = data[0] * m.data[0]  + data[3] * m.data[1]  + data[6] * m.data[2];
+		_data[1] = data[1] * m.data[0]  + data[4] * m.data[1]  + data[7] * m.data[2];
+		_data[2] = data[2] * m.data[0]  + data[5] * m.data[1]  + data[8] * m.data[2];
+		_data[3] = data[0] * m.data[3]  + data[3] * m.data[4]  + data[6] * m.data[5];
+		_data[4] = data[1] * m.data[3]  + data[4] * m.data[4]  + data[7] * m.data[5];
+		_data[5] = data[2] * m.data[3]  + data[5] * m.data[4]  + data[8] * m.data[5];
+		_data[6] = data[0] * m.data[6]  + data[3] * m.data[7]  + data[6] * m.data[8];
+		_data[7] = data[1] * m.data[6]  + data[4] * m.data[7]  + data[7] * m.data[8];
+		_data[8] = data[2] * m.data[6]  + data[5] * m.data[7]  + data[8] * m.data[8];
 		data = _data;
 		return *this;
 	}
