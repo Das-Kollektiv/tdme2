@@ -446,6 +446,22 @@ public:
 	}
 
 	/** 
+	 * Interpolates between vector 1 and vector2 by 0f<=t<=1f linearly
+	 * @param vector 1
+	 * @param vector 2
+	 * @param t
+	 * @param destination vector
+	 * @return destination vector
+	 */
+	inline static Vector3& interpolateLinear(const Vector3& v1, const Vector3& v2, float t, Vector3& dest) {
+		return dest.set(
+			(v2.data[0] * t) + ((1.0f - t) * v1.data[0]),
+			(v2.data[1] * t) + ((1.0f - t) * v1.data[1]),
+			(v2.data[2] * t) + ((1.0f - t) * v1.data[2])
+		);
+	}
+
+	/**
 	 * Compares this vector with given vector
 	 * @param vector v
 	 * @param tolerance per component(x, y, z)
