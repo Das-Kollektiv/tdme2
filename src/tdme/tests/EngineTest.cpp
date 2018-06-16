@@ -1,6 +1,7 @@
 #include <tdme/tests/EngineTest.h>
 
 #include <cctype>
+#include <string>
 #include <vector>
 
 #include <tdme/engine/Camera.h>
@@ -39,6 +40,7 @@
 #include <tdme/utils/Console.h>
 
 using std::tolower;
+using std::to_string;
 using std::vector;
 
 using tdme::tests::EngineTest;
@@ -156,6 +158,14 @@ void EngineTest::display()
 		if (entityClicked != nullptr) {
 			entityClicked->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
+		Vector3 clickWorldPosition;
+		engine->computeWorldCoordinateByMousePosition(mouseClickedXY[0], mouseClickedXY[1], clickWorldPosition);
+		Console::println(
+			"EngineTest::display(): clicked@" +
+			to_string(clickWorldPosition.getX()) + ", " +
+			to_string(clickWorldPosition.getY()) + ", " +
+			to_string(clickWorldPosition.getZ())
+		);
 		auto _object3DClicked = engine->getEntityByMousePosition(mouseClickedXY[0], mouseClickedXY[1]);
 		if (_object3DClicked != nullptr) {
 			_object3DClicked->setEffectColorMul(Color4(2.0f, 2.0f, 2.0f, 1.0f));

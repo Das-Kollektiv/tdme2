@@ -621,12 +621,9 @@ void GL2Renderer::setTextureUnit(int32_t textureUnit)
 
 float GL2Renderer::readPixelDepth(int32_t x, int32_t y)
 {
-	/*
-	pixelDepthBuffer->clear();
-	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL::GL_FLOAT, static_cast< Buffer* >(pixelDepthBuffer));
-	return pixelDepthBuffer->get();
-	*/
-	return -1.0f;
+	float depth;
+	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	return depth;
 }
 
 ByteBuffer* GL2Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
