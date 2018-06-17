@@ -86,17 +86,17 @@ void CameraRotationInputHandler::reset()
 
 void CameraRotationInputHandler::handleInputEvents()
 {
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents()->size(); i++) {
-		auto event = dynamic_cast< GUIMouseEvent* >(engine->getGUI()->getMouseEvents()->at(i));
-		if (event->isProcessed() == true)
+	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
+		auto& event = engine->getGUI()->getMouseEvents()[i];
+		if (event.isProcessed() == true)
 			continue;
 
 		if (mouseDragging == true) {
-			if (event->getButton() == 1) {
-				auto xMoved = (event->getX() - mouseLastX) / 5.0f;
-				auto yMoved = (event->getY() - mouseLastY) / 5.0f;
-				mouseLastX = event->getX();
-				mouseLastY = event->getY();
+			if (event.getButton() == 1) {
+				auto xMoved = (event.getX() - mouseLastX) / 5.0f;
+				auto yMoved = (event.getY() - mouseLastY) / 5.0f;
+				mouseLastX = event.getX();
+				mouseLastY = event.getY();
 				auto& xRotation = lookFromRotations.getRotation(0);
 				auto& yRotation = lookFromRotations.getRotation(1);
 				auto xRotationAngle = xRotation.getAngle() + xMoved;
@@ -108,13 +108,13 @@ void CameraRotationInputHandler::handleInputEvents()
 				mouseDragging = false;
 			}
 		} else {
-			if (event->getButton() == 1) {
+			if (event.getButton() == 1) {
 				mouseDragging = true;
-				mouseLastX = event->getX();
-				mouseLastY = event->getY();
+				mouseLastX = event.getX();
+				mouseLastY = event.getY();
 			}
 		}
-		auto mouseWheel = event->getWheelY();
+		auto mouseWheel = event.getWheelY();
 		if (mouseWheel != 0) {
 			scale += mouseWheel * 0.1f;
 			if (scale < 0.05f)
@@ -122,37 +122,37 @@ void CameraRotationInputHandler::handleInputEvents()
 
 		}
 	}
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents()->size(); i++) {
-		auto event = dynamic_cast< GUIKeyboardEvent* >(engine->getGUI()->getKeyboardEvents()->at(i));
-		if (event->isProcessed() == true)
+	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
+		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+		if (event.isProcessed() == true)
 			continue;
 
-		auto isKeyDown = event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
+		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
 			keyLeft = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT)
 			keyRight = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_UP)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_UP)
 			keyUp = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN)
 			keyDown = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'.')
+		if (Character::toLowerCase(event.getKeyChar()) == u'.')
 			keyPeriod = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u',')
+		if (Character::toLowerCase(event.getKeyChar()) == u',')
 			keyComma = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'+')
+		if (Character::toLowerCase(event.getKeyChar()) == u'+')
 			keyPlus = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'-')
+		if (Character::toLowerCase(event.getKeyChar()) == u'-')
 			keyMinus = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'r')
+		if (Character::toLowerCase(event.getKeyChar()) == u'r')
 			keyR = isKeyDown;
 
 	}

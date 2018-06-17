@@ -8,19 +8,14 @@
 
 using std::vector;
 
+namespace tdme {
+namespace utils {
+
 /** 
  * Pool 
  * @author Andreas Drewke
  * @version $Id$
  * @param<E>
- */
-namespace tdme {
-namespace utils {
-
-/**
- * Array list iterator for multiple array lists
- * @author Andreas Drewke
- * @version $Id$
  */
 template<typename T>
 class Pool

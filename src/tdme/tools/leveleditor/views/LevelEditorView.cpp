@@ -293,61 +293,61 @@ void LevelEditorView::handleInputEvents()
 	auto keyVBefore = keyV;
 	auto keyXBefore = keyX;
 	keyControl = false;
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents()->size(); i++) {
-		auto event = engine->getGUI()->getKeyboardEvents()->at(i);
-		if (event->isProcessed() == true)
+	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
+		auto& event = engine->getGUI()->getKeyboardEvents()[i];
+		if (event.isProcessed() == true)
 			continue;
 
-		keyControl = event->isControlDown();
+		keyControl = event.isControlDown();
 
-		auto isKeyDown = event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE)
 			keyEscape = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
 			keyLeft = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT)
 			keyRight = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_UP)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_UP)
 			keyUp = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN)
 			keyDown = isKeyDown;
 
-		if (event->getKeyCode() == GUIKeyboardEvent::KEYCODE_BACKSPACE)
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_BACKSPACE)
 			keyDelete = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'x')
+		if (Character::toLowerCase(event.getKeyChar()) == u'x')
 			keyX = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'c')
+		if (Character::toLowerCase(event.getKeyChar()) == u'c')
 			keyC = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'v')
+		if (Character::toLowerCase(event.getKeyChar()) == u'v')
 			keyV = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'a')
+		if (Character::toLowerCase(event.getKeyChar()) == u'a')
 			keyA = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'd')
+		if (Character::toLowerCase(event.getKeyChar()) == u'd')
 			keyD = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'w')
+		if (Character::toLowerCase(event.getKeyChar()) == u'w')
 			keyW = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u's')
+		if (Character::toLowerCase(event.getKeyChar()) == u's')
 			keyS = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'+')
+		if (Character::toLowerCase(event.getKeyChar()) == u'+')
 			keyPlus = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'-')
+		if (Character::toLowerCase(event.getKeyChar()) == u'-')
 			keyMinus = isKeyDown;
 
-		if (Character::toLowerCase(event->getKeyChar()) == u'r')
+		if (Character::toLowerCase(event.getKeyChar()) == u'r')
 			keyR = isKeyDown;
 
 	}
@@ -367,14 +367,14 @@ void LevelEditorView::handleInputEvents()
 		}
 		levelEditorScreenController->unselectObjectsInObjectListBox();
 	}
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents()->size(); i++) {
-		auto event = engine->getGUI()->getMouseEvents()->at(i);
-		if (event->isProcessed() == true)
+	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
+		auto& event = engine->getGUI()->getMouseEvents()[i];
+		if (event.isProcessed() == true)
 			continue;
 
-		if (event->getButton() != MOUSE_BUTTON_NONE) {
+		if (event.getButton() != MOUSE_BUTTON_NONE) {
 			if (mouseDragging == false) {
-				if (mouseDownLastX != event->getX() || mouseDownLastY != event->getY()) {
+				if (mouseDownLastX != event.getX() || mouseDownLastY != event.getY()) {
 					mouseDragging = true;
 				}
 			}
@@ -386,9 +386,9 @@ void LevelEditorView::handleInputEvents()
 				mouseDraggingLastObject = nullptr;
 			}
 		}
-		if (event->getButton() == MOUSE_BUTTON_LEFT) {
+		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (mouseDragging == false) {
-				if (mouseDownLastX != event->getX() || mouseDownLastY != event->getY()) {
+				if (mouseDownLastX != event.getX() || mouseDownLastY != event.getY()) {
 					mouseDragging = true;
 				}
 			}
@@ -411,9 +411,9 @@ void LevelEditorView::handleInputEvents()
 					levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
 				}
 			}
-			auto selectedEntity = engine->getEntityByMousePosition(event->getX(), event->getY(), entityPickingFilterNoGrid);
+			auto selectedEntity = engine->getEntityByMousePosition(event.getX(), event.getY(), entityPickingFilterNoGrid);
 			if (selectedEntity == nullptr) {
-				selectedEntity = engine->getEntityByMousePosition(event->getX(), event->getY());
+				selectedEntity = engine->getEntityByMousePosition(event.getX(), event.getY());
 			}
 			if (selectedEntity != nullptr) {
 				if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
@@ -441,23 +441,25 @@ void LevelEditorView::handleInputEvents()
 			}
 			mouseDraggingLastObject = selectedEntity;
 			updateGUIElements();
-		} else if (event->getButton() == MOUSE_BUTTON_RIGHT) {
+		} else
+		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
 			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
-				mousePanningSide = event->getX() - mouseDownLastX;
-				mousePanningForward = event->getY() - mouseDownLastY;
+				mousePanningSide = event.getX() - mouseDownLastX;
+				mousePanningForward = event.getY() - mouseDownLastY;
 			}
-		} else if (event->getButton() == MOUSE_BUTTON_MIDDLE) {
+		} else
+		if (event.getButton() == MOUSE_BUTTON_MIDDLE) {
 			centerObject();
 			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
-				mouseRotationX = event->getX() - mouseDownLastX;
-				mouseRotationY = event->getY() - mouseDownLastY;
+				mouseRotationX = event.getX() - mouseDownLastX;
+				mouseRotationY = event.getY() - mouseDownLastY;
 			}
 		}
-		if (event->getButton() != MOUSE_BUTTON_NONE) {
-			mouseDownLastX = event->getX();
-			mouseDownLastY = event->getY();
+		if (event.getButton() != MOUSE_BUTTON_NONE) {
+			mouseDownLastX = event.getX();
+			mouseDownLastY = event.getY();
 		}
-		auto mouseWheel = event->getWheelY();
+		auto mouseWheel = event.getWheelY();
 		if (mouseWheel != 0) {
 			camScale += -mouseWheel * 0.1f;
 			if (camScale < camScaleMin)

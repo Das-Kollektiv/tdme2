@@ -15,7 +15,6 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/VectorIteratorMultiple.h>
-#include <tdme/utils/Pool.h>
 #include <tdme/utils/Console.h>
 
 using std::list;
@@ -35,7 +34,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::VectorIteratorMultiple;
-using tdme::utils::Pool;
 using tdme::utils::Console;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MIN;

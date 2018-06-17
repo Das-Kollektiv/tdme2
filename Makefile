@@ -208,8 +208,6 @@ SRCS = \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \
 	src/tdme/gui/GUIParserException.cpp \
-	src/tdme/gui/GUI_1.cpp \
-	src/tdme/gui/GUI_2.cpp \
 	src/tdme/gui/effects/GUIColorEffect.cpp \
 	src/tdme/gui/effects/GUIEffect.cpp \
 	src/tdme/gui/effects/GUIPositionEffect.cpp \
