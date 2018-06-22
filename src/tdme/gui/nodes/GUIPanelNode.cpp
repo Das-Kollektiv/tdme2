@@ -13,8 +13,24 @@ using std::vector;
 using tdme::gui::nodes::GUIPanelNode;
 using tdme::gui::events::GUIMouseEvent;
 
-GUIPanelNode::GUIPanelNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, GUILayoutNode_Alignment* alignment) throw (GUIParserException)
-	: GUILayoutNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn, alignment)
+GUIPanelNode::GUIPanelNode(
+	GUIScreenNode* screenNode,
+	GUIParentNode* parentNode,
+	const string& id,
+	GUINode_Flow* flow,
+	GUIParentNode_Overflow* overflowX,
+	GUIParentNode_Overflow* overflowY,
+	const GUINode_Alignments& alignments,
+	const GUINode_RequestedConstraints& requestedConstraints,
+	const GUIColor& backgroundColor,
+	const string& backgroundImage,
+	const GUINode_Border& border,
+	const GUINode_Padding& padding,
+	const GUINodeConditions& showOn,
+	const GUINodeConditions& hideOn,
+	GUILayoutNode_Alignment* alignment
+) throw (GUIParserException) :
+	GUILayoutNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn, alignment)
 {
 }
 

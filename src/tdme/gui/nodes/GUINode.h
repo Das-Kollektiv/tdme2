@@ -6,6 +6,7 @@
 #include <set>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -25,6 +26,7 @@ using std::vector;
 using std::set;
 using std::string;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -64,7 +66,6 @@ class tdme::gui::nodes::GUINode
 	friend class GUINode_RequestedConstraints;
 	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
 
-
 protected:
 	GUIScreenNode* screenNode {  };
 	GUIParentNode* parentNode {  };
@@ -74,6 +75,8 @@ protected:
 	GUINode_RequestedConstraints requestedConstraints;
 	GUINode_ComputedConstraints computedConstraints;
 	GUIColor backgroundColor;
+	Texture* backgroundTexture;
+	int32_t backgroundTextureId;
 	GUINode_Padding padding;
 	GUINode_Border border;
 	GUINodeConditions showOn;
@@ -185,12 +188,26 @@ protected:
 	 * @param alignments
 	 * @param requested constraints
 	 * @param background color
+	 * @param background image
 	 * @param border
 	 * @param padding
 	 * @param show on
 	 * @param hide on
 	 */
-	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn);
+	GUINode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn
+	);
 
 	/**
 	 * Destructor
@@ -198,7 +215,6 @@ protected:
 	virtual ~GUINode();
 
 public:
-
 	/** 
 	 * @return scren node
 	 */

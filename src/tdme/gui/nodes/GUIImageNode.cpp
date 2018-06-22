@@ -13,6 +13,7 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 
 using tdme::gui::nodes::GUIImageNode;
+
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -24,8 +25,24 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& src, const GUIColor& effectColorMul, const GUIColor& effectColorAdd) throw(GUIParserException)
-	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
+GUIImageNode::GUIImageNode(
+	GUIScreenNode* screenNode,
+	GUIParentNode* parentNode,
+	const string& id,
+	GUINode_Flow* flow,
+	const GUINode_Alignments& alignments,
+	const GUINode_RequestedConstraints& requestedConstraints,
+	const GUIColor& backgroundColor,
+	const string& backgroundImage,
+	const GUINode_Border& border,
+	const GUINode_Padding& padding,
+	const GUINodeConditions& showOn,
+	const GUINodeConditions& hideOn,
+	const string& src,
+	const GUIColor& effectColorMul,
+	const GUIColor& effectColorAdd)
+	throw(GUIParserException):
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
 {
 	init();
 	this->texture = GUI::getImage(src);
@@ -36,7 +53,6 @@ GUIImageNode::GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode,
 
 void GUIImageNode::init()
 {
-	color = {{1.0f, 1.0f, 1.0f, 1.0f}};
 }
 
 const string GUIImageNode::getNodeType()
@@ -88,7 +104,41 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 	guiRenderer->bindTexture(textureId);
 	guiRenderer->setEffectColorMul(effectColorMul);
 	guiRenderer->setEffectColorAdd(effectColorAdd);
-	guiRenderer->addQuad(((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 0.0f, 0.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 1.0f, 0.0f, ((left + width) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 1.0f, 1.0f, ((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f, color[0], color[1], color[2], color[3], 0.0f, 1.0f);
+	guiRenderer->addQuad(
+		((left) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		0.0f,
+		0.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		0.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		((left) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		1.0f,
+		0.0f,
+		1.0f
+	);
 	guiRenderer->render();
+	guiRenderer->bindTexture(0);
 }
 

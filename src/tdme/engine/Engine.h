@@ -82,6 +82,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;
 	friend class tdme::gui::GUI;
 	friend class tdme::gui::nodes::GUIImageNode;
+	friend class tdme::gui::nodes::GUINode;
 	friend class tdme::gui::renderer::GUIRenderer;
 	friend class tdme::gui::renderer::GUIFont;
 

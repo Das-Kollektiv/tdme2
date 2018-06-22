@@ -39,8 +39,26 @@ using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::Integer;
 
-GUIInputInternalNode::GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const string& colorDisabled, const MutableString& text, int32_t maxLength) throw (Exception)
-	: GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
+GUIInputInternalNode::GUIInputInternalNode(
+	GUIScreenNode* screenNode,
+	GUIParentNode* parentNode,
+	const string& id,
+	GUINode_Flow* flow,
+	const GUINode_Alignments& alignments,
+	const GUINode_RequestedConstraints& requestedConstraints,
+	const GUIColor& backgroundColor,
+	const string& backgroundImage,
+	const GUINode_Border& border,
+	const GUINode_Padding& padding,
+	const GUINodeConditions& showOn,
+	const GUINodeConditions& hideOn,
+	const string& font,
+	const string& color,
+	const string& colorDisabled,
+	const MutableString& text,
+	int32_t maxLength
+	) throw (Exception):
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);

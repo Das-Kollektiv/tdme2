@@ -15,8 +15,21 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::utils::StringUtils;
 
-GUISpaceNode::GUISpaceNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn)
-	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
+GUISpaceNode::GUISpaceNode(
+	GUIScreenNode* screenNode,
+	GUIParentNode* parentNode,
+	const string& id,
+	GUINode_Flow* flow,
+	const GUINode_Alignments& alignments,
+	const GUINode_RequestedConstraints& requestedConstraints,
+	const GUIColor& backgroundColor,
+	const string& backgroundImage,
+	const GUINode_Border& border,
+	const GUINode_Padding& padding,
+	const GUINodeConditions& showOn,
+	const GUINodeConditions& hideOn
+):
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
 {
 }
 

@@ -25,8 +25,24 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::renderer::GUIRenderer;
 
-GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const GUIColor& barColorNone, const GUIColor& barColorMouseOver, const GUIColor& barColorDragging)
-	: 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, border, padding, showOn, hideOn)
+GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(
+	GUIScreenNode* screenNode,
+	GUIParentNode* parentNode, const
+	string& id,
+	GUINode_Flow* flow,
+	const GUINode_Alignments& alignments,
+	const GUINode_RequestedConstraints& requestedConstraints,
+	const GUIColor& backgroundColor,
+	const string& backgroundImage,
+	const GUINode_Border& border,
+	const GUINode_Padding& padding,
+	const GUINodeConditions& showOn,
+	const GUINodeConditions& hideOn,
+	const GUIColor& barColorNone,
+	const GUIColor& barColorMouseOver,
+	const GUIColor& barColorDragging
+	):
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
 {
 	this->controller = new GUIHorizontalScrollbarInternalController(this);
 	this->barColorNone = barColorNone;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <array>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -11,7 +10,6 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
 
-using std::array;
 using std::string;
 
 using tdme::gui::nodes::GUINode;
@@ -40,7 +38,6 @@ class tdme::gui::nodes::GUIImageNode final
 private:
 	Texture* texture {  };
 	int32_t textureId {  };
-	array<float, 4> color {  };
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
 
@@ -50,7 +47,42 @@ protected:
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
-	GUIImageNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& src, const GUIColor& effectColorMul, const GUIColor& effectColorAdd) throw(GUIParserException);
+
+	/**
+	 * Constructor
+	 * @param screen node
+	 * @param parent node
+	 * @param id
+	 * @param flow
+	 * @param alignments
+	 * @param requested constraints
+	 * @param background color
+	 * @param background image
+	 * @param border
+	 * @param padding
+	 * @param show on
+	 * @param hide on
+	 * @param src
+	 * @param effect color mul
+	 * @param effect color add
+	 */
+	GUIImageNode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn,
+		const string& src,
+		const GUIColor& effectColorMul,
+		const GUIColor& effectColorAdd
+	) throw(GUIParserException);
 
 public:
 	int32_t getContentWidth() override;

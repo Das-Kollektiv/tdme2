@@ -160,7 +160,39 @@ protected:
 	 */
 	const string getNodeType() override;
 
-	GUIScreenNode(const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, bool scrollable, bool popUp) throw(GUIParserException);
+	/**
+	 * Constructor
+	 * @param id
+	 * @param flow
+	 * @param overflow x
+	 * @param overflow y
+	 * @param alignments
+	 * @param requested constraints
+	 * @param background color
+	 * @param background image
+	 * @þaram border
+	 * @param padding
+	 * @param show on
+	 * @param hide on
+	 * @param scrollable
+	 * @param pop up
+	 */
+	GUIScreenNode(
+		const string& id,
+		GUINode_Flow* flow,
+		GUIParentNode_Overflow* overflowX,
+		GUIParentNode_Overflow* overflowY,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn,
+		bool scrollable,
+		bool popUp
+	) throw(GUIParserException);
 
 	/**
 	 * Destructor

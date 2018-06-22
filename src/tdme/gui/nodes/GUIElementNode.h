@@ -75,7 +75,45 @@ protected:
 	void setLeft(int32_t left) override;
 	void layoutSubNodes() override;
 	void layout() override;
-	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) throw (GUIParserException);
+
+	/**
+	 * Constructor
+	 * @param screen node
+	 * @param parent node
+	 * @param id
+	 * @param flow
+	 * @param overflow x
+	 * @param overflow y
+	 * @param alignments
+	 * @param requested constraints
+	 * @param background color
+	 * @param background image
+	 * @param border
+	 * @param padding
+	 * @
+	 */
+	GUIElementNode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		GUIParentNode_Overflow* overflowX,
+		GUIParentNode_Overflow* overflowY,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn,
+		const string& name,
+		const string& value,
+		bool selected,
+		bool disabled,
+		bool focusable,
+		bool ignoreEvents
+	) throw (GUIParserException);
 
 public:
 	int32_t getContentWidth() override;

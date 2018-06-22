@@ -52,7 +52,42 @@ protected:
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
-	GUITextNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const MutableString& text) throw(Exception);
+
+	/**
+	 * Constructor
+	 * @param screen node
+	 * @param parent node
+	 * @param id
+	 * @param flow
+	 * @param alignments
+	 * @param requested constraints
+	 * @param background color
+	 * @param background image
+	 * @param border
+	 * @param padding
+	 * @param show on
+	 * @param hide on
+	 * @param font
+	 * @param color
+	 * @param text
+	 */
+	GUITextNode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn,
+		const string& font,
+		const string& color,
+		const MutableString& text
+	) throw(Exception);
 
 public:
 	int32_t getContentWidth() override;

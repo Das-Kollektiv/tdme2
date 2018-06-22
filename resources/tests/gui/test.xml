@@ -13,6 +13,7 @@
 				<tab id="tab4" text="Dropdown" />
 				<tab id="tab5" text="Input" />
 				<tab id="tab6" text="Scrollarea" />
+				<tab id="tab7" text="Sliders + Knob" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
@@ -230,6 +231,11 @@
 							<text font="resources/gui/fonts/Foo_20.fnt" text="END" color="#000000" />
 						</layout>
 					</scrollarea>
+				</tab-content>
+				<tab-content tab-id="tab7" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
+						<slider-horizontal name="sliderh-test" id="sliderh-test" />
+					</layout>
 				</tab-content>
 			</tabs-content>
 		</tabs>
