@@ -147,7 +147,16 @@
 						<space height="*" />
 						<button id="test_text_button2" name="button2" text="Test manipulating GUI" />
 						<space height="*" />
-						<button id="test_text_button3" name="button3" text="Disabled Button" disabled="true "/>
+						<button id="test_text_button3" name="button3" text="Disabled Button" disabled="true"/>
+						<space height="*" />
+						<image-button
+							id="image-button"
+							name="image-button"
+							src-normal="resources/tests/gui/images/button_normal.png"
+							src-over="resources/tests/gui/images/button_mouseover.png"
+							src-clicked="resources/tests/gui/images/button_click.png"
+							src-disabled="resources/tests/gui/images/button_normal.png"
+						/>
 						<space height="*" />
 					</layout>
 				</tab-content>

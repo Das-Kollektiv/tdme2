@@ -16,6 +16,7 @@ class tdme::gui::elements::GUIButtonController final
 	: public GUIElementController
 {
 	friend class GUIButton;
+	friend class GUIImageButton;
 
 private:
 	GUIButtonController(GUINode* node);

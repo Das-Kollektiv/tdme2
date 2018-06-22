@@ -220,6 +220,7 @@ SRCS = \
 	src/tdme/gui/elements/GUIDropDownOption.cpp \
 	src/tdme/gui/elements/GUIDropDownOptionController.cpp \
 	src/tdme/gui/elements/GUIElement.cpp \
+	src/tdme/gui/elements/GUIImageButton.cpp \
 	src/tdme/gui/elements/GUIInput.cpp \
 	src/tdme/gui/elements/GUIInputController.cpp \
 	src/tdme/gui/elements/GUIKnob.cpp \

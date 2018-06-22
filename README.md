@@ -88,6 +88,7 @@ TDME2
                 - button
                 - checkbox
                 - dropdown
+                - image button
                 - input
                 - knob
                 - radio button
@@ -120,6 +121,7 @@ TDME2
     - What is WIP or planned
         - LOD
         - GUI system port needs to be finished(Memory Management and other minor things)
+        - GUI system knob, vertical/horizontal slider are working but need a bit more love
         - Logic documentation/comments need to be imported from TDME(-JAVA)
         - A demonstration video
         - Build documentation
