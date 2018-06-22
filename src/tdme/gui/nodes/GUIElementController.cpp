@@ -28,7 +28,6 @@ GUIElementController::GUIElementController(GUINode* node)
 {
 	this->isActionPerforming = false;
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
-	this->node->getScreenNode()->addTickNode(this->node);
 }
 
 string GUIElementController::CONDITION_DISABLED = "disabled";
@@ -49,6 +48,7 @@ void GUIElementController::setDisabled(bool disabled)
 
 void GUIElementController::initialize()
 {
+	this->node->getScreenNode()->addTickNode(this->node);
 	setDisabled(disabled);
 }
 

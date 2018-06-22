@@ -89,6 +89,7 @@ TDME2
                 - checkbox
                 - dropdown
                 - input
+                - knob
                 - radio button
                 - scrollarea both
                 - scrollarea horizontal

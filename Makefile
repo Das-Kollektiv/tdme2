@@ -222,6 +222,8 @@ SRCS = \
 	src/tdme/gui/elements/GUIElement.cpp \
 	src/tdme/gui/elements/GUIInput.cpp \
 	src/tdme/gui/elements/GUIInputController.cpp \
+	src/tdme/gui/elements/GUIKnob.cpp \
+	src/tdme/gui/elements/GUIKnobController.cpp \
 	src/tdme/gui/elements/GUIRadioButton.cpp \
 	src/tdme/gui/elements/GUIRadioButtonController.cpp \
 	src/tdme/gui/elements/GUIScrollArea.cpp \

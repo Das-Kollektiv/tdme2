@@ -10,6 +10,7 @@
 #include <tdme/gui/elements/GUIDropDownOption.h>
 #include <tdme/gui/elements/GUIElement.h>
 #include <tdme/gui/elements/GUIInput.h>
+#include <tdme/gui/elements/GUIKnob.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
 #include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
@@ -61,6 +62,7 @@ using tdme::gui::elements::GUIDropDown;
 using tdme::gui::elements::GUIDropDownOption;
 using tdme::gui::elements::GUIElement;
 using tdme::gui::elements::GUIInput;
+using tdme::gui::elements::GUIKnob;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
 using tdme::gui::elements::GUIScrollAreaHorizontal;
@@ -889,6 +891,13 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUISliderV();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIKnob();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

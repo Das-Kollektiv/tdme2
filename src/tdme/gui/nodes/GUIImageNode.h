@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
 
@@ -24,6 +25,7 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::math::Matrix2D3x3;
 
 /** 
  * GUI image node
@@ -89,7 +91,10 @@ public:
 	int32_t getContentHeight() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
+	void setTextureMatrix(const Matrix2D3x3& textureMatrix);
 
 private:
 	void init();
+
+	Matrix2D3x3 textureMatrix;
 };

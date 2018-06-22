@@ -16,6 +16,8 @@ namespace elements {
 	class GUIElement;
 	class GUIInput;
 	class GUIInputController;
+	class GUIKnob;
+	class GUIKnobController;
 	class GUIRadioButton;
 	class GUIRadioButtonController;
 	class GUIScrollArea;

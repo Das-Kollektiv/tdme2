@@ -1,6 +1,5 @@
 #include <tdme/gui/nodes/GUIImageNode.h>
 
-
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
@@ -11,6 +10,7 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/math/Matrix2D3x3.h>
 
 using tdme::gui::nodes::GUIImageNode;
 
@@ -24,6 +24,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::math::Matrix2D3x3;
 
 GUIImageNode::GUIImageNode(
 	GUIScreenNode* screenNode,
@@ -49,6 +50,7 @@ GUIImageNode::GUIImageNode(
 	this->textureId = Engine::getInstance()->getTextureManager()->addTexture(texture);
 	this->effectColorMul = effectColorMul;
 	this->effectColorAdd = effectColorAdd;
+	this->textureMatrix.identity();
 }
 
 void GUIImageNode::init()
@@ -102,6 +104,7 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 	float width = getContentWidth();
 	float height = getContentHeight();
 	guiRenderer->bindTexture(textureId);
+	guiRenderer->setTexureMatrix(textureMatrix);
 	guiRenderer->setEffectColorMul(effectColorMul);
 	guiRenderer->setEffectColorAdd(effectColorAdd);
 	guiRenderer->addQuad(
@@ -140,5 +143,9 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 	);
 	guiRenderer->render();
 	guiRenderer->bindTexture(0);
+	guiRenderer->setTexureMatrix((Matrix2D3x3()).identity());
 }
 
+void GUIImageNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
+	this->textureMatrix.set(textureMatrix);
+}
