@@ -20,11 +20,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
 /** 
- * GUI horizontal slider
+ * GUI vertical slider
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISliderH final
+class tdme::gui::elements::GUISliderV final
 	: public GUIElement
 {
 
@@ -39,5 +39,5 @@ public:
 	map<string, string>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	GUISliderH() throw (FileSystemException);
+	GUISliderV() throw (FileSystemException);
 };

@@ -19,6 +19,7 @@
 #include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
 #include <tdme/gui/elements/GUISelectBoxOption.h>
 #include <tdme/gui/elements/GUISliderH.h>
+#include <tdme/gui/elements/GUISliderV.h>
 #include <tdme/gui/elements/GUITab.h>
 #include <tdme/gui/elements/GUITabContent.h>
 #include <tdme/gui/elements/GUITabs.h>
@@ -69,6 +70,7 @@ using tdme::gui::elements::GUISelectBoxMultiple;
 using tdme::gui::elements::GUISelectBoxMultipleOption;
 using tdme::gui::elements::GUISelectBoxOption;
 using tdme::gui::elements::GUISliderH;
+using tdme::gui::elements::GUISliderV;
 using tdme::gui::elements::GUITab;
 using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabs;
@@ -880,6 +882,13 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUISliderH();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUISliderV();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

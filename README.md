@@ -96,6 +96,7 @@ TDME2
                 - selectbox
                 - selectbox multiple
                 - slider horizontal
+                - slider vertical
                 - tabs
             - supports position and color based effects
         - Networking module, which consists of

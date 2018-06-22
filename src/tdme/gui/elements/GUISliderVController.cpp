@@ -1,4 +1,4 @@
-#include <tdme/gui/elements/GUISliderHController.h>
+#include <tdme/gui/elements/GUISliderVController.h>
 
 #include <array>
 #include <string>
@@ -34,33 +34,33 @@ using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::Time;
 
-using tdme::gui::elements::GUISliderHController;
+using tdme::gui::elements::GUISliderVController;
 
-GUISliderHController::GUISliderHController(GUINode* node): GUINodeController(node)
+GUISliderVController::GUISliderVController(GUINode* node): GUINodeController(node)
 {
 	// TODO: maybe introduce a custom relative node alignment, I use content alignment for now
 }
 
-bool GUISliderHController::isDisabled() {
+bool GUISliderVController::isDisabled() {
 	return false;
 }
 
-void GUISliderHController::setDisabled(bool disabled) {
+void GUISliderVController::setDisabled(bool disabled) {
 
 }
 
-void GUISliderHController::initialize() {
+void GUISliderVController::initialize() {
 	sliderNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_slider");
 }
 
-void GUISliderHController::dispose() {
+void GUISliderVController::dispose() {
 }
 
-void GUISliderHController::postLayout() {
+void GUISliderVController::postLayout() {
 	updateSlider();
 }
 
-void GUISliderHController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
+void GUISliderVController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 	array<float, 2> nodeMousePosition;
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED == true) {
@@ -73,20 +73,20 @@ void GUISliderHController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		event->getButton() == 1) {
 		event->setProcessed(true);
 		auto sliderPosition = Math::clamp(
-			static_cast<int>(nodeMousePosition[0]) - sliderNode->getContentWidth() / 2,
+			static_cast<int>(nodeMousePosition[1]) - sliderNode->getContentHeight() / 2,
 			0,
-			this->node->getComputedConstraints().width - sliderNode->getContentWidth()
+			this->node->getComputedConstraints().height - sliderNode->getContentHeight()
 		);
-		valueFloat = static_cast<float>(sliderPosition) / static_cast<float>(this->node->getComputedConstraints().width - sliderNode->getContentWidth());
+		valueFloat = static_cast<float>(sliderPosition) / static_cast<float>(this->node->getComputedConstraints().height - sliderNode->getContentHeight());
 		updateSlider();
 		node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
 	}
 }
 
-void GUISliderHController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) {
+void GUISliderVController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) {
 	if (node == this->node) {
 		switch (event->getKeyCode()) {
-			case GUIKeyboardEvent::KEYCODE_LEFT: {
+			case GUIKeyboardEvent::KEYCODE_UP: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
@@ -95,7 +95,7 @@ void GUISliderHController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 					}
 				}
 				break;
-			case GUIKeyboardEvent::KEYCODE_RIGHT: {
+			case GUIKeyboardEvent::KEYCODE_DOWN: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 						this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
@@ -108,30 +108,30 @@ void GUISliderHController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 	}
 }
 
-void GUISliderHController::tick() {
+void GUISliderVController::tick() {
 }
 
-void GUISliderHController::onFocusGained() {
+void GUISliderVController::onFocusGained() {
 }
 
-void GUISliderHController::onFocusLost() {
+void GUISliderVController::onFocusLost() {
 }
 
-bool GUISliderHController::hasValue() {
+bool GUISliderVController::hasValue() {
 	return true;
 }
 
-const MutableString& GUISliderHController::getValue() {
+const MutableString& GUISliderVController::getValue() {
 	return value.set(valueFloat, 4);
 }
 
-void GUISliderHController::setValue(const MutableString& value) {
+void GUISliderVController::setValue(const MutableString& value) {
 	this->value.set(value);
 	this->valueFloat = Math::clamp(Float::parseFloat(this->value.getString()), 0.0f, 1.0f);
 	updateSlider();
 }
 
-void GUISliderHController::updateSlider() {
-	auto sliderPosition = static_cast<int>(valueFloat * (this->node->getComputedConstraints().width - sliderNode->getContentWidth()));
-	sliderNode->getComputedConstraints().contentAlignmentLeft = sliderPosition;
+void GUISliderVController::updateSlider() {
+	auto sliderPosition = static_cast<int>(valueFloat * (this->node->getComputedConstraints().height - sliderNode->getContentHeight()));
+	sliderNode->getComputedConstraints().contentAlignmentTop = sliderPosition;
 }

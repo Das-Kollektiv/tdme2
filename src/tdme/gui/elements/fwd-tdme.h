@@ -37,6 +37,8 @@ namespace elements {
 	class GUISelectBoxOptionController;
 	class GUISliderH;
 	class GUISliderHController;
+	class GUISliderV;
+	class GUISliderVController;
 	class GUITab;
 	class GUITabContent;
 	class GUITabContentController;

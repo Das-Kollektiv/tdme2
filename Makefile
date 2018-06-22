@@ -243,6 +243,8 @@ SRCS = \
 	src/tdme/gui/elements/GUISelectBoxOptionController.cpp \
 	src/tdme/gui/elements/GUISliderH.cpp \
 	src/tdme/gui/elements/GUISliderHController.cpp \
+	src/tdme/gui/elements/GUISliderV.cpp \
+	src/tdme/gui/elements/GUISliderVController.cpp \
 	src/tdme/gui/elements/GUITab.cpp \
 	src/tdme/gui/elements/GUITabContent.cpp \
 	src/tdme/gui/elements/GUITabContentController.cpp \
