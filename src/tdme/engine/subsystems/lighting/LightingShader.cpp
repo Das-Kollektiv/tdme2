@@ -251,19 +251,22 @@ void LightingShader::updateMaterial(GLRenderer* renderer)
 	// skip if not running
 	if (isRunning == false) return;
 
-	// we dont have alpha on ambient, specular, emission
-	tmpColor4[3] = 0.0f;
+	//
+	array<float, 4> tmpColor4 {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 
 	// ambient without alpha, as we only use alpha from diffuse color
-	copy(begin(renderer->material.ambient), end(renderer->material.ambient), begin(tmpColor4));
+	tmpColor4 = renderer->material.ambient;
+	tmpColor4[3] = 0.0f;
 	renderer->setProgramUniformFloatVec4(uniformMaterialAmbient, tmpColor4);
 	// diffuse
 	renderer->setProgramUniformFloatVec4(uniformMaterialDiffuse, renderer->material.diffuse);
 	// specular without alpha, as we only use alpha from diffuse color
-	copy(begin(renderer->material.specular), end(renderer->material.specular), begin(tmpColor4));
-	// emission without alpha, as we only use alpha from diffuse color
+	tmpColor4 = renderer->material.specular;
+	tmpColor4[3] = 0.0f;
 	renderer->setProgramUniformFloatVec4(uniformMaterialSpecular, tmpColor4);
-	copy(begin(renderer->material.emission), end(renderer->material.emission), begin(tmpColor4));
+	// emission without alpha, as we only use alpha from diffuse color
+	tmpColor4 = renderer->material.emission;
+	tmpColor4[3] = 0.0f;
 	renderer->setProgramUniformFloatVec4(uniformMaterialEmission, tmpColor4);
 	// shininess
 	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material.shininess);
@@ -278,7 +281,7 @@ void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
 	// skip if not running
 	if (isRunning == false) return;
 
-	// lighs
+	// lights
 	renderer->setProgramUniformInteger(uniformLightEnabled[lightId], renderer->lights[lightId].enabled);
 	if (renderer->lights[lightId].enabled == 1) {
 		renderer->setProgramUniformFloatVec4(uniformLightAmbient[lightId], renderer->lights[lightId].ambient);

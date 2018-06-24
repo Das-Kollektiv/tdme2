@@ -27,6 +27,17 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+else ifeq ($(OS), NetBSD)
+	# NetBSD
+	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
+	SRC_PLATFORM:= $(SRC_PLATFORM) \
+			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGL2Renderer.cpp \
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lfreeglut -lopenal -pthread
 else ifeq ($(OS), Haiku)
 	# Haiku
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers

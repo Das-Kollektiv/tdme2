@@ -1,5 +1,6 @@
-#if defined(__FreeBSD__) or defined(__linux__)
+#if defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__)
 	#if !defined(__arm__) and !defined(__aarch64__)
+		#define GLEW_NO_GLU
 		#include <GL/glew.h>
 	#endif
 	#include <GL/freeglut.h>
@@ -73,14 +74,10 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutInit(&argc, argv);
 #if defined(__APPLE__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-#elif ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
+#elif ((defined(__linux__) or defined(__FreeBSD__) or defined(__NetBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	if (glewIsSupported("GL_VERSION_3_2") == true) {
-		glutInitContextVersion(3,2);
-		glutInitContextProfile(GLUT_CORE_PROFILE);
-	} else {
-		glutInitContextVersion(2,1);
-	}
+	glutInitContextVersion(3,2);
+	glutInitContextProfile(GLUT_CORE_PROFILE);
 #elif defined(__linux__) and (defined(__arm__) or defined(__aarch64__))
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitContextVersion(2,0);
@@ -90,7 +87,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutInitWindowSize(1024, 768);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow((title).c_str());
-#if defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
+#if defined(_WIN32) or ((defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
 	glewExperimental = true;
 	GLenum glewInitStatus = glewInit();
 	if (glewInitStatus != GLEW_OK) {
@@ -109,7 +106,7 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutMotionFunc(Application::glutOnMouseDragged);
 	glutPassiveMotionFunc(Application::glutOnMouseMoved);
 	glutMouseFunc(Application::glutOnMouseButton);
-#if defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32)
+#if defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__) or defined(_WIN32)
 	glutMouseWheelFunc(Application::glutOnMouseWheel);
 #endif
 	glutMainLoop();
