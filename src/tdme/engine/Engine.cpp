@@ -1,6 +1,7 @@
 #include <tdme/engine/Engine.h>
 
-#if ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32) or defined(__HAIKU__)
+#if ((defined(__linux__) or defined(__FreeBSD__) or defined(__NetBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32) or defined(__HAIKU__)
+	#define GLEW_NO_GLU
 	#include <GL/glew.h>
 #endif
 
@@ -413,8 +414,8 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
-	// Linux/FreeBSD/Win32, GL2 or GL3 via GLEW
-	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
+	// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
+	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
 	{
 		int glMajorVersion;
 		int glMinorVersion;
@@ -433,7 +434,7 @@ void Engine::initialize(bool debug)
 		ShadowMapping::setShadowMapSize(2048, 2048);
 	}
 	// GLES2 on Linux
-	#elif (defined(__linux__) or defined(__FreeBSD__)) and (defined(__arm__) or defined(__aarch64__))
+	#elif (defined(__linux__) or defined(__FreeBSD__) or defined(__NetBSD__)) and (defined(__arm__) or defined(__aarch64__))
 	{
 		renderer = new EngineGLES2Renderer(this);
 		Console::println(string("TDME::Using GLES2"));

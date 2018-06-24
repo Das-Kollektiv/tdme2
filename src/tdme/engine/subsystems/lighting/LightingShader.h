@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -70,7 +69,6 @@ private:
 	Matrix4x4 mvpMatrix {  };
 	Matrix4x4 normalMatrix {  };
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
-	array<float, 4> tmpColor4 {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	bool isRunning {  };
 	bool initialized {  };
 	GLRenderer* renderer {  };
