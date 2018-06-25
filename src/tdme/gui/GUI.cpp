@@ -423,9 +423,6 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mou
 	// handle each event
 	set<string> mouseEventNodeIds;
 
-	// skip if already processed
-	if (event->isProcessed() == true) return;
-
 	//
 	event->setX(event->getX() + node->getScreenNode()->getGUIEffectOffsetX());
 	event->setY(event->getY() + node->getScreenNode()->getGUIEffectOffsetY());
@@ -453,6 +450,10 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mou
 			auto eventNode = node->getScreenNode()->getNodeById(eventNodeId);
 			if (eventNode == nullptr) continue;
 
+			// TODO: this removes MOUSE OVER effects from element nodes, could get integrated into architecture though
+			auto eventNodeElementNode = dynamic_cast<GUIElementNode*>(eventNode);
+			if (eventNodeElementNode != nullptr) eventNodeElementNode->getActiveConditions().remove(GUIElementNode::CONDITION_ONMOUSEOVER);
+
 			// controller node
 			auto controllerNode = eventNode;
 			if (controllerNode->getController() == nullptr) {
@@ -460,7 +461,7 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mou
 			}
 			if (controllerNode == nullptr) continue;
 
-			//
+			// handle each event
 			controllerNode->getController()->handleMouseEvent(eventNode, event);
 		}
 	}
@@ -574,27 +575,32 @@ void GUI::handleEvents()
 		// handle floating nodes first
 		for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 			auto screen = renderScreens[i];
-
+			// skip on invisible
 			if (screen->isVisible() == false) continue;
-
+			//
 			vector<GUINode*>* floatingNodes = screen->getFloatingNodes();
 			for (auto j = 0; j < floatingNodes->size(); j++) {
 				auto floatingNode = floatingNodes->at(j);
+				//
 				handleMouseEvent(floatingNode, &event, mouseMovedEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()]);
+				// do not continue handling mouse events if already processed
+				if (event.isProcessed() == true) break;
 			}
-
+			// do not continue handling mouse events if already processed
+			if (event.isProcessed() == true) break;
+			// skip on pop ups
 			if (screen->isPopUp() == true) break;
 		}
 
-		// handle normal screen nodes
-		for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
-			auto screen = renderScreens[i];
-
-			if (screen->isVisible() == false) continue;
-
-			handleMouseEvent(screen, &event, mouseMovedEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()]);
-
-			if (screen->isPopUp() == true) break;
+		// handle normal screen nodes if not processed already by floating node
+		// 	Note: Different screens should not have UI elements that overlap and process events
+		if (event.isProcessed() == false) {
+			for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
+				auto screen = renderScreens[i];
+				if (screen->isVisible() == false) continue;
+				handleMouseEvent(screen, &event, mouseMovedEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()]);
+				if (screen->isPopUp() == true) break;
+			}
 		}
 
 		// handle mouse released event

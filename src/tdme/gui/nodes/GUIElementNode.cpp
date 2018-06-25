@@ -235,7 +235,8 @@ void GUIElementNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>&
 				activeConditions.add(CONDITION_ONMOUSEOVER);
 				if (ignoreEvents == false) event->setProcessed(true);
 			} else
-			if (v == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+			if (v == GUIMouseEvent_Type::MOUSEEVENT_PRESSED ||
+				v == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 				activeConditions.add(CONDITION_CLICK);
 				if (ignoreEvents == false) event->setProcessed(true);
 			}
