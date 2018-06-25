@@ -45,9 +45,6 @@ using tdme::utils::Time;
 class tdme::gui::GUI final
 	: public virtual ApplicationInputEventsHandler
 {
-	friend class GUI_1;
-	friend class GUI_2;
-
 private:
 	GUIRenderer* guiRenderer {  };
 	Engine* engine {  };
