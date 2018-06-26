@@ -1,5 +1,6 @@
 STACKFLAGS =
-SRC_PLATFORM =
+SRCS_PLATFORM =
+SRCS_DEBUG =
 INCLUDES := $(INCLUDES) -Isrc -Iext -Iext -I./ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
 
 # set platform specific flags
@@ -8,7 +9,7 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/include
-	SRC_PLATFORM:= $(SRC_PLATFORM) \
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
@@ -19,7 +20,7 @@ ifeq ($(OS), Darwin)
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	INCLUDES := $(INCLUDES) -I/usr/local/include
-	SRC_PLATFORM:= $(SRC_PLATFORM) \
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -30,7 +31,7 @@ else ifeq ($(OS), FreeBSD)
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
-	SRC_PLATFORM:= $(SRC_PLATFORM) \
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -41,7 +42,7 @@ else ifeq ($(OS), NetBSD)
 else ifeq ($(OS), Haiku)
 	# Haiku
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
-	SRC_PLATFORM:= $(SRC_PLATFORM) \
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -50,24 +51,24 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
 else ifeq ($(OS), Linux)
-	SRC_PLATFORM:= $(SRC_PLATFORM) \
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	ifeq ($(ARCH), aarch64)
 		# Linux, ARM64
-		SRC_PLATFORM:= $(SRC_PLATFORM) \
+		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else ifeq ($(ARCH), armv7l)
 		# Linux, ARM
-		SRC_PLATFORM:= $(SRC_PLATFORM) \
+		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
 		# Linux, any other
-		SRC_PLATFORM:= $(SRC_PLATFORM) \
+		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
@@ -76,7 +77,7 @@ else ifeq ($(OS), Linux)
 	endif
 else
 	# Windows via MINGW
-	SRC_PLATFORM:= $(SRC_PLATFORM) \
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -92,10 +93,13 @@ CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
 #CFLAGS := $(CFLAGS) -g -pipe -MMD -MP -DNDEBUG
 #CFLAGS := $(CFLAGS) -O2 -pipe -MMD -MP
 CFLAGS := $(CFLAGS) -O2 -pipe -MMD -MP -DNDEBUG
+CFLAGS_DEBUG := $(CFLAGS) -g -pipe -MMD -MP -DNDEBUG
 CXXFLAGS := $(CFLAGS) -std=gnu++11
+CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) -std=gnu++11
 
 BIN := bin
 OBJ := obj
+OBJ_DEBUG := obj-debug
 
 NAME := tdme
 
@@ -443,7 +447,7 @@ SRCS = \
 	src/tdme/utils/StringTokenizer.cpp \
 	src/tdme/utils/ExceptionBase.cpp \
 	src/tdme/utils/Console.cpp \
-	$(SRC_PLATFORM)
+	$(SRCS_PLATFORM)
 
 EXT_SRCS = \
 
@@ -630,6 +634,7 @@ MAIN_SRCS = \
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
+OBJS_DEBUG = $(SRCS_DEBUG:$(SRC)/%.cpp=$(OBJ_DEBUG)/%.o)
 
 EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
@@ -648,6 +653,11 @@ define cpp-command
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 endef
 
+define cpp-command-debug
+@mkdir -p $(dir $@); 
+@echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_DEBUG) -c -o $@ $<
+endef
+
 define c-command
 @mkdir -p $(dir $@); 
 @echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
@@ -655,6 +665,9 @@ endef
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
+
+$(OBJS_DEBUG):$(OBJ_DEBUG)/%.o: $(SRC)/%.cpp | print-opts
+	$(cpp-command-debug)
 
 $(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
 	$(cpp-command)
@@ -689,7 +702,7 @@ $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	@rm -f $@
 	@ar rcs $@ $^
 
-$(BIN)/$(LIB): $(OBJS)
+$(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
 $(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS)
 
@@ -700,7 +713,7 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 mains: $(MAINS)
 
 clean:
-	rm -rf $(OBJ) $(BIN)
+	rm -rf $(OBJ) $(OBJ_DEBUG) $(BIN)
 
 print-opts:
 	@echo Building with \"$(CXX) $(CPPFLAGS) $(CXXFLAGS)\"
@@ -708,3 +721,4 @@ print-opts:
 .PHONY: all mains clean print-opts
 
 -include $(OBJS:%.o=%.d)
+-include $(OBJS_DEBUG:%.o=%.d)
