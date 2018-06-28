@@ -6,6 +6,7 @@
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Model.h>
@@ -42,6 +43,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Transformations;
+using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
@@ -227,6 +229,72 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	level->update();
 }
 
+void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups) {
+	auto entityLibrary = level->getEntityLibrary();
+	auto groupId = group->getId();
+	auto modelName = groupId;
+	modelName = StringUtils::replaceAll(modelName, "[-_]{1}[0-9]+$", "");
+	modelName = StringUtils::replaceAll(modelName, "[0-9]+$", "");
+	auto haveName = entityLibrary->getEntityCount() == 0;
+	if (haveName == false) {
+		for (auto i = 0; i < 10000; i++) {
+			haveName = true;
+			auto modelNameTry = modelName;
+			if (i > 0) modelNameTry+= to_string(i);
+			for (auto entityIdx = 0; entityIdx < entityLibrary->getEntityCount(); entityIdx++) {
+				auto entity = entityLibrary->getEntityAt(entityIdx);
+				if (entity->getName() == modelNameTry) {
+					haveName = false;
+					break;
+				}
+			}
+			if (haveName == true) {
+				modelName = modelNameTry;
+				break;
+			}
+		}
+	}
+	if (haveName == false) {
+		Console::println(
+			string(
+				"LevelFileImport::doImportFromModel(): Skipping model '" +
+				modelName +
+				"' as no name could be created for it."
+			)
+		 );
+		return;
+	}
+	Matrix4x4 transformationsMatrix;
+	// compute animation matrix if animation setups exist
+	auto animation = group->getAnimation();
+	if (animation != nullptr) {
+		auto animationMatrices = animation->getTransformationsMatrices();
+		transformationsMatrix.set((*animationMatrices)[0 % animationMatrices->size()]);
+	} else {
+		// no animation matrix, set up local transformation matrix up as group matrix
+		transformationsMatrix.set(group->getTransformationsMatrix());
+	}
+
+	// apply parent transformation matrix
+	transformationsMatrix.multiply(parentTransformationsMatrix);
+
+	// check if no mesh?
+	if (group->getVertices()->size() == 0 && group->getSubGroups()->size() > 0) {
+		// ok, check sub meshes
+		for (auto subGroupIt: *group->getSubGroups()) {
+			determineMeshGroups(level, subGroupIt.second, transformationsMatrix.clone(), meshGroups);
+		}
+	} else {
+		// add to group meshes, even if empty as its a empty :D
+		LevelEditorEntityMeshGroup levelEditorEntityMeshGroup;
+		levelEditorEntityMeshGroup.id = groupId;
+		levelEditorEntityMeshGroup.name = modelName;
+		levelEditorEntityMeshGroup.group = group;
+		levelEditorEntityMeshGroup.transformationsMatrix.set(transformationsMatrix);
+		meshGroups.push_back(levelEditorEntityMeshGroup);
+	}
+}
+
 void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException) {
 	level->clearProperties();
 	level->getEntityLibrary()->clear();
@@ -254,164 +322,132 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	modelImportRotationMatrix.getScale(levelModelScale);
 	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
 	for (auto groupIt: *levelModel->getSubGroups()) {
-		auto group = groupIt.second;
-		auto groupId = groupIt.second->getId();
-		auto modelName = groupId;
-		modelName = StringUtils::replaceAll(modelName, "[-_]{1}[0-9]+$", "");
-		modelName = StringUtils::replaceAll(modelName, "[0-9]+$", "");
-		auto haveName = entityLibrary->getEntityCount() == 0;
-		if (haveName == false) {
-			for (auto i = 0; i < 10000; i++) {
-				haveName = true;
-				auto modelNameTry = modelName;
-				if (i > 0) modelNameTry+= to_string(i);
-				for (auto entityIdx = 0; entityIdx < entityLibrary->getEntityCount(); entityIdx++) {
-					auto entity = entityLibrary->getEntityAt(entityIdx);
-					if (entity->getName() == modelNameTry) {
-						haveName = false;
+		vector<LevelEditorEntityMeshGroup> meshGroups;
+		determineMeshGroups(level, groupIt.second, (Matrix4x4()).identity(), meshGroups);
+		for (auto& meshGroup: meshGroups) {
+			auto model = new Model(
+				modelPathName,
+				fileName + "-" + meshGroup.name,
+				upVector,
+				rotationOrder,
+				nullptr
+			);
+			model->getImportTransformationsMatrix().set(levelModel->getImportTransformationsMatrix());
+			float importFixScale = 1.0f;
+			Vector3 translation, scale, rotation;
+			Vector3 xAxis, yAxis, zAxis, tmpAxis;
+			Matrix4x4 groupTransformationsMatrix;
+			groupTransformationsMatrix.set(meshGroup.transformationsMatrix);
+			groupTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
+			groupTransformationsMatrix.getTranslation(translation);
+			groupTransformationsMatrix.getScale(scale);
+			xAxis.normalize();
+			yAxis.normalize();
+			zAxis.normalize();
+			groupTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
+			if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
+				(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
+				xAxis.scale(-1.0f);
+				yAxis.scale(-1.0f);
+				zAxis.scale(-1.0f);
+				groupTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
+				scale.scale(-1.0f);
+			}
+			groupTransformationsMatrix.computeEulerAngles(rotation);
+			modelImportRotationMatrix.multiply(scale, scale);
+			modelImportRotationMatrix.multiply(rotation, rotation);
+			model->getImportTransformationsMatrix().multiply(translation, translation);
+
+			ModelHelper::cloneGroup(meshGroup.group, model);
+			if (model->getSubGroups()->begin() != model->getSubGroups()->end()) {
+				model->getSubGroups()->begin()->second->getTransformationsMatrix().identity();
+			}
+			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
+			ModelHelper::prepareForIndexedRendering(model);
+			// scale up model if dimension too less, this occurres with importing FBX that was exported by UE
+			// TODO: maybe make this conditional
+			{
+				auto width = model->getBoundingBox()->getDimensions().getX();
+				auto height = model->getBoundingBox()->getDimensions().getY();
+				auto depth = model->getBoundingBox()->getDimensions().getZ();
+				if (width < 0.2f && height < 0.2f && depth < 0.2f) {
+					if (width > Math::EPSILON && width < height && width < depth) {
+						importFixScale = 1.0f / width / 5.0f;
+					} else
+					if (height > Math::EPSILON && height < width && height < depth) {
+						importFixScale = 1.0f / height / 5.0f;
+					} else
+					if (depth > Math::EPSILON) {
+						importFixScale = 1.0f / depth / 5.0f;
+					}
+				}
+				model->getImportTransformationsMatrix().scale(importFixScale);
+				model->getBoundingBox()->getMin().scale(importFixScale);
+				model->getBoundingBox()->getMax().scale(importFixScale);
+				model->getBoundingBox()->update();
+				scale.scale(1.0f / importFixScale);
+			}
+			auto entityType = LevelEditorEntity_EntityType::MODEL;
+			if (meshGroup.group->getVertices()->size() == 0) {
+				entityType = LevelEditorEntity_EntityType::EMPTY;
+				delete model;
+			}
+			LevelEditorEntity* levelEditorEntity = nullptr;
+			if (entityType == LevelEditorEntity_EntityType::MODEL) {
+				for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
+					auto levelEditorEntityCompare = level->getEntityLibrary()->getEntityAt(i);
+					if (levelEditorEntityCompare->getType() != LevelEditorEntity_EntityType::MODEL)
+						continue;
+
+					if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
+						levelEditorEntity = levelEditorEntityCompare;
+						delete model;
 						break;
 					}
 				}
-				if (haveName == true) {
-					modelName = modelNameTry;
-					break;
-				}
-			}
-		}
-		if (haveName == false) {
-			Console::println(
-				string(
-					"LevelFileImport::doImportFromModel(): Skipping model '" +
-					modelName +
-					"' as no name could be created for it."
-				)
-			 );
-			continue;
-		}
-		auto model = new Model(
-			modelPathName,
-			fileName + "-" + modelName,
-			upVector,
-			rotationOrder,
-			nullptr
-		);
-		model->getImportTransformationsMatrix().set(levelModel->getImportTransformationsMatrix());
-		float importFixScale = 1.0f;
-		Vector3 translation, scale, rotation;
-		Vector3 xAxis, yAxis, zAxis, tmpAxis;
-		Matrix4x4 groupTransformationsMatrix;
-		groupTransformationsMatrix.set(group->getTransformationsMatrix());
-		groupTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
-		groupTransformationsMatrix.getTranslation(translation);
-		groupTransformationsMatrix.getScale(scale);
-		xAxis.normalize();
-		yAxis.normalize();
-		zAxis.normalize();
-		groupTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
-		if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f) ||
-			(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis, tmpAxis), yAxis) < 0.0f)) {
-			xAxis.scale(-1.0f);
-			yAxis.scale(-1.0f);
-			zAxis.scale(-1.0f);
-			groupTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
-			scale.scale(-1.0f);
-		}
-		groupTransformationsMatrix.computeEulerAngles(rotation);
-		modelImportRotationMatrix.multiply(scale, scale);
-		modelImportRotationMatrix.multiply(rotation, rotation);
-		model->getImportTransformationsMatrix().multiply(translation, translation);
-
-		ModelHelper::cloneGroup(group, model);
-		if (model->getSubGroups()->begin() != model->getSubGroups()->end()) {
-			model->getSubGroups()->begin()->second->getTransformationsMatrix().identity();
-		}
-		model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
-		ModelHelper::prepareForIndexedRendering(model);
-		// scale up model if dimension too less, this occurres with importing FBX that was exported by UE
-		// TODO: maybe make this conditional
-		{
-			auto width = model->getBoundingBox()->getDimensions().getX();
-			auto height = model->getBoundingBox()->getDimensions().getY();
-			auto depth = model->getBoundingBox()->getDimensions().getZ();
-			if (width < 0.2f && height < 0.2f && depth < 0.2f) {
-				if (width > Math::EPSILON && width < height && width < depth) {
-					importFixScale = 1.0f / width / 5.0f;
-				} else
-				if (height > Math::EPSILON && height < width && height < depth) {
-					importFixScale = 1.0f / height / 5.0f;
-				} else
-				if (depth > Math::EPSILON) {
-					importFixScale = 1.0f / depth / 5.0f;
-				}
-			}
-			model->getImportTransformationsMatrix().scale(importFixScale);
-			model->getBoundingBox()->getMin().scale(importFixScale);
-			model->getBoundingBox()->getMax().scale(importFixScale);
-			model->getBoundingBox()->update();
-			scale.scale(1.0f / importFixScale);
-		}
-		auto entityType = LevelEditorEntity_EntityType::MODEL;
-		ModelStatistics modelStatistics;
-		ModelUtilities::computeModelStatistics(model, &modelStatistics);
-		if (modelStatistics.opaqueFaceCount == 0 && modelStatistics.transparentFaceCount == 0) {
-			entityType = LevelEditorEntity_EntityType::EMPTY;
-			delete model;
-		}
-		LevelEditorEntity* levelEditorEntity = nullptr;
-		if (entityType == LevelEditorEntity_EntityType::MODEL) {
-			for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
-				auto levelEditorEntityCompare = level->getEntityLibrary()->getEntityAt(i);
-				if (levelEditorEntityCompare->getType() != LevelEditorEntity_EntityType::MODEL)
-					continue;
-
-				if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
-					levelEditorEntity = levelEditorEntityCompare;
+				if (levelEditorEntity == nullptr) {
+					auto modelFileName = meshGroup.name + ".tm";
+					TMWriter::write(
+						model,
+						modelPathName,
+						modelFileName
+					  );
 					delete model;
-					break;
+					levelEditorEntity = entityLibrary->addModel(
+						groupIdx++,
+						meshGroup.name,
+						meshGroup.name,
+						modelPathName,
+						modelFileName,
+						Vector3()
+					);
 				}
-			}
-			if (levelEditorEntity == nullptr) {
-				auto modelFileName = modelName + ".tm";
-				TMWriter::write(
-					model,
-					modelPathName,
-					modelFileName
-				  );
+			} else
+			if (entityType == LevelEditorEntity_EntityType::EMPTY) {
+				if (emptyEntity == nullptr) {
+					emptyEntity = entityLibrary->addEmpty(groupIdx++, "Default Empty", "");
+				}
+				levelEditorEntity = emptyEntity;
+			} else {
+				Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
 				delete model;
-				levelEditorEntity = entityLibrary->addModel(
-					groupIdx++,
-					modelName,
-					modelName,
-					modelPathName,
-					modelFileName,
-					Vector3()
-				);
+				continue;
 			}
-		} else
-		if (entityType == LevelEditorEntity_EntityType::EMPTY) {
-			if (emptyEntity == nullptr) {
-				emptyEntity = entityLibrary->addEmpty(groupIdx++, "Default Empty", "");
-			}
-			levelEditorEntity = emptyEntity;
-		} else {
-			Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
-			delete model;
-			continue;
+			Transformations levelEditorObjectTransformations;
+			levelEditorObjectTransformations.setTranslation(translation);
+			levelEditorObjectTransformations.addRotation(rotationOrder->getAxis0(), rotation.getArray()[rotationOrder->getAxis0VectorIndex()]);
+			levelEditorObjectTransformations.addRotation(rotationOrder->getAxis1(), rotation.getArray()[rotationOrder->getAxis1VectorIndex()]);
+			levelEditorObjectTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
+			levelEditorObjectTransformations.setScale(scale);
+			levelEditorObjectTransformations.update();
+			auto object = new LevelEditorObject(
+				meshGroup.id,
+				meshGroup.id,
+				levelEditorObjectTransformations,
+				levelEditorEntity
+			);
+			level->addObject(object);
 		}
-		Transformations levelEditorObjectTransformations;
-		levelEditorObjectTransformations.setTranslation(translation);
-		levelEditorObjectTransformations.addRotation(rotationOrder->getAxis0(), rotation.getArray()[rotationOrder->getAxis0VectorIndex()]);
-		levelEditorObjectTransformations.addRotation(rotationOrder->getAxis1(), rotation.getArray()[rotationOrder->getAxis1VectorIndex()]);
-		levelEditorObjectTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
-		levelEditorObjectTransformations.setScale(scale);
-		levelEditorObjectTransformations.update();
-		auto object = new LevelEditorObject(
-			groupId,
-			groupId,
-			levelEditorObjectTransformations,
-			levelEditorEntity
-		);
-		level->addObject(object);
 	}
 
 	// export to tl

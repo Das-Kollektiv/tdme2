@@ -630,6 +630,7 @@ MAIN_SRCS = \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
+	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)

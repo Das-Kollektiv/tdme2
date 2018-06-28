@@ -1,16 +1,22 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
+#include <tdme/engine/fileio/models/ModelFileIOException.h>
+#include <tdme/engine/model/Group.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <ext/jsonbox/JsonException.h>
 
 using std::string;
+using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::engine::model::Group;
+using tdme::math::Matrix4x4;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::os::filesystem::FileSystemException;
 
@@ -60,4 +66,20 @@ public:
 	 */
 	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
 
+private:
+	struct LevelEditorEntityMeshGroup {
+		string id;
+		string name;
+		Matrix4x4 transformationsMatrix;
+		Group* group;
+	};
+
+	/**
+	 * Determine mesh groups in group hierarchy
+	 * @param level
+	 * @param group
+	 * @param parent transformations matrix
+	 * @param mesh groups
+	 */
+	static void determineMeshGroups(LevelEditorLevel* level, Group* group, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups);
 };
