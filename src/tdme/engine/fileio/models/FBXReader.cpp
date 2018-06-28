@@ -115,6 +115,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	// process nodes
 	processScene(fbxScene, model, pathName);
 
+	//
 	Console::println("FBXReader::read(): setting up animations");
 
 	// parse animations stacks
@@ -176,6 +177,9 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
         frameOffset+= endFrame - startFrame + 1;
 	}
 	FbxArrayDelete(fbxAnimStackNameArray);
+
+	//
+	Console::println("FBXReader::read(): destroying FBX SDK");
 
 	// destroy the importer
 	if (fbxImporter != nullptr) fbxImporter->Destroy();
@@ -408,13 +412,12 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 							static_cast<float>(fbxDouble3.Get()[0]),
 							static_cast<float>(fbxDouble3.Get()[1]),
 							static_cast<float>(fbxDouble3.Get()[2]),
-							model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER?
-								(
-									1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
-										1.0f:
-										1.0f - static_cast<float>(fbxDouble)
-								):
-								1.0f - static_cast<float>(fbxDouble)
+							// TODO: I am not sure about this here, but it seem to work
+							(
+								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+									1.0f:
+									1.0f - static_cast<float>(fbxDouble)
+							)
 						)
 					);
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
@@ -460,7 +463,12 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 							static_cast<float>(fbxDouble3.Get()[0]),
 							static_cast<float>(fbxDouble3.Get()[1]),
 							static_cast<float>(fbxDouble3.Get()[2]),
-							1.0f - static_cast<float>(fbxDouble)
+							// TODO: I am not sure about this here, but it seem to work
+							(
+								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+									1.0f:
+									1.0f - static_cast<float>(fbxDouble)
+							)
 						)
 					);
 					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Emissive;
