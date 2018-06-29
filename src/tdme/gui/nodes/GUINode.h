@@ -18,6 +18,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Flow.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -321,6 +322,17 @@ public:
 	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
 
 	/** 
+	 * Create scale 9 grid
+	 * @param all
+	 * @param left
+	 * @param top
+	 * @param right
+	 * @param bottom
+	 * @return scale 9 grid
+	 */
+	static GUINode_Scale9Grid createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
+
+	/**
 	 * Create conditions
 	 * @param conditions
 	 */

@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
@@ -21,6 +22,7 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -83,7 +85,8 @@ protected:
 		const GUINodeConditions& hideOn,
 		const string& src,
 		const GUIColor& effectColorMul,
-		const GUIColor& effectColorAdd
+		const GUIColor& effectColorAdd,
+		const GUINode_Scale9Grid& scale9Grid
 	) throw(GUIParserException);
 
 public:
@@ -97,4 +100,5 @@ private:
 	void init();
 
 	Matrix2D3x3 textureMatrix;
+	GUINode_Scale9Grid scale9Grid;
 };

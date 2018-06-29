@@ -20,6 +20,7 @@
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
@@ -52,6 +53,7 @@ using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
@@ -335,6 +337,20 @@ GUINode_Padding GUINode::createPadding(const string& allPadding, const string& l
 	padding.right = getRequestedPixelValue(right, padding.right);
 	padding.bottom = getRequestedPixelValue(bottom, padding.bottom);
 	return padding;
+}
+
+GUINode_Scale9Grid GUINode::createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException)
+{
+	GUINode_Scale9Grid scale9Grid;
+	scale9Grid.left = getRequestedPixelValue(all, 0);
+	scale9Grid.top = getRequestedPixelValue(all, 0);
+	scale9Grid.right = getRequestedPixelValue(all, 0);
+	scale9Grid.bottom = getRequestedPixelValue(all, 0);
+	scale9Grid.left = getRequestedPixelValue(left, scale9Grid.left);
+	scale9Grid.top = getRequestedPixelValue(top, scale9Grid.top);
+	scale9Grid.right = getRequestedPixelValue(right, scale9Grid.right);
+	scale9Grid.bottom = getRequestedPixelValue(bottom, scale9Grid.bottom);
+	return scale9Grid;
 }
 
 GUINodeConditions GUINode::createConditions(const string& conditions)

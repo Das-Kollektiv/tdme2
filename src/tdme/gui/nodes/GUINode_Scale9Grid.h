@@ -4,11 +4,11 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 
 /** 
- * Padding
+ * Scale9Grid definitions
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::gui::nodes::GUINode_Padding
+struct tdme::gui::nodes::GUINode_Scale9Grid
 {
 
 	int32_t left {  };

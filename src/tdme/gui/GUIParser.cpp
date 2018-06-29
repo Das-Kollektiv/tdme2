@@ -454,7 +454,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src")))),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
-					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD)
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-bottom")))
+					)
 				);
 				guiParentNode->addSubNode(guiImageNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {

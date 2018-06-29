@@ -30,6 +30,7 @@ namespace nodes {
 			struct GUINode_Padding;
 			struct GUINode_RequestedConstraints;
 			class GUINode_RequestedConstraints_RequestedConstraintsType;
+			struct GUINode_Scale9Grid;
 			class GUIPanelNode;
 			class GUIParentNode;
 			class GUIParentNode_Overflow;
