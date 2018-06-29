@@ -229,9 +229,10 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	level->update();
 }
 
-void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups) {
+void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups) {
 	auto entityLibrary = level->getEntityLibrary();
 	auto groupId = group->getId();
+	if (parentName.length() > 0) groupId = parentName + "." + groupId;
 	auto modelName = groupId;
 	modelName = StringUtils::replaceAll(modelName, "[-_]{1}[0-9]+$", "");
 	modelName = StringUtils::replaceAll(modelName, "[0-9]+$", "");
@@ -282,7 +283,7 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	if (group->getVertices()->size() == 0 && group->getSubGroups()->size() > 0) {
 		// ok, check sub meshes
 		for (auto subGroupIt: *group->getSubGroups()) {
-			determineMeshGroups(level, subGroupIt.second, transformationsMatrix.clone(), meshGroups);
+			determineMeshGroups(level, subGroupIt.second, groupId, transformationsMatrix.clone(), meshGroups);
 		}
 	} else {
 		// add to group meshes, even if empty as its a empty :D
@@ -323,7 +324,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
 	for (auto groupIt: *levelModel->getSubGroups()) {
 		vector<LevelEditorEntityMeshGroup> meshGroups;
-		determineMeshGroups(level, groupIt.second, (Matrix4x4()).identity(), meshGroups);
+		determineMeshGroups(level, groupIt.second, "", (Matrix4x4()).identity(), meshGroups);
 		for (auto& meshGroup: meshGroups) {
 			auto model = new Model(
 				modelPathName,

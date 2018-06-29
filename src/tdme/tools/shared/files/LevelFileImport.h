@@ -78,8 +78,9 @@ private:
 	 * Determine mesh groups in group hierarchy
 	 * @param level
 	 * @param group
+	 * @param parent node
 	 * @param parent transformations matrix
 	 * @param mesh groups
 	 */
-	static void determineMeshGroups(LevelEditorLevel* level, Group* group, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups);
+	static void determineMeshGroups(LevelEditorLevel* level, Group* group, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups);
 };
