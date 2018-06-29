@@ -259,7 +259,7 @@
 							src="resources/tests/gui/images/scale9GridTest.png" 
 							horizontal-align="center" 
 							vertical-align="center"
-							scale9grid="125" 
+							scale9="125" 
 						/>
 					</layout>
 				</tab-content>

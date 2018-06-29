@@ -146,6 +146,13 @@ GUIScreenNode* GUIParser::parse(const string& xml) throw (GUIParserException)
 		),
 		GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image"))),
+		GUINode::createScale9Grid(
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-left"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-top"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-right"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-bottom")))
+		),
 		GUINode::createBorder(
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border-left"))),
@@ -220,6 +227,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor("#F0F0F0")),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -273,6 +287,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -324,6 +345,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -375,6 +403,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -431,6 +466,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -456,11 +498,11 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
-						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-left"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-top"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-right"))),
-						string(AVOID_NULLPTR_STRING(node->Attribute("scale9grid-bottom")))
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-bottom")))
 					)
 				);
 				guiParentNode->addSubNode(guiImageNode);
@@ -490,6 +532,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -542,6 +591,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -596,6 +652,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -648,6 +711,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
 					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),

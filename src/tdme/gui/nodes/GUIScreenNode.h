@@ -36,6 +36,7 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
@@ -170,6 +171,7 @@ protected:
 	 * @param requested constraints
 	 * @param background color
 	 * @param background image
+	 * @param background image scale 9 grid
 	 * @þaram border
 	 * @param padding
 	 * @param show on
@@ -186,6 +188,7 @@ protected:
 		const GUINode_RequestedConstraints& requestedConstraints,
 		const GUIColor& backgroundColor,
 		const string& backgroundImage,
+		const GUINode_Scale9Grid& backgroundImageScale9Grid,
 		const GUINode_Border& border,
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,

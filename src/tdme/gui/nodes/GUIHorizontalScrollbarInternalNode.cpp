@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 
@@ -22,6 +23,7 @@ using tdme::gui::nodes::GUIHorizontalScrollbarInternalController_State;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::renderer::GUIRenderer;
 
@@ -34,6 +36,7 @@ GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(
 	const GUINode_RequestedConstraints& requestedConstraints,
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
+	const GUINode_Scale9Grid& backgroundImageScale9Grid,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
@@ -42,7 +45,7 @@ GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(
 	const GUIColor& barColorMouseOver,
 	const GUIColor& barColorDragging
 	):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
 {
 	this->controller = new GUIHorizontalScrollbarInternalController(this);
 	this->barColorNone = barColorNone;

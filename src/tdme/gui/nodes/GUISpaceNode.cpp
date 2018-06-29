@@ -24,12 +24,13 @@ GUISpaceNode::GUISpaceNode(
 	const GUINode_RequestedConstraints& requestedConstraints,
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
+	const GUINode_Scale9Grid& backgroundImageScale9Grid,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn
 ):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
 {
 }
 

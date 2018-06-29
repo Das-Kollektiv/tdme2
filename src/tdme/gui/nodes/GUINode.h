@@ -78,6 +78,7 @@ protected:
 	GUIColor backgroundColor;
 	Texture* backgroundTexture;
 	int32_t backgroundTextureId;
+	GUINode_Scale9Grid backgroundImageScale9Grid;
 	GUINode_Padding padding;
 	GUINode_Border border;
 	GUINodeConditions showOn;
@@ -204,6 +205,7 @@ protected:
 		const GUINode_RequestedConstraints& requestedConstraints,
 		const GUIColor& backgroundColor,
 		const string& backgroundImage,
+		const GUINode_Scale9Grid& backgroundImageScale9Grid,
 		const GUINode_Border& border,
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,

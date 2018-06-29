@@ -24,13 +24,14 @@ GUIPanelNode::GUIPanelNode(
 	const GUINode_RequestedConstraints& requestedConstraints,
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
+	const GUINode_Scale9Grid& backgroundImageScale9Grid,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
 	GUILayoutNode_Alignment* alignment
 ) throw (GUIParserException) :
-	GUILayoutNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn, alignment)
+	GUILayoutNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn, alignment)
 {
 }
 

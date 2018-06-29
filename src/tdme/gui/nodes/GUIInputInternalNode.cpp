@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -29,6 +30,7 @@ using tdme::gui::nodes::GUIInputInternalController;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -48,6 +50,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const GUINode_RequestedConstraints& requestedConstraints,
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
+	const GUINode_Scale9Grid& backgroundImageScale9Grid,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
@@ -58,7 +61,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const MutableString& text,
 	int32_t maxLength
 	) throw (Exception):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);

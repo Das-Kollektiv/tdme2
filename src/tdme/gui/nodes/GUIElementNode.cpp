@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -30,6 +31,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
@@ -48,6 +50,7 @@ GUIElementNode::GUIElementNode(
 	const GUINode_RequestedConstraints& requestedConstraints,
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
+	const GUINode_Scale9Grid& backgroundImageScaleGrid,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
@@ -59,7 +62,7 @@ GUIElementNode::GUIElementNode(
 	bool focusable,
 	bool ignoreEvents)
 	throw (GUIParserException) :
-	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn),
+	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, border, padding, showOn, hideOn),
 	activeConditions(this)
 {
 	init();

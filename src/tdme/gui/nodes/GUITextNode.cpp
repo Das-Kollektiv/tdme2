@@ -8,6 +8,7 @@
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/MutableString.h>
@@ -21,6 +22,7 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::renderer::GUIFont;
 using tdme::utils::Exception;
 using tdme::utils::MutableString;
@@ -34,6 +36,7 @@ GUITextNode::GUITextNode(
 	const GUINode_RequestedConstraints& requestedConstraints,
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
+	const GUINode_Scale9Grid& backgroundImageScale9Grid,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
@@ -42,7 +45,7 @@ GUITextNode::GUITextNode(
 	const string& color,
 	const MutableString& text
 ) throw(Exception):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
