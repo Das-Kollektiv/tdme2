@@ -158,8 +158,8 @@ BatchVBORendererTriangles* Object3DVBORenderer::acquireTrianglesBatchVBORenderer
 		if (batchVBORenderer->acquire()) return batchVBORenderer;
 
 	}
-	// nope
 	Console::println(string("Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"));
+	// nope
 	return nullptr;
 }
 
@@ -642,7 +642,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					}
 
 					// limit objects to render to INSTANCEDRENDERING_OBJECTS_MAX
-					if (objectsToRender.size() == INSTANCEDRENDERING_OBJECTS_MAX) {
+					if (fbMvMatrices.getPosition() / 16 == INSTANCEDRENDERING_OBJECTS_MAX) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
