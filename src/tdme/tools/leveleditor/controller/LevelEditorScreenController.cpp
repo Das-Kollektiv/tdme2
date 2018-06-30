@@ -260,16 +260,20 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 		"<scrollarea-vertical id=\"" +
 		objectsListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	for (int i = 0; i < level->getObjectCount(); i++) {
-		auto objectId = level->getObjectAt(i)->getId();
-		objectsListBoxSubNodesXML =
-			objectsListBoxSubNodesXML +
-			"<selectbox-multiple-option text=\"" +
-			GUIParser::escapeQuotes(objectId) +
-			"\" value=\"" +
-			GUIParser::escapeQuotes(objectId) +
-			"\" " +
-			"/>\n";
+	if (level->getObjectCount() > 100000) {
+		Console::println("LevelEditorScreenController::setObjectListbox(): too many objects: not creating list");
+	} else {
+		for (int i = 0; i < level->getObjectCount(); i++) {
+			auto objectId = level->getObjectAt(i)->getId();
+			objectsListBoxSubNodesXML =
+				objectsListBoxSubNodesXML +
+				"<selectbox-multiple-option text=\"" +
+				GUIParser::escapeQuotes(objectId) +
+				"\" value=\"" +
+				GUIParser::escapeQuotes(objectId) +
+				"\" " +
+				"/>\n";
+		}
 	}
 	objectsListBoxSubNodesXML =
 		objectsListBoxSubNodesXML +
