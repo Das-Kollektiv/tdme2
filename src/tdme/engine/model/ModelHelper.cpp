@@ -662,3 +662,28 @@ void ModelHelper::partition(Model* model, const Transformations& transformations
 		ModelHelper::prepareForIndexedRendering(partitionModel);
 	}
 }
+
+void ModelHelper::shrinkToFit(Group* group) {
+	for (auto& facesEntity: *group->getFacesEntities()) {
+		facesEntity.getFaces()->shrink_to_fit();
+	}
+
+	group->getFacesEntities()->shrink_to_fit();
+	group->getVertices()->shrink_to_fit();
+	group->getNormals()->shrink_to_fit();
+	group->getTextureCoordinates()->shrink_to_fit();
+	group->getTangents()->shrink_to_fit();
+	group->getBitangents()->shrink_to_fit();
+
+	// do child groups
+	for (auto groupIt: *group->getSubGroups()) {
+		shrinkToFit(groupIt.second);
+	}
+
+}
+
+void ModelHelper::shrinkToFit(Model* model) {
+	for (auto groupIt: *model->getSubGroups()) {
+		shrinkToFit(groupIt.second);
+	}
+}

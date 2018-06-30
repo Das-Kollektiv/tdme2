@@ -89,26 +89,6 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 	transformationsMatrix.set(sourceGroup->getTransformationsMatrix());
 	transformationsMatrix.multiply(parentTransformationsMatrix);
 
-	Vector3 vertex0;
-	Vector3 vertex1;
-	Vector3 vertex2;
-	Vector3 normal0;
-	Vector3 normal1;
-	Vector3 normal2;
-	TextureCoordinate textureCoordinate0;
-	TextureCoordinate textureCoordinate1;
-	TextureCoordinate textureCoordinate2;
-	Vector3 tangent0;
-	Vector3 tangent1;
-	Vector3 tangent2;
-	Vector3 bitangent0;
-	Vector3 bitangent1;
-	Vector3 bitangent2;
-
-	Vector3 vertex0Transformed;
-	Vector3 vertex1Transformed;
-	Vector3 vertex2Transformed;
-
 	// create group in combined model
 	auto combinedModelGroup = combinedModel->getGroupById(sourceGroup->getId());
 	if (combinedModelGroup == nullptr) {
@@ -124,6 +104,29 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 			(*combinedModelGroup->getParentGroup()->getSubGroups())[combinedModelGroup->getId()] = combinedModelGroup;
 		}
 		(*combinedModel->getGroups())[combinedModelGroup->getId()] = combinedModelGroup;
+	}
+
+	// add vertices and such
+	auto combinedModelGroupVerticesIdx = combinedModelGroup->getVertices()->size();
+	auto combinedModelGroupNormalsIdx = combinedModelGroup->getNormals()->size();
+	auto combinedModelGroupTextureCoordinatesIdx = combinedModelGroup->getTextureCoordinates()->size();
+	auto combinedModelGroupTangentsIdx = combinedModelGroup->getTangents()->size();
+	auto combinedModelGroupBitangentsIdx = combinedModelGroup->getBitangents()->size();
+	Vector3 tmpVector3;
+	for (auto vertex: *sourceGroup->getVertices()) {
+		combinedModelGroup->getVertices()->push_back(transformationsMatrix.multiply(vertex, tmpVector3));
+	}
+	for (auto normal: *sourceGroup->getNormals()) {
+		combinedModelGroup->getNormals()->push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
+	}
+	for (auto textureCoordinate: *sourceGroup->getTextureCoordinates()) {
+		combinedModelGroup->getTextureCoordinates()->push_back(textureCoordinate);
+	}
+	for (auto tangent: *sourceGroup->getTangents()) {
+		combinedModelGroup->getTangents()->push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
+	}
+	for (auto bitangent: *sourceGroup->getBitangents()) {
+		combinedModelGroup->getBitangents()->push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
 	}
 
 	//
@@ -158,107 +161,50 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 		// add faces
 		for (auto& face: *facesEntity.getFaces()) {
 			// get face vertices and such
-			auto& vertexIndices = *face.getVertexIndices();
-			auto& normalIndices = *face.getNormalIndices();
-			auto& textureCoordinatesIndices = *face.getTextureCoordinateIndices();
-			auto& tangentIndices = *face.getTangentIndices();
-			auto& bitangentIndices = *face.getBitangentIndices();
-			vertex0.set((*sourceGroup->getVertices())[vertexIndices[0]]);
-			vertex1.set((*sourceGroup->getVertices())[vertexIndices[1]]);
-			vertex2.set((*sourceGroup->getVertices())[vertexIndices[2]]);
-			transformationsMatrix.multiply(vertex0, vertex0);
-			transformationsMatrix.multiply(vertex1, vertex1);
-			transformationsMatrix.multiply(vertex2, vertex2);
-			normal0.set((*sourceGroup->getNormals())[normalIndices[0]]);
-			normal1.set((*sourceGroup->getNormals())[normalIndices[1]]);
-			normal2.set((*sourceGroup->getNormals())[normalIndices[2]]);
-			transformationsMatrix.multiplyNoTranslation(normal0, normal0);
-			transformationsMatrix.multiplyNoTranslation(normal1, normal1);
-			transformationsMatrix.multiplyNoTranslation(normal2, normal2);
-			if (haveTextureCoordinates == true) {
-				textureCoordinate0.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[0]]);
-				textureCoordinate1.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[1]]);
-				textureCoordinate2.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[2]]);
-			}
-			if (haveTangentsBitangents == true) {
-				tangent0.set((*sourceGroup->getTangents())[tangentIndices[0]]);
-				tangent1.set((*sourceGroup->getTangents())[tangentIndices[1]]);
-				tangent2.set((*sourceGroup->getTangents())[tangentIndices[2]]);
-				transformationsMatrix.multiplyNoTranslation(tangent0, tangent0);
-				transformationsMatrix.multiplyNoTranslation(tangent1, tangent1);
-				transformationsMatrix.multiplyNoTranslation(tangent2, tangent2);
-				bitangent0.set((*sourceGroup->getBitangents())[bitangentIndices[0]]);
-				bitangent1.set((*sourceGroup->getBitangents())[bitangentIndices[1]]);
-				bitangent2.set((*sourceGroup->getBitangents())[bitangentIndices[2]]);
-				transformationsMatrix.multiplyNoTranslation(bitangent0, bitangent0);
-				transformationsMatrix.multiplyNoTranslation(bitangent1, bitangent1);
-				transformationsMatrix.multiplyNoTranslation(bitangent2, bitangent2);
-			}
+			auto& faceVertexIndices = *face.getVertexIndices();
+			auto& faceNormalIndices = *face.getNormalIndices();
+			auto& faceTextureCoordinatesIndices = *face.getTextureCoordinateIndices();
+			auto& faceTangentIndices = *face.getTangentIndices();
+			auto& faceBitangentIndices = *face.getBitangentIndices();
 
-			// add vertices and such
-			auto verticesIdx = combinedModelGroup->getVertices()->size();
-			combinedModelGroup->getVertices()->push_back(vertex0);
-			combinedModelGroup->getVertices()->push_back(vertex1);
-			combinedModelGroup->getVertices()->push_back(vertex2);
-			combinedModelGroup->getNormals()->push_back(normal0);
-			combinedModelGroup->getNormals()->push_back(normal1);
-			combinedModelGroup->getNormals()->push_back(normal2);
-			if (haveTextureCoordinates == true) {
-				combinedModelGroup->getTextureCoordinates()->push_back(textureCoordinate0);
-				combinedModelGroup->getTextureCoordinates()->push_back(textureCoordinate1);
-				combinedModelGroup->getTextureCoordinates()->push_back(textureCoordinate2);
-			}
-			if (haveTangentsBitangents == true) {
-				combinedModelGroup->getTangents()->push_back(tangent0);
-				combinedModelGroup->getTangents()->push_back(tangent1);
-				combinedModelGroup->getTangents()->push_back(tangent2);
-				combinedModelGroup->getBitangents()->push_back(bitangent0);
-				combinedModelGroup->getBitangents()->push_back(bitangent1);
-				combinedModelGroup->getBitangents()->push_back(bitangent2);
-			}
+			//
 			combinedModelGroupFacesEntity->getFaces()->push_back(
 				Face(
 					combinedModelGroup,
-					verticesIdx + 0,
-					verticesIdx + 1,
-					verticesIdx + 2,
-					verticesIdx + 0,
-					verticesIdx + 1,
-					verticesIdx + 2
+					combinedModelGroupVerticesIdx + faceVertexIndices[0],
+					combinedModelGroupVerticesIdx + faceVertexIndices[1],
+					combinedModelGroupVerticesIdx + faceVertexIndices[2],
+					combinedModelGroupNormalsIdx + faceNormalIndices[0],
+					combinedModelGroupNormalsIdx + faceNormalIndices[1],
+					combinedModelGroupNormalsIdx + faceNormalIndices[2]
 				)
 			);
 			if (haveTextureCoordinates == true) {
 				(*combinedModelGroupFacesEntity->getFaces())[combinedModelGroupFacesEntity->getFaces()->size() - 1].setTextureCoordinateIndices(
-					verticesIdx + 0,
-					verticesIdx + 1,
-					verticesIdx + 2
+					combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[0],
+					combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[1],
+					combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[2]
 				);
 			}
 			if (haveTangentsBitangents == true) {
 				(*combinedModelGroupFacesEntity->getFaces())[combinedModelGroupFacesEntity->getFaces()->size() - 1].setTangentIndices(
-					verticesIdx + 0,
-					verticesIdx + 1,
-					verticesIdx + 2
+					combinedModelGroupTangentsIdx + faceTangentIndices[0],
+					combinedModelGroupTangentsIdx + faceTangentIndices[1],
+					combinedModelGroupTangentsIdx + faceTangentIndices[2]
 				);
 				(*combinedModelGroupFacesEntity->getFaces())[combinedModelGroupFacesEntity->getFaces()->size() - 1].setBitangentIndices(
-					verticesIdx + 0,
-					verticesIdx + 1,
-					verticesIdx + 2
+					combinedModelGroupBitangentsIdx + faceBitangentIndices[0],
+					combinedModelGroupBitangentsIdx + faceBitangentIndices[1],
+					combinedModelGroupBitangentsIdx + faceBitangentIndices[2]
 				);
 			}
 		}
-		combinedModelGroupFacesEntity->getFaces()->shrink_to_fit();
 	}
 
-	combinedModelGroup->getFacesEntities()->shrink_to_fit();
-	combinedModelGroup->getVertices()->shrink_to_fit();
-	combinedModelGroup->getNormals()->shrink_to_fit();
-	combinedModelGroup->getTextureCoordinates()->shrink_to_fit();
-	combinedModelGroup->getTangents()->shrink_to_fit();
-	combinedModelGroup->getBitangents()->shrink_to_fit();
-
+	// features
 	combinedModelGroup->determineFeatures();
 
+	// do child groups
 	for (auto groupIt: *sourceGroup->getSubGroups()) {
 		combineGroup(groupIt.second, transformationsMatrix, combinedModel);
 	}
@@ -297,10 +243,10 @@ void Object3DRenderGroup::updateRenderGroup() {
 		for (auto object: objects) {
 			combineObject(model, object->getTransformations(), combinedModel);
 		}
+		ModelHelper::shrinkToFit(combinedModel);
 		ModelHelper::createDefaultAnimation(combinedModel, 0);
 		ModelHelper::setupJoints(combinedModel);
 		ModelHelper::fixAnimationLength(combinedModel);
-		ModelHelper::prepareForIndexedRendering(combinedModel);
 		auto objectCombined = new Object3D(id, combinedModel);
 		objectCombined->initialize();
 		objectsCombined.push_back(objectCombined);

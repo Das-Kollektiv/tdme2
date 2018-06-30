@@ -163,6 +163,12 @@ private:
 	 */
 	static void partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix);
 
+	/**
+	 * Shrink to fit group
+	 * @param group
+	 */
+	static void shrinkToFit(Group* group);
+
 public:
 	/**
 	 * Partition model
@@ -171,4 +177,11 @@ public:
 	 * @param models position
 	 */
 	static void partition(Model* model, const Transformations& transformations, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition);
+
+	/**
+	 * Shrink to fit
+	 * @param model
+	 */
+	static void shrinkToFit(Model* model);
+
 };

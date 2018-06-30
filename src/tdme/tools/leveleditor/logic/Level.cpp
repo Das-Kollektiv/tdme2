@@ -330,6 +330,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 		}
 	}
 
+	// do render groups
 	for (auto itModel: renderGroupEntitiesByModelAndPartition) {
 		for (auto itPartition: itModel.second) {
 			auto object3DRenderGroup = new Object3DRenderGroup("tdme.rendergroup" + itModel.first + "." + itPartition.first);
