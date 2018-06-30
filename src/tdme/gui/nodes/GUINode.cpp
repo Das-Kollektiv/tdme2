@@ -468,14 +468,15 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 	}
 	if (backgroundTexture != nullptr) {
 		guiRenderer->bindTexture(backgroundTextureId);
-		if (backgroundImageScale9Grid.left == 0 &&
-			backgroundImageScale9Grid.right == 0 &&
-			backgroundImageScale9Grid.top == 0 &&
-			backgroundImageScale9Grid.bottom == 0) {
-			float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft;
-			float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop;
-			float width = getContentWidth();
-			float height = getContentHeight();
+		GUINode_Scale9Grid& scale9Grid = backgroundImageScale9Grid;
+		if (scale9Grid.left == 0 &&
+			scale9Grid.right == 0 &&
+			scale9Grid.top == 0 &&
+			scale9Grid.bottom == 0) {
+			float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;
+			float top = computedConstraints.top + computedConstraints.alignmentTop + border.top;
+			float width = computedConstraints.width - border.left - border.right;
+			float height = computedConstraints.height - border.top - border.bottom;
 			guiRenderer->addQuad(
 				((left) / (screenWidth / 2.0f)) - 1.0f,
 				((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -499,12 +500,40 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 				1.0f
 			);
 		} else {
+			auto scaleX = 1.0f;
+			auto scaleY = 1.0f;
+			// we have a scale here, because we have a axis without "scale9grid"
+			if (scale9Grid.top == 0 && scale9Grid.bottom == 0) {
+				scaleY = (float)getContentHeight() / (float)backgroundTexture->getHeight();
+				scaleX = scaleY;
+			} else
+			// we have a scale here, because we have a axis without "scale9grid"
+			if (scale9Grid.left == 0 && scale9Grid.right == 0) {
+				scaleX = (float)getContentWidth() / (float)backgroundTexture->getWidth();
+				scaleY = scaleX;
+			}
+			// we have no certain scale, take original image size
+			GUINode_Scale9Grid scaledScale9Grid;
+			scaledScale9Grid.left = static_cast<int>(scale9Grid.left * scaleX);
+			scaledScale9Grid.right = static_cast<int>(scale9Grid.right * scaleX);
+			scaledScale9Grid.top = static_cast<int>(scale9Grid.top * scaleY);
+			scaledScale9Grid.bottom = static_cast<int>(scale9Grid.bottom * scaleY);
+			float imageScreenLeft = computedConstraints.left + computedConstraints.alignmentLeft + border.left;;
+			float imageScreenTop = computedConstraints.top + computedConstraints.alignmentTop + border.top;;
+			float imageScreenScale9Left = imageScreenLeft + scaledScale9Grid.left;
+			float imageScreenScale9Top = imageScreenTop + scaledScale9Grid.top;
+			float imageScreenWidth = computedConstraints.width - border.left - border.right;
+			float imageScreenHeight = computedConstraints.height - border.top - border.bottom;
+			float imageScreenScale9Right = imageScreenLeft + imageScreenWidth - scaledScale9Grid.right;
+			float imageScreenScale9Bottom = imageScreenTop + imageScreenHeight - scaledScale9Grid.bottom;
+			float imageTextureWidth = backgroundTexture->getWidth();
+			float imageTextureHeight = backgroundTexture->getHeight();
 			// left top
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop;
-				float width = backgroundImageScale9Grid.left;
-				float height = backgroundImageScale9Grid.top;
+			if (scaledScale9Grid.left > 0 && scaledScale9Grid.top > 0) {
+				float left = imageScreenLeft;
+				float top = imageScreenTop;
+				float width = scaledScale9Grid.left;
+				float height = scaledScale9Grid.top;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -514,60 +543,60 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
+					1.0f / imageTextureWidth * scale9Grid.left,
 					0.0f,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					0.0f,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top
+					1.0f / imageTextureHeight * scale9Grid.top
 				);
 			}
 			// middle top
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + backgroundImageScale9Grid.left;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop;
-				float width = getContentWidth() - backgroundImageScale9Grid.left - backgroundImageScale9Grid.right;
-				float height = backgroundImageScale9Grid.top;
+			if (scaledScale9Grid.top > 0) {
+				float left = imageScreenScale9Left;
+				float top = imageScreenTop;
+				float width = imageScreenWidth - scaledScale9Grid.left - scaledScale9Grid.right;
+				float height = scaledScale9Grid.top;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
+					1.0f / imageTextureWidth * scale9Grid.left,
 					0.0f,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
 					0.0f,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * scale9Grid.top
 				);
 			}
 			// right top
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + getContentWidth() - backgroundImageScale9Grid.right;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop;
-				float width = backgroundImageScale9Grid.right;
-				float height = backgroundImageScale9Grid.top;
+			if (scaledScale9Grid.right > 0 && scaledScale9Grid.top > 0) {
+				float left = imageScreenScale9Right;
+				float top = imageScreenTop;
+				float width = scaledScale9Grid.right;
+				float height = scaledScale9Grid.top;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
 					0.0f,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -578,31 +607,31 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					1.0f,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * scale9Grid.top
 				);
 			}
 			// right bottom
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + getContentWidth() - backgroundImageScale9Grid.right;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + getContentHeight() - backgroundImageScale9Grid.bottom;
-				float width = backgroundImageScale9Grid.right;
-				float height = backgroundImageScale9Grid.top;
+			if (scaledScale9Grid.right > 0 && scaledScale9Grid.bottom > 0) {
+				float left = imageScreenScale9Right;
+				float top = imageScreenScale9Bottom;
+				float width = scaledScale9Grid.right;
+				float height = scaledScale9Grid.bottom;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					1.0f,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
@@ -611,60 +640,60 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
 					1.0f
 				);
 			}
 			// middle bottom
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + backgroundImageScale9Grid.left;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + getContentHeight() - backgroundImageScale9Grid.bottom;
-				float width = getContentWidth() - backgroundImageScale9Grid.left - backgroundImageScale9Grid.right;
-				float height = backgroundImageScale9Grid.bottom;
+			if (scaledScale9Grid.bottom > 0) {
+				float left = imageScreenScale9Left;
+				float top = imageScreenScale9Bottom;
+				float width = imageScreenWidth - scaledScale9Grid.left - scaledScale9Grid.right;
+				float height = scaledScale9Grid.bottom;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
 					1.0f,
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
+					1.0f / imageTextureWidth * scale9Grid.left,
 					1.0f
 				);
 			}
 			// left bottom
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + getContentHeight() - backgroundImageScale9Grid.bottom;
-				float width = backgroundImageScale9Grid.right;
-				float height = backgroundImageScale9Grid.top;
+			if (scaledScale9Grid.left > 0 && scaledScale9Grid.bottom > 0) {
+				float left = imageScreenLeft;
+				float top = imageScreenScale9Bottom;
+				float width = scaledScale9Grid.left;
+				float height = scaledScale9Grid.bottom;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					0.0f,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
+					1.0f / imageTextureWidth * scale9Grid.left,
 					1.0f,
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
@@ -674,90 +703,90 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 				);
 			}
 			// left middle
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + backgroundImageScale9Grid.top;
-				float width = backgroundImageScale9Grid.left;
-				float height = getContentHeight() - backgroundImageScale9Grid.top - backgroundImageScale9Grid.bottom;
+			if (scaledScale9Grid.left > 0) {
+				float left = imageScreenLeft;
+				float top = imageScreenScale9Top;
+				float width = scaledScale9Grid.left;
+				float height = imageScreenHeight - scaledScale9Grid.top - scaledScale9Grid.bottom;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					0.0f,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					0.0f,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom)
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom)
 				);
 			}
 			// right middle
-			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + getContentWidth() - backgroundImageScale9Grid.right;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + backgroundImageScale9Grid.top;
-				float width = backgroundImageScale9Grid.right;
-				float height = getContentHeight() - backgroundImageScale9Grid.top - backgroundImageScale9Grid.bottom;
+			if (scaledScale9Grid.right > 0) {
+				float left = imageScreenScale9Right;
+				float top = imageScreenScale9Top;
+				float width = scaledScale9Grid.right;
+				float height = imageScreenHeight - scaledScale9Grid.top - scaledScale9Grid.bottom;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					1.0f,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
 					1.0f,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom)
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom)
 				);
 			}
 			// center
 			{
-				float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + backgroundImageScale9Grid.left;
-				float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + backgroundImageScale9Grid.top;
-				float width = getContentWidth() - backgroundImageScale9Grid.left - backgroundImageScale9Grid.right;
-				float height = getContentHeight() - backgroundImageScale9Grid.top - backgroundImageScale9Grid.bottom;
+				float left = imageScreenScale9Left;
+				float top = imageScreenScale9Top;
+				float width = imageScreenWidth - scaledScale9Grid.left - scaledScale9Grid.right;
+				float height = imageScreenHeight - scaledScale9Grid.top - scaledScale9Grid.bottom;
 				guiRenderer->addQuad(
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * backgroundImageScale9Grid.top,
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * scale9Grid.top,
 					((left + width) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * (backgroundTexture->getWidth() - backgroundImageScale9Grid.right),
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom),
+					1.0f / imageTextureWidth * (imageTextureWidth - scale9Grid.right),
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom),
 					((left) / (screenWidth / 2.0f)) - 1.0f,
 					((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 					1.0f, 1.0f, 1.0f, 1.0f,
-					1.0f / backgroundTexture->getWidth() * backgroundImageScale9Grid.left,
-					1.0f / backgroundTexture->getHeight() * (backgroundTexture->getHeight() - backgroundImageScale9Grid.bottom)
+					1.0f / imageTextureWidth * scale9Grid.left,
+					1.0f / imageTextureHeight * (imageTextureHeight - scale9Grid.bottom)
 				);
 			}
 		}
