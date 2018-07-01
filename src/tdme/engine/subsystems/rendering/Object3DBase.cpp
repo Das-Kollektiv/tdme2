@@ -486,10 +486,22 @@ void Object3DBase::initialize()
 			if (usesMeshManager == true) {
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
-					object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, object3DGroup->group, &object3DGroup->object->transformationsMatrices, getSkinningGroupsMatrices(object3DGroup->group));
+					object3DGroup->mesh = Object3DGroupMesh::createMesh(
+						object3DGroup->renderer,
+						animationProcessingTarget,
+						object3DGroup->group,
+						&object3DGroup->object->transformationsMatrices,
+						getSkinningGroupsMatrices(object3DGroup->group)
+					);
 				}
 			} else {
-				object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, object3DGroup->group, &object3DGroup->object->transformationsMatrices, getSkinningGroupsMatrices(object3DGroup->group));
+				object3DGroup->mesh = Object3DGroupMesh::createMesh(
+					object3DGroup->renderer,
+					animationProcessingTarget,
+					object3DGroup->group,
+					&object3DGroup->object->transformationsMatrices,
+					getSkinningGroupsMatrices(object3DGroup->group)
+				);
 			}
 		}
 	}

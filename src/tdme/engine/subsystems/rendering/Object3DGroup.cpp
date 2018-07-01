@@ -98,15 +98,28 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 			object3DGroup->object = object3D;
 			object3DGroup->group = group;
 			object3DGroup->animated = animated;
+			object3DGroup->renderer = new Object3DGroupVBORenderer(object3DGroup);
 			if (useMeshManager == true) {
 				auto meshManager = Engine::getInstance()->getMeshManager();
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
-					object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, group, &object3D->transformationsMatrices, object3D->getSkinningGroupsMatrices(group));
+					object3DGroup->mesh = Object3DGroupMesh::createMesh(
+						object3DGroup->renderer,
+						animationProcessingTarget,
+						group,
+						&object3D->transformationsMatrices,
+						object3D->getSkinningGroupsMatrices(group)
+					);
 					meshManager->addMesh(object3DGroup->id, object3DGroup->mesh);
 				}
 			} else {
-				object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, group, &object3D->transformationsMatrices, object3D->getSkinningGroupsMatrices(group));
+				object3DGroup->mesh = Object3DGroupMesh::createMesh(
+					object3DGroup->renderer,
+					animationProcessingTarget,
+					group,
+					&object3D->transformationsMatrices,
+					object3D->getSkinningGroupsMatrices(group)
+				);
 			}
 			object3DGroup->textureMatricesByEntities.resize(group->getFacesEntities()->size());
 			for (auto& textureMatrix: object3DGroup->textureMatricesByEntities) textureMatrix.identity();
@@ -123,7 +136,6 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 				object3DGroup->materialNormalTextureIdsByEntities[j] = GLTEXTUREID_NONE;
 			}
 			// determine renderer
-			object3DGroup->renderer = new Object3DGroupVBORenderer(object3DGroup);
 			auto groupTransformationsMatrixIt = object3D->transformationsMatrices.find(group->getId());
 			object3DGroup->groupTransformationsMatrix = groupTransformationsMatrixIt != object3D->transformationsMatrices.end()?groupTransformationsMatrixIt->second:nullptr;
 		}
@@ -135,7 +147,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 void Object3DGroup::computeTransformations(vector<Object3DGroup*>* object3DGroups)
 {
 	for (auto object3DGroup : *object3DGroups) {
-		object3DGroup->mesh->computeTransformations(object3DGroup->group);
+		object3DGroup->mesh->computeTransformations();
 	}
 }
 

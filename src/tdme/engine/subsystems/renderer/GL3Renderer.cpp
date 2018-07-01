@@ -55,6 +55,7 @@ GL3Renderer::GL3Renderer()
 	FRONTFACE_CCW = GL_CCW;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
+	SHADER_COMPUTE_SHADER = GL_COMPUTE_SHADER;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 }
@@ -678,4 +679,52 @@ void GL3Renderer::checkGLError()
 	if (error != GL_NO_ERROR) {
 		Console::println(string("OpenGL Error: (" + to_string(error) + ") @:"));
 	}
+}
+
+void GL3Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+	// TODO: put me into paramters or something
+	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+	// TODO: put me into paramters or something
+	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+}
+
+void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_STATIC_READ);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+}
+
+void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_STATIC_READ);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+}
+
+void GL3Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObjectId);
+}
+
+void GL3Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferObjectId);
+}
+
+void GL3Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, bufferObjectId);
+}
+
+void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bufferObjectId);
+}
+
+void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bufferObjectId);
+}
+
+void GL3Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bufferObjectId);
+}
+
+void GL3Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
 }

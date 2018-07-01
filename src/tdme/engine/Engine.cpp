@@ -33,6 +33,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
@@ -40,6 +41,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
+#include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
@@ -91,6 +93,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
+using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::renderer::GUIRenderer;
@@ -115,6 +118,7 @@ ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
 ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
 ParticlesShader* Engine::particlesShader = nullptr;
+SkinningShader* Engine::skinningShader = nullptr;
 GUIShader* Engine::guiShader = nullptr;
 
 Engine::Engine() 
@@ -293,6 +297,10 @@ ParticlesShader* Engine::getParticlesShader()
 	return particlesShader;
 }
 
+SkinningShader* Engine::getSkinningShader() {
+	return skinningShader;
+}
+
 GUIShader* Engine::getGUIShader()
 {
 	return guiShader;
@@ -391,6 +399,7 @@ void Engine::reset()
 	}
 	partition->reset();
 	object3DVBORenderer->reset();
+	if (skinningShaderEnabled == true) skinningShader->reset();
 }
 
 void Engine::initialize()
@@ -411,8 +420,9 @@ void Engine::initialize(bool debug)
 		Console::println(string("TDME::Using GL3"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
+		skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+		animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 	}
 	// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
 	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
@@ -428,10 +438,11 @@ void Engine::initialize(bool debug)
 			Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 			renderer = new EngineGL2Renderer(this);
 		}
+		skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
+		animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 	}
 	// GLES2 on Linux
 	#elif (defined(__linux__) or defined(__FreeBSD__) or defined(__NetBSD__)) and (defined(__arm__) or defined(__aarch64__))
@@ -520,6 +531,15 @@ void Engine::initialize(bool debug)
 		shadowMapping = new ShadowMapping(this, renderer, object3DVBORenderer);
 	} else {
 		Console::println(string("TDME::Not using shadow mapping"));
+	}
+
+	// initialize skinning shader
+	if (skinningShaderEnabled == true) {
+		Console::println(string("TDME::Using skinning compute shader"));
+		skinningShader = new SkinningShader(renderer);
+		skinningShader->initialize();
+	} else {
+		Console::println(string("TDME::Not using skinning compute shader"));
 	}
 
 	// check if initialized
@@ -648,6 +668,11 @@ void Engine::computeTransformations()
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
+	}
+
+	// TODO: improve met
+	if (skinningShaderEnabled == true) {
+		skinningShader->unUseProgram();
 	}
 
 	//

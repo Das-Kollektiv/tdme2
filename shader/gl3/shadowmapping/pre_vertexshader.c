@@ -15,7 +15,7 @@ uniform mat3 textureMatrix;
 // will be passed to fragment shader
 out vec2 vsFragTextureUV;
 
-void main(){
+void main() {
 	// pass texture uv to fragment shader
 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 

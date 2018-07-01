@@ -6,12 +6,14 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
+#include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 
 using std::vector;
 
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::skinning::SkinningShader;
 
 /** 
  * Object 3D group render 
@@ -21,6 +23,7 @@ using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 class tdme::engine::subsystems::rendering::Object3DGroupVBORenderer final
 {
 	friend class Object3DVBORenderer;
+	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
 	Object3DGroup* object3DGroup {  };

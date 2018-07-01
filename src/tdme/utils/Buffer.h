@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/utils/fwd-tdme.h>

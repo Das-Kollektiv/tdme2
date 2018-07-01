@@ -64,7 +64,7 @@ else ifeq ($(OS), Linux)
 		# Linux, ARM
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+			src/tdme/engine/subsystems/renderer/GES2Renderer.cpp
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
 		# Linux, any other
@@ -220,6 +220,7 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp \
+	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \
 	src/tdme/gui/GUIParserException.cpp \
@@ -355,6 +356,7 @@ SRCS = \
 	src/tdme/tests/ThreadingTest_TestThread.cpp \
 	src/tdme/tests/UDPServerTest_UDPServer.cpp \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
+	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.cpp \
@@ -618,6 +620,7 @@ MAIN_SRCS = \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
+	src/tdme/tests/SkinningTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PivotTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \

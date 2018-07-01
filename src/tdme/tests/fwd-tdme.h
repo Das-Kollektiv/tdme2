@@ -16,5 +16,6 @@ namespace tests {
 		class PhysicsTest2;
 		class PhysicsTest3;
 		class PhysicsTest4;
+		class SkinningTest;
 }  // namespace tests
 }  // namespace tdme
