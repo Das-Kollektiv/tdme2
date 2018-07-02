@@ -70,7 +70,7 @@ void SkinningTest::display()
 	auto camLookAt = engine->getCamera()->getLookAt();
 	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
 	engine->getCamera()->setLookFrom(camLookFrom);
-	engine->getCamera()->setLookAt(camLookAt.add(engine->getCamera()->getLookFrom()));
+	engine->getCamera()->setLookAt(camLookFrom.clone().add(camLookAt.scale(25.0f)));
 	auto start = Time::getCurrentMillis();
 	engine->display();
 	auto end = Time::getCurrentMillis();
@@ -104,7 +104,7 @@ void SkinningTest::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(15.0f, 1.0f, 15.0f));
+	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(16.0f, 1.0f, 15.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
 	(*groundModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	(*groundModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
