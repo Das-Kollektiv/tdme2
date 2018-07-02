@@ -104,7 +104,7 @@ void SkinningTest::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(30.0f, 1.0f, 30.0f));
+	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(15.0f, 1.0f, 15.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
 	(*groundModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	(*groundModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -114,11 +114,12 @@ void SkinningTest::initialize()
 	engine->addEntity(entity);
 	auto character = ModelReader::read("resources/tests/models/mementoman", "mementoman.dae");
 	int characterIdx = 0;
-	for (float z = -30.0f; z < 30.0f; z+= 10.0f)
-	for (float x = -30.0f; x < 30.0f; x+= 10.0f) {
+	for (float z = -15.0f; z < 15.0f; z+= 2.5f)
+	for (float x = -15.0f; x < 15.0f; x+= 2.5f) {
 		auto entity = new Object3D("character." + to_string(characterIdx++), character);
 		entity->setTranslation(Vector3(x, 0.0f, z));
 		entity->update();
+		entity->setDynamicShadowingEnabled(true);
 		engine->addEntity(entity);
 	}
 }

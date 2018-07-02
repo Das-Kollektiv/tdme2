@@ -130,13 +130,14 @@ public:
 	void bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId);
 	void bindSkinningVerticesResultBufferObject(int32_t bufferObjectId);
 	void bindSkinningNormalsResultBufferObject(int32_t bufferObjectId);
+	void bindSkinningMatricesBufferObject(int32_t bufferObjectId);
 
 private:
 
 	/** 
 	 * Checks if GL error did occour 
 	 */
-	void checkGLError();
+	void checkGLError(int line);
 
 	// Generated
 

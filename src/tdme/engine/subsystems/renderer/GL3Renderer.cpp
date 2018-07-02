@@ -476,7 +476,7 @@ vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers)
 void GL3Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -495,7 +495,7 @@ void GL3Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size
 void GL3Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -673,31 +673,31 @@ void GL3Renderer::doneGuiMode()
 	glEnable(GL_CULL_FACE);
 }
 
-void GL3Renderer::checkGLError()
+void GL3Renderer::checkGLError(int line)
 {
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		Console::println(string("OpenGL Error: (" + to_string(error) + ") @:"));
+		Console::println(string("OpenGL Error: (" + to_string(error) + ") @: " + __FILE__ + ":" + to_string(line)));
 	}
 }
 
 void GL3Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	// TODO: put me into paramters or something
+	// TODO: fix correct barriers and put me into paramters or something
 	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 	glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
-	// TODO: put me into paramters or something
+	// TODO: fix correct barriers and put me into paramters or something
 	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 }
 
 void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_STATIC_READ);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
 }
 
 void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_STATIC_READ);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
 }
 
@@ -727,4 +727,8 @@ void GL3Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId)
 
 void GL3Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
+}
+
+void GL3Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
 }

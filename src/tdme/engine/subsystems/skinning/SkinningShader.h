@@ -33,7 +33,6 @@ private:
 
 	int32_t programId {  };
 	int32_t shaderId {  };
-	int32_t uniformSkinningJointsTransformationsMatrices { -1 };
 	int32_t uniformSkinningCount { -1 };
 	bool isRunning {  };
 	bool initialized {  };

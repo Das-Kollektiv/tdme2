@@ -1,34 +1,32 @@
 #version 430 core
 
-#define MAX_JOINTS	60
-
-// structs
-
 // layouts
-layout(local_size_x=16, local_size_y=1, local_size_z=1) in;
-layout(std430, binding=0) buffer InVertex { vec3 inVertex[]; };
-layout(std430, binding=1) buffer InNormal { vec3 inNormal[]; };
-layout(std430, binding=2) buffer InSkinningVertexJoints { int inSkinningVertexJoints[]; };
-layout(std430, binding=3) buffer InSkinningVertexJointIdxs { ivec4 inSkinningVertexJointIdxs[]; };
-layout(std430, binding=4) buffer InSkinningVertexJointWeights { vec4 inSkinningVertexJointWeights[]; };
-layout(std430, binding=5) buffer OutVertex { vec3 outVertex[]; };
-layout(std430, binding=6) buffer OutNormal { vec3 outNormal[]; };
+layout(local_size_x=16) in;
+layout(std430,binding=0) buffer InVertex { float inVertexFloatArray[]; };
+layout(std430,binding=1) buffer InNormal { float inNormalFloatArray[]; };
+layout(std430,binding=2) buffer InSkinningVertexJoints { int inSkinningVertexJoints[]; };
+layout(std430,binding=3) buffer InSkinningVertexJointIdxs { ivec4 inSkinningVertexJointIdxs[]; };
+layout(std430,binding=4) buffer InSkinningVertexJointWeights { vec4 inSkinningVertexJointWeights[]; };
+layout(std430,binding=5) buffer OutVertex { float outVertexFloatArray[]; };
+layout(std430,binding=6) buffer OutNormal { float outNormalFloatArray[]; };
+layout(std430,binding=7) buffer InSkinningJointsTransformationMatrices{ mat4 inSkinningJointsTransformationsMatrices[]; };
 
 // uniforms
 uniform int skinningCount;
-uniform mat4 skinningJointsTransformationsMatrices[MAX_JOINTS];
 
 void main() {
 	// TODO: tangents and bitangents
-	uint offset = gl_GlobalInvocationID.x;
+	int offset = int(gl_GlobalInvocationID.x);
 	if (offset < skinningCount) {
-		vec4 skinnedVertex = vec4(0.0, 0.0, 0.0, 0.0);
+		vec3 skinnedVertex = vec3(0.0, 0.0, 0.0);
 		vec3 skinnedNormal = vec3(0.0, 0.0, 0.0);
 		float totalWeights = 0.0;
+		vec3 inVertex = vec3(inVertexFloatArray[offset * 3 + 0], inVertexFloatArray[offset * 3 + 1], inVertexFloatArray[offset * 3 + 2]);
+		vec3 inNormal = vec3(inNormalFloatArray[offset * 3 + 0], inNormalFloatArray[offset * 3 + 1], inNormalFloatArray[offset * 3 + 2]);
 		for (int i = 0; i < inSkinningVertexJoints[offset]; i++) {
-			mat4 transformationsMatrix = skinningJointsTransformationsMatrices[inSkinningVertexJointIdxs[offset][i]];
-			skinnedVertex+= transformationsMatrix * vec4(inVertex[offset], 1.0) * inSkinningVertexJointWeights[offset][i];
-			skinnedNormal+= mat3(transformationsMatrix) * inNormal[offset] * inSkinningVertexJointWeights[offset][i];
+			mat4 transformationsMatrix = inSkinningJointsTransformationsMatrices[inSkinningVertexJointIdxs[offset][i]];
+			skinnedVertex+= (transformationsMatrix * vec4(inVertex, 1.0)).xyz * inSkinningVertexJointWeights[offset][i];
+			skinnedNormal+= (mat3(transformationsMatrix) * inNormal) * inSkinningVertexJointWeights[offset][i];
 			totalWeights+= inSkinningVertexJointWeights[offset][i];
 		}
 		if (totalWeights != 1.0) {
@@ -36,7 +34,11 @@ void main() {
 			skinnedVertex*= weightNormalized;
 			skinnedNormal*= weightNormalized;
 		}
-		outVertex[offset] = skinnedVertex.xyz;
-		outNormal[offset] = skinnedNormal;
+		outVertexFloatArray[offset * 3 + 0] = skinnedVertex.x;
+		outVertexFloatArray[offset * 3 + 1] = skinnedVertex.y;
+		outVertexFloatArray[offset * 3 + 2] = skinnedVertex.z;
+		outNormalFloatArray[offset * 3 + 0] = skinnedNormal.x;
+		outNormalFloatArray[offset * 3 + 1] = skinnedNormal.y;
+		outNormalFloatArray[offset * 3 + 2] = skinnedNormal.z;
 	}
 }

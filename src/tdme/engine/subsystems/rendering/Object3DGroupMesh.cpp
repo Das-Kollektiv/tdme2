@@ -145,7 +145,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* objec
 	mesh->recreatedBuffers = false;
 	// group transformations matrix
 	if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU ||
-		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING ||
+		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
 		auto transformationMatrixIt = transformationMatrices->find(group->getId());
 		// group transformations matrix
 		mesh->cGroupTransformationsMatrix = transformationMatrixIt != transformationMatrices->end()?transformationMatrixIt->second:nullptr;

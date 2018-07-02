@@ -77,10 +77,7 @@ void SkinningShader::initialize()
 	// link program
 	if (renderer->linkProgram(programId) == false) return;
 
-	// get uniforms
-	uniformSkinningJointsTransformationsMatrices = renderer->getProgramUniformLocation(programId, "skinningJointsTransformationsMatrices");
-	if (uniformSkinningJointsTransformationsMatrices == -1) return;
-
+	//
 	uniformSkinningCount = renderer->getProgramUniformLocation(programId, "skinningCount");
 	if (uniformSkinningCount == -1) return;
 
@@ -96,10 +93,6 @@ void SkinningShader::useProgram()
 
 void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 {
-	if (isRunning == false) {
-		useProgram();
-	}
-
 	// Hack: fix me
 	auto gl3Renderer = dynamic_cast<GL3Renderer*>(renderer);
 
@@ -107,7 +100,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	auto vboBaseIds = object3DGroupMesh->object3DGroupVBORenderer->vboBaseIds;
 	if (vboBaseIds == nullptr) return;
 
-	ModelSkinningCache* modelSkinningCacheCached;
+	ModelSkinningCache* modelSkinningCacheCached = nullptr;
 	auto group = object3DGroupMesh->group;
 	auto& vertices = *group->getVertices();
 	auto id = group->getModel()->getId() + "." + group->getId();
@@ -116,11 +109,11 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 		ModelSkinningCache modelSkinningCache;
 
 		auto skinning = group->getSkinning();
-		auto& jointsWeights = *skinning->getVerticesJointsWeights();
+		auto& verticesJointsWeights = *skinning->getVerticesJointsWeights();
 		auto& weights = *skinning->getWeights();
 
 		// vbo
-		auto vboManaged = Engine::getVBOManager()->addVBO(id + ".vbo", 5);
+		auto vboManaged = Engine::getVBOManager()->addVBO(id + ".vbo", 6);
 		modelSkinningCache.vboIds = vboManaged->getVBOGlIds();
 
 		// vertices
@@ -137,9 +130,9 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 			// vertices joints
 			auto ibVerticesJoints = ObjectBuffer::getByteBuffer(vertices.size() * 1 * sizeof(int))->asIntBuffer();
 			for (int groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
-				int vertexJoints = jointsWeights[groupVertexIndex].size();
+				int vertexJoints = verticesJointsWeights[groupVertexIndex].size();
 				// put number of joints
-				ibVerticesJoints.put(vertexJoints);
+				ibVerticesJoints.put((int)vertexJoints);
 			}
 			gl3Renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[2], ibVerticesJoints.getPosition() * sizeof(int), &ibVerticesJoints);
 		}
@@ -148,10 +141,11 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 			// vertices joints indices
 			auto ibVerticesVertexJointsIdxs = ObjectBuffer::getByteBuffer(vertices.size() * 4 * sizeof(float))->asIntBuffer();
 			for (int groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
-				int vertexJoints = jointsWeights[groupVertexIndex].size();
+				auto& vertexJointsWeight = verticesJointsWeights[groupVertexIndex];
 				// vertex joint idx 1..4
 				for (int i = 0; i < 4; i++) {
-					ibVerticesVertexJointsIdxs.put(vertexJoints > i?jointsWeights[groupVertexIndex][i].getJointIndex():-1);
+					auto jointIndex = i < vertexJointsWeight.size()?vertexJointsWeight[i].getJointIndex():-1;
+					ibVerticesVertexJointsIdxs.put((int)jointIndex);
 				}
 			}
 			gl3Renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[3], ibVerticesVertexJointsIdxs.getPosition() * sizeof(int), &ibVerticesVertexJointsIdxs);
@@ -161,10 +155,10 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 			// vertices joints weights
 			auto fbVerticesVertexJointsWeights = ObjectBuffer::getByteBuffer(vertices.size() * 4 * sizeof(float))->asFloatBuffer();
 			for (int groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
-				int vertexJoints = jointsWeights[groupVertexIndex].size();
+				auto& vertexJointsWeight = verticesJointsWeights[groupVertexIndex];
 				// vertex joint weight 1..4
 				for (int i = 0; i < 4; i++) {
-					fbVerticesVertexJointsWeights.put(static_cast<float>(vertexJoints > i?weights[jointsWeights[groupVertexIndex][i].getWeightIndex()]:0.0f));
+					fbVerticesVertexJointsWeights.put(static_cast<float>(i < vertexJointsWeight.size()?weights[vertexJointsWeight[i].getWeightIndex()]:0.0f));
 				}
 			}
 			gl3Renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[4], fbVerticesVertexJointsWeights.getPosition() * sizeof(float), &fbVerticesVertexJointsWeights);
@@ -177,37 +171,39 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 		modelSkinningCacheCached = &cacheIt->second;
 	}
 
+	// upload matrices
+	{
+		auto skinning = group->getSkinning();
+		auto skinningJoints = skinning->getJoints();
+		auto fbMatrices = ObjectBuffer::getByteBuffer(skinningJoints->size() * 16 * sizeof(float))->asFloatBuffer();
+		for (auto& joint: *skinningJoints) {
+			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());
+		}
+		gl3Renderer->uploadSkinningBufferObject((*modelSkinningCacheCached->vboIds)[5], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
+	}
+
 	// bind
 	gl3Renderer->bindSkinningVerticesBufferObject((*modelSkinningCacheCached->vboIds)[0]);
 	gl3Renderer->bindSkinningNormalsBufferObject((*modelSkinningCacheCached->vboIds)[1]);
 	gl3Renderer->bindSkinningVertexJointsBufferObject((*modelSkinningCacheCached->vboIds)[2]);
 	gl3Renderer->bindSkinningVertexJointIdxsBufferObject((*modelSkinningCacheCached->vboIds)[3]);
 	gl3Renderer->bindSkinningVertexJointWeightsBufferObject((*modelSkinningCacheCached->vboIds)[4]);
+	gl3Renderer->bindSkinningMatricesBufferObject((*modelSkinningCacheCached->vboIds)[5]);
 
 	// bind output / result buffers
 	gl3Renderer->bindSkinningVerticesResultBufferObject((*vboBaseIds)[1]);
 	gl3Renderer->bindSkinningNormalsResultBufferObject((*vboBaseIds)[2]);
 
-	// upload matrices
-	{
-		auto skinning = group->getSkinning();
-		auto skinningJoints = skinning->getJoints();
-		auto fbMatrices = ObjectBuffer::getByteBuffer(60 * 16 * sizeof(float))->asFloatBuffer();
-		for (auto& joint: *skinningJoints) {
-			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());
-		}
-		gl3Renderer->setProgramUniformFloatMatrices4x4(
-			uniformSkinningJointsTransformationsMatrices,
-			fbMatrices.getPosition() / 16,
-			&fbMatrices
-		);
-	}
+	useProgram();
 
 	// skinning count
 	gl3Renderer->setProgramUniformInteger(uniformSkinningCount, vertices.size());
 
 	// do it so
 	gl3Renderer->dispatchCompute((int)Math::ceil(vertices.size() / 16.0f), 1, 1);
+
+	//
+	unUseProgram();
 }
 
 void SkinningShader::unUseProgram()
