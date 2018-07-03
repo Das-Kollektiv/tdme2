@@ -85,7 +85,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
-		const string& src,
+		const string& source,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid
@@ -96,11 +96,28 @@ public:
 	int32_t getContentHeight() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
+
+	/**
+	 * Set image source
+	 * @param source
+	 */
+	void setSource(const string source);
+
+	/**
+	 * @return image source
+	 */
+	const string& getSource();
+
+	/**
+	 * Set texture matrix
+	 * @param texture matrix
+	 */
 	void setTextureMatrix(const Matrix2D3x3& textureMatrix);
 
 private:
 	void init();
 
+	string source;
 	Matrix2D3x3 textureMatrix;
 	GUINode_Scale9Grid scale9Grid;
 };
