@@ -14,8 +14,9 @@
 				<tab id="tab5" text="Input" />
 				<tab id="tab6" text="Scrollarea" />
 				<tab id="tab7" text="Sliders + Knob" />
-				<tab id="tab8" text="scale9Grid" />
-				<tab id="tab9" text="scale9Grid II" />
+				<tab id="tab8" text="scale9 I" />
+				<tab id="tab9" text="scale9 II" />
+				<tab id="tab10" text="Template" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
@@ -276,6 +277,9 @@
 							scale9-right="500"
 						/>
 					</layout>
+				</tab-content>
+				<tab-content tab-id="tab10" vertical-align="top">
+					<template src="resources/tests/gui/template.xml" my-text="Hello this is a template parameter" />
 				</tab-content>
 			</tabs-content>
 		</tabs>

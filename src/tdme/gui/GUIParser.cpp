@@ -751,6 +751,20 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					}
 					guiElementControllerInstalled = true;
 				}
+			} else
+			if (nodeTagName == "template") {
+				auto src = string(AVOID_NULLPTR_STRING(node->Attribute("src")));
+				map<string, string> attributes;
+				parseTemplate(
+					guiParentNode,
+					node,
+					FileSystem::getInstance()->getContentAsString(
+						FileSystem::getInstance()->getPathName(src),
+						FileSystem::getInstance()->getFileName(src)
+					),
+					attributes,
+					nullptr
+				);
 			} else {
 				auto nodeTagNameString = nodeTagName;
 				const auto guiElementIt = elements.find(nodeTagNameString);
@@ -761,36 +775,39 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						"'"
 					);
 				}
-				auto newGuiElementTemplate = guiElementIt->second->getTemplate();
-				for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
-					auto attributeKey = string(attribute->Name());
-					auto attributeValue = string(attribute->Value());
-					newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
-				}
-
-				auto newGuiElementAttributes = guiElementIt->second->getAttributes(guiParentNode->getScreenNode());
-				for (auto newGuiElementAttributesIt : *newGuiElementAttributes) {
-					auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
-					newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
-				}
-
-				newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$innerXml}", getInnerXml(node));
-				auto newGuiElementDocumentXML =  "<gui-element>\n" + newGuiElementTemplate + "</gui-element>\n";
-
-				TiXmlDocument newGuiElementDocument;
-				newGuiElementDocument.Parse((newGuiElementDocumentXML).c_str());
-				if (newGuiElementDocument.Error() == true) {
-					throw GUIParserException(
-						"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
-					);
-				}
-				parseGUINode(guiParentNode, newGuiElementDocument.RootElement(), guiElementIt->second);
+				parseTemplate(guiParentNode, node, guiElementIt->second->getTemplate(), *guiElementIt->second->getAttributes(guiParentNode->screenNode), guiElementIt->second);
 			}
 		}
 	}
 	if (guiElementController != nullptr) {
 		guiElementController->initialize();
 	}
+}
+
+void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& _template, map<string, string>& attributes, GUIElement* guiElement) {
+	auto newGuiElementTemplate = _template;
+	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
+		auto attributeKey = string(attribute->Name());
+		auto attributeValue = string(attribute->Value());
+		newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
+	}
+
+	for (auto newGuiElementAttributesIt : attributes) {
+		auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
+		newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+	}
+
+	newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$innerXml}", getInnerXml(node));
+	auto newGuiElementDocumentXML =  "<gui-element>\n" + newGuiElementTemplate + "</gui-element>\n";
+
+	TiXmlDocument newGuiElementDocument;
+	newGuiElementDocument.Parse((newGuiElementDocumentXML).c_str());
+	if (newGuiElementDocument.Error() == true) {
+		throw GUIParserException(
+			"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
+		);
+	}
+	parseGUINode(parentNode, newGuiElementDocument.RootElement(), guiElement);
 }
 
 const vector<TiXmlElement*> GUIParser::getChildrenByTagName(TiXmlElement* parent, const char* name)

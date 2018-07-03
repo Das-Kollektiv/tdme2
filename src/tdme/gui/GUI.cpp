@@ -185,6 +185,7 @@ Texture* GUI::getImage(const string& fileName)
 	if (image == nullptr) {
 		try {
 			image = TextureLoader::loadTexture(path, file);
+			image->setUseMipMap(false);
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getImage(): An error occurred: "));
 			Console::println(string(exception.what()));

@@ -384,9 +384,9 @@ int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 void GLES2Renderer::uploadTexture(Texture* texture)
 {
 	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void GLES2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
