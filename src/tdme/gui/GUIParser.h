@@ -93,6 +93,16 @@ private:
 	 */
 	static const string getInnerXml(TiXmlElement* node);
 
+	/**
+	 * Parse template
+	 * @param GUI parent node
+	 * @param template xml node
+	 * @param template
+	 * @param attributes
+	 * @param GUI element
+	 */
+	static void parseTemplate(GUIParentNode* guiParentNode, TiXmlElement* node, const string& _template, map<string, string>& attributes, GUIElement* guiElement);
+
 public:
 
 	/** 
