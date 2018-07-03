@@ -114,14 +114,15 @@ void SkinningTest::initialize()
 	engine->addEntity(entity);
 	auto character = ModelReader::read("resources/tests/models/mementoman", "mementoman.dae");
 	int characterIdx = 0;
-	for (float z = -15.0f; z < 15.0f; z+= 2.5f)
-	for (float x = -15.0f; x < 15.0f; x+= 2.5f) {
+	for (float z = -15.0f; z < 15.0f; z+= 1.8f)
+	for (float x = -15.0f; x < 15.0f; x+= 1.8f) {
 		auto entity = new Object3D("character." + to_string(characterIdx++), character);
 		entity->setTranslation(Vector3(x, 0.0f, z));
 		entity->update();
 		entity->setDynamicShadowingEnabled(true);
 		engine->addEntity(entity);
 	}
+	Console::println("Spawned characters: " + to_string(characterIdx));
 }
 
 void SkinningTest::reshape(int32_t width, int32_t height)
