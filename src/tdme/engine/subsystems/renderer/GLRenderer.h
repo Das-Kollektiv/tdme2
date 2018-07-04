@@ -479,14 +479,6 @@ public:
 	 */
 	virtual void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
 
-	/**
-	 * Uploads buffer data to buffer object
-	 * @param buffer object id
-	 * @param size
-	 * @param data
-	 */
-	virtual void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
-
 	/** 
 	 * Bind indices buffer object
 	 * @param buffer object id
@@ -775,6 +767,83 @@ public:
 	 * @return byte buffer
 	 */
 	virtual ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
+
+	/**
+	 * Dispatch compute
+	 * @param num groups x
+	 * @param num groups y
+	 * @param num groups z
+	 */
+	virtual void dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) = 0;
+
+	/**
+	 * Memory barrier
+	 */
+	virtual void memoryBarrier() = 0;
+
+	/**
+	 * Upload skinning buffer object
+	 * @param buffer object id
+	 * @param size
+	 * @param data
+	 */
+	virtual void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
+
+	/**
+	 * Upload skinning buffer object
+	 * @param buffer object id
+	 * @param size
+	 * @param data
+	 */
+	virtual void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+
+	/**
+	 * Bind skinning vertices buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVerticesBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning normal buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningNormalsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertex joints buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertex joint indices buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertex joint weights buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertices result buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning normals result buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning matrices result buffer objec
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningMatricesBufferObject(int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Set up renderer for GUI rendering

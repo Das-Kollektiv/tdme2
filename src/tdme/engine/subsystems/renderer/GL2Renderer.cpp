@@ -508,13 +508,6 @@ void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
-void GL2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
-}
-
 void GL2Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
@@ -656,4 +649,52 @@ void GL2Renderer::doneGuiMode()
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+}
+
+void GL2Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+	Console::println("GL2Renderer::dispatchCompute(): Not implemented");
+}
+
+void GL2Renderer::memoryBarrier() {
+	Console::println("GL2Renderer::memoryBarrier(): Not implemented");
+}
+
+void GL2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
+}
+
+void GL2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }

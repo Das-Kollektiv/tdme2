@@ -417,12 +417,12 @@ void Engine::initialize(bool debug)
 	#if defined(__APPLE__)
 	{
 		renderer = new EngineGL3Renderer(this);
-		Console::println(string("TDME::Using GL3"));
+		Console::println(string("TDME::Using GL3+/CORE"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		ShadowMapping::setShadowMapSize(2048, 2048);
-		skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
-		animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
+		skinningShaderEnabled = false;
+		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 	}
 	// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
 	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
@@ -432,7 +432,7 @@ void Engine::initialize(bool debug)
 		glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
 		glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
 		if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
-			Console::println(string("TDME::Using GL3(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+			Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 			renderer = new EngineGL3Renderer(this);
 		} else {
 			Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));

@@ -480,13 +480,6 @@ void GLES2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t si
 	Console::println("GLES2Renderer::uploadIndicesBufferObject()::not implemented");
 }
 
-void GLES2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
-}
-
 void GLES2Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
@@ -618,6 +611,54 @@ void GLES2Renderer::doneGuiMode()
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+}
+
+void GLES2Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+	Console::println("GLES2Renderer::dispatchCompute(): Not implemented");
+}
+
+void GLES2Renderer::memoryBarrier() {
+	Console::println("GLES2Renderer::memoryBarrier(): Not implemented");
+}
+
+void GLES2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	Console::println("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	Console::println("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+}
+
+void GLES2Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println("GLES2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }
 
 void GLES2Renderer::checkGLError()

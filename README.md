@@ -18,6 +18,9 @@ TDME2
                 - DAE and WaveFront OBJ files require triangulated meshes for now
             - animations
                 - supports model object base animation and animation overlays
+            - skinning via
+                - CPU on GL2, GLES2
+                - GPU via compute shaders with GL4.3+(GL3+/CORE renderer)
             - object transformations
                 - scaling
                 - rotations
@@ -56,7 +59,7 @@ TDME2
                 - rendering can be used (in other engine instances) as diffuse texture
             - screenshot ability
             - multiple renderer
-              - GL2, GL3(core) and GLES2
+              - GL2, GL3+(CORE) and GLES2
         - physics
             - uses ReactPhysics3D 0.7.0, needs some more integration still
         - path finding

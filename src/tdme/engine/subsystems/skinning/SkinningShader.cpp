@@ -95,9 +95,6 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 {
 	if (isRunning == false) useProgram();
 
-	// Hack: fix me
-	auto gl3Renderer = dynamic_cast<GL3Renderer*>(renderer);
-
 	// vbo base ids
 	auto vboBaseIds = object3DGroupMesh->object3DGroupVBORenderer->vboBaseIds;
 
@@ -136,7 +133,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 				// put number of joints
 				ibVerticesJoints.put((int)vertexJoints);
 			}
-			gl3Renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[2], ibVerticesJoints.getPosition() * sizeof(int), &ibVerticesJoints);
+			renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[2], ibVerticesJoints.getPosition() * sizeof(int), &ibVerticesJoints);
 		}
 
 		{
@@ -150,7 +147,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 					ibVerticesVertexJointsIdxs.put((int)jointIndex);
 				}
 			}
-			gl3Renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[3], ibVerticesVertexJointsIdxs.getPosition() * sizeof(int), &ibVerticesVertexJointsIdxs);
+			renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[3], ibVerticesVertexJointsIdxs.getPosition() * sizeof(int), &ibVerticesVertexJointsIdxs);
 		}
 
 		{
@@ -163,7 +160,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 					fbVerticesVertexJointsWeights.put(static_cast<float>(i < vertexJointsWeight.size()?weights[vertexJointsWeight[i].getWeightIndex()]:0.0f));
 				}
 			}
-			gl3Renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[4], fbVerticesVertexJointsWeights.getPosition() * sizeof(float), &fbVerticesVertexJointsWeights);
+			renderer->uploadSkinningBufferObject((*modelSkinningCache.vboIds)[4], fbVerticesVertexJointsWeights.getPosition() * sizeof(float), &fbVerticesVertexJointsWeights);
 		}
 
 		// add to cache
@@ -181,35 +178,33 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 		for (auto& joint: *skinningJoints) {
 			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());
 		}
-		gl3Renderer->uploadSkinningBufferObject((*modelSkinningCacheCached->vboIds)[5], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
+		renderer->uploadSkinningBufferObject((*modelSkinningCacheCached->vboIds)[5], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
 	}
 
 	// bind
-	gl3Renderer->bindSkinningVerticesBufferObject((*modelSkinningCacheCached->vboIds)[0]);
-	gl3Renderer->bindSkinningNormalsBufferObject((*modelSkinningCacheCached->vboIds)[1]);
-	gl3Renderer->bindSkinningVertexJointsBufferObject((*modelSkinningCacheCached->vboIds)[2]);
-	gl3Renderer->bindSkinningVertexJointIdxsBufferObject((*modelSkinningCacheCached->vboIds)[3]);
-	gl3Renderer->bindSkinningVertexJointWeightsBufferObject((*modelSkinningCacheCached->vboIds)[4]);
-	gl3Renderer->bindSkinningMatricesBufferObject((*modelSkinningCacheCached->vboIds)[5]);
+	renderer->bindSkinningVerticesBufferObject((*modelSkinningCacheCached->vboIds)[0]);
+	renderer->bindSkinningNormalsBufferObject((*modelSkinningCacheCached->vboIds)[1]);
+	renderer->bindSkinningVertexJointsBufferObject((*modelSkinningCacheCached->vboIds)[2]);
+	renderer->bindSkinningVertexJointIdxsBufferObject((*modelSkinningCacheCached->vboIds)[3]);
+	renderer->bindSkinningVertexJointWeightsBufferObject((*modelSkinningCacheCached->vboIds)[4]);
+	renderer->bindSkinningMatricesBufferObject((*modelSkinningCacheCached->vboIds)[5]);
 
 	// bind output / result buffers
-	gl3Renderer->bindSkinningVerticesResultBufferObject((*vboBaseIds)[1]);
-	gl3Renderer->bindSkinningNormalsResultBufferObject((*vboBaseIds)[2]);
+	renderer->bindSkinningVerticesResultBufferObject((*vboBaseIds)[1]);
+	renderer->bindSkinningNormalsResultBufferObject((*vboBaseIds)[2]);
 
 	// skinning count
-	gl3Renderer->setProgramUniformInteger(uniformSkinningCount, vertices.size());
+	renderer->setProgramUniformInteger(uniformSkinningCount, vertices.size());
 
 	// do it so
-	gl3Renderer->dispatchCompute((int)Math::ceil(vertices.size() / 16.0f), 1, 1);
+	renderer->dispatchCompute((int)Math::ceil(vertices.size() / 16.0f), 1, 1);
 }
 
 void SkinningShader::unUseProgram()
 {
 	isRunning = false;
-
-	// Hack: fix me
-	auto gl3Renderer = dynamic_cast<GL3Renderer*>(renderer);
-	gl3Renderer->memoryBarrier();
+	// we are done, do memory barrier
+	renderer->memoryBarrier();
 }
 
 void SkinningShader::reset() {

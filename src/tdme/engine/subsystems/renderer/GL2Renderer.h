@@ -112,7 +112,6 @@ public:
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
-	void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void bindIndicesBufferObject(int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(int32_t bufferObjectId) override;
@@ -136,6 +135,20 @@ public:
 	ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void initGuiMode() override;
 	void doneGuiMode() override;
+
+	// overriden methods for skinning on GPU via compute shader
+	void dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
+	void memoryBarrier() override;
+	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
+	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
+	void bindSkinningVerticesBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningNormalsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningMatricesBufferObject(int32_t bufferObjectId) override;
 
 	/**
 	 * Public constructor

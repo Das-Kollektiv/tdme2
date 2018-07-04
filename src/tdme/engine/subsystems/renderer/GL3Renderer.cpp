@@ -492,13 +492,6 @@ void GL3Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
-void GL3Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
-}
-
 void GL3Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
@@ -682,54 +675,102 @@ void GL3Renderer::checkGLError(int line)
 }
 
 void GL3Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::dispatchCompute(): Not implemented");
+	#else
+		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+	#endif
 }
 
 void GL3Renderer::memoryBarrier() {
-	// TODO: put barrier bits into paramters
-	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::memoryBarrier(): Not implemented");
+	#else
+		// TODO: put barrier bits into paramters
+		glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	#endif
 }
 
 void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
+	#else
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+	#endif
 }
 
 void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
+	#else
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+	#endif
 }
 
 void GL3Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObjectId);
+	#endif
 }
 
 void GL3Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferObjectId);
+	#endif
 }
 
 void GL3Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, bufferObjectId);
+	#endif
 }
 
 void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bufferObjectId);
+	#endif
 }
 
 void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bufferObjectId);
+	#endif
 }
 
 void GL3Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bufferObjectId);
+	#endif
 }
 
 void GL3Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
+	#endif
 }
 
 void GL3Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
+	#endif
 }
