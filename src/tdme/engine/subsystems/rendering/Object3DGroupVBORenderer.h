@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
@@ -23,6 +24,7 @@ using tdme::engine::subsystems::skinning::SkinningShader;
 class tdme::engine::subsystems::rendering::Object3DGroupVBORenderer final
 {
 	friend class Object3DVBORenderer;
+	friend class tdme::engine::Object3D;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
@@ -39,7 +41,10 @@ public:
 		return haveVBOs == false || object3DGroup->mesh->hasRecreatedBuffers() == true;
 	}
 
-	void preRender(Object3DVBORenderer* object3DVBORenderer);
+	/**
+	 * Pre render step like uploading VBOs and such
+	 */
+	void preRender();
 
 	/** 
 	 * Disposes the object 3d group

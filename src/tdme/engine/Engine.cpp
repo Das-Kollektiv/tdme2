@@ -607,6 +607,7 @@ void Engine::computeTransformations()
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
 	{ \
 		if ((object = dynamic_cast< Object3D* >(_entity)) != nullptr) { \
+			object->preRender(); \
 			object->computeTransformations(); \
 			visibleObjects.push_back(object); \
 		} else \
@@ -615,11 +616,13 @@ void Engine::computeTransformations()
 			if (object != nullptr) { \
 				visibleLODObjects.push_back(lodObject); \
 				visibleObjects.push_back(object); \
+				object->preRender(); \
 				object->computeTransformations(); \
 			} \
 		} else \
 		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(_entity)) != nullptr) { \
 			for (auto object: *opse->getEnabledObjects()) { \
+				object->preRender(); \
 				object->computeTransformations(); \
 				visibleObjects.push_back(object); \
 			} \
@@ -639,7 +642,7 @@ void Engine::computeTransformations()
 
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
-			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
@@ -664,7 +667,7 @@ void Engine::computeTransformations()
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);
-			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}

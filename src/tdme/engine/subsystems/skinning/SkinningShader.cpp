@@ -98,10 +98,10 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	// Hack: fix me
 	auto gl3Renderer = dynamic_cast<GL3Renderer*>(renderer);
 
-	// check if vbo already created
+	// vbo base ids
 	auto vboBaseIds = object3DGroupMesh->object3DGroupVBORenderer->vboBaseIds;
-	if (vboBaseIds == nullptr) return;
 
+	//
 	ModelSkinningCache* modelSkinningCacheCached = nullptr;
 	auto group = object3DGroupMesh->group;
 	auto& vertices = *group->getVertices();

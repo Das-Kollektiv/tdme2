@@ -18,7 +18,6 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/Console.h>
 
 using std::string;
 using std::vector;
@@ -39,7 +38,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
-using tdme::utils::Console;
 
 Object3DRenderGroup::Object3DRenderGroup(
 	const string& id,
@@ -54,25 +52,26 @@ Object3DRenderGroup::Object3DRenderGroup(
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->identityMatrix.identity();
 	this->combinedModel = nullptr;
+	this->combinedObject = nullptr;
 	setModel(model);
 }
 
 Object3DRenderGroup::~Object3DRenderGroup() {
-	for (auto object: objects) delete object;
+	if (combinedObject != nullptr) delete combinedObject;
 	if (combinedModel != nullptr) delete combinedModel;
 }
 
 void Object3DRenderGroup::setModel(Model* model) {
 	// dispose old object and combined model
-	for (auto object: objects) {
-		object->dispose();
-		delete object;
+	if (combinedObject != nullptr) {
+		combinedObject->dispose();
+		delete combinedObject;
+		combinedObject = nullptr;
 	}
 	if (combinedModel != nullptr) {
 		delete combinedModel;
 		combinedModel = nullptr;
 	}
-	objects.clear();
 
 	// set up new model
 	this->model = model;
@@ -87,8 +86,9 @@ void Object3DRenderGroup::setModel(Model* model) {
 }
 
 void Object3DRenderGroup::computeBoundingBox() {
-	if (objects.size() == 0) return;
-	boundingBox.fromBoundingVolume(objects[0]->getBoundingBox());
+	if (combinedObject == nullptr) return;
+	boundingBox.fromBoundingVolume(combinedObject->getBoundingBox());
+	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 }
 
 void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& parentTransformationsMatrix, Model* combinedModel) {
@@ -120,19 +120,19 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 	auto combinedModelGroupTangentsIdx = combinedModelGroup->getTangents()->size();
 	auto combinedModelGroupBitangentsIdx = combinedModelGroup->getBitangents()->size();
 	Vector3 tmpVector3;
-	for (auto vertex: *sourceGroup->getVertices()) {
+	for (auto& vertex: *sourceGroup->getVertices()) {
 		combinedModelGroup->getVertices()->push_back(transformationsMatrix.multiply(vertex, tmpVector3));
 	}
-	for (auto normal: *sourceGroup->getNormals()) {
+	for (auto& normal: *sourceGroup->getNormals()) {
 		combinedModelGroup->getNormals()->push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
 	}
-	for (auto textureCoordinate: *sourceGroup->getTextureCoordinates()) {
+	for (auto& textureCoordinate: *sourceGroup->getTextureCoordinates()) {
 		combinedModelGroup->getTextureCoordinates()->push_back(textureCoordinate);
 	}
-	for (auto tangent: *sourceGroup->getTangents()) {
+	for (auto& tangent: *sourceGroup->getTangents()) {
 		combinedModelGroup->getTangents()->push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
 	}
-	for (auto bitangent: *sourceGroup->getBitangents()) {
+	for (auto& bitangent: *sourceGroup->getBitangents()) {
 		combinedModelGroup->getBitangents()->push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
 	}
 
@@ -228,11 +228,11 @@ void Object3DRenderGroup::combineObject(Model* model, const Transformations& tra
 
 void Object3DRenderGroup::updateRenderGroup() {
 	// dispose old object and combined model
-	for (auto object: objects) {
-		object->dispose();
-		delete object;
+	if (combinedObject != nullptr) {
+		combinedObject->dispose();
+		delete combinedObject;
+		combinedObject = nullptr;
 	}
-	objects.clear();
 
 	// create new combined object
 	if (combinedModel != nullptr) {
@@ -243,9 +243,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		ModelHelper::fixAnimationLength(combinedModel);
 
 		// create object, initialize and
-		auto objectCombined = new Object3D(id, combinedModel);
-		objectCombined->initialize();
-		objects.push_back(objectCombined);
+		combinedObject = new Object3D(id, combinedModel);
 
 		//
 		computeBoundingBox();
@@ -270,8 +268,6 @@ void Object3DRenderGroup::fromTransformations(const Transformations& transformat
 	Transformations::fromTransformations(transformations);
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	// compute bounding box
-	computeBoundingBox();
 	// update object
 	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
@@ -279,8 +275,6 @@ void Object3DRenderGroup::fromTransformations(const Transformations& transformat
 void Object3DRenderGroup::update()
 {
 	Transformations::update();
-	// update render group
-	updateRenderGroup();
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	// update object
@@ -325,8 +319,12 @@ void Object3DRenderGroup::setFrustumCulling(bool frustumCulling) {
 
 void Object3DRenderGroup::dispose()
 {
-	// delegate to objects
-	for (auto object: objects) object->dispose();
+	// delegate to combined object
+	if (combinedObject != nullptr) {
+		combinedObject->dispose();
+		delete combinedObject;
+		combinedObject = nullptr;
+	}
 	// disose combined model
 	if (combinedModel != nullptr) {
 		delete combinedModel;
@@ -336,5 +334,8 @@ void Object3DRenderGroup::dispose()
 
 void Object3DRenderGroup::initialize()
 {
+	if (combinedObject != nullptr) {
+		combinedObject->initialize();
+	}
 }
 

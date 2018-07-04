@@ -336,16 +336,6 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 
 void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
-	// do pre render steps
-	for (auto object: objects) {
-		for (auto j = 0; j < object->object3dGroups.size(); j++) {
-			auto object3DGroup = object->object3dGroups[j];
-			if (object3DGroup->renderer->needsPreRender() == true) {
-				object3DGroup->renderer->preRender(this);
-			}
-		}
-	}
-
 	//
 	auto shadowMapping = engine->getShadowMapping();
 	Matrix4x4 modelViewMatrix;
@@ -533,19 +523,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	Matrix4x4 cameraMatrix(renderer->getModelViewMatrix());
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
-
-	//	objects
-	{
-		// do pre render steps
-		for (auto object: objects) {
-			for (auto j = 0; j < object->object3dGroups.size(); j++) {
-				auto object3DGroup = object->object3dGroups[j];
-				if (object3DGroup->renderer->needsPreRender() == true) {
-					object3DGroup->renderer->preRender(this);
-				}
-			}
-		}
-	}
 
 	//
 	auto shadowMapping = engine->getShadowMapping();

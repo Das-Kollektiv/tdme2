@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -18,11 +17,9 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/utils/Console.h>
 
 using std::string;
 using std::to_string;
-using std::vector;
 
 using tdme::engine::Entity;
 using tdme::engine::Engine;
@@ -35,7 +32,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 
 /** 
  * Object 3D render group
@@ -60,7 +56,7 @@ private:
 	BoundingBox boundingBox {  };
 	BoundingBox boundingBoxTransformed {  };
 	Matrix4x4 identityMatrix {  };
-	vector<Object3D*> objects {  };
+	Object3D* combinedObject {  };
 	Model* model {  };
 	Model* combinedModel {  };
 
@@ -86,11 +82,6 @@ private:
 	 */
 	static void combineObject(Model* model, const Transformations& transformations, Model* combinedModel);
 
-	/**
-	 * Update render group model and bounding box
-	 */
-	void updateRenderGroup();
-
 public:
 	// overriden methods
 	void setEngine(Engine* engine) override;
@@ -100,21 +91,6 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
-
-	/**
-	 * @return if is using group rendering
-	 */
-	inline bool isGroupRendering() {
-		return groupRendering;
-	}
-
-	/**
-	 * Set if to use group rendering
-	 * @param group rendering
-	 */
-	inline void setGroupRendering(bool groupRendering) {
-		this->groupRendering = groupRendering;
-	}
 
 	/**
 	 * Public constructor
@@ -127,6 +103,11 @@ public:
 	 * Destructor
 	 */
 	virtual ~Object3DRenderGroup();
+
+	/**
+	 * Update render group model and bounding box
+	 */
+	void updateRenderGroup();
 
 public:
 
@@ -144,10 +125,10 @@ public:
 	void setModel(Model* model);
 
 	/**
-	 * @return objects
+	 * @return object
 	 */
-	inline vector<Object3D*>& getObjects() {
-		return objects;
+	inline Object3D* getObject() {
+		return combinedObject;
 	}
 
 	/**

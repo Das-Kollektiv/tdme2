@@ -19,6 +19,7 @@ using std::vector;
 using std::string;
 
 using tdme::engine::Engine;
+using tdme::engine::Object3D;
 using tdme::engine::model::Group;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
@@ -35,6 +36,7 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
  */
 class tdme::engine::subsystems::rendering::Object3DGroup final
 {
+	friend class tdme::engine::Object3D;
 	friend class ModelUtilitiesInternal;
 	friend class Object3DBase;
 	friend class Object3DBase_TransformedFacesIterator;

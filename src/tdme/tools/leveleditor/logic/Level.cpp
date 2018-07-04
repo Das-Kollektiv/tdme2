@@ -340,7 +340,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			for (auto transformation: itPartition.second) {
 				object3DRenderGroup->addObject(*transformation);
 			}
-			object3DRenderGroup->update();
+			object3DRenderGroup->updateRenderGroup();
 			engine->addEntity(object3DRenderGroup);
 		}
 	}

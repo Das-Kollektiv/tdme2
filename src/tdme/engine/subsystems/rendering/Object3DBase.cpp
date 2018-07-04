@@ -77,12 +77,12 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 	// create transformations matrices
 	createTransformationsMatrices(&transformationsMatrices, model->getSubGroups());
-	// object 3d groups
-	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
 	// calculate transformations matrices
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), &baseAnimation, 0);
-	// do initial transformations
-	Object3DGroup::computeTransformations(&object3dGroups);
+	// object 3d groups
+	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
+	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(&object3dGroups);
 	// reset animation
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 }
@@ -320,7 +320,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 void Object3DBase::computeTransformations()
 {
 	// do transformations if we have a animation
-	if (baseAnimation.setup != nullptr && baseAnimation.setup->getFrames() > 1) {
+	if (baseAnimation.setup != nullptr) {
 		auto engine = Engine::getInstance();
 		// animation timing
 		auto timing = engine->getTiming();
