@@ -1,5 +1,6 @@
 STACKFLAGS =
 SRC_PLATFORM =
+CFLAGS =
 INCLUDES := $(INCLUDES) -Isrc -Iext -Iext -I./ -Iext/v-hacd/src/VHACD_Lib/inc/
 
 # set platform specific flags
@@ -75,7 +76,8 @@ else ifeq ($(OS), Linux)
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
 	endif
 else
-	# Windows via MINGW
+	# Windows via MINGW64/MSYS2
+	CFLAGS:= $(CFLAGS) -D_WIN32 -D__MINGW32__
 	SRC_PLATFORM:= $(SRC_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -83,8 +85,8 @@ else
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I. -Iext/glew/include -Iext/openal-soft/include -Iext/freeglut/include
-	EXTRA_LIBS ?= -lws2_32 -Lext\glew\bin\Release\x64 -lglew32 -lopengl32 -Lext/freeglut/lib/x64 -lfreeglut -Lext/openal-soft/libs/Win64/ -lOpenAL32 -l$(NAME) -l$(NAME)-ext
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
+	EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -l$(NAME) -l$(NAME)-ext
 	STACKFLAGS := -Wl,--stack,0x1000000
 endif
 
