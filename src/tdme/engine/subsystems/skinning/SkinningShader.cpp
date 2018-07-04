@@ -93,6 +93,8 @@ void SkinningShader::useProgram()
 
 void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 {
+	if (isRunning == false) useProgram();
+
 	// Hack: fix me
 	auto gl3Renderer = dynamic_cast<GL3Renderer*>(renderer);
 
@@ -113,7 +115,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 		auto& weights = *skinning->getWeights();
 
 		// vbo
-		auto vboManaged = Engine::getVBOManager()->addVBO(id + ".vbo", 6);
+		auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 6);
 		modelSkinningCache.vboIds = vboManaged->getVBOGlIds();
 
 		// vertices
@@ -194,23 +196,25 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	gl3Renderer->bindSkinningVerticesResultBufferObject((*vboBaseIds)[1]);
 	gl3Renderer->bindSkinningNormalsResultBufferObject((*vboBaseIds)[2]);
 
-	useProgram();
-
 	// skinning count
 	gl3Renderer->setProgramUniformInteger(uniformSkinningCount, vertices.size());
 
 	// do it so
 	gl3Renderer->dispatchCompute((int)Math::ceil(vertices.size() / 16.0f), 1, 1);
-
-	//
-	unUseProgram();
 }
 
 void SkinningShader::unUseProgram()
 {
 	isRunning = false;
+
+	// Hack: fix me
+	auto gl3Renderer = dynamic_cast<GL3Renderer*>(renderer);
+	gl3Renderer->memoryBarrier();
 }
 
 void SkinningShader::reset() {
-	// TODO
+	for (auto& modelSkinningCacheIt: cache) {
+		Engine::getVBOManager()->removeVBO("skinning_compute_shader." + modelSkinningCacheIt.second.id + ".vbos");
+	}
+	cache.clear();
 }

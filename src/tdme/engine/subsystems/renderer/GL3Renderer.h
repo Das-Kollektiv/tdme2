@@ -121,6 +121,7 @@ public:
 
 	/** WIP: compute shaders */
 	void dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ);
+	void memoryBarrier();
 	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data);
 	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data);
 	void bindSkinningVerticesBufferObject(int32_t bufferObjectId);

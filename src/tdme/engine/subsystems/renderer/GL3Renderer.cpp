@@ -682,10 +682,11 @@ void GL3Renderer::checkGLError(int line)
 }
 
 void GL3Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	// TODO: fix correct barriers and put me into paramters or something
-	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 	glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
-	// TODO: fix correct barriers and put me into paramters or something
+}
+
+void GL3Renderer::memoryBarrier() {
+	// TODO: put barrier bits into paramters
 	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 }
 
