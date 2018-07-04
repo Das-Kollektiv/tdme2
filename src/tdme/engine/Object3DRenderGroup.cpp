@@ -42,7 +42,8 @@ using tdme::math::Matrix4x4;
 using tdme::utils::Console;
 
 Object3DRenderGroup::Object3DRenderGroup(
-	const string& id
+	const string& id,
+	Model* model
 ):
 	id(id)
 {
@@ -53,35 +54,41 @@ Object3DRenderGroup::Object3DRenderGroup(
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->identityMatrix.identity();
 	this->combinedModel = nullptr;
+	setModel(model);
 }
 
 Object3DRenderGroup::~Object3DRenderGroup() {
 	for (auto object: objects) delete object;
-	for (auto object: objectsCombined) delete object;
 	if (combinedModel != nullptr) delete combinedModel;
+}
+
+void Object3DRenderGroup::setModel(Model* model) {
+	// dispose old object and combined model
+	for (auto object: objects) {
+		object->dispose();
+		delete object;
+	}
+	if (combinedModel != nullptr) {
+		delete combinedModel;
+		combinedModel = nullptr;
+	}
+	objects.clear();
+
+	// set up new model
+	this->model = model;
+	// combine objects to a new model
+	combinedModel = new Model(
+		id,
+		id,
+		model->getUpVector(),
+		model->getRotationOrder(),
+		nullptr
+	);
 }
 
 void Object3DRenderGroup::computeBoundingBox() {
 	if (objects.size() == 0) return;
-
-	float minX = objects[0]->getBoundingBoxTransformed()->getMin().getX();
-	float minY = objects[0]->getBoundingBoxTransformed()->getMin().getY();
-	float minZ = objects[0]->getBoundingBoxTransformed()->getMin().getZ();
-	float maxX = objects[0]->getBoundingBoxTransformed()->getMax().getX();
-	float maxY = objects[0]->getBoundingBoxTransformed()->getMax().getY();
-	float maxZ = objects[0]->getBoundingBoxTransformed()->getMax().getZ();
-	for (auto i = 1; i < objects.size(); i++) {
-		minX = Math::min(minX, objects[i]->getBoundingBoxTransformed()->getMin().getX());
-		minY = Math::min(minY, objects[i]->getBoundingBoxTransformed()->getMin().getY());
-		minZ = Math::min(minZ, objects[i]->getBoundingBoxTransformed()->getMin().getZ());
-		maxX = Math::max(maxX, objects[i]->getBoundingBoxTransformed()->getMax().getX());
-		maxY = Math::max(maxY, objects[i]->getBoundingBoxTransformed()->getMax().getY());
-		maxZ = Math::max(maxZ, objects[i]->getBoundingBoxTransformed()->getMax().getZ());
-	}
-
-	boundingBox.getMin().set(minX, minY, minZ);
-	boundingBox.getMax().set(maxX, maxY, maxZ);
-	boundingBox.update();
+	boundingBox.fromBoundingVolume(objects[0]->getBoundingBox());
 }
 
 void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& parentTransformationsMatrix, Model* combinedModel) {
@@ -220,47 +227,33 @@ void Object3DRenderGroup::combineObject(Model* model, const Transformations& tra
 }
 
 void Object3DRenderGroup::updateRenderGroup() {
-	// combine objects to a new model
-	for (auto object: objectsCombined) {
+	// dispose old object and combined model
+	for (auto object: objects) {
 		object->dispose();
 		delete object;
 	}
+	objects.clear();
+
+	// create new combined object
 	if (combinedModel != nullptr) {
-		delete combinedModel;
-		combinedModel = nullptr;
-	}
-	objectsCombined.clear();
-	if (objects.size() > 0) {
-		auto model = objects[0]->getModel();
-		// combine objects to a new model
-		combinedModel = new Model(
-			id,
-			id,
-			model->getUpVector(),
-			model->getRotationOrder(),
-			nullptr
-		);
-		for (auto object: objects) {
-			combineObject(model, object->getTransformations(), combinedModel);
-		}
+		// post process combined model
 		ModelHelper::shrinkToFit(combinedModel);
 		ModelHelper::createDefaultAnimation(combinedModel, 0);
 		ModelHelper::setupJoints(combinedModel);
 		ModelHelper::fixAnimationLength(combinedModel);
+
+		// create object, initialize and
 		auto objectCombined = new Object3D(id, combinedModel);
 		objectCombined->initialize();
-		objectsCombined.push_back(objectCombined);
+		objects.push_back(objectCombined);
+
+		//
+		computeBoundingBox();
 	}
 }
 
-void Object3DRenderGroup::addObject(Object3D* object) {
-	if (objects.size() > 0 && objects[0]->getModel() != object->getModel()) {
-		Console::println("Object3DRenderGroup::addObject(): a object rendergroup is designed for a single model with multiple objects. Not adding object!");
-	}
-	// initialize object
-	object->initialize();
-	// add to objects
-	objects.push_back(object);
+void Object3DRenderGroup::addObject(const Transformations& transformations) {
+	combineObject(model, transformations, combinedModel);
 }
 
 void Object3DRenderGroup::setEngine(Engine* engine)
@@ -286,8 +279,6 @@ void Object3DRenderGroup::fromTransformations(const Transformations& transformat
 void Object3DRenderGroup::update()
 {
 	Transformations::update();
-	// compute bounding box
-	computeBoundingBox();
 	// update render group
 	updateRenderGroup();
 	// update bounding box transformed
@@ -336,8 +327,7 @@ void Object3DRenderGroup::dispose()
 {
 	// delegate to objects
 	for (auto object: objects) object->dispose();
-	// delegate to objects combined
-	for (auto object: objectsCombined) object->dispose();
+	// disose combined model
 	if (combinedModel != nullptr) {
 		delete combinedModel;
 		combinedModel = nullptr;

@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
@@ -60,7 +61,7 @@ private:
 	BoundingBox boundingBoxTransformed {  };
 	Matrix4x4 identityMatrix {  };
 	vector<Object3D*> objects {  };
-	vector<Object3D*> objectsCombined {  };
+	Model* model {  };
 	Model* combinedModel {  };
 
 	/**
@@ -118,8 +119,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param id
+	 * @param model
 	 */
-	Object3DRenderGroup(const string& id);
+	Object3DRenderGroup(const string& id, Model* model);
 
 	/**
 	 * Destructor
@@ -127,32 +129,33 @@ public:
 	virtual ~Object3DRenderGroup();
 
 public:
+
 	/**
 	 * @return associated model
 	 */
 	inline Model* getModel() {
-		return objects[0]->getModel();
+		return model;
 	}
+
+	/**
+	 * Set model
+	 * @param model
+	 */
+	void setModel(Model* model);
 
 	/**
 	 * @return objects
 	 */
 	inline vector<Object3D*>& getObjects() {
-		return groupRendering == true?objectsCombined:objects;
-	}
-
-	/**
-	 * @return all objects aka group objects used to be combined
-	 */
-	inline vector<Object3D*>& getGroupObjects() {
 		return objects;
 	}
 
 	/**
-	 * Adds a object to this render group
-	 * @param object
+	 * Adds a instance this render group
+	 * @param model
+	 * @param transformations
 	 */
-	void addObject(Object3D* object);
+	void addObject(const Transformations& transformations);
 
 	// overriden methods
 	virtual void dispose() override;

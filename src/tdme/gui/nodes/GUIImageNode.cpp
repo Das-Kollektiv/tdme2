@@ -42,7 +42,7 @@ GUIImageNode::GUIImageNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
-	const string& src,
+	const string& source,
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Scale9Grid& scale9Grid)
@@ -50,12 +50,11 @@ GUIImageNode::GUIImageNode(
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
 {
 	init();
-	this->texture = GUI::getImage(src);
-	this->textureId = Engine::getInstance()->getTextureManager()->addTexture(texture);
 	this->effectColorMul = effectColorMul;
 	this->effectColorAdd = effectColorAdd;
 	this->scale9Grid = scale9Grid;
 	this->textureMatrix.identity();
+	this->setSource(source);
 }
 
 void GUIImageNode::init()
@@ -432,6 +431,19 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 	guiRenderer->render();
 	guiRenderer->bindTexture(0);
 	guiRenderer->setTexureMatrix((Matrix2D3x3()).identity());
+}
+
+void GUIImageNode::setSource(const string source) {
+	if (texture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
+	}
+	this->source = source;
+	this->texture = GUI::getImage(source);
+	this->textureId = Engine::getInstance()->getTextureManager()->addTexture(texture);
+}
+
+const string& GUIImageNode::getSource() {
+	return source;
 }
 
 void GUIImageNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
