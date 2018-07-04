@@ -2,9 +2,11 @@
 
 #if defined(_WIN32)
 	#include <winsock2.h>
+	#define TIMEVAL_TYPE	__ms_timeval
 #else
 	#include <sys/select.h>
 	#include <sys/time.h>
+	#define TIMEVAL_TYPE	timeval
 #endif
 
 #include <tdme/os/network/fwd-tdme.h>
@@ -105,7 +107,7 @@ int KernelEventMechanism::doKernelEventMechanism() throw (NIOKEMException) {
 	// have a timeout of 1ms
 	// as we only can delegate interest changes to the kernel by
 	// select
-	struct timeval timeout = {0, 1L * 1000L};
+	struct TIMEVAL_TYPE timeout = {0, 1L * 1000L};
 
 	// clone fd sets
 	psd->fdsMutex.lock();

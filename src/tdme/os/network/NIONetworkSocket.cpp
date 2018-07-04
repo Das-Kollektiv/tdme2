@@ -1,17 +1,16 @@
-#include <errno.h>
-#include <fcntl.h>
 #include <string.h>
-#include <unistd.h>
+
 #if defined(_WIN32)
 	#include <winsock2.h>
 	#define SHUT_RDWR SD_BOTH	
 #else
+	#include <errno.h>
+	#include <fcntl.h>
+	#include <unistd.h>
 	#include <netinet/in.h>
 	#include <sys/socket.h>
 	#include <arpa/inet.h>
 #endif
-
-#include <string>
 
 #include <tdme/os/network/NIONetworkSocket.h>
 
@@ -60,7 +59,7 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 
 void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 	#if defined(_WIN32)
-		u_long mode = 1;
+		unsigned int mode = 1;
 		ioctlsocket(descriptor, FIONBIO, &mode);
 	#else
 		// get the server socket file descriptor control settings
@@ -81,6 +80,6 @@ void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 }
 
 void NIONetworkSocket::close() {
-	::close(descriptor);
+	::closesocket(descriptor);
 	descriptor = -1;
 }
