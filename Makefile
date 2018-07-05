@@ -2,7 +2,7 @@ STACKFLAGS =
 SRCS_PLATFORM =
 SRCS_DEBUG =
 CFLAGS =
-INCLUDES := $(INCLUDES) -Isrc -Iext -Iext -I./ -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
+INCLUDES := $(INCLUDES) -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -78,7 +78,6 @@ else ifeq ($(OS), Linux)
 	endif
 else
 	# Windows via MINGW64/MSYS2
-	CFLAGS:= $(CFLAGS) -D_WIN32 -D__MINGW32__
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \

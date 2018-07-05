@@ -229,7 +229,12 @@ const string StandardFileSystem::getFileName(const string& fileName) throw (File
 }
 
 void StandardFileSystem::createPath(const string& pathName) throw (FileSystemException) {
-	int32_t status = mkdir(pathName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+	#if defined(_WIN32)
+		int32_t status = mkdir(pathName.c_str());
+	#else
+		int32_t status = mkdir(pathName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	#endif
 	if (status == -1) {
 		throw FileSystemException("Unable to create path(" + to_string(errno) + "): " + pathName);
 	}

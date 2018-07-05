@@ -59,7 +59,7 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 
 void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 	#if defined(_WIN32)
-		unsigned int mode = 1;
+		u_long mode = 1;
 		ioctlsocket(descriptor, FIONBIO, &mode);
 	#else
 		// get the server socket file descriptor control settings
