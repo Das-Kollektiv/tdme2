@@ -185,6 +185,8 @@ TDME2
         - others
 
     - Interested in collaboration? Then drop me a line via mail
+        - You can help with testing and reporting bugs (Windows 64 Bit for now, Linux and FreeBSD will follow)
+          - see http:://drewke.net/tdme2 
         - I have easy to hard task regarding engine/tools development
         - I have tasks regarding documentation
         - I even might have system administrator tasks
