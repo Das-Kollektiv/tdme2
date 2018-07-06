@@ -80,6 +80,10 @@ void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 }
 
 void NIONetworkSocket::close() {
-	::closesocket(descriptor);
+	#if defined(_WIN32)
+		::closesocket(descriptor);
+	#else
+		close(descriptor);
+	#endif
 	descriptor = -1;
 }
