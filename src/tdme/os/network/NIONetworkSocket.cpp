@@ -83,7 +83,7 @@ void NIONetworkSocket::close() {
 	#if defined(_WIN32)
 		::closesocket(descriptor);
 	#else
-		close(descriptor);
+		::close(descriptor);
 	#endif
 	descriptor = -1;
 }
