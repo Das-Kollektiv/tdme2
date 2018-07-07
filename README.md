@@ -184,9 +184,8 @@ TDME2
         - Kolja Gumpert
         - others
 
-    - Interested in collaboration? Then drop me a line via mail
-        - You can help with testing and reporting bugs (Windows 64 Bit for now, Linux and FreeBSD will follow)
-          - see http:://drewke.net/tdme2 
+    - Interested in collaboration? Then drop me a line via mail or use the issues section on tdme@github
+        - You can help with testing and reporting bugs, see http:://drewke.net/tdme2 
         - I have easy to hard task regarding engine/tools development
         - I have tasks regarding documentation
         - I even might have system administrator tasks
