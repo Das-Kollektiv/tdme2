@@ -385,20 +385,42 @@ void Body::setMass(float mass)
 	rigidBody->setMass(mass);
 }
 
-Vector3& Body::getLinearVelocity()
+const Vector3 Body::getLinearVelocity()
 {
 	if (rigidBody == nullptr) {
 		Console::println("Body::getLinearVelocity(): no rigid body attached");
 	}
-	return linearVelocity;
+	return Vector3(
+		rigidBody->getLinearVelocity().x,
+		rigidBody->getLinearVelocity().y,
+		rigidBody->getLinearVelocity().z
+	);
 }
 
-Vector3& Body::getAngularVelocity()
+void Body::setLinearVelocity(const Vector3& linearVelocity) {
+	if (rigidBody == nullptr) {
+		Console::println("Body::setLinearVelocity(): no rigid body attached");
+	}
+	rigidBody->setLinearVelocity(reactphysics3d::Vector3(linearVelocity.getX(), linearVelocity.getY(), linearVelocity.getZ()));
+}
+
+const Vector3 Body::getAngularVelocity()
 {
 	if (rigidBody == nullptr) {
 		Console::println("Body::getAngularVelocity(): no rigid body attached");
 	}
-	return angularVelocity;
+	return Vector3(
+		rigidBody->getAngularVelocity().x,
+		rigidBody->getAngularVelocity().y,
+		rigidBody->getAngularVelocity().z
+	);
+}
+
+void Body::setAngularVelocity(const Vector3& angularVelocity) {
+	if (rigidBody == nullptr) {
+		Console::println("Body::setAngularVelocity(): no rigid body attached");
+	}
+	rigidBody->setAngularVelocity(reactphysics3d::Vector3(angularVelocity.getX(), angularVelocity.getY(), angularVelocity.getZ()));
 }
 
 const Transformations& Body::getTransformations() {

@@ -71,8 +71,6 @@ private:
 	uint16_t collideTypeIds {  };
 	uint16_t collisionTypeId {  };
 	Vector3 inertiaTensor {  };
-	Vector3 linearVelocity;
-	Vector3 angularVelocity;
 	Transformations transformations {  };
 	Vector3 transformationsScale {  };
 	vector<BoundingVolume*> boundingVolumes {  };
@@ -264,12 +262,24 @@ public:
 	/** 
 	 * @return linear velocity
 	 */
-	Vector3& getLinearVelocity();
+	const Vector3 getLinearVelocity();
+
+	/**
+	 * Set linear velocity
+	 * @param velocity
+	 */
+	void setLinearVelocity(const Vector3& linearVelocity);
 
 	/** 
 	 * @return angular velocity
 	 */
-	Vector3& getAngularVelocity();
+	const Vector3 getAngularVelocity();
+
+	/**
+	 * Set angular velocity
+	 * @param angular velocity
+	 */
+	void setAngularVelocity(const Vector3& angularVelocity);
 
 	/**
 	 * @return transformations

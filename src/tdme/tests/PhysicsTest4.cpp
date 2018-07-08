@@ -115,7 +115,7 @@ void PhysicsTest4::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("box", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
-	world->getBody("box")->getLinearVelocity().setX(1.0f);
+	world->getBody("box")->setLinearVelocity(world->getBody("box")->getLinearVelocity().clone().setX(1.0f));
 	try {
 		auto _terrainModel = ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm");
 		entity = new Object3D("terrain", _terrainModel);

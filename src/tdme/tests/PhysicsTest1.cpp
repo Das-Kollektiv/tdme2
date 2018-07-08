@@ -82,32 +82,28 @@ void PhysicsTest1::main(int argc, char** argv)
 
 void PhysicsTest1::display()
 {
-	auto capsuleBig1 = world->getBody("capsulebig1");
-	if (keyLeft)
-		capsuleBig1->getLinearVelocity().setX(8.0f);
-	else if (keyRight)
-		capsuleBig1->getLinearVelocity().setX(-8.0f);
-	else
-		capsuleBig1->getLinearVelocity().setX(0.0f);
-	if (keyUp)
-		capsuleBig1->getLinearVelocity().setZ(8.0f);
-	else if (keyDown)
-		capsuleBig1->getLinearVelocity().setZ(-8.0f);
-	else
-		capsuleBig1->getLinearVelocity().setZ(0.0f);
-	auto capsuleBig2 = world->getBody("capsulebig2");
-	if (keyA)
-		capsuleBig2->getLinearVelocity().setX(6.0f);
-	else if (keyD)
-		capsuleBig2->getLinearVelocity().setX(-6.0f);
-	else
-		capsuleBig2->getLinearVelocity().setX(0.0f);
-	if (keyW)
-		capsuleBig2->getLinearVelocity().setZ(6.0f);
-	else if (keyS)
-		capsuleBig2->getLinearVelocity().setZ(-6.0f);
-	else
-		capsuleBig2->getLinearVelocity().setZ(0.0f);
+	{
+		auto velocity = world->getBody("capsulebig1")->getLinearVelocity();
+		if (keyLeft) velocity.setX(8.0f); else
+		if (keyRight) velocity.setX(-8.0f); else
+			velocity.setX(0.0f);
+		if (keyUp) velocity.setZ(8.0f); else
+		if (keyDown) velocity.setZ(-8.0f); else
+			velocity.setZ(0.0f);
+		world->getBody("capsulebig1")->setLinearVelocity(velocity);
+	}
+
+	{
+		auto velocity = world->getBody("capsulebig2")->getLinearVelocity();
+		if (keyA) velocity.setX(8.0f); else
+		if (keyD) velocity.setX(-8.0f); else
+			velocity.setX(0.0f);
+		if (keyW) velocity.setZ(8.0f); else
+		if (keyS) velocity.setZ(-8.0f); else
+			velocity.setZ(0.0f);
+		world->getBody("capsulebig2")->setLinearVelocity(velocity);
+	}
+
 	auto start = Time::getCurrentMillis();
 	auto fps = 60.0f;
 	world->update(1.0f / fps);

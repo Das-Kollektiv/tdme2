@@ -144,37 +144,6 @@ void World::update(float deltaTime)
 {
 	if (deltaTime < Math::EPSILON) return;
 
-	// update velocities
-	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
-		auto body = rigidBodiesDynamic.at(i);
-		// skip if enabled
-		if (body->enabled == false) {
-			continue;
-		}
-		// skip if sleeping
-		if (body->isSleeping() == true &&
-			body->angularVelocity.computeLengthSquared() < Math::EPSILON &&
-			body->linearVelocity.computeLengthSquared() < Math::EPSILON) {
-			continue;
-		}
-		auto& bodyAngularVelocity = body->angularVelocity;
-		body->rigidBody->setAngularVelocity(
-			reactphysics3d::Vector3(
-				bodyAngularVelocity.getX(),
-				bodyAngularVelocity.getY(),
-				bodyAngularVelocity.getZ()
-			)
-		);
-		auto& bodyLinearVelocity = body->linearVelocity;
-		body->rigidBody->setLinearVelocity(
-			reactphysics3d::Vector3(
-				bodyLinearVelocity.getX(),
-				bodyLinearVelocity.getY(),
-				bodyLinearVelocity.getZ()
-			)
-		);
-	}
-
 	// do the job
 	world.update(deltaTime);
 
@@ -279,11 +248,6 @@ void World::update(float deltaTime)
 		physicsTransformations.setTranslation(Vector3(position.x, position.y, position.z));
 		physicsTransformations.getRotation(0).fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
 		physicsTransformations.update();
-		// velocities
-		auto angularVelocity = body->rigidBody->getAngularVelocity();
-		auto linearVelocity = body->rigidBody->getLinearVelocity();
-		body->getAngularVelocity().set(angularVelocity.x, angularVelocity.y, angularVelocity.z);
-		body->getLinearVelocity().set(linearVelocity.x, linearVelocity.y, linearVelocity.z);
 	}
 }
 
@@ -431,8 +395,6 @@ void World::synch(Body* clonedBody, Body* body)
 	clonedBody->setCollisionTypeIds(body->getCollisionTypeIds());
 	clonedBody->setEnabled(body->isEnabled());
 	clonedBody->setMass(body->getMass());
-	clonedBody->getAngularVelocity().set(body->angularVelocity);
-	clonedBody->getLinearVelocity().set(body->linearVelocity);
 	clonedBody->fromTransformations(body->transformations);
 }
 
