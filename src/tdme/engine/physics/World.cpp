@@ -396,6 +396,10 @@ void World::synch(Body* clonedBody, Body* body)
 	clonedBody->setEnabled(body->isEnabled());
 	clonedBody->setMass(body->getMass());
 	clonedBody->fromTransformations(body->transformations);
+	if (clonedBody->getType() == Body::TYPE_DYNAMIC) {
+		clonedBody->setLinearVelocity(body->getLinearVelocity());
+		clonedBody->setAngularVelocity(body->getAngularVelocity());
+	}
 }
 
 void World::synch(World* world)
