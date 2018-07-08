@@ -13,7 +13,6 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
@@ -28,6 +27,7 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/PathFinding.h>
+#include "../engine/physics/Body.h"
 
 using std::string;
 using std::to_string;
@@ -45,7 +45,7 @@ using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;

@@ -11,7 +11,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/physics/RigidBody.h>
+#include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
@@ -37,7 +37,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
@@ -69,7 +69,7 @@ void PhysicsTest4::main(int argc, char** argv)
 
 void PhysicsTest4::display()
 {
-	auto box = world->getRigidBody("box");
+	auto box = world->getBody("box");
 	auto start = Time::getCurrentMillis();
 	world->update(1.0f / 60.0f);
 	world->synch(engine);
@@ -115,7 +115,7 @@ void PhysicsTest4::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("box", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
-	world->getRigidBody("box")->getLinearVelocity().setX(1.0f);
+	world->getBody("box")->getLinearVelocity().setX(1.0f);
 	try {
 		auto _terrainModel = ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm");
 		entity = new Object3D("terrain", _terrainModel);

@@ -171,7 +171,7 @@ SRCS = \
 	src/tdme/engine/model/RotationOrder.cpp \
 	src/tdme/engine/model/Skinning.cpp \
 	src/tdme/engine/model/TextureCoordinate.cpp \
-	src/tdme/engine/physics/RigidBody.cpp \
+	src/tdme/engine/physics/Body.cpp \
 	src/tdme/engine/physics/World.cpp \
 	src/tdme/engine/primitives/BoundingBox.cpp \
 	src/tdme/engine/primitives/BoundingVolume.cpp \

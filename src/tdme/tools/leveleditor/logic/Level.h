@@ -6,7 +6,6 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
@@ -19,7 +18,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transformations;
 using tdme::engine::model::Model;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -107,7 +106,7 @@ public:
 	 * @param collision type id or 0 for default
 	 * @return rigid body
 	 */
-	static RigidBody* createRigidBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0);
+	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0);
 
 	/**
 	 * Create rigid body
@@ -117,7 +116,7 @@ public:
 	 * @param collision type id or 0 for default
 	 * @return rigid body
 	 */
-	static RigidBody* createRigidBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0);
+	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0);
 
 	/** 
 	 * Add level to physics world

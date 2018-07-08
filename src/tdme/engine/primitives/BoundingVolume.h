@@ -23,7 +23,7 @@ using tdme::math::Vector3;
  */
 class tdme::engine::primitives::BoundingVolume
 {
-	friend class tdme::engine::physics::RigidBody;
+	friend class tdme::engine::physics::Body;
 	friend class tdme::engine::physics::World;
 	friend class BoundingBox;
 	friend class Capsule;

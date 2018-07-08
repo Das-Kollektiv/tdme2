@@ -6,8 +6,8 @@
 #include <stack>
 
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
-#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
@@ -24,7 +24,7 @@ using std::to_string;
 
 using tdme::engine::Transformations;
 using tdme::engine::physics::World;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -100,11 +100,11 @@ bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& 
 	actorTransformations.update();
 
 	// update rigid body
-	auto actorCollisionBody = world->getRigidBody("pathfinding.actor");
+	auto actorCollisionBody = world->getBody("pathfinding.actor");
 	actorCollisionBody->fromTransformations(actorTransformations);
 
 	// check if actor collides with world
-	vector<RigidBody*> collidedRigidBodies;
+	vector<Body*> collidedRigidBodies;
 	auto collision = world->doesCollideWith(collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
 	return collision;
 }
@@ -380,7 +380,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 
 	// unset actor bounding volume and remove rigid body
 	this->actorBoundingVolume = nullptr;
-	world->removeRigidBody("pathfinding.actor");
+	world->removeBody("pathfinding.actor");
 
 	// reset
 	reset();

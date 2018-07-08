@@ -8,7 +8,7 @@ namespace physics {
 			struct CollisionListener;
 			class CollisionResponse;
 			class CollisionResponse_Entity;
-			class RigidBody;
+			class Body;
 			class World;
 			class WorldListener;
 }  // namespace physics

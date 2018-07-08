@@ -21,7 +21,6 @@ class tdme::tests::PivotTest final
 {
 private:
 	Engine* engine {  };
-	World* world {  };
 
 public:
 

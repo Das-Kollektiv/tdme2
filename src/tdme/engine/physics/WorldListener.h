@@ -28,7 +28,7 @@ struct tdme::engine::physics::WorldListener
 	/** 
 	 * Event fired when rigid body was added
 	 * @param id
-	 * @param rigid body type
+	 * @param body type
 	 * @param collision type id
 	 * @param transformations
 	 * @oaram restitution
@@ -37,7 +37,7 @@ struct tdme::engine::physics::WorldListener
 	 * @param inertia tensor
 	 * @param bounding volumes
 	 */
-	virtual void onAddedRigidBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*>& boundingVolumes) = 0;
+	virtual void onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*>& boundingVolumes) = 0;
 
 	/** 
 	 * Event fired when rigid body was removed
@@ -45,6 +45,6 @@ struct tdme::engine::physics::WorldListener
 	 * @param rigid body type
 	 * @param collision type id
 	 */
-	virtual void onRemovedRigidBody(const string& id, int32_t type, uint16_t collisionTypeId) = 0;
+	virtual void onRemovedBody(const string& id, int32_t type, uint16_t collisionTypeId) = 0;
 
 };

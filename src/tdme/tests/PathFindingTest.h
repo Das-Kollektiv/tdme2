@@ -33,8 +33,8 @@ class tdme::tests::PathFindingTest final
 	: public virtual Application
 {
 private:
-	Engine* engine {  };
 	World* world {  };
+	Engine* engine {  };
 	LevelEditorLevel level;
 	LevelEditorEntity* playerModelEntity;
 	Object3D* playerObject;

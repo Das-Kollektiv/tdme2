@@ -20,7 +20,7 @@ using std::vector;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -34,28 +34,28 @@ using tdme::math::Vector3;
  */
 class tdme::engine::physics::World final
 {
-	friend class RigidBody;
+	friend class Body;
 
 private:
-	struct RigidBodyCollisionStruct {
-		string rigidBody1Id;
-		string rigidBody2Id;
+	struct BodyCollisionStruct {
+		string body1Id;
+		string body2Id;
 	};
 
 	reactphysics3d::DynamicsWorld world;
 
-	vector<RigidBody*> rigidBodies {  };
-	vector<RigidBody*> rigidBodiesDynamic {  };
-	map<string, RigidBody*> rigidBodiesById {  };
-	map<string, RigidBodyCollisionStruct> rigidBodyCollisionsLastFrame;
+	vector<Body*> bodies {  };
+	vector<Body*> rigidBodiesDynamic {  };
+	map<string, Body*> bodiesById {  };
+	map<string, BodyCollisionStruct> bodyCollisionsLastFrame;
 	vector<WorldListener*> worldListeners { };
 
 	/**
-	 * Synch into cloned rigid body from rigid body
-	 * @param cloned rigid body
-	 * @param rigid body
+	 * Synch into cloned body from body
+	 * @param cloned body
+	 * @param body
 	 */
-	void synch(RigidBody* clonedRigidBody, RigidBody* rigidBody);
+	void synch(Body* clonedBody, Body* body);
 
 public:
 
@@ -75,9 +75,9 @@ public:
 	 * @param mass
 	 * @param inertia matrix
 	 * @param bounding volumes
-	 * @return rigid body
+	 * @return body
 	 */
-	RigidBody* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
+	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
 
 	/** 
 	 * Add a collision body
@@ -86,9 +86,9 @@ public:
 	 * @param collision type id
 	 * @param transformations
 	 * @param bounding volumes
-	 * @return rigid body
+	 * @return body
 	 */
-	RigidBody* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes);
+	Body* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Add a static rigid body
@@ -98,22 +98,22 @@ public:
 	 * @param transformations
 	 * @param friction
 	 * @param bounding volumes
-	 * @return rigid body
+	 * @return body
 	 */
-	RigidBody* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes);
+	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes);
 
 	/** 
-	 * Returns rigid body identified by id 
+	 * Returns body identified by id
 	 * @param id
 	 * @return ridig body
 	 */
-	RigidBody* getRigidBody(const string& id);
+	Body* getBody(const string& id);
 
 	/** 
-	 * Removes rigid body identified by id
+	 * Removes body identified by id
 	 * @param id
 	 */
-	void removeRigidBody(const string& id);
+	void removeBody(const string& id);
 
 	/**
 	 * Update world
@@ -133,56 +133,36 @@ public:
 	 * @param step up max
 	 * @param point on which height should be calculated
 	 * @param point where height has been determined
-	 * @return rigid body from which height was determined or null
+	 * @return body from which height was determined or null
 	 */
-	RigidBody* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest);
-
-	/** 
-	 * Determine height of bounding volume
-	 * @param collision type ids
-	 * @param step up max
-	 * @param bounding volume
-	 * @param point
-	 * @param dest
-	 * @return rigid body from which height was determined or null
-	 */
-	RigidBody* determineHeight(uint16_t collisionTypeId, float stepUpMax, BoundingVolume* boundingVolume, const Vector3& point, Vector3& dest);
-
-	/** 
-	 * Check if world collides with given bounding box
-	 * @param collision type ids
-	 * @param bounding volume
-	 * @param rigid bodies that collide with bounding volume
-	 * @return if collision happpened or not
-	 */
-	bool doesCollideWith(uint16_t collisionTypeId, BoundingBox* boundingBox, vector<RigidBody*>& rigidBodies);
+	Body* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest);
 
 	/**
-	 * Check if world collides with given bounding volume
-	 * 	Note: this uses the bounding volume AABB to detect collision, so no exact collision is computed
+	 * Check if world collides with given body
 	 * @param collision type ids
+	 * @param body
+	 * @param bodies that collide with given body
+	 * @return if collision happpened or not
+	 */
+	bool doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& rigidBodies);
+
+	/**
+	 * Check if world collides with given bounding volumes and its transformations, which both form a collision for method runtime
+	 * @param collision type ids
+	 * @param transformations
 	 * @param bounding volume
-	 * @param rigid bodies that collide with bounding volume
+	 * @param bodies that collide with given body
 	 * @return if collision happpened or not
 	 */
-	bool doesCollideWith(uint16_t collisionTypeId, BoundingVolume* boundingVolume, vector<RigidBody*>& rigidBodies);
+	bool doesCollideWith(uint16_t collisionTypeIds, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes, vector<Body*>& rigidBodies);
 
 	/**
-	 * Check if world collides with given rigid body
-	 * @param collision type ids
-	 * @param rigid body
-	 * @param rigid bodies that collide with given rigid body
+	 * Check if body 1 collides with body 2
+	 * @param body 1
+	 * @param body 2
 	 * @return if collision happpened or not
 	 */
-	bool doesCollideWith(uint16_t collisionTypeId, RigidBody* rigidBody, vector<RigidBody*>& rigidBodies);
-
-	/**
-	 * Check if rigid body 1 collides with rigid body 2
-	 * @param rigid body 1
-	 * @param rigid body 2
-	 * @return if collision happpened or not
-	 */
-	bool doesCollideWith(RigidBody* rigidBody1, RigidBody* rigidBody2);
+	bool doCollide(Body* body1, Body* body2);
 
 	/** 
 	 * Clone this world

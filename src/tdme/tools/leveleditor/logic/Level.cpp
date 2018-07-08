@@ -18,7 +18,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/physics/RigidBody.h>
+#include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -78,7 +78,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Model;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -346,7 +346,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 }
 
-RigidBody* Level::createRigidBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId) {
+Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId) {
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::EMPTY) return nullptr;
 
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
@@ -443,21 +443,21 @@ RigidBody* Level::createRigidBody(World* world, LevelEditorEntity* levelEditorEn
 	return nullptr;
 }
 
-RigidBody* Level::createRigidBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId) {
+Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId) {
 	Transformations transformations;
 	transformations.fromTransformations(levelEditorObject->getTransformations());
 	if (translation.equals(Vector3()) == false) {
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createRigidBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId);
+	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId);
 }
 
 void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation)
 {
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto levelEditorObject = level->getObjectAt(i);
-		auto rigidBody = createRigidBody(world, levelEditorObject);
+		auto rigidBody = createBody(world, levelEditorObject);
 		if (rigidBody == nullptr) continue;
 		if (translation.equals(Vector3()) == false) {
 			auto transformations = levelEditorObject->getTransformations();
@@ -486,7 +486,7 @@ void Level::disableLevel(World* world, LevelEditorLevel* level)
 	Transformations transformations;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
-		auto rigidBody = world->getRigidBody(object->getId());
+		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		rigidBody->setEnabled(false);
 	}
@@ -515,7 +515,7 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, const Vector3& tr
 	Transformations transformations;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
-		auto rigidBody = world->getRigidBody(object->getId());
+		auto rigidBody = world->getBody(object->getId());
 		if (rigidBody == nullptr) continue;
 		transformations.fromTransformations(object->getTransformations());
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));

@@ -12,8 +12,6 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/physics/RigidBody.h>
-#include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -37,8 +35,6 @@ using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::physics::RigidBody;
-using tdme::engine::physics::World;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -50,7 +46,6 @@ using tdme::utils::Console;
 PivotTest::PivotTest()
 {
 	engine = Engine::getInstance();
-	world = new World();
 }
 
 

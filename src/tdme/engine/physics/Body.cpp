@@ -1,11 +1,9 @@
-#include <tdme/engine/physics/RigidBody.h>
-
 #include <string>
 #include <vector>
 
 #include <ext/reactphysics3d/src/body/Body.h>
 #include <ext/reactphysics3d/src/body/CollisionBody.h>
-#include <ext/reactphysics3d/src/body/RigidBody.h>
+#include <ext/reactphysics3d/src/body/Body.h>
 #include <ext/reactphysics3d/src/collision/CollisionCallback.h>
 #include <ext/reactphysics3d/src/collision/NarrowPhaseInfo.h>
 #include <ext/reactphysics3d/src/collision/ProxyShape.h>
@@ -33,12 +31,13 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
+#include "Body.h"
 
 using std::string;
 using std::to_string;
 using std::vector;
 
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
@@ -54,11 +53,11 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
-constexpr uint16_t RigidBody::TYPEIDS_ALL;
-constexpr uint16_t RigidBody::TYPEID_STATIC;
-constexpr uint16_t RigidBody::TYPEID_DYNAMIC;
+constexpr uint16_t Body::TYPEIDS_ALL;
+constexpr uint16_t Body::TYPEID_STATIC;
+constexpr uint16_t Body::TYPEID_DYNAMIC;
 
-RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes)
+Body::Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes)
 {
 	this->world = world;
 	this->id = id;
@@ -91,7 +90,7 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 		default:
 			this->rigidBody = nullptr;
 			this->collisionBody = nullptr;
-			Console::println("RigidBody::RigidBody(): unsupported type: " + to_string(type));
+			Console::println("Body::Body(): unsupported type: " + to_string(type));
 			break;
 	}
 	if (rigidBody != nullptr) {
@@ -107,18 +106,18 @@ RigidBody::RigidBody(World* world, const string& id, int type, bool enabled, uin
 	setEnabled(enabled);
 }
 
-RigidBody::~RigidBody() {
+Body::~Body() {
 	for (auto boundingVolume: boundingVolumes) {
 		if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr && cloned == true) continue;
 		delete boundingVolume;
 	}
 }
 
-const Vector3 RigidBody::getNoRotationInertiaTensor() {
+const Vector3 Body::getNoRotationInertiaTensor() {
 	return Vector3(0.0f, 0.0f, 0.0f);
 }
 
-Matrix4x4 RigidBody::computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
+Matrix4x4 Body::computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
 {
 	auto width = boundingBox->getDimensions().getX();
 	auto height = boundingBox->getDimensions().getY();
@@ -144,38 +143,38 @@ Matrix4x4 RigidBody::computeInverseInertiaMatrix(BoundingBox* boundingBox, float
 		));
 }
 
-bool RigidBody::isCloned() {
+bool Body::isCloned() {
 	return cloned;
 }
 
-void RigidBody::setCloned(bool cloned) {
+void Body::setCloned(bool cloned) {
 	this->cloned = cloned;
 }
 
-const string& RigidBody::getId()
+const string& Body::getId()
 {
 	return id;
 }
 
-const string& RigidBody::getRootId()
+const string& Body::getRootId()
 {
 	return rootId;
 }
 
-void RigidBody::setRootId(const string& rootId) {
+void Body::setRootId(const string& rootId) {
 	this->rootId = rootId;
 }
 
-int32_t RigidBody::getType() {
+int32_t Body::getType() {
 	return type;
 }
 
-uint16_t RigidBody::getCollisionTypeId()
+uint16_t Body::getCollisionTypeId()
 {
 	return collisionTypeId;
 }
 
-void RigidBody::setCollisionTypeId(uint16_t typeId)
+void Body::setCollisionTypeId(uint16_t typeId)
 {
 	this->collisionTypeId = typeId;
 	for (auto proxyShape: proxyShapes) {
@@ -183,12 +182,12 @@ void RigidBody::setCollisionTypeId(uint16_t typeId)
 	}
 }
 
-uint16_t RigidBody::getCollisionTypeIds()
+uint16_t Body::getCollisionTypeIds()
 {
 	return collideTypeIds;
 }
 
-void RigidBody::setCollisionTypeIds(uint16_t collisionTypeIds)
+void Body::setCollisionTypeIds(uint16_t collisionTypeIds)
 {
 	this->collideTypeIds = collisionTypeIds;
 	for (auto proxyShape: proxyShapes) {
@@ -196,12 +195,12 @@ void RigidBody::setCollisionTypeIds(uint16_t collisionTypeIds)
 	}
 }
 
-bool RigidBody::isEnabled()
+bool Body::isEnabled()
 {
 	return enabled;
 }
 
-void RigidBody::setEnabled(bool enabled)
+void Body::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled)
@@ -214,16 +213,16 @@ void RigidBody::setEnabled(bool enabled)
 	this->enabled = enabled;
 }
 
-bool RigidBody::isSleeping()
+bool Body::isSleeping()
 {
 	return collisionBody->isSleeping();
 }
 
-vector<BoundingVolume*>& RigidBody::getBoundingVolumes() {
+vector<BoundingVolume*>& Body::getBoundingVolumes() {
 	return boundingVolumes;
 }
 
-void RigidBody::resetProxyShapes() {
+void Body::resetProxyShapes() {
 	// remove proxy shapes
 	for (auto proxyShape: proxyShapes) {
 		if (rigidBody != nullptr) {
@@ -319,7 +318,7 @@ void RigidBody::resetProxyShapes() {
 	};
 }
 
-BoundingBox RigidBody::computeBoundingBoxTransformed() {
+BoundingBox Body::computeBoundingBoxTransformed() {
 	auto aabb = rigidBody->getAABB();
 	return BoundingBox(
 		Vector3(
@@ -335,78 +334,78 @@ BoundingBox RigidBody::computeBoundingBoxTransformed() {
 	);
 }
 
-float RigidBody::getFriction()
+float Body::getFriction()
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::getFriction(): no rigid body attached");
+		Console::println("Body::getFriction(): no rigid body attached");
 		return 0.0f;
 	}
 	return rigidBody->getMaterial().getFrictionCoefficient();
 }
 
-void RigidBody::setFriction(float friction)
+void Body::setFriction(float friction)
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::setFriction(): no rigid body attached");
+		Console::println("Body::setFriction(): no rigid body attached");
 		return;
 	}
 	rigidBody->getMaterial().setFrictionCoefficient(friction);
 }
 
-float RigidBody::getRestitution()
+float Body::getRestitution()
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::getRestitution(): no rigid body attached");
+		Console::println("Body::getRestitution(): no rigid body attached");
 		return 0.0f;
 	}
 	return rigidBody->getMaterial().getBounciness();
 }
 
-void RigidBody::setRestitution(float restitution)
+void Body::setRestitution(float restitution)
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::setRestitution(): no rigid body attached");
+		Console::println("Body::setRestitution(): no rigid body attached");
 		return;
 	}
 	rigidBody->getMaterial().setBounciness(restitution);
 }
 
-float RigidBody::getMass()
+float Body::getMass()
 {
 	return mass;
 }
 
-void RigidBody::setMass(float mass)
+void Body::setMass(float mass)
 {
 	this->mass = mass;
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::setMass(): no rigid body attached");
+		Console::println("Body::setMass(): no rigid body attached");
 		return;
 	}
 	rigidBody->setMass(mass);
 }
 
-Vector3& RigidBody::getLinearVelocity()
+Vector3& Body::getLinearVelocity()
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::getLinearVelocity(): no rigid body attached");
+		Console::println("Body::getLinearVelocity(): no rigid body attached");
 	}
 	return linearVelocity;
 }
 
-Vector3& RigidBody::getAngularVelocity()
+Vector3& Body::getAngularVelocity()
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::getAngularVelocity(): no rigid body attached");
+		Console::println("Body::getAngularVelocity(): no rigid body attached");
 	}
 	return angularVelocity;
 }
 
-const Transformations& RigidBody::getTransformations() {
+const Transformations& Body::getTransformations() {
 	return transformations;
 }
 
-void RigidBody::fromTransformations(const Transformations& transformations)
+void Body::fromTransformations(const Transformations& transformations)
 {
 	// store engine transformations
 	this->transformations.fromTransformations(transformations);
@@ -430,7 +429,7 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	/*
 	// TODO: center of mass ~ pivot
 	// set center of mass which is basically center of bv for now
-	rigidBody->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
+	body->setCenterOfMassLocal(boundingVolume->collisionShapeLocalTransform.getPosition());
 	// find final position, not sure yet if its working 100%, but still works with some tests
 	auto centerOfMassWorld = transform * boundingVolume->collisionShapeLocalTransform.getPosition();
 	transform.setPosition(
@@ -451,10 +450,10 @@ void RigidBody::fromTransformations(const Transformations& transformations)
 	collisionBody->setTransform(transform);
 }
 
-void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
+void Body::addForce(const Vector3& forceOrigin, const Vector3& force)
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::addForce(): no rigid body attached");
+		Console::println("Body::addForce(): no rigid body attached");
 		return;
 	}
 	rigidBody->applyForce(
@@ -463,10 +462,10 @@ void RigidBody::addForce(const Vector3& forceOrigin, const Vector3& force)
 	);
 }
 
-void RigidBody::addForce(const Vector3& force)
+void Body::addForce(const Vector3& force)
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::addForce(): no rigid body attached");
+		Console::println("Body::addForce(): no rigid body attached");
 		return;
 	}
 	rigidBody->applyForceToCenterOfMass(
@@ -474,10 +473,10 @@ void RigidBody::addForce(const Vector3& force)
 	);
 }
 
-void RigidBody::addTorque(const Vector3& torque)
+void Body::addTorque(const Vector3& torque)
 {
 	if (rigidBody == nullptr) {
-		Console::println("RigidBody::addTorque(): no rigid body attached");
+		Console::println("Body::addTorque(): no rigid body attached");
 		return;
 	}
 	rigidBody->applyForceToCenterOfMass(
@@ -485,31 +484,31 @@ void RigidBody::addTorque(const Vector3& torque)
 	);
 }
 
-void RigidBody::addCollisionListener(CollisionListener* listener)
+void Body::addCollisionListener(CollisionListener* listener)
 {
 	collisionListener.push_back(listener);
 }
 
-void RigidBody::removeCollisionListener(CollisionListener* listener)
+void Body::removeCollisionListener(CollisionListener* listener)
 {
 	collisionListener.erase(remove(collisionListener.begin(), collisionListener.end(), listener), collisionListener.end());
 }
 
-void RigidBody::fireOnCollision(RigidBody* other, CollisionResponse* collisionResponse)
+void Body::fireOnCollision(Body* other, CollisionResponse* collisionResponse)
 {
 	for (auto listener: collisionListener) {
 		listener->onCollision(this, other, collisionResponse);
 	}
 }
 
-void RigidBody::fireOnCollisionBegin(RigidBody* other, CollisionResponse* collisionResponse)
+void Body::fireOnCollisionBegin(Body* other, CollisionResponse* collisionResponse)
 {
 	for (auto listener: collisionListener) {
 		listener->onCollisionBegin(this, other, collisionResponse);
 	}
 }
 
-void RigidBody::fireOnCollisionEnd(RigidBody* other)
+void Body::fireOnCollisionEnd(Body* other)
 {
 	for (auto listener: collisionListener) {
 		listener->onCollisionEnd(this, other);

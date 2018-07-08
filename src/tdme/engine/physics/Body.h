@@ -39,7 +39,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::physics::RigidBody final
+class tdme::engine::physics::Body final
 {
 	friend class World;
 
@@ -89,21 +89,21 @@ private:
 	 * @param other
 	 * @param collision response
 	 */
-	void fireOnCollision(RigidBody* other, CollisionResponse* collisionResponse);
+	void fireOnCollision(Body* other, CollisionResponse* collisionResponse);
 
 	/**
 	 * Fire on collision begin
 	 * @param other
 	 * @param collision response
 	 */
-	void fireOnCollisionBegin(RigidBody* other, CollisionResponse* collisionResponse);
+	void fireOnCollisionBegin(Body* other, CollisionResponse* collisionResponse);
 
 	/**
 	 * Fire on collision end
 	 * @param other
 	 * @param collision response
 	 */
-	void fireOnCollisionEnd(RigidBody* other);
+	void fireOnCollisionEnd(Body* other);
 
 	/**
 	 * Computes the inverse inertia matrix
@@ -128,12 +128,12 @@ private:
 	 * @param mass in kg
 	 * @param bounding volumes
 	 */
-	RigidBody(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
+	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Destructor
 	 */
-	~RigidBody();
+	~Body();
 
 public:
 	/**
@@ -315,7 +315,7 @@ public:
 	 * @param bounding volume
 	 * @param collision
 	 */
-	bool doesCollideWith(RigidBody* rigidBody, CollisionResponse* collision);
+	bool doesCollideWith(Body* body, CollisionResponse* collision);
 
 	/** 
 	 * Add a collision listener to this rigid body

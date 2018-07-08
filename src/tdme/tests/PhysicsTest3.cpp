@@ -12,7 +12,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/physics/RigidBody.h>
+#include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
@@ -42,7 +42,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::ConvexMesh;
@@ -85,7 +85,7 @@ void PhysicsTest3::main(int argc, char** argv)
 
 void PhysicsTest3::display()
 {
-	auto capsuleBig1 = world->getRigidBody("capsulebig1");
+	auto capsuleBig1 = world->getBody("capsulebig1");
 	if (keyLeft)
 		capsuleBig1->getLinearVelocity().setX(8.0f);
 	else if (keyRight)
@@ -98,7 +98,7 @@ void PhysicsTest3::display()
 		capsuleBig1->getLinearVelocity().setZ(-8.0f);
 	else
 		capsuleBig1->getLinearVelocity().setZ(0.0f);
-	auto capsuleBig2 = world->getRigidBody("capsulebig2");
+	auto capsuleBig2 = world->getBody("capsulebig2");
 	if (keyA)
 		capsuleBig2->getLinearVelocity().setX(6.0f);
 	else if (keyD)
@@ -229,13 +229,13 @@ void PhysicsTest3::initialize()
 	entity->setTranslation(Vector3(-2.0f, 5.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 80.0f, RigidBody::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 	entity = new Object3D("capsulebig2", capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->setTranslation(Vector3(+2.0f, 5.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, RigidBody::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 	try {
 		auto _terrainModel = ModelReader::read("resources/tests/environment/terrain_test", "terrain_test4.dae");
 		entity = new Object3D("terrain", _terrainModel);
