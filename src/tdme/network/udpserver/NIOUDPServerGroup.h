@@ -13,7 +13,7 @@ using tdme::network::udpserver::NIOUDPServerClient;
  * NIO UDP server group
  * @author Andreas Drewke
  */
-class tdme::network::udpserver::NIOUDPServerGroup : public NIOServerGroup<NIOUDPServer, NIOUDPServerClient> {
+class tdme::network::udpserver::NIOUDPServerGroup : public NIOServerGroup<NIOUDPServer, NIOUDPServerClient, NIOUDPServerGroup> {
 public:
 	/**
 	 * @brief Creates a frame to be used with send

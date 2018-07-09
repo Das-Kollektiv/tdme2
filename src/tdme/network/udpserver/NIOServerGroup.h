@@ -28,7 +28,7 @@ namespace udpserver {
  * Base class for NIO server groups
  * @author Andreas Drewke
  */
-template <typename SERVER, typename CLIENT>
+template <typename SERVER, typename CLIENT, typename GROUP>
 class NIOServerGroup : public NIOServerGroupBase {
 public:
 	typedef std::set<std::string> ClientKeySet;
@@ -86,13 +86,13 @@ public:
 	 */
 	virtual const bool addClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();
-		typename ClientKeySet::iterator it = clientKeySet.find(client->getId());
+		typename ClientKeySet::iterator it = clientKeySet.find(client->getKey());
 		// check if already exists
 		if (it != clientKeySet.end()) {
 			clientKeyListsReadWriteLock.unlock();
 			return false;
 		}
-		clientKeySet.insert(make_pair(client->getId(), client));
+		clientKeySet.insert(client->getKey());
 		clientKeyListsReadWriteLock.unlock();
 		return true;
 	}
@@ -103,13 +103,13 @@ public:
 	 */
 	virtual const bool removeClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();
-		typename ClientKeySet::iterator it = clientKeySet.find(client->getId());
+		typename ClientKeySet::iterator it = clientKeySet.find(client->getKey());
 		// check if not exists
 		if (it == clientKeySet.end()) {
 			clientKeyListsReadWriteLock.unlock();
 			return false;
 		}
-		clientKeySet.erase(client->getId());
+		clientKeySet.erase(client->getKey());
 		clientKeyListsReadWriteLock.unlock();
 		return true;
 	}
@@ -145,7 +145,7 @@ protected:
 		// delegate it to thread pool, but make close request not declinable
 		server->workerThreadPool->addElement(request, false);
 		// server call back
-		server->closeClient(this);
+		server->closeGroup(dynamic_cast<GROUP*>(this));
 	}
 
 	//

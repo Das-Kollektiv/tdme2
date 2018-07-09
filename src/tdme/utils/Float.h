@@ -20,7 +20,7 @@ class tdme::utils::Float final
 {
 public:
 	static constexpr int32_t MAX_EXPONENT { 127 };
-	static constexpr float MAX_VALUE { 3.4028235E38f };
+	static constexpr float MAX_VALUE { 3.402823466e+38f };
 	static constexpr int32_t MIN_EXPONENT { -126 };
 	static constexpr float MIN_NORMAL { 1.17549435E-38f };
 	static constexpr float MIN_VALUE { 1.4E-45f };

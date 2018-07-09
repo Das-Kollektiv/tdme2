@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(_WIN32) && defined(_MSC_VER)
+	#define ssize_t int
+#endif
+
 #include <stdint.h>
 
 #include <queue>

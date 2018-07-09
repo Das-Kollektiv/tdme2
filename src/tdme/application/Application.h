@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(__linux__) or defined(_WIN32)
+#if defined(__linux__) || defined(_WIN32)
 	#include <GL/freeglut.h>
 #elif defined(__APPLE__)
 	#include <GLUT/glut.h>

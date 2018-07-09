@@ -1,9 +1,12 @@
 /**
  * @version $Id: a5817099da41ca9b6651ef724eeb90d29510f8e1 $
  */
-
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/Mutex.h>
+
+#if defined(_WIN32) && defined(_MSC_VER)
+	#include <windows.h>
+#endif
 
 using std::string;
 using tdme::os::threading::Barrier;
@@ -41,7 +44,12 @@ bool Barrier::wait() {
 		m.unlock();
 
 		// notify exited thread
-		__sync_add_and_fetch(&exited, 1);
+		#if defined(_WIN32) && defined(_MSC_VER)
+			InterlockedIncrement(&exited);
+		#else
+			__sync_add_and_fetch(&exited, 1);
+		#endif
+
 
 		// exit
 		return true;
@@ -53,8 +61,13 @@ bool Barrier::wait() {
 		m.unlock();
 
 		// notify exited thread
-		__sync_add_and_fetch(&exited, 1);
+		#if defined(_WIN32) && defined(_MSC_VER)
+			InterlockedIncrement(&exited);
+		#else
+			__sync_add_and_fetch(&exited, 1);
+		#endif
 
+		//
 		return false;
 	}
 }

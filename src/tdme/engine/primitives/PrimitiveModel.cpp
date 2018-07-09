@@ -41,6 +41,7 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;

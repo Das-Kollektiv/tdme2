@@ -2,7 +2,7 @@
 
 #if defined (__APPLE__)
 	#include <OpenGL/gl3.h>
-#elif defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__) or defined(_WIN32) or defined(__HAIKU__)
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
 	#define GLEW_NO_GLU
 	#include <GL/glew.h>
 #endif
@@ -84,7 +84,7 @@ void GL3Renderer::initialize()
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 	// Note sure here: GLEW requires to have it, whereas I actually do use core profile, maybe something is wrong with FREEGLUT core profile initialization
-	#if defined(_WIN32) or defined(__linux__) or defined(__FreeBSD__)
+	#if defined(_WIN32) || defined(__linux__) || defined(__FreeBSD__)
 		glEnable(GL_POINT_SPRITE);
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -165,7 +165,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 		// get error
 		int32_t infoLogLengthBuffer;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
-		char infoLogBuffer[infoLogLengthBuffer];
+		char* infoLogBuffer = new char[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
 		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
 		// be verbose
@@ -182,6 +182,8 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 				infoLogString
 			 )
 		 );
+		//
+		delete infoLogBuffer;
 		// remove shader
 		glDeleteShader(handle);
 		return 0;
@@ -216,7 +218,7 @@ bool GL3Renderer::linkProgram(int32_t programId)
 		// get error
 		int32_t infoLogLength = 0;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-		char infoLog[infoLogLength];
+		char* infoLog = new char[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
 		auto infoLogString = (string(infoLog, infoLogLength));
 		// be verbose
@@ -228,6 +230,9 @@ bool GL3Renderer::linkProgram(int32_t programId)
 				infoLogString
 			 )
 		);
+		//
+		delete infoLog;
+		//
 		return false;
 	}
 	return true;

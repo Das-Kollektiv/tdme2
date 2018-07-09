@@ -1,8 +1,12 @@
 /**
  * @version $Id: aa3465de5134eac90f5c600a66a33e052df4613d $
  */
+#if defined(_WIN32) && defined(_MSC_VER)
+	#include <windows.h>
+#else
+	#include <unistd.h>
+#endif
 
-#include <unistd.h>
 #include <string>
 #include <iostream>
 
@@ -25,12 +29,16 @@ void Thread::sleep(const uint64_t milliseconds) {
 	//	time.tv_sec = milliseconds / 1000;
 	//	time.tv_nsec = (milliseconds - (time.tv_sec * 1000)) * 1000000;
 	//	nanosleep(&time, &time);
-	uint64_t secondsWaited = 0L;
-	while (milliseconds - (secondsWaited * 1000L) >= 1000L) {
-		::sleep(1);
-		secondsWaited++;
-	}
-	usleep((milliseconds - (secondsWaited * 1000L)) * 1000L);
+	#if defined(_WIN32) && defined(_MSC_VER)
+		Sleep(milliseconds);
+	#else
+		uint64_t secondsWaited = 0L;
+		while (milliseconds - (secondsWaited * 1000L) >= 1000L) {
+			::sleep(1);
+			secondsWaited++;
+		}
+		usleep((milliseconds - (secondsWaited * 1000L)) * 1000L);
+	#endif
 }
 
 void Thread::join() {

@@ -20,7 +20,7 @@ class NIOServerRequest;
  * @author Andreas Drewke
  */
 class NIOServerWorkerThreadPool : public Queue<NIOServerRequest> {
-friend class NIOServerWorkerThread;
+	friend class NIOServerWorkerThread;
 
 public:
 

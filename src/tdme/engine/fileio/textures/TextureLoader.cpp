@@ -169,7 +169,7 @@ Texture* TextureLoader::loadPNG(const string& pathName, const string& fileName) 
 	ByteBuffer* pixelByteBuffer = ByteBuffer::allocate(width * height * bytesPerPixel);
 
 	// setup array with row pointers into pixel buffer
-	png_bytep rows[height];
+	png_bytep* rows = new png_bytep[height];
 	uint8_t* p = (uint8_t*)pixelByteBuffer->getBuffer();
 	for(int i = 0; i < height; i++) {
 		rows[i] = p;
@@ -181,6 +181,9 @@ Texture* TextureLoader::loadPNG(const string& pathName, const string& fileName) 
 	// setjmp point and eventually return nullptr
 	png_read_image(png, rows);
 	png_read_end(png, nullptr);
+
+	//
+	delete rows;
 
 	// done
 	png_destroy_read_struct(&png, &info, nullptr);

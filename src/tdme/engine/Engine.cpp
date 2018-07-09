@@ -1,6 +1,6 @@
 #include <tdme/engine/Engine.h>
 
-#if ((defined(__linux__) or defined(__FreeBSD__) or defined(__NetBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32) or defined(__HAIKU__)
+#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32) || defined(__HAIKU__)
 	#define GLEW_NO_GLU
 	#include <GL/glew.h>
 #endif
@@ -425,7 +425,7 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 	}
 	// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
-	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__NetBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
+	#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
 	{
 		int glMajorVersion;
 		int glMinorVersion;
@@ -445,7 +445,7 @@ void Engine::initialize(bool debug)
 		animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 	}
 	// GLES2 on Linux
-	#elif (defined(__linux__) or defined(__FreeBSD__) or defined(__NetBSD__)) and (defined(__arm__) or defined(__aarch64__))
+	#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && (defined(__arm__) || defined(__aarch64__))
 	{
 		renderer = new EngineGLES2Renderer(this);
 		Console::println(string("TDME::Using GLES2"));
