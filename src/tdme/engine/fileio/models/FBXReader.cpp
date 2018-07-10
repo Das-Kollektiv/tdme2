@@ -1,5 +1,7 @@
 #include <tdme/engine/fileio/models/FBXReader.h>
 
+#define FBXSDK_SHARED
+
 #include <fbxsdk.h>
 
 #include <map>

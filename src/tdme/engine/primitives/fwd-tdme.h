@@ -5,7 +5,7 @@ namespace tdme {
 namespace engine {
 namespace primitives {
 			class BoundingBox;
-			struct BoundingVolume;
+			class BoundingVolume;
 			class Capsule;
 			class ConvexMesh;
 			class ConvexMeshBoundingVolume;

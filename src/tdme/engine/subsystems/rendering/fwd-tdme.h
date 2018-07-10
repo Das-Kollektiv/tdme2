@@ -21,7 +21,7 @@ namespace rendering {
 				class Object3DVBORenderer;
 				class Object3DVBORenderer_1;
 				class Object3DVBORenderer_TransparentRenderFacesGroupPool;
-				class TransparentRenderFace;
+				struct TransparentRenderFace;
 				class TransparentRenderFacesGroup;
 				class TransparentRenderFacesPool;
 				class TransparentRenderFacesPool_TransparentRenderFacesPool;
