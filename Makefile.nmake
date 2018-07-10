@@ -581,7 +581,21 @@ EXT_SRCS = \
 
 OBJECTS = *.obj
 
-all: compile link clean ext-compile ext-link ext-clean AngleTest AudioTest EngineTest GUITest LODTest PathFindingTest PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 SkinningTest ThreadingTest UDPClientTest UDPServerTest
+all: \
+	compile link clean \
+	ext-compile ext-link ext-clean\
+	AngleTest AudioTest EngineTest GUITest LODTest PathFindingTest \
+	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
+	SkinningTest \
+	ThreadingTest \
+	UDPClientTest \
+	UDPServerTest \
+	converttotm \
+	levelfixmodelszup2yup \
+	TDMELevelEditor \
+	TDMEModelEditor \
+	TDMEParticleSystem \
+	clean-mains
 
 ext-compile: $(EXT_SRCS)
 	cl /c $(FLAGS) $(INCLUDES) $**
@@ -601,6 +615,11 @@ link: *.obj
 	lib /OUT:libtdme.lib $** 
 
 clean: *.obj 
+	cmd /c <<clean.bat
+del $**
+<<
+
+clean-mains: *.obj 
 	cmd /c <<clean.bat
 del $**
 <<
@@ -646,3 +665,18 @@ UDPClientTest:
 
 UDPServerTest:
 	cl $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(EXTRA_LIBS)
+
+converttotm:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(EXTRA_LIBS)
+
+levelfixmodelszup2yup:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(EXTRA_LIBS)
+
+TDMELevelEditor:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(EXTRA_LIBS)
+
+TDMEModelEditor:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp /link $(EXTRA_LIBS)
+
+TDMEParticleSystem:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp /link $(EXTRA_LIBS)
