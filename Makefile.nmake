@@ -9,10 +9,38 @@ SRCS_PLATFORM = \
 	src/tdme/engine/fileio/models/FBXReader.cpp \
 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 
-INCLUDES = /I "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" /I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" /I "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include" /I src /I ext /I . /I ext/v-hacd/src/VHACD_Lib/inc/ /I ext/reactphysics3d/src/ /I src /I ext /I ext/src /I /mingw64/include/ /I ext/fbx/win64/include /I ext\win-pthread /I ext/openal-soft/includes /I ext\win-glew\include /I ext\win-freeglut\include /I ext\win-dirent\include
-EXTRA_LIBS = /LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\*.lib" /LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\*.lib"
-#EXTRA_LIBS = -Lext/fbx/win64/lib -lfbxsdk -ltdme -ltdme-ext -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal
-FLAGS = /MP /D _USING_V110_SDK71_ /EHsc
+INCLUDES = \
+	/I "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" \
+	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
+	/I "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include" \
+	/I src \
+	/I ext \
+	/I . \
+	/I "ext\v-hacd\src\VHACD_Lib\inc" \
+	/I "ext\reactphysics3d\src" \
+	/I "src" \
+	/I "ext" \
+	/I "ext\src" \
+	/I "ext\fbx\win64\include" \
+	/I "ext\win-pthread\includes" \
+	/I "ext\win-openal-soft\includes" \
+	/I "ext\win-glew\include" \
+	/I "ext\win-freeglut\include" \
+	/I "ext\win-dirent\include"
+
+EXTRA_LIBS = \
+	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\*.lib" \
+	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\*.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64\*.lib" \
+	/LIBPATH "ext\win-pthread\libs\pthreadVC2.lib" \
+	/LIBPATH "ext\win-openal-soft\libs\OpenAL32.lib" \
+	/LIBPATH "ext\win-glew\libs/glew32.lib" \
+	/LIBPATH "ext\win-freeglut\libs\freeglut.lib" \
+	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
+	/LIBPATH libtdme-ext.lib \
+	/LIBPATH libtdme.lib
+
+FLAGS = /MP /D _USING_V110_SDK71_ /EHsc /O2
 
 SRC = src
 TINYXML = tinyxml
@@ -553,7 +581,7 @@ EXT_SRCS = \
 
 OBJECTS = *.obj
 
-all: compile link clean ext-compile ext-link ext-clean
+all: compile link clean ext-compile ext-link ext-clean AngleTest AudioTest EngineTest GUITest LODTest PathFindingTest PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 SkinningTest ThreadingTest UDPClientTest UDPServerTest
 
 ext-compile: $(EXT_SRCS)
 	cl /c $(FLAGS) $(INCLUDES) $**
@@ -576,3 +604,45 @@ clean: *.obj
 	cmd /c <<clean.bat
 del $**
 <<
+
+AngleTest: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(EXTRA_LIBS)
+	
+AudioTest: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(EXTRA_LIBS)
+
+EngineTest: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(EXTRA_LIBS)
+
+LODTest: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(EXTRA_LIBS)
+
+PathFindingTest: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(EXTRA_LIBS)
+
+GUITest: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/GUITest-main.cpp /link $(EXTRA_LIBS)
+
+PhysicsTest1: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(EXTRA_LIBS)
+
+PhysicsTest2: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(EXTRA_LIBS)
+
+PhysicsTest3: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(EXTRA_LIBS)
+
+PhysicsTest4: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(EXTRA_LIBS)
+
+SkinningTest: 
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(EXTRA_LIBS)
+
+ThreadingTest:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(EXTRA_LIBS)
+
+UDPClientTest:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(EXTRA_LIBS)
+
+UDPServerTest:
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(EXTRA_LIBS)
