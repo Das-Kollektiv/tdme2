@@ -1,9 +1,14 @@
 #include <tdme/os/filesystem/StandardFileSystem.h>
 
+#if defined(_WIN32) && defined(_MSC_VER)
+	#include <direct.h>
+# else
+	#include <unistd.h>
+#endif
+
 #include <algorithm>
 #include <limits.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
 

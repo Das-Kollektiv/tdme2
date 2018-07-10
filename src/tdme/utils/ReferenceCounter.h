@@ -28,5 +28,5 @@ public:
 	 */
 	void releaseReference();
 private:
-	int referenceCounter;
+	unsigned int referenceCounter;
 };

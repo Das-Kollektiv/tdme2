@@ -7,7 +7,7 @@ SRCS_PLATFORM = \
 	src/tdme/engine/fileio/models/FBXReader.cpp \
 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 
-INCLUDES = /I "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" /I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" /I "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include" /I src /I ext /I . /I ext/v-hacd/src/VHACD_Lib/inc/ /I ext/reactphysics3d/src/ /I src /I ext /I ext/src /I /mingw64/include/ /I ext/fbx/win64/include /I ext\win-pthread /I ext/openal-soft/includes /I ext\win-glew\include /I ext\win-freeglut\include
+INCLUDES = /I "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" /I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" /I "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include" /I src /I ext /I . /I ext/v-hacd/src/VHACD_Lib/inc/ /I ext/reactphysics3d/src/ /I src /I ext /I ext/src /I /mingw64/include/ /I ext/fbx/win64/include /I ext\win-pthread /I ext/openal-soft/includes /I ext\win-glew\include /I ext\win-freeglut\include /I ext\win-dirent\include
 EXTRA_LIBS = -Lext/fbx/win64/lib -lfbxsdk -ltdme -ltdme-ext -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal
 FLAGS = /EHsc
 
@@ -540,4 +540,4 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 
 srcs: $(SRCS)
-	cl /D _USING_V110_SDK71_ /MP $(INCLUDES) $(FLAGS) $** 
+	cl /MP /D _USING_V110_SDK71_ $(INCLUDES) $(FLAGS) $**

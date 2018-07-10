@@ -157,6 +157,7 @@ TDME2
 	            - V-HACD
         - targeted platforms and its current state
             - Windows/MINGW(port completed)
+            - Windows/MSC(port is WIP)
             - Linux(port completed)
             - Mac Os X(port completed)
             - FreeBSD(port completed)

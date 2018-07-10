@@ -72,10 +72,22 @@ const string StringUtils::trim(const string& src) {
 	string result = src;
 	result.erase(
 		result.begin(),
-		find_if(result.begin(), result.end(), not1(std::ptr_fun<int, int>(std::isspace)))
+		find_if(
+			result.begin(),
+			result.end(),
+			[](int c) {
+				return !isspace(c);
+			}
+		)
 	);
 	result.erase(
-		find_if(result.rbegin(), result.rend(), not1(std::ptr_fun<int, int>(std::isspace))).base(),
+		find_if(
+			result.rbegin(),
+			result.rend(),
+			[](int c) {
+	        	return !isspace(c);
+	    	}
+		).base(),
 		result.end()
 	);
 	return result;

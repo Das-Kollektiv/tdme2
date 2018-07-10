@@ -1,5 +1,9 @@
 #include <tdme/tools/leveleditor/logic/Level.h>
 
+#if defined(_WIN32) && defined(_MSC_VER)
+	#pragma warning(disable:4503)
+#endif
+
 #include <vector>
 #include <map>
 #include <string>
