@@ -553,13 +553,18 @@ EXT_SRCS = \
 
 OBJECTS = *.obj
 
-all: compile link clean ext-compile ext-link clean
+all: compile link clean ext-compile ext-link ext-clean
 
 ext-compile: $(EXT_SRCS)
 	cl /c $(FLAGS) $(INCLUDES) $**
 
 ext-link: *.obj
 	lib /OUT:libtdme-ext.lib $** 
+
+ext-clean: *.obj 
+	cmd /c <<clean.bat
+del $**
+<<
 
 compile: $(SRCS)
 	cl /c $(FLAGS) $(INCLUDES) $**
@@ -568,4 +573,6 @@ link: *.obj
 	lib /OUT:libtdme.lib $** 
 
 clean: *.obj 
-	FOR /F "tokens=10000 delims= " %%G IN ("$**") del %%G
+	cmd /c <<clean.bat
+del $**
+<<
