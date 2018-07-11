@@ -145,7 +145,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	model->addAnimationSetup(
 		Model::ANIMATIONSETUP_DEFAULT,
 		0,
-		framesTotal - 1,
+		framesTotal,
 		true
 	);
 	int frameOffset = 0;

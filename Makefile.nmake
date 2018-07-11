@@ -40,7 +40,7 @@ EXTRA_LIBS = \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MP /D _USING_V110_SDK71_ /EHsc /O2
+FLAGS = /MP /D _USING_V110_SDK71_ /EHsc /Ox
 
 SRC = src
 TINYXML = tinyxml
