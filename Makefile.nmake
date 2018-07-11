@@ -663,7 +663,7 @@ PhysicsTest3:
 	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(EXTRA_LIBS)
 
 PhysicsTest4: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(EXTRA_LIBS)
 
 SkinningTest: 
 	cl $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(EXTRA_LIBS)

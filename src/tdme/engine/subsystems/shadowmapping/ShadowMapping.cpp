@@ -153,7 +153,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		auto shadowMap = shadowMaps[i];
 		auto light = engine->getLightAt(i);
 		// set up light shader uniforms
-		renderer->getCameraMatrix().multiply(light->getPosition(), lightPosition4Transformed).scale(1.0f / lightPosition4Transformed.getW());
+		renderer->getCameraMatrix().multiply(light->getPosition(), lightPosition4Transformed).scale(Math::abs(lightPosition4Transformed.getW()) < Math::EPSILON?1.0:1.0f / lightPosition4Transformed.getW());
 		shader->setProgramLightPosition(lightPosition3Transformed.set(lightPosition4Transformed.getX(), lightPosition4Transformed.getY(), lightPosition4Transformed.getZ()));
 		renderer->getCameraMatrix().multiply(spotDirection4.set(light->getSpotDirection(), 0.0f), spotDirection4Transformed);
 		shader->setProgramLightDirection(spotDirection3Transformed.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ()));

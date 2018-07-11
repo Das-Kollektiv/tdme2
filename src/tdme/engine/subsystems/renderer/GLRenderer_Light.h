@@ -19,7 +19,7 @@ struct tdme::engine::subsystems::renderer::GLRenderer_Light
 	array<float, 4> position {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	array<float, 3> spotDirection {{ 0.0f, 0.0f, -1.0f }};
 	float spotExponent { 0.0f };
-	float spotCosCutoff {  };
+	float spotCosCutoff { 0.0f };
 	float constantAttenuation { 1.0f };
 	float linearAttenuation { 0.0f };
 	float quadraticAttenuation { 0.0f };
