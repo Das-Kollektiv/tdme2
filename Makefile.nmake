@@ -51,7 +51,8 @@ EXTRA_LIBS = \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MP /D _USING_V110_SDK71_ /EHsc /Ox
+FLAGS = /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL
+LINK_FLAGS = /LTCG
 
 SRC = src
 TINYXML = tinyxml
@@ -612,7 +613,7 @@ ext-compile: $(EXT_SRCS)
 	cl /c $(FLAGS) $(INCLUDES) $**
 
 ext-link: *.obj
-	lib /OUT:libtdme-ext.lib $** 
+	lib $(LINK_FLAGS) /OUT:libtdme-ext.lib $**
 
 ext-clean: *.obj 
 	cmd /c <<clean.bat
@@ -623,7 +624,7 @@ compile: $(SRCS)
 	cl /c $(FLAGS) $(INCLUDES) $**
 
 link: *.obj
-	lib /OUT:libtdme.lib $** 
+	lib $(LINK_FLAGS) /OUT:libtdme.lib $**
 
 clean: *.obj 
 	cmd /c <<clean.bat
@@ -636,58 +637,58 @@ del $**
 <<
 
 AngleTest: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 	
 AudioTest: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 EngineTest: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 LODTest: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PathFindingTest: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 GUITest: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/GUITest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/GUITest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest1: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest2: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest3: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest4: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 SkinningTest: 
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 ThreadingTest:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 UDPClientTest:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 UDPServerTest:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 converttotm:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 levelfixmodelszup2yup:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMELevelEditor:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMEModelEditor:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMEParticleSystem:
-	cl $(FLAGS) $(INCLUDES) src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp /link $(EXTRA_LIBS)
+	cl $(FLAGS) $(INCLUDES) src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
