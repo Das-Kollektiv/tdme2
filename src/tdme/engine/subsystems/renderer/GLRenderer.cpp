@@ -132,12 +132,12 @@ void GLRenderer::setLightQuadraticAttenuation(int32_t lightId, float QuadraticAt
 
 void GLRenderer::setEffectColorMul(const array<float, 4>& effectColorMul)
 {
-	copy(begin(effectColorMul), end(effectColorMul), begin(this->effectColorMul));
+	this->effectColorMul = effectColorMul;
 }
 
 void GLRenderer::setEffectColorAdd(const array<float, 4>& effectColorAdd)
 {
-	copy(begin(effectColorAdd), end(effectColorAdd), begin(this->effectColorAdd));
+	this->effectColorAdd = effectColorAdd;
 }
 
 void GLRenderer::setMaterialEnabled()

@@ -155,12 +155,14 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 	// shader source
 	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	string sourceString = (shaderSource);
-	char *sourceHeap = new char[sourceString.length() + 1];
+	char* sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
 	// load source
 	glShaderSource(handle, 1, &sourceHeap, nullptr);
 	// compile
 	glCompileShader(handle);
+	//
+	delete [] sourceHeap;
 	// check state
 	int32_t compileStatus;
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
@@ -186,7 +188,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 			 )
 		 );
 		//
-		delete infoLogBuffer;
+		delete [] infoLogBuffer;
 		// remove shader
 		glDeleteShader(handle);
 		//
@@ -235,7 +237,7 @@ bool GL2Renderer::linkProgram(int32_t programId)
 				infoLogString
 			 )
 		);
-		delete infoLog;
+		delete [] infoLog;
 		return false;
 	}
 	return true;

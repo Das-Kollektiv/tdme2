@@ -183,7 +183,7 @@ Texture* TextureLoader::loadPNG(const string& pathName, const string& fileName) 
 	png_read_end(png, nullptr);
 
 	//
-	delete rows;
+	delete [] rows;
 
 	// done
 	png_destroy_read_struct(&png, &info, nullptr);
