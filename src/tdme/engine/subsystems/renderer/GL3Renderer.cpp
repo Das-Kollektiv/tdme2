@@ -55,13 +55,16 @@ GL3Renderer::GL3Renderer()
 	FRONTFACE_CCW = GL_CCW;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
+	SHADER_GEOMETRY_SHADER = GL_GEOMETRY_SHADER;
 	#if defined (__APPLE__)
 		SHADER_COMPUTE_SHADER = -1;
 	#else
 		SHADER_COMPUTE_SHADER = GL_COMPUTE_SHADER;
 	#endif
-	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_ALWAYS = GL_ALWAYS;
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
+	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 }
 
 const string GL3Renderer::getGLVersion()
@@ -97,6 +100,7 @@ void GL3Renderer::initialize()
 
 void GL3Renderer::initializeFrame()
 {
+	GLRenderer::initializeFrame();
 }
 
 bool GL3Renderer::isBufferObjectsAvailable()
@@ -135,6 +139,10 @@ bool GL3Renderer::isInstancedRenderingAvailable() {
 
 bool GL3Renderer::isUsingShortIndices() {
 	return false;
+}
+
+bool GL3Renderer::isGeometryShaderAvailable() {
+	return true;
 }
 
 int32_t GL3Renderer::getTextureUnits()

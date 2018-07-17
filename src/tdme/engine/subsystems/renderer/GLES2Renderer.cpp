@@ -53,9 +53,12 @@ GLES2Renderer::GLES2Renderer()
 	FRONTFACE_CCW = GL_CCW;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
+	SHADER_GEOMETRY_SHADER = -1;
 	SHADER_COMPUTE_SHADER = -1;
-	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_ALWAYS = GL_ALWAYS;
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
+	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 }
 
 const string GLES2Renderer::getGLVersion()
@@ -82,6 +85,7 @@ void GLES2Renderer::initialize()
 
 void GLES2Renderer::initializeFrame()
 {
+	GLRenderer::initializeFrame();
 }
 
 bool GLES2Renderer::isBufferObjectsAvailable()
@@ -121,6 +125,10 @@ bool GLES2Renderer::isInstancedRenderingAvailable() {
 
 bool GLES2Renderer::isUsingShortIndices() {
 	return true;
+}
+
+bool GLES2Renderer::isGeometryShaderAvailable() {
+	return false;
 }
 
 int32_t GLES2Renderer::getTextureUnits()

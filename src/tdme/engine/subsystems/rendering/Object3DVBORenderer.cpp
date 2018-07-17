@@ -493,6 +493,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					renderer->getTextureMatrix().set(_object3DGroup->textureMatricesByEntities[faceEntityIdx]);
 					renderer->onUpdateTextureMatrix();
 				}
+				// foliage
+				renderer->setApplyFoliageAnimation(object->isApplyFoliageAnimation());
+				renderer->onUpdateApplyFoliageAnimation();
 				// draw
 				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
 				// do transformations end to shadow mapping
@@ -595,6 +598,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				auto objectCount = objectsToRender.size();
 				auto currentTextureMatrix = objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
+				auto currentUseFoliageAnimation = objectsToRender[0]->isApplyFoliageAnimation();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 					auto object = objectsToRender[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
@@ -626,6 +630,12 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 
 					// check if texture matrix did change
 					if (_object3DGroup->textureMatricesByEntities[faceEntityIdx].equals(currentTextureMatrix) == false) {
+						objectsNotRendered.push_back(object);
+						continue;
+					}
+
+					// check if foliage did change
+					if (object->isApplyFoliageAnimation() != currentUseFoliageAnimation) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
@@ -746,11 +756,16 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					renderer->onUpdateTextureMatrix();
 				}
 
+				// foliage
+				renderer->setApplyFoliageAnimation(currentUseFoliageAnimation);
+				renderer->onUpdateApplyFoliageAnimation();
+
 				// draw
 				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, fbMvMatrices.getPosition() / 16);
 
 				// set up next objects to render
 				objectsToRender = objectsNotRendered;
+
 				// clear list of objects we did not render
 				objectsNotRendered.clear();
 			} while (objectsToRender.size() > 0);

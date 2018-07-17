@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -59,7 +58,7 @@ private:
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	LevelEditorEntityModel* modelSettings;
 	bool renderGroups {  };
-	bool applyAnimations {  };
+	bool applyFoliageAnimation {  };
 	bool dynamicShadowing {  };
 public:
 
@@ -268,19 +267,19 @@ public:
 	}
 
 	/**
-	 * Is applying animations
+	 * Is applying foliage animations
 	 * @return apply animation flag
 	 */
-	inline bool isApplyAnimations() {
-		return applyAnimations;
+	inline bool isApplyFoliageAnimation() {
+		return applyFoliageAnimation;
 	}
 
 	/**
-	 * Set apply animations
+	 * Set apply foliage animations
 	 * @param apply animations
 	 */
-	inline void setApplyAnimations(bool applyAnimations) {
-		this->applyAnimations = applyAnimations;
+	inline void setApplyFoliageAnimation(bool applyFoliageAnimation) {
+		this->applyFoliageAnimation = applyFoliageAnimation;
 	}
 
 	/**

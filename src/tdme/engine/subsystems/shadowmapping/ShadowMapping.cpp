@@ -142,7 +142,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	//	do not allow writing to depth buffer
 	renderer->disableDepthBuffer();
 	//	only process nearest fragments
-	renderer->setDepthFunction(renderer->DEPTHFUNCTION_EQUAL);
+	renderer->setDepthFunction(renderer->DEPTHFUNCTION_LESSEQUAL);
 	// render each shadow map
 	for (auto i = 0; i < shadowMaps.size(); i++) {
 		// skip on unused shadow mapping

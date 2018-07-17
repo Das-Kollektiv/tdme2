@@ -109,3 +109,7 @@ void EngineGLES2Renderer::onUpdateMaterial()
 		engine->shadowMapping->updateMaterial(this);
 }
 
+void EngineGLES2Renderer::onUpdateApplyFoliageAnimation() {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->updateApplyFoliageAnimation(this);
+}

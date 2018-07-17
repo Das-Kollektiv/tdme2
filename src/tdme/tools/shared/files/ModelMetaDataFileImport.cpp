@@ -386,7 +386,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	}
 	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());
 	levelEditorEntity->setRenderGroups(jEntityRoot["rg"].isNull() == false?jEntityRoot["rg"].getBoolean():false);
-	levelEditorEntity->setApplyAnimations(jEntityRoot["aa"].isNull() == false?jEntityRoot["aa"].getBoolean():false);
+	levelEditorEntity->setApplyFoliageAnimation(jEntityRoot["afa"].isNull() == false?jEntityRoot["afa"].getBoolean():false);
 	return levelEditorEntity;
 }
 

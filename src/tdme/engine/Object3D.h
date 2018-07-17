@@ -52,6 +52,7 @@ private:
 
 	Engine* engine { nullptr };
 	bool frustumCulling { true };
+	bool applyFoliageAnimation { false };
 
 	/**
 	 * Pre render step like uploading VBOs and such
@@ -204,6 +205,21 @@ public:
 
 	inline virtual const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	/**
+	 * @return is using foliage animation
+	 */
+	inline bool isApplyFoliageAnimation() {
+		return this->applyFoliageAnimation;
+	}
+
+	/**
+	 * Set apply foliage animation
+	 * @param useFoliageAnimation
+	 */
+	inline void setApplyFoliageAnimation(bool applyFoliageAnimation) {
+		this->applyFoliageAnimation = applyFoliageAnimation;
 	}
 
 };

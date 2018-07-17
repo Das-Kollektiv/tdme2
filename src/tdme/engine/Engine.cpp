@@ -1014,7 +1014,3 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 	//
 	return true;
 }
-
-vector<Object3DRenderGroup*>& Engine::getVisibleObjectRenderGroups() {
-	return visibleObjectRenderGroups;
-}

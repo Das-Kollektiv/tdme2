@@ -243,6 +243,8 @@ void GUI::resetRenderScreens()
 		renderScreens[i]->setGUI(nullptr);
 	}
 	renderScreens.clear();
+	focussedNode = nullptr;
+	determineFocussedNodes();
 }
 
 void GUI::addRenderScreen(const string& screenId)

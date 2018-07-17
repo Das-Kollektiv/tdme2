@@ -106,3 +106,8 @@ void EngineGL2Renderer::onUpdateMaterial()
 	if (engine->shadowMapping != nullptr)
 		engine->shadowMapping->updateMaterial(this);
 }
+
+void EngineGL2Renderer::onUpdateApplyFoliageAnimation() {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->updateApplyFoliageAnimation(this);
+}

@@ -44,9 +44,12 @@ public:
 	int32_t TEXTUREUNITS_MAX {  };
 	int32_t SHADER_FRAGMENT_SHADER {  };
 	int32_t SHADER_VERTEX_SHADER {  };
+	int32_t SHADER_GEOMETRY_SHADER {  };
 	int32_t SHADER_COMPUTE_SHADER {  };
-	int32_t DEPTHFUNCTION_LESSEQUAL {  };
+	int32_t DEPTHFUNCTION_ALWAYS {  };
 	int32_t DEPTHFUNCTION_EQUAL {  };
+	int32_t DEPTHFUNCTION_LESSEQUAL {  };
+	int32_t DEPTHFUNCTION_GREATEREQUAL {  };
 	int32_t FRAMEBUFFER_DEFAULT {  };
 	int32_t FRONTFACE_CW {  };
 	int32_t FRONTFACE_CCW {  };
@@ -54,6 +57,8 @@ public:
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	GLRenderer_Material material;
 	array<GLRenderer_Light, 8> lights;
+	bool applyFoliageAnimation {  };
+	int frame { 0 };
 
 protected:
 	int32_t viewPortX {  };
@@ -78,7 +83,7 @@ public:
 	/** 
 	 * Pre Frame Initialization
 	 */
-	virtual void initializeFrame() = 0;
+	virtual void initializeFrame();
 
 	/** 
 	 * @return renderer version e.g. gl2, gl3 or gles2
@@ -127,6 +132,11 @@ public:
 	 * @return Returns if renderer is using short indices, otherwise it uses int indices
 	 */
 	virtual bool isUsingShortIndices() = 0;
+
+	/**
+	 * @return If geometry shader is available
+	 */
+	virtual bool isGeometryShaderAvailable() = 0;
 
 	/**
 	 * @return number of texture units
@@ -354,7 +364,7 @@ public:
 	 */
 	virtual void clear(int32_t mask) = 0;
 
-	/** 
+	/**
 	 * Sets up which face will be culled
 	 * @param cull face
 	 */
@@ -746,9 +756,20 @@ public:
 	virtual void setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold);
 
 	/** 
-	 * Update material
+	 * On update material
 	 */
 	virtual void onUpdateMaterial() = 0;
+
+	/**
+	 * Set apply foliage animation
+	 * @param apply foliage animation
+	 */
+	virtual void setApplyFoliageAnimation(bool applyFoliageAnimation);
+
+	/**
+	 * On update apply foliage animation
+	 */
+	virtual void onUpdateApplyFoliageAnimation() = 0;
 
 	/** 
 	 * Reads a pixel depth

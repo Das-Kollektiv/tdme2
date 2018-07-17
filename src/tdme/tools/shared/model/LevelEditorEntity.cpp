@@ -47,7 +47,7 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 		this->physics = new LevelEditorEntityPhysics();
 	}
 	renderGroups = false;
-	applyAnimations = false;
+	applyFoliageAnimation = false;
 	dynamicShadowing = true;
 }
 

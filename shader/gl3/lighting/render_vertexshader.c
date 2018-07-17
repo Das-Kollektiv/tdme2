@@ -56,16 +56,14 @@ layout (location = 10) in vec4 inEffectColorMul;
 layout (location = 11) in vec4 inEffectColorAdd;
 
 // uniforms
-uniform mat4 projectionMatrix;
-uniform mat4 cameraMatrix;
-uniform mat3 textureMatrix;
 uniform sampler2D displacementTextureUnit;
 uniform int displacementTextureAvailable;
+uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
 
-// will be passed to fragment shader
+// will be passed to geometry shader
+out mat4 vsModelMatrix;
 out vec2 vsFragTextureUV;
-out vec3 vsPosition;
 out vec3 vsNormal;
 out vec3 vsTangent;
 out vec3 vsBitangent;
@@ -74,7 +72,14 @@ out vec4 vsEffectColorAdd;
 
 void main(void) {
 	// pass to fragment shader
+	vsModelMatrix = inModelMatrix;
 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
+	vsNormal = inNormal;
+	// normal texture
+	if (normalTextureAvailable == 1) {
+		vsTangent = inTangent;
+		vsBitangent = inBitangent;
+	}
 	vsEffectColorMul = inEffectColorMul;
 	vsEffectColorAdd = inEffectColorAdd;
 
@@ -88,22 +93,6 @@ void main(void) {
 		*/
 	}
 
-	// vertices, normals
-	gl_Position = (projectionMatrix * cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
-
-	// eye coordinate position of vertex, needed in various calculations
-	vec4 vsPosition4 = (cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
-	vsPosition = vsPosition4.xyz / vsPosition4.w;
-
-	// normal matrix
-	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix))));
-
-	// compute the normal
-	vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
-
-	// normal texture
-	if (normalTextureAvailable == 1) {
-		vsTangent = normalize(vec3(normalMatrix * vec4(inTangent, 0.0)));
-		vsBitangent = normalize(vec3(normalMatrix * vec4(inBitangent, 0.0)));
-	}
+	// gl position
+	gl_Position = vec4(inVertex, 1.0);
 }

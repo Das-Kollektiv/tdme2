@@ -44,11 +44,19 @@ void GLRenderer::init()
 	TEXTUREUNITS_MAX = -1;
 	SHADER_FRAGMENT_SHADER = -1;
 	SHADER_VERTEX_SHADER = -1;
-	DEPTHFUNCTION_LESSEQUAL = -1;
+	SHADER_GEOMETRY_SHADER = -1;
+	SHADER_COMPUTE_SHADER = -1;
+	DEPTHFUNCTION_ALWAYS = -1;
 	DEPTHFUNCTION_EQUAL = -1;
+	DEPTHFUNCTION_LESSEQUAL = -1;
+	DEPTHFUNCTION_GREATEREQUAL = -1;
 	FRAMEBUFFER_DEFAULT = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
+}
+
+void GLRenderer::initializeFrame() {
+	frame++;
 }
 
 Matrix4x4& GLRenderer::getProjectionMatrix()
@@ -181,4 +189,8 @@ void GLRenderer::setMaterialDiffuseTextureMaskedTransparency(bool diffuseTexture
 void GLRenderer::setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold)
 {
 	material.diffuseTextureMaskedTransparencyThreshold = diffuseTextureMaskedTransparencyThreshold;
+}
+
+void GLRenderer::setApplyFoliageAnimation(bool applyFoliageAnimation) {
+	this->applyFoliageAnimation = applyFoliageAnimation;
 }

@@ -55,9 +55,12 @@ GL2Renderer::GL2Renderer()
 	FRONTFACE_CCW = GL_CCW;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
+	SHADER_GEOMETRY_SHADER = -1;
 	SHADER_COMPUTE_SHADER = -1;
-	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_ALWAYS = GL_ALWAYS;
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
+	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 	// TODO: buffer objects available
 	bufferObjectsAvailable = true;
 }
@@ -106,6 +109,7 @@ void GL2Renderer::initialize()
 
 void GL2Renderer::initializeFrame()
 {
+	GLRenderer::initializeFrame();
 }
 
 bool GL2Renderer::isBufferObjectsAvailable()
@@ -138,6 +142,10 @@ bool GL2Renderer::isInstancedRenderingAvailable() {
 }
 
 bool GL2Renderer::isUsingShortIndices() {
+	return false;
+}
+
+bool GL2Renderer::isGeometryShaderAvailable() {
 	return false;
 }
 

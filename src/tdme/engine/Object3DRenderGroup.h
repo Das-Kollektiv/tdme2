@@ -59,6 +59,7 @@ private:
 	Object3D* combinedObject {  };
 	Model* model {  };
 	Model* combinedModel {  };
+	bool applyFoliageAnimation { false };
 
 	/**
 	 * Compute bounding box
@@ -186,10 +187,15 @@ public:
 	// override methods
 	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		this->dynamicShadowing = dynamicShadowing;
+		if (combinedObject != nullptr) {
+			combinedObject->setDynamicShadowingEnabled(dynamicShadowing);
+		}
 	}
 
 	inline virtual void setPickable(bool pickable) override {
-		this->pickable = pickable;
+		if (combinedObject != nullptr) {
+			combinedObject->setPickable(pickable);
+		}
 	}
 
 	inline virtual const Vector3& getTranslation() const override {
@@ -258,6 +264,24 @@ public:
 
 	inline virtual const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	/**
+	 * @return is using foliage animation
+	 */
+	inline bool isApplyFoliageAnimation() {
+		return this->applyFoliageAnimation;
+	}
+
+	/**
+	 * Set use foliage animation
+	 * @param apply foliage animation
+	 */
+	inline void setApplyFoliageAnimation(bool applyFoliageAnimation) {
+		this->applyFoliageAnimation = applyFoliageAnimation;
+		if (combinedObject != nullptr) {
+			combinedObject->setApplyFoliageAnimation(applyFoliageAnimation);
+		}
 	}
 
 };

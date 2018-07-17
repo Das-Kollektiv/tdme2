@@ -45,4 +45,6 @@ void main() {
 
 	// compute gl position
 	gl_Position = (projectionMatrix * cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
+	// add some bias to have DEPTHFUNCTION_LESSEQUAL working better
+	gl_Position.z-= 0.0001;
 }

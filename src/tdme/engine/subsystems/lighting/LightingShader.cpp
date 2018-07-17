@@ -53,6 +53,16 @@ void LightingShader::initialize()
 	);
 	if (renderLightingFragmentShaderId == 0) return;
 
+	// geometry shader
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderLightingGeometryShaderId = renderer->loadShader(
+			renderer->SHADER_GEOMETRY_SHADER,
+			"shader/" + rendererVersion + "/geometry",
+			"render_geometryshader.c"
+		);
+		if (renderLightingGeometryShaderId == 0) return;
+	}
+
 	//	vertex shader
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
@@ -64,6 +74,9 @@ void LightingShader::initialize()
 	// create, attach and link program
 	renderLightingProgramId = renderer->createProgram();
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderer->attachShaderToProgram(renderLightingProgramId, renderLightingGeometryShaderId);
+	}
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
 
 	// map inputs to attributes
@@ -196,6 +209,15 @@ void LightingShader::initialize()
 		if (uniformLightQuadraticAttenuation[i] == -1) return;
 	}
 
+	// use foliage animation
+	if (renderer->isGeometryShaderAvailable() == true) {
+		uniformFrame = renderer->getProgramUniformLocation(renderLightingProgramId, "frame");
+		if (uniformFrame == -1) return;
+
+		uniformApplyFoliageAnimation = renderer->getProgramUniformLocation(renderLightingProgramId, "applyFoliageAnimation");
+		if (uniformApplyFoliageAnimation == -1) return;
+	}
+
 	//
 	initialized = true;
 }
@@ -225,6 +247,10 @@ void LightingShader::useProgram()
 	updateMaterial(renderer);
 	for (auto i = 0; i < MAX_LIGHTS; i++) {
 		updateLight(renderer, i);
+	}
+	// frame
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
 	}
 }
 
@@ -329,6 +355,18 @@ void LightingShader::updateTextureMatrix(GLRenderer* renderer) {
 
 	//
 	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
+}
+
+
+void LightingShader::updateApplyFoliageAnimation(GLRenderer* renderer) {
+	// skip if not running
+	if (isRunning == false) return;
+
+	// skip if no geometry shader available
+	if (renderer->isGeometryShaderAvailable() == false) return;
+
+	//
+	renderer->setProgramUniformInteger(uniformApplyFoliageAnimation, renderer->applyFoliageAnimation == true?1:0);
 }
 
 void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)

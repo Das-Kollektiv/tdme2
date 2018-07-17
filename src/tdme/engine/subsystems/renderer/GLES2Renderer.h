@@ -42,6 +42,7 @@ public:
 	bool isDisplacementMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;
 	bool isUsingShortIndices() override;
+	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName) override;
 	void useProgram(int32_t programId) override;

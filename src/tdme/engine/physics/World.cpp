@@ -344,10 +344,14 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 }
 
 bool World::doesCollideWith(uint16_t collisionTypeIds, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes, vector<Body*>& rigidBodies) {
+	/*
+	// TODO: a.drewke
 	auto collisionBody = addCollisionBody("tdme.world.doescollidewith", true, 16384, transformations, boundingVolumes);
 	doesCollideWith(collisionTypeIds, collisionBody, rigidBodies);
 	removeBody("tdme.world.doescollidewith");
 	return rigidBodies.size() > 0;
+	*/
+	return false;
 }
 
 bool World::doCollide(Body* body1, Body* body2) {

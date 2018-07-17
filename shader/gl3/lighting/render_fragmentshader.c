@@ -85,14 +85,14 @@ uniform int normalTextureAvailable;
 // material shininess
 float materialShininess;
 
-// passed from vertex shader
-in vec2 vsFragTextureUV;
-in vec3 vsPosition;
-in vec3 vsNormal;
-in vec3 vsTangent;
-in vec3 vsBitangent;
-in vec4 vsEffectColorMul;
-in vec4 vsEffectColorAdd;
+// passed from geometry shader
+in vec2 gsFragTextureUV;
+in vec3 gsPosition;
+in vec3 gsNormal;
+in vec3 gsTangent;
+in vec3 gsBitangent;
+in vec4 gsEffectColorMul;
+in vec4 gsEffectColorAdd;
 
 // out
 out vec4 outColor;
@@ -148,7 +148,7 @@ void main (void) {
 	vec4 diffuseTextureColor;
 	if (diffuseTextureAvailable == 1) {
 		// fetch from texture
-		diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
+		diffuseTextureColor = texture(diffuseTextureUnit, gsFragTextureUV);
 		// check if to handle diffuse texture masked transparency
 		if (diffuseTextureMaskedTransparency == 1) {
 			// discard if beeing transparent
@@ -163,12 +163,12 @@ void main (void) {
 	fragColor+= clamp(sceneColor, 0.0, 1.0);
 	fragColor+= clamp(material.emission, 0.0, 1.0);
 
-	vec3 normal = vsNormal;
+	vec3 normal = gsNormal;
 
 	// specular
 	materialShininess = material.shininess;
 	if (specularTextureAvailable == 1) {
-		vec3 specularTextureValue = texture(specularTextureUnit, vsFragTextureUV).rgb;
+		vec3 specularTextureValue = texture(specularTextureUnit, gsFragTextureUV).rgb;
 		materialShininess =
 			((0.33 * specularTextureValue.r) +
 			(0.33 * specularTextureValue.g) +
@@ -177,24 +177,24 @@ void main (void) {
 
 	// compute normal
 	if (normalTextureAvailable == 1) {
-		vec3 normalVector = normalize(texture(normalTextureUnit, vsFragTextureUV).rgb * 2.0 - 1.0);
+		vec3 normalVector = normalize(texture(normalTextureUnit, gsFragTextureUV).rgb * 2.0 - 1.0);
 		normal = vec3(0.0, 0.0, 0.0);
-		normal+= vsTangent * normalVector.x;
-		normal+= vsBitangent * normalVector.y;
-		normal+= vsNormal * normalVector.z;
+		normal+= gsTangent * normalVector.x;
+		normal+= gsBitangent * normalVector.y;
+		normal+= gsNormal * normalVector.z;
 	}
 
  	// compute lights
-	computeLights(normal, vsPosition);
+	computeLights(normal, gsPosition);
 
 	// take effect colors into account
-	fragColor = fragColor * vsEffectColorMul;
-	fragColor.a = material.diffuse.a * vsEffectColorMul.a;
+	fragColor = fragColor * gsEffectColorMul;
+	fragColor.a = material.diffuse.a * gsEffectColorMul.a;
 
 	//
 	if (diffuseTextureAvailable == 1) {
-		outColor = clamp((vsEffectColorAdd + diffuseTextureColor * fragColor), 0.0, 1.0);
+		outColor = clamp((gsEffectColorAdd + diffuseTextureColor * fragColor), 0.0, 1.0);
 	} else {
-		outColor = clamp(vsEffectColorAdd + fragColor, 0.0, 1.0);
+		outColor = clamp(gsEffectColorAdd + fragColor, 0.0, 1.0);
 	}
 }

@@ -421,11 +421,6 @@ public:
 	bool makeScreenshot(const string& pathName, const string& fileName);
 
 	/**
-	 * @return visible object render groups
-	 */
-	vector<Object3DRenderGroup*>& getVisibleObjectRenderGroups();
-
-	/**
 	 * Destructor
 	 */
 	~Engine();

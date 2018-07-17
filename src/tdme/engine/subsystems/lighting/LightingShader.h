@@ -30,6 +30,7 @@ public:
 private:
 	int32_t renderLightingProgramId {  };
 	int32_t renderLightingFragmentShaderId {  };
+	int32_t renderLightingGeometryShaderId {  };
 	int32_t renderLightingVertexShaderId {  };
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformDiffuseTextureAvailable { -1 };
@@ -55,6 +56,8 @@ private:
 	int32_t uniformMaterialSpecular { -1 };
 	int32_t uniformMaterialEmission { -1 };
 	int32_t uniformMaterialShininess { -1 };
+	int32_t uniformFrame { -1 };
+	int32_t uniformApplyFoliageAnimation { -1 };
 	array<int32_t, MAX_LIGHTS> uniformLightEnabled {  };
 	array<int32_t, MAX_LIGHTS> uniformLightAmbient {  };
 	array<int32_t, MAX_LIGHTS> uniformLightDiffuse {  };
@@ -125,6 +128,12 @@ public:
 	 * @param renderer
 	 */
 	void updateTextureMatrix(GLRenderer* renderer);
+
+	/**
+	 * Update apply foliage animation to program
+	 * @param renderer
+	 */
+	void updateApplyFoliageAnimation(GLRenderer* renderer);
 
 	/**
 	 * Bind texture

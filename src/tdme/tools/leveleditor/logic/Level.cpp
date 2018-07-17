@@ -265,6 +265,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				id,
 				levelEditorEntity->getModel()
 			);
+			dynamic_cast<Object3D*>(entity)->setApplyFoliageAnimation(levelEditorEntity->isApplyFoliageAnimation());
 		}
 	} else
 	// particle system
@@ -299,7 +300,7 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation)
 {
 	map<string, map<string, vector<Transformations*>>> renderGroupEntitiesByModelAndPartition;
-	map<string, Model*> renderGroupModels;
+	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto properties = object->getTotalProperties();
@@ -314,7 +315,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			int partitionX = (int)(minX / 32.0f);
 			int partitionY = (int)(minY / 32.0f);
 			int partitionZ = (int)(minZ / 32.0f);
-			renderGroupModels[object->getEntity()->getModel()->getId()] = object->getEntity()->getModel();
+			renderGroupLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
 			renderGroupEntitiesByModelAndPartition[object->getEntity()->getModel()->getId()][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)].push_back(&object->getTransformations());
 		} else {
 			Entity* entity = createEntity(object);
@@ -337,10 +338,12 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	// do render groups
 	for (auto itModel: renderGroupEntitiesByModelAndPartition) {
 		for (auto itPartition: itModel.second) {
+			auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
 			auto object3DRenderGroup = new Object3DRenderGroup(
 				"tdme.rendergroup." + itModel.first + "." + itPartition.first,
-				renderGroupModels[itModel.first]
+				levelEditorEntity->getModel()
 			);
+			object3DRenderGroup->setApplyFoliageAnimation(levelEditorEntity->isApplyFoliageAnimation());
 			for (auto transformation: itPartition.second) {
 				object3DRenderGroup->addObject(*transformation);
 			}

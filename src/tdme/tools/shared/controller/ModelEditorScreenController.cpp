@@ -140,7 +140,7 @@ void ModelEditorScreenController::initialize()
 		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
 		renderingRenderGroups = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_groups"));
-		renderingApplyAnimations = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_apply_animations"));
+		renderingApplyFoliageAnimations = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_foliage_animation"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
 		lodLevel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level"));
 		lodLevelApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level_apply"));
@@ -262,8 +262,8 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 	renderingDynamicShadowing->getController()->setValue(MutableString(entity->isDynamicShadowing() == true?"1":""));
 	renderingRenderGroups->getController()->setDisabled(false);
 	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
-	renderingApplyAnimations->getController()->setDisabled(false);
-	renderingApplyAnimations->getController()->setValue(MutableString(entity->isApplyAnimations() == true?"1":""));
+	renderingApplyFoliageAnimations->getController()->setDisabled(false);
+	renderingApplyFoliageAnimations->getController()->setValue(MutableString(entity->isApplyFoliageAnimation() == true?"1":""));
 	renderingApply->getController()->setDisabled(false);
 }
 
@@ -273,8 +273,8 @@ void ModelEditorScreenController::unsetRendering()
 	renderingDynamicShadowing->getController()->setValue(MutableString("1"));
 	renderingRenderGroups->getController()->setDisabled(true);
 	renderingRenderGroups->getController()->setValue(MutableString("0"));
-	renderingApplyAnimations->getController()->setDisabled(true);
-	renderingApplyAnimations->getController()->setValue(MutableString("0"));
+	renderingApplyFoliageAnimations->getController()->setDisabled(true);
+	renderingApplyFoliageAnimations->getController()->setValue(MutableString("0"));
 	renderingApply->getController()->setDisabled(true);
 }
 
@@ -965,7 +965,7 @@ void ModelEditorScreenController::onRenderingApply()
 	if (view->getEntity() == nullptr) return;
 	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue().equals("1"));
 	view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
-	view->getEntity()->setApplyAnimations(renderingApplyAnimations->getController()->getValue().equals("1"));
+	view->getEntity()->setApplyFoliageAnimation(renderingApplyFoliageAnimations->getController()->getValue().equals("1"));
 }
 
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
