@@ -201,6 +201,9 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		renderer->disableDepthBuffer();
 		renderer->disableCulling();
 		renderer->enableBlending();
+		// disable foliage animation
+		renderer->setApplyFoliageAnimation(false);
+		renderer->onUpdateApplyFoliageAnimation();
 		// actually this should not make any difference as culling is disabled
 		// but having a fixed value is not a bad idea except that it is a GL call
 		// TODO: confirm this

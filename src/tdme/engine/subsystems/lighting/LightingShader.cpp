@@ -57,7 +57,7 @@ void LightingShader::initialize()
 	if (renderer->isGeometryShaderAvailable() == true) {
 		renderLightingGeometryShaderId = renderer->loadShader(
 			renderer->SHADER_GEOMETRY_SHADER,
-			"shader/" + rendererVersion + "/geometry",
+			"shader/" + rendererVersion + "/lighting",
 			"render_geometryshader.c"
 		);
 		if (renderLightingGeometryShaderId == 0) return;
