@@ -18,7 +18,6 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/Console.h>
 
 using std::string;
 using std::to_string;
@@ -40,7 +39,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
-using tdme::utils::Console;
 
 Object3DRenderGroup::Object3DRenderGroup(
 	const string& id,
@@ -141,7 +139,6 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 
 	//
 	for (auto& facesEntity: *sourceGroup->getFacesEntities()) {
-		Console::println("Object3DRenderGroup::combineGroup(): adding triangles: " + to_string(facesEntity.getFaces()->size()));
 		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
 		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
 

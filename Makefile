@@ -91,12 +91,14 @@ else
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP -DNDEBUG
-#CFLAGS := $(CFLAGS) -O2 -pipe -MMD -MP
-CFLAGS := $(CFLAGS) -O2 -pipe -MMD -MP -DNDEBUG
-CFLAGS_DEBUG := $(CFLAGS) -g -pipe -MMD -MP -DNDEBUG
+#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP
+#CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP
+CFLAGS_EXT_RP3D := $(CFLAGS) -O2 -pipe -MMD -MP -DNDEBUG
+CFLAGS_DEBUG := $(CFLAGS) -g -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) -std=gnu++11
+CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) -std=gnu++11
 
 BIN := bin
 OBJ := obj
@@ -663,6 +665,11 @@ define cpp-command-debug
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_DEBUG) -c -o $@ $<
 endef
 
+define cpp-command-ext-rp3d
+@mkdir -p $(dir $@); 
+@echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_EXT_RP3D) -c -o $@ $<
+endef
+
 define c-command
 @mkdir -p $(dir $@); 
 @echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
@@ -699,7 +706,7 @@ $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
-	$(cpp-command)
+	$(cpp-command-ext-rp3d)
 
 %.a:
 	@echo Archive $@
