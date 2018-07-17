@@ -87,27 +87,18 @@ mat4 createRotationMatrix(vec3 axis, float angle) {
     float c = cos(angle * 0.017453294);
     float s = sin(angle * 0.017453294);
     float c1 = 1.0 - c;
-    float r0 = axis[0] * axis[0] * c1 + c;
-    float r1 = axis[0] * axis[1] * c1 + axis[2] * s;
-    float r2 = axis[0] * axis[2] * c1 - axis[1] * s;
-    float r4 = axis[0] * axis[1] * c1 - axis[2] * s;
-    float r5 = axis[1] * axis[1] * c1 + c;
-    float r6 = axis[1] * axis[2] * c1 + axis[0] * s;
-    float r8 = axis[0] * axis[2] * c1 + axis[1] * s;
-    float r9 = axis[1] * axis[2] * c1 - axis[0] * s;
-    float r10= axis[2] * axis[2] * c1 + c;
     return mat4(
-		r0,
-		r1,
-		r2,
+		axis[0] * axis[0] * c1 + c,
+		axis[0] * axis[1] * c1 + axis[2] * s,
+		axis[0] * axis[2] * c1 - axis[1] * s,
 		0.0,
-		r4,
-		r5,
-		r6,
+		axis[0] * axis[1] * c1 - axis[2] * s,
+		axis[1] * axis[1] * c1 + c,
+		axis[1] * axis[2] * c1 + axis[0] * s,
 		0.0,
-		r8,
-		r9,
-		r10,
+		axis[0] * axis[2] * c1 + axis[1] * s,
+		axis[1] * axis[2] * c1 - axis[0] * s,
+		axis[2] * axis[2] * c1 + c,
 		0.0,
 		0.0,
 		0.0,
