@@ -21,9 +21,10 @@ TDME2
                 - DAE and WaveFront OBJ files require triangulated meshes for now
             - animations
                 - supports model object base animation and animation overlays
+                - supports foliage animation for feasible models via geometry shader on GL3+/CORE
             - skinning via
                 - CPU on GL2, GLES2
-                - GPU via compute shaders with GL4.3+(GL3+/CORE renderer)
+                - GPU via compute shaders with GL4.3+/CORE
             - object transformations
                 - scaling
                 - rotations
@@ -35,11 +36,11 @@ TDME2
                 - via texture matrices
             - lighting
                 - supports phong lighting
-                - supports phong shading on GL3, GL2
+                - supports phong shading on GL3+/CORE, GL2
                 - supports gouraud shading on GLES2
-                - supports diffuse mapping on GL3, GL2, GLES2
-                - supports specular shininess mapping on GL3
-                - supports normal mapping on GL3
+                - supports diffuse mapping on GL3+/CORE, GL2, GLES2
+                - supports specular shininess mapping on GL3+/CORE
+                - supports normal mapping on GL3+/CORE
             - shadow mapping
             - particle system which
               - is object based
@@ -62,7 +63,7 @@ TDME2
                 - rendering can be used (in other engine instances) as diffuse texture
             - screenshot ability
             - multiple renderer
-              - GL2, GL3+(CORE) and GLES2
+              - GL2, GL3+/CORE and GLES2
         - physics
             - uses ReactPhysics3D 0.7.0, needs some more integration still
         - path finding
