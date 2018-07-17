@@ -135,7 +135,7 @@ void main()
 		vec3 verticesMax;
 		vec3 verticesCenter;
 		for (int i = 0; i < gl_in.length(); i++) {
-			vec3 vertex = (vsModelMatrix[i] * gl_in[i].gl_Position).xyz;
+			vec3 vertex = gl_in[i].gl_Position.xyz;
 			if (i == 0) {
 				verticesMin = vertex;
 				verticesMax = vertex;
