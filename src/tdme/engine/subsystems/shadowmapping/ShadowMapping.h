@@ -132,6 +132,12 @@ public:
 	void updateMaterial(GLRenderer* renderer);
 
 	/**
+	 * Update apply foliage animation
+	 * @param renderer
+	 */
+	void updateApplyFoliageAnimation(GLRenderer* renderer);
+
+	/**
 	 * Bind texture
 	 * @param renderer
 	 * @param texture id

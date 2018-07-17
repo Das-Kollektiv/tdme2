@@ -366,3 +366,22 @@ void ShadowMapping::updateDepthBiasMVPMatrix()
 	// upload
 	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }
+
+void ShadowMapping::updateApplyFoliageAnimation(GLRenderer* renderer) {
+	{
+		auto v = runState;
+		if (v == ShadowMapping_RunState::PRE) {
+			{
+				Engine::getShadowMappingShaderPre()->updateApplyFoliageAnimation(renderer);
+				goto end_switch0;;
+			}
+		} else
+		if (v == ShadowMapping_RunState::RENDER) {
+			{
+				Engine::getShadowMappingShaderRender()->updateApplyFoliageAnimation(renderer);
+				goto end_switch0;;
+			}
+		}
+		end_switch0:;
+	}
+}

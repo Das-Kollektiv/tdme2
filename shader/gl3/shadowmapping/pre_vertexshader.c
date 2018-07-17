@@ -7,18 +7,18 @@ layout (location = 2) in vec2 inTextureUV;
 // indexed rendering
 layout (location = 6) in mat4 inModelMatrix;
 
+// will be passed to geometry shader
+out vec2 vsFragTextureUV;
+out mat4 vsModelMatrix;
+
 // uniforms
-uniform mat4 projectionMatrix;
-uniform mat4 cameraMatrix;
 uniform mat3 textureMatrix;
 
-// will be passed to fragment shader
-out vec2 vsFragTextureUV;
-
 void main() {
-	// pass texture uv to fragment shader
+	// pass to geometry shader
 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
+	vsModelMatrix = inModelMatrix;
 
 	// position
-	gl_Position = (projectionMatrix * cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
+	gl_Position = vec4(inVertex, 1.0);
 }

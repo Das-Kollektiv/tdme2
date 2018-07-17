@@ -33,19 +33,29 @@ void ShadowMappingShaderRender::initialize()
 		"shader/" + rendererVersion + "/shadowmapping",
 		"render_vertexshader.c"
 	);
-	if (renderVertexShaderGlId == 0)
-		return;
+	if (renderVertexShaderGlId == 0) return;
+
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderGeometryShaderGlId = renderer->loadShader(
+			renderer->SHADER_GEOMETRY_SHADER,
+			"shader/" + rendererVersion + "/shadowmapping",
+			"render_geometryshader.c"
+		);
+		if (renderGeometryShaderGlId == 0) return;
+	}
 
 	renderFragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
 		"render_fragmentshader.c"
 	);
-	if (renderFragmentShaderGlId == 0)
-		return;
+	if (renderFragmentShaderGlId == 0) return;
 	// create shadow mapping render program
 	renderProgramGlId = renderer->createProgram();
 	renderer->attachShaderToProgram(renderProgramGlId, renderVertexShaderGlId);
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderer->attachShaderToProgram(renderProgramGlId, renderGeometryShaderGlId);
+	}
 	renderer->attachShaderToProgram(renderProgramGlId, renderFragmentShaderGlId);
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
@@ -107,6 +117,15 @@ void ShadowMappingShaderRender::initialize()
 		renderUniformLightQuadraticAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, "lightQuadraticAttenuation");
 		if (renderUniformLightQuadraticAttenuation == -1) return;
 	}
+
+	//
+	if (renderer->isGeometryShaderAvailable() == true) {
+		uniformApplyFoliageAnimation = renderer->getProgramUniformLocation(renderProgramGlId, "applyFoliageAnimation");
+		if (uniformApplyFoliageAnimation == -1) return;
+		uniformFrame = renderer->getProgramUniformLocation(renderProgramGlId, "frame");
+		if (uniformFrame == -1) return;
+	}
+
 	//
 	initialized = true;
 }
@@ -114,6 +133,9 @@ void ShadowMappingShaderRender::initialize()
 void ShadowMappingShaderRender::useProgram()
 {
 	renderer->useProgram(renderProgramGlId);
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
+	}
 }
 
 void ShadowMappingShaderRender::unUseProgram()
@@ -165,6 +187,14 @@ void ShadowMappingShaderRender::updateMaterial(GLRenderer* renderer)
 {
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
+}
+
+void ShadowMappingShaderRender::updateApplyFoliageAnimation(GLRenderer* renderer) {
+	// skip if no geometry shader available
+	if (renderer->isGeometryShaderAvailable() == false) return;
+
+	//
+	renderer->setProgramUniformInteger(uniformApplyFoliageAnimation, renderer->applyFoliageAnimation == true?1:0);
 }
 
 void ShadowMappingShaderRender::bindTexture(GLRenderer* renderer, int32_t textureId)

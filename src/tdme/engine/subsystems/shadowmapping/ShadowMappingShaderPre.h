@@ -19,6 +19,7 @@ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre
 private:
 	GLRenderer* renderer {  };
 	int32_t vertexShaderGlId {  };
+	int32_t geometryShaderGlId {  };
 	int32_t fragmentShaderGlId {  };
 	int32_t programGlId {  };
 	int32_t uniformProjectionMatrix { -1 };
@@ -29,6 +30,8 @@ private:
 	int32_t uniformDiffuseTextureAvailable { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparencyThreshold { -1 };
+	int32_t uniformApplyFoliageAnimation { -1 };
+	int32_t uniformFrame { -1 };
 	bool initialized {  };
 
 public:
@@ -77,6 +80,12 @@ public:
 	 * @param texture id
 	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId);
+
+	/**
+	 * Update apply foliage animation
+	 * @param renderer
+	 */
+	virtual void updateApplyFoliageAnimation(GLRenderer* renderer);
 
 	/**
 	 * Constructor

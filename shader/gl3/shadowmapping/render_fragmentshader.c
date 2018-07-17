@@ -4,6 +4,7 @@
 
 #define SHADOWMAP_LOOKUPS	4
 
+// uniforms
 uniform sampler2D textureUnit;
 uniform float texturePixelWidth;
 uniform float texturePixelHeight;
@@ -21,19 +22,20 @@ uniform float lightConstantAttenuation;
 uniform float lightLinearAttenuation;
 uniform float lightQuadraticAttenuation;
 
-// passed from vertex shader
-in vec2 vsFragTextureUV;
-in vec3 vsPosition;
-in vec4 vsShadowCoord;
-in float vsShadowIntensity;
+// passed from geometry shader
+in vec2 gsFragTextureUV;
+in vec3 gsPosition;
+in vec4 gsShadowCoord;
+in float gsShadowIntensity;
 
+// fragment color
 out vec4 outColor;
 
 void main() {
 	// retrieve diffuse texture color value
 	if (diffuseTextureAvailable == 1) {
 		// fetch from texture
-		vec4 diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
+		vec4 diffuseTextureColor = texture(diffuseTextureUnit, gsFragTextureUV);
 		// check if to handle diffuse texture masked transparency
 		if (diffuseTextureMaskedTransparency == 1) {
 			// discard if beeing transparent
@@ -42,13 +44,13 @@ void main() {
 	}
 
 	// do not process samples out of frustum, or out of shadow map
-	if (vsShadowCoord.w == 0.0 ||
-		vsShadowCoord.x < 0.0 || vsShadowCoord.x > 1.0 ||
-		vsShadowCoord.y < 0.0 || vsShadowCoord.y > 1.0) {
+	if (gsShadowCoord.w == 0.0 ||
+		gsShadowCoord.x < 0.0 || gsShadowCoord.x > 1.0 ||
+		gsShadowCoord.y < 0.0 || gsShadowCoord.y > 1.0) {
 		// return color to be blended with framebuffer
 		outColor = vec4(0.0, 0.0, 0.0, 0.0);
 	} else {
-		vec3 L = lightPosition - vsPosition;
+		vec3 L = lightPosition - gsPosition;
 		float d = length(L);
 		L = normalize(L);
 
@@ -78,11 +80,11 @@ void main() {
 		float visibility = 0.0;
 		for (float y = -SHADOWMAP_LOOKUPS / 2; y <= SHADOWMAP_LOOKUPS / 2; y+=1.0)
 		for (float x = -SHADOWMAP_LOOKUPS / 2; x <= SHADOWMAP_LOOKUPS / 2; x+=1.0) {
-			visibility+= texture(textureUnit, vsShadowCoord.xy + vec2(x * texturePixelWidth, y * texturePixelHeight)).x < vsShadowCoord.z + depthBias?0.40:0.0;
+			visibility+= texture(textureUnit, gsShadowCoord.xy + vec2(x * texturePixelWidth, y * texturePixelHeight)).x < gsShadowCoord.z + depthBias?0.40:0.0;
 		}
 		visibility = visibility / (SHADOWMAP_LOOKUPS * SHADOWMAP_LOOKUPS);
 
 		// return color to be blended with framebuffer
-		outColor = vec4(0.0, 0.0, 0.0, visibility * vsShadowIntensity * attenuation * 0.5);
+		outColor = vec4(0.0, 0.0, 0.0, visibility * gsShadowIntensity * attenuation * 0.5);
 	}
 }

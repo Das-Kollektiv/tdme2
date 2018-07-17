@@ -32,7 +32,14 @@ void ShadowMappingShaderPre::initialize()
 		"pre_vertexshader.c"
 	);
 	if (vertexShaderGlId == 0) return;
-
+	if (renderer->isGeometryShaderAvailable() == true) {
+		geometryShaderGlId = renderer->loadShader(
+			renderer->SHADER_GEOMETRY_SHADER,
+			"shader/" + rendererVersion + "/shadowmapping",
+			"pre_geometryshader.c"
+		);
+		if (geometryShaderGlId == 0) return;
+	}
 	fragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
@@ -44,6 +51,9 @@ void ShadowMappingShaderPre::initialize()
 	//	pre
 	programGlId = renderer->createProgram();
 	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderer->attachShaderToProgram(programGlId, geometryShaderGlId);
+	}
 	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
@@ -77,12 +87,23 @@ void ShadowMappingShaderPre::initialize()
 	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 
 	//
+	if (renderer->isGeometryShaderAvailable() == true) {
+		uniformApplyFoliageAnimation = renderer->getProgramUniformLocation(programGlId, "applyFoliageAnimation");
+		if (uniformApplyFoliageAnimation == -1) return;
+		uniformFrame = renderer->getProgramUniformLocation(programGlId, "frame");
+		if (uniformFrame == -1) return;
+	}
+
+	//
 	initialized = true;
 }
 
 void ShadowMappingShaderPre::useProgram()
 {
 	renderer->useProgram(programGlId);
+	if (renderer->isGeometryShaderAvailable() == true) {
+		renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
+	}
 }
 
 void ShadowMappingShaderPre::unUseProgram()
@@ -116,4 +137,12 @@ void ShadowMappingShaderPre::bindTexture(GLRenderer* renderer, int32_t textureId
 			renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
+}
+
+void ShadowMappingShaderPre::updateApplyFoliageAnimation(GLRenderer* renderer) {
+	// skip if no geometry shader available
+	if (renderer->isGeometryShaderAvailable() == false) return;
+
+	//
+	renderer->setProgramUniformInteger(uniformApplyFoliageAnimation, renderer->applyFoliageAnimation == true?1:0);
 }

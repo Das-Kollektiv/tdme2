@@ -22,6 +22,7 @@ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender final
 private:
 	GLRenderer* renderer {  };
 	int32_t renderVertexShaderGlId {  };
+	int32_t renderGeometryShaderGlId {  };
 	int32_t renderFragmentShaderGlId {  };
 	int32_t renderProgramGlId {  };
 	int32_t renderUniformTextureUnit { -1 };
@@ -45,6 +46,8 @@ private:
 	int32_t renderUniformLightConstantAttenuation { -1 };
 	int32_t renderUniformLightLinearAttenuation { -1 };
 	int32_t renderUniformLightQuadraticAttenuation { -1 };
+	int32_t uniformApplyFoliageAnimation { -1 };
+	int32_t uniformFrame { -1 };
 	bool initialized {  };
 public:
 
@@ -114,6 +117,12 @@ public:
 	 * @param renderer
 	 */
 	void updateMaterial(GLRenderer* renderer);
+
+	/**
+	 * Update apply foliage animation
+	 * @param renderer
+	 */
+	void updateApplyFoliageAnimation(GLRenderer* renderer);
 
 	/**
 	 * Bind texture
