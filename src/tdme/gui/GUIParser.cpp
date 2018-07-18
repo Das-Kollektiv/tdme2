@@ -505,6 +505,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-bottom")))
+					),
+					GUIImageNode::createClipping(
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
 					)
 				);
 				guiParentNode->addSubNode(guiImageNode);

@@ -6,6 +6,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
+#include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
@@ -21,6 +22,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
+using tdme::gui::nodes::GUINode_Clipping;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Padding;
@@ -45,7 +47,8 @@ GUIImageNode::GUIImageNode(
 	const string& source,
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
-	const GUINode_Scale9Grid& scale9Grid)
+	const GUINode_Scale9Grid& scale9Grid,
+	const GUINode_Clipping& clipping)
 	throw(GUIParserException):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
 {
@@ -55,6 +58,7 @@ GUIImageNode::GUIImageNode(
 	this->scale9Grid = scale9Grid;
 	this->textureMatrix.identity();
 	this->setSource(source);
+	this->clipping = clipping;
 }
 
 void GUIImageNode::init()
@@ -101,6 +105,26 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 		return;
 
 	GUINode::render(guiRenderer, floatingNodes);
+
+	{
+		auto renderOffsetXCurrent = guiRenderer->getRenderOffsetX();
+		auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
+		float screenWidth = guiRenderer->getGUI()->getWidth();
+		float screenHeight = guiRenderer->getGUI()->getHeight();
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + padding.left + clipping.left;
+		float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + padding.top + clipping.top;
+		float width = getContentWidth() - padding.left - padding.right - clipping.left - clipping.right;
+		float height = getContentHeight() - padding.top - padding.bottom - clipping.top - clipping.bottom;
+		auto renderAreaLeft = ((left) / (screenWidth / 2.0f)) - 1.0f;
+		auto renderAreaTop = ((screenHeight - top) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
+		auto renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
+		auto renderAreaBottom = ((screenHeight - top - height) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
+		guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
+		guiRenderer->setSubRenderAreaTop(renderAreaTop);
+		guiRenderer->setSubRenderAreaRight(renderAreaRight);
+		guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
+	}
+
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
 	guiRenderer->bindTexture(textureId);
@@ -138,7 +162,7 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 			1.0f
 		);
 	} else {
-		// TODO: padding, scaling if pixels to render smaller as scale9 pixels
+		// TODO: padding
 		auto scaleX = 1.0f;
 		auto scaleY = 1.0f;
 		// we have a scale here, because we have a axis without "scale9grid"
@@ -150,6 +174,15 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 		if (scale9Grid.left == 0 && scale9Grid.right == 0) {
 			scaleX = (float)getContentWidth() / (float)texture->getWidth();
 			scaleY = scaleX;
+		} else {
+			// scale Y if content height is too small to fit scale 9 top and bottom
+			if (getContentHeight() < scale9Grid.top + scale9Grid.bottom) {
+				scaleY = getContentHeight() < Math::EPSILON?0.0f:(float)getContentHeight() / (float)(scale9Grid.top + scale9Grid.bottom);
+			}
+			// scale X if content width is too small to fit scale 9 left and top
+			if (getContentWidth() < scale9Grid.left + scale9Grid.right) {
+				scaleX = getContentWidth() < Math::EPSILON?0.0f:(float)getContentWidth() / (float)(scale9Grid.left + scale9Grid.right);
+			}
 		}
 		// we have no certain scale, take original image size
 		GUINode_Scale9Grid scaledScale9Grid;
@@ -449,4 +482,22 @@ const string& GUIImageNode::getSource() {
 
 void GUIImageNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
 	this->textureMatrix.set(textureMatrix);
+}
+
+GUINode_Clipping& GUIImageNode::getClipping() {
+	return clipping;
+}
+
+GUINode_Clipping GUIImageNode::createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom) throw (GUIParserException)
+{
+	GUINode_Clipping clipping;
+	clipping.left = getRequestedPixelValue(allClipping, 0);
+	clipping.top = getRequestedPixelValue(allClipping, 0);
+	clipping.right = getRequestedPixelValue(allClipping, 0);
+	clipping.bottom = getRequestedPixelValue(allClipping, 0);
+	clipping.left = getRequestedPixelValue(left, clipping.left);
+	clipping.top = getRequestedPixelValue(top, clipping.top);
+	clipping.right = getRequestedPixelValue(right, clipping.right);
+	clipping.bottom = getRequestedPixelValue(bottom, clipping.bottom);
+	return clipping;
 }

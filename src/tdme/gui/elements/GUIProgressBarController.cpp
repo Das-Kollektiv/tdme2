@@ -9,6 +9,7 @@
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Math.h>
@@ -26,6 +27,7 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
@@ -91,8 +93,6 @@ void GUIProgressBarController::setValue(const MutableString& value) {
 }
 
 void GUIProgressBarController::updateBar() {
-	auto barWidth = static_cast<int>(valueFloat * (this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right));
-	barNode->getComputedConstraints().contentAlignmentTop = (node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - backgroundNode->getContentHeight()) / 2;
-	barNode->getComputedConstraints().contentAlignmentLeft = 0.0f;
-	barNode->getComputedConstraints().width = barWidth;
+	auto barWidth = this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right;
+	dynamic_cast<GUIImageNode*>(barNode)->getClipping().right = barWidth - (int)((float)barWidth * valueFloat);
 }

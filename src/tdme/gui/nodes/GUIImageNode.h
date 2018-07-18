@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/math/Matrix2D3x3.h>
 
@@ -19,6 +20,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
+using tdme::gui::nodes::GUINode_Clipping;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
@@ -44,6 +46,7 @@ private:
 	int32_t textureId {  };
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
+	GUINode_Clipping clipping;
 
 protected:
 	/** 
@@ -88,7 +91,8 @@ protected:
 		const string& source,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
-		const GUINode_Scale9Grid& scale9Grid
+		const GUINode_Scale9Grid& scale9Grid,
+		const GUINode_Clipping& clipping
 	) throw(GUIParserException);
 
 public:
@@ -113,6 +117,21 @@ public:
 	 * @param texture matrix
 	 */
 	void setTextureMatrix(const Matrix2D3x3& textureMatrix);
+
+	/**
+	 * @return clipping
+	 */
+	GUINode_Clipping& getClipping();
+
+	/**
+	 * Create clipping
+	 * @param all sides
+	 * @param left
+	 * @param top
+	 * @param right
+	 * @param bottom
+	 */
+	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom) throw (GUIParserException);
 
 private:
 	void init();
