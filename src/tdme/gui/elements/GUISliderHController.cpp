@@ -49,6 +49,7 @@ void GUISliderHController::setDisabled(bool disabled) {
 
 void GUISliderHController::initialize() {
 	sliderNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_slider");
+	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
 }
 
 void GUISliderHController::dispose() {

@@ -246,11 +246,12 @@
 				</tab-content>
 				<tab-content tab-id="tab7" vertical-align="top">
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
-						<slider-horizontal name="sliderh-test" id="sliderh-test" />
+						<progress-bar name="progressbar-test" id="progressbar-test" value="0.5" />
+						<slider-horizontal name="sliderh-test" id="sliderh-test" value="0.5" />
 						<space width="50" />
-						<slider-vertical name="sliderv-test" id="sliderv-test" />
+						<slider-vertical name="sliderv-test" id="sliderv-test" value="0.5" />
 						<space width="50" />
-						<knob name="knob-test" id="knob-test" />
+						<knob name="knob-test" id="knob-test" value="0.5" />
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab8" vertical-align="top">

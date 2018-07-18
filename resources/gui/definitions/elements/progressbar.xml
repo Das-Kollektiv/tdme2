@@ -1,0 +1,18 @@
+<element id="{$id}" name="{$name}" border="2" border-color="transparent" disabled="{$disabled}" width="223" height="52" value="{$value}">
+	<image
+		width="223"
+		height="52"
+		scale9-left="50"
+		scale9-right="50"
+		id="{$id}_bar"
+		src="resources/gui/images/elements/progressbar/progressbar_fill.png"
+	/>
+	<image 
+		width="223" 
+		height="52"
+		scale9-left="50"
+		scale9-right="50"
+		id="{$id}_background" 
+		src="resources/gui/images/elements/progressbar/progressbar.png" 
+	/>
+</element>

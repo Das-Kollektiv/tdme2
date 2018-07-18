@@ -111,10 +111,10 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 		scale9Grid.right == 0 &&
 		scale9Grid.top == 0 &&
 		scale9Grid.bottom == 0) {
-		float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft;
-		float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop;
-		float width = getContentWidth();
-		float height = getContentHeight();
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + padding.left;
+		float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + padding.top;
+		float width = getContentWidth() - padding.left - padding.right;
+		float height = getContentHeight() - padding.top - padding.bottom;
 		guiRenderer->addQuad(
 			((left) / (screenWidth / 2.0f)) - 1.0f,
 			((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -138,6 +138,7 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 			1.0f
 		);
 	} else {
+		// TODO: padding, scaling if pixels to render smaller as scale9 pixels
 		auto scaleX = 1.0f;
 		auto scaleY = 1.0f;
 		// we have a scale here, because we have a axis without "scale9grid"
