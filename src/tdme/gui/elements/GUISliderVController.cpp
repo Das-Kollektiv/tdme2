@@ -12,7 +12,6 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Math.h>
-#include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Time.h>
@@ -29,7 +28,6 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Math;
-using tdme::utils::Console;
 using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::Time;
@@ -73,11 +71,11 @@ void GUISliderVController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		event->getButton() == 1) {
 		event->setProcessed(true);
 		auto sliderPosition = Math::clamp(
-			static_cast<int>(nodeMousePosition[1]) - sliderNode->getContentHeight() / 2,
+			static_cast<int>(nodeMousePosition[1]) - sliderNode->getContentHeight() / 2 - this->node->getPadding().top,
 			0,
-			this->node->getComputedConstraints().height - sliderNode->getContentHeight()
+			this->node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - sliderNode->getContentHeight()
 		);
-		valueFloat = static_cast<float>(sliderPosition) / static_cast<float>(this->node->getComputedConstraints().height - sliderNode->getContentHeight());
+		valueFloat = static_cast<float>(sliderPosition) / static_cast<float>(this->node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - sliderNode->getContentHeight());
 		updateSlider();
 		node->getScreenNode()->delegateValueChanged(dynamic_cast< GUIElementNode* >(this->node));
 	}
@@ -132,7 +130,7 @@ void GUISliderVController::setValue(const MutableString& value) {
 }
 
 void GUISliderVController::updateSlider() {
-	auto sliderPosition = static_cast<int>(valueFloat * (this->node->getComputedConstraints().height - sliderNode->getContentHeight()));
-	sliderNode->getComputedConstraints().contentAlignmentLeft = (node->getComputedConstraints().width - sliderNode->getContentWidth()) / 2;
+	auto sliderPosition = static_cast<int>(valueFloat * (this->node->getComputedConstraints().height - this->node->getPadding().top - this->node->getPadding().bottom - sliderNode->getContentHeight()));
+	sliderNode->getComputedConstraints().contentAlignmentLeft = (node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right - sliderNode->getContentWidth()) / 2;
 	sliderNode->getComputedConstraints().contentAlignmentTop = sliderPosition;
 }

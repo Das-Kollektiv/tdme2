@@ -147,6 +147,11 @@ GUINode_Border& GUINode::getBorder()
 	return border;
 }
 
+GUINode_Padding& GUINode::getPadding()
+{
+	return padding;
+}
+
 GUINode_RequestedConstraints& GUINode::getRequestsConstraints()
 {
 	return requestedConstraints;
@@ -203,7 +208,7 @@ void GUINode::computeContentAlignment()
 				computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border.top + padding.top;
 			} else
 			if (v == GUINode_AlignmentVertical::BOTTOM) {
-				computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border.left + padding.left;
+				computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border.top + padding.top;
 			}
 		}
 

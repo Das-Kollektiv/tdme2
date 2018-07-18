@@ -263,7 +263,7 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 		if (v == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
-				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border.right- padding.right);
+				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border.right - padding.right);
 			}
 		}
 	}
@@ -288,7 +288,7 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 		if (v == GUINode_AlignmentVertical::BOTTOM) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
-				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom- padding.bottom);
+				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom - padding.bottom);
 			}
 		}
 	}

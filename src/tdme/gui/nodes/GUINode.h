@@ -259,6 +259,11 @@ public:
 	virtual GUINode_Border& getBorder();
 
 	/**
+	 * @return padding
+	 */
+	virtual GUINode_Padding& getPadding();
+
+	/**
 	 * @return computed constraints
 	 */
 	virtual GUINode_ComputedConstraints& getComputedConstraints();
