@@ -2,8 +2,6 @@
 
 #include <tdme/gui/events/fwd-tdme.h>
 
-
-
 /** 
  * Action Interface
  * @author Andreas Drewke

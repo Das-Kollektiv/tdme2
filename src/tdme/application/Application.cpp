@@ -69,6 +69,10 @@ void Application::setMousePosition(int x, int y) {
 	#endif
 }
 
+void Application::swapBuffers() {
+	glutSwapBuffers();
+}
+
 void Application::run(int argc, char** argv, const string& title, ApplicationInputEventsHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
 	glutInit(&argc, argv);

@@ -59,6 +59,11 @@ public:
 	static void setMousePosition(int x, int y);
 
 	/**
+	 * Swap rendering buffers
+	 */
+	static void swapBuffers();
+
+	/**
 	 * Run this application
 	 * @param argument count
 	 * @param argument values
