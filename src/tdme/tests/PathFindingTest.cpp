@@ -162,9 +162,6 @@ void PathFindingTest::display()
 	}
 	auto fps = 60.0f;
 	auto start = now;
-	// TODO: a.drewke, nothing to update here, but still this crashes RP3D
-	// world->update(1.0f / fps);
-	// world->synch(engine);
 	auto end = Time::getCurrentMillis();
 	engine->display();
 }
