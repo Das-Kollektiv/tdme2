@@ -83,9 +83,11 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	if (progressCallback != nullptr) progressCallback->progress(0.165f);
 
 	Value jRoot;
 	jRoot.loadFromString(jsonContent);
+	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
 	auto version = Float::parseFloat((jRoot["version"].getString()));
@@ -150,7 +152,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 
 	auto jModels = jRoot["models"].getArray();
 	auto jObjects = jRoot["objects"].getArray();
-	auto progressStepCount = jModels.size() + jObjects.size();
+	auto progressStepCount =  + jObjects.size();
 	auto progressStepCurrent = 0;
 
 	for (auto i = 0; i < jModels.size(); i++) {
@@ -176,7 +178,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			}
 		}
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepCount));
+		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jModels.size()) * 0.33f);
 		progressStepCurrent++;
 	}
 	level->clearObjects();
@@ -187,7 +189,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		if (model == nullptr) {
 			Console::println("LevelFileImport::doImport(): No entity found with id = " + to_string(jObject["mid"].getInt()));
 
-			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepCount));
+			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jObjects.size()) * 0.33f);
 			progressStepCurrent++;
 
 			continue;
@@ -238,7 +240,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		}
 		level->addObject(levelEditorObject);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepCount));
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jObjects.size()) * 0.33f);
 		progressStepCurrent++;
 	}
 	level->setObjectIdx(jRoot["objects_eidx"].getInt());
