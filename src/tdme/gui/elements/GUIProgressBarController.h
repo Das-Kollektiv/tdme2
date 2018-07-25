@@ -9,7 +9,8 @@
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIImageNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::utils::MutableString;
 
 /** 
@@ -44,8 +45,9 @@ private:
 	 */
 	void updateBar();
 
-	GUINode* backgroundNode { nullptr };
-	GUINode* barNode { nullptr };
+	GUIImageNode* backgroundNode { nullptr };
+	GUIImageNode* barNode { nullptr };
+	GUITextNode* textNode { nullptr };
 	bool disabled { false };
 	float valueFloat { 0.0f };
 	MutableString value { };

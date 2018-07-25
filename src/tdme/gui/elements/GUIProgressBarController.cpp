@@ -12,6 +12,7 @@
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/math/Math.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
@@ -28,8 +29,8 @@ using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::math::Math;
 using tdme::utils::Console;
 using tdme::utils::Float;
@@ -51,8 +52,9 @@ void GUIProgressBarController::setDisabled(bool disabled) {
 }
 
 void GUIProgressBarController::initialize() {
-	backgroundNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_background");
-	barNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_bar");
+	backgroundNode = dynamic_cast<GUIImageNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_background"));
+	barNode = dynamic_cast<GUIImageNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_bar"));
+	textNode = dynamic_cast<GUITextNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_text"));
 	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
 }
 
@@ -94,5 +96,7 @@ void GUIProgressBarController::setValue(const MutableString& value) {
 
 void GUIProgressBarController::updateBar() {
 	auto barWidth = this->node->getComputedConstraints().width - this->node->getPadding().left - this->node->getPadding().right;
-	dynamic_cast<GUIImageNode*>(barNode)->getClipping().right = barWidth - (int)((float)barWidth * valueFloat);
+	barNode->getClipping().right = barWidth - (int)((float)barWidth * valueFloat);
+	textNode->setText((MutableString((int)(valueFloat * 100.0f))).append(" %"));
+	textNode->getScreenNode()->layout(textNode);
 }
