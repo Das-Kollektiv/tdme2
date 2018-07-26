@@ -223,7 +223,7 @@ void World::update(float deltaTime)
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
 		auto body = rigidBodiesDynamic[i];
 		// skip if enabled
-		if (body->enabled == false) {
+		if (body->isEnabled() == false) {
 			continue;
 		}
 		// skip if static or sleeping
@@ -272,10 +272,10 @@ void World::synch(Engine* engine)
 		}
 
 		// enable
-		engineEntity->setEnabled(body->enabled);
+		engineEntity->setEnabled(body->isEnabled());
 
 		//apply inverse local transformation for engine update
-		if (body->enabled == true) {
+		if (body->isEnabled() == true) {
 			engineEntity->fromTransformations(body->transformations);
 		}
 	}
@@ -369,13 +369,13 @@ World* World::clone(uint16_t collisionTypeIds)
 		// clone rigid body
 		switch(bodyType) {
 			case Body::TYPE_STATIC:
-				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->enabled, body->getCollisionTypeId(), body->transformations, body->getFriction(), body->boundingVolumes);
+				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transformations, body->getFriction(), body->boundingVolumes);
 				break;
 			case Body::TYPE_DYNAMIC:
-				clonedBody = clonedWorld->addRigidBody(body->id, body->enabled, body->getCollisionTypeId(), body->transformations, body->getRestitution(), body->getFriction(), body->getMass(), body->inertiaTensor, body->boundingVolumes);
+				clonedBody = clonedWorld->addRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transformations, body->getRestitution(), body->getFriction(), body->getMass(), body->inertiaTensor, body->boundingVolumes);
 				break;
 			case Body::TYPE_COLLISION:
-				clonedBody = clonedWorld->addCollisionBody(body->id, body->enabled, body->getCollisionTypeId(), body->transformations, body->boundingVolumes);
+				clonedBody = clonedWorld->addCollisionBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transformations, body->boundingVolumes);
 				break;
 			default:
 				Console::println("World::clone(): Unsupported type: " + to_string(bodyType));

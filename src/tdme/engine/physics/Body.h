@@ -66,7 +66,6 @@ private:
 	string id {  };
 	string rootId {  };
 	int32_t type {  };
-	bool enabled { false };
 	float mass {  };
 	uint16_t collideTypeIds {  };
 	uint16_t collisionTypeId {  };
