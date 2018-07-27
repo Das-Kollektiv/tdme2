@@ -249,7 +249,8 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 		Matrix4x4 transformationsMatrix;
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
-		if (animation != nullptr && animationState->finished == false) {
+		// TODO: check if its better to not compute animation matrix if finished
+		if (animation != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
 			auto frames = animationState->setup->getFrames();
 			auto fps = model->getFPS();
