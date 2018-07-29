@@ -242,13 +242,13 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		if (openListNode != nullptr) {
 			// remove open list node
 			openNodes.erase(openListNodeIt);
-			delete openListNodeIt->second;
+			delete openListNode;
 		}
 
 		// Remove found node from closed nodes list, since it was less optimal
 		if (closedListNode != nullptr) {
 			closedNodes.erase(closedListNodeIt);
-			delete closedListNodeIt->second;
+			delete closedListNode;
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end

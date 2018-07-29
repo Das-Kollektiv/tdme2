@@ -74,7 +74,7 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 					pixelByteBuffer
 				);
 				int diffuseTextureBytesPerPixel = diffuseTexture->getDepth() / 8;
-				int transparencyTextureBytesPerPixel = diffuseTexture->getDepth() / 8;
+				int transparencyTextureBytesPerPixel = transparencyTexture->getDepth() / 8;
 				for (int y = 0; y < height; y++)
 				for (int x = 0; x < width; x++) {
 					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 0));

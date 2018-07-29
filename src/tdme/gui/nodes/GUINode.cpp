@@ -147,6 +147,11 @@ GUINode_Border& GUINode::getBorder()
 	return border;
 }
 
+GUINode_Padding& GUINode::getPadding()
+{
+	return padding;
+}
+
 GUINode_RequestedConstraints& GUINode::getRequestsConstraints()
 {
 	return requestedConstraints;
@@ -203,7 +208,7 @@ void GUINode::computeContentAlignment()
 				computedConstraints.contentAlignmentTop = (computedConstraints.height - getContentHeight()) / 2 + border.top + padding.top;
 			} else
 			if (v == GUINode_AlignmentVertical::BOTTOM) {
-				computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border.left + padding.left;
+				computedConstraints.contentAlignmentTop = computedConstraints.height - getContentHeight() + border.top + padding.top;
 			}
 		}
 
@@ -511,6 +516,15 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 			if (scale9Grid.left == 0 && scale9Grid.right == 0) {
 				scaleX = (float)getContentWidth() / (float)backgroundTexture->getWidth();
 				scaleY = scaleX;
+			} else {
+				// scale Y if content height is too small to fit scale 9 top and bottom
+				if (getContentHeight() < scale9Grid.top + scale9Grid.bottom) {
+					scaleY = getContentHeight() < Math::EPSILON?0.0f:(float)getContentHeight() / (float)(scale9Grid.top + scale9Grid.bottom);
+				}
+				// scale X if content width is too small to fit scale 9 left and top
+				if (getContentWidth() < scale9Grid.left + scale9Grid.right) {
+					scaleX = getContentWidth() < Math::EPSILON?0.0f:(float)getContentWidth() / (float)(scale9Grid.left + scale9Grid.right);
+				}
 			}
 			// we have no certain scale, take original image size
 			GUINode_Scale9Grid scaledScale9Grid;

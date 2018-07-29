@@ -54,6 +54,7 @@ using tdme::gui::renderer::GUIRenderer;
 class tdme::gui::nodes::GUINode
 {
 	friend class GUIElementNode;
+	friend class GUIImageNode;
 	friend class GUILayoutNode;
 	friend class GUIParentNode;
 	friend class GUIScreenNode;
@@ -257,6 +258,11 @@ public:
 	 * @return border
 	 */
 	virtual GUINode_Border& getBorder();
+
+	/**
+	 * @return padding
+	 */
+	virtual GUINode_Padding& getPadding();
 
 	/**
 	 * @return computed constraints

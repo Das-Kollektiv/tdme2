@@ -102,7 +102,7 @@ int32_t GUIInputInternalNode::getContentWidth()
 
 int32_t GUIInputInternalNode::getContentHeight()
 {
-	return font->getLineHeight() + border.top + border.bottom+ padding.top + padding.bottom;
+	return font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
 
 GUIFont* GUIInputInternalNode::getFont()

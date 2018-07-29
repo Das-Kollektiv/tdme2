@@ -54,6 +54,7 @@ void GUIKnobController::setDisabled(bool disabled) {
 
 void GUIKnobController::initialize() {
 	knobNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_knob");
+	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
 }
 
 void GUIKnobController::dispose() {

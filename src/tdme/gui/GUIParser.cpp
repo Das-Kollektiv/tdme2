@@ -12,6 +12,7 @@
 #include <tdme/gui/elements/GUIImageButton.h>
 #include <tdme/gui/elements/GUIInput.h>
 #include <tdme/gui/elements/GUIKnob.h>
+#include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
 #include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
@@ -65,6 +66,7 @@ using tdme::gui::elements::GUIElement;
 using tdme::gui::elements::GUIImageButton;
 using tdme::gui::elements::GUIInput;
 using tdme::gui::elements::GUIKnob;
+using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
 using tdme::gui::elements::GUIScrollAreaHorizontal;
@@ -503,6 +505,13 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-bottom")))
+					),
+					GUIImageNode::createClipping(
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
 					)
 				);
 				guiParentNode->addSubNode(guiImageNode);
@@ -1001,6 +1010,13 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIImageButton();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIProgressBar();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

@@ -41,6 +41,7 @@ map<string, string>* GUISliderH::getAttributes(GUIScreenNode* screenNode)
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["disabled"] = "false";
+	attributes["value"] = "0.0";
 	return &attributes;
 }
 

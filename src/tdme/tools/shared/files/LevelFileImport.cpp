@@ -21,6 +21,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
+#include <tdme/tools/shared/files/ProgressCallback.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
@@ -72,17 +73,21 @@ using tdme::utils::StringUtils;
 using tdme::ext::jsonbox::Value;
 using tdme::ext::jsonbox::Array;
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback) throw (FileSystemException, JsonException, ModelFileIOException)
 {
-	doImport(pathName, fileName, level, "");
+	doImport(pathName, fileName, level, "", progressCallback);
 }
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback) throw (FileSystemException, JsonException, ModelFileIOException)
 {
+	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	if (progressCallback != nullptr) progressCallback->progress(0.165f);
 
 	Value jRoot;
 	jRoot.loadFromString(jsonContent);
+	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
 	auto version = Float::parseFloat((jRoot["version"].getString()));
@@ -144,7 +149,12 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		}
 	}
 	level->getEntityLibrary()->clear();
+
 	auto jModels = jRoot["models"].getArray();
+	auto jObjects = jRoot["objects"].getArray();
+	auto progressStepCount =  + jObjects.size();
+	auto progressStepCurrent = 0;
+
 	for (auto i = 0; i < jModels.size(); i++) {
 		auto jModel = jModels[i];
 		LevelEditorEntity* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
@@ -167,14 +177,21 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 				);
 			}
 		}
+
+		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jModels.size()) * 0.33f);
+		progressStepCurrent++;
 	}
 	level->clearObjects();
-	auto jObjects = jRoot["objects"].getArray();
+
 	for (auto i = 0; i < jObjects.size(); i++) {
 		auto& jObject = jObjects[i];
 		auto model = level->getEntityLibrary()->getEntity(jObject["mid"].getInt());
 		if (model == nullptr) {
 			Console::println("LevelFileImport::doImport(): No entity found with id = " + to_string(jObject["mid"].getInt()));
+
+			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jObjects.size()) * 0.33f);
+			progressStepCurrent++;
+
 			continue;
 		}
 
@@ -222,11 +239,19 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			}
 		}
 		level->addObject(levelEditorObject);
+
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jObjects.size()) * 0.33f);
+		progressStepCurrent++;
 	}
 	level->setObjectIdx(jRoot["objects_eidx"].getInt());
 	level->setPathName(pathName);
 	level->setFileName(fileName);
 	level->update();
+
+	if (progressCallback != nullptr) {
+		progressCallback->progress(1.0f);
+		delete progressCallback;
+	}
 }
 
 void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups) {

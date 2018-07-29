@@ -197,20 +197,12 @@ void Body::setCollisionTypeIds(uint16_t collisionTypeIds)
 
 bool Body::isEnabled()
 {
-	return enabled;
+	return collisionBody->isActive();
 }
 
 void Body::setEnabled(bool enabled)
 {
-	// return if enable state has not changed
-	if (this->enabled == enabled)
-		return;
-
-	//
 	collisionBody->setIsActive(enabled);
-
-	//
-	this->enabled = enabled;
 }
 
 bool Body::isSleeping()
