@@ -91,11 +91,10 @@ else
 endif
 
 CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := -g -pipe -MMD -MP -DNDEBUG
-#CFLAGS := -O3 -pipe -MMD -MP -DNDEBUG
+#CFLAGS := -g -pipe -MMD -MP
 CFLAGS := -O3 -pipe -MMD -MP -DNDEBUG
 CFLAGS_EXT_RP3D := -O2 -pipe -MMD -MP -DNDEBUG
-CFLAGS_DEBUG := -g -pipe -MMD -MP -DNDEBUG
+CFLAGS_DEBUG := -g -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) -std=gnu++11
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) -std=gnu++11
