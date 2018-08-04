@@ -169,8 +169,12 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \

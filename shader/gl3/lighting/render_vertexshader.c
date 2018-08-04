@@ -125,6 +125,6 @@ void main(void) {
 		gl_Position = vec4(inVertex, 1.0);
 	#else
 		// compute vertex and pass to fragment shader
-		computeVertex(vec4(inVertex, 1.0), 0, mat4(1.0));
+		computeVertex(vec4(inVertex, 1.0), -1, mat4(1.0));
 	#endif
 }

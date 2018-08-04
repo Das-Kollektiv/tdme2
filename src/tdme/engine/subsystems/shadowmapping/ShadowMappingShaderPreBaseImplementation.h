@@ -18,7 +18,7 @@ using tdme::math::Matrix4x4;
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation: public ShadowMappingShaderPreImplementation
 {
-private:
+protected:
 	GLRenderer* renderer {  };
 	int32_t vertexShaderGlId {  };
 	int32_t geometryShaderGlId {  };

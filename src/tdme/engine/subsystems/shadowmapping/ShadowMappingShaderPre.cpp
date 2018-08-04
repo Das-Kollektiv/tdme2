@@ -1,12 +1,15 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
@@ -14,8 +17,8 @@ using tdme::utils::Console;
 
 ShadowMappingShaderPre::ShadowMappingShaderPre(GLRenderer* renderer) 
 {
-	shader["default"] = new ShadowMappingShaderPreBaseImplementation(renderer);
-	shader["foliage"] = new ShadowMappingShaderPreBaseImplementation(renderer);
+	shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
+	shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
 }
 
 ShadowMappingShaderPre::~ShadowMappingShaderPre() {

@@ -2,19 +2,21 @@
 
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 
 ShadowMappingShaderRender::ShadowMappingShaderRender(GLRenderer* renderer) 
 {
-	shader["default"] = new ShadowMappingShaderRenderBaseImplementation(renderer);
-	shader["foliage"] = new ShadowMappingShaderRenderBaseImplementation(renderer);
+	shader["default"] = new ShadowMappingShaderRenderDefaultImplementation(renderer);
+	shader["foliage"] = new ShadowMappingShaderRenderFoliageImplementation(renderer);
 }
 
 ShadowMappingShaderRender::~ShadowMappingShaderRender()

@@ -20,7 +20,7 @@ using tdme::math::Vector3;
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation: public ShadowMappingShaderRenderImplementation
 {
-private:
+protected:
 	GLRenderer* renderer {  };
 	int32_t renderVertexShaderGlId {  };
 	int32_t renderGeometryShaderGlId {  };
