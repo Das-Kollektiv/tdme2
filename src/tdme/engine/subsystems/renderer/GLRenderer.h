@@ -57,7 +57,7 @@ public:
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	GLRenderer_Material material;
 	array<GLRenderer_Light, 8> lights;
-	bool applyFoliageAnimation {  };
+	string shaderId {  };
 	int frame { 0 };
 
 protected:
@@ -761,15 +761,15 @@ public:
 	virtual void onUpdateMaterial() = 0;
 
 	/**
-	 * Set apply foliage animation
-	 * @param apply foliage animation
+	 * Set shader
+	 * @param shader id
 	 */
-	virtual void setApplyFoliageAnimation(bool applyFoliageAnimation);
+	virtual void setShader(const string& id);
 
 	/**
-	 * On update apply foliage animation
+	 * On update shader
 	 */
-	virtual void onUpdateApplyFoliageAnimation() = 0;
+	virtual void onUpdateShader() = 0;
 
 	/** 
 	 * Reads a pixel depth

@@ -58,7 +58,7 @@ private:
 	LevelEditorEntityParticleSystem* particleSystem {  };
 	LevelEditorEntityModel* modelSettings;
 	bool renderGroups {  };
-	bool applyFoliageAnimation {  };
+	string shaderId {  };
 	bool dynamicShadowing {  };
 public:
 
@@ -267,19 +267,19 @@ public:
 	}
 
 	/**
-	 * Is applying foliage animations
-	 * @return apply animation flag
+	 * Get shader
+	 * @return shader id
 	 */
-	inline bool isApplyFoliageAnimation() {
-		return applyFoliageAnimation;
+	inline const string& getShader() {
+		return shaderId;
 	}
 
 	/**
-	 * Set apply foliage animations
-	 * @param apply animations
+	 * Set shader
+	 * @param shader id
 	 */
-	inline void setApplyFoliageAnimation(bool applyFoliageAnimation) {
-		this->applyFoliageAnimation = applyFoliageAnimation;
+	inline void setShader(const string& id) {
+		this->shaderId = id;
 	}
 
 	/**

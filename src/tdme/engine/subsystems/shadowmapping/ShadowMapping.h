@@ -144,10 +144,10 @@ public:
 	void updateMaterial(GLRenderer* renderer);
 
 	/**
-	 * Update apply foliage animation
-	 * @param renderer
+	 * Set shader
+	 * @param shader id
 	 */
-	void updateApplyFoliageAnimation(GLRenderer* renderer);
+	void setShader(const string& id);
 
 	/**
 	 * Upload light

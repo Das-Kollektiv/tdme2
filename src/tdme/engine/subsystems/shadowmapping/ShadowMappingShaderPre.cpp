@@ -14,24 +14,30 @@ using tdme::utils::Console;
 
 ShadowMappingShaderPre::ShadowMappingShaderPre(GLRenderer* renderer) 
 {
-	defaultImplementation = new ShadowMappingShaderPreBaseImplementation(renderer);
-	foliageImplementation = new ShadowMappingShaderPreBaseImplementation(renderer);
+	shader["default"] = new ShadowMappingShaderPreBaseImplementation(renderer);
+	shader["foliage"] = new ShadowMappingShaderPreBaseImplementation(renderer);
 }
 
 ShadowMappingShaderPre::~ShadowMappingShaderPre() {
-	delete defaultImplementation;
-	delete foliageImplementation;
+	for (auto shaderIt: shader) {
+		delete shaderIt.second;
+	}
 }
 
 bool ShadowMappingShaderPre::isInitialized()
 {
-	return defaultImplementation->isInitialized() && foliageImplementation->isInitialized();
+	bool initialized = true;
+	for (auto shaderIt: shader) {
+		initialized&= shaderIt.second->isInitialized();
+	}
+	return initialized;
 }
 
 void ShadowMappingShaderPre::initialize()
 {
-	defaultImplementation->initialize();
-	foliageImplementation->initialize();
+	for (auto shaderIt: shader) {
+		shaderIt.second->initialize();
+	}
 }
 
 void ShadowMappingShaderPre::useProgram()
@@ -71,9 +77,15 @@ void ShadowMappingShaderPre::bindTexture(GLRenderer* renderer, int32_t textureId
 	implementation->bindTexture(renderer, textureId);
 }
 
-void ShadowMappingShaderPre::updateApplyFoliageAnimation(GLRenderer* renderer) {
+void ShadowMappingShaderPre::setShader(const string& id) {
 	auto currentImplementation = implementation;
-	implementation = renderer->applyFoliageAnimation == true?foliageImplementation:defaultImplementation;
+
+	auto shaderIt = shader.find(id);
+	if (shaderIt == shader.end()) {
+		shaderIt = shader.find("default");
+	}
+	implementation = shaderIt->second;
+
 	if (currentImplementation != implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
 		implementation->useProgram();

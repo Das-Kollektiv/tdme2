@@ -355,18 +355,18 @@ void ShadowMapping::updateDepthBiasMVPMatrix()
 	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 }
 
-void ShadowMapping::updateApplyFoliageAnimation(GLRenderer* renderer) {
+void ShadowMapping::setShader(const string& id) {
 	{
 		if (runState == ShadowMapping_RunState::NONE) {
 			// no op
 		} else
 		if (runState == ShadowMapping_RunState::PRE) {
-			Engine::getShadowMappingShaderPre()->updateApplyFoliageAnimation(renderer);
+			Engine::getShadowMappingShaderPre()->setShader(id);
 		} else
 		if (runState == ShadowMapping_RunState::RENDER) {
-			Engine::getShadowMappingShaderRender()->updateApplyFoliageAnimation(renderer);
+			Engine::getShadowMappingShaderRender()->setShader(id);
 		} else {
-			Console::println(string("ShadowMapping::updateApplyFoliageAnimation(): unsupported run state '" + to_string(runState)));
+			Console::println(string("ShadowMapping::setShader(): unsupported run state '" + to_string(runState)));
 		}
 	}
 }

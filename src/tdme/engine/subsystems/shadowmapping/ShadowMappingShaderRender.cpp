@@ -13,25 +13,31 @@ using tdme::math::Matrix4x4;
 
 ShadowMappingShaderRender::ShadowMappingShaderRender(GLRenderer* renderer) 
 {
-	defaultImplementation = new ShadowMappingShaderRenderBaseImplementation(renderer);
-	foliageImplementation = new ShadowMappingShaderRenderBaseImplementation(renderer);
+	shader["default"] = new ShadowMappingShaderRenderBaseImplementation(renderer);
+	shader["foliage"] = new ShadowMappingShaderRenderBaseImplementation(renderer);
 }
 
 ShadowMappingShaderRender::~ShadowMappingShaderRender()
 {
-	delete defaultImplementation;
-	delete foliageImplementation;
+	for (auto shaderIt: shader) {
+		delete shaderIt.second;
+	}
 }
 
 bool ShadowMappingShaderRender::isInitialized()
 {
-	return defaultImplementation->isInitialized() && foliageImplementation->isInitialized();
+	bool initialized = true;
+	for (auto shaderIt: shader) {
+		initialized&= shaderIt.second->isInitialized();
+	}
+	return initialized;
 }
 
 void ShadowMappingShaderRender::initialize()
 {
-	defaultImplementation->initialize();
-	foliageImplementation->initialize();
+	for (auto shaderIt: shader) {
+		shaderIt.second->initialize();
+	}
 }
 
 void ShadowMappingShaderRender::useProgram()
@@ -97,13 +103,20 @@ void ShadowMappingShaderRender::setRenderLightId(int32_t lightId) {
 	this->lightId = lightId;
 }
 
-void ShadowMappingShaderRender::updateApplyFoliageAnimation(GLRenderer* renderer) {
+void ShadowMappingShaderRender::setShader(const string& id) {
 	auto currentImplementation = implementation;
-	implementation = renderer->applyFoliageAnimation == true?foliageImplementation:defaultImplementation;
+
+	auto shaderIt = shader.find(id);
+	if (shaderIt == shader.end()) {
+		shaderIt = shader.find("default");
+	}
+	implementation = shaderIt->second;
+
 	if (currentImplementation != implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
 		implementation->useProgram();
 	}
+
 	implementation->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
 	implementation->setRenderLightId(lightId);
 }

@@ -1,8 +1,14 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+
+using std::map;
+using std::string;
 
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -15,8 +21,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 class tdme::engine::subsystems::lighting::LightingShader final
 {
 private:
-	LightingShaderImplementation* foliageImplementation { nullptr };
-	LightingShaderImplementation* defaultImplementation { nullptr };
+	map<string, LightingShaderImplementation*> shader;
 	LightingShaderImplementation* implementation { nullptr };
 	bool running { false };
 
@@ -73,10 +78,10 @@ public:
 	void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
-	 * Update apply foliage animation to program
-	 * @param renderer
+	 * Set shader
+	 * @param id
 	 */
-	void updateApplyFoliageAnimation(GLRenderer* renderer);
+	void setShader(const string& id);
 
 	/**
 	 * Bind texture

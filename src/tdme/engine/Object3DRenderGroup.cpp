@@ -245,7 +245,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 
 		// create object, initialize and
 		combinedObject = new Object3D(id, combinedModel);
-		combinedObject->setApplyFoliageAnimation(applyFoliageAnimation);
+		combinedObject->setShader(shaderId);
 		combinedObject->setDynamicShadowingEnabled(dynamicShadowing);
 
 		//

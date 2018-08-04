@@ -509,6 +509,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	jEntityRoot["properties"] = jModelProperties;
 	jEntityRoot["ds"] = entity->isDynamicShadowing();
 	jEntityRoot["rg"] = entity->isRenderGroups();
-	jEntityRoot["afa"] = entity->isApplyFoliageAnimation();
+	jEntityRoot["s"] = entity->getShader();
 	return jEntityRoot;
 }

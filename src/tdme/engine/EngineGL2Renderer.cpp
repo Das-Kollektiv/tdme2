@@ -109,10 +109,10 @@ void EngineGL2Renderer::onUpdateMaterial()
 		Engine::currentEngine->shadowMapping->updateMaterial(this);
 }
 
-void EngineGL2Renderer::onUpdateApplyFoliageAnimation() {
+void EngineGL2Renderer::onUpdateShader() {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateApplyFoliageAnimation(this);
+		Engine::lightingShader->setShader(shaderId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateApplyFoliageAnimation(this);
+		Engine::currentEngine->shadowMapping->setShader(shaderId);
 }

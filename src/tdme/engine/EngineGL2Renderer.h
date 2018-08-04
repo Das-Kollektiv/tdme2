@@ -20,7 +20,7 @@ public:
 	void onUpdateEffect() override;
 	void onUpdateLight(int32_t lightId) override;
 	void onUpdateMaterial() override;
-	void onUpdateApplyFoliageAnimation() override;
+	void onUpdateShader() override;
 
 	/**
 	 * Public constructor

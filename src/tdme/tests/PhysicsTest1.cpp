@@ -228,7 +228,7 @@ void PhysicsTest1::initialize()
 	entity = new Object3D("capsulebig1", capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->setTranslation(Vector3(-2.0f, 5.0f, 0.0f));
-	entity->setApplyFoliageAnimation(true);
+	entity->setShader("foliage");
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});

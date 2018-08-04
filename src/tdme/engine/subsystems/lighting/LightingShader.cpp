@@ -15,25 +15,31 @@ using tdme::utils::Console;
 
 LightingShader::LightingShader(GLRenderer* renderer) 
 {
-	defaultImplementation = new LightingShaderDefaultImplementation(renderer);
-	foliageImplementation = new LightingShaderFoliageImplementation(renderer);
+	shader["default"] = new LightingShaderDefaultImplementation(renderer);
+	shader["foliage"] = new LightingShaderFoliageImplementation(renderer);
 	implementation = nullptr;
 }
 
 LightingShader::~LightingShader() {
-	delete defaultImplementation;
-	delete foliageImplementation;
+	for (auto shaderIt: shader) {
+		delete shaderIt.second;
+	}
 }
 
 bool LightingShader::isInitialized()
 {
-	return defaultImplementation->isInitialized() == true && foliageImplementation->isInitialized() == true;
+	bool initialized = true;
+	for (auto shaderIt: shader) {
+		initialized&= shaderIt.second->isInitialized();
+	}
+	return initialized;
 }
 
 void LightingShader::initialize()
 {
-	defaultImplementation->initialize();
-	foliageImplementation->initialize();
+	for (auto shaderIt: shader) {
+		shaderIt.second->initialize();
+	}
 }
 
 void LightingShader::useProgram()
@@ -79,11 +85,16 @@ void LightingShader::updateTextureMatrix(GLRenderer* renderer) {
 	implementation->updateTextureMatrix(renderer);
 }
 
-void LightingShader::updateApplyFoliageAnimation(GLRenderer* renderer) {
+void LightingShader::setShader(const string& id) {
 	if (running == false) return;
 
 	auto currentImplementation = implementation;
-	implementation = renderer->applyFoliageAnimation == true?foliageImplementation:defaultImplementation;
+	auto shaderIt = shader.find(id);
+	if (shaderIt == shader.end()) {
+		shaderIt = shader.find("default");
+	}
+	implementation = shaderIt->second;
+
 	if (currentImplementation != implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
 		implementation->useProgram();

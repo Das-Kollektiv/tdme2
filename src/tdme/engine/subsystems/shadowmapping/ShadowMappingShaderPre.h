@@ -1,9 +1,15 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
+
+using std::map;
+using std::string;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
@@ -17,8 +23,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre final
 {
 private:
-	ShadowMappingShaderPreImplementation* defaultImplementation { nullptr };
-	ShadowMappingShaderPreImplementation* foliageImplementation { nullptr };
+	map<string, ShadowMappingShaderPreImplementation*> shader;
 	ShadowMappingShaderPreImplementation* implementation { nullptr };
 	bool running { false };
 
@@ -70,10 +75,10 @@ public:
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/**
-	 * Update apply foliage animation
-	 * @param renderer
+	 * Set shader
+	 * @param shader id
 	 */
-	void updateApplyFoliageAnimation(GLRenderer* renderer);
+	void setShader(const string& id);
 
 	/**
 	 * Constructor

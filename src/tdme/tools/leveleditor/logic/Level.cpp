@@ -265,7 +265,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				id,
 				levelEditorEntity->getModel()
 			);
-			dynamic_cast<Object3D*>(entity)->setApplyFoliageAnimation(levelEditorEntity->isApplyFoliageAnimation());
+			dynamic_cast<Object3D*>(entity)->setShader(levelEditorEntity->getShader());
 		}
 	} else
 	// particle system
@@ -343,7 +343,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 				"tdme.rendergroup." + itModel.first + "." + itPartition.first,
 				levelEditorEntity->getModel()
 			);
-			object3DRenderGroup->setApplyFoliageAnimation(levelEditorEntity->isApplyFoliageAnimation());
+			object3DRenderGroup->setShader(levelEditorEntity->getShader());
 			for (auto transformation: itPartition.second) {
 				object3DRenderGroup->addObject(*transformation);
 			}

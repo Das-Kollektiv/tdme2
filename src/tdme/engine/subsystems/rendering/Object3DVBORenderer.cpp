@@ -204,8 +204,8 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		renderer->disableCulling();
 		renderer->enableBlending();
 		// disable foliage animation
-		renderer->setApplyFoliageAnimation(false);
-		renderer->onUpdateApplyFoliageAnimation();
+		renderer->setShader("default");
+		renderer->onUpdateShader();
 		// have identity texture matrix
 		renderer->getTextureMatrix().identity();
 		renderer->onUpdateTextureMatrix();
@@ -437,6 +437,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					// skip to next object
 					continue;
 				}
+				// shader
+				renderer->setShader(object->getShader());
+				renderer->onUpdateShader();
 				// bind buffer base objects if not bound yet
 				auto currentVBOGlIds = _object3DGroup->renderer->vboBaseIds;
 				if (boundVBOBaseIds != currentVBOGlIds) {
@@ -501,9 +504,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					renderer->getTextureMatrix().set(_object3DGroup->textureMatricesByEntities[faceEntityIdx]);
 					renderer->onUpdateTextureMatrix();
 				}
-				// foliage
-				renderer->setApplyFoliageAnimation(object->isApplyFoliageAnimation());
-				renderer->onUpdateApplyFoliageAnimation();
 				// draw
 				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
 				// do transformations end to shadow mapping
@@ -606,7 +606,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				auto objectCount = objectsToRender.size();
 				auto currentTextureMatrix = objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
-				auto currentUseFoliageAnimation = objectsToRender[0]->isApplyFoliageAnimation();
+				auto currentShader = objectsToRender[0]->getShader();
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 					auto object = objectsToRender[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
@@ -642,16 +642,16 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
-					// check if foliage did change
-					if (object->isApplyFoliageAnimation() != currentUseFoliageAnimation) {
+					// check if shader did change
+					if (object->getShader() != currentShader) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
 
 					// foliage
 					//	TODO: have a more abstract way to select shader, but currently this selects default or foliage shader
-					renderer->setApplyFoliageAnimation(currentUseFoliageAnimation);
-					renderer->onUpdateApplyFoliageAnimation();
+					renderer->setShader(currentShader);
+					renderer->onUpdateShader();
 
 					// set up material on first object and update on succeeding
 					string materialKeyCurrent = materialKey;

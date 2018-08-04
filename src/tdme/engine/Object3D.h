@@ -52,7 +52,7 @@ private:
 
 	Engine* engine { nullptr };
 	bool frustumCulling { true };
-	bool applyFoliageAnimation { false };
+	string shaderId { "default" };
 
 	/**
 	 * Pre render step like uploading VBOs and such
@@ -208,18 +208,18 @@ public:
 	}
 
 	/**
-	 * @return is using foliage animation
+	 * @return shader id
 	 */
-	inline bool isApplyFoliageAnimation() {
-		return this->applyFoliageAnimation;
+	inline const string& getShader() {
+		return shaderId;
 	}
 
 	/**
-	 * Set apply foliage animation
-	 * @param useFoliageAnimation
+	 * Set shader
+	 * @param shader id
 	 */
-	inline void setApplyFoliageAnimation(bool applyFoliageAnimation) {
-		this->applyFoliageAnimation = applyFoliageAnimation;
+	inline void setShader(const string& id) {
+		shaderId = id;
 	}
 
 };

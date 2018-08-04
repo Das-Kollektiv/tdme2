@@ -191,6 +191,6 @@ void GLRenderer::setMaterialDiffuseTextureMaskedTransparencyThreshold(float diff
 	material.diffuseTextureMaskedTransparencyThreshold = diffuseTextureMaskedTransparencyThreshold;
 }
 
-void GLRenderer::setApplyFoliageAnimation(bool applyFoliageAnimation) {
-	this->applyFoliageAnimation = applyFoliageAnimation;
+void GLRenderer::setShader(const string& id) {
+	this->shaderId = id;
 }

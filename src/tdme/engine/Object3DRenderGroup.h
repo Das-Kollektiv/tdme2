@@ -59,7 +59,7 @@ private:
 	Object3D* combinedObject {  };
 	Model* model {  };
 	Model* combinedModel {  };
-	bool applyFoliageAnimation { false };
+	string shaderId { "default" };
 
 	/**
 	 * Compute bounding box
@@ -267,20 +267,20 @@ public:
 	}
 
 	/**
-	 * @return is using foliage animation
+	 * @return shader id
 	 */
-	inline bool isApplyFoliageAnimation() {
-		return this->applyFoliageAnimation;
+	inline const string& getShader() {
+		return shaderId;
 	}
 
 	/**
-	 * Set use foliage animation
-	 * @param apply foliage animation
+	 * Set shader id
+	 * @param shader
 	 */
-	inline void setApplyFoliageAnimation(bool applyFoliageAnimation) {
-		this->applyFoliageAnimation = applyFoliageAnimation;
+	inline void setShader(const string& id) {
+		this->shaderId = id;
 		if (combinedObject != nullptr) {
-			combinedObject->setApplyFoliageAnimation(applyFoliageAnimation);
+			combinedObject->setShader(id);
 		}
 	}
 

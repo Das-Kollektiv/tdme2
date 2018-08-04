@@ -263,7 +263,7 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 	renderingRenderGroups->getController()->setDisabled(false);
 	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
 	renderingApplyFoliageAnimations->getController()->setDisabled(false);
-	renderingApplyFoliageAnimations->getController()->setValue(MutableString(entity->isApplyFoliageAnimation() == true?"1":""));
+	renderingApplyFoliageAnimations->getController()->setValue(MutableString(entity->getShader() == "foliage"?"1":""));
 	renderingApply->getController()->setDisabled(false);
 }
 
@@ -965,7 +965,7 @@ void ModelEditorScreenController::onRenderingApply()
 	if (view->getEntity() == nullptr) return;
 	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue().equals("1"));
 	view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
-	view->getEntity()->setApplyFoliageAnimation(renderingApplyFoliageAnimations->getController()->getValue().equals("1"));
+	view->getEntity()->setShader(renderingApplyFoliageAnimations->getController()->getValue().equals("1") == true?"foliage":"default");
 }
 
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
