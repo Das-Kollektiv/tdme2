@@ -39,7 +39,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
-#include "subsystems/shadowmapping/ShadowMappingShaderPre.h"
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/gui/GUI.h>
