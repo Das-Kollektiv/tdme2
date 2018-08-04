@@ -259,7 +259,7 @@ void EngineTest::initialize()
 	cam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	light0->setAmbient(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	light0->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
@@ -352,6 +352,8 @@ void EngineTest::initialize()
 		auto osCube = new Object3D("cube", _cube);
 		osCube->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
 		osCube->setScale(Vector3(2.0f, 2.0f, 2.0f));
+		osCube->setScale(Vector3(2.0f, 2.0f, 2.0f));
+		osCube->setDynamicShadowingEnabled(true);
 		osCube->update();
 		osEngine->addEntity(osCube);
 		engine->addEntity(new PointsParticleSystemEntity("circle", false, new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, true));

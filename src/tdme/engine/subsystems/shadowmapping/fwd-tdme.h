@@ -9,7 +9,12 @@ namespace shadowmapping {
 				class ShadowMap;
 				class ShadowMapping;
 				class ShadowMappingShaderPre;
+				struct ShadowMappingShaderPreImplementation;
+				class ShadowMappingShaderPreBaseImplementation;
 				class ShadowMappingShaderRender;
+				struct ShadowMappingShaderRenderImplementation;
+				class ShadowMappingShaderRenderImplementation;
+				class ShadowMappingShaderRenderBaseImplementation;
 				class ShadowMapping_RunState;
 }  // namespace shadowmapping
 }  // namespace subsystems

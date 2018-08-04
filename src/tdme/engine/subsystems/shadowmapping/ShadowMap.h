@@ -30,8 +30,6 @@ class tdme::engine::subsystems::shadowmapping::ShadowMap final
 	friend class ShadowMapping;
 
 private:
-	static constexpr int32_t TEXTUREUNIT { 4 };
-
 	vector<Object3D*> visibleObjects {  };
 	ShadowMapping* shadowMapping {  };
 	Camera* lightCamera {  };
@@ -88,6 +86,7 @@ private:
 	void updateDepthBiasMVPMatrix();
 
 public:
+	static constexpr int32_t TEXTUREUNIT { 4 };
 
 	/**
 	 * @return width

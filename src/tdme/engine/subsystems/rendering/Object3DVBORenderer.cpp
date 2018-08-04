@@ -18,6 +18,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/rendering/BatchVBORendererPoints.h>
@@ -68,6 +69,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::rendering::BatchVBORendererPoints;
@@ -204,6 +206,9 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		// disable foliage animation
 		renderer->setApplyFoliageAnimation(false);
 		renderer->onUpdateApplyFoliageAnimation();
+		// have identity texture matrix
+		renderer->getTextureMatrix().identity();
+		renderer->onUpdateTextureMatrix();
 		// actually this should not make any difference as culling is disabled
 		// but having a fixed value is not a bad idea except that it is a GL call
 		// TODO: confirm this
@@ -643,6 +648,11 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
+					// foliage
+					//	TODO: have a more abstract way to select shader, but currently this selects default or foliage shader
+					renderer->setApplyFoliageAnimation(currentUseFoliageAnimation);
+					renderer->onUpdateApplyFoliageAnimation();
+
 					// set up material on first object and update on succeeding
 					string materialKeyCurrent = materialKey;
 					if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
@@ -658,6 +668,15 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					if (materialKey != materialKeyCurrent) {
 						objectsNotRendered.push_back(object);
 						continue;
+					}
+
+					// issue upload matrices
+					renderer->onUpdateCameraMatrix();
+					renderer->onUpdateProjectionMatrix();
+
+					// update lights
+					for (auto j = 0; j < engine->lights.size(); j++) {
+						engine->lights[j].update();
 					}
 
 					// bind buffer base objects if not bound yet
@@ -759,10 +778,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					renderer->onUpdateTextureMatrix();
 				}
 
-				// foliage
-				renderer->setApplyFoliageAnimation(currentUseFoliageAnimation);
-				renderer->onUpdateApplyFoliageAnimation();
-
 				// draw
 				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, fbMvMatrices.getPosition() / 16);
 
@@ -822,21 +837,21 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
 			// bind specular texture
 			if (renderer->isSpecularMappingAvailable() == true) {
-				renderer->setTextureUnit(LightingShader::TEXTUREUNIT_SPECULAR);
+				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_SPECULAR);
 				renderer->bindTexture(object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
 			}
 			// bind displacement texture
 			if (renderer->isDisplacementMappingAvailable() == true) {
-				renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DISPLACEMENT);
+				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
 				renderer->bindTexture(object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
 			}
 			// bind normal texture
 			if (renderer->isNormalMappingAvailable() == true) {
-				renderer->setTextureUnit(LightingShader::TEXTUREUNIT_NORMAL);
+				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_NORMAL);
 				renderer->bindTexture(object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
 			}
 			// switch back texture unit to diffuse unit
-			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
+			renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 		}
 	}
 
@@ -849,7 +864,7 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 			material->hasDiffuseTextureMaskedTransparency() == true) {
 			auto diffuseTextureId = object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ? object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] : object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
 			materialKey+= "," + to_string(diffuseTextureId);
-			renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
+			renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 			renderer->bindTexture(diffuseTextureId);
 		}
 	}
@@ -859,25 +874,25 @@ void Object3DVBORenderer::clearMaterial()
 {
 	// TODO: optimize me! We do not need always to clear material
 	// unbind diffuse texture
-	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
+	renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 	renderer->bindTexture(renderer->ID_NONE);
 	// unbind specular texture
 	if (renderer->isSpecularMappingAvailable() == true) {
-		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_SPECULAR);
+		renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_SPECULAR);
 		renderer->bindTexture(renderer->ID_NONE);
 	}
 	// unbind displacement texture
 	if (renderer->isDisplacementMappingAvailable() == true) {
-		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DISPLACEMENT);
+		renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
 		renderer->bindTexture(renderer->ID_NONE);
 	}
 	// unbind normal texture
 	if (renderer->isNormalMappingAvailable()) {
-		renderer->setTextureUnit(LightingShader::TEXTUREUNIT_NORMAL);
+		renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_NORMAL);
 		renderer->bindTexture(renderer->ID_NONE);
 	}
 	// set diffuse texture unit
-	renderer->setTextureUnit(LightingShader::TEXTUREUNIT_DIFFUSE);
+	renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 }
 
 const string Object3DVBORenderer::createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, bool depthBuffer, bool sort)

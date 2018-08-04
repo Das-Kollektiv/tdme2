@@ -93,6 +93,9 @@ class tdme::engine::Engine final
 public:
 	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
 
+protected:
+	static Engine* currentEngine;
+
 private:
 	static Engine* instance;
 	static GLRenderer* renderer;

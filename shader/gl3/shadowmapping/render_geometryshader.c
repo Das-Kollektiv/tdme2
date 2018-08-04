@@ -37,7 +37,7 @@ void computeVertexTransform(int vertexIdx, mat4 shaderTransformMatrix) {
 
 	// shadow intensity
 	vec3 normal = normalize(vec3(normalMatrix * vec4(vsNormal[vertexIdx], 0.0)));
-	gsShadowIntensity = clamp(abs(dot(normalize(lightDirection.xyz), normal)), 0.0, 1.0);
+	gsShadowIntensity = 0.6 + clamp(abs(dot(normalize(lightDirection.xyz), normal)), 0.0, 1.0) * 0.4;
 
 	// eye coordinate position of vertex, needed in various calculations
 	vec4 gsPosition4 = mvMatrix * gl_in[vertexIdx].gl_Position;
@@ -74,50 +74,7 @@ void computeVertex(int vertexIdx) {
 	gl_Position.z-= 0.0001;
 }
 
-mat4 createRotationMatrix(vec3 axis, float angle) {
-    float c = cos(angle * 0.017453294);
-    float s = sin(angle * 0.017453294);
-    float c1 = 1.0 - c;
-    return mat4(
-		axis[0] * axis[0] * c1 + c,
-		axis[0] * axis[1] * c1 + axis[2] * s,
-		axis[0] * axis[2] * c1 - axis[1] * s,
-		0.0,
-		axis[0] * axis[1] * c1 - axis[2] * s,
-		axis[1] * axis[1] * c1 + c,
-		axis[1] * axis[2] * c1 + axis[0] * s,
-		0.0,
-		axis[0] * axis[2] * c1 + axis[1] * s,
-		axis[1] * axis[2] * c1 - axis[0] * s,
-		axis[2] * axis[2] * c1 + c,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		1.0
-	);
-}
-
-mat4 createTranslationMatrix(vec3 translation) {
-	return mat4(
-		1.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		1.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		1.0,
-		0.0,
-		translation[0],
-		translation[1],
-		translation[2],
-		1.0
-	);
-}
+{$FUNCTIONS}
 
 void main()
 {

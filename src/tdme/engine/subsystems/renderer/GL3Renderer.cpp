@@ -24,6 +24,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::array;
 using std::vector;
@@ -42,6 +43,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 GL3Renderer::GL3Renderer() 
 {
@@ -150,7 +152,7 @@ int32_t GL3Renderer::getTextureUnits()
 	return -1;
 }
 
-int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
+int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	// create shader
 	int32_t handle = glCreateShader(type);
@@ -158,7 +160,15 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 	if (handle == 0) return 0;
 
 	// shader source
-	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto shaderSource = StringUtils::replace(
+		StringUtils::replace(
+			FileSystem::getInstance()->getContentAsString(pathName, fileName),
+			"{$DEFINITIONS}",
+			definitions
+		),
+		"{$FUNCTIONS}",
+		functions
+	);
 	string sourceString = (shaderSource);
 	char* sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
@@ -251,6 +261,9 @@ bool GL3Renderer::linkProgram(int32_t programId)
 int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
 	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
+	if (uniformLocation == -1) {
+		Console::println("Did not found uniform location: " + name);
+	}
 	return uniformLocation;
 }
 

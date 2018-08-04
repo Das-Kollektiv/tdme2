@@ -44,7 +44,7 @@ public:
 	bool isUsingShortIndices() override;
 	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
-	int32_t loadShader(int32_t type, const string& pathName, const string& fileName) override;
+	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
 	void useProgram(int32_t programId) override;
 	int32_t createProgram() override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;

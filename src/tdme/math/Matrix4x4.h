@@ -87,6 +87,24 @@ public:
 	}
 
 	/**
+	 * Array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline float& operator[](int i) {
+    		return data[i];
+    }
+
+	/**
+	 * Const array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline const float& operator[](int i) const {
+    		return data[i];
+    }
+
+	/**
 	 * Get coordinate system axes
 	 * @param x axis
 	 * @param y axis

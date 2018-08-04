@@ -1,16 +1,13 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::math::Matrix4x4;
-using tdme::math::Vector3;
 
 /** 
  * Shadow mapping shader for render shadows pass
@@ -20,35 +17,13 @@ using tdme::math::Vector3;
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender final
 {
 private:
-	GLRenderer* renderer {  };
-	int32_t renderVertexShaderGlId {  };
-	int32_t renderGeometryShaderGlId {  };
-	int32_t renderFragmentShaderGlId {  };
-	int32_t renderProgramGlId {  };
-	int32_t renderUniformTextureUnit { -1 };
-	int32_t renderUniformTexturePixelWidth { -1 };
-	int32_t renderUniformTexturePixelHeight { -1 };
-	int32_t renderUniformDepthBiasMVPMatrix { -1 };
-	int32_t renderUniformProjectionMatrix { -1 };
-	int32_t renderUniformCameraMatrix { -1 };
-	int32_t renderUniformMVMatrix { -1 };
-	int32_t renderUniformMVPMatrix { -1 };
-	int32_t renderUniformNormalMatrix { -1 };
-	int32_t uniformTextureMatrix { -1 };
-	int32_t uniformDiffuseTextureUnit { -1 };
-	int32_t uniformDiffuseTextureAvailable { -1 };
-	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
-	int32_t uniformDiffuseTextureMaskedTransparencyThreshold { -1 };
-	int32_t renderUniformLightPosition { -1 };
-	int32_t renderUniformLightDirection { -1 };
-	int32_t renderUniformLightSpotExponent { -1 };
-	int32_t renderUniformLightSpotCosCutoff { -1 };
-	int32_t renderUniformLightConstantAttenuation { -1 };
-	int32_t renderUniformLightLinearAttenuation { -1 };
-	int32_t renderUniformLightQuadraticAttenuation { -1 };
-	int32_t uniformApplyFoliageAnimation { -1 };
-	int32_t uniformFrame { -1 };
-	bool initialized {  };
+	ShadowMappingShaderRenderImplementation* defaultImplementation { nullptr };
+	ShadowMappingShaderRenderImplementation* foliageImplementation { nullptr };
+	ShadowMappingShaderRenderImplementation* implementation { nullptr };
+	bool running { false };
+	Matrix4x4 depthBiasMVPMatrix {  };
+	int32_t lightId { -1 };
+
 public:
 
 	/** 
@@ -70,18 +45,6 @@ public:
 	 * Un use render shadow mapping program
 	 */
 	void unUseProgram();
-
-	/** 
-	 * Set up program texture unit
-	 * @param texture unit
-	 */
-	void setProgramTextureUnit(int32_t textureUnit);
-
-	/** 
-	 * Set up program texture unit
-	 * @param texture unit
-	 */
-	void setProgramTexturePixelDimensions(float width, float height);
 
 	/** 
 	 * Set up program projection and camera matrix
@@ -110,7 +73,7 @@ public:
 	 * Set up pre program texture matrix
 	 * @param renderer
 	 */
-	virtual void updateTextureMatrix(GLRenderer* renderer);
+	void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
 	 * Update material
@@ -119,10 +82,11 @@ public:
 	void updateMaterial(GLRenderer* renderer);
 
 	/**
-	 * Update apply foliage animation
+	 * Update light
 	 * @param renderer
+	 * @param light id
 	 */
-	void updateApplyFoliageAnimation(GLRenderer* renderer);
+	void updateLight(GLRenderer* renderer, int32_t lightId);
 
 	/**
 	 * Bind texture
@@ -132,56 +96,31 @@ public:
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/** 
-	 * Set up program light position
-	 * @param light position
-	 */
-	void setProgramLightPosition(const Vector3& lightPosition);
-
-	/** 
-	 * Set up program light position
-	 * @param light position
-	 */
-	void setProgramLightDirection(const Vector3& lightDirection);
-
-	/** 
 	 * Set up program depth bias mvp matrix
 	 * @param depth bias mvp matrix
 	 */
 	void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix);
 
-	/** 
-	 * Set up light spot exponent
-	 * @param spot exponent
+	/**
+	 * Set light id
+	 * @param light id to render
 	 */
-	void setProgramLightSpotExponent(float spotExponent);
+	void setRenderLightId(int32_t lightId);
 
-	/** 
-	 * Set up light spot cos cut off
-	 * @param spot cos cut off
+	/**
+	 * Update apply foliage animation
+	 * @param renderer
 	 */
-	void setProgramLightSpotCosCutOff(float spotCosCutOff);
-
-	/** 
-	 * Set up light constant attenuation
-	 * @param constant attenuation
-	 */
-	void setProgramLightConstantAttenuation(float constantAttenuation);
-
-	/** 
-	 * Set up light linear attenuation
-	 * @param linear attenuation
-	 */
-	void setProgramLightLinearAttenuation(float linearAttenuation);
-
-	/** 
-	 * Set up light quadratic attenuation
-	 * @param quadratic attenuation
-	 */
-	void setProgramLightQuadraticAttenuation(float quadraticAttenuation);
+	void updateApplyFoliageAnimation(GLRenderer* renderer);
 
 	/**
 	 * Public constructor
 	 * @param renderer
 	 */
 	ShadowMappingShaderRender(GLRenderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~ShadowMappingShaderRender();
 };

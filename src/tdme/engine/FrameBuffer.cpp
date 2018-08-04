@@ -88,3 +88,8 @@ int32_t FrameBuffer::getColorBufferTextureId()
 {
 	return colorBufferTextureId;
 }
+
+int32_t FrameBuffer::getDepthBufferTextureId()
+{
+	return depthBufferTextureId;
+}

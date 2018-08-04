@@ -61,38 +61,70 @@ uniform int displacementTextureAvailable;
 uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
 
-// will be passed to geometry shader
-out mat4 vsModelMatrix;
-out vec2 vsFragTextureUV;
-out vec3 vsNormal;
-out vec3 vsTangent;
-out vec3 vsBitangent;
-out vec4 vsEffectColorMul;
-out vec4 vsEffectColorAdd;
+{$DEFINITIONS}
+
+#if defined(HAVE_GEOMETRY_SHADER) == false
+	uniform mat4 projectionMatrix;
+	uniform mat4 cameraMatrix;
+
+	// will be passed to fragment shader
+	out mat4 gsModelMatrix;
+	out vec2 gsFragTextureUV;
+	out vec3 gsNormal;
+	out vec3 gsTangent;
+	out vec3 gsBitangent;
+	out vec4 gsEffectColorMul;
+	out vec4 gsEffectColorAdd;
+	out vec3 gsPosition;
+
+	#define vsModelMatrix inModelMatrix
+	#define vsFragTextureUV inTextureUV
+	#define vsNormal inNormal
+	#define vsTangent inTangent
+	#define vsBitangent inBitangent
+	#define vsEffectColorMul inEffectColorMul
+	#define vsEffectColorAdd inEffectColorAdd
+
+	#define GS_IN_ARRAY_AT(array, index) array
+
+#else
+	// will be passed to geometry shader
+	out mat4 vsModelMatrix;
+	out vec2 vsFragTextureUV;
+	out vec3 vsNormal;
+	out vec3 vsTangent;
+	out vec3 vsBitangent;
+	out vec4 vsEffectColorMul;
+	out vec4 vsEffectColorAdd;
+#endif
+
+{$FUNCTIONS}
 
 void main(void) {
-	// pass to fragment shader
-	vsModelMatrix = inModelMatrix;
-	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
-	vsNormal = inNormal;
-	// normal texture
-	if (normalTextureAvailable == 1) {
-		vsTangent = inTangent;
-		vsBitangent = inBitangent;
-	}
-	vsEffectColorMul = inEffectColorMul;
-	vsEffectColorAdd = inEffectColorAdd;
-
-	// compute gl position
-	if (displacementTextureAvailable == 1) {
-		vec3 displacementVector = texture(displacementTextureUnit, vsFragTextureUV).rgb * 2.0 - 1.0;
-		/*
-		float displacementLength = (displacementVector.x + displacementVector.y + displacementVector.z) / 3.0;
-		skinnedInVertex-=
-			vec4(normalize(skinnedInNormal) * displacementLength, 0.0);
-		*/
-	}
-
-	// gl position
-	gl_Position = vec4(inVertex, 1.0);
+	#if defined(HAVE_GEOMETRY_SHADER)
+		// pass to geometry shader
+		vsModelMatrix = inModelMatrix;
+		vsFragTextureUV = inTextureUV;
+		vsNormal = inNormal;
+		if (normalTextureAvailable == 1) {
+			vsTangent = inTangent;
+			vsBitangent = inBitangent;
+		}
+		vsEffectColorMul = inEffectColorMul;
+		vsEffectColorAdd = inEffectColorAdd;
+		// compute gl position
+		if (displacementTextureAvailable == 1) {
+			vec3 displacementVector = texture(displacementTextureUnit, vsFragTextureUV).rgb * 2.0 - 1.0;
+			/*
+			float displacementLength = (displacementVector.x + displacementVector.y + displacementVector.z) / 3.0;
+			skinnedInVertex-=
+				vec4(normalize(skinnedInNormal) * displacementLength, 0.0);
+			*/
+		}
+		// gl position
+		gl_Position = vec4(inVertex, 1.0);
+	#else
+		// compute vertex and pass to fragment shader
+		computeVertex(vec4(inVertex, 1.0), 0, mat4(1.0));
+	#endif
 }

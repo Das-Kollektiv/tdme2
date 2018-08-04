@@ -33,50 +33,7 @@ void computeVertex(int vertexIdx) {
 	gl_Position = mvpMatrix * gl_in[vertexIdx].gl_Position;
 }
 
-mat4 createRotationMatrix(vec3 axis, float angle) {
-    float c = cos(angle * 0.017453294);
-    float s = sin(angle * 0.017453294);
-    float c1 = 1.0 - c;
-    return mat4(
-		axis[0] * axis[0] * c1 + c,
-		axis[0] * axis[1] * c1 + axis[2] * s,
-		axis[0] * axis[2] * c1 - axis[1] * s,
-		0.0,
-		axis[0] * axis[1] * c1 - axis[2] * s,
-		axis[1] * axis[1] * c1 + c,
-		axis[1] * axis[2] * c1 + axis[0] * s,
-		0.0,
-		axis[0] * axis[2] * c1 + axis[1] * s,
-		axis[1] * axis[2] * c1 - axis[0] * s,
-		axis[2] * axis[2] * c1 + c,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		1.0
-	);
-}
-
-mat4 createTranslationMatrix(vec3 translation) {
-	return mat4(
-		1.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		1.0,
-		0.0,
-		0.0,
-		0.0,
-		0.0,
-		1.0,
-		0.0,
-		translation[0],
-		translation[1],
-		translation[2],
-		1.0
-	);
-}
+{$FUNCTIONS}
 
 void main()
 {

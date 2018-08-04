@@ -186,6 +186,9 @@ SRCS = \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp \
 	src/tdme/engine/subsystems/manager/TextureManager.cpp \
@@ -221,7 +224,9 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \

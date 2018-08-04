@@ -39,7 +39,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
+#include "subsystems/shadowmapping/ShadowMappingShaderPre.h"
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/gui/GUI.h>
@@ -120,6 +120,7 @@ LightingShader* Engine::lightingShader = nullptr;
 ParticlesShader* Engine::particlesShader = nullptr;
 SkinningShader* Engine::skinningShader = nullptr;
 GUIShader* Engine::guiShader = nullptr;
+Engine* Engine::currentEngine = nullptr;
 
 Engine::Engine() 
 {
@@ -161,6 +162,8 @@ Engine::~Engine() {
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
 	}
+	// set current engine
+	if (currentEngine == this) currentEngine = nullptr;
 }
 
 Engine* Engine::getInstance()
@@ -409,6 +412,9 @@ void Engine::initialize()
 
 void Engine::initialize(bool debug)
 {
+	// set current engine
+	currentEngine = this;
+
 	// exit if already initialized like a offscreen engine instance
 	if (initialized == true)
 		return;
@@ -458,6 +464,7 @@ void Engine::initialize(bool debug)
 			shadowMappingEnabled = false;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
+		skinningShaderEnabled = false;
 	}
 	#else
 		Console::println("Engine::initialize(): unsupported GL!");
@@ -555,6 +562,9 @@ void Engine::initialize(bool debug)
 
 void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
+	// set current engine
+	currentEngine = this;
+
 	// update our width and height
 	this->width = width;
 	this->height = height;
@@ -684,6 +694,9 @@ void Engine::computeTransformations()
 
 void Engine::display()
 {
+	// set current engine
+	currentEngine = this;
+
 	// do pre rendering steps
 	if (renderingInitiated == false) initRendering();
 	if (renderingComputedTransformations == false) computeTransformations();
@@ -974,6 +987,9 @@ void Engine::dispose()
 	if (instance == this) {
 		guiRenderer->dispose();
 	}
+
+	// set current engine
+	if (currentEngine == this) currentEngine = nullptr;
 }
 
 void Engine::initGUIMode()

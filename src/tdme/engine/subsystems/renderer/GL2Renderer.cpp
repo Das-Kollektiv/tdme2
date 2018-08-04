@@ -24,6 +24,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::array;
 using std::vector;
@@ -42,6 +43,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 GL2Renderer::GL2Renderer() 
 {
@@ -154,14 +156,22 @@ int32_t GL2Renderer::getTextureUnits()
 	return -1;
 }
 
-int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
+int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	// create shader
 	int32_t handle = glCreateShader(type);
 	// exit if no handle returned
 	if (handle == 0) return 0;
 	// shader source
-	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto shaderSource = StringUtils::replace(
+		StringUtils::replace(
+			FileSystem::getInstance()->getContentAsString(pathName, fileName),
+			"{$DEFINITIONS}",
+			definitions
+		),
+		"{$FUNCTIONS}",
+		functions
+	);
 	string sourceString = (shaderSource);
 	char* sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());

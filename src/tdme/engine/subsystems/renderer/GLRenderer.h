@@ -151,7 +151,7 @@ public:
 	 * @param fileName
 	 * @return shader handle
 	 */
-	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName) = 0;
+	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;
 
 	/** 
 	 * Use shader program
