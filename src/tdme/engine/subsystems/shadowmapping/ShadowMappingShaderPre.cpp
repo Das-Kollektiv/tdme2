@@ -17,8 +17,8 @@ using tdme::utils::Console;
 
 ShadowMappingShaderPre::ShadowMappingShaderPre(GLRenderer* renderer) 
 {
-	shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
-	shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
+	if (ShadowMappingShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
+	if (ShadowMappingShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
 }
 
 ShadowMappingShaderPre::~ShadowMappingShaderPre() {

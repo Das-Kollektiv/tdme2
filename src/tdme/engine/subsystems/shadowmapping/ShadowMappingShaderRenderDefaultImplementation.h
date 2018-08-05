@@ -17,6 +17,11 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultI
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation: public ShadowMappingShaderRenderBaseImplementation
 {
 public:
+	/**
+	 * @return if supported by renderer
+	 * @param renderer
+	 */
+	static bool isSupported(GLRenderer* renderer);
 
 	/** 
 	 * Init shadow mapping

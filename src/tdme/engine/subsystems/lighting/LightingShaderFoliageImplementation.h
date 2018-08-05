@@ -16,6 +16,11 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 class tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation: public LightingShaderBaseImplementation
 {
 public:
+	/**
+	 * @return if supported by renderer
+	 * @param renderer
+	 */
+	static bool isSupported(GLRenderer* renderer);
 
 	/** 
 	 * Initialize renderer

@@ -75,7 +75,6 @@ protected:
 	bool initialized {  };
 	GLRenderer* renderer {  };
 public:
-
 	/** 
 	 * @return initialized and ready to be used
 	 */

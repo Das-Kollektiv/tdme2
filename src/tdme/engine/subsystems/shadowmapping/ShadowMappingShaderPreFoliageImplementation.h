@@ -15,6 +15,11 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImpleme
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation: public ShadowMappingShaderPreBaseImplementation
 {
 public:
+	/**
+	 * @return if supported by renderer
+	 * @param renderer
+	 */
+	static bool isSupported(GLRenderer* renderer);
 
 	/** 
 	 * Init shadow mapping

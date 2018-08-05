@@ -15,6 +15,9 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
+bool LightingShaderDefaultImplementation::isSupported(GLRenderer* renderer) {
+	return true;
+}
 
 LightingShaderDefaultImplementation::LightingShaderDefaultImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
 {

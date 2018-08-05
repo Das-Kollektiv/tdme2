@@ -735,11 +735,6 @@ void Engine::display()
 		lightingShader->useProgram();
 	}
 
-	// update lights
-	for (auto j = 0; j < lights.size(); j++) {
-		lights[j].update();
-	}
-
 	// render objects
 	object3DVBORenderer->render(
 		visibleObjects,

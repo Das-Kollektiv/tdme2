@@ -17,6 +17,12 @@ class tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation: p
 {
 public:
 
+	/**
+	 * @return if supported by renderer
+	 * @param renderer
+	 */
+	static bool isSupported(GLRenderer* renderer);
+
 	/** 
 	 * Initialize renderer
 	 */

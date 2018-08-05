@@ -74,9 +74,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 void ShadowMappingShaderPreBaseImplementation::useProgram()
 {
 	renderer->useProgram(programGlId);
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
-	}
+	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
 }
 
 void ShadowMappingShaderPreBaseImplementation::unUseProgram()

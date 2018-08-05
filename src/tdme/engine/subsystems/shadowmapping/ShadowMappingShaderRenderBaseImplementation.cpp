@@ -12,7 +12,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
 
 using std::to_string;
 
@@ -27,7 +26,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
 
 ShadowMappingShaderRenderBaseImplementation::ShadowMappingShaderRenderBaseImplementation(GLRenderer* renderer)
 {
@@ -120,9 +118,7 @@ void ShadowMappingShaderRenderBaseImplementation::useProgram()
 {
 	renderer->useProgram(renderProgramGlId);
 	renderer->setProgramUniformInteger(renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
-	}
+	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
 }
 
 void ShadowMappingShaderRenderBaseImplementation::unUseProgram()

@@ -15,8 +15,8 @@ using tdme::utils::Console;
 
 LightingShader::LightingShader(GLRenderer* renderer) 
 {
-	shader["default"] = new LightingShaderDefaultImplementation(renderer);
-	shader["foliage"] = new LightingShaderFoliageImplementation(renderer);
+	if (LightingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new LightingShaderDefaultImplementation(renderer);
+	if (LightingShaderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new LightingShaderFoliageImplementation(renderer);
 	implementation = nullptr;
 }
 

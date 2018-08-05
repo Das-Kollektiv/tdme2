@@ -9,6 +9,10 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
+bool ShadowMappingShaderPreFoliageImplementation::isSupported(GLRenderer* renderer) {
+	return renderer->isGeometryShaderAvailable();
+}
+
 ShadowMappingShaderPreFoliageImplementation::ShadowMappingShaderPreFoliageImplementation(GLRenderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
 {
 }

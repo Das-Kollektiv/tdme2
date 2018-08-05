@@ -15,8 +15,8 @@ using tdme::math::Matrix4x4;
 
 ShadowMappingShaderRender::ShadowMappingShaderRender(GLRenderer* renderer) 
 {
-	shader["default"] = new ShadowMappingShaderRenderDefaultImplementation(renderer);
-	shader["foliage"] = new ShadowMappingShaderRenderFoliageImplementation(renderer);
+	if (ShadowMappingShaderRenderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderRenderDefaultImplementation(renderer);
+	if (ShadowMappingShaderRenderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderRenderFoliageImplementation(renderer);
 }
 
 ShadowMappingShaderRender::~ShadowMappingShaderRender()
@@ -99,6 +99,8 @@ void ShadowMappingShaderRender::bindTexture(GLRenderer* renderer, int32_t textur
 void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix)
 {
 	this->depthBiasMVPMatrix = depthBiasMVPMatrix;
+	if (implementation == nullptr) return;
+	implementation->setProgramDepthBiasMVPMatrix(this->depthBiasMVPMatrix);
 }
 
 void ShadowMappingShaderRender::setRenderLightId(int32_t lightId) {

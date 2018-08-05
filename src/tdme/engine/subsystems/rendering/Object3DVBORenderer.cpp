@@ -410,15 +410,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 			for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 				auto object = objects[objectIdx];
 				auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
-
-				// set up material on first object
-				string materialKey;
-				if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
-					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
-					// only update materials for next calls
-					materialUpdateOnly = true;
-				}
-
 				//	check transparency via effect
 				if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON ||
 					object->effectColorAdd.getAlpha() < -Math::EPSILON) {
@@ -440,6 +431,17 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				// shader
 				renderer->setShader(object->getShader());
 				renderer->onUpdateShader();
+				// update lights
+				for (auto j = 0; j < engine->lights.size(); j++) {
+					engine->lights[j].update();
+				}
+				// set up material on first object
+				string materialKey;
+				if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
+					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
+					// only update materials for next calls
+					materialUpdateOnly = true;
+				}
 				// bind buffer base objects if not bound yet
 				auto currentVBOGlIds = _object3DGroup->renderer->vboBaseIds;
 				if (boundVBOBaseIds != currentVBOGlIds) {
@@ -521,7 +523,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 			}
 		}
 	}
-
 	// unbind buffers
 	renderer->unbindBufferObjects();
 	// restore model view matrix / view matrix
