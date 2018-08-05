@@ -6,6 +6,7 @@ TDME2
         - TDME2 is open source
           - please check the license and the licenses of used 3rd party libraries
           - you find the source code at https://github.com/andreasdr/tdme2 
+          - you find binary alpha builds at http://drewke.net/tdme2
 
     - What is already working
         - 3d engine
@@ -132,7 +133,6 @@ TDME2
         - Logic documentation/comments need to be imported from TDME(-JAVA)
         - A demonstration video
         - Build documentation
-        - A auto build environment (for Windows/AMD64 and Linux/AMD64 for nighly builds) 
         - A release plan
         - Integrate LUA to be able to write TDME2 applications completely via LUA or game logics
 
