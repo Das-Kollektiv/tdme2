@@ -607,7 +607,18 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				auto objectCount = objectsToRender.size();
 				auto currentTextureMatrix = objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
+				// set up shader
 				auto currentShader = objectsToRender[0]->getShader();
+				renderer->setShader(currentShader);
+				renderer->onUpdateShader();
+				// issue upload matrices
+				renderer->onUpdateCameraMatrix();
+				renderer->onUpdateProjectionMatrix();
+				// update lights
+				for (auto j = 0; j < engine->lights.size(); j++) {
+					engine->lights[j].update();
+				}
+				// draw objects
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 					auto object = objectsToRender[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
@@ -649,11 +660,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						continue;
 					}
 
-					// foliage
-					//	TODO: have a more abstract way to select shader, but currently this selects default or foliage shader
-					renderer->setShader(currentShader);
-					renderer->onUpdateShader();
-
 					// set up material on first object and update on succeeding
 					string materialKeyCurrent = materialKey;
 					if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
@@ -669,15 +675,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					if (materialKey != materialKeyCurrent) {
 						objectsNotRendered.push_back(object);
 						continue;
-					}
-
-					// issue upload matrices
-					renderer->onUpdateCameraMatrix();
-					renderer->onUpdateProjectionMatrix();
-
-					// update lights
-					for (auto j = 0; j < engine->lights.size(); j++) {
-						engine->lights[j].update();
 					}
 
 					// bind buffer base objects if not bound yet
