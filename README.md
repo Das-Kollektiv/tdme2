@@ -1,6 +1,6 @@
 TDME2
 =====
-
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logo/tdme_logo_full.png)
     - What is it?
         - ThreeDeeMiniEngine2 is a lightweight 3D engine including tools suited for 3D games development using C++11
         - TDME2 is open source
