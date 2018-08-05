@@ -21,7 +21,7 @@ TDME2
                 - DAE and WaveFront OBJ files require triangulated meshes for now
             - animations
                 - supports model object base animation and animation overlays
-                - supports foliage animation for feasible models via geometry shader on GL3+/CORE
+                - supports foliage animation for feasible models via geometry shader on GL3+/CORE using custom shader infrastructure
             - skinning via
                 - CPU on GL2, GLES2
                 - GPU via compute shaders with GL4.3+/CORE

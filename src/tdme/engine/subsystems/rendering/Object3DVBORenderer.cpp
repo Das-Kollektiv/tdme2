@@ -355,6 +355,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	// all objects share the same object 3d group structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
+	string currentShader;
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
@@ -429,11 +430,14 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					continue;
 				}
 				// shader
-				renderer->setShader(object->getShader());
-				renderer->onUpdateShader();
-				// update lights
-				for (auto j = 0; j < engine->lights.size(); j++) {
-					engine->lights[j].update();
+				if (currentShader != object->getShader()) {
+					currentShader = object->getShader();
+					renderer->setShader(currentShader);
+					renderer->onUpdateShader();
+					// update lights
+					for (auto j = 0; j < engine->lights.size(); j++) {
+						engine->lights[j].update();
+					}
 				}
 				// set up material on first object
 				string materialKey;
