@@ -47,53 +47,7 @@ bool ShadowMappingShaderRenderBaseImplementation::isInitialized()
 void ShadowMappingShaderRenderBaseImplementation::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
-	// load shadow mapping shaders
-	renderVertexShaderGlId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
-		"render_vertexshader.c"
-	);
-	if (renderVertexShaderGlId == 0) return;
 
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderGeometryShaderGlId = renderer->loadShader(
-			renderer->SHADER_GEOMETRY_SHADER,
-			"shader/" + rendererVersion + "/shadowmapping",
-			"render_geometryshader.c",
-			"",
-			/*
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/lighting",
-				"render_computevertex.inc.c"
-			) +
-			"\n\n" +
-			*/
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
-				"create_rotation_matrix.inc.c"
-			) +
-			"\n\n" +
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
-				"create_translation_matrix.inc.c"
-			)
-		);
-		if (renderGeometryShaderGlId == 0) return;
-	}
-
-	renderFragmentShaderGlId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
-		"render_fragmentshader.c"
-	);
-	if (renderFragmentShaderGlId == 0) return;
-	// create shadow mapping render program
-	renderProgramGlId = renderer->createProgram();
-	renderer->attachShaderToProgram(renderProgramGlId, renderVertexShaderGlId);
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->attachShaderToProgram(renderProgramGlId, renderGeometryShaderGlId);
-	}
-	renderer->attachShaderToProgram(renderProgramGlId, renderFragmentShaderGlId);
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(renderProgramGlId, 0, "inVertex");
@@ -156,10 +110,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 	}
 
 	//
-	if (renderer->isGeometryShaderAvailable() == true) {
-		uniformFrame = renderer->getProgramUniformLocation(renderProgramGlId, "frame");
-		if (uniformFrame == -1) return;
-	}
+	uniformFrame = renderer->getProgramUniformLocation(renderProgramGlId, "frame");
 
 	//
 	initialized = true;

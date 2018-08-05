@@ -202,6 +202,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 				infoLogString
 			 )
 		 );
+		Console::println(shaderSource);
 		//
 		delete [] infoLogBuffer;
 		// remove shader

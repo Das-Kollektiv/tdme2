@@ -65,10 +65,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 
 	//
-	if (renderer->isGeometryShaderAvailable() == true) {
-		uniformFrame = renderer->getProgramUniformLocation(programGlId, "frame");
-		if (uniformFrame == -1) return;
-	}
+	uniformFrame = renderer->getProgramUniformLocation(programGlId, "frame");
 
 	//
 	initialized = true;

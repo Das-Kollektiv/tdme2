@@ -25,34 +25,14 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 	vertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
-		"pre_vertexshader.c"
+		"pre_vertexshader.c",
+		"",
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + rendererVersion + "/shadowmapping",
+			"pre_computevertex.inc.c"
+		)
 	);
 	if (vertexShaderGlId == 0) return;
-	if (renderer->isGeometryShaderAvailable() == true) {
-		geometryShaderGlId = renderer->loadShader(
-			renderer->SHADER_GEOMETRY_SHADER,
-			"shader/" + rendererVersion + "/shadowmapping",
-			"pre_geometryshader.c",
-			"",
-			/*
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/lighting",
-				"render_computevertex.inc.c"
-			) +
-			"\n\n" +
-			*/
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
-				"create_rotation_matrix.inc.c"
-			) +
-			"\n\n" +
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
-				"create_translation_matrix.inc.c"
-			)
-		);
-		if (geometryShaderGlId == 0) return;
-	}
 	fragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
@@ -64,9 +44,6 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 	//	pre
 	programGlId = renderer->createProgram();
 	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->attachShaderToProgram(programGlId, geometryShaderGlId);
-	}
 	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
 
 	//

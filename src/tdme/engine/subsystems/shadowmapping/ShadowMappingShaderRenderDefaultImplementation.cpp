@@ -24,39 +24,19 @@ ShadowMappingShaderRenderDefaultImplementation::~ShadowMappingShaderRenderDefaul
 void ShadowMappingShaderRenderDefaultImplementation::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
+
 	// load shadow mapping shaders
 	renderVertexShaderGlId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
-		"render_vertexshader.c"
+		"render_vertexshader.c",
+		"",
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + rendererVersion + "/shadowmapping",
+			"render_computevertex.inc.c"
+		)
 	);
 	if (renderVertexShaderGlId == 0) return;
-
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderGeometryShaderGlId = renderer->loadShader(
-			renderer->SHADER_GEOMETRY_SHADER,
-			"shader/" + rendererVersion + "/shadowmapping",
-			"render_geometryshader.c",
-			"",
-			/*
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/lighting",
-				"render_computevertex.inc.c"
-			) +
-			"\n\n" +
-			*/
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
-				"create_rotation_matrix.inc.c"
-			) +
-			"\n\n" +
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
-				"create_translation_matrix.inc.c"
-			)
-		);
-		if (renderGeometryShaderGlId == 0) return;
-	}
 
 	renderFragmentShaderGlId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
@@ -64,12 +44,10 @@ void ShadowMappingShaderRenderDefaultImplementation::initialize()
 		"render_fragmentshader.c"
 	);
 	if (renderFragmentShaderGlId == 0) return;
+
 	// create shadow mapping render program
 	renderProgramGlId = renderer->createProgram();
 	renderer->attachShaderToProgram(renderProgramGlId, renderVertexShaderGlId);
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->attachShaderToProgram(renderProgramGlId, renderGeometryShaderGlId);
-	}
 	renderer->attachShaderToProgram(renderProgramGlId, renderFragmentShaderGlId);
 
 	ShadowMappingShaderRenderBaseImplementation::initialize();
