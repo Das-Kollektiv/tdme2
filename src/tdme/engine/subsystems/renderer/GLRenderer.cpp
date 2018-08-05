@@ -1,15 +1,9 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
-#include <algorithm>
-
 #include <tdme/math/Math.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/Matrix4x4.h>
-
-using std::copy;
-using std::begin;
-using std::end;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Math;
@@ -50,11 +44,19 @@ void GLRenderer::init()
 	TEXTUREUNITS_MAX = -1;
 	SHADER_FRAGMENT_SHADER = -1;
 	SHADER_VERTEX_SHADER = -1;
-	DEPTHFUNCTION_LESSEQUAL = -1;
+	SHADER_GEOMETRY_SHADER = -1;
+	SHADER_COMPUTE_SHADER = -1;
+	DEPTHFUNCTION_ALWAYS = -1;
 	DEPTHFUNCTION_EQUAL = -1;
+	DEPTHFUNCTION_LESSEQUAL = -1;
+	DEPTHFUNCTION_GREATEREQUAL = -1;
 	FRAMEBUFFER_DEFAULT = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
+}
+
+void GLRenderer::initializeFrame() {
+	frame++;
 }
 
 Matrix4x4& GLRenderer::getProjectionMatrix()
@@ -77,6 +79,10 @@ Matrix4x4& GLRenderer::getViewportMatrix()
 	return viewportMatrix;
 }
 
+Matrix2D3x3& GLRenderer::getTextureMatrix() {
+	return textureMatrix;
+}
+
 void GLRenderer::setLightEnabled(int32_t lightId)
 {
 	lights[lightId].enabled = 1;
@@ -89,22 +95,22 @@ void GLRenderer::setLightDisabled(int32_t lightId)
 
 void GLRenderer::setLightAmbient(int32_t lightId, const array<float, 4>& ambient)
 {
-	copy(begin(ambient), end(ambient), begin(lights[lightId].ambient));
+	lights[lightId].ambient = ambient;
 }
 
 void GLRenderer::setLightDiffuse(int32_t lightId, const array<float, 4>& diffuse)
 {
-	copy(begin(diffuse), end(diffuse), begin(lights[lightId].diffuse));
+	lights[lightId].diffuse = diffuse;
 }
 
 void GLRenderer::setLightPosition(int32_t lightId, const array<float, 4>& position)
 {
-	copy(begin(position), end(position), begin(lights[lightId].position));
+	lights[lightId].position = position;
 }
 
 void GLRenderer::setLightSpotDirection(int32_t lightId, const array<float, 3>& spotDirection)
 {
-	copy(begin(spotDirection), end(spotDirection), begin(lights[lightId].spotDirection));
+	lights[lightId].spotDirection = spotDirection;
 }
 
 void GLRenderer::setLightSpotExponent(int32_t lightId, float spotExponent)
@@ -134,12 +140,12 @@ void GLRenderer::setLightQuadraticAttenuation(int32_t lightId, float QuadraticAt
 
 void GLRenderer::setEffectColorMul(const array<float, 4>& effectColorMul)
 {
-	copy(begin(effectColorMul), end(effectColorMul), begin(this->effectColorMul));
+	this->effectColorMul = effectColorMul;
 }
 
 void GLRenderer::setEffectColorAdd(const array<float, 4>& effectColorAdd)
 {
-	copy(begin(effectColorAdd), end(effectColorAdd), begin(this->effectColorAdd));
+	this->effectColorAdd = effectColorAdd;
 }
 
 void GLRenderer::setMaterialEnabled()
@@ -152,22 +158,22 @@ void GLRenderer::setMaterialDisabled()
 
 void GLRenderer::setMaterialAmbient(const array<float, 4>& ambient)
 {
-	copy(begin(ambient), end(ambient), begin(material.ambient));
+	material.ambient = ambient;
 }
 
 void GLRenderer::setMaterialDiffuse(const array<float, 4>& diffuse)
 {
-	copy(begin(diffuse), end(diffuse), begin(material.diffuse));
+	material.diffuse = diffuse;
 }
 
 void GLRenderer::setMaterialSpecular(const array<float, 4>& specular)
 {
-	copy(begin(specular), end(specular), begin(material.specular));
+	material.specular = specular;
 }
 
 void GLRenderer::setMaterialEmission(const array<float, 4>& emission)
 {
-	copy(begin(emission), end(emission), begin(material.emission));
+	material.emission = emission;
 }
 
 void GLRenderer::setMaterialShininess(float shininess)
@@ -183,4 +189,8 @@ void GLRenderer::setMaterialDiffuseTextureMaskedTransparency(bool diffuseTexture
 void GLRenderer::setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold)
 {
 	material.diffuseTextureMaskedTransparencyThreshold = diffuseTextureMaskedTransparencyThreshold;
+}
+
+void GLRenderer::setShader(const string& id) {
+	this->shaderId = id;
 }

@@ -11,8 +11,11 @@ namespace tests {
 		class GUITest_init_2;
 		class LODTest;
 		class PathFindingTest;
+		class PivotTest;
 		class PhysicsTest1;
 		class PhysicsTest2;
 		class PhysicsTest3;
+		class PhysicsTest4;
+		class SkinningTest;
 }  // namespace tests
 }  // namespace tdme

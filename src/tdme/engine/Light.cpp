@@ -1,5 +1,7 @@
 #include <tdme/engine/Light.h>
 
+#include <string>
+
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Matrix4x4.h>
@@ -49,7 +51,7 @@ Light::Light(GLRenderer* renderer, int32_t id)
 
 void Light::update()
 {
-	if (enabled) {
+	if (enabled == true) {
 		Vector4 lightPositionTransformed;
 		Vector3 tmpVector3;
 		Vector4 spotDirection4;
@@ -57,7 +59,7 @@ void Light::update()
 		renderer->setLightEnabled(id);
 		renderer->setLightAmbient(id, ambient.getArray());
 		renderer->setLightDiffuse(id, diffuse.getArray());
-		renderer->setLightPosition(id, renderer->getCameraMatrix().multiply(position, lightPositionTransformed).scale(1.0f / lightPositionTransformed.getW()).getArray());
+		renderer->setLightPosition(id, renderer->getCameraMatrix().multiply(position, lightPositionTransformed).scale(Math::abs(lightPositionTransformed.getW()) < Math::EPSILON?1.0f:1.0f / lightPositionTransformed.getW()).setW(1.0f).getArray());
 		renderer->getCameraMatrix().multiply(spotDirection4.set(spotDirection, 0.0f), spotDirection4Transformed);
 		renderer->setLightSpotDirection(id, tmpVector3.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ()).getArray());
 		renderer->setLightSpotExponent(id, spotExponent);

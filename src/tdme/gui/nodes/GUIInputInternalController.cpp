@@ -47,7 +47,6 @@ GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	this->offset = 0;
 	this->isDragging = false;
 	this->dragPosition = {{ 0, 0 }};
-	this->node->getScreenNode()->addTickNode(this->node);
 }
 
 void GUIInputInternalController::init()
@@ -72,6 +71,7 @@ void GUIInputInternalController::setDisabled(bool disabled)
 
 void GUIInputInternalController::initialize()
 {
+	this->node->getScreenNode()->addTickNode(this->node);
 	inputNode = dynamic_cast< GUIElementNode* >(node->getParentControllerNode());
 }
 

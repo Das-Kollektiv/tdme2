@@ -1,22 +1,11 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
-#include <tdme/engine/primitives/ConvexMesh.h>
+#include <tdme/math/Vector3.h>
 
-using tdme::engine::physics::CollisionDetection;
-using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::primitives::ConvexMesh;
-using tdme::engine::Transformations;
-using tdme::engine::physics::CollisionResponse;
 using tdme::math::Vector3;
 
 /** 
@@ -34,36 +23,18 @@ public:
 	float getRadius() const;
 
 	/** 
-	 * Set up radius
-	 * @param radius
-	 */
-	void setRadius(float radius);
-
-	/** 
 	 * @return line segment point a
 	 */
-	Vector3& getA();
+	const Vector3& getA() const;
 
 	/** 
 	 * @return line segment point b
 	 */
-	Vector3& getB();
-	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
-	void update() override;
+	const Vector3& getB() const;
 
-	inline Vector3& getCenter() override {
-		return center;
-	}
 
-	inline virtual BoundingBox* getBoundingBox() override {
-		return &boundingBox;
-	}
-
-	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
-	bool containsPoint(const Vector3& point) const override;
-	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) override;
-	float computeDimensionOnAxis(const Vector3& axis) const override;
+	// overrides
+	void setScale(const Vector3& scale) override;
 	BoundingVolume* clone() const override;
 
 	/**
@@ -71,31 +42,13 @@ public:
 	 * @param a
 	 * @param b
 	 * @param radius
+	 * @param scale
 	 */
-	Capsule(const Vector3& a, const Vector3& b, float radius);
+	Capsule(const Vector3& a, const Vector3& b, float radius, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
-	/**
-	 * Returns convex mesh representation of capsule
-	 * @return convex mesh
-	 */
-	inline ConvexMesh* getConvexMesh() {
-		return &convexMesh;
-	}
 private:
-
-	/**
-	 * Creates convex mesh from capsule
-	 */
-	void createConvexMesh();
-
 	//
 	Vector3 a {  };
 	Vector3 b {  };
 	float radius {  };
-	ConvexMesh convexMesh {  };
-	Vector3 convexMeshA {  };
-	Vector3 convexMeshB {  };
-	float convexMeshRadius {  };
-	Vector3 center {  };
-	BoundingBox boundingBox;
 };

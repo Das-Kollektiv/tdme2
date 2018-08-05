@@ -35,9 +35,10 @@ using tdme::network::udpserver::NIOServerWorkerThreadPool;
  * Base class for NIO udp servers
  * @author Andreas Drewke
  */
-class tdme::network::udpserver::NIOUDPServer : public NIOServer<NIOUDPServerClient, NIOUDPServerGroup>, public Thread {
-friend class NIOUDPServerClient;
-friend class NIOUDPServerIOThread;
+class tdme::network::udpserver::NIOUDPServer: public NIOServer<NIOUDPServerClient, NIOUDPServerGroup>, public Thread {
+	friend class NIOUDPServerClient;
+	friend class NIOUDPServerIOThread;
+	friend class NIOServerGroup<NIOUDPServer, NIOUDPServerClient, NIOUDPServerGroup>;
 
 public:
 	/**
@@ -188,7 +189,7 @@ private:
 
 	unsigned int ioThreadCurrent;
 	NIOUDPServerIOThread** ioThreads;
-	NIOServerWorkerThreadPool *workerThreadPool;
+	NIOServerWorkerThreadPool* workerThreadPool;
 
 	uint32_t clientCount;
 	uint32_t messageCount;

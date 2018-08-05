@@ -80,7 +80,7 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 	sin.sin_port = htons(port);
 
 	// go
-	#if defined(__APPLE__) or defined(_WIN32)
+	#if defined(__APPLE__) || defined(_WIN32)
 		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, 0, (const struct sockaddr*)&sin, sin_len);
 	#else
 		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL, (const struct sockaddr*)&sin, sin_len);

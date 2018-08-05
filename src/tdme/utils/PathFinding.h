@@ -46,7 +46,7 @@ public:
 	 * @param step size last
 	 * @param actor step up max
 	 */
-	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.5f);
+	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f);
 
 	/**
 	 * Destructor
@@ -63,12 +63,11 @@ public:
 	 * @param actor original bounding volume
 	 * @param current actor transformations
 	 * @param end position
-	 * @param collision rigidbody types
+	 * @param collision type ids
 	 * @param path from actor to target
-	 * @param actor rigibody id
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path, const string& actorId = "");
+	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path);
 
 private:
 	/**
@@ -152,15 +151,15 @@ private:
 	float stepSize;
 	float stepSizeLast;
 	float actorStepUpMax;
-	uint32_t collisionRigidBodyTypes;
+	uint16_t collisionTypeIds;
 	PathFindingNode* end;
 	stack<PathFindingNode*> successorNodes;
 	map<string, PathFindingNode*> openNodes;
 	map<string, PathFindingNode*> closedNodes;
 	Vector3 sideVector { 1.0f, 0.0f, 0.0f };
 	Vector3 forwardVector { 0.0f, 0.0f, 1.0f };
-	string actorId;
 	Transformations actorTransformations;
-	BoundingVolume* actorObv;
-	BoundingVolume* actorCbv;
+	BoundingVolume* actorBoundingVolume;
+	float actorXHalfExtension;
+	float actorZHalfExtension;
 };

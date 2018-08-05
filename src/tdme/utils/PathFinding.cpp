@@ -6,6 +6,7 @@
 #include <stack>
 
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Math.h>
@@ -23,6 +24,7 @@ using std::to_string;
 
 using tdme::engine::Transformations;
 using tdme::engine::physics::World;
+using tdme::engine::physics::Body;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -38,20 +40,17 @@ PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, bool s
 	this->customTest = customtest;
 	this->sloping = sloping;
 	this->end = new PathFindingNode();
-	this->actorObv = nullptr;
-	this->actorCbv = nullptr;
+	this->actorBoundingVolume = nullptr;
 	this->stepsMax = stepsMax;
 	this->stepSize = stepSize;
 	this->stepSizeLast = stepSizeLast;
 	this->actorStepUpMax = actorStepUpMax;
-	this->collisionRigidBodyTypes = 0;
+	this->collisionTypeIds = 0;
 }
 
 PathFinding::~PathFinding() {
 	delete end;
 	if (customTest != nullptr) delete customTest;
-	if (actorObv != nullptr) delete actorObv;
-	if (actorCbv != nullptr) delete actorCbv;
 }
 
 string PathFinding::toKeyFloat(float value)
@@ -73,49 +72,41 @@ void PathFinding::reset() {
 
 bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& height) {
 	// determine y height of ground plate of actor bounding volume
-	float xHalfExtension = actorCbv->computeDimensionOnAxis(sideVector) / 2.0f;
-	float zHalfExtension = actorCbv->computeDimensionOnAxis(forwardVector) / 2.0f;
-	float _z = z - zHalfExtension;
+	float _z = z - actorZHalfExtension;
 	height = -10000.0f;
 	Vector3 actorPosition;
 	for (int i = 0; i < 2; i++) {
-		float _x = x - xHalfExtension;
+		float _x = x - actorXHalfExtension;
 		for (int j = 0; j < 2; j++) {
 			Vector3 actorPositionCandidate;
 			if (world->determineHeight(
-				collisionRigidBodyTypes,
+				collisionTypeIds,
 				stepUpMax,
 				actorPositionCandidate.set(_x, y, _z),
 				actorPosition) == nullptr) {
 				return false;
 			}
 			if (actorPosition.getY() > height) height = actorPosition.getY();
-			if (customTest != nullptr && customTest->isWalkable(actorCbv, actorPosition.getX(), actorPosition.getY(), actorPosition.getZ()) == false) {
+			if (customTest != nullptr && customTest->isWalkable(actorBoundingVolume, actorPosition.getX(), actorPosition.getY(), actorPosition.getZ()) == false) {
 				return false;
 			}
-			_x+= xHalfExtension * 2.0f;
+			_x+= actorXHalfExtension * 2.0f;
 		}
-		_z+= zHalfExtension * 2.0f;
+		_z+= actorZHalfExtension * 2.0f;
 	}
 
-	// set up correct height
+	// set up transformations
 	actorTransformations.setTranslation(Vector3(x, height + 0.1f, z));
 	actorTransformations.update();
-	actorCbv->fromBoundingVolumeWithTransformations(actorObv, actorTransformations);
 
-	// check if collides with world
-	vector<RigidBody*> collidedRigidBodies;
-	world->doesCollideWith(collisionRigidBodyTypes, actorCbv, collidedRigidBodies);
-	if (actorId.size() > 0) {
-		for (auto rigidBody: collidedRigidBodies) {
-			if (rigidBody->getRootId() != actorId) {
-				return false;
-			}
-		}
-		return true;
-	} else {
-		return collidedRigidBodies.size() == 0;
-	}
+	// update rigid body
+	auto actorCollisionBody = world->getBody("pathfinding.actor");
+	actorCollisionBody->fromTransformations(actorTransformations);
+
+	// check if actor collides with world
+	vector<Body*> collidedRigidBodies;
+	auto collision = world->doesCollideWith(collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
+	return collision;
 }
 
 void PathFinding::start(Vector3 startPosition, Vector3 endPosition) {
@@ -251,13 +242,13 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		if (openListNode != nullptr) {
 			// remove open list node
 			openNodes.erase(openListNodeIt);
-			delete openListNodeIt->second;
+			delete openListNode;
 		}
 
 		// Remove found node from closed nodes list, since it was less optimal
 		if (closedListNode != nullptr) {
 			closedNodes.erase(closedListNodeIt);
-			delete closedListNodeIt->second;
+			delete closedListNode;
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
@@ -277,9 +268,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	return PathFindingStatus::PATH_STEP;
 }
 
-bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& actorTransformations, const Vector3& endPosition, const uint32_t collisionRigidBodyTypes, vector<Vector3>& path, const string& actorId) {
-	this->actorId = actorId;
-
+bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path) {
 	//
 	auto now = Time::getCurrentMillis();
 
@@ -287,13 +276,19 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 	path.clear();
 
 	//
-	this->collisionRigidBodyTypes = collisionRigidBodyTypes;
+	this->collisionTypeIds = collisionTypeIds;
 
-	// init transformations, bounding volumes
+	// TODO: try to avoid cloning actor bv
+	auto actorBoundingVolumeTransformed = actorBoundingVolume->clone();
+	actorBoundingVolumeTransformed->fromTransformations(actorTransformations);
+	this->actorXHalfExtension = actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getX() / 2.0f;
+	this->actorZHalfExtension = actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f;
+	delete actorBoundingVolumeTransformed;
+
+	// init bounding volume, transformations, collision body
+	this->actorBoundingVolume = actorBoundingVolume;
 	this->actorTransformations.fromTransformations(actorTransformations);
-	this->actorObv = actorObv->clone();
-	this->actorCbv = actorObv->clone();
-	this->actorCbv->fromBoundingVolumeWithTransformations(this->actorObv, this->actorTransformations);
+	auto actorCollisionBody = world->addCollisionBody("pathfinding.actor", true, collisionTypeIds, actorTransformations, {actorBoundingVolume});
 
 	// positions
 	Vector3 startPositionComputed;
@@ -370,7 +365,7 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 						nodesCount++;
 					}
 					reverse(path.begin(), path.end());
-					if (path.size() > 0) path.erase(path.begin());
+					if (path.size() > 1) path.erase(path.begin());
 					done = true;
 					success = true;
 					break;
@@ -383,15 +378,9 @@ bool PathFinding::findPath(BoundingVolume* actorObv, const Transformations& acto
 		Console::println("PathFinding::findPath(): steps == stepsMax: " + to_string(stepIdx));
 	}
 
-	this->actorId = "";
-
-	// delete old actor obv, cbv
-	delete this->actorObv;
-	delete this->actorCbv;
-
-	// unset
-	this->actorObv = nullptr;
-	this->actorCbv = nullptr;
+	// unset actor bounding volume and remove rigid body
+	this->actorBoundingVolume = nullptr;
+	world->removeBody("pathfinding.actor");
 
 	// reset
 	reset();

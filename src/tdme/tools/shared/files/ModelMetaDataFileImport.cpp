@@ -24,6 +24,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/Float.h>
@@ -60,6 +62,8 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleS
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::LevelEditorEntityPhysics;
+using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::Float;
 using tdme::utils::StringUtils;
@@ -149,6 +153,21 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 			auto& jBv = jBoundingVolumes[i];
 			levelEditorEntity->addBoundingVolume(i, parseBoundingVolume(i, levelEditorEntity, pathName, jBv));
 		}
+	}
+	if (jEntityRoot["p"].isNull() == false && levelEditorEntity->getPhysics() != nullptr) {
+		auto physics = levelEditorEntity->getPhysics();
+		auto& jPhysics = jEntityRoot["p"];
+		physics->setType(LevelEditorEntityPhysics_BodyType::valueOf(jPhysics["type"].getString()));
+		physics->setMass(static_cast<float>(jPhysics["mass"].getDouble()));
+		physics->setRestitution(static_cast<float>(jPhysics["restitution"].getDouble()));
+		physics->setFriction(static_cast<float>(jPhysics["friction"].getDouble()));
+		physics->setInertiaTensor(
+			Vector3(
+				static_cast<float>(jPhysics["itx"].getDouble()),
+				static_cast<float>(jPhysics["ity"].getDouble()),
+				static_cast<float>(jPhysics["itz"].getDouble())
+			)
+		);
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
 		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
@@ -367,7 +386,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	}
 	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());
 	levelEditorEntity->setRenderGroups(jEntityRoot["rg"].isNull() == false?jEntityRoot["rg"].getBoolean():false);
-	levelEditorEntity->setApplyAnimations(jEntityRoot["aa"].isNull() == false?jEntityRoot["aa"].getBoolean():false);
+	levelEditorEntity->setShader(jEntityRoot["s"].isNull() == false?jEntityRoot["s"].getString():"default");
 	return levelEditorEntity;
 }
 

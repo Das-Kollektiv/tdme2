@@ -10,6 +10,7 @@
 #include <tdme/network/udpserver/NIOServerClient.h>
 #include <tdme/network/udpserver/NIOServerGroup.h>
 #include <tdme/network/udpserver/NIOServerWorkerThread.h>
+#include <tdme/network/udpserver/NIOServerWorkerThreadPool.h>
 
 using std::string;
 using std::to_string;
@@ -20,6 +21,7 @@ using tdme::utils::RTTI;
 using tdme::network::udpserver::NIOServerClient;
 using tdme::network::udpserver::NIOServerGroup;
 using tdme::network::udpserver::NIOServerWorkerThread;
+using tdme::network::udpserver::NIOServerWorkerThreadPool;
 
 NIOServerWorkerThread::NIOServerWorkerThread(const unsigned int id, NIOServerWorkerThreadPool* threadPool) :
 	Thread("nioworkerthread"),

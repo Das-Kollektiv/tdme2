@@ -24,6 +24,7 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
@@ -75,7 +76,54 @@ protected:
 	void setLeft(int32_t left) override;
 	void layoutSubNodes() override;
 	void layout() override;
-	GUIElementNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, GUIParentNode_Overflow* overflowX, GUIParentNode_Overflow* overflowY, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& name, const string& value, bool selected, bool disabled, bool focusable, bool ignoreEvents) throw (GUIParserException);
+
+	/**
+	 * Constructor
+	 * @param screen node
+	 * @param parent node
+	 * @param id
+	 * @param flow
+	 * @param overflow x
+	 * @param overflow y
+	 * @param alignments
+	 * @param requested constraints
+	 * @param background color
+	 * @param background image
+	 * @param background image scale 9 grid
+	 * @param border
+	 * @param padding
+	 * @param show on
+	 * @param hide on
+	 * @param name
+	 * @param value
+	 * @param selected
+	 * @param disabled
+	 * @param focusable
+	 * @param ignore events
+	 */
+	GUIElementNode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		GUIParentNode_Overflow* overflowX,
+		GUIParentNode_Overflow* overflowY,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Scale9Grid& backgroundImageScale9Grid,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn,
+		const string& name,
+		const string& value,
+		bool selected,
+		bool disabled,
+		bool focusable,
+		bool ignoreEvents
+	) throw (GUIParserException);
 
 public:
 	int32_t getContentWidth() override;

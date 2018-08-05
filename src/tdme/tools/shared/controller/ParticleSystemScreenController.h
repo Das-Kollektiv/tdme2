@@ -24,7 +24,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -57,7 +57,7 @@ private:
 	static string EMITTER_SPHEREPARTICLEEMITTER;
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
-	EntityBoundingVolumeSubScreenController* entityBoundingVolumeSubScreenController {  };
+	EntityPhysicsSubScreenController* entityPhysicsSubScreenController {  };
 	SharedParticleSystemView* view {  };
 	GUIScreenNode* screenNode {  };
 	GUITextNode* screenCaption {  };
@@ -149,7 +149,7 @@ public:
 	/** 
 	 * @return entity bounding volume sub screen controller
 	 */
-	EntityBoundingVolumeSubScreenController* getEntityBoundingVolumeSubScreenController();
+	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
 	GUIScreenNode* getScreenNode() override;
 
 	/** 

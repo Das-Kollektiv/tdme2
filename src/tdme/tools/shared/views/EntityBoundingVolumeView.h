@@ -14,12 +14,12 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::math::Vector3;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
 /** 
- * Entity bounding volume view
+ * Entity physics sub screen controller
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -27,7 +27,7 @@ class tdme::tools::shared::views::EntityBoundingVolumeView
 {
 private:
 	Engine* engine {  };
-	EntityBoundingVolumeSubScreenController* boundingVolumeSubScreenController {  };
+	EntityPhysicsSubScreenController* entityPhysicsSubScreenController {  };
 	PopUps* popUps {  };
 
 public:
@@ -89,14 +89,31 @@ public:
 	 */
 	virtual void unsetConvexMeshes();
 
+	/**
+	 * Unset physics
+	 */
+	virtual void unsetPhysics();
+
+	/**
+	 * Set physics
+	 * @param entity
+	 */
+	virtual void setPhysics(LevelEditorEntity* entity);
+
 private:
 
+	/**
+	 * Clear model bounding volume
+	 * @param idx
+	 */
+	void clearModelBoundingVolume(int32_t idx);
+
 	/** 
-	 * Update model bounding volume
+	 * Setup model bounding volume
 	 * @param entity
 	 * @param idx
 	 */
-	void updateModelBoundingVolume(LevelEditorEntity* entity, int32_t idx);
+	void setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx);
 
 public:
 
@@ -160,5 +177,5 @@ public:
 	 * @param pop ups
 	 * @param model editor screen controller
 	 */
-	EntityBoundingVolumeView(EntityBoundingVolumeSubScreenController* modelEditorScreenController, PopUps* popUps);
+	EntityBoundingVolumeView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps);
 };

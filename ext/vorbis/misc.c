@@ -18,7 +18,10 @@
 #include "vorbis/codec.h"
 #define MISC_C
 #include "misc.h"
-#include <sys/time.h>
+
+#if !(defined(_WIN32) && defined(_MSC_VER))
+	#include <sys/time.h>
+#endif
 
 static pthread_mutex_t memlock=PTHREAD_MUTEX_INITIALIZER;
 static void **pointers=NULL;
@@ -115,10 +118,11 @@ static void *_insert(void *ptr,long bytes,char *file,long line){
   }
 #endif
 
+
   global_bytes+=(bytes-HEAD_ALIGN);
 
   pthread_mutex_unlock(&memlock);
-  return(ptr+HEAD_ALIGN);
+  return(ptr=(char*)ptr+HEAD_ALIGN);
 }
 
 static void _ripremove(void *ptr){
@@ -196,7 +200,7 @@ void *_VDBG_malloc(void *ptr,long bytes,char *file,long line){
 
   bytes+=HEAD_ALIGN;
   if(ptr){
-    ptr-=HEAD_ALIGN;
+    ptr=(char*)ptr-HEAD_ALIGN;
     _ripremove(ptr);
     ptr=realloc(ptr,bytes);
   }else{
@@ -208,7 +212,7 @@ void *_VDBG_malloc(void *ptr,long bytes,char *file,long line){
 
 void _VDBG_free(void *ptr,char *file,long line){
   if(ptr){
-    ptr-=HEAD_ALIGN;
+    ptr=(char*)ptr-HEAD_ALIGN;
     _ripremove(ptr);
     free(ptr);
   }

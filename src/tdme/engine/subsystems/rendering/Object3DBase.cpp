@@ -77,12 +77,12 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 	// create transformations matrices
 	createTransformationsMatrices(&transformationsMatrices, model->getSubGroups());
-	// object 3d groups
-	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
 	// calculate transformations matrices
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), &baseAnimation, 0);
-	// do initial transformations
-	Object3DGroup::computeTransformations(&object3dGroups);
+	// object 3d groups
+	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
+	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(&object3dGroups);
 	// reset animation
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 }
@@ -249,7 +249,8 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 		Matrix4x4 transformationsMatrix;
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
-		if (animation != nullptr && animationState->finished == false) {
+		// TODO: check if its better to not compute animation matrix if finished
+		if (animation != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
 			auto frames = animationState->setup->getFrames();
 			auto fps = model->getFPS();
@@ -320,7 +321,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 void Object3DBase::computeTransformations()
 {
 	// do transformations if we have a animation
-	if (baseAnimation.setup != nullptr && baseAnimation.setup->getFrames() > 1) {
+	if (baseAnimation.setup != nullptr) {
 		auto engine = Engine::getInstance();
 		// animation timing
 		auto timing = engine->getTiming();
@@ -365,14 +366,34 @@ void Object3DBase::computeTransformations()
 	}
 }
 
-void Object3DBase::getFaceTriangles(vector<Triangle>* faceTriangles)
+int Object3DBase::getGroupCount() const {
+	return object3dGroups.size();
+}
+
+void Object3DBase::getTriangles(vector<Triangle>& triangles, int groupIdx)
 {
-	for (auto object3DGroup : object3dGroups) {
+	if (groupIdx == -1) {
+		for (auto object3DGroup : object3dGroups) {
+			auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
+			for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
+			for (auto& face : *facesEntity.getFaces()) {
+				auto faceVertexIndices = face.getVertexIndices();
+				triangles.push_back(
+					Triangle(
+						(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
+						(*groupVerticesTransformed)[(*faceVertexIndices)[1]],
+						(*groupVerticesTransformed)[(*faceVertexIndices)[2]]
+					)
+				);
+			}
+		}
+	} else {
+		auto object3DGroup = object3dGroups[groupIdx];
 		auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
 		for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
 		for (auto& face : *facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
-			faceTriangles->push_back(
+			triangles.push_back(
 				Triangle(
 					(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
 					(*groupVerticesTransformed)[(*faceVertexIndices)[1]],
@@ -466,10 +487,22 @@ void Object3DBase::initialize()
 			if (usesMeshManager == true) {
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
-					object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, object3DGroup->group, &object3DGroup->object->transformationsMatrices, getSkinningGroupsMatrices(object3DGroup->group));
+					object3DGroup->mesh = Object3DGroupMesh::createMesh(
+						object3DGroup->renderer,
+						animationProcessingTarget,
+						object3DGroup->group,
+						&object3DGroup->object->transformationsMatrices,
+						getSkinningGroupsMatrices(object3DGroup->group)
+					);
 				}
 			} else {
-				object3DGroup->mesh = Object3DGroupMesh::createMesh(animationProcessingTarget, object3DGroup->group, &object3DGroup->object->transformationsMatrices, getSkinningGroupsMatrices(object3DGroup->group));
+				object3DGroup->mesh = Object3DGroupMesh::createMesh(
+					object3DGroup->renderer,
+					animationProcessingTarget,
+					object3DGroup->group,
+					&object3DGroup->object->transformationsMatrices,
+					getSkinningGroupsMatrices(object3DGroup->group)
+				);
 			}
 		}
 	}

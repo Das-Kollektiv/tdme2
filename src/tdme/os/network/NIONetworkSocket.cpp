@@ -1,17 +1,16 @@
-#include <errno.h>
-#include <fcntl.h>
 #include <string.h>
-#include <unistd.h>
+
 #if defined(_WIN32)
 	#include <winsock2.h>
 	#define SHUT_RDWR SD_BOTH	
 #else
+	#include <errno.h>
+	#include <fcntl.h>
+	#include <unistd.h>
 	#include <netinet/in.h>
 	#include <sys/socket.h>
 	#include <arpa/inet.h>
 #endif
-
-#include <string>
 
 #include <tdme/os/network/NIONetworkSocket.h>
 
@@ -81,6 +80,10 @@ void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 }
 
 void NIONetworkSocket::close() {
-	::close(descriptor);
+	#if defined(_WIN32)
+		::closesocket(descriptor);
+	#else
+		::close(descriptor);
+	#endif
 	descriptor = -1;
 }

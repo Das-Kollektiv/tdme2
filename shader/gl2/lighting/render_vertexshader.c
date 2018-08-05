@@ -54,6 +54,7 @@ uniform sampler2D diffuseTextureUnit;
 uniform mat4 mvpMatrix;
 uniform mat4 mvMatrix;
 uniform mat4 normalMatrix;
+uniform mat3 textureMatrix;
 
 // will be passed to fragment shader
 varying vec2 vsFragTextureUV;
@@ -62,7 +63,7 @@ varying vec3 vsNormal;
  
 void main(void) {
 	// pass texture uv to fragment shader
-	vsFragTextureUV = inTextureUV;
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 
 	// compute gl position
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);

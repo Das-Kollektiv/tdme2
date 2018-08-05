@@ -9,7 +9,10 @@
 #include <tdme/gui/elements/GUIDropDown.h>
 #include <tdme/gui/elements/GUIDropDownOption.h>
 #include <tdme/gui/elements/GUIElement.h>
+#include <tdme/gui/elements/GUIImageButton.h>
 #include <tdme/gui/elements/GUIInput.h>
+#include <tdme/gui/elements/GUIKnob.h>
+#include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
 #include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
@@ -18,6 +21,8 @@
 #include <tdme/gui/elements/GUISelectBoxMultiple.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
 #include <tdme/gui/elements/GUISelectBoxOption.h>
+#include <tdme/gui/elements/GUISliderH.h>
+#include <tdme/gui/elements/GUISliderV.h>
 #include <tdme/gui/elements/GUITab.h>
 #include <tdme/gui/elements/GUITabContent.h>
 #include <tdme/gui/elements/GUITabs.h>
@@ -58,7 +63,10 @@ using tdme::gui::elements::GUICheckbox;
 using tdme::gui::elements::GUIDropDown;
 using tdme::gui::elements::GUIDropDownOption;
 using tdme::gui::elements::GUIElement;
+using tdme::gui::elements::GUIImageButton;
 using tdme::gui::elements::GUIInput;
+using tdme::gui::elements::GUIKnob;
+using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
 using tdme::gui::elements::GUIScrollAreaHorizontal;
@@ -67,6 +75,8 @@ using tdme::gui::elements::GUISelectBox;
 using tdme::gui::elements::GUISelectBoxMultiple;
 using tdme::gui::elements::GUISelectBoxMultipleOption;
 using tdme::gui::elements::GUISelectBoxOption;
+using tdme::gui::elements::GUISliderH;
+using tdme::gui::elements::GUISliderV;
 using tdme::gui::elements::GUITab;
 using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabs;
@@ -137,6 +147,14 @@ GUIScreenNode* GUIParser::parse(const string& xml) throw (GUIParserException)
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("height")))
 		),
 		GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image"))),
+		GUINode::createScale9Grid(
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-left"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-top"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-right"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-bottom")))
+		),
 		GUINode::createBorder(
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border-left"))),
@@ -210,6 +228,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor("#F0F0F0")),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -262,6 +288,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -312,6 +346,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -362,6 +404,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -417,6 +467,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -440,7 +498,21 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src")))),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
-					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD)
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-bottom")))
+					),
+					GUIImageNode::createClipping(
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
+					)
 				);
 				guiParentNode->addSubNode(guiImageNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -468,6 +540,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -519,6 +599,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -572,6 +660,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -623,6 +719,14 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
 					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -656,6 +760,20 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					}
 					guiElementControllerInstalled = true;
 				}
+			} else
+			if (nodeTagName == "template") {
+				auto src = string(AVOID_NULLPTR_STRING(node->Attribute("src")));
+				map<string, string> attributes;
+				parseTemplate(
+					guiParentNode,
+					node,
+					FileSystem::getInstance()->getContentAsString(
+						FileSystem::getInstance()->getPathName(src),
+						FileSystem::getInstance()->getFileName(src)
+					),
+					attributes,
+					nullptr
+				);
 			} else {
 				auto nodeTagNameString = nodeTagName;
 				const auto guiElementIt = elements.find(nodeTagNameString);
@@ -666,36 +784,39 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						"'"
 					);
 				}
-				auto newGuiElementTemplate = guiElementIt->second->getTemplate();
-				for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
-					auto attributeKey = string(attribute->Name());
-					auto attributeValue = string(attribute->Value());
-					newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
-				}
-
-				auto newGuiElementAttributes = guiElementIt->second->getAttributes(guiParentNode->getScreenNode());
-				for (auto newGuiElementAttributesIt : *newGuiElementAttributes) {
-					auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
-					newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
-				}
-
-				newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$innerXml}", getInnerXml(node));
-				auto newGuiElementDocumentXML =  "<gui-element>\n" + newGuiElementTemplate + "</gui-element>\n";
-
-				TiXmlDocument newGuiElementDocument;
-				newGuiElementDocument.Parse((newGuiElementDocumentXML).c_str());
-				if (newGuiElementDocument.Error() == true) {
-					throw GUIParserException(
-						"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
-					);
-				}
-				parseGUINode(guiParentNode, newGuiElementDocument.RootElement(), guiElementIt->second);
+				parseTemplate(guiParentNode, node, guiElementIt->second->getTemplate(), *guiElementIt->second->getAttributes(guiParentNode->screenNode), guiElementIt->second);
 			}
 		}
 	}
 	if (guiElementController != nullptr) {
 		guiElementController->initialize();
 	}
+}
+
+void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& _template, map<string, string>& attributes, GUIElement* guiElement) {
+	auto newGuiElementTemplate = _template;
+	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
+		auto attributeKey = string(attribute->Name());
+		auto attributeValue = string(attribute->Value());
+		newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
+	}
+
+	for (auto newGuiElementAttributesIt : attributes) {
+		auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
+		newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+	}
+
+	newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$innerXml}", getInnerXml(node));
+	auto newGuiElementDocumentXML =  "<gui-element>\n" + newGuiElementTemplate + "</gui-element>\n";
+
+	TiXmlDocument newGuiElementDocument;
+	newGuiElementDocument.Parse((newGuiElementDocumentXML).c_str());
+	if (newGuiElementDocument.Error() == true) {
+		throw GUIParserException(
+			"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())
+		);
+	}
+	parseGUINode(parentNode, newGuiElementDocument.RootElement(), guiElement);
 }
 
 const vector<TiXmlElement*> GUIParser::getChildrenByTagName(TiXmlElement* parent, const char* name)
@@ -861,6 +982,41 @@ void GUIParser::initialize()
 	}
 	try {
 		GUIElement* guiElement = new GUIScrollArea();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUISliderH();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUISliderV();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIKnob();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIImageButton();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		GUIElement* guiElement = new GUIProgressBar();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

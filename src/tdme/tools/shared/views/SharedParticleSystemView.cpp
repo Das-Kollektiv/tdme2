@@ -13,7 +13,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -48,7 +48,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -198,11 +198,13 @@ void SharedParticleSystemView::updateGUIElements()
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
+		entityBoundingVolumeView->setPhysics(entity);
 	} else {
 		particleSystemScreenController->setScreenCaption("Particle System - no entity loaded");
 		particleSystemScreenController->unsetEntityProperties();
 		particleSystemScreenController->unsetEntityData();
 		entityBoundingVolumeView->unsetBoundingVolumes();
+		entityBoundingVolumeView->unsetPhysics();
 	}
 }
 
@@ -232,7 +234,7 @@ void SharedParticleSystemView::initialize()
 		particleSystemScreenController = new ParticleSystemScreenController(this);
 		particleSystemScreenController->initialize();
 		entityDisplayView = particleSystemScreenController->getEntityDisplaySubScreenController()->getView();
-		entityBoundingVolumeView = particleSystemScreenController->getEntityBoundingVolumeSubScreenController()->getView();
+		entityBoundingVolumeView = particleSystemScreenController->getEntityPhysicsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -299,7 +301,7 @@ void SharedParticleSystemView::deactivate()
 
 void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
 {
-	delete entity;
+	delete oldEntity;
 }
 
 void SharedParticleSystemView::loadParticleSystem()

@@ -87,17 +87,34 @@ public:
 	}
 
 	/**
+	 * Array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline float& operator[](int i) {
+    		return data[i];
+    }
+
+	/**
+	 * Const array access operator
+	 * @param index
+	 * @return vector3 component
+	 */
+    inline const float& operator[](int i) const {
+    		return data[i];
+    }
+
+	/**
 	 * Get coordinate system axes
 	 * @param x axis
 	 * @param y axis
 	 * @param z axis
 	 * @return this matrix
 	 */
-	inline Matrix4x4& getAxes(Vector3& xAxis, Vector3& yAxis, Vector3& zAxis) {
+	inline void getAxes(Vector3& xAxis, Vector3& yAxis, Vector3& zAxis) const {
 		xAxis.set(data[0], data[1], data[2]);
 		yAxis.set(data[4], data[5], data[6]);
 		zAxis.set(data[8], data[9], data[10]);
-		return *this;
 	}
 
 	/** 
@@ -128,9 +145,8 @@ public:
 	 * @param translation
 	 * @return this matrix
 	 */
-	inline Matrix4x4& getTranslation(Vector3& translation) {
+	inline void getTranslation(Vector3& translation) const {
 		translation.set(data[12], data[13], data[14]);
-		return *this;
 	}
 
 	/** 
@@ -150,7 +166,7 @@ public:
 	 * @param scale
 	 * @return this matrix
 	 */
-	inline Matrix4x4& getScale(Vector3& scale) {
+	inline void getScale(Vector3& scale) const {
 		Vector3 tmpVector3;
 		// x axis
 		tmpVector3.set(data[0], data[1], data[2]);
@@ -161,7 +177,6 @@ public:
 		// z axis
 		tmpVector3.set(data[8], data[9], data[10]);
 		scale.data[2] = tmpVector3.computeLength();
-		return *this;
 	}
 
 	/** 
@@ -553,19 +568,18 @@ public:
 			nobody involved with Gems - authors, editors, publishers, or webmasters - are to be held responsible.
 			Basically, don't be a jerk, and remember that anything free comes with no guarantee.
 		*/
-		auto& eulerXYZ = euler.getArray();
 		auto axis0 = 0;
 		auto axis1 = 1;
 		auto axis2 = 2;
 		auto cy = static_cast< float >(Math::sqrt(data[axis0 + 4 * axis0] * data[axis0 + 4 * axis0] + data[axis1 + 4 * axis0] * data[axis1 + 4 * axis0]));
 		if (cy > 16.0f * Math::EPSILON) {
-			eulerXYZ[0] = static_cast< float >((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
-			eulerXYZ[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
-			eulerXYZ[2] = static_cast< float >((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
+			euler[0] = static_cast< float >((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
+			euler[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
+			euler[2] = static_cast< float >((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
 		} else {
-			eulerXYZ[0] = static_cast< float >((Math::atan2(-data[axis1 + 4 * axis2], data[axis1 + 4 * axis1])));
-			eulerXYZ[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
-			eulerXYZ[2] = 0.0f;
+			euler[0] = static_cast< float >((Math::atan2(-data[axis1 + 4 * axis2], data[axis1 + 4 * axis1])));
+			euler[1] = static_cast< float >((Math::atan2(-data[axis2 + 4 * axis0], cy)));
+			euler[2] = 0.0f;
 		}
 		euler.scale(static_cast< float >((180.0 / Math::PI)));
 	}

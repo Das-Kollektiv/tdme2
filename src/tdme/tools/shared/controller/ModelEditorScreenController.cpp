@@ -18,7 +18,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -59,7 +59,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -91,14 +91,14 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ModelEditorScreenController_ModelEditorScreenController_1(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
-	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), modelPath, true);
+	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, true);
 }
 
 ModelEditorScreenController::~ModelEditorScreenController() {
 	delete modelPath;
 	delete entityBaseSubScreenController;
 	delete entityDisplaySubScreenController;
-	delete entityBoundingVolumeSubScreenController;
+	delete entityPhysicsSubScreenController;
 }
 
 SharedModelEditorView* ModelEditorScreenController::getView() {
@@ -110,9 +110,9 @@ EntityDisplaySubScreenController* ModelEditorScreenController::getEntityDisplayS
 	return entityDisplaySubScreenController;
 }
 
-EntityBoundingVolumeSubScreenController* ModelEditorScreenController::getEntityBoundingVolumeSubScreenController()
+EntityPhysicsSubScreenController* ModelEditorScreenController::getEntityPhysicsSubScreenController()
 {
-	return entityBoundingVolumeSubScreenController;
+	return entityPhysicsSubScreenController;
 }
 
 GUIScreenNode* ModelEditorScreenController::getScreenNode()
@@ -140,7 +140,7 @@ void ModelEditorScreenController::initialize()
 		pivotApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_pivot_apply"));
 		renderingDynamicShadowing = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_dynamic_shadowing"));
 		renderingRenderGroups = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_render_groups"));
-		renderingApplyAnimations = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_apply_animations"));
+		renderingApplyFoliageAnimations = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("rendering_foliage_animation"));
 		renderingApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_rendering_apply"));
 		lodLevel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level"));
 		lodLevelApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("lod_level_apply"));
@@ -197,7 +197,7 @@ void ModelEditorScreenController::initialize()
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
-	entityBoundingVolumeSubScreenController->initialize(screenNode);
+	entityPhysicsSubScreenController->initialize(screenNode);
 }
 
 void ModelEditorScreenController::dispose()
@@ -262,8 +262,8 @@ void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 	renderingDynamicShadowing->getController()->setValue(MutableString(entity->isDynamicShadowing() == true?"1":""));
 	renderingRenderGroups->getController()->setDisabled(false);
 	renderingRenderGroups->getController()->setValue(MutableString(entity->isRenderGroups() == true?"1":""));
-	renderingApplyAnimations->getController()->setDisabled(false);
-	renderingApplyAnimations->getController()->setValue(MutableString(entity->isApplyAnimations() == true?"1":""));
+	renderingApplyFoliageAnimations->getController()->setDisabled(false);
+	renderingApplyFoliageAnimations->getController()->setValue(MutableString(entity->getShader() == "foliage"?"1":""));
 	renderingApply->getController()->setDisabled(false);
 }
 
@@ -273,8 +273,8 @@ void ModelEditorScreenController::unsetRendering()
 	renderingDynamicShadowing->getController()->setValue(MutableString("1"));
 	renderingRenderGroups->getController()->setDisabled(true);
 	renderingRenderGroups->getController()->setValue(MutableString("0"));
-	renderingApplyAnimations->getController()->setDisabled(true);
-	renderingApplyAnimations->getController()->setValue(MutableString("0"));
+	renderingApplyFoliageAnimations->getController()->setDisabled(true);
+	renderingApplyFoliageAnimations->getController()->setValue(MutableString("0"));
 	renderingApply->getController()->setDisabled(true);
 }
 
@@ -965,7 +965,7 @@ void ModelEditorScreenController::onRenderingApply()
 	if (view->getEntity() == nullptr) return;
 	view->getEntity()->setDynamicShadowing(renderingDynamicShadowing->getController()->getValue().equals("1"));
 	view->getEntity()->setRenderGroups(renderingRenderGroups->getController()->getValue().equals("1"));
-	view->getEntity()->setApplyAnimations(renderingApplyAnimations->getController()->getValue().equals("1"));
+	view->getEntity()->setShader(renderingApplyFoliageAnimations->getController()->getValue().equals("1") == true?"foliage":"default");
 }
 
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
@@ -989,6 +989,7 @@ void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 		onAnimationDropDownValueChanged();
 	} else {
 		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
+		entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
 	}
 }
 
@@ -996,7 +997,7 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityDisplaySubScreenController->onActionPerformed(type, node);
-	entityBoundingVolumeSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
 	{
 		auto v = type;
 		if (v == GUIActionListener_Type::PERFORMED) {

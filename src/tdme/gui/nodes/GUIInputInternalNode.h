@@ -21,6 +21,7 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -62,7 +63,48 @@ protected:
 	 */
 	const string getNodeType() override;
 	bool isContentNode() override;
-	GUIInputInternalNode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn, const string& font, const string& color, const string& colorDisabled, const MutableString& text, int32_t maxLength) throw(Exception);
+
+	/**
+	 * Constructor
+	 * @param screen node
+	 * @param parent node
+	 * @param id
+	 * @param flow
+	 * @param alignments
+	 * @param requested constraints
+	 * @param background color
+	 * @param background image
+	 * @param background image scale 9 grid
+	 * @param border
+	 * @param padding
+	 * @param show on
+	 * @param hide on
+	 * @param font
+	 * @param color
+	 * @param color disabled
+	 * @param text
+	 * @param max length
+	 */
+	GUIInputInternalNode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Scale9Grid& backgroundImageScale9Grid,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn,
+		const string& font,
+		const string& color,
+		const string& colorDisabled,
+		const MutableString& text,
+		int32_t maxLength
+	) throw(Exception);
 
 public:
 	int32_t getContentWidth() override;

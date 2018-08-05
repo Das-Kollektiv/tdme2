@@ -26,8 +26,8 @@ void EngineGL3Renderer::onUpdateProjectionMatrix()
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this);
 
-	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->updateMatrices(this);
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->updateMatrices(this);
 
 }
 
@@ -39,8 +39,8 @@ void EngineGL3Renderer::onUpdateCameraMatrix()
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this);
 
-	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->updateMatrices(this);
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->updateMatrices(this);
 
 }
 
@@ -52,8 +52,8 @@ void EngineGL3Renderer::onUpdateModelViewMatrix()
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this);
 
-	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->updateMatrices(this);
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->updateMatrices(this);
 
 }
 
@@ -65,12 +65,20 @@ void EngineGL3Renderer::onBindTexture(int32_t textureId)
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->bindTexture(this, textureId);
 
-	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->bindTexture(this, textureId);
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->bindTexture(this, textureId);
 }
 
 void EngineGL3Renderer::onUpdateTextureMatrix()
 {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->updateTextureMatrix(this);
+
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->updateTextureMatrix(this);
+
+	if (Engine::guiShader != nullptr)
+		Engine::guiShader->updateTextureMatrix(this);
 }
 
 void EngineGL3Renderer::onUpdateEffect()
@@ -91,6 +99,8 @@ void EngineGL3Renderer::onUpdateLight(int32_t lightId)
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateLight(this, lightId);
 
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->updateLight(this, lightId);
 }
 
 void EngineGL3Renderer::onUpdateMaterial()
@@ -98,7 +108,14 @@ void EngineGL3Renderer::onUpdateMaterial()
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMaterial(this);
 
-	if (engine->shadowMapping != nullptr)
-		engine->shadowMapping->updateMaterial(this);
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->updateMaterial(this);
 }
 
+void EngineGL3Renderer::onUpdateShader() {
+	if (Engine::lightingShader != nullptr)
+		Engine::lightingShader->setShader(shaderId);
+
+	if (Engine::currentEngine->shadowMapping != nullptr)
+		Engine::currentEngine->shadowMapping->setShader(shaderId);
+}

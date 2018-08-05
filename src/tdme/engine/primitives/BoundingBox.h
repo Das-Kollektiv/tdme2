@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <array>
@@ -10,12 +9,10 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/engine/primitives/BoundingVolume.h>
 
 using std::array;
 using std::vector;
 
-using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionResponse;
 using tdme::math::Vector3;
@@ -25,9 +22,9 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::primitives::BoundingBox final :
-	public BoundingVolume
+class tdme::engine::primitives::BoundingBox
 {
+
 private:
 	static const array<int32_t, 3> FACE0_INDICES;
 	static const array<int32_t, 3> FACE1_INDICES;
@@ -44,8 +41,9 @@ private:
 	static const array<array<int32_t,3>,12> facesVerticesIndexes;
 	Vector3 min {  };
 	Vector3 max {  };
-	Vector3 center {  };
 	vector<Vector3> vertices {  };
+	Vector3 center;
+	Vector3 dimensions;
 
 public:
 
@@ -72,30 +70,50 @@ public:
 		return &vertices;
 	}
 
-	/** 
+	/**
 	 * @return faces vertices indexes
 	 */
 	inline static const array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
 		return &facesVerticesIndexes;
 	}
 
-	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
-	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
-	bool containsPoint(const Vector3& point) const override;
-	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) override;
-
-	inline Vector3& getCenter() override {
+	/**
+	 * @return center
+	 */
+	inline const Vector3& getCenter() const {
 		return center;
 	}
 
-	inline virtual BoundingBox* getBoundingBox() override {
-		return this;
+	/**
+	 * @return half extension
+	 */
+	inline const Vector3& getDimensions() const {
+		return dimensions;
 	}
 
-	float computeDimensionOnAxis(const Vector3& axis) const override;
-	void update() override;
-	BoundingVolume* clone() const override;
+	/**
+	 * Set up this bounding volume from given bounding volume
+	 * @param original bounding box
+	 */
+	void fromBoundingVolume(BoundingBox* original);
+
+	/**
+	 * Create bounding volume from given original(of same type) with applied transformations
+	 * @param original bounding box
+	 * @param transformations
+	 */
+	void fromBoundingVolumeWithTransformations(BoundingBox* original, const Transformations& transformations);
+
+	/**
+	 * Clones this bounding volume
+	 * @return cloned bounding volume
+	 */
+	BoundingBox* clone() const;
+
+	/**
+	 * Updates this bounding box
+	 */
+	void update();
 
 	/**
 	 * Public constructor
@@ -114,4 +132,5 @@ public:
 	 * @param max
 	 */
 	BoundingBox(const Vector3& min, const Vector3& max);
+
 };

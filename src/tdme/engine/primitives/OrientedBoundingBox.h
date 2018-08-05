@@ -1,24 +1,15 @@
-
 #pragma once
 
 #include <array>
-#include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/math/Vector3.h>
 
 using std::array;
-using std::vector;
 
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::Transformations;
-using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
@@ -51,15 +42,7 @@ public:
 	static const Vector3 AABB_AXIS_Z;
 
 public:
-	inline Vector3& getCenter() override {
-		return center;
-	}
-
-	inline virtual BoundingBox* getBoundingBox() override {
-		return &boundingBox;
-	}
-
-	/** 
+	/**
 	 * @return 3 axes
 	 */
 	const array<Vector3, 3>* getAxes() const;
@@ -67,72 +50,26 @@ public:
 	/** 
 	 * @return half extension
 	 */
-	Vector3& getHalfExtension();
-
-	/** 
-	 * Set up oriented bounding box from bounding box
-	 * @param bb
-	 */
-	void fromBoundingBox(BoundingBox* bb);
+	const Vector3& getHalfExtension() const;
 
 	/** 
 	 * Set up oriented bounding box from oriented bounding box
 	 * @param bb
 	 */
-	void fromOrientedBoundingBox(OrientedBoundingBox* obb);
-	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
-	void update() override;
+
+	// overrides
+	void setScale(const Vector3& scale) override;
+	BoundingVolume* clone() const override;
 
 	/** 
 	 * @return oriented bounding box vertices
 	 */
-	inline const vector<Vector3>* getVertices() const {
-		return &vertices;
-	}
+	const array<Vector3, 8> getVertices() const;
 
 	/** 
 	 * @return faces vertices indexes
 	 */
-	inline static const array<array<int32_t,3>,12>* getFacesVerticesIndexes() {
-		return &facesVerticesIndexes;
-	}
-
-	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const override;
-
-	/** 
-	 * Computes nearest point on obb face from point in obb
-	 * @param point in obb
-	 * @param point on face
-	 */
-	void computeNearestPointOnFaceBoundingVolume(const Vector3& pointInObb, Vector3& pointOnFace) const;
-
-	/** 
-	 * Computes nearest point on obb face from point in obb on given axis
-	 * @param axis idx
-	 * @param point in obb
-	 * @param point on face
-	 */
-	void computeNearestPointOnFaceBoundingVolumeAxis(int32_t axisIdx, const Vector3& pointInObb, Vector3& pointOnFace) const;
-
-	/** 
-	 * Computes nearest point on obb face from point in obb
-	 * @param point in obb
-	 * @param point on face
-	 */
-	void computeOppositePointOnFaceBoundingVolume(const Vector3& pointInObb, Vector3& pointOnFace) const;
-
-	/** 
-	 * Computes nearest point on obb face from point in obb on given axis
-	 * @param axis idx
-	 * @param point in obb
-	 * @param point on face
-	 */
-	void computeOppositePointOnFaceBoundingVolumeAxis(int32_t axisIdx, const Vector3& pointInObb, Vector3& pointOnFace) const;
-	bool containsPoint(const Vector3& point) const override;
-	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) override;
-	float computeDimensionOnAxis(const Vector3& axis) const override;
-	BoundingVolume* clone() const override;
+	static const array<array<int32_t,3>,12>& getFacesVerticesIndexes();
 
 	/**
 	 * Public constructor
@@ -141,14 +78,16 @@ public:
 	 * @param axis1
 	 * @param axis2
 	 * @param half extension
+	 * @param scale
 	 */
-	OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+	OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Public constructor
 	 * @param bounding box
+	 * @param scale
 	 */
-	OrientedBoundingBox(BoundingBox* bb);
+	OrientedBoundingBox(BoundingBox* bb, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Public constructor
@@ -156,10 +95,6 @@ public:
 	OrientedBoundingBox();
 
 private:
-	Vector3 center {  };
 	array<Vector3, 3> axes {  };
 	Vector3 halfExtension {  };
-	vector<Vector3> vertices {  };
-	BoundingBox boundingBox;
-
 };

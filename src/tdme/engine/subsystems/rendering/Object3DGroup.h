@@ -11,6 +11,7 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -18,11 +19,13 @@ using std::vector;
 using std::string;
 
 using tdme::engine::Engine;
+using tdme::engine::Object3D;
 using tdme::engine::model::Group;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 
@@ -33,6 +36,7 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
  */
 class tdme::engine::subsystems::rendering::Object3DGroup final
 {
+	friend class tdme::engine::Object3D;
 	friend class ModelUtilitiesInternal;
 	friend class Object3DBase;
 	friend class Object3DBase_TransformedFacesIterator;
@@ -52,6 +56,7 @@ private:
 	Object3DBase* object {  };
 	Group* group {  };
 	bool animated {  };
+	vector<Matrix2D3x3> textureMatricesByEntities {  };
 	vector<int32_t> materialDiffuseTextureIdsByEntities {  };
 	vector<int32_t> dynamicDiffuseTextureIdsByEntities {  };
 	vector<int32_t> materialSpecularTextureIdsByEntities {  };

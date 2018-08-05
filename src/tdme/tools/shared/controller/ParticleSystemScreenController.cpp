@@ -20,7 +20,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -69,7 +69,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -115,7 +115,7 @@ ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSys
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ParticleSystemScreenController_ParticleSystemScreenController_1(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
-	this->entityBoundingVolumeSubScreenController = new EntityBoundingVolumeSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
+	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
 }
 
 ParticleSystemScreenController::~ParticleSystemScreenController() {
@@ -123,7 +123,7 @@ ParticleSystemScreenController::~ParticleSystemScreenController() {
 	delete modelPath;
 	delete entityBaseSubScreenController;
 	delete entityDisplaySubScreenController;
-	delete entityBoundingVolumeSubScreenController;
+	delete entityPhysicsSubScreenController;
 }
 
 EntityDisplaySubScreenController* ParticleSystemScreenController::getEntityDisplaySubScreenController()
@@ -131,9 +131,9 @@ EntityDisplaySubScreenController* ParticleSystemScreenController::getEntityDispl
 	return entityDisplaySubScreenController;
 }
 
-EntityBoundingVolumeSubScreenController* ParticleSystemScreenController::getEntityBoundingVolumeSubScreenController()
+EntityPhysicsSubScreenController* ParticleSystemScreenController::getEntityPhysicsSubScreenController()
 {
-	return entityBoundingVolumeSubScreenController;
+	return entityPhysicsSubScreenController;
 }
 
 GUIScreenNode* ParticleSystemScreenController::getScreenNode()
@@ -239,7 +239,7 @@ void ParticleSystemScreenController::initialize()
 	}
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
-	entityBoundingVolumeSubScreenController->initialize(screenNode);
+	entityPhysicsSubScreenController->initialize(screenNode);
 }
 
 void ParticleSystemScreenController::dispose()
@@ -797,7 +797,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityDisplaySubScreenController->onActionPerformed(type, node);
-	entityBoundingVolumeSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
 	{
 		auto v = type;
 		if (v == GUIActionListener_Type::PERFORMED) {

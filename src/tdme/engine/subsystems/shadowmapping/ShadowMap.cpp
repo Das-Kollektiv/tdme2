@@ -123,23 +123,30 @@ void ShadowMap::render(Light* light)
 	ObjectParticleSystemEntity* opse = nullptr;
 	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
-			for (auto orgObject: org->getObjects()) visibleObjects.push_back(orgObject);
+			if ((object = org->getObject()) != nullptr) {
+				if (object->isDynamicShadowingEnabled() == false) continue;
+				object->preRender();
+				visibleObjects.push_back(object);
+			}
 		} else
 		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
 			if (object->isDynamicShadowingEnabled() == false) continue;
+			object->preRender();
 			visibleObjects.push_back(object);
 		} else
 		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
 			if (lodObject->isDynamicShadowingEnabled() == false) continue;
 			auto object = lodObject->getLODObject();
 			if (object != nullptr) {
+				object->preRender();
 				visibleObjects.push_back(object);
 			}
 		} else
 		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
 			if (opse->isDynamicShadowingEnabled() == false) continue;
-			for (auto object3D: *opse->getEnabledObjects()) {
-				visibleObjects.push_back(object3D);
+			for (auto object: *opse->getEnabledObjects()) {
+				object->preRender();
+				visibleObjects.push_back(object);
 			}
 		}
 	}

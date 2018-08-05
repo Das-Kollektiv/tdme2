@@ -67,15 +67,19 @@ void pc_test() {
 }
 
 void atomic_test() {
-	int intValue = 0;
-	// 5 atomic adds
-	for(int i = 0; i < 5; i++) {
-		Console::println("atomic add, result " + to_string(__sync_add_and_fetch(&intValue,1)));
-	}
-	// 5 atomic subs
-	for(int i = 0; i < 5; i++) {
-		Console::println("atomic sub, result " + to_string(__sync_sub_and_fetch(&intValue,1)));
-	}
+	#if defined(_WIN32) && defined(_MSC_VER)
+		// need to create some class or definition for atomic add, dec, otherwise this is not portable
+	#else
+		int intValue = 0;
+		// 5 atomic adds
+		for(int i = 0; i < 5; i++) {
+			Console::println("atomic add, result " + to_string(__sync_add_and_fetch(&intValue,1)));
+		}
+		// 5 atomic subs
+		for(int i = 0; i < 5; i++) {
+			Console::println("atomic sub, result " + to_string(__sync_sub_and_fetch(&intValue,1)));
+		}
+	#endif
 }
 
 int main(int argc, char *argv[]) {

@@ -1,10 +1,10 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
@@ -17,11 +17,9 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/utils/Console.h>
 
 using std::string;
 using std::to_string;
-using std::vector;
 
 using tdme::engine::Entity;
 using tdme::engine::Engine;
@@ -34,7 +32,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 
 /** 
  * Object 3D render group
@@ -59,9 +56,10 @@ private:
 	BoundingBox boundingBox {  };
 	BoundingBox boundingBoxTransformed {  };
 	Matrix4x4 identityMatrix {  };
-	vector<Object3D*> objects {  };
-	vector<Object3D*> objectsCombined {  };
+	Object3D* combinedObject {  };
+	Model* model {  };
 	Model* combinedModel {  };
+	string shaderId { "default" };
 
 	/**
 	 * Compute bounding box
@@ -85,11 +83,6 @@ private:
 	 */
 	static void combineObject(Model* model, const Transformations& transformations, Model* combinedModel);
 
-	/**
-	 * Update render group model and bounding box
-	 */
-	void updateRenderGroup();
-
 public:
 	// overriden methods
 	void setEngine(Engine* engine) override;
@@ -101,58 +94,50 @@ public:
 	void setFrustumCulling(bool frustumCulling) override;
 
 	/**
-	 * @return if is using group rendering
-	 */
-	inline bool isGroupRendering() {
-		return groupRendering;
-	}
-
-	/**
-	 * Set if to use group rendering
-	 * @param group rendering
-	 */
-	inline void setGroupRendering(bool groupRendering) {
-		this->groupRendering = groupRendering;
-	}
-
-	/**
 	 * Public constructor
 	 * @param id
+	 * @param model
 	 */
-	Object3DRenderGroup(const string& id);
+	Object3DRenderGroup(const string& id, Model* model);
 
 	/**
 	 * Destructor
 	 */
 	virtual ~Object3DRenderGroup();
 
+	/**
+	 * Update render group model and bounding box
+	 */
+	void updateRenderGroup();
+
 public:
+
 	/**
 	 * @return associated model
 	 */
 	inline Model* getModel() {
-		return objects[0]->getModel();
+		return model;
 	}
 
 	/**
-	 * @return objects
+	 * Set model
+	 * @param model
 	 */
-	inline vector<Object3D*>& getObjects() {
-		return groupRendering == true?objectsCombined:objects;
+	void setModel(Model* model);
+
+	/**
+	 * @return object
+	 */
+	inline Object3D* getObject() {
+		return combinedObject;
 	}
 
 	/**
-	 * @return all objects aka group objects used to be combined
+	 * Adds a instance this render group
+	 * @param model
+	 * @param transformations
 	 */
-	inline vector<Object3D*>& getGroupObjects() {
-		return objects;
-	}
-
-	/**
-	 * Adds a object to this render group
-	 * @param object
-	 */
-	void addObject(Object3D* object);
+	void addObject(const Transformations& transformations);
 
 	// overriden methods
 	virtual void dispose() override;
@@ -202,10 +187,15 @@ public:
 	// override methods
 	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		this->dynamicShadowing = dynamicShadowing;
+		if (combinedObject != nullptr) {
+			combinedObject->setDynamicShadowingEnabled(dynamicShadowing);
+		}
 	}
 
 	inline virtual void setPickable(bool pickable) override {
-		this->pickable = pickable;
+		if (combinedObject != nullptr) {
+			combinedObject->setPickable(pickable);
+		}
 	}
 
 	inline virtual const Vector3& getTranslation() const override {
@@ -274,6 +264,24 @@ public:
 
 	inline virtual const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	/**
+	 * @return shader id
+	 */
+	inline const string& getShader() {
+		return shaderId;
+	}
+
+	/**
+	 * Set shader id
+	 * @param shader
+	 */
+	inline void setShader(const string& id) {
+		this->shaderId = id;
+		if (combinedObject != nullptr) {
+			combinedObject->setShader(id);
+		}
 	}
 
 };

@@ -3,6 +3,9 @@ TDME2
 
     - What is it?
         - ThreeDeeMiniEngine2 is a lightweight 3D engine including tools suited for 3D games development using C++11
+        - TDME2 is open source
+          - please check the license and the licenses of used 3rd party libraries
+          - you find the source code at https://github.com/andreasdr/tdme2 
 
     - What is already working
         - 3d engine
@@ -16,25 +19,29 @@ TDME2
                     - this is a much more efficient model file format for TDME
                     - can be read and written
                 - DAE and WaveFront OBJ files require triangulated meshes for now
+            - animations
+                - supports model object base animation and animation overlays
+                - supports foliage animation for feasible models via geometry shader on GL3+/CORE using custom shader infrastructure
+            - skinning via
+                - CPU on GL2, GLES2
+                - GPU via compute shaders with GL4.3+/CORE
             - object transformations
                 - scaling
                 - rotations
                 - translation
-            - animations
-                - supports base animation and animation overlays
-                - supports attaching objects to bones of another objects
-            - color effects on objects
-                - via shader
+            - color effects on objects, particles, ...
                 - color addition
                 - color multiplication
-            - lighting via shaders
+            - texture transformations/animations
+                - via texture matrices
+            - lighting
                 - supports phong lighting
-                - supports phong shading on GL3, GL2
+                - supports phong shading on GL3+/CORE, GL2
                 - supports gouraud shading on GLES2
-                - supports diffuse mapping on GL3, GL2, GLES2
-                - supports specular shininess mapping on GL3
-                - supports normal mapping on GL3
-            - dynamic shadows via shaders
+                - supports diffuse mapping on GL3+/CORE, GL2, GLES2
+                - supports specular shininess mapping on GL3+/CORE
+                - supports normal mapping on GL3+/CORE
+            - shadow mapping
             - particle system which
               - is object based
               - or point based
@@ -56,22 +63,9 @@ TDME2
                 - rendering can be used (in other engine instances) as diffuse texture
             - screenshot ability
             - multiple renderer
-              - GL2, GL3(core) and GLES2
+              - GL2, GL3+/CORE and GLES2
         - physics
-            - discrete collision detection
-                - sphere
-                - capsule
-                - axis aligned bounding boxes
-                - oriented bounding boxes
-                - triangle
-                - convex mesh
-            - rigid body simulator
-              - broadphase collision detection
-                  - uses oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
-                  - additional bounding box <> bounding box test
-              - narrowphase collision detection
-              - collision filtering by type
-              - sleeping technology
+            - uses ReactPhysics3D 0.7.0, needs some more integration still
         - path finding
             - uses A*
             - is paired with physics world to determine if a "cell" is walkable
@@ -101,13 +95,17 @@ TDME2
                 - button
                 - checkbox
                 - dropdown
+                - image button
                 - input
+                - knob
                 - radio button
                 - scrollarea both
                 - scrollarea horizontal
                 - scrollarea vertical
                 - selectbox
                 - selectbox multiple
+                - slider horizontal
+                - slider vertical
                 - tabs
             - supports position and color based effects
         - Networking module, which consists of
@@ -123,16 +121,14 @@ TDME2
     - What does it (maybe still) lack
         - animation blending
         - physics
-          - bounding volume hierarchies
-          - multiple bounding volumes for a rigid body
-          - rag doll / joints / springs
+          - some more RP3D integration
         - example games
         - documentation
 
     - What is WIP or planned
         - LOD
-        - rigid body simulator(needs to be updated to newer "ReactPhysics3D 0.5")
         - GUI system port needs to be finished(Memory Management and other minor things)
+        - GUI system knob, vertical/horizontal slider are working but need a bit more love
         - Logic documentation/comments need to be imported from TDME(-JAVA)
         - A demonstration video
         - Build documentation
@@ -157,15 +153,17 @@ TDME2
 	            - zlib
 	            - libpng
 	            - tinyxml
-	            - (collision resolving of) ReactPhysics3D
+	            - ReactPhysics3D
 	            - FBXSDK
 	            - V-HACD
         - targeted platforms and its current state
             - Windows/MINGW(port completed)
+            - Windows/MSC(port is WIP)
             - Linux(port completed)
             - Mac Os X(port completed)
             - FreeBSD(port completed)
-            - Haiku(port completed, some minor issues are still left)
+            - NetBSD(port completed)
+            - Haiku(port completed)
             - Android(port pending)
             - iOS(port pending)
 
@@ -191,7 +189,8 @@ TDME2
         - Kolja Gumpert
         - others
 
-    - Interested in collaboration? Then drop me a line via mail
+    - Interested in collaboration? Then drop me a line via mail or use the issues section on tdme@github
+        - You can help with testing and reporting bugs, see http:://drewke.net/tdme2 
         - I have easy to hard task regarding engine/tools development
         - I have tasks regarding documentation
         - I even might have system administrator tasks

@@ -4,6 +4,7 @@
 
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/model/RotationOrder.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -12,6 +13,7 @@ using std::to_string;
 
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
+using tdme::engine::model::RotationOrder;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -55,6 +57,18 @@ void Transformations::fromTransformations(const Transformations& transformations
 	// copy matrices and such
 	transformationsMatrix.set(transformations.transformationsMatrix);
 	rotationsQuaternion.set(transformations.rotationsQuaternion);
+}
+
+void Transformations::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder) {
+	Vector3 eulerAngles;
+	matrix.getScale(scale);
+	matrix.getTranslation(translation);
+	matrix.computeEulerAngles(eulerAngles);
+	rotations.clear();
+	rotations.push_back(Rotation(eulerAngles[rotationOrder->getAxis0VectorIndex()], rotationOrder->getAxis0()));
+	rotations.push_back(Rotation(eulerAngles[rotationOrder->getAxis1VectorIndex()], rotationOrder->getAxis1()));
+	rotations.push_back(Rotation(eulerAngles[rotationOrder->getAxis2VectorIndex()], rotationOrder->getAxis2()));
+	update();
 }
 
 void Transformations::update()

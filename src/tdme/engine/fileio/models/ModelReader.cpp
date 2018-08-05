@@ -46,7 +46,7 @@ Model* ModelReader::read(const string& pathName, const string& fileName) throw (
 		}
 	} catch (Exception& exception) {
 		Console::println("ModelLoader::read(): Could not read model: " + pathName + "/" + fileName + ": " + (exception.what()));
-		throw exception;
+		throw;
 	}
 	return nullptr;
 }

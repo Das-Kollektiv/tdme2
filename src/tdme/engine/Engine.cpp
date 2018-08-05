@@ -1,6 +1,7 @@
 #include <tdme/engine/Engine.h>
 
-#if ((defined(__linux__) or defined(__FreeBSD__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(_WIN32) or defined(__HAIKU__)
+#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32) || defined(__HAIKU__)
+	#define GLEW_NO_GLU
 	#include <GL/glew.h>
 #endif
 
@@ -32,6 +33,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
@@ -39,6 +41,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
+#include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
@@ -90,6 +93,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
+using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::renderer::GUIRenderer;
@@ -114,7 +118,9 @@ ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
 ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
 ParticlesShader* Engine::particlesShader = nullptr;
+SkinningShader* Engine::skinningShader = nullptr;
 GUIShader* Engine::guiShader = nullptr;
+Engine* Engine::currentEngine = nullptr;
 
 Engine::Engine() 
 {
@@ -156,6 +162,8 @@ Engine::~Engine() {
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
 	}
+	// set current engine
+	if (currentEngine == this) currentEngine = nullptr;
 }
 
 Engine* Engine::getInstance()
@@ -292,6 +300,10 @@ ParticlesShader* Engine::getParticlesShader()
 	return particlesShader;
 }
 
+SkinningShader* Engine::getSkinningShader() {
+	return skinningShader;
+}
+
 GUIShader* Engine::getGUIShader()
 {
 	return guiShader;
@@ -390,6 +402,7 @@ void Engine::reset()
 	}
 	partition->reset();
 	object3DVBORenderer->reset();
+	if (skinningShaderEnabled == true) skinningShader->reset();
 }
 
 void Engine::initialize()
@@ -399,6 +412,9 @@ void Engine::initialize()
 
 void Engine::initialize(bool debug)
 {
+	// set current engine
+	currentEngine = this;
+
 	// exit if already initialized like a offscreen engine instance
 	if (initialized == true)
 		return;
@@ -407,33 +423,35 @@ void Engine::initialize(bool debug)
 	#if defined(__APPLE__)
 	{
 		renderer = new EngineGL3Renderer(this);
-		Console::println(string("TDME::Using GL3"));
+		Console::println(string("TDME::Using GL3+/CORE"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
+		skinningShaderEnabled = false;
+		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 	}
-	// Linux/FreeBSD/Win32, GL2 or GL3 via GLEW
-	#elif defined(_WIN32) or ((defined(__FreeBSD__) or defined(__linux__)) and !defined(__arm__) and !defined(__aarch64__)) or defined(__HAIKU__)
+	// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
+	#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
 	{
 		int glMajorVersion;
 		int glMinorVersion;
 		glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
 		glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
 		if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
-			Console::println(string("TDME::Using GL3(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+			Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 			renderer = new EngineGL3Renderer(this);
 		} else {
 			Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 			renderer = new EngineGL2Renderer(this);
 		}
+		skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		ShadowMapping::setShadowMapSize(2048, 2048);
+		animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 	}
 	// GLES2 on Linux
-	#elif (defined(__linux__) or defined(__FreeBSD__)) and (defined(__arm__) or defined(__aarch64__))
+	#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && (defined(__arm__) || defined(__aarch64__))
 	{
 		renderer = new EngineGLES2Renderer(this);
 		Console::println(string("TDME::Using GLES2"));
@@ -446,6 +464,7 @@ void Engine::initialize(bool debug)
 			shadowMappingEnabled = false;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
+		skinningShaderEnabled = false;
 	}
 	#else
 		Console::println("Engine::initialize(): unsupported GL!");
@@ -521,6 +540,15 @@ void Engine::initialize(bool debug)
 		Console::println(string("TDME::Not using shadow mapping"));
 	}
 
+	// initialize skinning shader
+	if (skinningShaderEnabled == true) {
+		Console::println(string("TDME::Using skinning compute shader"));
+		skinningShader = new SkinningShader(renderer);
+		skinningShader->initialize();
+	} else {
+		Console::println(string("TDME::Not using skinning compute shader"));
+	}
+
 	// check if initialized
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
@@ -534,6 +562,9 @@ void Engine::initialize(bool debug)
 
 void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 {
+	// set current engine
+	currentEngine = this;
+
 	// update our width and height
 	this->width = width;
 	this->height = height;
@@ -586,6 +617,7 @@ void Engine::computeTransformations()
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
 	{ \
 		if ((object = dynamic_cast< Object3D* >(_entity)) != nullptr) { \
+			object->preRender(); \
 			object->computeTransformations(); \
 			visibleObjects.push_back(object); \
 		} else \
@@ -594,11 +626,13 @@ void Engine::computeTransformations()
 			if (object != nullptr) { \
 				visibleLODObjects.push_back(lodObject); \
 				visibleObjects.push_back(object); \
+				object->preRender(); \
 				object->computeTransformations(); \
 			} \
 		} else \
 		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(_entity)) != nullptr) { \
 			for (auto object: *opse->getEnabledObjects()) { \
+				object->preRender(); \
 				object->computeTransformations(); \
 				visibleObjects.push_back(object); \
 			} \
@@ -618,7 +652,7 @@ void Engine::computeTransformations()
 
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
-			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
@@ -643,10 +677,15 @@ void Engine::computeTransformations()
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);
-			for (auto orgObject: org->getObjects()) COMPUTE_ENTITY_TRANSFORMATIONS(orgObject);
+			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
+	}
+
+	// TODO: improve met
+	if (skinningShaderEnabled == true) {
+		skinningShader->unUseProgram();
 	}
 
 	//
@@ -655,6 +694,9 @@ void Engine::computeTransformations()
 
 void Engine::display()
 {
+	// set current engine
+	currentEngine = this;
+
 	// do pre rendering steps
 	if (renderingInitiated == false) initRendering();
 	if (renderingComputedTransformations == false) computeTransformations();
@@ -691,11 +733,6 @@ void Engine::display()
 	// use lighting shader
 	if (lightingShader != nullptr) {
 		lightingShader->useProgram();
-	}
-
-	// update lights
-	for (auto j = 0; j < lights.size(); j++) {
-		lights[j].update();
 	}
 
 	// render objects
@@ -945,6 +982,9 @@ void Engine::dispose()
 	if (instance == this) {
 		guiRenderer->dispose();
 	}
+
+	// set current engine
+	if (currentEngine == this) currentEngine = nullptr;
 }
 
 void Engine::initGUIMode()
@@ -984,8 +1024,4 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 
 	//
 	return true;
-}
-
-vector<Object3DRenderGroup*>& Engine::getVisibleObjectRenderGroups() {
-	return visibleObjectRenderGroups;
 }

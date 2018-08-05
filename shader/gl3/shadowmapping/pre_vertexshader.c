@@ -8,16 +8,39 @@ layout (location = 2) in vec2 inTextureUV;
 layout (location = 6) in mat4 inModelMatrix;
 
 // uniforms
-uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 textureMatrix;
 
-// will be passed to fragment shader
-out vec2 vsFragTextureUV;
+{$DEFINITIONS}
 
-void main(){
-	// pass texture uv to fragment shader
-	vsFragTextureUV = inTextureUV;
+#if defined(HAVE_GEOMETRY_SHADER) == false
+	// will be passed to fragement shader
+	out vec2 gsFragTextureUV;
+	out mat4 gsModelMatrix;
 
-	// position
-	gl_Position = (projectionMatrix * cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
+	#define vsFragTextureUV inTextureUV
+	#define vsModelMatrix inModelMatrix
+
+	#define GS_IN_ARRAY_AT(array, index) array
+
+#else
+	// will be passed to geometry shader
+	out vec2 vsFragTextureUV;
+	out mat4 vsModelMatrix;
+#endif
+
+{$FUNCTIONS}
+
+void main() {
+	#if defined(HAVE_GEOMETRY_SHADER)
+		// pass to geometry shader
+		vsFragTextureUV = inTextureUV;
+		vsModelMatrix = inModelMatrix;
+		// position
+		gl_Position = vec4(inVertex, 1.0);
+	#else
+		// compute vertex and pass to fragment shader
+		computeVertex(vec4(inVertex, 1.0), -1, mat4(1.0));
+	#endif
 }

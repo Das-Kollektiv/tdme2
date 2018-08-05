@@ -9,6 +9,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
+#include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
 
@@ -18,6 +19,7 @@ using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::math::Matrix2D3x3;
 
 /** 
  * TDME Object 3D
@@ -142,46 +144,27 @@ public:
 	}
 
 	/** 
-	 * Bind frame buffer color texture to this object
-	 * @param group id
-	 * @param faces entity name or null if texture should be bound to all faces entities
-	 * @param frame buffer
-	 */
-	virtual void bindDiffuseTexture(FrameBuffer* frameBuffer);
-
-	/** 
-	 * Bind frame buffer color texture to a group of this object
-	 * @param group id
-	 * @param faces entity name or null if texture should be bound to all faces entities
-	 * @param frame buffer
-	 */
-	virtual void bindDiffuseTexture(const string& groupId, FrameBuffer* frameBuffer);
-
-	/** 
 	 * Bind frame buffer color texture to a group and faces entity of this object
-	 * @param group id
-	 * @param faces entity id
 	 * @param frame buffer
+	 * @param group id or empty string for all
+	 * @param faces entity id or empty string for all
 	 */
-	virtual void bindDiffuseTexture(const string& groupId, const string& facesEntityId, FrameBuffer* frameBuffer);
-
-	/** 
-	 * Unbind dynamic texture of this object
-	 */
-	virtual void unbindDiffuseTexture();
-
-	/** 
-	 * Unbind dynamic texture to a group of this object
-	 * @param group id
-	 */
-	virtual void unbindDiffuseTexture(const string& groupId);
+	virtual void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId = string(), const string& facesEntityId = string());
 
 	/** 
 	 * Unbind dynamic texture to a group and faces entity of this object
-	 * @param group id
-	 * @param faces entity id
+	 * @param group id or empty string for all
+	 * @param faces entity id orempty string for all
 	 */
-	virtual void unbindDiffuseTexture(const string& groupId, const string& facesEntityId);
+	virtual void unbindDiffuseTexture(const string& groupId = string(), const string& facesEntityId = string());
+
+	/**
+	 * Set texture matrix
+	 * @param texture matrix
+	 * @param group id or empty string for all
+	 * @param faces entity id or empty string for all
+	 */
+	virtual void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId = string(), const string& facesEntityId = string());
 
 	// overriden methods
 	void initialize() override;

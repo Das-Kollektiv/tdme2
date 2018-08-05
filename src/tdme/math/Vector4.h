@@ -77,7 +77,7 @@ public:
 		return *this;
 	}
 
-	/** 
+	/**
 	 * @return x
 	 */
 	inline float getX() const {

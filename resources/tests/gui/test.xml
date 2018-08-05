@@ -13,6 +13,10 @@
 				<tab id="tab4" text="Dropdown" />
 				<tab id="tab5" text="Input" />
 				<tab id="tab6" text="Scrollarea" />
+				<tab id="tab7" text="Sliders + Knob" />
+				<tab id="tab8" text="scale9 I" />
+				<tab id="tab9" text="scale9 II" />
+				<tab id="tab10" text="Template" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
@@ -146,7 +150,16 @@
 						<space height="*" />
 						<button id="test_text_button2" name="button2" text="Test manipulating GUI" />
 						<space height="*" />
-						<button id="test_text_button3" name="button3" text="Disabled Button" disabled="true "/>
+						<button id="test_text_button3" name="button3" text="Disabled Button" disabled="true"/>
+						<space height="*" />
+						<image-button
+							id="image-button"
+							name="image-button"
+							src-normal="resources/tests/gui/images/button_normal.png"
+							src-over="resources/tests/gui/images/button_mouseover.png"
+							src-clicked="resources/tests/gui/images/button_click.png"
+							src-disabled="resources/tests/gui/images/button_normal.png"
+						/>
 						<space height="*" />
 					</layout>
 				</tab-content>
@@ -230,6 +243,44 @@
 							<text font="resources/gui/fonts/Foo_20.fnt" text="END" color="#000000" />
 						</layout>
 					</scrollarea>
+				</tab-content>
+				<tab-content tab-id="tab7" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
+						<progress-bar width="300" name="progressbar-test" id="progressbar-test" value="0.5" />
+						<slider-horizontal name="sliderh-test" id="sliderh-test" value="0.5" />
+						<space width="50" />
+						<slider-vertical name="sliderv-test" id="sliderv-test" value="0.5" />
+						<space width="50" />
+						<knob name="knob-test" id="knob-test" value="0.5" />
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab8" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
+						<image 
+							width="100%" 
+							height="100%" 
+							src="resources/tests/gui/images/scale9GridTest.png" 
+							horizontal-align="center" 
+							vertical-align="center"
+							scale9="125" 
+						/>
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab9" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
+						<image 
+							width="80%" 
+							height="25" 
+							src="resources/tests/gui/images/hr.png" 
+							horizontal-align="center" 
+							vertical-align="center"
+							scale9-left="500"
+							scale9-right="500"
+						/>
+					</layout>
+				</tab-content>
+				<tab-content tab-id="tab10" vertical-align="top">
+					<template src="resources/tests/gui/template.xml" my-text="Hello this is a template parameter" />
 				</tab-content>
 			</tabs-content>
 		</tabs>

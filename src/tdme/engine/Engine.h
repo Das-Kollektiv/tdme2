@@ -17,6 +17,7 @@
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
+#include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
@@ -48,6 +49,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
+using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::gui::GUI;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
@@ -78,15 +80,21 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 	friend class tdme::engine::subsystems::rendering::Object3DVBORenderer;
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
+	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;
+	friend class tdme::engine::subsystems::skinning::SkinningShader;
 	friend class tdme::gui::GUI;
 	friend class tdme::gui::nodes::GUIImageNode;
+	friend class tdme::gui::nodes::GUINode;
 	friend class tdme::gui::renderer::GUIRenderer;
 	friend class tdme::gui::renderer::GUIFont;
 
 public:
-	enum AnimationProcessingTarget {CPU, CPU_NORENDERING};
+	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
+
+protected:
+	static Engine* currentEngine;
 
 private:
 	static Engine* instance;
@@ -103,6 +111,7 @@ private:
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
 	static ParticlesShader* particlesShader;
+	static SkinningShader* skinningShader;
 	static GUIShader* guiShader;
 
 	int32_t width {  };
@@ -130,6 +139,7 @@ private:
 	Object3DVBORenderer* object3DVBORenderer {  };
 
 	bool shadowMappingEnabled {  };
+	bool skinningShaderEnabled {  };
 	bool renderingInitiated {  };
 	bool renderingComputedTransformations {  };
 	Matrix4x4 modelViewMatrix {  };
@@ -140,17 +150,17 @@ private:
 	/**
 	 * @return texture manager
 	 */
-	TextureManager* getTextureManager();
+	static TextureManager* getTextureManager();
 
 	/**
 	 * @return vertex buffer object manager
 	 */
-	VBOManager* getVBOManager();
+	static VBOManager* getVBOManager();
 
 	/**
 	 * @return mesh manager
 	 */
-	MeshManager* getMeshManager();
+	static MeshManager* getMeshManager();
 
 	/**
 	 * @return shadow mapping shader
@@ -171,6 +181,11 @@ private:
 	 * @return particles shader
 	 */
 	static ParticlesShader* getParticlesShader();
+
+	/**
+	 * @return skinning shader
+	 */
+	static SkinningShader* getSkinningShader();
 
 	/**
 	 * @return GUI shader
@@ -407,11 +422,6 @@ public:
 	 * @return success
 	 */
 	bool makeScreenshot(const string& pathName, const string& fileName);
-
-	/**
-	 * @return visible object render groups
-	 */
-	vector<Object3DRenderGroup*>& getVisibleObjectRenderGroups();
 
 	/**
 	 * Destructor

@@ -75,6 +75,7 @@ attribute vec2 inTextureUV;
 uniform mat4 mvpMatrix;
 uniform mat4 mvMatrix;
 uniform mat4 normalMatrix;
+uniform mat3 textureMatrix;
 
 uniform vec4 sceneColor;
 uniform vec4 effectColorMul;
@@ -132,7 +133,7 @@ void computeLights(in vec3 normal, in vec3 position) {
  
 void main(void) {
 	// pass texture uv to fragment shader
-	vsFragTextureUV = inTextureUV;
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 
 	//
 	vsFragColor = vec4(0.0, 0.0, 0.0, 0.0);

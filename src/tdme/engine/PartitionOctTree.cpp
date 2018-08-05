@@ -15,7 +15,6 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/VectorIteratorMultiple.h>
-#include <tdme/utils/Pool.h>
 #include <tdme/utils/Console.h>
 
 using std::list;
@@ -35,7 +34,6 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 using tdme::utils::VectorIteratorMultiple;
-using tdme::utils::Pool;
 using tdme::utils::Console;
 
 constexpr float PartitionOctTree::PARTITION_SIZE_MIN;
@@ -145,7 +143,7 @@ VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolu
 	entityIterator.clear();
 	auto lookUps = 0;
 	for (auto& subNode: treeRoot.subNodes) {
-		lookUps += doPartitionTreeLookUpNearEntities(&subNode, cbv->getBoundingBox());
+		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &cbv->getBoundingBoxTransformed());
 	}
 	return &entityIterator;
 }

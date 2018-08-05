@@ -1,12 +1,15 @@
-
 #pragma once
 
 #include <map>
 #include <string>
 
+#include <ext/reactphysics3d/src/mathematics/Vector3.h>
+
 #include <tdme/tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -33,6 +36,47 @@ private:
 	static constexpr int32_t SPHERE_SEGMENTS_Y { 20 };
 	static constexpr int32_t CAPSULE_SEGMENTS_X { 20 };
 	static constexpr int32_t CAPSULE_SEGMENTS_Y { 20 };
+
+	/**
+	 * Converts a TDME2 vector to ReactPhysics3D vector
+	 * @param tdme vector
+	 * @returns reactphysics3d vector
+	 */
+	inline static reactphysics3d::Vector3 toRP3DVector3(const Vector3& vector) {
+		return reactphysics3d::Vector3(vector.getX(), vector.getY(), vector.getZ());
+	}
+
+	/**
+	 * Transforms a given ReactPhysics3D vector with bounding volume transform
+	 * @param bounding volume
+	 * @param vector
+	 * @return transformed vector
+	 */
+	inline static Vector3 transformVector3(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& vector) {
+		// TODO: take bounding volume scale into account
+		//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
+		auto vectorTransformed = boundingVolume->collisionShapeTransform * vector;
+		return Vector3(vectorTransformed.x, vectorTransformed.y, vectorTransformed.z);
+	}
+
+	/**
+	 * Transforms a given ReactPhysics3D vector with bounding volume transform
+	 * @param bounding volume
+	 * @param vector
+	 * @return transformed vector
+	 */
+	inline static Vector3 transformVector3Normal(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& normal) {
+		// TODO: take bounding volume scale into account
+		//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
+		auto normalTransformed = boundingVolume->collisionShapeTransform.getOrientation() * normal;
+		return Vector3(normalTransformed.x, normalTransformed.y, normalTransformed.z);
+	}
+
+	/**
+	 * Set up convex mesh material
+	 * @param groups
+	 */
+	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material);
 
 public:
 	/** 
@@ -79,8 +123,22 @@ public:
 	 */
 	static Model* createConvexMeshModel(ConvexMesh* mesh, const string& id);
 
+	/**
+	 * Set up a convex mesh model
+	 * @param model
+	 */
+	static void setupConvexMeshModel(Model* model);
+
 public:
 	/** 
+	 * Creates a model from bounding volume
+	 * @param bounding volume
+	 * @param id
+	 * @return model
+	 */
+	static Model* createModel(BoundingBox* boundingVolume, const string& id);
+
+	/**
 	 * Creates a model from bounding volume
 	 * @param bounding box
 	 * @param id

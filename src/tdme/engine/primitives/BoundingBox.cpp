@@ -2,30 +2,14 @@
 
 #include <vector>
 
-#include <tdme/math/Math.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/physics/CollisionDetection.h>
-#include <tdme/engine/primitives/BoundingVolume.h>
-#include <tdme/engine/primitives/Capsule.h>
-#include <tdme/engine/primitives/ConvexMesh.h>
-#include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/primitives/Sphere.h>
-#include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
 using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
-using tdme::math::Math;
 using tdme::engine::Transformations;
-using tdme::engine::physics::CollisionDetection;
-using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::primitives::Capsule;
-using tdme::engine::primitives::ConvexMesh;
-using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::Sphere;
-using tdme::engine::primitives::Triangle;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -50,51 +34,37 @@ const array<array<int32_t,3>,12> BoundingBox::facesVerticesIndexes =
 
 BoundingBox::BoundingBox() 
 {
-	min.set(0.0f, 0.0f, 0.0f);
-	max.set(0.0f, 0.0f, 0.0f);
 	vertices.resize(8);
 	update();
 }
 
 BoundingBox::BoundingBox(BoundingBox* boundingBox) 
 {
+	vertices.resize(8);
 	this->min.set(boundingBox->min);
 	this->max.set(boundingBox->max);
-	vertices.resize(8);
 	update();
 }
 
 BoundingBox::BoundingBox(const Vector3& min, const Vector3& max)
 {
-
+	vertices.resize(8);
 	this->min.set(min);
 	this->max.set(max);
-	vertices.resize(8);
 	update();
 }
 
-void BoundingBox::fromBoundingVolume(BoundingVolume* original)
+void BoundingBox::fromBoundingVolume(BoundingBox* boundingBox)
 {
-	// check for same type of original
-	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {
-		return;
-	}
-	auto boundingBox = dynamic_cast< BoundingBox* >(original);
-	min.set(boundingBox->min);
-	max.set(boundingBox->max);
-	center.set(boundingBox->center);
-	for (auto i = 0; i < vertices.size(); i++) {
-		vertices[i].set(boundingBox->vertices[i]);
-	}
+	min = boundingBox->min;
+	max = boundingBox->max;
+	vertices = boundingBox->vertices;
+	center = boundingBox->center;
+	dimensions = boundingBox->dimensions;
 }
 
-void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations)
+void BoundingBox::fromBoundingVolumeWithTransformations(BoundingBox* boundingBox, const Transformations& transformations)
 {
-	// check for same type of original
-	if (dynamic_cast< BoundingBox* >(original) != nullptr == false) {
-		return;
-	}
-	auto boundingBox = dynamic_cast< BoundingBox* >(original);
 	// apply transformations from original vertices to local vertices
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	auto _vertices = boundingBox->getVertices();
@@ -114,7 +84,6 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 		if (vertexXYZ[0] > maxX) maxX = vertexXYZ[0];
 		if (vertexXYZ[1] > maxY) maxY = vertexXYZ[1];
 		if (vertexXYZ[2] > maxZ) maxZ = vertexXYZ[2];
-
 	}
 	// set up new aabb
 	min.set(minX, minY, minZ);
@@ -123,63 +92,12 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingVolume* original
 	update();
 }
 
-void BoundingBox::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const
+BoundingBox* BoundingBox::clone() const
 {
-	auto& pointXYZ = point.getArray();
-	auto& minXYZ = min.getArray();
-	auto& maxXYZ = max.getArray();
-	auto closestX = pointXYZ[0] < minXYZ[0] ? minXYZ[0] : pointXYZ[0] > maxXYZ[0] ? maxXYZ[0] : pointXYZ[0];
-	auto closestY = pointXYZ[1] < minXYZ[1] ? minXYZ[1] : pointXYZ[1] > maxXYZ[1] ? maxXYZ[1] : pointXYZ[1];
-	auto closestZ = pointXYZ[2] < minXYZ[2] ? minXYZ[2] : pointXYZ[2] > maxXYZ[2] ? maxXYZ[2] : pointXYZ[2];
-	closestPoint.set(closestX, closestY, closestZ);
+	return new BoundingBox(min, max);
 }
 
-bool BoundingBox::containsPoint(const Vector3& point) const
-{
-	auto& pointXYZ = point.getArray();
-	auto& minXYZ = min.getArray();
-	auto& maxXYZ = max.getArray();
-	for (auto i = 0; i < 3; i++) {
-		if (pointXYZ[i] < minXYZ[i]) return false;
-		if (pointXYZ[i] > maxXYZ[i]) return false;
-	}
-	return true;
-}
-
-bool BoundingBox::doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision)
-{
-	if (dynamic_cast< BoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< BoundingBox* >(bv2), movement, collision);
-	} else if (dynamic_cast< OrientedBoundingBox* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< OrientedBoundingBox* >(bv2), movement, collision);
-	} else if (dynamic_cast< Sphere* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Sphere* >(bv2), movement, collision);
-	} else if (dynamic_cast< Capsule* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Capsule* >(bv2), movement, collision);
-	} else if (dynamic_cast< Triangle* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< Triangle* >(bv2), movement, collision);
-	} else if (dynamic_cast< ConvexMesh* >(bv2) != nullptr) {
-		return CollisionDetection::doCollide(this, dynamic_cast< ConvexMesh* >(bv2), movement, collision);
-	} else {
-		return false;
-	}
-}
-
-float BoundingBox::computeDimensionOnAxis(const Vector3& axis) const
-{
-	auto vertexOnAxis = Vector3::computeDotProduct(vertices[0], axis);
-	auto min = vertexOnAxis;
-	auto max = vertexOnAxis;
-	for (auto i = 1; i < vertices.size(); i++) {
-		vertexOnAxis = Vector3::computeDotProduct(vertices[i], axis);
-		if (vertexOnAxis < min) min = vertexOnAxis;
-		if (vertexOnAxis > max) max = vertexOnAxis;
-	}
-	return Math::abs(max - min);
-}
-
-void BoundingBox::update()
-{
+void BoundingBox::update() {
 	auto& minXYZ = min.getArray();
 	auto& maxXYZ = max.getArray();
 	// near, left, top
@@ -199,13 +117,7 @@ void BoundingBox::update()
 	// far, left, bottom
 	vertices[7].set(minXYZ[0], maxXYZ[1], maxXYZ[2]);
 	center.set(min).add(max).scale(0.5f);
-	Vector3 halfExtension;
-	halfExtension.set(max).sub(min).scale(0.5f);
-}
-
-BoundingVolume* BoundingBox::clone() const
-{
-	return new BoundingBox(min, max);
+	dimensions.set(max).sub(min);
 }
 
 

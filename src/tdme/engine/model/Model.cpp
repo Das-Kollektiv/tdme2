@@ -179,6 +179,7 @@ Matrix4x4& Model::getImportTransformationsMatrix()
 
 BoundingBox* Model::getBoundingBox()
 {
+	// TODO: return const bb
 	if (boundingBox == nullptr) {
 		boundingBox = ModelUtilities::createBoundingBox(this);
 	}
@@ -195,27 +196,31 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matr
 		if (animation != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
 			transformationsMatrix.set((*animationMatrices)[frame % animationMatrices->size()]);
-			transformationsMatrix.multiply(group->getTransformationsMatrix());
 		} else {
 			// no animation matrix, set up local transformation matrix up as group matrix
 			transformationsMatrix.set(group->getTransformationsMatrix());
 		}
+
 		// apply parent transformation matrix
 		transformationsMatrix.multiply(parentTransformationsMatrix);
+
 		// return matrix if group matches
 		if (group->getId() == groupId) return true;
 
 		// calculate sub groups
 		auto subGroups = group->getSubGroups();
 		if (subGroups->size() > 0) {
-			Matrix4x4 parentTransformationsMatrix = transformationsMatrix;
-			auto haveTransformationsMatrix = computeTransformationsMatrix(subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
+			auto haveTransformationsMatrix = computeTransformationsMatrix(subGroups, transformationsMatrix.clone(), frame, groupId, transformationsMatrix);
 			if (haveTransformationsMatrix == true) return true;
 		}
 	}
 
 	//
 	return false;
+}
+
+bool Model::computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame) {
+	return computeTransformationsMatrix(&subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
 }
 
 bool Model::computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame) {

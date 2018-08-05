@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -19,6 +18,7 @@ using tdme::utils::ByteBuffer;
 class tdme::engine::fileio::textures::Texture
 {
 public:
+
 	/**
 	 * Public constructor
 	 * @param id
@@ -29,15 +29,23 @@ public:
 	 * @param texture height
 	 * @param texture data
 	 */
-	Texture(
+	inline Texture(
 		const string& id,
 		int32_t depth,
-		int32_t width,
-		int32_t height,
-		int32_t textureWidth,
-		int32_t textureHeight,
-		ByteBuffer* textureData
-	);
+		int32_t width, int32_t height,
+		int32_t textureWidth, int32_t textureHeight,
+		ByteBuffer* textureData)
+		:
+		id(id),
+		depth(depth),
+		width(width),
+		height(height),
+		textureWidth(textureWidth),
+		textureHeight(textureHeight),
+		textureData(textureData),
+		useMipMap(true) {
+		//
+	}
 
 	/**
 	 * Destructor
@@ -47,37 +55,66 @@ public:
 	/** 
 	 * @return id
 	 */
-	const string& getId();
+	inline const string& getId()  {
+		return id;
+	}
 
 	/** 
 	 * @return depth in bits per pixel
 	 */
-	int32_t getDepth();
+	inline int32_t getDepth() {
+		return depth;
+	}
 
 	/** 
 	 * @return image width
 	 */
-	int32_t getWidth();
+	inline int32_t getWidth() {
+		return width;
+	}
 
 	/** 
 	 * @return image height
 	 */
-	int32_t getHeight();
+	inline int32_t getHeight() {
+		return height;
+	}
 
 	/** 
 	 * @return texture height
 	 */
-	int32_t getTextureHeight();
+	inline int32_t getTextureHeight() {
+		return textureHeight;
+	}
 
 	/** 
 	 * @return texture width
 	 */
-	int32_t getTextureWidth();
+	inline int32_t getTextureWidth() {
+		return textureWidth;
+	}
 
 	/** 
 	 * @return texture data wrapped in a byte buffer
 	 */
-	ByteBuffer* getTextureData();
+	inline ByteBuffer* getTextureData() {
+		return textureData;
+	}
+
+	/**
+	 * @return use mip map
+	 */
+	inline bool isUseMipMap() {
+		return useMipMap;
+	}
+
+	/**
+	 * Set if to use mip map
+	 * @param mip map enabled
+	 */
+	inline void setUseMipMap(bool useMipMap) {
+		this->useMipMap = useMipMap;
+	}
 
 private:
 	string id;
@@ -87,4 +124,5 @@ private:
 	int32_t textureHeight;
 	int32_t textureWidth;
 	ByteBuffer* textureData;
+	bool useMipMap;
 };

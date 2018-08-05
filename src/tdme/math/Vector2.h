@@ -17,6 +17,8 @@ using tdme::math::Math;
  */
 class tdme::math::Vector2 final
 {
+	friend class Matrix2D3x3;
+
 private:
 	array<float, 2> data {  };
 
@@ -161,6 +163,14 @@ public:
 	 */
 	inline array<float, 2>& getArray() const {
 		return (array<float, 2>&)data;
+	}
+
+	/**
+	 * Clones the vector
+	 * @return new cloned vector
+	 */
+	inline Vector2 clone() const {
+		return Vector2(data);
 	}
 
 	/**

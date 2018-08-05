@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -55,6 +54,19 @@ private:
 	ShadowMapping_RunState runState {  };
 
 public:
+	/**
+	 * @return shadow map width
+	 */
+	inline static int32_t getShadowMapWidth() {
+		return shadowMapWidth;
+	}
+
+	/**
+	 * @return shadow map width
+	 */
+	inline static int32_t getShadowMapHeight() {
+		return shadowMapHeight;
+	}
 
 	/** 
 	 * Set shadow map size
@@ -121,10 +133,28 @@ public:
 	void updateMatrices(GLRenderer* renderer);
 
 	/**
+	 * Update texture matrix
+	 */
+	void updateTextureMatrix(GLRenderer* renderer);
+
+	/**
 	 * Update material
 	 * @param renderer
 	 */
 	void updateMaterial(GLRenderer* renderer);
+
+	/**
+	 * Set shader
+	 * @param shader id
+	 */
+	void setShader(const string& id);
+
+	/**
+	 * Upload light
+	 * @param renderer
+	 * @param light id
+	 */
+	void updateLight(GLRenderer* renderer, int32_t lightId);
 
 	/**
 	 * Bind texture

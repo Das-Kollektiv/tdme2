@@ -11,37 +11,47 @@ layout (location = 2) in vec2 inTextureUV;
 layout (location = 6) in mat4 inModelMatrix;
 
 // uniforms
+// uniforms
 uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
 uniform mat4 depthBiasMVPMatrix;
 uniform vec3 lightPosition;
 uniform vec3 lightDirection;
+uniform mat3 textureMatrix;
 
-// will be passed to fragment shader
-out vec2 vsFragTextureUV;
-out vec4 vsShadowCoord;
-out float vsShadowIntensity;
-out vec3 vsPosition;
+{$DEFINITIONS}
+
+#if defined(HAVE_GEOMETRY_SHADER) == false
+	// will be passed to fragment shader
+	out vec2 gsFragTextureUV;
+	out vec4 gsShadowCoord;
+	out float gsShadowIntensity;
+	out vec3 gsPosition;
+
+	#define vsNormal inNormal
+	#define vsFragTextureUV inTextureUV
+	#define vsModelMatrix inModelMatrix
+
+	#define GS_IN_ARRAY_AT(array, index) array
+
+#else
+	// will be passed to geometry shader
+	out vec2 vsFragTextureUV;
+	out vec3 vsNormal;
+	out mat4 vsModelMatrix;
+#endif
+
+{$FUNCTIONS}
 
 void main() {
-	// pass texture uv to fragment shader
-	vsFragTextureUV = inTextureUV;
-
-	// shadow coord
-	vsShadowCoord = (depthBiasMVPMatrix * inModelMatrix) * vec4(inVertex, 1.0);
-	vsShadowCoord = vsShadowCoord / vsShadowCoord.w;
-
-	// normal matrix
-	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix))));
-
-	// shadow intensity 
-	vec3 normal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
-	vsShadowIntensity = clamp(abs(dot(normalize(lightDirection.xyz), normal)), 0.0, 1.0);
-
-	// eye coordinate position of vertex, needed in various calculations
-	vec4 vsPosition4 = (cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
-	vsPosition = vsPosition4.xyz / vsPosition4.w;
-
-	// compute gl position
-	gl_Position = (projectionMatrix * cameraMatrix * inModelMatrix) * vec4(inVertex, 1.0);
+	#if defined(HAVE_GEOMETRY_SHADER)
+		// pass to geometry shader
+		vsFragTextureUV = inTextureUV;
+		vsNormal = inNormal;
+		vsModelMatrix = inModelMatrix;
+		gl_Position = vec4(inVertex, 1.0);
+	#else
+		// compute vertex and pass to fragment shader
+		computeVertex(vec4(inVertex, 1.0), -1, mat4(1.0));
+	#endif
 }

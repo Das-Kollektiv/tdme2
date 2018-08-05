@@ -10,7 +10,8 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Vector3;
 
 /** 
- * Line segment utilities
+ * Line segment
+ * This class should be used on a per thread basis
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -76,7 +77,6 @@ public:
 
 	/** 
 	 * Does line segment collides with triangle
-	 * 	TODO: I guess its safe to change API to use tdme::engine::primitives::Triangle here
 	 * @param p1 triangle point 1
 	 * @param p2 triangle point 2
 	 * @param p3 triangle point 3

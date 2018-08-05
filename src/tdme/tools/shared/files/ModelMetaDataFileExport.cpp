@@ -32,6 +32,8 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_SphereParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Type.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
+#include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/StringUtils.h>
@@ -72,6 +74,8 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleS
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
+using tdme::tools::shared::model::LevelEditorEntityPhysics;
+using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::StringUtils;
@@ -482,6 +486,18 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		}
 	}
 	jEntityRoot["bvs"] = jBoundingVolumes;
+	auto physics = entity->getPhysics();
+	if (physics != nullptr) {
+		ext::jsonbox::Object jPhysics;
+		jPhysics["type"] = physics->getType()->getName();
+		jPhysics["mass"] = static_cast< double >(physics->getMass());
+		jPhysics["restitution"] = static_cast< double >(physics->getRestitution());
+		jPhysics["friction"] = static_cast< double >(physics->getFriction());
+		jPhysics["itx"] = static_cast< double >(physics->getInertiaTensor().getX());
+		jPhysics["ity"] = static_cast< double >(physics->getInertiaTensor().getY());
+		jPhysics["itz"] = static_cast< double >(physics->getInertiaTensor().getZ());
+		jEntityRoot["p"] = jPhysics;
+	}
 	ext::jsonbox::Array jModelProperties;
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
 		PropertyModelClass* modelProperty = entity->getPropertyByIndex(i);
@@ -493,6 +509,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	jEntityRoot["properties"] = jModelProperties;
 	jEntityRoot["ds"] = entity->isDynamicShadowing();
 	jEntityRoot["rg"] = entity->isRenderGroups();
-	jEntityRoot["aa"] = entity->isApplyAnimations();
+	jEntityRoot["s"] = entity->getShader();
 	return jEntityRoot;
 }

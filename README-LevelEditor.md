@@ -18,8 +18,7 @@ TDMELevelEditor
         - level editor
             - setting up a grid where to place objects on
             - load, save maps, showing level dimension
-            - import maps from model files, which
-                - takes first level model groups as objects by converting them to .TM files, ...
+            - import maps from model files like FBX, DAE or TM
             - setting up map properties
                 - key, value map for what ever reason
             - objects

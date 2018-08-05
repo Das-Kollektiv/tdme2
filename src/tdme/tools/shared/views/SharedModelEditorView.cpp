@@ -14,7 +14,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/controller/EntityBoundingVolumeSubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -52,7 +52,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::controller::EntityBoundingVolumeSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -214,6 +214,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setEntityData(entity->getName(), entity->getDescription());
 		modelEditorScreenController->setPivot(entity->getPivot());
 		entityBoundingVolumeView->setBoundingVolumes(entity);
+		entityBoundingVolumeView->setPhysics(entity);
 		entityBoundingVolumeView->setTerrainMesh(entity);
 		entityBoundingVolumeView->setConvexMeshes(entity);
 		modelEditorScreenController->setRendering(entity);
@@ -226,6 +227,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetEntityData();
 		modelEditorScreenController->unsetPivot();
 		entityBoundingVolumeView->unsetBoundingVolumes();
+		entityBoundingVolumeView->unsetPhysics();
 		entityBoundingVolumeView->unsetTerrainMesh();
 		entityBoundingVolumeView->unsetConvexMeshes();
 		modelEditorScreenController->unsetRendering();
@@ -260,7 +262,7 @@ void SharedModelEditorView::initialize()
 		modelEditorScreenController = new ModelEditorScreenController(this);
 		modelEditorScreenController->initialize();
 		entityDisplayView = modelEditorScreenController->getEntityDisplaySubScreenController()->getView();
-		entityBoundingVolumeView = modelEditorScreenController->getEntityBoundingVolumeSubScreenController()->getView();
+		entityBoundingVolumeView = modelEditorScreenController->getEntityPhysicsSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
 		modelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {

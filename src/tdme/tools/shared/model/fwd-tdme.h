@@ -21,6 +21,8 @@ namespace model {
 				class LevelEditorEntityParticleSystem_PointParticleSystem;
 				class LevelEditorEntityParticleSystem_SphereParticleEmitter;
 				class LevelEditorEntityParticleSystem_Type;
+				class LevelEditorEntityPhysics;
+				class LevelEditorEntityPhysics_BodyType;
 				class LevelEditorEntity_EntityType;
 				class LevelEditorLevel;
 				class LevelEditorLight;

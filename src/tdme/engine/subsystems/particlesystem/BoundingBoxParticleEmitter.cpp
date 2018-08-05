@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 
 #include <tdme/math/Math.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -9,6 +10,7 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
+using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -74,5 +76,29 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 
 void BoundingBoxParticleEmitter::fromTransformations(const Transformations& transformations)
 {
-	obbTransformed->fromBoundingVolumeWithTransformations(obb, transformations);
+	Vector3 center;
+	array<Vector3, 3> axes;
+	array<Vector3, 3> axesTransformed;
+	Vector3 halfExtension;
+	auto& transformationsMatrix = transformations.getTransformationsMatrix();
+	// apply rotation, scale, translation
+	transformationsMatrix.multiply(obb->getCenter(), center);
+	// apply transformations rotation + scale to axis
+	transformationsMatrix.multiplyNoTranslation((*obb->getAxes())[0], axesTransformed[0]);
+	transformationsMatrix.multiplyNoTranslation((*obb->getAxes())[1], axesTransformed[1]);
+	transformationsMatrix.multiplyNoTranslation((*obb->getAxes())[2], axesTransformed[2]);
+	// set up axes
+	axes[0].set(axesTransformed[0]).normalize();
+	axes[1].set(axesTransformed[1]).normalize();
+	axes[2].set(axesTransformed[2]).normalize();
+	// apply scale to half extension
+	halfExtension.set(obb->getHalfExtension());
+	halfExtension.scale(
+		Vector3(
+			axesTransformed[0].computeLength(),
+			axesTransformed[1].computeLength(),
+			axesTransformed[2].computeLength()
+		)
+	);
+	*obbTransformed = OrientedBoundingBox(center, axes[0], axes[1], axes[2], halfExtension);
 }

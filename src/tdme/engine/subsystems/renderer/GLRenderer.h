@@ -11,6 +11,7 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::array;
@@ -24,6 +25,7 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::GLRenderer_Light;
 using tdme::engine::subsystems::renderer::GLRenderer_Material;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -42,8 +44,12 @@ public:
 	int32_t TEXTUREUNITS_MAX {  };
 	int32_t SHADER_FRAGMENT_SHADER {  };
 	int32_t SHADER_VERTEX_SHADER {  };
-	int32_t DEPTHFUNCTION_LESSEQUAL {  };
+	int32_t SHADER_GEOMETRY_SHADER {  };
+	int32_t SHADER_COMPUTE_SHADER {  };
+	int32_t DEPTHFUNCTION_ALWAYS {  };
 	int32_t DEPTHFUNCTION_EQUAL {  };
+	int32_t DEPTHFUNCTION_LESSEQUAL {  };
+	int32_t DEPTHFUNCTION_GREATEREQUAL {  };
 	int32_t FRAMEBUFFER_DEFAULT {  };
 	int32_t FRONTFACE_CW {  };
 	int32_t FRONTFACE_CCW {  };
@@ -51,6 +57,8 @@ public:
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	GLRenderer_Material material;
 	array<GLRenderer_Light, 8> lights;
+	string shaderId {  };
+	int frame { 0 };
 
 protected:
 	int32_t viewPortX {  };
@@ -62,6 +70,7 @@ protected:
 	Matrix4x4 cameraMatrix {  };
 	Matrix4x4 modelViewMatrix {  };
 	Matrix4x4 viewportMatrix {  };
+	Matrix2D3x3 textureMatrix {  };
 
 public:
 	float pointSize {  };
@@ -74,7 +83,7 @@ public:
 	/** 
 	 * Pre Frame Initialization
 	 */
-	virtual void initializeFrame() = 0;
+	virtual void initializeFrame();
 
 	/** 
 	 * @return renderer version e.g. gl2, gl3 or gles2
@@ -125,6 +134,11 @@ public:
 	virtual bool isUsingShortIndices() = 0;
 
 	/**
+	 * @return If geometry shader is available
+	 */
+	virtual bool isGeometryShaderAvailable() = 0;
+
+	/**
 	 * @return number of texture units
 	 */
 	virtual int32_t getTextureUnits() = 0;
@@ -137,7 +151,7 @@ public:
 	 * @param fileName
 	 * @return shader handle
 	 */
-	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName) = 0;
+	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;
 
 	/** 
 	 * Use shader program
@@ -188,6 +202,13 @@ public:
 	virtual void setProgramUniformFloat(int32_t uniformId, float value) = 0;
 
 	/** 
+	 * Set up a float matrix 3x3 uniform value
+	 * @param uniform id
+	 * @param value
+	 */
+	virtual void setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& value) = 0;
+
+	/**
 	 * Set up a float matrix 4x4 uniform value
 	 * @param uniform id
 	 * @param value
@@ -274,6 +295,11 @@ public:
 	virtual Matrix4x4& getViewportMatrix();
 
 	/** 
+	 * @return texture matrix
+	 */
+	virtual Matrix2D3x3& getTextureMatrix();
+
+	/**
 	 * Update texture matrix for active texture unit event
 	 */
 	virtual void onUpdateTextureMatrix() = 0;
@@ -338,7 +364,7 @@ public:
 	 */
 	virtual void clear(int32_t mask) = 0;
 
-	/** 
+	/**
 	 * Sets up which face will be culled
 	 * @param cull face
 	 */
@@ -462,14 +488,6 @@ public:
 	 * @param data
 	 */
 	virtual void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
-
-	/**
-	 * Uploads buffer data to buffer object
-	 * @param buffer object id
-	 * @param size
-	 * @param data
-	 */
-	virtual void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
 	/** 
 	 * Bind indices buffer object
@@ -738,9 +756,20 @@ public:
 	virtual void setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold);
 
 	/** 
-	 * Update material
+	 * On update material
 	 */
 	virtual void onUpdateMaterial() = 0;
+
+	/**
+	 * Set shader
+	 * @param shader id
+	 */
+	virtual void setShader(const string& id);
+
+	/**
+	 * On update shader
+	 */
+	virtual void onUpdateShader() = 0;
 
 	/** 
 	 * Reads a pixel depth
@@ -759,6 +788,83 @@ public:
 	 * @return byte buffer
 	 */
 	virtual ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
+
+	/**
+	 * Dispatch compute
+	 * @param num groups x
+	 * @param num groups y
+	 * @param num groups z
+	 */
+	virtual void dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) = 0;
+
+	/**
+	 * Memory barrier
+	 */
+	virtual void memoryBarrier() = 0;
+
+	/**
+	 * Upload skinning buffer object
+	 * @param buffer object id
+	 * @param size
+	 * @param data
+	 */
+	virtual void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
+
+	/**
+	 * Upload skinning buffer object
+	 * @param buffer object id
+	 * @param size
+	 * @param data
+	 */
+	virtual void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+
+	/**
+	 * Bind skinning vertices buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVerticesBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning normal buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningNormalsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertex joints buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertex joint indices buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertex joint weights buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning vertices result buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning normals result buffer object
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind skinning matrices result buffer objec
+	 * @param buffer object id
+	 */
+	virtual void bindSkinningMatricesBufferObject(int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Set up renderer for GUI rendering

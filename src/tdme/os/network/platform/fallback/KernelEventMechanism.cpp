@@ -120,6 +120,7 @@ int KernelEventMechanism::doKernelEventMechanism() throw (NIOKEMException) {
 	}
 
 	// compile list of events
+	psd->fdsMutex.lock();
 	psd->events.clear();
 	for (auto fdIt = psd->fds.begin(); fdIt != psd->fds.end(); ++fdIt) {
 		if (FD_ISSET(fdIt->first, &rfds) != 0) {
@@ -137,6 +138,7 @@ int KernelEventMechanism::doKernelEventMechanism() throw (NIOKEMException) {
 			psd->events.push_back(event);
 		}
 	}
+	psd->fdsMutex.unlock();
 
 	//
 	return psd->events.size();

@@ -1,6 +1,9 @@
 /**
  * @version $Id: baf35fe106f82d8bd3b13366cbf9d28daba32aed $
  */
+#if defined(_WIN32) && defined(_MSC_VER)
+	#include <windows.h>
+#endif
 
 #include <math.h>
 
@@ -469,7 +472,11 @@ void NIOUDPServer::sendMessage(const NIOUDPServerClient* client, stringstream* f
 	switch(messageType) {
 		case(MESSAGETYPE_CONNECT):
 		case(MESSAGETYPE_MESSAGE):
-			_messageId = __sync_add_and_fetch(&messageCount, 1);
+			#if defined(_WIN32) && defined(_MSC_VER)
+				_messageId = InterlockedIncrement(&messageCount);
+			#else
+				_messageId = __sync_add_and_fetch(&messageCount, 1);
+			#endif
 			break;
 		case(MESSAGETYPE_ACKNOWLEDGEMENT):
 			_messageId = messageId;
@@ -490,6 +497,10 @@ void NIOUDPServer::processAckReceived(NIOUDPServerClient* client, const uint32_t
 }
 
 const uint32_t NIOUDPServer::allocateClientId() {
-	uint32_t clientId = __sync_add_and_fetch(&clientCount, 1);
+	#if defined(_WIN32) && defined(_MSC_VER)
+		uint32_t clientId = InterlockedIncrement(&clientCount);
+	#else
+		uint32_t clientId = __sync_add_and_fetch(&clientCount, 1);
+	#endif
 	return clientId;
 }

@@ -1,12 +1,18 @@
-
 #pragma once
+
+#include <map>
+#include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
+
+using std::map;
+using std::string;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -14,66 +20,75 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre
+class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre final
 {
 private:
-	GLRenderer* renderer {  };
-	int32_t vertexShaderGlId {  };
-	int32_t fragmentShaderGlId {  };
-	int32_t programGlId {  };
-	int32_t uniformProjectionMatrix { -1 };
-	int32_t uniformCameraMatrix { -1 };
-	int32_t uniformMVPMatrix { -1 };
-	int32_t uniformDiffuseTextureUnit { -1 };
-	int32_t uniformDiffuseTextureAvailable { -1 };
-	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
-	int32_t uniformDiffuseTextureMaskedTransparencyThreshold { -1 };
-	bool initialized {  };
+	map<string, ShadowMappingShaderPreImplementation*> shader;
+	ShadowMappingShaderPreImplementation* implementation { nullptr };
+	bool running { false };
 
 public:
 
 	/** 
 	 * @return if initialized and ready to use
 	 */
-	virtual bool isInitialized();
+	bool isInitialized();
 
 	/** 
 	 * Init shadow mapping
 	 */
-	virtual void initialize();
+	void initialize();
 
 	/** 
 	 * Use pre render shadow mapping program
 	 */
-	virtual void useProgram();
+	void useProgram();
 
 	/** 
 	 * Un use pre render shadow mapping program
 	 */
-	virtual void unUseProgram();
+	void unUseProgram();
 
 	/** 
 	 * Set up pre program mvp matrix
 	 * @param mvp matrix
 	 */
-	virtual void updateMatrices(const Matrix4x4& mvpMatrix);
+	void updateMatrices(const Matrix4x4& mvpMatrix);
+
+	/**
+	 * Set up pre program texture matrix
+	 * @param renderer
+	 */
+	void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
 	 * Update material
 	 * @param renderer
 	 */
-	virtual void updateMaterial(GLRenderer* renderer);
+	void updateMaterial(GLRenderer* renderer);
 
 	/**
 	 * Bind texture
 	 * @param renderer
 	 * @param texture id
 	 */
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId);
+	void bindTexture(GLRenderer* renderer, int32_t textureId);
+
+	/**
+	 * Set shader
+	 * @param shader id
+	 */
+	void setShader(const string& id);
 
 	/**
 	 * Constructor
 	 * @param renderer
 	 */
 	ShadowMappingShaderPre(GLRenderer* renderer);
+
+	/**
+	 * Destructor
+	 */
+	~ShadowMappingShaderPre();
+
 };

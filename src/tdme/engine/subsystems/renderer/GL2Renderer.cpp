@@ -2,7 +2,8 @@
 
 #if defined(__APPLE__)
         #include <OpenGL/gl.h>
-#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32) or defined(__HAIKU__)
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
+	#define GLEW_NO_GLU
 	#include <GL/glew.h>
 #endif
 
@@ -23,6 +24,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::array;
 using std::vector;
@@ -41,6 +43,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 GL2Renderer::GL2Renderer() 
 {
@@ -54,8 +57,12 @@ GL2Renderer::GL2Renderer()
 	FRONTFACE_CCW = GL_CCW;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
-	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	SHADER_GEOMETRY_SHADER = -1;
+	SHADER_COMPUTE_SHADER = -1;
+	DEPTHFUNCTION_ALWAYS = GL_ALWAYS;
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
+	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 	// TODO: buffer objects available
 	bufferObjectsAvailable = true;
 }
@@ -104,6 +111,7 @@ void GL2Renderer::initialize()
 
 void GL2Renderer::initializeFrame()
 {
+	GLRenderer::initializeFrame();
 }
 
 bool GL2Renderer::isBufferObjectsAvailable()
@@ -139,26 +147,40 @@ bool GL2Renderer::isUsingShortIndices() {
 	return false;
 }
 
+bool GL2Renderer::isGeometryShaderAvailable() {
+	return false;
+}
+
 int32_t GL2Renderer::getTextureUnits()
 {
 	return -1;
 }
 
-int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
+int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	// create shader
 	int32_t handle = glCreateShader(type);
 	// exit if no handle returned
 	if (handle == 0) return 0;
 	// shader source
-	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto shaderSource = StringUtils::replace(
+		StringUtils::replace(
+			FileSystem::getInstance()->getContentAsString(pathName, fileName),
+			"{$DEFINITIONS}",
+			definitions
+		),
+		"{$FUNCTIONS}",
+		functions
+	);
 	string sourceString = (shaderSource);
-	char *sourceHeap = new char[sourceString.length() + 1];
+	char* sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
 	// load source
 	glShaderSource(handle, 1, &sourceHeap, nullptr);
 	// compile
 	glCompileShader(handle);
+	//
+	delete [] sourceHeap;
 	// check state
 	int32_t compileStatus;
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
@@ -166,7 +188,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 	if (compileStatus == 0) {
 		int32_t infoLogLengthBuffer;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
-		char infoLogBuffer[infoLogLengthBuffer];
+		char* infoLogBuffer = new char[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
 		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
 		// be verbose
@@ -183,6 +205,8 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 				infoLogString
 			 )
 		 );
+		//
+		delete [] infoLogBuffer;
 		// remove shader
 		glDeleteShader(handle);
 		//
@@ -219,7 +243,7 @@ bool GL2Renderer::linkProgram(int32_t programId)
 		// get error
 		int32_t infoLogLength = 0;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-		char infoLog[infoLogLength];
+		char* infoLog = new char[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
 		auto infoLogString = (string(infoLog, infoLogLength));
 		// be verbose
@@ -231,6 +255,7 @@ bool GL2Renderer::linkProgram(int32_t programId)
 				infoLogString
 			 )
 		);
+		delete [] infoLog;
 		return false;
 	}
 	return true;
@@ -255,6 +280,11 @@ void GL2Renderer::setProgramUniformFloat(int32_t uniformId, float value)
 void GL2Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
 {
 	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
+}
+
+void GL2Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
+{
+	glUniformMatrix3fv(uniformId, 1, false, data.data());
 }
 
 void GL2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)
@@ -387,8 +417,8 @@ int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 	// color texture parameter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return colorBufferTextureGlId;
@@ -397,9 +427,9 @@ int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 void GL2Renderer::uploadTexture(Texture* texture)
 {
 	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void GL2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -499,13 +529,6 @@ void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
-}
-
-void GL2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
 void GL2Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
@@ -616,12 +639,9 @@ void GL2Renderer::setTextureUnit(int32_t textureUnit)
 
 float GL2Renderer::readPixelDepth(int32_t x, int32_t y)
 {
-	/*
-	pixelDepthBuffer->clear();
-	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL::GL_FLOAT, static_cast< Buffer* >(pixelDepthBuffer));
-	return pixelDepthBuffer->get();
-	*/
-	return -1.0f;
+	float depth;
+	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	return depth;
 }
 
 ByteBuffer* GL2Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -652,4 +672,52 @@ void GL2Renderer::doneGuiMode()
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+}
+
+void GL2Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+	Console::println("GL2Renderer::dispatchCompute(): Not implemented");
+}
+
+void GL2Renderer::memoryBarrier() {
+	Console::println("GL2Renderer::memoryBarrier(): Not implemented");
+}
+
+void GL2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
+}
+
+void GL2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+}
+
+void GL2Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }

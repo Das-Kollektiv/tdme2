@@ -77,6 +77,11 @@ public:
 	int32_t getColorBufferTextureId();
 
 	/**
+	 * @return depth buffer texture id
+	 */
+	int32_t getDepthBufferTextureId();
+
+	/**
 	 * Public constructor
 	 * @param engine
 	 * @param width

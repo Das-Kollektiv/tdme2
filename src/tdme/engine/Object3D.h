@@ -10,7 +10,10 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroup.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DInternal.h>
+#include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
@@ -24,7 +27,10 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::rendering::Object3DInternal;
+using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
@@ -40,8 +46,25 @@ class tdme::engine::Object3D final
 {
 
 private:
+	friend class Engine;
+	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
+
+
 	Engine* engine { nullptr };
 	bool frustumCulling { true };
+	string shaderId { "default" };
+
+	/**
+	 * Pre render step like uploading VBOs and such
+	 */
+	inline void preRender() {
+		for (auto object3DGroup: object3dGroups) {
+			if (object3DGroup->renderer->needsPreRender() == true) {
+				object3DGroup->renderer->preRender();
+			}
+		}
+	}
+
 public:
 	void setEngine(Engine* engine) override;
 	void setRenderer(GLRenderer* renderer) override;
@@ -183,4 +206,20 @@ public:
 	inline virtual const Transformations& getTransformations() const override {
 		return *this;
 	}
+
+	/**
+	 * @return shader id
+	 */
+	inline const string& getShader() {
+		return shaderId;
+	}
+
+	/**
+	 * Set shader
+	 * @param shader id
+	 */
+	inline void setShader(const string& id) {
+		shaderId = id;
+	}
+
 };

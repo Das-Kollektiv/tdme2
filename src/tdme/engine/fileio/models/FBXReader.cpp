@@ -1,5 +1,7 @@
 #include <tdme/engine/fileio/models/FBXReader.h>
 
+#define FBXSDK_SHARED
+
 #include <fbxsdk.h>
 
 #include <map>
@@ -115,6 +117,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	// process nodes
 	processScene(fbxScene, model, pathName);
 
+	//
 	Console::println("FBXReader::read(): setting up animations");
 
 	// parse animations stacks
@@ -142,7 +145,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	model->addAnimationSetup(
 		Model::ANIMATIONSETUP_DEFAULT,
 		0,
-		framesTotal - 1,
+		framesTotal,
 		true
 	);
 	int frameOffset = 0;
@@ -176,6 +179,9 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
         frameOffset+= endFrame - startFrame + 1;
 	}
 	FbxArrayDelete(fbxAnimStackNameArray);
+
+	//
+	Console::println("FBXReader::read(): destroying FBX SDK");
 
 	// destroy the importer
 	if (fbxImporter != nullptr) fbxImporter->Destroy();
@@ -408,13 +414,12 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 							static_cast<float>(fbxDouble3.Get()[0]),
 							static_cast<float>(fbxDouble3.Get()[1]),
 							static_cast<float>(fbxDouble3.Get()[2]),
-							model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER?
-								(
-									1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
-										1.0f:
-										1.0f - static_cast<float>(fbxDouble)
-								):
-								1.0f - static_cast<float>(fbxDouble)
+							// TODO: I am not sure about this here, but it seem to work
+							(
+								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+									1.0f:
+									1.0f - static_cast<float>(fbxDouble)
+							)
 						)
 					);
 					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
@@ -460,7 +465,12 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 							static_cast<float>(fbxDouble3.Get()[0]),
 							static_cast<float>(fbxDouble3.Get()[1]),
 							static_cast<float>(fbxDouble3.Get()[2]),
-							1.0f - static_cast<float>(fbxDouble)
+							// TODO: I am not sure about this here, but it seem to work
+							(
+								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+									1.0f:
+									1.0f - static_cast<float>(fbxDouble)
+							)
 						)
 					);
 					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Emissive;
@@ -490,6 +500,16 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 							""
 						):
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				if (diffuseTransparencyTextureFileName.length() == 0) {
+					fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sTransparencyFactor);
+					diffuseTransparencyTextureFileName =
+						fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
+							(fbxProperty.GetSrcObjectCount<FbxTexture>() > 0?
+								FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0))->GetFileName():
+								""
+							):
+						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				}
 				if (diffuseTextureFileName.length() > 0) {
 					material->setDiffuseTexture(
 						FileSystem::getInstance()->fileExists(

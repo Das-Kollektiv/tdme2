@@ -149,6 +149,7 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, const M
 		x += xAdvance;
 	}
 	guiRenderer->render();
+	guiRenderer->bindTexture(0);
 }
 
 int32_t GUIFont::getTextIndexX(const MutableString& text, int32_t offset, int32_t length, int32_t index)

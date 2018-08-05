@@ -46,8 +46,9 @@ public:
 	bool isDisplacementMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;
 	bool isUsingShortIndices() override;
+	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
-	int32_t loadShader(int32_t type, const string& pathName, const string& fileName) override;
+	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
 	void useProgram(int32_t programId) override;
 	int32_t createProgram() override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
@@ -55,6 +56,7 @@ public:
 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
 	void setProgramUniformInteger(int32_t uniformId, int32_t value) override;
 	void setProgramUniformFloat(int32_t uniformId, float value) override;
+	void setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data) override;
 	void setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data) override;
 	void setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data) override;
 	void setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data) override;
@@ -89,7 +91,6 @@ public:
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
-	void uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void bindIndicesBufferObject(int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(int32_t bufferObjectId) override;
@@ -118,12 +119,26 @@ public:
 	void initGuiMode() override;
 	void doneGuiMode() override;
 
+	// overriden methods for skinning on GPU via compute shader
+	void dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
+	void memoryBarrier() override;
+	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
+	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
+	void bindSkinningVerticesBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningNormalsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) override;
+	void bindSkinningMatricesBufferObject(int32_t bufferObjectId) override;
+
 private:
 
 	/** 
 	 * Checks if GL error did occour 
 	 */
-	void checkGLError();
+	void checkGLError(int line);
 
 	// Generated
 

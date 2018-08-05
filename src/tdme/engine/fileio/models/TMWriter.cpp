@@ -32,6 +32,7 @@ using std::vector;
 using std::string;
 
 using tdme::engine::fileio::models::TMWriter;
+using tdme::engine::fileio::models::TMWriterOutputStream;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Color4;

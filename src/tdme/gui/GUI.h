@@ -11,12 +11,13 @@
 #include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Time.h>
-#include <tdme/utils/Pool.h>
 
 using std::map;
 using std::set;
@@ -35,7 +36,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::Time;
-using tdme::utils::Pool;
 
 /** 
  * GUI
@@ -45,9 +45,6 @@ using tdme::utils::Pool;
 class tdme::gui::GUI final
 	: public virtual ApplicationInputEventsHandler
 {
-	friend class GUI_1;
-	friend class GUI_2;
-
 private:
 	GUIRenderer* guiRenderer {  };
 	Engine* engine {  };
@@ -62,10 +59,8 @@ private:
 	GUIColor unfocussedNodeBorderRightColor;
 	GUIColor unfocussedNodeBorderTopColor;
 	GUIColor unfocussedNodeBorderBottomColor;
-	Pool<GUIMouseEvent*>* mouseEventsPool {  };
-	vector<GUIMouseEvent*> mouseEvents {  };
-	Pool<GUIKeyboardEvent*>* keyboardEventsPool {  };
-	vector<GUIKeyboardEvent*> keyboardEvents {  };
+	vector<GUIMouseEvent> mouseEvents {  };
+	vector<GUIKeyboardEvent> keyboardEvents {  };
 	vector<GUIScreenNode*> renderScreens {  };
 	int32_t width {  };
 	int32_t height {  };
@@ -117,12 +112,12 @@ public:
 	/** 
 	 * @return mouse events
 	 */
-	vector<GUIMouseEvent*>* getMouseEvents();
+	vector<GUIMouseEvent>& getMouseEvents();
 
 	/** 
 	 * @return keyboard events
 	 */
-	vector<GUIKeyboardEvent*>* getKeyboardEvents();
+	vector<GUIKeyboardEvent>& getKeyboardEvents();
 
 	/** 
 	 * Get font
@@ -335,10 +330,16 @@ private:
 	void fakeKeyboardModifierEvent();
 
 public:
-
+	/**
+	 * Public constructor
+	 * @param engine
+	 * @param gui renderer
+	 */
 	GUI(Engine* engine, GUIRenderer* guiRenderer);
 
-private:
-	void init();
+	/**
+	 * Destructor
+	 */
+	~GUI();
 
 };

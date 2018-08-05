@@ -1,4 +1,4 @@
-	#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
 #include <string>
 
@@ -153,7 +153,8 @@ void LevelEditorEntityBoundingVolume::setupObb(const Vector3& center, const Vect
 void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
 {
 	if (boundingVolume != nullptr) delete boundingVolume;
-	boundingVolume = new BoundingBox(min, max);
+	BoundingBox aabb(min, max);
+	boundingVolume = new OrientedBoundingBox(&aabb);
 	if (model != nullptr) delete model;
 	model = PrimitiveModel::createModel(
 		boundingVolume,
@@ -184,17 +185,8 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
 		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
 		delete convexMeshObject3DModel;
-		delete convexMeshModel;
-		model = PrimitiveModel::createModel(
-			boundingVolume,
-			string(levelEditorEntity->getModel() != nullptr ? levelEditorEntity->getModel()->getId() : "none") +
-				string(",") +
-				to_string(levelEditorEntity->getId()) +
-				string("_model_bv.") +
-				to_string(id) +
-				string(".") +
-				to_string(staticIdx++)
-		);
+		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
+		model = convexMeshModel;
 	} catch (Exception& exception) {
 		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
 		Console::println(string(exception.what()));

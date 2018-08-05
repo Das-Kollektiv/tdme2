@@ -52,14 +52,14 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
-ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(array<Vector3,3>* vertices)
+ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(const vector<Vector3>& vertices)
 {
 	auto edgeSum = 0;
-	for (auto i = 0; i < vertices->size(); i++) {
-		auto currentVertexXYZ = (*vertices)[i].getArray();
-		auto nextVertexXYZ = (*vertices)[(i + 1) % vertices->size()].getArray();
+	for (auto i = 0; i < vertices.size(); i++) {
+		auto& currentVertexXYZ = vertices[i].getArray();
+		auto& nextVertexXYZ = vertices[(i + 1) % vertices.size()].getArray();
 		edgeSum +=
-			(nextVertexXYZ[0] - currentVertexXYZ[0]) * (nextVertexXYZ[1] - currentVertexXYZ[1]) * (nextVertexXYZ[2] - currentVertexXYZ[0]);
+			(nextVertexXYZ[0] - currentVertexXYZ[0]) * (nextVertexXYZ[1] - currentVertexXYZ[1]) * (nextVertexXYZ[2] - currentVertexXYZ[2]);
 	}
 	if (edgeSum >= 0) {
 		return ModelHelper_VertexOrder::CLOCKWISE;
@@ -660,5 +660,30 @@ void ModelHelper::partition(Model* model, const Transformations& transformations
 		ModelHelper::setupJoints(partitionModel);
 		ModelHelper::fixAnimationLength(partitionModel);
 		ModelHelper::prepareForIndexedRendering(partitionModel);
+	}
+}
+
+void ModelHelper::shrinkToFit(Group* group) {
+	for (auto& facesEntity: *group->getFacesEntities()) {
+		facesEntity.getFaces()->shrink_to_fit();
+	}
+
+	group->getFacesEntities()->shrink_to_fit();
+	group->getVertices()->shrink_to_fit();
+	group->getNormals()->shrink_to_fit();
+	group->getTextureCoordinates()->shrink_to_fit();
+	group->getTangents()->shrink_to_fit();
+	group->getBitangents()->shrink_to_fit();
+
+	// do child groups
+	for (auto groupIt: *group->getSubGroups()) {
+		shrinkToFit(groupIt.second);
+	}
+
+}
+
+void ModelHelper::shrinkToFit(Model* model) {
+	for (auto groupIt: *model->getSubGroups()) {
+		shrinkToFit(groupIt.second);
 	}
 }

@@ -10,6 +10,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -24,6 +25,7 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::Group;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -36,8 +38,10 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 	friend class Object3DGroupVBORenderer;
 	friend class Object3DVBORenderer;
 	friend class TransparentRenderFacesPool;
+	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
+	Object3DGroupVBORenderer* object3DGroupVBORenderer;
 	Group* group {  };
 	int32_t faceCount {  };
 	vector<uint32_t> indices {  };
@@ -50,6 +54,7 @@ private:
 	vector<Vector3> transformedNormals;
 	vector<Vector3> transformedTangents;
 	vector<Vector3> transformedBitangents;
+	map<string, Matrix4x4*>* skinningMatrices;
 	Engine::AnimationProcessingTarget animationProcessingTarget {  };
 
 	int32_t cSkinningMaxVertexWeights {  };
@@ -68,19 +73,19 @@ private:
 
 	/** 
 	 * Creates a object3d group mesh from group
+	 * @param object 3D group VBO renderer
 	 * @param animation processing target
 	 * @param group
 	 * @param transformationm matrices
 	 * @param skinning matrices 
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices,map<string, Matrix4x4*>* skinningMatrices);
+	static Object3DGroupMesh* createMesh(Object3DGroupVBORenderer* object3DVBOGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices,map<string, Matrix4x4*>* skinningMatrices);
 
 	/** 
 	 * Computes mesh transformations
-	 * @param group
 	 */
-	void computeTransformations(Group* group);
+	void computeTransformations();
 
 	/** 
 	 * Recreates group float buffers

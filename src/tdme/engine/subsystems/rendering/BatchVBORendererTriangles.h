@@ -13,6 +13,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
 
@@ -24,6 +25,7 @@ using tdme::utils::FloatBuffer;
 using tdme::engine::model::Color4;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
 
@@ -56,7 +58,6 @@ private:
 	FloatBuffer fbNormals {  };
 	ByteBuffer* fbTextureCoordinatesByteBuffer {  };
 	FloatBuffer fbTextureCoordinates {  };
-	static array<float, 2> TEXTURECOORDINATE_NONE;
 
 	/**
 	 * Clears this batch vbo renderer
@@ -75,18 +76,14 @@ private:
 	 * @param texture coordinate
 	 * @return success
 	 */
-	inline bool addVertex(const Vector3& vertex, const Vector3& normal, TextureCoordinate* textureCoordinate) {
+	inline bool addVertex(const Vector3& vertex, const Vector3& normal, const Vector2& textureCoordinate) {
 		// check if full
 		if (vertices == VERTEX_COUNT) return false;
 
 		// otherwise
 		fbVertices.put(vertex.getArray());
 		fbNormals.put(normal.getArray());
-		if (textureCoordinate != nullptr) {
-			fbTextureCoordinates.put(textureCoordinate->getArray());
-		} else {
-			fbTextureCoordinates.put(&TEXTURECOORDINATE_NONE);
-		}
+		fbTextureCoordinates.put(textureCoordinate.getArray());
 
 		//
 		vertices++;

@@ -2,7 +2,8 @@
 
 #if defined (__APPLE__)
 	#include <OpenGL/gl3.h>
-#elif defined(__FreeBSD__) or defined(__linux__) or defined(_WIN32) or defined(__HAIKU__)
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
+	#define GLEW_NO_GLU
 	#include <GL/glew.h>
 #endif
 
@@ -23,6 +24,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::array;
 using std::vector;
@@ -41,6 +43,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+using tdme::utils::StringUtils;
 
 GL3Renderer::GL3Renderer() 
 {
@@ -54,8 +57,16 @@ GL3Renderer::GL3Renderer()
 	FRONTFACE_CCW = GL_CCW;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
-	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	SHADER_GEOMETRY_SHADER = GL_GEOMETRY_SHADER;
+	#if defined (__APPLE__)
+		SHADER_COMPUTE_SHADER = -1;
+	#else
+		SHADER_COMPUTE_SHADER = GL_COMPUTE_SHADER;
+	#endif
+	DEPTHFUNCTION_ALWAYS = GL_ALWAYS;
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
+	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
+	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 }
 
 const string GL3Renderer::getGLVersion()
@@ -78,7 +89,7 @@ void GL3Renderer::initialize()
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
 	// Note sure here: GLEW requires to have it, whereas I actually do use core profile, maybe something is wrong with FREEGLUT core profile initialization
-	#if defined(_WIN32) or defined(__linux__) or defined(__FreeBSD__)
+	#if defined(_WIN32) || defined(__linux__) || defined(__FreeBSD__)
 		glEnable(GL_POINT_SPRITE);
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
@@ -91,6 +102,7 @@ void GL3Renderer::initialize()
 
 void GL3Renderer::initializeFrame()
 {
+	GLRenderer::initializeFrame();
 }
 
 bool GL3Renderer::isBufferObjectsAvailable()
@@ -131,12 +143,16 @@ bool GL3Renderer::isUsingShortIndices() {
 	return false;
 }
 
+bool GL3Renderer::isGeometryShaderAvailable() {
+	return true;
+}
+
 int32_t GL3Renderer::getTextureUnits()
 {
 	return -1;
 }
 
-int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const string& fileName)
+int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	// create shader
 	int32_t handle = glCreateShader(type);
@@ -144,14 +160,24 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 	if (handle == 0) return 0;
 
 	// shader source
-	auto shaderSource = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+	auto shaderSource = StringUtils::replace(
+		StringUtils::replace(
+			FileSystem::getInstance()->getContentAsString(pathName, fileName),
+			"{$DEFINITIONS}",
+			definitions
+		),
+		"{$FUNCTIONS}",
+		functions
+	);
 	string sourceString = (shaderSource);
-	char *sourceHeap = new char[sourceString.length() + 1];
+	char* sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
 	// load source
 	glShaderSource(handle, 1, &sourceHeap, nullptr);
 	// compile
 	glCompileShader(handle);
+	//
+	delete [] sourceHeap;
 	// check state
 	int32_t compileStatus;
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &compileStatus);
@@ -159,7 +185,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 		// get error
 		int32_t infoLogLengthBuffer;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &infoLogLengthBuffer);
-		char infoLogBuffer[infoLogLengthBuffer];
+		char* infoLogBuffer = new char[infoLogLengthBuffer];
 		glGetShaderInfoLog(handle, infoLogLengthBuffer, &infoLogLengthBuffer, infoLogBuffer);
 		auto infoLogString = (string(infoLogBuffer, infoLogLengthBuffer));
 		// be verbose
@@ -176,6 +202,9 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 				infoLogString
 			 )
 		 );
+		Console::println(shaderSource);
+		//
+		delete [] infoLogBuffer;
 		// remove shader
 		glDeleteShader(handle);
 		return 0;
@@ -210,7 +239,7 @@ bool GL3Renderer::linkProgram(int32_t programId)
 		// get error
 		int32_t infoLogLength = 0;
 		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-		char infoLog[infoLogLength];
+		char* infoLog = new char[infoLogLength];
 		glGetProgramInfoLog(programId, infoLogLength, &infoLogLength, infoLog);
 		auto infoLogString = (string(infoLog, infoLogLength));
 		// be verbose
@@ -222,6 +251,9 @@ bool GL3Renderer::linkProgram(int32_t programId)
 				infoLogString
 			 )
 		);
+		//
+		delete [] infoLog;
+		//
 		return false;
 	}
 	return true;
@@ -230,6 +262,9 @@ bool GL3Renderer::linkProgram(int32_t programId)
 int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
 	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
+	if (uniformLocation == -1) {
+		Console::println("Did not found uniform location: " + name);
+	}
 	return uniformLocation;
 }
 
@@ -241,6 +276,11 @@ void GL3Renderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
 void GL3Renderer::setProgramUniformFloat(int32_t uniformId, float value)
 {
 	glUniform1f(uniformId, value);
+}
+
+void GL3Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
+{
+	glUniformMatrix3fv(uniformId, 1, false, data.data());
 }
 
 void GL3Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)
@@ -379,8 +419,8 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height)
 	// color texture parameter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// unbind, return
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	return colorBufferTextureGlId;
@@ -389,9 +429,9 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height)
 void GL3Renderer::uploadTexture(Texture* texture)
 {
 	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 void GL3Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -469,7 +509,7 @@ vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers)
 void GL3Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -483,13 +523,6 @@ void GL3Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
-}
-
-void GL3Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
 void GL3Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
@@ -631,12 +664,9 @@ void GL3Renderer::setTextureUnit(int32_t textureUnit)
 
 float GL3Renderer::readPixelDepth(int32_t x, int32_t y)
 {
-	/*
-	pixelDepthBuffer->clear();
-	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL::GL_FLOAT, static_cast< Buffer* >(pixelDepthBuffer));
-	return pixelDepthBuffer->get();
-	*/
-	return -1.0f;
+	float depth;
+	glReadPixels(x, y, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	return depth;
 }
 
 ByteBuffer* GL3Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -669,10 +699,111 @@ void GL3Renderer::doneGuiMode()
 	glEnable(GL_CULL_FACE);
 }
 
-void GL3Renderer::checkGLError()
+void GL3Renderer::checkGLError(int line)
 {
 	auto error = glGetError();
 	if (error != GL_NO_ERROR) {
-		Console::println(string("OpenGL Error: (" + to_string(error) + ") @:"));
+		Console::println(string("OpenGL Error: (" + to_string(error) + ") @: " + __FILE__ + ":" + to_string(line)));
 	}
+}
+
+void GL3Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::dispatchCompute(): Not implemented");
+	#else
+		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+	#endif
+}
+
+void GL3Renderer::memoryBarrier() {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::memoryBarrier(): Not implemented");
+	#else
+		// TODO: put barrier bits into paramters
+		glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	#endif
+}
+
+void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
+	#else
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+	#endif
+}
+
+void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
+	#else
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
+	#endif
+}
+
+void GL3Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVerticesBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObjectId);
+	#endif
+}
+
+void GL3Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningNormalsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferObjectId);
+	#endif
+}
+
+void GL3Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, bufferObjectId);
+	#endif
+}
+
+void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bufferObjectId);
+	#endif
+}
+
+void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bufferObjectId);
+	#endif
+}
+
+void GL3Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bufferObjectId);
+	#endif
+}
+
+void GL3Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
+	#endif
+}
+
+void GL3Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+	#if defined (__APPLE__)
+		Console::println("GL3Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+	#else
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
+	#endif
 }

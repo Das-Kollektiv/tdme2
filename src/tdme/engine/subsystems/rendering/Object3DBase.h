@@ -192,14 +192,17 @@ public:
 	 */
 	virtual void computeTransformations();
 
-	/** 
-	 * Retrieves complete list of face triangles for all render groups
-	 * TODO: 
-	 * these are untransformed, so even without group transformation, check later if this makes really sense in all cases
-	 * as it is working with physics test 1 + 3 I currently leave it as it is
-	 * @param face triangles
+	/**
+	 * @return group count
 	 */
-	virtual void getFaceTriangles(vector<Triangle>* faceTriangles);
+	virtual int getGroupCount() const;
+
+	/** 
+	 * Retrieves list of triangles of all or given groups
+	 * @param triangles
+	 * @param group index or -1 for all groups
+	 */
+	virtual void getTriangles(vector<Triangle>& triangles, int groupIdx = -1);
 
 	/** 
 	 * @return transformed faces iterator

@@ -6,6 +6,7 @@
 #include <set>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -17,6 +18,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Flow.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
+#include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -25,6 +27,7 @@ using std::vector;
 using std::set;
 using std::string;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
@@ -51,6 +54,7 @@ using tdme::gui::renderer::GUIRenderer;
 class tdme::gui::nodes::GUINode
 {
 	friend class GUIElementNode;
+	friend class GUIImageNode;
 	friend class GUILayoutNode;
 	friend class GUIParentNode;
 	friend class GUIScreenNode;
@@ -64,7 +68,6 @@ class tdme::gui::nodes::GUINode
 	friend class GUINode_RequestedConstraints;
 	friend class GUINode_RequestedConstraints_RequestedConstraintsType;
 
-
 protected:
 	GUIScreenNode* screenNode {  };
 	GUIParentNode* parentNode {  };
@@ -74,6 +77,9 @@ protected:
 	GUINode_RequestedConstraints requestedConstraints;
 	GUINode_ComputedConstraints computedConstraints;
 	GUIColor backgroundColor;
+	Texture* backgroundTexture;
+	int32_t backgroundTextureId;
+	GUINode_Scale9Grid backgroundImageScale9Grid;
 	GUINode_Padding padding;
 	GUINode_Border border;
 	GUINodeConditions showOn;
@@ -185,12 +191,27 @@ protected:
 	 * @param alignments
 	 * @param requested constraints
 	 * @param background color
+	 * @param background image
 	 * @param border
 	 * @param padding
 	 * @param show on
 	 * @param hide on
 	 */
-	GUINode(GUIScreenNode* screenNode, GUIParentNode* parentNode, const string& id, GUINode_Flow* flow, const GUINode_Alignments& alignments, const GUINode_RequestedConstraints& requestedConstraints, const GUIColor& backgroundColor, const GUINode_Border& border, const GUINode_Padding& padding, const GUINodeConditions& showOn, const GUINodeConditions& hideOn);
+	GUINode(
+		GUIScreenNode* screenNode,
+		GUIParentNode* parentNode,
+		const string& id,
+		GUINode_Flow* flow,
+		const GUINode_Alignments& alignments,
+		const GUINode_RequestedConstraints& requestedConstraints,
+		const GUIColor& backgroundColor,
+		const string& backgroundImage,
+		const GUINode_Scale9Grid& backgroundImageScale9Grid,
+		const GUINode_Border& border,
+		const GUINode_Padding& padding,
+		const GUINodeConditions& showOn,
+		const GUINodeConditions& hideOn
+	);
 
 	/**
 	 * Destructor
@@ -198,7 +219,6 @@ protected:
 	virtual ~GUINode();
 
 public:
-
 	/** 
 	 * @return scren node
 	 */
@@ -238,6 +258,11 @@ public:
 	 * @return border
 	 */
 	virtual GUINode_Border& getBorder();
+
+	/**
+	 * @return padding
+	 */
+	virtual GUINode_Padding& getPadding();
 
 	/**
 	 * @return computed constraints
@@ -305,6 +330,17 @@ public:
 	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
 
 	/** 
+	 * Create scale 9 grid
+	 * @param all
+	 * @param left
+	 * @param top
+	 * @param right
+	 * @param bottom
+	 * @return scale 9 grid
+	 */
+	static GUINode_Scale9Grid createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
+
+	/**
 	 * Create conditions
 	 * @param conditions
 	 */

@@ -1,113 +1,96 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 
-#include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
-using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
+using tdme::utils::Console;
 
 ShadowMappingShaderPre::ShadowMappingShaderPre(GLRenderer* renderer) 
 {
-	this->renderer = renderer;
-	initialized = false;
+	if (ShadowMappingShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
+	if (ShadowMappingShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
+}
+
+ShadowMappingShaderPre::~ShadowMappingShaderPre() {
+	for (auto shaderIt: shader) {
+		delete shaderIt.second;
+	}
 }
 
 bool ShadowMappingShaderPre::isInitialized()
 {
+	bool initialized = true;
+	for (auto shaderIt: shader) {
+		initialized&= shaderIt.second->isInitialized();
+	}
 	return initialized;
 }
 
 void ShadowMappingShaderPre::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
-
-	// load shadow mapping shaders
-	//	pre render
-	vertexShaderGlId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
-		"pre_vertexshader.c"
-	);
-	if (vertexShaderGlId == 0) return;
-
-	fragmentShaderGlId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
-		"pre_fragmentshader.c"
-	);
-	if (fragmentShaderGlId == 0) return;
-
-	// create shadow mapping render program
-	//	pre
-	programGlId = renderer->createProgram();
-	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
-	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
-	// map inputs to attributes
-	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(programGlId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(programGlId, 2, "inTextureUV");
+	for (auto shaderIt: shader) {
+		shaderIt.second->initialize();
 	}
-	// link
-	if (renderer->linkProgram(programGlId) == false) return;
-
-	// uniforms
-	if (renderer->isInstancedRenderingAvailable() == true) {
-		//	uniforms
-		uniformProjectionMatrix = renderer->getProgramUniformLocation(programGlId, "projectionMatrix");
-		if (uniformProjectionMatrix == -1) return;
-		uniformCameraMatrix = renderer->getProgramUniformLocation(programGlId, "cameraMatrix");
-		if (uniformCameraMatrix == -1) return;
-	} else {
-		//	uniforms
-		uniformMVPMatrix = renderer->getProgramUniformLocation(programGlId, "mvpMatrix");
-		if (uniformMVPMatrix == -1) return;
-	}
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, "diffuseTextureUnit");
-	if (uniformDiffuseTextureUnit == -1) return;
-	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, "diffuseTextureAvailable");
-	if (uniformDiffuseTextureAvailable == -1) return;
-	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(programGlId, "diffuseTextureMaskedTransparency");
-	if (uniformDiffuseTextureMaskedTransparency == -1) return;
-	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(programGlId, "diffuseTextureMaskedTransparencyThreshold");
-	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
-
-	//
-	initialized = true;
 }
 
 void ShadowMappingShaderPre::useProgram()
 {
-	renderer->useProgram(programGlId);
+	running = true;
 }
 
 void ShadowMappingShaderPre::unUseProgram()
 {
+	running = false;
+	if (implementation != nullptr) {
+		implementation->unUseProgram();;
+	}
+	implementation = nullptr;
 }
 
 void ShadowMappingShaderPre::updateMatrices(const Matrix4x4& mvpMatrix)
 {
-	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(uniformCameraMatrix, renderer->getCameraMatrix().getArray());
-	} else {
-		renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
-	}
+	if (implementation == nullptr) return;
+	implementation->updateMatrices(mvpMatrix);
+}
+
+void ShadowMappingShaderPre::updateTextureMatrix(GLRenderer* renderer) {
+	if (implementation == nullptr) return;
+	implementation->updateTextureMatrix(renderer);
 }
 
 void ShadowMappingShaderPre::updateMaterial(GLRenderer* renderer)
 {
-	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
-	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
+	if (implementation == nullptr) return;
+	implementation->updateMaterial(renderer);
 }
 
 void ShadowMappingShaderPre::bindTexture(GLRenderer* renderer, int32_t textureId)
 {
-	switch (renderer->getTextureUnit()) {
-		case LightingShader::TEXTUREUNIT_DIFFUSE:
-			renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
-			break;
+	if (implementation == nullptr) return;
+	implementation->bindTexture(renderer, textureId);
+}
+
+void ShadowMappingShaderPre::setShader(const string& id) {
+	auto currentImplementation = implementation;
+
+	auto shaderIt = shader.find(id);
+	if (shaderIt == shader.end()) {
+		shaderIt = shader.find("default");
+	}
+	implementation = shaderIt->second;
+
+	if (currentImplementation != implementation) {
+		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
+		implementation->useProgram();
 	}
 }

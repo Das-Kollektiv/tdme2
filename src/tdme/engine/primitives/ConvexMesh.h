@@ -1,31 +1,18 @@
 #pragma once
 
-#include <array>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
-#include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/ConvexMeshBoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/engine/primitives/BoundingVolume.h>
 
-using std::array;
 using std::vector;
 
-using tdme::engine::Transformations;
-using tdme::engine::primitives::BoundingBox;
-using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::Object3DModel;
-using tdme::engine::Transformations;
-using tdme::engine::physics::CollisionResponse;
+using tdme::engine::primitives::ConvexMeshBoundingVolume;
 using tdme::engine::primitives::Triangle;
-using tdme::math::SeparatingAxisTheorem;
+using tdme::engine::Object3DModel;
 using tdme::math::Vector3;
 
 /** 
@@ -34,71 +21,39 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::primitives::ConvexMesh final
-	: public BoundingVolume
+	: public ConvexMeshBoundingVolume
 {
 private:
-	vector<Triangle> triangles {  };
-	vector<Vector3> vertices {  };
-	vector<array<int32_t, 2>> vertexReferences {  };
-	Vector3 center {  };
-	BoundingBox boundingBox;
-	bool terrain {  };
-	float terrainHeight {  };
-private:
+	vector<Vector3> vertices;
+	vector<int> facesVerticesCount;
+	vector<int> indices;
 
-	/** 
-	 * Create vertices
+	/**
+	 * Public constructor
+	 * @param vertices
+	 * @param faces vertices count
+	 * @param indices
+	 * @param scale
 	 */
-	void createVertices();
+	ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+
+	/**
+	 * Checks if vertex lives on triangle plane
+	 * @param triangle
+	 * @param vertex
+	 * @return if vertex lives on triangle plane
+	 */
+	bool isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex);
 
 public:
-
-	/**
-	 * Create terrain convex meshes
-	 * @param model
-	 * @param convex meshes
-	 * @param terrain height
-	 */
-	static void createTerrainConvexMeshes(Object3DModel* model, vector<ConvexMesh>& convexMeshes, float terrainHeight = 0.75f, const Transformations& transformations = Transformations());
-
-	/**
-	 * @return is terrain
-	 */
-	inline bool isTerrain() {
-		return terrain;
-	}
-
-	/** 
-	 * @return triangles
-	 */
-	inline vector<Triangle>* getTriangles() {
-		return &triangles;
-	}
-
-	/** 
-	 * @return mesh vertices
-	 */
-	inline const vector<Vector3>* getVertices() const {
-		return &vertices;
-	}
-
-	void fromBoundingVolume(BoundingVolume* original) override;
-	void fromBoundingVolumeWithTransformations(BoundingVolume* original, const Transformations& transformations) override;
-	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestsPoint) const override;
-	bool containsPoint(const Vector3& point) const override;
-	bool doesCollideWith(BoundingVolume* bv2, const Vector3& movement, CollisionResponse* collision) override;
-
-	inline Vector3& getCenter() override {
-		return center;
-	}
-
-	inline virtual BoundingBox* getBoundingBox() override {
-		return &boundingBox;
-	}
-
-	float computeDimensionOnAxis(const Vector3& axis) const override;
-	void update() override;
+	// overriden methods
+	void setScale(const Vector3& scale) override;
 	BoundingVolume* clone() const override;
+
+	/**
+	 * @return vertices
+	 */
+	const vector<Vector3>& getVertices();
 
 	/**
 	 * Public constructor
@@ -107,17 +62,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param triangles
-	 * @param is terrain
-	 * @param terrain height
-	 */
-	ConvexMesh(const vector<Triangle>* triangles, bool terrain = false, float terrainHeight = 0.0f);
-
-	/**
-	 * Public constructor
 	 * @param model
-	 * @param is terrain
-	 * @param terrain height
+	 * @param scale
 	 */
-	ConvexMesh(Object3DModel* model, bool terrain = false, float terrainHeight = 0.0f);
+	ConvexMesh(Object3DModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+
 };

@@ -1,12 +1,19 @@
 #pragma once
 
 #include <string>
-#include <unistd.h>
+
+#include <stddef.h>
+
+#if defined(_WIN32) && defined(_MSC_VER)
+	#define ssize_t int
+#endif
 
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NIOIOException.h>
 #include <tdme/os/network/NIONetworkSocket.h>
 #include <tdme/os/network/NIOSocketException.h>
+
+using std::string;
 
 using tdme::os::network::NIOIOException;
 using tdme::os::network::NIONetworkSocket;
@@ -31,7 +38,7 @@ public:
 	 * @param buf size
 	 * @return datagram size or -1 if read would block
 	 */
-	ssize_t read(std::string& from, unsigned int& port, void* buf, const size_t bytes) throw (NIOIOException);
+	ssize_t read(string& from, unsigned int& port, void* buf, const size_t bytes) throw (NIOIOException);
 
 	/**
 	 * @brief writes up to "bytes" bytes to socket
@@ -42,7 +49,7 @@ public:
 	 * @param buf size
 	 * @return datagram bytes written or -1 if write would block
 	 */
-	ssize_t write(const std::string& to, const unsigned int port, void* buf, const size_t bytes) throw (NIOIOException);
+	ssize_t write(const string& to, const unsigned int port, void* buf, const size_t bytes) throw (NIOIOException);
 
 	/**
 	 * @brief creates a udp socket

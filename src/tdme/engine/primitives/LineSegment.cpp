@@ -6,9 +6,9 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::primitives::LineSegment;
-using tdme::math::Math;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
+using tdme::math::Math;
 using tdme::math::Vector3;
 
 bool LineSegment::doesLineSegmentsCollide(const Vector3& p1, const Vector3& q1, const Vector3& p2, const Vector3& q2, Vector3& p)

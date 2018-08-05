@@ -13,7 +13,6 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/physics/RigidBody.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
@@ -28,6 +27,7 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/PathFinding.h>
+#include "../engine/physics/Body.h"
 
 using std::string;
 using std::to_string;
@@ -45,7 +45,7 @@ using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::physics::RigidBody;
+using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
@@ -162,8 +162,6 @@ void PathFindingTest::display()
 	}
 	auto fps = 60.0f;
 	auto start = now;
-	world->update(1.0f / fps);
-	world->synch(engine);
 	auto end = Time::getCurrentMillis();
 	engine->display();
 }
@@ -177,12 +175,9 @@ void PathFindingTest::initialize()
 {
 	engine->initialize();
 	LevelFileImport::doImport("resources/tests/levels/pathfinding", "test.tl", &level);
-	Level::setLight(engine, &level, Vector3());
-	Level::addLevel(engine, &level, false, false, false, Vector3(0.0f, 0.0f, 0.0f));
-	Level::enableLevel(engine, &level, Vector3(0.0f, 0.0f, 0.0f));
-	vector<RigidBody*> rigidBodies;
-	Level::addLevel(world, &level, rigidBodies, Vector3(0.0f, 0.0f, 0.0f));
-	Level::enableLevel(world, &level, rigidBodies, Vector3(0.0f, 0.0f, 0.0f));
+	Level::setLight(engine, &level);
+	Level::addLevel(engine, &level, false, false, false);
+	Level::addLevel(world, &level);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
