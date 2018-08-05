@@ -234,7 +234,6 @@ const string StandardFileSystem::getFileName(const string& fileName) throw (File
 }
 
 void StandardFileSystem::createPath(const string& pathName) throw (FileSystemException) {
-
 	#if defined(_WIN32)
 		int32_t status = mkdir(pathName.c_str());
 	#else
