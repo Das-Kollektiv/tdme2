@@ -26,6 +26,7 @@ using tdme::os::threading::Thread;
 using tdme::os::threading::Mutex;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOUDPSocket;
+
 using tdme::network::udpclient::NIOClientException;
 using tdme::network::udpclient::NIOUDPClientMessage;
 

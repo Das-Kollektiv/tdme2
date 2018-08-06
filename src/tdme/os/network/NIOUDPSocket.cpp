@@ -35,10 +35,27 @@ NIOUDPSocket::~NIOUDPSocket() {
 }
 
 ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const size_t bytes) throw (NIOIOException) {
-	// read from socket
-	struct sockaddr_in sin;
-	socklen_t sin_len = sizeof(sin);
-	ssize_t bytesRead = ::recvfrom(descriptor, BUF_CAST(buf), bytes, 0, (struct sockaddr *)&sin, &sin_len);
+	// socket address in setup
+	socklen_t sinLen = 0;
+	void* sin;
+	sockaddr_in sinIPV4;
+	sockaddr_in6 sinIPV6;
+	switch(ipVersion) {
+		case IPV4:
+			{
+				sin = &sinIPV4;
+				sinLen = sizeof(sockaddr_in);
+			}
+			break;
+		case IPV6:
+			{
+
+				sin = &sinIPV6;
+				sinLen = sizeof(sockaddr_in6);
+			}
+	}
+
+	ssize_t bytesRead = ::recvfrom(descriptor, BUF_CAST(buf), bytes, 0, (struct sockaddr *)sin, &sinLen);
 	if (bytesRead == -1) {
 		#if defined(_WIN32)
 			int wsaError = WSAGetLastError();
@@ -62,28 +79,59 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 	}
 
 	// set up senders ip + port
-	from = inet_ntoa(sin.sin_addr);
-	port = ntohs(sin.sin_port);
+	switch(ipVersion) {
+		case IPV4:
+			{
+				from = inet_ntoa(sinIPV4.sin_addr);
+				port = ntohs(sinIPV4.sin_port);
+			}
+			break;
+		case IPV6:
+			{
+				char ipv6AddressString[4 * 8 + 8];
+				from = inet_ntop(AF_INET6, &sinIPV6.sin6_addr, ipv6AddressString, INET6_ADDRSTRLEN) == NULL?"::1":ipv6AddressString;
+				port = ntohs(sinIPV6.sin6_port);
+			}
+	}
 
 	// return bytes read
 	return bytesRead;
 }
 
 ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf, const size_t bytes) throw (NIOIOException) {
-	// set up receiver
-	struct sockaddr_in sin;
-	socklen_t sin_len = sizeof(sin);
+	// receiver address in setup
+	socklen_t sinLen = 0;
+	void* sin;
+	sockaddr_in sinIPV4;
+	sockaddr_in6 sinIPV6;
+	switch(ipVersion) {
+		case IPV4:
+			{
+				memset(&sinIPV4, 0, sizeof(sinIPV4));
+				sinIPV4.sin_family = AF_INET;
+				sinIPV4.sin_port = htons(port);
+				sinIPV4.sin_addr.s_addr = inet_addr(ip.c_str());
+				sin = &sinIPV4;
+				sinLen = sizeof(sockaddr_in);
+			}
+			break;
+		case IPV6:
+			{
 
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = inet_addr(to.c_str());
-	sin.sin_port = htons(port);
+				memset(&sinIPV6, 0, sizeof(sinIPV6));
+				sinIPV6.sin6_family = AF_INET6;
+				sinIPV6.sin6_port = htons(port);
+				inet_pton(AF_INET6, to.c_str(), &sinIPV6.sin6_addr);
+				sin = &sinIPV6;
+				sinLen = sizeof(sockaddr_in6);
+			}
+	}
 
 	// go
 	#if defined(__APPLE__) || defined(_WIN32)
-		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, 0, (const struct sockaddr*)&sin, sin_len);
+		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, 0, (const struct sockaddr*)sin, sinLen);
 	#else
-		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL, (const struct sockaddr*)&sin, sin_len);
+		ssize_t bytesWritten = ::sendto(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL, (const struct sockaddr*)sin, sinLen);
 	#endif
 
 	// send successful?
@@ -113,8 +161,8 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 	return bytesWritten;
 }
 
-void NIOUDPSocket::create(NIOUDPSocket& socket) throw (NIOSocketException) {
-	socket.descriptor = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+void NIOUDPSocket::create(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException) {
+	socket.descriptor = ::socket(ipVersion == IPV6?AF_INET6:AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socket.descriptor == -1) {
 		string msg = "Could not create socket: ";
 		msg+= strerror(errno);
@@ -132,7 +180,7 @@ void NIOUDPSocket::create(NIOUDPSocket& socket) throw (NIOSocketException) {
 
 void NIOUDPSocket::createServerSocket(NIOUDPSocket& socket, const string& ip, const unsigned int port) throw (NIOSocketException) {
 	// create socket
-	NIOUDPSocket::create(socket);
+	NIOUDPSocket::create(socket, determineIpVersion(ip));
 
 	try {
 		// set non blocked
@@ -155,9 +203,9 @@ void NIOUDPSocket::createServerSocket(NIOUDPSocket& socket, const string& ip, co
 	}
 }
 
-void NIOUDPSocket::createClientSocket(NIOUDPSocket& socket) throw (NIOSocketException) {
+void NIOUDPSocket::createClientSocket(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException) {
 	// create socket
-	NIOUDPSocket::create(socket);
+	NIOUDPSocket::create(socket, ipVersion);
 
 	try {
 		// set non blocked

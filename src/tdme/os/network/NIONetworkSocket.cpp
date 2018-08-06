@@ -19,10 +19,11 @@ using tdme::os::network::NIONetworkSocket;
 NIONetworkSocket& NIONetworkSocket::operator=(NIONetworkSocket& socket) {
 	descriptor = socket.descriptor;
 	ip = socket.ip;
+	ipVersion = socket.ipVersion;
 	return *this;
 }
 
-NIONetworkSocket::NIONetworkSocket() : descriptor(-1), ip("0.0.0.0"), port(0) {
+NIONetworkSocket::NIONetworkSocket() : descriptor(-1), ip("0.0.0.0"), port(0), ipVersion(IpVersion::IPV4) {
 }
 
 NIONetworkSocket::~NIONetworkSocket() {
@@ -41,12 +42,39 @@ void NIONetworkSocket::shutdown() {
 }
 
 void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) throw (NIOSocketException) {
-	struct sockaddr_in sin;
-	memset(&sin, 0, sizeof(sin));
-	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = inet_addr(ip.c_str());
-	sin.sin_port = htons(port);
-	if (::bind(descriptor, (const struct sockaddr*)&sin, sizeof(sin)) == -1) {
+	// determine IP version
+	ipVersion = determineIpVersion(ip);
+
+	// socket address in setup
+	socklen_t sinLen = 0;
+	void* sin;
+	sockaddr_in sinIPV4;
+	sockaddr_in6 sinIPV6;
+	switch(ipVersion) {
+		case IPV4:
+			{
+				memset(&sinIPV4, 0, sizeof(sinIPV4));
+				sinIPV4.sin_family = AF_INET;
+				sinIPV4.sin_port = htons(port);
+				sinIPV4.sin_addr.s_addr = inet_addr(ip.c_str());
+				sin = &sinIPV4;
+				sinLen = sizeof(sockaddr_in);
+			}
+			break;
+		case IPV6:
+			{
+
+				memset(&sinIPV6, 0, sizeof(sinIPV6));
+				sinIPV6.sin6_family = AF_INET6;
+				sinIPV6.sin6_port = htons(port);
+				inet_pton(AF_INET6, ip.c_str(), &sinIPV6.sin6_addr);
+				sin = &sinIPV6;
+				sinLen = sizeof(sockaddr_in6);
+			}
+	}
+
+	// bind
+	if (::bind(descriptor, (const struct sockaddr*)sin, sinLen) == -1) {
 		std::string msg = "Could not bind socket: ";
 		msg+= strerror(errno);
 		throw NIOSocketException(msg);
@@ -86,4 +114,8 @@ void NIONetworkSocket::close() {
 		::close(descriptor);
 	#endif
 	descriptor = -1;
+}
+
+NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& ip) {
+	return ip.find(':') != std::string::npos?IpVersion::IPV6:IpVersion::IPV4;
 }

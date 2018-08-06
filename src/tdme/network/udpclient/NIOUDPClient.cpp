@@ -8,6 +8,7 @@
 
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
+#include <tdme/os/network/NIONetworkSocket.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/Console.h>
@@ -28,6 +29,7 @@ using std::to_string;
 
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
+using tdme::os::network::NIONetworkSocket;
 using tdme::os::network::NIO_INTEREST_NONE;
 using tdme::os::network::NIO_INTEREST_READ;
 using tdme::os::network::NIO_INTEREST_WRITE;
@@ -88,7 +90,7 @@ void NIOUDPClient::run() {
 	// catch kernel event and server socket exceptions
 	try {
 		// create client socket
-		NIOUDPSocket::createClientSocket(socket);
+		NIOUDPSocket::createClientSocket(socket, NIONetworkSocket::determineIpVersion(ip));
 
 		// initialize kernel event mechanismn
 		kem.initKernelEventMechanism(1);

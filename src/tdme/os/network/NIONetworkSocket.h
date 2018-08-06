@@ -17,6 +17,8 @@ class tdme::os::network::NIONetworkSocket {
 	friend class KernelEventMechanism;
 
 public:
+	enum IpVersion {IPV4, IPV6};
+
 	/**
 	 * @brief copy operator
 	 */
@@ -68,8 +70,15 @@ public:
 	 */
 	void close();
 
+	/**
+	 * Determine IP version
+	 * @param ip
+	 * @returns ip version
+	 */
+	static IpVersion determineIpVersion(const string& ip);
+
 protected:
-	//
+	IpVersion ipVersion;
 	int descriptor;
 	string ip;
 	unsigned int port;

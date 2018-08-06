@@ -54,9 +54,10 @@ public:
 	/**
 	 * @brief creates a udp socket
 	 * @param socket
+	 * @param IP version
 	 * @throws NIOSocketException
 	 */
-	static void create(NIOUDPSocket& socket) throw (NIOSocketException);
+	static void create(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException);
 
 	/**
 	 * @brief creates a udp server socket
@@ -70,8 +71,9 @@ public:
 	/**
 	 * @brief creates a udp client socket
 	 * @param socket
+	 * @param IP version
 	 * @throws NIOSocketException
 	 */
-	static void createClientSocket(NIOUDPSocket& socket) throw (NIOSocketException);
+	static void createClientSocket(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException);
 };
 
