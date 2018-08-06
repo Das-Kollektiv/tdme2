@@ -191,7 +191,7 @@
     - Chantal Zabel
     - others
 
-- Interested in collaboration? Then drop me a line via mail or use the [issues](https://github.com/andreasdr/tdme2/issues) section on tdme@github
+- Interested in collaboration? Then drop me a line via mail or use the [issues section on tdme2@github](https://github.com/andreasdr/tdme2/issues)
     - You can help with testing and reporting bugs 
     - I have easy to hard task regarding engine/tools development
     - I have tasks regarding documentation
