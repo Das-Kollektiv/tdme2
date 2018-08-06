@@ -2,7 +2,7 @@
 
 
     - What is TDME2?
-        - ThreeDeeMiniEngine2 is a lightweight 3D engine including tools suited for 3D games development using C++11
+        - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
         - TDME2 is open source
           - please check the license and the licenses of used 3rd party libraries
           - you find the source code at https://github.com/andreasdr/tdme2 
@@ -22,7 +22,7 @@
                 - DAE and WaveFront OBJ files require triangulated meshes for now
             - animations
                 - supports model object base animation and animation overlays
-                - supports foliage animation for feasible models via geometry shader on GL3+/CORE using custom shader infrastructure
+                - supports foliage animation for feasible models via geometry shader on GL3+/CORE using custom shaders
             - skinning via
                 - CPU on GL2, GLES2
                 - GPU via compute shaders with GL4.3+/CORE
@@ -65,8 +65,13 @@
             - screenshot ability
             - multiple renderer
               - GL2, GL3+/CORE and GLES2
-        - physics
-            - uses ReactPhysics3D 0.7.0, needs some more integration still
+        - physics via ReactPhysics3D 0.7.0
+            - have sphere, capsule, obb, convex mesh, concave terrain mesh bounding volumes
+            - have multiple bounding volumes per body
+            - have static, dynamic rigid bodies and collision bodies
+            - uses discrete collision detection
+            - rigid body simulator
+            - for RP3D internals and additional features see ReactPhysics3D website
         - path finding
             - uses A*
             - is paired with physics world to determine if a "cell" is walkable
@@ -99,6 +104,7 @@
                 - image button
                 - input
                 - knob
+                - progress bar
                 - radio button
                 - scrollarea both
                 - scrollarea horizontal
@@ -128,13 +134,13 @@
 
     - What is WIP or planned
         - LOD
-        - GUI system port needs to be finished(Memory Management and other minor things)
-        - GUI system knob, vertical/horizontal slider are working but need a bit more love
-        - Logic documentation/comments need to be imported from TDME(-JAVA)
+        - GUI system port needs to be finished(memory management and other minor things)
+        - Some UI elements need some default skinning fixes
+        - WaveFront OBJ model file reader is broken currently
+        - Integrate LUA to be able to write TDME2 applications completely via LUA or game logics
         - A demonstration video
         - Build documentation
         - A release plan
-        - Integrate LUA to be able to write TDME2 applications completely via LUA or game logics
 
     - Technology
         - designed for simple multi threading

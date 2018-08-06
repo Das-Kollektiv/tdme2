@@ -23,6 +23,7 @@ TDMEModelEditor
             - oriented bounding box
             - convex mesh
               - multiple convex meshes can be automatically generated from any mesh using V-HACD
+              - or be imported from a given model with each top level group representing a convex mesh
             - concave terrain mesh
         - LOD level editor
             - type, distance, model, adjustment add/mul color, ... 
