@@ -5,8 +5,8 @@
         - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
         - TDME2 is open source
           - please check the license and the licenses of used 3rd party libraries
-          - you find the source code at https://github.com/andreasdr/tdme2 
-          - you find binary alpha builds at http://drewke.net/tdme2
+          - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
+          - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
 
     - What is already working
         - 3d engine
@@ -174,17 +174,15 @@
             - iOS(port pending)
 
     - Tools
-        - TDME Model Editor, see README-ModelEditor.md
-        - TDME Particle System Editor, see README-ParticleSystemEditor.md
-        - TDME Level Editor, see README-LevelEditor.md
+        - TDME Model Editor, see [README-ModelEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-ModelEditor.md)
+        - TDME Particle System Editor, see [README-ParticleSystemEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-ParticleSystemEditor.md)
+        - TDME Level Editor, see [README-LevelEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-LevelEditor.md)
 
     - Links
         - <youtube link here>
 
     - References
-        - "game physics - a practical introduction" / Kenwright
-        - "real-time collision detection" / Ericson
-        - "ReactPhysics3D" physics library, http://www.reactphysics3d.com 
+        - "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
         - the world wide web! thank you for sharing
 
     - Other credits
@@ -196,8 +194,8 @@
         - Chantal Zabel
         - others
 
-    - Interested in collaboration? Then drop me a line via mail or use the issues section on tdme@github
-        - You can help with testing and reporting bugs, see http:://drewke.net/tdme2 
+    - Interested in collaboration? Then drop me a line via mail or use the [issues](https://github.com/andreasdr/tdme2/issues) section on tdme@github
+        - You can help with testing and reporting bugs 
         - I have easy to hard task regarding engine/tools development
         - I have tasks regarding documentation
         - I even might have system administrator tasks
