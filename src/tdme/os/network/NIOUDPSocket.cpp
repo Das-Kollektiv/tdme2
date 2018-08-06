@@ -162,6 +162,7 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 }
 
 void NIOUDPSocket::create(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException) {
+	socket.ipVersion = ipVersion;
 	socket.descriptor = ::socket(ipVersion == IPV6?AF_INET6:AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socket.descriptor == -1) {
 		string msg = "Could not create socket: ";
