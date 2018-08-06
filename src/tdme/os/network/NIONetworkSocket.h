@@ -77,6 +77,10 @@ public:
 	 */
 	static IpVersion determineIpVersion(const string& ip);
 
+	#if defined(_WIN32)
+		static void inet_pton(int af, const char* src, void* dest);
+		static char* inet_ntop(int af, const void* src, char* dest, size_t size);
+	#endif
 protected:
 	IpVersion ipVersion;
 	int descriptor;

@@ -2,6 +2,7 @@
 #include <string.h>
 #if defined(_WIN32)
 	#include <winsock2.h>
+	#include <ws2tcpip.h>
 	#define socklen_t int
 	#define BUF_CAST(buf) ((char*)buf)
 #else

@@ -2,6 +2,7 @@
 
 #if defined(_WIN32)
 	#include <winsock2.h>
+	#include <ws2tcpip.h>
 	#define SHUT_RDWR SD_BOTH	
 #else
 	#include <errno.h>
@@ -87,7 +88,7 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 
 void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 	#if defined(_WIN32)
-		unsigned int mode = 1;
+		long unsigned int mode = 1;
 		ioctlsocket(descriptor, FIONBIO, &mode);
 	#else
 		// get the server socket file descriptor control settings
@@ -119,3 +120,13 @@ void NIONetworkSocket::close() {
 NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& ip) {
 	return ip.find(':') != std::string::npos?IpVersion::IPV6:IpVersion::IPV4;
 }
+
+#if defined(_WIN32)
+void NIONetworkSocket::inet_pton(int af, const char *src, void* dest) 
+{
+}
+char* NIONetworkSocket::inet_ntop(int af, const void* src, char* dest, size_t size)
+{
+	return NULL;
+}
+#endif
