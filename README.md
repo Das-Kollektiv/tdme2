@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logo/tdme_logo_full.png)
+![LOGO](resources/logo/tdme_logo_full.png)
 
 
     - What is TDME2?
@@ -174,9 +174,9 @@
             - iOS(port pending)
 
     - Tools
-        - TDME Model Editor, see [README-ModelEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-ModelEditor.md)
-        - TDME Particle System Editor, see [README-ParticleSystemEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-ParticleSystemEditor.md)
-        - TDME Level Editor, see [README-LevelEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-LevelEditor.md)
+        - TDME Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
+        - TDME Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
+        - TDME Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
 
     - Links
         - <youtube link here>
