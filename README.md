@@ -172,15 +172,13 @@
         - Android(port pending)
         - iOS(port pending)
 
-- Tools
-    - TDME Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
-    - TDME Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
-    - TDME Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
-
 - Links
-    - <youtube link here>
+	- TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
+    - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
+    - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
 
-- References
+- External references
     - "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
     - the world wide web! thank you for sharing
 
