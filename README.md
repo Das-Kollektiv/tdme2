@@ -3,7 +3,7 @@
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
     - TDME2 is open source
-      - please check the license and the licenses of used 3rd party libraries
+      - please check the (license)[./LICENSE] and the [licenses of used 3rd party libraries](./ext)
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
       - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
 
