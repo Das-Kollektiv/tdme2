@@ -60,7 +60,8 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 	if (bytesRead == -1) {
 		#if defined(_WIN32)
 			int wsaError = WSAGetLastError();
-			if (wsaError == WSAEWOULDBLOCK) {
+			if (wsaError == WSAEWOULDBLOCK ||
+				wsaError == WSAECONNRESET) {
 				return -1;
 			} else {
 				string msg = "error while reading from socket: ";

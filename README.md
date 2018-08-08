@@ -120,9 +120,11 @@
             - supports safe messages with acknowledgment and automatic resending
             - support fast messages
             - can be used in a heavy multithreaded environment (the networking module is thread safe)
+            - IPV6 ready
         - UDP client
             - has single thread with a simple threadsafe API
             - supports all features required by UDP server
+            - IPV6 ready
 
 - What does it (maybe still) lack
     - animation blending
