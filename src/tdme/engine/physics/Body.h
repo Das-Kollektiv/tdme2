@@ -210,6 +210,12 @@ public:
 	bool isSleeping();
 
 	/**
+	 * Set sleeping
+	 * @param sleeping
+	 */
+	void setSleeping(bool sleeping);
+
+	/**
 	 * @return bounding volumes
 	 */
 	vector<BoundingVolume*>& getBoundingVolumes();

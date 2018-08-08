@@ -210,6 +210,10 @@ bool Body::isSleeping()
 	return collisionBody->isSleeping();
 }
 
+void Body::setSleeping(bool sleeping) {
+	collisionBody->setIsSleeping(sleeping);
+}
+
 vector<BoundingVolume*>& Body::getBoundingVolumes() {
 	return boundingVolumes;
 }
