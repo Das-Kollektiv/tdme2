@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NIOSocketException.h>
 
@@ -77,9 +78,15 @@ public:
 	 */
 	static IpVersion determineIpVersion(const string& ip);
 
-	#if defined(_WIN32)
-		static void inet_pton(int af, const char* src, void* dest);
-		static char* inet_ntop(int af, const void* src, char* dest, size_t size);
+	// MINGW: Have some missing posix functions
+	#if defined(__MINGW32__)
+		#define inet_pton inet_pton6
+		#define inet_ntop inet_ntop6
+		static size_t strlcpy(char* __restrict dst, const char* __restrict src, size_t siz);
+		static int inet_pton4(const char* src, void* dst);
+		static int inet_pton6(int af, const char* src, void* dst);
+		static char* inet_ntop4(const void* src, char* dst, size_t size);
+		static char* inet_ntop6(int af, const void* src, char* dst, size_t size);
 	#endif
 protected:
 	IpVersion ipVersion;

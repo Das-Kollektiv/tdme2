@@ -132,6 +132,7 @@
     - documentation
 
 - What is WIP or planned
+    - IPV6
     - LOD
     - GUI system port needs to be finished(memory management and other minor things)
     - Some UI elements need some default skinning fixes

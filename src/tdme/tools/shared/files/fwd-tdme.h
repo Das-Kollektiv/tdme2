@@ -9,7 +9,7 @@ namespace files {
 	class LevelFileImport;
 	class ModelMetaDataFileExport;
 	class ModelMetaDataFileImport;
-	class ProgressCallback;
+	struct ProgressCallback;
 }  // namespace files
 }  // namespace shared
 }  // namespace tools

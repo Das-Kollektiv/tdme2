@@ -45,14 +45,14 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 		case IPV4:
 			{
 				sin = &sinIPV4;
-				sinLen = sizeof(sockaddr_in);
+				sinLen = sizeof(sinIPV4);
 			}
 			break;
 		case IPV6:
 			{
 
 				sin = &sinIPV6;
-				sinLen = sizeof(sockaddr_in6);
+				sinLen = sizeof(sinIPV6);
 			}
 	}
 
@@ -108,24 +108,24 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 	switch(ipVersion) {
 		case IPV4:
 			{
-				memset(&sinIPV4, 0, sizeof(sinIPV4));
+				sinLen = sizeof(sinIPV4);
+				memset(&sinIPV4, 0, sinLen);
 				sinIPV4.sin_family = AF_INET;
 				sinIPV4.sin_port = htons(port);
-				sinIPV4.sin_addr.s_addr = inet_addr(ip.c_str());
+				sinIPV4.sin_addr.s_addr = inet_addr(to.c_str());
 				sin = &sinIPV4;
-				sinLen = sizeof(sockaddr_in);
 			}
 			break;
 		case IPV6:
 			{
-
-				memset(&sinIPV6, 0, sizeof(sinIPV6));
+				sinLen = sizeof(sinIPV6);
+				memset(&sinIPV6, 0, sinLen);
 				sinIPV6.sin6_family = AF_INET6;
 				sinIPV6.sin6_port = htons(port);
 				inet_pton(AF_INET6, to.c_str(), &sinIPV6.sin6_addr);
 				sin = &sinIPV6;
-				sinLen = sizeof(sockaddr_in6);
 			}
+			break;
 	}
 
 	// go
@@ -142,7 +142,7 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 			if (wsaError == WSAEWOULDBLOCK) {
 				return -1;
 			} else {
-				string msg = "error while reading from socket: ";
+				string msg = "error while writing to socket: ";
 				msg+= to_string(wsaError);
 				throw NIOIOException(msg);
 			}
