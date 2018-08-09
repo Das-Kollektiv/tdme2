@@ -1,8 +1,8 @@
 STACKFLAGS =
 SRCS_PLATFORM =
 SRCS_DEBUG =
-CFLAGS =
-INCLUDES := $(INCLUDES) -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
+OFLAGS =
+INCLUDES := -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -18,6 +18,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 	EXTRA_LIBS ?= -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
+	OFLAGS := -O3 
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	INCLUDES := $(INCLUDES) -I/usr/local/include
@@ -29,6 +30,7 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+	OFLAGS := -O3
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
@@ -40,6 +42,7 @@ else ifeq ($(OS), NetBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lfreeglut -lopenal -pthread
+	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
@@ -51,6 +54,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
+	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
@@ -76,6 +80,7 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
 	endif
+	OFLAGS := -O2
 else
 	# Windows via MINGW64/MSYS2
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
@@ -88,12 +93,13 @@ else
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
 	EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -l$(NAME) -l$(NAME)-ext
 	STACKFLAGS := -Wl,--stack,0x1000000
+	OFLAGS := -O2
 endif
 
-CPPFLAGS := $(CPPFLAGS) $(INCLUDES)
-#CFLAGS := $(CFLAGS) -g -pipe -MMD -MP -DNDEBUG
-CFLAGS := $(CFLAGS) -O3 -pipe -MMD -MP -DNDEBUG
-CFLAGS_EXT_RP3D := -O2 -pipe -MMD -MP -DNDEBUG
+CPPFLAGS := $(INCLUDES)
+#CFLAGS := -g -pipe -MMD -MP -DNDEBUG
+CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_DEBUG := -g -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) -std=gnu++11
