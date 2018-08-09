@@ -19,6 +19,8 @@
 
 #include <tdme/os/network/NIONetworkSocket.h>
 
+using std::to_string;
+
 using tdme::os::network::NIONetworkSocket;
 
 NIONetworkSocket& NIONetworkSocket::operator=(NIONetworkSocket& socket) {
@@ -81,7 +83,11 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 	// bind
 	if (::bind(descriptor, (const struct sockaddr*)sin, sinLen) == -1) {
 		std::string msg = "Could not bind socket: ";
-		msg+= strerror(errno);
+		#if defined(_WIN32)
+			msg+= to_string(WSAGetLastError());
+		#else
+			msg+= strerror(errno);
+		#endif
 		throw NIOSocketException(msg);
 	}
 
@@ -93,7 +99,11 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
 	#if defined(_WIN32)
 		long unsigned int mode = 1;
-		ioctlsocket(descriptor, FIONBIO, &mode);
+		if (ioctlsocket(descriptor, FIONBIO, &mode) != 0) {
+			std::string msg = "Could not set socket non blocked: ";
+			msg+= to_string(WSAGetLastError());
+			throw NIOSocketException(msg);
+		}
 	#else
 		// get the server socket file descriptor control settings
 		int fdc = fcntl(descriptor, F_GETFL, 0);
