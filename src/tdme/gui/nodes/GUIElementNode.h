@@ -55,6 +55,10 @@ private:
 	GUINodeConditions activeConditions {  };
 	bool focusable {  };
 	bool ignoreEvents {  };
+	string onInitialize;
+	string onMouseClick;
+	string onMouseOver;
+	string onMouseOut;
 
 protected:
 	/** 
@@ -100,6 +104,9 @@ protected:
 	 * @param disabled
 	 * @param focusable
 	 * @param ignore events
+	 * @param on initialize
+	 * @param on mouse click
+	 * @param on mouse over
 	 */
 	GUIElementNode(
 		GUIScreenNode* screenNode,
@@ -122,7 +129,11 @@ protected:
 		bool selected,
 		bool disabled,
 		bool focusable,
-		bool ignoreEvents
+		bool ignoreEvents,
+		const string& onInitialize,
+		const string& onMouseClick,
+		const string& onMouseOver,
+		const string& onMouseOut
 	) throw (GUIParserException);
 
 public:
@@ -153,6 +164,27 @@ public:
 	 * @return is disabled
 	 */
 	bool isDisabled();
+
+
+	/**
+	 * @return on initialize expression
+	 */
+	const string& getOnInitializeExpression();
+
+	/**
+	 * @return on mouse click expression
+	 */
+	const string& getOnMouseClickExpression();
+
+	/**
+	 * @return on mouse over expression
+	 */
+	const string& getOnMouseOverExpression();
+
+	/**
+	 * @return on mouse out expression
+	 */
+	const string& getOnMouseOutExpression();
 
 	/** 
 	 * @return active conditions

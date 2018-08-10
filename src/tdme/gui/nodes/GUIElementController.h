@@ -31,7 +31,13 @@ private:
 	static string CONDITION_ENABLED;
 	bool disabled {  };
 	bool isActionPerforming {  };
+	bool initialized { };
 	MutableString value;
+
+	/**
+	 * Execute expression
+	 */
+	void executeExpression(const string& expression);
 
 public:
 	bool isDisabled() override;

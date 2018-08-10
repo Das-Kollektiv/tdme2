@@ -60,7 +60,11 @@ GUIElementNode::GUIElementNode(
 	bool selected,
 	bool disabled,
 	bool focusable,
-	bool ignoreEvents)
+	bool ignoreEvents,
+	const string& onInitialize,
+	const string& onMouseClick,
+	const string& onMouseOver,
+	const string& onMouseOut)
 	throw (GUIParserException) :
 	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, border, padding, showOn, hideOn),
 	activeConditions(this)
@@ -72,6 +76,10 @@ GUIElementNode::GUIElementNode(
 	this->disabled = disabled;
 	this->focusable = focusable;
 	this->ignoreEvents = ignoreEvents;
+	this->onInitialize = onInitialize;
+	this->onMouseClick = onMouseClick;
+	this->onMouseOver = onMouseOver;
+	this->onMouseOut = onMouseOut;
 	this->controller = ignoreEvents == true ? static_cast< GUINodeController* >(new GUIElementIgnoreEventsController(this)) : static_cast< GUINodeController* >(new GUIElementController(this));
 	this->controller->initialize();
 }
@@ -214,6 +222,22 @@ bool GUIElementNode::isSelected()
 bool GUIElementNode::isDisabled()
 {
 	return disabled;
+}
+
+const string& GUIElementNode::getOnInitializeExpression() {
+	return onInitialize;
+}
+
+const string& GUIElementNode::getOnMouseClickExpression() {
+	return onMouseClick;
+}
+
+const string& GUIElementNode::getOnMouseOverExpression() {
+	return onMouseOver;
+}
+
+const string& GUIElementNode::getOnMouseOutExpression() {
+	return onMouseOut;
 }
 
 GUINodeConditions& GUIElementNode::getActiveConditions()

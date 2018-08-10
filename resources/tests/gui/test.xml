@@ -14,9 +14,9 @@
 				<tab id="tab5" text="Input" />
 				<tab id="tab6" text="Scrollarea" />
 				<tab id="tab7" text="Sliders + Knob" />
-				<tab id="tab8" text="scale9 I" />
-				<tab id="tab9" text="scale9 II" />
-				<tab id="tab10" text="Template" />
+				<tab id="tab8" text="Scale9" />
+				<tab id="tab9" text="Template" />
+				<tab id="tab10" text="Conditions" />
 			</tabs-header>
 			<tabs-content>
 				<tab-content tab-id="tab1" vertical-align="top">
@@ -255,19 +255,8 @@
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab8" vertical-align="top">
-					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
-						<image 
-							width="100%" 
-							height="100%" 
-							src="resources/tests/gui/images/scale9GridTest.png" 
-							horizontal-align="center" 
-							vertical-align="center"
-							scale9="125" 
-						/>
-					</layout>
-				</tab-content>
-				<tab-content tab-id="tab9" vertical-align="top">
-					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
+					<layout horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
+						<space height="*" />
 						<image 
 							width="80%" 
 							height="25" 
@@ -277,10 +266,48 @@
 							scale9-left="500"
 							scale9-right="500"
 						/>
+						<space height="*" />
+						<image 
+							width="100%" 
+							height="50%" 
+							src="resources/tests/gui/images/scale9GridTest.png" 
+							horizontal-align="center" 
+							vertical-align="center"
+							scale9="125" 
+						/>
 					</layout>
 				</tab-content>
-				<tab-content tab-id="tab10" vertical-align="top">
+				<tab-content tab-id="tab9" vertical-align="top">
 					<template src="resources/tests/gui/template.xml" my-text="Hello this is a template parameter" />
+				</tab-content>
+				<tab-content tab-id="tab10" vertical-align="top">
+					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
+						<space height="*" />
+						<layout horizontal-align="center" vertical-align="center" alignment="horizontal">
+							<element border="2" focusable="true" on-mouse-click="tab10-element.condition=a">
+								<text font="resources/gui/fonts/Foo_75.fnt" text="Click-A" color="#000000" />
+							</element>
+							<space width="20" />
+							<element border="2" focusable="true" on-mouse-click="tab10-element.condition=b">
+								<text font="resources/gui/fonts/Foo_75.fnt" text="Click-B" color="#000000" />
+							</element>
+							<space width="20" />
+							<element border="2" focusable="true" on-mouse-over="tab10-element.condition=c" on-mouse-out="tab10-element.condition=">
+								<text font="resources/gui/fonts/Foo_75.fnt" text="Over-C" color="#000000" />
+							</element>
+							<space width="20" />
+							<element border="2" focusable="true" on-mouse-click="tab10-element.condition=">
+								<text font="resources/gui/fonts/Foo_75.fnt" text="Hide" color="#000000" />
+							</element>
+						</layout>
+						<space height="10" />
+						<element on-initialize="tab10-element.condition=a" id="tab10-element" horizontal-align="center" vertical-align="center" alignment="horizontal">
+							<text show-on="a" font="resources/gui/fonts/Foo_75.fnt" text="A" color="#000000" />
+							<text show-on="b" font="resources/gui/fonts/Foo_75.fnt" text="B" color="#000000" />
+							<text show-on="c" font="resources/gui/fonts/Foo_75.fnt" text="C" color="#000000" />
+						</element>
+						<space height="*" />
+					</layout>
 				</tab-content>
 			</tabs-content>
 		</tabs>
