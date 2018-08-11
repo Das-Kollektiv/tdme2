@@ -55,10 +55,10 @@ private:
 	GUINodeConditions activeConditions {  };
 	bool focusable {  };
 	bool ignoreEvents {  };
-	string onInitialize;
-	string onMouseClick;
-	string onMouseOver;
-	string onMouseOut;
+	string onInitializeExpression;
+	string onMouseClickExpression;
+	string onMouseOverExpression;
+	string onMouseOutExpression;
 
 protected:
 	/** 
@@ -104,9 +104,10 @@ protected:
 	 * @param disabled
 	 * @param focusable
 	 * @param ignore events
-	 * @param on initialize
-	 * @param on mouse click
-	 * @param on mouse over
+	 * @param on initialize expression
+	 * @param on mouse click expression
+	 * @param on mouse over expression
+	 * @param on mouse out expression
 	 */
 	GUIElementNode(
 		GUIScreenNode* screenNode,

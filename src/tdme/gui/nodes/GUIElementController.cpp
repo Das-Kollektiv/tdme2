@@ -106,6 +106,8 @@ void GUIElementController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+					auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
+					if (onMouseClickExpression.size() > 0) executeExpression(onMouseClickExpression);
 					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
 				}
 			}
