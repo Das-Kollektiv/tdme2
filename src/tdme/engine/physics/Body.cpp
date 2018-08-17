@@ -419,6 +419,42 @@ void Body::setAngularVelocity(const Vector3& angularVelocity) {
 	rigidBody->setAngularVelocity(reactphysics3d::Vector3(angularVelocity.getX(), angularVelocity.getY(), angularVelocity.getZ()));
 }
 
+float Body::getLinearDamping()
+{
+	if (rigidBody == nullptr) {
+		Console::println("Body::getLinearDamping(): no rigid body attached");
+		return 0.0f;
+	}
+	return rigidBody->getLinearDamping();
+}
+
+void Body::setLinearDamping(float linearDamping)
+{
+	if (rigidBody == nullptr) {
+		Console::println("Body::setLinearDamping(): no rigid body attached");
+		return;
+	}
+	rigidBody->setLinearDamping(linearDamping);
+}
+
+float Body::getAngularDamping()
+{
+	if (rigidBody == nullptr) {
+		Console::println("Body::getAngularDamping(): no rigid body attached");
+		return 0.0f;
+	}
+	return rigidBody->getAngularDamping();
+}
+
+void Body::setAngularDamping(float angularDamping)
+{
+	if (rigidBody == nullptr) {
+		Console::println("Body::setAngularDamping(): no rigid body attached");
+		return;
+	}
+	rigidBody->setAngularDamping(angularDamping);
+}
+
 const Transformations& Body::getTransformations() {
 	return transformations;
 }

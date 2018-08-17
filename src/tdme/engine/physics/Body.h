@@ -287,6 +287,28 @@ public:
 	void setAngularVelocity(const Vector3& angularVelocity);
 
 	/**
+	 * @return return linear damping
+	 */
+	float getLinearDamping();
+
+	/**
+	 * Set linear damping
+	 * @param linear damping
+	 */
+	void setLinearDamping(float linearDamping);
+
+	/**
+	 * @return return angular damping
+	 */
+	float getAngularDamping();
+
+	/**
+	 * Set angular damping
+	 * @param anuglar damping
+	 */
+	void setAngularDamping(float angularDamping);
+
+	/**
 	 * @return transformations
 	 */
 	const Transformations& getTransformations();

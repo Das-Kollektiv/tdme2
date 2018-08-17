@@ -133,9 +133,10 @@ public:
 	 * @param step up max
 	 * @param point on which height should be calculated
 	 * @param point where height has been determined
+	 * @param min height to determine height from
 	 * @return body from which height was determined or null
 	 */
-	Body* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest);
+	Body* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight = -10000.0f);
 
 	/**
 	 * Check if world collides with given body

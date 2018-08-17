@@ -281,15 +281,15 @@ void World::synch(Engine* engine)
 	}
 }
 
-Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& dest)
+Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight)
 {
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
-		CustomCallbackClass(float stepUpMax, const Vector3& point): stepUpMax(stepUpMax), point(point), height(-10000.0f), body(nullptr) {
+		CustomCallbackClass(float stepUpMax, const Vector3& point, float minHeight = -10000.0f): stepUpMax(stepUpMax), point(point), height(minHeight), body(nullptr) {
 		}
 		virtual reactphysics3d::decimal notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {
 			Vector3 hitPoint(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
-			if (hitPoint.getY() >= height && hitPoint.getY() <= point.getY() + Math::max(0.1f, stepUpMax)) {
+			if (hitPoint.getY() >= height) {
 				height = hitPoint.getY();
 				body = (Body*)info.body->getUserData();
 			}
@@ -307,10 +307,10 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 		float height;
 		Body* body;
 	};
-	reactphysics3d::Vector3 startPoint(point.getX(), +10000.0f, point.getZ());
-	reactphysics3d::Vector3 endPoint(point.getX(), -10000.0f, point.getZ());
+	reactphysics3d::Vector3 startPoint(point.getX(), point.getY() + stepUpMax, point.getZ());
+	reactphysics3d::Vector3 endPoint(point.getX(), minHeight, point.getZ());
 	reactphysics3d::Ray ray(startPoint, endPoint);
-	CustomCallbackClass customCallbackObject(stepUpMax, point);
+	CustomCallbackClass customCallbackObject(stepUpMax, point, minHeight);
 	world.raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getBody() != nullptr) {
 		dest.set(point);
