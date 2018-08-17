@@ -259,6 +259,9 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				lodObject->setEffectColorAddLOD3(lodLevel3->getColorAdd());
 				lodObject->setEffectColorMulLOD3(lodLevel3->getColorMul());
 			}
+			lodObject->setShader(levelEditorEntity->getShader());
+			lodObject->setDistanceShader("default");
+			lodObject->setDistanceShaderDistance(50.0f);
 		} else {
 			// single
 			entity = new Object3D(
@@ -266,6 +269,8 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				levelEditorEntity->getModel()
 			);
 			dynamic_cast<Object3D*>(entity)->setShader(levelEditorEntity->getShader());
+			dynamic_cast<Object3D*>(entity)->setDistanceShader("default");
+			dynamic_cast<Object3D*>(entity)->setDistanceShaderDistance(50.0f);
 		}
 	} else
 	// particle system
@@ -344,6 +349,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 				levelEditorEntity->getModel()
 			);
 			object3DRenderGroup->setShader(levelEditorEntity->getShader());
+			object3DRenderGroup->setDistanceShader("default");
+			object3DRenderGroup->setDistanceShaderDistance(50.0f);
 			for (auto transformation: itPartition.second) {
 				object3DRenderGroup->addObject(*transformation);
 			}

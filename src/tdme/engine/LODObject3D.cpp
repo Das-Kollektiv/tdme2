@@ -54,6 +54,17 @@ LODObject3D::LODObject3D(
 	if (modelLOD1 != nullptr) objectLOD1 = new Object3D(id + ".lod1", modelLOD1);
 	if (modelLOD2 != nullptr) objectLOD2 = new Object3D(id + ".lod2", modelLOD2);
 	if (modelLOD3 != nullptr) objectLOD3 = new Object3D(id + ".lod3", modelLOD3);
+
+	if (objectLOD1 != nullptr) objectLOD1->setShader(shaderId);
+	if (objectLOD2 != nullptr) objectLOD2->setShader(shaderId);
+	if (objectLOD3 != nullptr) objectLOD3->setShader(shaderId);
+	if (objectLOD1 != nullptr) objectLOD1->setDistanceShader(distanceShaderId);
+	if (objectLOD2 != nullptr) objectLOD2->setDistanceShader(distanceShaderId);
+	if (objectLOD3 != nullptr) objectLOD3->setDistanceShader(distanceShaderId);
+	if (objectLOD1 != nullptr) objectLOD1->setDistanceShaderDistance(distanceShaderDistance);
+	if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderDistance(distanceShaderDistance);
+	if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderDistance(distanceShaderDistance);
+
 	levelLOD = 1;
 }
 

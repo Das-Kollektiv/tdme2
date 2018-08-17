@@ -246,6 +246,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		// create object, initialize and
 		combinedObject = new Object3D(id, combinedModel);
 		combinedObject->setShader(shaderId);
+		combinedObject->setDistanceShader(distanceShaderId);
 		combinedObject->setDynamicShadowingEnabled(dynamicShadowing);
 
 		//

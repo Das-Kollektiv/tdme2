@@ -46,7 +46,6 @@ class tdme::engine::subsystems::rendering::Object3DVBORenderer final {
 
 private:
 	static constexpr int32_t BATCHVBORENDERER_MAX { 256 };
-
 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
 
 	Engine* engine {  };

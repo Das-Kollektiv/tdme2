@@ -76,6 +76,9 @@ private:
 	Color4 effectColorAddLOD2 {  };
 	Color4 effectColorMulLOD3 {  };
 	Color4 effectColorAddLOD3 {  };
+	string shaderId { "default" };
+	string distanceShaderId { "" };
+	float distanceShaderDistance { 50.0f };
 
 public:
 	void setEngine(Engine* engine) override;
@@ -160,14 +163,14 @@ public:
 
 			// determine LOD object and level type
 			if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
-				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD3MinDistance)) {
+				(objectCamFromLengthSquared = objectCamFromAxis.set(getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD3MinDistance)) {
 				lodLevelType = levelTypeLOD3;
 				planeRotationYLOD = planeRotationYLOD3;
 				objectLOD = objectLOD3;
 				levelLOD = 3;
 			} else
 			if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
-				(objectCamFromLengthSquared = objectCamFromAxis.set(getTranslation()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
+				(objectCamFromLengthSquared = objectCamFromAxis.set(getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
 				lodLevelType = levelTypeLOD2;
 				planeRotationYLOD = planeRotationYLOD2;
 				objectLOD = objectLOD2;
@@ -405,6 +408,60 @@ public:
 
 	inline virtual const Transformations& getTransformations() const override {
 		return *this;
+	}
+
+	/**
+	 * @return shader id
+	 */
+	inline const string& getShader() {
+		return shaderId;
+	}
+
+	/**
+	 * Set shader id
+	 * @param shader
+	 */
+	inline void setShader(const string& id) {
+		this->shaderId = id;
+		if (objectLOD1 != nullptr) objectLOD1->setShader(shaderId);
+		if (objectLOD2 != nullptr) objectLOD2->setShader(shaderId);
+		if (objectLOD3 != nullptr) objectLOD3->setShader(shaderId);
+	}
+
+	/**
+	 * @return distance shader id
+	 */
+	inline const string& getDistanceShader() {
+		return distanceShaderId;
+	}
+
+	/**
+	 * Set distance shader id
+	 * @param shader
+	 */
+	inline void setDistanceShader(const string& id) {
+		this->distanceShaderId = id;
+		if (objectLOD1 != nullptr) objectLOD1->setDistanceShader(distanceShaderId);
+		if (objectLOD2 != nullptr) objectLOD2->setDistanceShader(distanceShaderId);
+		if (objectLOD3 != nullptr) objectLOD3->setDistanceShader(distanceShaderId);
+	}
+
+	/**
+	 * @return distance shader distance
+	 */
+	inline float getDistanceShaderDistance() {
+		return distanceShaderDistance;
+	}
+
+	/**
+	 * Set distance shader distance
+	 * @param shader
+	 */
+	inline void setDistanceShaderDistance(float distanceShaderDistance) {
+		this->distanceShaderDistance = distanceShaderDistance;
+		if (objectLOD1 != nullptr) objectLOD1->setDistanceShaderDistance(distanceShaderDistance);
+		if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderDistance(distanceShaderDistance);
+		if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderDistance(distanceShaderDistance);
 	}
 
 };

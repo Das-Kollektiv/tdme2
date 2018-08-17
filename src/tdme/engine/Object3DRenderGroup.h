@@ -60,6 +60,8 @@ private:
 	Model* model {  };
 	Model* combinedModel {  };
 	string shaderId { "default" };
+	string distanceShaderId { "" };
+	float distanceShaderDistance { 50.0f };
 
 	/**
 	 * Compute bounding box
@@ -281,6 +283,42 @@ public:
 		this->shaderId = id;
 		if (combinedObject != nullptr) {
 			combinedObject->setShader(id);
+		}
+	}
+
+	/**
+	 * @return distance shader id
+	 */
+	inline const string& getDistanceShader() {
+		return distanceShaderId;
+	}
+
+	/**
+	 * Set distance shader id
+	 * @param shader
+	 */
+	inline void setDistanceShader(const string& id) {
+		this->distanceShaderId = id;
+		if (combinedObject != nullptr) {
+			combinedObject->setDistanceShader(id);
+		}
+	}
+
+	/**
+	 * @return distance shader distance
+	 */
+	inline float getDistanceShaderDistance() {
+		return distanceShaderDistance;
+	}
+
+	/**
+	 * Set distance shader distance
+	 * @param shader
+	 */
+	inline void setDistanceShaderDistance(float distanceShaderDistance) {
+		this->distanceShaderDistance = distanceShaderDistance;
+		if (combinedObject != nullptr) {
+			combinedObject->setDistanceShaderDistance(distanceShaderDistance);
 		}
 	}
 

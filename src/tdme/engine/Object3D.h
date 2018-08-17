@@ -53,6 +53,8 @@ private:
 	Engine* engine { nullptr };
 	bool frustumCulling { true };
 	string shaderId { "default" };
+	string distanceShaderId { "" };
+	float distanceShaderDistance { 50.0f };
 
 	/**
 	 * Pre render step like uploading VBOs and such
@@ -220,6 +222,36 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		shaderId = id;
+	}
+
+	/**
+	 * @return distance shader id
+	 */
+	inline const string& getDistanceShader() {
+		return distanceShaderId;
+	}
+
+	/**
+	 * Set distance shader
+	 * @param shader id
+	 */
+	inline void setDistanceShader(const string& id) {
+		distanceShaderId = id;
+	}
+
+	/**
+	 * @return distance shader distance
+	 */
+	inline float getDistanceShaderDistance() {
+		return distanceShaderDistance;
+	}
+
+	/**
+	 * Set distance shader distance
+	 * @param shader
+	 */
+	inline void setDistanceShaderDistance(float distanceShaderDistance) {
+		this->distanceShaderDistance = distanceShaderDistance;
 	}
 
 };

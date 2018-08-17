@@ -6,6 +6,7 @@
 #include <set>
 #include <string>
 
+#include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
@@ -344,6 +345,9 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 
 void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
+	Vector3 objectCamFromAxis;
+	auto camera = engine->getCamera();
+
 	//
 	auto shadowMapping = engine->getShadowMapping();
 	Matrix4x4 modelViewMatrix;
@@ -430,8 +434,13 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					continue;
 				}
 				// shader
-				if (currentShader != object->getShader()) {
-					currentShader = object->getShader();
+				auto objectShader = object->getDistanceShader().length() == 0?
+					object->getShader():
+					objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+						object->getShader():
+						object->getDistanceShader();
+				if (currentShader != objectShader) {
+					currentShader = objectShader;
 					renderer->setShader(currentShader);
 					renderer->onUpdateShader();
 					// update lights
@@ -536,6 +545,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 
 void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
+	Vector3 objectCamFromAxis;
+	auto camera = engine->getCamera();
+
 	Matrix4x4 cameraMatrix(renderer->getModelViewMatrix());
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
@@ -611,8 +623,12 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				auto objectCount = objectsToRender.size();
 				auto currentTextureMatrix = objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
-				// set up shader
-				auto currentShader = objectsToRender[0]->getShader();
+				// shader
+				auto currentShader = objectsToRender[0]->getDistanceShader().length() == 0?
+					objectsToRender[0]->getShader():
+					objectCamFromAxis.set(objectsToRender[0]->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(objectsToRender[0]->getDistanceShaderDistance())?
+						objectsToRender[0]->getShader():
+						objectsToRender[0]->getDistanceShader();
 				renderer->setShader(currentShader);
 				renderer->onUpdateShader();
 				// issue upload matrices
@@ -659,7 +675,13 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					}
 
 					// check if shader did change
-					if (object->getShader() != currentShader) {
+					// shader
+					auto objectShader = object->getDistanceShader().length() == 0?
+						object->getShader():
+						objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+							object->getShader():
+							object->getDistanceShader();
+					if (objectShader != currentShader) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
