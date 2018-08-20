@@ -21,20 +21,20 @@ using tdme::utils::FilenameFilter;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
-class ListFilter : public virtual FilenameFilter {
-	public:
-		virtual ~ListFilter() {}
-
-		bool accept(const string& pathName, const string& fileName) override {
-			if (fileName == ".") return false;
-			if (fileName == "..") return false;
-			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
-			if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".h") == true) return true;
-			return false;
-		}
-};
-
 void scanDir(const string& folder, vector<string>& totalFiles) {
+	class ListFilter : public virtual FilenameFilter {
+		public:
+			virtual ~ListFilter() {}
+
+			bool accept(const string& pathName, const string& fileName) override {
+				if (fileName == ".") return false;
+				if (fileName == "..") return false;
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".h") == true) return true;
+				return false;
+			}
+	};
+
 	ListFilter listFilter;
 	vector<string> files;
 

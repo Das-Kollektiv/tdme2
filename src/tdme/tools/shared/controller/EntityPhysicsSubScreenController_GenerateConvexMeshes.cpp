@@ -78,31 +78,6 @@ using tdme::utils::Exception;
 using tdme::utils::ExceptionBase;
 using tdme::utils::MutableString;
 
-class VHACDCallback : public IVHACD::IUserCallback {
-public:
-	VHACDCallback() {}
-    ~VHACDCallback() {};
-    void Update(
-    	const double overallProgress,
-		const double stageProgress,
-		const double operationProgress,
-        const char* const stage,
-		const char* const operation)
-    {
-    	Console::println(to_string((int)(overallProgress + 0.5)));
-    };
-};
-
-class VHACDLogger : public IVHACD::IUserLogger {
-public:
-	VHACDLogger() {}
-    ~VHACDLogger() {};
-    void Log(const char* const msg)
-    {
-    	Console::println(msg);
-    }
-};
-
 void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, LevelEditorEntity* entityFinal)
 {
 	string meshPathName = entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName();
@@ -134,6 +109,31 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 	auto convexMeshMode = values["boundingvolume_convexmeshes_mode"].getString();
 	vector<string> convexMeshFileNames;
 	if (convexMeshMode == "vhacd") {
+		class VHACDCallback : public IVHACD::IUserCallback {
+		public:
+			VHACDCallback() {}
+		    ~VHACDCallback() {};
+		    void Update(
+		    	const double overallProgress,
+				const double stageProgress,
+				const double operationProgress,
+		        const char* const stage,
+				const char* const operation)
+		    {
+		    	Console::println(to_string((int)(overallProgress + 0.5)));
+		    };
+		};
+
+		class VHACDLogger : public IVHACD::IUserLogger {
+		public:
+			VHACDLogger() {}
+		    ~VHACDLogger() {};
+		    void Log(const char* const msg)
+		    {
+		    	Console::println(msg);
+		    }
+		};
+
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			IVHACD::Parameters vhacdParams;
