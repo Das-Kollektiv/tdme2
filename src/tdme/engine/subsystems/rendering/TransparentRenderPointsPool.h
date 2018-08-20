@@ -36,6 +36,7 @@ public:
 	 * Creates an transparent render point entity in pool
 	 * @param point
 	 * @param color
+	 * @param distance from camera
 	 */
 	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera) {
 		// check for pool overflow

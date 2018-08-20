@@ -204,13 +204,11 @@ private:
 
 	/**
 	 * Set up GUI mode rendering
-	 * @param drawable
 	 */
 	void initGUIMode();
 
 	/**
 	 * Set up GUI mode rendering
-	 * @param drawable
 	 */
 	void doneGUIMode();
 

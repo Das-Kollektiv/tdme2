@@ -52,7 +52,6 @@ private:
 	/** 
 	 * Checks if VBO is available
 	 * based on http://www.felixgers.de/teaching/jogl/vertexBufferObject.html
-	 * @param gl
 	 * @return vbo availability
 	 */
 	bool checkBufferObjectsAvailable();

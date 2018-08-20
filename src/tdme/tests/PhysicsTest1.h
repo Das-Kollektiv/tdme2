@@ -47,14 +47,6 @@ public:
 	 * @param argument values
 	 */
 	static void main(int argc, char** argv);
-protected:
-
-	/** 
-	 * Physics test
-	 * @param gl window
-	 * @param fps animator
-	 */
-	void ctor();
 
 public:
 	void display() override;

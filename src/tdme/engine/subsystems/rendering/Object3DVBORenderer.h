@@ -80,15 +80,12 @@ private:
 	void renderTransparentFacesGroups();
 
 	/** 
-	 * Render transparent faces groups
-	 * @param transparent render faces groups
-	 * @param depth buffer mode
+	 * Release transparent faces groups
 	 */
 	void releaseTransparentFacesGroups();
 
 	/** 
 	 * Renders multiple objects of same type(with same model)
-	 * @param engine
 	 * @param objects of same type/ with same models
 	 * @param collect render faces
 	 * @param render types
@@ -97,7 +94,6 @@ private:
 
 	/** 
 	 * Renders multiple objects of same type(with same model) not using instancing
-	 * @param engine
 	 * @param objects of same type/ with same models
 	 * @param collect render faces
 	 * @param render types
@@ -106,7 +102,6 @@ private:
 
 	/**
 	 * Renders multiple objects of same type(with same model) using instancing
-	 * @param engine
 	 * @param objects of same type/ with same models
 	 * @param collect render faces
 	 * @param render types
@@ -135,8 +130,6 @@ private:
 
 	/** 
 	 * Clear material for rendering
-	 * @param gl
-	 * @param material
 	 */
 	void clearMaterial();
 
@@ -187,7 +180,6 @@ public:
 	 * @param objects
 	 * @param render transparent faces
 	 * @param render types
-	 * @param material key
 	 */
 	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 

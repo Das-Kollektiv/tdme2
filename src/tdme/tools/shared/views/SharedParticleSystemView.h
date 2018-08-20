@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -132,7 +131,6 @@ public:
 
 	/** 
 	 * On init additional screens
-	 * @param drawable
 	 */
 	virtual void onInitAdditionalScreens();
 
@@ -144,7 +142,7 @@ public:
 	/** 
 	 * On load particle system
 	 * @param old entity
-	 * @oaram entity
+	 * @param entity
 	 */
 	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
 

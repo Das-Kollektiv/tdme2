@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -66,6 +65,7 @@ public:
 
 	/** 
 	 * Add a trigger
+	 * @param id
 	 * @param name
 	 * @param description
 	 * @param width
@@ -78,6 +78,7 @@ public:
 
 	/** 
 	 * Add a empty
+	 * @param id
 	 * @param name
 	 * @param description
 	 * @return level editor entity
@@ -87,6 +88,7 @@ public:
 
 	/** 
 	 * Add a empty
+	 * @param id
 	 * @param name
 	 * @param description
 	 * @return level editor entity

@@ -36,21 +36,22 @@ public:
 
 	/**
 	 * Set character
-	 * @param c
+	 * @param char
 	 * @return this mutable string
 	 */
 	MutableString& set(char c);
 
 	/**
 	 * Append character
-	 * @param c
+	 * @param char
 	 * @return this mutable string
 	 */
 	MutableString& append(char c);
 
 	/**
 	 * Insert character c at idx
-	 * @param c
+	 * @param index
+	 * @param char
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, char c);
@@ -71,7 +72,8 @@ public:
 
 	/**
 	 * Insert string at idx
-	 * @param c
+	 * @param index
+	 * @param string
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, const string& s);
@@ -92,7 +94,8 @@ public:
 
 	/**
 	 * Insert mutable string at idx
-	 * @param c
+	 * @param index
+	 * @param string
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, const MutableString& s);
@@ -115,6 +118,7 @@ public:
 	/**
 	 * Insert integer at idx
 	 * @see http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
+	 * @param index
 	 * @param i
 	 * @return this mutable string
 	 */
@@ -140,7 +144,9 @@ public:
 	/**
 	 * Insert float at idx
 	 * @see http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
-	 * @param i
+	 * @param index
+	 * @param float
+	 * @param decimals
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, float f, int32_t decimals);

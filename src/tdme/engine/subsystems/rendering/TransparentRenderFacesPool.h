@@ -55,8 +55,6 @@ private:
 	 * @param object3D group
 	 * @param faces entity index
 	 * @param face index
-	 * @param face index for texture coordinates
-	 * @return
 	 */
 	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx) {
 		// retrieve objects we need

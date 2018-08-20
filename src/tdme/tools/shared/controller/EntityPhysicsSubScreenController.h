@@ -138,7 +138,8 @@ public:
 
 	/** 
 	 * Display given bounding volume GUI elements
-	 * @param bvType
+	 * @param idx
+	 * @param bounding volume type
 	 */
 	virtual void selectBoundingVolume(int32_t idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
 
@@ -153,7 +154,8 @@ public:
 	/** 
 	 * Setup capsule bounding volume
 	 * @param idx
-	 * @param center
+	 * @param a
+	 * @param b
 	 * @param radius
 	 */
 	virtual void setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius);

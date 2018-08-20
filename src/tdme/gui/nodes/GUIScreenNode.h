@@ -172,7 +172,7 @@ protected:
 	 * @param background color
 	 * @param background image
 	 * @param background image scale 9 grid
-	 * @þaram border
+	 * @param border
 	 * @param padding
 	 * @param show on
 	 * @param hide on
@@ -314,6 +314,7 @@ public:
 
 	/** 
 	 * Delegate action performed
+	 * @param type
 	 * @param node
 	 */
 	void delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node);

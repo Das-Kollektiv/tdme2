@@ -188,7 +188,6 @@ public:
 
 	/** 
 	 * Sets up camera while resizing the view port
-	 * @param gl
 	 * @param width
 	 * @param height
 	 */

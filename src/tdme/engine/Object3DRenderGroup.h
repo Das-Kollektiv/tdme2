@@ -136,7 +136,6 @@ public:
 
 	/**
 	 * Adds a instance this render group
-	 * @param model
 	 * @param transformations
 	 */
 	void addObject(const Transformations& transformations);

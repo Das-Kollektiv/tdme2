@@ -60,7 +60,6 @@ public:
 
 	/** 
 	 * Setup bounding volume none
-	 * @param idx
 	 */
 	virtual void setupNone();
 

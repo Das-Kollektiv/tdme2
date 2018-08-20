@@ -75,6 +75,7 @@ private:
 	/**
 	 * Set up convex mesh material
 	 * @param groups
+	 * @param material
 	 */
 	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material);
 

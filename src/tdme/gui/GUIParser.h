@@ -82,7 +82,8 @@ private:
 	/** 
 	 * Returns immediate children tags
 	 * @param parent
-	 * @return name
+	 * @param name
+	 * @return children of parent node with given name
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 

@@ -76,7 +76,6 @@ public:
 	/** 
 	 * Set up entity properties
 	 * @param preset id
-	 * @param entity properties
 	 * @param selected name
 	 */
 	void setEntityProperties(const string& presetId, const string& selectedName);
@@ -88,7 +87,9 @@ public:
 
 	/** 
 	 * Set trigger tab
-	 * @param dimension
+	 * @param width
+	 * @param height
+	 * @param depth
 	 */
 	void setTrigger(float width, float height, float depth);
 

@@ -159,6 +159,7 @@ private:
 	 * Partition sub groups
 	 * @param source group to partition
 	 * @param models by partition
+	 * @param models position
 	 * @param parent transformations matrix
 	 */
 	static void partitionGroup(Group* sourceGroup, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix);
@@ -173,6 +174,7 @@ public:
 	/**
 	 * Partition model
 	 * @param model
+	 * @param transformations
 	 * @param models by partition
 	 * @param models position
 	 */

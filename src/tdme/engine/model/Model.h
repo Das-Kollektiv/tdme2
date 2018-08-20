@@ -69,6 +69,7 @@ private:
 	 * @param parent transformations matrix
 	 * @param frame
 	 * @param group id
+	 * @param transformations matrix
 	 * @return target group transformations
 	 */
 	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);

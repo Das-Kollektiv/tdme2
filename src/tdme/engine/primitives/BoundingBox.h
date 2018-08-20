@@ -63,7 +63,6 @@ public:
 
 	/** 
 	 * Returns bounding box vertices
-	 * @param bounding box
 	 * @return vertices
 	 */
 	const vector<Vector3>* getVertices() const {

@@ -123,7 +123,6 @@ public:
 	/**
 	 * Creates a rotation matrix
 	 * @param angle
-	 * @param vector v
 	 * @return this matrix
 	 */
 	inline Matrix2D3x3& rotate(float angle) {

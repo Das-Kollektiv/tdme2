@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -31,17 +30,15 @@ private:
 public:
 
 	/** 
-	 * Adds a vbo to manager / open gl stack
-	 * @param gl
-	 * @param texture
-	 * @param vbo id count
+	 * Adds a VBO to manager
+	 * @param VBO id
+	 * @param VBOs to allocate
 	 */
 	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids);
 
 	/** 
-	 * Removes a vbo from manager / open gl stack
-	 * @param gl
-	 * @param texture
+	 * Removes a VBO from manager
+	 * @param VBO id
 	 */
 	void removeVBO(const string& vboId);
 

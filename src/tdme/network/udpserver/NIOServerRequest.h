@@ -41,6 +41,7 @@ public:
 	 * @brief Public constructor
 	 * @param request type
 	 * @param object
+	 * @param custom event type if any
 	 * @param request frame stream
 	 * @param message id (udp server only)
 	 * @param message retries (udp server only)

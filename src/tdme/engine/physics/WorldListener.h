@@ -29,9 +29,10 @@ struct tdme::engine::physics::WorldListener
 	 * Event fired when rigid body was added
 	 * @param id
 	 * @param body type
+	 * @param enabled
 	 * @param collision type id
 	 * @param transformations
-	 * @oaram restitution
+	 * @param restitution
 	 * @param friction
 	 * @param mass
 	 * @param inertia tensor

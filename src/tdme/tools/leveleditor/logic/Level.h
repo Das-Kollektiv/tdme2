@@ -80,6 +80,7 @@ public:
 	/**
 	 * Create engine entity
 	 * @param level editor object
+	 * @param translation
 	 * @return entity
 	 */
 	static Entity* createEntity(LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
@@ -91,7 +92,6 @@ public:
 	 * @param add empties
 	 * @param add trigger
 	 * @param pickable
-	 * @param translation
 	 * @param enable
 	 * @param translation
 	 */

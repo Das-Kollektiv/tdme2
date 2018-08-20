@@ -92,7 +92,6 @@ public:
 	/**
 	 * Public constructor
 	 * @param id
-	 * @param LOD level type LOD1
 	 * @param model LOD 1
 	 * @param LOD level type LOD2
 	 * @param model LOD 2 min distance
@@ -100,8 +99,8 @@ public:
 	 * @param LOD level type LOD3
 	 * @param model LOD 3 min distance
 	 * @param model LOD 3
-	 * @param model LOD2 axis Y index
-	 * @param model LOD3 axis Y index
+	 * @param model LOD2 plane rotation around Y axis
+	 * @param model LOD3 plane rotation around Y axis
 	 */
 	LODObject3D(
 		const string& id,

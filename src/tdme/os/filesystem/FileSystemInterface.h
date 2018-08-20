@@ -27,6 +27,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param path name
 	 * @param file name
 	 * @return complete filename with path and file
+	 * @throws FileSystemException
 	 */
 	virtual const string getFileName(const string& pathName, const string& fileName) throw (FileSystemException) = 0;
 
@@ -35,6 +36,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param path name
 	 * @param file name
 	 * @return string
+	 * @throws FileSystemException
 	 */
 	virtual const string getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) = 0;
 
@@ -42,7 +44,8 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Set content from string
 	 * @param path name
 	 * @param file name
-	 * @return string
+	 * @param content string
+	 * @throws FileSystemException
 	 */
 	virtual void setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) = 0;
 
@@ -50,8 +53,8 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Get file content
 	 * @param path name
 	 * @param file name
-	 * @return byte array
-	 * @throws IOException
+	 * @param content vector
+	 * @throws FileSystemException
 	 */
 	virtual void getContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) = 0;
 
@@ -59,9 +62,8 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Get file content
 	 * @param path name
 	 * @param file name
-	 * @param data
-	 * @param length or -1 if data length should be used
-	 * @throws IOException
+	 * @param content vector
+	 * @throws FileSystemException
 	 */
 	virtual void setContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) = 0;
 
@@ -69,8 +71,8 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * Get file content as string array
 	 * @param path name
 	 * @param file name
-	 * @return byte array
-	 * @throws IOException
+	 * @param content vector
+	 * @throws FileSystemException
 	 */
 	virtual void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException) = 0;
 
@@ -80,13 +82,14 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param file name
 	 * @param string array
 	 * @return byte array
-	 * @throws IOException
+	 * @throws FileSystemException
 	 */
 	virtual void setContentFromStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException) = 0;
 
 	/**
 	 * List files for given path and filter by a file name filter if not null 
 	 * @param path name
+	 * @param files
 	 * @param filter or null
 	 * @return file names 
 	 */

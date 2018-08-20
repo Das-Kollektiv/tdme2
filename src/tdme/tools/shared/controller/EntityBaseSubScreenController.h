@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -87,7 +86,6 @@ public:
 	 * Set up entity properties
 	 * @param entity
 	 * @param preset id
-	 * @param entity properties
 	 * @param selected name
 	 */
 	virtual void setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName);

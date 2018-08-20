@@ -108,7 +108,9 @@ public:
 	int64_t computeDuration();
 
 	/** 
-	 * @param frames
+	 * Compute animation duration
+	 * @param start frame
+	 * @param end frame
 	 * @return animation duration in milliseconds
 	 */
 	int64_t computeDuration(int32_t startFrame, int32_t endFrame);

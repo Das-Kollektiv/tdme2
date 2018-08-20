@@ -70,7 +70,6 @@ public:
 	/** 
 	 * Set up entity properties
 	 * @param preset id
-	 * @param entity properties
 	 * @param selected name
 	 */
 	void setEntityProperties(const string& presetId, const string& selectedName);

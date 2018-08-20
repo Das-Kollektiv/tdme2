@@ -25,8 +25,6 @@ public:
 	 * Will not provide hit points
 	 * @param axis aligned bounding box 1
 	 * @param axis aligned bounding box 2
-	 * @param movement
-	 * @param collision response
 	 * @return collision 
 	 */
 	inline static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2) {

@@ -75,8 +75,10 @@ public:
 
 	/** 
 	 * Shows the file dialog pop up
+	 * @param current working directory
 	 * @param caption text
 	 * @param extensions
+	 * @param file name
 	 * @param apply action
 	 * @throws IOException 
 	 */

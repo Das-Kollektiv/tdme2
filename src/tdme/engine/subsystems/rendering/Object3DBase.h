@@ -48,7 +48,6 @@ private:
 	/**
 	 * Determine skinned group count
 	 * @param groups
-	 * @param current count
 	 */
 	int32_t determineSkinnedGroupCount(map<string, Group*>* groups);
 

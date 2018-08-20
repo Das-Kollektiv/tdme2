@@ -203,8 +203,6 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param distance
-	 * @param normal
 	 */
 	inline CollisionResponse() {
 	}

@@ -192,6 +192,7 @@ protected:
 	 * @param requested constraints
 	 * @param background color
 	 * @param background image
+	 * @param background image scale 9 grid
 	 * @param border
 	 * @param padding
 	 * @param show on

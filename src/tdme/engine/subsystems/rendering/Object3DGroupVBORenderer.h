@@ -48,7 +48,6 @@ public:
 
 	/** 
 	 * Disposes the object 3d group
-	 * @param gl
 	 */
 	void dispose();
 

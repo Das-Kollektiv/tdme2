@@ -49,7 +49,6 @@ private:
 
 	/** 
 	 * Select
-	 * @param checked
 	 */
 	void select();
 

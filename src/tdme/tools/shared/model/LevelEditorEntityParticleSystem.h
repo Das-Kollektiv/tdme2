@@ -43,13 +43,11 @@ private:
 
 	/**
 	 * Unset particle system type
-	 * @param type
 	 */
 	virtual void unsetType();
 
 	/**
 	 * Unset emitter
-	 * @param emitter
 	 */
 	virtual void unsetEmitter();
 

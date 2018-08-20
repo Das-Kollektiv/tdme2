@@ -16,6 +16,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param model editor screen controller
+	 * @param gui element node
 	 */
 	ModelEditorScreenController_onMaterialLoadTexture(ModelEditorScreenController* modelEditorScreenController, GUIElementNode* guiElementNode);
 

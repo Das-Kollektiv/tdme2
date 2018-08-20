@@ -282,6 +282,7 @@ private:
 	/** 
 	 * Read animation from input stream into group
 	 * @param input stream
+	 * @param group
 	 * @throws IOException 
 	 * @throws model file IO exception
 	 * @return Animation
@@ -326,6 +327,7 @@ private:
 	 * Read sub groups
 	 * @param input stream
 	 * @param model
+	 * @param parent group
 	 * @param sub groups
 	 * @throws IOException
 	 * @throws model file IO exception

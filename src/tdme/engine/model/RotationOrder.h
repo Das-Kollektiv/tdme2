@@ -87,6 +87,8 @@ public:
 
 	/**
 	 * Constructor
+	 * @param name
+	 * @param ordinal
 	 * @param axis 0
 	 * @param axis 1
 	 * @param axis 2

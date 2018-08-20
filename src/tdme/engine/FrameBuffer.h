@@ -37,37 +37,33 @@ public:
 	/** 
 	 * Init the frame buffer
 	 * currently only depth buffer rendering is enabled, can be extended to color buffer easily
-	 * @param gl
 	 */
 	void initialize();
 
 	/** 
 	 * Resize the frame buffer
-	 * @param gl
+	 * @param width
+	 * @param height
 	 */
 	void reshape(int32_t width, int32_t height);
 
 	/** 
 	 * Disposes this frame buffer
-	 * @param gl
 	 */
 	void dispose();
 
 	/** 
 	 * Enables this frame buffer to be rendered
-	 * @param gl
 	 */
 	void enableFrameBuffer();
 
 	/** 
 	 * Switches back to non offscreen main frame buffer to be rendered
-	 * @param gl
 	 */
 	static void disableFrameBuffer();
 
 	/** 
 	 * Bind depth texture
-	 * @param gl
 	 */
 	void bindDepthBufferTexture();
 
@@ -83,7 +79,6 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param engine
 	 * @param width
 	 * @param height
 	 * @param buffers (see FrameBuffer::FRAMEBUFFER_*)

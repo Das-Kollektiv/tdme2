@@ -72,7 +72,8 @@ public:
 
 	/** 
 	 * Parse the font definition file
-	 * @param font file
+	 * @param font path name
+	 * @param font file name
 	 * @throws FileSystemException
 	 */
 	static GUIFont* parse(const string& pathName, const string& fileName) throw (FileSystemException);

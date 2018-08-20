@@ -59,7 +59,6 @@ private:
 	/** 
 	 * Set transparent render faces group
 	 * @param object3D VBO renderer
-	 * @param batch VBO renderer
 	 * @param model
 	 * @param object 3D group
 	 * @param faces entity idx

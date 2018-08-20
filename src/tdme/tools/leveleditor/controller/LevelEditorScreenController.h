@@ -147,6 +147,7 @@ public:
 	/** 
 	 * Set up level size
 	 * @param width
+	 * @param depth
 	 * @param height
 	 */
 	void setLevelSize(float width, float depth, float height);
@@ -229,8 +230,6 @@ public:
 
 	/** 
 	 * Event callback for map properties selection
-	 * @param id
-	 * @param event
 	 */
 	void onMapPropertiesSelectionChanged();
 
@@ -264,8 +263,6 @@ public:
 
 	/** 
 	 * Event callback for object properties selection
-	 * @param id
-	 * @param event
 	 */
 	void onObjectPropertiesSelectionChanged();
 

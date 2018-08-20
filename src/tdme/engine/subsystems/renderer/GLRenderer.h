@@ -145,10 +145,11 @@ public:
 
 	/** 
 	 * Loads a shader into open gl stack
-	 * @param gl
 	 * @param type
 	 * @param pathName
 	 * @param fileName
+	 * @param definitions
+	 * @param functions
 	 * @return shader handle
 	 */
 	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;
@@ -568,6 +569,7 @@ public:
 	 * Draw instanced triangles from buffer objects
 	 * @param triangles
 	 * @param triangles offset
+	 * @param instances
 	 */
 	virtual void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
 

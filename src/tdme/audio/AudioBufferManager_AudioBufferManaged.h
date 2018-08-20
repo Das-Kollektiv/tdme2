@@ -60,7 +60,6 @@ private:
 	 * @param audio buffer manager
 	 * @param id
 	 * @param Open AL id
-	 * @param referenceCounter
 	 */
 	AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId);
 

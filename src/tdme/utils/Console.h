@@ -32,7 +32,6 @@ public:
 
 	/** 
 	 * Print new line to console
-	 * @param text
 	 */
 	static void println();
 

@@ -61,7 +61,8 @@ public:
 
 	/** 
 	 * Add a property
-	 * @param property
+	 * @param name
+	 * @param value
 	 */
 	virtual bool addProperty(const string& name, const string& value);
 

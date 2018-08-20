@@ -72,6 +72,7 @@ private:
 	 * @param y
 	 * @param z
 	 * @param partition size
+	 * @param entity
 	 */
 	inline void updatePartitionTree(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity) {
 		// key
@@ -182,7 +183,6 @@ private:
 	 * Do partition tree lookup
 	 * @param frustum
 	 * @param node
-	 * @param visible entities
 	 * @return number of look ups
 	 */
 	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node) {
@@ -224,8 +224,7 @@ private:
 	/** 
 	 * Do partition tree lookup for near entities to cbv
 	 * @param node
-	 * @param cbv
-	 * @param entity iterator
+	 * @param computed bounding volume
 	 */
 	inline int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv) {
 		// check if given cbv collides with partition node bv

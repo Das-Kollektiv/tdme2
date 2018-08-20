@@ -70,9 +70,11 @@ protected:
 	 * @param padding
 	 * @param show on
 	 * @param hide on
-	 * @param src
+	 * @param source
 	 * @param effect color mul
 	 * @param effect color add
+	 * @param scale 9 grid
+	 * @param clipping
 	 */
 	GUIImageNode(
 		GUIScreenNode* screenNode,

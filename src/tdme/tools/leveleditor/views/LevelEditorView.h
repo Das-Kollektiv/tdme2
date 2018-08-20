@@ -189,7 +189,6 @@ public:
 
 	/** 
 	 * Select objects by id
-	 * @param id
 	 */
 	void unselectObjects();
 
@@ -413,15 +412,18 @@ public:
 
 	/** 
 	 * Compute spot direction
-	 * @param i
+	 * @param light index
+	 * @param position
+	 * @param spot to
 	 */
 	void computeSpotDirection(int32_t i, const Vector4& position, const Vector3& spotTo);
 
 	/** 
 	 * Apply light with index i
-	 * @param i
+	 * @param light index
 	 * @param ambient
 	 * @param diffuse
+	 * @param specular
 	 * @param position
 	 * @param constant attenuation
 	 * @param linear attenuation

@@ -53,7 +53,6 @@ private:
 
 	/** 
 	 * Unselect
-	 * @param checked
 	 */
 	void unselect();
 
@@ -70,7 +69,6 @@ private:
 
 	/** 
 	 * Unfocus
-	 * @param checked
 	 */
 	void unfocus();
 

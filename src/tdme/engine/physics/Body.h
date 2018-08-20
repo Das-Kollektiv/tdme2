@@ -98,7 +98,6 @@ private:
 	/**
 	 * Fire on collision end
 	 * @param other
-	 * @param collision response
 	 */
 	void fireOnCollisionEnd(Body* other);
 
@@ -119,10 +118,12 @@ private:
 	 * @param id
 	 * @param type
 	 * @param enabled
-	 * @param type id
+	 * @param collision type id
 	 * @param transformations
 	 * @param restitution
+	 * @param friction
 	 * @param mass in kg
+	 * @param inertia tensor vector
 	 * @param bounding volumes
 	 */
 	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
@@ -349,7 +350,6 @@ public:
 	/**
 	 * Checks if this rigid body does collide with another rigid body
 	 * @param rigid body
-	 * @param bounding volume
 	 * @param collision
 	 */
 	bool doesCollideWith(Body* body, CollisionResponse* collision);

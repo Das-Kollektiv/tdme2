@@ -39,13 +39,11 @@ private:
 
 	/** 
 	 * Init frame buffer
-	 * @param gl
 	 */
 	void initialize();
 
 	/** 
 	 * Reshape frame buffer
-	 * @param gl
 	 * @param width
 	 * @param height
 	 */
@@ -53,13 +51,11 @@ private:
 
 	/** 
 	 * Disposes this shadow mapping
-	 * @param gl
 	 */
 	void dispose();
 
 	/** 
 	 * Binds frame buffer depth texture
-	 * @param gl
 	 */
 	void bindDepthBufferTexture();
 
@@ -76,7 +72,6 @@ private:
 
 	/** 
 	 * Computes shadow texture matrix and stores it
-	 * @param gl
 	 */
 	void computeDepthBiasMVPMatrix();
 

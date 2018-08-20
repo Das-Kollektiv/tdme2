@@ -58,7 +58,6 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param capacity
 	 * @param data
 	 */
 	inline ByteBuffer(vector<uint8_t>* data) : Buffer(data) {

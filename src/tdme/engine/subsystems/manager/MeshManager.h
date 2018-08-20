@@ -28,7 +28,7 @@ public:
 
 	/** 
 	 * Get mesh from managed meshes
-	 * @param meshId
+	 * @param mesh id
 	 * @return object 3d group mesh or null
 	 */
 	Object3DGroupMesh* getMesh(const string& meshId);
@@ -42,8 +42,7 @@ public:
 
 	/** 
 	 * Removes a mesh from manager
-	 * @param gl
-	 * @param texture
+	 * @param mesh id
 	 */
 	void removeMesh(const string& meshId);
 

@@ -26,8 +26,9 @@ public:
 
 	/**
 	 * @brief Public constructor
-	 * @param server
+	 * @param start up barrier
 	 * @param worker count
+	 * @param max elements
 	 */
 	NIOServerWorkerThreadPool(Barrier* startUpBarrier, const unsigned int workerCount, const unsigned int maxElements);
 

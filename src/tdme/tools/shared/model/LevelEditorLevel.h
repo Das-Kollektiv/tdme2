@@ -195,6 +195,7 @@ public:
 	/** 
 	 * Get objects with given entity id
 	 * @param entity id
+	 * @param objects by entity id
 	 */
 	void getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId);
 
@@ -214,6 +215,7 @@ public:
 	/** 
 	 * Updates pivot
 	 * @param model id
+	 * @param pivot
 	 */
 	void updatePivot(int32_t modelId, const Vector3& pivot);
 
@@ -259,7 +261,6 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param default map properties or null
 	 */
 	LevelEditorLevel();
 

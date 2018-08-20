@@ -32,6 +32,8 @@ public:
 	/** 
 	 * Set up vector
 	 * @param x
+	 * @param y
+	 * @param z
 	 * @return this vector
 	 */
 	inline Vector3& set(float x, float y, float z) {
@@ -297,11 +299,8 @@ public:
 	}
 
 	/**
-	 * Compute the cross product of vector v1 and v2
-	 * @param v1
-	 * @param v2
-	 * @param destination vector
-	 * @return destination vector
+	 * Convert this vector to vector with positive vector components
+	 * @return this vector
 	 */
 	inline Vector3& abs() {
 		data[0] = Math::abs(data[0]);

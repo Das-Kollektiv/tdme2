@@ -116,14 +116,12 @@ public:
 
 	/** 
 	 * Start object transformations
-	 * @param gl
 	 * @param transformations matrix
 	 */
 	void startObjectTransformations(Matrix4x4& transformationsMatrix);
 
 	/** 
 	 * End object transformations
-	 * @param gl
 	 */
 	void endObjectTransformations();
 

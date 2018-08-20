@@ -53,9 +53,7 @@ public:
 
 	/** 
 	 * Set quaternion
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param vector
 	 * @param w
 	 */
 	inline Quaternion& set(const Vector3& v, float w) {

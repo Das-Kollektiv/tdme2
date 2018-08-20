@@ -39,7 +39,7 @@ public:
 	/**
 	 * Get retry time for given retry count
 	 * @param retry count
-	 * @param approximatly retry time in ms
+	 * @return approximatly retry time in ms
 	 */
 	static uint64_t getRetryTime(const uint8_t retries);
 

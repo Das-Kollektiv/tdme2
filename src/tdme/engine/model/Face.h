@@ -28,9 +28,7 @@ private:
 
 	/**
 	 * Prepared this face for indexed rendering
-	 * @param index 0
-	 * @param index 1
-	 * @param index 2
+	 * @param indices
 	 */
 	void setIndexedRenderingIndices(array<int32_t, 3>* indices);
 

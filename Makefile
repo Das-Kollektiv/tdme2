@@ -654,6 +654,7 @@ MAIN_SRCS = \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
+	src/tdme/tools/cli/fixdoxygen-main.cpp \
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)

@@ -90,6 +90,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param id
+	 * @param description
 	 * @param transformations
 	 * @param entity
 	 */

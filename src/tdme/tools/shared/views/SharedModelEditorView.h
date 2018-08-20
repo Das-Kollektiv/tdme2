@@ -154,7 +154,6 @@ public:
 
 	/** 
 	 * On init additional screens
-	 * @param drawable
 	 */
 	virtual void onInitAdditionalScreens();
 
@@ -166,7 +165,7 @@ public:
 	/** 
 	 * On load model
 	 * @param old entity
-	 * @oaram entity
+	 * @param entity
 	 */
 	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
 

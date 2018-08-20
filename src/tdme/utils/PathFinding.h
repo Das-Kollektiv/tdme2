@@ -91,7 +91,9 @@ private:
 	/**
 	 * Returns if nodes are equals
 	 * @param a
-	 * @param b
+	 * @param b x coordinate
+	 * @param b y coordinate
+	 * @param b z coordinate
 	 * @return if node a == node b
 	 */
 	inline bool equals(PathFindingNode* a, float bX, float bY, float bZ) {

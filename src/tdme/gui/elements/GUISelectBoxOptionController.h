@@ -50,7 +50,6 @@ private:
 
 	/**
 	 * Unselect
-	 * @param checked
 	 */
 	void unselect();
 

@@ -47,6 +47,7 @@ public:
 
 	/** 
 	 * Exports a level to a TDME level file
+	 * @param path name
 	 * @param file name
 	 * @param entity
 	 * @throws file system exception
