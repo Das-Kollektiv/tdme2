@@ -6,6 +6,7 @@
       - please check the [license](./LICENSE) and the [licenses of used 3rd party libraries](./ext)
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
       - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
+      - you find developer documentation for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha) including collaboration graphs and private API
 
 - What is already working
     - 3d engine
@@ -139,9 +140,10 @@
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
     - Integrate LUA to be able to write TDME2 applications completely via LUA or game logics
-    - A demonstration video
     - Build documentation
+    - Public API documentation
     - A release plan
+    - A demonstration video
 
 - Technology
     - designed for simple multi threading
