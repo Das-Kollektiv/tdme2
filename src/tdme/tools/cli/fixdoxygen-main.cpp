@@ -60,8 +60,10 @@ void processFile(const string& fileName) {
 	int docLineEndIdx = -1;
 	int lineIdx = 0;
 	vector<string> doc;
+	vector<string> newFileContent;
 	string method = "";
 	for (auto line: fileContent) {
+		newFileContent.push_back(line);
 		if (haveMethod == false) {
 			if (line.find("/**") != string::npos) {
 				docLineStartIdx = lineIdx;
@@ -90,7 +92,7 @@ void processFile(const string& fileName) {
 				method = StringUtils::trim(method);
 				// parse parameter names
 				if (paramCount > 0) {
-					Console::println(fileName + ": " + method + ": " + to_string(paramCount) + " / " + to_string(docLineStartIdx) + " - " + to_string(docLineEndIdx));
+					// Console::println(fileName + ": " + method + ": " + to_string(paramCount) + " / " + to_string(docLineStartIdx) + " - " + to_string(docLineEndIdx));
 					bool paramBegin = false;
 					bool paramIgnore = false;
 					int smallerCount = 0;
@@ -143,6 +145,7 @@ void processFile(const string& fileName) {
 						paramsFinal.push_back(param);
 					}
 					int paramIdx = 0;
+					vector<string> newDoc;
 					for (auto docLine: doc) {
 						size_t docLineParamIdx = docLine.find("@param ");
 						if (docLineParamIdx != string::npos) {
@@ -152,12 +155,15 @@ void processFile(const string& fileName) {
 								Console::println("Warning: Missing parameter " + to_string(paramIdx));
 							}
 						}
-						Console::println(docLine);
+						newDoc.push_back(docLine);
 					}
 					if (paramIdx != paramsFinal.size()) {
 						Console::print("Warning: Having extra parameter: ");
-						for (auto i = paramIdx; i < paramsFinal.size(); i++) Console::print(paramsFinal[i] + " ");
-						Console::println();
+						// for (auto i = paramIdx; i < paramsFinal.size(); i++) Console::print(paramsFinal[i] + " ");
+						// Console::println();
+					}
+					for (auto i = docLineStartIdx; i <= docLineEndIdx; i++) {
+						newFileContent[i] = newDoc[i - docLineStartIdx];
 					}
 				}
 				hadMethod = false;
@@ -167,7 +173,7 @@ void processFile(const string& fileName) {
 		}
 		lineIdx++;
 	}
-	Console::println(fileName + ": " + to_string(methodCount));
+	FileSystem::getInstance()->setContentFromStringArray(".", fileName, &newFileContent);
 }
 
 int main(int argc, char** argv)
