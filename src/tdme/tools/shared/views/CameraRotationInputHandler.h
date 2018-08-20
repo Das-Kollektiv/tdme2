@@ -47,7 +47,7 @@ public:
 
 	/** 
 	 * Set max dimension on one of x,y,z axis
-	 * @param max axis dimension
+	 * @param maxAxisDimension max axis dimension
 	 */
 	virtual void setMaxAxisDimension(float maxAxisDimension);
 
@@ -63,7 +63,7 @@ public:
 
 	/** 
 	 * Set scale
-	 * @param scale
+	 * @param scale scale
 	 */
 	virtual void setScale(float scale);
 

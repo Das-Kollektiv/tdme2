@@ -47,29 +47,29 @@ public:
 
 	/** 
 	 * Render
-	 * @param gui renderer
-	 * @param floating nodes
+	 * @param guiRenderer gui renderer
+	 * @param floatingNodes floating nodes
 	 */
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
 
 	/**
 	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param bar color none
-	 * @param bar color mouse over
-	 * @param bar color dragging
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 * @param barColorNone bar color none
+	 * @param barColorMouseOver bar color mouse over
+	 * @param barColorDragging bar color dragging
 	 *
 	 */
 	GUIHorizontalScrollbarInternalNode(

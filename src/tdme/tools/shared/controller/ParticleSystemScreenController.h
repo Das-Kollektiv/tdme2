@@ -166,14 +166,14 @@ public:
 
 	/** 
 	 * Set screen caption
-	 * @param text
+	 * @param text text
 	 */
 	void setScreenCaption(const string& text);
 
 	/** 
 	 * Set up general entity data
-	 * @param name
-	 * @param description
+	 * @param name name
+	 * @param description description
 	 */
 	void setEntityData(const string& name, const string& description);
 
@@ -184,9 +184,9 @@ public:
 
 	/** 
 	 * Set up entity properties
-	 * @param preset id
-	 * @param entity properties
-	 * @param selected name
+	 * @param presetId preset id
+	 * @param entity entity properties
+	 * @param selectedName selected name
 	 */
 	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
 
@@ -197,13 +197,13 @@ public:
 
 	/** 
 	 * Set up particle system types
-	 * @param particle system types
+	 * @param particleSystemTypesCollection particle system types
 	 */
 	void setParticleSystemTypes(const vector<string>* particleSystemTypesCollection);
 
 	/** 
 	 * Set up emitters
-	 * @param emitters
+	 * @param emittersCollection emitters
 	 */
 	void setParticleSystemEmitters(const vector<string>* emittersCollection);
 
@@ -268,7 +268,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param view
+	 * @param view view
 	 */
 	ParticleSystemScreenController(SharedParticleSystemView* view);
 

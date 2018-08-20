@@ -38,15 +38,15 @@ class tdme::network::udpclient::NIOUDPClient : public Thread {
 public:
 	/**
 	 * Get retry time for given retry count
-	 * @param retry count
+	 * @param retries retry count
 	 * @return approximatly retry time in ms
 	 */
 	static uint64_t getRetryTime(const uint8_t retries);
 
 	/**
 	 * Public constructor
-	 * @param server ip
-	 * @param server port
+	 * @param ip server ip
+	 * @param port server port
 	 */
 	NIOUDPClient(const string& ip, const unsigned int port);
 
@@ -77,7 +77,7 @@ public:
 
 	/**
 	 * Set client key
-	 * @param client key
+	 * @param clientKey client key
 	 */
 	void setClientKey(const string& clientKey);
 
@@ -88,7 +88,7 @@ public:
 
 	/**
 	 * Returns if a message should be processed or already have been processed
-	 * @param client message
+	 * @param clientMessage client message
 	 * @return if message should be processed or not
 	 */
 	bool processSafeMessage(NIOUDPClientMessage* clientMessage);
@@ -101,20 +101,20 @@ public:
 
 	/**
 	 * Pushes a message to be send, takes over ownership of message
-	 * @param client message object
-	 * @param safe
+	 * @param clientMessage client message object
+	 * @param safe safe
 	 */
 	void sendMessage(NIOUDPClientMessage* clientMessage, bool safe) throw (NIOClientException);
 
 	/**
 	 * Create message
-	 * @param frame content
+	 * @param frame frame content
 	 */
 	NIOUDPClientMessage* createMessage(stringstream* frame);
 private:
 	/**
 	 * Processes ack reveived
-	 * @param message id
+	 * @param messageId message id
 	 */
 	void processAckReceived(const uint32_t messageId) throw (NIOClientException);
 

@@ -28,7 +28,7 @@ private:
 
 	/**
 	 * Prepared this face for indexed rendering
-	 * @param indices
+	 * @param indices indices
 	 */
 	void setIndexedRenderingIndices(array<int32_t, 3>* indices);
 
@@ -55,9 +55,9 @@ public:
 
 	/** 
 	 * Set up optional texture coordinate indices
-	 * @param vtX
-	 * @param vtY
-	 * @param vtZ
+	 * @param vt0 vtX
+	 * @param vt1 vtY
+	 * @param vt2 vtZ
 	 */
 	void setTextureCoordinateIndices(int32_t vt0, int32_t vt1, int32_t vt2);
 
@@ -68,9 +68,9 @@ public:
 
 	/** 
 	 * Set tangent indices
-	 * @param ti0
-	 * @param ti1
-	 * @param ti2
+	 * @param ti0 ti0
+	 * @param ti1 ti1
+	 * @param ti2 ti2
 	 */
 	void setTangentIndices(int32_t ti0, int32_t ti1, int32_t ti2);
 
@@ -81,9 +81,9 @@ public:
 
 	/** 
 	 * Set bitangent indices
-	 * @param bi0
-	 * @param bi1
-	 * @param bi2
+	 * @param bi0 bi0
+	 * @param bi1 bi1
+	 * @param bi2 bi2
 	 */
 	void setBitangentIndices(int32_t bi0, int32_t bi1, int32_t bi2);
 
@@ -100,29 +100,29 @@ public:
 	/**
 	 * Public constructor, requires vertex, normals indices
 	 * we only support triangulated faces
-	 * @param model
-	 * @param vertex index 0
-	 * @param vertex index 1
-	 * @param vertex index 2
-	 * @param normal index 0
-	 * @param normal index 1
-	 * @param normal index 2
+	 * @param group model
+	 * @param vi0 vertex index 0
+	 * @param vi1 vertex index 1
+	 * @param vi2 vertex index 2
+	 * @param ni0 normal index 0
+	 * @param ni1 normal index 1
+	 * @param ni2 normal index 2
 	 */
 	Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2);
 
 	/**
 	 * Public constructor, requires vertex, normals indices, texture coordinate indices
 	 * we only support triangulated faces
-	 * @param model
-	 * @param vertex index 0
-	 * @param vertex index 1
-	 * @param vertex index 2
-	 * @param normal index 0
-	 * @param normal index 1
-	 * @param normal index 2
-	 * @param texture coordinate index 0
-	 * @param texture coordinate index 1
-	 * @param texture coordinate index 2
+	 * @param group model
+	 * @param vi0 vertex index 0
+	 * @param vi1 vertex index 1
+	 * @param vi2 vertex index 2
+	 * @param ni0 normal index 0
+	 * @param ni1 normal index 1
+	 * @param ni2 normal index 2
+	 * @param vt0 texture coordinate index 0
+	 * @param vt1 texture coordinate index 1
+	 * @param vt2 texture coordinate index 2
 	 */
 	Face(Group* group, int32_t vi0, int32_t vi1, int32_t vi2, int32_t ni0, int32_t ni1, int32_t ni2, int32_t vt0, int32_t vt1, int32_t vt2);
 };

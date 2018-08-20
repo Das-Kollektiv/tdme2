@@ -62,7 +62,7 @@ private:
 
 	/** 
 	 * Set dragged x
-	 * @param dragged x
+	 * @param draggedX dragged x
 	 */
 	virtual void setDraggedX(float draggedX);
 

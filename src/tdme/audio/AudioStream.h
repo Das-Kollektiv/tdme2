@@ -36,9 +36,9 @@ private:
 public:
 	/**
 	 * Set audio initialization parameters
-	 * @param sample rate
-	 * @param channels
-	 * @param buffer size
+	 * @param sampleRate sample rate
+	 * @param channels channels
+	 * @param bufferSize buffer size
 	 */
 	virtual void setParameters(uint32_t sampleRate, uint8_t channels, const uint32_t bufferSize = 32768);
 
@@ -59,7 +59,7 @@ private:
 protected:
 	/**
 	 * Protected constructor
-	 * @param id
+	 * @param id id
 	 */
 	AudioStream(const string& id);
 
@@ -70,7 +70,7 @@ protected:
 
 	/**
 	 * Fill buffer
-	 * @param data
+	 * @param data data
 	 */
 	virtual void fillBuffer(ByteBuffer* data) = 0;
 

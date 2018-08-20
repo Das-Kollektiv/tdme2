@@ -38,22 +38,22 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param overflow x
-	 * @param overflow y
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param alignment
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param overflowX overflow x
+	 * @param overflowY overflow y
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 * @param alignment alignment
 	 */
 	GUILayoutNode(
 		GUIScreenNode* screenNode,
@@ -82,7 +82,7 @@ public:
 
 	/** 
 	 * Create alignment
-	 * @param alignment
+	 * @param alignment alignment
 	 * @return alignment
 	 */
 	static GUILayoutNode_Alignment* createAlignment(const string& alignment);

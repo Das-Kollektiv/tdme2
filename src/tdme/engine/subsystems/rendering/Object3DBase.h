@@ -47,22 +47,22 @@ private:
 
 	/**
 	 * Determine skinned group count
-	 * @param groups
+	 * @param groups groups
 	 */
 	int32_t determineSkinnedGroupCount(map<string, Group*>* groups);
 
 	/**
 	 * Determine skinned group count
-	 * @param groups
-	 * @param current count
+	 * @param map* groups
+	 * @param count current count
 	 */
 	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count);
 
 	/**
 	 * Determine skinned groups
-	 * @param groups
-	 * @param skinning groups
-	 * @param idx
+	 * @param map* groups
+	 * @param skinningGroups skinning groups
+	 * @param idx idx
 	 */
 	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>* skinningGroups, int32_t idx);
 
@@ -83,32 +83,32 @@ protected:
 
 	/**
 	 * Creates all groups transformation matrices
-	 * @param matrices
-	 * @param groups
+	 * @param matrices matrices
+	 * @param groups groups
 	 */
 	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups);
 
 	/**
 	 * Calculates all groups transformation matrices
-	 * @param groups
-	 * @param parent transformations matrix
-	 * @param animation state
-	 * @param depth
+	 * @param groups groups
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param animationState animation state
+	 * @param depth depth
 	 */
 	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
 
 	/**
 	 * Get skinning groups matrices
-	 * @param group
+	 * @param group group
 	 * @return matrices
 	 */
 	virtual map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
 
 	/**
 	 * Public constructor
-	 * @param model
-	 * @param use mesh manager
-	 * @param animation processing target
+	 * @param model model
+	 * @param useMeshManager use mesh manager
+	 * @param animationProcessingTarget animation processing target
 	 */
 	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
 
@@ -128,19 +128,19 @@ public:
 
 	/** 
 	 * Sets up a base animation to play
-	 * @param id
+	 * @param id id
 	 */
 	virtual void setAnimation(const string& id);
 
 	/** 
 	 * Overlays a animation above the base animation
-	 * @param id
+	 * @param id id
 	 */
 	virtual void addOverlayAnimation(const string& id);
 
 	/** 
 	 * Removes a overlay animation
-	 * @param id
+	 * @param id id
 	 */
 	virtual void removeOverlayAnimation(const string& id);
 
@@ -167,21 +167,21 @@ public:
 
 	/** 
 	 * Returns if there is currently running a overlay animation with given id
-	 * @param id
+	 * @param id id
 	 * @return animation is running
 	 */
 	virtual bool hasOverlayAnimation(const string& id);
 
 	/** 
 	 * Returns current overlay animation time
-	 * @param id 
+	 * @param id id 
 	 * @return 0.0 <= time <= 1.0
 	 */
 	virtual float getOverlayAnimationTime(const string& id);
 
 	/** 
 	 * Returns transformation matrix for given group
-	 * @param group id
+	 * @param id group id
 	 * @return transformation matrix or null
 	 */
 	virtual Matrix4x4* getTransformationsMatrix(const string& id);
@@ -198,8 +198,8 @@ public:
 
 	/** 
 	 * Retrieves list of triangles of all or given groups
-	 * @param triangles
-	 * @param group index or -1 for all groups
+	 * @param triangles triangles
+	 * @param groupIdx group index or -1 for all groups
 	 */
 	virtual void getTriangles(vector<Triangle>& triangles, int groupIdx = -1);
 
@@ -210,7 +210,7 @@ public:
 
 	/** 
 	 * Returns object3d group mesh object
-	 * @param group id
+	 * @param groupId group id
 	 * @return object3d group mesh object
 	 */
 	virtual Object3DGroupMesh* getMesh(const string& groupId);

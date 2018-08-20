@@ -25,7 +25,7 @@ public:
 
 	/**
 	 * Get a value at given position
-	 * @param position
+	 * @param position position
 	 */
 	inline int16_t get(int32_t position) {
 		int16_t value = 0;
@@ -36,7 +36,7 @@ public:
 
 	/**
 	 * Put a value into current position
-	 * @param value
+	 * @param value value
 	 */
 	inline ShortBuffer* put(int16_t value) {
 		int8_t* shortAsInt8 = ((int8_t*)&value);
@@ -53,7 +53,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param buffer
+	 * @param buffer buffer
 	 */
 	ShortBuffer(Buffer* buffer) : Buffer(buffer) {
 	}

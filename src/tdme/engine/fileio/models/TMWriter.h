@@ -66,7 +66,7 @@ public:
 	/**
 	 * Writes a boolean to output stream
 	 * @throws model file IO exception
-	 * @param boolean
+	 * @param b boolean
 	 */
 	inline void writeBoolean(bool b) throw (ModelFileIOException) {
 		writeByte(b == true?1:0);
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Writes a byte to output stream
 	 * @throws model file IO exception
-	 * @param byte
+	 * @param b byte
 	 */
 	inline void writeByte(int8_t b) throw (ModelFileIOException) {
 		data.push_back(b);
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Writes a integer to output stream
 	 * @throws model file IO exception
-	 * @param int
+	 * @param i int
 	 */
 	inline void writeInt(int32_t i) throw (ModelFileIOException) {
 		writeByte((i >> 24) & 0xFF);
@@ -95,7 +95,7 @@ public:
 
 	/**
 	 * Writes a float to output stream
-	 * @param float
+	 * @param f float
 	 * @throws model file IO exception
 	 */
 	inline void writeFloat(float f) throw (ModelFileIOException) {
@@ -105,7 +105,7 @@ public:
 
 	/**
 	 * Writes a string to output stream
-	 * @param string
+	 * @param s string
 	 * @throws model file IO exception
 	 */
 	inline void writeString(const string& s) throw (ModelFileIOException) {
@@ -122,7 +122,7 @@ public:
 
 	/**
 	 * Writes a float array to output stream
-	 * @param float array
+	 * @param f float array
 	 * @throws model file IO exception
 	 */
 	inline void writeFloatArray(array<float,2>& f) throw (ModelFileIOException) {
@@ -134,7 +134,7 @@ public:
 
 	/**
 	 * Writes a float array to output stream
-	 * @param float array
+	 * @param f float array
 	 * @throws model file IO exception
 	 */
 	inline void writeFloatArray(array<float,3>& f) throw (ModelFileIOException) {
@@ -146,7 +146,7 @@ public:
 
 	/**
 	 * Writes a float array to output stream
-	 * @param float array
+	 * @param f float array
 	 * @throws model file IO exception
 	 */
 	inline void writeFloatArray(array<float,4>& f) throw (ModelFileIOException) {
@@ -158,7 +158,7 @@ public:
 
 	/**
 	 * Writes a float array to output stream
-	 * @param float array
+	 * @param f float array
 	 * @throws model file IO exception
 	 */
 	inline void writeFloatArray(array<float,4>* f) throw (ModelFileIOException) {
@@ -170,7 +170,7 @@ public:
 
 	/**
 	 * Writes a float array to output stream
-	 * @param float array
+	 * @param f float array
 	 * @throws model file IO exception
 	 */
 	inline void writeFloatArray(array<float,16>& f) throw (ModelFileIOException) {
@@ -182,7 +182,7 @@ public:
 
 	/**
 	 * Writes a float array to output stream
-	 * @param float array
+	 * @param f float array
 	 * @throws model file IO exception
 	 */
 	inline void writeFloatArray(const vector<float>* f) throw (ModelFileIOException) {
@@ -210,9 +210,9 @@ public:
 
 	/** 
 	 * TDME model format writer
-	 * @param model
-	 * @param path name
-	 * @param file name
+	 * @param model model
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	static void write(Model* model, const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
 
@@ -220,96 +220,96 @@ private:
 
 	/**
 	 * Write material
-	 * @param output stream
-	 * @param material
+	 * @param os output stream
+	 * @param m material
 	 * @throws model file IO exception
 	 */
 	static void writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException);
 
 	/** 
 	 * Write animation setup
-	 * @param output stream
-	 * @param animation setup
+	 * @param os output stream
+	 * @param animationSetup animation setup
 	 * @throws model file IO exception
 	 */
 	static void writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup) throw (ModelFileIOException);
 
 	/** 
 	 * Write vertices to output stream
-	 * @param output stream
-	 * @param vertices
+	 * @param os output stream
+	 * @param v vertices
 	 * @throws model file IO exception
 	 */
 	static void writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw (ModelFileIOException);
 
 	/** 
 	 * Write texture coordinates to output stream
-	 * @param output stream
-	 * @param texture coordinates
+	 * @param os output stream
+	 * @param tc texture coordinates
 	 * @throws model file IO exception
 	 */
 	static void writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException);
 
 	/** 
 	 * Write indices to output stream
-	 * @param output stream
-	 * @param indices
+	 * @param os output stream
+	 * @param indices indices
 	 * @throws model file IO exception
 	 */
 	static void writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices) throw (ModelFileIOException);
 
 	/** 
 	 * Write animation to output stream
-	 * @param output stream
-	 * @param animation
+	 * @param os output stream
+	 * @param a animation
 	 * @throws model file IO exception
 	 */
 	static void writeAnimation(TMWriterOutputStream* os, Animation* a) throw (ModelFileIOException);
 
 	/** 
 	 * Write faces entities to output stream
-	 * @param output stream
-	 * @param faces entities
+	 * @param os output stream
+	 * @param facesEntities faces entities
 	 * @throws model file IO exception
 	 */
 	static void writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>* facesEntities) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning joint
-	 * @param output stream
-	 * @param joint
+	 * @param os output stream
+	 * @param joint joint
 	 * @throws model file IO exception
 	 */
 	static void writeSkinningJoint(TMWriterOutputStream* os, Joint* joint) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning joint weight
-	 * @param output stream
-	 * @param joint
+	 * @param os output stream
+	 * @param jointWeight joint
 	 * @throws model file IO exception
 	 */
 	static void writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning to output stream
-	 * @param output stream
-	 * @param skinning
+	 * @param os output stream
+	 * @param skinning skinning
 	 * @throws model file IO exception
 	 */
 	static void writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw (ModelFileIOException);
 
 	/** 
 	 * Write sub groups
-	 * @param output stream
-	 * @param sub groups
+	 * @param os output stream
+	 * @param subGroups sub groups
 	 * @throws model file IO exception
 	 */
 	static void writeSubGroups(TMWriterOutputStream* os, map<string, Group*>* subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream
-	 * @param output stream
-	 * @param group
+	 * @param os output stream
+	 * @param g group
 	 * @throws model file IO exception
 	 */
 	static void writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIOException);

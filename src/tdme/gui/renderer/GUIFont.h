@@ -72,8 +72,8 @@ public:
 
 	/** 
 	 * Parse the font definition file
-	 * @param font path name
-	 * @param font file name
+	 * @param pathName font path name
+	 * @param fileName font file name
 	 * @throws FileSystemException
 	 */
 	static GUIFont* parse(const string& pathName, const string& fileName) throw (FileSystemException);
@@ -82,14 +82,14 @@ private:
 
 	/** 
 	 * Parse a single character line from the definition
-	 * @param line The line to be parsed
+	 * @param line line The line to be parsed
 	 * @return The character definition from the line
 	 */
 	GUIFont_CharacterDefinition* parseCharacter(const string& line);
 
 	/**
 	 * Get character defintion
-	 * @param character id
+	 * @param charId character id
 	 * @return character definition
 	 */
 	GUIFont_CharacterDefinition* getCharacter(int32_t charId);
@@ -108,53 +108,53 @@ public:
 
 	/** 
 	 * Draw string
-	 * @param gui renderer
-	 * @param x
-	 * @param y
-	 * @param text
-	 * @param offset
-	 * @param length or 0 if full length
-	 * @param color
+	 * @param guiRenderer gui renderer
+	 * @param x x
+	 * @param y y
+	 * @param text text
+	 * @param offset offset
+	 * @param length length or 0 if full length
+	 * @param color color
 	 */
 	void drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, const MutableString& text, int32_t offset, int32_t length, const GUIColor& color);
 
 	/** 
 	 * Get text index X of given text and index
-	 * @param text
-	 * @param offset
-	 * @param length or 0 if full length
-	 * @param index
+	 * @param text text
+	 * @param offset offset
+	 * @param length length or 0 if full length
+	 * @param index index
 	 * @return text index x
 	 */
 	int32_t getTextIndexX(const MutableString& text, int32_t offset, int32_t length, int32_t index);
 
 	/** 
 	 * Get text index by text and X in space of text
-	 * @param text
-	 * @param offset
-	 * @param length or 0 if full length
-	 * @param text X
+	 * @param text text
+	 * @param offset offset
+	 * @param length length or 0 if full length
+	 * @param textX text X
 	 * @return text index
 	 */
 	int32_t getTextIndexByX(const MutableString& text, int32_t offset, int32_t length, int32_t textX);
 
 	/** 
 	 * Get the offset from the draw location the font will place glyphs
-	 * @param text The text that is to be tested
+	 * @param text text The text that is to be tested
 	 * @return The yoffset from the y draw location at which text will start
 	 */
 	int32_t getYOffset(const MutableString& text);
 
 	/** 
 	 * Text height
-	 * @param text
+	 * @param text text
 	 * @return text height
 	 */
 	int32_t getTextHeight(const MutableString& text);
 
 	/** 
 	 * Text width
-	 * @param text
+	 * @param text text
 	 * @return text width
 	 */
 	int32_t getTextWidth(const MutableString& text);

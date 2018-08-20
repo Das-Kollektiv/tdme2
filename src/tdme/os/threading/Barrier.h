@@ -21,8 +21,8 @@ class tdme::os::threading::Barrier {
 public:
 	/**
 	 * @brief Public constructor
-	 * @param name
-	 * @param Number of threads that need to "wait" on barrier to complete barrier
+	 * @param name name
+	 * @param count Number of threads that need to "wait" on barrier to complete barrier
 	 */
 	Barrier(const string& name, const unsigned int count);
 

@@ -51,20 +51,20 @@ public:
 
 	/** 
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/** 
 	 * Update effect to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateEffect(GLRenderer* renderer);
 
 	/**
 	 * Update texure matrix to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateTextureMatrix(GLRenderer* renderer);
 

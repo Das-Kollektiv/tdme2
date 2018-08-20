@@ -63,7 +63,7 @@ public:
 
 	/**
 	 * Compute skinning
-	 * @param object 3d group mesh
+	 * @param object3DGroupMesh object 3d group mesh
 	 */
 	void computeSkinning(Object3DGroupMesh* object3DGroupMesh);
 
@@ -74,7 +74,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	SkinningShader(GLRenderer* renderer);
 };

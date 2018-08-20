@@ -43,10 +43,10 @@ public:
 
 	/**
 	 * @brief Request handler implementation
-	 * @param client
-	 * @param request data
-	 * @param message id (udp server only)
-	 * @param retries (udp server only)
+	 * @param client client
+	 * @param request request data
+	 * @param messageId message id (udp server only)
+	 * @param retries retries (udp server only)
 	 */
 	virtual void handleRequest(CLIENT* client, REQUEST& request, const uint32_t messageId, const uint8_t retries) throw (Exception) = 0;
 private:

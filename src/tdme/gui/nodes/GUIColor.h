@@ -51,28 +51,28 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param color
+	 * @param color color
 	 */
 	GUIColor(const Color4& color);
 
 	/**
 	 * Public constructor
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @param alpha
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
 	 */
 	GUIColor(float r, float g, float b, float a);
 
 	/**
 	 * Public constructor
-	 * @param color as float array
+	 * @param color color as float array
 	 */
 	GUIColor(const array<float, 4>& color);
 
 	/**
 	 * Public constructor
-	 * @param color as string
+	 * @param colorString color as string
 	 */
 	GUIColor(const string& colorString) throw (GUIParserException);
 };

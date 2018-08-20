@@ -62,10 +62,10 @@ private:
 
 	/**
 	 * Load particle system
-	 * @param name
-	 * @param description
-	 * @param path name
-	 * @param file name
+	 * @param name name
+	 * @param description description
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @return level editor entity
 	 * @throws Exception
 	 */
@@ -141,8 +141,8 @@ public:
 
 	/** 
 	 * On load particle system
-	 * @param old entity
-	 * @param entity
+	 * @param oldEntity old entity
+	 * @param entity entity
 	 */
 	virtual void onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
 
@@ -153,7 +153,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param pop ups view
+	 * @param popUps pop ups view
 	 */
 	SharedParticleSystemView(PopUps* popUps);
 

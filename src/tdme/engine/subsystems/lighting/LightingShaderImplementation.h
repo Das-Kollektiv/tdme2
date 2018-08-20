@@ -50,39 +50,39 @@ public:
 
 	/** 
 	 * Update effect to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateEffect(GLRenderer* renderer) = 0;
 
 	/** 
 	 * Update material to program
-	 * @param gl3 renderer
+	 * @param renderer gl3 renderer
 	 */
 	virtual void updateMaterial(GLRenderer* renderer) = 0;
 
 	/** 
 	 * Update light to program
-	 * @param renderer
-	 * @param light id
+	 * @param renderer renderer
+	 * @param lightId light id
 	 */
 	virtual void updateLight(GLRenderer* renderer, int32_t lightId) = 0;
 
 	/** 
 	 * Update matrices to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateMatrices(GLRenderer* renderer) = 0;
 
 	/** 
 	 * Update texture matrix to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) = 0;
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) = 0;
 

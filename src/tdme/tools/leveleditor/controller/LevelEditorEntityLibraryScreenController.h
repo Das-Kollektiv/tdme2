@@ -51,7 +51,7 @@ public:
 
 	/** 
 	 * Set model path
-	 * @param model path
+	 * @param modelPath model path
 	 */
 	virtual void setModelPath(const string& modelPath);
 	void initialize() override;
@@ -59,7 +59,7 @@ public:
 
 	/** 
 	 * Select entity by entity id
-	 * @param entity id
+	 * @param entityId entity id
 	 */
 	virtual void selectEntity(int32_t entityId);
 

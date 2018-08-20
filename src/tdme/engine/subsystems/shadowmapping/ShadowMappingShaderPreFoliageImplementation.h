@@ -17,7 +17,7 @@ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImpl
 public:
 	/**
 	 * @return if supported by renderer
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	static bool isSupported(GLRenderer* renderer);
 
@@ -28,7 +28,7 @@ public:
 
 /**
 	 * Constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	ShadowMappingShaderPreFoliageImplementation(GLRenderer* renderer);
 

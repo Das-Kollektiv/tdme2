@@ -60,7 +60,7 @@ public:
 
 	/**
 	 * Set particle system type
-	 * @param type
+	 * @param type type
 	 */
 	virtual void setType(LevelEditorEntityParticleSystem_Type* type);
 
@@ -81,7 +81,7 @@ public:
 
 	/**
 	 * Set emitter
-	 * @param emitter
+	 * @param emitter emitter
 	 */
 	virtual void setEmitter(LevelEditorEntityParticleSystem_Emitter* emitter);
 

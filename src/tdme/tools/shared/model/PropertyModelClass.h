@@ -27,7 +27,7 @@ public:
 
 	/** 
 	 * Set up name 
-	 * @param name
+	 * @param name name
 	 */
 	void setName(const string& name);
 
@@ -38,7 +38,7 @@ public:
 
 	/** 
 	 * Set up value
-	 * @param value
+	 * @param value value
 	 */
 	void setValue(const string& value);
 
@@ -49,8 +49,8 @@ public:
 
 	/**
 	 * Constructor
-	 * @param name
-	 * @param value
+	 * @param name name
+	 * @param value value
 	 */
 	PropertyModelClass(const string& name, const string& value);
 };

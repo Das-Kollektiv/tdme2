@@ -25,7 +25,7 @@ public:
 
 	/** 
 	 * Check if matrix is negative
-	 * @param matrix
+	 * @param matrix matrix
 	 * @return negative
 	 */
 	inline bool isNegative(Matrix4x4& matrix) {

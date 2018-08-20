@@ -54,8 +54,8 @@ public:
 
 	/**
 	 * Binds a socket to local ip and port
-	 * @param ip
-	 * @param port
+	 * @param ip ip
+	 * @param port port
 	 * @throws NIOSocketException
 	 */
 	void bind(const string& ip, const unsigned int port) throw (NIOSocketException);
@@ -73,7 +73,7 @@ public:
 
 	/**
 	 * Determine IP version
-	 * @param ip
+	 * @param ip ip
 	 * @returns ip version
 	 */
 	static IpVersion determineIpVersion(const string& ip);

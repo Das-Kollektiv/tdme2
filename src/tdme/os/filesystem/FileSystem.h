@@ -25,7 +25,7 @@ public:
 
 	/** 
 	 * Set up file system
-	 * @param file system
+	 * @param fileSystem file system
 	 */
 	static void setupFileSystem(FileSystemInterface* fileSystem);
 

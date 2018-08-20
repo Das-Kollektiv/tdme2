@@ -112,7 +112,7 @@ public:
 
 	/** 
 	 * Set up current texture unit
-	 * @param texture unit
+	 * @param textureUnit texture unit
 	 */
 	void setTextureUnit(int32_t textureUnit) override;
 	float readPixelDepth(int32_t x, int32_t y) override;

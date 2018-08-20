@@ -25,8 +25,8 @@ struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 
 	/**
 	 * Compare
-	 * @param point 1
-	 * @param point 2
+	 * @param point1 point 1
+	 * @param point2 point 2
 	 */
 	inline static bool compare(TransparentRenderPoint& point1, TransparentRenderPoint& point2) {
 		if (point1.acquired == false && point2.acquired == false) {

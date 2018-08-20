@@ -43,13 +43,13 @@ private:
 
 	/** 
 	 * Set checked
-	 * @param checked
+	 * @param checked checked
 	 */
 	void setChecked(bool checked);
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUICheckboxController(GUINode* node);
 

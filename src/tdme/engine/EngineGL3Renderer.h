@@ -24,7 +24,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param engine
+	 * @param engine engine
 	 */
 	EngineGL3Renderer(Engine* engine);
 private:

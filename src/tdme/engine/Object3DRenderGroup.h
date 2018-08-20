@@ -70,17 +70,17 @@ private:
 
 	/**
 	 * Combine group into given combined model
-	 * @param source group to combine into current model
-	 * @param parent transformations matrix
-	 * @param combined model
+	 * @param sourceGroup source group to combine into current model
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param combinedModel combined model
 	 */
 	static void combineGroup(Group* sourceGroup, const Matrix4x4& parentTransformationsMatrix, Model* combinedModel);
 
 	/**
 	 * Combine model with transformations into current model
-	 * @param model
-	 * @param transformations
-	 * @param combined model
+	 * @param model model
+	 * @param transformations transformations
+	 * @param combinedModel combined model
 	 * @return model
 	 */
 	static void combineObject(Model* model, const Transformations& transformations, Model* combinedModel);
@@ -97,8 +97,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param model
+	 * @param id id
+	 * @param model model
 	 */
 	Object3DRenderGroup(const string& id, Model* model);
 
@@ -123,7 +123,7 @@ public:
 
 	/**
 	 * Set model
-	 * @param model
+	 * @param model model
 	 */
 	void setModel(Model* model);
 
@@ -136,7 +136,7 @@ public:
 
 	/**
 	 * Adds a instance this render group
-	 * @param transformations
+	 * @param transformations transformations
 	 */
 	void addObject(const Transformations& transformations);
 
@@ -276,7 +276,7 @@ public:
 
 	/**
 	 * Set shader id
-	 * @param shader
+	 * @param id shader
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
@@ -294,7 +294,7 @@ public:
 
 	/**
 	 * Set distance shader id
-	 * @param shader
+	 * @param id shader
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
@@ -312,7 +312,7 @@ public:
 
 	/**
 	 * Set distance shader distance
-	 * @param shader
+	 * @param distanceShaderDistance shader
 	 */
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;

@@ -58,7 +58,7 @@ private:
 
 	/** 
 	 * Set dragged y
-	 * @param dragged y
+	 * @param draggedY dragged y
 	 */
 	virtual void setDraggedY(float draggedY);
 
@@ -75,7 +75,7 @@ public:
 private:
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIVerticalScrollbarInternalController(GUINode* node);
 

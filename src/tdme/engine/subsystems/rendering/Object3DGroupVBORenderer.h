@@ -53,7 +53,7 @@ public:
 
 	/**
 	 * Constructor
-	 * @param object 3D group
+	 * @param object3DGroup object 3D group
 	 */
 	Object3DGroupVBORenderer(Object3DGroup* object3DGroup);
 };

@@ -17,7 +17,7 @@ class tdme::network::udpserver::NIONetworkServerException: public NIOException {
 public:
 	/**
 	 * @brief public constructor
-	 * @param message exception message
+	 * @param &message message exception message
 	 */
 	NIONetworkServerException(const string &message) throw();
 };

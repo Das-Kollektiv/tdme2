@@ -28,10 +28,10 @@ public:
 
 	/** 
 	 * Set up this quaternion by components
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param w
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param w w
 	 */
 	inline Quaternion& set(float x, float y, float z, float w) {
 		data[0] = x;
@@ -43,7 +43,7 @@ public:
 
 	/** 
 	 * Sets up this quaternion by quaternion q
-	 * @param q
+	 * @param q q
 	 * @return
 	 */
 	inline Quaternion& set(const Quaternion& q) {
@@ -53,8 +53,8 @@ public:
 
 	/** 
 	 * Set quaternion
-	 * @param vector
-	 * @param w
+	 * @param v vector
+	 * @param w w
 	 */
 	inline Quaternion& set(const Vector3& v, float w) {
 		data[0] = v.data[0];
@@ -73,7 +73,7 @@ public:
 
 	/**
 	 * Set X
-	 * @param x
+	 * @param x x
 	 * @return this quaternion
 	 */
 	inline Quaternion& setX(float x) {
@@ -90,7 +90,7 @@ public:
 
 	/**
 	 * Set Y
-	 * @param y
+	 * @param y y
 	 * @return this quaternion
 	 */
 	inline Quaternion& setY(float y) {
@@ -107,7 +107,7 @@ public:
 
 	/**
 	 * Set Z
-	 * @param z
+	 * @param z z
 	 * @return this quaternion
 	 */
 	inline Quaternion& setZ(float z) {
@@ -124,7 +124,7 @@ public:
 
 	/**
 	 * Set W
-	 * @param w
+	 * @param w w
 	 * @return this quaternion
 	 */
 	inline Quaternion& setW(float w) {
@@ -157,8 +157,8 @@ public:
 
 	/** 
 	 * Creates a rotation quaternion
-	 * @param angle
-	 * @param axis
+	 * @param angle angle
+	 * @param v axis
 	 * @return this quaternion
 	 */
 	inline Quaternion& rotate(float angle, const Vector3& v) {
@@ -189,7 +189,7 @@ public:
 
 	/** 
 	 * Multiplies this quaternion with quaternion q
-	 * @param quaterion q
+	 * @param q quaterion q
 	 * @return this quaternion
 	 */
 	inline Quaternion& multiply(const Quaternion q) {
@@ -204,7 +204,7 @@ public:
 
 	/** 
 	 * Multiplies this quaternion with quaternion q
-	 * @param quaterion q
+	 * @param q quaterion q
 	 * @return this quaternion
 	 */
 	inline Quaternion& add(const Quaternion& q) {
@@ -217,7 +217,7 @@ public:
 
 	/** 
 	 * Scales this quaternion with given value
-	 * @param value
+	 * @param value value
 	 * @return this quaternion
 	 */
 	inline Quaternion& scale(float value) {
@@ -230,8 +230,8 @@ public:
 
 	/** 
 	 * Multiplies a quaternion with given vector v
-	 * @param vector v
-	 * @param dest
+	 * @param v vector v
+	 * @param dest dest
 	 * @return dest
 	 */
 	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
@@ -251,7 +251,7 @@ public:
 
 	/** 
 	 * Computes a matrix from given
-	 * @param destination matrix
+	 * @param matrix destination matrix
 	 * @return destination matrix  
 	 */
 	inline Matrix4x4& computeMatrix(Matrix4x4& matrix) const {
@@ -293,7 +293,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param quaternion
+	 * @param q quaternion
 	 */
 	inline Quaternion(const Quaternion& q) {
 		data = q.data;
@@ -301,10 +301,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param w
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param w w
 	 */
 	inline Quaternion(float x, float y, float z, float w) {
 		data[0] = x;
@@ -315,8 +315,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param vector
-	 * @param w
+	 * @param v vector
+	 * @param w w
 	 */
 	inline Quaternion(const Vector3& v, float w) {
 		data[0] = v.data[0];

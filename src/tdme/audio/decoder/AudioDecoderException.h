@@ -17,7 +17,7 @@ public:
 
 	/**
 	 * @brief Public constructor
-	 * @param message exception message
+	 * @param message message exception message
 	 */
 	AudioDecoderException(const string& message) throw();
 

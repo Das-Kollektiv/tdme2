@@ -57,24 +57,24 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param source
-	 * @param effect color mul
-	 * @param effect color add
-	 * @param scale 9 grid
-	 * @param clipping
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 * @param source source
+	 * @param effectColorMul effect color mul
+	 * @param effectColorAdd effect color add
+	 * @param scale9Grid scale 9 grid
+	 * @param clipping clipping
 	 */
 	GUIImageNode(
 		GUIScreenNode* screenNode,
@@ -105,7 +105,7 @@ public:
 
 	/**
 	 * Set image source
-	 * @param source
+	 * @param source source
 	 */
 	void setSource(const string source);
 
@@ -116,7 +116,7 @@ public:
 
 	/**
 	 * Set texture matrix
-	 * @param texture matrix
+	 * @param textureMatrix texture matrix
 	 */
 	void setTextureMatrix(const Matrix2D3x3& textureMatrix);
 
@@ -127,11 +127,11 @@ public:
 
 	/**
 	 * Create clipping
-	 * @param all sides
-	 * @param left
-	 * @param top
-	 * @param right
-	 * @param bottom
+	 * @param allClipping all sides
+	 * @param left left
+	 * @param top top
+	 * @param right right
+	 * @param bottom bottom
 	 */
 	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom) throw (GUIParserException);
 

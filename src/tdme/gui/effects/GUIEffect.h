@@ -41,7 +41,7 @@ public:
 
 	/** 
 	 * Set time total
-	 * @param time total
+	 * @param timeTotal time total
 	 */
 	inline virtual void setTimeTotal(float timeTotal) {
 		this->timeTotal = timeTotal;
@@ -56,7 +56,7 @@ public:
 
 	/** 
 	 * Set action to be performed on effect end
-	 * @param action
+	 * @param action action
 	 */
 	inline virtual void setAction(Action* action) {
 		this->action = action;
@@ -69,13 +69,13 @@ public:
 
 	/** 
 	 * Updates the effect to GUI renderer and updates time
-	 * @param gui renderer
+	 * @param guiRenderer gui renderer
 	 */
 	virtual void update(GUIRenderer* guiRenderer);
 
 	/** 
 	 * Apply effect
-	 * @param GUI renderer
+	 * @param guiRenderer GUI renderer
 	 */
 	virtual void apply(GUIRenderer* guiRenderer) = 0;
 

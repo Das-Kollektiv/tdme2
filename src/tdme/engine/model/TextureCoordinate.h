@@ -30,20 +30,20 @@ public:
 
 	/**
 	 * Set texture coordinate
-	 * @param texture coordinate
+	 * @param textureCoordinate texture coordinate
 	 */
 	TextureCoordinate& set(const TextureCoordinate& textureCoordinate);
 
 	/**
 	 * Set texture coordinate
-	 * @param texture coordinate
+	 * @param uv texture coordinate
 	 */
 	TextureCoordinate& set(const array<float, 2>& uv);
 
 	/**
 	 * Set texture coordinate
-	 * @param u
-	 * @param v
+	 * @param u u
+	 * @param v v
 	 */
 	TextureCoordinate& set(float u, float v);
 
@@ -71,20 +71,20 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param texture coordinate
+	 * @param textureCoordinate texture coordinate
 	 */
 	TextureCoordinate(const TextureCoordinate& textureCoordinate);
 
 	/**
 	 * Public constructor
-	 * @param texture coordinate
+	 * @param uv texture coordinate
 	 */
 	TextureCoordinate(const array<float, 2>& uv);
 
 	/**
 	 * Public constructor
-	 * @param u
-	 * @param v
+	 * @param u u
+	 * @param v v
 	 */
 	TextureCoordinate(float u, float v);
 };

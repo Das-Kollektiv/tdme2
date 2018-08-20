@@ -19,8 +19,8 @@ struct tdme::engine::subsystems::rendering::TransparentRenderFace final
 
 	/**
 	 * Compare
-	 * @param face 1
-	 * @param face 2
+	 * @param face1 face 1
+	 * @param face2 face 2
 	 */
 	inline static bool compare(TransparentRenderFace* face1, TransparentRenderFace* face2) {
 		return face1->distanceFromCamera > face2->distanceFromCamera;

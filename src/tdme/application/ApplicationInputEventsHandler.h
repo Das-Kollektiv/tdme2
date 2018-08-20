@@ -39,65 +39,65 @@ public:
 
 	/**
 	 * On key down
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onKeyDown (unsigned char key, int x, int y) = 0;
 
 	/**
 	 * On key up
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onKeyUp(unsigned char key, int x, int y) = 0;
 
 	/**
 	 * On special key up
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onSpecialKeyDown (int key, int x, int y) = 0;
 
 	/**
 	 * On special key up
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onSpecialKeyUp(int key, int x, int y) = 0;
 
 	/**
 	 * On mouse dragged
-	 * @param x
-	 * @param y
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onMouseDragged(int x, int y) = 0;
 
 	/**
 	 * On mouse moved
-	 * @param x
-	 * @param y
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onMouseMoved(int x, int y) = 0;
 
 	/**
 	 * On mouse moved
-	 * @param button
-	 * @param state
-	 * @param x
-	 * @param y
+	 * @param button button
+	 * @param state state
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onMouseButton(int button, int state, int x, int y) = 0;
 
 	/**
 	 * On mouse wheen
-	 * @param button
-	 * @param direction
-	 * @param x
-	 * @param y
+	 * @param button button
+	 * @param direction direction
+	 * @param x x
+	 * @param y y
 	 */
 	virtual void onMouseWheel(int button, int direction, int x, int y) = 0;
 

@@ -49,7 +49,7 @@ public:
 
 	/** 
 	 * Set enabled
-	 * @param enabled
+	 * @param enabled enabled
 	 */
 	void setEnabled(bool enabled);
 
@@ -91,7 +91,7 @@ public:
 
 	/** 
 	 * set up spot exponent 
-	 * @param spot exponent
+	 * @param spotExponent spot exponent
 	 */
 	void setSpotExponent(float spotExponent);
 
@@ -102,7 +102,7 @@ public:
 
 	/** 
 	 * set spot cut off
-	 * @param spot cut off
+	 * @param spotCutOff spot cut off
 	 */
 	void setSpotCutOff(float spotCutOff);
 
@@ -113,7 +113,7 @@ public:
 
 	/** 
 	 * set up constant attenuation
-	 * @param constant attenuation
+	 * @param constantAttenuation constant attenuation
 	 */
 	void setConstantAttenuation(float constantAttenuation);
 
@@ -124,7 +124,7 @@ public:
 
 	/** 
 	 * set up linear attenuation
-	 * @param linarAttenuation
+	 * @param linarAttenuation linarAttenuation
 	 */
 	void setLinearAttenuation(float linarAttenuation);
 
@@ -135,13 +135,13 @@ public:
 
 	/** 
 	 * set up quadratic attenuation
-	 * @param quadraticAttenuation
+	 * @param quadraticAttenuation quadraticAttenuation
 	 */
 	void setQuadraticAttenuation(float quadraticAttenuation);
 
 	/**
 	 * Public default constructor
-	 * @param id
+	 * @param id id
 	 */
 	LevelEditorLight(int32_t id);
 };

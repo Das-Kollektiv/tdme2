@@ -34,10 +34,10 @@ public:
 
 	/** 
 	 * Imports a level from a TDME level file to Level Editor
-	 * @param path name
-	 * @param file name
-	 * @param level
-	 * @param progress callback
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param level level
+	 * @param progressCallback progress callback
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception
@@ -46,11 +46,11 @@ public:
 
 	/** 
 	 * Imports a level from a TDME level file to Level Editor
-	 * @param path name
-	 * @param file name
-	 * @param level
-	 * @param object id prefix
-	 * @param progress callback
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param level level
+	 * @param objectIdPrefix object id prefix
+	 * @param progressCallback progress callback
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception
@@ -59,9 +59,9 @@ public:
 
 	/**
 	 * Imports a level from a model file to Level Editor
-	 * @param path name
-	 * @param file name
-	 * @param level
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param level level
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception
@@ -78,11 +78,11 @@ private:
 
 	/**
 	 * Determine mesh groups in group hierarchy
-	 * @param level
-	 * @param group
-	 * @param parent node
-	 * @param parent transformations matrix
-	 * @param mesh groups
+	 * @param level level
+	 * @param group group
+	 * @param parentName parent node
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param meshGroups mesh groups
 	 */
 	static void determineMeshGroups(LevelEditorLevel* level, Group* group, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<LevelEditorEntityMeshGroup>& meshGroups);
 };

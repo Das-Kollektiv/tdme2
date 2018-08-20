@@ -34,9 +34,9 @@ public:
 
 	/** 
 	 * Creates an transparent render point entity in pool
-	 * @param point
-	 * @param color
-	 * @param distance from camera
+	 * @param point point
+	 * @param color color
+	 * @param distanceFromCamera distance from camera
 	 */
 	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera) {
 		// check for pool overflow
@@ -54,7 +54,7 @@ public:
 
 	/** 
 	 * Merge another pool into this pool
-	 * @param pool
+	 * @param pool2 pool
 	 */
 	void merge(TransparentRenderPointsPool* pool2);
 
@@ -75,7 +75,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param points max
+	 * @param pointsMax points max
 	 */
 	TransparentRenderPointsPool(int32_t pointsMax);
 };

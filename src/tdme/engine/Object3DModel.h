@@ -18,7 +18,7 @@ class tdme::engine::Object3DModel final
 public:
 	/**
 	 * Public constructor
-	 * @param model
+	 * @param model model
 	 */
 	Object3DModel(Model* model);
 };

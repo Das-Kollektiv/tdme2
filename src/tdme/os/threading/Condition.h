@@ -21,7 +21,7 @@ class tdme::os::threading::Condition {
 public:
 	/**
 	 * @brief Public constructor, creates condition variable
-	 * @param string
+	 * @param name string
 	 */
 	Condition(const string& name);
 

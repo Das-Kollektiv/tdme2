@@ -42,7 +42,7 @@ private:
 
 	/** 
 	 * Set tab content selected
-	 * @param id
+	 * @param id id
 	 */
 	void setTabContentSelected(const string& id);
 
@@ -66,7 +66,7 @@ public:
 private:
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUITabsController(GUINode* node);
 

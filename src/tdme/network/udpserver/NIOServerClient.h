@@ -57,7 +57,7 @@ public:
 
 	/**
 	 * @brief sets the clients identification key
-	 * @param client identification key
+	 * @param &key client identification key
 	 * @return if setting the key was succesful
 	 */
 	virtual const bool setKey(const string &key) = 0;
@@ -76,9 +76,9 @@ public:
 protected:
 	/**
 	 * @brief To be overwritten with a request handler, will be called from worker
-	 * @param frame
-	 * @param message id (udp server only)
-	 * @param retries (udp server only)
+	 * @param frame frame
+	 * @param messageId message id (udp server only)
+	 * @param retries retries (udp server only)
 	 */
 	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) throw (Exception) = 0;
 
@@ -99,9 +99,9 @@ protected:
 
 	/**
 	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool
-	 * @param frame
-	 * @param message id (upd server only)
-	 * @param retries (udp server only)
+	 * @param frame frame
+	 * @param messageId message id (upd server only)
+	 * @param retries retries (udp server only)
 	 */
 	virtual void onFrameReceived(stringstream* frame, const uint32_t messageId = 0, const uint8_t retries = 0) = 0;
 

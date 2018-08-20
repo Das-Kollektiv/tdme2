@@ -44,7 +44,7 @@ public:
 
 	/** 
 	 * Set default level properties  
-	 * @param level
+	 * @param level level
 	 */
 	void setDefaultLevelProperties(LevelEditorLevel* level);
 
@@ -69,8 +69,8 @@ private:
 
 	/** 
 	 * Returns immediate children by tagnames of parent
-	 * @param parent
-	 * @param name
+	 * @param parent parent
+	 * @param name name
 	 * @return children with given name
 	 */
 	const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
@@ -78,8 +78,8 @@ private:
 public:
 	/**
 	 * Constructor
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	LevelPropertyPresets(const string& pathName, const string& fileName);
 

@@ -38,10 +38,10 @@ protected:
 	/**
 	 * Create convex mesh
 	 * 	Note: it also translates center into origin
-	 * @param vertices
-	 * @param faces vertices count
-	 * @param indices
-	 * @param scale
+	 * @param vertices vertices
+	 * @param facesVerticesCount faces vertices count
+	 * @param indices indices
+	 * @param scale scale
 	 */
 	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
 

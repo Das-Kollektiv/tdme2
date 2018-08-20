@@ -39,7 +39,7 @@ private:
 
 	/**
 	 * Converts a TDME2 vector to ReactPhysics3D vector
-	 * @param tdme vector
+	 * @param vector tdme vector
 	 * @returns reactphysics3d vector
 	 */
 	inline static reactphysics3d::Vector3 toRP3DVector3(const Vector3& vector) {
@@ -48,8 +48,8 @@ private:
 
 	/**
 	 * Transforms a given ReactPhysics3D vector with bounding volume transform
-	 * @param bounding volume
-	 * @param vector
+	 * @param boundingVolume bounding volume
+	 * @param vector vector
 	 * @return transformed vector
 	 */
 	inline static Vector3 transformVector3(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& vector) {
@@ -61,8 +61,8 @@ private:
 
 	/**
 	 * Transforms a given ReactPhysics3D vector with bounding volume transform
-	 * @param bounding volume
-	 * @param vector
+	 * @param boundingVolume bounding volume
+	 * @param normal vector
 	 * @return transformed vector
 	 */
 	inline static Vector3 transformVector3Normal(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& normal) {
@@ -74,75 +74,75 @@ private:
 
 	/**
 	 * Set up convex mesh material
-	 * @param groups
-	 * @param material
+	 * @param groups groups
+	 * @param material material
 	 */
 	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material);
 
 public:
 	/** 
 	 * Creates a model from bounding box
-	 * @param bounding box
-	 * @param id
+	 * @param boundingBox bounding box
+	 * @param id id
 	 * @return model
 	 */
 	static Model* createBoundingBoxModel(BoundingBox* boundingBox, const string& id);
 
 	/** 
 	 * Creates a model from oriented bounding box
-	 * @param bounding box
-	 * @param id
+	 * @param orientedBoundingBox bounding box
+	 * @param id id
 	 * @return model
 	 */
 	static Model* createOrientedBoundingBoxModel(OrientedBoundingBox* orientedBoundingBox, const string& id);
 
 	/** 
 	 * Creates a model from oriented bounding box
-	 * @param sphere
-	 * @param id
-	 * @param number of x segments
-	 * @param number of y segments
+	 * @param sphere sphere
+	 * @param id id
+	 * @param segmentsX number of x segments
+	 * @param segmentsY number of y segments
 	 * @return model
 	 */
 	static Model* createSphereModel(Sphere* sphere, const string& id, int32_t segmentsX, int32_t segmentsY);
 
 	/** 
 	 * Creates a model from capsule
-	 * @param sphere
-	 * @param id
-	 * @param number of x segments
-	 * @param number of y segments
+	 * @param capsule sphere
+	 * @param id id
+	 * @param segmentsX number of x segments
+	 * @param segmentsY number of y segments
 	 * @return model
 	 */
 	static Model* createCapsuleModel(Capsule* capsule, const string& id, int32_t segmentsX, int32_t segmentsY);
 
 	/** 
 	 * Creates a model from convex mesh
-	 * @param convex mesh
-	 * @param id
+	 * @param mesh convex mesh
+	 * @param id id
 	 * @return model
 	 */
 	static Model* createConvexMeshModel(ConvexMesh* mesh, const string& id);
 
 	/**
 	 * Set up a convex mesh model
-	 * @param model
+	 * @param model model
 	 */
 	static void setupConvexMeshModel(Model* model);
 
 public:
 	/** 
 	 * Creates a model from bounding volume
-	 * @param bounding volume
-	 * @param id
+	 * @param boundingVolume bounding volume
+	 * @param id id
 	 * @return model
 	 */
 	static Model* createModel(BoundingBox* boundingVolume, const string& id);
 
 	/**
 	 * Creates a model from bounding volume
-	 * @param bounding box
-	 * @param id
+	 * @param boundingVolume bounding box
+	 * @param id id
 	 * @return model
 	 */
 	static Model* createModel(BoundingVolume* boundingVolume, const string& id);

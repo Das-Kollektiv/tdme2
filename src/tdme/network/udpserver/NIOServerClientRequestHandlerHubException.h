@@ -18,7 +18,7 @@ class NIOServerClientRequestHandlerHubException: public ExceptionBase {
 public:
 	/**
 	 * @brief public constructor
-	 * @param message exception message
+	 * @param &message message exception message
 	 */
 	NIOServerClientRequestHandlerHubException(const string &message) throw();
 };

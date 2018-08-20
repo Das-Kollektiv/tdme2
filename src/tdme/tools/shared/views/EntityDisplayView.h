@@ -42,7 +42,7 @@ public:
 
 	/** 
 	 * Set up ground plate visibility
-	 * @param ground plate visible
+	 * @param groundPlate ground plate visible
 	 */
 	virtual void setDisplayGroundPlate(bool groundPlate);
 
@@ -53,7 +53,7 @@ public:
 
 	/** 
 	 * Set up shadow rendering
-	 * @param shadow rendering
+	 * @param shadowing shadow rendering
 	 */
 	virtual void setDisplayShadowing(bool shadowing);
 
@@ -64,19 +64,19 @@ public:
 
 	/** 
 	 * Set up bounding volume visibility
-	 * @param bounding volume
+	 * @param displayBoundingVolume bounding volume
 	 */
 	virtual void setDisplayBoundingVolume(bool displayBoundingVolume);
 
 	/** 
 	 * Display
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void display(LevelEditorEntity* entity);
 
 	/**
 	 * Public constructor
-	 * @param entity display sub screen controller
+	 * @param entityDisplaySubScreenController entity display sub screen controller
 	 */
 	EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController);
 };

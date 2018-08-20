@@ -33,7 +33,7 @@ public:
 
 	/** 
 	 * Set time
-	 * @param time
+	 * @param time time
 	 */
 	virtual void setTime(int64_t time);
 
@@ -44,7 +44,7 @@ public:
 
 	/** 
 	 * Set type
-	 * @param type
+	 * @param type type
 	 */
 	virtual void setType(GUIMouseEvent_Type* type);
 
@@ -55,7 +55,7 @@ public:
 
 	/** 
 	 * Set x
-	 * @param x
+	 * @param x x
 	 */
 	virtual void setX(int32_t x);
 
@@ -66,7 +66,7 @@ public:
 
 	/** 
 	 * Set y
-	 * @param y
+	 * @param y y
 	 */
 	virtual void setY(int32_t y);
 
@@ -77,7 +77,7 @@ public:
 
 	/** 
 	 * Set button
-	 * @param button
+	 * @param button button
 	 */
 	virtual void setButton(int32_t button);
 
@@ -88,7 +88,7 @@ public:
 
 	/** 
 	 * Set up wheel x
-	 * @param wheel x
+	 * @param wheelX wheel x
 	 */
 	virtual void setWheelX(float wheelX);
 
@@ -99,7 +99,7 @@ public:
 
 	/** 
 	 * Set up wheel y
-	 * @param wheel y
+	 * @param wheelY wheel y
 	 */
 	virtual void setWheelY(float wheelY);
 
@@ -110,7 +110,7 @@ public:
 
 	/** 
 	 * Set up wheel z
-	 * @param wheel z
+	 * @param wheelZ wheel z
 	 */
 	virtual void setWheelZ(float wheelZ);
 
@@ -121,7 +121,7 @@ public:
 
 	/** 
 	 * Set processed 
-	 * @param processed
+	 * @param processed processed
 	 */
 	virtual void setProcessed(bool processed);
 

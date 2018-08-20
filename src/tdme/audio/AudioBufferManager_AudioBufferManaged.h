@@ -35,7 +35,7 @@ private:
 
 	/** 
 	 * Set up Open AL audio buffer id
-	 * @param al Id
+	 * @param alId al Id
 	 */
 	virtual void setAlId(int32_t alId);
 
@@ -57,9 +57,9 @@ private:
 
 	/**
 	 * Protected constructor
-	 * @param audio buffer manager
-	 * @param id
-	 * @param Open AL id
+	 * @param audioBufferManager audio buffer manager
+	 * @param id id
+	 * @param alId Open AL id
 	 */
 	AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId);
 

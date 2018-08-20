@@ -26,7 +26,7 @@ private:
 
 	/**
 	 * Update node
-	 * @param node
+	 * @param node node
 	 */
 	void updateNode(GUINode* node);
 
@@ -44,14 +44,14 @@ public:
 
 	/** 
 	 * Add a condition
-	 * @param condition
+	 * @param condition condition
 	 * @return condition changed
 	 */
 	bool add(const string& condition);
 
 	/** 
 	 * Remove a condition
-	 * @param condition
+	 * @param condition condition
 	 * @return condition changed
 	 */
 	bool remove(const string& condition);
@@ -64,7 +64,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUINodeConditions(GUIElementNode* node = nullptr);
 };

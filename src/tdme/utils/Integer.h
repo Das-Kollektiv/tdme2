@@ -18,7 +18,7 @@ public:
 
 	/**
 	 * Parse integer
-	 * @param string
+	 * @param str string
 	 * @return integer
 	 */
 	static int parseInt(const string& str);

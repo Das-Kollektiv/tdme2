@@ -52,12 +52,12 @@ public:
 
 	/** 
 	 * Adds a model
-	 * @param id
-	 * @param name
-	 * @param description
-	 * @param path name
-	 * @param file name
-	 * @param pivot
+	 * @param id id
+	 * @param name name
+	 * @param description description
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param pivot pivot
 	 * @return level editor entity
 	 * @throws Exception
 	 */
@@ -65,12 +65,12 @@ public:
 
 	/** 
 	 * Add a trigger
-	 * @param id
-	 * @param name
-	 * @param description
-	 * @param width
-	 * @param height
-	 * @param depth
+	 * @param id id
+	 * @param name name
+	 * @param description description
+	 * @param width width
+	 * @param height height
+	 * @param depth depth
 	 * @return level editor entity
 	 * @throws Exception
 	 */
@@ -78,9 +78,9 @@ public:
 
 	/** 
 	 * Add a empty
-	 * @param id
-	 * @param name
-	 * @param description
+	 * @param id id
+	 * @param name name
+	 * @param description description
 	 * @return level editor entity
 	 * @throws Exception
 	 */
@@ -88,9 +88,9 @@ public:
 
 	/** 
 	 * Add a empty
-	 * @param id
-	 * @param name
-	 * @param description
+	 * @param id id
+	 * @param name name
+	 * @param description description
 	 * @return level editor entity
 	 * @throws Exception
 	 */
@@ -98,26 +98,26 @@ public:
 
 	/** 
 	 * Add a entity
-	 * @param model
+	 * @param levelEditorEntity model
 	 */
 	void addEntity(LevelEditorEntity* levelEditorEntity) /* throws(Exception) */;
 
 	/** 
-	 * @param idx
+	 * @param idx idx
 	 * @return entity 
 	 */
 	LevelEditorEntity* getEntityAt(int32_t idx);
 
 	/** 
 	 * Retrieve a entity
-	 * @param id
+	 * @param id id
 	 * @return level editor entity
 	 */
 	LevelEditorEntity* getEntity(int32_t id);
 
 	/** 
 	 * Remove a entity
-	 * @param id
+	 * @param id id
 	 */
 	void removeEntity(int32_t id);
 

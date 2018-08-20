@@ -51,7 +51,7 @@ public:
 
 	/**
 	 * Set start frame
-	 * @param start frame
+	 * @param startFrame start frame
 	 */
 	void setStartFrame(int32_t startFrame);
 
@@ -64,7 +64,7 @@ public:
 
 	/**
 	 * Set end frame
-	 * @param end frame
+	 * @param endFrame end frame
 	 */
 	void setEndFrame(int32_t endFrame);
 
@@ -84,7 +84,7 @@ public:
 
 	/** 
 	 * Set loop
-	 * @param loop
+	 * @param loop loop
 	 */
 	void setLoop(bool loop);
 
@@ -98,7 +98,7 @@ public:
 
 	/**
 	 * Set overlay from group id
-	 * @param overlay from group id
+	 * @param overlayFromGroupId overlay from group id
 	 */
 	void setOverlayFromGroupId(const string& overlayFromGroupId);
 
@@ -109,20 +109,20 @@ public:
 
 	/** 
 	 * Compute animation duration
-	 * @param start frame
-	 * @param end frame
+	 * @param startFrame start frame
+	 * @param endFrame end frame
 	 * @return animation duration in milliseconds
 	 */
 	int64_t computeDuration(int32_t startFrame, int32_t endFrame);
 
 	/**
 	 * Public constructor
-	 * @param model
-	 * @param id
-	 * @param start frame
-	 * @param end frame
-	 * @param loop
-	 * @param overlay from group id
+	 * @param model model
+	 * @param id id
+	 * @param startFrame start frame
+	 * @param endFrame end frame
+	 * @param loop loop
+	 * @param overlayFromGroupId overlay from group id
 	 */
 	AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromGroupId);
 };

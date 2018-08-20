@@ -92,14 +92,14 @@ public:
 
 	/**
 	 * Set up this bounding volume from given bounding volume
-	 * @param original bounding box
+	 * @param original original bounding box
 	 */
 	void fromBoundingVolume(BoundingBox* original);
 
 	/**
 	 * Create bounding volume from given original(of same type) with applied transformations
-	 * @param original bounding box
-	 * @param transformations
+	 * @param original original bounding box
+	 * @param transformations transformations
 	 */
 	void fromBoundingVolumeWithTransformations(BoundingBox* original, const Transformations& transformations);
 
@@ -121,14 +121,14 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param bounding box
+	 * @param boundingBox bounding box
 	 */
 	BoundingBox(BoundingBox* boundingBox);
 
 	/**
 	 * Public constructor
-	 * @param min
-	 * @param max
+	 * @param min min
+	 * @param max max
 	 */
 	BoundingBox(const Vector3& min, const Vector3& max);
 

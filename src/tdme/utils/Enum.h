@@ -34,8 +34,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param name
-	 * @param ordinal or index
+	 * @param name name
+	 * @param ordinal ordinal or index
 	 */
 	Enum(const string& name, int32_t ordinal);
 

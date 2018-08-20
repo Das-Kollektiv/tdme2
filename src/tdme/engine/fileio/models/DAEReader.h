@@ -51,8 +51,8 @@ public:
 
 	/** 
 	 * Reads Collada DAE file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @throws model file IO exception
 	 * @throws file system exception
 	 * @return model instance
@@ -63,14 +63,14 @@ private:
 
 	/** 
 	 * Get authoring tool
-	 * @param xml root
+	 * @param xmlRoot xml root
 	 * @return authoring tool
 	 */
 	static Model::AuthoringTool getAuthoringTool(TiXmlElement* xmlRoot);
 
 	/** 
 	 * Get Up vector
-	 * @param xml root
+	 * @param xmlRoot xml root
 	 * @return up vector
 	 * @throws ModelFileIOException
 	 */
@@ -78,38 +78,38 @@ private:
 
 	/** 
 	 * Set up model import rotation matrix
-	 * @param xml root
-	 * @param model
+	 * @param xmlRoot xml root
+	 * @param model model
 	 */
 	static void setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* model);
 
 	/** 
 	 * Set up model import scale matrix
-	 * @param xml root
-	 * @param model
+	 * @param xmlRoot xml root
+	 * @param model model
 	 */
 	static void setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model);
 
 	/** 
 	 * Read a DAE visual scene node
-	 * @param path name
-	 * @param model
-	 * @param parent group
-	 * @param xml node
-	 * @param xml root
-	 * @param frames per second
+	 * @param pathName path name
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param xmlRoot xml node
+	 * @param xmlNode xml root
+	 * @param fps frames per second
 	 * @return group
 	 */
 	static Group* readVisualSceneNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/** 
 	 * Reads a DAE visual scene group node
-	 * @param path name
-	 * @param model
-	 * @param parent group
-	 * @param xml node
-	 * @param xml root
-	 * @param frames per seconds
+	 * @param pathName path name
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param xmlRoot xml node
+	 * @param xmlNode xml root
+	 * @param fps frames per seconds
 	 * @throws model file IO exception
 	 * @return group
 	 */
@@ -117,11 +117,11 @@ private:
 
 	/** 
 	 * Reads a instance controller
-	 * @param path name
-	 * @param model
-	 * @param parent group
-	 * @param xml root
-	 * @param xml node
+	 * @param pathName path name
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param xmlRoot xml root
+	 * @param xmlNode xml node
 	 * @throws model file IO exception
 	 * @return Group
 	 * @throws Exception
@@ -130,46 +130,46 @@ private:
 
 	/** 
 	 * Reads a geometry
-	 * @param path name
-	 * @param model
-	 * @param group
-	 * @param xml root
-	 * @param xml node id
-	 * @param material symbols
+	 * @param pathName path name
+	 * @param model model
+	 * @param group group
+	 * @param xmlRoot xml root
+	 * @param xmlNodeId xml node id
+	 * @param materialSymbols material symbols
 	 * @throws model file IO exception
 	 */
 	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException);
 
 	/** 
 	 * Reads a material
-	 * @param path name
-	 * @param model
-	 * @param xml root
-	 * @param xml node id
+	 * @param pathName path name
+	 * @param model model
+	 * @param xmlRoot xml root
+	 * @param xmlNodeId xml node id
 	 * @return material
 	 */
 	static Material* readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId);
 
 	/** 
 	 * Determine displacement filename 
-	 * @param path
-	 * @param map type
-	 * @param file name
+	 * @param path path
+	 * @param mapType map type
+	 * @param fileName file name
 	 * @return displacement file name or null
 	 */
 	static const string determineDisplacementFilename(const string& path, const string& mapType, const string& fileName);
 
 	/** 
 	 * Make file name relative
-	 * @param file name
+	 * @param fileName file name
 	 * @return file name
 	 */
 	static const string makeFileNameRelative(const string& fileName);
 
 	/** 
 	 * Get texture file name by id
-	 * @param xml root
-	 * @param xml texture id
+	 * @param xmlRoot xml root
+	 * @param xmlTextureId xml texture id
 	 * @return xml texture file name
 	 */
 	static const string getTextureFileNameById(TiXmlElement* xmlRoot, const string& xmlTextureId);
@@ -178,15 +178,15 @@ public:
 
 	/** 
 	 * Returns immediate children tags by tag name
-	 * @param parent
-	 * @param name
+	 * @param parent parent
+	 * @param name name
 	 * @return matching elements
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	/**
 	 * Returns immediate children tags
-	 * @param parent
+	 * @param parent parent
 	 * @return elements
 	 */
 	static const vector<TiXmlElement*> getChildren(TiXmlElement* parent);

@@ -70,8 +70,8 @@ public:
 
 	/** 
 	 * Set shadow map size
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	static void setShadowMapSize(int32_t width, int32_t height);
 
@@ -87,14 +87,14 @@ public:
 
 	/** 
 	 * Set light eye distance scale
-	 * @param light eye distance scale
+	 * @param lightEyeDistanceScale light eye distance scale
 	 */
 	void setLightEyeDistanceScale(float lightEyeDistanceScale);
 
 	/** 
 	 * Reshape shadow maps
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
@@ -105,7 +105,7 @@ public:
 
 	/** 
 	 * Render shadow maps
-	 * @param visible objects
+	 * @param visibleObjects visible objects
 	 */
 	void renderShadowMaps(const vector<Object3D*>& visibleObjects);
 
@@ -116,7 +116,7 @@ public:
 
 	/** 
 	 * Start object transformations
-	 * @param transformations matrix
+	 * @param transformationsMatrix transformations matrix
 	 */
 	void startObjectTransformations(Matrix4x4& transformationsMatrix);
 
@@ -137,27 +137,27 @@ public:
 
 	/**
 	 * Update material
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateMaterial(GLRenderer* renderer);
 
 	/**
 	 * Set shader
-	 * @param shader id
+	 * @param id shader id
 	 */
 	void setShader(const string& id);
 
 	/**
 	 * Upload light
-	 * @param renderer
-	 * @param light id
+	 * @param renderer renderer
+	 * @param lightId light id
 	 */
 	void updateLight(GLRenderer* renderer, int32_t lightId);
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
@@ -173,9 +173,9 @@ public:
 
 	/**
 	 * Constructor
-	 * @param engine
-	 * @param renderer
-	 * @param object 3d vbo renderer
+	 * @param engine engine
+	 * @param renderer renderer
+	 * @param object3DVBORenderer object 3d vbo renderer
 	 */
 	ShadowMapping(Engine* engine, GLRenderer* renderer, Object3DVBORenderer* object3DVBORenderer);
 

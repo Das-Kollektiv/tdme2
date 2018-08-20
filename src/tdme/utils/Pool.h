@@ -50,7 +50,7 @@ public:
 
 	/** 
 	 * Release element in pool for being reused
-	 * @param element
+	 * @param element element
 	 */
 	void release(T element) {
 		for (auto i = 0; i < usedElements.size(); i++) {

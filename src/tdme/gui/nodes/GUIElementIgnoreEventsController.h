@@ -50,7 +50,7 @@ public:
 private:
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIElementIgnoreEventsController(GUINode* node);
 };

@@ -54,8 +54,8 @@ private:
 
 	/** 
 	 * Protected constructor
-	 * @param id
-	 * @param mesh
+	 * @param id id
+	 * @param mesh mesh
 	 */
 	MeshManager_MeshManaged(const string& id, Object3DGroupMesh* mesh);
 };

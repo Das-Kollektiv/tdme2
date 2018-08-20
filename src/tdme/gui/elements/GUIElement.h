@@ -36,14 +36,14 @@ public:
 
 	/** 
 	 * Get default attributes
-	 * @param screen node
+	 * @param screenNode screen node
 	 * @return default attributes
 	 */
 	virtual map<string, string>* getAttributes(GUIScreenNode* screenNode) = 0;
 
 	/** 
 	 * Create controller which is attached to this node
-	 * @param node
+	 * @param node node
 	 * @return
 	 */
 	virtual GUINodeController* createController(GUINode* node) = 0;

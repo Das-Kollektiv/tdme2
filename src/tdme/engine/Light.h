@@ -53,7 +53,7 @@ public:
 
 	/** 
 	 * Set enabled
-	 * @param enabled
+	 * @param enabled enabled
 	 */
 	inline void setEnabled(bool enabled) {
 		this->enabled = enabled;
@@ -68,7 +68,7 @@ public:
 
 	/** 
 	 * Set ambient light component
-	 * @param ambient light component
+	 * @param ambient ambient light component
 	 */
 	inline void setAmbient(const Color4& ambient) {
 		this->ambient = ambient;
@@ -83,7 +83,7 @@ public:
 
 	/** 
 	 * Set diffuse light component
-	 * @param diffuse light
+	 * @param diffuse diffuse light
 	 */
 	inline void setDiffuse(const Color4& diffuse) {
 		this->diffuse = diffuse;
@@ -98,7 +98,7 @@ public:
 
 	/** 
 	 * Set specular light component
-	 * @param specular light
+	 * @param specular specular light
 	 */
 	inline void setSpecular(const Color4& specular) {
 		this->specular = specular;
@@ -113,7 +113,7 @@ public:
 
 	/**
 	 * Set light position
-	 * @param position of light
+	 * @param position position of light
 	 */
 	inline void setPosition(const Vector4& position) {
 		this->position = position;
@@ -128,7 +128,7 @@ public:
 
 	/**
 	 * Set spot direction
-	 * @param spot direction
+	 * @param spotDirection spot direction
 	 */
 	inline void setSpotDirection(const Vector3& spotDirection) {
 		this->spotDirection = spotDirection;
@@ -143,7 +143,7 @@ public:
 
 	/** 
 	 * Set up spot exponent
-	 * @param spot exponent
+	 * @param spotExponent spot exponent
 	 */
 	inline void setSpotExponent(float spotExponent) {
 		this->spotExponent = spotExponent;
@@ -158,7 +158,7 @@ public:
 
 	/** 
 	 * Set spot cut off
-	 * @param spot cut off
+	 * @param spotCutOff spot cut off
 	 */
 	inline void setSpotCutOff(float spotCutOff) {
 		this->spotCutOff = spotCutOff;
@@ -173,7 +173,7 @@ public:
 
 	/** 
 	 * Set up constant attenuation
-	 * @param constant attenuation
+	 * @param constantAttenuation constant attenuation
 	 */
 	inline void setConstantAttenuation(float constantAttenuation) {
 		this->constantAttenuation = constantAttenuation;
@@ -188,7 +188,7 @@ public:
 
 	/** 
 	 * Set up linear attenuation
-	 * @param linear attenuation
+	 * @param linearAttenuation linear attenuation
 	 */
 	inline void setLinearAttenuation(float linearAttenuation) {
 		this->linearAttenuation = linearAttenuation;
@@ -203,7 +203,7 @@ public:
 
 	/** 
 	 * Set up quadratic attenuation
-	 * @param quadraticAttenuation
+	 * @param quadraticAttenuation quadraticAttenuation
 	 */
 	inline void setQuadraticAttenuation(float quadraticAttenuation) {
 		this->quadraticAttenuation = quadraticAttenuation;
@@ -222,8 +222,8 @@ public:
 
 	/**
 	 * Public default constructor
-	 * @param renderer
-	 * @param id
+	 * @param renderer renderer
+	 * @param id id
 	 */
 	Light(GLRenderer* renderer, int32_t id);
 };

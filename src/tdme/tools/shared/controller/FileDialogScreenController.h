@@ -75,11 +75,11 @@ public:
 
 	/** 
 	 * Shows the file dialog pop up
-	 * @param current working directory
-	 * @param caption text
-	 * @param extensions
-	 * @param file name
-	 * @param apply action
+	 * @param cwd current working directory
+	 * @param captionText caption text
+	 * @param extensions extensions
+	 * @param fileName file name
+	 * @param applyAction apply action
 	 * @throws IOException 
 	 */
 	virtual void show(const string& cwd, const string& captionText, vector<string>* extensions, const string& fileName, Action* applyAction);

@@ -16,8 +16,8 @@ struct tdme::gui::events::GUIActionListener
 
 	/** 
 	 * On action performed
-	 * @param type
-	 * @param element node
+	 * @param type type
+	 * @param node element node
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) = 0;
 };

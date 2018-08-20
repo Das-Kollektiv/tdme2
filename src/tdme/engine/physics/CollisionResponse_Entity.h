@@ -41,7 +41,7 @@ public:
 
 	/** 
 	 * Set distance
-	 * @param distance
+	 * @param distance distance
 	 */
 	inline void setDistance(float distance) {
 		this->distance = distance;
@@ -63,7 +63,7 @@ public:
 
 	/** 
 	 * Adds a hit point
-	 * @param hit point
+	 * @param hitPoint hit point
 	 */
 	inline void addHitPoint(const Vector3& hitPoint) {
 		// check if we already have this hit point
@@ -82,7 +82,7 @@ public:
 
 	/** 
 	 * Get hit point of given index 
-	 * @param i
+	 * @param i i
 	 * @return hit point for given hit points index
 	 */
 	inline Vector3& getHitPointAt(int32_t i) {

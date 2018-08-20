@@ -20,13 +20,13 @@ class tdme::utils::Console
 public:
 	/** 
 	 * Print given string and trailing newline to console
-	 * @param string
+	 * @param str string
 	 */
 	static void println(const string& str);
 
 	/** 
 	 * Print given string
-	 * @param string
+	 * @param str string
 	 */
 	static void print(const string& str);
 

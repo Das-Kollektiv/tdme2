@@ -65,40 +65,40 @@ public:
 
 	/** 
 	 * Setup bounding volume sphere
-	 * @param center
-	 * @param radius
+	 * @param center center
+	 * @param radius radius
 	 */
 	virtual void setupSphere(const Vector3& center, float radius);
 
 	/** 
 	 * Setup bounding volume capsule
-	 * @param a
-	 * @param b
-	 * @param radius
+	 * @param a a
+	 * @param b b
+	 * @param radius radius
 	 */
 	virtual void setupCapsule(const Vector3& a, const Vector3& b, float radius);
 
 	/** 
 	 * Setup bounding volume oriented bounding box
-	 * @param center
-	 * @param axis 0
-	 * @param axis 1
-	 * @param axis 2
-	 * @param half extension
+	 * @param center center
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param axis2 axis 2
+	 * @param halfExtension half extension
 	 */
 	virtual void setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/** 
 	 * Setup bounding volume bounding box
-	 * @param min
-	 * @param max
+	 * @param min min
+	 * @param max max
 	 */
 	virtual void setupAabb(const Vector3& min, const Vector3& max);
 
 	/** 
 	 * Setup bounding volume sphere
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	virtual void setupConvexMesh(const string& pathName, const string& fileName);
 
@@ -112,8 +112,8 @@ private:
 public:
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param level editor entity
+	 * @param id id
+	 * @param levelEditorEntity level editor entity
 	 */
 	LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity);
 

@@ -28,7 +28,7 @@ public:
 
 	/** 
 	 * Set up distance from origin
-	 * @param distance
+	 * @param distance distance
 	 */
 	inline void setDistance(float distance) {
 		this->distance = distance;
@@ -51,8 +51,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param normal
-	 * @param distance
+	 * @param normal normal
+	 * @param distance distance
 	 */
 	inline Plane(const Vector3& normal, float distance) {
 		this->normal.set(normal);

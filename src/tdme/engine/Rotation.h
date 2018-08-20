@@ -37,7 +37,7 @@ public:
 	}
 
 	/** 
-	 * @param angle
+	 * @param angle angle
 	 */
 	inline void setAngle(const float angle) {
 		this->angle = angle;
@@ -52,7 +52,7 @@ public:
 
 	/**
 	 * Set axis
-	 * @param axis
+	 * @param axis axis
 	 */
 	inline void setAxis(const Vector3& axis) {
 		this->axis.set(axis);
@@ -67,13 +67,13 @@ public:
 
 	/** 
 	 * Sets up this rotation from another rotation
-	 * @param rotation
+	 * @param rotation rotation
 	 */
 	void fromRotation(const Rotation& rotation);
 
 	/** 
 	 * Sets up this rotation from quaternion, current quaternion will be lost, needs to get updated
-	 * @param q
+	 * @param q q
 	 */
 	void fromQuaternion(const Quaternion& q);
 
@@ -89,8 +89,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param angle
-	 * @param axis
+	 * @param angle angle
+	 * @param axis axis
 	 */
 	Rotation(float angle, const Vector3& axis);
 };

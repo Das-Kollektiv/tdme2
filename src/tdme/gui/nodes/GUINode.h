@@ -104,13 +104,13 @@ protected:
 
 	/**
 	 * Set computed left
-	 * @param left
+	 * @param left left
 	 */
 	virtual void setLeft(int32_t left);
 
 	/**
 	 * Set computed top
-	 * @param top
+	 * @param top top
 	 */
 	virtual void setTop(int32_t top);
 
@@ -126,41 +126,41 @@ protected:
 
 	/**
 	 * Layout constraint
-	 * @param type
-	 * @param auto value
-	 * @param parent value
-	 * @param value
+	 * @param type type
+	 * @param autoValue auto value
+	 * @param parentValue parent value
+	 * @param value value
 	 * @return pixel
 	 */
 	virtual int32_t layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int32_t autoValue, int32_t parentValue, int32_t value);
 
 	/**
 	 * Get requested constraints type
-	 * @param constraint
-	 * @param default constraints type
+	 * @param constraint constraint
+	 * @param defaultConstraintsType default constraints type
 	 * @return requested constraints type
 	 */
 	static GUINode_RequestedConstraints_RequestedConstraintsType* getRequestedConstraintsType(const string& constraint, GUINode_RequestedConstraints_RequestedConstraintsType* defaultConstraintsType);
 
 	/**
 	 * Get requested constraints value
-	 * @param constraint
-	 * @param default constraints value
+	 * @param constraint constraint
+	 * @param defaultConstraintsValue default constraints value
 	 * @return requested constraints value
 	 */
 	static int32_t getRequestedConstraintsValue(const string& constraint, int32_t defaultConstraintsValue);
 
 	/**
 	 * Get requested pixel value
-	 * @param value
-	 * @param default value
+	 * @param value value
+	 * @param defaultValue default value
 	 * @return value
 	 */
 	static int32_t getRequestedPixelValue(const string& value, int32_t defaultValue);
 
 	/**
 	 * Check if conditions are met
-	 * @param element node
+	 * @param elementNode element node
 	 * @return conditions met
 	 */
 	virtual bool checkConditions(GUIElementNode* elementNode = nullptr);
@@ -177,26 +177,26 @@ protected:
 
 	/**
 	 * Compute indent string
-	 * @param ident
+	 * @param indent ident
 	 * @return indented string
 	 */
 	virtual const string indent(int32_t indent);
 
 	/**
 	 * Public constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
 	 */
 	GUINode(
 		GUIScreenNode* screenNode,
@@ -272,78 +272,78 @@ public:
 
 	/** 
 	 * Create alignments
-	 * @param horizontal
-	 * @param vertical
+	 * @param horizontal horizontal
+	 * @param vertical vertical
 	 * @return alignments
 	 */
 	static GUINode_Alignments createAlignments(const string& horizontal, const string& vertical);
 
 	/** 
 	 * Create requested constraints
-	 * @param left
-	 * @param top
-	 * @param width
-	 * @param height
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
 	 * @return requested constraints
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
 	/** 
 	 * Get color
-	 * @param color
-	 * @param default color
+	 * @param color color
+	 * @param defaultColor default color
 	 * @return value
 	 */
 	static GUIColor getRequestedColor(const string& color, const GUIColor& defaultColor) throw (GUIParserException);
 
 	/** 
 	 * Create flow
-	 * @param flow
+	 * @param flow flow
 	 * @return flow
 	 */
 	static GUINode_Flow* createFlow(const string& flow);
 
 	/** 
 	 * Create border
-	 * @param all border
-	 * @param left
-	 * @param top
-	 * @param right
-	 * @param bottom
-	 * @param all border color
-	 * @param left color
-	 * @param top color
-	 * @param right color
-	 * @param bottom color
+	 * @param allBorder all border
+	 * @param left left
+	 * @param top top
+	 * @param right right
+	 * @param bottom bottom
+	 * @param allBorderColor all border color
+	 * @param leftColor left color
+	 * @param topColor top color
+	 * @param rightColor right color
+	 * @param bottomColor bottom color
 	 * @return border
 	 */
 	static GUINode_Border createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) throw(GUIParserException);
 
 	/** 
 	 * Create padding
-	 * @param all padding
-	 * @param left
-	 * @param top
-	 * @param right
-	 * @param bottom
+	 * @param allPadding all padding
+	 * @param left left
+	 * @param top top
+	 * @param right right
+	 * @param bottom bottom
 	 * @return padding
 	 */
 	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
 
 	/** 
 	 * Create scale 9 grid
-	 * @param all
-	 * @param left
-	 * @param top
-	 * @param right
-	 * @param bottom
+	 * @param all all
+	 * @param left left
+	 * @param top top
+	 * @param right right
+	 * @param bottom bottom
 	 * @return scale 9 grid
 	 */
 	static GUINode_Scale9Grid createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
 
 	/**
 	 * Create conditions
-	 * @param conditions
+	 * @param conditions conditions
 	 */
 	static GUINodeConditions createConditions(const string& conditions);
 
@@ -359,22 +359,22 @@ public:
 
 	/**
 	 * Render
-	 * @param gui renderer
-	 * @param floating nodes
+	 * @param guiRenderer gui renderer
+	 * @param floatingNodes floating nodes
 	 */
 	virtual void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes);
 
 	/** 
 	 * Is event belonging to node
-	 * @param event
-	 * @param x,y position in node coordinate system 
+	 * @param event event
+	 * @param position x,y position in node coordinate system 
 	 * @return boolean
 	 */
 	virtual bool isEventBelongingToNode(GUIMouseEvent* event, array<float, 2>& position);
 
 	/** 
 	 * Is event belonging to node
-	 * @param event
+	 * @param event event
 	 * @return boolean
 	 */
 	virtual bool isEventBelongingToNode(GUIMouseEvent* event);
@@ -382,8 +382,8 @@ public:
 	/** 
 	 * Get event off node relative position
 	 * 	TODO: use Vector2 instead of array<float, 2>
-	 * @param event
-	 * @param x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)  
+	 * @param event event
+	 * @param position x,y position (will return x = 0 if in node on x axis, will return x < 0  (-pixel) if on the left of element, x > 0 (+pixel) if on the right of element, y behaves analogous to x)  
 	 * @return void
 	 */
 	virtual void getEventOffNodeRelativePosition(GUIMouseEvent* event, array<float, 2>& position);
@@ -395,14 +395,14 @@ public:
 
 	/**
 	 * Determine mouse event nodes
-	 * @param event
-	 * @param event node ids
+	 * @param event event
+	 * @param eventNodeIds event node ids
 	 */
 	virtual void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds);
 
 	/**
 	 * Handle keyboard event
-	 * @param event
+	 * @param event event
 	 */
 	virtual void handleKeyboardEvent(GUIKeyboardEvent* event);
 
@@ -413,7 +413,7 @@ public:
 
 	/** 
 	 * Set up node controller
-	 * @param controller
+	 * @param controller controller
 	 */
 	virtual void setController(GUINodeController* controller);
 
@@ -424,7 +424,7 @@ public:
 
 	/** 
 	 * Scroll to node Y
-	 * @param stop at node to node
+	 * @param toNode stop at node to node
 	 */
 	virtual void scrollToNodeY(GUIParentNode* toNode);
 
@@ -435,7 +435,7 @@ public:
 
 	/** 
 	 * Scroll to node X
-	 * @param stop at node to node
+	 * @param toNode stop at node to node
 	 */
 	virtual void scrollToNodeX(GUIParentNode* toNode);
 

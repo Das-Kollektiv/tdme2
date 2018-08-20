@@ -28,40 +28,40 @@ struct tdme::engine::Partition
 
 	/** 
 	 * Adds a entity
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void addEntity(Entity* entity) = 0;
 
 	/** 
 	 * Updates a entity
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void updateEntity(Entity* entity) = 0;
 
 	/** 
 	 * Removes a entity
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void removeEntity(Entity* entity) = 0;
 
 	/** 
 	 * Get visible entities
-	 * @param frustum
+	 * @param frustum frustum
 	 * @return visible entities
 	 */
 	virtual const vector<Entity*>* getVisibleEntities(Frustum* frustum) = 0;
 
 	/** 
 	 * Get objects near to bounding volume
-	 * @param cbv
+	 * @param cbv cbv
 	 * @return objects near to cbv
 	 */
 	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
 
 	/** 
 	 * Get objects near to given world position
-	 * @param center
-	 * @param half extension
+	 * @param center center
+	 * @param halfExtension half extension
 	 * @return objects near to given world position
 	 */
 	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center, const Vector3& halfExtension = Vector3(0.1f, 0.1f, 0.1f)) = 0;

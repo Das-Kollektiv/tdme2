@@ -84,21 +84,21 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param overflow x
-	 * @param overflow y
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param overflowX overflow x
+	 * @param overflowY overflow y
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
 	 */
 	GUIParentNode(
 		GUIScreenNode* screenNode,
@@ -127,14 +127,14 @@ public:
 
 	/** 
 	 * Replace sub nodes with given XML
-	 * @param xml
-	 * @param reset scroll offsets
+	 * @param xml xml
+	 * @param resetScrollOffsets reset scroll offsets
 	 */
 	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */;
 
 	/** 
 	 * Add sub node
-	 * @param node
+	 * @param node node
 	 */
 	virtual void addSubNode(GUINode* node) throw (GUIParserException);
 
@@ -150,7 +150,7 @@ public:
 
 	/** 
 	 * Create over flow
-	 * @param over flow
+	 * @param overflow over flow
 	 * @return over flow
 	 * @throws gui parser exception
 	 */
@@ -163,7 +163,7 @@ public:
 
 	/** 
 	 * Set children render offset x
-	 * @param children render offset x
+	 * @param childrenRenderOffSetX children render offset x
 	 */
 	virtual void setChildrenRenderOffsetX(float childrenRenderOffSetX);
 
@@ -174,23 +174,23 @@ public:
 
 	/** 
 	 * Set children render offset y
-	 * @param children render offset y
+	 * @param childrenRenderOffSetY children render offset y
 	 */
 	virtual void setChildrenRenderOffsetY(float childrenRenderOffSetY);
 
 	/** 
 	 * Create requested constraints
-	 * @param left
-	 * @param top
-	 * @param width
-	 * @param height
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
 	 * @return requested constraints
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
 
 	/** 
 	 * Get child controller nodes
-	 * @param child controller nodes
+	 * @param childControllerNodes child controller nodes
 	 */
 	virtual void getChildControllerNodes(vector<GUINode*>* childControllerNodes);
 	void dispose() override;
@@ -202,7 +202,7 @@ public:
 private:
 	/**
 	 * Get child controller nodes internal
-	 * @param child controller nodes
+	 * @param childControllerNodes child controller nodes
 	 */
 	void getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes);
 

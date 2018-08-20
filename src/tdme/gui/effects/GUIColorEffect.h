@@ -38,7 +38,7 @@ public:
 
 	/** 
 	 * Set color add start
-	 * @param color add start
+	 * @param colorAddStart color add start
 	 */
 	inline virtual void setColorAddStart(const GUIColor& colorAddStart) {
 		this->colorAddStart = colorAddStart;
@@ -53,7 +53,7 @@ public:
 
 	/**
 	 * Set color add end
-	 * @param color add end
+	 * @param colorAddEnd color add end
 	 */
 	inline virtual void setColorAddEnd(const GUIColor& colorAddEnd) {
 		this->colorAddEnd = colorAddEnd;
@@ -68,7 +68,7 @@ public:
 
 	/** 
 	 * Set color mul start
-	 * @param color mul start
+	 * @param colorMulStart color mul start
 	 */
 	inline virtual void setColorMulStart(const GUIColor& colorMulStart) {
 		this->colorMulStart = colorMulStart;
@@ -83,7 +83,7 @@ public:
 
 	/**
 	 * Set color mul end
-	 * @param color mul end
+	 * @param colorMulEnd color mul end
 	 */
 	inline virtual void setColorMulEnd(const GUIColor& colorMulEnd) {
 		this->colorMulEnd = colorMulEnd;

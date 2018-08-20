@@ -74,7 +74,7 @@ public:
 
 	/** 
 	 * Sets up if this group is a joint or not 
-	 * @param isbone
+	 * @param isJoint isbone
 	 */
 	void setJoint(bool isJoint);
 
@@ -90,7 +90,7 @@ public:
 
 	/** 
 	 * Set vertices
-	 * @param vertices
+	 * @param vertices vertices
 	 */
 	void setVertices(const vector<Vector3>* vertices);
 
@@ -101,7 +101,7 @@ public:
 
 	/** 
 	 * Set normals
-	 * @param normals
+	 * @param normals normals
 	 */
 	void setNormals(const vector<Vector3>* normals);
 
@@ -112,7 +112,7 @@ public:
 
 	/** 
 	 * Set texture coordinates
-	 * @param texture coordinates
+	 * @param textureCoordinates texture coordinates
 	 */
 	void setTextureCoordinates(const vector<TextureCoordinate>* textureCoordinates);
 
@@ -123,7 +123,7 @@ public:
 
 	/** 
 	 * Set tangents
-	 * @param tangents
+	 * @param tangents tangents
 	 */
 	void setTangents(const vector<Vector3>* tangents);
 
@@ -134,7 +134,7 @@ public:
 
 	/** 
 	 * Set bitangents
-	 * @param bitangents
+	 * @param bitangents bitangents
 	 */
 	void setBitangents(const vector<Vector3>* bitangents);
 
@@ -145,7 +145,7 @@ public:
 
 	/** 
 	 * Creates an empty animation object
-	 * @param frames
+	 * @param frames frames
 	 * @return animation
 	 */
 	Animation* createAnimation(int32_t frames);
@@ -173,7 +173,7 @@ public:
 
 	/** 
 	 * Set up faces entities
-	 * @param faces entity
+	 * @param facesEntities faces entity
 	 */
 	void setFacesEntities(const vector<FacesEntity>* facesEntities);
 
@@ -184,7 +184,7 @@ public:
 
 	/** 
 	 * Returns a sub group by id
-	 * @param groupId
+	 * @param groupId groupId
 	 * @return sub group or null
 	 */
 	Group* getSubGroupById(const string& groupId);
@@ -197,10 +197,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param model
-	 * @param parent group
-	 * @param id
-	 * @param name
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param id id
+	 * @param name name
 	 */
 	Group(Model* model, Group* parentGroup, const string& id, const string& name);
 

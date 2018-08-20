@@ -73,11 +73,11 @@ private:
 
 	/** 
 	 * Creates a object3d group mesh from group
-	 * @param object 3D group VBO renderer
-	 * @param animation processing target
-	 * @param group
-	 * @param transformationm matrices
-	 * @param skinning matrices 
+	 * @param object3DVBOGroupRenderer object 3D group VBO renderer
+	 * @param animationProcessingTarget animation processing target
+	 * @param group group
+	 * @param transformationMatrices transformationm matrices
+	 * @param skinningMatrices skinning matrices 
 	 * @return object 3d group mesh
 	 */
 	static Object3DGroupMesh* createMesh(Object3DGroupVBORenderer* object3DVBOGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices,map<string, Matrix4x4*>* skinningMatrices);
@@ -106,43 +106,43 @@ private:
 
 	/** 
 	 * Set up vertex indices buffer
-	 * @param renderer
-	 * @param vbo id
+	 * @param renderer renderer
+	 * @param vboId vbo id
 	 */
 	void setupVertexIndicesBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up texture coordinates buffer
-	 * @param renderer
-	 * @param vbo id
+	 * @param renderer renderer
+	 * @param vboId vbo id
 	 */
 	void setupTextureCoordinatesBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up vertices buffer
-	 * @param renderer
-	 * @param vbo id
+	 * @param renderer renderer
+	 * @param vboId vbo id
 	 */
 	void setupVerticesBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up normals buffer
-	 * @param renderer
-	 * @param vbo id
+	 * @param renderer renderer
+	 * @param vboId vbo id
 	 */
 	void setupNormalsBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up tangents buffer
-	 * @param renderer
-	 * @param vbo id
+	 * @param renderer renderer
+	 * @param vboId vbo id
 	 */
 	void setupTangentsBuffer(GLRenderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up bitangents buffer
-	 * @param renderer
-	 * @param vbo id
+	 * @param renderer renderer
+	 * @param vboId vbo id
 	 */
 	void setupBitangentsBuffer(GLRenderer* renderer, int32_t vboId);
 

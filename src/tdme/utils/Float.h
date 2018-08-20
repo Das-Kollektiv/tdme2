@@ -31,14 +31,14 @@ public:
 
 	/**
 	 * Parse float
-	 * @param string
+	 * @param str string
 	 * @return float
 	 */
 	static float parseFloat(const string& str);
 
 	/**
 	 * Check if float is nane
-	 * @param float value
+	 * @param value float value
 	 */
 	inline static bool isNaN(float value) {
 		return isnan(value);

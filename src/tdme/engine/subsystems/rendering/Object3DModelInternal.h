@@ -20,7 +20,7 @@ class tdme::engine::subsystems::rendering::Object3DModelInternal
 public:
 	/**
 	 * Public constructor
-	 * @param model
+	 * @param model model
 	 */
 	Object3DModelInternal(Model* model);
 

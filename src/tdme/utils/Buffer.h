@@ -50,7 +50,7 @@ public:
 
 	/**
 	 * @returns value at given position
-	 * @param position
+	 * @param position position
 	 */
 	inline uint8_t get(int32_t position) {
 		return (*buffer)[position];
@@ -73,7 +73,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param capacity
+	 * @param capacity capacity
 	 */
 	inline Buffer(int32_t capacity) {
 		this->createdBuffer = true;
@@ -83,7 +83,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param buffer
+	 * @param buffer buffer
 	 */
 	inline Buffer(Buffer* buffer) {
 		this->createdBuffer = false;
@@ -93,7 +93,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param data
+	 * @param data data
 	 */
 	inline Buffer(vector<uint8_t>* data) {
 		this->createdBuffer = false;

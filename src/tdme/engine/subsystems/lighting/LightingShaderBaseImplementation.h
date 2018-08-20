@@ -97,45 +97,45 @@ public:
 
 	/** 
 	 * Update effect to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateEffect(GLRenderer* renderer) override;
 
 	/** 
 	 * Update material to program
-	 * @param gl3 renderer
+	 * @param renderer gl3 renderer
 	 */
 	virtual void updateMaterial(GLRenderer* renderer) override;
 
 	/** 
 	 * Update light to program
-	 * @param renderer
-	 * @param light id
+	 * @param renderer renderer
+	 * @param lightId light id
 	 */
 	virtual void updateLight(GLRenderer* renderer, int32_t lightId) override;
 
 	/** 
 	 * Update matrices to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateMatrices(GLRenderer* renderer) override;
 
 	/** 
 	 * Update texture matrix to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) override;
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	LightingShaderBaseImplementation(GLRenderer* renderer);
 };

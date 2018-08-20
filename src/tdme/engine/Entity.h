@@ -31,13 +31,13 @@ struct tdme::engine::Entity
 
 	/** 
 	 * Set up engine
-	 * @param engine
+	 * @param engine engine
 	 */
 	virtual void setEngine(Engine* engine) = 0;
 
 	/** 
 	 * Set up renderer
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void setRenderer(GLRenderer* renderer) = 0;
 
@@ -53,7 +53,7 @@ struct tdme::engine::Entity
 
 	/** 
 	 * Enable/disable rendering
-	 * @param enabled
+	 * @param enabled enabled
 	 */
 	virtual void setEnabled(bool enabled) = 0;
 
@@ -64,7 +64,7 @@ struct tdme::engine::Entity
 
 	/**
 	 * Set frustum culling
-	 * @param frustum culling
+	 * @param frustumCulling frustum culling
 	 */
 	virtual void setFrustumCulling(bool frustumCulling) = 0;
 
@@ -75,7 +75,7 @@ struct tdme::engine::Entity
 
 	/** 
 	 * Set this object pickable
-	 * @param pickable
+	 * @param pickable pickable
 	 */
 	virtual void setPickable(bool pickable) = 0;
 
@@ -86,7 +86,7 @@ struct tdme::engine::Entity
 
 	/** 
 	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing
+	 * @param dynamicShadowing dynamicShadowing
 	 */
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) = 0;
 
@@ -98,7 +98,7 @@ struct tdme::engine::Entity
 
 	/** 
 	 * Set effect color that will be multiplied with fragment color
-	 * @param effect color
+	 * @param effectColorMul effect color
 	 */
 	virtual void setEffectColorMul(const Color4& effectColorMul) = 0;
 
@@ -141,7 +141,7 @@ struct tdme::engine::Entity
 
 	/**
 	 * Set translation
-	 * @param translation
+	 * @param translation translation
 	 */
 	virtual void setTranslation(const Vector3& translation) = 0;
 
@@ -152,7 +152,7 @@ struct tdme::engine::Entity
 
 	/**
 	 * Set scale
-	 * @param scale
+	 * @param scale scale
 	 */
 	virtual void setScale(const Vector3& scale) = 0;
 
@@ -163,7 +163,7 @@ struct tdme::engine::Entity
 
 	/**
 	 * Set pivot
-	 * @param pivot
+	 * @param pivot pivot
 	 */
 	virtual void setPivot(const Vector3& pivot) = 0;
 
@@ -174,46 +174,46 @@ struct tdme::engine::Entity
 
 	/**
 	 * Get rotation at given index
-	 * @param rotation index
+	 * @param idx rotation index
 	 * @return rotation
 	 */
 	virtual Rotation& getRotation(const int idx) = 0;
 
 	/**
 	 * Add rotation
-	 * @param axis
-	 * @param angle
+	 * @param axis axis
+	 * @param angle angle
 	 */
 	virtual void addRotation(const Vector3& axis, const float angle) = 0;
 
 	/**
 	 * Remove rotation
-	 * @param index
+	 * @param idx index
 	 */
 	virtual void removeRotation(int idx) = 0;
 
 	/**
-	 * @param rotation index
+	 * @param idx rotation index
 	 * @return rotation axis for rotation with given index
 	 */
 	virtual const Vector3& getRotationAxis(const int idx) const = 0;
 
 	/**
 	 * Set rotation axis
-	 * @param rotation index
-	 * @param rotation axis
+	 * @param idx rotation index
+	 * @param axis rotation axis
 	 */
 	virtual void setRotationAxis(const int idx, const Vector3& axis) = 0;
 
 	/**
-	 * @param rotation index
+	 * @param idx rotation index
 	 * @return rotation angle for rotation with given index
 	 */
 	virtual const float getRotationAngle(const int idx) const = 0;
 
 	/**
-	 * @param rotation index
-	 * @param rotation angle
+	 * @param idx rotation index
+	 * @param angle rotation angle
 	 * @return rotation angle for rotation with given index
 	 */
 	virtual void setRotationAngle(const int idx, const float angle) = 0;
@@ -230,7 +230,7 @@ struct tdme::engine::Entity
 
 	/**
 	 * Set up this transformations from given transformations
-	 * @param transformations
+	 * @param transformations transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations) = 0;
 

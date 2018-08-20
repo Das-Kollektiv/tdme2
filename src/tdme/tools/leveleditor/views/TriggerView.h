@@ -70,9 +70,9 @@ public:
 
 	/** 
 	 * Trigger apply
-	 * @param width
-	 * @param height
-	 * @param depth
+	 * @param width width
+	 * @param height height
+	 * @param depth depth
 	 */
 	virtual void triggerApply(float width, float height, float depth);
 	void initialize() override;
@@ -82,7 +82,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param pop ups view
+	 * @param popUps pop ups view
 	 */
 	TriggerView(PopUps* popUps);
 

@@ -21,7 +21,7 @@ class tdme::utils::ExceptionBase: public runtime_error {
 	public:
 		/**
 		 * @brief Public constructor
-		 * @param message Exception message
+		 * @param message message Exception message
 		 */
 		ExceptionBase(const string& message) throw();
 		~ExceptionBase() throw();

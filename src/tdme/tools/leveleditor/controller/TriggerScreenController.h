@@ -57,14 +57,14 @@ public:
 
 	/** 
 	 * Set screen caption
-	 * @param text
+	 * @param text text
 	 */
 	void setScreenCaption(const string& text);
 
 	/** 
 	 * Set up general entity data
-	 * @param name
-	 * @param description
+	 * @param name name
+	 * @param description description
 	 */
 	void setEntityData(const string& name, const string& description);
 
@@ -75,8 +75,8 @@ public:
 
 	/** 
 	 * Set up entity properties
-	 * @param preset id
-	 * @param selected name
+	 * @param presetId preset id
+	 * @param selectedName selected name
 	 */
 	void setEntityProperties(const string& presetId, const string& selectedName);
 
@@ -87,9 +87,9 @@ public:
 
 	/** 
 	 * Set trigger tab
-	 * @param width
-	 * @param height
-	 * @param depth
+	 * @param width width
+	 * @param height height
+	 * @param depth depth
 	 */
 	void setTrigger(float width, float height, float depth);
 
@@ -117,7 +117,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param view
+	 * @param view view
 	 */
 	TriggerScreenController(TriggerView* view);
 };

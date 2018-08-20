@@ -26,10 +26,10 @@ private:
 public:
 	/** 
 	 * Set up vector
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param w
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param w w
 	 * @return this vector
 	 */
 	inline Vector4& set(float x, float y, float z, float w) {
@@ -42,7 +42,7 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param float array containing x,y,z,w values
+	 * @param v float array containing x,y,z,w values
 	 * @return this vector
 	 */
 	inline Vector4& set(const array<float, 4>& v) {
@@ -52,7 +52,7 @@ public:
 
 	/**
 	 * Set up vector
-	 * @param v
+	 * @param v v
 	 * @return this vector
 	 */
 	inline Vector4& set(const Vector4& v) {
@@ -65,8 +65,8 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param vector 3
-	 * @param w 
+	 * @param v vector 3
+	 * @param w w 
 	 * @return this vector
 	 */
 	inline Vector4& set(const Vector3& v, float w) {
@@ -86,7 +86,7 @@ public:
 
 	/** 
 	 * set X
-	 * @param x
+	 * @param x x
 	 * @return this vector
 	 */
 	inline Vector4& setX(float x) {
@@ -103,7 +103,7 @@ public:
 
 	/** 
 	 * set Y
-	 * @param y
+	 * @param y y
 	 * @return this vector
 	 */
 	inline Vector4& setY(float y) {
@@ -120,7 +120,7 @@ public:
 
 	/** 
 	 * Set Z
-	 * @param z
+	 * @param z z
 	 * @return this vector
 	 */
 	inline Vector4& setZ(float z) {
@@ -137,7 +137,7 @@ public:
 
 	/** 
 	 * Set W
-	 * @param w
+	 * @param w w
 	 * @return this vector
 	 */
 	inline Vector4& setW(float w) {
@@ -147,7 +147,7 @@ public:
 
 	/** 
 	 * Scale this vector
-	 * @param scale
+	 * @param scale scale
 	 * @return this vector 
 	 */
 	inline Vector4& scale(float scale) {
@@ -160,7 +160,7 @@ public:
 
 	/** 
 	 * Scale this vector
-	 * @param scale
+	 * @param scale scale
 	 * @return this vector 
 	 */
 	inline Vector4& scale(const Vector4& scale) {
@@ -195,7 +195,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param vector
+	 * @param v vector
 	 */
 	inline Vector4(const Vector4& v) {
 		data = v.data;
@@ -203,8 +203,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param vector
-	 * @param w
+	 * @param v vector
+	 * @param w w
 	 */
 	inline Vector4(const Vector3& v, float w) {
 		data[0] = v.data[0];
@@ -215,10 +215,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param w
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param w w
 	 */
 	inline Vector4(float x, float y, float z, float w) {
 		data[0] = x;
@@ -229,7 +229,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param v
+	 * @param v v
 	 */
 	inline Vector4(const array<float, 4>& v) {
 		data = v;

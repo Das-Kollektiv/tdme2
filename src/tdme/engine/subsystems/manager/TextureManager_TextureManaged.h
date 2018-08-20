@@ -51,8 +51,8 @@ private:
 
 	/**
 	 * Protected constructor
-	 * @param id
-	 * @param gl id
+	 * @param id id
+	 * @param glId gl id
 	 */
 	TextureManager_TextureManaged(const string& id, int32_t glId);
 };

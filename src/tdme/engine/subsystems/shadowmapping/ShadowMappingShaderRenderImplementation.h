@@ -47,57 +47,57 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImpleme
 
 	/**
 	 * Set up program model view matrix
-	 * @param model view matrix
+	 * @param mvMatrix model view matrix
 	 */
 	virtual void setProgramMVMatrix(const Matrix4x4& mvMatrix) = 0;
 
 	/** 
 	 * Set up program mvp matrix
-	 * @param mvp matrix
+	 * @param mvpMatrix mvp matrix
 	 */
 	virtual void setProgramMVPMatrix(const Matrix4x4& mvpMatrix) = 0;
 
 	/** 
 	 * Set up program normal matrix
-	 * @param normal matrix
+	 * @param normalMatrix normal matrix
 	 */
 	virtual void setProgramNormalMatrix(const Matrix4x4& normalMatrix) = 0;
 
 	/**
 	 * Set up pre program texture matrix
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) = 0;
 
 	/**
 	 * Update material
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateMaterial(GLRenderer* renderer) = 0;
 
 	/**
 	 * Update light
-	 * @param renderer
-	 * @param light id
+	 * @param renderer renderer
+	 * @param lightId light id
 	 */
 	virtual void updateLight(GLRenderer* renderer, int32_t lightId) = 0;
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) = 0;
 
 	/** 
 	 * Set up program depth bias mvp matrix
-	 * @param depth bias mvp matrix
+	 * @param depthBiasMVPMatrix depth bias mvp matrix
 	 */
 	virtual void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix) = 0;
 
 	/**
 	 * Set light id
-	 * @param light id to render
+	 * @param lightId light id to render
 	 */
 	virtual void setRenderLightId(int32_t lightId) = 0;
 };

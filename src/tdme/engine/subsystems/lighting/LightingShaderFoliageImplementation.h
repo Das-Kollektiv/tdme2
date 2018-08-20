@@ -18,7 +18,7 @@ class tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation: p
 public:
 	/**
 	 * @return if supported by renderer
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	static bool isSupported(GLRenderer* renderer);
 
@@ -29,7 +29,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	LightingShaderFoliageImplementation(GLRenderer* renderer);
 };

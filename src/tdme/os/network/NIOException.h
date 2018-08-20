@@ -16,7 +16,7 @@ class tdme::os::network::NIOException: public ExceptionBase {
 public:
 	/**
 	 * @brief public constructor
-	 * @param message exception message
+	 * @param &message message exception message
 	 */
 	NIOException(const string &message) throw();
 };

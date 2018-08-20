@@ -70,7 +70,7 @@ public:
 
 	/** 
 	 * Set game root
-	 * @param gameRoot
+	 * @param gameRoot gameRoot
 	 */
 	inline void setGameRoot(const string& gameRoot) {
 		this->gameRoot = gameRoot;
@@ -85,7 +85,7 @@ public:
 
 	/** 
 	 * Set up path name
-	 * @param pathName
+	 * @param pathName pathName
 	 */
 	inline void setPathName(const string& pathName) {
 		this->pathName = pathName;
@@ -100,7 +100,7 @@ public:
 
 	/** 
 	 * Set up level file name
-	 * @param file name
+	 * @param fileName file name
 	 */
 	inline void setFileName(const string& fileName) {
 		this->fileName = fileName;
@@ -115,7 +115,7 @@ public:
 
 	/** 
 	 * Set rotation order
-	 * @param rotation order
+	 * @param rotationOrder rotation order
 	 */
 	inline void setRotationOrder(RotationOrder* rotationOrder) {
 		this->rotationOrder = rotationOrder;
@@ -130,7 +130,7 @@ public:
 
 	/** 
 	 * Get light at index i
-	 * @param i
+	 * @param i i
 	 * @return
 	 */
 	inline LevelEditorLight* getLightAt(int32_t i) {
@@ -181,7 +181,7 @@ public:
 
 	/** 
 	 * Set entity idx
-	 * @param objectIdx
+	 * @param entityIdx objectIdx
 	 */
 	inline void setObjectIdx(int32_t entityIdx) {
 		this->objectIdx = entityIdx;
@@ -194,46 +194,46 @@ public:
 
 	/** 
 	 * Get objects with given entity id
-	 * @param entity id
-	 * @param objects by entity id
+	 * @param entityId entity id
+	 * @param objectsByEntityId objects by entity id
 	 */
 	void getObjectsByEntityId(int32_t entityId, vector<string>& objectsByEntityId);
 
 	/**
 	 * Remove objects with given entity id
-	 * @param entity id
+	 * @param entityId entity id
 	 */
 	void removeObjectsByEntityId(int32_t entityId);
 
 	/** 
 	 * Replace entity
-	 * @param search model id
-	 * @param replace model id 
+	 * @param searchEntityId search model id
+	 * @param replaceEntityId replace model id 
 	 */
 	void replaceEntity(int32_t searchEntityId, int32_t replaceEntityId);
 
 	/** 
 	 * Updates pivot
-	 * @param model id
-	 * @param pivot
+	 * @param modelId model id
+	 * @param pivot pivot
 	 */
 	void updatePivot(int32_t modelId, const Vector3& pivot);
 
 	/** 
 	 * Adds an object to level
-	 * @param object
+	 * @param object object
 	 */
 	void addObject(LevelEditorObject* object);
 
 	/** 
 	 * Removes an object from level 
-	 * @param id
+	 * @param id id
 	 */
 	void removeObject(const string& id);
 
 	/** 
 	 * Returns level editor object by id
-	 * @param id
+	 * @param id id
 	 * @return level editor object or null
 	 */
 	LevelEditorObject* getObjectById(const string& id);
@@ -247,7 +247,7 @@ public:
 
 	/** 
 	 * Returns object at idx  
-	 * @param idx
+	 * @param idx idx
 	 * @return level object
 	 */
 	inline LevelEditorObject* getObjectAt(int32_t idx) {

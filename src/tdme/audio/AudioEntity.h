@@ -48,7 +48,7 @@ public:
 
 	/** 
 	 * Set looping
-	 * @param if sound will be looped
+	 * @param looping if sound will be looped
 	 */
 	inline virtual void setLooping(bool looping) {
 		this->looping = looping;
@@ -63,7 +63,7 @@ public:
 
 	/** 
 	 * Set this entity fixed, means the sound will always played no matter where the position and listener is located
-	 * @param fixed
+	 * @param fixed fixed
 	 */
 	inline virtual void setFixed(bool fixed) {
 		this->fixed = fixed;
@@ -78,7 +78,7 @@ public:
 
 	/** 
 	 * Set up pitch
-	 * @param pitch
+	 * @param pitch pitch
 	 */
 	inline virtual void setPitch(float pitch) {
 		this->pitch = pitch;
@@ -93,7 +93,7 @@ public:
 
 	/** 
 	 * Set up gain
-	 * @param gain
+	 * @param gain gain
 	 */
 	inline virtual void setGain(float gain) {
 		this->gain = gain;
@@ -123,7 +123,7 @@ public:
 
 	/**
 	 * Set source direction
-	 * @param source direction
+	 * @param sourceDirection source direction
 	 */
 	inline virtual void setSourceDirection(const Vector3& sourceDirection) {
 		this->sourceDirection = sourceDirection;
@@ -138,7 +138,7 @@ public:
 
 	/** 
 	 * Set source velocity
-	 * @param source velocity
+	 * @param sourceVelocity source velocity
 	 */
 	inline virtual void getSourceVelocity(const Vector3& sourceVelocity) {
 		this->sourceVelocity = sourceVelocity;

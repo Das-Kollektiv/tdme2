@@ -51,10 +51,10 @@ private:
 
 	/** 
 	 * Creates an array of transparent render faces from
-	 * @param model view matrix
-	 * @param object3D group
-	 * @param faces entity index
-	 * @param face index
+	 * @param modelViewMatrix model view matrix
+	 * @param object3DGroup object3D group
+	 * @param facesEntityIdx faces entity index
+	 * @param faceIdx face index
 	 */
 	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx) {
 		// retrieve objects we need

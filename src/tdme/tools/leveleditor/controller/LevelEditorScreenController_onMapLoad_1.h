@@ -18,7 +18,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param level editor screen controller
+	 * @param levelEditorScreenController level editor screen controller
 	 */
 	LevelEditorScreenController_onMapLoad_1(LevelEditorScreenController* levelEditorScreenController);
 

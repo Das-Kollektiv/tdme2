@@ -44,7 +44,7 @@ public:
 
 	/** 
 	 * Create max length
-	 * @param s
+	 * @param s s
 	 * @return max length
 	 */
 	static int32_t createMaxLength(const string& s);
@@ -66,24 +66,24 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param font
-	 * @param color
-	 * @param color disabled
-	 * @param text
-	 * @param max length
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 * @param font font
+	 * @param color color
+	 * @param colorDisabled color disabled
+	 * @param text text
+	 * @param maxLength max length
 	 */
 	GUIInputInternalNode(
 		GUIScreenNode* screenNode,

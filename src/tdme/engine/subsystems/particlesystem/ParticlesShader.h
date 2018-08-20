@@ -55,7 +55,7 @@ public:
 
 	/** 
 	 * Update effect to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateEffect(GLRenderer* renderer);
 
@@ -66,14 +66,14 @@ public:
 
 	/** 
 	 * Update matrices to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateMatrices(GLRenderer* renderer);
 
 	/**
 	 * Public constructor
-	 * @param engine
-	 * @param renderer
+	 * @param engine engine
+	 * @param renderer renderer
 	 */
 	ParticlesShader(Engine* engine, GLRenderer* renderer);
 };

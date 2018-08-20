@@ -36,7 +36,7 @@ private:
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIInputController(GUINode* node);
 

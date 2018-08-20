@@ -49,7 +49,7 @@ public:
 
 	/**
 	 * Set type
-	 * @param type
+	 * @param type type
 	 */
 	inline void setType(LevelEditorEntityPhysics_BodyType* type) {
 		this->type = type;
@@ -64,7 +64,7 @@ public:
 
 	/**
 	 * Set friction
-	 * @param friction
+	 * @param friction friction
 	 */
 	inline void setFriction(float friction) {
 		this->friction = friction;
@@ -79,7 +79,7 @@ public:
 
 	/**
 	 * Set mass in kg
-	 * @param mass
+	 * @param mass mass
 	 */
 	inline void setMass(float mass) {
 		this->mass = mass;
@@ -94,7 +94,7 @@ public:
 
 	/**
 	 * Set restitution
-	 * @param restitution
+	 * @param restitution restitution
 	 */
 	inline void setRestitution(float restitution) {
 		this->restitution = restitution;
@@ -109,7 +109,7 @@ public:
 
 	/**
 	 * Set inertia tensor
-	 * @param inertia tensor
+	 * @param inertiaTensor inertia tensor
 	 */
 	inline void setInertiaTensor(const Vector3& inertiaTensor) {
 		this->inertiaTensor = inertiaTensor;

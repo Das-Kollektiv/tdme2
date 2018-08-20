@@ -84,7 +84,7 @@ public:
 
 	/** 
 	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing
+	 * @param dynamicShadowing dynamicShadowing
 	 */
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
 
@@ -100,13 +100,13 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param model
-	 * @param scale
-	 * @param auto emit
-	 * @param enable dynamic shadows
-	 * @param maxCount
-	 * @param emitter
+	 * @param id id
+	 * @param model model
+	 * @param scale scale
+	 * @param autoEmit auto emit
+	 * @param enableDynamicShadows enable dynamic shadows
+	 * @param maxCount maxCount
+	 * @param emitter emitter
 	 */
 	ObjectParticleSystemEntityInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 

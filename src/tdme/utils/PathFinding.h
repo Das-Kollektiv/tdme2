@@ -38,13 +38,13 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param world
-	 * @param user path finding test
-	 * @param sloping
-	 * @param steps max
-	 * @param step size
-	 * @param step size last
-	 * @param actor step up max
+	 * @param world world
+	 * @param customTest user path finding test
+	 * @param sloping sloping
+	 * @param stepsMax steps max
+	 * @param stepSize step size
+	 * @param stepSizeLast step size last
+	 * @param actorStepUpMax actor step up max
 	 */
 	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f);
 
@@ -60,11 +60,11 @@ public:
 
 	/**
 	 * Finds path to given end position
-	 * @param actor original bounding volume
-	 * @param current actor transformations
-	 * @param end position
-	 * @param collision type ids
-	 * @param path from actor to target
+	 * @param actorBoundingVolume actor original bounding volume
+	 * @param actorTransformations current actor transformations
+	 * @param endPosition end position
+	 * @param collisionTypeIds collision type ids
+	 * @param path path from actor to target
 	 * @return success
 	 */
 	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path);
@@ -77,8 +77,8 @@ private:
 
 	/**
 	 * Computes non square rooted distance between a and b
-	 * @param a
-	 * @param b
+	 * @param a a
+	 * @param b b
 	 * @return non square rooted distance
 	 */
 	inline float computeDistance(PathFindingNode* a, PathFindingNode* b) {
@@ -90,10 +90,10 @@ private:
 
 	/**
 	 * Returns if nodes are equals
-	 * @param a
-	 * @param b x coordinate
-	 * @param b y coordinate
-	 * @param b z coordinate
+	 * @param a a
+	 * @param bX b x coordinate
+	 * @param bY b y coordinate
+	 * @param bZ b z coordinate
 	 * @return if node a == node b
 	 */
 	inline bool equals(PathFindingNode* a, float bX, float bY, float bZ) {
@@ -107,8 +107,8 @@ private:
 
 	/**
 	 * Returns if nodes are equals for (last node test)
-	 * @param a
-	 * @param b
+	 * @param a a
+	 * @param lastNode b
 	 * @return if node a == node b
 	 */
 	inline bool equalsLastNode(PathFindingNode* a, PathFindingNode* lastNode) {
@@ -123,19 +123,19 @@ private:
 
 	/**
 	 * Checks if a cell is walkable
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param step up max
-	 * @param y stepped up
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param stepUpMax step up max
+	 * @param height y stepped up
 	 * @return if cell is walkable
 	 */
 	bool isWalkable(float x, float y, float z, float stepUpMax, float& height);
 
 	/**
 	 * Sets up the PathFinding, it needs to be called after constructing the object
-	 * @param start position
-	 * @param end position
+	 * @param startPosition start position
+	 * @param endPosition end position
 	 */
 	void start(Vector3 startPosition, Vector3 endPosition);
 

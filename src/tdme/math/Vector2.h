@@ -26,8 +26,8 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param x
-	 * @param y
+	 * @param x x
+	 * @param y y
 	 * @return this vector
 	 */
 	inline Vector2& set(float x, float y) {
@@ -38,7 +38,7 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param float array containing x,y values
+	 * @param v float array containing x,y values
 	 * @return this vector
 	 */
 	inline Vector2& set(const array<float, 2>& v) {
@@ -48,7 +48,7 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param v
+	 * @param v v
 	 * @return this vector
 	 */
 	inline Vector2& set(const Vector2& v) {
@@ -65,7 +65,7 @@ public:
 
 	/** 
 	 * set X
-	 * @param x
+	 * @param x x
 	 * @return this vector
 	 */
 	inline Vector2& setX(float x) {
@@ -82,7 +82,7 @@ public:
 
 	/** 
 	 * set Y
-	 * @param y
+	 * @param y y
 	 */
 	inline Vector2& setY(float y) {
 		data[1] = y;
@@ -91,7 +91,7 @@ public:
 
 	/** 
 	 * Adds a vector
-	 * @param v
+	 * @param v v
 	 * @return this vector
 	 */
 	inline Vector2& add(Vector2& v) {
@@ -102,7 +102,7 @@ public:
 
 	/** 
 	 * Subtracts a vector
-	 * @param v
+	 * @param v v
 	 * @return this vector
 	 */
 	inline Vector2& sub(Vector2& v) {
@@ -113,7 +113,7 @@ public:
 
 	/** 
 	 * Scale this vector
-	 * @param scale
+	 * @param scale scale
 	 * @return this vector 
 	 */
 	inline Vector2& scale(float scale) {
@@ -124,7 +124,7 @@ public:
 
 	/** 
 	 * Scale this vector
-	 * @param scale
+	 * @param scale scale
 	 * @return this vector 
 	 */
 	inline Vector2& scale(Vector2& scale) {
@@ -142,7 +142,7 @@ public:
 
 	/**
 	 * Array access operator
-	 * @param index
+	 * @param i index
 	 * @return vector3 component
 	 */
     inline float& operator[](int i) {
@@ -151,7 +151,7 @@ public:
 
 	/**
 	 * Const array access operator
-	 * @param index
+	 * @param i index
 	 * @return vector3 component
 	 */
     inline const float& operator[](int i) const {
@@ -182,8 +182,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param x
-	 * @param y
+	 * @param x x
+	 * @param y y
 	 */
 	inline Vector2(float x, float y) {
 		data[0] = x;
@@ -192,7 +192,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param float values
+	 * @param v float values
 	 */
 	inline Vector2(const array<float, 2>& v) {
 		data = v;
@@ -200,7 +200,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param v
+	 * @param v v
 	 */
 	inline Vector2(const Vector2& v) {
 		data = v.data;

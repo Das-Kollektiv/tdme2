@@ -43,26 +43,26 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
 
 	/** 
 	 * Set up pre program mvp matrix
-	 * @param mvp matrix
+	 * @param mvpMatrix mvp matrix
 	 */
 	virtual void updateMatrices(const Matrix4x4& mvpMatrix) = 0;
 
 	/**
 	 * Set up pre program texture matrix
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) = 0;
 
 	/**
 	 * Update material
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateMaterial(GLRenderer* renderer) = 0;
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) = 0;
 };

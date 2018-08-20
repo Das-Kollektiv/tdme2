@@ -91,16 +91,16 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param model LOD 1
-	 * @param LOD level type LOD2
-	 * @param model LOD 2 min distance
-	 * @param model LOD 2
-	 * @param LOD level type LOD3
-	 * @param model LOD 3 min distance
-	 * @param model LOD 3
-	 * @param model LOD2 plane rotation around Y axis
-	 * @param model LOD3 plane rotation around Y axis
+	 * @param id id
+	 * @param modelLOD1 model LOD 1
+	 * @param levelTypeLOD2 LOD level type LOD2
+	 * @param modelLOD2MinDistance model LOD 2 min distance
+	 * @param modelLOD2 model LOD 2
+	 * @param levelTypeLOD3 LOD level type LOD3
+	 * @param modelLOD3MinDistance model LOD 3 min distance
+	 * @param modelLOD3 model LOD 3
+	 * @param planeRotationYLOD2 model LOD2 plane rotation around Y axis
+	 * @param planeRotationYLOD3 model LOD3 plane rotation around Y axis
 	 */
 	LODObject3D(
 		const string& id,
@@ -150,7 +150,7 @@ public:
 
 	/**
 	 * Get current lod object
-	 * @param camera
+	 * @param camera camera
 	 * @return LOD object to render
 	 */
 	inline Object3D* determineLODObject(Camera* camera) {
@@ -229,7 +229,7 @@ public:
 
 	/**
 	 * Set effect color add for LOD2 level
-	 * @param effect color add for LOD2 level
+	 * @param effectColorAddLOD2 effect color add for LOD2 level
 	 */
 	inline void setEffectColorAddLOD2(const Color4& effectColorAddLOD2) {
 		this->effectColorAddLOD2 = effectColorAddLOD2;
@@ -244,7 +244,7 @@ public:
 
 	/**
 	 * Set effect color mul for LOD2 level
-	 * @param effect color mul for LOD2 level
+	 * @param effectColorMulLOD2 effect color mul for LOD2 level
 	 */
 	inline void setEffectColorMulLOD2(const Color4& effectColorMulLOD2) {
 		this->effectColorMulLOD2 = effectColorMulLOD2;
@@ -259,7 +259,7 @@ public:
 
 	/**
 	 * Set effect color add for LOD3 level
-	 * @param effect color add for LOD3 level
+	 * @param effectColorAddLOD3 effect color add for LOD3 level
 	 */
 	inline void setEffectColorAddLOD3(const Color4& effectColorAddLOD3) {
 		this->effectColorAddLOD3 = effectColorAddLOD3;
@@ -274,7 +274,7 @@ public:
 
 	/**
 	 * Set effect color mul for LOD3 level
-	 * @param effect color mul for LOD3 level
+	 * @param effectColorMulLOD3 effect color mul for LOD3 level
 	 */
 	inline void setEffectColorMulLOD3(const Color4& effectColorMulLOD3) {
 		this->effectColorMulLOD3 = effectColorMulLOD3;
@@ -418,7 +418,7 @@ public:
 
 	/**
 	 * Set shader id
-	 * @param shader
+	 * @param id shader
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
@@ -436,7 +436,7 @@ public:
 
 	/**
 	 * Set distance shader id
-	 * @param shader
+	 * @param id shader
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
@@ -454,7 +454,7 @@ public:
 
 	/**
 	 * Set distance shader distance
-	 * @param shader
+	 * @param distanceShaderDistance shader
 	 */
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;

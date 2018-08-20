@@ -14,14 +14,14 @@ public:
 
 	/**
 	 * Convert character to lower case character
-	 * @param character
+	 * @param character character
 	 * @return lower case character
 	 */
 	static char toLowerCase(char character);
 
 	/**
 	 * Convert character to upper case character
-	 * @param character
+	 * @param character character
 	 * @return upper case character
 	 */
 	static char toUpperCase(char character);

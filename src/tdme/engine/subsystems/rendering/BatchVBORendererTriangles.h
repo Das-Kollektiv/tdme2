@@ -71,9 +71,9 @@ private:
 
 	/**
 	 * Adds a vertex to this transparent render faces group
-	 * @param vertex
-	 * @param normal
-	 * @param texture coordinate
+	 * @param vertex vertex
+	 * @param normal normal
+	 * @param textureCoordinate texture coordinate
 	 * @return success
 	 */
 	inline bool addVertex(const Vector3& vertex, const Vector3& normal, const Vector2& textureCoordinate) {
@@ -118,8 +118,8 @@ public:
 	void dispose();
 	/**
 	 * Public constructor
-	 * @param renderer
-	 * @param id
+	 * @param renderer renderer
+	 * @param id id
 	 */
 	BatchVBORendererTriangles(GLRenderer* renderer, int32_t id);
 

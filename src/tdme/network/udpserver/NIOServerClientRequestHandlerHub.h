@@ -44,7 +44,7 @@ public:
 
 	/**
 	 * @brief Adds a client request handler
-	 * @param request handler
+	 * @param handler request handler
 	 * @throws TCPServerClientRequestHandlerHubException
 	 */
 	void addHandler(NIOServerClientRequestHandler<CLIENT,REQUEST>* handler) throw (NIOServerClientRequestHandlerHubException) {
@@ -58,7 +58,7 @@ public:
 
 	/**
 	 * @brief Sets the client request default handler, will be used if command not found in request handler map
-	 * @param request handler
+	 * @param handler request handler
 	 */
 	void setDefaultHandler(NIOServerClientRequestHandler<CLIENT,REQUEST>* handler) {
 		defaultHandler = handler;
@@ -66,11 +66,11 @@ public:
 
 	/**
 	 * Handles a client request
-	 * @param client
-	 * @param command
-	 * @param request
-	 * @param message id (udp server only)
-	 * @param retries (udp server only)
+	 * @param client client
+	 * @param command command
+	 * @param request request
+	 * @param messageId message id (udp server only)
+	 * @param retries retries (udp server only)
 	 * @throws exception
 	 */
 	void handleRequest(CLIENT* client, const string& command, REQUEST& request, const uint32_t messageId, const uint8_t retries) throw (Exception) {

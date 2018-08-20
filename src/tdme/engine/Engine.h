@@ -235,8 +235,8 @@ public:
 	 * Note:
 	 * - the root engine must have been initialized before
 	 * - the created offscreen engine must not be initialized
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 * @return off screen engine
 	 */
 	static Engine* createOffScreenInstance(int32_t width, int32_t height);
@@ -283,7 +283,7 @@ public:
 
 	/** 
 	 * Set partition
-	 * @param partition
+	 * @param partition partition
 	 */
 	void setPartition(Partition* partition);
 
@@ -299,7 +299,7 @@ public:
 
 	/** 
 	 * Returns light at idx (0 <= idx < 8)
-	 * @param idx
+	 * @param idx idx
 	 * @return Light
 	 */
 	Light* getLightAt(int32_t idx);
@@ -316,20 +316,20 @@ public:
 
 	/** 
 	 * Returns a entity by given id
-	 * @param id
+	 * @param id id
 	 * @return entity or null
 	 */
 	Entity* getEntity(const string& id);
 
 	/** 
 	 * Adds an entity by id
-	 * @param object
+	 * @param entity object
 	 */
 	void addEntity(Entity* entity);
 
 	/** 
 	 * Removes an entity
-	 * @param id
+	 * @param id id
 	 */
 	void removeEntity(const string& id);
 
@@ -345,16 +345,16 @@ public:
 
 	/** 
 	 * Initialize render engine
-	 * @param debug
+	 * @param debug debug
 	 */
 	void initialize(bool debug);
 
 	/** 
 	 * Reshape
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
+	 * @param x x
+	 * @param y y
+	 * @param width width
+	 * @param height height
 	 */
 	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
 
@@ -365,10 +365,10 @@ public:
 
 	/** 
 	 * Compute world coordinate from mouse position and z value
-	 * @param mouse x
-	 * @param mouse y
-	 * @param z
-	 * @param world coordinate
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param z z
+	 * @param worldCoordinate world coordinate
 	 */
 	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate);
 
@@ -376,33 +376,33 @@ public:
 	 * Compute world coordinate from mouse position
 	 * TODO:
 	 * this does not work with GLES2
-	 * @param mouse x
-	 * @param mouse y
-	 * @param world coordinate
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param worldCoordinate world coordinate
 	 */
 	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate);
 
 	/** 
 	 * Retrieves object by mouse position
-	 * @param mouse x
-	 * @param mouse y
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
 	 * @return entity or null
 	 */
 	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY);
 
 	/** 
 	 * Retrieves object by mouse position
-	 * @param mouse x
-	 * @param mouse y
-	 * @param filter
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param filter filter
 	 * @return entity or null
 	 */
 	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
 
 	/** 
 	 * Convert screen coordinate by world coordinate
-	 * @param world woordinate
-	 * @param screen coordinate
+	 * @param worldCoordinate world woordinate
+	 * @param screenCoordinate screen coordinate
 	 */
 	void computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
 
@@ -415,8 +415,8 @@ public:
 	 * Creates a PNG file from current screen
 	 * TODO:
 	 * this does not seem to work with GLES2 and offscreen engines
-	 * @param path name 
-	 * @param file name
+	 * @param pathName path name 
+	 * @param fileName file name
 	 * @return success
 	 */
 	bool makeScreenshot(const string& pathName, const string& fileName);
@@ -430,7 +430,7 @@ private:
 
 	/**
 	 * Updates an entity regarding internal lists
-	 * @param entity
+	 * @param entity entity
 	 */
 	void updateEntity(Entity* entity);
 

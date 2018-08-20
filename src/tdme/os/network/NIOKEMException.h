@@ -15,7 +15,7 @@ class tdme::os::network::NIOKEMException: public NIOException {
 public:
 	/**
 	 * @brief public constructor
-	 * @param message exception message
+	 * @param &message message exception message
 	 */
 	NIOKEMException(const string &message) throw();
 };

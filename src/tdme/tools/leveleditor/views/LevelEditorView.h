@@ -154,7 +154,7 @@ public:
 	bool isGridEnabled();
 
 	/** 
-	 * @param grid enabled
+	 * @param gridEnabled grid enabled
 	 */
 	void setGridEnabled(bool gridEnabled);
 
@@ -165,13 +165,13 @@ public:
 
 	/** 
 	 * Set grid y position 
-	 * @param grid y
+	 * @param gridY grid y
 	 */
 	void setGridY(float gridY);
 
 	/** 
 	 * Load selected entity from library
-	 * @param id
+	 * @param id id
 	 */
 	void loadEntityFromLibrary(int32_t id);
 	void handleInputEvents() override;
@@ -183,7 +183,7 @@ public:
 
 	/** 
 	 * Select objects
-	 * @param object ids
+	 * @param entityIds object ids
 	 */
 	void selectObjects(vector<string>* entityIds);
 
@@ -243,13 +243,13 @@ private:
 
 	/** 
 	 * Set highlight object color effect
-	 * @param object
+	 * @param object object
 	 */
 	void setHighlightObjectColorEffect(Entity* object);
 
 	/** 
 	 * Set standard object color effect
-	 * @param object
+	 * @param object object
 	 */
 	void setStandardObjectColorEffect(Entity* object);
 
@@ -282,8 +282,8 @@ public:
 
 	/** 
 	 * On object data apply
-	 * @param name
-	 * @param description
+	 * @param name name
+	 * @param description description
 	 */
 	bool objectDataApply(const string& name, const string& description);
 
@@ -314,33 +314,33 @@ public:
 
 	/** 
 	 * Apply object translation
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param x x
+	 * @param y y
+	 * @param z z
 	 */
 	void objectTranslationApply(float x, float y, float z);
 
 	/** 
 	 * Apply object scale
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param x x
+	 * @param y y
+	 * @param z z
 	 */
 	void objectScaleApply(float x, float y, float z);
 
 	/** 
 	 * Apply object rotations
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param x x
+	 * @param y y
+	 * @param z z
 	 */
 	void objectRotationsApply(float x, float y, float z);
 
 	/** 
 	 * Save a map property
-	 * @param old name
-	 * @param name
-	 * @param value
+	 * @param oldName old name
+	 * @param name name
+	 * @param value value
 	 * @return success
 	 */
 	bool mapPropertySave(const string& oldName, const string& name, const string& value);
@@ -353,29 +353,29 @@ public:
 
 	/** 
 	 * Remove a map property from model properties
-	 * @param name
+	 * @param name name
 	 * @return success
 	 */
 	bool mapPropertyRemove(const string& name);
 
 	/** 
 	 * Remove a object property from object properties
-	 * @param name
+	 * @param name name
 	 * @return success
 	 */
 	bool objectPropertyRemove(const string& name);
 
 	/** 
 	 * Apply object property preset
-	 * @param preset id
+	 * @param presetId preset id
 	 */
 	void objectPropertiesPreset(const string& presetId);
 
 	/** 
 	 * Save a model property
-	 * @param old name
-	 * @param name
-	 * @param value
+	 * @param oldName old name
+	 * @param name name
+	 * @param value value
 	 * @return success
 	 */
 	bool objectPropertySave(const string& oldName, const string& name, const string& value);
@@ -412,33 +412,33 @@ public:
 
 	/** 
 	 * Compute spot direction
-	 * @param light index
-	 * @param position
-	 * @param spot to
+	 * @param i light index
+	 * @param position position
+	 * @param spotTo spot to
 	 */
 	void computeSpotDirection(int32_t i, const Vector4& position, const Vector3& spotTo);
 
 	/** 
 	 * Apply light with index i
-	 * @param light index
-	 * @param ambient
-	 * @param diffuse
-	 * @param specular
-	 * @param position
-	 * @param constant attenuation
-	 * @param linear attenuation
-	 * @param quadratic attenuation
-	 * @param spot to
-	 * @param spot direction
-	 * @param spot exponent
-	 * @param spot cutoff
-	 * @param enabled
+	 * @param i light index
+	 * @param ambient ambient
+	 * @param diffuse diffuse
+	 * @param specular specular
+	 * @param position position
+	 * @param constantAttenuation constant attenuation
+	 * @param linearAttenuation linear attenuation
+	 * @param quadraticAttenuation quadratic attenuation
+	 * @param spotTo spot to
+	 * @param spotDirection spot direction
+	 * @param spotExponent spot exponent
+	 * @param spotCutoff spot cutoff
+	 * @param enabled enabled
 	 */
 	void applyLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constantAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
 	/**
 	 * Public constructor
-	 * @param pop ups
+	 * @param popUps pop ups
 	 */
 	LevelEditorView(PopUps* popUps);
 

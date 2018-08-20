@@ -21,8 +21,8 @@ class NIOServerWorkerThread : public Thread {
 public:
 	/**
 	 * @brief Public constructor
-	 * @param id
-	 * @param thread pool
+	 * @param id id
+	 * @param threadPool thread pool
 	 */
 	NIOServerWorkerThread(const unsigned int id, NIOServerWorkerThreadPool* threadPool);
 

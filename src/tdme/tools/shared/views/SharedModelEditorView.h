@@ -70,11 +70,11 @@ private:
 
 	/**
 	 * Load model
-	 * @param name
-	 * @param description
-	 * @param path name
-	 * @param file name
-	 * @param pivot
+	 * @param name name
+	 * @param description description
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param pivot pivot
 	 * @return level editor entity
 	 * @throws Exception
 	 */
@@ -114,7 +114,7 @@ public:
 
 	/**
 	 * Set lod level to display
-	 * @param lod level
+	 * @param lodLevel lod level
 	 */
 	void setLodLevel(int lodLevel);
 
@@ -135,9 +135,9 @@ public:
 
 	/** 
 	 * Apply pivot
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param x x
+	 * @param y y
+	 * @param z z
 	 */
 	virtual void pivotApply(float x, float y, float z);
 	void handleInputEvents() override;
@@ -164,8 +164,8 @@ public:
 
 	/** 
 	 * On load model
-	 * @param old entity
-	 * @param entity
+	 * @param oldEntity old entity
+	 * @param entity entity
 	 */
 	virtual void onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity);
 
@@ -181,7 +181,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param pop ups
+	 * @param popUps pop ups
 	 */
 	SharedModelEditorView(PopUps* popUps);
 

@@ -24,7 +24,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param engine
+	 * @param *engine engine
 	 */
 	EngineGLES2Renderer(Engine *engine);
 private:

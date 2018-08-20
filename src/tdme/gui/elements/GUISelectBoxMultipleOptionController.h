@@ -74,7 +74,7 @@ private:
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUISelectBoxMultipleOptionController(GUINode* node);
 

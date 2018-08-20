@@ -68,7 +68,7 @@ public:
 
 	/** 
 	 * Set listener position
-	 * @param listener position
+	 * @param listenerPosition listener position
 	 */
 	inline void setListenerPosition(const Vector3& listenerPosition) {
 		this->listenerPosition = listenerPosition;
@@ -83,7 +83,7 @@ public:
 
 	/**
 	 * Set listener velocity
-	 * @param listener velocity
+	 * @param listenerVelocity listener velocity
 	 */
 	inline void setListenerVelocity(const Vector3& listenerVelocity) {
 		this->listenerVelocity = listenerVelocity;
@@ -98,7 +98,7 @@ public:
 
 	/** 
 	 * Set listener orientation at
-	 * @param listener orientation at
+	 * @param listenerOrientationAt listener orientation at
 	 */
 	inline void setListenerOrientationAt(const Vector3& listenerOrientationAt) {
 		this->listenerOrientationAt = listenerOrientationAt;
@@ -121,20 +121,20 @@ public:
 
 	/** 
 	 * Returns an audio entity identified by given id
-	 * @param id
+	 * @param id id
 	 * @return audio entity
 	 */
 	AudioEntity* getEntity(const string& id);
 
 	/** 
 	 * Adds a audio entity
-	 * @param audio entity
+	 * @param entity audio entity
 	 */
 	void addEntity(AudioEntity* entity);
 
 	/** 
 	 * Removes an audio entity
-	 * @param id
+	 * @param id id
 	 */
 	void removeEntity(const string& id);
 

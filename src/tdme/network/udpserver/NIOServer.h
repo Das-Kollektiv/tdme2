@@ -29,10 +29,10 @@ public:
 
 	/**
 	 * @brief Public constructor
-	 * @param server name
-	 * @param host where to bind the server socket
-	 * @param port to listen on
-s			 * @param max ccu
+	 * @param name server name
+	 * @param host host where to bind the server socket
+	 * @param port port to listen on
+s			 * @param maxCCU max ccu
 	 */
 	NIOServer(const std::string& name, const std::string& host, const unsigned int port, const unsigned int maxCCU) :
 		name(name),
@@ -50,7 +50,7 @@ s			 * @param max ccu
 
 	/**
 	 * @brief Sets up the numbers of threads to handle IO and framing
-	 * @param IO thread count
+	 * @param ioThreadCount IO thread count
 	 */
 	void setIOThreadCount(const unsigned int ioThreadCount) {
 		this->ioThreadCount = ioThreadCount;
@@ -58,7 +58,7 @@ s			 * @param max ccu
 
 	/**
 	 * @brief Sets up the number of workers that handle requests in thread pool
-	 * @param number of workers in thread pool
+	 * @param workerThreadCount number of workers in thread pool
 	 */
 	void setWorkerThreadCount(const unsigned int workerThreadCount) {
 		workerThreadPoolCount = workerThreadCount;
@@ -66,7 +66,7 @@ s			 * @param max ccu
 
 	/**
 	 * @brief Sets up max number of elements in worker thread pool queue
-	 * @param max elements
+	 * @param maxElements max elements
 	 */
 	void setThreadPoolMaxElements(const unsigned int maxElements) {
 		workerThreadPoolMaxElements = maxElements;
@@ -94,7 +94,7 @@ s			 * @param max ccu
 
 	/**
 	 * @brief retrieve a client by key, the client reference is acquired, must be released after usage
-	 * @param client identification key
+	 * @param clientKey client identification key
 	 * @return client or NULL
 	 */
 	CLIENT* getClientByKey(const std::string& clientKey) {
@@ -125,7 +125,7 @@ s			 * @param max ccu
 
 	/**
 	 * @brief retrieve a group by key, the group reference is acquired, must be released after usage
-	 * @param group identification key
+	 * @param groupKey group identification key
 	 * @return group or NULL
 	 */
 	GROUP* getGroupByKey(const std::string& groupKey) {
@@ -151,8 +151,8 @@ protected:
 
 	/**
 	 * @brief sets a client identification key
-	 * @param client
-	 * @param client identification key
+	 * @param client client
+	 * @param &clientKey client identification key
 	 * @return if setting the key was successful
 	 */
 	bool setClientKey(CLIENT* client, const std::string &clientKey) {
@@ -179,7 +179,7 @@ protected:
 
 	/**
 	 * @brief closes a client connection
-	 * @param client
+	 * @param client client
 	 */
 	void closeClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();
@@ -193,8 +193,8 @@ protected:
 
 	/**
 	 * @brief sets a group identification key
-	 * @param group
-	 * @param group identification key
+	 * @param group group
+	 * @param &groupKey group identification key
 	 * @return if setting the key was successful
 	 */
 	bool setGroupKey(GROUP* group, const std::string &groupKey) {
@@ -221,7 +221,7 @@ protected:
 
 	/**
 	 * @brief closes a group connection
-	 * @param group
+	 * @param group group
 	 */
 	void closeGroup(GROUP* group) {
 		groupKeyListsReadWriteLock.writeLock();

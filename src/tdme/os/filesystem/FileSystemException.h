@@ -17,7 +17,7 @@ public:
 
 	/**
 	 * @brief Public constructor
-	 * @param message Exception message
+	 * @param message message Exception message
 	 */
 	FileSystemException(const string& message) throw();
 

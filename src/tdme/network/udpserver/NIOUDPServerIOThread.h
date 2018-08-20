@@ -56,9 +56,9 @@ private:
 
 	/**
 	 * @brief public constructor should be called in NIOTCPServer
-	 * @param id
-	 * @param server
-	 * @param max ccu
+	 * @param id id
+	 * @param *server server
+	 * @param maxCCU max ccu
 	 */
 	NIOUDPServerIOThread(const unsigned int id, NIOUDPServer *server, const unsigned int maxCCU);
 
@@ -69,20 +69,20 @@ private:
 
 	/**
 	 * @brief pushes a message to be send, takes over ownership of frame
-	 * @param client
-	 * @param message type
-	 * @param message id
-	 * @param frame to be send
-	 * @param safe, requires ack and retransmission
-	 * @param delete frame
+	 * @param client client
+	 * @param messageType message type
+	 * @param messageId message id
+	 * @param frame frame to be send
+	 * @param safe safe, requires ack and retransmission
+	 * @param deleteFrame delete frame
 	 * @throws NIONetworkServerException
 	 */
 	void sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame) throw (NIONetworkServerException);
 
 	/**
 	 * @brief Processes an acknowlegdement reception
-	 * @param client
-	 * @param message id
+	 * @param client client
+	 * @param messageId message id
 	 */
 	void processAckReceived(NIOUDPServerClient* client, const uint32_t messageId) throw (NIONetworkServerException);
 

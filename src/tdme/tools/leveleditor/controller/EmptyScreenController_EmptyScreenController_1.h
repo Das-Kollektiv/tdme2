@@ -19,8 +19,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param empty screen controller
-	 * @param final view
+	 * @param *emptyScreenController empty screen controller
+	 * @param finalView final view
 	 */
 	EmptyScreenController_EmptyScreenController_1(EmptyScreenController *emptyScreenController, EmptyView* finalView);
 

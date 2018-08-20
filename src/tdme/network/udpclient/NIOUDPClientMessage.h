@@ -26,8 +26,8 @@ public:
 
 	/**
 	 * Parse
-	 * @param message
-	 * @param bytes
+	 * @param message[512] message
+	 * @param bytes bytes
 	 */
 	static NIOUDPClientMessage* parse(const char message[512], const size_t bytes);
 
@@ -84,11 +84,11 @@ public:
 private:
 	/**
 	 * Public constructor
-	 * @param message type
-	 * @param client id
-	 * @param message id
-	 * @param retries
-	 * @param frame
+	 * @param messageType message type
+	 * @param clientId client id
+	 * @param messageId message id
+	 * @param retries retries
+	 * @param frame frame
 	 */
 	NIOUDPClientMessage(const MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries, stringstream* frame);
 

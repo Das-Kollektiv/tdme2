@@ -32,9 +32,9 @@ class tdme::tools::shared::files::ModelMetaDataFileImport final
 public:
 	/** 
 	 * Imports a model meta data file from file
-	 * @param id or LevelEditorEntity.ID_NONE
-	 * @param path name
-	 * @param file name
+	 * @param id id or LevelEditorEntity.ID_NONE
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception
@@ -44,9 +44,9 @@ public:
 
 	/** 
 	 * Imports a model meta data file from JSON object
-	 * @param id or LevelEditorEntity.ID_NONE
-	 * @param path name or null
-	 * @param JSON entity root
+	 * @param id id or LevelEditorEntity.ID_NONE
+	 * @param pathName path name or null
+	 * @param jEntityRoot JSON entity root
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception
@@ -58,18 +58,18 @@ private:
 
 	/**
 	 * Get model path name
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @return model path name
 	 */
 	static const string getModelPathName(const string& pathName, const string& fileName);
 
 	/** 
 	 * Parse bounding volume
-	 * @param idx
-	 * @param level editor entity
-	 * @param path name
-	 * @param JSON bounding volume node
+	 * @param idx idx
+	 * @param levelEditorEntity level editor entity
+	 * @param pathName path name
+	 * @param jBv JSON bounding volume node
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception
@@ -79,8 +79,8 @@ private:
 
 	/**
 	 * Parse LOD level
-	 * @param path name
-	 * @param JSON LOD level
+	 * @param pathName path name
+	 * @param jLodLevel JSON LOD level
 	 * @return level editor lod level
 	 */
 	static LevelEditorEntityLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);

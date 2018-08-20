@@ -54,7 +54,7 @@ private:
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIRadioButtonController(GUINode* node);
 

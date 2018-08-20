@@ -64,13 +64,13 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param model
-	 * @param scale
-	 * @param auto emit
-	 * @param enable dynamic shadows
-	 * @param max count
-	 * @param emitter
+	 * @param id id
+	 * @param model model
+	 * @param scale scale
+	 * @param autoEmit auto emit
+	 * @param enableDynamicShadows enable dynamic shadows
+	 * @param maxCount max count
+	 * @param emitter emitter
 	 */
 	ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
 

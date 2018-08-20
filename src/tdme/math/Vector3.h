@@ -31,9 +31,9 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param x x
+	 * @param y y
+	 * @param z z
 	 * @return this vector
 	 */
 	inline Vector3& set(float x, float y, float z) {
@@ -45,7 +45,7 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param float array containing x,y,z values
+	 * @param v float array containing x,y,z values
 	 * @return this vector
 	 */
 	inline Vector3& set(const array<float, 3>& v) {
@@ -55,7 +55,7 @@ public:
 
 	/** 
 	 * Set up vector
-	 * @param v
+	 * @param v v
 	 * @return this vector
 	 */
 	inline Vector3& set(const Vector3& v) {
@@ -72,7 +72,7 @@ public:
 
 	/** 
 	 * Set X
-	 * @param x
+	 * @param x x
 	 */
 	inline Vector3& setX(float x) {
 		data[0] = x;
@@ -81,7 +81,7 @@ public:
 
 	/** 
 	 * Add to x component
-	 * @param x
+	 * @param x x
 	 * @return this vector
 	 */
 	inline Vector3& addX(float x) {
@@ -91,7 +91,7 @@ public:
 
 	/** 
 	 * Sub from x component
-	 * @param x
+	 * @param x x
 	 * @return this vector
 	 */
 	inline Vector3& subX(float x) {
@@ -108,7 +108,7 @@ public:
 
 	/** 
 	 * Set Y
-	 * @param y
+	 * @param y y
 	 * @return this vector
 	 */
 	inline Vector3& setY(float y) {
@@ -118,7 +118,7 @@ public:
 
 	/** 
 	 * Add to y component
-	 * @param y
+	 * @param y y
 	 * @return this vector
 	 */
 	inline Vector3& addY(float y) {
@@ -128,7 +128,7 @@ public:
 
 	/** 
 	 * Sub from y component
-	 * @param y
+	 * @param y y
 	 * @return this vector
 	 */
 	inline Vector3& subY(float y) {
@@ -145,7 +145,7 @@ public:
 
 	/** 
 	 * Set Z
-	 * @param z
+	 * @param z z
 	 * @return this vector
 	 */
 	inline Vector3& setZ(float z) {
@@ -155,7 +155,7 @@ public:
 
 	/** 
 	 * Add to z component
-	 * @param z
+	 * @param z z
 	 * @return this vector
 	 */
 	inline Vector3& addZ(float z) {
@@ -165,7 +165,7 @@ public:
 
 	/** 
 	 * Sub from z component
-	 * @param z
+	 * @param z z
 	 * @return this vector
 	 */
 	inline Vector3& subZ(float z) {
@@ -175,7 +175,7 @@ public:
 
 	/**
 	 * Array access operator
-	 * @param index
+	 * @param i index
 	 * @return vector3 component
 	 */
     inline float& operator[](int i) {
@@ -184,7 +184,7 @@ public:
 
 	/**
 	 * Const array access operator
-	 * @param index
+	 * @param i index
 	 * @return vector3 component
 	 */
     inline const float& operator[](int i) const {
@@ -200,9 +200,9 @@ public:
 
 	/** 
 	 * Compute the cross product of vector v1 and v2
-	 * @param v1
-	 * @param v2
-	 * @param destination vector
+	 * @param v1 v1
+	 * @param v2 v2
+	 * @param dest destination vector
 	 * @return destination vector
 	 */
 	inline static Vector3& computeCrossProduct(const Vector3& v1, const Vector3& v2, Vector3& dest) {
@@ -215,8 +215,8 @@ public:
 
 	/** 
 	 * Compute the dot product of vector v1 and v2
-	 * @param v1
-	 * @param v2
+	 * @param v1 v1
+	 * @param v2 v2
 	 * @return Vector3
 	 */
 	inline static float computeDotProduct(const Vector3& v1, const Vector3& v2) {
@@ -239,7 +239,7 @@ public:
 
 	/**
 	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @param euler angles
+	 * @param euler euler angles
 	 * @return if euler angles have been generated
 	 */
 	inline bool computeEulerAngles(Vector3& euler) const {
@@ -274,8 +274,8 @@ public:
 
 	/** 
 	 * Computes angle between a and b from 0..180
-	 * @param vector a, vector to test, must be normalized
-	 * @param vector b, vector to test against, must be normalized
+	 * @param a vector a, vector to test, must be normalized
+	 * @param b vector b, vector to test against, must be normalized
 	 * @return
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b) {
@@ -285,9 +285,9 @@ public:
 
 	/**
 	 * Computes angle between a and b
-	 * @param vector a, vector to test, must be normalized
-	 * @param vector b, vector to test against, must be normalized
-	 * @param plane normal n where a and b live in, must be normalized
+	 * @param a vector a, vector to test, must be normalized
+	 * @param b vector b, vector to test against, must be normalized
+	 * @param n plane normal n where a and b live in, must be normalized
 	 * @return
 	 */
 	inline static float computeAngle(const Vector3& a, const Vector3& b, const Vector3& n) {
@@ -323,7 +323,7 @@ public:
 
 	/** 
 	 * Computes a orthogonal vector from this vector
-	 * @param destination vector
+	 * @param dest destination vector
 	 * @return destination vector
 	 */
 	inline Vector3& computeOrthogonalVector(Vector3& dest) {
@@ -347,7 +347,7 @@ public:
 
 	/** 
 	 * Adds a vector
-	 * @param v
+	 * @param v v
 	 * @return this vector
 	 */
 	inline Vector3& add(const Vector3& v) {
@@ -359,7 +359,7 @@ public:
 
 	/** 
 	 * Adds a float to each vector component
-	 * @param v
+	 * @param value v
 	 * @return this vector
 	 */
 	inline Vector3& add(float value) {
@@ -371,7 +371,7 @@ public:
 
 	/** 
 	 * Adds a vector
-	 * @param v
+	 * @param v v
 	 * @return this vector 
 	 */
 	inline Vector3& sub(const Vector3& v) {
@@ -383,7 +383,7 @@ public:
 
 	/** 
 	 * Subtracts a float from each vector component
-	 * @param v
+	 * @param value v
 	 * @return this vector
 	 */
 	inline Vector3& sub(float value) {
@@ -395,7 +395,7 @@ public:
 
 	/** 
 	 * Scale this vector
-	 * @param scale
+	 * @param scale scale
 	 * @return this vector 
 	 */
 	inline Vector3& scale(float scale) {
@@ -407,7 +407,7 @@ public:
 
 	/** 
 	 * Scale this vector
-	 * @param scale
+	 * @param scale scale
 	 * @return this vector 
 	 */
 	inline Vector3& scale(const Vector3& scale) {
@@ -427,7 +427,7 @@ public:
 
 	/**
 	 * Compares this vector with given vector
-	 * @param vector v
+	 * @param v vector v
 	 * @return equality
 	 */
 	inline bool equals(const Vector3& v) const {
@@ -446,10 +446,10 @@ public:
 
 	/** 
 	 * Interpolates between vector 1 and vector2 by 0f<=t<=1f linearly
-	 * @param vector 1
-	 * @param vector 2
-	 * @param t
-	 * @param destination vector
+	 * @param v1 vector 1
+	 * @param v2 vector 2
+	 * @param t t
+	 * @param dest destination vector
 	 * @return destination vector
 	 */
 	inline static Vector3& interpolateLinear(const Vector3& v1, const Vector3& v2, float t, Vector3& dest) {
@@ -462,8 +462,8 @@ public:
 
 	/**
 	 * Compares this vector with given vector
-	 * @param vector v
-	 * @param tolerance per component(x, y, z)
+	 * @param v vector v
+	 * @param tolerance tolerance per component(x, y, z)
 	 * @return equality
 	 */
 	inline bool equals(const Vector3& v, float tolerance) const {
@@ -484,9 +484,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param x x
+	 * @param y y
+	 * @param z z
 	 */
 	inline Vector3(float x, float y, float z) {
 		data[0] = x;
@@ -496,7 +496,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param values
+	 * @param v values
 	 */
 	inline Vector3(const array<float,3>& v) {
 		data = v;
@@ -504,7 +504,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param vector
+	 * @param v vector
 	 */
 	inline Vector3(const Vector3& v) {
 		data = v.data;

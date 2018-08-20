@@ -58,8 +58,8 @@ public:
 
 	/** 
 	 * Main
-	 * @param argument count
-	 * @param argument values
+	 * @param argc argument count
+	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
 
@@ -78,10 +78,10 @@ private:
 
 	/** 
 	 * Do player control
-	 * @param idx
-	 * @param key left
-	 * @param key right
-	 * @param key up
+	 * @param idx idx
+	 * @param keyLeft key left
+	 * @param keyRight key right
+	 * @param keyUp key up
 	 */
 	void doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp);
 

@@ -33,7 +33,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 
 	/** 
 	 * Set start color
-	 * @param color start
+	 * @param colorStart color start
 	 */
 	virtual void setColorStart(const Color4& colorStart) = 0;
 
@@ -44,19 +44,19 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 
 	/** 
 	 * Set end color
-	 * @param color end
+	 * @param colorEnd color end
 	 */
 	virtual void setColorEnd(const Color4& colorEnd) = 0;
 
 	/**
 	 * Emits particles
-	 * @param particle
+	 * @param particle particle
 	 */
 	virtual void emit(Particle* particle) = 0;
 
 	/** 
 	 * Update transformation with given transformations
-	 * @param transformations
+	 * @param transformations transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations) = 0;
 

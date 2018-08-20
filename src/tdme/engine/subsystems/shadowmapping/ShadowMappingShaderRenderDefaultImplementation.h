@@ -19,7 +19,7 @@ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultI
 public:
 	/**
 	 * @return if supported by renderer
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	static bool isSupported(GLRenderer* renderer);
 
@@ -30,7 +30,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	ShadowMappingShaderRenderDefaultImplementation(GLRenderer* renderer);
 

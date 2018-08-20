@@ -89,7 +89,7 @@ public:
 private:
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUISelectBoxController(GUINode* node);
 

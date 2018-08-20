@@ -29,8 +29,8 @@ public:
 
 	/** 
 	 * Reads FBX file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @throws model file IO exception
 	 * @throws file system exception
 	 * @return model instance
@@ -41,71 +41,71 @@ private:
 
 	/**
 	 * Get scene up vector
-	 * @param fbx scene
+	 * @param fbxScene fbx scene
 	 */
 	static UpVector* getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException);
 
 	/**
 	 * Get scene rotation order
-	 * @param fbx scene
+	 * @param fbxScene fbx scene
 	 */
 	static RotationOrder* getSceneRotationOrder(FbxScene* fbxScene) throw (ModelFileIOException);
 
 	/**
 	 * Set up model import rotation maxtrix
-	 * @param model
+	 * @param model model
 	 */
 	static void setupModelImportRotationMatrix(Model* model);
 
 	/**
 	 * Set up model import scale maxtrix
-	 * @param fbx scene
-	 * @param model
+	 * @param fbxScene fbx scene
+	 * @param model model
 	 */
 	static void setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model);
 
 	/**
 	 * Process FBX scene
-	 * @param FBX scene
-	 * @param model
-	 * @param path name
+	 * @param fbxScene FBX scene
+	 * @param model model
+	 * @param pathName path name
 	 */
 	static void processScene(FbxScene* fbxScene, Model* model, const string& pathName);
 
 	/**
 	 * Process FBX node
-	 * @param FBX scene
-	 * @param model
-	 * @param parent group
-	 * @param path name
+	 * @param fbxNode FBX scene
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param pathName path name
 	 */
 	static void processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
 
 	/**
 	 * Process FBX mesh node
-	 * @param FBX node
-	 * @param model
-	 * @param parent group
-	 * @param path name
+	 * @param fbxNode FBX node
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param pathName path name
 	 */
 	static Group* processMeshNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
 
 	/**
 	 * Process FBX skeleton node
-	 * @param FBX node
-	 * @param model
-	 * @param parent group
-	 * @param path name
+	 * @param fbxNode FBX node
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param pathName path name
 	 */
 	static Group* processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName);
 
 	/**
 	 * Process animation
-	 * @param FBX node
-	 * @param FBX start frame
-	 * @param FBX end frame
-	 * @param model
-	 * @param frame offset
+	 * @param fbxNode FBX node
+	 * @param fbxStartFrame FBX start frame
+	 * @param fbxEndFrame FBX end frame
+	 * @param model model
+	 * @param frameOffset frame offset
 	 */
 	static void processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model, int frameOffset);
 };

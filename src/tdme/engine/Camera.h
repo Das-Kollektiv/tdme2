@@ -53,7 +53,7 @@ public:
 
 	/** 
 	 * Set field of view Y
-	 * @param field of view y
+	 * @param fovY field of view y
 	 */
 	inline void setFovY(float fovY) {
 		this->fovY = fovY;
@@ -68,7 +68,7 @@ public:
 
 	/**
 	 * Set z near
-	 * @param zNear
+	 * @param zNear zNear
 	 */
 	inline void setZNear(float zNear) {
 		this->zNear = zNear;
@@ -83,7 +83,7 @@ public:
 
 	/** 
 	 * Set z far
-	 * @param zFar
+	 * @param zFar zFar
 	 */
 	inline void setZFar(float zFar) {
 		this->zFar = zFar;
@@ -98,7 +98,7 @@ public:
 
 	/**
 	 * Set up vector
-	 * @param up vector
+	 * @param upVector up vector
 	 */
 	inline void setUpVector(const Vector3& upVector) {
 		this->upVector = upVector;
@@ -113,7 +113,7 @@ public:
 
 	/**
 	 * Set look from
-	 * @param look from
+	 * @param lookFrom look from
 	 */
 	inline void setLookFrom(const Vector3& lookFrom) {
 		this->lookFrom = lookFrom;
@@ -128,7 +128,7 @@ public:
 
 	/**
 	 * Set look at
-	 * @param look at
+	 * @param lookAt look at
 	 */
 	inline void setLookAt(const Vector3& lookAt) {
 		this->lookAt = lookAt;
@@ -143,8 +143,8 @@ public:
 
 	/** 
 	 * Computes the up vector for given look from and look at vectors
-	 * @param look from
-	 * @param look at
+	 * @param lookFrom look from
+	 * @param lookAt look at
 	 * @return up vector
 	 */
 	Vector3 computeUpVector(const Vector3& lookFrom, const Vector3& lookAt);
@@ -154,10 +154,10 @@ private:
 	/** 
 	 * Computes the projection matrix
 	 * based on: http://www.songho.ca/opengl/gl_transform.html
-	 * @param y field of view
-	 * @param aspect
-	 * @param z near
-	 * @param z far
+	 * @param yfieldOfView y field of view
+	 * @param aspect aspect
+	 * @param zNear z near
+	 * @param zFar z far
 	 * @return projection matrix
 	 */
 	Matrix4x4& computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar);
@@ -165,21 +165,21 @@ private:
 	/** 
 	 * Computes frustum matrix
 	 * based on: http://www.songho.ca/opengl/gl_transform.html
-	 * @param left
-	 * @param right
-	 * @param top
-	 * @param bottom
-	 * @param near
-	 * @param far
+	 * @param left left
+	 * @param right right
+	 * @param bottom top
+	 * @param top bottom
+	 * @param near near
+	 * @param far far
 	 * @return frustum matrix
 	 */
 	Matrix4x4& computeFrustumMatrix(float left, float right, float bottom, float top, float near, float far);
 
 	/** 
 	 * Computes projection matrix for given look from, look at and up vector
-	 * @param look from
-	 * @param look at
-	 * @param up vector
+	 * @param lookFrom look from
+	 * @param lookAt look at
+	 * @param upVector up vector
 	 * @return model view matrix
 	 */
 	Matrix4x4& computeModelViewMatrix(const Vector3& lookFrom, const Vector3& lookAt, const Vector3& upVector);
@@ -188,14 +188,14 @@ public:
 
 	/** 
 	 * Sets up camera while resizing the view port
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	void update(int32_t width, int32_t height);
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	Camera(GLRenderer* renderer);
 

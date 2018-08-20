@@ -39,7 +39,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param group id
+	 * @param groupId group id
 	 */
 	Joint(const string& groupId);
 };

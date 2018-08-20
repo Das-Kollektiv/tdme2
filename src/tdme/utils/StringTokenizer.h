@@ -24,8 +24,8 @@ private:
 public:
 	/**
 	 * Tokenize
-	 * @param string to tokenize
-	 * @param delimiters
+	 * @param str string to tokenize
+	 * @param delimiters delimiters
 	 */
 	void tokenize(const string& str, const string& delimiters);
 

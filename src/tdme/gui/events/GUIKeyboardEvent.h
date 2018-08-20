@@ -48,7 +48,7 @@ public:
 
 	/**
 	 * Get key code from char
-	 * @param key char
+	 * @param key key char
 	 */
 	static int32_t getKeyCodeFromChar(char key);
 
@@ -59,7 +59,7 @@ public:
 
 	/** 
 	 * Time in milliseconds
-	 * @param time
+	 * @param time time
 	 */
 	virtual void setTime(int64_t time);
 
@@ -70,7 +70,7 @@ public:
 
 	/** 
 	 * Set type
-	 * @param type
+	 * @param type type
 	 */
 	virtual void setType(GUIKeyboardEvent_Type* type);
 
@@ -81,7 +81,7 @@ public:
 
 	/** 
 	 * Set key code
-	 * @param code
+	 * @param code code
 	 */
 	virtual void setKeyCode(int32_t code);
 
@@ -92,7 +92,7 @@ public:
 
 	/** 
 	 * Set key char
-	 * @param key char
+	 * @param keyChar key char
 	 */
 	virtual void setKeyChar(char keyChar);
 
@@ -103,7 +103,7 @@ public:
 
 	/** 
 	 * Set meta down 
-	 * @param meta down
+	 * @param metaDown meta down
 	 */
 	virtual void setMetaDown(bool metaDown);
 
@@ -114,7 +114,7 @@ public:
 
 	/** 
 	 * Set control down
-	 * @param control down
+	 * @param controlDown control down
 	 */
 	virtual void setControlDown(bool controlDown);
 
@@ -125,7 +125,7 @@ public:
 
 	/** 
 	 * Set alt down
-	 * @param alt down
+	 * @param altDown alt down
 	 */
 	virtual void setAltDown(bool altDown);
 
@@ -136,7 +136,7 @@ public:
 
 	/** 
 	 * Set shift down
-	 * @param shiftDown
+	 * @param shiftDown shiftDown
 	 */
 	virtual void setShiftDown(bool shiftDown);
 
@@ -147,7 +147,7 @@ public:
 
 	/** 
 	 * Set event processed
-	 * @param processed
+	 * @param processed processed
 	 */
 	virtual void setProcessed(bool processed);
 

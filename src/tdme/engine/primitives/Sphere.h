@@ -36,9 +36,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param center
-	 * @param radius
-	 * @param scale
+	 * @param center center
+	 * @param radius radius
+	 * @param scale scale
 	 */
 	Sphere(const Vector3& center, float radius, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 

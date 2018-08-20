@@ -27,7 +27,7 @@ public:
 
 	/** 
 	 * Set path
-	 * @param path
+	 * @param path path
 	 */
 	virtual void setPath(const string& path);
 

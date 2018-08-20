@@ -60,7 +60,7 @@ public:
 
 	/** 
 	 * Set max count
-	 * @param max count
+	 * @param maxCount max count
 	 */
 	virtual void setMaxCount(int32_t maxCount);
 
@@ -71,7 +71,7 @@ public:
 
 	/** 
 	 * Set auto emit 
-	 * @param autoEmit
+	 * @param autoEmit autoEmit
 	 */
 	virtual void setAutoEmit(bool autoEmit);
 
@@ -82,7 +82,7 @@ public:
 
 	/** 
 	 * Set model
-	 * @param model
+	 * @param model model
 	 */
 	virtual void setModel(Model* model);
 
@@ -93,7 +93,7 @@ public:
 
 	/** 
 	 * Set model file
-	 * @param model file name
+	 * @param modelFileName model file name
 	 */
 	virtual void setModelFile(const string& modelFileName) /* throws(Exception) */;
 

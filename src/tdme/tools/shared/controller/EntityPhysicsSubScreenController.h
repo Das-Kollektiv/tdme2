@@ -107,7 +107,7 @@ public:
 
 	/** 
 	 * Init
-	 * @param screen node
+	 * @param screenNode screen node
 	 */
 	virtual void initialize(GUIScreenNode* screenNode);
 
@@ -118,157 +118,157 @@ public:
 
 	/** 
 	 * Enable bounding volume
-	 * @param idx
+	 * @param idx idx
 	 */
 	virtual void enableBoundingVolume(int32_t idx);
 
 	/** 
 	 * Set up model bounding volume type
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void setupModelBoundingVolumeType(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * Set up bounding volume types
-	 * @param idx
-	 * @param bounding volume types
+	 * @param idx idx
+	 * @param boundingVolumeTypes bounding volume types
 	 */
 	virtual void setupBoundingVolumeTypes(int32_t idx, vector<string>* boundingVolumeTypes);
 
 	/** 
 	 * Display given bounding volume GUI elements
-	 * @param idx
-	 * @param bounding volume type
+	 * @param idx idx
+	 * @param bvType bounding volume type
 	 */
 	virtual void selectBoundingVolume(int32_t idx, EntityPhysicsSubScreenController_BoundingVolumeType* bvType);
 
 	/** 
 	 * Setup sphere bounding volume
-	 * @param idx
-	 * @param center
-	 * @param radius
+	 * @param idx idx
+	 * @param center center
+	 * @param radius radius
 	 */
 	virtual void setupSphere(int32_t idx, const Vector3& center, float radius);
 
 	/** 
 	 * Setup capsule bounding volume
-	 * @param idx
-	 * @param a
-	 * @param b
-	 * @param radius
+	 * @param idx idx
+	 * @param a a
+	 * @param b b
+	 * @param radius radius
 	 */
 	virtual void setupCapsule(int32_t idx, const Vector3& a, const Vector3& b, float radius);
 
 	/** 
 	 * Setup AABB bounding volume
-	 * @param idx
-	 * @param min
-	 * @param max
+	 * @param idx idx
+	 * @param min min
+	 * @param max max
 	 */
 	virtual void setupBoundingBox(int32_t idx, const Vector3& min, const Vector3& max);
 
 	/** 
 	 * Setup oriented bounding box
-	 * @param idx
-	 * @param center
-	 * @param axis 0
-	 * @param axis 1
-	 * @param axis 2
-	 * @param half extension
+	 * @param idx idx
+	 * @param center center
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param axis2 axis 2
+	 * @param halfExtension half extension
 	 */
 	virtual void setupOrientedBoundingBox(int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/** 
 	 * Setup convex mesh bounding volume
-	 * @param idx
-	 * @param file
+	 * @param idx idx
+	 * @param file file
 	 */
 	virtual void setupConvexMesh(int32_t idx, const string& file);
 
 	/** 
 	 * On pivot apply
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeTypeApply(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume none apply
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeNoneApply(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume sphere apply
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeSphereApply(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume capsule apply
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume AABB apply
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume OBB apply
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume convex mesh apply
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume convex mesh file clicked
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume convex meshes file
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity);
 
 	/**
 	 * On bounding volume convex meshes remove
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onBoundingVolumeConvexMeshesRemove(LevelEditorEntity* entity);
 
 	/**
 	 * On bounding volume convex meshes generate
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onBoundingVolumeConvexMeshesGenerate(LevelEditorEntity* entity);
 
 	/**
 	 * Set terrain mesh
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void setTerrainMesh(LevelEditorEntity* entity);
 
 	/**
 	 * Shows the error pop up
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onSetTerrainMesh(LevelEditorEntity* entity);
 
@@ -279,7 +279,7 @@ public:
 
 	/**
 	 * Set convex meshes
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void setConvexMeshes(LevelEditorEntity* entity);
 
@@ -295,25 +295,25 @@ public:
 
 	/**
 	 * Set physics
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void setPhysics(LevelEditorEntity* entity);
 
 	/**
 	 * On physics body type apply
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onPhysicsBodyTypeApply(LevelEditorEntity* entity);
 
 	/**
 	 * On physics body apply
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onPhysicsBodyApply(LevelEditorEntity* entity);
 
 	/**
 	 * On convex mesh mode changed
-	 * @param disabled
+	 * @param disabled disabled
 	 */
 	virtual void onConvexMeshModeChanged(bool disabled);
 
@@ -324,24 +324,24 @@ public:
 
 	/**
 	 * On value changed
-	 * @param node
-	 * @param entity
+	 * @param node node
+	 * @param entity entity
 	 */
 	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* entity);
 
 	/** 
 	 * On action performed
-	 * @param type
-	 * @param node
-	 * @param entity
+	 * @param type type
+	 * @param node node
+	 * @param entity entity
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
 
 	/**
 	 * Public constructor
-	 * @param pop ups
-	 * @param model editor screen controller
-	 * @param is model bounding volumes
+	 * @param popUps pop ups
+	 * @param modelPath model editor screen controller
+	 * @param isModelBoundingVolumes is model bounding volumes
 	 */
 	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
 

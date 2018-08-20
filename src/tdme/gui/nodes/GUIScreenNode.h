@@ -90,7 +90,7 @@ public:
 
 	/** 
 	 * Set GUI
-	 * @param gui
+	 * @param gui gui
 	 */
 	void setGUI(GUI* gui);
 
@@ -111,7 +111,7 @@ public:
 
 	/** 
 	 * Set visible
-	 * @param visible
+	 * @param visible visible
 	 */
 	void setVisible(bool visible);
 
@@ -122,7 +122,7 @@ public:
 
 	/** 
 	 * Set pop up
-	 * @param pop up
+	 * @param popUp pop up
 	 */
 	void setPopUp(bool popUp);
 
@@ -138,7 +138,7 @@ public:
 
 	/** 
 	 * Set GUI effect offset X
-	 * @param gui effect offset X
+	 * @param guiEffectOffsetX gui effect offset X
 	 */
 	void setGUIEffectOffsetX(int32_t guiEffectOffsetX);
 
@@ -149,7 +149,7 @@ public:
 
 	/** 
 	 * Set GUI effect offset Y
-	 * @param gui effect offset Y
+	 * @param guiEffectOffsetY gui effect offset Y
 	 */
 	void setGUIEffectOffsetY(int32_t guiEffectOffsetY);
 
@@ -163,21 +163,21 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param id
-	 * @param flow
-	 * @param overflow x
-	 * @param overflow y
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param scrollable
-	 * @param pop up
+	 * @param id id
+	 * @param flow flow
+	 * @param overflowX overflow x
+	 * @param overflowY overflow y
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 * @param scrollable scrollable
+	 * @param popUp pop up
 	 */
 	GUIScreenNode(
 		const string& id,
@@ -205,14 +205,14 @@ protected:
 private:
 	/**
 	 * Add node
-	 * @param node
+	 * @param node node
 	 * @return success
 	 */
 	bool addNode(GUINode* node);
 
 	/**
 	 * Add node
-	 * @param node
+	 * @param node node
 	 * @return success
 	 */
 	bool removeNode(GUINode* node);
@@ -242,20 +242,20 @@ public:
 	/** 
 	 * Layout node content (e.g. child nodes or content)
 	 * this does also does call layouted nodes post layout method
-	 * @param node
+	 * @param node node
 	 */
 	void layout(GUINode* node);
 
 	/** 
 	 * Set screen size
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	void setScreenSize(int32_t width, int32_t height);
 
 	/** 
 	 * Get GUI node by id
-	 * @param nodeId
+	 * @param nodeId nodeId
 	 * @return GUI node or null
 	 */
 	GUINode* getNodeById(const string& nodeId);
@@ -268,20 +268,20 @@ public:
 
 	/** 
 	 * Render screen
-	 * @param gui renderer
+	 * @param guiRenderer gui renderer
 	 */
 	void render(GUIRenderer* guiRenderer);
 
 	/** 
 	 * Render floating nodes
-	 * @param gui renderer
+	 * @param guiRenderer gui renderer
 	 */
 	void renderFloatingNodes(GUIRenderer* guiRenderer);
 
 	/** 
 	 * Determine focussed nodes
-	 * @param parent node
-	 * @param focusable nodes
+	 * @param parentNode parent node
+	 * @param focusableNodes focusable nodes
 	 */
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
 
@@ -291,13 +291,13 @@ public:
 
 	/** 
 	 * Add action listener
-	 * @param listener
+	 * @param listener listener
 	 */
 	void addActionListener(GUIActionListener* listener);
 
 	/** 
 	 * Remove action listener
-	 * @param listener
+	 * @param listener listener
 	 */
 	void removeActionListener(GUIActionListener* listener);
 
@@ -308,50 +308,50 @@ public:
 
 	/** 
 	 * Set input event handler 
-	 * @param input event handler
+	 * @param inputEventHandler input event handler
 	 */
 	void setInputEventHandler(GUIInputEventHandler* inputEventHandler);
 
 	/** 
 	 * Delegate action performed
-	 * @param type
-	 * @param node
+	 * @param type type
+	 * @param node node
 	 */
 	void delegateActionPerformed(GUIActionListener_Type* type, GUIElementNode* node);
 
 	/** 
 	 * Add change listener
-	 * @param listener
+	 * @param listener listener
 	 */
 	void addChangeListener(GUIChangeListener* listener);
 
 	/** 
 	 * Remove change listener
-	 * @param listener
+	 * @param listener listener
 	 */
 	void removeChangeListener(GUIChangeListener* listener);
 
 	/** 
 	 * Delegate value changed
-	 * @param node
+	 * @param node node
 	 */
 	void delegateValueChanged(GUIElementNode* node);
 
 	/**
 	 * Add mouse over listener
-	 * @param listener
+	 * @param listener listener
 	 */
 	void addMouseOverListener(GUIMouseOverListener* listener);
 
 	/**
 	 * Remove mouse over listener
-	 * @param listener
+	 * @param listener listener
 	 */
 	void removeMouseOverListener(GUIMouseOverListener* listener);
 
 	/**
 	 * Delegate mouse over event
-	 * @param node
+	 * @param node node
 	 */
 	void delegateMouseOver(GUIElementNode* node);
 
@@ -368,34 +368,34 @@ public:
 
 	/** 
 	 * Get values
-	 * @param values
+	 * @param values values
 	 */
 	void getValues(map<string, MutableString>& values);
 
 	/** 
 	 * Set values
-	 * @param values
+	 * @param values values
 	 */
 	void setValues(const map<string, MutableString>& values);
 
 	/** 
 	 * Add effect that will be removed if finished
-	 * @param id
-	 * @param effect
+	 * @param id id
+	 * @param effect effect
 	 * @return success
 	 */
 	bool addEffect(const string& id, GUIEffect* effect);
 
 	/** 
 	 * Get effect
-	 * @param id
+	 * @param id id
 	 * @return effect or null
 	 */
 	GUIEffect* getEffect(const string& id);
 
 	/** 
 	 * Remove effect
-	 * @param id
+	 * @param id id
 	 * @return success
 	 */
 	bool removeEffect(const string& id);

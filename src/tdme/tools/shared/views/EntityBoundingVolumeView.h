@@ -44,14 +44,14 @@ public:
 
 	/** 
 	 * Reset bounding volume
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	virtual void resetBoundingVolume(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * Set bounding volumes
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void setBoundingVolumes(LevelEditorEntity* entity);
 
@@ -62,14 +62,14 @@ public:
 
 	/** 
 	 * Select bounding volume type
-	 * @param idx
-	 * @param bounding volume type
+	 * @param idx idx
+	 * @param bvTypeId bounding volume type
 	 */
 	virtual void selectBoundingVolumeType(int32_t idx, int32_t bvTypeId);
 
 	/**
 	 * Set terrain mesh
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void setTerrainMesh(LevelEditorEntity* entity);
 
@@ -80,7 +80,7 @@ public:
 
 	/**
 	 * Set convex meshes
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void setConvexMeshes(LevelEditorEntity* entity);
 
@@ -96,7 +96,7 @@ public:
 
 	/**
 	 * Set physics
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void setPhysics(LevelEditorEntity* entity);
 
@@ -104,14 +104,14 @@ private:
 
 	/**
 	 * Clear model bounding volume
-	 * @param idx
+	 * @param idx idx
 	 */
 	void clearModelBoundingVolume(int32_t idx);
 
 	/** 
 	 * Setup model bounding volume
-	 * @param entity
-	 * @param idx
+	 * @param entity entity
+	 * @param idx idx
 	 */
 	void setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx);
 
@@ -119,63 +119,63 @@ public:
 
 	/** 
 	 * On bounding volume none apply
-	 * @param entity
-	 * @param bounding volume index
+	 * @param entity entity
+	 * @param idx bounding volume index
 	 */
 	virtual void applyBoundingVolumeNone(LevelEditorEntity* entity, int32_t idx);
 
 	/** 
 	 * On bounding volume sphere apply
-	 * @param entity
-	 * @param bounding volume index
-	 * @param sphere center
-	 * @param radius
+	 * @param entity entity
+	 * @param idx bounding volume index
+	 * @param center sphere center
+	 * @param radius radius
 	 */
 	virtual void applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, const Vector3& center, float radius);
 
 	/** 
 	 * On bounding volume capsule apply
-	 * @param entity
-	 * @param bounding volume index
-	 * @param point a
-	 * @param point b
-	 * @param radius
+	 * @param entity entity
+	 * @param idx bounding volume index
+	 * @param a point a
+	 * @param b point b
+	 * @param radius radius
 	 */
 	virtual void applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, const Vector3& a, const Vector3& b, float radius);
 
 	/** 
 	 * On bounding volume AABB apply
-	 * @param entity
-	 * @param bounding volume index
-	 * @param AABB min vector
-	 * @param AABB max vector
+	 * @param entity entity
+	 * @param idx bounding volume index
+	 * @param min AABB min vector
+	 * @param max AABB max vector
 	 */
 	virtual void applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, const Vector3& min, const Vector3& max);
 
 	/** 
 	 * On bounding volume OBB apply
-	 * @param entity
-	 * @param bounding volume index
-	 * @param OBB center
-	 * @param OBB axis 0
-	 * @param OBB axis 1
-	 * @param OBB axis 2
-	 * @param OBB half extension
+	 * @param entity entity
+	 * @param idx bounding volume index
+	 * @param center OBB center
+	 * @param axis0 OBB axis 0
+	 * @param axis1 OBB axis 1
+	 * @param axis2 OBB axis 2
+	 * @param halfExtension OBB half extension
 	 */
 	virtual void applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/** 
 	 * On bounding volume convex mesh apply
-	 * @param entity
-	 * @param bounding volume index
-	 * @param file name
+	 * @param entity entity
+	 * @param idx bounding volume index
+	 * @param fileName file name
 	 */
 	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const string& fileName);
 
 	/**
 	 * Public constructor
-	 * @param pop ups
-	 * @param model editor screen controller
+	 * @param entityPhysicsSubScreenController pop ups
+	 * @param popUps model editor screen controller
 	 */
 	EntityBoundingVolumeView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps);
 };

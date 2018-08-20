@@ -25,8 +25,8 @@ public:
 
 	/**
 	 * Open a local file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	virtual void openFile(const string& pathName, const string& fileName) throw (FileSystemException, AudioDecoderException);
 
@@ -37,7 +37,7 @@ public:
 
 	/**
 	 * Read raw PCM data from stream
-	 * @param byte buffer
+	 * @param data byte buffer
 	 * @return number of bytes read
 	 */
 	virtual int32_t readFromStream(ByteBuffer* data) throw (FileSystemException, AudioDecoderException);

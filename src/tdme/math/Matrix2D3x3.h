@@ -26,15 +26,15 @@ private:
 public:
 	/**
 	 * Set up matrix by values
-	 * @param row 0, column 0
-	 * @param row 1, column 0
-	 * @param row 2, column 0
-	 * @param row 0, column 1
-	 * @param row 1, column 1
-	 * @param row 2, column 1
-	 * @param row 0, column 2
-	 * @param row 1, column 2
-	 * @param row 2, column 2
+	 * @param r0c0 row 0, column 0
+	 * @param r1c0 row 1, column 0
+	 * @param r2c0 row 2, column 0
+	 * @param r0c1 row 0, column 1
+	 * @param r1c1 row 1, column 1
+	 * @param r2c1 row 2, column 1
+	 * @param r0c2 row 0, column 2
+	 * @param r1c2 row 1, column 2
+	 * @param r2c2 row 2, column 2
 	 * @return this matrix
 	 */
 	inline Matrix2D3x3& set(float r0c0, float r1c0, float r2c0, float r0c1, float r1c1, float r2c1, float r0c2, float r1c2, float r2c2) {
@@ -52,7 +52,7 @@ public:
 
 	/**
 	 * Sets up this matrix by matrix m
-	 * @param m
+	 * @param m m
 	 * @return this matrix
 	 */
 	inline Matrix2D3x3& set(const array<float, 9>& m) {
@@ -62,7 +62,7 @@ public:
 
 	/**
 	 * Sets up this matrix by matrix m
-	 * @param m
+	 * @param m m
 	 * @return
 	 */
 	inline Matrix2D3x3& set(const Matrix2D3x3& m) {
@@ -89,7 +89,7 @@ public:
 
 	/**
 	 * Scales this matrix
-	 * @param s
+	 * @param s s
 	 * @returns this matrix
 	 */
 	inline Matrix2D3x3& scale(float s) {
@@ -100,7 +100,7 @@ public:
 
 	/**
 	 * Scales this matrix by given vector
-	 * @param v
+	 * @param v v
 	 * @return this matrix
 	 */
 	inline Matrix2D3x3& scale(const Vector2& v) {
@@ -111,7 +111,7 @@ public:
 
 	/**
 	 * Sets up a translation matrix
-	 * @param v
+	 * @param v v
 	 * @return this matrix
 	 */
 	inline Matrix2D3x3& translate(const Vector2& v) {
@@ -122,7 +122,7 @@ public:
 
 	/**
 	 * Creates a rotation matrix
-	 * @param angle
+	 * @param angle angle
 	 * @return this matrix
 	 */
 	inline Matrix2D3x3& rotate(float angle) {
@@ -143,7 +143,7 @@ public:
 
 	/**
 	 * Creates a rotation matrix that rotates around texture center by given angle
-	 * @param angle
+	 * @param angle angle
 	 * @return rotation matrix
 	 */
 	static inline Matrix2D3x3 rotateAroundTextureCenter(float angle) {
@@ -152,8 +152,8 @@ public:
 
 	/**
 	 * Creates a rotation matrix that rotates around given point by given angle
-	 * @param point
-	 * @param angle
+	 * @param point point
+	 * @param angle angle
 	 * @return rotation matrix
 	 */
 	static inline Matrix2D3x3 rotateAroundPoint(const Vector2& point, float angle) {
@@ -167,7 +167,7 @@ public:
 
 	/**
 	 * Multiplies this matrix with another matrix
-	 * @param m
+	 * @param m m
 	 * @return this matrix
 	 */
 	inline Matrix2D3x3& multiply(const Matrix2D3x3& m) {
@@ -187,8 +187,8 @@ public:
 
 	/**
 	 * Multiplies a vector with this matrix into destination vector
-	 * @param vector
-	 * @param destination vector
+	 * @param v vector
+	 * @param dest destination vector
 	 * @return destination vector
 	 */
 	inline Vector2& multiply(const Vector2& v, Vector2& dest) const {
@@ -200,7 +200,7 @@ public:
 
 	/**
 	 * Returns if this matrix equals m
-	 * @param m
+	 * @param m m
 	 * @return equals
 	 */
 	inline bool equals(const Matrix2D3x3& m) const {
@@ -229,10 +229,10 @@ public:
 
 	/**
 	 * Interpolates between matrix 1 and matrix 2 by 0f<=t<=1f linearly
-	 * @param matrix 1
-	 * @param matrix 2
-	 * @param t
-	 * @param destination matrix
+	 * @param m1 matrix 1
+	 * @param m2 matrix 2
+	 * @param t t
+	 * @param dest destination matrix
 	 * @return interpolated matrix
 	 */
 	inline static Matrix2D3x3& interpolateLinear(const Matrix2D3x3& m1, const Matrix2D3x3& m2, float t, Matrix2D3x3& dest) {
@@ -266,7 +266,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param matrix as float values
+	 * @param m matrix as float values
 	 */
 	inline Matrix2D3x3(const array<float, 9>& m) {
 		data = m;
@@ -274,7 +274,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param matrix
+	 * @param matrix matrix
 	 */
 	inline Matrix2D3x3(const Matrix2D3x3& matrix) {
 		data = matrix.data;
@@ -282,15 +282,15 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param r0c0
-	 * @param r1c0
-	 * @param r2c0
-	 * @param r0c1
-	 * @param r1c1
-	 * @param r2c1
-	 * @param r0c2
-	 * @param r1c2
-	 * @param r2c2
+	 * @param r0c0 r0c0
+	 * @param r1c0 r1c0
+	 * @param r2c0 r2c0
+	 * @param r0c1 r0c1
+	 * @param r1c1 r1c1
+	 * @param r2c1 r2c1
+	 * @param r0c2 r0c2
+	 * @param r1c2 r1c2
+	 * @param r2c2 r2c2
 	 */
 	inline Matrix2D3x3(float r0c0, float r1c0, float r2c0, float r0c1, float r1c1, float r2c1, float r0c2, float r1c2, float r2c2) {
 		set(r0c0, r1c0, r2c0, r0c1, r1c1, r2c1, r0c2, r1c2, r2c2);

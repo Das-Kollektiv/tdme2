@@ -31,9 +31,9 @@ private:
 public:
 	/**
 	 * Protected constructor
-	 * @param id
-	 * @param path name
-	 * @param file name
+	 * @param id id
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	Sound(const string& id, const string& pathName, const string& fileName);
 

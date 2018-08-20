@@ -36,7 +36,7 @@ public:
 
 	/** 
 	 * Set position X start
-	 * @param position X start
+	 * @param positionXStart position X start
 	 */
 	inline virtual void setPositionXStart(float positionXStart) {
 		this->positionXStart = positionXStart;
@@ -51,7 +51,7 @@ public:
 
 	/** 
 	 * Set position X end
-	 * @param position X end
+	 * @param positionXEnd position X end
 	 */
 	inline virtual void setPositionXEnd(float positionXEnd) {
 		this->positionXEnd = positionXEnd;
@@ -66,7 +66,7 @@ public:
 
 	/** 
 	 * Set position Y start
-	 * @param position Y start
+	 * @param positionYStart position Y start
 	 */
 	inline virtual void setPositionYStart(float positionYStart) {
 		this->positionYStart = positionYStart;
@@ -81,7 +81,7 @@ public:
 
 	/** 
 	 * Set position Y end
-	 * @param position Y end
+	 * @param positionYEnd position Y end
 	 */
 	inline virtual void setPositionYEnd(float positionYEnd) {
 		this->positionYEnd = positionYEnd;

@@ -58,9 +58,9 @@ private:
 
 	/** 
 	 * Draw character
-	 * @param gui renderer
-	 * @param x
-	 * @param y
+	 * @param guiRenderer gui renderer
+	 * @param x x
+	 * @param y y
 	 */
 	void draw(GUIRenderer* guiRenderer, int32_t x, int32_t y);
 

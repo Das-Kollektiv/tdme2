@@ -39,7 +39,7 @@ public:
 
 	/** 
 	 * Init
-	 * @param screen node
+	 * @param screenNode screen node
 	 */
 	virtual void initialize(GUIScreenNode* screenNode);
 

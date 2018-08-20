@@ -44,7 +44,7 @@ public:
 
 	/** 
 	 * Set max points
-	 * @param max points
+	 * @param maxPoints max points
 	 */
 	virtual void setMaxPoints(int32_t maxPoints);
 
@@ -55,7 +55,7 @@ public:
 
 	/** 
 	 * Set auto emit
-	 * @param auto emit
+	 * @param autoEmit auto emit
 	 */
 	virtual void setAutoEmit(bool autoEmit);
 

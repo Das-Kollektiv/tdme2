@@ -87,17 +87,17 @@ public:
 
 	/**
 	 * Constructor
-	 * @param name
-	 * @param ordinal
-	 * @param axis 0
-	 * @param axis 1
-	 * @param axis 2
-	 * @param axis 0 vector (data) index
-	 * @param axis 1 vector (data) index
-	 * @param axis 2 vector (data) index
-	 * @param axis X index
-	 * @param axis Y index
-	 * @param axis Z index
+	 * @param name name
+	 * @param ordinal ordinal
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param axis2 axis 2
+	 * @param axis0VectorIndex axis 0 vector (data) index
+	 * @param axis1VectorIndex axis 1 vector (data) index
+	 * @param axis2VectorIndex axis 2 vector (data) index
+	 * @param axisXIndex axis X index
+	 * @param axisYIndex axis Y index
+	 * @param axisZIndex axis Z index
 	 */
 	RotationOrder(const string& name, int ordinal, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, int32_t axis0VectorIndex, int32_t axis1VectorIndex, int32_t axis2VectorIndex, int32_t axisXIndex, int32_t axisYIndex, int32_t axisZIndex);
 };

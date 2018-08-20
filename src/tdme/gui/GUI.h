@@ -89,8 +89,8 @@ public:
 
 	/** 
 	 * Reshape
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
@@ -121,35 +121,35 @@ public:
 
 	/** 
 	 * Get font
-	 * @param file name
+	 * @param fileName file name
 	 * @return
 	 */
 	static GUIFont* getFont(const string& fileName);
 
 	/** 
 	 * Get image
-	 * @param file name
+	 * @param fileName file name
 	 * @return
 	 */
 	static Texture* getImage(const string& fileName);
 
 	/** 
 	 * Get screen
-	 * @param id
+	 * @param id id
 	 * @return screen
 	 */
 	GUIScreenNode* getScreen(const string& id);
 
 	/** 
 	 * Add screen
-	 * @param id
-	 * @param gui
+	 * @param id id
+	 * @param screen gui
 	 */
 	void addScreen(const string& id, GUIScreenNode* screen);
 
 	/** 
 	 * Removes an screen
-	 * @param id
+	 * @param id id
 	 */
 	void removeScreen(const string& id);
 
@@ -165,13 +165,13 @@ public:
 
 	/** 
 	 * Add render screen
-	 * @param screenId
+	 * @param screenId screenId
 	 */
 	void addRenderScreen(const string& screenId);
 
 	/** 
 	 * Remove render screen
-	 * @param screenId
+	 * @param screenId screenId
 	 */
 	void removeRenderScreen(const string& screenId);
 
@@ -211,7 +211,7 @@ public:
 
 	/** 
 	 * Set focussed node
-	 * @param foccussed node
+	 * @param newFoccussedNode foccussed node
 	 */
 	void setFoccussedNode(GUIElementNode* newFoccussedNode);
 
@@ -234,81 +234,81 @@ private:
 
 	/** 
 	 * Handle mouse event for given node
-	 * @param node
-	 * @param event
-	 * @param mouse moved event nodes ids
-	 * @param mouse pressed event node ids
+	 * @param node node
+	 * @param event event
+	 * @param mouseMovedEventNodeIds mouse moved event nodes ids
+	 * @param mousePressedEventNodeIds mouse pressed event node ids
 	 */
 	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mouseMovedEventNodeIds, set<string>& mousePressedEventNodeIds);
 
 	/**
 	 * Handle mouse event for given node
-	 * @param event
+	 * @param event event
 	 */
 	void handleKeyboardEvent(GUIKeyboardEvent* event);
 
 public:
 	/**
 	 * On key down
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	void onKeyDown (unsigned char key, int x, int y) override;
 
 	/**
 	 * On key up
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	void onKeyUp(unsigned char key, int x, int y) override;
 
 	/**
 	 * On special key up
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	void onSpecialKeyDown (int key, int x, int y) override;
 
 	/**
 	 * On special key up
-	 * @param key
-	 * @param x
-	 * @param y
+	 * @param key key
+	 * @param x x
+	 * @param y y
 	 */
 	void onSpecialKeyUp(int key, int x, int y) override;
 
 	/**
 	 * On mouse dragged
-	 * @param x
-	 * @param y
+	 * @param x x
+	 * @param y y
 	 */
 	void onMouseDragged(int x, int y) override;
 
 	/**
 	 * On mouse moved
-	 * @param x
-	 * @param y
+	 * @param x x
+	 * @param y y
 	 */
 	void onMouseMoved(int x, int y) override;
 
 	/**
 	 * On mouse moved
-	 * @param button
-	 * @param state
-	 * @param x
-	 * @param y
+	 * @param button button
+	 * @param state state
+	 * @param x x
+	 * @param y y
 	 */
 	void onMouseButton(int button, int state, int x, int y) override;
 
 	/**
 	 * On mouse wheel
-	 * @param button
-	 * @param direction
-	 * @param x
-	 * @param y
+	 * @param button button
+	 * @param direction direction
+	 * @param x x
+	 * @param y y
 	 */
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
@@ -332,8 +332,8 @@ private:
 public:
 	/**
 	 * Public constructor
-	 * @param engine
-	 * @param gui renderer
+	 * @param engine engine
+	 * @param guiRenderer gui renderer
 	 */
 	GUI(Engine* engine, GUIRenderer* guiRenderer);
 

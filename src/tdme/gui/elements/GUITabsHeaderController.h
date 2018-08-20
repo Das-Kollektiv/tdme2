@@ -80,7 +80,7 @@ private:
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUITabsHeaderController(GUINode* node);
 

@@ -23,8 +23,8 @@ public:
 	/** 
 	 * Returns if axis aligned bounding boxes do collide
 	 * Will not provide hit points
-	 * @param axis aligned bounding box 1
-	 * @param axis aligned bounding box 2
+	 * @param b1 axis aligned bounding box 1
+	 * @param b2 axis aligned bounding box 2
 	 * @return collision 
 	 */
 	inline static bool doCollideAABBvsAABBFast(BoundingBox* b1, BoundingBox* b2) {

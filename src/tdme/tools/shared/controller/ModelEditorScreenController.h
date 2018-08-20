@@ -155,14 +155,14 @@ public:
 
 	/** 
 	 * Set screen caption
-	 * @param text
+	 * @param text text
 	 */
 	void setScreenCaption(const string& text);
 
 	/** 
 	 * Set up general entity data
-	 * @param name
-	 * @param description
+	 * @param name name
+	 * @param description description
 	 */
 	void setEntityData(const string& name, const string& description);
 
@@ -173,9 +173,9 @@ public:
 
 	/** 
 	 * Set up entity properties
-	 * @param preset id
-	 * @param entity properties
-	 * @param selected name
+	 * @param presetId preset id
+	 * @param entity entity properties
+	 * @param selectedName selected name
 	 */
 	void setEntityProperties(const string& presetId, LevelEditorEntity* entity, const string& selectedName);
 
@@ -186,7 +186,7 @@ public:
 
 	/** 
 	 * Set pivot tab
-	 * @param pivot
+	 * @param pivot pivot
 	 */
 	void setPivot(const Vector3& pivot);
 
@@ -197,7 +197,7 @@ public:
 
 	/**
 	 * Set renering options
-	 * @param entity
+	 * @param entity entity
 	 */
 	void setRendering(LevelEditorEntity* entity);
 
@@ -208,8 +208,8 @@ public:
 
 	/**
 	 * Set lod level
-	 * @param entity
-	 * @param lod level
+	 * @param entity entity
+	 * @param level lod level
 	 */
 	void setLODLevel(LevelEditorEntity* entity, int level);
 
@@ -240,7 +240,7 @@ public:
 
 	/**
 	 * Set materials
-	 * @param entity
+	 * @param entity entity
 	 */
 	void setMaterials(LevelEditorEntity* entity);
 
@@ -318,9 +318,9 @@ public:
 
 	/** 
 	 * Set up model statistics
-	 * @param stats opaque faces
-	 * @param stats transparent faces
-	 * @param stats material count
+	 * @param statsOpaqueFaces stats opaque faces
+	 * @param statsTransparentFaces stats transparent faces
+	 * @param statsMaterialCount stats material count
 	 */
 	void setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount);
 
@@ -361,15 +361,15 @@ public:
 
 	/**
 	 * Save file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	void saveFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
 	/**
 	 * Load file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	void loadFile(const string& pathName, const string& fileName) /* throws(Exception) */;
 
@@ -380,20 +380,20 @@ public:
 
 	/**
 	 * On value changed
-	 * @param node
+	 * @param node node
 	 */
 	void onValueChanged(GUIElementNode* node) override;
 
 	/**
 	 * On action performed
-	 * @param type
-	 * @param node
+	 * @param type type
+	 * @param node node
 	 */
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
 
 	/**
 	 * Public constructor
-	 * @param view
+	 * @param view view
 	 */
 	ModelEditorScreenController(SharedModelEditorView* view);
 

@@ -54,7 +54,7 @@ public:
 
 	/** 
 	 * Checks if given vector is in frustum
-	 * @param vecto
+	 * @param vector vecto
 	 * @return visibility
 	 */
 	inline bool isVisible(const Vector3& vector) {
@@ -70,7 +70,7 @@ public:
 
 	/** 
 	 * Checks if sphere is in frustum
-	 * @param s
+	 * @param s s
 	 * @return visibility
 	 */
 	inline bool isVisible(Sphere* s) {
@@ -87,7 +87,7 @@ public:
 
 	/** 
 	 * Checks if bounding box is in frustum
-	 * @param s
+	 * @param b s
 	 * @return visibility
 	 */
 	inline bool isVisible(BoundingBox* b) {

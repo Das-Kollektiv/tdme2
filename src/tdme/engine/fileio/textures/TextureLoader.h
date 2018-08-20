@@ -45,8 +45,8 @@ public:
 
 	/**
 	 * Read byte
-	 * @param out bytes
-	 * @param out bytes to read
+	 * @param outBytes out bytes
+	 * @param outBytesToRead out bytes to read
 	 */
 	void readBytes(int8_t* outBytes, int32_t outBytesToRead) {
 		for (int32_t i = 0; i < outBytesToRead && offset < data->size(); i++) {
@@ -80,8 +80,8 @@ public:
 
 	/** 
 	 * Loads a texture
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @return texture data instance or null
 	 */
 	static Texture* loadTexture(const string& pathName, const string& fileName);
@@ -89,16 +89,16 @@ public:
 private:
 	/**
 	 * Read PNG data from memory
-	 * @param png structure
-	 * @param out bytes
-	 * @param out bytes to read
+	 * @param png_ptr png structure
+	 * @param outBytes out bytes
+	 * @param outBytesToRead out bytes to read
 	 */
 	static void readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead);
 
 	/**
 	 * Load PNG
-	 * @param path name
-	 * @param file name
+	 * @param path path name
+	 * @param fileName file name
 	 */
 	static Texture* loadPNG(const string& path, const string& fileName) throw (FileSystemException);
 

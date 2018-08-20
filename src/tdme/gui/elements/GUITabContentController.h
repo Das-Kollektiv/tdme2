@@ -41,13 +41,13 @@ private:
 
 	/** 
 	 * Set checked
-	 * @param selected
+	 * @param selected selected
 	 */
 	void setSelected(bool selected);
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUITabContentController(GUINode* node);
 

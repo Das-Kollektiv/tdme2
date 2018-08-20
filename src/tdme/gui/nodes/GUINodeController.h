@@ -53,15 +53,15 @@ public:
 
 	/** 
 	 * Handle mouse event
-	 * @param node
-	 * @param event
+	 * @param node node
+	 * @param event event
 	 */
 	virtual void handleMouseEvent(GUINode* node, GUIMouseEvent* event) = 0;
 
 	/** 
 	 * Handle keyboard event
-	 * @param node
-	 * @param event
+	 * @param node node
+	 * @param event event
 	 */
 	virtual void handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) = 0;
 
@@ -92,7 +92,7 @@ public:
 
 	/** 
 	 * Set value
-	 * @param value
+	 * @param value value
 	 */
 	virtual void setValue(const MutableString& value) = 0;
 
@@ -103,7 +103,7 @@ public:
 
 	/** 
 	 * Set disabled 
-	 * @param disabled
+	 * @param disabled disabled
 	 */
 	virtual void setDisabled(bool disabled) = 0;
 

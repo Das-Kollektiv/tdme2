@@ -70,7 +70,7 @@ private:
 	 * Renders transparent faces
 	 * TODO:	guess this should be optimized regarding GL commands
 	 * skinned mesh is not supported when using GPU
-	 * @param transparent render faces
+	 * @param transparentRenderFaces transparent render faces
 	 */
 	void prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces);
 
@@ -86,33 +86,33 @@ private:
 
 	/** 
 	 * Renders multiple objects of same type(with same model)
-	 * @param objects of same type/ with same models
-	 * @param collect render faces
-	 * @param render types
+	 * @param objects objects of same type/ with same models
+	 * @param collectTransparentFaces collect render faces
+	 * @param renderTypes render types
 	 */
 	void renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/** 
 	 * Renders multiple objects of same type(with same model) not using instancing
-	 * @param objects of same type/ with same models
-	 * @param collect render faces
-	 * @param render types
+	 * @param objects objects of same type/ with same models
+	 * @param collectTransparentFaces collect render faces
+	 * @param renderTypes render types
 	 */
 	void renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/**
 	 * Renders multiple objects of same type(with same model) using instancing
-	 * @param objects of same type/ with same models
-	 * @param collect render faces
-	 * @param render types
+	 * @param objects objects of same type/ with same models
+	 * @param collectTransparentFaces collect render faces
+	 * @param renderTypes render types
 	 */
 	void renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/**
 	 * Checks if a material could change when having multiple objects but same model
-	 * @param object 3d group
-	 * @param faces entity idx
-	 * @param render types
+	 * @param object3DGroup object 3d group
+	 * @param facesEntityIdx faces entity idx
+	 * @param renderTypes render types
 	 */
 	inline bool checkMaterialChangable(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes) {
 		return object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE;
@@ -120,11 +120,11 @@ private:
 
 	/**
 	 * Set ups a material for rendering
-	 * @param object 3d group
-	 * @param faces entity idx
-	 * @param render types
-	 * @param update only, means material has been set up already, only do changes
-	 * @param material key
+	 * @param object3DGroup object 3d group
+	 * @param facesEntityIdx faces entity idx
+	 * @param renderTypes render types
+	 * @param updateOnly update only, means material has been set up already, only do changes
+	 * @param materialKey material key
 	 */
 	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey);
 
@@ -135,10 +135,10 @@ private:
 
 	/** 
 	 * Creates a particle system entity key
-	 * @param effect color add
-	 * @param effect color mul
-	 * @param depthBuffer
-	 * @param sort
+	 * @param effectColorAdd effect color add
+	 * @param effectColorMul effect color mul
+	 * @param depthBuffer depthBuffer
+	 * @param sort sort
 	 */
 	static const string createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, bool depthBuffer, bool sort);
 
@@ -177,22 +177,22 @@ public:
 
 	/**
 	 * Renders all given objects
-	 * @param objects
-	 * @param render transparent faces
-	 * @param render types
+	 * @param objects objects
+	 * @param renderTransparentFaces render transparent faces
+	 * @param renderTypes render types
 	 */
 	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/** 
 	 * Render batch VBO renderer points entities
-	 * @param points batch VBO renderer points
+	 * @param visiblePses points batch VBO renderer points
 	 */
 	void render(const vector<PointsParticleSystemEntity*>& visiblePses);
 
 	/**
 	 * Public constructor
-	 * @param engine
-	 * @param renderer
+	 * @param engine engine
+	 * @param renderer renderer
 	 */
 	Object3DVBORenderer(Engine* engine, GLRenderer* renderer);
 

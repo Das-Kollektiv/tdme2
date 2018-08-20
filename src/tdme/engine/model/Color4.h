@@ -27,24 +27,24 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param color
+	 * @param color color
 	 */
 	inline Color4(const Color4& color) : Color4Base(color) {
 	}
 
 	/**
 	 * Public constructor
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @param alpha
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
 	 */
 	inline Color4(float r, float g, float b, float a) : Color4Base(r,g,b,a) {
 	}
 
 	/**
 	 * Public constructor
-	 * @param color array
+	 * @param color color array
 	 */
 	inline Color4(const array<float, 4>& color) : Color4Base(color) {
 	}

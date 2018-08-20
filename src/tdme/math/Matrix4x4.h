@@ -28,22 +28,22 @@ private:
 public:
 	/** 
 	 * Set up matrix by values
-	 * @param row 0, column 0
-	 * @param row 1, column 0
-	 * @param row 2, column 0
-	 * @param row 3, column 0
-	 * @param row 0, column 1
-	 * @param row 1, column 1
-	 * @param row 2, column 1
-	 * @param row 3, column 1
-	 * @param row 0, column 2
-	 * @param row 1, column 2
-	 * @param row 2, column 2
-	 * @param row 3, column 2
-	 * @param row 0, column 3
-	 * @param row 1, column 3
-	 * @param row 2, column 3
-	 * @param row 3, column 3
+	 * @param r0c0 row 0, column 0
+	 * @param r1c0 row 1, column 0
+	 * @param r2c0 row 2, column 0
+	 * @param r3c0 row 3, column 0
+	 * @param r0c1 row 0, column 1
+	 * @param r1c1 row 1, column 1
+	 * @param r2c1 row 2, column 1
+	 * @param r3c1 row 3, column 1
+	 * @param r0c2 row 0, column 2
+	 * @param r1c2 row 1, column 2
+	 * @param r2c2 row 2, column 2
+	 * @param r3c2 row 3, column 2
+	 * @param r0c3 row 0, column 3
+	 * @param r1c3 row 1, column 3
+	 * @param r2c3 row 2, column 3
+	 * @param r3c3 row 3, column 3
 	 * @return this matrix
 	 */
 	inline Matrix4x4& set(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3) {
@@ -68,7 +68,7 @@ public:
 
 	/** 
 	 * Sets up this matrix by matrix m
-	 * @param m
+	 * @param m m
 	 * @return this matrix
 	 */
 	inline Matrix4x4& set(const array<float, 16>& m) {
@@ -78,7 +78,7 @@ public:
 
 	/** 
 	 * Sets up this matrix by matrix m
-	 * @param m
+	 * @param m m
 	 * @return
 	 */
 	inline Matrix4x4& set(const Matrix4x4& m) {
@@ -88,7 +88,7 @@ public:
 
 	/**
 	 * Array access operator
-	 * @param index
+	 * @param i index
 	 * @return vector3 component
 	 */
     inline float& operator[](int i) {
@@ -97,7 +97,7 @@ public:
 
 	/**
 	 * Const array access operator
-	 * @param index
+	 * @param i index
 	 * @return vector3 component
 	 */
     inline const float& operator[](int i) const {
@@ -106,9 +106,9 @@ public:
 
 	/**
 	 * Get coordinate system axes
-	 * @param x axis
-	 * @param y axis
-	 * @param z axis
+	 * @param xAxis x axis
+	 * @param yAxis y axis
+	 * @param zAxis z axis
 	 * @return this matrix
 	 */
 	inline void getAxes(Vector3& xAxis, Vector3& yAxis, Vector3& zAxis) const {
@@ -119,9 +119,9 @@ public:
 
 	/** 
 	 * Set coordinate system axes
-	 * @param x axis
-	 * @param y axis
-	 * @param z axis
+	 * @param xAxis x axis
+	 * @param yAxis y axis
+	 * @param zAxis z axis
 	 * @return this matrix
 	 */
 	inline Matrix4x4& setAxes(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis) {
@@ -142,7 +142,7 @@ public:
 
 	/** 
 	 * Get translation
-	 * @param translation
+	 * @param translation translation
 	 * @return this matrix
 	 */
 	inline void getTranslation(Vector3& translation) const {
@@ -151,7 +151,7 @@ public:
 
 	/** 
 	 * Set translation
-	 * @param translation
+	 * @param translation translation
 	 * @return this matrix
 	 */
 	inline Matrix4x4& setTranslation(const Vector3& translation) {
@@ -163,7 +163,7 @@ public:
 
 	/** 
 	 * Get scale
-	 * @param scale
+	 * @param scale scale
 	 * @return this matrix
 	 */
 	inline void getScale(Vector3& scale) const {
@@ -181,7 +181,7 @@ public:
 
 	/** 
 	 * Get scale
-	 * @param scale
+	 * @param scale scale
 	 * @return this matrix
 	 */
 	inline Matrix4x4& setScale(const Vector3& scale) {
@@ -236,8 +236,8 @@ public:
 
 	/** 
 	 * Multiplies a vector3 with this matrix into destination vector
-	 * @param vector 3
-	 * @param destination vector 3
+	 * @param v vector 3
+	 * @param dest destination vector 3
 	 * @return vector 3
 	 */
 	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
@@ -250,8 +250,8 @@ public:
 
 	/** 
 	 * Multiplies a vector3 with this matrix ignoring translation
-	 * @param vector 3
-	 * @param destination vector 3
+	 * @param v vector 3
+	 * @param dest destination vector 3
 	 * @return vector 3 dest
 	 */
 	inline Vector3& multiplyNoTranslation(const Vector3& v, Vector3& dest) const {
@@ -264,8 +264,8 @@ public:
 
 	/** 
 	 * Multiplies a vector4 with this matrix into destination vector
-	 * @param vector 4
-	 * @param destination vector4
+	 * @param v vector 4
+	 * @param dest destination vector4
 	 * @return destination vector 4
 	 */
 	inline Vector4& multiply(const Vector4& v, Vector4& dest) const {
@@ -280,7 +280,7 @@ public:
 
 	/** 
 	 * Multiplies this matrix with another matrix
-	 * @param m
+	 * @param m m
 	 * @return this matrix
 	 */
 	inline Matrix4x4& multiply(const Matrix4x4& m) {
@@ -307,7 +307,7 @@ public:
 
 	/** 
 	 * Scales this matrix
-	 * @param s
+	 * @param s s
 	 * @returns this matrix
 	 */
 	inline Matrix4x4& scale(float s) {
@@ -328,7 +328,7 @@ public:
 
 	/** 
 	 * Scales this matrix by given vector
-	 * @param v
+	 * @param v v
 	 * @return this matrix
 	 */
 	inline Matrix4x4& scale(const Vector3& v) {
@@ -349,7 +349,7 @@ public:
 
 	/** 
 	 * Sets up a translation matrix
-	 * @param v
+	 * @param v v
 	 * @return this matrix
 	 */
 	inline Matrix4x4& translate(const Vector3& v) {
@@ -361,8 +361,8 @@ public:
 
 	/** 
 	 * Creates a rotation matrix
-	 * @param angle
-	 * @param vector v
+	 * @param angle angle
+	 * @param v vector v
 	 * @return this matrix
 	 */
 	inline Matrix4x4& rotate(float angle, const Vector3& v) {
@@ -478,7 +478,7 @@ public:
 
 	/** 
 	 * Returns if this matrix equals m
-	 * @param m
+	 * @param m m
 	 * @return equals
 	 */
 	inline bool equals(const Matrix4x4& m) const {
@@ -523,10 +523,10 @@ public:
 
 	/** 
 	 * Interpolates between matrix 1 and matrix 2 by 0f<=t<=1f linearly 
-	 * @param matrix 1
-	 * @param matrix 2
-	 * @param t
-	 * @param destination matrix
+	 * @param m1 matrix 1
+	 * @param m2 matrix 2
+	 * @param t t
+	 * @param dest destination matrix
 	 * @return interpolated matrix
 	 */
 	inline static Matrix4x4& interpolateLinear(const Matrix4x4& m1, const Matrix4x4& m2, float t, Matrix4x4& dest) {
@@ -552,7 +552,7 @@ public:
 
 	/**
 	 * Compute Euler angles (rotation around x, y, z axes)
-	 * @param euler
+	 * @param euler euler
 	 */
 	inline void computeEulerAngles(Vector3& euler) const {
 		/*
@@ -601,7 +601,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param matrix as float values
+	 * @param m matrix as float values
 	 */
 	inline Matrix4x4(const array<float, 16>& m) {
 		data = m;
@@ -609,7 +609,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param matrix
+	 * @param matrix matrix
 	 */
 	inline Matrix4x4(const Matrix4x4& matrix) {
 		data = matrix.data;
@@ -617,22 +617,22 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param r0c0
-	 * @param r1c0
-	 * @param r2c0
-	 * @param r3c0
-	 * @param r0c1
-	 * @param r1c1
-	 * @param r2c1
-	 * @param r3c1
-	 * @param r0c2
-	 * @param r1c2
-	 * @param r2c2
-	 * @param r3c2
-	 * @param r0c3
-	 * @param r1c3
-	 * @param r2c3
-	 * @param r3c3
+	 * @param r0c0 r0c0
+	 * @param r1c0 r1c0
+	 * @param r2c0 r2c0
+	 * @param r3c0 r3c0
+	 * @param r0c1 r0c1
+	 * @param r1c1 r1c1
+	 * @param r2c1 r2c1
+	 * @param r3c1 r3c1
+	 * @param r0c2 r0c2
+	 * @param r1c2 r1c2
+	 * @param r2c2 r2c2
+	 * @param r3c2 r3c2
+	 * @param r0c3 r0c3
+	 * @param r1c3 r1c3
+	 * @param r2c3 r2c3
+	 * @param r3c3 r3c3
 	 */
 	inline Matrix4x4(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3) {
 		set(r0c0, r1c0, r2c0, r3c0, r0c1, r1c1, r2c1, r3c1, r0c2, r1c2, r2c2, r3c2, r0c3, r1c3, r2c3, r3c3);

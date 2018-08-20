@@ -31,15 +31,15 @@ private:
 
 	/** 
 	 * Copy file
-	 * @param source
-	 * @param dest
+	 * @param source source
+	 * @param dest dest
 	 * @throws file system exception
 	 */
 	static void copyFile(const string& source, const string& dest) throw (FileSystemException);
 
 	/**
 	 * Export LOD level to JSON
-	 * @param lod level
+	 * @param lodLevel lod level
 	 * @return json root
 	 */
 	static tdme::ext::jsonbox::Object exportLODLevelToJSON(LevelEditorEntityLODLevel* lodLevel);
@@ -47,9 +47,9 @@ public:
 
 	/** 
 	 * Exports a level to a TDME level file
-	 * @param path name
-	 * @param file name
-	 * @param entity
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param entity entity
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception
@@ -58,7 +58,7 @@ public:
 
 	/** 
 	 * Export model meta data file to JSON node
-	 * @param entity
+	 * @param entity entity
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception

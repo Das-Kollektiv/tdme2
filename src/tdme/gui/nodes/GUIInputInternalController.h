@@ -93,7 +93,7 @@ public:
 private:
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIInputInternalController(GUINode* node);
 

@@ -84,7 +84,7 @@ public:
 
 	/** 
 	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing
+	 * @param dynamicShadowing dynamicShadowing
 	 */
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
 
@@ -105,11 +105,11 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param do collision tests
-	 * @param emitter
-	 * @param max points
-	 * @param auto emit
+	 * @param id id
+	 * @param doCollisionTests do collision tests
+	 * @param emitter emitter
+	 * @param maxPoints max points
+	 * @param autoEmit auto emit
 	 */
 	PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
 

@@ -27,14 +27,14 @@ private:
 
 	/** 
 	 * Adds a audio buffer to manager / open al stack
-	 * @param id
+	 * @param id id
 	 * @return audio buffer managed
 	 */
 	AudioBufferManager_AudioBufferManaged* addAudioBuffer(const string& id);
 
 	/** 
 	 * Removes a texture from manager / open gl stack
-	 * @param id
+	 * @param id id
 	 * @return true if caller has to remove the audio buffer from open AL
 	 */
 	bool removeAudioBuffer(const string& id);

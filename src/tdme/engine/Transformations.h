@@ -43,7 +43,7 @@ public:
 
 	/** 
 	 * Set translation
-	 * @param translation
+	 * @param translation translation
 	 */
 	inline virtual void setTranslation(const Vector3& translation) {
 		this->translation.set(translation);
@@ -58,7 +58,7 @@ public:
 
 	/** 
 	 * Set scale
-	 * @param scale
+	 * @param scale scale
 	 */
 	inline virtual void setScale(const Vector3& scale) {
 		this->scale.set(scale);
@@ -73,7 +73,7 @@ public:
 
 	/**
 	 * Set pivot
-	 * @param pivot
+	 * @param pivot pivot
 	 */
 	inline virtual void setPivot(const Vector3& pivot) {
 		this->pivot.set(pivot);
@@ -88,7 +88,7 @@ public:
 
 	/**
 	 * Get rotation at given index
-	 * @param rotation index
+	 * @param idx rotation index
 	 * @return rotation
 	 */
 	inline virtual Rotation& getRotation(const int idx) {
@@ -97,8 +97,8 @@ public:
 
 	/**
 	 * Add rotation
-	 * @param axis
-	 * @param angle
+	 * @param axis axis
+	 * @param angle angle
 	 */
 	inline virtual void addRotation(const Vector3& axis, const float angle) {
 		rotations.push_back(Rotation(angle, axis));
@@ -106,14 +106,14 @@ public:
 
 	/**
 	 * Remove rotation
-	 * @param index
+	 * @param idx index
 	 */
 	inline virtual void removeRotation(const int idx) {
 		rotations.erase(rotations.begin() + idx);
 	}
 
 	/** 
-	 * @param rotation index
+	 * @param idx rotation index
 	 * @return rotation axis for rotation with given index
 	 */
 	inline virtual const Vector3& getRotationAxis(const int idx) const {
@@ -122,15 +122,15 @@ public:
 
 	/** 
 	 * Set rotation axis
-	 * @param rotation index
-	 * @param rotation axis
+	 * @param idx rotation index
+	 * @param axis rotation axis
 	 */
 	inline virtual void setRotationAxis(const int idx, const Vector3& axis) {
 		return rotations[idx].setAxis(axis);
 	}
 
 	/**
-	 * @param rotation index
+	 * @param idx rotation index
 	 * @return rotation angle for rotation with given index
 	 */
 	inline virtual const float getRotationAngle(const int idx) const {
@@ -138,8 +138,8 @@ public:
 	}
 
 	/**
-	 * @param rotation index
-	 * @param rotation angle
+	 * @param idx rotation index
+	 * @param angle rotation angle
 	 * @return rotation angle for rotation with given index
 	 */
 	inline virtual void setRotationAngle(const int idx, const float angle) {
@@ -162,14 +162,14 @@ public:
 
 	/** 
 	 * Set up this transformations from given transformations
-	 * @param transformations
+	 * @param transformations transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations);
 
 	/** 
 	 * Set up this transformations from given matrix and rotation order
-	 * @param matrix
-	 * @param rotation order
+	 * @param matrix matrix
+	 * @param rotationOrder rotation order
 	 */
 	virtual void fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder);
 

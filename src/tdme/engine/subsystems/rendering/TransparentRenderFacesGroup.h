@@ -58,35 +58,35 @@ private:
 
 	/** 
 	 * Set transparent render faces group
-	 * @param object3D VBO renderer
-	 * @param model
-	 * @param object 3D group
-	 * @param faces entity idx
-	 * @param effect color add
-	 * @param effect color mul
-	 * @param material
-	 * @param texture coordinates
+	 * @param object3DVBORenderer object3D VBO renderer
+	 * @param model model
+	 * @param object3DGroup object 3D group
+	 * @param facesEntityIdx faces entity idx
+	 * @param effectColorAdd effect color add
+	 * @param effectColorMul effect color mul
+	 * @param material material
+	 * @param textureCoordinates texture coordinates
 	 */
 	void set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates);
 
 	/** 
 	 * Creates a key for given transparent render faces group attributes
-	 * @param model
-	 * @param object 3D group
-	 * @param faces entity idx
-	 * @param effect color add
-	 * @param effect color mul
-	 * @param material
-	 * @param texture coordinates
+	 * @param model model
+	 * @param object3DGroup object 3D group
+	 * @param facesEntityIdx faces entity idx
+	 * @param effectColorAdd effect color add
+	 * @param effectColorMul effect color mul
+	 * @param material material
+	 * @param textureCoordinates texture coordinates
 	 * @return
 	 */
 	static const string createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates);
 
 	/** 
 	 * Adds a vertex to this transparent render faces group
-	 * @param vertex
-	 * @param normal
-	 * @param texture coordinate
+	 * @param vertex vertex
+	 * @param normal normal
+	 * @param textureCoordinate texture coordinate
 	 */
 	inline void addVertex(const Vector3& vertex, const Vector3& normal, const Vector2& textureCoordinate) {
 		// check if we have a batch renderer already?
@@ -117,7 +117,7 @@ private:
 
 	/**
 	 * Render this transparent render faces group
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void render(GLRenderer* renderer);
 

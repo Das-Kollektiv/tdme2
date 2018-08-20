@@ -31,14 +31,14 @@ public:
 
 	/** 
 	 * Adds a VBO to manager
-	 * @param VBO id
-	 * @param VBOs to allocate
+	 * @param vboId VBO id
+	 * @param ids VBOs to allocate
 	 */
 	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids);
 
 	/** 
 	 * Removes a VBO from manager
-	 * @param VBO id
+	 * @param vboId VBO id
 	 */
 	void removeVBO(const string& vboId);
 

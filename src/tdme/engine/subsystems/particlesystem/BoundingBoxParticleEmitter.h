@@ -72,16 +72,16 @@ public:
 
 	/** 
 	 * Public constructor
-	 * @param particles to emit in one second
-	 * @param life time in milli seconds
-	 * @param life time rnd in milli seconds
-	 * @param mass in kg
-	 * @param mass rnd in kg
-	 * @param oriented bounding box
-	 * @param velocity in meter / seconds
-	 * @param velocity rnd in meter / seconds
-	 * @param color start
-	 * @param color end 
+	 * @param count particles to emit in one second
+	 * @param lifeTime life time in milli seconds
+	 * @param lifeTimeRnd life time rnd in milli seconds
+	 * @param mass mass in kg
+	 * @param massRnd mass rnd in kg
+	 * @param obb oriented bounding box
+	 * @param velocity velocity in meter / seconds
+	 * @param velocityRnd velocity rnd in meter / seconds
+	 * @param colorStart color start
+	 * @param colorEnd color end 
 	 */
 	BoundingBoxParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, float mass, float massRnd, OrientedBoundingBox* obb, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
 

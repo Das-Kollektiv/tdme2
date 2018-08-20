@@ -38,7 +38,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 
 	/** 
 	 * Enable/disable rendering
-	 * @param enabled
+	 * @param enabled enabled
 	 */
 	virtual void setEnabled(bool enabled) = 0;
 
@@ -49,7 +49,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 
 	/** 
 	 * Set this object pickable
-	 * @param pickable
+	 * @param pickable pickable
 	 */
 	virtual void setPickable(bool pickable) = 0;
 
@@ -60,7 +60,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 
 	/** 
 	 * Set auto emit
-	 * @param auto emit
+	 * @param autoEmit auto emit
 	 */
 	virtual void setAutoEmit(bool autoEmit) = 0;
 
@@ -72,7 +72,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 
 	/** 
 	 * Set the effect color that will be multiplied with fragment color
-	 * @param effect color
+	 * @param effectColorMul effect color
 	 */
 	virtual void setEffectColorMul(const Color4& effectColorMul) = 0;
 
@@ -84,7 +84,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 
 	/**
 	 * Set the effect color that will be added to fragment color
-	 * @param effect color
+	 * @param effectColorAdd effect color
 	 */
 	virtual void setEffectColorAdd(const Color4& effectColorAdd) = 0;
 
@@ -105,7 +105,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 
 	/** 
 	 * Set up this transformations from given transformations
-	 * @param transformations
+	 * @param transformations transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations) = 0;
 

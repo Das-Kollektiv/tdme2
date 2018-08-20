@@ -54,7 +54,7 @@ public:
 
 	/** 
 	 * Set up oriented bounding box from oriented bounding box
-	 * @param bb
+	 * @param scale bb
 	 */
 
 	// overrides
@@ -73,19 +73,19 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param center
-	 * @param axis0
-	 * @param axis1
-	 * @param axis2
-	 * @param half extension
-	 * @param scale
+	 * @param center center
+	 * @param axis0 axis0
+	 * @param axis1 axis1
+	 * @param axis2 axis2
+	 * @param halfExtension half extension
+	 * @param scale scale
 	 */
 	OrientedBoundingBox(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Public constructor
-	 * @param bounding box
-	 * @param scale
+	 * @param bb bounding box
+	 * @param scale scale
 	 */
 	OrientedBoundingBox(BoundingBox* bb, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 

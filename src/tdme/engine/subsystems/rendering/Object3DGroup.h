@@ -68,36 +68,36 @@ private:
 
 	/** 
 	 * Creates object 3d groups from given object3d base object
-	 * @param object 3d base
-	 * @param use mesh manager
-	 * @param animation processing target
-	 * @param object 3d groups array
+	 * @param object object 3d base
+	 * @param useMeshManager use mesh manager
+	 * @param animationProcessingTarget animation processing target
+	 * @param object3DGroups object 3d groups array
 	 * @return object 3d group
 	 */
 	static void createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 
 	/** 
 	 * Applies transformations to meshes for given object 3d groups
-	 * @param group render data list
+	 * @param object3DGroups group render data list
 	 */
 	static void computeTransformations(vector<Object3DGroup*>* object3DGroups);
 
 	/** 
 	 * Set up textures for given object3d group and faces entity
-	 * @param renderer
-	 * @param object 3D group
-	 * @param faces entity idx
+	 * @param renderer renderer
+	 * @param object3DGroup object 3D group
+	 * @param facesEntityIdx faces entity idx
 	 */
 	static void setupTextures(GLRenderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx);
 
 	/**
 	 * Creates a object 3d groups recursively for given group and it sub groups
-	 * @param object 3D base
-	 * @param groups
-	 * @param animated
-	 * @param use mesh manager
-	 * @param animation processing target
-	 * @param object 3D groups
+	 * @param object3D object 3D base
+	 * @param groups groups
+	 * @param animated animated
+	 * @param useMeshManager use mesh manager
+	 * @param animationProcessingTarget animation processing target
+	 * @param object3DGroups object 3D groups
 	 */
 	static void createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
 

@@ -31,16 +31,16 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param vertex 0
-	 * @param vertex 1
-	 * @param vertex 2
+	 * @param vertex0 vertex 0
+	 * @param vertex1 vertex 1
+	 * @param vertex2 vertex 2
 	 */
 	Triangle(const Vector3& vertex0, const Vector3& vertex1, const Vector3& vertex2);
 
 	/**
 	 * Compute closest point on bounding volume
-	 * @param point
-	 * @param closest point
+	 * @param point point
+	 * @param closestPoint closest point
 	 */
 	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const;
 

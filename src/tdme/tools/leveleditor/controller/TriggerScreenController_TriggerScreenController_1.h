@@ -19,8 +19,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param trigger screen controller
-	 * @param final view
+	 * @param triggerScreenController trigger screen controller
+	 * @param finalView final view
 	 */
 	TriggerScreenController_TriggerScreenController_1(TriggerScreenController* triggerScreenController, TriggerView* finalView);
 

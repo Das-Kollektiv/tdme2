@@ -22,9 +22,9 @@ public:
 
 	/**
 	 * Clamps a int value to min or max value
-	 * @param value
-	 * @param min value
-	 * @param max value
+	 * @param value value
+	 * @param min min value
+	 * @param max max value
 	 * @return clamped value
 	 */
 	inline static int clamp(int value, int min, int max) {
@@ -35,9 +35,9 @@ public:
 
 	/**
 	 * Clamps a float value to min or max value
-	 * @param value
-	 * @param min value
-	 * @param max value
+	 * @param value value
+	 * @param min min value
+	 * @param max max value
 	 * @return clamped value
 	 */
 	inline static float clamp(float value, float min, float max) {
@@ -48,7 +48,7 @@ public:
 
 	/**
 	 * Returns sign of value
-	 * @param value
+	 * @param value value
 	 * @return -1 if value is negative or +1 if positive
 	 */
 	inline static float sign(float value) {
@@ -57,7 +57,7 @@ public:
 
 	/**
 	 * Do the square product
-	 * @param value
+	 * @param value value
 	 * @return
 	 */
 	inline static float square(float value) {
@@ -66,7 +66,7 @@ public:
 
 	/**
 	 * Returns absolute value
-	 * @param value
+	 * @param value value
 	 * @return absolute value
 	 */
 	inline static int32_t abs(int32_t value) {
@@ -75,7 +75,7 @@ public:
 
 	/**
 	 * Returns absolute value
-	 * @param value
+	 * @param value value
 	 * @return absolute value
 	 */
 	inline static float abs(float value) {
@@ -84,7 +84,7 @@ public:
 
 	/**
 	 * Returns the arc cosine of a value
-	 * @param value
+	 * @param value value
 	 * @return arc cosine
 	 */
 	inline static float acos(float value) {
@@ -93,7 +93,7 @@ public:
 
 	/**
 	 * Returns the arc sine of a value
-	 * @param value
+	 * @param value value
 	 * @return arc sine
 	 */
 	inline static float asin(float value) {
@@ -102,7 +102,7 @@ public:
 
 	/**
 	 * Returns the arc tangent of a value
-	 * @param value
+	 * @param value value
 	 * @return arc tangent
 	 */
 	inline static float atan(float value) {
@@ -111,8 +111,8 @@ public:
 
 	/**
 	 * Returns the angle from the conversion of rectangular coordinates to polar coordinates.
-	 * @param y
-	 * @param x
+	 * @param y y
+	 * @param x x
 	 * @return angle
 	 *
 	 */
@@ -122,7 +122,7 @@ public:
 
 	/**
 	 * Returns the higher integer value of given value
-	 * @param value
+	 * @param value value
 	 * @return higher integer
 	 */
 	inline static float ceil(float value) {
@@ -131,7 +131,7 @@ public:
 
 	/**
 	 * Returns the cosine of an angle
-	 * @param value
+	 * @param value value
 	 * @return cosine
 	 */
 	inline static float cos(float value) {
@@ -140,7 +140,7 @@ public:
 
 	/**
 	 * Returns the lower integer value of given value
-	 * @param value
+	 * @param value value
 	 * @return lower integer
 	 */
 	inline static float floor(float value) {
@@ -149,8 +149,8 @@ public:
 
 	/**
 	 * Returns the higher value of given values
-	 * @param value 1
-	 * @param value 2
+	 * @param value1 value 1
+	 * @param value2 value 2
 	 * @return higher value
 	 */
 	inline static int32_t max(int32_t value1, int32_t value2) {
@@ -159,8 +159,8 @@ public:
 
 	/**
 	 * Returns the higher value of given values
-	 * @param value 1
-	 * @param value 2
+	 * @param value1 value 1
+	 * @param value2 value 2
 	 * @return higher value
 	 */
 	inline static float max(float value1, float value2) {
@@ -169,8 +169,8 @@ public:
 
 	/**
 	 * Returns the lesser value of given values
-	 * @param value 1
-	 * @param value 2
+	 * @param value1 value 1
+	 * @param value2 value 2
 	 * @return lesser value
 	 */
 	inline static int32_t min(int32_t value1, int32_t value2) {
@@ -179,8 +179,8 @@ public:
 
 	/**
 	 * Returns the lesser value of given values
-	 * @param value 1
-	 * @param value 2
+	 * @param value1 value 1
+	 * @param value2 value 2
 	 * @return lesser value
 	 */
 	inline static float min(float value1, float value2) {
@@ -189,8 +189,8 @@ public:
 
 	/**
 	 * Returns the value of the value 1 raised to the power of value2
-	 * @param value 1
-	 * @param value 2
+	 * @param value1 value 1
+	 * @param value2 value 2
 	 * @return pow
 	 */
 	inline static double pow(double value1, double value2) {
@@ -207,7 +207,7 @@ public:
 
 	/**
 	 * Returns the sine of an angle
-	 * @param value
+	 * @param value value
 	 * @return sine
 	 */
 	inline static float sin(float value) {
@@ -216,7 +216,7 @@ public:
 
 	/**
 	 * Returns the square of given value
-	 * @param value
+	 * @param value value
 	 * @return squaere
 	 */
 	inline static float sqrt(float value) {
@@ -225,7 +225,7 @@ public:
 
 	/**
 	 * Returns the tangent of an angle
-	 * @param value
+	 * @param value value
 	 * @return tangent
 	 */
 	inline static float tan(float value) {

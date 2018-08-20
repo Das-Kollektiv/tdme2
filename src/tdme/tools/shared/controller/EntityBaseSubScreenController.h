@@ -54,14 +54,14 @@ public:
 
 	/** 
 	 * Init
-	 * @param screen node
+	 * @param screenNode screen node
 	 */
 	virtual void initialize(GUIScreenNode* screenNode);
 
 	/** 
 	 * Set up general entity data
-	 * @param name
-	 * @param description
+	 * @param name name
+	 * @param description description
 	 */
 	virtual void setEntityData(const string& name, const string& description);
 
@@ -72,21 +72,21 @@ public:
 
 	/** 
 	 * On entity data apply
-	 * @param model
+	 * @param model model
 	 */
 	virtual void onEntityDataApply(LevelEditorEntity* model);
 
 	/** 
 	 * Set up entity property preset ids
-	 * @param entity property preset ids
+	 * @param entityPresetIds entity property preset ids
 	 */
 	virtual void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>* entityPresetIds);
 
 	/** 
 	 * Set up entity properties
-	 * @param entity
-	 * @param preset id
-	 * @param selected name
+	 * @param entity entity
+	 * @param presetId preset id
+	 * @param selectedName selected name
 	 */
 	virtual void setEntityProperties(LevelEditorEntity* entity, const string& presetId, const string& selectedName);
 
@@ -97,19 +97,19 @@ public:
 
 	/** 
 	 * On entity property save
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onEntityPropertySave(LevelEditorEntity* entity);
 
 	/** 
 	 * On entity property add
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onEntityPropertyAdd(LevelEditorEntity* entity);
 
 	/** 
 	 * On entity property remove
-	 * @param entity
+	 * @param entity entity
 	 */
 	virtual void onEntityPropertyRemove(LevelEditorEntity* entity);
 
@@ -120,7 +120,7 @@ public:
 
 	/** 
 	 * On entity property preset apply
-	 * @param model 
+	 * @param model model 
 	 */
 	virtual void onEntityPropertyPresetApply(LevelEditorEntity* model);
 
@@ -132,23 +132,23 @@ public:
 
 	/** 
 	 * On value changed
-	 * @param node
-	 * @param model
+	 * @param node node
+	 * @param model model
 	 */
 	virtual void onValueChanged(GUIElementNode* node, LevelEditorEntity* model);
 
 	/** 
 	 * On action performed
-	 * @param type
-	 * @param node
-	 * @param entity
+	 * @param type type
+	 * @param node node
+	 * @param entity entity
 	 */
 	virtual void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node, LevelEditorEntity* entity);
 
 	/**
 	 * Public constructor
-	 * @param view
-	 * @param on set entity data action
+	 * @param popUps view
+	 * @param onSetEntityDataAction on set entity data action
 	 */
 	EntityBaseSubScreenController(PopUps* popUps, Action* onSetEntityDataAction);
 

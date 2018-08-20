@@ -53,7 +53,7 @@ private:
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIDropDownOptionController(GUINode* node);
 

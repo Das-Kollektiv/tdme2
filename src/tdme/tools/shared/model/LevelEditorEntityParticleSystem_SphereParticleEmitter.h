@@ -59,7 +59,7 @@ public:
 
 	/** 
 	 * Set count
-	 * @param count
+	 * @param count count
 	 */
 	virtual void setCount(int32_t count);
 
@@ -70,7 +70,7 @@ public:
 
 	/** 
 	 * Set life time
-	 * @param life time
+	 * @param lifeTime life time
 	 */
 	virtual void setLifeTime(int64_t lifeTime);
 
@@ -81,7 +81,7 @@ public:
 
 	/** 
 	 * Set life time rnd
-	 * @param life time rnd
+	 * @param lifeTimeRnd life time rnd
 	 */
 	virtual void setLifeTimeRnd(int64_t lifeTimeRnd);
 
@@ -92,7 +92,7 @@ public:
 
 	/** 
 	 * Set mass
-	 * @param mass
+	 * @param mass mass
 	 */
 	virtual void setMass(float mass);
 
@@ -103,7 +103,7 @@ public:
 
 	/** 
 	 * Set mass rnd
-	 * @param mass rnd
+	 * @param massRnd mass rnd
 	 */
 	virtual void setMassRnd(float massRnd);
 
@@ -139,7 +139,7 @@ public:
 
 	/** 
 	 * Set radius
-	 * @param radius
+	 * @param radius radius
 	 */
 	virtual void setRadius(float radius);
 

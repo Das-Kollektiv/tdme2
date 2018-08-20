@@ -34,7 +34,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param pop ups
+	 * @param popUps pop ups
 	 */
 	ParticleSystemView(PopUps* popUps);
 };

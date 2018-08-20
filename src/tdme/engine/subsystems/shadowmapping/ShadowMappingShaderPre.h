@@ -51,38 +51,38 @@ public:
 
 	/** 
 	 * Set up pre program mvp matrix
-	 * @param mvp matrix
+	 * @param mvpMatrix mvp matrix
 	 */
 	void updateMatrices(const Matrix4x4& mvpMatrix);
 
 	/**
 	 * Set up pre program texture matrix
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
 	 * Update material
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateMaterial(GLRenderer* renderer);
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/**
 	 * Set shader
-	 * @param shader id
+	 * @param id shader id
 	 */
 	void setShader(const string& id);
 
 	/**
 	 * Constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	ShadowMappingShaderPre(GLRenderer* renderer);
 

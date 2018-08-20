@@ -44,7 +44,7 @@ private:
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIScrollAreaVerticalController(GUINode* node);
 

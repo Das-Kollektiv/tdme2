@@ -32,11 +32,11 @@ private:
 public:
 	/**
 	 * Public constructor
-	 * @param file name
-	 * @param model
-	 * @param min distance
-	 * @param type
-	 * @param plane rotation y
+	 * @param type file name
+	 * @param fileName model
+	 * @param model min distance
+	 * @param minDistance type
+	 * @param planeRotationY plane rotation y
 	 */
 	LevelEditorEntityLODLevel(
 		LODObject3D::LODLevelType type,
@@ -58,7 +58,7 @@ public:
 
 	/**
 	 * Set type
-	 * @param type
+	 * @param type type
 	 */
 	void setType(LODObject3D::LODLevelType type);
 
@@ -69,7 +69,7 @@ public:
 
 	/**
 	 * Set file name
-	 * @param file name
+	 * @param fileName file name
 	 */
 	void setFileName(const string& fileName);
 
@@ -80,7 +80,7 @@ public:
 
 	/**
 	 * Set model
-	 * @param model
+	 * @param model model
 	 */
 	void setModel(Model* model);
 
@@ -91,7 +91,7 @@ public:
 
 	/**
 	 * Set min distance
-	 * @param min distance
+	 * @param minDistance min distance
 	 */
 	void setMinDistance(float minDistance);
 
@@ -102,7 +102,7 @@ public:
 
 	/**
 	 * Set plane rotation y
-	 * @param plane rotation y
+	 * @param planeRotationY plane rotation y
 	 */
 	void setPlaneRotationY(float planeRotationY);
 
@@ -113,7 +113,7 @@ public:
 
 	/**
 	 * Set color add
-	 * @param color add
+	 * @param colorAdd color add
 	 */
 	void setColorAdd(const Color4& colorAdd);
 
@@ -124,7 +124,7 @@ public:
 
 	/**
 	 * Set color mul
-	 * @param color mul
+	 * @param colorMul color mul
 	 */
 	void setColorMul(const Color4& colorMul);
 

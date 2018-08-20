@@ -83,48 +83,48 @@ private:
 
 	/**
 	 * Fire on collision
-	 * @param other
-	 * @param collision response
+	 * @param other other
+	 * @param collisionResponse collision response
 	 */
 	void fireOnCollision(Body* other, CollisionResponse* collisionResponse);
 
 	/**
 	 * Fire on collision begin
-	 * @param other
-	 * @param collision response
+	 * @param other other
+	 * @param collisionResponse collision response
 	 */
 	void fireOnCollisionBegin(Body* other, CollisionResponse* collisionResponse);
 
 	/**
 	 * Fire on collision end
-	 * @param other
+	 * @param other other
 	 */
 	void fireOnCollisionEnd(Body* other);
 
 	/**
 	 * Computes the inverse inertia matrix
-	 * @param bounding box
-	 * @param mass
-	 * @param scale x axis
-	 * @param scale y axis
-	 * @param scale z axis
+	 * @param boundingBox bounding box
+	 * @param mass mass
+	 * @param scaleXAxis scale x axis
+	 * @param scaleYAxis scale y axis
+	 * @param scaleZAxis scale z axis
 	 * @return inverse inertia matrix
 	 */
 	static Matrix4x4 computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 	/**
 	 * Protected constructor
-	 * @param world
-	 * @param id
-	 * @param type
-	 * @param enabled
-	 * @param collision type id
-	 * @param transformations
-	 * @param restitution
-	 * @param friction
-	 * @param mass in kg
-	 * @param inertia tensor vector
-	 * @param bounding volumes
+	 * @param world world
+	 * @param id id
+	 * @param type type
+	 * @param enabled enabled
+	 * @param collisionTypeId collision type id
+	 * @param transformations transformations
+	 * @param restitution restitution
+	 * @param friction friction
+	 * @param mass mass in kg
+	 * @param inertiaTensor inertia tensor vector
+	 * @param boundingVolumes bounding volumes
 	 */
 	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
 
@@ -141,7 +141,7 @@ public:
 
 	/**
 	 * Set cloned
-	 * @param cloned
+	 * @param cloned cloned
 	 */
 	void setCloned(bool cloned);
 
@@ -157,7 +157,7 @@ public:
 
 	/**
 	 * Set root id
-	 * @param root id
+	 * @param rootId root id
 	 */
 	void setRootId(const string& rootId);
 
@@ -174,7 +174,7 @@ public:
 
 	/**
 	 * Set collision type id
-	 * @param type id
+	 * @param typeId type id
 	 */
 	void setCollisionTypeId(uint16_t typeId);
 
@@ -185,7 +185,7 @@ public:
 
 	/** 
 	 * Set up collision type ids
-	 * @param collisionTypeIds
+	 * @param collisionTypeIds collisionTypeIds
 	 */
 	void setCollisionTypeIds(uint16_t collisionTypeIds);
 
@@ -196,7 +196,7 @@ public:
 
 	/** 
 	 * Set up if rigid body is enabled
-	 * @param enabled
+	 * @param enabled enabled
 	 */
 	void setEnabled(bool enabled);
 
@@ -212,7 +212,7 @@ public:
 
 	/**
 	 * Set sleeping
-	 * @param sleeping
+	 * @param sleeping sleeping
 	 */
 	void setSleeping(bool sleeping);
 
@@ -223,7 +223,7 @@ public:
 
 	/**
 	 * Add bounding volume
-	 * @param bounding volume
+	 * @param boundingVolume bounding volume
 	 */
 	void addBoundingVolume(BoundingVolume* boundingVolume);
 
@@ -239,7 +239,7 @@ public:
 
 	/** 
 	 * Set up friction
-	 * @param friction
+	 * @param friction friction
 	 */
 	void setFriction(float friction);
 
@@ -250,7 +250,7 @@ public:
 
 	/** 
 	 * Set up restitution
-	 * @param restitution
+	 * @param restitution restitution
 	 */
 	void setRestitution(float restitution);
 
@@ -261,7 +261,7 @@ public:
 
 	/** 
 	 * Set up mass
-	 * @param mass
+	 * @param mass mass
 	 */
 	void setMass(float mass);
 
@@ -272,7 +272,7 @@ public:
 
 	/**
 	 * Set linear velocity
-	 * @param velocity
+	 * @param linearVelocity velocity
 	 */
 	void setLinearVelocity(const Vector3& linearVelocity);
 
@@ -283,7 +283,7 @@ public:
 
 	/**
 	 * Set angular velocity
-	 * @param angular velocity
+	 * @param angularVelocity angular velocity
 	 */
 	void setAngularVelocity(const Vector3& angularVelocity);
 
@@ -294,7 +294,7 @@ public:
 
 	/**
 	 * Set linear damping
-	 * @param linear damping
+	 * @param linearDamping linear damping
 	 */
 	void setLinearDamping(float linearDamping);
 
@@ -305,7 +305,7 @@ public:
 
 	/**
 	 * Set angular damping
-	 * @param anuglar damping
+	 * @param angularDamping anuglar damping
 	 */
 	void setAngularDamping(float angularDamping);
 
@@ -316,53 +316,53 @@ public:
 
 	/** 
 	 * Synchronizes this rigid body with transformations
-	 * @param transformations
+	 * @param transformations transformations
 	 */
 	void fromTransformations(const Transformations& transformations);
 
 	/** 
 	 * Add force
-	 * @param position of world force
-	 * @param force
+	 * @param forceOrigin position of world force
+	 * @param force force
 	 */
 	void addForce(const Vector3& forceOrigin, const Vector3& force);
 
 	/**
 	 * Add force to center of mass
-	 * @param force
+	 * @param forceOrigin force
 	 */
 	void addForce(const Vector3& forceOrigin);
 
 	/**
 	 * Add torque
-	 * @param torque
+	 * @param torque torque
 	 */
 	void addTorque(const Vector3& torque);
 
 	/**
 	 * Checks if this rigid body does collide with given bounding volume
 	 * @deprecated this method is deprecated, please try to avoid it
-	 * @param bounding volume
-	 * @param collision
+	 * @param boundingVolume bounding volume
+	 * @param collision collision
 	 */
 	bool doesCollideWith(BoundingVolume* boundingVolume, CollisionResponse* collision);
 
 	/**
 	 * Checks if this rigid body does collide with another rigid body
-	 * @param rigid body
-	 * @param collision
+	 * @param body rigid body
+	 * @param collision collision
 	 */
 	bool doesCollideWith(Body* body, CollisionResponse* collision);
 
 	/** 
 	 * Add a collision listener to this rigid body
-	 * @param listener
+	 * @param listener listener
 	 */
 	void addCollisionListener(CollisionListener* listener);
 
 	/** 
 	 * Remove a collision listener to this rigid body
-	 * @param listener
+	 * @param listener listener
 	 */
 	void removeCollisionListener(CollisionListener* listener);
 

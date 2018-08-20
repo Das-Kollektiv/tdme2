@@ -37,7 +37,7 @@ public:
 
 	/** 
 	 * Adds vector to iterator
-	 * @param vector
+	 * @param vector vector
 	 */
 	void addVector(vector<T>* vector) {
 		if (find(vectorList.begin(), vectorList.end(), vector) != vectorList.end()) return;
@@ -102,7 +102,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param vector list
+	 * @param vectorList vector list
 	 */
 	VectorIteratorMultiple(vector<vector<T>*>& vectorList) {
 		this->vectorList = vectorList;

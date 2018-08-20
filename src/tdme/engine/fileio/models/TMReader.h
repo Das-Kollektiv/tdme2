@@ -49,7 +49,7 @@ private:
 public:
 	/**
 	 * Constructor
-	 * @param input data array
+	 * @param data input data array
 	 */
 	inline TMReaderInputStream(vector<uint8_t>* data) {
 		this->data = data;
@@ -216,8 +216,8 @@ public:
 
 	/** 
 	 * TDME model format reader
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return model
@@ -227,17 +227,17 @@ public:
 private:
 	/**
 	 * Get texture path
-	 * @param model path name
-	 * @param texture path name
-	 * @param texture file name
+	 * @param modelPathName model path name
+	 * @param texturePathName texture path name
+	 * @param textureFileName texture file name
 	 */
 	static const string getTexturePath(const string& modelPathName, const string& texturePathName, const string& textureFileName);
 
 	/** 
 	 * Read material
-	 * @param path name
-	 * @param input stream
-	 * @param version
+	 * @param pathName path name
+	 * @param is input stream
+	 * @param version version
 	 * @throws model file IO exception
 	 * @return material
 	 */
@@ -245,15 +245,15 @@ private:
 
 	/**
 	 * Read animation setup
-	 * @param input stream
-	 * @param model
+	 * @param is input stream
+	 * @param model model
 	 * @throw model file io exception
 	 */
 	static void readAnimationSetup(TMReaderInputStream* is, Model* model) throw (ModelFileIOException);
 
 	/** 
 	 * Read vertices from input stream
-	 * @param input stream
+	 * @param is input stream
 	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return vector3 array
@@ -262,7 +262,7 @@ private:
 
 	/** 
 	 * Read texture coordinates from input stream
-	 * @param input stream
+	 * @param is input stream
 	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return texture coordinates array
@@ -271,8 +271,8 @@ private:
 
 	/** 
 	 * Read indices from input stream
-	 * @param input stream
-	 * @param indices
+	 * @param is input stream
+	 * @param indices indices
 	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return if having indices
@@ -281,8 +281,8 @@ private:
 
 	/** 
 	 * Read animation from input stream into group
-	 * @param input stream
-	 * @param group
+	 * @param is input stream
+	 * @param g group
 	 * @throws IOException 
 	 * @throws model file IO exception
 	 * @return Animation
@@ -291,15 +291,15 @@ private:
 
 	/** 
 	 * Read faces entities from input stream
-	 * @param input stream
-	 * @param group
+	 * @param is input stream
+	 * @param g group
 	 * @throws model file IO exception
 	 */
 	static void readFacesEntities(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
 
 	/** 
 	 * Read skinning joint
-	 * @param input stream
+	 * @param is input stream
 	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return joint
@@ -308,7 +308,7 @@ private:
 
 	/** 
 	 * Read skinning joint weight
-	 * @param input stream
+	 * @param is input stream
 	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return joint weight
@@ -317,18 +317,18 @@ private:
 
 	/** 
 	 * Read skinning from input stream
-	 * @param input stream
-	 * @param group
+	 * @param is input stream
+	 * @param g group
 	 * @throws model file IO exception
 	 */
 	static void readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
 
 	/** 
 	 * Read sub groups
-	 * @param input stream
-	 * @param model
-	 * @param parent group
-	 * @param sub groups
+	 * @param is input stream
+	 * @param model model
+	 * @param parentGroup parent group
+	 * @param subGroups sub groups
 	 * @throws IOException
 	 * @throws model file IO exception
 	 * @return group
@@ -337,9 +337,9 @@ private:
 
 	/** 
 	 * Write group to output stream
-	 * @param input stream
-	 * @param model
-	 * @param parent group
+	 * @param is input stream
+	 * @param model model
+	 * @param parentGroup parent group
 	 * @throws model file IO exception
 	 * @return group
 	 */

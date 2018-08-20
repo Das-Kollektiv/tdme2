@@ -29,7 +29,7 @@ public:
 
 	/**
 	 * Get a value at given position
-	 * @param position
+	 * @param position position
 	 * @return value at given position
 	 */
 	inline float get(int32_t position) {
@@ -43,7 +43,7 @@ public:
 
 	/**
 	 * Put a float value into float buffer
-	 * @param value
+	 * @param value value
 	 */
 	inline FloatBuffer* put(float value) {
 		uint8_t* floatAsInt8 = ((uint8_t*)&value);
@@ -56,7 +56,7 @@ public:
 
 	/**
 	 * Put float values into float buffer
-	 * @param values
+	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 2>* values) {
 		for (int i = 0; i < values->size(); i++) {
@@ -67,7 +67,7 @@ public:
 
 	/**
 	 * Put float values into float buffer
-	 * @param values
+	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 2>& values) {
 		for (int i = 0; i < values.size(); i++) {
@@ -78,7 +78,7 @@ public:
 
 	/**
 	 * Put float values into float buffer
-	 * @param values
+	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 3>& values) {
 		for (int i = 0; i < values.size(); i++) {
@@ -89,7 +89,7 @@ public:
 
 	/**
 	 * Put float values into float buffer
-	 * @param values
+	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 4>& values) {
 		for (int i = 0; i < values.size(); i++) {
@@ -100,7 +100,7 @@ public:
 
 	/**
 	 * Put float values into float buffer
-	 * @param values
+	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 16>& values) {
 		for (int i = 0; i < values.size(); i++) {
@@ -118,7 +118,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param buffer
+	 * @param buffer buffer
 	 */
 	FloatBuffer(Buffer* buffer) : Buffer(buffer) {
 	}

@@ -33,8 +33,8 @@ public:
 
 	/** 
 	 * Main
-	 * @param argument count
-	 * @param argument values
+	 * @param argc argument count
+	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
 

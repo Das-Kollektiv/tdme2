@@ -48,51 +48,51 @@ public:
 
 	/** 
 	 * Update effect to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateEffect(GLRenderer* renderer);
 
 	/** 
 	 * Update material to program
-	 * @param gl3 renderer
+	 * @param renderer gl3 renderer
 	 */
 	void updateMaterial(GLRenderer* renderer);
 
 	/** 
 	 * Update light to program
-	 * @param renderer
-	 * @param light id
+	 * @param renderer renderer
+	 * @param lightId light id
 	 */
 	void updateLight(GLRenderer* renderer, int32_t lightId);
 
 	/** 
 	 * Update matrices to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateMatrices(GLRenderer* renderer);
 
 	/** 
 	 * Update texture matrix to program
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
 	 * Set shader
-	 * @param id
+	 * @param id id
 	 */
 	void setShader(const string& id);
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	LightingShader(GLRenderer* renderer);
 

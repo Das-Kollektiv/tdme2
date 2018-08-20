@@ -25,7 +25,7 @@ public:
 
 	/**
 	 * Get a value at given position
-	 * @param position
+	 * @param position position
 	 */
 	inline int32_t get(int32_t position) {
 		int32_t value = 0;
@@ -38,7 +38,7 @@ public:
 
 	/**
 	 * Puts a value into buffer at its current position
-	 * @param value
+	 * @param value value
 	 */
 	inline IntBuffer* put(int32_t value) {
 		int8_t* intAsInt8 = ((int8_t*)&value);

@@ -31,8 +31,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param joint index
-	 * @param weight index
+	 * @param jointIndex joint index
+	 * @param weightIndex weight index
 	 */
 	JointWeight(int32_t jointIndex, int32_t weightIndex);
 };

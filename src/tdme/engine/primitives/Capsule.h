@@ -39,10 +39,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param a
-	 * @param b
-	 * @param radius
-	 * @param scale
+	 * @param a a
+	 * @param b b
+	 * @param radius radius
+	 * @param scale scale
 	 */
 	Capsule(const Vector3& a, const Vector3& b, float radius, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 

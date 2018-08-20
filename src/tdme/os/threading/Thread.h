@@ -26,7 +26,7 @@ public:
 
 	/**
 	 * @brief sleeps current thread for given time in milliseconds
-	 * @param uint64_t milliseconds to wait
+	 * @param milliseconds uint64_t milliseconds to wait
 	 */
 	static void sleep(const uint64_t milliseconds);
 

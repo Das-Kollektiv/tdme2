@@ -16,7 +16,7 @@ class tdme::os::threading::ReadWriteLock {
 public:
 	/**
 	 * @brief Public constructor
-	 * @param name
+	 * @param name name
 	 */
 	ReadWriteLock(const string& name);
 

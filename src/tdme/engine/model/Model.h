@@ -53,23 +53,23 @@ private:
 
 	/**
 	 * Delete sub groups
-	 * @param sub groups
+	 * @param subGroups sub groups
 	 */
 	void deleteSubGroups(map<string, Group*>* subGroups);
 
 	/**
 	 * Set up if model has skinning
-	 * @param has skinning
+	 * @param hasSkinning has skinning
 	 */
 	void setHasSkinning(bool hasSkinning);
 
 	/**
 	 * Computes a transformations matrix at a given frame for a given group id recursivly
-	 * @param groups
-	 * @param parent transformations matrix
-	 * @param frame
-	 * @param group id
-	 * @param transformations matrix
+	 * @param groups groups
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param frame frame
+	 * @param groupId group id
+	 * @param transformationsMatrix transformations matrix
 	 * @return target group transformations
 	 */
 	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
@@ -117,7 +117,7 @@ public:
 
 	/** 
 	 * Returns a group by given name or null
-	 * @param id
+	 * @param id id
 	 * @return
 	 */
 	Group* getGroupById(const string& id);
@@ -130,7 +130,7 @@ public:
 
 	/** 
 	 * Returns a sub group by given name or null
-	 * @param id
+	 * @param id id
 	 * @return
 	 */
 	Group* getSubGroupById(const string& id);
@@ -147,27 +147,27 @@ public:
 
 	/** 
 	 * Set model animation frames per seconds
-	 * @param fps
+	 * @param fps fps
 	 */
 	void setFPS(float fps);
 
 	/** 
 	 * Adds an base animation setup
-	 * @param id
-	 * @param start frame
-	 * @param end frame
-	 * @param loop
+	 * @param id id
+	 * @param startFrame start frame
+	 * @param endFrame end frame
+	 * @param loop loop
 	 * @return animation setup
 	 */
 	AnimationSetup* addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop);
 
 	/** 
 	 * Adds an overlay animation setup
-	 * @param id
-	 * @param overlay from group id
-	 * @param start frame
-	 * @param end frame
-	 * @param loop
+	 * @param id id
+	 * @param overlayFromGroupId overlay from group id
+	 * @param startFrame start frame
+	 * @param endFrame end frame
+	 * @param loop loop
 	 * @return animation setup
 	 */
 	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop);
@@ -199,29 +199,29 @@ public:
 
 	/**
 	 * Computes a transformations matrix at a given frame for a given group id recursivly
-	 * @param group id
-	 * @param parent transformations matrix
-	 * @param target group transformations matrix
-	 * @param frame
+	 * @param groupId group id
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param transformationsMatrix target group transformations matrix
+	 * @param frame frame
 	 */
 	bool computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame = 0);
 
 	/**
 	 * Computes a transformations matrix at a given frame for a given group id recursivly
-	 * @param group id
-	 * @param target group transformations matrix
-	 * @param frame
+	 * @param groupId group id
+	 * @param transformationsMatrix target group transformations matrix
+	 * @param frame frame
 	 */
 	bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0);
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param name
-	 * @param up vector
-	 * @param rotation order
-	 * @param bounding box
-	 * @param authoring tool
+	 * @param id id
+	 * @param name name
+	 * @param upVector up vector
+	 * @param rotationOrder rotation order
+	 * @param boundingBox bounding box
+	 * @param authoringTool authoring tool
 	 */
 	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool = AUTHORINGTOOL_UNKNOWN);
 

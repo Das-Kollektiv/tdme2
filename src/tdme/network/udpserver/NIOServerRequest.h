@@ -39,12 +39,12 @@ public:
 
 	/**
 	 * @brief Public constructor
-	 * @param request type
-	 * @param object
-	 * @param custom event type if any
-	 * @param request frame stream
-	 * @param message id (udp server only)
-	 * @param message retries (udp server only)
+	 * @param requestType request type
+	 * @param object object
+	 * @param custom custom event type if any
+	 * @param messageFrame request frame stream
+	 * @param messageId message id (udp server only)
+	 * @param messageRetries message retries (udp server only)
 	 */
 	inline NIOServerRequest(const RequestType requestType, void* object, const string& custom = EVENT_CUSTOM_NONE, stringstream* messageFrame = NULL, const uint32_t messageId = MESSAGE_ID_UNSUPPORTED, const uint8_t messageRetries = MESSAGE_RETRIES_NONE) :
 		requestType(requestType), object(object), customEvent(custom), messageFrame(messageFrame), messageId(messageId), messageRetries(messageRetries) {

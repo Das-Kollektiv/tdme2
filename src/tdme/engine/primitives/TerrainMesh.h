@@ -39,8 +39,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param model
-	 * @param transformations
+	 * @param model model
+	 * @param transformations transformations
 	 */
 	TerrainMesh(Object3DModel* model, const Transformations& transformations = Transformations());
 

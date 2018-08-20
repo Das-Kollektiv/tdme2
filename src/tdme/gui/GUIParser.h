@@ -36,8 +36,8 @@ public:
 
 	/** 
 	 * Parses a GUI XML file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
@@ -45,7 +45,7 @@ public:
 
 	/** 
 	 * Parses a GUI XML content
-	 * @param xml
+	 * @param xml xml
 	 * @return GUI screen node
 	 * @throws IOException
 	 */
@@ -53,17 +53,17 @@ public:
 
 	/** 
 	 * Parses a GUI XML file into parent node
-	 * @param parent node
-	 * @param path name
-	 * @param file name
+	 * @param parentNode parent node
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @throws IOException
 	 */
 	static void parse(GUIParentNode* parentNode, const string& pathName, const string& fileName) throw (GUIParserException);
 
 	/** 
 	 * Parses a GUI XML content into parent node
-	 * @param parent node
-	 * @param xml
+	 * @param parentNode parent node
+	 * @param xml xml
 	 * @throws IOException
 	 */
 	static void parse(GUIParentNode* parentNode, const string& xml) throw (GUIParserException);
@@ -72,35 +72,35 @@ private:
 
 	/** 
 	 * Parse GUI node
-	 * @param gui parent node
-	 * @param xml parent node
-	 * @param gui element
+	 * @param guiParentNode gui parent node
+	 * @param xmlParentNode xml parent node
+	 * @param guiElement gui element
 	 * @throws Exception
 	 */
 	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) throw (GUIParserException);
 
 	/** 
 	 * Returns immediate children tags
-	 * @param parent
-	 * @param name
+	 * @param parent parent
+	 * @param name name
 	 * @return children of parent node with given name
 	 */
 	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
 
 	/** 
 	 * Get inner XML
-	 * @param node
+	 * @param node node
 	 * @return string
 	 */
 	static const string getInnerXml(TiXmlElement* node);
 
 	/**
 	 * Parse template
-	 * @param GUI parent node
-	 * @param template xml node
-	 * @param template
-	 * @param attributes
-	 * @param GUI element
+	 * @param guiParentNode GUI parent node
+	 * @param node template xml node
+	 * @param _template template
+	 * @param attributes attributes
+	 * @param guiElement GUI element
 	 */
 	static void parseTemplate(GUIParentNode* guiParentNode, TiXmlElement* node, const string& _template, map<string, string>& attributes, GUIElement* guiElement);
 
@@ -108,21 +108,21 @@ public:
 
 	/** 
 	 * Unescape quotes
-	 * @param string
+	 * @param str string
 	 * @return string with unescaped quotes
 	 */
 	static const string unescapeQuotes(const string& str);
 
 	/**
 	 * Escape quotes
-	 * @param string
+	 * @param str string
 	 * @return string with escaped quotes
 	 */
 	static const string escapeQuotes(const string& str);
 
 	/** 
 	 * Add GUI element
-	 * @param guiElement
+	 * @param guiElement guiElement
 	 * @throws GUIParserException
 	 */
 	static void addElement(GUIElement* guiElement) throw (GUIParserException);

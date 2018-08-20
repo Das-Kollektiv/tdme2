@@ -32,10 +32,10 @@ public:
 
 	/**
 	 * @brief reads a datagram from socket
-	 * @param from host
-	 * @param from port
-	 * @param buf
-	 * @param buf size
+	 * @param from from host
+	 * @param port from port
+	 * @param buf buf
+	 * @param bytes buf size
 	 * @return datagram size or -1 if read would block
 	 */
 	ssize_t read(string& from, unsigned int& port, void* buf, const size_t bytes) throw (NIOIOException);
@@ -43,35 +43,35 @@ public:
 	/**
 	 * @brief writes up to "bytes" bytes to socket
 	 * @throws NIOIOException
-	 * @param to host
-	 * @param to port
-	 * @param buf
-	 * @param buf size
+	 * @param to to host
+	 * @param port to port
+	 * @param buf buf
+	 * @param bytes buf size
 	 * @return datagram bytes written or -1 if write would block
 	 */
 	ssize_t write(const string& to, const unsigned int port, void* buf, const size_t bytes) throw (NIOIOException);
 
 	/**
 	 * @brief creates a udp socket
-	 * @param socket
-	 * @param IP version
+	 * @param socket socket
+	 * @param ipVersion IP version
 	 * @throws NIOSocketException
 	 */
 	static void create(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException);
 
 	/**
 	 * @brief creates a udp server socket
-	 * @param socket
-	 * @param ip
-	 * @param port
+	 * @param socket socket
+	 * @param ip ip
+	 * @param port port
 	 * @throws NIOSocketException
 	 */
 	static void createServerSocket(NIOUDPSocket& socket, const std::string& ip, const unsigned int port) throw (NIOSocketException);
 
 	/**
 	 * @brief creates a udp client socket
-	 * @param socket
-	 * @param IP version
+	 * @param socket socket
+	 * @param ipVersion IP version
 	 * @throws NIOSocketException
 	 */
 	static void createClientSocket(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException);

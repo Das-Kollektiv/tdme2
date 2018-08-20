@@ -58,69 +58,69 @@ public:
 
 	/**
 	 * Set up program model view matrix
-	 * @param model view matrix
+	 * @param mvMatrix model view matrix
 	 */
 	void setProgramMVMatrix(const Matrix4x4& mvMatrix);
 
 	/** 
 	 * Set up program mvp matrix
-	 * @param mvp matrix
+	 * @param mvpMatrix mvp matrix
 	 */
 	void setProgramMVPMatrix(const Matrix4x4& mvpMatrix);
 
 	/** 
 	 * Set up program normal matrix
-	 * @param normal matrix
+	 * @param normalMatrix normal matrix
 	 */
 	void setProgramNormalMatrix(const Matrix4x4& normalMatrix);
 
 	/**
 	 * Set up pre program texture matrix
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateTextureMatrix(GLRenderer* renderer);
 
 	/**
 	 * Update material
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	void updateMaterial(GLRenderer* renderer);
 
 	/**
 	 * Update light
-	 * @param renderer
-	 * @param light id
+	 * @param renderer renderer
+	 * @param lightId light id
 	 */
 	void updateLight(GLRenderer* renderer, int32_t lightId);
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	void bindTexture(GLRenderer* renderer, int32_t textureId);
 
 	/** 
 	 * Set up program depth bias mvp matrix
-	 * @param depth bias mvp matrix
+	 * @param depthBiasMVPMatrix depth bias mvp matrix
 	 */
 	void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix);
 
 	/**
 	 * Set light id
-	 * @param light id to render
+	 * @param lightId light id to render
 	 */
 	void setRenderLightId(int32_t lightId);
 
 	/**
 	 * Set shader
-	 * @param id
+	 * @param id id
 	 */
 	void setShader(const string& id);
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	ShadowMappingShaderRender(GLRenderer* renderer);
 

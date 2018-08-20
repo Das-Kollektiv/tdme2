@@ -44,8 +44,8 @@ private:
 
 	/** 
 	 * Reshape frame buffer
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
@@ -66,7 +66,7 @@ private:
 
 	/** 
 	 * Renders given objects to shadow map
-	 * @param light
+	 * @param light light
 	 */
 	void render(Light* light);
 
@@ -95,9 +95,9 @@ public:
 
 	/** 
 	 * Public constructor
-	 * @param shadow mapping
-	 * @param width
-	 * @param height
+	 * @param shadowMapping shadow mapping
+	 * @param width width
+	 * @param height height
 	 */
 	ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height);
 

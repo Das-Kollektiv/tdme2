@@ -25,7 +25,7 @@ private:
 
 	/** 
 	 * Get byte buffer
-	 * @param bytes
+	 * @param bytes bytes
 	 * @return byte buffer
 	 */
 	static ByteBuffer* getByteBuffer(int32_t bytes);

@@ -26,32 +26,32 @@ private:
 public:
 	/**
 	 * Get property value by key
-	 * @param key
-	 * @param default value
+	 * @param key key
+	 * @param defaultValue default value
 	 * @return value if found or default value
 	 */
 	const string& get(const string& key, const string& defaultValue);
 
 	/**
 	 * Add property
-	 * @param key
-	 * @param value
+	 * @param key key
+	 * @param value value
 	 *
 	 */
 	void put(const string& key, const string& value);
 
 	/**
 	 * Load property file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @throws file system exception
 	 */
 	void load(const string& pathName, const string& fileName) throw (FileSystemException);
 
 	/**
 	 * Store property file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @throws file system exception
 	 */
 	void store(const string& pathName, const string& fileName) throw (FileSystemException);

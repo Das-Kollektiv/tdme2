@@ -80,7 +80,7 @@ public:
 
 	/**
 	 * Set ambient color component
-	 * @param ambient color
+	 * @param ambientColor ambient color
 	 */
 	inline void setAmbientColor(const Color4& ambientColor) {
 		this->ambientColor = ambientColor;
@@ -95,7 +95,7 @@ public:
 
 	/**
 	 * Set diffuse color component
-	 * @param diffuse color
+	 * @param diffuseColor diffuse color
 	 */
 	inline void setDiffuseColor(const Color4& diffuseColor) {
 		this->diffuseColor = diffuseColor;
@@ -110,7 +110,7 @@ public:
 
 	/**
 	 * Set specular color component
-	 * @param specular color
+	 * @param specularColor specular color
 	 */
 	inline void setSpecularColor(const Color4& specularColor) {
 		this->specularColor = specularColor;
@@ -125,7 +125,7 @@ public:
 
 	/**
 	 * Set emission color component
-	 * @param emission color
+	 * @param emissionColor emission color
 	 */
 	inline void setEmissionColor(const Color4& emissionColor) {
 		this->emissionColor = emissionColor;
@@ -140,7 +140,7 @@ public:
 
 	/** 
 	 * Set up material shininess
-	 * @param shininess
+	 * @param shininess shininess
 	 */
 	inline void setShininess(float shininess) {
 		this->shininess = shininess;
@@ -176,10 +176,10 @@ public:
 
 	/**
 	 * Set up a diffuse texture
-	 * @param path name
-	 * @param file name
-	 * @param transparency path name
-	 * @param transparency file name
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param transparencyPathName transparency path name
+	 * @param transparencyFileName transparency file name
 	 */
 	void setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName = "", const string& transparencyFileName = "");
 
@@ -213,7 +213,7 @@ public:
 
 	/**
 	 * Set if diffuse texture uses masked transparency(means pixel are eighter opaque or not visible)
-	 * @param masked transparency
+	 * @param maskedTransparency masked transparency
 	 */
 	inline void setDiffuseTextureMaskedTransparency(bool maskedTransparency) {
 		diffuseTextureMaskedTransparency = maskedTransparency;
@@ -228,7 +228,7 @@ public:
 
 	/**
 	 * Set diffuse texture masked transparency threshold
-	 * @param diffuse texture masked transparency threshold
+	 * @param maskedTransparencyThreshold diffuse texture masked transparency threshold
 	 */
 	inline void setDiffuseTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold) {
 		diffuseTextureMaskedTransparencyThreshold = maskedTransparencyThreshold;
@@ -250,8 +250,8 @@ public:
 
 	/** 
 	 * Set up a specular texture
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	void setSpecularTexture(const string& pathName, const string& fileName);
 
@@ -285,8 +285,8 @@ public:
 
 	/** 
 	 * Set up a normal texture
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	void setNormalTexture(const string& pathName, const string& fileName);
 
@@ -320,8 +320,8 @@ public:
 
 	/** 
 	 * Set up a displacement texture
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 */
 	void setDisplacementTexture(const string& pathName, const string& fileName);
 
@@ -355,7 +355,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
+	 * @param id id
 	 */
 	Material(const string& id);
 

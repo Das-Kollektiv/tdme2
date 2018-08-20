@@ -43,9 +43,9 @@ protected:
 
 	/**
 	 * Bind a texture to a group and faces entity
-	 * @param group id
-	 * @param faces entity id or null if texture should be bound to all faces entities
-	 * @param texture id
+	 * @param groupId group id
+	 * @param facesEntityId faces entity id or null if texture should be bound to all faces entities
+	 * @param textureId texture id
 	 */
 	void setDynamicDiffuseTexture(const string& groupId, const string& facesEntityId, int32_t textureId);
 
@@ -66,7 +66,7 @@ public:
 
 	/** 
 	 * Enable/disable rendering
-	 * @param enabled
+	 * @param enabled enabled
 	 */
 	virtual void setEnabled(bool enabled);
 
@@ -79,7 +79,7 @@ public:
 
 	/** 
 	 * Set this object pickable
-	 * @param pickable
+	 * @param pickable pickable
 	 */
 	virtual void setPickable(bool pickable);
 
@@ -92,7 +92,7 @@ public:
 
 	/** 
 	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing
+	 * @param dynamicShadowing dynamicShadowing
 	 */
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
 
@@ -106,7 +106,7 @@ public:
 
 	/** 
 	 * The effect color that will be multiplied with fragment color
-	 * @param effect color
+	 * @param effectColorMul effect color
 	 */
 	inline virtual void setEffectColorMul(const Color4& effectColorMul) {
 		this->effectColorMul = effectColorMul;
@@ -145,24 +145,24 @@ public:
 
 	/** 
 	 * Bind frame buffer color texture to a group and faces entity of this object
-	 * @param frame buffer
-	 * @param group id or empty string for all
-	 * @param faces entity id or empty string for all
+	 * @param frameBuffer frame buffer
+	 * @param groupId group id or empty string for all
+	 * @param facesEntityId faces entity id or empty string for all
 	 */
 	virtual void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId = string(), const string& facesEntityId = string());
 
 	/** 
 	 * Unbind dynamic texture to a group and faces entity of this object
-	 * @param group id or empty string for all
-	 * @param faces entity id orempty string for all
+	 * @param groupId group id or empty string for all
+	 * @param facesEntityId faces entity id orempty string for all
 	 */
 	virtual void unbindDiffuseTexture(const string& groupId = string(), const string& facesEntityId = string());
 
 	/**
 	 * Set texture matrix
-	 * @param texture matrix
-	 * @param group id or empty string for all
-	 * @param faces entity id or empty string for all
+	 * @param textureMatrix texture matrix
+	 * @param groupId group id or empty string for all
+	 * @param facesEntityId faces entity id or empty string for all
 	 */
 	virtual void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId = string(), const string& facesEntityId = string());
 
@@ -174,8 +174,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param model
+	 * @param id id
+	 * @param model model
 	 */
 	Object3DInternal(const string& id, Model* model);
 

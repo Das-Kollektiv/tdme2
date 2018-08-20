@@ -23,7 +23,7 @@ protected:
 public:
 	/**
 	 * Set up color
-	 * @param color float array
+	 * @param color color float array
 	 */
 	inline virtual void set(const array<float, 4>& color) {
 		this->data = color;
@@ -31,10 +31,10 @@ public:
 
 	/** 
 	 * Set up color
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @param alpha
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
 	 */
 	inline virtual void set(float r, float g, float b, float a) {
 		data[0] = r;
@@ -45,7 +45,7 @@ public:
 
 	/** 
 	 * Sets up this color with given color
-	 * @param color
+	 * @param color color
 	 */
 	inline virtual void set(const Color4Base& color) {
 		data = color.data;
@@ -53,10 +53,10 @@ public:
 
 	/** 
 	 * Add to color
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @param alpha
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
 	 */
 	inline virtual void add(float r, float g, float b, float a) {
 		data[0] += r;
@@ -73,7 +73,7 @@ public:
 	}
 
 	/** 
-	 * @param red component
+	 * @param red red component
 	 */
 	inline virtual void setRed(float red) {
 		data[0] = red;
@@ -87,7 +87,7 @@ public:
 	}
 
 	/** 
-	 * @param green component
+	 * @param green green component
 	 */
 	inline virtual void setGreen(float green) {
 		data[1] = green;
@@ -101,7 +101,7 @@ public:
 	}
 
 	/** 
-	 * @param blue component
+	 * @param blue blue component
 	 */
 	inline virtual void setBlue(float blue) {
 		data[2] = blue;
@@ -115,7 +115,7 @@ public:
 	}
 
 	/** 
-	 * @param alpha component
+	 * @param alpha alpha component
 	 */
 	inline virtual void setAlpha(float alpha) {
 		data[3] = alpha;
@@ -123,7 +123,7 @@ public:
 
 	/** 
 	 * Scale this color
-	 * @param scale
+	 * @param scale scale
 	 * @return this color
 	 */
 	inline Color4Base& scale(float scale) {
@@ -136,7 +136,7 @@ public:
 
 	/**
 	 * Scale this color
-	 * @param scale
+	 * @param scale scale
 	 * @return this color
 	 */
 	inline Color4Base& scale(const Color4Base& scale) {
@@ -149,7 +149,7 @@ public:
 
 	/**
 	 * Add color to this color
-	 * @param color
+	 * @param color color
 	 * @return this color
 	 */
 	inline Color4Base& add(const Color4Base& color) {
@@ -162,7 +162,7 @@ public:
 
 	/**
 	 * Subtracts color from this color
-	 * @param color
+	 * @param color color
 	 * @return this color
 	 */
 	inline Color4Base& sub(const Color4Base& color) {
@@ -205,7 +205,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param color
+	 * @param color color
 	 */
 	inline Color4Base(const Color4Base& color) {
 		data = color.data;
@@ -213,7 +213,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param color
+	 * @param color color
 	 */
 	inline Color4Base(const array<float, 4>& color) {
 		this->data = color;
@@ -221,10 +221,10 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param red
-	 * @param green
-	 * @param blue
-	 * @param alpha
+	 * @param r red
+	 * @param g green
+	 * @param b blue
+	 * @param a alpha
 	 */
 	inline Color4Base(float r, float g, float b, float a) {
 		data[0] = r;

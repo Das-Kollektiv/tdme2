@@ -54,7 +54,7 @@ public:
 
 	/**
 	 * @brief sets the group identification key
-	 * @param group identification key
+	 * @param &key group identification key
 	 * @return if setting the key was succesful
 	 */
 	const bool setKey(const string &key) {
@@ -82,7 +82,7 @@ public:
 
 	/**
 	 * @brief Adds a client to this group
-	 * @param client
+	 * @param client client
 	 */
 	virtual const bool addClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();
@@ -99,7 +99,7 @@ public:
 
 	/**
 	 * @brief Removes a client from this group
-	 * @param client
+	 * @param client client
 	 */
 	virtual const bool removeClient(CLIENT* client) {
 		clientKeyListsReadWriteLock.writeLock();

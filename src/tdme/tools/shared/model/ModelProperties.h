@@ -35,7 +35,7 @@ public:
 
 	/** 
 	 * Retrieve property by name
-	 * @param name
+	 * @param name name
 	 * @return property or null
 	 */
 	virtual PropertyModelClass* getProperty(const string& name);
@@ -47,37 +47,37 @@ public:
 
 	/** 
 	 * Get property index
-	 * @param name
+	 * @param name name
 	 * @return index or -1 if not found
 	 */
 	virtual int32_t getPropertyIndex(const string& name);
 
 	/** 
 	 * Get property by index
-	 * @param idx
+	 * @param idx idx
 	 * @return property or null
 	 */
 	virtual PropertyModelClass* getPropertyByIndex(int32_t idx);
 
 	/** 
 	 * Add a property
-	 * @param name
-	 * @param value
+	 * @param name name
+	 * @param value value
 	 */
 	virtual bool addProperty(const string& name, const string& value);
 
 	/** 
 	 * Update a property
-	 * @param old name
-	 * @param name
-	 * @param value
+	 * @param oldName old name
+	 * @param name name
+	 * @param value value
 	 * @return success
 	 */
 	virtual bool updateProperty(const string& oldName, const string& name, const string& value);
 
 	/** 
 	 * Removes a property
-	 * @param property name
+	 * @param name property name
 	 */
 	virtual bool removeProperty(const string& name);
 

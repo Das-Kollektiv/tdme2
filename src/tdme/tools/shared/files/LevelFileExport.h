@@ -28,9 +28,9 @@ class tdme::tools::shared::files::LevelFileExport final
 public:
 	/** 
 	 * Exports a level to a TDME level file
-	 * @param path name
-	 * @param file name
-	 * @param level
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param level level
 	 * @throws file system exception
 	 * @throws json exception
 	 * @throws model file io exception

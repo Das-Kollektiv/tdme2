@@ -133,22 +133,22 @@ public:
 
 	/** 
 	 * Set up screen caption
-	 * @param text
+	 * @param text text
 	 */
 	void setScreenCaption(const string& text);
 
 	/** 
 	 * Set grid
-	 * @param enabled
-	 * @param grid y position
+	 * @param enabled enabled
+	 * @param gridY grid y position
 	 */
 	void setGrid(bool enabled, float gridY);
 
 	/** 
 	 * Set up level size
-	 * @param width
-	 * @param depth
-	 * @param height
+	 * @param width width
+	 * @param depth depth
+	 * @param height height
 	 */
 	void setLevelSize(float width, float depth, float height);
 
@@ -164,10 +164,10 @@ public:
 
 	/** 
 	 * Set up general object data
-	 * @param name
-	 * @param description
-	 * @param model name
-	 * @param center
+	 * @param name name
+	 * @param description description
+	 * @param modelName model name
+	 * @param center center
 	 */
 	void setObjectData(const string& name, const string& description, const string& modelName, const Vector3& center);
 
@@ -183,7 +183,7 @@ public:
 
 	/** 
 	 * Set up object list box
-	 * @param object by ids hash map
+	 * @param level object by ids hash map
 	 */
 	void setObjectListbox(LevelEditorLevel* level);
 
@@ -199,7 +199,7 @@ public:
 
 	/** 
 	 * Select a object in object list box
-	 * @param object id
+	 * @param objectId object id
 	 */
 	void selectObjectInObjectListbox(const string& objectId);
 
@@ -215,11 +215,11 @@ public:
 
 	/** 
 	 * Set up object
-	 * @param translation
-	 * @param scale
-	 * @param rotation x
-	 * @param rotation y
-	 * @param rotation z
+	 * @param translation translation
+	 * @param scale scale
+	 * @param rotationX rotation x
+	 * @param rotationY rotation y
+	 * @param rotationZ rotation z
 	 */
 	void setObject(const Vector3& translation, const Vector3& scale, float rotationX, float rotationY, float rotationZ);
 
@@ -235,8 +235,8 @@ public:
 
 	/** 
 	 * Set up map properties
-	 * @param map properties
-	 * @param selected name
+	 * @param level map properties
+	 * @param selectedName selected name
 	 */
 	void setMapProperties(LevelEditorLevel* level, const string& selectedName);
 
@@ -257,7 +257,7 @@ public:
 
 	/** 
 	 * Set up object property preset ids
-	 * @param object property preset ids
+	 * @param objectPresetIds object property preset ids
 	 */
 	void setObjectPresetIds(const map<string, vector<PropertyModelClass*>>* objectPresetIds);
 
@@ -268,9 +268,9 @@ public:
 
 	/** 
 	 * Set up object properties
-	 * @param preset id
-	 * @param object properties
-	 * @param selected name
+	 * @param presetId preset id
+	 * @param object object properties
+	 * @param selectedName selected name
 	 */
 	void setObjectProperties(const string& presetId, LevelEditorObject* object, const string& selectedName);
 
@@ -346,7 +346,7 @@ public:
 
 	/** 
 	 * Set up light presets
-	 * @param light presets
+	 * @param lightPresetIds light presets
 	 */
 	void setLightPresetsIds(const map<string, LevelEditorLight*>* lightPresetIds);
 
@@ -357,19 +357,19 @@ public:
 
 	/** 
 	 * Set up light indexed by i
-	 * @param i
-	 * @param ambient
-	 * @param diffuse
-	 * @param specular
-	 * @param position
-	 * @param const attenuation
-	 * @param linear attenuation
-	 * @param quadratic attenuation
-	 * @param spot to
-	 * @param spot direction
-	 * @param spot exponent
-	 * @param spot cutoff
-	 * @param enabled
+	 * @param i i
+	 * @param ambient ambient
+	 * @param diffuse diffuse
+	 * @param specular specular
+	 * @param position position
+	 * @param constAttenuation const attenuation
+	 * @param linearAttenuation linear attenuation
+	 * @param quadraticAttenuation quadratic attenuation
+	 * @param spotTo spot to
+	 * @param spotDirection spot direction
+	 * @param spotExponent spot exponent
+	 * @param spotCutoff spot cutoff
+	 * @param enabled enabled
 	 */
 	void setLight(int32_t i, const Color4& ambient, const Color4& diffuse, const Color4& specular, const Vector4& position, float constAttenuation, float linearAttenuation, float quadraticAttenuation, const Vector3& spotTo, const Vector3& spotDirection, float spotExponent, float spotCutoff, bool enabled);
 
@@ -395,7 +395,7 @@ public:
 
 	/** 
 	 * On light 3 apply
-	 * @param light idx
+	 * @param lightIdx light idx
 	 */
 	void onLightApply(int32_t lightIdx);
 
@@ -421,7 +421,7 @@ public:
 
 	/** 
 	 * On light preset apply for light
-	 * @param i
+	 * @param lightIdx i
 	 */
 	void onLightPresetApply(int32_t lightIdx);
 
@@ -461,7 +461,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param view
+	 * @param view view
 	 */
 	LevelEditorScreenController(LevelEditorView* view);
 };

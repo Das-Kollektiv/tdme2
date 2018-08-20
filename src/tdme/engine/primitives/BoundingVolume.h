@@ -52,7 +52,7 @@ public:
 
 	/** 
 	 * Transform bounding volume from given transformations
-	 * @param transformations
+	 * @param transformations transformations
 	 */
 	virtual void fromTransformations(const Transformations& transformations);
 

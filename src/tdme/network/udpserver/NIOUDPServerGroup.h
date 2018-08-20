@@ -23,8 +23,8 @@ public:
 
 	/**
 	 * @brief Sends a frame to client, takes over ownership of frame
-	 * @param frame data
-	 * @param safe, requires ack and retransmission
+	 * @param frame frame data
+	 * @param safe safe, requires ack and retransmission
 	 */
 	// void send(stringstream* frame, bool safe = true);
 };

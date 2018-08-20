@@ -92,7 +92,7 @@ private:
 
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUIDropDownController(GUINode* node);
 

@@ -44,7 +44,7 @@ public:
 
 	/** 
 	 * Set disabled
-	 * @param disabled
+	 * @param disabled disabled
 	 */
 	void setDisabled(bool disabled) override;
 	void initialize() override;
@@ -105,7 +105,7 @@ public:
 private:
 	/**
 	 * Private constructor
-	 * @param node
+	 * @param node node
 	 */
 	GUISelectBoxMultipleController(GUINode* node);
 

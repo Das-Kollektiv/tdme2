@@ -28,7 +28,7 @@ public:
 
 	/**
 	 * @brief initializes the kernel event mechanism
-	 * @param supported max ccu
+	 * @param maxCCU supported max ccu
 	 * @throws NIOKEMException
 	 */
 	void initKernelEventMechanism(const unsigned int maxCCU)  throw (NIOKEMException);
@@ -47,19 +47,19 @@ public:
 
 	/**
 	 * @brief decodes a kernel event
-	 * @param kernel event index
-	 * @param kernel event io interest
-	 * @param kernel event cookie
+	 * @param index kernel event index
+	 * @param &interest kernel event io interest
+	 * @param cookie kernel event cookie
 	 * @throws NIOKEMException
 	 */
 	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie) throw (NIOKEMException);
 
 	/**
 	 * @brief sets a non blocked socket io interest
-	 * @param socket
-	 * @param last nio interest
-	 * @param nio interest
-	 * @param cookie
+	 * @param &socket socket
+	 * @param lastInterest last nio interest
+	 * @param interest nio interest
+	 * @param cookie cookie
 	 * @throws NIOKEMException
 	 */
 	void setSocketInterest(const NIONetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) throw (NIOKEMException);

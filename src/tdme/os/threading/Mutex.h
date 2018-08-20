@@ -24,7 +24,7 @@ class tdme::os::threading::Mutex {
 public:
 	/**
 	 * @brief Public constructor
-	 * @param name
+	 * @param name name
 	 */
 	Mutex(const string& name);
 

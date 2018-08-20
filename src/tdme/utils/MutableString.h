@@ -24,7 +24,7 @@ public:
 
 	/**
 	 * Get char at index
-	 * @param idx
+	 * @param idx idx
 	 * @return char
 	 */
 	char charAt(int32_t idx) const;
@@ -36,73 +36,73 @@ public:
 
 	/**
 	 * Set character
-	 * @param char
+	 * @param c char
 	 * @return this mutable string
 	 */
 	MutableString& set(char c);
 
 	/**
 	 * Append character
-	 * @param char
+	 * @param c char
 	 * @return this mutable string
 	 */
 	MutableString& append(char c);
 
 	/**
 	 * Insert character c at idx
-	 * @param index
-	 * @param char
+	 * @param idx index
+	 * @param c char
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, char c);
 
 	/**
 	 * Set string
-	 * @param s
+	 * @param s s
 	 * @return this mutable string
 	 */
 	MutableString& set(const string& s);
 
 	/**
 	 * Append string
-	 * @param s
+	 * @param s s
 	 * @return this mutable string
 	 */
 	MutableString& append(const string& s);
 
 	/**
 	 * Insert string at idx
-	 * @param index
-	 * @param string
+	 * @param idx index
+	 * @param s string
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, const string& s);
 
 	/**
 	 * Set mutable string
-	 * @param s
+	 * @param s s
 	 * @return this mutable string
 	 */
 	MutableString& set(const MutableString& s);
 
 	/**
 	 * Append mutable string
-	 * @param s
+	 * @param s s
 	 * @return this mutable string
 	 */
 	MutableString& append(const MutableString& s);
 
 	/**
 	 * Insert mutable string at idx
-	 * @param index
-	 * @param string
+	 * @param idx index
+	 * @param s string
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, const MutableString& s);
 
 	/**
 	 * Set integer
-	 * @param i
+	 * @param i i
 	 * @return this mutable string
 	 */
 	MutableString& set(int32_t i);
@@ -110,7 +110,7 @@ public:
 	/**
 	 * Append integer
 	 * @see http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
-	 * @param i
+	 * @param i i
 	 * @return this mutable string
 	 */
 	MutableString& append(int32_t i);
@@ -118,16 +118,16 @@ public:
 	/**
 	 * Insert integer at idx
 	 * @see http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
-	 * @param index
-	 * @param i
+	 * @param idx index
+	 * @param i i
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, int32_t i);
 
 	/**
 	 * Set float
-	 * @param f
-	 * @param decimals
+	 * @param f f
+	 * @param decimals decimals
 	 * @return this mutable string
 	 */
 	MutableString& set(float f, int32_t decimals);
@@ -135,8 +135,8 @@ public:
 	/**
 	 * Append float with given decimals
 	 * @see http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
-	 * @param f
-	 * @param decimals
+	 * @param f f
+	 * @param decimals decimals
 	 * @return this mutable string
 	 */
 	MutableString& append(float f, int32_t decimals);
@@ -144,46 +144,46 @@ public:
 	/**
 	 * Insert float at idx
 	 * @see http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
-	 * @param index
-	 * @param float
-	 * @param decimals
+	 * @param idx index
+	 * @param f float
+	 * @param decimals decimals
 	 * @return this mutable string
 	 */
 	MutableString& insert(int32_t idx, float f, int32_t decimals);
 
 	/**
 	 * Delete characters at idx with given length
-	 * @param idx
-	 * @param length
+	 * @param idx idx
+	 * @param count length
 	 * @return this mutable string
 	 */
 	MutableString& delete_(int32_t idx, int32_t count);
 
 	/**
 	 * Returns the character index where string s have been found or -1 if not found
-	 * @param string
-	 * @param index
+	 * @param s string
+	 * @param idx index
 	 * @return index where string has been found or -1
 	 */
 	int32_t indexOf(const MutableString& s, int32_t idx) const;
 
 	/**
 	 * Returns the character index where string s have been found or -1 if not found
-	 * @param string
+	 * @param s string
 	 * @return index where string has been found or -1
 	 */
 	int32_t indexOf(const MutableString& s) const;
 
 	/**
 	 * Equals
-	 * @param string 2
+	 * @param s2 string 2
 	 * @return string 2 equals this string
 	 */
 	bool equals(const string& s2) const;
 
 	/**
 	 * Equals
-	 * @param string 2
+	 * @param s2 string 2
 	 * @return string 2 equals this string
 	 */
 	bool equals(const MutableString& s2) const;
@@ -205,20 +205,20 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param string
+	 * @param s string
 	 */
 	MutableString(const string& s);
 
 	/**
 	 * Public constructor
-	 * @param integer
+	 * @param i integer
 	 */
 	MutableString(int i);
 
 	/**
 	 * Public constructor
-	 * @param f
-	 * @param decimals
+	 * @param f f
+	 * @param decimals decimals
 	 */
 	MutableString(float f, int32_t decimals);
 

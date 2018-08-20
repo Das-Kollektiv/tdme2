@@ -41,7 +41,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param level editor entity
+	 * @param levelEditorEntity level editor entity
 	 */
 	LevelEditorEntityModel(LevelEditorEntity* levelEditorEntity);
 

@@ -75,8 +75,8 @@ public:
 
 	/**
 	 * @brief Adds an element to this queue, signals threads which waits for an element
-	 * @param T* element
-	 * @param bool if element is declinable
+	 * @param element T* element
+	 * @param declinable bool if element is declinable
 	 * @return if element was added
 	 */
 	bool addElement(T* element, const bool declinable) {

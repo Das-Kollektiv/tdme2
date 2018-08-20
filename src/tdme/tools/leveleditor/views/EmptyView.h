@@ -76,7 +76,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param pop ups view
+	 * @param popUps pop ups view
 	 */
 	EmptyView(PopUps* popUps);
 

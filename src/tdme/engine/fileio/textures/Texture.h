@@ -21,13 +21,13 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param depth
-	 * @param width
-	 * @param height
-	 * @param texture width
-	 * @param texture height
-	 * @param texture data
+	 * @param id id
+	 * @param depth depth
+	 * @param width width
+	 * @param height height
+	 * @param textureWidth texture width
+	 * @param textureHeight texture height
+	 * @param textureData texture data
 	 */
 	inline Texture(
 		const string& id,
@@ -110,7 +110,7 @@ public:
 
 	/**
 	 * Set if to use mip map
-	 * @param mip map enabled
+	 * @param useMipMap mip map enabled
 	 */
 	inline void setUseMipMap(bool useMipMap) {
 		this->useMipMap = useMipMap;

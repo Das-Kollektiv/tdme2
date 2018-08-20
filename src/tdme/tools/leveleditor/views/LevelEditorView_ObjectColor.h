@@ -28,13 +28,13 @@ private:
 public:
 	/**
 	 * Public constructor
-	 * @param level editor view
-	 * @param colorMulR
-	 * @param colorMulG
-	 * @param colorMulB
-	 * @param colorAddR
-	 * @param colorAddG
-	 * @param colorAddB
+	 * @param levelEditorView level editor view
+	 * @param colorMulR colorMulR
+	 * @param colorMulG colorMulG
+	 * @param colorMulB colorMulB
+	 * @param colorAddR colorAddR
+	 * @param colorAddG colorAddG
+	 * @param colorAddB colorAddB
 	 */
 	LevelEditorView_ObjectColor(LevelEditorView* levelEditorView, float colorMulR, float colorMulG, float colorMulB, float colorAddR, float colorAddG, float colorAddB);
 };

@@ -31,8 +31,8 @@ class tdme::engine::fileio::models::WFObjReader final
 public:
 	/** 
 	 * Reads a wave front object file
-	 * @param path name
-	 * @param file name
+	 * @param pathName path name
+	 * @param fileName file name
 	 * @return model
 	 * @throws FileSystemException
 	 * @throws ModelIOException
@@ -43,9 +43,9 @@ private:
 
 	/** 
 	 * Reads a wavefront object material library
-	 * @param path name
-	 * @param file name
-	 * @param materials
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param materials materials
 	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */

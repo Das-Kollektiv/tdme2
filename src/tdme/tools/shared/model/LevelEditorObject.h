@@ -38,7 +38,7 @@ public:
 
 	/** 
 	 * Set id
-	 * @param id
+	 * @param id id
 	 */
 	inline void setId(const string& id) {
 		this->id = id;
@@ -53,7 +53,7 @@ public:
 
 	/** 
 	 * Set description
-	 * @param description
+	 * @param description description
 	 */
 	inline void setDescription(const string& description) {
 		this->description = description;
@@ -75,7 +75,7 @@ public:
 
 	/** 
 	 * Set up entity
-	 * @param entity
+	 * @param entity entity
 	 */
 	inline void setEntity(LevelEditorEntity* entity) {
 		this->entity = entity;
@@ -89,10 +89,10 @@ public:
 public:
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param description
-	 * @param transformations
-	 * @param entity
+	 * @param id id
+	 * @param description description
+	 * @param transformations transformations
+	 * @param entity entity
 	 */
 	LevelEditorObject(const string& id, const string& description, const Transformations& transformations, LevelEditorEntity* entity);
 

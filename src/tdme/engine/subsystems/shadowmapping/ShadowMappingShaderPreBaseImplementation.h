@@ -59,32 +59,32 @@ public:
 
 	/** 
 	 * Set up pre program mvp matrix
-	 * @param mvp matrix
+	 * @param mvpMatrix mvp matrix
 	 */
 	virtual void updateMatrices(const Matrix4x4& mvpMatrix) override;
 
 	/**
 	 * Set up pre program texture matrix
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) override;
 
 	/**
 	 * Update material
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	virtual void updateMaterial(GLRenderer* renderer) override;
 
 	/**
 	 * Bind texture
-	 * @param renderer
-	 * @param texture id
+	 * @param renderer renderer
+	 * @param textureId texture id
 	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
 
 	/**
 	 * Constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	ShadowMappingShaderPreBaseImplementation(GLRenderer* renderer);
 

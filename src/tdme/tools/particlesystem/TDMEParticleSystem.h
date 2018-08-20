@@ -41,8 +41,8 @@ public:
 
 	/** 
 	 * Main
-	 * @param argument count
-	 * @param argument values
+	 * @param argc argument count
+	 * @param argv argument values
 	 */
 	static void main(int argc, char** argv);
 
@@ -55,7 +55,7 @@ public:
 
 	/** 
 	 * Set up new view
-	 * @param view
+	 * @param view view
 	 */
 	void setView(View* view);
 
@@ -86,8 +86,8 @@ public:
 
 	/** 
 	 * Reshape tdme level editor
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 

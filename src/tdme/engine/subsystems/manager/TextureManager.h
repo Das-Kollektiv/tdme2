@@ -34,20 +34,20 @@ public:
 
 	/** 
 	 * Adds a texture to manager / open gl stack
-	 * @param texture
+	 * @param texture texture
 	 * @returns gl texture id
 	 */
 	int32_t addTexture(Texture* texture);
 
 	/** 
 	 * Removes a texture from manager / open gl stack
-	 * @param texture id
+	 * @param textureId texture id
 	 */
 	void removeTexture(const string& textureId);
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	TextureManager(GLRenderer* renderer);
 

@@ -23,9 +23,9 @@ struct tdme::engine::physics::CollisionListener
 	 * Note: 
 	 * 	The collision response will only live while calling this method.
 	 * 	If you need it somewhere else you need to clone it
-	 * @param body 1
-	 * @param body 2
-	 * @param collision response
+	 * @param body1 body 1
+	 * @param body2 body 2
+	 * @param collisionResponse collision response
 	 */
 	virtual void onCollision(Body* body1, Body* body2, CollisionResponse* collisionResponse) = 0;
 
@@ -34,16 +34,16 @@ struct tdme::engine::physics::CollisionListener
 	 * Note: 
 	 * 	The collision response will only live while calling this method.
 	 * 	If you need it somewhere else you need to clone it
-	 * @param body 1
-	 * @param body 2
-	 * @param collision response
+	 * @param body1 body 1
+	 * @param body2 body 2
+	 * @param collisionResponse collision response
 	 */
 	virtual void onCollisionBegin(Body* body1, Body* body2, CollisionResponse* collisionResponse) = 0;
 
 	/** 
 	 * On collision end
-	 * @param body 1
-	 * @param body 2
+	 * @param body1 body 1
+	 * @param body2 body 2
 	 */
 	virtual void onCollisionEnd(Body* body1, Body* body2) = 0;
 };

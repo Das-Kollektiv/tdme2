@@ -76,19 +76,19 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param particles to emit in one second
-	 * @param life time
-	 * @param life time rnd
-	 * @param axis 0
-	 * @param axis 1
-	 * @param center
-	 * @param radius
-	 * @param mass
-	 * @param mass rnd
-	 * @param velocity
-	 * @param velocity rnd
-	 * @param color start
-	 * @param color end
+	 * @param count particles to emit in one second
+	 * @param lifeTime life time
+	 * @param lifeTimeRnd life time rnd
+	 * @param axis0 axis 0
+	 * @param axis1 axis 1
+	 * @param center center
+	 * @param radius radius
+	 * @param mass mass
+	 * @param massRnd mass rnd
+	 * @param velocity velocity
+	 * @param velocityRnd velocity rnd
+	 * @param colorStart color start
+	 * @param colorEnd color end
 	 */
 	CircleParticleEmitter(int32_t count, int64_t lifeTime, int64_t lifeTimeRnd, const Vector3& axis0, const Vector3& axis1, const Vector3& center, float radius, float mass, float massRnd, const Vector3& velocity, const Vector3& velocityRnd, const Color4& colorStart, const Color4& colorEnd);
 };

@@ -69,13 +69,13 @@ protected:
 
 	/** 
 	 * Set computed top
-	 * @param top
+	 * @param top top
 	 */
 	void setTop(int32_t top) override;
 
 	/** 
 	 * Set computed left
-	 * @param left
+	 * @param left left
 	 */
 	void setLeft(int32_t left) override;
 	void layoutSubNodes() override;
@@ -83,31 +83,31 @@ protected:
 
 	/**
 	 * Constructor
-	 * @param screen node
-	 * @param parent node
-	 * @param id
-	 * @param flow
-	 * @param overflow x
-	 * @param overflow y
-	 * @param alignments
-	 * @param requested constraints
-	 * @param background color
-	 * @param background image
-	 * @param background image scale 9 grid
-	 * @param border
-	 * @param padding
-	 * @param show on
-	 * @param hide on
-	 * @param name
-	 * @param value
-	 * @param selected
-	 * @param disabled
-	 * @param focusable
-	 * @param ignore events
-	 * @param on initialize expression
-	 * @param on mouse click expression
-	 * @param on mouse over expression
-	 * @param on mouse out expression
+	 * @param screenNode screen node
+	 * @param parentNode parent node
+	 * @param id id
+	 * @param flow flow
+	 * @param overflowX overflow x
+	 * @param overflowY overflow y
+	 * @param alignments alignments
+	 * @param requestedConstraints requested constraints
+	 * @param backgroundColor background color
+	 * @param backgroundImage background image
+	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param border border
+	 * @param padding padding
+	 * @param showOn show on
+	 * @param hideOn hide on
+	 * @param name name
+	 * @param value value
+	 * @param selected selected
+	 * @param disabled disabled
+	 * @param focusable focusable
+	 * @param ignoreEvents ignore events
+	 * @param onInitialize on initialize expression
+	 * @param onMouseClick on mouse click expression
+	 * @param onMouseOver on mouse over expression
+	 * @param onMouseOut on mouse out expression
 	 */
 	GUIElementNode(
 		GUIScreenNode* screenNode,

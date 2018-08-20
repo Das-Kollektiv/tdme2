@@ -78,8 +78,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id
-	 * @param model
+	 * @param id id
+	 * @param model model
 	 */
 	Object3D(const string& id, Model* model);
 
@@ -218,7 +218,7 @@ public:
 
 	/**
 	 * Set shader
-	 * @param shader id
+	 * @param id shader id
 	 */
 	inline void setShader(const string& id) {
 		shaderId = id;
@@ -233,7 +233,7 @@ public:
 
 	/**
 	 * Set distance shader
-	 * @param shader id
+	 * @param id shader id
 	 */
 	inline void setDistanceShader(const string& id) {
 		distanceShaderId = id;
@@ -248,7 +248,7 @@ public:
 
 	/**
 	 * Set distance shader distance
-	 * @param shader
+	 * @param distanceShaderDistance shader
 	 */
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;

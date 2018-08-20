@@ -33,9 +33,9 @@ class tdme::network::udpserver::NIOUDPServerClient : public NIOServerClient {
 public:
 	/**
 	 * @brief public constructor should be called in any subclass of NIOUDPNetworkServer
-	 * @param client id
-	 * @param ip
-	 * @param port
+	 * @param clientId client id
+	 * @param ip ip
+	 * @param port port
 	 */
 	NIOUDPServerClient(const uint32_t clientId, const std::string& ip, const unsigned int port);
 
@@ -71,7 +71,7 @@ public:
 
 	/**
 	 * @brief sets the clients identification key
-	 * @param client identification key
+	 * @param &key client identification key
 	 * @return if setting the key was succesful
 	 */
 	const bool setKey(const string &key);
@@ -84,15 +84,15 @@ public:
 
 	/**
 	 * @brief Sends a frame to client, takes over ownership of frame
-	 * @param frame data
-	 * @param safe, requires ack and retransmission
-	 * @param delete frame
+	 * @param frame frame data
+	 * @param safe safe, requires ack and retransmission
+	 * @param deleteFrame delete frame
 	 */
 	void send(stringstream* frame, bool safe = true, bool deleteFrame = true);
 
 	/**
 	 * @brief Checks if message has already been processed and sends an acknowlegdement to client / safe client messages
-	 * @param message id
+	 * @param messageId message id
 	 */
 	bool processSafeMessage(const uint32_t messageId);
 
@@ -119,9 +119,9 @@ protected:
 
 	/**
 	 * @brief To be overwritten with a request handler, will be called from worker
-	 * @param frame
-	 * @param message id
-	 * @param retries
+	 * @param frame frame
+	 * @param messageId message id
+	 * @param retries retries
 	 */
 	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) throw (Exception) = 0;
 
@@ -132,9 +132,9 @@ protected:
 
 	/**
 	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool
-	 * @param frame
-	 * @param message id (upd server only)
-	 * @param retries (udp server only)
+	 * @param frame frame
+	 * @param messageId message id (upd server only)
+	 * @param retries retries (udp server only)
 	 */
 	virtual void onFrameReceived(stringstream* frame, const uint32_t messageId = 0, const uint8_t retries = 0);
 

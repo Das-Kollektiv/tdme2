@@ -38,7 +38,7 @@ public:
 
 	/** 
 	 * Set up the entity's material
-	 * @param material
+	 * @param material material
 	 */
 	void setMaterial(Material* material);
 
@@ -54,7 +54,7 @@ public:
 
 	/** 
 	 * Set up entity's faces
-	 * @param faces
+	 * @param faces faces
 	 */
 	void setFaces(const vector<Face>* faces);
 
@@ -80,8 +80,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param group
-	 * @param id
+	 * @param group group
+	 * @param id id
 	 */
 	FacesEntity(Group* group, const string& id);
 };

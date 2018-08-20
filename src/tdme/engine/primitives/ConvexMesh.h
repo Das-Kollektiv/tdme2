@@ -30,17 +30,17 @@ private:
 
 	/**
 	 * Public constructor
-	 * @param vertices
-	 * @param faces vertices count
-	 * @param indices
-	 * @param scale
+	 * @param vertices vertices
+	 * @param facesVerticesCount faces vertices count
+	 * @param indices indices
+	 * @param scale scale
 	 */
 	ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Checks if vertex lives on triangle plane
-	 * @param triangle
-	 * @param vertex
+	 * @param triangle triangle
+	 * @param vertex vertex
 	 * @return if vertex lives on triangle plane
 	 */
 	bool isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex);
@@ -62,8 +62,8 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param model
-	 * @param scale
+	 * @param model model
+	 * @param scale scale
 	 */
 	ConvexMesh(Object3DModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 

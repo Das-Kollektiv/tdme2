@@ -67,12 +67,12 @@ private:
 
 	/** 
 	 * Update partition tree
-	 * @param parent
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param partition size
-	 * @param entity
+	 * @param parent parent
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param partitionSize partition size
+	 * @param entity entity
 	 */
 	inline void updatePartitionTree(PartitionOctTree_PartitionTreeNode* parent, int32_t x, int32_t y, int32_t z, float partitionSize, Entity* entity) {
 		// key
@@ -143,7 +143,7 @@ private:
 
 	/** 
 	 * Is partition empty
-	 * @param node
+	 * @param node node
 	 * @return partition empty
 	 */
 	inline bool isPartitionNodeEmpty(PartitionOctTree_PartitionTreeNode* node) {
@@ -162,7 +162,7 @@ private:
 
 	/** 
 	 * Remove partition node, should be empty
-	 * @param node
+	 * @param node node
 	 */
 	inline void removePartitionNode(PartitionOctTree_PartitionTreeNode* node) {
 		// lowest level node has objects attached?
@@ -181,8 +181,8 @@ private:
 
 	/** 
 	 * Do partition tree lookup
-	 * @param frustum
-	 * @param node
+	 * @param frustum frustum
+	 * @param node node
 	 * @return number of look ups
 	 */
 	inline int32_t doPartitionTreeLookUpVisibleObjects(Frustum* frustum, PartitionOctTree_PartitionTreeNode* node) {
@@ -223,8 +223,8 @@ private:
 
 	/** 
 	 * Do partition tree lookup for near entities to cbv
-	 * @param node
-	 * @param computed bounding volume
+	 * @param node node
+	 * @param cbv computed bounding volume
 	 */
 	inline int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv) {
 		// check if given cbv collides with partition node bv

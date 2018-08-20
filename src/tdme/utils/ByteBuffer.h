@@ -51,14 +51,14 @@ public:
 public:
 	/**
 	 * Public constructor
-	 * @param capacity
+	 * @param capacity capacity
 	 */
 	inline ByteBuffer(int32_t capacity) : Buffer(capacity) {
 	}
 
 	/**
 	 * Public constructor
-	 * @param data
+	 * @param data data
 	 */
 	inline ByteBuffer(vector<uint8_t>* data) : Buffer(data) {
 	}

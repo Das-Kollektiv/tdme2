@@ -42,8 +42,8 @@ public:
 
 	/** 
 	 * Resize the frame buffer
-	 * @param width
-	 * @param height
+	 * @param width width
+	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
@@ -79,9 +79,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param width
-	 * @param height
-	 * @param buffers (see FrameBuffer::FRAMEBUFFER_*)
+	 * @param width width
+	 * @param height height
+	 * @param buffers buffers (see FrameBuffer::FRAMEBUFFER_*)
 	 */
 	FrameBuffer(int32_t width, int32_t height, int32_t buffers);
 };

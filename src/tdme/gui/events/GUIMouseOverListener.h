@@ -15,7 +15,7 @@ struct tdme::gui::events::GUIMouseOverListener
 
 	/** 
 	 * On mouse over
-	 * @param node
+	 * @param node node
 	 */
 	virtual void onMouseOver(GUIElementNode* node) = 0;
 };

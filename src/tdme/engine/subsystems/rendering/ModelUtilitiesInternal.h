@@ -29,35 +29,35 @@ class tdme::engine::subsystems::rendering::ModelUtilitiesInternal
 public:
 	/** 
 	 * Creates a bounding box from given model
-	 * @param model
+	 * @param model model
 	 * @return axis aligned bounding box
 	 */
 	static BoundingBox* createBoundingBox(Model* model);
 
 	/** 
 	 * Invert normals of a model
-	 * @param model
+	 * @param model model
 	 */
 	static void invertNormals(Model* model);
 
 private:
 	/**
 	 * Creates a bounding box from given object3d model
-	 * @param model
+	 * @param object3DModelInternal model
 	 * @return axis aligned bounding box
 	 */
 	static BoundingBox* createBoundingBox(Object3DModelInternal* object3DModelInternal);
 
 	/**
 	 * Creates a bounding box from given object3d model without mesh
-	 * @param model
+	 * @param object3DModelInternal model
 	 * @return axis aligned bounding box
 	 */
 	static BoundingBox* createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal);
 
 	/** 
 	 * Invert normals recursive
-	 * @param groups
+	 * @param groups groups
 	 */
 	static void invertNormals(map<string, Group*>* groups);
 
@@ -65,30 +65,30 @@ public:
 
 	/** 
 	 * Compute model statistics
-	 * @param model
-	 * @param model statistics
+	 * @param model model
+	 * @param modelStatistics model statistics
 	 */
 	static void computeModelStatistics(Model* model, ModelStatistics* modelStatistics);
 
 	/** 
 	 * Compute model statistics
-	 * @param object 3d model internal
-	 * @param model statistics
+	 * @param object3DModelInternal object 3d model internal
+	 * @param modelStatistics model statistics
 	 */
 	static void computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics);
 
 	/** 
 	 * Compute if model 1 equals model 2
-	 * @param model 1
-	 * @param model 2
+	 * @param model1 model 1
+	 * @param model2 model 2
 	 * @return model1 equals model2
 	 */
 	static bool equals(Model* model1, Model* model2);
 
 	/** 
 	 * Compute if model 1 equals model 2
-	 * @param model 1
-	 * @param model 2
+	 * @param object3DModel1Internal model 1
+	 * @param object3DModel2Internal model 2
 	 * @return model1 equals model2
 	 */
 	static bool equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal);

@@ -15,7 +15,7 @@ struct tdme::gui::events::GUIChangeListener
 
 	/** 
 	 * On value changed
-	 * @param node
+	 * @param node node
 	 */
 	virtual void onValueChanged(GUIElementNode* node) = 0;
 };

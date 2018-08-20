@@ -47,7 +47,7 @@ private:
 
 	/**
 	 * Adds a transparent render point to this transparent render points
-	 * @param transparent render point
+	 * @param point transparent render point
 	 */
 	void addPoint(TransparentRenderPoint* point);
 

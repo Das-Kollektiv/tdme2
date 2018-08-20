@@ -85,7 +85,7 @@ public:
 
 	/** 
 	 * Set up model name
-	 * @param name
+	 * @param name name
 	 */
 	inline void setName(const string& name) {
 		this->name = name;
@@ -100,7 +100,7 @@ public:
 
 	/** 
 	 * Set up model description
-	 * @param description
+	 * @param description description
 	 */
 	inline void setDescription(const string& description) {
 		this->description = description;
@@ -115,7 +115,7 @@ public:
 
 	/** 
 	 * Set entity file name
-	 * @param entity file name
+	 * @param entityFileName entity file name
 	 */
 	inline void setEntityFileName(const string& entityFileName) {
 		this->entityFileName = entityFileName;
@@ -144,7 +144,7 @@ public:
 
 	/** 
 	 * Set model
-	 * @param model
+	 * @param model model
 	 */
 	inline void setModel(Model* model) {
 		if (this->model != nullptr) delete this->model;
@@ -167,7 +167,7 @@ public:
 
 	/** 
 	 * Get bounding volume at
-	 * @param idx
+	 * @param idx idx
 	 * @return level editor object bounding volume
 	 */
 	inline LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx) {
@@ -176,8 +176,8 @@ public:
 
 	/** 
 	 * Add bounding volume
-	 * @param idx
-	 * @param level editor entity bounding volume
+	 * @param idx idx
+	 * @param levelEditorEntityBoundingVolume level editor entity bounding volume
 	 * @return level editor bounding volume
 	 */
 	bool addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume);
@@ -203,7 +203,7 @@ public:
 
 	/**
 	 * Set LOD level 2
-	 * @param lod level settings
+	 * @param lodLevel lod level settings
 	 */
 	void setLODLevel2(LevelEditorEntityLODLevel* lodLevel);
 
@@ -216,7 +216,7 @@ public:
 
 	/**
 	 * Set LOD level 3
-	 * @param lod level settings
+	 * @param lodLevel lod level settings
 	 */
 	void setLODLevel3(LevelEditorEntityLODLevel* lodLevel);
 
@@ -244,7 +244,7 @@ public:
 
 	/**
 	 * Set dynamic shadowing
-	 * @param dynamic shadowing enabled
+	 * @param dynamicShadowing dynamic shadowing enabled
 	 */
 	inline void setDynamicShadowing(bool dynamicShadowing) {
 		this->dynamicShadowing = dynamicShadowing;
@@ -260,7 +260,7 @@ public:
 
 	/**
 	 * Set using render groups
-	 * @param use render groups
+	 * @param renderGroups use render groups
 	 */
 	inline void setRenderGroups(bool renderGroups) {
 		this->renderGroups = renderGroups;
@@ -276,7 +276,7 @@ public:
 
 	/**
 	 * Set shader
-	 * @param shader id
+	 * @param id shader id
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
@@ -284,15 +284,15 @@ public:
 
 	/**
 	 * Creates a level editor model
-	 * @param id
-	 * @param entity type
-	 * @param name
-	 * @param description
-	 * @param entity file name
-	 * @param file name
-	 * @param thumbnail
-	 * @param model
-	 * @param pivot
+	 * @param id id
+	 * @param entityType entity type
+	 * @param name name
+	 * @param description description
+	 * @param entityFileName entity file name
+	 * @param fileName file name
+	 * @param thumbnail thumbnail
+	 * @param model model
+	 * @param pivot pivot
 	 */
 	LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot);
 

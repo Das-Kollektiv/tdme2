@@ -56,7 +56,7 @@ public:
 
 	/** 
 	 * Adds a collision response entity 
-	 * @param distance
+	 * @param distance distance
 	 * @return Entity or null
 	 */
 	inline CollisionResponse_Entity* addResponse(float distance) {
@@ -86,7 +86,7 @@ public:
 
 	/** 
 	 * Selects entity at given index
-	 * @param idx
+	 * @param idx idx
 	 * @return
 	 */
 	inline CollisionResponse_Entity* getEntityAt(int32_t idx) {
@@ -96,7 +96,7 @@ public:
 
 	/** 
 	 * Selects entity at given index
-	 * @param idx
+	 * @param idx idx
 	 * @return
 	 */
 	inline CollisionResponse* selectEntityAt(int32_t idx) {
@@ -147,7 +147,7 @@ public:
 
 	/** 
 	 * Get hit point of given index 
-	 * @param i
+	 * @param i i
 	 * @return hit point for given hit points index
 	 */
 	inline Vector3* getHitPointAt(int32_t i) {
@@ -157,7 +157,7 @@ public:
 
 	/** 
 	 * Set up response from given collision response
-	 * @param response
+	 * @param response response
 	 */
 	inline CollisionResponse* fromResponse(CollisionResponse* response) {
 		// copy reponse
@@ -177,7 +177,7 @@ public:
 
 	/** 
 	 * Set up response from given collision response
-	 * @param response
+	 * @param response response
 	 */
 	inline CollisionResponse* mergeResponse(CollisionResponse* response) {
 		// TODO: This does not seem to be used, remove it then!
