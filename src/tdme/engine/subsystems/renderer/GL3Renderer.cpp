@@ -57,10 +57,11 @@ GL3Renderer::GL3Renderer()
 	FRONTFACE_CCW = GL_CCW;
 	SHADER_FRAGMENT_SHADER = GL_FRAGMENT_SHADER;
 	SHADER_VERTEX_SHADER = GL_VERTEX_SHADER;
-	SHADER_GEOMETRY_SHADER = GL_GEOMETRY_SHADER;
 	#if defined (__APPLE__)
 		SHADER_COMPUTE_SHADER = -1;
+		SHADER_GEOMETRY_SHADER = -1;
 	#else
+		SHADER_GEOMETRY_SHADER = GL_GEOMETRY_SHADER;
 		SHADER_COMPUTE_SHADER = GL_COMPUTE_SHADER;
 	#endif
 	DEPTHFUNCTION_ALWAYS = GL_ALWAYS;
@@ -144,7 +145,11 @@ bool GL3Renderer::isUsingShortIndices() {
 }
 
 bool GL3Renderer::isGeometryShaderAvailable() {
-	return true;
+	#if defined (__APPLE__)
+		return false;
+	#else
+		return true;
+	#endif
 }
 
 int32_t GL3Renderer::getTextureUnits()
