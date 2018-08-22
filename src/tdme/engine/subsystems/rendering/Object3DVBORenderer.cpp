@@ -730,7 +730,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					// bind tangent, bitangend buffers
 					auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
 					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
-						renderer->isNormalMappingAvailable() && currentVBOTangentBitangentIds != nullptr) {
+						renderer->isNormalMappingAvailable() == true && currentVBOTangentBitangentIds != nullptr) {
 						// bind tangent, bitangend buffers if not yet done
 						if (boundVBOTangentBitangentIds == nullptr) {
 							// tangent
