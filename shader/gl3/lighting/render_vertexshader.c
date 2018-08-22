@@ -63,7 +63,16 @@ uniform int normalTextureAvailable;
 
 {$DEFINITIONS}
 
-#if defined(HAVE_GEOMETRY_SHADER) == false
+#if defined(HAVE_GEOMETRY_SHADER)
+	// will be passed to geometry shader
+	out mat4 vsModelMatrix;
+	out vec2 vsFragTextureUV;
+	out vec3 vsNormal;
+	out vec3 vsTangent;
+	out vec3 vsBitangent;
+	out vec4 vsEffectColorMul;
+	out vec4 vsEffectColorAdd;
+#else
 	uniform mat4 projectionMatrix;
 	uniform mat4 cameraMatrix;
 
@@ -86,16 +95,6 @@ uniform int normalTextureAvailable;
 	#define vsEffectColorAdd inEffectColorAdd
 
 	#define GS_IN_ARRAY_AT(array, index) array
-
-#else
-	// will be passed to geometry shader
-	out mat4 vsModelMatrix;
-	out vec2 vsFragTextureUV;
-	out vec3 vsNormal;
-	out vec3 vsTangent;
-	out vec3 vsBitangent;
-	out vec4 vsEffectColorMul;
-	out vec4 vsEffectColorAdd;
 #endif
 
 {$FUNCTIONS}

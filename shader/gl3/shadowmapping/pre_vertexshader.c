@@ -14,7 +14,11 @@ uniform mat3 textureMatrix;
 
 {$DEFINITIONS}
 
-#if defined(HAVE_GEOMETRY_SHADER) == false
+#if defined(HAVE_GEOMETRY_SHADER)
+	// will be passed to geometry shader
+	out vec2 vsFragTextureUV;
+	out mat4 vsModelMatrix;
+#else
 	// will be passed to fragement shader
 	out vec2 gsFragTextureUV;
 	out mat4 gsModelMatrix;
@@ -23,11 +27,6 @@ uniform mat3 textureMatrix;
 	#define vsModelMatrix inModelMatrix
 
 	#define GS_IN_ARRAY_AT(array, index) array
-
-#else
-	// will be passed to geometry shader
-	out vec2 vsFragTextureUV;
-	out mat4 vsModelMatrix;
 #endif
 
 {$FUNCTIONS}
