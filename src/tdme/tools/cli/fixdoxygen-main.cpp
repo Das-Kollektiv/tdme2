@@ -182,9 +182,16 @@ int main(int argc, char** argv)
 	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
 	Console::println();
 
+	if (argc != 2) {
+		Console::println("Usage: fixdoxyen path_to_headers");
+		exit(0);
+	}
+
+	auto pathToHeaders = string(argv[1]);
+
 	Console::println("Scanning files");
 	vector<string> files;
-	scanDir("./src/tdme", files);
+	scanDir(pathToHeaders, files);
 
 	Console::println("Processing files");
 	for (auto fileName: files) {
