@@ -139,6 +139,17 @@ public:
 	Body* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight = -10000.0f);
 
 	/**
+	 * Do a ray cast from given start to given end point, if there is any body with given collision type in between
+	 * then the body is returned and a hit point is reported
+	 * @param collisionTypeIds collision type ids
+	 * @param start start
+	 * @param end end
+	 * @param hitPoint hit point
+	 * @return body
+	 *
+	 */
+	Body* doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const Vector3& end, Vector3& hitPoint);
+	/**
 	 * Check if world collides with given body
 	 * @param collisionTypeIds collision type ids
 	 * @param body body

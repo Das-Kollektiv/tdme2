@@ -321,6 +321,40 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 	}
 }
 
+Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const Vector3& end, Vector3& hitPoint)
+{
+	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
+	public:
+		CustomCallbackClass(): body(nullptr) {
+		}
+		virtual reactphysics3d::decimal notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {
+			hitPoint.set(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
+			body = (Body*)info.body->getUserData();
+			return reactphysics3d::decimal(0.0);
+		};
+		Body* getBody() {
+			return body;
+		}
+		const Vector3& getHitPoint() {
+			return hitPoint;
+		}
+	private:
+		Vector3 hitPoint;
+		Body* body;
+	};
+	reactphysics3d::Vector3 startPoint(start.getX(), start.getY(), start.getZ());
+	reactphysics3d::Vector3 endPoint(end.getX(), end.getY(), end.getZ());
+	reactphysics3d::Ray ray(startPoint, endPoint);
+	CustomCallbackClass customCallbackObject;
+	world.raycast(ray, &customCallbackObject, collisionTypeIds);
+	if (customCallbackObject.getBody() != nullptr) {
+		hitPoint.set(customCallbackObject.getHitPoint());
+		return customCallbackObject.getBody();
+	} else {
+		return nullptr;
+	}
+}
+
 bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& rigidBodies) {
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
