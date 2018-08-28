@@ -484,6 +484,22 @@ void GUIImageNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
 	this->textureMatrix.set(textureMatrix);
 }
 
+const GUIColor& GUIImageNode::getEffectColorMul() {
+	return effectColorMul;
+}
+
+void GUIImageNode::setEffectColorMul(const GUIColor& effectColorMul) {
+	this->effectColorMul = effectColorMul;
+}
+
+const GUIColor& GUIImageNode::getEffectColorAdd() {
+	return effectColorAdd;
+}
+
+void GUIImageNode::setEffectColorAdd(const GUIColor& effectColorAdd) {
+	this->effectColorAdd = effectColorAdd;
+}
+
 GUINode_Clipping& GUIImageNode::getClipping() {
 	return clipping;
 }

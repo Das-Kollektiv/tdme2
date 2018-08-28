@@ -121,6 +121,28 @@ public:
 	void setTextureMatrix(const Matrix2D3x3& textureMatrix);
 
 	/**
+	 * @return effect color mul
+	 */
+	const GUIColor& getEffectColorMul();
+
+	/**
+	 * Set effect color mul
+	 * @param effect color mul
+	 */
+	void setEffectColorMul(const GUIColor& effectColorMul);
+
+	/**
+	 * @return effect color add
+	 */
+	const GUIColor& getEffectColorAdd();
+
+	/**
+	 * Set effect color add
+	 * @param effect color add
+	 */
+	void setEffectColorAdd(const GUIColor& effectColorAdd);
+
+	/**
 	 * @return clipping
 	 */
 	GUINode_Clipping& getClipping();
