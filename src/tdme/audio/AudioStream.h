@@ -32,6 +32,7 @@ private:
 	uint8_t channels {  };
 	ByteBuffer* data {  };
 	int32_t format {  };
+	bool playing { false };
 
 public:
 	/**
@@ -50,6 +51,10 @@ public:
 	virtual void stop() override;
 
 private:
+	/**
+	 * @return having buffers that are currently played
+	 */
+	bool isPlayingBuffers();
 
 	/** 
 	 * Updates properties to Open AL

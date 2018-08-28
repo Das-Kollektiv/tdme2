@@ -48,11 +48,15 @@ void AudioStream::setParameters(uint32_t sampleRate, uint8_t channels, const uin
 	this->data = ByteBuffer::allocate(bufferSize);
 }
 
-bool AudioStream::isPlaying()
-{
+bool AudioStream::isPlayingBuffers() {
 	ALint state;
 	alGetSourcei(alSourceId, AL_SOURCE_STATE, &state);
 	return state == AL_PLAYING;
+}
+
+bool AudioStream::isPlaying()
+{
+	return isPlayingBuffers() == true || playing == true;
 }
 
 void AudioStream::rewind()
@@ -64,8 +68,8 @@ void AudioStream::play()
 	if (initiated == false)
 		return;
 
-	if (isPlaying() == true)
-		stop();
+	//
+	stop();
 
 	// update AL properties
 	updateProperties();
@@ -92,6 +96,9 @@ void AudioStream::play()
 	if (alGetError() != AL_NO_ERROR) {
 		Console::println(string("AudioStream::play(): '"+ id + "': Could not play source"));
 	}
+
+	//
+	playing = true;
 }
 
 void AudioStream::pause()
@@ -129,6 +136,9 @@ void AudioStream::stop()
 			Console::println(string("AudioStream::stop(): '" + id + "': Could not unqueue buffers"));
 		}
 	}
+
+	//
+	playing = false;
 }
 
 bool AudioStream::initialize()
@@ -169,7 +179,9 @@ void AudioStream::update()
 	if (alGetError() != AL_NO_ERROR) {
 		Console::println(string("AudioStream::update(): '" + id + "': Could not determine processed buffers"));
 	}
-	if (processedBuffers > 0) {
+	if (isPlayingBuffers() == false && playing == true) {
+		play();
+	} else {
 		while (processedBuffers > 0) {
 			// get a processed buffer id and unqueue it
 			uint32_t processedBufferId;
@@ -180,8 +192,10 @@ void AudioStream::update()
 			// fill processed buffer again
 			data->clear();
 			fillBuffer(data);
-			//
-			if (data->getPosition() > 0) {
+			// stop buffer if not filled
+			if (data->getPosition() == 0) {
+				playing = false;
+			} else {
 				// upload buffer data
 				alBufferData(processedBufferId, format, data->getBuffer(), data->getPosition(), sampleRate);
 				if (alGetError() != AL_NO_ERROR) {
@@ -191,6 +205,10 @@ void AudioStream::update()
 				alSourceQueueBuffers(alSourceId, 1, &processedBufferId);
 				if (alGetError() != AL_NO_ERROR) {
 					Console::println(string("AudioStream::update(): '" + id + "': Could not queue buffer"));
+				}
+				// stop buffer if not filled completely
+				if (data->getPosition() < data->getCapacity()) {
+					playing = false;
 				}
 			}
 			// processed it
