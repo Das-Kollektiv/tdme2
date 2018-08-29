@@ -92,12 +92,12 @@ array<int32_t, 3>* Face::getBitangentIndices()
 	return &bitangentIndices;
 }
 
-void Face::setIndexedRenderingIndices(array<int32_t, 3>* indices)
+void Face::setIndexedRenderingIndices(const array<int32_t, 3>& indices)
 {
-	vertexIndices = *indices;
-	normalIndices = *indices;
-	textureCoordinateIndices = *indices;
-	tangentIndices = *indices;
-	bitangentIndices = *indices;
+	vertexIndices = indices;
+	normalIndices = indices;
+	textureCoordinateIndices = indices;
+	tangentIndices = indices;
+	bitangentIndices = indices;
 }
 

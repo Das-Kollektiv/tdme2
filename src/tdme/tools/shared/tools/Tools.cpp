@@ -119,16 +119,6 @@ void Tools::convertToArray(const string& text, array<float, 3>& array) /* throws
 	}
 }
 
-void Tools::convertToArray(const string& text, array<float, 4>* array) /* throws(NumberFormatException) */
-{
-	auto i = 0;
-	StringTokenizer t;
-	t.tokenize(text, ",");
-	while (t.hasMoreTokens() && i < array->size()) {
-		(*array)[i++] = Float::parseFloat(t.nextToken());
-	}
-}
-
 void Tools::convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */
 {
 	auto i = 0;

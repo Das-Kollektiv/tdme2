@@ -239,8 +239,8 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 					// compute vertex normal
 					array<Vector3, 3> faceVertexNormals;
 					ModelHelper::computeNormals(
-						&faceVertices,
-						&faceVertexNormals
+						faceVertices,
+						faceVertexNormals
 					);
 					// store group normals
 					auto n0 = groupNormals.size();

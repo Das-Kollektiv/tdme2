@@ -138,7 +138,7 @@ void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureC
 	}
 }
 
-void TMWriter::writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices) throw (ModelFileIOException)
+void TMWriter::writeIndices(TMWriterOutputStream* os, const array<int32_t, 3>* indices) throw (ModelFileIOException)
 {
 	if (indices == nullptr) {
 		os->writeBoolean(false);

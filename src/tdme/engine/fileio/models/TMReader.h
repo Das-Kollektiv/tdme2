@@ -129,13 +129,13 @@ public:
 	 * @throws model file IO exception
 	 * @return float array
 	 */
-	inline void readFloatArray(array<float, 16>* data) throw (ModelFileIOException) {
+	inline void readFloatArray(array<float, 16>& data) throw (ModelFileIOException) {
 		auto length = readInt();
-		if (length != data->size()) {
+		if (length != data.size()) {
 			throw ModelFileIOException("Wrong float array size");
 		}
-		for (auto i = 0; i < data->size(); i++) {
-			(*data)[i] = readFloat();
+		for (auto i = 0; i < data.size(); i++) {
+			(data)[i] = readFloat();
 		}
 	}
 
@@ -144,13 +144,13 @@ public:
 	 * @throws model file IO exception
 	 * @return float array
 	 */
-	inline void readFloatArray(array<float, 4>* data) throw (ModelFileIOException) {
+	inline void readFloatArray(array<float, 4>& data) throw (ModelFileIOException) {
 		auto length = readInt();
-		if (length != data->size()) {
+		if (length != data.size()) {
 			throw ModelFileIOException("Wrong float array size");
 		}
-		for (auto i = 0; i < data->size(); i++) {
-			(*data)[i] = readFloat();
+		for (auto i = 0; i < data.size(); i++) {
+			(data)[i] = readFloat();
 		}
 	}
 
@@ -333,7 +333,7 @@ private:
 	 * @throws model file IO exception
 	 * @return group
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups) throw (ModelFileIOException);
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups) throw (ModelFileIOException); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Write group to output stream

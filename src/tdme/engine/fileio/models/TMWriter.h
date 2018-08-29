@@ -125,7 +125,7 @@ public:
 	 * @param f float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(array<float,2>& f) throw (ModelFileIOException) {
+	inline void writeFloatArray(const array<float,2>& f) throw (ModelFileIOException) {
 		writeInt(f.size());
 		for (auto i = 0; i < f.size(); i++) {
 			writeFloat(f[i]);
@@ -137,7 +137,7 @@ public:
 	 * @param f float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(array<float,3>& f) throw (ModelFileIOException) {
+	inline void writeFloatArray(const array<float,3>& f) throw (ModelFileIOException) {
 		writeInt(f.size());
 		for (auto i = 0; i < f.size(); i++) {
 			writeFloat(f[i]);
@@ -149,7 +149,7 @@ public:
 	 * @param f float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(array<float,4>& f) throw (ModelFileIOException) {
+	inline void writeFloatArray(const array<float,4>& f) throw (ModelFileIOException) {
 		writeInt(f.size());
 		for (auto i = 0; i < f.size(); i++) {
 			writeFloat(f[i]);
@@ -161,7 +161,7 @@ public:
 	 * @param f float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(array<float,4>* f) throw (ModelFileIOException) {
+	inline void writeFloatArray(const array<float,4>* f) throw (ModelFileIOException) {
 		writeInt(f->size());
 		for (auto i = 0; i < f->size(); i++) {
 			writeFloat((*f)[i]);
@@ -173,7 +173,7 @@ public:
 	 * @param f float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(array<float,16>& f) throw (ModelFileIOException) {
+	inline void writeFloatArray(const array<float,16>& f) throw (ModelFileIOException) {
 		writeInt(f.size());
 		for (auto i = 0; i < f.size(); i++) {
 			writeFloat(f[i]);
@@ -256,7 +256,7 @@ private:
 	 * @param indices indices
 	 * @throws model file IO exception
 	 */
-	static void writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices) throw (ModelFileIOException);
+	static void writeIndices(TMWriterOutputStream* os, const array<int32_t, 3>* indices) throw (ModelFileIOException);
 
 	/** 
 	 * Write animation to output stream
@@ -304,7 +304,7 @@ private:
 	 * @param subGroups sub groups
 	 * @throws model file IO exception
 	 */
-	static void writeSubGroups(TMWriterOutputStream* os, map<string, Group*>* subGroups) throw (ModelFileIOException);
+	static void writeSubGroups(TMWriterOutputStream* os, map<string, Group*>* subGroups) throw (ModelFileIOException); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Write group to output stream

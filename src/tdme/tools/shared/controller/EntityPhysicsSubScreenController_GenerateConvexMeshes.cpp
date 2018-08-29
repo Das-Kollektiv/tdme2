@@ -341,7 +341,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 				vertices[triangles[i * 3 + 2]]
 			};
 			array<Vector3, 3> faceNormals;
-			ModelHelper::computeNormals(&faceVertices, &faceNormals);
+			ModelHelper::computeNormals(faceVertices, faceNormals);
 			for (auto& normal : faceNormals) {
 				normals.push_back(normal);
 			}
@@ -396,7 +396,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 				triangle.getVertices()[2],
 			};
 			array<Vector3, 3> faceNormals;
-			ModelHelper::computeNormals(&faceVertices, &faceNormals);
+			ModelHelper::computeNormals(faceVertices, faceNormals);
 			for (auto& normal : faceNormals) {
 				normals.push_back(normal);
 			}

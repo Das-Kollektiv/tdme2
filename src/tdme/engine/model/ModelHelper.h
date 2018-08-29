@@ -44,7 +44,7 @@ public:
 	 * @param normal face normal
 	 * @return computed face normal
 	 */
-	static void computeNormal(array<Vector3,3>* vertices, Vector3& normal);
+	static void computeNormal(const array<Vector3,3>& vertices, Vector3& normal);
 
 	/** 
 	 * Computes face normals for given face vertices
@@ -52,7 +52,7 @@ public:
 	 * @param vertices face vertices
 	 * @param normals computed face normals
 	 */
-	static void computeNormals(array<Vector3,3>* vertices, array<Vector3,3>* normals);
+	static void computeNormals(const array<Vector3,3>& vertices, array<Vector3,3>& normals);
 
 	/** 
 	 * Create normal tangents and bitangents for groups with normal mapping
@@ -79,7 +79,7 @@ private:
 	 * Prepares this group for indexed rendering
 	 * @param groups groups
 	 */
-	static void prepareForIndexedRendering(map<string, Group*>* groups);
+	static void prepareForIndexedRendering(map<string, Group*>* groups); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Maps original vertices to new vertice mapping

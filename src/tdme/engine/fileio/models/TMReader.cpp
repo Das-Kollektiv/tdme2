@@ -101,7 +101,7 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	);
 	model->setFPS(is.readFloat());
 	array<float, 16> importTransformationsMatrixArray;
-	is.readFloatArray(&importTransformationsMatrixArray);
+	is.readFloatArray(importTransformationsMatrixArray);
 	model->getImportTransformationsMatrix().set(importTransformationsMatrixArray);
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
@@ -138,13 +138,13 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	auto id = is->readString();
 	auto m = new Material(id);
 	array<float, 4> colorRGBAArray;
-	is->readFloatArray(&colorRGBAArray);
+	is->readFloatArray(colorRGBAArray);
 	m->setAmbientColor(Color4(colorRGBAArray));
-	is->readFloatArray(&colorRGBAArray);
+	is->readFloatArray(colorRGBAArray);
 	m->setDiffuseColor(Color4(colorRGBAArray));
-	is->readFloatArray(&colorRGBAArray);
+	is->readFloatArray(colorRGBAArray);
 	m->setSpecularColor(Color4(colorRGBAArray));
-	is->readFloatArray(&colorRGBAArray);
+	is->readFloatArray(colorRGBAArray);
 	m->setEmissionColor(Color4(colorRGBAArray));
 	m->setShininess(is->readFloat());
 	auto diffuseTexturePathName = is->readString();
@@ -255,7 +255,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 		array<float, 16> matrixArray;
 		g->createAnimation(is->readInt());
 		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->size(); i++) {
-			is->readFloatArray(&matrixArray);
+			is->readFloatArray(matrixArray);
 			(*g->getAnimation()->getTransformationsMatrices())[i].set(matrixArray);
 		}
 		return g->getAnimation();
@@ -315,7 +315,7 @@ Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOExc
 {
 	array<float, 16> matrixArray;
 	Joint joint(is->readString());
-	is->readFloatArray(&matrixArray);
+	is->readFloatArray(matrixArray);
 	joint.getBindMatrix().set(matrixArray);
 	return joint;
 }
@@ -369,7 +369,7 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	auto group = new Group(model, parentGroup, groupId, groupName);
 	group->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
-	is->readFloatArray(&matrixArray);
+	is->readFloatArray(matrixArray);
 	group->getTransformationsMatrix().set(matrixArray);
 	vector<Vector3> vertices = readVertices(is);
 	group->setVertices(&vertices);

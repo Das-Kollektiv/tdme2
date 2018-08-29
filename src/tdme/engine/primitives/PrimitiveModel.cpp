@@ -243,7 +243,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -260,7 +260,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -375,7 +375,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -391,7 +391,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
