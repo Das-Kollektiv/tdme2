@@ -230,6 +230,13 @@ public:
 	 */
 	void render();
 
+	/**
+	 * Reports if node has currently mouse interaction like dragging or pressing
+	 * @param node node
+	 * @return if node has currently mouse interaction
+	 */
+	bool isHavingMouseInteraction(GUINode* node);
+
 private:
 
 	/** 

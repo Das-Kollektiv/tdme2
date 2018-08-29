@@ -421,6 +421,14 @@ void GUI::render()
 	engine->doneGUIMode();
 }
 
+bool GUI::isHavingMouseInteraction(GUINode* node) {
+	auto nodeId = node->getId();
+	auto screenNodeId = node->getScreenNode()->getId();
+	return
+		mousePressedEventNodeIds[screenNodeId].find(nodeId) != mousePressedEventNodeIds[screenNodeId].end() ||
+		mouseDraggingEventNodeIds[screenNodeId].find(nodeId) != mouseDraggingEventNodeIds[screenNodeId].end();
+}
+
 void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, set<string>& mouseMovedEventNodeIds, set<string>& mousePressedEventNodeIds)
 {
 	// handle each event

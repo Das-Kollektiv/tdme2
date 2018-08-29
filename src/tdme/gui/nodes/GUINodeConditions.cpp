@@ -21,6 +21,13 @@ vector<string>& GUINodeConditions::getConditions()
 	return conditions;
 }
 
+bool GUINodeConditions::has(const string& condition) {
+	for (vector<string>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
+		if (condition == *it) return true;
+	}
+	return false;
+}
+
 bool GUINodeConditions::add(const string& condition)
 {
 	auto conditionsChanged = true;

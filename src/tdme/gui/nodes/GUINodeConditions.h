@@ -42,6 +42,13 @@ public:
 	 */
 	vector<string>& getConditions();
 
+	/**
+	 * Returns if condition is set
+	 * @param condition condition name
+	 * @return if condition is set
+	 */
+	bool has(const string& condition);
+
 	/** 
 	 * Add a condition
 	 * @param condition condition

@@ -127,7 +127,7 @@ public:
 
 	/**
 	 * Set effect color mul
-	 * @param effect color mul
+	 * @param effectColorMul effect color mul
 	 */
 	void setEffectColorMul(const GUIColor& effectColorMul);
 
@@ -138,7 +138,7 @@ public:
 
 	/**
 	 * Set effect color add
-	 * @param effect color add
+	 * @param effectColorAdd effect color add
 	 */
 	void setEffectColorAdd(const GUIColor& effectColorAdd);
 
