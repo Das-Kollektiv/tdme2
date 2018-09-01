@@ -60,13 +60,13 @@ Object3DGroup::~Object3DGroup()
 	delete renderer;
 }
 
-void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
 {
 	auto model = object->getModel();
 	createGroups(object, model->getSubGroups(), model->hasAnimations(), useMeshManager, animationProcessingTarget, object3DGroups);
 }
 
-void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
@@ -81,7 +81,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 			// create group render data
 			auto object3DGroup = new Object3DGroup();
 			// add it to group render data list
-			object3DGroups->push_back(object3DGroup);
+			object3DGroups.push_back(object3DGroup);
 			// determine mesh id
 			object3DGroup->id =
 				group->getModel()->getId() +
@@ -144,9 +144,9 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 	}
 }
 
-void Object3DGroup::computeTransformations(vector<Object3DGroup*>* object3DGroups)
+void Object3DGroup::computeTransformations(vector<Object3DGroup*>& object3DGroups)
 {
-	for (auto object3DGroup : *object3DGroups) {
+	for (auto object3DGroup : object3DGroups) {
 		object3DGroup->mesh->computeTransformations();
 	}
 }

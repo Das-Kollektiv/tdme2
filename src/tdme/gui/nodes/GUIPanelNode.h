@@ -2,7 +2,6 @@
 
 #include <set>
 #include <string>
-#include <vector>
 
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -11,7 +10,6 @@
 
 using std::set;
 using std::string;
-using std::vector;
 
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::events::GUIKeyboardEvent;

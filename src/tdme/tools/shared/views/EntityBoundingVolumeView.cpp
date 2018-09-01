@@ -67,7 +67,7 @@ void EntityBoundingVolumeView::initialize()
 		"Convex Mesh"
 	};
 	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-		entityPhysicsSubScreenController->setupBoundingVolumeTypes(i, &boundingVolumeTypes);
+		entityPhysicsSubScreenController->setupBoundingVolumeTypes(i, boundingVolumeTypes);
 		entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 	}
 }

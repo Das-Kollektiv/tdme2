@@ -53,7 +53,7 @@ public:
 	 * Set up joints
 	 * @param joints joints
 	 */
-	void setJoints(const vector<Joint>* joints);
+	void setJoints(const vector<Joint>& joints);
 
 	/** 
 	 * @return all vertex joints
@@ -64,7 +64,7 @@ public:
 	 * Sets up vertices joints weights 
 	 * @param verticesJointsWeights verticesJointsWeights
 	 */
-	void setVerticesJointsWeights(const vector<vector<JointWeight>>* verticesJointsWeights);
+	void setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights);
 
 	/** 
 	 * Get joint by name

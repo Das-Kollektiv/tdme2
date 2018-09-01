@@ -49,14 +49,14 @@ private:
 	 * Determine skinned group count
 	 * @param groups groups
 	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>* groups);
+	int32_t determineSkinnedGroupCount(map<string, Group*>* groups); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Determine skinned group count
 	 * @param map* groups
 	 * @param count current count
 	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count);
+	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Determine skinned groups
@@ -64,7 +64,7 @@ private:
 	 * @param skinningGroups skinning groups
 	 * @param idx idx
 	 */
-	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>* skinningGroups, int32_t idx);
+	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>& skinningGroups, int32_t idx); // TODO: std container: maybe use call by reference
 
 
 protected:
@@ -86,7 +86,7 @@ protected:
 	 * @param matrices matrices
 	 * @param groups groups
 	 */
-	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups);
+	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Calculates all groups transformation matrices
@@ -95,7 +95,7 @@ protected:
 	 * @param animationState animation state
 	 * @param depth depth
 	 */
-	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth);
+	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Get skinning groups matrices

@@ -38,11 +38,11 @@ vector<Joint>* Skinning::getJoints()
 	return &joints;
 }
 
-void Skinning::setJoints(const vector<Joint>* joints)
+void Skinning::setJoints(const vector<Joint>& joints)
 {
-	this->joints.resize(joints->size());
+	this->joints.resize(joints.size());
 	int i = 0;
-	for (auto& joint: *joints) {
+	for (auto& joint: joints) {
 		this->joints[i++] = joint;
 	}
 	setupJointsByName();
@@ -53,13 +53,13 @@ vector<vector<JointWeight>>* Skinning::getVerticesJointsWeights()
 	return &verticesJointsWeights;
 }
 
-void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight>>* verticesJointsWeights)
+void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights)
 {
-	this->verticesJointsWeights.resize(verticesJointsWeights->size());
-	for (auto i = 0; i < verticesJointsWeights->size(); i++) {
-		this->verticesJointsWeights[i].resize(verticesJointsWeights->at(i).size());
-		for (auto j = 0; j < verticesJointsWeights->at(i).size(); j++) {
-			this->verticesJointsWeights[i][j] = (*verticesJointsWeights)[i][j];
+	this->verticesJointsWeights.resize(verticesJointsWeights.size());
+	for (auto i = 0; i < verticesJointsWeights.size(); i++) {
+		this->verticesJointsWeights[i].resize(verticesJointsWeights.at(i).size());
+		for (auto j = 0; j < verticesJointsWeights.at(i).size(); j++) {
+			this->verticesJointsWeights[i][j] = verticesJointsWeights[i][j];
 		}
 	}
 }

@@ -59,7 +59,7 @@ private:
 	 * Invert normals recursive
 	 * @param groups groups
 	 */
-	static void invertNormals(map<string, Group*>* groups);
+	static void invertNormals(map<string, Group*>* groups); // TODO: std container: maybe use call by reference
 
 public:
 

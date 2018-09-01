@@ -107,7 +107,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 			StringTokenizer t;
 			StringTokenizer t2;
 			vector<string> lines;
-			FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+			FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
 			string line;
 			for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 				line = StringUtils::trim(lines[lineIdx]);
@@ -266,10 +266,10 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
 						// group
-						group->setVertices(&groupVertices);
-						group->setNormals(&groupNormals);
-						group->setTextureCoordinates(&groupTextureCoordinates);
-						group->setFacesEntities(&groupFacesEntities);
+						group->setVertices(groupVertices);
+						group->setNormals(groupNormals);
+						group->setTextureCoordinates(groupTextureCoordinates);
+						group->setFacesEntities(groupFacesEntities);
 						group->determineFeatures();
 					}
 					t.tokenize(arguments, " ");
@@ -318,12 +318,12 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 					groupFacesEntities.push_back(*groupFacesEntity);
 				}
 				// group
-				group->setVertices(&groupVertices);
-				group->setNormals(&groupNormals);
+				group->setVertices(groupVertices);
+				group->setNormals(groupNormals);
 				if (groupTextureCoordinates.size() > 0) {
-					group->setTextureCoordinates(&groupTextureCoordinates);
+					group->setTextureCoordinates(groupTextureCoordinates);
 				}
-				group->setFacesEntities(&groupFacesEntities);
+				group->setFacesEntities(groupFacesEntities);
 				group->determineFeatures();
 			}
 		}
@@ -346,7 +346,7 @@ void WFObjReader::readMaterials(const string& pathName, const string& fileName, 
 		});
 		StringTokenizer t;
 		vector<string> lines;
-		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
 		for (int lineIdx = 0; lineIdx < lines.size(); lineIdx++) {
 			auto line = StringUtils::trim(lines[lineIdx]);
 			// skip on comments

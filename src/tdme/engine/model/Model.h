@@ -55,7 +55,7 @@ private:
 	 * Delete sub groups
 	 * @param subGroups sub groups
 	 */
-	void deleteSubGroups(map<string, Group*>* subGroups);
+	void deleteSubGroups(map<string, Group*>* subGroups); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Set up if model has skinning
@@ -72,7 +72,7 @@ private:
 	 * @param transformationsMatrix transformations matrix
 	 * @return target group transformations
 	 */
-	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
+	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix); // TODO: std container: maybe use call by reference
 
 public:
 

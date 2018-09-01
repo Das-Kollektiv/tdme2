@@ -1,7 +1,5 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 
-#include <vector>
-
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
@@ -9,8 +7,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
-
-using std::vector;
 
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::engine::model::Model;

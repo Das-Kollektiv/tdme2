@@ -1,15 +1,11 @@
 #include <tdme/gui/elements/GUITabsController.h>
 
-#include <vector>
-
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/elements/GUITabController.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/utils/MutableString.h>
-
-using std::vector;
 
 using tdme::gui::elements::GUITabsController;
 using tdme::gui::elements::GUITabContentController;
@@ -40,7 +36,7 @@ void GUITabsController::setDisabled(bool disabled)
 
 void GUITabsController::initialize()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -66,7 +62,7 @@ void GUITabsController::postLayout()
 
 void GUITabsController::unselect()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -84,7 +80,7 @@ void GUITabsController::setTabContentSelected(const string& id)
 {
 	MutableString tabContentNodeId;
 	tabContentNodeId.set(id + "-content");
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();

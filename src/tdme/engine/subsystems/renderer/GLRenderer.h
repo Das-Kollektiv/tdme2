@@ -596,7 +596,7 @@ public:
 	 * Disposes a frame buffer object
 	 * @param bufferObjectIds frame buffer id
 	 */
-	virtual void disposeBufferObjects(vector<int32_t>* bufferObjectIds) = 0;
+	virtual void disposeBufferObjects(vector<int32_t>& bufferObjectIds) = 0;
 
 	/** 
 	 * @return active texture unit

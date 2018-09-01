@@ -368,7 +368,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			popUps->getFileDialogScreenController()->show(
 				modelPath,
 				"Load from: ",
-				&extensions,
+				extensions,
 				"",
 				new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary)
 			);

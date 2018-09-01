@@ -77,7 +77,7 @@ private:
 	 * @param groups groups
 	 * @param material material
 	 */
-	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material);
+	static void setupConvexMeshMaterial(map<string, Group*>* groups, Material* material); // TODO: std container: maybe use call by reference
 
 public:
 	/** 

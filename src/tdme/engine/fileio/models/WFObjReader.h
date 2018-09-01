@@ -49,5 +49,5 @@ private:
 	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */
-	static void readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials) throw (FileSystemException, ModelFileIOException);
+	static void readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials) throw (FileSystemException, ModelFileIOException); // TODO: std container: maybe use call by reference
 };

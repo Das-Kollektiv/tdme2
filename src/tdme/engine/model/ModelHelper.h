@@ -87,7 +87,7 @@ private:
 	 * @param vertexMapping vertice mapping / new vertex index to old vertex index
 	 * @param vertices vertice count
 	 */
-	static void prepareForIndexedRendering(Skinning* skinning, vector<int32_t>* vertexMapping, int32_t vertices);
+	static void prepareForIndexedRendering(Skinning* skinning, const vector<int32_t>& vertexMapping, int32_t vertices);
 
 public:
 

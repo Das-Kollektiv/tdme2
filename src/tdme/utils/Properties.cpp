@@ -39,7 +39,7 @@ void Properties::load(const string& pathName, const string& fileName) throw (Fil
 {
 	properties.clear();
 	vector<string> lines;
-	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
 	for (int i = 0; i < lines.size(); i++) {
 		string line = StringUtils::trim(lines[i]);
 		if (line.length() == 0 || StringUtils::startsWith(line, "#")) continue;
@@ -59,5 +59,5 @@ void Properties::store(const string& pathName, const string& fileName) throw (Fi
 		string value = it->second;
 		result.push_back(key + "=" + value);
 	}
-	FileSystem::getInstance()->setContentFromStringArray(pathName, fileName, &result);
+	FileSystem::getInstance()->setContentFromStringArray(pathName, fileName, result);
 }

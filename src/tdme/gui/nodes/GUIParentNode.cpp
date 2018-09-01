@@ -294,12 +294,12 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 	}
 }
 
-void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes)
+void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes)
 {
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto node = subNodes[i];
 		if (node->controller != nullptr) {
-			childControllerNodes->push_back(node);
+			childControllerNodes.push_back(node);
 		}
 		if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 			(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodesInternal(childControllerNodes);
@@ -307,9 +307,9 @@ void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>* childContr
 	}
 }
 
-void GUIParentNode::getChildControllerNodes(vector<GUINode*>*childControllerNodes)
+void GUIParentNode::getChildControllerNodes(vector<GUINode*>& childControllerNodes)
 {
-	childControllerNodes->clear();
+	childControllerNodes.clear();
 	getChildControllerNodesInternal(childControllerNodes);
 }
 

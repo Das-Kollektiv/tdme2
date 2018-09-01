@@ -59,7 +59,7 @@ using tdme::os::filesystem::FileSystemInterface;
 Model* TMReader::read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
 {
 	vector<uint8_t> content;
-	FileSystem::getInstance()->getContent(pathName, fileName, &content);
+	FileSystem::getInstance()->getContent(pathName, fileName, content);
 	TMReaderInputStream is(&content);
 	auto fileId = is.readString();
 	if (fileId.length() == 0 || fileId != "TDME Model") {
@@ -308,7 +308,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 		}
 		facesEntities[i].setFaces(&faces);
 	}
-	g->setFacesEntities(&facesEntities);
+	g->setFacesEntities(facesEntities);
 }
 
 Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
@@ -338,7 +338,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 		for (auto i = 0; i < joints.size(); i++) {
 			joints[i] = readSkinningJoint(is);
 		}
-		skinning->setJoints(&joints);
+		skinning->setJoints(joints);
 		vector<vector<JointWeight>> verticesJointsWeight;
 		verticesJointsWeight.resize(is->readInt());
 		for (auto i = 0; i < verticesJointsWeight.size(); i++) {
@@ -347,7 +347,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 				verticesJointsWeight[i][j] = readSkinningJointWeight(is);
 			}
 		}
-		skinning->setVerticesJointsWeights(&verticesJointsWeight);
+		skinning->setVerticesJointsWeights(verticesJointsWeight);
 	}
 }
 
@@ -372,15 +372,15 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	is->readFloatArray(matrixArray);
 	group->getTransformationsMatrix().set(matrixArray);
 	vector<Vector3> vertices = readVertices(is);
-	group->setVertices(&vertices);
+	group->setVertices(vertices);
 	vector<Vector3> normals = readVertices(is);
-	group->setNormals(&normals);
+	group->setNormals(normals);
 	vector<TextureCoordinate> textureCoordinates = readTextureCoordinates(is);
-	group->setTextureCoordinates(&textureCoordinates);
+	group->setTextureCoordinates(textureCoordinates);
 	vector<Vector3> tangents = readVertices(is);
-	group->setTangents(&tangents);
+	group->setTangents(tangents);
 	vector<Vector3> bitangents = readVertices(is);
-	group->setBitangents(&bitangents);
+	group->setBitangents(bitangents);
 	readAnimation(is, group);
 	readSkinning(is, group);
 	readFacesEntities(is, group);

@@ -53,7 +53,7 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (F
 	int lineIdx = 0;
 	auto font = new GUIFont();
 	vector<string> lines;
-	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, &lines);
+	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
 	auto info = lines[lineIdx++];
 	auto common = lines[lineIdx++];
 	auto page = lines[lineIdx++];

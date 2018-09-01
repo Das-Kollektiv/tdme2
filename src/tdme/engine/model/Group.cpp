@@ -84,11 +84,11 @@ vector<Vector3>* Group::getVertices()
 	return &vertices;
 }
 
-void Group::setVertices(const vector<Vector3>* vertices)
+void Group::setVertices(const vector<Vector3>& vertices)
 {
-	this->vertices.resize(vertices->size());
+	this->vertices.resize(vertices.size());
 	int i = 0;
-	for (auto& vertex: *vertices) {
+	for (auto& vertex: vertices) {
 		this->vertices[i++] = vertex;
 	}
 }
@@ -98,11 +98,11 @@ vector<Vector3>* Group::getNormals()
 	return &normals;
 }
 
-void Group::setNormals(const vector<Vector3>* normals)
+void Group::setNormals(const vector<Vector3>& normals)
 {
-	this->normals.resize(normals->size());
+	this->normals.resize(normals.size());
 	int i = 0;
-	for (auto& normal: *normals) {
+	for (auto& normal: normals) {
 		this->normals[i++] = normal;
 	}
 }
@@ -112,11 +112,11 @@ vector<TextureCoordinate>* Group::getTextureCoordinates()
 	return &textureCoordinates;
 }
 
-void Group::setTextureCoordinates(const vector<TextureCoordinate>* textureCoordinates)
+void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
 {
-	this->textureCoordinates.resize(textureCoordinates->size());
+	this->textureCoordinates.resize(textureCoordinates.size());
 	int i = 0;
-	for (auto& textureCoordinate: *textureCoordinates) {
+	for (auto& textureCoordinate: textureCoordinates) {
 		this->textureCoordinates[i++] = textureCoordinate;
 	}
 }
@@ -126,11 +126,11 @@ vector<Vector3>* Group::getTangents()
 	return &tangents;
 }
 
-void Group::setTangents(const vector<Vector3>* tangents)
+void Group::setTangents(const vector<Vector3>& tangents)
 {
-	this->tangents.resize(tangents->size());
+	this->tangents.resize(tangents.size());
 	int i = 0;
-	for (auto& tangent: *tangents) {
+	for (auto& tangent: tangents) {
 		this->tangents[i++] = tangent;
 	}
 }
@@ -140,11 +140,11 @@ vector<Vector3>* Group::getBitangents()
 	return &bitangents;
 }
 
-void Group::setBitangents(const vector<Vector3>* bitangents)
+void Group::setBitangents(const vector<Vector3>& bitangents)
 {
-	this->bitangents.resize(bitangents->size());
+	this->bitangents.resize(bitangents.size());
 	int i = 0;
-	for (auto& bitangent: *bitangents) {
+	for (auto& bitangent: bitangents) {
 		this->bitangents[i++] = bitangent;
 	}
 }
@@ -186,11 +186,11 @@ vector<FacesEntity>* Group::getFacesEntities()
 	return &facesEntities;
 }
 
-void Group::setFacesEntities(const vector<FacesEntity>* facesEntities)
+void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
 {
-	this->facesEntities.resize(facesEntities->size());
+	this->facesEntities.resize(facesEntities.size());
 	int i = 0;
-	for (auto& facesEntity: *facesEntities) {
+	for (auto& facesEntity: facesEntities) {
 		this->facesEntities[i++] = facesEntity;
 	}
 }

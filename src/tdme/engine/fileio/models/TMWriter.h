@@ -185,10 +185,10 @@ public:
 	 * @param f float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(const vector<float>* f) throw (ModelFileIOException) {
-		writeInt(f->size());
-		for (auto i = 0; i < f->size(); i++) {
-			writeFloat((*f)[i]);
+	inline void writeFloatArray(const vector<float>& f) throw (ModelFileIOException) {
+		writeInt(f.size());
+		for (auto i = 0; i < f.size(); i++) {
+			writeFloat(f[i]);
 		}
 	}
 
@@ -240,7 +240,7 @@ private:
 	 * @param v vertices
 	 * @throws model file IO exception
 	 */
-	static void writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw (ModelFileIOException);
+	static void writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v) throw (ModelFileIOException);
 
 	/** 
 	 * Write texture coordinates to output stream
@@ -272,7 +272,7 @@ private:
 	 * @param facesEntities faces entities
 	 * @throws model file IO exception
 	 */
-	static void writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>* facesEntities) throw (ModelFileIOException);
+	static void writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>& facesEntities) throw (ModelFileIOException);
 
 	/** 
 	 * Write skinning joint

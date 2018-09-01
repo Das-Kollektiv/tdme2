@@ -64,7 +64,7 @@ Texture* TextureLoader::loadPNG(const string& pathName, const string& fileName) 
 
 	// create PNG input stream
 	vector<uint8_t> content;
-	FileSystem::getInstance()->getContent(pathName, fileName, &content);
+	FileSystem::getInstance()->getContent(pathName, fileName, content);
 	PNGInputStream* pngInputStream = new PNGInputStream(&content);
 
 	// check that the PNG signature is in the file header

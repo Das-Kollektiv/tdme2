@@ -56,16 +56,16 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param content content vector
 	 * @throws FileSystemException
 	 */
-	virtual void getContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) = 0;
+	virtual void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) throw (FileSystemException) = 0;
 
 	/** 
-	 * Get file content
+	 * Set file content
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param content content vector
 	 * @throws FileSystemException
 	 */
-	virtual void setContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) = 0;
+	virtual void setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) throw (FileSystemException) = 0;
 
 	/**
 	 * Get file content as string array
@@ -74,7 +74,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param content content vector
 	 * @throws FileSystemException
 	 */
-	virtual void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException) = 0;
+	virtual void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) throw (FileSystemException) = 0;
 
 	/**
 	 * Set file content as string array
@@ -84,7 +84,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @return byte array
 	 * @throws FileSystemException
 	 */
-	virtual void setContentFromStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException) = 0;
+	virtual void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) throw (FileSystemException) = 0;
 
 	/**
 	 * List files for given path and filter by a file name filter if not null 
@@ -93,7 +93,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param filter filter or null
 	 * @return file names 
 	 */
-	virtual void list(const string& pathName, vector<string>* files, FilenameFilter* filter = nullptr) throw (FileSystemException) = 0;
+	virtual void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr) throw (FileSystemException) = 0;
 
 	/**
 	 * Check if file is a path

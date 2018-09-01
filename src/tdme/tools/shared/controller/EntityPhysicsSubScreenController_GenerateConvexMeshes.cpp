@@ -1,6 +1,7 @@
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.h>
 
 #include <string>
+#include <vector>
 
 #include <ext/v-hacd/src/VHACD_Lib/public/VHACD.h>
 
@@ -40,6 +41,7 @@
 
 using std::string;
 using std::to_string;
+using std::vector;
 
 using namespace VHACD;
 
@@ -363,9 +365,9 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	groupFacesEntity.setFaces(&faces);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
-	group->setFacesEntities(&groupFacesEntities);
+	group->setVertices(vertices);
+	group->setNormals(normals);
+	group->setFacesEntities(groupFacesEntities);
 	group->determineFeatures();
 	(*model->getGroups())["group"] = group;
 	(*model->getSubGroups())["group"] = group;
@@ -419,9 +421,9 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	groupFacesEntity.setFaces(&faces);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
-	group->setFacesEntities(&groupFacesEntities);
+	group->setVertices(vertices);
+	group->setNormals(normals);
+	group->setFacesEntities(groupFacesEntities);
 	group->determineFeatures();
 	(*model->getGroups())["group"] = group;
 	(*model->getSubGroups())["group"] = group;

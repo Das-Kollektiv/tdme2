@@ -588,9 +588,9 @@ void GLES2Renderer::unbindBufferObjects()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void GLES2Renderer::disposeBufferObjects(vector<int32_t>* bufferObjectIds)
+void GLES2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
-	glDeleteBuffers(bufferObjectIds->size(), (const uint32_t*)bufferObjectIds->data());
+	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
 int32_t GLES2Renderer::getTextureUnit()

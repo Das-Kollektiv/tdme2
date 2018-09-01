@@ -92,7 +92,7 @@ public:
 	 * Set vertices
 	 * @param vertices vertices
 	 */
-	void setVertices(const vector<Vector3>* vertices);
+	void setVertices(const vector<Vector3>& vertices);
 
 	/** 
 	 * @return normals
@@ -103,7 +103,7 @@ public:
 	 * Set normals
 	 * @param normals normals
 	 */
-	void setNormals(const vector<Vector3>* normals);
+	void setNormals(const vector<Vector3>& normals);
 
 	/** 
 	 * @return texture coordinates or null (optional)
@@ -114,7 +114,7 @@ public:
 	 * Set texture coordinates
 	 * @param textureCoordinates texture coordinates
 	 */
-	void setTextureCoordinates(const vector<TextureCoordinate>* textureCoordinates);
+	void setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates);
 
 	/** 
 	 * @return tangents
@@ -125,7 +125,7 @@ public:
 	 * Set tangents
 	 * @param tangents tangents
 	 */
-	void setTangents(const vector<Vector3>* tangents);
+	void setTangents(const vector<Vector3>& tangents);
 
 	/** 
 	 * @return bitangents
@@ -136,7 +136,7 @@ public:
 	 * Set bitangents
 	 * @param bitangents bitangents
 	 */
-	void setBitangents(const vector<Vector3>* bitangents);
+	void setBitangents(const vector<Vector3>& bitangents);
 
 	/** 
 	 * @return animation
@@ -175,7 +175,7 @@ public:
 	 * Set up faces entities
 	 * @param facesEntities faces entity
 	 */
-	void setFacesEntities(const vector<FacesEntity>* facesEntities);
+	void setFacesEntities(const vector<FacesEntity>& facesEntities);
 
 	/** 
 	 * @return sub sub groups of this group

@@ -185,7 +185,7 @@ public:
 	 * Select objects
 	 * @param entityIds object ids
 	 */
-	void selectObjects(vector<string>* entityIds);
+	void selectObjects(const vector<string>& entityIds);
 
 	/** 
 	 * Select objects by id

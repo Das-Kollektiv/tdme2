@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -11,8 +9,6 @@
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-
-using std::vector;
 
 using tdme::engine::Engine;
 using tdme::engine::Entity;

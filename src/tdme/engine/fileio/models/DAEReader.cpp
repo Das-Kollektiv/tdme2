@@ -1,7 +1,6 @@
 #include <tdme/engine/fileio/models/DAEReader.h>
 
 #include <map>
-#include <map>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -572,7 +571,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 			}
 		}
 	}
-	skinning->setJoints(&joints);
+	skinning->setJoints(joints);
 
 	// check for inverse bind matrices source
 	if (xmlJointsInverseBindMatricesSource.length() == 0) {
@@ -684,7 +683,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 		}
 		verticesJointsWeights.push_back(vertexJointsWeights);
 	}
-	skinning->setVerticesJointsWeights(&verticesJointsWeights);
+	skinning->setVerticesJointsWeights(verticesJointsWeights);
 
 	return group;
 }
@@ -944,11 +943,11 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 	}
 
 	// set up group
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
+	group->setVertices(vertices);
+	group->setNormals(normals);
 	if (textureCoordinates.size() > 0)
-		group->setTextureCoordinates(&textureCoordinates);
-	group->setFacesEntities(&facesEntities);
+		group->setTextureCoordinates(textureCoordinates);
+	group->setFacesEntities(facesEntities);
 	// create normal tangents and bitangents
 	ModelHelper::createNormalTangentsAndBitangents(group);
 	// determine features
@@ -1261,7 +1260,7 @@ const string DAEReader::determineDisplacementFilename(const string& path, const 
 	// try to find file in path file listing
 	try {
 		vector<string> fileNameCandidates;
-		FileSystem::getInstance()->list(path, &fileNameCandidates, new DAEReader_determineDisplacementFilename_1(tmpFileNameCandidate));
+		FileSystem::getInstance()->list(path, fileNameCandidates, new DAEReader_determineDisplacementFilename_1(tmpFileNameCandidate));
 		if (fileNameCandidates.size() > 0) {
 			return fileNameCandidates[0];
 		}

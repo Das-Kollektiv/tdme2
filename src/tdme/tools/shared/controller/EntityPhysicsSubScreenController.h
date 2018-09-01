@@ -134,7 +134,7 @@ public:
 	 * @param idx idx
 	 * @param boundingVolumeTypes bounding volume types
 	 */
-	virtual void setupBoundingVolumeTypes(int32_t idx, vector<string>* boundingVolumeTypes);
+	virtual void setupBoundingVolumeTypes(int32_t idx, const vector<string>& boundingVolumeTypes);
 
 	/** 
 	 * Display given bounding volume GUI elements

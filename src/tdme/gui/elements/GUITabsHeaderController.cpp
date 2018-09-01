@@ -62,7 +62,7 @@ bool GUITabsHeaderController::hasFocus()
 
 void GUITabsHeaderController::unselect()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -79,7 +79,7 @@ void GUITabsHeaderController::unselect()
 void GUITabsHeaderController::determineTabControllers()
 {
 	tabControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();

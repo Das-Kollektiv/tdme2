@@ -2,6 +2,8 @@
 
 #include <map>
 #include <string>
+#include <vector>
+
 
 #include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
 

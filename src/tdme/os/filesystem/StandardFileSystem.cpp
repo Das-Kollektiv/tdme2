@@ -47,7 +47,7 @@ const string StandardFileSystem::getFileName(const string& pathName, const strin
 	return pathName + "/" + fileName;
 }
 
-void StandardFileSystem::list(const string& pathName, vector<string>* files, FilenameFilter* filter) throw (FileSystemException)
+void StandardFileSystem::list(const string& pathName, vector<string>& files, FilenameFilter* filter) throw (FileSystemException)
 {
 	DIR *dir;
 	struct dirent *dirent;
@@ -57,9 +57,9 @@ void StandardFileSystem::list(const string& pathName, vector<string>* files, Fil
 	while ((dirent = readdir(dir)) != NULL) {
 		string fileName = (dirent->d_name);
 		if (filter != nullptr && filter->accept(pathName, fileName) == false) continue;
-		files->push_back(fileName);
+		files.push_back(fileName);
 	}
-	sort(files->begin(), files->end());
+	sort(files.begin(), files.end());
 	closedir(dir);
 }
 
@@ -98,7 +98,7 @@ void StandardFileSystem::setContentFromString(const string& pathName, const stri
 	return;
 }
 
-void StandardFileSystem::getContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException)
+void StandardFileSystem::getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) throw (FileSystemException)
 {
 	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {
@@ -106,22 +106,22 @@ void StandardFileSystem::getContent(const string& pathName, const string& fileNa
 	}
 	ifs.seekg( 0, ios::end );
 	size_t size = ifs.tellg();
-	content->resize(size);
+	content.resize(size);
 	ifs.seekg(0, ios::beg);
-	ifs.read((char*)content->data(), size);
+	ifs.read((char*)content.data(), size);
 	ifs.close();
 }
 
-void StandardFileSystem::setContent(const string& pathName, const string& fileName, vector<uint8_t>* content) throw (FileSystemException) {
+void StandardFileSystem::setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) throw (FileSystemException) {
 	ofstream ofs(getFileName(pathName, fileName).c_str(), ofstream::binary);
 	if (ofs.is_open() == false) {
 		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
-	ofs.write((char*)content->data(), content->size());
+	ofs.write((char*)content.data(), content.size());
 	ofs.close();
 }
 
-void StandardFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException)
+void StandardFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) throw (FileSystemException)
 {
 	ifstream ifs(getFileName(pathName, fileName).c_str());
 	if(ifs.is_open() == false) {
@@ -130,21 +130,21 @@ void StandardFileSystem::getContentAsStringArray(const string& pathName, const s
 
 	string line;
 	while (getline(ifs, line)) {
-		content->push_back((line));
+		content.push_back((line));
 	}
 
 	ifs.close();
 }
 
-void StandardFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, vector<string>* content) throw (FileSystemException)
+void StandardFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) throw (FileSystemException)
 {
 	ofstream ofs(getFileName(pathName, fileName).c_str());
 	if(ofs.is_open() == false) {
 		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 
-	for (int i = 0; i < content->size(); i++) {
-		ofs << (content->at(i)) << "\n";
+	for (int i = 0; i < content.size(); i++) {
+		ofs << (content.at(i)) << "\n";
 	}
 
 	ofs.close();
@@ -246,7 +246,7 @@ void StandardFileSystem::createPath(const string& pathName) throw (FileSystemExc
 
 void StandardFileSystem::removePath(const string& pathName) throw (FileSystemException) {
 	vector<string> files;
-	list(pathName, &files, nullptr);
+	list(pathName, files, nullptr);
 	for (int i = 0; i < files.size(); i++) {
 		auto file = files[i];
 		if (file == "." || file == "..") {

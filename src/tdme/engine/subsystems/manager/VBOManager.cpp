@@ -39,7 +39,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids)
 	// create vertex buffer objects
 	auto vboIds = renderer->createBufferObjects(ids);
 	// create managed texture
-	auto vboManaged = new VBOManager_VBOManaged(vboId, &vboIds);
+	auto vboManaged = new VBOManager_VBOManaged(vboId, vboIds);
 	// add it to our textures
 	vboManaged->incrementReferenceCounter();
 	vbos[vboManaged->getId()] = vboManaged;
@@ -55,7 +55,7 @@ void VBOManager::removeVBO(const string& vboId)
 		if (vboManaged->decrementReferenceCounter()) {
 			auto vboIds = vboManaged->getVBOGlIds();
 			// delete vbos from open gl
-			renderer->disposeBufferObjects(vboIds);
+			renderer->disposeBufferObjects(*vboIds);
 			// remove from our list
 			vbos.erase(vboManagedIt);
 			delete vboManaged;
