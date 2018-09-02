@@ -727,14 +727,14 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 		facesEntity->setFaces(&faces);
 	}
 
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
+	group->setVertices(vertices);
+	group->setNormals(normals);
 	if (tangents.size() > 0 && bitangents.size() > 0) {
-		group->setTangents(&tangents);
-		group->setBitangents(&bitangents);
+		group->setTangents(tangents);
+		group->setBitangents(bitangents);
 	}
-	if (textureCoordinates.size() > 0) group->setTextureCoordinates(&textureCoordinates);
-	group->setFacesEntities(&facesEntities);
+	if (textureCoordinates.size() > 0) group->setTextureCoordinates(textureCoordinates);
+	group->setFacesEntities(facesEntities);
 	group->determineFeatures();
 
 	int fbxSkinCount = fbxNode->GetMesh()->GetDeformerCount(FbxDeformer::eSkin);
@@ -809,7 +809,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 				jointWeightsByVertices[fbxControlPointIndex].push_back(JointWeight(jointIndex, weightIndex));
 			}
 		}
-		skinning->setJoints(&joints);
+		skinning->setJoints(joints);
 		skinning->setWeights(weights);
 		vector<vector<JointWeight>> verticesJointsWeights;
 		for (auto vertexIndex = 0; vertexIndex < vertices.size(); vertexIndex++) {
@@ -821,7 +821,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 				}
 			}
 		}
-		skinning->setVerticesJointsWeights(&verticesJointsWeights);
+		skinning->setVerticesJointsWeights(verticesJointsWeights);
 	} else {
 		Console::println("FBXReader::processMeshNode(): " + to_string(fbxSkinCount) + " skins per mesh: Not supported");
 	}
