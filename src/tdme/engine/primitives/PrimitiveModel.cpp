@@ -113,9 +113,9 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	// setup group vertex data
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
-	group->setFacesEntities(&groupFacesEntities);
+	group->setVertices(vertices);
+	group->setNormals(normals);
+	group->setFacesEntities(groupFacesEntities);
 	// determine features
 	group->determineFeatures();
 	// register group
@@ -183,9 +183,9 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	// setup group vertex data
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
-	group->setFacesEntities(&groupFacesEntities);
+	group->setVertices(vertices);
+	group->setNormals(normals);
+	group->setFacesEntities(groupFacesEntities);
 	// determine features
 	group->determineFeatures();
 	// register group
@@ -243,7 +243,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -260,7 +260,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -276,9 +276,9 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	// setup group vertex data
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
-	group->setFacesEntities(&groupFacesEntities);
+	group->setVertices(vertices);
+	group->setNormals(normals);
+	group->setFacesEntities(groupFacesEntities);
 	// determine features
 	group->determineFeatures();
 	// register group
@@ -375,7 +375,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -391,7 +391,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 					vertices.at(vi2)
 				};
 				array<Vector3, 3> faceNormals;
-				ModelHelper::computeNormals(&faceVertices, &faceNormals);
+				ModelHelper::computeNormals(faceVertices, faceNormals);
 				for (auto& normal : faceNormals) {
 					normals.push_back(normal);
 				}
@@ -407,9 +407,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	// setup group vertex data
-	group->setVertices(&vertices);
-	group->setNormals(&normals);
-	group->setFacesEntities(&groupFacesEntities);
+	group->setVertices(vertices);
+	group->setNormals(normals);
+	group->setFacesEntities(groupFacesEntities);
 	// determine features
 	group->determineFeatures();
 	// register group

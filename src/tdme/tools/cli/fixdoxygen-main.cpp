@@ -38,7 +38,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	ListFilter listFilter;
 	vector<string> files;
 
-	FileSystem::getInstance()->list(folder, &files, &listFilter);
+	FileSystem::getInstance()->list(folder, files, &listFilter);
 
 	for (auto fileName: files) {
 		if (StringUtils::endsWith(fileName, ".h") == true) {
@@ -51,7 +51,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 
 void processFile(const string& fileName) {
 	vector<string> fileContent;
-	FileSystem::getInstance()->getContentAsStringArray(".", fileName, &fileContent);
+	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
 	int methodCount = 0;
 	int paramCount = 0;
 	bool haveMethod = false;
@@ -173,7 +173,7 @@ void processFile(const string& fileName) {
 		}
 		lineIdx++;
 	}
-	FileSystem::getInstance()->setContentFromStringArray(".", fileName, &newFileContent);
+	FileSystem::getInstance()->setContentFromStringArray(".", fileName, newFileContent);
 }
 
 int main(int argc, char** argv)

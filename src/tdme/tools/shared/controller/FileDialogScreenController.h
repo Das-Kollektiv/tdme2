@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -12,8 +11,8 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
@@ -82,7 +81,7 @@ public:
 	 * @param applyAction apply action
 	 * @throws IOException 
 	 */
-	virtual void show(const string& cwd, const string& captionText, vector<string>* extensions, const string& fileName, Action* applyAction);
+	virtual void show(const string& cwd, const string& captionText, vector<string>& extensions, const string& fileName, Action* applyAction);
 
 	/** 
 	 * Abort the file dialog pop up

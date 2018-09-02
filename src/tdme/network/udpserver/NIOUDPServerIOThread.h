@@ -4,7 +4,6 @@
 
 #include <queue>
 #include <map>
-#include <set>
 #include <utility>
 
 #include <tdme/network/udpserver/fwd-tdme.h>

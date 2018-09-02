@@ -30,7 +30,7 @@ private:
 	 * Prepared this face for indexed rendering
 	 * @param indices indices
 	 */
-	void setIndexedRenderingIndices(array<int32_t, 3>* indices);
+	void setIndexedRenderingIndices(const array<int32_t, 3>& indices);
 
 public:
 	/**

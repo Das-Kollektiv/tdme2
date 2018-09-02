@@ -101,7 +101,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 	try {
 		auto directory = cwd;
 		FileDialogScreenController_setupFileDialogListBox_1 extensionsFilter(this);
-		FileSystem::getInstance()->list(directory, &fileList, &extensionsFilter);
+		FileSystem::getInstance()->list(directory, fileList, &extensionsFilter);
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -132,7 +132,7 @@ void FileDialogScreenController::setupFileDialogListBox()
 	}
 }
 
-void FileDialogScreenController::show(const string& cwd, const string& captionText, vector<string>* extensions, const string& fileName, Action* applyAction)
+void FileDialogScreenController::show(const string& cwd, const string& captionText, vector<string>& extensions, const string& fileName, Action* applyAction)
 {
 	try {
 		this->cwd = FileSystem::getInstance()->getCanonicalPath(cwd, "");
@@ -146,7 +146,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 		this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
 	}
 	this->captionText = captionText;
-	this->extensions = *extensions;
+	this->extensions = extensions;
 	this->fileName->getController()->setValue(value->set(fileName));
 	setupFileDialogListBox();
 	screenNode->setVisible(true);

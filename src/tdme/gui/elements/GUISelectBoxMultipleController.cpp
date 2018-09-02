@@ -1,7 +1,5 @@
 #include <tdme/gui/elements/GUISelectBoxMultipleController.h>
 
-#include <vector>
-
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUISelectBoxMultipleOptionController.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -15,8 +13,6 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
-
-using std::vector;
 
 using tdme::gui::elements::GUISelectBoxMultipleController;
 using tdme::gui::GUI;
@@ -81,7 +77,7 @@ void GUISelectBoxMultipleController::postLayout()
 
 void GUISelectBoxMultipleController::unselect()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -93,7 +89,7 @@ void GUISelectBoxMultipleController::unselect()
 
 void GUISelectBoxMultipleController::unfocus()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -106,7 +102,7 @@ void GUISelectBoxMultipleController::unfocus()
 void GUISelectBoxMultipleController::determineSelectBoxMultipleOptionControllers()
 {
 	selectBoxMultipleOptionControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();

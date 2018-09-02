@@ -80,7 +80,7 @@ public:
 	 * Set up entity property preset ids
 	 * @param entityPresetIds entity property preset ids
 	 */
-	virtual void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>* entityPresetIds);
+	virtual void setEntityPresetIds(const map<string, vector<PropertyModelClass*>>* entityPresetIds); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Set up entity properties

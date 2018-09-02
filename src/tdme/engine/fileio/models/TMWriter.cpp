@@ -79,7 +79,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 		AnimationSetup* animationSetup = it.second;
 		writeAnimationSetup(&os, animationSetup);
 	}
-	FileSystem::getInstance()->setContent(pathName, fileName, os.getData());
+	FileSystem::getInstance()->setContent(pathName, fileName, *os.getData());
 }
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (ModelFileIOException)
@@ -112,20 +112,20 @@ void TMWriter::writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* ani
 	os->writeBoolean(animationSetup->isLoop());
 }
 
-void TMWriter::writeVertices(TMWriterOutputStream* os, vector<Vector3>* v) throw (ModelFileIOException)
+void TMWriter::writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v) throw (ModelFileIOException)
 {
-	if (v->size() == 0) {
+	if (v.size() == 0) {
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(v->size());
-		for (auto i = 0; i < v->size(); i++) {
-			os->writeFloatArray((*v)[i].getArray());
+		os->writeInt(v.size());
+		for (auto i = 0; i < v.size(); i++) {
+			os->writeFloatArray(v[i].getArray());
 		}
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException)
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException) // TODO: change std::vector* argument to std::vector& ?
 {
 	if (tc == nullptr) {
 		os->writeBoolean(false);
@@ -138,7 +138,7 @@ void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureC
 	}
 }
 
-void TMWriter::writeIndices(TMWriterOutputStream* os, array<int32_t, 3>* indices) throw (ModelFileIOException)
+void TMWriter::writeIndices(TMWriterOutputStream* os, const array<int32_t, 3>* indices) throw (ModelFileIOException) // TODO: change std::array* argument to std::array& ?
 {
 	if (indices == nullptr) {
 		os->writeBoolean(false);
@@ -164,11 +164,11 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) throw (Mod
 	}
 }
 
-void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>* facesEntities) throw (ModelFileIOException)
+void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>& facesEntities) throw (ModelFileIOException)
 {
-	os->writeInt(facesEntities->size());
-	for (auto i = 0; i < facesEntities->size(); i++) {
-		auto& fe = (*facesEntities)[i];
+	os->writeInt(facesEntities.size());
+	for (auto i = 0; i < facesEntities.size(); i++) {
+		auto& fe = facesEntities[i];
 		os->writeString(fe.getId());
 		if (fe.getMaterial() == nullptr) {
 			os->writeBoolean(false);
@@ -206,7 +206,7 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeFloatArray(skinning->getWeights());
+		os->writeFloatArray(*skinning->getWeights());
 		os->writeInt(skinning->getJoints()->size());
 		for (auto i = 0; i < skinning->getJoints()->size(); i++) {
 			writeSkinningJoint(os, &(*skinning->getJoints())[i]);
@@ -236,13 +236,13 @@ void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIO
 	os->writeString(g->getName());
 	os->writeBoolean(g->isJoint());
 	os->writeFloatArray(g->getTransformationsMatrix().getArray());
-	writeVertices(os, g->getVertices());
-	writeVertices(os, g->getNormals());
+	writeVertices(os, *g->getVertices());
+	writeVertices(os, *g->getNormals());
 	writeTextureCoordinates(os, g->getTextureCoordinates());
-	writeVertices(os, g->getTangents());
-	writeVertices(os, g->getBitangents());
+	writeVertices(os, *g->getTangents());
+	writeVertices(os, *g->getBitangents());
 	writeAnimation(os, g->getAnimation());
 	writeSkinning(os, g->getSkinning());
-	writeFacesEntities(os, g->getFacesEntities());
+	writeFacesEntities(os, *g->getFacesEntities());
 	writeSubGroups(os, g->getSubGroups());
 }

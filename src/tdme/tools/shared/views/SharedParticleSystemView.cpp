@@ -248,7 +248,7 @@ void SharedParticleSystemView::initialize()
 	particleSystemTypes.push_back("None");
 	particleSystemTypes.push_back("Object Particle System");
 	particleSystemTypes.push_back("Points Particle System");
-	particleSystemScreenController->setParticleSystemTypes(&particleSystemTypes);
+	particleSystemScreenController->setParticleSystemTypes(particleSystemTypes);
 	vector<string> particleSystemEmitters;
 	particleSystemEmitters.push_back("None");
 	particleSystemEmitters.push_back("Point Particle Emitter");
@@ -256,7 +256,7 @@ void SharedParticleSystemView::initialize()
 	particleSystemEmitters.push_back("Circle Particle Emitter");
 	particleSystemEmitters.push_back("Circle Particle Emitter Plane Velocity");
 	particleSystemEmitters.push_back("Sphere Particle Emitter");
-	particleSystemScreenController->setParticleSystemEmitters(&particleSystemEmitters);
+	particleSystemScreenController->setParticleSystemEmitters(particleSystemEmitters);
 	particleSystemScreenController->getEntityDisplaySubScreenController()->setupDisplay();
 	updateGUIElements();
 	initParticleSystemRequested = true;

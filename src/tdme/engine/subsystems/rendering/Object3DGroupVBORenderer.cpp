@@ -1,7 +1,5 @@
 #include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
 
-#include <vector>
-
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
@@ -14,8 +12,6 @@
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/math/Vector3.h>
-
-using std::vector;
 
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::utils::FloatBuffer;

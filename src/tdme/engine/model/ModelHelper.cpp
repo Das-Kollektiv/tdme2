@@ -68,25 +68,25 @@ ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(const vector<Vector3>
 	}
 }
 
-void ModelHelper::computeNormal(array<Vector3,3>* vertices, Vector3& normal)
+void ModelHelper::computeNormal(const array<Vector3,3>& vertices, Vector3& normal)
 {
 	// face normal
 	Vector3::computeCrossProduct(
-		(*vertices)[1].clone().sub((*vertices)[0]),
-		(*vertices)[2].clone().sub((*vertices)[0]),
+		(vertices)[1].clone().sub((vertices)[0]),
+		(vertices)[2].clone().sub((vertices)[0]),
 		normal
 	).normalize();
 }
 
-void ModelHelper::computeNormals(array<Vector3,3> *vertices, array<Vector3,3>* normals)
+void ModelHelper::computeNormals(const array<Vector3,3>& vertices, array<Vector3,3>& normals)
 {
 	// face normal
 	Vector3 normal;
 	computeNormal(vertices, normal);
 
 	// compute vertex normal
-	for (auto i = 0; i < vertices->size(); i++) {
-		(*normals)[i].set(normal);
+	for (auto i = 0; i < vertices.size(); i++) {
+		(normals)[i].set(normal);
 	}
 }
 
@@ -150,8 +150,8 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 
 	// set up tangents and bitangents if we have any
 	if (tangentsArrayList.size() > 0 && bitangentsArrayList.size() > 0) {
-		group->setTangents(&tangentsArrayList);
-		group->setBitangents(&bitangentsArrayList);
+		group->setTangents(tangentsArrayList);
+		group->setBitangents(bitangentsArrayList);
 		// going further
 		auto tangents = group->getTangents();
 		auto bitangents = group->getBitangents();
@@ -236,41 +236,41 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 					}
 					indexedFaceVertexIndices[idx] = newIndex;
 				}
-				face.setIndexedRenderingIndices(&indexedFaceVertexIndices);
+				face.setIndexedRenderingIndices(indexedFaceVertexIndices);
 			}
 		}
 		// remap skinning
 		auto skinning = group->getSkinning();
 		if (skinning != nullptr) {
-			prepareForIndexedRendering(skinning, &vertexMapping, preparedIndices);
+			prepareForIndexedRendering(skinning, vertexMapping, preparedIndices);
 		}
-		group->setVertices(&indexedVertices);
-		group->setNormals(&indexedNormals);
+		group->setVertices(indexedVertices);
+		group->setNormals(indexedNormals);
 		if (groupTextureCoordinates->size() > 0) {
-			group->setTextureCoordinates(&indexedTextureCoordinates);
+			group->setTextureCoordinates(indexedTextureCoordinates);
 		}
 		if (groupTangents != nullptr && groupBitangents != nullptr) {
-			group->setTangents(&indexedTangents);
-			group->setBitangents(&indexedBitangents);
+			group->setTangents(indexedTangents);
+			group->setBitangents(indexedBitangents);
 		}
 		// process sub groups
 		prepareForIndexedRendering(group->getSubGroups());
 	}
 }
 
-void ModelHelper::prepareForIndexedRendering(Skinning* skinning, vector<int32_t>* vertexMapping, int32_t vertices)
+void ModelHelper::prepareForIndexedRendering(Skinning* skinning, const vector<int32_t>& vertexMapping, int32_t vertices)
 {
 	auto originalVerticesJointsWeights = skinning->getVerticesJointsWeights();
 	vector<vector<JointWeight>> verticesJointsWeights;
 	verticesJointsWeights.resize(vertices);
 	for (auto i = 0; i < vertices; i++) {
-		auto vertexOriginalMappedToIdx = (*vertexMapping)[i];
+		auto vertexOriginalMappedToIdx = vertexMapping[i];
 		verticesJointsWeights[i].resize((*originalVerticesJointsWeights)[vertexOriginalMappedToIdx].size());
 		for (auto j = 0; j < verticesJointsWeights[i].size(); j++) {
 			verticesJointsWeights[i][j] = (*originalVerticesJointsWeights)[vertexOriginalMappedToIdx][j];
 		}
 	}
-	skinning->setVerticesJointsWeights(&verticesJointsWeights);
+	skinning->setVerticesJointsWeights(verticesJointsWeights);
 }
 
 void ModelHelper::setDiffuseMaskedTransparency(Model* model, bool maskedTransparency) {
@@ -403,12 +403,12 @@ Material* ModelHelper::cloneMaterial(Material* material) {
 
 void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup) {
 	auto clonedGroup = new Group(targetModel, targetParentGroup, sourceGroup->getId(), sourceGroup->getName());
-	clonedGroup->setVertices(sourceGroup->getVertices());
-	clonedGroup->setNormals(sourceGroup->getNormals());
-	clonedGroup->setTextureCoordinates(sourceGroup->getTextureCoordinates());
-	clonedGroup->setTangents(sourceGroup->getTangents());
-	clonedGroup->setBitangents(sourceGroup->getBitangents());
-	clonedGroup->setFacesEntities(sourceGroup->getFacesEntities());
+	clonedGroup->setVertices(*(sourceGroup->getVertices()));
+	clonedGroup->setNormals(*(sourceGroup->getNormals()));
+	clonedGroup->setTextureCoordinates(*(sourceGroup->getTextureCoordinates()));
+	clonedGroup->setTangents(*(sourceGroup->getTangents()));
+	clonedGroup->setBitangents(*(sourceGroup->getBitangents()));
+	clonedGroup->setFacesEntities(*(sourceGroup->getFacesEntities()));
 	clonedGroup->setJoint(false);
 	clonedGroup->getTransformationsMatrix().set(sourceGroup->getTransformationsMatrix());
 	for (auto& facesEntity: *clonedGroup->getFacesEntities()) {

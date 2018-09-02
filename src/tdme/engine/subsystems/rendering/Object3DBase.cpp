@@ -67,7 +67,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	if (model->hasSkinning() == true) {
 		hasSkinning = true;
 		skinningGroups.resize(determineSkinnedGroupCount(model->getSubGroups()));
-		determineSkinnedGroups(model->getSubGroups(), &skinningGroups, 0);
+		determineSkinnedGroups(model->getSubGroups(), skinningGroups, 0);
 		skinningGroupsMatrices.resize(skinningGroups.size());
 		for (auto i = 0; i < skinningGroups.size(); i++) {
 			createTransformationsMatrices(&skinningGroupsMatrices[i], model->getSubGroups());
@@ -80,9 +80,9 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	// calculate transformations matrices
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), &baseAnimation, 0);
 	// object 3d groups
-	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, &object3dGroups);
+	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, object3dGroups);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
-	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(&object3dGroups);
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(object3dGroups);
 	// reset animation
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 }
@@ -350,7 +350,7 @@ void Object3DBase::computeTransformations()
 		// calculate transformations matrices
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, 0);
 		// do transformations in group render data
-		Object3DGroup::computeTransformations(&object3dGroups);
+		Object3DGroup::computeTransformations(object3dGroups);
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		// set up parent transformations matrix
@@ -362,7 +362,7 @@ void Object3DBase::computeTransformations()
 		// calculate transformations matrices
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, 0);
 		// do transformations in group render data
-		Object3DGroup::computeTransformations(&object3dGroups);
+		Object3DGroup::computeTransformations(object3dGroups);
 	}
 }
 
@@ -445,14 +445,14 @@ int32_t Object3DBase::determineSkinnedGroupCount(map<string, Group*>* groups, in
 	return count;
 }
 
-int32_t Object3DBase::determineSkinnedGroups(map<string, Group*>* groups, vector<Group*>* skinningGroups, int32_t idx)
+int32_t Object3DBase::determineSkinnedGroups(map<string, Group*>* groups, vector<Group*>& skinningGroups, int32_t idx)
 {
 	// iterate through groups
 	for (auto it: *groups) {
 		Group* group = it.second;
 		// fetch skinning groups
 		if (group->getSkinning() != nullptr) {
-			(*skinningGroups)[idx++] = group;
+			skinningGroups[idx++] = group;
 		}
 		// calculate sub groups
 		auto subGroups = group->getSubGroups();

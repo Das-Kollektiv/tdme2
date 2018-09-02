@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -138,7 +137,7 @@ private:
 	 * @param materialSymbols material symbols
 	 * @throws model file IO exception
 	 */
-	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException);
+	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Reads a material

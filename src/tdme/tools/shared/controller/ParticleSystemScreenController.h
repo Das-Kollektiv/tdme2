@@ -199,13 +199,13 @@ public:
 	 * Set up particle system types
 	 * @param particleSystemTypesCollection particle system types
 	 */
-	void setParticleSystemTypes(const vector<string>* particleSystemTypesCollection);
+	void setParticleSystemTypes(const vector<string>& particleSystemTypesCollection);
 
 	/** 
 	 * Set up emitters
 	 * @param emittersCollection emitters
 	 */
-	void setParticleSystemEmitters(const vector<string>* emittersCollection);
+	void setParticleSystemEmitters(const vector<string>& emittersCollection);
 
 	/** 
 	 * On quit

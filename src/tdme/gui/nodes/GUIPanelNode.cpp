@@ -2,13 +2,11 @@
 
 #include <string>
 #include <set>
-#include <vector>
 
 #include <tdme/gui/events/GUIMouseEvent.h>
 
 using std::set;
 using std::string;
-using std::vector;
 
 using tdme::gui::nodes::GUIPanelNode;
 using tdme::gui::events::GUIMouseEvent;

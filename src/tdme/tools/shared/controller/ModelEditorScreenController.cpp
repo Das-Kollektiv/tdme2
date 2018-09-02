@@ -400,7 +400,7 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		entityLodLevel->getFileName() != ""?Tools::getPath(entityLodLevel->getFileName()):modelPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		Tools::getFileName(entityLodLevel->getFileName()),
 		new ModelEditorScreenController_onLODModelLoad(this)
 	);
@@ -632,7 +632,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		material->getDiffuseTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialDiffuseTexture)
 	);
@@ -646,7 +646,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTransparencyTextureFileName() != ""?material->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		material->getDiffuseTransparencyTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialDiffuseTransparencyTexture)
 	);
@@ -660,7 +660,7 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getNormalTextureFileName() != ""?material->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		material->getNormalTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialNormalTexture)
 	);
@@ -674,7 +674,7 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getSpecularTextureFileName() != ""?material->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		material->getSpecularTextureFileName(),
 		new ModelEditorScreenController_onMaterialLoadTexture(this, materialsMaterialNormalTexture)
 	);
@@ -915,7 +915,7 @@ void ModelEditorScreenController::onModelLoad()
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		view->getFileName(),
 		new ModelEditorScreenController_onModelLoad_2(this)
 	);
@@ -937,7 +937,7 @@ void ModelEditorScreenController::onModelSave()
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Save from: ",
-		&extensions,
+		extensions,
 		fileName,
 		new ModelEditorScreenController_onModelSave_3(this)
 	);

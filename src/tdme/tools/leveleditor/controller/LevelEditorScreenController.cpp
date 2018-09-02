@@ -319,7 +319,7 @@ void LevelEditorScreenController::onObjectsSelect()
 		selectedObjectList.push_back(t.nextToken());
 	}
 	if (selectedObjectList.empty() == false)
-		view->selectObjects(&selectedObjectList);
+		view->selectObjects(selectedObjectList);
 
 }
 
@@ -673,7 +673,7 @@ void LevelEditorScreenController::onMapLoad()
 	view->getPopUps()->getFileDialogScreenController()->show(
 		mapPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		view->getFileName(),
 		new LevelEditorScreenController_onMapLoad_1(this)
 	);
@@ -687,7 +687,7 @@ void LevelEditorScreenController::onMapSave()
 	view->getPopUps()->getFileDialogScreenController()->show(
 		mapPath->getPath(),
 		"Save to: ",
-		&extensions,
+		extensions,
 		view->getFileName(),
 		new LevelEditorScreenController_onMapSave_2(this)
 	);

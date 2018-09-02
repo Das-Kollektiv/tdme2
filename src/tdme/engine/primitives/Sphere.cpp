@@ -1,14 +1,11 @@
 #include <tdme/engine/primitives/Sphere.h>
 
-#include <vector>
-
 #include <ext/reactphysics3d/src/collision/shapes/SphereShape.h>
 
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 
 using std::to_string;
-using std::vector;
 
 using tdme::engine::primitives::Sphere;
 using tdme::math::Math;

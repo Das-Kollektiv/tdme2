@@ -2,7 +2,6 @@
 
 #include <map>
 #include <string>
-#include <vector>
 
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
@@ -26,7 +25,6 @@
 #include <tdme/utils/Console.h>
 
 using std::map;
-using std::vector;
 using std::string;
 
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;

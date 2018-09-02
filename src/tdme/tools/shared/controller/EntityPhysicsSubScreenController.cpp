@@ -218,7 +218,7 @@ void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(LevelEditorE
 	}
 }
 
-void EntityPhysicsSubScreenController::setupBoundingVolumeTypes(int32_t idx, vector<string>* boundingVolumeTypes)
+void EntityPhysicsSubScreenController::setupBoundingVolumeTypes(int32_t idx, const vector<string>& boundingVolumeTypes)
 {
 	auto boundingVolumeTypeDropDownInnerNode = dynamic_cast< GUIParentNode* >((boundingVolumeTypeDropDown[idx]->getScreenNode()->getNodeById(boundingVolumeTypeDropDown[idx]->getId() + "_inner")));
 	auto bvIdx = 0;
@@ -226,7 +226,7 @@ void EntityPhysicsSubScreenController::setupBoundingVolumeTypes(int32_t idx, vec
 	boundingVolumeTypeDropDownSubNodesXML =
 		boundingVolumeTypeDropDownSubNodesXML +
 		"<scrollarea-vertical width=\"100%\" height=\"80\">";
-	for (auto& bvType : *boundingVolumeTypes) {
+	for (auto& bvType : boundingVolumeTypes) {
 		boundingVolumeTypeDropDownSubNodesXML =
 			boundingVolumeTypeDropDownSubNodesXML +
 			"<dropdown-option text=\"" +
@@ -443,7 +443,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEdito
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolumeAt(idx)->getModelMeshFile() : entity->getFileName(),
 		new EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile(this, idxFinal, entityFinal)
 	);
@@ -456,7 +456,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEdi
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		Tools::getPath(convexMeshesFile->getController()->getValue().getString()),
 		"Load from: ",
-		&extensions,
+		extensions,
 		Tools::getFileName(convexMeshesFile->getController()->getValue().getString()),
 		new EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile(this, entityFinal)
 	);

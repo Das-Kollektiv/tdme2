@@ -103,7 +103,7 @@ public:
 	void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) override;
 	void drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset) override;
 	void unbindBufferObjects() override;
-	void disposeBufferObjects(vector<int32_t>* bufferObjectIds) override;
+	void disposeBufferObjects(vector<int32_t>& bufferObjectIds) override;
 	int32_t getTextureUnit() override;
 	void setTextureUnit(int32_t textureUnit) override;
 	float readPixelDepth(int32_t x, int32_t y) override;

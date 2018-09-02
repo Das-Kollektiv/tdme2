@@ -119,16 +119,6 @@ void Tools::convertToArray(const string& text, array<float, 3>& array) /* throws
 	}
 }
 
-void Tools::convertToArray(const string& text, array<float, 4>* array) /* throws(NumberFormatException) */
-{
-	auto i = 0;
-	StringTokenizer t;
-	t.tokenize(text, ",");
-	while (t.hasMoreTokens() && i < array->size()) {
-		(*array)[i++] = Float::parseFloat(t.nextToken());
-	}
-}
-
 void Tools::convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */
 {
 	auto i = 0;
@@ -262,10 +252,10 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntityGround.setFaces(&groundFacesGround);
 	groupFacesEntities.push_back(groupFacesEntityGround);
-	groundGroup->setVertices(&groundVertices);
-	groundGroup->setNormals(&groundNormals);
-	groundGroup->setTextureCoordinates(&groundTextureCoordinates);
-	groundGroup->setFacesEntities(&groupFacesEntities);
+	groundGroup->setVertices(groundVertices);
+	groundGroup->setNormals(groundNormals);
+	groundGroup->setTextureCoordinates(groundTextureCoordinates);
+	groundGroup->setFacesEntities(groupFacesEntities);
 	(*ground->getGroups())["ground"] = groundGroup;
 	(*ground->getSubGroups())["ground"] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(ground);

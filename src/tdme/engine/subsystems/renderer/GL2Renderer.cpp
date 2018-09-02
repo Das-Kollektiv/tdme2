@@ -621,9 +621,9 @@ void GL2Renderer::unbindBufferObjects()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void GL2Renderer::disposeBufferObjects(vector<int32_t>* bufferObjectIds)
+void GL2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
-	glDeleteBuffers(bufferObjectIds->size(), (const uint32_t*)bufferObjectIds->data());
+	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
 int32_t GL2Renderer::getTextureUnit()

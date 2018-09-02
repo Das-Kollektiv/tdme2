@@ -594,7 +594,7 @@ void LevelEditorView::display()
 	engine->getGUI()->render();
 }
 
-void LevelEditorView::selectObjects(vector<string>* entityIds)
+void LevelEditorView::selectObjects(const vector<string>& entityIds)
 {
 	for (auto entityIdToRemove: selectedEntityIds) {
 		auto entityToRemove = engine->getEntity(entityIdToRemove);
@@ -602,7 +602,7 @@ void LevelEditorView::selectObjects(vector<string>* entityIds)
 	}
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
-	for (auto entityId: *entityIds) {
+	for (auto entityId: entityIds) {
 		auto selectedEntity = engine->getEntity(entityId);
 		if (selectedEntity == nullptr) continue;
 		setStandardObjectColorEffect(selectedEntity);
@@ -921,10 +921,10 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groupFacesEntityGround.setFaces(&groundFacesGround);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntityGround);
-	groundGroup->setVertices(&groundVertices);
-	groundGroup->setNormals(&groundNormals);
-	groundGroup->setTextureCoordinates(&groundTextureCoordinates);
-	groundGroup->setFacesEntities(&groupFacesEntities);
+	groundGroup->setVertices(groundVertices);
+	groundGroup->setNormals(groundNormals);
+	groundGroup->setTextureCoordinates(groundTextureCoordinates);
+	groundGroup->setFacesEntities(groupFacesEntities);
 	(*groundPlate->getGroups())[groundGroup->getId()] = groundGroup;
 	(*groundPlate->getSubGroups())[groundGroup->getId()] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(groundPlate);

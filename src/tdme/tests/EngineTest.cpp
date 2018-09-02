@@ -127,10 +127,10 @@ Model* EngineTest::createWallModel()
 	groupFacesEntityFarPlane.setMaterial(wallMaterial);
 	groupFacesEntityFarPlane.setFaces(&facesFarPlane);
 	groupFacesEntities.push_back(groupFacesEntityFarPlane);
-	wallGroup->setVertices(&vertices);
-	wallGroup->setNormals(&normals);
-	wallGroup->setTextureCoordinates(&textureCoordinates);
-	wallGroup->setFacesEntities(&groupFacesEntities);
+	wallGroup->setVertices(vertices);
+	wallGroup->setNormals(normals);
+	wallGroup->setTextureCoordinates(textureCoordinates);
+	wallGroup->setFacesEntities(groupFacesEntities);
 	wallGroup->determineFeatures();
 	(*wall->getGroups())["wall"] = wallGroup;
 	(*wall->getSubGroups())["wall"] = wallGroup;

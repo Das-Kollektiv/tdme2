@@ -74,13 +74,13 @@ private:
 	 * @param object3DGroups object 3d groups array
 	 * @return object 3d group
 	 */
-	static void createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
+	static void createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups);
 
 	/** 
 	 * Applies transformations to meshes for given object 3d groups
 	 * @param object3DGroups group render data list
 	 */
-	static void computeTransformations(vector<Object3DGroup*>* object3DGroups);
+	static void computeTransformations(vector<Object3DGroup*>& object3DGroups);
 
 	/** 
 	 * Set up textures for given object3d group and faces entity
@@ -99,7 +99,7 @@ private:
 	 * @param animationProcessingTarget animation processing target
 	 * @param object3DGroups object 3D groups
 	 */
-	static void createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>* object3DGroups);
+	static void createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Dispose

@@ -398,7 +398,7 @@ public:
 	 * @param event event
 	 * @param eventNodeIds event node ids
 	 */
-	virtual void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds);
+	virtual void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Handle keyboard event

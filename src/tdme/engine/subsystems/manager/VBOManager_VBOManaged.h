@@ -63,5 +63,5 @@ public:
 	virtual bool isUploaded();
 
 private:
-	VBOManager_VBOManaged(const string& id, vector<int32_t>* vboGlIds);
+	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboGlIds);
 };

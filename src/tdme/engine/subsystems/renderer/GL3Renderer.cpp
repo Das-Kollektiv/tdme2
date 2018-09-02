@@ -651,9 +651,9 @@ void GL3Renderer::unbindBufferObjects()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
-void GL3Renderer::disposeBufferObjects(vector<int32_t>* bufferObjectIds)
+void GL3Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
-	glDeleteBuffers(bufferObjectIds->size(), (const uint32_t*)bufferObjectIds->data());
+	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
 int32_t GL3Renderer::getTextureUnit()

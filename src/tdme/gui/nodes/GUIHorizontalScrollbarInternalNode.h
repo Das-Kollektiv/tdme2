@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -10,6 +11,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 
 using std::string;
+using std::vector;
 
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIColor;

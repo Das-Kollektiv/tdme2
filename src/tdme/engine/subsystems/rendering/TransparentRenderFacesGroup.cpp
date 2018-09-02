@@ -1,7 +1,6 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
 
 #include <string>
-#include <vector>
 
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -13,7 +12,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Console.h>
 
-using std::vector;
 using std::string;
 using std::to_string;
 

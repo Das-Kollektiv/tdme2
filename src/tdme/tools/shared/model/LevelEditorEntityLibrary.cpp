@@ -1,9 +1,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
 
 #include <algorithm>
-#include <map>
 #include <string>
-#include <vector>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
@@ -19,10 +17,8 @@
 #include <tdme/utils/ExceptionBase.h>
 #include <tdme/utils/StringUtils.h>
 
-using std::map;
 using std::remove;
 using std::to_string;
-using std::vector;
 using std::string;
 
 using tdme::tools::shared::model::LevelEditorEntityLibrary;

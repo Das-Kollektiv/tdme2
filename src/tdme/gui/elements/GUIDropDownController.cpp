@@ -1,7 +1,6 @@
 #include <tdme/gui/elements/GUIDropDownController.h>
 
 #include <string>
-#include <vector>
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
@@ -17,7 +16,6 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
 
-using std::vector;
 using std::string;
 
 using tdme::gui::elements::GUIDropDownController;
@@ -102,7 +100,7 @@ bool GUIDropDownController::isOpen()
 
 void GUIDropDownController::unselect()
 {
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();
@@ -124,7 +122,7 @@ void GUIDropDownController::toggleOpenState()
 void GUIDropDownController::determineDropDownOptionControllers()
 {
 	dropDownOptionControllers.clear();
-	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(&childControllerNodes);
+	(dynamic_cast< GUIParentNode* >(node))->getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		auto childController = childControllerNode->getController();

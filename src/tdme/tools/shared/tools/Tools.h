@@ -71,13 +71,6 @@ public:
 	 * @param text text
 	 * @param array array
 	 */
-	static void convertToArray(const string& text, array<float, 4>* array) /* throws(NumberFormatException) */;
-
-	/**
-	 * Convert string to array
-	 * @param text text
-	 * @param array array
-	 */
 	static void convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */;
 
 	/** 

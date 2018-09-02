@@ -189,7 +189,7 @@ void GUIScreenNode::layout()
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes[i]->layout();
 	}
-	getChildControllerNodes(&childControllerNodes);
+	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto node = childControllerNodes[i];
 		auto controller = node->getController();
@@ -204,7 +204,7 @@ void GUIScreenNode::layout(GUINode* node)
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = dynamic_cast< GUIParentNode* >(node);
 		parentNode->layoutSubNodes();
-		parentNode->getChildControllerNodes(&childControllerNodes);
+		parentNode->getChildControllerNodes(childControllerNodes);
 		for (auto i = 0; i < childControllerNodes.size(); i++) {
 			auto childNode = childControllerNodes[i];
 			auto controller = childNode->getController();
@@ -423,7 +423,7 @@ void GUIScreenNode::tick() {
 void GUIScreenNode::getValues(map<string, MutableString>& values)
 {
 	values.clear();
-	getChildControllerNodes(&childControllerNodes);
+	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)
@@ -444,7 +444,7 @@ void GUIScreenNode::getValues(map<string, MutableString>& values)
 
 void GUIScreenNode::setValues(const map<string, MutableString>& values)
 {
-	getChildControllerNodes(&childControllerNodes);
+	getChildControllerNodes(childControllerNodes);
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto childControllerNode = childControllerNodes[i];
 		if (dynamic_cast< GUIElementNode* >(childControllerNode) != nullptr == false)

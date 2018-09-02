@@ -192,7 +192,8 @@ public:
 	 * Get child controller nodes
 	 * @param childControllerNodes child controller nodes
 	 */
-	virtual void getChildControllerNodes(vector<GUINode*>* childControllerNodes);
+	virtual void getChildControllerNodes(vector<GUINode*>& childControllerNodes);
+
 	void dispose() override;
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
@@ -204,7 +205,7 @@ private:
 	 * Get child controller nodes internal
 	 * @param childControllerNodes child controller nodes
 	 */
-	void getChildControllerNodesInternal(vector<GUINode*>* childControllerNodes);
+	void getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes);
 
 	/**
 	 * Invalidate render caches

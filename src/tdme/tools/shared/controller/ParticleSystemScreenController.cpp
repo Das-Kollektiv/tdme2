@@ -276,7 +276,7 @@ void ParticleSystemScreenController::unsetEntityProperties()
 	entityBaseSubScreenController->unsetEntityProperties();
 }
 
-void ParticleSystemScreenController::setParticleSystemTypes(const vector<string>* particleSystemTypesCollection)
+void ParticleSystemScreenController::setParticleSystemTypes(const vector<string>& particleSystemTypesCollection)
 {
 	auto particleSystemTypesInnerNode = dynamic_cast< GUIParentNode* >(particleSystemTypes->getScreenNode()->getNodeById(particleSystemTypes->getId() + "_inner"));
 	auto idx = 0;
@@ -286,7 +286,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<string>
 		"<scrollarea-vertical id=\"" +
 		particleSystemTypes->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	for (auto particleSystem: *particleSystemTypesCollection) {
+	for (auto particleSystem: particleSystemTypesCollection) {
 		particleSystemTypesInnerNodeSubNodesXML =
 			particleSystemTypesInnerNodeSubNodesXML +
 			"<dropdown-option text=\"" +
@@ -309,7 +309,7 @@ void ParticleSystemScreenController::setParticleSystemTypes(const vector<string>
 	}
 }
 
-void ParticleSystemScreenController::setParticleSystemEmitters(const vector<string>* emittersCollection)
+void ParticleSystemScreenController::setParticleSystemEmitters(const vector<string>& emittersCollection)
 {
 	auto particleSystemEmittersInnerNode = dynamic_cast< GUIParentNode* >((particleSystemEmitters->getScreenNode()->getNodeById(particleSystemEmitters->getId() + "_inner")));
 	auto idx = 0;
@@ -319,7 +319,7 @@ void ParticleSystemScreenController::setParticleSystemEmitters(const vector<stri
 		"<scrollarea-vertical id=\"" +
 		particleSystemEmitters->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	for (auto particleSystemEmitter: *emittersCollection) {
+	for (auto particleSystemEmitter: emittersCollection) {
 		particleSystemEmittersInnerNodeSubNodesXML =
 			particleSystemEmittersInnerNodeSubNodesXML +
 			"<dropdown-option text=\"" +
@@ -743,7 +743,7 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		particleSystemPath->getPath(),
 		"Load from: ",
-		&extensions,
+		extensions,
 		view->getFileName(),
 		new ParticleSystemScreenController_onParticleSystemLoad_2(this)
 	);
@@ -762,7 +762,7 @@ void ParticleSystemScreenController::onEntitySave()
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		particleSystemPath->getPath(),
 		"Save from: ",
-		&extensions,
+		extensions,
 		fileName,
 		new ParticleSystemScreenController_onEntitySave_3(this)
 );
@@ -827,7 +827,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 				view->getPopUpsViews()->getFileDialogScreenController()->show(
 					modelPath->getPath(),
 					"Load from: ",
-					&extensions,
+					extensions,
 					"",
 					new ParticleSystemScreenController_onActionPerformed_4(this)
 				);

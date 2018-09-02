@@ -1,15 +1,11 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 
 #include <algorithm>
-#include <map>
 #include <string>
-#include <vector>
 
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
-using std::map;
 using std::remove;
-using std::vector;
 using std::string;
 
 using tdme::tools::shared::model::ModelProperties;

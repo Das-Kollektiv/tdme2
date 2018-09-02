@@ -1,11 +1,7 @@
 #include <tdme/engine/primitives/Triangle.h>
 
-#include <vector>
-
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
-
-using std::vector;
 
 using tdme::engine::primitives::Triangle;
 
