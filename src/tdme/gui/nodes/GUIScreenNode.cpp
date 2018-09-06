@@ -19,8 +19,10 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
+#include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
 
 using std::map;
@@ -43,8 +45,10 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
+using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::Console;
+using tdme::utils::Integer;
 using tdme::utils::MutableString;
 
 GUIScreenNode::GUIScreenNode(
@@ -59,6 +63,7 @@ GUIScreenNode::GUIScreenNode(
 	const GUINode_Scale9Grid& backgroundImageScale9Grid,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
+	const GUIScreenNode_SizeConstraints& sizeConstraints,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
 	bool scrollable,
@@ -66,6 +71,7 @@ GUIScreenNode::GUIScreenNode(
 ) throw(GUIParserException):
 	GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
 {
+	this->sizeConstraints = sizeConstraints;
 	init();
 	this->gui = nullptr;
 	this->nodeCounter = 0;
@@ -496,3 +502,12 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	GUIParentNode::render(guiRenderer, floatingNodes);
 }
 
+GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight)
+{
+	GUIScreenNode_SizeConstraints constraints;
+	constraints.minWidth = minWidth.empty() == true?-1:Integer::parseInt(minWidth);
+	constraints.minHeight = minHeight.empty() == true?-1:Integer::parseInt(minHeight);
+	constraints.maxWidth = maxWidth.empty() == true?-1:Integer::parseInt(maxWidth);
+	constraints.maxHeight = maxHeight.empty() == true?-1:Integer::parseInt(maxHeight);
+	return constraints;
+}

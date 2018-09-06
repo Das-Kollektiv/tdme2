@@ -174,6 +174,12 @@ GUIScreenNode* GUIParser::parse(const string& xml) throw (GUIParserException)
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("padding-right"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("padding-bottom")))
 		),
+		GUIScreenNode::createSizeConstraints(
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("min-width"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("min-height"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("max-width"))),
+			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("max-height")))
+		),
 		GUINode::createConditions(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("show-on")))),
 		GUINode::createConditions(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("hide-on")))),
 		StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),

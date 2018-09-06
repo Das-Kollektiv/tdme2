@@ -1,4 +1,4 @@
-<screen id="test" background-color="#202020">
+<screen id="test" background-color="#202020" min-width="1024" min-height="768" max-width="2048" max-height="1536">
 	<panel left="5%" top="5%" width="90%" height="90%" alignment="vertical" horizontal-align="center"> 
 		<space height="5%" />
 		<layout width="80%" padding="10" border="1" border-color="red" alignment="none" horizontal-align="center" vertical-align="center" background-color="#909090">

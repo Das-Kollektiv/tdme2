@@ -38,6 +38,26 @@ void GUIMouseEvent::setType(GUIMouseEvent_Type* type)
 	this->type = type;
 }
 
+int32_t GUIMouseEvent::getXUnscaled()
+{
+	return xUnscaled;
+}
+
+void GUIMouseEvent::setXUnscaled(int32_t xUnscaled)
+{
+	this->xUnscaled = xUnscaled;
+}
+
+int32_t GUIMouseEvent::getYUnscaled()
+{
+	return yUnscaled;
+}
+
+void GUIMouseEvent::setYUnscaled(int32_t yUnscaled)
+{
+	this->yUnscaled = yUnscaled;
+}
+
 int32_t GUIMouseEvent::getX()
 {
 	return x;

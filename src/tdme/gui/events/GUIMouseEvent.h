@@ -16,6 +16,8 @@ class tdme::gui::events::GUIMouseEvent
 private:
 	int64_t time {  };
 	GUIMouseEvent_Type* type {  };
+	int32_t xUnscaled {  };
+	int32_t yUnscaled {  };
 	int32_t x {  };
 	int32_t y {  };
 	int32_t button {  };
@@ -49,6 +51,28 @@ public:
 	virtual void setType(GUIMouseEvent_Type* type);
 
 	/** 
+	 * @return x unscaled
+	 */
+	virtual int32_t getXUnscaled();
+
+	/**
+	 * Set x unscaled
+	 * @param x x unscaled
+	 */
+	virtual void setXUnscaled(int32_t xUnscaled);
+
+	/**
+	 * @return y unscaled
+	 */
+	virtual int32_t getYUnscaled();
+
+	/**
+	 * Set y unscaled
+	 * @param y y  unscaled
+	 */
+	virtual void setYUnscaled(int32_t yUnscaled);
+
+	/**
 	 * @return x
 	 */
 	virtual int32_t getX();

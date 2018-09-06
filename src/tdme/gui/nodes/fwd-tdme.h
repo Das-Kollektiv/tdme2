@@ -35,6 +35,7 @@ namespace nodes {
 	class GUIParentNode;
 	class GUIParentNode_Overflow;
 	class GUIScreenNode;
+	struct GUIScreenNode_SizeConstraints;
 	class GUISpaceNode;
 	class GUITextNode;
 	class GUIVerticalScrollbarInternalController;

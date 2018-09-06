@@ -427,8 +427,8 @@ void GUINode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
 	if (conditionsMet == false)
 		return;
 
-	float screenWidth = guiRenderer->getGUI()->getWidth();
-	float screenHeight = guiRenderer->getGUI()->getHeight();
+	auto screenWidth = screenNode->getScreenWidth();
+	auto screenHeight = screenNode->getScreenHeight();
 	float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left;
 	float top = computedConstraints.top + computedConstraints.alignmentTop + border.top;
 	float width = computedConstraints.width - border.left - border.right;

@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 
 using std::array;
@@ -25,6 +26,7 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeController;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
 GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(
@@ -79,8 +81,8 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector
 		return;
 
 	GUINode::render(guiRenderer, floatingNodes);
-	float screenWidth = guiRenderer->getGUI()->getWidth();
-	float screenHeight = guiRenderer->getGUI()->getHeight();
+	auto screenWidth = screenNode->getScreenWidth();
+	auto screenHeight = screenNode->getScreenHeight();
 	auto controller = dynamic_cast< GUIHorizontalScrollbarInternalController* >(this->controller);
 	auto barWidth = controller->getBarWidth();
 	auto barLeft = controller->getBarLeft();

@@ -4,6 +4,7 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 
@@ -11,6 +12,7 @@ using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 
@@ -21,8 +23,8 @@ GUIFont_CharacterDefinition::GUIFont_CharacterDefinition(GUIFont* font)
 
 void GUIFont_CharacterDefinition::draw(GUIRenderer* guiRenderer, int32_t x, int32_t y)
 {
-	float screenWidth = guiRenderer->gui->getWidth();
-	float screenHeight = guiRenderer->gui->getHeight();
+	auto screenWidth = guiRenderer->screenNode->getScreenWidth();
+	auto screenHeight = guiRenderer->screenNode->getScreenHeight();
 	float left = x + xOffset;
 	float top = y + yOffset;
 	float width = this->width;

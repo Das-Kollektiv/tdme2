@@ -138,8 +138,8 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& fl
 	auto disable = inputController->isDisabled();
 	font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
 	if (static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController_CursorMode::SHOW) {
-		float screenWidth = guiRenderer->getGUI()->getWidth();
-		float screenHeight = guiRenderer->getGUI()->getHeight();
+		auto screenWidth = screenNode->getScreenWidth();
+		auto screenHeight = screenNode->getScreenHeight();
 		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex());
 		float top = computedConstraints.top + computedConstraints.alignmentTop + border.top + padding.top;
 		float width = 2;

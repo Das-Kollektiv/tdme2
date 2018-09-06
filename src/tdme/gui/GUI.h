@@ -254,6 +254,12 @@ private:
 	 */
 	void handleKeyboardEvent(GUIKeyboardEvent* event);
 
+	/**
+	 * Reshape screen
+	 * @param screenNode screen node
+	 */
+	void reshapeScreen(GUIScreenNode* screenNode);
+
 public:
 	/**
 	 * On key down

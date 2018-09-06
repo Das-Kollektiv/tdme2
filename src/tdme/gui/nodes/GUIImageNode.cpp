@@ -11,6 +11,7 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/math/Matrix2D3x3.h>
 
@@ -27,6 +28,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Matrix2D3x3;
 
@@ -109,8 +111,8 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 	{
 		auto renderOffsetXCurrent = guiRenderer->getRenderOffsetX();
 		auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
-		float screenWidth = guiRenderer->getGUI()->getWidth();
-		float screenHeight = guiRenderer->getGUI()->getHeight();
+		auto screenWidth = screenNode->getScreenWidth();
+		auto screenHeight = screenNode->getScreenHeight();
 		float left = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + padding.left + clipping.left;
 		float top = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + padding.top + clipping.top;
 		float width = getContentWidth() - padding.left - padding.right - clipping.left - clipping.right;
@@ -125,8 +127,8 @@ void GUIImageNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNo
 		guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 	}
 
-	float screenWidth = guiRenderer->getGUI()->getWidth();
-	float screenHeight = guiRenderer->getGUI()->getHeight();
+	auto screenWidth = screenNode->getScreenWidth();
+	auto screenHeight = screenNode->getScreenHeight();
 	guiRenderer->bindTexture(textureId);
 	guiRenderer->setTexureMatrix(textureMatrix);
 	guiRenderer->setEffectColorMul(effectColorMul);
