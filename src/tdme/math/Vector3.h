@@ -322,30 +322,6 @@ public:
 	}
 
 	/** 
-	 * Computes a orthogonal vector from this vector
-	 * @param dest destination vector
-	 * @return destination vector
-	 */
-	inline Vector3& computeOrthogonalVector(Vector3& dest) {
-		if (Math::abs(data[0]) > Math::EPSILON) {
-			dest.data[1] = data[0];
-			dest.data[2] = ((-2 * data[0] * data[1]* data[2] + 2 * data[0] * data[2]) / (2 * (data[2] * data[2] + data[0] * data[0])));
-			dest.data[0] = ((-data[0] * data[1] - data[2] * dest.data[2]) / data[0]);
-		} else
-		if (Math::abs(data[1]) > Math::EPSILON) {
-			dest.data[2] = data[1];
-			dest.data[0] = ((-2 * data[0] * data[1]* data[2] + 2 * data[0] * data[1]) / (2 * (data[1] * data[1] + data[0] * data[0])));
-			dest.data[1] = ((-data[2] * data[1] - data[0] * dest.data[0]) / data[1]);
-		} else
-		if (Math::abs(data[2]) > Math::EPSILON) {
-			dest.data[0] = data[2];
-			dest.data[1] = ((-2 * data[0] * data[1]* data[2] + 2 * data[1] * data[2]) / (2 * (data[2] * data[2] + data[1] * data[1])));
-			dest.data[2] = ((-data[0] * data[2] - data[1] * dest.data[1]) / data[2]);
-		}
-		return dest;
-	}
-
-	/** 
 	 * Adds a vector
 	 * @param v v
 	 * @return this vector
@@ -432,16 +408,6 @@ public:
 	 */
 	inline bool equals(const Vector3& v) const {
 		return equals(v, Math::EPSILON);
-	}
-
-	/**
-	 * Check if given vector has NaN value
-	 */
-	inline bool hasNaN() const {
-		return
-			Float::isNaN(data[0]) == true ||
-			Float::isNaN(data[1]) == true ||
-			Float::isNaN(data[2]);
 	}
 
 	/** 
