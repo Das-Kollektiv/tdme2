@@ -758,7 +758,7 @@ void Engine::display()
 		}
 		if (postProcessingFrameBuffer[1] != nullptr) {
 			postProcessingFrameBuffer[1]->dispose();
-			delete postProcessingFrameBuffer[0];
+			delete postProcessingFrameBuffer[1];
 			postProcessingFrameBuffer[1] = nullptr;
 		}
 		// switch back to framebuffer if we have one

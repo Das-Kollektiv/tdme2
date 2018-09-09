@@ -168,6 +168,12 @@ void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
 	// unuse frame buffer render shader
 	renderer->drawTrianglesFromBufferObjects(2, 0);
 
+	// unbind buffers
+	renderer->unbindBufferObjects();
+
+	// unbind buffers
+	renderer->unbindBufferObjects();
+
 	//
 	postProcessingShader->unUseProgram();
 
