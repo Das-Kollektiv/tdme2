@@ -11,10 +11,12 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
+#include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
@@ -38,6 +40,7 @@ using tdme::engine::Light;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
+using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -45,6 +48,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
@@ -73,6 +77,7 @@ class tdme::engine::Engine final
 	friend class LODObject3D;
 	friend class ObjectParticleSystemEntity;
 	friend class PointsParticleSystemEntity;
+	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::rendering::BatchVBORendererPoints;
 	friend class tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
 	friend class tdme::engine::subsystems::rendering::Object3DBase;
@@ -113,6 +118,8 @@ private:
 	static ParticlesShader* particlesShader;
 	static SkinningShader* skinningShader;
 	static GUIShader* guiShader;
+	static FrameBufferRenderShader* frameBufferRenderShader;
+	static PostProcessingShader* postProcessingShader;
 
 	int32_t width {  };
 	int32_t height {  };
@@ -125,6 +132,7 @@ private:
 	array<Light, 8> lights {  };
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
+	array<FrameBuffer*, 2> postProcessingFrameBuffer {  };
 	ShadowMapping* shadowMapping {  };
 
 	map<string, Entity*> entitiesById {  };
@@ -144,6 +152,8 @@ private:
 	bool renderingComputedTransformations {  };
 	Matrix4x4 modelViewMatrix {  };
 	Matrix4x4 projectionMatrix {  };
+
+	vector<string> postProcessingShaders;
 
 	bool initialized {  };
 
@@ -191,6 +201,16 @@ private:
 	 * @return GUI shader
 	 */
 	static GUIShader* getGUIShader();
+
+	/**
+	 * @return frame buffer render shader
+	 */
+	static FrameBufferRenderShader* getFrameBufferRenderShader();
+
+	/**
+	 * @return post processed shader
+	 */
+	static PostProcessingShader* getPostProcessingShader();
 
 	/**
 	 * @return object 3d vbo renderer
@@ -420,6 +440,16 @@ public:
 	 * @return success
 	 */
 	bool makeScreenshot(const string& pathName, const string& fileName);
+
+	/**
+	 * Clear post processing shaders
+	 */
+	void clearPostProcessing();
+
+	/**
+	 * Add post processing
+	 */
+	void addPostProcessing(const string& shaderId);
 
 	/**
 	 * Destructor

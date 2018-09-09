@@ -21,9 +21,7 @@ public:
 	 */
 	static bool isSupported(GLRenderer* renderer);
 
-	/** 
-	 * Init shadow mapping
-	 */
+	// overriden methods
 	virtual void initialize() override;
 
 /**

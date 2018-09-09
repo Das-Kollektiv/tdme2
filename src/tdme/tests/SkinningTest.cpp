@@ -6,6 +6,7 @@
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
@@ -29,6 +30,7 @@ using tdme::tests::SkinningTest;
 
 using tdme::engine::Camera;
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
@@ -123,6 +125,7 @@ void SkinningTest::initialize()
 		engine->addEntity(entity);
 	}
 	Console::println("Spawned characters: " + to_string(characterIdx));
+	engine->addPostProcessing("depth_blur");
 }
 
 void SkinningTest::reshape(int32_t width, int32_t height)

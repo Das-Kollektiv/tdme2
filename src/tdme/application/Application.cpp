@@ -80,7 +80,6 @@ void Application::run(int argc, char** argv, const string& title, ApplicationInp
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
 #elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-//	glutInitContextVersion(4,3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	/*
 	glutInitContextVersion(3, 1);

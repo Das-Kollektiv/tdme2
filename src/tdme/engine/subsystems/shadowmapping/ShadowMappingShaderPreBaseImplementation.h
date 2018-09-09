@@ -37,49 +37,14 @@ protected:
 
 public:
 
-	/** 
-	 * @return if initialized and ready to use
-	 */
+	// overriden methods
 	virtual bool isInitialized() override;
-
-	/** 
-	 * Init shadow mapping
-	 */
 	virtual void initialize() override;
-
-	/** 
-	 * Use pre render shadow mapping program
-	 */
 	virtual void useProgram() override;
-
-	/** 
-	 * Un use pre render shadow mapping program
-	 */
 	virtual void unUseProgram() override;
-
-	/** 
-	 * Set up pre program mvp matrix
-	 * @param mvpMatrix mvp matrix
-	 */
 	virtual void updateMatrices(const Matrix4x4& mvpMatrix) override;
-
-	/**
-	 * Set up pre program texture matrix
-	 * @param renderer renderer
-	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) override;
-
-	/**
-	 * Update material
-	 * @param renderer renderer
-	 */
 	virtual void updateMaterial(GLRenderer* renderer) override;
-
-	/**
-	 * Bind texture
-	 * @param renderer renderer
-	 * @param textureId texture id
-	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
 
 	/**

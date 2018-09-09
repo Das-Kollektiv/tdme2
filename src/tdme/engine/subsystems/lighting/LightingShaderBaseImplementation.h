@@ -75,62 +75,17 @@ protected:
 	bool initialized {  };
 	GLRenderer* renderer {  };
 public:
-	/** 
-	 * @return initialized and ready to be used
-	 */
+
+	// overriden methods
 	virtual bool isInitialized() override;
-
-	/** 
-	 * Initialize renderer
-	 */
 	virtual void initialize() override;
-
-	/** 
-	 * Use lighting program
-	 */
 	virtual void useProgram() override;
-
-	/** 
-	 * Unuse lighting program
-	 */
 	virtual void unUseProgram() override;
-
-	/** 
-	 * Update effect to program
-	 * @param renderer renderer
-	 */
 	virtual void updateEffect(GLRenderer* renderer) override;
-
-	/** 
-	 * Update material to program
-	 * @param renderer gl3 renderer
-	 */
 	virtual void updateMaterial(GLRenderer* renderer) override;
-
-	/** 
-	 * Update light to program
-	 * @param renderer renderer
-	 * @param lightId light id
-	 */
 	virtual void updateLight(GLRenderer* renderer, int32_t lightId) override;
-
-	/** 
-	 * Update matrices to program
-	 * @param renderer renderer
-	 */
 	virtual void updateMatrices(GLRenderer* renderer) override;
-
-	/** 
-	 * Update texture matrix to program
-	 * @param renderer renderer
-	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) override;
-
-	/**
-	 * Bind texture
-	 * @param renderer renderer
-	 * @param textureId texture id
-	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
 
 	/**

@@ -43,6 +43,8 @@
             - supports specular shininess mapping on GL3+/CORE
             - supports normal mapping on GL3+/CORE
         - shadow mapping
+        - post processing
+          - depth blur
         - particle system which
           - is object based
           - or point based
@@ -135,6 +137,7 @@
     - documentation
 
 - What is WIP or planned
+    - SSAO post effect
     - LOD
     - GUI system port needs to be finished(memory management and other minor things)
     - Some UI elements need some default skinning fixes

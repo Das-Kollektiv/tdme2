@@ -53,85 +53,20 @@ protected:
 
 public:
 
-	/** 
-	 * @return if initialized and ready to use
-	 */
+	// overriden methods
 	virtual bool isInitialized() override;
-
-	/** 
-	 * Init shadow mapping
-	 */
 	virtual void initialize() override;
-
-	/** 
-	 * Use render shadow mapping program
-	 */
 	virtual void useProgram() override;
-
-	/** 
-	 * Un use render shadow mapping program
-	 */
 	virtual void unUseProgram() override;
-
-	/** 
-	 * Set up program projection and camera matrix
-	 */
 	virtual void setProgramViewMatrices() override;
-
-	/**
-	 * Set up program model view matrix
-	 * @param mvMatrix model view matrix
-	 */
 	virtual void setProgramMVMatrix(const Matrix4x4& mvMatrix) override;
-
-	/** 
-	 * Set up program mvp matrix
-	 * @param mvpMatrix mvp matrix
-	 */
 	virtual void setProgramMVPMatrix(const Matrix4x4& mvpMatrix) override;
-
-	/** 
-	 * Set up program normal matrix
-	 * @param normalMatrix normal matrix
-	 */
 	virtual void setProgramNormalMatrix(const Matrix4x4& normalMatrix) override;
-
-	/**
-	 * Set up pre program texture matrix
-	 * @param renderer renderer
-	 */
 	virtual void updateTextureMatrix(GLRenderer* renderer) override;
-
-	/**
-	 * Update material
-	 * @param renderer renderer
-	 */
 	virtual void updateMaterial(GLRenderer* renderer) override;
-
-	/**
-	 * Update light
-	 * @param renderer renderer
-	 * @param lightId light id
-	 */
 	virtual void updateLight(GLRenderer* renderer, int32_t lightId) override;
-
-	/**
-	 * Bind texture
-	 * @param renderer renderer
-	 * @param textureId texture id
-	 */
 	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
-
-	/** 
-	 * Set up program depth bias mvp matrix
-	 * @param depthBiasMVPMatrix depth bias mvp matrix
-	 */
 	virtual void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix) override;
-
-	/**
-	 * Set light id
-	 * @param lightId light id to render
-	 */
 	virtual void setRenderLightId(int32_t lightId) override;
 
 	/**

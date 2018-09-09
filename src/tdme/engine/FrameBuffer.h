@@ -1,7 +1,14 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
+
+using std::string;
+
+using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 
 /** 
  * Frame buffer class
@@ -76,6 +83,18 @@ public:
 	 * @return depth buffer texture id
 	 */
 	int32_t getDepthBufferTextureId();
+
+	/**
+	 * Render to screen
+	 */
+	void renderToScreen();
+
+	/**
+	 * Do post processing into this frame buffer
+	 * @param source source frame buffer
+	 * @param post processing shader id
+	 */
+	void doPostProcessing(FrameBuffer* source, const string& shaderId);
 
 	/**
 	 * Public constructor

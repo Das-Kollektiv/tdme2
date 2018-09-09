@@ -129,6 +129,7 @@ SRCS = \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
+	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
@@ -165,6 +166,10 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \

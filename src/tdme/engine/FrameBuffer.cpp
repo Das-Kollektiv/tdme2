@@ -1,10 +1,16 @@
 #include <tdme/engine/FrameBuffer.h>
 
+#include <string>
+
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using tdme::engine::FrameBuffer;
 using tdme::engine::Engine;
+using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
 FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers) 
@@ -93,3 +99,83 @@ int32_t FrameBuffer::getDepthBufferTextureId()
 {
 	return depthBufferTextureId;
 }
+
+void FrameBuffer::renderToScreen()
+{
+	auto renderer = Engine::renderer;
+
+	//
+	renderer->disableDepthBuffer();
+	renderer->disableCulling();
+
+	// use frame buffer render shader
+	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
+	frameBufferRenderShader->useProgram();
+
+	// bind color buffer texture
+	renderer->setTextureUnit(0);
+	renderer->bindTexture(colorBufferTextureId);
+
+	//
+	renderer->bindVerticesBufferObject(frameBufferRenderShader->getVBOVertices());
+	renderer->bindTextureCoordinatesBufferObject(frameBufferRenderShader->getVBOTextureCoordinates());
+
+	// unuse frame buffer render shader
+	renderer->drawTrianglesFromBufferObjects(2, 0);
+
+	//
+	frameBufferRenderShader->unUseProgram();
+
+	// unset
+	renderer->enableCulling();
+	renderer->enableDepthBuffer();
+}
+
+void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
+{
+	// enable this framebuffer to be rendered into
+	enableFrameBuffer();
+
+	//
+	auto renderer = Engine::renderer;
+
+	//
+	renderer->disableDepthBuffer();
+	renderer->disableCulling();
+
+	// use frame buffer render shader
+	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
+
+	// use post processing shader
+	auto postProcessingShader = Engine::getInstance()->getPostProcessingShader();
+	postProcessingShader->useProgram();
+	postProcessingShader->setShader(shaderId);
+	postProcessingShader->setBufferPixelWidth(1.0f / static_cast<float>(source->getWidth()));
+	postProcessingShader->setBufferPixelHeight(1.0f / static_cast<float>(source->getHeight()));
+
+	// bind color buffer texture
+	renderer->setTextureUnit(0);
+	renderer->bindTexture(source->colorBufferTextureId);
+
+	// bind color buffer texture
+	renderer->setTextureUnit(1);
+	renderer->bindTexture(source->depthBufferTextureId);
+
+	//
+	renderer->bindVerticesBufferObject(frameBufferRenderShader->getVBOVertices());
+	renderer->bindTextureCoordinatesBufferObject(frameBufferRenderShader->getVBOTextureCoordinates());
+
+	// unuse frame buffer render shader
+	renderer->drawTrianglesFromBufferObjects(2, 0);
+
+	//
+	postProcessingShader->unUseProgram();
+
+	// unset
+	renderer->enableCulling();
+	renderer->enableDepthBuffer();
+
+	//
+	disableFrameBuffer();
+}
+
