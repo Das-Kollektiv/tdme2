@@ -73,6 +73,7 @@ void main() {
 		float depthBias = 0.0;
 
 		// determine visibility
+		// TODO: improve me
 		float visibility = 0.0;
 		for (float y = -SHADOWMAP_LOOKUPS / 2.0; y <= SHADOWMAP_LOOKUPS / 2.0; y+=1.0)
 		for (float x = -SHADOWMAP_LOOKUPS / 2.0; x <= SHADOWMAP_LOOKUPS / 2.0; x+=1.0) {
