@@ -201,7 +201,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		// second render pass, draw color buffer for transparent objects
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear
-		renderer->disableDepthBuffer();
+		renderer->disableDepthBufferWriting();
 		renderer->disableCulling();
 		renderer->enableBlending();
 		// disable foliage animation
@@ -246,7 +246,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		//	no blending, but culling and depth buffer
 		renderer->disableBlending();
 		renderer->enableCulling();
-		renderer->enableDepthBuffer();
+		renderer->enableDepthBufferWriting();
 		// done!
 	}
 }
@@ -957,7 +957,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	auto depthBuffer = false;
 	// set up GL state
 	renderer->enableBlending();
-	renderer->disableDepthBuffer();
+	renderer->disableDepthBufferWriting();
 	// 	model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
@@ -1001,9 +1001,9 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		renderer->onUpdateEffect();
 		depthBuffer = currentPse->isPickable();
 		if (depthBuffer) {
-			renderer->enableDepthBuffer();
+			renderer->enableDepthBufferWriting();
 		} else {
-			renderer->disableDepthBuffer();
+			renderer->disableDepthBufferWriting();
 		}
 		// render, clear
 		psePointBatchVBORenderer->render();
@@ -1011,7 +1011,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 		pseTransparentRenderPointsPool->reset();
 	}
 	renderer->disableBlending();
-	if (depthBuffer == false) renderer->enableDepthBuffer();
+	if (depthBuffer == false) renderer->enableDepthBufferWriting();
 	// restore gl state
 	renderer->unbindBufferObjects();
 	renderer->getModelViewMatrix().set(modelViewMatrix);

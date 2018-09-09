@@ -835,6 +835,7 @@ void Engine::display()
 	projectionMatrix.set(renderer->getProjectionMatrix());
 
 	// do post processing
+	// TODO: depth buffer gets lost when rendering from post processing framebuffer 0 -> 1
 	if (postProcessingShaders.size() > 0) {
 		auto postProcessingFrameBufferIdx = 0;
 		for (auto shaderId: postProcessingShaders) {

@@ -132,7 +132,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	// render using shadow mapping program
 	auto shader = Engine::getShadowMappingShaderRender();
 	//	do not allow writing to depth buffer
-	renderer->disableDepthBuffer();
+	renderer->disableDepthBufferWriting();
 	//	only process nearest fragments
 	renderer->setDepthFunction(renderer->DEPTHFUNCTION_LESSEQUAL);
 	// user shader program
@@ -181,7 +181,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	renderer->setTextureUnit(textureUnit);
 	// restore render defaults
 	renderer->disableBlending();
-	renderer->enableDepthBuffer();
+	renderer->enableDepthBufferWriting();
 	renderer->setDepthFunction(renderer->DEPTHFUNCTION_LESSEQUAL);
 	//
 	runState = ShadowMapping_RunState::NONE;

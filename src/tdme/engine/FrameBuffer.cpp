@@ -105,7 +105,8 @@ void FrameBuffer::renderToScreen()
 	auto renderer = Engine::renderer;
 
 	//
-	renderer->disableDepthBuffer();
+	renderer->disableDepthBufferWriting();
+	renderer->disableDepthBufferTest();
 	renderer->disableCulling();
 
 	// use frame buffer render shader
@@ -123,24 +124,28 @@ void FrameBuffer::renderToScreen()
 	// unuse frame buffer render shader
 	renderer->drawTrianglesFromBufferObjects(2, 0);
 
+	// unbind buffers
+	renderer->unbindBufferObjects();
+
 	//
 	frameBufferRenderShader->unUseProgram();
 
 	// unset
 	renderer->enableCulling();
-	renderer->enableDepthBuffer();
+	renderer->enableDepthBufferTest();
+	renderer->enableDepthBufferWriting();
 }
 
 void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
 {
-	// enable this framebuffer to be rendered into
 	enableFrameBuffer();
 
 	//
 	auto renderer = Engine::renderer;
 
 	//
-	renderer->disableDepthBuffer();
+	renderer->disableDepthBufferWriting();
+	renderer->disableDepthBufferTest();
 	renderer->disableCulling();
 
 	// use frame buffer render shader
@@ -171,15 +176,13 @@ void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
 	// unbind buffers
 	renderer->unbindBufferObjects();
 
-	// unbind buffers
-	renderer->unbindBufferObjects();
-
 	//
 	postProcessingShader->unUseProgram();
 
 	// unset
 	renderer->enableCulling();
-	renderer->enableDepthBuffer();
+	renderer->enableDepthBufferTest();
+	renderer->enableDepthBufferWriting();
 
 	//
 	disableFrameBuffer();

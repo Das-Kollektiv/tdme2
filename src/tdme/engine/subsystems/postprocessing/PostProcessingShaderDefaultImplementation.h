@@ -21,7 +21,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param renderer
+	 * @param renderer renderer
 	 */
 	PostProcessingShaderDefaultImplementation(GLRenderer* renderer);
 

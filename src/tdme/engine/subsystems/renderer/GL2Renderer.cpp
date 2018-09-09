@@ -346,14 +346,24 @@ void GL2Renderer::disableBlending()
 	glDisable(GL_BLEND);
 }
 
-void GL2Renderer::enableDepthBuffer()
+void GL2Renderer::enableDepthBufferWriting()
 {
 	glDepthMask(true);
 }
 
-void GL2Renderer::disableDepthBuffer()
+void GL2Renderer::disableDepthBufferWriting()
 {
 	glDepthMask(false);
+}
+
+void GL2Renderer::disableDepthBufferTest()
+{
+	glDisable(GL_DEPTH_TEST);
+}
+
+void GL2Renderer::enableDepthBufferTest()
+{
+	glEnable(GL_DEPTH_TEST);
 }
 
 void GL2Renderer::setDepthFunction(int32_t depthFunction)

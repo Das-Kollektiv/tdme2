@@ -69,8 +69,10 @@ public:
 	void disableCulling() override;
 	void enableBlending() override;
 	void disableBlending() override;
-	void enableDepthBuffer() override;
-	void disableDepthBuffer() override;
+	void enableDepthBufferWriting() override;
+	void disableDepthBufferWriting() override;
+	void disableDepthBufferTest() override;
+	void enableDepthBufferTest() override;
 	void setDepthFunction(int32_t depthFunction) override;
 	void setColorMask(bool red, bool green, bool blue, bool alpha) override;
 	void clear(int32_t mask) override;
