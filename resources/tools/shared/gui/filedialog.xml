@@ -1,4 +1,4 @@
-<screen id="popup_filedialog" background-color="#00000080" popup="true">
+<screen id="popup_filedialog" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<panel alignment="vertical" left="10%" top="10%" width="80%" height="80%" horizontal-align="center">
 		<space height="10" />
 		<text id="filedialog_caption" font="resources/gui/fonts/Foo_20.fnt" text="Load" width="auto" height="auto"/>
