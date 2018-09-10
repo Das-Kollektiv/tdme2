@@ -1,4 +1,4 @@
-#version 120
+#version 130
 
 #define SHADOWMAP_LOOKUPS_NEAR		4
 #define SHADOWMAP_LOOKUPS_FAR		8
@@ -56,4 +56,5 @@ void main (void) {
 		blurredColor+= originalColor * (1.0 - intensity);
 		gl_FragColor = vec4(blurredColor, 1.0);
 	}
+	gl_FragDepth = depth;
 }

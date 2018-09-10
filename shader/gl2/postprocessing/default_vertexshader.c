@@ -1,4 +1,4 @@
-#version 120
+#version 130
 
 // layouts
 attribute vec3 inVertex;

@@ -59,4 +59,5 @@ void main (void) {
 		blurredColor+= originalColor * (1.0 - intensity);
 		outColor = vec4(blurredColor, 1.0);
 	}
+	gl_FragDepth = depth;
 }
