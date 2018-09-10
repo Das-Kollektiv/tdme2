@@ -77,11 +77,17 @@ void main() {
 		float depthBias = 0.0;
 
 		// determine visibility
-		// TODO: improve me
 		float visibility = 0.0;
-		for (float y = -SHADOWMAP_LOOKUPS / 2; y <= SHADOWMAP_LOOKUPS / 2; y+=1.0)
-		for (float x = -SHADOWMAP_LOOKUPS / 2; x <= SHADOWMAP_LOOKUPS / 2; x+=1.0) {
-			visibility+= texture(textureUnit, gsShadowCoord.xy + vec2(x * texturePixelWidth, y * texturePixelHeight)).x < gsShadowCoord.z + depthBias?0.40:0.0;
+		for (int y = 0; y < SHADOWMAP_LOOKUPS; y++)
+		for (int x = 0; x < SHADOWMAP_LOOKUPS; x++) {
+			visibility+= texture(
+				textureUnit,
+				gsShadowCoord.xy +
+					vec2(
+						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + x) * texturePixelWidth,
+						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + y) * texturePixelHeight
+					)
+			).x < gsShadowCoord.z + depthBias?0.50:0.0;
 		}
 		visibility = visibility / (SHADOWMAP_LOOKUPS * SHADOWMAP_LOOKUPS);
 
