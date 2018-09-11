@@ -1,4 +1,4 @@
-#version 130
+#version 110
 
 #define SHADOWMAP_LOOKUPS_NEAR		4
 #define SHADOWMAP_LOOKUPS_FAR		8
@@ -26,12 +26,12 @@ void main (void) {
 				colorBufferTextureUnit,
 				vsFragTextureUV.xy +
 					vec2(
-						(-SHADOWMAP_LOOKUPS_NEAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
-						(-SHADOWMAP_LOOKUPS_NEAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
+						(-float(SHADOWMAP_LOOKUPS_NEAR) / 2.0 + 0.5 + float(x)) * bufferTexturePixelWidth,
+						(-float(SHADOWMAP_LOOKUPS_NEAR) / 2.0 + 0.5 + float(y)) * bufferTexturePixelHeight
 					)
 			).rgb;
 		}
-		blurredColor/= SHADOWMAP_LOOKUPS_NEAR * SHADOWMAP_LOOKUPS_NEAR;
+		blurredColor/= float(SHADOWMAP_LOOKUPS_NEAR * SHADOWMAP_LOOKUPS_NEAR);
 		blurredColor*= intensity;
 		blurredColor+= originalColor * (1.0 - intensity);
 		gl_FragColor = vec4(blurredColor, 1.0);
@@ -46,12 +46,12 @@ void main (void) {
 				colorBufferTextureUnit,
 				vsFragTextureUV.xy +
 					vec2(
-						(-SHADOWMAP_LOOKUPS_FAR / 2.0 + 0.5 + x) * bufferTexturePixelWidth,
-						(-SHADOWMAP_LOOKUPS_FAR / 2.0 + 0.5 + y) * bufferTexturePixelHeight
+						(-float(SHADOWMAP_LOOKUPS_FAR) / 2.0 + 0.5 + float(x)) * bufferTexturePixelWidth,
+						(-float(SHADOWMAP_LOOKUPS_FAR) / 2.0 + 0.5 + float(y)) * bufferTexturePixelHeight
 					)
 			).rgb;
 		}
-		blurredColor/= SHADOWMAP_LOOKUPS_FAR * SHADOWMAP_LOOKUPS_FAR;
+		blurredColor/= float(SHADOWMAP_LOOKUPS_FAR * SHADOWMAP_LOOKUPS_FAR);
 		blurredColor*= intensity;
 		blurredColor+= originalColor * (1.0 - intensity);
 		gl_FragColor = vec4(blurredColor, 1.0);

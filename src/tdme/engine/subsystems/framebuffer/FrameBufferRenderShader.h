@@ -18,8 +18,9 @@ private:
 	GLRenderer* renderer {  };
 	int32_t vertexShaderGlId {  };
 	int32_t fragmentShaderGlId {  };
-	int32_t programGlId {  };
-	int32_t uniformDiffuseTextureUnit {  };
+	int32_t programId {  };
+	int32_t uniformColorBufferTextureUnit { -1 };
+	int32_t uniformDepthBufferTextureUnit { -1 };
 	int32_t vboVertices {  };
 	int32_t vboTextureCoordinates {  };
 	bool initialized {  };

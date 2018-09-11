@@ -105,9 +105,10 @@ void FrameBuffer::renderToScreen()
 	auto renderer = Engine::renderer;
 
 	//
-	renderer->disableDepthBufferWriting();
-	renderer->disableDepthBufferTest();
 	renderer->disableCulling();
+
+	// clear
+	renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
 
 	// use frame buffer render shader
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
@@ -116,6 +117,10 @@ void FrameBuffer::renderToScreen()
 	// bind color buffer texture
 	renderer->setTextureUnit(0);
 	renderer->bindTexture(colorBufferTextureId);
+
+	// bind depth buffer texture
+	renderer->setTextureUnit(1);
+	renderer->bindTexture(depthBufferTextureId);
 
 	//
 	renderer->bindVerticesBufferObject(frameBufferRenderShader->getVBOVertices());
@@ -132,8 +137,6 @@ void FrameBuffer::renderToScreen()
 
 	// unset
 	renderer->enableCulling();
-	renderer->enableDepthBufferTest();
-	renderer->enableDepthBufferWriting();
 }
 
 void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
@@ -144,8 +147,10 @@ void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
 	auto renderer = Engine::renderer;
 
 	//
-	renderer->disableDepthBufferTest();
 	renderer->disableCulling();
+
+	// clear
+	renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
 
 	// use frame buffer render shader
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
@@ -161,7 +166,7 @@ void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
 	renderer->setTextureUnit(0);
 	renderer->bindTexture(source->colorBufferTextureId);
 
-	// bind color buffer texture
+	// bind depth buffer texture
 	renderer->setTextureUnit(1);
 	renderer->bindTexture(source->depthBufferTextureId);
 
@@ -180,7 +185,6 @@ void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
 
 	// unset
 	renderer->enableCulling();
-	renderer->enableDepthBufferTest();
 
 	//
 	disableFrameBuffer();

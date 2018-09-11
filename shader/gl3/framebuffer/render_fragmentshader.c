@@ -1,7 +1,8 @@
 #version 330
 
 // uniforms
-uniform sampler2D diffuseTextureUnit;
+uniform sampler2D colorBufferTextureUnit;
+uniform sampler2D depthBufferTextureUnit;
 
 // passed from vertex shader
 in vec2 vsFragTextureUV;
@@ -11,5 +12,6 @@ out vec4 outColor;
 
 // main
 void main (void) {
-	outColor = texture(diffuseTextureUnit, vsFragTextureUV);
+	outColor = texture(colorBufferTextureUnit, vsFragTextureUV);
+	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 }

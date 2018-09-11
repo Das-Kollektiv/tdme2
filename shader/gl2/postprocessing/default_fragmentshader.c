@@ -1,4 +1,4 @@
-#version 130
+#version 110
 
 #define SHADOWMAP_LOOKUPS_NEAR		4
 #define SHADOWMAP_LOOKUPS_FAR		8
@@ -15,5 +15,5 @@ varying vec2 vsFragTextureUV;
 // main
 void main (void) {
 	gl_FragColor = texture2D(colorBufferTextureUnit, vsFragTextureUV);
-	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
+	gl_FragDepth = texture2D(depthBufferTextureUnit, vsFragTextureUV).r;
 }
