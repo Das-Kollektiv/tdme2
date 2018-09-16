@@ -3,7 +3,7 @@
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
     - TDME2 is open source
-      - please check the [license](./LICENSE) and the [licenses of used 3rd party libraries](./ext)
+      - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE) and the [licenses of used 3rd party libraries](https://github.com/andreasdr/tdme2/blob/master/ext)
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
       - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
       - you find developer documentation for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha) including collaboration graphs and private API
@@ -183,9 +183,9 @@
 
 - Links
 	- TDME2 Engine, see [README.md](./README.md)
-    - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
-    - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
-    - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
+    - TDME2 Model Editor, see [README-ModelEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-ModelEditor.md)
+    - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-ParticleSystemEditor.md)
+    - TDME2 Level Editor, see [README-LevelEditor.md](https://github.com/andreasdr/tdme2/blob/master/README-LevelEditor.md)
 
 - External references
     - "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
