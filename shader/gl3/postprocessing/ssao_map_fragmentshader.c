@@ -54,7 +54,7 @@ void main (void) {
 		vec3( 0.0352,-0.0631, 0.5460), vec3(-0.4776, 0.2847,-0.0271)
 	);
 
-	vec3 random;
+	vec3 random = vec3(0.0, 0.0, 0.0);
 	random+= sample_sphere[int(vsFragTextureUV.x / bufferTexturePixelWidth) % 16];
 	random+= sample_sphere[int(vsFragTextureUV.y / bufferTexturePixelHeight) % 16];
 	random = normalize(random);
