@@ -87,6 +87,7 @@ void SkinningTest::dispose()
 void SkinningTest::initialize()
 {
 	engine->initialize();
+	engine->addPostProcessingProgram("depth_blur");
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
@@ -125,7 +126,6 @@ void SkinningTest::initialize()
 		engine->addEntity(entity);
 	}
 	Console::println("Spawned characters: " + to_string(characterIdx));
-	engine->addPostProcessing("depth_blur");
 }
 
 void SkinningTest::reshape(int32_t width, int32_t height)

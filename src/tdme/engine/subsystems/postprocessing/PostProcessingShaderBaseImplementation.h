@@ -24,6 +24,8 @@ protected:
 
 	int32_t uniformColorBufferTextureUnit { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };
+	int32_t uniformTemporaryColorBufferTextureUnit { -1 };
+	int32_t uniformTemporaryDepthBufferTextureUnit { -1 };
 	int32_t uniformBufferTexturePixelWidth { -1 };
 	int32_t uniformBufferTexturePixelHeight { -1 };
 

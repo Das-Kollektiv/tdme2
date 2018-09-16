@@ -139,7 +139,7 @@ void FrameBuffer::renderToScreen()
 	renderer->enableCulling();
 }
 
-void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
+void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId, FrameBuffer* temporary)
 {
 	enableFrameBuffer();
 
@@ -169,6 +169,15 @@ void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId)
 	// bind depth buffer texture
 	renderer->setTextureUnit(1);
 	renderer->bindTexture(source->depthBufferTextureId);
+
+	// bind temporary if any given
+	if (temporary != nullptr) {
+		renderer->setTextureUnit(2);
+		renderer->bindTexture(temporary->colorBufferTextureId);
+
+		renderer->setTextureUnit(3);
+		renderer->bindTexture(temporary->depthBufferTextureId);
+	}
 
 	//
 	renderer->bindVerticesBufferObject(frameBufferRenderShader->getVBOVertices());

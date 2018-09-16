@@ -36,6 +36,8 @@ void PostProcessingShaderBaseImplementation::initialize()
 	// uniforms
 	uniformColorBufferTextureUnit = renderer->getProgramUniformLocation(programId, "colorBufferTextureUnit");
 	uniformDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "depthBufferTextureUnit");
+	uniformTemporaryColorBufferTextureUnit = renderer->getProgramUniformLocation(programId, "temporaryColorBufferTextureUnit");
+	uniformTemporaryDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "temporaryDepthBufferTextureUnit");
 	uniformBufferTexturePixelWidth = renderer->getProgramUniformLocation(programId, "bufferTexturePixelWidth");
 	uniformBufferTexturePixelHeight = renderer->getProgramUniformLocation(programId, "bufferTexturePixelHeight");
 
@@ -47,8 +49,10 @@ void PostProcessingShaderBaseImplementation::useProgram()
 {
 	isRunning = true;
 	renderer->useProgram(programId);
-	renderer->setProgramUniformInteger(uniformColorBufferTextureUnit, 0);
-	renderer->setProgramUniformInteger(uniformDepthBufferTextureUnit, 1);
+	if (uniformColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(uniformColorBufferTextureUnit, 0);
+	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(uniformDepthBufferTextureUnit, 1);
+	if (uniformTemporaryColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(uniformTemporaryColorBufferTextureUnit, 2);
+	if (uniformTemporaryDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(uniformTemporaryDepthBufferTextureUnit, 3);
 }
 
 void PostProcessingShaderBaseImplementation::unUseProgram()
@@ -57,9 +61,9 @@ void PostProcessingShaderBaseImplementation::unUseProgram()
 }
 
 void PostProcessingShaderBaseImplementation::setBufferPixelWidth(float pixelWidth) {
-	renderer->setProgramUniformFloat(uniformBufferTexturePixelWidth, pixelWidth);
+	if (uniformBufferTexturePixelWidth != -1) renderer->setProgramUniformFloat(uniformBufferTexturePixelWidth, pixelWidth);
 }
 
 void PostProcessingShaderBaseImplementation::setBufferPixelHeight(float pixelHeight) {
-	renderer->setProgramUniformFloat(uniformBufferTexturePixelHeight, pixelHeight);
+	if (uniformBufferTexturePixelHeight != -1) renderer->setProgramUniformFloat(uniformBufferTexturePixelHeight, pixelHeight);
 }

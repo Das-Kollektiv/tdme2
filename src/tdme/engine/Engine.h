@@ -48,6 +48,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
@@ -119,6 +120,7 @@ private:
 	static SkinningShader* skinningShader;
 	static GUIShader* guiShader;
 	static FrameBufferRenderShader* frameBufferRenderShader;
+	static PostProcessing* postProcessing;
 	static PostProcessingShader* postProcessingShader;
 
 	int32_t width {  };
@@ -133,6 +135,7 @@ private:
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	array<FrameBuffer*, 2> postProcessingFrameBuffer {  };
+	FrameBuffer* postProcessingTemporaryFrameBuffer {  };
 	ShadowMapping* shadowMapping {  };
 
 	map<string, Entity*> entitiesById {  };
@@ -153,7 +156,7 @@ private:
 	Matrix4x4 modelViewMatrix {  };
 	Matrix4x4 projectionMatrix {  };
 
-	vector<string> postProcessingShaders;
+	vector<string> postProcessingPrograms;
 
 	bool initialized {  };
 
@@ -442,15 +445,15 @@ public:
 	bool makeScreenshot(const string& pathName, const string& fileName);
 
 	/**
-	 * Clear post processing shaders
+	 * Clear post processing programs
 	 */
-	void clearPostProcessing();
+	void clearPostProcessingPrograms();
 
 	/**
-	 * Add post processing shader
-	 * @param shaderId shader id
+	 * Add post processing program
+	 * @param programId program id
 	 */
-	void addPostProcessing(const string& shaderId);
+	void addPostProcessingProgram(const string& programId);
 
 	/**
 	 * Destructor

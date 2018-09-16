@@ -138,6 +138,7 @@
 
 - What is WIP or planned
     - SSAO post effect
+    - Expose shader and post processing programs setup API
     - LOD
     - GUI system port needs to be finished(memory management and other minor things)
     - Some UI elements need some default skinning fixes

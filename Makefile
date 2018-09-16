@@ -228,10 +228,14 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessing.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp \

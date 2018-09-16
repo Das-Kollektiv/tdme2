@@ -38,6 +38,8 @@
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
@@ -91,6 +93,9 @@ using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
+using tdme::engine::subsystems::postprocessing::PostProcessing;
+using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
+using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
@@ -116,6 +121,7 @@ VBOManager* Engine::vboManager = nullptr;
 MeshManager* Engine::meshManager = nullptr;
 GUIRenderer* Engine::guiRenderer = nullptr;
 FrameBufferRenderShader* Engine::frameBufferRenderShader = nullptr;
+PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
@@ -145,6 +151,7 @@ Engine::Engine()
 	// post processing frame buffers
 	postProcessingFrameBuffer[0] = nullptr;
 	postProcessingFrameBuffer[1] = nullptr;
+	postProcessingTemporaryFrameBuffer = nullptr;
 }
 
 Engine::~Engine() {
@@ -155,6 +162,7 @@ Engine::~Engine() {
 	if (frameBuffer != nullptr) delete frameBuffer;
 	if (postProcessingFrameBuffer[0] != nullptr) delete postProcessingFrameBuffer[0];
 	if (postProcessingFrameBuffer[1] != nullptr) delete postProcessingFrameBuffer[1];
+	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
 	if (shadowMappingEnabled == true) {
 		delete shadowMapping;
 	}
@@ -167,6 +175,8 @@ Engine::~Engine() {
 		delete guiRenderer;
 		delete lightingShader;
 		delete particlesShader;
+		delete postProcessing;
+		delete postProcessingShader;
 		delete guiShader;
 		delete frameBufferRenderShader;
 		delete shadowMappingShaderPre;
@@ -534,6 +544,9 @@ void Engine::initialize(bool debug)
 	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
 	frameBufferRenderShader->initialize();
 
+	// create post processing
+	postProcessing = new PostProcessing();
+
 	// create post processing shader
 	postProcessingShader = new PostProcessingShader(renderer);
 	postProcessingShader->initialize();
@@ -603,6 +616,7 @@ void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 	// update post processing frame buffer if we have one
 	if (postProcessingFrameBuffer[0] != nullptr) postProcessingFrameBuffer[0]->reshape(width, height);
 	if (postProcessingFrameBuffer[1] != nullptr) postProcessingFrameBuffer[1]->reshape(width, height);
+	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(width, height);
 
 	// update shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->reshape(width, height);
@@ -740,7 +754,7 @@ void Engine::display()
 		shadowMapping->createShadowMaps();
 
 	// create post processing frame buffers if having post processing
-	if (postProcessingShaders.size() > 0) {
+	if (postProcessingPrograms.size() > 0) {
 		if (postProcessingFrameBuffer[0] == nullptr) {
 			postProcessingFrameBuffer[0] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			postProcessingFrameBuffer[0]->initialize();
@@ -835,11 +849,39 @@ void Engine::display()
 	projectionMatrix.set(renderer->getProjectionMatrix());
 
 	// do post processing
-	if (postProcessingShaders.size() > 0) {
+	if (postProcessingPrograms.size() > 0) {
+		bool isUsingPostProcessingTemporaryFrameBuffer = false;
 		auto postProcessingFrameBufferIdx = 0;
-		for (auto shaderId: postProcessingShaders) {
-			postProcessingFrameBuffer[(postProcessingFrameBufferIdx + 1) % 2]->doPostProcessing(postProcessingFrameBuffer[postProcessingFrameBufferIdx], shaderId);
-			postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
+		for (auto programId: postProcessingPrograms) {
+			auto program = postProcessing->getPostProcessingProgram(programId);
+			if (program != nullptr) {
+				for (auto& step: program->getPostProcessingSteps()) {
+					auto shaderId = step.shaderId;
+					FrameBuffer* source = postProcessingFrameBuffer[postProcessingFrameBufferIdx];
+					FrameBuffer* target = nullptr;
+					switch(step.target) {
+						case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
+							target = postProcessingFrameBuffer[(postProcessingFrameBufferIdx + 1) % 2];
+							break;
+						case PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY:
+							isUsingPostProcessingTemporaryFrameBuffer = true;
+							if (postProcessingTemporaryFrameBuffer == nullptr) {
+								postProcessingTemporaryFrameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
+								postProcessingTemporaryFrameBuffer->initialize();
+							}
+							target = postProcessingTemporaryFrameBuffer;
+							break;
+					}
+					target->doPostProcessing(source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr);
+					switch(step.target) {
+						case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
+							postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
+							break;
+						case PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY:
+							break;
+					}
+				}
+			}
 		}
 		// unuse framebuffer if we have one
 		if (frameBuffer != nullptr) {
@@ -848,6 +890,13 @@ void Engine::display()
 			frameBuffer->disableFrameBuffer();
 		}
 		postProcessingFrameBuffer[postProcessingFrameBufferIdx]->renderToScreen();
+
+		//
+		if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
+			postProcessingTemporaryFrameBuffer->dispose();
+			delete postProcessingTemporaryFrameBuffer;
+			postProcessingTemporaryFrameBuffer = nullptr;
+		}
 	}
 
 	// unuse framebuffer if we have one
@@ -1090,10 +1139,10 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 	return true;
 }
 
-void Engine::clearPostProcessing() {
-	postProcessingShaders.clear();
+void Engine::clearPostProcessingPrograms() {
+	postProcessingPrograms.clear();
 }
 
-void Engine::addPostProcessing(const string& shaderId) {
-	postProcessingShaders.push_back(shaderId);
+void Engine::addPostProcessingProgram(const string& programId) {
+	postProcessingPrograms.push_back(programId);
 }

@@ -92,9 +92,10 @@ public:
 	/**
 	 * Do post processing into this frame buffer
 	 * @param source source frame buffer
-	 * @param post processing shader id
+	 * @param shaderId post processing shader id
+	 * @param temporary bind additional temporary frame buffer
 	 */
-	void doPostProcessing(FrameBuffer* source, const string& shaderId);
+	void doPostProcessing(FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr);
 
 	/**
 	 * Public constructor
