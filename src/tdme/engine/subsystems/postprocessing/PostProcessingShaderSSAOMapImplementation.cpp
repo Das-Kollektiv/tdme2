@@ -3,6 +3,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
@@ -14,6 +15,7 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::Engine;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
@@ -66,7 +68,9 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 		initialized = false;
 		return;
 	}
-	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureLoader::loadTexture("resources/textures", "random.png"));
+	auto randomTexture = TextureLoader::loadTexture("resources/textures", "random.png");
+	randomTexture->setUseMipMap(false);
+	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(randomTexture);
 }
 
 void PostProcessingShaderSSAOMapImplementation::useProgram() {
