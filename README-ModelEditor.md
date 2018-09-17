@@ -1,4 +1,4 @@
-![LOGO](resources/logo/tdme_logo_full.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logo/tdme_logo_full.png)
 
 - What is TDMEModelEditor?
     - TDME based 3D model asset viewer/editor 

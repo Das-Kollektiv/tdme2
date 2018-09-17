@@ -1,4 +1,4 @@
-![LOGO](resources/logo/tdme_logo_full.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logo/tdme_logo_full.png)
 
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
