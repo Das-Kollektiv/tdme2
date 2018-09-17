@@ -1,10 +1,14 @@
 #pragma once
 
+#include <array>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+
+using std::array;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 
@@ -25,4 +29,11 @@ public:
 	 */
 	PostProcessingShaderSSAOMapImplementation(GLRenderer* renderer);
 
+	// overriden methods
+	virtual void useProgram() override;
+
+private:
+	array<int32_t, 16> uniformSphere;
+	int32_t uniformRandomTextureUnit { -1 };
+	int32_t randomTextureId { -1 };
 };
