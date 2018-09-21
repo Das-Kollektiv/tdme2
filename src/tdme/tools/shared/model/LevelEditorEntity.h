@@ -41,7 +41,32 @@ class tdme::tools::shared::model::LevelEditorEntity final
 public:
 	static constexpr int32_t ID_NONE { -1 };
 	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 24 };
-	static vector<string> MODEL_BOUNDINGVOLUME_IDS;
+	static constexpr char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT] {
+			"model_bv.0",
+			"model_bv.1",
+			"model_bv.2",
+			"model_bv.3",
+			"model_bv.4",
+			"model_bv.5",
+			"model_bv.6",
+			"model_bv.7",
+			"model_bv.8",
+			"model_bv.9",
+			"model_bv.10"
+			"model_bv.11",
+			"model_bv.12",
+			"model_bv.13",
+			"model_bv.14",
+			"model_bv.15",
+			"model_bv.16",
+			"model_bv.17",
+			"model_bv.18",
+			"model_bv.19",
+			"model_bv.20",
+			"model_bv.21",
+			"model_bv.22",
+			"model_bv.23"
+		};
 
 private:
 	int32_t id {  };

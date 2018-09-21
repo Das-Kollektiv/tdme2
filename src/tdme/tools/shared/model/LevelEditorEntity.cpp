@@ -18,33 +18,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
 constexpr int32_t LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
-
-vector<string> LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS = {
-	"model_bv.0",
-	"model_bv.1",
-	"model_bv.2",
-	"model_bv.3",
-	"model_bv.4",
-	"model_bv.5",
-	"model_bv.6",
-	"model_bv.7",
-	"model_bv.8",
-	"model_bv.9",
-	"model_bv.10"
-	"model_bv.11",
-	"model_bv.12",
-	"model_bv.13",
-	"model_bv.14",
-	"model_bv.15",
-	"model_bv.16",
-	"model_bv.17",
-	"model_bv.18",
-	"model_bv.19",
-	"model_bv.20",
-	"model_bv.21",
-	"model_bv.22",
-	"model_bv.23"
-};
+constexpr char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT];
 
 LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)
 {
