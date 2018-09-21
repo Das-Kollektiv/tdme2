@@ -85,7 +85,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(E
 	string meshPathName = entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName();
 	string meshFileName = entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName();
 	// delete old convex meshes
-	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
 		if (FileSystem::getInstance()->fileExists(meshPathName + "/" + convexHullFileName) == false) {
 			break;
@@ -103,7 +103,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::removeConvexMeshes(E
 
 void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, LevelEditorEntity* entityFinal)
 {
-	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		entityPhysicsSubScreenController->onBoundingVolumeNoneApply(entityFinal, i);
 	}
 	map<string, MutableString> values;
@@ -213,15 +213,15 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 				);
 			if (vhacdResult == true) {
 				auto convexHulls = vhacd->GetNConvexHulls();
-				if (convexHulls > EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT) {
+				if (convexHulls > LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT) {
 					throw ExceptionBase(
 						"More than " +
-						to_string(EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT) +
+						to_string(LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT) +
 						" convex hulls: " + to_string(convexHulls)
 					);
 				}
 				// delete old convex meshes
-				for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+				for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 					auto convexHullFileName = meshFileName + ".cm." + to_string(i) + ".tm";
 					if (FileSystem::getInstance()->fileExists(meshPathName + "/" + convexHullFileName) == false) {
 						break;
@@ -306,7 +306,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 			Console::println(string("Could not create convex hulls: ") + exception.what());
 		}
 	}
-	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT && i < convexMeshFileNames.size(); i++) {
+	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT && i < convexMeshFileNames.size(); i++) {
 		entityPhysicsSubScreenController->boundingvolumeConvexMeshFile[i]->getController()->setValue(MutableString(convexMeshFileNames[i]));
 		entityPhysicsSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, i);
 		entityPhysicsSubScreenController->setupModelBoundingVolumeType(entityFinal, i);

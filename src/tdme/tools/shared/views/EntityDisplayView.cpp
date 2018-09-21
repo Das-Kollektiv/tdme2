@@ -20,17 +20,6 @@ using tdme::engine::Entity;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 
-vector<string> EntityDisplayView::MODEL_BOUNDINGVOLUME_IDS = {
-	"model_bv.0",
-	"model_bv.1",
-	"model_bv.2",
-	"model_bv.3",
-	"model_bv.4",
-	"model_bv.5",
-	"model_bv.6",
-	"model_bv.7"
-};
-
 EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController) 
 {
 	this->engine = Engine::getInstance();
@@ -79,8 +68,8 @@ void EntityDisplayView::display(LevelEditorEntity* entity)
 		}
 		auto ground = engine->getEntity("ground");
 		ground->setEnabled(displayGroundPlate);
-		for (auto i = 0; i < MODEL_BOUNDINGVOLUME_IDS.size(); i++) {
-			auto modelBoundingVolume = engine->getEntity(MODEL_BOUNDINGVOLUME_IDS[i]);
+		for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+			auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
 			if (modelBoundingVolume != nullptr) {
 				modelBoundingVolume->setEnabled(displayBoundingVolume);
 			}

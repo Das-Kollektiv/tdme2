@@ -66,7 +66,7 @@ void EntityBoundingVolumeView::initialize()
 		"Oriented Bounding Box",
 		"Convex Mesh"
 	};
-	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		entityPhysicsSubScreenController->setupBoundingVolumeTypes(i, boundingVolumeTypes);
 		entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 	}
@@ -123,7 +123,7 @@ void EntityBoundingVolumeView::resetBoundingVolume(LevelEditorEntity* entity, in
 
 void EntityBoundingVolumeView::setBoundingVolumes(LevelEditorEntity* entity)
 {
-	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		resetBoundingVolume(entity, i);
 	}
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
@@ -163,7 +163,7 @@ void EntityBoundingVolumeView::setBoundingVolumes(LevelEditorEntity* entity)
 
 void EntityBoundingVolumeView::unsetBoundingVolumes()
 {
-	for (auto i = 0; i < EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 		entityPhysicsSubScreenController->disableBoundingVolume(i);
 	}
 }
@@ -194,7 +194,7 @@ void EntityBoundingVolumeView::selectBoundingVolumeType(int32_t idx, int32_t bvT
 }
 
 void EntityBoundingVolumeView::clearModelBoundingVolume(int32_t idx) {
-	auto modelBoundingVolumeEntityId = EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_IDS[idx];
+	auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx];
 	auto modelBoundingVolumeEntity = engine->getEntity(modelBoundingVolumeEntityId);
 	if (modelBoundingVolumeEntity != nullptr) {
 		engine->removeEntity(modelBoundingVolumeEntityId);
@@ -204,7 +204,7 @@ void EntityBoundingVolumeView::clearModelBoundingVolume(int32_t idx) {
 void EntityBoundingVolumeView::setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx)
 {
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
-	auto modelBoundingVolumeEntityId = EntityPhysicsSubScreenController::MODEL_BOUNDINGVOLUME_IDS[idx];
+	auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx];
 	auto modelEntity = engine->getEntity("model");
 	if (entityBoundingVolume->getModel() == nullptr) return;
 

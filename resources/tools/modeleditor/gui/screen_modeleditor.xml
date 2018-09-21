@@ -129,899 +129,105 @@
 					<tab-content tab-id="tab_properties_boundingvolume" vertical-align="top">
 						<tabs alignment="vertical" width="100%" height="100%">
 							<tabs-header>
-								<tab id="tab_properties_boundingvolume_0" text="BV 0" />
-								<tab id="tab_properties_boundingvolume_1" text="BV 1" />
-								<tab id="tab_properties_boundingvolume_2" text="BV 2" />
-								<tab id="tab_properties_boundingvolume_3" text="BV 3" />
-								<tab id="tab_properties_boundingvolume_4" text="BV 4" />
-								<tab id="tab_properties_boundingvolume_5" text="BV 5" />
-								<tab id="tab_properties_boundingvolume_6" text="BV 6" />
-								<tab id="tab_properties_boundingvolume_7" text="BV 7" />
+								<tab id="tab_properties_boundingvolume_0" text="0" />
+								<tab id="tab_properties_boundingvolume_1" text="1" />
+								<tab id="tab_properties_boundingvolume_2" text="2" />
+								<tab id="tab_properties_boundingvolume_3" text="3" />
+								<tab id="tab_properties_boundingvolume_4" text="4" />
+								<tab id="tab_properties_boundingvolume_5" text="5" />
+								<tab id="tab_properties_boundingvolume_6" text="6" />
+								<tab id="tab_properties_boundingvolume_7" text="7" />
+								<tab id="tab_properties_boundingvolume_8" text="8" />
+								<tab id="tab_properties_boundingvolume_9" text="9" />
+								<tab id="tab_properties_boundingvolume_10" text="10" />
+								<tab id="tab_properties_boundingvolume_11" text="11" />
+								<tab id="tab_properties_boundingvolume_12" text="12" />
+								<tab id="tab_properties_boundingvolume_13" text="13" />
+								<tab id="tab_properties_boundingvolume_14" text="14" />
+								<tab id="tab_properties_boundingvolume_15" text="15" />
+								<tab id="tab_properties_boundingvolume_16" text="16" />
+								<tab id="tab_properties_boundingvolume_17" text="17" />
+								<tab id="tab_properties_boundingvolume_18" text="18" />
+								<tab id="tab_properties_boundingvolume_19" text="19" />
+								<tab id="tab_properties_boundingvolume_20" text="20" />
+								<tab id="tab_properties_boundingvolume_21" text="21" />
+								<tab id="tab_properties_boundingvolume_22" text="22" />
+								<tab id="tab_properties_boundingvolume_23" text="23" />
 								<tab id="tab_properties_terrain" text="Terrain" />
 								<tab id="tab_properties_convexmeshes" text="Generate" />
 							</tabs-header>
 							<tabs-content>
 								<tab-content tab-id="tab_properties_boundingvolume_0">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_0" name="boundingvolume_type_0" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_0" name="button_boundingvolume_apply_0" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_0" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_0" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_0" name="boundingvolume_sphere_center_0" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_0" name="boundingvolume_sphere_radius_0" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_0" name="button_boundingvolume_sphere_apply_0" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_0" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_0" name="boundingvolume_capsule_a_0" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_0" name="boundingvolume_capsule_b_0" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_0" name="boundingvolume_capsule_radius_0" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_0" name="button_boundingvolume_capsule_apply_0" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_0" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_0" name="boundingvolume_sphere_center_0" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_0" name="boundingvolume_aabb_max_0" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_0" name="button_boundingvolume_sphere_apply_0" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_0" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_0" name="boundingvolume_obb_center_0" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_0" name="boundingvolume_obb_halfextension_0" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_0" name="boundingvolume_obb_rotation_x_0" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_0" name="boundingvolume_obb_rotation_y_0" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_0" name="boundingvolume_obb_rotation_z_0" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_0" name="button_boundingvolume_obb_apply_0" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_0" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_0" name="boundingvolume_convexmesh_file_0" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_0" name="button_boundingvolume_convexmesh_file_0" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_0" name="button_boundingvolume_convexmesh_apply_0" text="Apply" width="auto" height="auto" />
-											</layout> 
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="0" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_1">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_1" name="boundingvolume_type_1" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_1" name="button_boundingvolume_apply_1" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_1" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_1" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_1" name="boundingvolume_sphere_center_1" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_1" name="boundingvolume_sphere_radius_1" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_1" name="button_boundingvolume_sphere_apply_1" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_1" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_1" name="boundingvolume_capsule_a_1" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_1" name="boundingvolume_capsule_b_1" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_1" name="boundingvolume_capsule_radius_1" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_1" name="button_boundingvolume_capsule_apply_1" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_1" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_1" name="boundingvolume_sphere_center_1" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_1" name="boundingvolume_aabb_max_1" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_1" name="button_boundingvolume_sphere_apply_1" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_1" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_1" name="boundingvolume_obb_center_1" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_1" name="boundingvolume_obb_halfextension_1" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_1" name="boundingvolume_obb_rotation_x_1" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_1" name="boundingvolume_obb_rotation_y_1" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_1" name="boundingvolume_obb_rotation_z_1" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_1" name="button_boundingvolume_obb_apply_1" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_1" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_1" name="boundingvolume_convexmesh_file_1" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_1" name="button_boundingvolume_convexmesh_file_1" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_1" name="button_boundingvolume_convexmesh_apply_1" text="Apply" width="auto" height="auto" />
-											</layout> 
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="1" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_2">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_2" name="boundingvolume_type_2" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_2" name="button_boundingvolume_apply_2" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_2" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_2" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_2" name="boundingvolume_sphere_center_2" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_2" name="boundingvolume_sphere_radius_2" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_2" name="button_boundingvolume_sphere_apply_2" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_2" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_2" name="boundingvolume_capsule_a_2" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_2" name="boundingvolume_capsule_b_2" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_2" name="boundingvolume_capsule_radius_2" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_2" name="button_boundingvolume_capsule_apply_2" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_2" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_2" name="boundingvolume_sphere_center_2" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_2" name="boundingvolume_aabb_max_2" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_2" name="button_boundingvolume_sphere_apply_2" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_2" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_2" name="boundingvolume_obb_center_2" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_2" name="boundingvolume_obb_halfextension_2" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_2" name="boundingvolume_obb_rotation_x_2" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_2" name="boundingvolume_obb_rotation_y_2" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_2" name="boundingvolume_obb_rotation_z_2" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_2" name="button_boundingvolume_obb_apply_2" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_2" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_2" name="boundingvolume_convexmesh_file_2" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_2" name="button_boundingvolume_convexmesh_file_2" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_2" name="button_boundingvolume_convexmesh_apply_2" text="Apply" width="auto" height="auto" />
-											</layout> 
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="2" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_3">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_3" name="boundingvolume_type_3" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_3" name="button_boundingvolume_apply_3" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_3" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_3" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_3" name="boundingvolume_sphere_center_3" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_3" name="boundingvolume_sphere_radius_3" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_3" name="button_boundingvolume_sphere_apply_3" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_3" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_3" name="boundingvolume_capsule_a_3" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_3" name="boundingvolume_capsule_b_3" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_3" name="boundingvolume_capsule_radius_3" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_3" name="button_boundingvolume_capsule_apply_3" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_3" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_3" name="boundingvolume_sphere_center_3" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_3" name="boundingvolume_aabb_max_3" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_3" name="button_boundingvolume_sphere_apply_3" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_3" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_3" name="boundingvolume_obb_center_3" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_3" name="boundingvolume_obb_halfextension_3" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_3" name="boundingvolume_obb_rotation_x_3" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_3" name="boundingvolume_obb_rotation_y_3" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_3" name="boundingvolume_obb_rotation_z_3" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_3" name="button_boundingvolume_obb_apply_3" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_3" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_3" name="boundingvolume_convexmesh_file_3" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_3" name="button_boundingvolume_convexmesh_file_3" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_3" name="button_boundingvolume_convexmesh_apply_3" text="Apply" width="auto" height="auto" />
-											</layout> 
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="3" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_4">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_4" name="boundingvolume_type_4" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_4" name="button_boundingvolume_apply_4" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_4" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_4" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_4" name="boundingvolume_sphere_center_4" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_4" name="boundingvolume_sphere_radius_4" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_4" name="button_boundingvolume_sphere_apply_4" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_4" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_4" name="boundingvolume_capsule_a_4" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_4" name="boundingvolume_capsule_b_4" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_4" name="boundingvolume_capsule_radius_4" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_4" name="button_boundingvolume_capsule_apply_4" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_4" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_4" name="boundingvolume_sphere_center_4" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_4" name="boundingvolume_aabb_max_4" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_4" name="button_boundingvolume_sphere_apply_4" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_4" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_4" name="boundingvolume_obb_center_4" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_4" name="boundingvolume_obb_halfextension_4" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_4" name="boundingvolume_obb_rotation_x_4" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_4" name="boundingvolume_obb_rotation_y_4" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_4" name="boundingvolume_obb_rotation_z_4" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_4" name="button_boundingvolume_obb_apply_4" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_4" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_4" name="boundingvolume_convexmesh_file_4" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_4" name="button_boundingvolume_convexmesh_file_4" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_4" name="button_boundingvolume_convexmesh_apply_4" text="Apply" width="auto" height="auto" />
-											</layout> 
-
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="4" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_5">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_5" name="boundingvolume_type_5" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_5" name="button_boundingvolume_apply_5" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_5" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_5" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_5" name="boundingvolume_sphere_center_5" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_5" name="boundingvolume_sphere_radius_5" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_5" name="button_boundingvolume_sphere_apply_5" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_5" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_5" name="boundingvolume_capsule_a_5" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_5" name="boundingvolume_capsule_b_5" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_5" name="boundingvolume_capsule_radius_5" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_5" name="button_boundingvolume_capsule_apply_5" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_5" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_5" name="boundingvolume_sphere_center_5" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_5" name="boundingvolume_aabb_max_5" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_5" name="button_boundingvolume_sphere_apply_5" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_5" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_5" name="boundingvolume_obb_center_5" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_5" name="boundingvolume_obb_halfextension_5" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_5" name="boundingvolume_obb_rotation_x_5" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_5" name="boundingvolume_obb_rotation_y_5" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_5" name="boundingvolume_obb_rotation_z_5" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_5" name="button_boundingvolume_obb_apply_5" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_5" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_5" name="boundingvolume_convexmesh_file_5" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_5" name="button_boundingvolume_convexmesh_file_5" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_5" name="button_boundingvolume_convexmesh_apply_5" text="Apply" width="auto" height="auto" />
-											</layout> 
-
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="5" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_6">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_6" name="boundingvolume_type_6" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_6" name="button_boundingvolume_apply_6" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_6" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_6" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_6" name="boundingvolume_sphere_center_6" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_6" name="boundingvolume_sphere_radius_6" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_6" name="button_boundingvolume_sphere_apply_6" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_6" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_6" name="boundingvolume_capsule_a_6" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_6" name="boundingvolume_capsule_b_6" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_6" name="boundingvolume_capsule_radius_6" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_6" name="button_boundingvolume_capsule_apply_6" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_6" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_6" name="boundingvolume_sphere_center_6" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_6" name="boundingvolume_aabb_max_6" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_6" name="button_boundingvolume_sphere_apply_6" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_6" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_6" name="boundingvolume_obb_center_6" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_6" name="boundingvolume_obb_halfextension_6" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_6" name="boundingvolume_obb_rotation_x_6" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_6" name="boundingvolume_obb_rotation_y_6" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_6" name="boundingvolume_obb_rotation_z_6" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_6" name="button_boundingvolume_obb_apply_6" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_6" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_6" name="boundingvolume_convexmesh_file_6" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_6" name="button_boundingvolume_convexmesh_file_6" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_6" name="button_boundingvolume_convexmesh_apply_6" text="Apply" width="auto" height="auto" />
-											</layout> 
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="6" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_7">
-									<layout width="100%" height="100%" horizontal-align="center" alignment="vertical">
-										<space height="10" />
-										<layout width="auto" height="auto" alignment="vertical">
-											<layout width="auto" height="auto" alignment="horizontal">
-												<dropdown id="boundingvolume_type_7" name="boundingvolume_type_7" width="530" height="auto" text="Test">
-													<scrollarea-vertical width="100%" height="70">
-														<dropdown-option text="None" value="0" />
-														<dropdown-option text="Sphere" value="1" />
-														<dropdown-option text="Capsule" value="2" />
-														<dropdown-option text="Axis Aligned Bounding Box" value="3" />
-														<dropdown-option text="Oriented Bounding Box" value="4" />
-														<dropdown-option text="Convex Mesh" value="5" />
-													</scrollarea-vertical>
-												</dropdown>
-												<space width="10" />
-												<button id="button_boundingvolume_apply_7" name="button_boundingvolume_apply_7" text="Apply" width="60" height="auto" />
-											</layout>
-										</layout>
-										<space height="10" />
-										<element id="boundingvolume_7" width="auto" height="100%">  
-											<layout show-on="sphere" id="boundingvolume_sphere_7" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_center_7" name="boundingvolume_sphere_center_7" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_sphere_radius_7" name="boundingvolume_sphere_radius_7" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_sphere_apply_7" name="button_boundingvolume_sphere_apply_7" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="capsule" id="boundingvolume_capsule_7" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_a_7" name="boundingvolume_capsule_a_7" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_b_7" name="boundingvolume_capsule_b_7" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_capsule_radius_7" name="boundingvolume_capsule_radius_7" width="150" height="auto" text="0.0" />
-													<space width="*" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_capsule_apply_7" name="button_boundingvolume_capsule_apply_7" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="aabb" id="boundingvolume_aabb_7" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_min_7" name="boundingvolume_sphere_center_7" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_aabb_max_7" name="boundingvolume_aabb_max_7" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_aabb_apply_7" name="button_boundingvolume_sphere_apply_7" text="Apply" width="auto" height="auto" />
-											</layout>
-											<layout show-on="obb" id="boundingvolume_obb_7" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_center_7" name="boundingvolume_obb_center_7" width="150" height="auto" text="0.0, 0.0, 0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_halfextension_7" name="boundingvolume_obb_halfextension_7" width="150" height="auto" text="0.0, 0.0, 0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_x_7" name="boundingvolume_obb_rotation_x_7" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_y_7" name="boundingvolume_obb_rotation_y_7" width="150" height="auto" text="0.0" />
-												</layout>
-												<space height="5" />
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_obb_rotation_z_7" name="boundingvolume_obb_rotation_z_7" width="150" height="auto" text="0.0" />
-													<space width="*" />
-													<button id="button_boundingvolume_obb_apply_7" name="button_boundingvolume_obb_apply_7" text="Apply" width="auto" height="auto" />
-												</layout>
-											</layout> 
-											<layout show-on="convexmesh" id="boundingvolume_convexmesh_7" alignment="vertical" width="auto" height="auto" horizontal-align="center">
-												<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-													<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
-													<space width="5" />
-													<input id="boundingvolume_convexmesh_file_7" name="boundingvolume_convexmesh_file_7" width="*" height="auto" text="./model.tm" />
-													<space width="10" />
-													<button id="button_boundingvolume_convexmesh_file_7" name="button_boundingvolume_convexmesh_file_7" text="Load" width="60" height="auto" />
-												</layout>
-												<space height="10" />
-												<button id="button_boundingvolume_convexmesh_apply_7" name="button_boundingvolume_convexmesh_apply_7" text="Apply" width="auto" height="auto" />
-											</layout> 
-										</element>
-									</layout>
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="7" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_8">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="8" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_9">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="9" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_10">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="10" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_11">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="11" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_12">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="12" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_13">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="13" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_14">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="14" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_15">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="15" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_16">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="16" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_17">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="17" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_18">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="18" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_19">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="19" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_20">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="20" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_21">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="21" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_22">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="22" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_23">
+									<template src="resources/tools/modeleditor/gui/template_boundingvolume.xml" boundingvolume-id="23" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_convexmeshes">
 									<scrollarea-vertical width="100%" height="100%">

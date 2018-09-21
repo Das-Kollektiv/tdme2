@@ -10,6 +10,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -42,30 +43,26 @@ class tdme::tools::shared::controller::EntityPhysicsSubScreenController
 	friend class EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile;
 	friend class EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile;
 
-public:
-	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 8 };
-	static vector<string> MODEL_BOUNDINGVOLUME_IDS;
-
 private:
 	GUIScreenNode* screenNode {  };
 	FileDialogPath* modelPath {  };
 	EntityBoundingVolumeView* view {  };
-	array<GUIElementNode*, 8> boundingVolumeTypeDropDown {  };
-	array<GUIElementNode*, 8> boundingVolumeNoneApply {  };
-	array<GUIElementNode*, 8> boundingVolume {  };
-	array<GUIElementNode*, 8> boundingvolumeSphereCenter {  };
-	array<GUIElementNode*, 8> boundingvolumeSphereRadius {  };
-	array<GUIElementNode*, 8> boundingvolumeCapsuleA {  };
-	array<GUIElementNode*, 8> boundingvolumeCapsuleB {  };
-	array<GUIElementNode*, 8> boundingvolumeCapsuleRadius {  };
-	array<GUIElementNode*, 8> boundingvolumeBoundingBoxMin {  };
-	array<GUIElementNode*, 8> boundingvolumeBoundingBoxMax {  };
-	array<GUIElementNode*, 8> boundingvolumeObbCenter {  };
-	array<GUIElementNode*, 8> boundingvolumeObbHalfextension {  };
-	array<GUIElementNode*, 8> boundingvolumeObbRotationX {  };
-	array<GUIElementNode*, 8> boundingvolumeObbRotationY {  };
-	array<GUIElementNode*, 8> boundingvolumeObbRotationZ {  };
-	array<GUIElementNode*, 8> boundingvolumeConvexMeshFile {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeNoneApply {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereCenter {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereRadius {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleA {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleB {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleRadius {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMin {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMax {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbCenter {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbHalfextension {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationX {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationY {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationZ {  };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeConvexMeshFile {  };
 	bool isModelBoundingVolumes;
 	GUIElementNode* terrainMesh {  };
 	GUIElementNode* terrainMeshApply {  };

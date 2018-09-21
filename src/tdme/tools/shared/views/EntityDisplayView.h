@@ -26,7 +26,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 class tdme::tools::shared::views::EntityDisplayView
 {
 private:
-	static vector<string> MODEL_BOUNDINGVOLUME_IDS;
 	Engine* engine {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	bool displayGroundPlate {  };
@@ -34,7 +33,6 @@ private:
 	bool displayBoundingVolume {  };
 
 public:
-
 	/** 
 	 * @return display ground plate
 	 */
