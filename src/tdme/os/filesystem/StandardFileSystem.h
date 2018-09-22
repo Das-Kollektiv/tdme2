@@ -19,8 +19,9 @@ class tdme::os::filesystem::StandardFileSystem final
 
 public:
 	const string getFileName(const string& path, const string& fileName) throw (FileSystemException) override;
-	void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr) throw (FileSystemException) override;
+	void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) override;
 	bool isPath(const string& pathName) throw (FileSystemException) override;
+	bool isDrive(const string& pathName) throw (FileSystemException) override;
 	bool fileExists(const string& fileName) throw (FileSystemException) override;
 	const string getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) override;
 	void setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) override;

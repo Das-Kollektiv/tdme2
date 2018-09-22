@@ -60,8 +60,7 @@
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed
-          - frustum culling
-            - oct tree like partitioning from 64mx64mx64m up to 16mx16mx16m
+          - frustum culling via oct tree
         - supports offscreen instances
             - rendering can be captured as screenshot
             - rendering can be used (in other engine instances) as diffuse texture

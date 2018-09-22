@@ -91,9 +91,10 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param pathName path name
 	 * @param files files
 	 * @param filter filter or null
+	 * @param addDrives add drives to list(applies to Microsoft Windows only)
 	 * @return file names 
 	 */
-	virtual void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr) throw (FileSystemException) = 0;
+	virtual void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) = 0;
 
 	/**
 	 * Check if file is a path
@@ -101,6 +102,13 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @return if file is a path
 	 */
 	virtual bool isPath(const string& pathName) throw (FileSystemException) = 0;
+
+	/**
+	 * Check if file is a drive (applies to Microsoft Windows only)
+	 * @param pathName path name
+	 * @return if file is a drive
+	 */
+	virtual bool isDrive(const string& pathName) throw (FileSystemException) = 0;
 
 	/**
 	 * Check if file exists

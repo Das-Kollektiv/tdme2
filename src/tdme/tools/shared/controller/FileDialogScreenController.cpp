@@ -45,7 +45,6 @@ using tdme::utils::Exception;
 FileDialogScreenController::FileDialogScreenController() 
 {
 	this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
-	this->value = new MutableString();
 	this->applyAction = nullptr;
 }
 
@@ -88,8 +87,9 @@ void FileDialogScreenController::dispose()
 {
 }
 
-void FileDialogScreenController::setupFileDialogListBox()
+bool FileDialogScreenController::setupFileDialogListBox()
 {
+	auto success = true;
 	auto directory = cwd;
 	if (directory.length() > 50) {
 		directory = "..." + StringUtils::substring(directory, directory.length() - 50 + 3);
@@ -101,10 +101,11 @@ void FileDialogScreenController::setupFileDialogListBox()
 	try {
 		auto directory = cwd;
 		FileDialogScreenController_setupFileDialogListBox_1 extensionsFilter(this);
-		FileSystem::getInstance()->list(directory, fileList, &extensionsFilter);
+		FileSystem::getInstance()->list(directory, fileList, &extensionsFilter, FileSystem::getInstance()->isDrive(directory));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
+		success = false;
 	}
 
 	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(files->getId() + "_inner"));
@@ -130,6 +131,9 @@ void FileDialogScreenController::setupFileDialogListBox()
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+
+	//
+	return success;
 }
 
 void FileDialogScreenController::show(const string& cwd, const string& captionText, vector<string>& extensions, const string& fileName, Action* applyAction)
@@ -147,7 +151,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	}
 	this->captionText = captionText;
 	this->extensions = extensions;
-	this->fileName->getController()->setValue(value->set(fileName));
+	this->fileName->getController()->setValue(fileName);
 	setupFileDialogListBox();
 	screenNode->setVisible(true);
 	if (this->applyAction != nullptr) delete this->applyAction;
@@ -164,21 +168,34 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	try {
 		if (node->getId().compare(files->getId()) == 0) {
 			auto selectedFile = node->getController()->getValue().getString();
+			if (FileSystem::getInstance()->isDrive(selectedFile) == true) {
+				auto lastCwd = cwd;
+				cwd = selectedFile;
+				if (setupFileDialogListBox() == false) {
+					cwd = lastCwd;
+					setupFileDialogListBox();
+				}
+			} else
 			if (FileSystem::getInstance()->isPath(cwd + "/" + selectedFile) == true) {
+				auto lastCwd = cwd;
 				try {
 					cwd = FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
 				} catch (Exception& exception) {
 					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
-				setupFileDialogListBox();
+				if (setupFileDialogListBox() == false) {
+					cwd = lastCwd;
+					setupFileDialogListBox();
+				}
 			} else {
-				fileName->getController()->setValue(value->set(selectedFile));
+				fileName->getController()->setValue(selectedFile);
 			}
 		}
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 		Console::println(string(exception.what()));
+		fileName->getController()->setValue(MutableString());
 	}
 }
 
