@@ -303,9 +303,10 @@ void EngineTest::initialize()
 		grass->setScale(Vector3(8.0f, 1.0f, 8.0f));
 		grass->update();
 		engine->addEntity(grass);
-		auto _player = ModelReader::read("resources/tests/models/dummy", "testDummy_textured.DAE");
-		_player->addAnimationSetup("still", 3, 3, true);
-		_player->addAnimationSetup("walk", 0, 18, true);
+		auto _player = ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae");
+		_player->addAnimationSetup("walk", 0, 23, true);
+		_player->addAnimationSetup("still", 24, 99, true);
+		_player->addAnimationSetup("death", 109, 169, false);
 		auto player1 = new Object3D("player1", _player);
 		player1->setTranslation(Vector3(-1.5f, 0.0f, 0.0f));
 		player1->setAnimation("still");
