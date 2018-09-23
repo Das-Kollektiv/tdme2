@@ -12,9 +12,10 @@ using tdme::engine::model::AnimationSetup;
  * @version $Id$
  */
 struct tdme::engine::subsystems::rendering::AnimationState final {
-	AnimationSetup* setup {  };
-	int64_t currentAtTime {  };
-	int64_t lastAtTime {  };
-	bool finished {  };
-	float time {  };
+	AnimationSetup* setup { nullptr };
+	int64_t endAtTime { -1LL };
+	int64_t currentAtTime { -1LL };
+	int64_t lastAtTime { -1LL };
+	bool finished { true };
+	float time { -1LL };
 };

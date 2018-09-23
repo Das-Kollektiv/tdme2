@@ -69,11 +69,12 @@ private:
 
 protected:
 	Model* model {  };
-	map<string, Matrix4x4*> transformationsMatrices {  };
+	vector<map<string, Matrix4x4*>*> transformationsMatrices {  };
 	bool hasSkinning {  };
 	vector<map<string, Matrix4x4*>> skinningGroupsMatrices {  };
 	vector<Group*> skinningGroups {  };
-	AnimationState baseAnimation {  };
+	vector<AnimationState> baseAnimations {  };
+	int baseAnimationIdx {  };
 	map<string, AnimationState*> overlayAnimationsById {  };
 	map<string, AnimationState*> overlayAnimationsByJointId {  };
 	vector<Object3DGroup*> object3dGroups {  };
@@ -93,9 +94,23 @@ protected:
 	 * @param groups groups
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param animationState animation state
+	 * @param transformationsMatrices transformations matrices which need to be set up
 	 * @param depth depth
 	 */
-	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, int32_t depth); // TODO: std container: maybe use call by reference
+	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>* transformationsMatrices, int32_t depth); // TODO: std container: maybe use call by reference
+
+	/**
+	 * Compute transformations for given animation state into given transformations matrices
+	 * @param baseAnimation base animation
+	 * @param transformationsMatrices transformations matrices
+	 */
+	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices);
+
+	/**
+	 * Update skinning transformations matrices
+	 * @param transformationsMatrices transformations matrices
+	 */
+	virtual void updateSkinningTransformationsMatrices(map<string, Matrix4x4*>* transformationsMatrices);
 
 	/**
 	 * Get skinning groups matrices
@@ -186,7 +201,7 @@ public:
 	 */
 	virtual Matrix4x4* getTransformationsMatrix(const string& id);
 
-	/** 
+	/**
 	 * Pre render step, computes transformations
 	 */
 	virtual void computeTransformations();

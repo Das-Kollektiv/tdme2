@@ -58,6 +58,8 @@ Object3DGroupMesh::Object3DGroupMesh()
 	cGroupTransformationsMatrix = nullptr;
 	skinning = false;
 	skinningJoints = -1;
+	object3DGroupVBORenderer = nullptr;
+	skinningMatrices = nullptr;
 }
 
 Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* object3DGroupVBORenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)

@@ -107,7 +107,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 						object3DGroup->renderer,
 						animationProcessingTarget,
 						group,
-						&object3D->transformationsMatrices,
+						object3D->transformationsMatrices[0],
 						object3D->getSkinningGroupsMatrices(group)
 					);
 					meshManager->addMesh(object3DGroup->id, object3DGroup->mesh);
@@ -117,7 +117,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 					object3DGroup->renderer,
 					animationProcessingTarget,
 					group,
-					&object3D->transformationsMatrices,
+					object3D->transformationsMatrices[0],
 					object3D->getSkinningGroupsMatrices(group)
 				);
 			}
@@ -135,9 +135,9 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 				object3DGroup->materialDisplacementTextureIdsByEntities[j] = GLTEXTUREID_NONE;
 				object3DGroup->materialNormalTextureIdsByEntities[j] = GLTEXTUREID_NONE;
 			}
-			// determine renderer
-			auto groupTransformationsMatrixIt = object3D->transformationsMatrices.find(group->getId());
-			object3DGroup->groupTransformationsMatrix = groupTransformationsMatrixIt != object3D->transformationsMatrices.end()?groupTransformationsMatrixIt->second:nullptr;
+			// determine group transformations matrix
+			auto groupTransformationsMatrixIt = object3D->transformationsMatrices[0]->find(group->getId());
+			object3DGroup->groupTransformationsMatrix = groupTransformationsMatrixIt != object3D->transformationsMatrices[0]->end()?groupTransformationsMatrixIt->second:nullptr;
 		}
 		// but still check sub groups
 		createGroups(object3D, group->getSubGroups(), animated, useMeshManager, animationProcessingTarget, object3DGroups);

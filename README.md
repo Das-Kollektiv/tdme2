@@ -23,8 +23,9 @@
         - animations
             - supports model object base animation and animation overlays
             - supports foliage animation for feasible models via geometry shader on GL3+/CORE using custom shaders
+            - supports animation blending when switching base animations
         - skinning via
-            - CPU on GL2, GLES2
+            - CPU on GL2, GL3+/CORE, GLES2
             - GPU via compute shaders with GL4.3+/CORE
         - object transformations
             - scaling
@@ -130,7 +131,6 @@
             - IPV6 ready
 
 - What does it (maybe still) lack
-    - animation blending
     - physics
       - some more RP3D integration
     - example games
