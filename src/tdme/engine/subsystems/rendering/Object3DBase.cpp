@@ -304,7 +304,14 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 			auto t = frameAtCurrent - static_cast< float >(Math::floor(frameAtLast));
 			if (t < 1.0f) {
 				if (matrixAtLast == matrixAtCurrent) {
-					matrixAtCurrent = ((matrixAtCurrent + 1) % frames);
+					matrixAtCurrent+= 1;
+					if (matrixAtCurrent >= frames) {
+						if (animationState->setup->isLoop() == true) {
+							matrixAtCurrent = matrixAtCurrent % frames;
+						} else {
+							matrixAtCurrent = frames - 1;
+						}
+					}
 				}
 				Matrix4x4::interpolateLinear(
 					(*animationMatrices)[matrixAtLast + animationState->setup->getStartFrame()],
