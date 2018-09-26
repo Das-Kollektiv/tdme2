@@ -349,19 +349,21 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 				}
 			case PATH_NOWAY:
 				{
-					Console::println("PathFinding::findPath(): path no way with steps: " + to_string(stepIdx));
+					// Console::println("PathFinding::findPath(): path no way with steps: " + to_string(stepIdx));
 					done = true;
 					break;
 				}
 			case PATH_FOUND:
 				{
-					Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
+					// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 					int nodesCount = 0;
 					for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
 						path.push_back(Vector3(node->x, node->y, node->z));
+						/*
 						if (nodesCount > 0 && nodesCount % 100 == 0) {
 							Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount));
 						}
+						*/
 						nodesCount++;
 					}
 					reverse(path.begin(), path.end());
@@ -374,9 +376,11 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	}
 
 	//
+	/*
 	if (stepIdx == stepsMax) {
 		Console::println("PathFinding::findPath(): steps == stepsMax: " + to_string(stepIdx));
 	}
+	*/
 
 	// unset actor bounding volume and remove rigid body
 	this->actorBoundingVolume = nullptr;
@@ -385,7 +389,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	// reset
 	reset();
 
-	Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms");
+	// Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms");
 
 	// return success
 	return success;
