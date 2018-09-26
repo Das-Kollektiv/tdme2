@@ -270,12 +270,12 @@ void EngineTest::initialize()
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
 	auto light1 = engine->getLightAt(1);
-	light1->setDiffuse(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	light1->setDiffuse(Color4(0.0f, 0.0f, 0.5f, 1.0f));
 	light1->setPosition(Vector4(-4.0f, 5.0f, -5.0f, 1.0f));
 	light1->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light1->getPosition().getX(), light1->getPosition().getY(), light1->getPosition().getZ())));
 	light1->setEnabled(true);
 	auto light2 = engine->getLightAt(2);
-	light2->setDiffuse(Color4(0.0f, 1.0f, 0.0f, 1.0f));
+	light2->setDiffuse(Color4(0.0f, 0.5f, 0.0f, 1.0f));
 	light2->setPosition(Vector4(+4.0f, 5.0f, 0.0f, 1.0f));
 	light2->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light2->getPosition().getX(), light2->getPosition().getY(), light2->getPosition().getZ())));
 	light2->setEnabled(true);
@@ -304,9 +304,8 @@ void EngineTest::initialize()
 		grass->update();
 		engine->addEntity(grass);
 		auto _player = ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae");
-		_player->addAnimationSetup("walk", 0, 23, true);
-		_player->addAnimationSetup("still", 24, 99, true);
-		_player->addAnimationSetup("death", 109, 169, false);
+		_player->addAnimationSetup("walk", 0, 24, true);
+		_player->addAnimationSetup("still", 25, 99, true);
 		auto player1 = new Object3D("player1", _player);
 		player1->setTranslation(Vector3(-1.5f, 0.0f, 0.0f));
 		player1->setAnimation("still");
