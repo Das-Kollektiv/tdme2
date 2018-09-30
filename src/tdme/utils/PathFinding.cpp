@@ -46,6 +46,8 @@ PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, bool s
 	this->stepSizeLast = stepSizeLast;
 	this->actorStepUpMax = actorStepUpMax;
 	this->collisionTypeIds = 0;
+	this->actorXHalfExtension = 0.0f;
+	this->actorZHalfExtension = 0.0f;
 }
 
 PathFinding::~PathFinding() {
@@ -368,6 +370,10 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 					}
 					reverse(path.begin(), path.end());
 					if (path.size() > 1) path.erase(path.begin());
+					if (path.size() == 0) {
+						Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
+						path.push_back(endPositionComputed);
+					}
 					done = true;
 					success = true;
 					break;
