@@ -322,7 +322,7 @@ void NIOUDPClient::sendMessage(NIOUDPClientMessage* clientMessage, bool safe) th
 			throw NIOClientException("message already on message queue ack");
 		}
 		//	check if message queue is full
-		if (messageMapAck.size() > 20) {
+		if (messageMapAck.size() > 100) {
 			messageMapAckMutex.unlock();
 			throw NIOClientException("message queue ack overflow");
 		}
@@ -335,7 +335,7 @@ void NIOUDPClient::sendMessage(NIOUDPClientMessage* clientMessage, bool safe) th
 	messageQueueMutex.lock();
 
 	//	check if message queue is full
-	if (messageQueue.size() > 20) {
+	if (messageQueue.size() > 100) {
 		messageQueueMutex.unlock();
 		throw NIOClientException("message queue overflow");
 	}
