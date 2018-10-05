@@ -16,7 +16,7 @@ const std::string RTTI::demangle(const char* name) {
 	#else
 		int status;
 		char* demangledName = abi::__cxa_demangle(name, 0, 0, &status);
-		std::string demangledNameString(demangledName);
+		std::string demangledNameString(demangledName == nullptr?name:demangledName);
 		free(demangledName);
 		return demangledNameString;
 	#endif

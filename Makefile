@@ -91,7 +91,7 @@ else
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
-	EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -l$(NAME) -l$(NAME)-ext
+	EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
 endif
@@ -368,6 +368,7 @@ SRCS = \
 	src/tdme/os/threading/Thread.cpp \
 	src/tdme/tests/AngleTest.cpp \
 	src/tdme/tests/AudioTest.cpp \
+	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/GUITest.cpp \
 	src/tdme/tests/GUITest_init_1.cpp \
@@ -466,6 +467,7 @@ SRCS = \
 	src/tdme/utils/Character.cpp \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
+	src/tdme/utils/HexEncDec.cpp \
 	src/tdme/utils/Integer.cpp \
 	src/tdme/utils/IntEncDec.cpp \
 	src/tdme/utils/MutableString.cpp \
@@ -645,6 +647,7 @@ EXT_REACTPHYSICS3D_SRCS = \
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
+	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \

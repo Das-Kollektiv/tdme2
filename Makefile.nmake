@@ -9,9 +9,11 @@ SRCS_PLATFORM = \
 	src/tdme/engine/fileio/models/FBXReader.cpp \
 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 
+# For Windows 10 this must be added to INCLUDES
+#	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
+
 INCLUDES = \
 	/I "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" \
-	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
 	/I "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include" \
 	/I src \
 	/I ext \
@@ -28,6 +30,9 @@ INCLUDES = \
 	/I "ext\win-freeglut\include" \
 	/I "ext\win-dirent\include"
 
+# For Windows 10 this must be added to EXTRA_LIBS
+#	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64\libucrt.lib" \
+
 EXTRA_LIBS = \
 	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\libcmt.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\oldnames.lib" \
@@ -42,6 +47,7 @@ EXTRA_LIBS = \
 	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\winmm.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\user32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\ws2_32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\dbghelp.lib" \
 	/LIBPATH "ext\win-pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\win-openal-soft\libs\OpenAL32.lib" \
 	/LIBPATH "ext\win-glew\libs/glew32.lib" \
@@ -50,7 +56,7 @@ EXTRA_LIBS = \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL
+FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi
 LINK_FLAGS = /LTCG
 
 SRC = src
@@ -305,6 +311,7 @@ SRCS = \
 	src/tdme/os/threading/Thread.cpp \
 	src/tdme/tests/AngleTest.cpp \
 	src/tdme/tests/AudioTest.cpp \
+	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/GUITest.cpp \
 	src/tdme/tests/GUITest_init_1.cpp \
@@ -581,6 +588,7 @@ EXT_REACTPHYSICS3D_SRCS = \
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
+	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
@@ -615,7 +623,7 @@ OBJECTS = *.obj
 all: \
 	compile link clean \
 	ext-compile ext-link ext-clean\
-	AngleTest AudioTest EngineTest GUITest LODTest PathFindingTest \
+	AngleTest AudioTest CrashTest EngineTest GUITest LODTest PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
 	SkinningTest \
 	ThreadingTest \
@@ -660,6 +668,9 @@ AngleTest:
 	
 AudioTest: 
 	cl /FeAudioTest $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+CrashTest: 
+	cl /FeCrashTest $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 EngineTest: 
 	cl /FeEngineTest $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

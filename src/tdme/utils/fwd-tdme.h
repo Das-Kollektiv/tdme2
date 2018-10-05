@@ -10,6 +10,7 @@ namespace utils {
 		class Enum;
 		class Float;
 		class FloatBuffer;
+		class HexEncDec;
 		class IntBuffer;
 		class Integer;
 		class IntEncDec;
