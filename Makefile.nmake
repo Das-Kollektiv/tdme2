@@ -28,7 +28,6 @@ INCLUDES = \
 	/I "ext\win-openal-soft\includes" \
 	/I "ext\win-glew\include" \
 	/I "ext\win-freeglut\include" \
-	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
 	/I "ext\win-dirent\include"
 
 # For Windows 10 this must be added to EXTRA_LIBS
@@ -49,7 +48,6 @@ EXTRA_LIBS = \
 	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\user32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\ws2_32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\dbghelp.lib" \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64\libucrt.lib" \
 	/LIBPATH "ext\win-pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\win-openal-soft\libs\OpenAL32.lib" \
 	/LIBPATH "ext\win-glew\libs/glew32.lib" \
