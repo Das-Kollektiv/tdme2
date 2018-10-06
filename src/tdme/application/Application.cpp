@@ -14,6 +14,7 @@
 	#include <dbghelp.h>
 	#include <stdio.h>
 	#include <string.h>
+	#include <tdme/os/threading/Mutex.h>
 #elif defined(__HAIKU__)
 	#include <GL/glew.h>
 	#include <GL/glut.h>
@@ -78,8 +79,14 @@ using tdme::utils::Time;
 		//	https://www.gamedev.net/forums/topic/478943-stackwalk64-and-x86/
 		//	https://stackoverflow.com/questions/12280472/stackwalk64-does-not-work-with-release-build
 
+		static tdme::os::threading::Mutex mutex("windowsexceptionhandler");
+
+		mutex.lock();
+
 		HANDLE process = GetCurrentProcess();
 		HANDLE thread = GetCurrentThread();
+
+		Console::println("windowsExceptionHandler(): process " + to_string((uint64_t)process) + " crashed: Printing stacktrace(thread " + to_string((uint64_t)thread) + ")\n");
 
 		CHAR _pathToExecutable[MAX_PATH];
 		GetModuleFileName(GetModuleHandleW(NULL), _pathToExecutable, MAX_PATH);
@@ -89,9 +96,13 @@ using tdme::utils::Time;
 			auto addr2lineToolCmd = StringUtils::substring(pathToExecutable, 0, StringUtils::lastIndexOf(pathToExecutable, '\\')) + "\\addr2line.exe";
 			if (FileSystem::getInstance()->fileExists(addr2lineToolCmd) == false) {
 				Console::println("handler(): " + addr2lineToolCmd + ": not found! Please copy addr2line utility to binary location!");
+				mutex.unlock();
 				return EXCEPTION_EXECUTE_HANDLER;
 			}
+			addr2lineToolCmd = "\"" + StringUtils::replace(addr2lineToolCmd, "\\", "\\\\") + "\"";
 		#endif
+
+		pathToExecutable = string("\"") + StringUtils::replace(pathToExecutable, "\\", "\\\\") + "\"";
 
 		SymSetOptions(
 			SYMOPT_UNDNAME |
@@ -198,7 +209,8 @@ using tdme::utils::Time;
 				if (functionName == "??") {
 					string hexAddr;
 					HexEncDec::encodeInt(stackFrame.AddrPC.Offset, hexAddr);
-					string addr2LineOutput = exec((addr2lineToolCmd + " -f -p -e " + string(pathToExecutable) + " " + hexAddr).c_str());
+					string addr2LineCommand = "\"" + addr2lineToolCmd + " -f -p -e " + string(pathToExecutable) + " " + hexAddr + "\"";
+					auto addr2LineOutput = exec(addr2LineCommand);
 					StringTokenizer t;
 					t.tokenize(addr2LineOutput, " ");
 					if (t.hasMoreTokens() == true) {
@@ -216,6 +228,10 @@ using tdme::utils::Time;
 		}
 
 		SymCleanup(process);
+
+		mutex.unlock();
+
+		Console::println();
 
 		//
 		return EXCEPTION_EXECUTE_HANDLER;
