@@ -2,14 +2,14 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/application/ApplicationInputEventsHandler.h>
+#include <tdme/application/InputEventHandler.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 
 using tdme::application::Application;
-using tdme::application::ApplicationInputEventsHandler;
+using tdme::application::InputEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::physics::World;
 
@@ -19,7 +19,7 @@ using tdme::engine::physics::World;
  * @version $Id$
  */
 class tdme::tests::PhysicsTest1 final
-	: public virtual Application, public virtual ApplicationInputEventsHandler
+	: public virtual Application, public virtual InputEventHandler
 {
 
 private:

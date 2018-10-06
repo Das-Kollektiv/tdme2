@@ -3,8 +3,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/tests/fwd-tdme.h>
+#include "../application/InputEventHandler.h"
 
 using tdme::application::Application;
 using tdme::engine::Engine;
@@ -15,7 +15,7 @@ using tdme::engine::Engine;
  * @version $Id$
  */
 class tdme::tests::LODTest final
-	: public virtual Application, public virtual ApplicationInputEventsHandler
+	: public virtual Application, public virtual InputEventHandler
 {
 private:
 	static constexpr int32_t RIGID_TYPEID_STANDARD { 1 };

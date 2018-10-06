@@ -1,3 +1,4 @@
+
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 	#if !defined(__arm__) && !defined(__aarch64__)
 		#define GLEW_NO_GLU
@@ -29,7 +30,7 @@
 #include <tdme/tdme.h>
 
 #include <tdme/application/Application.h>
-#include <tdme/application/ApplicationInputEventsHandler.h>
+#include <tdme/application/InputEventHandler.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
@@ -46,7 +47,7 @@ using std::shared_ptr;
 using std::to_string;
 
 using tdme::application::Application;
-using tdme::application::ApplicationInputEventsHandler;
+using tdme::application::InputEventHandler;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
@@ -240,7 +241,7 @@ using tdme::utils::Time;
 
 constexpr int32_t Application::FPS;
 Application* Application::application = nullptr;
-ApplicationInputEventsHandler* Application::inputEventHandler = nullptr;
+InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
 
 Application::Application() {
@@ -251,7 +252,7 @@ Application::Application() {
 Application::~Application() {
 }
 
-void Application::setInputEventHandler(ApplicationInputEventsHandler* inputEventHandler) {
+void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
 }
 
@@ -281,7 +282,7 @@ void Application::swapBuffers() {
 	glutSwapBuffers();
 }
 
-void Application::run(int argc, char** argv, const string& title, ApplicationInputEventsHandler* inputEventHandler) {
+void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
 	glutInit(&argc, argv);
 #if defined(__APPLE__)

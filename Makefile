@@ -138,7 +138,7 @@ SRCS = \
 	src/tdme/audio/decoder/AudioDecoderException.cpp \
 	src/tdme/audio/decoder/VorbisDecoder.cpp \
 	src/tdme/application/Application.cpp \
-	src/tdme/application/ApplicationInputEventsHandler.cpp \
+	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/FrameBuffer.cpp \

@@ -5,10 +5,10 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
+#include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/application/Application.h>
-#include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -17,7 +17,7 @@ using std::array;
 using std::vector;
 
 using tdme::application::Application;
-using tdme::application::ApplicationInputEventsHandler;
+using tdme::application::InputEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
@@ -30,7 +30,7 @@ using tdme::engine::model::Model;
  * @version $Id$
  */
 class tdme::tests::EngineTest final
-	: public Application, public virtual ApplicationInputEventsHandler
+	: public Application, public virtual InputEventHandler
 {
 
 private:

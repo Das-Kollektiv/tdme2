@@ -6,9 +6,9 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/application/ApplicationInputEventsHandler.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -25,7 +25,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::Engine;
-using tdme::application::ApplicationInputEventsHandler;
+using tdme::application::InputEventHandler;
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -43,7 +43,7 @@ using tdme::utils::Time;
  * @version $Id$
  */
 class tdme::gui::GUI final
-	: public virtual ApplicationInputEventsHandler
+	: public virtual InputEventHandler
 {
 private:
 	GUIRenderer* guiRenderer {  };

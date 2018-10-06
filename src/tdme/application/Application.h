@@ -13,11 +13,11 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
-#include <tdme/application/ApplicationInputEventsHandler.h>
+#include <tdme/application/InputEventHandler.h>
 
 using std::string;
 
-using tdme::application::ApplicationInputEventsHandler;
+using tdme::application::InputEventHandler;
 
 /** 
  * Application
@@ -43,7 +43,7 @@ public:
 	 * Set input event handler
 	 * @param inputEventHandler input event handler
 	 */
-	void setInputEventHandler(ApplicationInputEventsHandler* inputEventHandler);
+	void setInputEventHandler(InputEventHandler* inputEventHandler);
 
 	/**
 	 * Windows only: Install exception handler that will print a stack trace if crashing
@@ -75,7 +75,7 @@ public:
 	 * @param title title
 	 * @param inputEventHandler application input event handler
 	 */
-	void run(int argc, char** argv, const string& title, ApplicationInputEventsHandler* inputEventHandler = nullptr);
+	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr);
 
 	/** 
 	 * Init
@@ -101,7 +101,7 @@ public:
 
 private:
 	static Application* application;
-	static ApplicationInputEventsHandler* inputEventHandler;
+	static InputEventHandler* inputEventHandler;
 	bool initialized { false };
 	static int64_t timeLast;
 
