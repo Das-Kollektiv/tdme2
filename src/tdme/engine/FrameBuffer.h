@@ -90,12 +90,12 @@ public:
 	void renderToScreen();
 
 	/**
-	 * Do post processing into this frame buffer
+	 * Do post processing into target frame buffer (which can be screen as well when passing nullptr)
 	 * @param source source frame buffer
 	 * @param shaderId post processing shader id
 	 * @param temporary bind additional temporary frame buffer
 	 */
-	void doPostProcessing(FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr);
+	static void doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary = nullptr);
 
 	/**
 	 * Public constructor

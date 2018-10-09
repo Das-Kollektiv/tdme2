@@ -139,9 +139,13 @@ void FrameBuffer::renderToScreen()
 	renderer->enableCulling();
 }
 
-void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId, FrameBuffer* temporary)
+void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary)
 {
-	enableFrameBuffer();
+	if (target != nullptr) {
+		target->enableFrameBuffer();
+	} else {
+		disableFrameBuffer();
+	}
 
 	//
 	auto renderer = Engine::renderer;
@@ -196,6 +200,8 @@ void FrameBuffer::doPostProcessing(FrameBuffer* source, const string& shaderId, 
 	renderer->enableCulling();
 
 	//
-	disableFrameBuffer();
+	if (target != nullptr) {
+		disableFrameBuffer();
+	}
 }
 

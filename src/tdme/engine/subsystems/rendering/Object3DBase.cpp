@@ -358,13 +358,11 @@ void Object3DBase::updateSkinningTransformationsMatrices(map<string, Matrix4x4*>
 	}
 }
 
-void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices)
+void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices, Timing* timing)
 {
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
-		auto engine = Engine::getInstance();
 		// animation timing
-		auto timing = engine->getTiming();
 		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
 		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 		auto lastFrameAtTime = timing->getLastFrameAtTime();
@@ -406,18 +404,18 @@ void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<str
 	}
 }
 
-void Object3DBase::computeTransformations() {
+void Object3DBase::computeTransformations(Timing* timing) {
 	// compute last animation matrices if required
 	auto baseAnimationIdxLast = transformationsMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
 	if (baseAnimationIdxLast != -1 &&
 		baseAnimations[baseAnimationIdxLast].lastAtTime != -1LL) {
-		computeTransformations(baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast]);
+		computeTransformations(baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], timing);
 	} else {
 		baseAnimationIdxLast = -1;
 	}
 
 	// compute current animation matrices
-	computeTransformations(baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx]);
+	computeTransformations(baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], timing);
 
 	// blend if required
 	if (transformationsMatrices.size() > 1) {

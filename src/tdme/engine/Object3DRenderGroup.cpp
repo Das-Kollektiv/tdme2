@@ -248,6 +248,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedObject->setShader(shaderId);
 		combinedObject->setDistanceShader(distanceShaderId);
 		combinedObject->setDynamicShadowingEnabled(dynamicShadowing);
+		combinedObject->setEngine(engine);
 
 		//
 		computeBoundingBox();
@@ -261,6 +262,7 @@ void Object3DRenderGroup::addObject(const Transformations& transformations) {
 void Object3DRenderGroup::setEngine(Engine* engine)
 {
 	this->engine = engine;
+	if (combinedObject != nullptr) combinedObject->setEngine(engine);
 }
 
 void Object3DRenderGroup::setRenderer(GLRenderer* renderer)

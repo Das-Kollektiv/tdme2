@@ -177,6 +177,7 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \

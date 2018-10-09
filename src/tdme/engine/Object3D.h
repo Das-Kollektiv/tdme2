@@ -209,6 +209,10 @@ public:
 		return *this;
 	}
 
+	inline void computeTransformations() {
+		Object3DInternal::computeTransformations(engine->getTiming());
+	}
+
 	/**
 	 * @return shader id
 	 */

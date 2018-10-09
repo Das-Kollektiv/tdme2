@@ -149,8 +149,8 @@ private:
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };
 	Object3DVBORenderer* object3DVBORenderer {  };
 
+	static bool skinningShaderEnabled;
 	bool shadowMappingEnabled {  };
-	bool skinningShaderEnabled {  };
 	bool renderingInitiated {  };
 	bool renderingComputedTransformations {  };
 	Matrix4x4 modelViewMatrix {  };
