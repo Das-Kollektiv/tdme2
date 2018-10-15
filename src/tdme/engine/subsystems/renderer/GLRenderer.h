@@ -58,7 +58,6 @@ public:
 	GLRenderer_Material material;
 	array<GLRenderer_Light, 8> lights;
 	string shaderId {  };
-	int frame { 0 };
 
 protected:
 	int32_t viewPortX {  };

@@ -4,6 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -11,6 +12,7 @@
 using std::map;
 using std::string;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::math::Matrix4x4;
@@ -28,6 +30,7 @@ private:
 	bool running { false };
 	Matrix4x4 depthBiasMVPMatrix {  };
 	int32_t lightId { -1 };
+	Engine* engine { nullptr };
 
 public:
 
@@ -43,8 +46,9 @@ public:
 
 	/** 
 	 * Use render shadow mapping program
+	 * @param engine engine
 	 */
-	void useProgram();
+	void useProgram(Engine* engine);
 
 	/** 
 	 * Un use render shadow mapping program

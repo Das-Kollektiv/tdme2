@@ -3,6 +3,7 @@
 #include <array>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -11,6 +12,7 @@
 
 using std::array;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
@@ -39,8 +41,9 @@ struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 
 	/** 
 	 * Use lighting program
+	 * @param engine engine
 	 */
-	virtual void useProgram() = 0;
+	virtual void useProgram(Engine* engine) = 0;
 
 	/** 
 	 * Unuse lighting program

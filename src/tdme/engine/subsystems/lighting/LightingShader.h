@@ -4,12 +4,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using std::map;
 using std::string;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
@@ -24,6 +26,7 @@ private:
 	map<string, LightingShaderImplementation*> shader;
 	LightingShaderImplementation* implementation { nullptr };
 	bool running { false };
+	Engine* engine { nullptr };
 
 public:
 	/** 
@@ -38,8 +41,9 @@ public:
 
 	/** 
 	 * Use lighting program
+	 * @param engine engine
 	 */
-	void useProgram();
+	void useProgram(Engine* engine);
 
 	/** 
 	 * Unuse lighting program

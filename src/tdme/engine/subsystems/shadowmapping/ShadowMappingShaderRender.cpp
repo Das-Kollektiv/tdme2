@@ -1,11 +1,15 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
 
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation;
@@ -42,9 +46,10 @@ void ShadowMappingShaderRender::initialize()
 	}
 }
 
-void ShadowMappingShaderRender::useProgram()
+void ShadowMappingShaderRender::useProgram(Engine* engine)
 {
 	running = true;
+	this->engine = engine;
 }
 
 void ShadowMappingShaderRender::unUseProgram()
@@ -54,6 +59,7 @@ void ShadowMappingShaderRender::unUseProgram()
 		implementation->unUseProgram();;
 	}
 	implementation = nullptr;
+	engine = nullptr;
 }
 
 void ShadowMappingShaderRender::setProgramMVMatrix(const Matrix4x4& mvMatrix)
@@ -118,7 +124,7 @@ void ShadowMappingShaderRender::setShader(const string& id) {
 
 	if (currentImplementation != implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
-		implementation->useProgram();
+		implementation->useProgram(engine);
 	}
 
 	implementation->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);

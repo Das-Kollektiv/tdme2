@@ -2,11 +2,13 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
 #include <tdme/math/fwd-tdme.h>
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::math::Matrix4x4;
@@ -40,7 +42,7 @@ public:
 	// overriden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
-	virtual void useProgram() override;
+	virtual void useProgram(Engine* engine) override;
 	virtual void unUseProgram() override;
 	virtual void updateMatrices(const Matrix4x4& mvpMatrix) override;
 	virtual void updateTextureMatrix(GLRenderer* renderer) override;

@@ -1,5 +1,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h>
 
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
@@ -8,6 +10,8 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
 
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
@@ -71,10 +75,10 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 	initialized = true;
 }
 
-void ShadowMappingShaderPreBaseImplementation::useProgram()
+void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine)
 {
 	renderer->useProgram(programGlId);
-	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
+	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, engine->getTiming()->getFrame());
 }
 
 void ShadowMappingShaderPreBaseImplementation::unUseProgram()

@@ -3,6 +3,8 @@
 #include <string>
 
 #include <tdme/math/Math.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
@@ -15,6 +17,8 @@
 
 using std::to_string;
 
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
@@ -114,11 +118,11 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 	initialized = true;
 }
 
-void ShadowMappingShaderRenderBaseImplementation::useProgram()
+void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine)
 {
 	renderer->useProgram(renderProgramGlId);
 	renderer->setProgramUniformInteger(renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
-	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, renderer->frame);
+	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, engine->getTiming()->getFrame());
 }
 
 void ShadowMappingShaderRenderBaseImplementation::unUseProgram()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h>
@@ -8,6 +9,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::math::Matrix4x4;
@@ -56,7 +58,7 @@ public:
 	// overriden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
-	virtual void useProgram() override;
+	virtual void useProgram(Engine* engine) override;
 	virtual void unUseProgram() override;
 	virtual void setProgramViewMatrices() override;
 	virtual void setProgramMVMatrix(const Matrix4x4& mvMatrix) override;
