@@ -779,31 +779,36 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					fbMvMatrices.put(modelViewMatrix.getArray());
 				}
 
-				// upload model view matrices
-				{
-					renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
-					renderer->bindModelMatricesBufferObject((*vboInstancedRenderingIds)[0]);
-				}
+				// it can happen that all faces to be rendered were transparent ones, check this and skip if feasible
+				auto objectsToRenderIssue = fbMvMatrices.getPosition() / 16;
+				if (objectsToRenderIssue > 0) {
 
-				// upload effects
-				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-					// upload effect color mul
-					renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-					renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
-					renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-					renderer->bindEffectColorAddsBufferObject((*vboInstancedRenderingIds)[2]);
-				}
+					// upload model view matrices
+					{
+						renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
+						renderer->bindModelMatricesBufferObject((*vboInstancedRenderingIds)[0]);
+					}
 
-				// set up texture matrix
-				//	TODO: check if texture is in use
-				if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
-					(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
-					renderer->getTextureMatrix().set(currentTextureMatrix);
-					renderer->onUpdateTextureMatrix();
-				}
+					// upload effects
+					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
+						// upload effect color mul
+						renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+						renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
+						renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+						renderer->bindEffectColorAddsBufferObject((*vboInstancedRenderingIds)[2]);
+					}
 
-				// draw
-				renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, fbMvMatrices.getPosition() / 16);
+					// set up texture matrix
+					//	TODO: check if texture is in use
+					if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
+						(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
+						renderer->getTextureMatrix().set(currentTextureMatrix);
+						renderer->onUpdateTextureMatrix();
+					}
+
+					// draw
+					renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, objectsToRenderIssue);
+				}
 
 				// set up next objects to render
 				objectsToRender = objectsNotRendered;
