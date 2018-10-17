@@ -151,6 +151,9 @@ void NIOUDPClient::run() {
 					while ((bytesReceived = socket.read(fromIp, fromPort, (void*)message, sizeof(message))) > 0) {
 						NIOUDPClientMessage* clientMessage = NIOUDPClientMessage::parse(message, bytesReceived);
 						try {
+							if (clientMessage == nullptr) {
+								throw NIOClientException("invalid message");
+							}
 							switch(clientMessage->getMessageType()) {
 								case NIOUDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT:
 									{

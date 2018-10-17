@@ -15,6 +15,7 @@ using tdme::network::udpclient::NIOUDPClientMessage;
 using std::ios_base;
 using std::string;
 using std::stringstream;
+using std::to_string;
 
 using tdme::network::udpclient::NIOUDPClient;
 using tdme::utils::Console;
@@ -35,6 +36,7 @@ NIOUDPClientMessage* NIOUDPClientMessage::parse(const char message[512], const s
 			messageType = MessageType::MESSAGETYPE_MESSAGE;
 			break;
 		default:
+			Console::println("NIOUDPClientMessage::parse(): invalid message type: '" + (string() + message[0]) + "' (" + to_string(message[0]) + ")");
 			return nullptr;
 	}
 	uint32_t clientId;
