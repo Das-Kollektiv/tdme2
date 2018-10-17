@@ -140,9 +140,9 @@
 					<layout padding="10" horizontal-align="center" alignment="vertical" width="100%" height="100%">
 						<space height="*" />
 						<element horizontal-align="center" vertical-align="center">
-							<image hide-on="mouseover,click" src="resources/tests/gui/images/button_normal.png" horizontal-align="center" vertical-align="center" />
-							<image show-on="mouseover" src="resources/tests/gui/images/button_mouseover.png" horizontal-align="center" vertical-align="center" />
-							<image show-on="click" src="resources/tests/gui/images/button_click.png" horizontal-align="center" vertical-align="center" />
+							<image hide-on="mouseover,click" src="resources/screens/images/button_normal.png" horizontal-align="center" vertical-align="center" />
+							<image show-on="mouseover" src="resources/screens/images/button_mouseover.png" horizontal-align="center" vertical-align="center" />
+							<image show-on="click" src="resources/screens/images/button_click.png" horizontal-align="center" vertical-align="center" />
 							<text font="resources/gui/fonts/Foo_20.fnt" text="ImageBtn!" color="#ffffff" horizontal-align="center" vertical-align="center" />
 						</element>
 						<space height="*" />
@@ -155,10 +155,10 @@
 						<image-button
 							id="image-button"
 							name="image-button"
-							src-normal="resources/tests/gui/images/button_normal.png"
-							src-over="resources/tests/gui/images/button_mouseover.png"
-							src-clicked="resources/tests/gui/images/button_click.png"
-							src-disabled="resources/tests/gui/images/button_normal.png"
+							src-normal="resources/screens/images/button_normal.png"
+							src-over="resources/screens/images/button_mouseover.png"
+							src-clicked="resources/screens/images/button_click.png"
+							src-disabled="resources/screens/images/button_normal.png"
 						/>
 						<space height="*" />
 					</layout>
@@ -260,7 +260,7 @@
 						<image 
 							width="80%" 
 							height="25" 
-							src="resources/tests/gui/images/hr.png" 
+							src="resources/screens/images/hr.png" 
 							horizontal-align="center" 
 							vertical-align="center"
 							scale9-left="500"
@@ -270,7 +270,7 @@
 						<image 
 							width="100%" 
 							height="50%" 
-							src="resources/tests/gui/images/scale9GridTest.png" 
+							src="resources/screens/images/scale9GridTest.png" 
 							horizontal-align="center" 
 							vertical-align="center"
 							scale9="125" 
@@ -278,7 +278,7 @@
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab9" vertical-align="top">
-					<template src="resources/tests/gui/template.xml" my-text="Hello this is a template parameter" />
+					<template src="resources/screens/template.xml" my-text="Hello this is a template parameter" />
 				</tab-content>
 				<tab-content tab-id="tab10" vertical-align="top">
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
