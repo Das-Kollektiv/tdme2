@@ -372,9 +372,6 @@ SRCS = \
 	src/tdme/tests/AudioTest.cpp \
 	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
-	src/tdme/tests/GUITest.cpp \
-	src/tdme/tests/GUITest_init_1.cpp \
-	src/tdme/tests/GUITest_init_2.cpp \
 	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
@@ -388,6 +385,7 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServer.cpp \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
+	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.cpp \
@@ -651,7 +649,6 @@ MAIN_SRCS = \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
-	src/tdme/tests/GUITest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
@@ -663,6 +660,7 @@ MAIN_SRCS = \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
+	src/tdme/tools/gui/GUITest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \

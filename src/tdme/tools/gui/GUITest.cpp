@@ -1,4 +1,4 @@
-#include <tdme/tests/GUITest.h>
+#include <tdme/tools/gui/GUITest.h>
 
 #include <string>
 
@@ -8,16 +8,20 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
 #include <tdme/gui/effects/GUIPositionEffect.h>
+#include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tests/GUITest_init_1.h>
-#include <tdme/tests/GUITest_init_2.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/MutableString.h>
 
-using tdme::tests::GUITest;
+using tdme::tools::gui::GUITest;
 
 using std::string;
 using std::to_string;
@@ -28,14 +32,18 @@ using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::effects::GUIColorEffect;
 using tdme::gui::effects::GUIPositionEffect;
+using tdme::gui::events::GUIActionListener;
+using tdme::gui::events::GUIActionListener_Type;
+using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tests::GUITest_init_1;
-using tdme::tests::GUITest_init_2;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::MutableString;
 
 
 GUITest::GUITest(const string& screenFileName)
@@ -56,8 +64,8 @@ void GUITest::initialize()
 			)
 		);
 		engine->getGUI()->getScreen("test")->setScreenSize(640, 480);
-		engine->getGUI()->getScreen("test")->addActionListener(new GUITest_init_1(this));
-		engine->getGUI()->getScreen("test")->addChangeListener(new GUITest_init_2(this));
+		engine->getGUI()->getScreen("test")->addActionListener(this);
+		engine->getGUI()->getScreen("test")->addChangeListener(this);
 		auto effectFadeIn = new GUIColorEffect();
 		effectFadeIn->setColorMulStart(GUIColor(0.0f, 0.0f, 0.0f, 1.0f));
 		effectFadeIn->setColorMulEnd(GUIColor(1.0f, 1.0f, 1.0f, 1.0f));
@@ -87,6 +95,15 @@ void GUITest::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(0, 0, width, height);
 }
+
+void GUITest::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) {
+	Console::println(node->getId() + ": onActionPerformed(): " + type->getName());
+}
+
+void GUITest::onValueChanged(GUIElementNode* node) {
+	Console::println(node->getName() + ": onValueChanged(): " + node->getController()->getValue().getString());
+}
+
 
 void GUITest::display()
 {
