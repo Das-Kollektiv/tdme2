@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/MutableString.h>
@@ -23,6 +24,7 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::utils::Exception;
 using tdme::utils::MutableString;
@@ -71,6 +73,11 @@ int32_t GUITextNode::getContentWidth()
 int32_t GUITextNode::getContentHeight()
 {
 	return font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
+}
+
+void GUITextNode::setText(const MutableString& text) {
+	this->text = text;
+	screenNode->layout(parentNode);
 }
 
 void GUITextNode::dispose()

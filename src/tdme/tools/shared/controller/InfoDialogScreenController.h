@@ -16,6 +16,7 @@ using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::utils::MutableString;
@@ -33,7 +34,7 @@ class tdme::tools::shared::controller::InfoDialogScreenController
 private:
 	GUIScreenNode* screenNode {  };
 	GUITextNode* captionNode {  };
-	GUITextNode* messageNode {  };
+	GUIMultilineTextNode* messageNode {  };
 
 public:
 	GUIScreenNode* getScreenNode() override;

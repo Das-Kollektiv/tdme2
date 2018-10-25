@@ -5,6 +5,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
@@ -18,6 +19,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -41,7 +43,7 @@ void InfoDialogScreenController::initialize()
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById("infodialog_caption"));
-		messageNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById("infodialog_message"));
+		messageNode = dynamic_cast< GUIMultilineTextNode* >(screenNode->getNodeById("infodialog_message"));
 	} catch (Exception& exception) {
 		Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

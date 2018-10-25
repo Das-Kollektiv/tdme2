@@ -104,11 +104,10 @@ public:
 	}
 
 	/**
-	 * @return text
+	 * Set text
+	 * @param text text
 	 */
-	inline void setText(const MutableString& text) {
-		this->text = text;
-	}
+	void setText(const MutableString& text);
 
 	// override methods
 	void dispose() override;
