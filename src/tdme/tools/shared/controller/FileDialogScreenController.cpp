@@ -136,7 +136,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	return success;
 }
 
-void FileDialogScreenController::show(const string& cwd, const string& captionText, vector<string>& extensions, const string& fileName, Action* applyAction)
+void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, Action* applyAction)
 {
 	try {
 		this->cwd = FileSystem::getInstance()->getCanonicalPath(cwd, "");

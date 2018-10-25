@@ -81,7 +81,7 @@ public:
 	 * @param applyAction apply action
 	 * @throws IOException 
 	 */
-	virtual void show(const string& cwd, const string& captionText, vector<string>& extensions, const string& fileName, Action* applyAction);
+	virtual void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, Action* applyAction);
 
 	/** 
 	 * Abort the file dialog pop up
