@@ -175,8 +175,11 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& fl
 	GUINode::render(guiRenderer, floatingNodes);
 
 	{
+		// indents
 		auto xIndentLeft = computedConstraints.left + border.left + padding.left;
 		auto yIndentTop = computedConstraints.top + border.top + padding.top;
+
+		// vertical alignment
 		auto y = 0;
 		if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
 			// no op
