@@ -211,37 +211,18 @@
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
-					<scrollarea id="bbb" width="100%" height="100%">
-						<layout id="ccc" alignment="vertical" width="auto" height="auto">
-							<text font="resources/gui/fonts/Foo_20.fnt" text="START" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="Lorem ipsum dolor sit amet," color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="consetetur sadipscing elitr," color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="sed diam nonumy eirmod tempor invidunt " color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="ut labore et dolore magna aliquyam erat" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="sed diam voluptua." color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="labore et dolore magna aliquyam erat" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="ut labore et dolore magna aliquyam erat" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="sed diam voluptua" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="At vero eos et accusam et justo duo dolores et ea rebum" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="Stet clita kasd gubergren" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="ccc pre eee" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="eee begin" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="Lorem ipsum dolor sit amet, sed diam voluptua. in hendrerit in vulputate velit esse molestie consequat.consetetur sadipscing elitr." color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="Left. Sed diam nonumy eirmod tempor invidunt, consetetur sadipscing elitr, ut labore et dolore magna aliquyam erat. Lorem ipsum dolor sit amet, consetetur sadipscing elitr. Right." color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="ccc post eee" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="no sea takimata sanctus est Lorem ipsum dolor sit amet" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="Duis autem vel eum iriure dolor" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="in hendrerit in vulputate velit esse molestie consequat" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="vel illum dolore eu feugiat nulla facilisis" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="at vero eros et accumsan et iusto" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="odio dignissim qui blandit praesent" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="luptatum zzril delenit augue duis" color="#000000" />
-							<button id="ddd" name="button2" text="I agree ccc" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="dolore te feugait nulla facilisi" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="Lorem ipsum dolor sit amet" color="#000000" />
-							<text font="resources/gui/fonts/Foo_20.fnt" text="END" color="#000000" />
-						</layout>
+					<scrollarea id="bbb" width="100%" height="100%" vertical-alignment="center">
+						<multiline-text font="resources/gui/fonts/Foo_20.fnt" color="#000000" width="100%" height="auto" border-color="red" border="10" padding="10" horizontal-align="left">
+							<![CDATA[
+Lorem ipsum dolor sit amet consectetur adipiscing elit, urna consequat felis vehicula class ultricies mollis dictumst, aenean non a in donec nulla. Phasellus ante pellentesque erat cum risus consequat imperdiet aliquam, integer placerat et turpis mi eros nec lobortis taciti, vehicula nisl litora tellus ligula porttitor metus.
+
+Vivamus integer non suscipit taciti mus etiam at primis tempor sagittis sit, euismod libero facilisi aptent elementum felis blandit cursus gravida sociis erat ante, eleifend lectus nullam dapibus netus feugiat curae curabitur est ad. Massa curae fringilla porttitor quam sollicitudin iaculis aptent leo ligula euismod dictumst, orci penatibus mauris eros etiam praesent erat volutpat posuere hac. Metus fringilla nec ullamcorper odio aliquam lacinia conubia mauris tempor, etiam ultricies proin quisque lectus sociis id tristique, integer phasellus taciti pretium adipiscing tortor sagittis ligula.
+
+Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultricies tortor suspendisse adipiscing fusce morbi volutpat pellentesque, consectetur mi risus molestie curae malesuada cum. Dignissim lacus convallis massa mauris enim ad mattis magnis senectus montes, mollis taciti phasellus accumsan bibendum semper blandit suspendisse faucibus nibh est, metus lobortis morbi cras magna vivamus per risus fermentum. Dapibus imperdiet praesent magnis ridiculus congue gravida curabitur dictum sagittis, enim et magna sit inceptos sodales parturient pharetra mollis, aenean vel nostra tellus commodo pretium sapien sociosqu.
+
+Hallo, dies ist ein Fliesstext, den ich mir jetzt einfach aus den Fingern sauge um dieses Multiline Textfeld zu testen. Ich weiss es ja auch nicht, aber es sollte funktionieren. Lorem Ipsum kann man nicht so gut auf Semantik testen, Syntax vlt. auch nicht. Naja. Mal sehen. Nein Ich denke nicht mehr an dich. Vlt. laesst du mich einfach in Ruhe. Gibt auch andere Frauen.
+							]]>
+						</multiline-text>
 					</scrollarea>
 				</tab-content>
 				<tab-content tab-id="tab7" vertical-align="top">

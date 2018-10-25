@@ -34,6 +34,7 @@
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
+#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
@@ -88,6 +89,7 @@ using tdme::gui::nodes::GUIHorizontalScrollbarInternalNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUILayoutNode;
+using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIPanelNode;
@@ -581,7 +583,66 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("font"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
-					MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text")))))
+					MutableString(unescapeQuotes(string(StringUtils::trim(AVOID_NULLPTR_STRING(node->Attribute("text"))))))
+				);
+				guiParentNode->addSubNode(guiTextNode);
+				if (guiElement != nullptr && guiElementControllerInstalled == false) {
+					guiElementController = guiElement->createController(guiTextNode);
+					if (guiElementController != nullptr) {
+						guiTextNode->setController(guiElementController);
+					}
+					guiElementControllerInstalled = true;
+				}
+			} else
+			if (nodeTagName == "multiline-text") {
+				auto guiTextNode = new GUIMultilineTextNode(
+					guiParentNode->getScreenNode(),
+					guiParentNode,
+					string(AVOID_NULLPTR_STRING(node->Attribute("id"))),
+					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
+					GUINode::createAlignments(
+						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
+					),
+					GUIParentNode::createRequestedConstraints(
+						string(AVOID_NULLPTR_STRING(node->Attribute("left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("width"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("height")))
+					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
+					string(AVOID_NULLPTR_STRING(node->Attribute("background-image"))),
+					GUINode::createScale9Grid(
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
+					),
+					GUINode::createBorder(
+						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-bottom"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("border-color-bottom")))
+					),
+					GUINode::createPadding(
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-left"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-top"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-right"))),
+						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
+					),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					string(AVOID_NULLPTR_STRING(node->Attribute("font"))),
+					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
+					MutableString(StringUtils::trim(AVOID_NULLPTR_STRING(node->GetText())))
 				);
 				guiParentNode->addSubNode(guiTextNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
