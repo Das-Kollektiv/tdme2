@@ -212,7 +212,7 @@
 				</tab-content>
 				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
 					<scrollarea id="bbb" width="100%" height="100%" vertical-alignment="center">
-						<multiline-text font="resources/gui/fonts/Foo_20.fnt" color="#000000" width="100%" height="auto" border-color="red" border="10" padding="10" horizontal-align="left">
+						<multiline-text font="resources/gui/fonts/Foo_20.fnt" color="#000000" width="100%" height="100%" border-color="red" border="10" padding="10" horizontal-align="center" vertical-align="center">
 							<![CDATA[
 Lorem ipsum dolor sit amet consectetur adipiscing elit, urna consequat felis vehicula class ultricies mollis dictumst, aenean non a in donec nulla. Phasellus ante pellentesque erat cum risus consequat imperdiet aliquam, integer placerat et turpis mi eros nec lobortis taciti, vehicula nisl litora tellus ligula porttitor metus.
 

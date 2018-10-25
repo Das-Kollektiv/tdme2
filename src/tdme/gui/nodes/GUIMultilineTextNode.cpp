@@ -87,6 +87,7 @@ int32_t GUIMultilineTextNode::getContentHeight()
 }
 
 void GUIMultilineTextNode::computeContentAlignment() {
+	// TODO: this is beeing called very often and thus makes layouting slow, please FIXME
 	autoWidth = 0;
 	autoHeight = 0;
 	{
@@ -155,6 +156,15 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& fl
 		auto xIndentLeft = computedConstraints.left + border.left + padding.left;
 		auto yIndentTop = computedConstraints.top + border.top + padding.top;
 		auto y = 0;
+		if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
+			// no op
+		} else
+		if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
+			y = (computedConstraints.height - (border.top + border.bottom + padding.top + padding.bottom) - autoHeight) / 2;
+		} else
+		if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
+			y = (computedConstraints.height - (border.top + border.bottom + padding.top + padding.bottom) - autoHeight);
+		}
 		string line;
 		string word;
 		bool hadBreak = false;
