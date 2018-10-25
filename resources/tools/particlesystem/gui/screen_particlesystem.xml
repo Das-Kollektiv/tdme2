@@ -1,7 +1,7 @@
 <screen id="particlesystem" background-color="#00000000" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" width="100%" height="100%" background-color="#00000000">
 		<panel alignment="none" width="100%" height="30" padding="5" vertical-align="center">
-			<text id="screen_caption" font="resources/gui/fonts/Foo_20.fnt" text="Particle System" width="100%" horizontal-align="center" height="auto" />
+			<text id="screen_caption" font="resources/gui-system/fonts/Foo_20.fnt" text="Particle System" width="100%" horizontal-align="center" height="auto" />
 		</panel>
 		<element width="100%" height="*" border="1" border-color="#000000" background-color="#FF000000" focusable="true" ignore-events="true" />
 		<panel width="100%" height="200">
@@ -21,17 +21,17 @@
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 								<checkbox id="display_ground" name="display_ground" value="1" />
 								<space width="5" />
-								<text font="resources/gui/fonts/Foo_20.fnt" text="Ground" width="120" height="auto"/>
+								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Ground" width="120" height="auto"/>
 								<space width="20" />
 								<checkbox id="display_shadowing" name="display_shadowing" value="1" />
 								<space width="5" />
-								<text font="resources/gui/fonts/Foo_20.fnt" text="Shadowing" width="120" height="auto"/>
+								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Shadowing" width="120" height="auto"/>
 							</layout>
 							<space height="5" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 								<checkbox id="display_boundingvolume" name="display_boundingvolume" value="1" />
 								<space width="5" />
-								<text font="resources/gui/fonts/Foo_20.fnt" text="Bounding Volume" width="auto" height="auto"/>
+								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Bounding Volume" width="auto" height="auto"/>
 							</layout>
 							<space height="20" />
 							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
@@ -42,13 +42,13 @@
 					<tab-content tab-id="tab_properties_particlesystem" vertical-align="center">
 						<layout width="auto" height="auto" alignment="vertical">
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui/fonts/Foo_20.fnt" text="Name" width="200" height="auto"/>
+								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Name" width="200" height="auto"/>
 								<space width="5" />
 								<input id="entity_name" name="entity_name" width="200" height="auto" text="Name" />
 							</layout>
 							<space height="5" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui/fonts/Foo_20.fnt" text="Description" width="200" height="auto"/>
+								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Description" width="200" height="auto"/>
 								<space width="5" />
 								<input id="entity_description" name="entity_description" width="200" height="auto" text="Description" />
 							</layout>
@@ -79,11 +79,11 @@
 								</selectbox>
 								<space height="10" />
 								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/gui/fonts/Foo_20.fnt" text="Name" width="45" height="auto"/>
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Name" width="45" height="auto"/>
 									<space width="*" />
 									<input id="entity_property_name" name="entity_property_name" width="240" height="auto" text="Name" />
 									<space width="*" />
-									<text font="resources/gui/fonts/Foo_20.fnt" text="Value" width="45" height="auto"/>
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Value" width="45" height="auto"/>
 									<space width="*" />
 									<input id="entity_property_value" name="entity_property_value" width="240" height="auto" text="Value" />
 								</layout>
@@ -114,17 +114,17 @@
 									<!-- ObjectParticleSystem Start -->
 									<space height="10" /> 
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Scale" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Scale" width="145" height="auto"/>
 										<space width="5" />
 										<input id="ops_scale" name="ops_scale" width="150" height="auto" text="Scale" />
 										<space width="20" />
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Max count" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Max count" width="145" height="auto"/>
 										<space width="5" />
 										<input id="ops_maxcount" name="ops_maxcount" width="150" height="auto" text="Max count" />
 									</layout>
 									<space height="5" /> 
 									<layout width="620" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Model" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Model" width="145" height="auto"/>
 										<space width="5" />
 										<input id="ops_model" name="ops_model" width="400" height="auto" text="Model" />
 										<space width="10" />
@@ -132,7 +132,7 @@
 									</layout>
 									<space height="5" /> 
 									<layout width="620" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Auto emit" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Auto emit" width="145" height="auto"/>
 										<space width="5" />
 										<checkbox id="ops_auto_emit" name="ops_auto_emit" width="auto" height="auto" value="1" />
 										<space width="*" />
@@ -147,11 +147,11 @@
 								<layout show-on="Points Particle System" alignment="vertical" width="100%" height="auto" horizontal-align="center">
 									<!-- PointsParticleSystem Start --> 
 									<layout width="660" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Max points" width="155" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Max points" width="155" height="auto"/>
 										<space width="5" />
 										<input id="pps_maxpoints" name="pps_maxpoints" width="160" height="auto" text="Max points" />
 										<space width="20" />
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Auto emit" width="155" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Auto emit" width="155" height="auto"/>
 										<space width="*" />
 										<checkbox id="pps_auto_emit" name="pps_auto_emit" width="auto" height="auto" value="1" />
 									</layout>
@@ -182,55 +182,55 @@
 									<space height="10" />
 									<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_count" name="ppe_count" width="150" height="auto" text="Count" />
 											<space width="320" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_lifetime" name="ppe_lifetime" width="150" height="auto" text="Life time" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_lifetimernd" name="ppe_lifetimernd" width="150" height="auto" text="Life time rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_mass" name="ppe_mass" width="150" height="auto" text="Mass" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_massrnd" name="ppe_massrnd" width="150" height="auto" text="Mass rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Position" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Position" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_position" name="ppe_position" width="150" height="auto" text="Position" />
 											<space width="320" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_velocity" name="ppe_velocity" width="150" height="auto" text="Velocity" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_velocityrnd" name="ppe_velocityrnd" width="150" height="auto" text="Velocity rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_colorstart" name="ppe_colorstart" width="150" height="auto" text="Color start" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
 											<space width="5" />
 											<input id="ppe_colorend" name="ppe_colorend" width="150" height="auto" text="Color end" />
 										</layout>
@@ -247,74 +247,74 @@
 									<space height="10" />
 									<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_count" name="bbpe_count" width="150" height="auto" text="Count" />
 											<space width="320" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_lifetime" name="bbpe_lifetime" width="150" height="auto" text="Life time" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_lifetimernd" name="bbpe_lifetimernd" width="150" height="auto" text="Life time rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_mass" name="bbpe_mass" width="150" height="auto" text="Mass" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_massrnd" name="bbpe_massrnd" width="150" height="auto" text="Mass rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_velocity" name="bbpe_velocity" width="150" height="auto" text="Velocity" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_velocityrnd" name="bbpe_velocityrnd" width="150" height="auto" text="Velocity rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_colorstart" name="bbpe_colorstart" width="150" height="auto" text="Color start" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_colorend" name="bbpe_colorend" width="150" height="auto" text="Color end" />
 										</layout>
 										<space height="20" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_obb_center" name="bbpe_obb_center" width="150" height="auto" text="Center" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Half extension" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Half extension" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_obb_halfextension" name="bbpe_obb_halfextension" width="150" height="auto" text="Half extension" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="X Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_obb_rotation_x" name="bbpe_obb_rotation_x" width="150" height="auto" text="X Rotation" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_obb_rotation_y" name="bbpe_obb_rotation_y" width="150" height="auto" text="Y Rotation" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Z Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="bbpe_obb_rotation_z" name="bbpe_obb_rotation_z" width="150" height="auto" text="Z Rotation" />
 											<space width="320" />
@@ -332,74 +332,74 @@
 									<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
 										<space height="10" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_count" name="cpe_count" width="150" height="auto" text="Count" />
 											<space width="320" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_lifetime" name="cpe_lifetime" width="150" height="auto" text="Life time" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_lifetimernd" name="cpe_lifetimernd" width="150" height="auto" text="Life time rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_mass" name="cpe_mass" width="150" height="auto" text="Mass" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_massrnd" name="cpe_massrnd" width="150" height="auto" text="Mass rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_velocity" name="cpe_velocity" width="150" height="auto" text="Velocity" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_velocityrnd" name="cpe_velocityrnd" width="150" height="auto" text="Velocity rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_colorstart" name="cpe_colorstart" width="150" height="auto" text="Color start" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_colorend" name="cpe_colorend" width="150" height="auto" text="Color end" />
 										</layout>
 										<space height="20" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_center" name="cpe_center" width="150" height="auto" text="Center" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Radius" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_radius" name="cpe_radius" width="150" height="auto" text="Radius" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="X Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_rotation_x" name="cpe_rotation_x" width="150" height="auto" text="X Rotation" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_rotation_y" name="cpe_rotation_y" width="150" height="auto" text="Y Rotation" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Z Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpe_rotation_z" name="cpe_rotation_z" width="150" height="auto" text="Z Rotation" />
 											<space width="320" />
@@ -417,74 +417,74 @@
 									<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">
 										<space height="10" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_count" name="cpepv_count" width="150" height="auto" text="Count" />
 											<space width="320" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_lifetime" name="cpepv_lifetime" width="150" height="auto" text="Life time" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_lifetimernd" name="cpepv_lifetimernd" width="150" height="auto" text="Life time rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_mass" name="cpepv_mass" width="150" height="auto" text="Mass" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_massrnd" name="cpepv_massrnd" width="150" height="auto" text="Mass rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_velocity" name="cpepv_velocity" width="150" height="auto" text="Velocity" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_velocityrnd" name="cpepv_velocityrnd" width="150" height="auto" text="Velocity rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_colorstart" name="cpepv_colorstart" width="150" height="auto" text="Color start" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_colorend" name="cpepv_colorend" width="150" height="auto" text="Color end" />
 										</layout>
 										<space height="20" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_center" name="cpepv_center" width="150" height="auto" text="Center" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Radius" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_radius" name="cpepv_radius" width="150" height="auto" text="Radius" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="X Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_rotation_x" name="cpepv_rotation_x" width="150" height="auto" text="X Rotation" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_rotation_y" name="cpepv_rotation_y" width="150" height="auto" text="Y Rotation" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Z Rotation" width="145" height="auto"/>
 											<space width="5" />
 											<input id="cpepv_rotation_z" name="cpe_rotation_z" width="150" height="auto" text="Z Rotation" />
 											<space width="320" />
@@ -501,58 +501,58 @@
 									<layout alignment="vertical" width="100%" height="auto" horizontal-align="center">									
 										<space height="10" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Count" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_count" name="spe_count" width="150" height="auto" text="Count" />
 											<space width="320" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_lifetime" name="spe_lifetime" width="150" height="auto" text="Life time" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Life time rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_lifetimernd" name="spe_lifetimernd" width="150" height="auto" text="Life time rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_mass" name="spe_mass" width="150" height="auto" text="Mass" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_massrnd" name="spe_massrnd" width="150" height="auto" text="Mass rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_velocity" name="spe_velocity" width="150" height="auto" text="Velocity" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Velocity rnd" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_velocityrnd" name="spe_velocityrnd" width="150" height="auto" text="Velocity rnd" />
 										</layout>
 										<space height="5" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color start" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_colorstart" name="spe_colorstart" width="150" height="auto" text="Color start" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Color end" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_colorend" name="spe_colorend" width="150" height="auto" text="Color end" />
 										</layout>
 										<space height="20" />
 										<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_center" name="spe_center" width="150" height="auto" text="Center" />
 											<space width="20" />
-											<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="145" height="auto"/>
+											<text font="resources/gui-system/fonts/Foo_20.fnt" text="Radius" width="145" height="auto"/>
 											<space width="5" />
 											<input id="spe_radius" name="spe_radius" width="150" height="auto" text="Radius" />
 										</layout>
@@ -688,7 +688,7 @@
 								<space height="20" />
 								<layout alignment="horizontal" width="auto" height="auto">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Mass" width="145" height="auto"/>
 										<space width="5" />
 										<input id="physics_body_mass" name="physics_body_mass" width="450" height="auto" text="Name" disabled="true" />
 									</layout>
@@ -696,7 +696,7 @@
 								<space height="20" />
 								<layout alignment="horizontal" width="auto" height="auto">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Bounciness" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Bounciness" width="145" height="auto"/>
 										<space width="5" />
 										<input id="physics_body_bounciness" name="physics_body_bounciness" width="450" height="auto" text="Name" disabled="true" />
 									</layout>
@@ -704,7 +704,7 @@
 								<space height="5" />
 								<layout alignment="horizontal" width="auto" height="auto">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Friction" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Friction" width="145" height="auto"/>
 										<space width="5" />
 										<input id="physics_body_friction" name="physics_body_friction" width="450" height="auto" text="Name" disabled="true" />
 									</layout>
@@ -712,7 +712,7 @@
 								<space height="20" />
 								<layout alignment="horizontal" width="auto" height="auto">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui/fonts/Foo_20.fnt" text="Inertia tensor" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Inertia tensor" width="145" height="auto"/>
 										<space width="5" />
 										<input id="physics_body_inertiatensor" name="physics_body_inertiatensor" width="450" height="auto" text="Name" disabled="true" />
 									</layout>

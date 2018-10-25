@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIRadioButton::GUIRadioButton() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "radiobutton.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "radiobutton.xml");
 }
 
 string GUIRadioButton::NAME = "radiobutton";

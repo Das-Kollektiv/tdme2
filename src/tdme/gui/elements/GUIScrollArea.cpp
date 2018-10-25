@@ -15,7 +15,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIScrollArea::GUIScrollArea() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "scrollarea.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea.xml");
 }
 
 string GUIScrollArea::NAME = "scrollarea";

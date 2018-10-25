@@ -23,7 +23,7 @@ string GUIKnob::NAME = "knob";
 
 GUIKnob::GUIKnob() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "knob.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "knob.xml");
 }
 
 const string& GUIKnob::getName()

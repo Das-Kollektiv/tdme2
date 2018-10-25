@@ -23,7 +23,7 @@ string GUIImageButton::NAME = "image-button";
 
 GUIImageButton::GUIImageButton() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "image-button.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "image-button.xml");
 }
 
 const string& GUIImageButton::getName()

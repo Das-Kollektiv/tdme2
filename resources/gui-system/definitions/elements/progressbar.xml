@@ -1,0 +1,5 @@
+<element id="{$id}" name="{$name}" border="2" border-color="transparent" disabled="{$disabled}" width="{$width}" height="53" value="{$value}">
+	<image width="100%" height="53" scale9-left="50" scale9-right="50" id="{$id}_bar" src="resources/gui-system/images/elements/progressbar/progressbar_fill.png" />
+	<image width="100%" height="53" scale9-left="50" scale9-right="50" id="{$id}_background" src="resources/gui-system/images/elements/progressbar/progressbar.png" />
+	<text width="100%" height="53" font="resources/gui-system/fonts/Foo_20.fnt" text="{$text}" color="#000000" horizontal-align="center" vertical-align="center" id="{$id}_text" />
+</element>

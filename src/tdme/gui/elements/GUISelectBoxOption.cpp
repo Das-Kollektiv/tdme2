@@ -15,7 +15,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUISelectBoxOption::GUISelectBoxOption() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "selectbox-option.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-option.xml");
 }
 
 string GUISelectBoxOption::NAME = "selectbox-option";

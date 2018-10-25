@@ -15,7 +15,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUISelectBoxMultiple::GUISelectBoxMultiple() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "selectbox-multiple.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-multiple.xml");
 }
 
 string GUISelectBoxMultiple::NAME = "selectbox-multiple";

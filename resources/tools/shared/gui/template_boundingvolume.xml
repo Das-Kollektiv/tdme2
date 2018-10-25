@@ -20,11 +20,11 @@
 	<element id="boundingvolume_{$boundingvolume-id}" width="auto" height="100%">  
 		<layout show-on="sphere" id="boundingvolume_sphere_{$boundingvolume-id}" alignment="vertical" width="auto" height="auto" horizontal-align="center">
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_sphere_center_{$boundingvolume-id}" name="boundingvolume_sphere_center_{$boundingvolume-id}" width="150" height="auto" text="0.0" />
 				<space width="*" />
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_sphere_radius_{$boundingvolume-id}" name="boundingvolume_sphere_radius_{$boundingvolume-id}" width="150" height="auto" text="0.0, 0.0, 0.0" />
 			</layout>
@@ -33,17 +33,17 @@
 		</layout>
 		<layout show-on="capsule" id="boundingvolume_capsule_{$boundingvolume-id}" alignment="vertical" width="auto" height="auto" horizontal-align="center">
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Point A" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_capsule_a_{$boundingvolume-id}" name="boundingvolume_capsule_a_{$boundingvolume-id}" width="150" height="auto" text="0.0, 0.0, 0.0" />
 				<space width="*" />
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Point B" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_capsule_b_{$boundingvolume-id}" name="boundingvolume_capsule_b_{$boundingvolume-id}" width="150" height="auto" text="0.0, 0.0, 0.0" />
 			</layout>
 			<space height="5" />
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Radius" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_capsule_radius_{$boundingvolume-id}" name="boundingvolume_capsule_radius_{$boundingvolume-id}" width="150" height="auto" text="0.0" />
 				<space width="*" />
@@ -53,11 +53,11 @@
 		</layout>
 		<layout show-on="aabb" id="boundingvolume_aabb_{$boundingvolume-id}" alignment="vertical" width="auto" height="auto" horizontal-align="center">
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Min" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_aabb_min_{$boundingvolume-id}" name="boundingvolume_sphere_center_{$boundingvolume-id}" width="150" height="auto" text="0.0, 0.0, 0.0" />
 				<space width="*" />
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Max" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_aabb_max_{$boundingvolume-id}" name="boundingvolume_aabb_max_{$boundingvolume-id}" width="150" height="auto" text="0.0, 0.0, 0.0" />
 			</layout>
@@ -66,27 +66,27 @@
 		</layout>
 		<layout show-on="obb" id="boundingvolume_obb_{$boundingvolume-id}" alignment="vertical" width="auto" height="auto" horizontal-align="center">
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Center" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_obb_center_{$boundingvolume-id}" name="boundingvolume_obb_center_{$boundingvolume-id}" width="150" height="auto" text="0.0, 0.0, 0.0" />
 				<space width="*" />
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Halfextension" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_obb_halfextension_{$boundingvolume-id}" name="boundingvolume_obb_halfextension_{$boundingvolume-id}" width="150" height="auto" text="0.0, 0.0, 0.0" />
 			</layout>
 			<space height="5" />
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="X Rotation" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_obb_rotation_x_{$boundingvolume-id}" name="boundingvolume_obb_rotation_x_{$boundingvolume-id}" width="150" height="auto" text="0.0" />
 				<space width="*" />
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y Rotation" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_obb_rotation_y_{$boundingvolume-id}" name="boundingvolume_obb_rotation_y_{$boundingvolume-id}" width="150" height="auto" text="0.0" />
 			</layout>
 			<space height="5" />
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="Z Rotation" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_obb_rotation_z_{$boundingvolume-id}" name="boundingvolume_obb_rotation_z_{$boundingvolume-id}" width="150" height="auto" text="0.0" />
 				<space width="*" />
@@ -95,7 +95,7 @@
 		</layout> 
 		<layout show-on="convexmesh" id="boundingvolume_convexmesh_{$boundingvolume-id}" alignment="vertical" width="auto" height="auto" horizontal-align="center">
 			<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="resources/gui/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
+				<text font="resources/gui-system/fonts/Foo_20.fnt" text="File" width="140" height="auto" horizontal-align="left" />
 				<space width="5" />
 				<input id="boundingvolume_convexmesh_file_{$boundingvolume-id}" name="boundingvolume_convexmesh_file_{$boundingvolume-id}" width="*" height="auto" text="./model.tm" />
 				<space width="10" />

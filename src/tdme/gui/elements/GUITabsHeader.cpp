@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUITabsHeader::GUITabsHeader() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "tabs-header.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs-header.xml");
 }
 
 string GUITabsHeader::NAME = "tabs-header";

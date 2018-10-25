@@ -23,7 +23,7 @@ string GUIProgressBar::NAME = "progress-bar";
 
 GUIProgressBar::GUIProgressBar() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "progressbar.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "progressbar.xml");
 }
 
 const string& GUIProgressBar::getName()

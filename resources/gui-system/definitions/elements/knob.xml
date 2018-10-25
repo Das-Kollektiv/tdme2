@@ -1,0 +1,3 @@
+<element id="{$id}" name="{$name}" border="2" border-color="transparent" disabled="{$disabled}" focusable="true" width="95" height="90" background-image="resources/gui-system/images/elements/knob/knobs.png" value="{$value}">
+	<image id="{$id}_knob" src="resources/gui-system/images/elements/knob/knobs_marker.png" width="95" height="90" />
+</element>

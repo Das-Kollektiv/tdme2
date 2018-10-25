@@ -15,7 +15,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIDropDownOption::GUIDropDownOption() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "dropdown-option.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "dropdown-option.xml");
 }
 
 string GUIDropDownOption::NAME = "dropdown-option";

@@ -23,7 +23,7 @@ string GUIButton::NAME = "button";
 
 GUIButton::GUIButton() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "button.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "button.xml");
 }
 
 const string& GUIButton::getName()

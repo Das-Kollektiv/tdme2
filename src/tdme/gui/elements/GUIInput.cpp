@@ -13,7 +13,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUIInput::GUIInput() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "input.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "input.xml");
 }
 
 string GUIInput::NAME = "input";

@@ -23,7 +23,7 @@ string GUISliderH::NAME = "slider-horizontal";
 
 GUISliderH::GUISliderH() throw (FileSystemException)
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui/definitions/elements", "slider-h.xml");
+	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "slider-h.xml");
 }
 
 const string& GUISliderH::getName()

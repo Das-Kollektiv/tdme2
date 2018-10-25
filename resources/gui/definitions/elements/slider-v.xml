@@ -1,3 +1,0 @@
-<element id="{$id}" name="{$name}" border="2" border-color="transparent" disabled="{$disabled}" focusable="true" width="52" height="223" background-image="resources/gui/images/elements/sliderv/slider_v_rail.png" value="{$value}">
-	<image id="{$id}_slider" src="resources/gui/images/elements/sliderv/slider_v.png" width="50" height="26" />
-</element>
