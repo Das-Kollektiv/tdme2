@@ -29,6 +29,7 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Time.h>
 #include <tdme/utils/Console.h>
@@ -61,6 +62,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Time;
 using tdme::utils::Console;
@@ -131,7 +133,7 @@ vector<GUIKeyboardEvent>& GUI::getKeyboardEvents()
 	return keyboardEvents;
 }
 
-GUIFont* GUI::getFont(const string& fileName)
+GUIFont* GUI::getFont(const string& fileName) throw (FileSystemException)
 {
 	string canonicalFile;
 	string path;
@@ -154,7 +156,7 @@ GUIFont* GUI::getFont(const string& fileName)
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getFont(): An error occurred: "));
 			Console::println(string(exception.what()));
-			return nullptr;
+			throw;
 		}
 
 		fontCache[canonicalFile] = font;
@@ -165,7 +167,7 @@ GUIFont* GUI::getFont(const string& fileName)
 	return font;
 }
 
-Texture* GUI::getImage(const string& fileName)
+Texture* GUI::getImage(const string& fileName) throw (FileSystemException)
 {
 	// TODO: fix me, proper get path, filename
 	string canonicalFile;
@@ -190,7 +192,7 @@ Texture* GUI::getImage(const string& fileName)
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getImage(): An error occurred: "));
 			Console::println(string(exception.what()));
-			return nullptr;
+			throw;
 		}
 		imageCache[canonicalFile] = image;
 	}

@@ -16,6 +16,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Time.h>
 
@@ -35,6 +36,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::os::filesystem::FileSystemException;
 using tdme::utils::Time;
 
 /** 
@@ -122,16 +124,18 @@ public:
 	/** 
 	 * Get font
 	 * @param fileName file name
-	 * @return
+	 * @throws FileSystemException
+	 * @return font
 	 */
-	static GUIFont* getFont(const string& fileName);
+	static GUIFont* getFont(const string& fileName) throw (FileSystemException);
 
 	/** 
 	 * Get image
 	 * @param fileName file name
-	 * @return
+	 * @throws FileSystemException
+	 * @return texture
 	 */
-	static Texture* getImage(const string& fileName);
+	static Texture* getImage(const string& fileName) throw (FileSystemException);
 
 	/** 
 	 * Get screen
