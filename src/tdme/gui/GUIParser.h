@@ -4,11 +4,12 @@
 #include <vector>
 
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/fwd-tdme.h>
 
-#include <tdme/gui/GUIParserException.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -20,6 +21,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
 using tdme::ext::tinyxml::TiXmlElement;
+using tdme::os::filesystem::FileSystemException;
 
 /** 
  * GUI parser 
@@ -39,34 +41,38 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @return GUI screen node
-	 * @throws IOException
+	 * @throws GUIParserException
+	 * @throws FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName) throw (GUIParserException);
+	static GUIScreenNode* parse(const string& pathName, const string& fileName) throw (GUIParserException, FileSystemException);
 
 	/** 
 	 * Parses a GUI XML content
 	 * @param xml xml
 	 * @return GUI screen node
-	 * @throws IOException
+	 * @throws GUIParserException
+	 * @throws FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml) throw (GUIParserException);
+	static GUIScreenNode* parse(const string& xml) throw (GUIParserException, FileSystemException);
 
 	/** 
 	 * Parses a GUI XML file into parent node
 	 * @param parentNode parent node
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws IOException
+	 * @throws GUIParserException
+	 * @throws FileSystemException
 	 */
-	static void parse(GUIParentNode* parentNode, const string& pathName, const string& fileName) throw (GUIParserException);
+	static void parse(GUIParentNode* parentNode, const string& pathName, const string& fileName) throw (GUIParserException, FileSystemException);
 
 	/** 
 	 * Parses a GUI XML content into parent node
 	 * @param parentNode parent node
 	 * @param xml xml
-	 * @throws IOException
+	 * @throws GUIParserException
+	 * @throws FileSystemException
 	 */
-	static void parse(GUIParentNode* parentNode, const string& xml) throw (GUIParserException);
+	static void parse(GUIParentNode* parentNode, const string& xml) throw (GUIParserException, FileSystemException);
 
 private:
 
@@ -75,9 +81,10 @@ private:
 	 * @param guiParentNode gui parent node
 	 * @param xmlParentNode xml parent node
 	 * @param guiElement gui element
-	 * @throws Exception
+	 * @throws GUIParserException
+	 * @throws FileSystemException
 	 */
-	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) throw (GUIParserException);
+	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) throw (GUIParserException, FileSystemException);
 
 	/** 
 	 * Returns immediate children tags
@@ -124,8 +131,9 @@ public:
 	 * Add GUI element
 	 * @param guiElement guiElement
 	 * @throws GUIParserException
+	 * @throws FileSystemException
 	 */
-	static void addElement(GUIElement* guiElement) throw (GUIParserException);
+	static void addElement(GUIElement* guiElement) throw (GUIParserException, FileSystemException);
 
 	/**
 	 * Initialize GUI elements
