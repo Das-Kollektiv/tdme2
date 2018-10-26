@@ -45,8 +45,10 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/controller/ProgressBarScreenController.h>
 #include <tdme/tools/shared/files/LevelFileExport.h>
 #include <tdme/tools/shared/files/LevelFileImport.h>
+#include <tdme/tools/shared/files/ProgressCallback.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLibrary.h>
@@ -113,8 +115,10 @@ using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::tools::shared::files::LevelFileExport;
 using tdme::tools::shared::files::LevelFileImport;
+using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLibrary;
@@ -736,6 +740,7 @@ void LevelEditorView::activate()
 	engine->getGUI()->addRenderScreen(TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 	loadLevel();
 	engine->getCamera()->setLookAt(camLookAt);
@@ -1343,7 +1348,19 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 		if (haveModelFile == true) {
 			LevelFileImport::doImportFromModel(path, file, level);
 		} else {
-			LevelFileImport::doImport(path, file, level);
+			class ImportProgressCallback: public ProgressCallback {
+			private:
+				ProgressBarScreenController* progressBarScreenController;
+			public:
+				ImportProgressCallback(ProgressBarScreenController* progressBarScreenController): progressBarScreenController(progressBarScreenController) {
+				}
+				virtual void progress(float value) {
+					progressBarScreenController->progress(value);
+				}
+			};
+			popUps->getProgressBarScreenController()->show();
+			LevelFileImport::doImport(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
+			popUps->getProgressBarScreenController()->close();
 		}
 		for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 			level->getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();

@@ -27,6 +27,7 @@ namespace controller {
 	class ParticleSystemScreenController_onActionPerformed_4;
 	class ParticleSystemScreenController_onEntitySave_3;
 	class ParticleSystemScreenController_onParticleSystemLoad_2;
+	class ProgressBarScreenController;
 	class ScreenController;
 }  // namespace controller
 }  // namespace shared

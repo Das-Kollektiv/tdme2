@@ -6,6 +6,7 @@
 
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::controller::ProgressBarScreenController;
 
 /**
  * Pop ups view
@@ -16,6 +17,7 @@ class tdme::tools::shared::views::PopUps
 private:
 	InfoDialogScreenController* infoDialogScreenController {  };
 	FileDialogScreenController* fileDialogScreenController {  };
+	ProgressBarScreenController* progressBarScreenController {  };
 
 public:
 
@@ -25,11 +27,16 @@ public:
 	virtual FileDialogScreenController* getFileDialogScreenController();
 
 	/** 
-	 * @return info dialog scren controller
+	 * @return info dialog screen controller
 	 */
 	virtual InfoDialogScreenController* getInfoDialogScreenController();
 
 	/** 
+	 * @return progress bar screen controller
+	 */
+	virtual ProgressBarScreenController* getProgressBarScreenController();
+
+	/**
 	 * Init
 	 */
 	virtual void initialize();
