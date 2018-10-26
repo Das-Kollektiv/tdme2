@@ -180,7 +180,6 @@ void LevelEditorScreenController::dispose()
 void LevelEditorScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->setText(text);
-	screenNode->layout(screenCaption);
 }
 
 void LevelEditorScreenController::setGrid(bool enabled, float gridY)

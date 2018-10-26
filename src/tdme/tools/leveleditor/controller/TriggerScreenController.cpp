@@ -82,7 +82,6 @@ void TriggerScreenController::dispose()
 void TriggerScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->setText(text);
-	screenNode->layout(screenCaption);
 }
 
 void TriggerScreenController::setEntityData(const string& name, const string& description)

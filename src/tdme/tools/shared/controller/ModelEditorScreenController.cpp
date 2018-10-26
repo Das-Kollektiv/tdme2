@@ -207,7 +207,6 @@ void ModelEditorScreenController::dispose()
 void ModelEditorScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->setText(text);
-	screenNode->layout(screenCaption);
 }
 
 void ModelEditorScreenController::setEntityData(const string& name, const string& description)

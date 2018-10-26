@@ -249,7 +249,6 @@ void ParticleSystemScreenController::dispose()
 void ParticleSystemScreenController::setScreenCaption(const string& text)
 {
 	screenCaption->setText(text);
-	screenNode->layout(screenCaption);
 }
 
 void ParticleSystemScreenController::setEntityData(const string& name, const string& description)
