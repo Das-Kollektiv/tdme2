@@ -113,7 +113,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		);
 	} else
 	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
-		model = ModelReader::read("resources/tools/leveleditor/models", "arrow.dae");
+		model = ModelReader::read("resources/tools/leveleditor/models", "empty.dae");
 	}
 
 	levelEditorEntity = new LevelEditorEntity(
