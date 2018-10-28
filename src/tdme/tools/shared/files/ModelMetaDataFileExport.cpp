@@ -20,6 +20,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
@@ -63,6 +64,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
@@ -156,6 +158,21 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		}
 		*/
 		jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
+		if (entity->getModelSettings()->getAnimationSounds().size() > 0) {
+			ext::jsonbox::Array jAnimationSounds;
+			for (auto animationSound: entity->getModelSettings()->getAnimationSounds()) {
+				if (animationSound->getFileName().length() == 0) continue;
+				ext::jsonbox::Object jAnimationSound;
+				jAnimationSound["i"] = animationSound->getAnimation();
+				jAnimationSound["file"] = animationSound->getFileName();
+				jAnimationSound["g"] = animationSound->getGain();
+				jAnimationSound["p"] = animationSound->getPitch();
+				jAnimationSound["l"] = animationSound->isLooping();
+				jAnimationSound["f"] = animationSound->isFixed();
+				jAnimationSounds.push_back(jAnimationSound);
+			}
+			jEntityRoot["as"] = jAnimationSounds;
+		}
 		int lodLevelIdx = 2;
 		{
 			auto lodLevel = entity->getLODLevel2();

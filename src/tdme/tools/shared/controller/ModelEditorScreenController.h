@@ -123,6 +123,7 @@ private:
 	GUIElementNode* statsMaterialCount {  };
 
 	FileDialogPath* modelPath {  };
+	FileDialogPath* audioPath {  };
 
 	/**
 	 * @return level editor entity lod level or nullptr
@@ -155,6 +156,11 @@ public:
 	 * @return model path
 	 */
 	FileDialogPath* getModelPath();
+
+	/**
+	 * @return audio path
+	 */
+	FileDialogPath* getAudioPath();
 
 	// overridden methods
 	void initialize() override;
@@ -319,9 +325,29 @@ public:
 	void onAnimationApply();
 
 	/**
+	 * On animation sound clear
+	 */
+	void onAnimationSoundClear();
+
+	/**
+	 * On animation sound load
+	 */
+	void onAnimationSoundLoad();
+
+	/**
+	 * On animation sound apply
+	 */
+	void onAnimationSoundApply();
+
+	/**
 	 * Unset animations
 	 */
 	void unsetAnimations();
+
+	/**
+	 * Unset animation sound
+	 */
+	void unsetAnimationSound();
 
 	/** 
 	 * Set up model statistics

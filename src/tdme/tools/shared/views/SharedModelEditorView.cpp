@@ -250,6 +250,7 @@ void SharedModelEditorView::loadSettings()
 		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
 		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
 		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
+		modelEditorScreenController->getAudioPath()->setPath(settings.get("audio.path", "."));
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelEditorView::loadSettings(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -294,6 +295,7 @@ void SharedModelEditorView::storeSettings()
 		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
+		settings.put("audio.path", modelEditorScreenController->getAudioPath()->getPath());
 		settings.store("settings", "modeleditor.properties");
 	} catch (Exception& exception) {
 		Console::print(string("SharedModelEditorView::storeSettings(): An error occurred: "));
