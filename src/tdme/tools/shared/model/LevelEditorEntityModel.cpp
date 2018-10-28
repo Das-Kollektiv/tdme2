@@ -23,6 +23,21 @@ LevelEditorEntityModel::~LevelEditorEntityModel() {
 	}
 }
 
+void LevelEditorEntityModel::renameAnimationSound(const string& animation, const string& newAnimationName) {
+	auto animationSound = getAnimationSound(animation);
+	if (animationSound == nullptr) return;
+
+	auto newAnimationSound = createAnimationSound(newAnimationName);
+	newAnimationSound->setFileName(animationSound->getFileName());
+	newAnimationSound->setGain(animationSound->getGain());
+	newAnimationSound->setPitch(animationSound->getPitch());
+	newAnimationSound->setLooping(animationSound->isLooping());
+	newAnimationSound->setFixed(animationSound->isFixed());
+
+	removeAnimationSound(animation);
+
+}
+
 LevelEditorEntityAudio* LevelEditorEntityModel::createAnimationSound(const string& animation) {
 	auto it = animationSoundsById.find(animation);
 	if (it != animationSoundsById.end()) return it->second;

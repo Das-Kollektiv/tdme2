@@ -884,6 +884,7 @@ void ModelEditorScreenController::onAnimationApply() {
 			if (model->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
 				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
+			view->getEntity()->getModelSettings()->renameAnimationSound(animationSetup->getId(), animationsAnimationName->getController()->getValue().getString());
 			(*model->getAnimationSetups()).erase(animationSetup->getId());
 			animationSetup = model->addAnimationSetup(
 				animationsAnimationName->getController()->getValue().getString(),
@@ -891,7 +892,6 @@ void ModelEditorScreenController::onAnimationApply() {
 				0,
 				false
 			);
-			// TODO: rename animation sound
 		}
 		animationSetup->setStartFrame(Integer::parseInt(animationsAnimationStartFrame->getController()->getValue().getString()));
 		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue().getString()));

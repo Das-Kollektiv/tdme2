@@ -61,6 +61,13 @@ public:
 	}
 
 	/**
+	 * Rename animation sound
+	 * @param animation animation
+	 * @param newAnimationName new animation name
+	 */
+	void renameAnimationSound(const string& animation, const string& newAnimationName);
+
+	/**
 	 * Create animation sound
 	 * @param animation animation
 	 * @return level editor entity audio
