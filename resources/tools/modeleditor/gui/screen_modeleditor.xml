@@ -692,9 +692,11 @@
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
 									<text font="resources/gui-system/fonts/Foo_20.fnt" text="File" width="85" height="auto"/>
 									<space width="23" />
-									<input id="animations_animation_sound_file" name="animations_animation_sound_file" width="418" height="auto" text="" />
+									<input id="animations_animation_sound_file" name="animations_animation_sound_file" width="344" height="auto" text="" />
                                      <space width="10" />
                                      <button id="animations_animation_sound_load" name="animations_animation_sound_load" text="Load" width="60" height="auto" />
+                                     <space width="10" />
+                                     <button id="animations_animation_sound_clear" name="animations_animation_sound_clear" text="Clear" width="60" height="auto" />
 								</layout>
 								<space height="10" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">

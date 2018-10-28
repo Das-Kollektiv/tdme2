@@ -186,6 +186,14 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
 		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
+		animationsAnimationSoundFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_file"));
+		animationsAnimationSoundLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_load"));
+		animationsAnimationSoundClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_clear"));
+		animationsAnimationSoundGain = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_gain"));
+		animationsAnimationSoundPitch = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_pitch"));
+		animationsAnimationSoundLooping = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_looping"));
+		animationsAnimationSoundFixed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_fixed"));
+		animationsAnimationSoundApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_sound_apply"));
 		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
 		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
 		statsOpaqueFaces->getController()->setDisabled(true);
@@ -881,6 +889,20 @@ void ModelEditorScreenController::unsetAnimations() {
 	animationsAnimationName->getController()->setValue(MutableString(""));
 	animationsAnimationName->getController()->setDisabled(true);
 	animationsAnimationApply->getController()->setDisabled(true);
+	animationsAnimationSoundFile->getController()->setValue(MutableString(""));
+	animationsAnimationSoundFile->getController()->setDisabled(true);
+	animationsAnimationSoundLoad->getController()->setDisabled(true);
+	animationsAnimationSoundClear->getController()->setDisabled(true);
+	animationsAnimationSoundGain->getController()->setValue(MutableString(""));
+	animationsAnimationSoundGain->getController()->setDisabled(true);
+	animationsAnimationSoundPitch->getController()->setValue(MutableString(""));
+	animationsAnimationSoundPitch->getController()->setDisabled(true);
+	animationsAnimationSoundLooping->getController()->setValue(MutableString(""));
+	animationsAnimationSoundLooping->getController()->setDisabled(true);
+	animationsAnimationSoundFixed->getController()->setValue(MutableString(""));
+	animationsAnimationSoundFixed->getController()->setDisabled(true);
+	animationsAnimationSoundApply->getController()->setDisabled(true);
+
 }
 
 void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)

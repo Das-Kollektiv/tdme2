@@ -110,6 +110,14 @@ private:
 	GUIElementNode* animationsAnimationLoop {  };
 	GUIElementNode* animationsAnimationName {  };
 	GUIElementNode* animationsAnimationApply {  };
+	GUIElementNode* animationsAnimationSoundFile {  };
+	GUIElementNode* animationsAnimationSoundLoad {  };
+	GUIElementNode* animationsAnimationSoundClear {  };
+	GUIElementNode* animationsAnimationSoundGain {  };
+	GUIElementNode* animationsAnimationSoundPitch {  };
+	GUIElementNode* animationsAnimationSoundLooping {  };
+	GUIElementNode* animationsAnimationSoundFixed {  };
+	GUIElementNode* animationsAnimationSoundApply {  };
 	GUIElementNode* statsOpaqueFaces {  };
 	GUIElementNode* statsTransparentFaces {  };
 	GUIElementNode* statsMaterialCount {  };
