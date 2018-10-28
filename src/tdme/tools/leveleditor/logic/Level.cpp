@@ -221,7 +221,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 
 Entity* Level::createEmpty(const string& id, const Transformations& transformations) {
 	if (emptyModel == nullptr) {
-		emptyModel = ModelReader::read("resources/tools/leveleditor/models", "arrow.dae");
+		emptyModel = ModelReader::read("resources/tools/leveleditor/models", "empty.dae");
 	}
 	auto entity = new Object3D(
 		id,
