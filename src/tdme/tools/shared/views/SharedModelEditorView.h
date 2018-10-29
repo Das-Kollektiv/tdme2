@@ -5,6 +5,7 @@
 #include "../../../gui/events/GUIInputEventHandler.h"
 #include "View.h"
 
+#include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
@@ -12,9 +13,9 @@
 
 using std::string;
 
-using tdme::tools::shared::views::View;
-using tdme::gui::events::GUIInputEventHandler;
+using tdme::audio::Audio;
 using tdme::engine::Engine;
+using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -22,6 +23,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::View;
 
 /** 
  * TDME model editor view
@@ -34,6 +36,7 @@ class tdme::tools::shared::views::SharedModelEditorView
 {
 protected:
 	Engine* engine {  };
+	Audio* audio {  };
 
 private:
 	PopUps* popUps {  };
