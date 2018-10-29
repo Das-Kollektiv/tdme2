@@ -926,6 +926,7 @@ void ModelEditorScreenController::onAnimationSoundLoad() {
 				"/" +
 				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName()
 			);
+			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
 		}
 	private:
 		ModelEditorScreenController* modelEditorScreenController;
