@@ -22,6 +22,7 @@ private:
 	string fileName { "" };
 	float gain { 1.0f };
 	float pitch { 1.0f };
+	int offset { 0 };
 	bool looping { false };
 	bool fixed { false };
 
@@ -96,6 +97,21 @@ public:
 	 */
 	inline void setPitch(float pitch) {
 		this->pitch = pitch;
+	}
+
+	/**
+	 * @return offset in ms
+	 */
+	inline int getOffset() const {
+		return offset;
+	}
+
+	/**
+	 * Set offset in ms
+	 * @param offset offset
+	 */
+	inline void setOffset(int offset) {
+		this->offset = offset;
 	}
 
 	/**

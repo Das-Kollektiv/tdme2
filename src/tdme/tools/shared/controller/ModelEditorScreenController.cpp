@@ -199,6 +199,7 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationSoundClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_clear"));
 		animationsAnimationSoundGain = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_gain"));
 		animationsAnimationSoundPitch = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_pitch"));
+		animationsAnimationSoundOffset = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_offset"));
 		animationsAnimationSoundLooping = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_looping"));
 		animationsAnimationSoundFixed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_fixed"));
 		animationsAnimationSoundApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_sound_apply"));
@@ -835,6 +836,8 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 		animationsAnimationSoundGain->getController()->setDisabled(defaultAnimation);
 		animationsAnimationSoundPitch->getController()->setValue(MutableString(animationSound->getPitch(), 4));
 		animationsAnimationSoundPitch->getController()->setDisabled(defaultAnimation);
+		animationsAnimationSoundOffset->getController()->setValue(MutableString(animationSound->getOffset()));
+		animationsAnimationSoundOffset->getController()->setDisabled(defaultAnimation);
 		animationsAnimationSoundLooping->getController()->setValue(MutableString(animationSound->isLooping() == true?"1":""));
 		animationsAnimationSoundLooping->getController()->setDisabled(defaultAnimation);
 		animationsAnimationSoundFixed->getController()->setValue(MutableString(animationSound->isFixed() == true?"1":""));
@@ -949,6 +952,7 @@ void ModelEditorScreenController::onAnimationSoundApply() {
 		animationSound->setFileName(animationsAnimationSoundFile->getController()->getValue().getString());
 		animationSound->setGain(Float::parseFloat(animationsAnimationSoundGain->getController()->getValue().getString()));
 		animationSound->setPitch(Float::parseFloat(animationsAnimationSoundPitch->getController()->getValue().getString()));
+		animationSound->setOffset(Integer::parseInt(animationsAnimationSoundOffset->getController()->getValue().getString()));
 		animationSound->setLooping(animationsAnimationSoundLooping->getController()->getValue().getString() == "1");
 		animationSound->setFixed(animationsAnimationSoundFixed->getController()->getValue().getString() == "1");
 		view->playAnimation(animationSound->getAnimation());
@@ -988,6 +992,8 @@ void ModelEditorScreenController::unsetAnimationSound() {
 	animationsAnimationSoundGain->getController()->setDisabled(true);
 	animationsAnimationSoundPitch->getController()->setValue(MutableString(""));
 	animationsAnimationSoundPitch->getController()->setDisabled(true);
+	animationsAnimationSoundOffset->getController()->setValue(MutableString(""));
+	animationsAnimationSoundOffset->getController()->setDisabled(true);
 	animationsAnimationSoundLooping->getController()->setValue(MutableString(""));
 	animationsAnimationSoundLooping->getController()->setDisabled(true);
 	animationsAnimationSoundFixed->getController()->setValue(MutableString(""));

@@ -708,6 +708,16 @@
 									<space width="*" />
 									<input id="animations_animation_sound_pitch" name="animations_animation_sound_pitch" width="180" height="auto" text="1.0" />
 								</layout>
+								<space height="10" />
+								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Offset ms" width="85" height="auto" />
+									<space width="*" />
+									<input id="animations_animation_sound_offset" name="animations_animation_sound_offset" width="180" height="auto" text="0" />
+									<space width="*" />
+									<space width="85" />
+									<space width="*" />
+									<space width="180" />
+								</layout>
 							    <space height="10" />
                                  <layout width="600" height="auto" alignment="horizontal" vertical-align="center">
                                      <text font="resources/gui-system/fonts/Foo_20.fnt" text="Looping" width="85" height="auto" />

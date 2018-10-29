@@ -182,6 +182,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 				animationSound->setFileName(jAnimationSound["file"].getString());
 				animationSound->setGain(static_cast<float>(jAnimationSound["g"].getDouble()));
 				animationSound->setPitch(static_cast<float>(jAnimationSound["p"].getDouble()));
+				animationSound->setOffset(static_cast<float>(jAnimationSound["o"].getInt()));
 				animationSound->setLooping(jAnimationSound["l"].getBoolean());
 				animationSound->setFixed(jAnimationSound["f"].getBoolean());
 			}
