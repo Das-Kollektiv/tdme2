@@ -54,15 +54,15 @@ public:
 	 */
 	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException);
 
-private:
-
 	/**
-	 * Get model path name
-	 * @param pathName path name
-	 * @param fileName file name
+	 * Get resource path name
+	 * @param pathName path name within a TDME2 resource folder where parent resource was loaded from
+	 * @param fileName file name containing a path and file in a TDME2 resource folder
 	 * @return model path name
 	 */
-	static const string getModelPathName(const string& pathName, const string& fileName);
+	static const string getResourcePathName(const string& pathName, const string& fileName);
+
+private:
 
 	/** 
 	 * Parse bounding volume

@@ -108,7 +108,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	}
 	Model* model = nullptr;
 	if (modelFileName.length() > 0) {
-		modelPathName = getModelPathName(pathName, modelFileName);
+		modelPathName = getResourcePathName(pathName, modelFileName);
 		model = ModelReader::read(
 			modelPathName,
 			FileSystem::getInstance()->getFileName(modelFileName)
@@ -207,7 +207,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 				objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].getBoolean());
 				try {
 					auto particleModelFile = (jObjectParticleSystem["mf"].getString());
-					auto particleModelPath = getModelPathName(pathName, particleModelFile);
+					auto particleModelPath = getResourcePathName(pathName, particleModelFile);
 					objectParticleSystem->setModelFile(
 						particleModelPath + "/" + Tools::getFileName(particleModelFile)
 					);
@@ -404,7 +404,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	return levelEditorEntity;
 }
 
-const string ModelMetaDataFileImport::getModelPathName(const string& pathName, const string& fileName) {
+const string ModelMetaDataFileImport::getResourcePathName(const string& pathName, const string& fileName) {
 	string modelFile = FileSystem::getInstance()->getCanonicalPath(
 		(
 			StringUtils::startsWith(FileSystem::getInstance()->getPathName(fileName), "/") == true?
@@ -498,7 +498,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 		try {
 			string fileName = jBv["file"].getString();
 			entityBoundingVolume->setupConvexMesh(
-				getModelPathName(pathName, fileName),
+				getResourcePathName(pathName, fileName),
 				Tools::getFileName(fileName)
 			);
 		} catch (Exception& exception) {
@@ -520,7 +520,7 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 	);
 	if (lodType == LODObject3D::LODLEVELTYPE_MODEL || lodType == LODObject3D::LODLEVELTYPE_PLANE) {
 		auto modelFileName = lodLevel->getFileName();
-		auto modelPathName = getModelPathName(pathName, modelFileName);
+		auto modelPathName = getResourcePathName(pathName, modelFileName);
 		lodLevel->setModel(
 			ModelReader::read(
 				modelPathName,
