@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <tdme/audio/Audio.h>
+#include <tdme/audio/Sound.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/PartitionNone.h>
@@ -24,6 +26,8 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
+#include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
@@ -38,6 +42,8 @@
 
 using std::string;
 
+using tdme::audio::Audio;
+using tdme::audio::Sound;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
@@ -62,6 +68,8 @@ using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityAudio;
+using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
@@ -188,6 +196,11 @@ void SharedModelEditorView::handleInputEvents()
 
 void SharedModelEditorView::display()
 {
+	if (audioOffset > 0 && Time::getCurrentMillis() - audioStarted >= audioOffset) {
+		auto audio = Audio::getInstance()->getEntity("audio");
+		if (audio != nullptr) audio->play();
+		audioOffset = -1LL;
+	}
 	if (loadModelRequested == true) {
 		initModelRequested = true;
 		initModelRequestedReset = false;
@@ -203,6 +216,7 @@ void SharedModelEditorView::display()
 	entityDisplayView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
+	Audio::getInstance()->update();
 }
 
 void SharedModelEditorView::updateGUIElements()
@@ -311,6 +325,7 @@ void SharedModelEditorView::dispose()
 {
 	storeSettings();
 	Engine::getInstance()->reset();
+	Audio::getInstance()->reset();
 }
 
 void SharedModelEditorView::onLoadModel(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
@@ -374,7 +389,33 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 void SharedModelEditorView::playAnimation(const string& animationId) {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (object != nullptr) {
+		Audio::getInstance()->removeEntity("audio");
 		object->setAnimation(animationId);
+		auto animationSound = entity->getModelSettings()->getAnimationSound(animationId);
+		if (animationSound != nullptr && animationSound->getFileName().length() > 0) {
+			string pathName = ModelMetaDataFileImport::getResourcePathName(
+				Tools::getPath(entity->getEntityFileName()),
+				animationSound->getFileName()
+			);
+			string fileName = Tools::getFileName(animationSound->getFileName());
+			auto sound = new Sound(
+				"audio",
+				pathName,
+				fileName
+			);
+			sound->setGain(animationSound->getGain());
+			sound->setPitch(animationSound->getPitch());
+			sound->setLooping(animationSound->isLooping());
+			sound->setFixed(true);
+			Audio::getInstance()->addEntity(sound);
+			audioStarted = Time::getCurrentMillis();
+			audioOffset = -1LL;
+			if (animationSound->getOffset() <= 0) {
+				sound->play();
+			} else {
+				audioOffset = animationSound->getOffset();
+			}
+		}
 	}
 }
 

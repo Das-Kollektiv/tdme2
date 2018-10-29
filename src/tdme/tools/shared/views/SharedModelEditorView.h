@@ -47,6 +47,8 @@ private:
 	string modelFile {  };
 	int lodLevel {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
+	int64_t audioStarted { -1LL };
+	int64_t audioOffset { -1LL };
 
 	/**
 	 * Init model
