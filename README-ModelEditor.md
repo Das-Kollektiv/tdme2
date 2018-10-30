@@ -30,6 +30,7 @@
         - adjust colors, textures, masked transparency
     - animations editor
         - create, edit and delete animations
+        - relate sounds to animations
     - set up rendering options
         - use dynamic shadowing
     - see statistics
@@ -38,7 +39,7 @@
         - material count
 
 - What is WIP
-    - setting up physic properties
+    - audio support
 
 - Links
 	- TDME2 Engine, see [README.md](./README.md)

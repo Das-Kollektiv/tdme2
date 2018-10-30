@@ -41,6 +41,7 @@
 
 - What is WIP
     - set up arbitrary lights as entities
+    - audio support
 
 - Links
 	- TDME2 Engine, see [README.md](./README.md)
