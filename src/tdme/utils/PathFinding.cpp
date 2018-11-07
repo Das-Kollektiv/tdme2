@@ -195,7 +195,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	while (successorNodes.empty() == false) {
 		PathFindingNode* successorNode = successorNodes.top();
 		successorNodes.pop();
-		auto& successorNodeKey = successorNode->key;
+		auto successorNodeKey = successorNode->key;
 
 		// Compute successor node's costs by costs to reach nodes point and the computed distance from node to successor node
 		float successorCostsReachPoint = node->costsReachPoint + computeDistance(successorNode, node);
@@ -258,7 +258,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	}
 
 	// node key
-	auto& nodeKey = node->key;
+	auto nodeKey = node->key;
 
 	// Remove node from open nodes, as we checked its successors
 	openNodes.erase(nodeKey);
@@ -357,10 +357,17 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 				}
 			case PATH_FOUND:
 				{
-					// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
+					Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 					int nodesCount = 0;
 					for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
-						path.push_back(Vector3(node->x, node->y, node->z));
+						path.
+							push_back(
+								Vector3(
+									node->x,
+									node->y,
+									node->z
+								)
+							);
 						/*
 						if (nodesCount > 0 && nodesCount % 100 == 0) {
 							Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount));
