@@ -118,6 +118,46 @@ void GUIMouseEvent::setWheelZ(float wheelZ)
 	this->wheelZ = wheelZ;
 }
 
+bool GUIMouseEvent::isMetaDown()
+{
+	return metaDown;
+}
+
+void GUIMouseEvent::setMetaDown(bool metaDown)
+{
+	this->metaDown = metaDown;
+}
+
+bool GUIMouseEvent::isControlDown()
+{
+	return controlDown;
+}
+
+void GUIMouseEvent::setControlDown(bool controlDown)
+{
+	this->controlDown = controlDown;
+}
+
+bool GUIMouseEvent::isAltDown()
+{
+	return altDown;
+}
+
+void GUIMouseEvent::setAltDown(bool altDown)
+{
+	this->altDown = altDown;
+}
+
+bool GUIMouseEvent::isShiftDown()
+{
+	return shiftDown;
+}
+
+void GUIMouseEvent::setShiftDown(bool shiftDown)
+{
+	this->shiftDown = shiftDown;
+}
+
 bool GUIMouseEvent::isProcessed()
 {
 	return processed;

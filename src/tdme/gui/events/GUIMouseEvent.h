@@ -24,6 +24,10 @@ private:
 	float wheelX {  };
 	float wheelY {  };
 	float wheelZ {  };
+	bool metaDown {  };
+	bool controlDown {  };
+	bool altDown {  };
+	bool shiftDown {  };
 	bool processed {  };
 
 public:
@@ -139,6 +143,50 @@ public:
 	virtual void setWheelZ(float wheelZ);
 
 	/** 
+	 * @return is meta down
+	 */
+	virtual bool isMetaDown();
+
+	/**
+	 * Set meta down
+	 * @param metaDown meta down
+	 */
+	virtual void setMetaDown(bool metaDown);
+
+	/**
+	 * @return control down
+	 */
+	virtual bool isControlDown();
+
+	/**
+	 * Set control down
+	 * @param controlDown control down
+	 */
+	virtual void setControlDown(bool controlDown);
+
+	/**
+	 * @return is alt down
+	 */
+	virtual bool isAltDown();
+
+	/**
+	 * Set alt down
+	 * @param altDown alt down
+	 */
+	virtual void setAltDown(bool altDown);
+
+	/**
+	 * @return is shift down
+	 */
+	virtual bool isShiftDown();
+
+	/**
+	 * Set shift down
+	 * @param shiftDown shiftDown
+	 */
+	virtual void setShiftDown(bool shiftDown);
+
+	/**
 	 * @return processed
 	 */
 	virtual bool isProcessed();
