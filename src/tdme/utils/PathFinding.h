@@ -40,14 +40,13 @@ public:
 	/**
 	 * Public constructor
 	 * @param world world
-	 * @param customTest user path finding test
 	 * @param sloping sloping
 	 * @param stepsMax steps max
 	 * @param stepSize step size
 	 * @param stepSizeLast step size last
 	 * @param actorStepUpMax actor step up max
 	 */
-	PathFinding(World* world, PathFindingCustomTest* customTest = nullptr, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f);
+	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f);
 
 	/**
 	 * Destructor
@@ -75,9 +74,10 @@ public:
 	 * @param endPosition end position
 	 * @param collisionTypeIds collision type ids
 	 * @param path path from actor to target
+	 * @param customTest custom test
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path);
+	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, PathFindingCustomTest* customTest = nullptr);
 
 private:
 	/**

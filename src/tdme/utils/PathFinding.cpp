@@ -35,9 +35,9 @@ using tdme::utils::Time;
 
 using tdme::utils::PathFinding;
 
-PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
+PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax) {
 	this->world = world;
-	this->customTest = customtest;
+	this->customTest = nullptr;
 	this->sloping = sloping;
 	this->end = new PathFindingNode();
 	this->actorBoundingVolume = nullptr;
@@ -52,7 +52,6 @@ PathFinding::PathFinding(World* world, PathFindingCustomTest* customtest, bool s
 
 PathFinding::~PathFinding() {
 	delete end;
-	if (customTest != nullptr) delete customTest;
 }
 
 void PathFinding::reset() {
@@ -264,12 +263,15 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	return PathFindingStatus::PATH_STEP;
 }
 
-bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path) {
+bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, PathFindingCustomTest* customTest) {
 	//
 	auto now = Time::getCurrentMillis();
 
+	// set up custom test
+	this->customTest = customTest;
+
 	// initialize custom test
-	if (customTest != nullptr) customTest->initialize();
+	if (this->customTest != nullptr) this->customTest->initialize();
 
 	// clear path
 	path.clear();
@@ -402,7 +404,11 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	// Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms");
 
 	// dispose custom test
-	if (customTest != nullptr) customTest->dispose();
+	if (this->customTest != nullptr) {
+		this->customTest->dispose();
+		delete this->customTest;
+		this->customTest = nullptr;
+	}
 
 	// return success
 	return success;
