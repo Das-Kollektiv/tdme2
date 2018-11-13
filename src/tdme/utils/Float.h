@@ -19,14 +19,9 @@ using std::string;
 class tdme::utils::Float final
 {
 public:
-	static constexpr int32_t MAX_EXPONENT { 127 };
-	static constexpr float MAX_VALUE { 3.402823466e+38f };
-	static constexpr int32_t MIN_EXPONENT { -126 };
-	static constexpr float MIN_NORMAL { 1.17549435E-38f };
-	static constexpr float MIN_VALUE { 1.4E-45f };
-	static constexpr float NEGATIVE_INFINITY { (-numeric_limits<float>::infinity()) };
+	static constexpr float MAX_VALUE { numeric_limits<float>::max() };
+	static constexpr float MIN_VALUE { -numeric_limits<float>::max() };
 	static constexpr float NaN { numeric_limits<float>::quiet_NaN() };
-	static constexpr float POSITIVE_INFINITY { numeric_limits<float>::infinity() };
 	static constexpr int32_t SIZE { 32 };
 
 	/**
