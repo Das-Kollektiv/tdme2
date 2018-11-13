@@ -12,6 +12,16 @@ struct tdme::utils::PathFindingCustomTest
 {
 
 	/**
+	 * Initialize custom test for a sequence of isWalkable calls for the current path finding execution
+	 */
+	virtual void initialize() = 0;
+
+	/**
+	 * Disposes custom test after a sequence of isWalkable calls for the last path finding execution
+	 */
+	virtual void dispose() = 0;
+
+	/**
 	 * Is walkable user test
 	 * @param actorObv actor cbv
 	 * @param x x

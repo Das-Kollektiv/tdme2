@@ -55,12 +55,6 @@ PathFinding::~PathFinding() {
 	if (customTest != nullptr) delete customTest;
 }
 
-string PathFinding::toKeyFloat(float value)
-{
-	string floatString = to_string(value);
-	return floatString.substr(0, floatString.length() - 5);
-}
-
 void PathFinding::reset() {
 	for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
 		delete nodeIt->second;
@@ -122,7 +116,7 @@ void PathFinding::start(Vector3 startPosition, Vector3 endPosition) {
 	start->costsReachPoint = 0.0f;
 	start->costsEstimated = 0.0f;
 	start->previousNode = nullptr;
-	start->key = toKeyFloat(start->x) + "," + toKeyFloat(start->y) + "," + toKeyFloat(start->z);
+	start->key = toKey(start->x, start->y, start->z);
 
 	// end node
 	auto& endXYZ = endPosition.getArray();
@@ -133,7 +127,7 @@ void PathFinding::start(Vector3 startPosition, Vector3 endPosition) {
 	end->costsReachPoint = 0.0f;
 	end->costsEstimated = 0.0f;
 	end->previousNode = nullptr;
-	end->key = toKeyFloat(end->x) + "," + toKeyFloat(end->y) + "," + toKeyFloat(end->z);
+	end->key = toKey(end->x, end->y, end->z);
 
 	// set up start node costs
 	start->costsEstimated = computeDistance(start, end);
@@ -185,7 +179,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 				successorNode->costsReachPoint = 0.0f;
 				successorNode->costsEstimated = 0.0f;
 				successorNode->previousNode = nullptr;
-				successorNode->key = toKeyFloat(successorNode->x) + "," + toKeyFloat(successorNode->y) + "," + toKeyFloat(successorNode->z);
+				successorNode->key = toKey(successorNode->x, successorNode->y, successorNode->z);
 				successorNodes.push(successorNode);
 			}
 		}
@@ -273,6 +267,9 @@ PathFinding::PathFindingStatus PathFinding::step() {
 bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path) {
 	//
 	auto now = Time::getCurrentMillis();
+
+	// initialize custom test
+	if (customTest != nullptr) customTest->initialize();
 
 	// clear path
 	path.clear();
@@ -403,6 +400,9 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	reset();
 
 	// Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms");
+
+	// dispose custom test
+	if (customTest != nullptr) customTest->dispose();
 
 	// return success
 	return success;
