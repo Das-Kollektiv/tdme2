@@ -82,12 +82,14 @@ bool PathFinding::isWalkable(float x, float y, float z, float stepUpMax, float& 
 				return false;
 			}
 			if (actorPosition.getY() > height) height = actorPosition.getY();
-			if (customTest != nullptr && customTest->isWalkable(actorBoundingVolume, actorPosition.getX(), actorPosition.getY(), actorPosition.getZ()) == false) {
-				return false;
-			}
 			_x+= actorXHalfExtension * 2.0f;
 		}
 		_z+= actorZHalfExtension * 2.0f;
+	}
+
+	// custom test
+	if (customTest != nullptr && customTest->isWalkable(actorBoundingVolume, x, height, z) == false) {
+		return false;
 	}
 
 	// set up transformations
@@ -289,7 +291,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	// init bounding volume, transformations, collision body
 	this->actorBoundingVolume = actorBoundingVolume;
 	this->actorTransformations.fromTransformations(actorTransformations);
-	auto actorCollisionBody = world->addCollisionBody("pathfinding.actor", true, collisionTypeIds, actorTransformations, {actorBoundingVolume});
+	auto actorCollisionBody = world->addCollisionBody("pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
 
 	// positions
 	Vector3 startPositionComputed;
