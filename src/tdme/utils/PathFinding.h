@@ -79,6 +79,18 @@ public:
 	 */
 	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, PathFindingCustomTest* customTest = nullptr);
 
+	/**
+	 * Checks if a cell is walkable
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param height y stepped up
+	 * @param collisionTypeIds collision type ids or 0 for default
+	 * @param ignoreStepUpMax ignore step up max
+	 * @return if cell is walkable
+	 */
+	bool isWalkable(float x, float y, float z, float& height, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
+
 private:
 	/**
 	 * Reset path finding
@@ -146,11 +158,12 @@ private:
 	 * @param x x
 	 * @param y y
 	 * @param z z
-	 * @param stepUpMax step up max
 	 * @param height y stepped up
+	 * @param collisionTypeIds collision type ids or 0 for default
+	 * @param ignoreStepUpMax ignore step up max
 	 * @return if cell is walkable
 	 */
-	bool isWalkable(float x, float y, float z, float stepUpMax, float& height);
+	bool isWalkableInternal(float x, float y, float z, float& height, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
 
 	/**
 	 * Sets up the PathFinding, it needs to be called after constructing the object

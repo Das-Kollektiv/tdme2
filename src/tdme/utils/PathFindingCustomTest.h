@@ -25,13 +25,13 @@ struct tdme::utils::PathFindingCustomTest
 
 	/**
 	 * Is walkable user test
-	 * @param actorObv actor cbv
+	 * @param pathFinding current path finding instance
 	 * @param x x
 	 * @param y y
 	 * @param z z
 	 * @return is walkable
 	 */
-	virtual bool isWalkable(BoundingVolume* actorObv, float x, float y, float z) = 0;
+	virtual bool isWalkable(PathFinding* pathFinding, float x, float y, float z) = 0;
 
 	/**
 	 * Destructor
