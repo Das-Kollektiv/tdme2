@@ -167,7 +167,8 @@ void GUIElementNode::layoutSubNodes()
 		if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 			guiSubNode->computedConstraints.height = height;
 			doLayoutSubNodes = true;
-		} else if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
+		} else
+		if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
 			guiSubNode->computedConstraints.width = width;
 			doLayoutSubNodes = true;
 		}
@@ -175,6 +176,8 @@ void GUIElementNode::layoutSubNodes()
 			(dynamic_cast< GUIParentNode* >(guiSubNode))->layoutSubNodes();
 		}
 	}
+	setTop(computedConstraints.top);
+	setLeft(computedConstraints.left);
 }
 
 void GUIElementNode::layout()

@@ -27,6 +27,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
@@ -34,6 +35,7 @@
 using std::array;
 using std::set;
 using std::string;
+using std::to_string;
 
 using tdme::gui::nodes::GUINode;
 
@@ -60,6 +62,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::utils::Console;
 using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
@@ -1036,12 +1039,26 @@ void GUINode::scrollToNodeX(GUIParentNode* toNode)
 	scrollXParentNode->scrollToNodeX(toNode);
 }
 
-const string GUINode::indent(int32_t indent)
-{
-	string tmp = "";
-	for (auto i = 0; i < indent; i++) 
-				tmp += "\t";
-
-	return tmp;
+void GUINode::dumpNode(GUINode* node, int indent) {
+	for (auto i = 0; i < indent; i++) Console::print("  ");
+	Console::println(
+		node->id + ": " +
+		to_string(node->computedConstraints.left) + ", " +
+		to_string(node->computedConstraints.top) + ", " +
+		to_string(node->computedConstraints.width) + ", " +
+		to_string(node->computedConstraints.height) + ", " +
+		to_string(node->computedConstraints.alignmentLeft) + ", " +
+		to_string(node->computedConstraints.alignmentTop) + ", " +
+		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
+		to_string(node->computedConstraints.contentAlignmentTop) + ": " +
+		to_string(node->conditionsMet)
+	);
+	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
+		auto parentNode = dynamic_cast< GUIParentNode* >(node);
+		for (auto subNode: parentNode->subNodes) {
+			dumpNode(subNode, indent + 1);
+		}
+	}
 }
+
 

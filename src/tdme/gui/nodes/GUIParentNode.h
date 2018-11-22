@@ -200,15 +200,15 @@ public:
 	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
+	/**
+	 * Invalidate render caches
+	 */
+	void invalidateRenderCaches();
+
 private:
 	/**
 	 * Get child controller nodes internal
 	 * @param childControllerNodes child controller nodes
 	 */
 	void getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes);
-
-	/**
-	 * Invalidate render caches
-	 */
-	void invalidateRenderCaches();
 };
