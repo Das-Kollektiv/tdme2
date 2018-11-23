@@ -1,4 +1,4 @@
-<element id="{$id}" width="{$width}" height="{$height}" background-color="#f0f0f0" border="1" border-color="#000000" name="{$name}" disabled="{$disabled}" focusable="true">
+<element id="{$id}" width="{$width}" height="{$height}" background-color="#f0f0f0" border="1" border-color="#000000" name="{$name}" disabled="{$disabled}" focusable="true" on-change="{$on-change}">
 	<layout alignment="vertical" width="100%">
 		<layout id="{$id}_layout_vertical" alignment="vertical" vertical-align="center" horizontal-align="center" background-color="#f0f0f0" width="100%">
 			<layout id="{$id}_layout_horizontal" width="100%" padding="5" alignment="horizontal">

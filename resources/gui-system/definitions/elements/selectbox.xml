@@ -1,4 +1,4 @@
-<element id="{$id}" width="{$width}" height="{$height}" border="1" border-color="black" name="{$name}" disabled="{$disabled}" focusable="true" overflow-y="downsize-children"> 
+<element id="{$id}" width="{$width}" height="{$height}" border="1" border-color="black" name="{$name}" disabled="{$disabled}" focusable="true" overflow-y="downsize-children" on-change="{$on-change}"> 
 	<layout id="{$id}_inner" alignment="vertical" padding="5" width="100%" height="{$height}" background-color="#f0f0f0">
 		{$innerXml}
 	</layout>

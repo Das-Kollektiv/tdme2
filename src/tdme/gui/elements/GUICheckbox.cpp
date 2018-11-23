@@ -40,6 +40,7 @@ map<string, string>* GUICheckbox::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
+	attributes["on-change"] = "";
 	return &attributes;
 }
 

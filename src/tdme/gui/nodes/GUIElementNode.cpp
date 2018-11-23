@@ -18,6 +18,9 @@
 #include <tdme/gui/nodes/GUIParentNode_Overflow.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/utils/Console.h>
+#include <tdme/utils/StringTokenizer.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::set;
 
@@ -38,6 +41,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::utils::Console;
+using tdme::utils::StringTokenizer;
+using tdme::utils::StringUtils;
 
 GUIElementNode::GUIElementNode(
 	GUIScreenNode* screenNode,
@@ -63,9 +69,11 @@ GUIElementNode::GUIElementNode(
 	bool ignoreEvents,
 	const string& onInitializeExpression,
 	const string& onMouseClickExpression,
+	const string& onMouseDoubleClickExpression,
 	const string& onMouseOverExpression,
-	const string& onMouseOutExpression)
-	throw (GUIParserException) :
+	const string& onMouseOutExpression,
+	const string& onChangeExpression
+	) throw (GUIParserException) :
 	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, border, padding, showOn, hideOn),
 	activeConditions(this)
 {
@@ -78,8 +86,10 @@ GUIElementNode::GUIElementNode(
 	this->ignoreEvents = ignoreEvents;
 	this->onInitializeExpression = onInitializeExpression;
 	this->onMouseClickExpression = onMouseClickExpression;
+	this->onMouseDoubleClickExpression = onMouseDoubleClickExpression;
 	this->onMouseOverExpression = onMouseOverExpression;
 	this->onMouseOutExpression = onMouseOutExpression;
+	this->onChangeExpression = onChangeExpression;
 	this->controller = ignoreEvents == true ? static_cast< GUINodeController* >(new GUIElementIgnoreEventsController(this)) : static_cast< GUINodeController* >(new GUIElementController(this));
 	this->controller->initialize();
 }
@@ -235,12 +245,86 @@ const string& GUIElementNode::getOnMouseClickExpression() {
 	return onMouseClickExpression;
 }
 
+const string& GUIElementNode::getOnMouseDoubleClickExpression() {
+	return onMouseDoubleClickExpression;
+}
+
 const string& GUIElementNode::getOnMouseOverExpression() {
 	return onMouseOverExpression;
 }
 
 const string& GUIElementNode::getOnMouseOutExpression() {
 	return onMouseOutExpression;
+}
+
+const string& GUIElementNode::getOnChangeExpression() {
+	return onChangeExpression;
+}
+
+void GUIElementNode::executeExpression(const string& expression) {
+	StringTokenizer t1;
+	t1.tokenize(expression, ";");
+	while (t1.hasMoreTokens()) {
+		StringTokenizer t2;
+		t2.tokenize(t1.nextToken(), "=");
+		string command;
+		string value;
+		string nodeId;
+		string subCommand;
+		if (t2.countTokens() > 0) {
+			command = StringUtils::trim(t2.nextToken());
+			if (t2.countTokens() > 1) value = StringUtils::trim(t2.nextToken());
+		}
+		t2.tokenize(command, ".");
+		if (t2.countTokens() == 2) {
+			nodeId = StringUtils::trim(t2.nextToken());
+			subCommand = StringUtils::trim(t2.nextToken());
+		}
+		if (subCommand == "value") {
+			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
+			auto nodeController = nodeElementNode != nullptr?nodeElementNode->getController():nullptr;
+			if (StringUtils::startsWith(value, "'") == true && StringUtils::endsWith(value, "'") == true) {
+				if (nodeController != nullptr) nodeController->setValue(MutableString(StringUtils::substring(value, 1, value.size() - 1)));
+			} else
+			if (StringUtils::endsWith(value, ".value") == true) {
+				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringUtils::substring(value, 0, value.length() - string(".value").size())));
+				auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
+				if (nodeController != nullptr && nodeValueController != nullptr) nodeController->setValue(nodeValueController->getValue());
+			} else {
+				Console::println("GUIElementController::executeExpression(): Unknown value in expression: " + value);
+			}
+		} else
+		if (subCommand == "condition") {
+			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
+			if (nodeElementNode != nullptr) {
+				nodeElementNode->getActiveConditions().removeAll();
+				nodeElementNode->getActiveConditions().add(value);
+			}
+		} else
+		if (subCommand == "condition-") {
+			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
+			if (nodeElementNode != nullptr) nodeElementNode->getActiveConditions().remove(value);
+		} else
+		if (subCommand == "condition+") {
+			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
+			if (nodeElementNode != nullptr) nodeElementNode->getActiveConditions().add(value);
+		} else
+		if (subCommand == "condition!") {
+			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
+			if (nodeElementNode != nullptr) {
+				if (nodeElementNode->getActiveConditions().has(value) == true) {
+					nodeElementNode->getActiveConditions().remove(value);
+				} else {
+					nodeElementNode->getActiveConditions().add(value);
+				}
+			}
+		}
+
+	}
+}
+
+void GUIElementNode::executeOnChangeExpression() {
+	if (onChangeExpression.size() > 0) executeExpression(onChangeExpression);
 }
 
 GUINodeConditions& GUIElementNode::getActiveConditions()

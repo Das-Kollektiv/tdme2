@@ -451,8 +451,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("ignore-events")))), "true"),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-initialize"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-click"))),
+					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-doubleclick"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-over"))),
-					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-out")))
+					string(AVOID_NULLPTR_STRING(node->Attribute("on-mouse-out"))),
+					string(AVOID_NULLPTR_STRING(node->Attribute("on-change")))
 				);
 				guiParentNode->addSubNode(guiElementNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {

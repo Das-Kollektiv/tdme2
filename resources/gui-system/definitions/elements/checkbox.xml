@@ -1,4 +1,4 @@
-<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true">
+<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-change="{$on-change}">
 	<!-- unchecked, no mouse over -->
 	<image effect-color-mul="#F0F0F0" hide-on="disabled,focus,checked,mouseover" src="resources/gui-system/images/elements/checkbox/background.png" />
 	<image effect-color-mul="#000000" hide-on="disabled,focus,checked,mouseover" src="resources/gui-system/images/elements/checkbox/border.png" />

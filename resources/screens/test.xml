@@ -238,11 +238,11 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 				<tab-content tab-id="tab7" vertical-align="top">
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
 						<progress-bar width="300" name="progressbar-test" id="progressbar-test" value="0.5" />
-						<slider-horizontal name="sliderh-test" id="sliderh-test" value="0.5" />
+						<slider-horizontal name="sliderh-test" id="sliderh-test" value="0.5" on-change="progressbar-test.value=sliderh-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value" />
 						<space width="50" />
-						<slider-vertical name="sliderv-test" id="sliderv-test" value="0.5" />
+						<slider-vertical name="sliderv-test" id="sliderv-test" value="0.5" on-change="progressbar-test.value=sliderv-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value" />
 						<space width="50" />
-						<knob name="knob-test" id="knob-test" value="0.5" />
+						<knob name="knob-test" id="knob-test" value="0.5" on-change="progressbar-test.value=knob-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value" />
 					</layout>
 				</tab-content>
 				<tab-content tab-id="tab8" vertical-align="top">
@@ -275,19 +275,19 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="vertical" width="100%" height="100%">
 						<space height="*" />
 						<layout horizontal-align="center" vertical-align="center" alignment="horizontal">
-							<element border="2" focusable="true" on-mouse-click="tab10-element.condition=a">
+							<element id="000" border="2" focusable="true" on-mouse-click="tab10-element.condition=a">
 								<text font="resources/gui-system/fonts/Foo_75.fnt" text="Click-A" color="#000000" />
 							</element>
 							<space width="20" />
-							<element border="2" focusable="true" on-mouse-click="tab10-element.condition=b">
+							<element id="111" border="2" focusable="true" on-mouse-click="tab10-element.condition=b">
 								<text font="resources/gui-system/fonts/Foo_75.fnt" text="Click-B" color="#000000" />
 							</element>
 							<space width="20" />
-							<element border="2" focusable="true" on-mouse-over="tab10-element.condition=c" on-mouse-out="tab10-element.condition=">
+							<element id="222" border="2" focusable="true" on-mouse-over="tab10-element.condition=c" on-mouse-out="tab10-element.condition=">
 								<text font="resources/gui-system/fonts/Foo_75.fnt" text="Over-C" color="#000000" />
 							</element>
 							<space width="20" />
-							<element border="2" focusable="true" on-mouse-click="tab10-element.condition=">
+							<element id="333" border="2" focusable="true" on-mouse-click="tab10-element.condition=">
 								<text font="resources/gui-system/fonts/Foo_75.fnt" text="Hide" color="#000000" />
 							</element>
 						</layout>

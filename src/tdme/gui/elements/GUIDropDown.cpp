@@ -37,6 +37,7 @@ map<string, string>* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
 	attributes["width"] = "100%";
 	attributes["height"] = "auto";
 	attributes["text"] = "10";
+	attributes["on-change"] = "";
 	return &attributes;
 }
 
