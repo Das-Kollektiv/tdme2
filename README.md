@@ -117,6 +117,9 @@
             - slider horizontal
             - slider vertical
             - tabs
+        - includes a simple script language
+            - to react on events with like on-mouse-click, ... and on-change for elements
+            - to manipulate conditions on elements and node properties
         - supports position and color based effects
     - Networking module, which consists of
         - UDP server
@@ -137,6 +140,7 @@
     - documentation
 
 - What is WIP or planned
+    - simple script language for GUI
     - SSAO post effect
     - Expose shader and post processing programs setup API
     - LOD
