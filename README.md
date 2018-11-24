@@ -119,7 +119,7 @@
             - tabs
         - includes a simple script language
             - to react on events with like on-mouse-click, ... and on-change for elements
-            - to manipulate conditions on elements and node properties
+            - to manipulate conditions of elements, values of element controller and node properties
         - supports position and color based effects
     - Networking module, which consists of
         - UDP server
