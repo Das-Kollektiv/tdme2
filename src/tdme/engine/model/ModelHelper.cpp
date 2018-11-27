@@ -687,3 +687,29 @@ void ModelHelper::shrinkToFit(Model* model) {
 		shrinkToFit(groupIt.second);
 	}
 }
+
+void ModelHelper::computeNormals(Group* group) {
+	group->getNormals()->clear();
+	array<Vector3, 3> vertices;
+	Vector3 normal;
+	for (auto& facesEntity: *group->getFacesEntities()) {
+		for (auto& face: *facesEntity.getFaces()) {
+			vertices[0] = (*group->getVertices())[(*face.getVertexIndices())[0]];
+			vertices[1] = (*group->getVertices())[(*face.getVertexIndices())[1]];
+			vertices[2] = (*group->getVertices())[(*face.getVertexIndices())[2]];
+			computeNormal(vertices, normal);
+			face.setNormalIndices(group->getNormals()->size(), group->getNormals()->size(), group->getNormals()->size());
+			group->getNormals()->push_back(normal);
+		}
+	}
+	for (auto subGroupIt: *group->getSubGroups()) {
+		computeNormals(subGroupIt.second);
+	}
+}
+
+void ModelHelper::computeNormals(Model* model) {
+	for (auto groupIt: *model->getSubGroups()) {
+		computeNormals(groupIt.second);
+	}
+	prepareForIndexedRendering(model);
+}

@@ -54,6 +54,14 @@ public:
 	array<int32_t, 3>* getNormalIndices();
 
 	/** 
+	 * Set normal indices
+	 * @param ni0 ni0
+	 * @param ni1 ni1
+	 * @param ni2 ni2
+	 */
+	void setNormalIndices(int32_t ni0, int32_t ni1, int32_t ni2);
+
+	/**
 	 * Set up optional texture coordinate indices
 	 * @param vt0 vtX
 	 * @param vt1 vtY

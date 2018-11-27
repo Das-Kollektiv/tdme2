@@ -336,6 +336,11 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			}
 			entity->update();
 			entity->setEnabled(enable);
+			// TODO: set up a shader selection box in LE
+			if (dynamic_cast<Object3D*>(entity) != nullptr && object->getEntity()->getModelSettings()->isTerrainMesh() == true) {
+				dynamic_cast<Object3D*>(entity)->setShader("terrain");
+				dynamic_cast<Object3D*>(entity)->setDistanceShader("terrain");
+			}
 			engine->addEntity(entity);
 		}
 	}

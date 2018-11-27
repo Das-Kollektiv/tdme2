@@ -145,10 +145,10 @@ public:
 	/** 
 	 * Loads a shader into open gl stack
 	 * @param type type
-	 * @param pathName pathName
-	 * @param fileName fileName
-	 * @param definitions definitions
-	 * @param functions functions
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param definitions preprocessor definitions
+	 * @param functions included functions
 	 * @return shader handle
 	 */
 	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;

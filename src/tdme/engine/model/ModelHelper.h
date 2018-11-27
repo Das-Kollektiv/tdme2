@@ -170,6 +170,12 @@ private:
 	 */
 	static void shrinkToFit(Group* group);
 
+	/**
+	 * Compute normals
+	 * @param group group
+	 */
+	static void computeNormals(Group* group);
+
 public:
 	/**
 	 * Partition model
@@ -185,5 +191,11 @@ public:
 	 * @param model model
 	 */
 	static void shrinkToFit(Model* model);
+
+	/**
+	 * Compute normals
+	 * @param group group
+	 */
+	static void computeNormals(Model* model);
 
 };

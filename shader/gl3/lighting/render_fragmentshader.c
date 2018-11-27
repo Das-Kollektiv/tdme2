@@ -71,11 +71,6 @@ uniform Light lights[MAX_LIGHTS];
 
 uniform vec4 sceneColor;
 
-uniform sampler2D diffuseTextureUnit;
-uniform int diffuseTextureAvailable;
-uniform int diffuseTextureMaskedTransparency;
-uniform float diffuseTextureMaskedTransparencyThreshold;
-
 uniform sampler2D specularTextureUnit;
 uniform int specularTextureAvailable;
 
@@ -98,6 +93,21 @@ in vec4 gsEffectColorAdd;
 out vec4 outColor;
 
 vec4 fragColor;
+
+{$DEFINITIONS}
+
+#if defined(HAVE_TERRAIN_SHADER)
+	in vec4 terrainBlending;
+	uniform sampler2D grasTextureUnit;
+	uniform sampler2D dirtTextureUnit;
+	uniform sampler2D stoneTextureUnit;
+	uniform sampler2D snowTextureUnit;
+#else
+	uniform sampler2D diffuseTextureUnit;
+	uniform int diffuseTextureAvailable;
+	uniform int diffuseTextureMaskedTransparency;
+	uniform float diffuseTextureMaskedTransparencyThreshold;
+#endif
 
 void computeLight(in int i, in vec3 normal, in vec3 position) {
 	vec3 lightDirection = lights[i].position.xyz - position.xyz;
@@ -145,18 +155,22 @@ void computeLights(in vec3 normal, in vec3 position) {
 
 void main (void) {
 	// retrieve diffuse texture color value
-	vec4 diffuseTextureColor;
-	if (diffuseTextureAvailable == 1) {
-		// fetch from texture
-		diffuseTextureColor = texture(diffuseTextureUnit, gsFragTextureUV);
-		// check if to handle diffuse texture masked transparency
-		if (diffuseTextureMaskedTransparency == 1) {
-			// discard if beeing transparent
-			if (diffuseTextureColor.a < diffuseTextureMaskedTransparencyThreshold) discard;
-			// set to opqaue
-			diffuseTextureColor.a = 1.0;
+	#if defined(HAVE_TERRAIN_SHADER)
+		// no op
+	#else
+		vec4 diffuseTextureColor;
+		if (diffuseTextureAvailable == 1) {
+			// fetch from texture
+			diffuseTextureColor = texture(diffuseTextureUnit, gsFragTextureUV);
+			// check if to handle diffuse texture masked transparency
+			if (diffuseTextureMaskedTransparency == 1) {
+				// discard if beeing transparent
+				if (diffuseTextureColor.a < diffuseTextureMaskedTransparencyThreshold) discard;
+				// set to opqaue
+				diffuseTextureColor.a = 1.0;
+			}
 		}
-	}
+	#endif
 
 	//
 	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
@@ -192,9 +206,19 @@ void main (void) {
 	fragColor.a = material.diffuse.a * gsEffectColorMul.a;
 
 	//
-	if (diffuseTextureAvailable == 1) {
-		outColor = clamp((gsEffectColorAdd + diffuseTextureColor * fragColor), 0.0, 1.0);
-	} else {
-		outColor = clamp(gsEffectColorAdd + fragColor, 0.0, 1.0);
-	}
+	#if defined(HAVE_TERRAIN_SHADER)
+		outColor = gsEffectColorAdd;
+		if (terrainBlending[0] > 0.001) outColor+= texture(grasTextureUnit, gsFragTextureUV) * terrainBlending[0];
+		if (terrainBlending[1] > 0.001) outColor+= texture(dirtTextureUnit, gsFragTextureUV) * terrainBlending[1];
+		if (terrainBlending[2] > 0.001) outColor+= texture(stoneTextureUnit, gsFragTextureUV) * terrainBlending[2];
+		if (terrainBlending[3] > 0.001) outColor+= texture(snowTextureUnit, gsFragTextureUV) * terrainBlending[3];
+		outColor*= fragColor;
+		outColor = clamp(outColor, 0.0, 1.0);
+	#else
+		if (diffuseTextureAvailable == 1) {
+			outColor = clamp((gsEffectColorAdd + diffuseTextureColor) * fragColor, 0.0, 1.0);
+		} else {
+			outColor = clamp(gsEffectColorAdd + fragColor, 0.0, 1.0);
+		}
+	#endif
 }

@@ -51,16 +51,16 @@ void LightingShaderBaseImplementation::initialize()
 	// get uniforms
 	//	globals
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureUnit");
-	if (uniformDiffuseTextureUnit == -1) return;
+	//if (uniformDiffuseTextureUnit == -1) return;
 
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureAvailable");
-	if (uniformDiffuseTextureAvailable == -1) return;
+	//if (uniformDiffuseTextureAvailable == -1) return;
 
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparency");
-	if (uniformDiffuseTextureMaskedTransparency == -1) return;
+	//if (uniformDiffuseTextureMaskedTransparency == -1) return;
 
 	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparencyThreshold");
-	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
+	//if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 
 	if (renderer->isDisplacementMappingAvailable() == true) {
 		uniformDisplacementTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "displacementTextureUnit");
@@ -184,7 +184,9 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine)
 		renderer->setProgramUniformFloatMatrix4x4(uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 		renderer->setProgramUniformFloatMatrix4x4(uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	}
-	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	if (uniformDiffuseTextureUnit != -1) {
+		renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	}
 	if (renderer->isSpecularMappingAvailable() == true) {
 		renderer->setProgramUniformInteger(uniformSpecularTextureUnit, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
 	}
@@ -250,9 +252,13 @@ void LightingShaderBaseImplementation::updateMaterial(GLRenderer* renderer)
 	// shininess
 	renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material.shininess);
 	// diffuse texture masked transparency
-	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+	if (uniformDiffuseTextureMaskedTransparency != -1) {
+		renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+	}
 	// diffuse texture masked transparency threshold
-	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
+	if (uniformDiffuseTextureMaskedTransparencyThreshold != -1) {
+		renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
+	}
 }
 
 void LightingShaderBaseImplementation::updateLight(GLRenderer* renderer, int32_t lightId)
@@ -318,7 +324,9 @@ void LightingShaderBaseImplementation::bindTexture(GLRenderer* renderer, int32_t
 
 	switch (renderer->getTextureUnit()) {
 		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
-			renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			if (uniformDiffuseTextureAvailable != -1) {
+				renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			}
 			break;
 		case LightingShaderConstants::TEXTUREUNIT_SPECULAR:
 			if (renderer->isSpecularMappingAvailable() == false)

@@ -56,6 +56,13 @@ array<int32_t, 3>* Face::getNormalIndices()
 	return &normalIndices;
 }
 
+void Face::setNormalIndices(int32_t ni0, int32_t ni1, int32_t ni2)
+{
+	normalIndices[0] = ni0;
+	normalIndices[1] = ni1;
+	normalIndices[2] = ni2;
+}
+
 void Face::setTextureCoordinateIndices(int32_t vt0, int32_t vt1, int32_t vt2)
 {
 	textureCoordinateIndices[0] = vt0;
