@@ -96,7 +96,8 @@ uniform int normalTextureAvailable;
 	#define GS_IN_ARRAY_AT(array, index) array
 
 	#if defined(HAVE_TERRAIN_SHADER)
-		out vec4 terrainBlending;
+		out float height;
+		out float slope;
 	#endif
 #endif
 
@@ -128,49 +129,14 @@ void main(void) {
 	#else
 		//
 		#if defined(HAVE_TERRAIN_SHADER)
-			#define TERRAIN_LEVEL_0	0.0
-			#define TERRAIN_LEVEL_1	10.0
-
 			vec4 heightVector4 = inModelMatrix * vec4(inVertex, 1.0);
 			vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
-			float height = heightVector3.y;
+			height = heightVector3.y;
 
 			mat4 normalMatrix = mat4(transpose(inverse(mat3(inModelMatrix))));
 			vec4 normalVector4 = normalMatrix * vec4(inNormal, 0.0);
 			vec3 normalVector3 = normalize(normalVector4.xyz);
-			float slope = abs(180.0 / 3.14 * acos(clamp(dot(normalVector3, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
-
-			terrainBlending[0] = 0.0; // gras
-			terrainBlending[1] = 0.0; // dirt
-			terrainBlending[2] = 0.0; // stone
-			terrainBlending[3] = 0.0; // snow
-
-			// height
-			if (height >= TERRAIN_LEVEL_1) {
-				float blendFactorHeight = clamp(height - TERRAIN_LEVEL_1, 0.0, 1.0);
-				// 10+ meter
-				if (slope > 45.0) {
-					terrainBlending[2] = 1.0 * blendFactorHeight; // stone
-				} else {
-					terrainBlending[3] = 1.0 * blendFactorHeight; // snow
-				}
-			} else
-			if (height >= TERRAIN_LEVEL_0) {
-				float blendFactorHeight = clamp(height - TERRAIN_LEVEL_0, 0.0, 1.0);
-				// 0..10 meter
-				if (slope > 45.0) {
-					terrainBlending[2] = 1.0 * blendFactorHeight; // stone
-				} else
-				if (slope > 26.0) {
-					terrainBlending[1] = 1.0 * blendFactorHeight; // dirt
-				} else {
-					terrainBlending[0] = 1.0 * blendFactorHeight; // gras
-				}
-			} else {
-				float blendFactorHeight = clamp(-height, 0.0, 1.0);
-				// 0- meter
-				terrainBlending[1] = 1.0 * blendFactorHeight; // dirt
-			}
+			slope = abs(180.0 / 3.14 * acos(clamp(dot(normalVector3, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
 		#endif
 
 		// compute vertex and pass to fragment shader

@@ -97,7 +97,8 @@ vec4 fragColor;
 {$DEFINITIONS}
 
 #if defined(HAVE_TERRAIN_SHADER)
-	in vec4 terrainBlending;
+	in float slope;
+	in float height;
 	uniform sampler2D grasTextureUnit;
 	uniform sampler2D dirtTextureUnit;
 	uniform sampler2D stoneTextureUnit;
@@ -207,6 +208,51 @@ void main (void) {
 
 	//
 	#if defined(HAVE_TERRAIN_SHADER)
+		#define TERRAIN_LEVEL_0				2.0
+		#define TERRAIN_LEVEL_1				12.0
+		#define TERRAIN_HEIGHT_BLEND		4.0
+
+		vec4 terrainBlending; // gras, dirt, stone, snow
+
+		// height
+		if (height > TERRAIN_LEVEL_1) {
+			float blendFactorHeight = clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			// 10+ meter
+			//if (slope > 45.0) {
+			//	terrainBlending[2] = blendFactorHeight; // stone
+			//} else {
+				terrainBlending[3] = blendFactorHeight; // snow
+			//}
+		}
+		if (height >= TERRAIN_LEVEL_0 && height < TERRAIN_LEVEL_1 + TERRAIN_HEIGHT_BLEND) {
+			float blendFactorHeight = 1.0;
+			if (height > TERRAIN_LEVEL_1) {
+				blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			} else
+			if (height < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
+				blendFactorHeight = clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			}
+
+			// 0..10 meter
+			//if (slope > 45.0) {
+			//	terrainBlending[2] = 1.0 * blendFactorHeight; // stone
+			//} else
+			//if (slope > 26.0) {
+			//	terrainBlending[1] = 1.0 * blendFactorHeight; // dirt
+			//} else {
+				terrainBlending[0] = 1.0 * blendFactorHeight; // gras
+			//}
+		}
+		if (height < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
+			float blendFactorHeight = 1.0;
+			if (height > TERRAIN_LEVEL_0) {
+				blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+			}
+			// 0- meter
+			terrainBlending[1] = 1.0 * blendFactorHeight; // dirt
+		}
+
+		//
 		outColor = gsEffectColorAdd;
 		if (terrainBlending[0] > 0.001) outColor+= texture(grasTextureUnit, gsFragTextureUV) * terrainBlending[0];
 		if (terrainBlending[1] > 0.001) outColor+= texture(dirtTextureUnit, gsFragTextureUV) * terrainBlending[1];
