@@ -97,6 +97,11 @@ vec4 fragColor;
 {$DEFINITIONS}
 
 #if defined(HAVE_TERRAIN_SHADER)
+	#define TERRAIN_LEVEL_0				-4.0
+	#define TERRAIN_LEVEL_1				10.0
+	#define TERRAIN_HEIGHT_BLEND		4.0
+	#define TERRAIN_SLOPE_BLEND			10.0
+
 	in float slope;
 	in float height;
 	uniform sampler2D grasTextureUnit;
@@ -208,11 +213,6 @@ void main (void) {
 
 	//
 	#if defined(HAVE_TERRAIN_SHADER)
-		#define TERRAIN_LEVEL_0				0.0
-		#define TERRAIN_LEVEL_1				10.0
-		#define TERRAIN_HEIGHT_BLEND		4.0
-		#define TERRAIN_SLOPE_BLEND			10.0
-
 		vec4 terrainBlending = vec4(0.0, 0.0, 0.0, 0.0); // gras, dirt, stone, snow
 
 		// height
