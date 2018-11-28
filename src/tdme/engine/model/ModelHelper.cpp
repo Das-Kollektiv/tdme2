@@ -86,7 +86,7 @@ void ModelHelper::computeNormals(const array<Vector3,3>& vertices, array<Vector3
 
 	// compute vertex normal
 	for (auto i = 0; i < vertices.size(); i++) {
-		(normals)[i].set(normal);
+		normals[i].set(normal);
 	}
 }
 
@@ -694,12 +694,24 @@ void ModelHelper::computeNormals(Group* group) {
 	Vector3 normal;
 	for (auto& facesEntity: *group->getFacesEntities()) {
 		for (auto& face: *facesEntity.getFaces()) {
-			vertices[0] = (*group->getVertices())[(*face.getVertexIndices())[0]];
-			vertices[1] = (*group->getVertices())[(*face.getVertexIndices())[1]];
-			vertices[2] = (*group->getVertices())[(*face.getVertexIndices())[2]];
+			for (auto i = 0; i < vertices.size(); i++) {
+				vertices[i] = (*group->getVertices())[(*face.getVertexIndices())[i]];
+			}
 			computeNormal(vertices, normal);
-			face.setNormalIndices(group->getNormals()->size(), group->getNormals()->size(), group->getNormals()->size());
+			face.setNormalIndices(group->getNormals()->size(), group->getNormals()->size() + 1, group->getNormals()->size() + 2);
 			group->getNormals()->push_back(normal);
+			group->getNormals()->push_back(normal);
+			group->getNormals()->push_back(normal);
+		}
+	}
+	auto normals = *group->getNormals();
+	for (auto& facesEntity: *group->getFacesEntities()) {
+		for (auto& face: *facesEntity.getFaces()) {
+			for (auto i = 0; i < vertices.size(); i++) {
+				if (interpolateNormal(group, (*group->getVertices())[(*face.getVertexIndices())[i]], normals, normal) == true) {
+					(*group->getNormals())[(*face.getNormalIndices())[i]].set(normal);
+				}
+			}
 		}
 	}
 	for (auto subGroupIt: *group->getSubGroups()) {

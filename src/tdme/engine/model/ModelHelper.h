@@ -8,7 +8,11 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Face.h>
+#include <tdme/engine/model/FacesEntity.h>
+#include <tdme/engine/model/Group.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::array;
@@ -169,6 +173,37 @@ private:
 	 * @param group group
 	 */
 	static void shrinkToFit(Group* group);
+
+	/**
+	 * Find all faces that include vertex and compute the avarage normal
+	 * @param group group
+	 * @param vertex vertex
+	 * @param normals normals
+	 * @param normal normal
+	 */
+	inline static bool interpolateNormal(Group* group, const Vector3& vertex, const vector<Vector3>& normals, Vector3& normal) {
+		array<Vector3, 3> vertices;
+		auto normalCount = 0;
+		normal.set(0.0f, 0.0f, 0.0f);
+		for (auto& facesEntity: *group->getFacesEntities()) {
+			for (auto& face: *facesEntity.getFaces()) {
+				for (auto i = 0; i < vertices.size(); i++) {
+					if (vertex.equals((*group->getVertices())[(*face.getVertexIndices())[i]]) == true) {
+						normal.add(normals[(*face.getNormalIndices())[0]]);
+						normalCount++;
+						break;
+					}
+
+				}
+			}
+		}
+		if (normalCount > 1) {
+			normal.normalize();
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Compute normals
