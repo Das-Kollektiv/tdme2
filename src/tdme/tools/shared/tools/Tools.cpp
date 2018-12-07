@@ -312,6 +312,9 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 			modelEntity->setDynamicShadowingEnabled(true);
 			modelEntity->setEffectColorMul(colorMul);
 			modelEntity->setEffectColorAdd(colorAdd);
+			dynamic_cast<Object3D*>(modelEntity)->setShader(entity->getShader());
+			dynamic_cast<Object3D*>(modelEntity)->setDistanceShader(entity->getDistanceShader());
+			dynamic_cast<Object3D*>(modelEntity)->setDistanceShaderDistance(entity->getDistanceShaderDistance());
 			engine->addEntity(modelEntity);
 		}
 	}

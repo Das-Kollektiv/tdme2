@@ -420,7 +420,14 @@ void SharedModelEditorView::playAnimation(const string& animationId) {
 	}
 }
 
-void SharedModelEditorView::onSetEntityData()
-{
+void SharedModelEditorView::updateRendering() {
+	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (object == nullptr || entity == nullptr) return;
+	object->setShader(entity->getShader());
+	object->setDistanceShader(entity->getDistanceShader());
+	object->setDistanceShaderDistance(entity->getDistanceShaderDistance());
+}
+
+void SharedModelEditorView::onSetEntityData() {
 }
 

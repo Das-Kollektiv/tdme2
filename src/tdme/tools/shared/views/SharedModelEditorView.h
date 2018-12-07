@@ -185,6 +185,11 @@ public:
 	virtual void playAnimation(const string& animationId);
 
 	/**
+	 * Update rendering options
+	 */
+	virtual void updateRendering();
+
+	/**
 	 * Public constructor
 	 * @param popUps pop ups
 	 */

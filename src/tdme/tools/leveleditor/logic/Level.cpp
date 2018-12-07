@@ -260,8 +260,8 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				lodObject->setEffectColorMulLOD3(lodLevel3->getColorMul());
 			}
 			lodObject->setShader(levelEditorEntity->getShader());
-			lodObject->setDistanceShader("default");
-			lodObject->setDistanceShaderDistance(50.0f);
+			lodObject->setDistanceShader(levelEditorEntity->getDistanceShader());
+			lodObject->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
 		} else {
 			// single
 			entity = new Object3D(
@@ -269,8 +269,8 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				levelEditorEntity->getModel()
 			);
 			dynamic_cast<Object3D*>(entity)->setShader(levelEditorEntity->getShader());
-			dynamic_cast<Object3D*>(entity)->setDistanceShader("default");
-			dynamic_cast<Object3D*>(entity)->setDistanceShaderDistance(50.0f);
+			dynamic_cast<Object3D*>(entity)->setDistanceShader(levelEditorEntity->getDistanceShader());
+			dynamic_cast<Object3D*>(entity)->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
 		}
 	} else
 	// particle system
@@ -336,11 +336,6 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			}
 			entity->update();
 			entity->setEnabled(enable);
-			// TODO: set up a shader selection box in LE
-			if (dynamic_cast<Object3D*>(entity) != nullptr && object->getEntity()->getModelSettings()->isTerrainMesh() == true) {
-				dynamic_cast<Object3D*>(entity)->setShader("terrain");
-				dynamic_cast<Object3D*>(entity)->setDistanceShader("terrain");
-			}
 			engine->addEntity(entity);
 		}
 	}
@@ -354,8 +349,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 				levelEditorEntity->getModel()
 			);
 			object3DRenderGroup->setShader(levelEditorEntity->getShader());
-			object3DRenderGroup->setDistanceShader("default");
-			object3DRenderGroup->setDistanceShaderDistance(50.0f);
+			object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
+			object3DRenderGroup->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
 			for (auto transformation: itPartition.second) {
 				object3DRenderGroup->addObject(*transformation);
 			}

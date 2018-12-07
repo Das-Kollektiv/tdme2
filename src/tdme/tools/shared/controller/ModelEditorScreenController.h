@@ -65,7 +65,9 @@ private:
 	GUIElementNode* pivotApply {  };
 	GUIElementNode* renderingDynamicShadowing {  };
 	GUIElementNode* renderingRenderGroups {  };
-	GUIElementNode* renderingApplyFoliageAnimations {  };
+	GUIElementNode* renderingShader {  };
+	GUIElementNode* renderingDistanceShader {  };
+	GUIElementNode* renderingDistanceShaderDistance {  };
 	GUIElementNode* renderingApply {  };
 	GUIElementNode* lodLevel {  };
 	GUIElementNode* lodLevelApply {  };

@@ -71,6 +71,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	}
 	renderGroups = false;
 	shaderId = "default";
+	distanceShaderId = "default";
+	distanceShaderDistance = 10000.0f;
 	dynamicShadowing = true;
 }
 

@@ -410,30 +410,54 @@
 							</layout>
 						</scrollarea-vertical>
 					</tab-content>
-					<tab-content tab-id="tab_properties_rendering"> 
-						<layout width="100%" height="auto" horizontal-align="center" vertical-alignment="center" alignment="vertical">
-							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<checkbox id="rendering_dynamic_shadowing" name="rendering_dynamic_shadowing" value="1" />
-								<space width="5" />
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Use dynamic shadowing" width="200" height="auto"/>
+					<tab-content tab-id="tab_properties_rendering">
+						<scrollarea-vertical width="100%" height="100%"> 
+							<layout width="100%" height="auto" horizontal-align="center" alignment="vertical">
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Shader" width="100" height="auto" />
+									<space width="5" />
+									<dropdown id="rendering_shader" name="rendering_shader" width="200" height="auto" text="Default">
+										<dropdown-option text="Default" value="default" />										
+										<dropdown-option text="Foliage" value="foliage" />
+										<dropdown-option text="Terrain" value="terrain" />
+									</dropdown>
+								</layout>
+								<space height="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Dist. shader" width="100" height="auto" />
+									<space width="5" />
+									<dropdown id="rendering_distance_shader" name="rendering_distance_shader" width="200" height="auto" text="Default">
+										<dropdown-option text="Default" value="default" />										
+										<dropdown-option text="Foliage" value="foliage" />
+										<dropdown-option text="Terrain" value="terrain" />
+									</dropdown>
+								</layout>
+								<space height="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Min. distance" width="100" height="auto" />
+									<space width="5" />
+									<input id="rendering_distance_shader_distance" name="rendering_distance_shader_distance" width="200" height="auto" text="10000" />
+								</layout>
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<checkbox id="rendering_dynamic_shadowing" name="rendering_dynamic_shadowing" value="1" />
+									<space width="5" />
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Use dynamic shadowing" width="200" height="auto"/>
+								</layout>
+								<space height="5" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<checkbox id="rendering_render_groups" name="rendering_render_groups" value="1" />
+									<space width="5" />
+									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Use render groups" width="200" height="auto"/>
+								</layout>
+								<space height="20" />
+								<layout width="auto" height="auto" alignment="none" horizontal-align="center">
+									<button id="button_rendering_apply" name="button_rendering_apply" text="Apply" />
+								</layout>
+								<space height="20" />
 							</layout>
-							<space height="5" />
-							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<checkbox id="rendering_render_groups" name="rendering_render_groups" value="1" />
-								<space width="5" />
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Use render groups" width="200" height="auto"/>
-							</layout>
-							<space height="5" />
-							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<checkbox id="rendering_foliage_animation" name="rendering_foliage" value="1" />
-								<space width="5" />
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Apply foliage animation" width="200" height="auto"/>
-							</layout>
-							<space height="20" />
-							<layout width="auto" height="auto" alignment="none" horizontal-align="center">
-								<button id="button_rendering_apply" name="button_rendering_apply" text="Apply" />
-							</layout>
-						</layout>
+						</scrollarea-vertical>
 					</tab-content>
 					<tab-content tab-id="tab_properties_lod" vertical-align="center">
 						<scrollarea-vertical width="100%" height="100%">

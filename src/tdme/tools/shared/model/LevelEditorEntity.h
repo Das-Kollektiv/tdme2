@@ -62,6 +62,8 @@ private:
 	LevelEditorEntityModel* modelSettings;
 	bool renderGroups {  };
 	string shaderId {  };
+	string distanceShaderId {  };
+	float distanceShaderDistance {  };
 	bool dynamicShadowing {  };
 public:
 
@@ -283,6 +285,38 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
+	}
+
+	/**
+	 * Get distance shader
+	 * @return shader id
+	 */
+	inline const string& getDistanceShader() {
+		return distanceShaderId;
+	}
+
+	/**
+	 * Set distance shader
+	 * @param id shader id
+	 */
+	inline void setDistanceShader(const string& id) {
+		this->distanceShaderId = id;
+	}
+
+	/**
+	 * Get distance shader distance
+	 * @return shader id
+	 */
+	inline float getDistanceShaderDistance() {
+		return distanceShaderDistance;
+	}
+
+	/**
+	 * Set distance shader distance
+	 * @param distance distance
+	 */
+	inline void setDistanceShaderDistance(float distance) {
+		this->distanceShaderDistance = distance;
 	}
 
 	/**

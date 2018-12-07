@@ -405,6 +405,8 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());
 	levelEditorEntity->setRenderGroups(jEntityRoot["rg"].isNull() == false?jEntityRoot["rg"].getBoolean():false);
 	levelEditorEntity->setShader(jEntityRoot["s"].isNull() == false?jEntityRoot["s"].getString():"default");
+	levelEditorEntity->setDistanceShader(jEntityRoot["sds"].isNull() == false?jEntityRoot["sds"].getString():"default");
+	levelEditorEntity->setDistanceShaderDistance(jEntityRoot["sdsd"].isNull() == false?static_cast<float>(jEntityRoot["sds"].getDouble()):10000.0f);
 	return levelEditorEntity;
 }
 
