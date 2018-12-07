@@ -224,10 +224,7 @@ void NIOUDPServer::identify(stringstream* frame, MessageType& messageType, uint3
 void NIOUDPServer::validate(stringstream* frame) throw (NIONetworkServerException) {
 }
 
-void NIOUDPServer::writeHeader(stringstream* frame) throw (NIONetworkServerException) {
-	// seek to beginning of stream
-	frame->seekp(0, ios_base::beg);
-
+void NIOUDPServer::initializeHeader(stringstream* frame) throw (NIONetworkServerException) {
 	// 14(messagetype, clientid, messageid, retries)
 	char emptyHeader[14] =
 		"\0\0\0\0\0\0\0\0\0\0"
