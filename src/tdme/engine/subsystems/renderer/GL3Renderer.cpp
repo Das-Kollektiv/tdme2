@@ -154,7 +154,7 @@ bool GL3Renderer::isGeometryShaderAvailable() {
 
 int32_t GL3Renderer::getTextureUnits()
 {
-	return -1;
+	return activeTextureUnit;
 }
 
 int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
