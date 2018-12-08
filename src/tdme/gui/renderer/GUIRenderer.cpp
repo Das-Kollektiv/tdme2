@@ -133,9 +133,6 @@ void GUIRenderer::initRendering()
 	setRenderAreaRight(SCREEN_RIGHT);
 	setRenderAreaBottom(SCREEN_BOTTOM);
 	Engine::getGUIShader()->useProgram();
-	renderer->bindIndicesBufferObject((*vboIds)[0]);
-	renderer->bindVerticesBufferObject((*vboIds)[1]);
-	renderer->bindColorsBufferObject((*vboIds)[2]);
 	renderer->bindTextureCoordinatesBufferObject((*vboIds)[3]);
 	renderer->getTextureMatrix().identity();
 }
@@ -338,6 +335,9 @@ void GUIRenderer::render()
 	renderer->uploadBufferObject((*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
 	renderer->uploadBufferObject((*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
 	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	renderer->bindIndicesBufferObject((*vboIds)[0]);
+	renderer->bindVerticesBufferObject((*vboIds)[1]);
+	renderer->bindColorsBufferObject((*vboIds)[2]);
 	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];

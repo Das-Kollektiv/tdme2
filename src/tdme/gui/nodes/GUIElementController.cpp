@@ -155,10 +155,10 @@ void GUIElementController::tick()
 
 	auto now = Time::getCurrentMillis();
 	if (timeLastClicked != -1LL && now - timeLastClicked >= TIME_DOUBLECLICK) {
+		timeLastClicked = -1LL;
 		auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
 		if (onMouseClickExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseClickExpression);
 		node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
-		timeLastClicked = -1LL;
 	}
 
 	if (isActionPerforming == true) {
