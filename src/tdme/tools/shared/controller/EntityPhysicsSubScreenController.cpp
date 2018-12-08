@@ -701,7 +701,7 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 			} else {
 				Console::println(
 					string(
-						"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
+						"EntityPhysicsSubScreenController::onActionPerformed()::unknown, type='" +
 						type->getName() +
 						"', id = '" +
 						node->getId() +

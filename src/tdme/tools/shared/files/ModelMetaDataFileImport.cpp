@@ -175,8 +175,6 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
 		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
-		// TODO: remove me, this is a work around for haveing a UE terrain FBX with normals only showing up
-		if (levelEditorEntity->getModelSettings()->isTerrainMesh() == true) ModelHelper::computeNormals(model);
 		if (jEntityRoot["ll2"].isNull() == false) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
 		if (jEntityRoot["ll3"].isNull() == false) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 		if (jEntityRoot["as"].isNull() == false) {
@@ -406,7 +404,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	levelEditorEntity->setRenderGroups(jEntityRoot["rg"].isNull() == false?jEntityRoot["rg"].getBoolean():false);
 	levelEditorEntity->setShader(jEntityRoot["s"].isNull() == false?jEntityRoot["s"].getString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot["sds"].isNull() == false?jEntityRoot["sds"].getString():"default");
-	levelEditorEntity->setDistanceShaderDistance(jEntityRoot["sdsd"].isNull() == false?static_cast<float>(jEntityRoot["sds"].getDouble()):10000.0f);
+	levelEditorEntity->setDistanceShaderDistance(jEntityRoot["sdsd"].isNull() == false?static_cast<float>(jEntityRoot["sdsd"].getDouble()):10000.0f);
 	return levelEditorEntity;
 }
 

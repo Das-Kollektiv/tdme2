@@ -13,6 +13,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::array;
@@ -26,6 +27,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::model::Skinning;
 using tdme::math::Vector3;
+using tdme::tools::shared::files::ProgressCallback;
 
 /** 
  * Model Helper
@@ -193,9 +195,10 @@ private:
 						normalCount++;
 						break;
 					}
-
 				}
+				if (normalCount == 6) break;
 			}
+			if (normalCount == 6) break;
 		}
 		if (normalCount > 1) {
 			normal.normalize();
@@ -209,7 +212,13 @@ private:
 	 * Compute normals
 	 * @param group group
 	 */
-	static void computeNormals(Group* group);
+	static float computeNormals(Group* group, ProgressCallback* progressCallback = nullptr, float incrementPerFace = 0.0f, float progress = 0.0f);
+
+	/**
+	 * Compute face count
+	 * @param group group
+	 */
+	static int determineFaceCount(Group* group);
 
 public:
 	/**
@@ -231,6 +240,6 @@ public:
 	 * Compute normals
 	 * @param group group
 	 */
-	static void computeNormals(Model* model);
+	static void computeNormals(Model* model, ProgressCallback* progressCallback = nullptr);
 
 };

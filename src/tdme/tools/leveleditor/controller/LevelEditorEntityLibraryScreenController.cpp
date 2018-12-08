@@ -301,6 +301,9 @@ void LevelEditorEntityLibraryScreenController::onPartitionEntity()
 				fileNamePartition,
 				Vector3(0.0f, 0.0f, 0.0f)
 			);
+			levelEditorEntityPartition->setShader(entity->getShader());
+			levelEditorEntityPartition->setDistanceShader(entity->getDistanceShader());
+			levelEditorEntityPartition->setDistanceShaderDistance(entity->getDistanceShaderDistance());
 
 			// avoid name collision
 			auto objectName = model->getName();

@@ -32,7 +32,10 @@
         - create, edit and delete animations
         - relate sounds to animations
     - set up rendering options
+        - shader
         - use dynamic shadowing
+    - tools
+        - be able to compute smooth normals    
     - see statistics
         - opaque faces
         - transparent faces

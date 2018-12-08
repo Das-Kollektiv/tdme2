@@ -21,6 +21,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/shared/files/ProgressCallback.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
@@ -48,6 +49,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::utils::Console;
 using tdme::utils::StringUtils;
@@ -688,10 +690,11 @@ void ModelHelper::shrinkToFit(Model* model) {
 	}
 }
 
-void ModelHelper::computeNormals(Group* group) {
+float ModelHelper::computeNormals(Group* group, ProgressCallback* progressCallback, float incrementPerFace, float progress) {
 	group->getNormals()->clear();
 	array<Vector3, 3> vertices;
 	Vector3 normal;
+	auto facesEntityProcessed = 0;
 	for (auto& facesEntity: *group->getFacesEntities()) {
 		for (auto& face: *facesEntity.getFaces()) {
 			for (auto i = 0; i < vertices.size(); i++) {
@@ -702,8 +705,14 @@ void ModelHelper::computeNormals(Group* group) {
 			group->getNormals()->push_back(normal);
 			group->getNormals()->push_back(normal);
 			group->getNormals()->push_back(normal);
+			if (progressCallback != nullptr) {
+				progress+= incrementPerFace / 2.0f;
+				if (facesEntityProcessed == 0 || facesEntityProcessed % 1000 == 0) progressCallback->progress(progress);
+				facesEntityProcessed++;
+			}
 		}
 	}
+	facesEntityProcessed = 0;
 	auto normals = *group->getNormals();
 	for (auto& facesEntity: *group->getFacesEntities()) {
 		for (auto& face: *facesEntity.getFaces()) {
@@ -712,16 +721,39 @@ void ModelHelper::computeNormals(Group* group) {
 					(*group->getNormals())[(*face.getNormalIndices())[i]].set(normal);
 				}
 			}
+			if (progressCallback != nullptr) {
+				progress+= incrementPerFace / 2.0f;
+				if (facesEntityProcessed == 0 || facesEntityProcessed % 1000 == 0) progressCallback->progress(progress);
+				facesEntityProcessed++;
+			}
 		}
 	}
 	for (auto subGroupIt: *group->getSubGroups()) {
-		computeNormals(subGroupIt.second);
+		progress = computeNormals(subGroupIt.second, progressCallback, incrementPerFace, progress);
+	}
+	return progress;
+}
+
+void ModelHelper::computeNormals(Model* model, ProgressCallback* progressCallback) {
+	auto faceCount = 0;
+	for (auto groupIt: *model->getSubGroups()) {
+		faceCount+= determineFaceCount(groupIt.second);
+	}
+	for (auto groupIt: *model->getSubGroups()) {
+		computeNormals(groupIt.second, progressCallback, 1.0f / static_cast<float>(faceCount), 0.0f);
+	}
+	prepareForIndexedRendering(model);
+	if (progressCallback != nullptr) {
+		progressCallback->progress(1.0f);
+		delete progressCallback;
 	}
 }
 
-void ModelHelper::computeNormals(Model* model) {
-	for (auto groupIt: *model->getSubGroups()) {
-		computeNormals(groupIt.second);
+int ModelHelper::determineFaceCount(Group* group) {
+	auto faceCount = 0;
+	faceCount+= group->getFaceCount();
+	for (auto subGroupIt: *group->getSubGroups()) {
+		faceCount+= determineFaceCount(subGroupIt.second);
 	}
-	prepareForIndexedRendering(model);
+	return faceCount;
 }

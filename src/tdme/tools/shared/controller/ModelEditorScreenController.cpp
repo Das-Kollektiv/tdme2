@@ -205,6 +205,7 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationSoundLooping = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_looping"));
 		animationsAnimationSoundFixed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_fixed"));
 		animationsAnimationSoundApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_sound_apply"));
+		buttonToolsComputeNormals = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_computenormals"));
 		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
 		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
 		statsOpaqueFaces->getController()->setDisabled(true);
@@ -1027,6 +1028,18 @@ void ModelEditorScreenController::unsetStatistics()
 	this->statsMaterialCount->getController()->setValue(MutableString());
 }
 
+void ModelEditorScreenController::setTools() {
+	buttonToolsComputeNormals->getController()->setDisabled(false);
+}
+
+void ModelEditorScreenController::unsetTools() {
+	buttonToolsComputeNormals->getController()->setDisabled(true);
+}
+
+void ModelEditorScreenController::onToolsComputeNormal() {
+	view->computeNormals();
+}
+
 void ModelEditorScreenController::onQuit()
 {
 	TDMEModelEditor::getInstance()->quit();
@@ -1211,6 +1224,9 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 			} else
 			if (node->getId().compare("button_animations_sound_apply") == 0) {
 				onAnimationSoundApply();
+			} else
+			if (node->getId().compare("button_tools_computenormals") == 0) {
+				onToolsComputeNormal();
 			} else {
 				Console::println(
 					string(

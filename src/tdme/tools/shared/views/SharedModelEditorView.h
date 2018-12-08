@@ -145,6 +145,13 @@ public:
 	 * @param z z
 	 */
 	virtual void pivotApply(float x, float y, float z);
+
+	/**
+	 * Compute normals
+	 */
+	void computeNormals();
+
+	// overriden methods
 	void handleInputEvents() override;
 
 	/** 

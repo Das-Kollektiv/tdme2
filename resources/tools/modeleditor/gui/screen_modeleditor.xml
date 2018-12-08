@@ -17,6 +17,7 @@
 					<tab id="tab_properties_lod" text="LOD" />
 					<tab id="tab_properties_materials" text="Materials" /> 
 					<tab id="tab_properties_animations" text="Animations" />
+					<tab id="tab_properties_tools" text="Tools" />
 					<tab id="tab_properties_stats" text="Statistics" />
 				</tabs-header>
 				<tabs-content>
@@ -783,6 +784,13 @@
 							</layout>
 						</layout>
 					</tab-content>
+					<tab-content tab-id="tab_properties_tools">
+						<layout width="100%" height="auto" alignment="vertical" vertical-align="center">
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_tools_computenormals" name="button_tools_computenormals" text="Compute smooth normals" />
+							</layout>
+						</layout>
+					</tab-content> 
 				</tabs-content>
 			</tabs>
 		</panel>
