@@ -126,7 +126,7 @@ void LODTest::initialize()
 		auto entity = new LODObject3D(
 			"tree." + to_string(treeIdx++),
 			treePine,
-			LODObject3D::LODLEVELTYPE_PLANE,
+			LODObject3D::LODLEVELTYPE_MODEL,
 			100.0f,
 			treePineLOD2,
 			LODObject3D::LODLEVELTYPE_NONE,
