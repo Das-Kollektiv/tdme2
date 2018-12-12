@@ -60,6 +60,7 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 			// same dimensions and supported pixel depth?
 			if (diffuseTexture->getWidth() == transparencyTexture->getWidth() &&
 				diffuseTexture->getHeight() == transparencyTexture->getHeight()) {
+				auto maskedTransparency = true;
 				// yep, combine diffuse map + diffuse transparency map
 				int width = diffuseTexture->getWidth();
 				int height = diffuseTexture->getHeight();
@@ -75,21 +76,23 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 				);
 				int diffuseTextureBytesPerPixel = diffuseTexture->getDepth() / 8;
 				int transparencyTextureBytesPerPixel = transparencyTexture->getDepth() / 8;
-				for (int y = 0; y < height; y++)
-				for (int x = 0; x < width; x++) {
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 0));
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 1));
-					pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 2));
-					pixelByteBuffer->put(
-						(uint8_t)((
-							transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 0) +
-							transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 1) +
-							transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 2)
-						) * 0.33f)
-					);
+				for (int y = 0; y < height; y++) {
+					for (int x = 0; x < width; x++) {
+						auto transparencyTextureRed = transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 0);
+						auto transparencyTextureGreen = transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 1);
+						auto transparencyTextureBlue = transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 2);
+						if (transparencyTextureRed != 0 && transparencyTextureRed != 255) maskedTransparency = false;
+						if (transparencyTextureGreen != 0 && transparencyTextureGreen != 255) maskedTransparency = false;
+						if (transparencyTextureBlue != 0 && transparencyTextureBlue != 255) maskedTransparency = false;
+						pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 0));
+						pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 1));
+						pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 2));
+						pixelByteBuffer->put((uint8_t)((transparencyTextureRed + transparencyTextureGreen + transparencyTextureBlue) * 0.33f));
+					}
 				}
 				delete diffuseTexture;
 				diffuseTexture = diffuseTextureWithTransparency;
+				if (maskedTransparency == true) setDiffuseTextureMaskedTransparency(true);
 			}
 			delete transparencyTexture;
 		}
