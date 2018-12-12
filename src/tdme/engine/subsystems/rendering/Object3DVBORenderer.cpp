@@ -201,7 +201,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		// second render pass, draw color buffer for transparent objects
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear
-		renderer->disableDepthBufferWriting();
+		//renderer->disableDepthBufferWriting();  // TODO: a.drewke, verify that this works ok in all cases?
 		renderer->disableCulling();
 		renderer->enableBlending();
 		// disable foliage animation
@@ -246,7 +246,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		//	no blending, but culling and depth buffer
 		renderer->disableBlending();
 		renderer->enableCulling();
-		renderer->enableDepthBufferWriting();
+		//renderer->enableDepthBufferWriting(); // TODO: a.drewke, verify that this works ok in all cases?
 		// done!
 	}
 }
