@@ -60,7 +60,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(9));
+	os.writeByte(static_cast< uint8_t >(10));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -102,6 +102,7 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m) throw (Model
 	os->writeString(m->getDisplacementTextureFileName());
 	os->writeBoolean(m->hasDiffuseTextureMaskedTransparency());
 	os->writeFloat(m->getDiffuseTextureMaskedTransparencyThreshold());
+	os->writeFloatArray(m->getTextureMatrix().getArray());
 }
 
 void TMWriter::writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup) throw (ModelFileIOException) {

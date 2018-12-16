@@ -161,10 +161,10 @@ public:
 	 * @param f float array
 	 * @throws model file IO exception
 	 */
-	inline void writeFloatArray(const array<float,4>* f) throw (ModelFileIOException) {
-		writeInt(f->size());
-		for (auto i = 0; i < f->size(); i++) {
-			writeFloat((*f)[i]);
+	inline void writeFloatArray(const array<float,9>& f) throw (ModelFileIOException) {
+		writeInt(f.size());
+		for (auto i = 0; i < f.size(); i++) {
+			writeFloat(f[i]);
 		}
 	}
 

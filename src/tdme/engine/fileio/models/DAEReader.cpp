@@ -26,6 +26,7 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -40,7 +41,6 @@
 #include <tdme/utils/Exception.h>
 
 #include <ext/tinyxml/tinyxml.h>
-#include "../../subsystems/rendering/ModelStatistics.h"
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
@@ -91,10 +91,6 @@ using tdme::ext::tinyxml::TiXmlElement;
 using tdme::ext::tinyxml::TiXmlAttribute;
 
 const Color4 DAEReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
-
-float DAEReader::BLENDER_AMBIENT_FROM_DIFFUSE_SCALE = 0.7f;
-
-float DAEReader::BLENDER_DIFFUSE_SCALE = 0.8f;
 
 Model* DAEReader::read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException)
 {

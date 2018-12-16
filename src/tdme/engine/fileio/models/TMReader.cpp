@@ -21,6 +21,7 @@
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -74,9 +75,10 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	version[1] = is.readByte();
 	version[2] = is.readByte();
 	if ((version[0] != 1 || version[1] != 0 || version[2] != 0) &&
-		(version[0] != 1 || version[1] != 9 || version[2] != 9)) {
+		(version[0] != 1 || version[1] != 9 || version[2] != 9) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 10)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0 or 1.9.9, but is " +
+			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10 but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -88,9 +90,9 @@ Model* TMReader::read(const string& pathName, const string& fileName) throw (Fil
 	auto upVector = UpVector::valueOf(is.readString());
 	auto rotationOrder = RotationOrder::valueOf(is.readString());
 	array<float, 3> boundingBoxMinXYZ;
-	is.readFloatArray(&boundingBoxMinXYZ);
+	is.readFloatArray(boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
-	is.readFloatArray(&boundingBoxMaxXYZ);
+	is.readFloatArray(boundingBoxMaxXYZ);
 	auto boundingBox = new BoundingBox(Vector3(boundingBoxMinXYZ), Vector3(boundingBoxMaxXYZ));
 	auto model = new Model(
 		pathName + "/" + fileName,
@@ -184,8 +186,14 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		);
 	}
 	m->setDiffuseTextureMaskedTransparency(is->readBoolean());
-	if (version[0] == 1 && version[1] == 9 && version[2] == 9) {
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 10)) {
 		m->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
+	}
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 10)) {
+		array<float, 9> textureMatrix;
+		is->readFloatArray(textureMatrix);
+		m->setTextureMatrix(Matrix2D3x3(textureMatrix));
 	}
 	return m;
 }
@@ -210,7 +218,7 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (Mod
 	if (is->readBoolean() == true) {
 		v.resize(is->readInt());
 		for (auto i = 0; i < v.size(); i++) {
-			is->readFloatArray(&vXYZ);
+			is->readFloatArray(vXYZ);
 			v[i].set(vXYZ);
 		}
 	}
@@ -224,7 +232,7 @@ const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputSt
 	if (is->readBoolean() == true) {
 		tc.resize(is->readInt());
 		for (auto i = 0; i < tc.size(); i++) {
-			is->readFloatArray(&tcUV);
+			is->readFloatArray(tcUV);
 			tc[i] = TextureCoordinate(tcUV);
 		}
 	}

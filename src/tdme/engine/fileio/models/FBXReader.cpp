@@ -23,6 +23,8 @@
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Math.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -48,11 +50,15 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Math;
+using tdme::math::Matrix2D3x3;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+
+const Color4 FBXReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
 Model* FBXReader::read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException) {
 	// init fbx sdk
@@ -396,102 +402,143 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			if (material == nullptr) {
 				material = new Material(fbxMaterialName);
 				if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId)) {
-					FbxPropertyT<FbxDouble3> fbxDouble3;
-					FbxPropertyT<FbxDouble> fbxDouble;
-					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Ambient;
-					material->setAmbientColor(
-						Color4(
-							static_cast<float>(fbxDouble3.Get()[0]),
-							static_cast<float>(fbxDouble3.Get()[1]),
-							static_cast<float>(fbxDouble3.Get()[2]),
-							1.0f
-						)
-					);
-					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->TransparencyFactor;
-					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Diffuse;
+					FbxPropertyT<FbxDouble3> fbxColor3;
+					FbxPropertyT<FbxDouble> fbxTransparency;
+					FbxPropertyT<FbxDouble> fbxFactor;
+					FbxPropertyT<FbxDouble> fbxShinienss;
+					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Ambient;
+					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->AmbientFactor;
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
+						material->setAmbientColor(
+							Color4(
+								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
+								1.0f
+							)
+						);
+					}
+					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Diffuse;
+					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->DiffuseFactor;
+					fbxTransparency = ((FbxSurfacePhong*)fbxMaterial)->TransparencyFactor;
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true && fbxTransparency.IsValid() == true)
 					material->setDiffuseColor(
 						Color4(
-							static_cast<float>(fbxDouble3.Get()[0]),
-							static_cast<float>(fbxDouble3.Get()[1]),
-							static_cast<float>(fbxDouble3.Get()[2]),
+							static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+							static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+							static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
 							// TODO: I am not sure about this here, but it seem to work
 							(
-								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+								1.0f - static_cast<float>(fbxTransparency) < Math::EPSILON?
 									1.0f:
-									1.0f - static_cast<float>(fbxDouble)
+									1.0f - static_cast<float>(fbxTransparency)
 							)
 						)
 					);
-					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
-					material->setSpecularColor(
-						Color4(
-							static_cast<float>(fbxDouble3.Get()[0]),
-							static_cast<float>(fbxDouble3.Get()[1]),
-							static_cast<float>(fbxDouble3.Get()[2]),
-							1.0f
-						)
-					);
-					fbxDouble3 = ((FbxSurfacePhong*)fbxMaterial)->Emissive;
-					material->setEmissionColor(
-						Color4(
-							static_cast<float>(fbxDouble3.Get()[0]),
-							static_cast<float>(fbxDouble3.Get()[1]),
-							static_cast<float>(fbxDouble3.Get()[2]),
-							1.0f
-						)
-					);
-					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->Shininess;
-					material->setShininess(
-						static_cast<float>(fbxDouble)
-					);
-					fbxDouble = ((FbxSurfacePhong*)fbxMaterial)->ReflectionFactor;
+					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Emissive;
+					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->EmissiveFactor;
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
+						material->setEmissionColor(
+							Color4(
+								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
+								1.0f
+							)
+						);
+					}
+					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
+					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->SpecularFactor;
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
+						material->setSpecularColor(
+							Color4(
+								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
+								1.0f
+							)
+						);
+					}
+					fbxShinienss = ((FbxSurfacePhong*)fbxMaterial)->Shininess;
+					if (fbxShinienss.IsValid() == true) {
+						material->setShininess(static_cast<float>(fbxShinienss.Get()));
+					}
 				} else
 				if (fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId)) {
-					FbxPropertyT<FbxDouble3> fbxDouble3;
-					FbxPropertyT<FbxDouble> fbxDouble;
-					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Ambient;
-					material->setAmbientColor(
-						Color4(
-							static_cast<float>(fbxDouble3.Get()[0]),
-							static_cast<float>(fbxDouble3.Get()[1]),
-							static_cast<float>(fbxDouble3.Get()[2]),
-							1.0f
-						)
-					);
-					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Diffuse;
-					fbxDouble = ((FbxSurfaceLambert*)fbxMaterial)->TransparencyFactor;
+					FbxPropertyT<FbxDouble3> fbxColor3;
+					FbxPropertyT<FbxDouble> fbxTransparency;
+					FbxPropertyT<FbxDouble> fbxFactor;
+					fbxColor3 = ((FbxSurfaceLambert*)fbxMaterial)->Ambient;
+					fbxFactor = ((FbxSurfaceLambert*)fbxMaterial)->AmbientFactor;
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
+						material->setAmbientColor(
+							Color4(
+								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
+								1.0f
+							)
+						);
+					}
+					fbxColor3 = ((FbxSurfaceLambert*)fbxMaterial)->Diffuse;
+					fbxFactor = ((FbxSurfaceLambert*)fbxMaterial)->DiffuseFactor;
+					fbxTransparency = ((FbxSurfaceLambert*)fbxMaterial)->TransparencyFactor;
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true && fbxTransparency.IsValid() == true)
 					material->setDiffuseColor(
 						Color4(
-							static_cast<float>(fbxDouble3.Get()[0]),
-							static_cast<float>(fbxDouble3.Get()[1]),
-							static_cast<float>(fbxDouble3.Get()[2]),
+							static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+							static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+							static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
 							// TODO: I am not sure about this here, but it seem to work
 							(
-								1.0f - static_cast<float>(fbxDouble) < Math::EPSILON?
+								1.0f - static_cast<float>(fbxTransparency) < Math::EPSILON?
 									1.0f:
-									1.0f - static_cast<float>(fbxDouble)
+									1.0f - static_cast<float>(fbxTransparency)
 							)
 						)
 					);
-					fbxDouble3 = ((FbxSurfaceLambert*)fbxMaterial)->Emissive;
-					material->setEmissionColor(
-						Color4(
-							static_cast<float>(fbxDouble3.Get()[0]),
-							static_cast<float>(fbxDouble3.Get()[1]),
-							static_cast<float>(fbxDouble3.Get()[2]),
-							1.0f
-						)
-					);
+					fbxColor3 = ((FbxSurfaceLambert*)fbxMaterial)->Emissive;
+					fbxFactor = ((FbxSurfaceLambert*)fbxMaterial)->EmissiveFactor;
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
+						material->setEmissionColor(
+							Color4(
+								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
+								1.0f
+							)
+						);
+					}
+				} else {
+					Console::println("FBXReader::processMeshNode(): unsupported material shading class: " + fbxMaterialName);
 				}
 				FbxProperty fbxProperty;
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
-				string diffuseTextureFileName =
-					fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
-						(fbxProperty.GetSrcObjectCount<FbxTexture>() > 0?
-							FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0))->GetFileName():
-							""
-						):
-						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
+				string diffuseTextureFileName;
+				{
+					if (fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() > 0) {
+						auto texture = FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0));
+						diffuseTextureFileName = texture->GetFileName();
+						Matrix2D3x3 textureMatrix;
+						textureMatrix.identity();
+						textureMatrix.multiply(Matrix2D3x3().identity().scale(Vector2(texture->GetScaleU(), texture->GetScaleV())));
+						// TODO: not sure about texture rotation with 2D textures here and I have no test model for now
+						textureMatrix.multiply(Matrix2D3x3::rotateAroundTextureCenter(texture->GetRotationU()));
+						textureMatrix.multiply(Matrix2D3x3().identity().translate(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
+						material->setTextureMatrix(textureMatrix);
+					} else
+					if (fbxProperty.GetSrcObjectCount<FbxTexture>() > 0) {
+						auto texture = FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxTexture>(0));
+						diffuseTextureFileName = texture->GetFileName();
+						Matrix2D3x3 textureMatrix;
+						textureMatrix.identity();
+						textureMatrix.multiply(Matrix2D3x3().identity().scale(Vector2(texture->GetScaleU(), texture->GetScaleV())));
+						// TODO: not sure about texture rotation with 2D textures here and I have no test model for now
+						textureMatrix.multiply(Matrix2D3x3::rotateAroundTextureCenter(texture->GetRotationU()));
+						textureMatrix.multiply(Matrix2D3x3().identity().translate(Vector2(texture->GetTranslationU(), texture->GetTranslationV())));
+						material->setTextureMatrix(textureMatrix);
+					}
+				}
 				fbxProperty = fbxMaterial->FindProperty(FbxSurfaceMaterial::sTransparentColor);
 				string diffuseTransparencyTextureFileName =
 					fbxProperty.GetSrcObjectCount<FbxLayeredTexture>() == 0?
@@ -552,6 +599,25 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(specularTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(specularTextureFileName),
 						FileSystem::getInstance()->getFileName(specularTextureFileName)
+					);
+				}
+				// adjust ambient light with blender
+				if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
+					material->setAmbientColor(
+						Color4(
+							material->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+							material->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+							material->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+							1.0f
+						)
+					);
+					material->setDiffuseColor(
+						Color4(
+							material->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
+							material->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
+							material->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
+							material->getDiffuseColor().getAlpha()
+						)
 					);
 				}
 				(*model->getMaterials())[material->getId()] = material;

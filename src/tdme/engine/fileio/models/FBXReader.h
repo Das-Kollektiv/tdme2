@@ -7,11 +7,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using tdme::engine::fileio::models::ModelFileIOException;
+using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::model::UpVector;
@@ -38,6 +40,9 @@ public:
 	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
 
 private:
+	static const Color4 BLENDER_AMBIENT_NONE;
+	static constexpr float BLENDER_AMBIENT_FROM_DIFFUSE_SCALE { 0.7f };
+	static constexpr float BLENDER_DIFFUSE_SCALE { 0.8f };
 
 	/**
 	 * Get scene up vector
