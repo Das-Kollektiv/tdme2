@@ -6,11 +6,13 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/math/Matrix2D3x3.h>
 
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
+using tdme::math::Matrix2D3x3;
 
 /** 
  * Represents a object material
@@ -56,6 +58,7 @@ private:
 	string displacementTexturePathName {  };
 	string displacementTextureFileName {  };
 	Texture* displacementTexture {  };
+	Matrix2D3x3 textureMatrix { };
 
 	/**
 	 * Checks and set ups diffuse texture transparency
@@ -351,6 +354,21 @@ public:
 	 */
 	inline bool hasTextureTransparency() const {
 		return diffuseTextureTransparency == true && diffuseTextureMaskedTransparency == false;
+	}
+
+	/**
+	 * @return texture matrix
+	 */
+	const Matrix2D3x3& getTextureMatrix() {
+		return textureMatrix;
+	}
+
+	/**
+	 * Set texture matrix
+	 * @param texture matrix
+	 */
+	void setTextureMatrix(const Matrix2D3x3& textureMatrix) {
+		this->textureMatrix = textureMatrix;
 	}
 
 	/**

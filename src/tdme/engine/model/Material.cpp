@@ -32,6 +32,7 @@ Material::Material(const string& id)
 	specularTexture = nullptr;
 	normalTexture = nullptr;
 	displacementTexture = nullptr;
+	textureMatrix.identity();
 }
 
 Material::~Material() {
