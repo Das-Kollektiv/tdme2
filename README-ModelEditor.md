@@ -35,7 +35,7 @@
         - shader
         - use dynamic shadowing
     - tools
-        - be able to compute smooth normals    
+        - be able to compute smooth normals
     - see statistics
         - opaque faces
         - transparent faces
