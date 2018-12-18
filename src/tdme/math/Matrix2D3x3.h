@@ -94,7 +94,11 @@ public:
 	 */
 	inline Matrix2D3x3& scale(float s) {
 		data[0] *= s;
+		data[1] *= s;
+		data[2] *= s;
+		data[3] *= s;
 		data[4] *= s;
+		data[5] *= s;
 		return *this;
 	}
 
@@ -105,7 +109,11 @@ public:
 	 */
 	inline Matrix2D3x3& scale(const Vector2& v) {
 		data[0] *= v.data[0];
+		data[1] *= v.data[0];
+		data[2] *= v.data[0];
+		data[3] *= v.data[1];
 		data[4] *= v.data[1];
+		data[5] *= v.data[1];
 		return *this;
 	}
 
