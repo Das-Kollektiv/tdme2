@@ -150,6 +150,7 @@ int main(int argc, char** argv)
 			ofs.write((char*)&fileInformation.bytes, sizeof(fileInformation.bytes));
 			ofs.write((char*)&fileInformation.compressed, sizeof(fileInformation.compressed));
 			ofs.write((char*)&fileInformation.bytesCompressed, sizeof(fileInformation.bytesCompressed));
+			ofs.write((char*)&fileInformation.offset, sizeof(fileInformation.offset));
 		}
 		ofs.write((char*)&fileInformationOffsetEnd, sizeof(fileInformationOffsetEnd));
 		ofs.write((char*)&fileInformationOffset, sizeof(fileInformationOffset));
