@@ -354,6 +354,7 @@ SRCS = \
 	src/tdme/network/udpserver/NIOUDPServer.cpp \
 	src/tdme/network/udpserver/NIOUDPServerClient.cpp \
 	src/tdme/network/udpserver/NIOUDPServerIOThread.cpp \
+	src/tdme/os/filesystem/ArchiveFileSystem.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \

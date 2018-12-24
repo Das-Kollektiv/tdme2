@@ -51,6 +51,8 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) return true;
 				// level
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tl") == true) return true;
+				// particle system
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tps") == true) return true;
 				// xml
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".xml") == true) return true;
 				// images
@@ -141,7 +143,7 @@ int main(int argc, char** argv)
 	// add file informations
 	{
 		ofstream ofs("archive.ta", ofstream::binary | ofstream::app);
-		uint64_t fileInformationOffsetEnd = 0LL;
+		uint32_t fileInformationOffsetEnd = 0LL;
 		uint64_t fileInformationOffset = ofs.tellp();
 		for (auto& fileInformation: fileInformations) {
 			uint32_t nameSize = fileInformation.name.size();
