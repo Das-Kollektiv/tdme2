@@ -135,6 +135,19 @@
             - has single thread with a simple threadsafe API
             - supports all features required by UDP server
             - IPV6 ready
+    - operation system layer
+        - file system
+            - standard file system
+            - archive file system + a tool to generate it from ./resources and ./shader folder
+        - multi threading
+            - barrier
+            - condition
+            - consumer/producer queue
+            - mutex
+            - read write lock
+            - thread
+        - network
+            - no compilation here as its not required to use those directly
 
 - What does it (maybe still) lack
     - physics
