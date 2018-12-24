@@ -135,7 +135,7 @@
             - has single thread with a simple threadsafe API
             - supports all features required by UDP server
             - IPV6 ready
-    - operation system layer
+    - Operating system layer
         - file system
             - standard file system
             - archive file system + a tool to generate it from ./resources and ./shader folder
