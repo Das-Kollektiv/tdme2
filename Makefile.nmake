@@ -608,8 +608,10 @@ MAIN_SRCS = \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
+	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
+	src/tdme/tools/cli/fixdoxygen-main.cpp \
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
@@ -632,8 +634,10 @@ all: \
 	ThreadingTest \
 	UDPClientTest \
 	UDPServerTest \
+	archive \
 	converttotm \
 	levelfixmodelszup2yup \
+	fixdoxygen \
 	TDMELevelEditor \
 	TDMEModelEditor \
 	TDMEParticleSystem \
@@ -711,11 +715,17 @@ UDPClientTest:
 UDPServerTest:
 	cl /FeUDPServerTest $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
+archive:
+    cl /Fearchive $(FLAGS) $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
 converttotm:
 	cl /Feconverttotm $(FLAGS) $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 levelfixmodelszup2yup:
 	cl /Felevelfixmodelszup2yup $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+fixdoxygen:
+    cl /Fefixdoxygen $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMELevelEditor:
 	cl /FeTDMELevelEditor $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
