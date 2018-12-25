@@ -21,7 +21,8 @@
 
 #include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/audio/decoder/AudioDecoderException.h>
-#include <tdme/os/filesystem/fwd-tdme.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/ByteBuffer.h>
@@ -30,22 +31,82 @@ using std::string;
 
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utils::ByteBuffer;
+
+static struct OGGFileData {
+	vector<uint8_t> data;
+	size_t position { 0 };
+};
+
+static size_t oggfiledata_read(void* buffer, size_t size, size_t count, OGGFileData* oggFileData) {
+	size_t bytesRead = 0;
+	for (size_t i = 0; i < size * count; i++) {
+		if (oggFileData->position == oggFileData->data.size()) break;
+		((uint8_t*)buffer)[i] = oggFileData->data[oggFileData->position];
+		bytesRead++;
+		oggFileData->position++;
+	}
+	return bytesRead;
+}
+
+static int oggfiledata_seek(OGGFileData* oggFileData, ogg_int64_t offset, int whence) {
+	switch (whence) {
+		case SEEK_SET:
+			oggFileData->position = offset;
+			return 0;
+		case SEEK_CUR:
+			oggFileData->position+= offset;
+			return 0;
+		case SEEK_END:
+			oggFileData->position = oggFileData->data.size() + offset;
+			return 0;
+		default:
+			return 1;
+	}
+}
+
+static int oggfiledata_close(OGGFileData* oggFileData) {
+	delete oggFileData;
+	return 0;
+}
+
+static long oggfiledata_tell(OGGFileData* oggFileData) {
+	return oggFileData->position;
+}
 
 VorbisDecoder::VorbisDecoder() : AudioDecoder()
 {
 }
 
 void VorbisDecoder::openFile(const string& pathName, const string& fileName) throw (FileSystemException, AudioDecoderException) {
+	// read from file system
+	auto oggFileData = new OGGFileData();
+	FileSystem::getInstance()->getContent(pathName, fileName, oggFileData->data);
+
+	// set up ogg file callbacks
+	static ov_callbacks oggFileCallbacks = {
+	  (size_t (*)(void *, size_t, size_t, void *))  oggfiledata_read,
+	  (int (*)(void *, ogg_int64_t, int))           oggfiledata_seek,
+	  (int (*)(void *))                             oggfiledata_close,
+	  (long (*)(void *))                            oggfiledata_tell
+	};
+
+	//
 	this->pathName = pathName;
 	this->fileName = fileName;
-	if (ov_open_callbacks(fopen((pathName + "/" + fileName).c_str(), "rb"), &vf, NULL, 0, OV_CALLBACKS_NOCLOSE) < 0) {
-		throw AudioDecoderException("Input does not appear to be an Ogg bitstream.");
+	if (ov_open_callbacks(oggFileData, &vf, NULL, 0, oggFileCallbacks) < 0) {
+		throw AudioDecoderException("Input does not appear to be an OGG bitstream");
 	}
-	/* Throw the comments plus a few lines about the bitstream we're decoding */
+
+	// fetch audio stream properties
 	char **ptr = ov_comment(&vf, -1)->user_comments;
 	vorbis_info *vi = ov_info(&vf, -1);
+
+	/*
+	// Throw the comments plus a few lines about the bitstream we're decoding
 	while (*ptr) {
 		fprintf(stderr, "%s\n", *ptr);
 		++ptr;
@@ -53,6 +114,9 @@ void VorbisDecoder::openFile(const string& pathName, const string& fileName) thr
 	fprintf(stderr, "\nBitstream is %d channel, %ldHz\n", vi->channels, vi->rate);
 	fprintf(stderr, "\nDecoded length: %ld samples\n",(long) ov_pcm_total(&vf, -1));
 	fprintf(stderr, "Encoded by: %s\n\n", ov_comment(&vf, -1)->vendor);
+	*/
+
+	// set audio stream properties
 	channels = vi->channels;
 	sampleRate = vi->rate;
 	bitsPerSample = 16;

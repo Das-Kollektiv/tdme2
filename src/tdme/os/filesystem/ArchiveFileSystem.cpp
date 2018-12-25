@@ -52,7 +52,6 @@ ArchiveFileSystem::ArchiveFileSystem()
 		ifs.read((char*)&fileInformation.compressed, sizeof(fileInformation.compressed));
 		ifs.read((char*)&fileInformation.bytesCompressed, sizeof(fileInformation.bytesCompressed));
 		ifs.read((char*)&fileInformation.offset, sizeof(fileInformation.offset));
-		Console::println("ArchiveFileSystem::ArchiveFileSystem(): got file: " + fileInformation.name);
 		fileInformations[fileInformation.name] = fileInformation;
 	}
 }
