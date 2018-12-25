@@ -34,6 +34,14 @@ private:
 	ifstream ifs;
 	map<string, FileInformation> fileInformations;
 
+	/**
+	 * Decompress from archive
+	 * @param inContent compressed content
+	 * @param outContent uncompressed out content
+	 * @throws FileSystemException
+	 */
+	void decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent) throw (FileSystemException);
+
 public:
 	const string getFileName(const string& path, const string& fileName) throw (FileSystemException) override;
 	void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) override;

@@ -36,7 +36,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utils::ByteBuffer;
 
-static struct OGGFileData {
+struct OGGFileData {
 	vector<uint8_t> data;
 	size_t position { 0 };
 };

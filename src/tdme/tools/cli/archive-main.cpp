@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+#include <ext/zlib/zlib.h>
+
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
@@ -92,20 +94,82 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	// append to archive
 	ofstream ofs("archive.ta", ofstream::binary | ofstream::app);
 	uint64_t fileOffset = ofs.tellp();
-	ofs.write((char*)content.data(), content.size());
+
+	//
+	uint64_t bytesCompressed = 0;
+	uint8_t compressed = 1;
+
+	// always use compression for now
+	if (compressed == 1) {
+		// see: https://www.zlib.net/zpipe.c
+
+		#define CHUNK 	16384
+
+		int ret;
+		int flush;
+		size_t have;
+		z_stream strm;
+		unsigned char in[CHUNK];
+		unsigned char out[CHUNK];
+
+		/* allocate deflate state */
+		strm.zalloc = Z_NULL;
+		strm.zfree = Z_NULL;
+		strm.opaque = Z_NULL;
+		ret = deflateInit(&strm, Z_DEFAULT_COMPRESSION);
+		if (ret != Z_OK) {
+			Console::println("processFile(): Error compressing file: Aborting");
+			return;
+		}
+
+		// compress until end of file
+		size_t inPosition = 0;
+		size_t inBytes = content.size();
+		do {
+			auto inStartPosition = inPosition;
+			for (size_t i = 0; i < CHUNK; i++) {
+				if (inPosition == inBytes) break;
+				in[i] = content[inPosition];
+				inPosition++;
+			}
+			strm.avail_in = inPosition - inStartPosition;
+			flush = inPosition == inBytes?Z_FINISH:Z_NO_FLUSH;
+			strm.next_in = in;
+
+			// run deflate() on input until output buffer not full, finish compression if all of source has been read in
+			do {
+				strm.avail_out = CHUNK;
+				strm.next_out = out;
+				ret = deflate(&strm, flush); // no bad return value
+				assert(ret != Z_STREAM_ERROR); // state not clobbered
+				have = CHUNK - strm.avail_out;
+				ofs.write((char*)out, have);
+				bytesCompressed+= have;
+			} while (strm.avail_out == 0);
+			assert(strm.avail_in == 0); // all input will be used
+
+			// done when last data in file processed
+		} while (flush != Z_FINISH);
+		assert(ret == Z_STREAM_END); // stream will be complete
+
+		// clean up and return
+		(void) deflateEnd(&strm);
+	} else {
+		ofs.write((char*)content.data(), content.size());
+	}
 	ofs.close();
 
 	// store file information
 	FileInformation fileInformation;
 	fileInformation.name = fileName;
 	fileInformation.bytes = content.size();
-	fileInformation.compressed = 0;
-	fileInformation.bytesCompressed = 0;
+	fileInformation.compressed = compressed;
+	fileInformation.bytesCompressed = bytesCompressed;
 	fileInformation.offset = fileOffset;
 	fileInformations.push_back(fileInformation);
 
 	// done
-	Console::println(", processed " + to_string(content.size()) + " bytes");
+	Console::println(", processed " + to_string(content.size()) + " bytes" + (compressed == 1?", " + to_string(bytesCompressed) + " bytes compressed":""));
 }
 
 int main(int argc, char** argv)

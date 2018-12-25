@@ -138,7 +138,7 @@
     - Operating system abstraction layer
         - file system
             - standard file system
-            - archive file system + a tool to generate it from ./resources and ./shader folder
+            - zlib based compressed archive file system and a tool to generate it from ./resources and ./shader folder
         - multi threading
             - barrier
             - condition

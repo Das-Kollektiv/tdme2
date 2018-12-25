@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <ext/zlib/zlib.h>
+
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/FilenameFilter.h>
 #include <tdme/utils/StringUtils.h>
@@ -82,6 +84,76 @@ bool ArchiveFileSystem::fileExists(const string& fileName) throw (FileSystemExce
 	return fileInformations.find(fileName) != fileInformations.end();
 }
 
+void ArchiveFileSystem::decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent) throw (FileSystemException) {
+	// see: https://www.zlib.net/zpipe.c
+
+	#define CHUNK	16384
+
+	int ret;
+	size_t have;
+	z_stream strm;
+	unsigned char in[CHUNK];
+	unsigned char out[CHUNK];
+
+	// allocate inflate state
+	strm.zalloc = Z_NULL;
+	strm.zfree = Z_NULL;
+	strm.opaque = Z_NULL;
+	strm.avail_in = 0;
+	strm.next_in = Z_NULL;
+	ret = inflateInit(&strm);
+	if (ret != Z_OK) {
+		throw FileSystemException("ArchiveFileSystem::decompress(): Error while decompressing: inflate init");
+	}
+
+	// decompress until deflate stream ends or end of file */
+	size_t outPosition = 0;
+	size_t inPosition = 0;
+	size_t inBytes = inContent.size();
+	do {
+		// see: https://www.zlib.net/zpipe.c
+		auto inStartPosition = inPosition;
+		for (size_t i = 0; i < CHUNK; i++) {
+			if (inPosition == inBytes) break;
+			in[i] = inContent[inPosition];
+			inPosition++;
+		}
+		strm.avail_in = inPosition - inStartPosition;
+		if (strm.avail_in == 0) break;
+		strm.next_in = in;
+
+		// run inflate() on input until output buffer not full
+		do {
+			strm.avail_out = CHUNK;
+			strm.next_out = out;
+			ret = inflate(&strm, Z_NO_FLUSH);
+			assert(ret != Z_STREAM_ERROR); // state not clobbered
+			switch (ret) {
+				case Z_NEED_DICT:
+					throw FileSystemException("ArchiveFileSystem::decompress(): Error while decompressing: Z_NEED_DICT");
+				case Z_DATA_ERROR:
+				case Z_MEM_ERROR:
+					(void)inflateEnd(&strm);
+					throw FileSystemException("ArchiveFileSystem::decompress(): Error while decompressing: Z_DATA_ERROR | Z_MEM_ERROR");
+			}
+			have = CHUNK - strm.avail_out;
+			for (size_t i = 0; i < have; i++) {
+				outContent[outPosition++] = out[i];
+			}
+		} while (strm.avail_out == 0);
+
+		// done when inflate() says it's done
+	} while (ret != Z_STREAM_END);
+
+	// clean up and return
+	(void) inflateEnd(&strm);
+
+	// check if eof
+	if (ret != Z_STREAM_END) {
+		throw FileSystemException("ArchiveFileSystem::decompress(): Error while decompressing: missing eof");
+	}
+}
+
 const string ArchiveFileSystem::getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;
@@ -99,10 +171,22 @@ const string ArchiveFileSystem::getContentAsString(const string& pathName, const
 
 	// result
 	string result;
-	auto buffer = new char[fileInformation.bytes];
-	ifs.read(buffer, fileInformation.bytes);
-	result.append(buffer, fileInformation.bytes);
-	delete [] buffer;
+	if (fileInformation.compressed == 1) {
+		vector<uint8_t> compressedBuffer;
+		compressedBuffer.resize(fileInformation.bytesCompressed);
+		vector<uint8_t> decompressedBuffer;
+		decompressedBuffer.resize(fileInformation.bytes);
+		ifs.read((char*)compressedBuffer.data(), fileInformation.bytesCompressed);
+		decompress(compressedBuffer, decompressedBuffer);
+		result.append((char*)decompressedBuffer.data(), fileInformation.bytes);
+	} else {
+		vector<uint8_t> buffer;
+		buffer.resize(fileInformation.bytes);
+		ifs.read((char*)buffer.data(), fileInformation.bytes);
+		result.append((char*)buffer.data(), fileInformation.bytes);
+	}
+
+	// done
 	return result;
 }
 
@@ -128,8 +212,16 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 	ifs.seekg(fileInformation.offset, ios::beg);
 
 	// result
-	content.resize(fileInformation.bytes);
-	ifs.read((char*)content.data(), fileInformation.bytes);
+	if (fileInformation.compressed == 1) {
+		vector<uint8_t> compressedContent;
+		compressedContent.resize(fileInformation.bytesCompressed);
+		content.resize(fileInformation.bytes);
+		ifs.read((char*)compressedContent.data(), fileInformation.bytesCompressed);
+		decompress(compressedContent, content);
+	} else {
+		content.resize(fileInformation.bytes);
+		ifs.read((char*)content.data(), fileInformation.bytes);
+	}
 }
 
 void ArchiveFileSystem::setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) throw (FileSystemException) {
