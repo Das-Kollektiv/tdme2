@@ -2,6 +2,7 @@ STACKFLAGS =
 SRCS_PLATFORM =
 SRCS_DEBUG =
 OFLAGS =
+LDFLAGS =
 INCLUDES := -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
 
 # set platform specific flags
@@ -21,6 +22,7 @@ ifeq ($(OS), Darwin)
 	OFLAGS := -O3
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
+	LDFLAGS+= -fuse-ld=bfd
 	INCLUDES := $(INCLUDES) -I/usr/local/include
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
@@ -754,7 +756,7 @@ $(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLI
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
-	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 mains: $(MAINS)
 
