@@ -25,13 +25,23 @@ using tdme::utils::FilenameFilter;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
-struct FileInformation {
-	string name;
-	uint64_t bytes;
-	uint8_t compressed;
-	uint64_t bytesCompressed;
-	uint64_t offset;
+namespace tdme {
+namespace tools {
+namespace cli {
+namespace archive {
+	struct FileInformation {
+		string name;
+		uint64_t bytes;
+		uint8_t compressed;
+		uint64_t bytesCompressed;
+		uint64_t offset;
+	};
 };
+};
+};
+};
+
+using tdme::tools::cli::archive::FileInformation;
 
 void scanDir(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FilenameFilter {
