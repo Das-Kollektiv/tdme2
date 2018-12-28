@@ -70,28 +70,6 @@ ModelHelper_VertexOrder* ModelHelper::determineVertexOrder(const vector<Vector3>
 	}
 }
 
-void ModelHelper::computeNormal(const array<Vector3,3>& vertices, Vector3& normal)
-{
-	// face normal
-	Vector3::computeCrossProduct(
-		(vertices)[1].clone().sub((vertices)[0]),
-		(vertices)[2].clone().sub((vertices)[0]),
-		normal
-	).normalize();
-}
-
-void ModelHelper::computeNormals(const array<Vector3,3>& vertices, array<Vector3,3>& normals)
-{
-	// face normal
-	Vector3 normal;
-	computeNormal(vertices, normal);
-
-	// compute vertex normal
-	for (auto i = 0; i < vertices.size(); i++) {
-		normals[i].set(normal);
-	}
-}
-
 void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 {
 	// what we need

@@ -50,7 +50,22 @@ public:
 	 * @param normal face normal
 	 * @return computed face normal
 	 */
-	static void computeNormal(const array<Vector3,3>& vertices, Vector3& normal);
+	static void computeNormal(const array<Vector3,3>& vertices, Vector3& normal) {
+		// face normal
+		Vector3::computeCrossProduct(
+			(vertices)[1].clone().sub((vertices)[0]),
+			(vertices)[2].clone().sub((vertices)[0]),
+			normal
+		);
+		// check if zero?
+		if (normal.computeLengthSquared() < Math::EPSILON * Math::EPSILON) {
+			// take up vector
+			normal.set(0.0f, 1.0f, 0.0f);
+		} else {
+			// otherwise normalize
+			normal.normalize();
+		}
+	}
 
 	/** 
 	 * Computes face normals for given face vertices
@@ -58,7 +73,16 @@ public:
 	 * @param vertices face vertices
 	 * @param normals computed face normals
 	 */
-	static void computeNormals(const array<Vector3,3>& vertices, array<Vector3,3>& normals);
+	static void computeNormals(const array<Vector3,3>& vertices, array<Vector3,3>& normals) {
+		// face normal
+		Vector3 normal;
+		computeNormal(vertices, normal);
+
+		// compute vertex normal
+		for (auto i = 0; i < vertices.size(); i++) {
+			normals[i].set(normal);
+		}
+	}
 
 	/** 
 	 * Create normal tangents and bitangents for groups with normal mapping
