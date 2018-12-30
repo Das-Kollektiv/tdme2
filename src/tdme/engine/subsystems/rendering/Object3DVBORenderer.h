@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -17,9 +17,9 @@
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Pool.h>
 
-using std::map;
-using std::vector;
+using std::unordered_map;
 using std::string;
+using std::vector;
 
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
@@ -52,11 +52,11 @@ private:
 	GLRenderer* renderer {  };
 	vector<int32_t>* vboInstancedRenderingIds {  };
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
-	map<string, vector<Object3D*>> visibleObjectsByModels {  };
+	unordered_map<string, vector<Object3D*>> visibleObjectsByModels {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
 	Object3DVBORenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool {  };
 	TransparentRenderFacesPool* transparentRenderFacesPool {  };
-	map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
+	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
 	BatchVBORendererPoints* psePointBatchVBORenderer {  };
 	Matrix4x4Negative matrix4x4Negative {  };
@@ -137,10 +137,12 @@ private:
 	 * Creates a particle system entity key
 	 * @param effectColorAdd effect color add
 	 * @param effectColorMul effect color mul
+	 * @param pointSize point size
+	 * @param textureId texture id
 	 * @param depthBuffer depthBuffer
 	 * @param sort sort
 	 */
-	static const string createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, bool depthBuffer, bool sort);
+	static const string createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, float pointSize, int32_t textureId, bool depthBuffer, bool sort);
 
 public:
 	static constexpr int32_t RENDERTYPE_NORMALS { 1 };

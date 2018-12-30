@@ -370,6 +370,7 @@ SRCS = \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_ParticleSystemScreenController_1.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.cpp \
+	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_5.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onEntitySave_3.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController_onParticleSystemLoad_2.cpp \
 	src/tdme/tools/shared/controller/ProgressBarScreenController.cpp \

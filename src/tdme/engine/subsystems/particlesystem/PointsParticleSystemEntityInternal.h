@@ -6,6 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -22,6 +23,7 @@ using std::vector;
 using tdme::engine::Transformations;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::Engine;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
@@ -51,6 +53,9 @@ protected:
 	ParticleEmitter* emitter {  };
 	vector<Particle> particles {  };
 	int32_t maxPoints {  };
+	float pointSize {  };
+	Texture* texture { nullptr };
+	int32_t textureId {  };
 	TransparentRenderPointsPool* pointsRenderPool {  };
 
 	BoundingBox* boundingBox {  };
@@ -88,6 +93,16 @@ public:
 	 */
 	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
 
+	/**
+	 * @return point size
+	 */
+	virtual float getPointSize();
+
+	/**
+	 * @return texture id
+	 */
+	virtual int32_t getTextureId();
+
 	/** 
 	 * Update transformations
 	 */
@@ -109,9 +124,11 @@ public:
 	 * @param doCollisionTests do collision tests
 	 * @param emitter emitter
 	 * @param maxPoints max points
+	 * @param pointSize point size
 	 * @param autoEmit auto emit
+	 * @param texture texture
 	 */
-	PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
+	PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
 
 	/**
 	 * Destructor

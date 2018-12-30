@@ -44,6 +44,7 @@ class tdme::tools::shared::controller::ParticleSystemScreenController final
 	friend class ParticleSystemScreenController_onParticleSystemLoad_2;
 	friend class ParticleSystemScreenController_onEntitySave_3;
 	friend class ParticleSystemScreenController_onActionPerformed_4;
+	friend class ParticleSystemScreenController_onActionPerformed_5;
 
 private:
 	static string TYPE_NONE;
@@ -73,6 +74,8 @@ private:
 	GUIElementNode* opsAutoEmit {  };
 	GUIElementNode* ppsAutoEmit {  };
 	GUIElementNode* ppsMaxPoints {  };
+	GUIElementNode* ppsPointSize {  };
+	GUIElementNode* ppsTexture {  };
 	GUIElementNode* ppeCount {  };
 	GUIElementNode* ppeLifeTime {  };
 	GUIElementNode* ppeLifeTimeRnd {  };

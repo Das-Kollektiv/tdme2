@@ -19,59 +19,6 @@ using tdme::tools::shared::tools::Tools;
 using tdme::utils::ExceptionBase;
 using tdme::utils::StringUtils;
 
-LevelEditorEntityParticleSystem_ObjectParticleSystem::LevelEditorEntityParticleSystem_ObjectParticleSystem() 
-{
-	scale.set(1.0f, 1.0f, 1.0f);
-	maxCount = 10;
-	autoEmit = true;
-	model = nullptr;
-	modelFileName = "";
-}
-
-LevelEditorEntityParticleSystem_ObjectParticleSystem::~LevelEditorEntityParticleSystem_ObjectParticleSystem() {
-	if (model != nullptr) delete model;
-}
-
-Vector3& LevelEditorEntityParticleSystem_ObjectParticleSystem::getScale()
-{
-	return scale;
-}
-
-int32_t LevelEditorEntityParticleSystem_ObjectParticleSystem::getMaxCount()
-{
-	return maxCount;
-}
-
-void LevelEditorEntityParticleSystem_ObjectParticleSystem::setMaxCount(int32_t maxCount)
-{
-	this->maxCount = maxCount;
-}
-
-bool LevelEditorEntityParticleSystem_ObjectParticleSystem::isAutoEmit()
-{
-	return autoEmit;
-}
-
-void LevelEditorEntityParticleSystem_ObjectParticleSystem::setAutoEmit(bool autoEmit)
-{
-	this->autoEmit = autoEmit;
-}
-
-Model* LevelEditorEntityParticleSystem_ObjectParticleSystem::getModel()
-{
-	return model;
-}
-
-void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModel(Model* model)
-{
-	this->model = model;
-}
-
-const string& LevelEditorEntityParticleSystem_ObjectParticleSystem::getModelFile()
-{
-	return modelFileName;
-}
-
 void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const string& modelFileName) /* throws(Exception) */
 {
 	this->modelFileName = modelFileName;
@@ -81,3 +28,6 @@ void LevelEditorEntityParticleSystem_ObjectParticleSystem::setModelFile(const st
 	);
 }
 
+LevelEditorEntityParticleSystem_ObjectParticleSystem::~LevelEditorEntityParticleSystem_ObjectParticleSystem() {
+	if (model != nullptr) delete model;
+}

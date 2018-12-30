@@ -199,11 +199,27 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 				if (objectParticleSystem->getModel() == nullptr) return nullptr;
 
-				return new ObjectParticleSystemEntity(id, objectParticleSystem->getModel(), objectParticleSystem->getScale(), objectParticleSystem->isAutoEmit(), enableDynamicShadows, objectParticleSystem->getMaxCount(), engineEmitter);
+				return new ObjectParticleSystemEntity(
+					id,
+					objectParticleSystem->getModel(),
+					objectParticleSystem->getScale(),
+					objectParticleSystem->isAutoEmit(),
+					enableDynamicShadows,
+					objectParticleSystem->getMaxCount(),
+					engineEmitter
+				);
 			} else
 			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 				auto pointParticleSystem = particleSystem->getPointParticleSystem();
-				return new PointsParticleSystemEntity(id, false, engineEmitter, pointParticleSystem->getMaxPoints(), pointParticleSystem->isAutoEmit());
+				return new PointsParticleSystemEntity(
+					id,
+					false,
+					engineEmitter,
+					pointParticleSystem->getMaxPoints(),
+					pointParticleSystem->getPointSize(),
+					pointParticleSystem->isAutoEmit(),
+					pointParticleSystem->getTexture()
+				);
 			} else {
 				Console::println(
 					string(

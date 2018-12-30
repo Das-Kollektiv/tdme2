@@ -25,6 +25,7 @@ namespace controller {
 	class ParticleSystemScreenController;
 	class ParticleSystemScreenController_ParticleSystemScreenController_1;
 	class ParticleSystemScreenController_onActionPerformed_4;
+	class ParticleSystemScreenController_onActionPerformed_5;
 	class ParticleSystemScreenController_onEntitySave_3;
 	class ParticleSystemScreenController_onParticleSystemLoad_2;
 	class ProgressBarScreenController;

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/textures/TextureLoader.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -28,6 +29,7 @@
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_onParticleSystemLoad_2.h>
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_onEntitySave_3.h>
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.h>
+#include <tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_5.h>
 #include <tdme/tools/shared/controller/ParticleSystemScreenController_ParticleSystemScreenController_1.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
@@ -53,6 +55,7 @@ using std::string;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -77,6 +80,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::controller::ParticleSystemScreenController_onParticleSystemLoad_2;
 using tdme::tools::shared::controller::ParticleSystemScreenController_onEntitySave_3;
 using tdme::tools::shared::controller::ParticleSystemScreenController_onActionPerformed_4;
+using tdme::tools::shared::controller::ParticleSystemScreenController_onActionPerformed_5;
 using tdme::tools::shared::controller::ParticleSystemScreenController_ParticleSystemScreenController_1;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
@@ -169,6 +173,8 @@ void ParticleSystemScreenController::initialize()
 		opsModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ops_model"));
 		opsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ops_auto_emit"));
 		ppsMaxPoints = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_maxpoints"));
+		ppsPointSize = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_pointsize"));
+		ppsTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_texture"));
 		ppsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_auto_emit"));
 		ppeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_count"));
 		ppeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_lifetime"));
@@ -368,6 +374,8 @@ void ParticleSystemScreenController::setParticleSystemType()
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_POINTSPARTICLESYSTEM));
 			particleSystemType->getActiveConditions().add(TYPE_POINTSPARTICLESYSTEM);
 			ppsMaxPoints->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getMaxPoints()));
+			ppsPointSize->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getPointSize(), 4));
+			ppsTexture->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureFileName()));
 			ppsAutoEmit->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->isAutoEmit() == true ? "1" : ""));
 		} else {
 			Console::println(
@@ -403,6 +411,8 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 			} else
 			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 				particleSystem->getPointParticleSystem()->setMaxPoints(Tools::convertToInt(ppsMaxPoints->getController()->getValue().getString()));
+				particleSystem->getPointParticleSystem()->setPointSize(Tools::convertToFloat(ppsPointSize->getController()->getValue().getString()));
+				particleSystem->getPointParticleSystem()->setTextureFileName(ppsTexture->getController()->getValue().getString());
 				particleSystem->getPointParticleSystem()->setAutoEmit(ppsAutoEmit->getController()->getValue().getString() == "1");
 			} else {
 				Console::println(
@@ -829,6 +839,16 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					extensions,
 					"",
 					new ParticleSystemScreenController_onActionPerformed_4(this)
+				);
+			} else
+			if (node->getId().compare("button_pps_texture_file") == 0) {
+				vector<string> extensions = TextureLoader::getTextureExtensions();
+				view->getPopUpsViews()->getFileDialogScreenController()->show(
+					modelPath->getPath(),
+					"Load from: ",
+					extensions,
+					"",
+					new ParticleSystemScreenController_onActionPerformed_5(this)
 				);
 			} else {
 				Console::println(

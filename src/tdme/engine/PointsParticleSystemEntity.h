@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -20,6 +21,7 @@ using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityIntern
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
@@ -58,9 +60,11 @@ public:
 	 * @param doCollisionTests do collision tests
 	 * @param emitter emitter
 	 * @param maxPoints max points
+	 * @param pointSize point size
 	 * @param autoEmit auto emit
+	 * @param texture texture
 	 */
-	PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit);
+	PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
 public:
 	// overridden methods
 	virtual void setEngine(Engine* engine) override;
@@ -101,6 +105,14 @@ public:
 
 	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		PointsParticleSystemEntityInternal::setDynamicShadowingEnabled(dynamicShadowing);
+	}
+
+	inline virtual float getPointSize() override {
+		return PointsParticleSystemEntityInternal::getPointSize();
+	}
+
+	inline virtual int32_t getTextureId() override {
+		return PointsParticleSystemEntityInternal::getTextureId();
 	}
 
 	inline virtual void setPickable(bool pickable) override {

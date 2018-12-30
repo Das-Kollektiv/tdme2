@@ -51,45 +51,53 @@ public:
 	/** 
 	 * @return scale
 	 */
-	virtual Vector3& getScale();
+	inline virtual Vector3& getScale() {
+		return scale;
+	}
 
 	/** 
 	 * @return max count
 	 */
-	virtual int32_t getMaxCount();
+	inline virtual int32_t getMaxCount() {
+		return maxCount;
+	}
 
 	/** 
 	 * Set max count
 	 * @param maxCount max count
 	 */
-	virtual void setMaxCount(int32_t maxCount);
+	inline virtual void setMaxCount(int32_t maxCount) {
+		this->maxCount = maxCount;
+	}
 
 	/** 
 	 * @return is auto emit
 	 */
-	virtual bool isAutoEmit();
+	inline virtual bool isAutoEmit() {
+		return autoEmit;
+	}
 
 	/** 
 	 * Set auto emit 
 	 * @param autoEmit autoEmit
 	 */
-	virtual void setAutoEmit(bool autoEmit);
+	inline virtual void setAutoEmit(bool autoEmit) {
+		this->autoEmit = autoEmit;
+	}
 
 	/** 
 	 * @return model
 	 */
-	virtual Model* getModel();
-
-	/** 
-	 * Set model
-	 * @param model model
-	 */
-	virtual void setModel(Model* model);
+	inline virtual Model* getModel() {
+		return model;
+	}
 
 	/** 
 	 * @return model file
 	 */
-	virtual const string& getModelFile();
+	inline virtual const string& getModelFile() {
+		return modelFileName;
+	}
 
 	/** 
 	 * Set model file
@@ -100,10 +108,17 @@ public:
 	/**
 	 * Public constructor
 	 */
-	LevelEditorEntityParticleSystem_ObjectParticleSystem();
+	inline LevelEditorEntityParticleSystem_ObjectParticleSystem() {
+		scale.set(1.0f, 1.0f, 1.0f);
+		maxCount = 10;
+		autoEmit = true;
+		model = nullptr;
+		modelFileName = "";
+	}
 
 	/**
 	 * Destructor
 	 */
 	virtual ~LevelEditorEntityParticleSystem_ObjectParticleSystem();
+
 };

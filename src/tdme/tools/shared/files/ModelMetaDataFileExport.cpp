@@ -239,6 +239,8 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			{
 				ext::jsonbox::Object jPointParticleSystem;
 				jPointParticleSystem["mp"] = particleSystem->getPointParticleSystem()->getMaxPoints();
+				jPointParticleSystem["ps"] = particleSystem->getPointParticleSystem()->getPointSize();
+				jPointParticleSystem["t"] = particleSystem->getPointParticleSystem()->getTextureFileName();
 				jPointParticleSystem["ae"] = particleSystem->getPointParticleSystem()->isAutoEmit();
 				jParticleSystem["pps"] = jPointParticleSystem;
 			} else {

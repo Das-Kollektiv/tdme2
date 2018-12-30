@@ -9,8 +9,11 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureLoader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
@@ -30,8 +33,11 @@ using tdme::engine::Entity;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureLoader;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
@@ -41,7 +47,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, bool autoEmit)
+PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
 {
 	this->id = id;
 	this->enabled = true;
@@ -56,9 +62,12 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const str
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
+	this->pointSize = pointSize;
 	this->autoEmit = autoEmit;
 	this->particlesToSpawnRemainder = 0.0f;
 	this->pointsRenderPool = nullptr;
+	this->texture = texture;
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureLoader::loadTexture("resources/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
 }
 
 PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {
@@ -66,6 +75,7 @@ PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {
 	delete boundingBox;
 	delete boundingBoxTransformed;
 	if (pointsRenderPool != nullptr) delete pointsRenderPool;
+	engine->getTextureManager()->removeTexture(texture->getId());
 }
 
 const string& PointsParticleSystemEntityInternal::getId()
@@ -146,6 +156,14 @@ bool PointsParticleSystemEntityInternal::isDynamicShadowingEnabled()
 
 void PointsParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 {
+}
+
+float PointsParticleSystemEntityInternal::getPointSize() {
+	return pointSize;
+}
+
+int32_t PointsParticleSystemEntityInternal::getTextureId() {
+	return textureId;
 }
 
 void PointsParticleSystemEntityInternal::update()

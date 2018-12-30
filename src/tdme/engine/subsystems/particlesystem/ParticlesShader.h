@@ -30,7 +30,6 @@ private:
 	int32_t uniformEffectColorMul {  };
 	int32_t uniformEffectColorAdd {  };
 	Matrix4x4 mvpMatrix {  };
-	int32_t pointTextureId {  };
 	bool isRunning {  };
 	bool initialized {  };
 	Engine* engine {  };
@@ -69,6 +68,13 @@ public:
 	 * @param renderer renderer
 	 */
 	void updateMatrices(GLRenderer* renderer);
+
+	/**
+	 * Set parameters
+	 * @param textureId texture id
+	 * @param pointSize point size
+	 */
+	void setParameters(int32_t textureId, float pointSize);
 
 	/**
 	 * Public constructor

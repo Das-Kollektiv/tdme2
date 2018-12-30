@@ -144,23 +144,40 @@
 									<space height="10" />
 									<!-- ObjectParticleSystem End -->
 								</scrollarea-vertical>
-								<layout show-on="Points Particle System" alignment="vertical" width="100%" height="auto" horizontal-align="center">
-									<!-- PointsParticleSystem Start --> 
-									<layout width="660" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Max points" width="155" height="auto"/>
+								<scrollarea-vertical show-on="Points Particle System" alignment="vertical" width="664" height="100%" horizontal-align="center" border="1" border-color="#000000" padding="5">
+									<!-- PointsParticleSystem Start -->
+									<space height="10" />
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Max points" width="145" height="auto"/>
 										<space width="5" />
-										<input id="pps_maxpoints" name="pps_maxpoints" width="160" height="auto" text="Max points" />
+										<input id="pps_maxpoints" name="pps_maxpoints" width="150" height="auto" text="Max points" />
 										<space width="20" />
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Auto emit" width="155" height="auto"/>
-										<space width="*" />
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Point size" width="145" height="auto"/>
+										<space width="5" />
+										<input id="pps_pointsize" name="pps_pointsize" width="150" height="auto" text="Point size" />
+									</layout>
+									<space height="5" />
+									<layout width="620" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Texture" width="145" height="auto"/>
+										<space width="5" />
+										<input id="pps_texture" name="pps_texture" width="400" height="auto" text="Texture" />
+										<space width="10" />
+										<button id="button_pps_texture_file" name="button_pps_texture_file" text="Load" width="56" height="auto" />
+									</layout>
+									<space height="5" /> 
+									<layout width="620" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Auto emit" width="145" height="auto"/>
+										<space width="5" />
 										<checkbox id="pps_auto_emit" name="pps_auto_emit" width="auto" height="auto" value="1" />
+										<space width="*" />
 									</layout>
 									<space height="10" />
 									<layout alignment="none" width="auto" height="auto" vertical-align="center" horizontal-align="center">
 										<button id="button_pps_type_apply" name="button_pps_type_apply" text="Apply" />
 									</layout>
+									<space height="10" /> 
 									<!-- PointsParticleSystem End -->
-								</layout>
+								</scrollarea-vertical>
 							</element>
 							<space height="10" />
 						</layout>
