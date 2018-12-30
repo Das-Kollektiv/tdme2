@@ -39,7 +39,7 @@ GUIScreenNode* InfoDialogScreenController::getScreenNode()
 void InfoDialogScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/shared/gui", "infodialog.xml");
+		screenNode = GUIParser::parse("resources/engine/tools/shared/gui", "infodialog.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		captionNode = dynamic_cast< GUITextNode* >(screenNode->getNodeById("infodialog_caption"));

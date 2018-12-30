@@ -306,16 +306,16 @@
 							</tabs-header>
 							<tabs-content>
 								<tab-content tab-id="tab_properties_light0">
-									<template src="resources/tools/leveleditor/gui/template_light.xml" light-id="0" />
+									<template src="resources/engine/tools/leveleditor/gui/template_light.xml" light-id="0" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_light1" vertical-align="center">
-									<template src="resources/tools/leveleditor/gui/template_light.xml" light-id="1" />
+									<template src="resources/engine/tools/leveleditor/gui/template_light.xml" light-id="1" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_light2" vertical-align="center">
-									<template src="resources/tools/leveleditor/gui/template_light.xml" light-id="2" />
+									<template src="resources/engine/tools/leveleditor/gui/template_light.xml" light-id="2" />
 								</tab-content>
 								<tab-content tab-id="tab_properties_light3" vertical-align="center">
-									<template src="resources/tools/leveleditor/gui/template_light.xml" light-id="3" />
+									<template src="resources/engine/tools/leveleditor/gui/template_light.xml" light-id="3" />
 								</tab-content>
 							</tabs-content>
 						</tabs>

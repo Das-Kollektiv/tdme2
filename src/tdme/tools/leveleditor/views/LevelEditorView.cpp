@@ -902,7 +902,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	auto groundPlateMaterialDiffuseColor = groundPlateMaterial->getDiffuseColor();
 	groundPlateMaterialDiffuseColor.setAlpha(0.75f);
 	groundPlateMaterial->setDiffuseColor(groundPlateMaterialDiffuseColor);
-	groundPlateMaterial->setDiffuseTexture("resources/tools/leveleditor/textures", "groundplate.png");
+	groundPlateMaterial->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
 	groundPlateMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	(*groundPlate->getMaterials())["ground"] = groundPlateMaterial;
 	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");

@@ -129,7 +129,7 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 {
 	if (instance == nullptr) {
 		try {
-			instance = new LevelPropertyPresets("resources/tools/leveleditor/gd", "presets.xml");
+			instance = new LevelPropertyPresets("resources/engine/tools/leveleditor/gd", "presets.xml");
 		} catch (Exception& exception) {
 			Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
 			Console::print(string(exception.what()));

@@ -67,7 +67,7 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const str
 	this->particlesToSpawnRemainder = 0.0f;
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureLoader::loadTexture("resources/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureLoader::loadTexture("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
 }
 
 PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {

@@ -102,7 +102,7 @@ FileDialogPath* LevelEditorScreenController::getMapPath()
 void LevelEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/leveleditor/gui", "screen_leveleditor.xml");
+		screenNode = GUIParser::parse("resources/engine/tools/leveleditor/gui", "screen_leveleditor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));

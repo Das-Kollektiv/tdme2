@@ -60,7 +60,7 @@ GUIScreenNode* TriggerScreenController::getScreenNode()
 void TriggerScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/leveleditor/gui", "screen_trigger.xml");
+		screenNode = GUIParser::parse("resources/engine/tools/leveleditor/gui", "screen_trigger.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));

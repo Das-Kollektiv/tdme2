@@ -70,7 +70,7 @@ const string FileDialogScreenController::getFileName()
 void FileDialogScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/shared/gui", "filedialog.xml");
+		screenNode = GUIParser::parse("resources/engine/tools/shared/gui", "filedialog.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);

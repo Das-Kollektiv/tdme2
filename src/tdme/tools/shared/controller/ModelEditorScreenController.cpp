@@ -136,7 +136,7 @@ FileDialogPath* ModelEditorScreenController::getAudioPath() {
 void ModelEditorScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/modeleditor/gui", "screen_modeleditor.xml");
+		screenNode = GUIParser::parse("resources/engine/tools/modeleditor/gui", "screen_modeleditor.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));

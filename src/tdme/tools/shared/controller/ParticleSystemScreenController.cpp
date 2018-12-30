@@ -158,7 +158,7 @@ FileDialogPath* ParticleSystemScreenController::getModelPath()
 void ParticleSystemScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/particlesystem/gui", "screen_particlesystem.xml");
+		screenNode = GUIParser::parse("resources/engine/tools/particlesystem/gui", "screen_particlesystem.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));

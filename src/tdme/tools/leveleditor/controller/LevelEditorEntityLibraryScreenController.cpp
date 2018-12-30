@@ -100,7 +100,7 @@ void LevelEditorEntityLibraryScreenController::setModelPath(const string& modelP
 void LevelEditorEntityLibraryScreenController::initialize()
 {
 	try {
-		screenNode = GUIParser::parse("resources/tools/leveleditor/gui", "screen_leveleditor_entitylibrary.xml");
+		screenNode = GUIParser::parse("resources/engine/tools/leveleditor/gui", "screen_leveleditor_entitylibrary.xml");
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		entityLibraryListBox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("entity_library_listbox"));

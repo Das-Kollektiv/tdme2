@@ -68,7 +68,7 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 		initialized = false;
 		return;
 	}
-	auto randomTexture = TextureLoader::loadTexture("resources/textures", "random.png");
+	auto randomTexture = TextureLoader::loadTexture("resources/engine/textures", "random.png");
 	randomTexture->setUseMipMap(false);
 	randomTextureId = Engine::getInstance()->getTextureManager()->addTexture(randomTexture);
 }
