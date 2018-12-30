@@ -1,7 +1,5 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 
-#include <string>
-
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -156,6 +154,9 @@ void CameraRotationInputHandler::handleInputEvents()
 			keyR = isKeyDown;
 
 	}
+
+	auto entity = engine->getEntity("model");
+
 	auto& rotationX = lookFromRotations.getRotation(0);
 	auto& rotationY = lookFromRotations.getRotation(1);
 	auto& rotationZ = lookFromRotations.getRotation(2);
@@ -190,13 +191,21 @@ void CameraRotationInputHandler::handleInputEvents()
 	}
 	if (keyLeft || keyRight || keyUp|| keyDown|| keyComma|| keyPeriod|| keyR|| resetRequested) {
 		lookFromRotations.update();
+		if (entity != nullptr) {
+			boundingBoxTransformed = *entity->getBoundingBoxTransformed();
+		}
 		resetRequested = false;
 	}
 	auto cam = engine->getCamera();
 	auto lookAt = cam->getLookAt();
-	auto model = engine->getEntity("model");
-	if (model != nullptr) {
-		lookAt.set(model->getBoundingBoxTransformed()->getCenter());
+	if (entity != nullptr) {
+		auto entityBoundingBoxTransformed = entity->getBoundingBoxTransformed();
+		for (auto i = 0; i < 3; i++) {
+			if (entityBoundingBoxTransformed->getMin()[i] < boundingBoxTransformed.getMin()[i]) boundingBoxTransformed.getMin()[i] = entityBoundingBoxTransformed->getMin()[i];
+			if (entityBoundingBoxTransformed->getMax()[i] > boundingBoxTransformed.getMax()[i]) boundingBoxTransformed.getMax()[i] = entityBoundingBoxTransformed->getMax()[i];
+		}
+		boundingBoxTransformed.update();
+		lookAt.set(boundingBoxTransformed.getCenter());
 	} else {
 		lookAt.set(0.0f, 0.0f, 0.0f);
 	}

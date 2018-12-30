@@ -179,6 +179,7 @@ void SharedParticleSystemView::display()
 		particleSystemScreenController->setParticleSystemType();
 		particleSystemScreenController->setParticleSystemEmitter();
 		initParticleSystemRequested = false;
+		cameraRotationInputHandler->reset();
 	}
 	auto particleSystemEntity = dynamic_cast< ParticleSystemEntity* >(engine->getEntity("model"));
 	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == false) {
