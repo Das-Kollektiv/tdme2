@@ -89,6 +89,9 @@ const string& ObjectParticleSystemEntityInternal::getId()
 void ObjectParticleSystemEntityInternal::setEngine(Engine* engine)
 {
 	this->engine = engine;
+	for (auto i = 0; i < objects.size(); i++) {
+		objects[i]->setEngine(engine);
+	}
 }
 
 void ObjectParticleSystemEntityInternal::setRenderer(GLRenderer* renderer)
