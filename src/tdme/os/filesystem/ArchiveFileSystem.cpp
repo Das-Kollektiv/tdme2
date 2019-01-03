@@ -1,5 +1,6 @@
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 
+#include <cassert>
 #include <fstream>
 #include <string>
 #include <vector>
