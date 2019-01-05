@@ -15,6 +15,10 @@ out vec4 outColor;
 #define DISTANCE_NEAR		0.99
 #define DISTANCE_MAX		1.0
 
+#define FOG_RED (255.0 / 255.0)
+#define FOG_GREEN (255.0 / 255.0)
+#define FOG_BLUE (255.0 / 255.0)
+
 // main
 void main (void) {
 	outColor = texture(colorBufferTextureUnit, vsFragTextureUV);
@@ -23,7 +27,7 @@ void main (void) {
 		float fogStrength = (clamp(gl_FragDepth, DISTANCE_NEAR, DISTANCE_MAX) - DISTANCE_NEAR) * 1.0 / (DISTANCE_MAX - DISTANCE_NEAR);
 		outColor = vec4(
 			(outColor.rgb * (1.0 - fogStrength)) +
-			vec3(1.0, 1.0, 1.0) * fogStrength,
+			vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
 			outColor.a
 		);
 	}
