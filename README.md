@@ -43,13 +43,14 @@
             - supports specular shininess mapping on GL3+/CORE
             - supports normal mapping on GL3+/CORE
         - custum shaders that currently include
-          - lighting
-          - lighting + foliage
-          - lighting + terrain
+          - lighting + depth fog
+          - lighting + foliage + depth fog
+          - lighting + terrain + depth fog
+          - solid(no lighting + no depth fog)
+          - sky(no lighting + no depth fog + fragment depth at maximum)
         - shadow mapping
         - post processing
           - depth blur
-          - depth fog
           - SSAO 
         - particle system which
           - is object based

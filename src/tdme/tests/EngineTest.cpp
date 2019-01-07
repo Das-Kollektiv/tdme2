@@ -236,6 +236,7 @@ void EngineTest::dispose()
 void EngineTest::initialize()
 {
 	engine->initialize();
+	engine->addPostProcessingProgram("ssao");
 	if (osEngine == nullptr) {
 		osEngine = Engine::createOffScreenInstance(512, 512);
 		auto osLight0 = osEngine->getLightAt(0);
@@ -250,7 +251,7 @@ void EngineTest::initialize()
 		osCam->setLookFrom(Vector3(0.0f, 4.0f, -4.0f));
 		osCam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 		osCam->setUpVector(osCam->computeUpVector(osCam->getLookFrom(), osCam->getLookAt()));
-		osEngine->getSceneColor().set(0.5f, 0.0f, 0.0f, 1.0f);
+		osEngine->setSceneColor(Color4(0.5f, 0.0f, 0.0f, 1.0f));
 	}
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);

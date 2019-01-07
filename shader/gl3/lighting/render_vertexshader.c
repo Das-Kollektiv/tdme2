@@ -50,7 +50,7 @@ layout (location = 2) in vec2 inTextureUV;
 layout (location = 4) in vec3 inTangent;
 layout (location = 5) in vec3 inBitangent;
 
-// indexed rendering
+// instanced rendering
 layout (location = 6) in mat4 inModelMatrix;
 layout (location = 10) in vec4 inEffectColorMul;
 layout (location = 11) in vec4 inEffectColorAdd;
@@ -99,6 +99,10 @@ uniform int normalTextureAvailable;
 		out float height;
 		out float slope;
 	#endif
+
+	#if defined(HAVE_DEPTH_FOG)
+		out float fragDepth;
+	#endif
 #endif
 
 {$FUNCTIONS}
@@ -141,5 +145,9 @@ void main(void) {
 
 		// compute vertex and pass to fragment shader
 		computeVertex(vec4(inVertex, 1.0), -1, mat4(1.0));
+
+		#if defined(HAVE_DEPTH_FOG)
+			fragDepth = gl_Position.z;
+		#endif
 	#endif
 }

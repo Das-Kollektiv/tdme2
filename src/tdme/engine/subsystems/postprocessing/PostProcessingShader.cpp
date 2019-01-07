@@ -5,8 +5,6 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthFogImplementation.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSkyImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
@@ -17,8 +15,6 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDefaultImplementation;
-using tdme::engine::subsystems::postprocessing::PostProcessingShaderDepthFogImplementation;
-using tdme::engine::subsystems::postprocessing::PostProcessingShaderSkyImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -28,10 +24,8 @@ PostProcessingShader::PostProcessingShader(GLRenderer* renderer)
 {
 	shader["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
 	shader["default"] = new PostProcessingShaderDefaultImplementation(renderer);
-	shader["sky"] = new PostProcessingShaderSkyImplementation(renderer);
 	shader["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
 	shader["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
-	shader["depth_fog"] = new PostProcessingShaderDepthFogImplementation(renderer);
 	implementation = nullptr;
 }
 

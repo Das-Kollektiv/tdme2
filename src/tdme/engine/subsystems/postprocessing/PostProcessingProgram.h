@@ -18,6 +18,7 @@ class tdme::engine::subsystems::postprocessing::PostProcessingProgram final
 	friend class PostProcessing;
 
 public:
+	enum RenderPass { RENDERPASS_OBJECTS, RENDERPASS_FINAL };
 	enum FrameBufferSource { FRAMEBUFFERSOURCE_SCREEN };
 	enum FrameBufferTarget { FRAMEBUFFERTARGET_TEMPORARY, FRAMEBUFFERTARGET_SCREEN };
 
@@ -29,13 +30,15 @@ private:
 		bool bindTemporary;
 
 	};
+	RenderPass renderPass;
 	vector<PostProcessingProgramStep> steps;
 
 public:
 	/**
 	 * Constructor
+	 * @param renderPass render pass
 	 */
-	PostProcessingProgram();
+	PostProcessingProgram(RenderPass renderPass);
 
 	/**
 	 * Add step
@@ -52,8 +55,17 @@ public:
 	);
 
 	/**
+	 * @return render pass
+	 */
+	inline const RenderPass getRenderPass() const {
+		return renderPass;
+	}
+
+	/**
 	 * @return steps
 	 */
-	const vector<PostProcessingProgramStep>& getPostProcessingSteps();
+	inline const vector<PostProcessingProgramStep>& getPostProcessingSteps() const {
+		return steps;
+	}
 
 };

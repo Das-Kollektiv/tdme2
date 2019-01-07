@@ -69,16 +69,17 @@ struct Light {
 uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
-uniform vec4 sceneColor;
+#if defined(HAVE_SOLID_SHADING)
+#else
+	uniform sampler2D specularTextureUnit;
+	uniform int specularTextureAvailable;
 
-uniform sampler2D specularTextureUnit;
-uniform int specularTextureAvailable;
+	uniform sampler2D normalTextureUnit;
+	uniform int normalTextureAvailable;
 
-uniform sampler2D normalTextureUnit;
-uniform int normalTextureAvailable;
-
-// material shininess
-float materialShininess;
+	// material shininess
+	float materialShininess;
+#endif
 
 // passed from geometry shader
 in vec2 gsFragTextureUV;
@@ -95,6 +96,15 @@ out vec4 outColor;
 vec4 fragColor;
 
 {$DEFINITIONS}
+
+#if defined(HAVE_DEPTH_FOG)
+	#define FOG_DISTANCE_NEAR			100.0
+	#define FOG_DISTANCE_MAX			250.0
+	#define FOG_RED						(255.0 / 255.0)
+	#define FOG_GREEN					(255.0 / 255.0)
+	#define FOG_BLUE					(255.0 / 255.0)
+	in float fragDepth;
+#endif
 
 #if defined(HAVE_TERRAIN_SHADER)
 	#define TERRAIN_LEVEL_0				-4.0
@@ -115,49 +125,52 @@ vec4 fragColor;
 	uniform float diffuseTextureMaskedTransparencyThreshold;
 #endif
 
-void computeLight(in int i, in vec3 normal, in vec3 position) {
-	vec3 lightDirection = lights[i].position.xyz - position.xyz;
-	float lightDistance = length(lightDirection);
-	lightDirection = normalize(lightDirection);
-	vec3 eyeDirection = normalize(-position);
-	vec3 reflectionDirection = normalize(reflect(-lightDirection, normal));
+#if defined(HAVE_SOLID_SHADING)
+#else
+	void computeLight(in int i, in vec3 normal, in vec3 position) {
+		vec3 lightDirection = lights[i].position.xyz - position.xyz;
+		float lightDistance = length(lightDirection);
+		lightDirection = normalize(lightDirection);
+		vec3 eyeDirection = normalize(-position);
+		vec3 reflectionDirection = normalize(reflect(-lightDirection, normal));
 
-	// compute attenuation
-	float lightAttenuation =
-		1.0 /
-		(
-			lights[i].constantAttenuation +
-			lights[i].linearAttenuation * lightDistance +
-			lights[i].quadraticAttenuation * lightDistance * lightDistance
-		);
- 
-	// see if point on surface is inside cone of illumination
-	float lightSpotDot = dot(-lightDirection, normalize(lights[i].spotDirection));
-	float lightSpotAttenuation = 0.0;
-	if (lightSpotDot >= lights[i].spotCosCutoff) {
-		lightSpotAttenuation = pow(lightSpotDot, lights[i].spotExponent);
+		// compute attenuation
+		float lightAttenuation =
+			1.0 /
+			(
+				lights[i].constantAttenuation +
+				lights[i].linearAttenuation * lightDistance +
+				lights[i].quadraticAttenuation * lightDistance * lightDistance
+			);
+
+		// see if point on surface is inside cone of illumination
+		float lightSpotDot = dot(-lightDirection, normalize(lights[i].spotDirection));
+		float lightSpotAttenuation = 0.0;
+		if (lightSpotDot >= lights[i].spotCosCutoff) {
+			lightSpotAttenuation = pow(lightSpotDot, lights[i].spotExponent);
+		}
+
+		// Combine the spotlight and distance attenuation.
+		lightAttenuation *= lightSpotAttenuation;
+
+		// add color components to fragment color
+		fragColor+=
+			clamp(lights[i].ambient * material.ambient, 0.0, 1.0) +
+			clamp(lights[i].diffuse * material.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
+			clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * materialShininess) * lightAttenuation, 0.0, 1.0);
 	}
 
-	// Combine the spotlight and distance attenuation.
-	lightAttenuation *= lightSpotAttenuation;
+	void computeLights(in vec3 normal, in vec3 position) {
+		// process each light
+		for (int i = 0; i < MAX_LIGHTS; i++) {
+			// skip on disabled lights
+			if (lights[i].enabled == FALSE) continue;
 
-	// add color components to fragment color
-	fragColor+=
-		clamp(lights[i].ambient * material.ambient, 0.0, 1.0) +
-		clamp(lights[i].diffuse * material.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
-		clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * materialShininess) * lightAttenuation, 0.0, 1.0);
-}
-
-void computeLights(in vec3 normal, in vec3 position) {
-	// process each light
-	for (int i = 0; i < MAX_LIGHTS; i++) {
-		// skip on disabled lights
-		if (lights[i].enabled == FALSE) continue;
-
-		// compute light
-		computeLight(i, normal, position);
+			// compute light
+			computeLight(i, normal, position);
+		}
 	}
-}
+#endif
 
 void main (void) {
 	// retrieve diffuse texture color value
@@ -180,35 +193,39 @@ void main (void) {
 
 	//
 	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
-	fragColor+= clamp(sceneColor, 0.0, 1.0);
 	fragColor+= clamp(material.emission, 0.0, 1.0);
-
-	vec3 normal = gsNormal;
-
-	// specular
-	materialShininess = material.shininess;
-	if (specularTextureAvailable == 1) {
-		vec3 specularTextureValue = texture(specularTextureUnit, gsFragTextureUV).rgb;
-		materialShininess =
-			((0.33 * specularTextureValue.r) +
-			(0.33 * specularTextureValue.g) +
-			(0.33 * specularTextureValue.b)) * 255.0;
-	}
-
-	// compute normal
-	if (normalTextureAvailable == 1) {
-		vec3 normalVector = normalize(texture(normalTextureUnit, gsFragTextureUV).rgb * 2.0 - 1.0);
-		normal = vec3(0.0, 0.0, 0.0);
-		normal+= gsTangent * normalVector.x;
-		normal+= gsBitangent * normalVector.y;
-		normal+= gsNormal * normalVector.z;
-	}
-
- 	// compute lights
-	computeLights(normal, gsPosition);
-
-	// take effect colors into account
 	fragColor = fragColor * gsEffectColorMul;
+
+	#if defined(HAVE_SOLID_SHADING)
+		fragColor+= material.ambient;
+		// no op
+	#else
+		vec3 normal = gsNormal;
+
+		// specular
+		materialShininess = material.shininess;
+		if (specularTextureAvailable == 1) {
+			vec3 specularTextureValue = texture(specularTextureUnit, gsFragTextureUV).rgb;
+			materialShininess =
+				((0.33 * specularTextureValue.r) +
+				(0.33 * specularTextureValue.g) +
+				(0.33 * specularTextureValue.b)) * 255.0;
+		}
+
+		// compute normal
+		if (normalTextureAvailable == 1) {
+			vec3 normalVector = normalize(texture(normalTextureUnit, gsFragTextureUV).rgb * 2.0 - 1.0);
+			normal = vec3(0.0, 0.0, 0.0);
+			normal+= gsTangent * normalVector.x;
+			normal+= gsBitangent * normalVector.y;
+			normal+= gsNormal * normalVector.z;
+		}
+
+		// compute lights
+		computeLights(normal, gsPosition);
+	#endif
+
+		// take effect colors into account
 	fragColor.a = material.diffuse.a * gsEffectColorMul.a;
 
 	//
@@ -278,6 +295,20 @@ void main (void) {
 			outColor = clamp((gsEffectColorAdd + diffuseTextureColor) * fragColor, 0.0, 1.0);
 		} else {
 			outColor = clamp(gsEffectColorAdd + fragColor, 0.0, 1.0);
+		}
+		if (outColor.a < 0.0001) discard;
+		#if defined(HAVE_SKY_SHADING)
+			gl_FragDepth = 1.0;
+		#endif
+	#endif
+	#if defined(HAVE_DEPTH_FOG)
+		if (fragDepth > FOG_DISTANCE_NEAR) {
+			float fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
+			outColor = vec4(
+				(outColor.rgb * (1.0 - fogStrength)) +
+				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
+				1.0
+			);
 		}
 	#endif
 }

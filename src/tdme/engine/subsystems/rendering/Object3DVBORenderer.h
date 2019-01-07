@@ -133,17 +133,6 @@ private:
 	 */
 	void clearMaterial();
 
-	/** 
-	 * Creates a particle system entity key
-	 * @param effectColorAdd effect color add
-	 * @param effectColorMul effect color mul
-	 * @param pointSize point size
-	 * @param textureId texture id
-	 * @param depthBuffer depthBuffer
-	 * @param sort sort
-	 */
-	static const string createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, float pointSize, int32_t textureId, bool depthBuffer, bool sort);
-
 public:
 	static constexpr int32_t RENDERTYPE_NORMALS { 1 };
 	static constexpr int32_t RENDERTYPE_TEXTUREARRAYS { 2 };

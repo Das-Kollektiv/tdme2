@@ -91,6 +91,7 @@ void LODTest::dispose()
 void LODTest::initialize()
 {
 	engine->initialize();
+	engine->setSceneColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	engine->addPostProcessingProgram("depth_fog");
 	Object3D* entity;
 	auto cam = engine->getCamera();

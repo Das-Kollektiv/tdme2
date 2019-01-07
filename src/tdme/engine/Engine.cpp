@@ -150,9 +150,11 @@ Engine::Engine()
 	//
 	initialized = false;
 	// post processing frame buffers
-	postProcessingFrameBuffer[0] = nullptr;
-	postProcessingFrameBuffer[1] = nullptr;
+	postProcessingFrameBuffer1 = nullptr;
+	postProcessingFrameBuffer2 = nullptr;
 	postProcessingTemporaryFrameBuffer = nullptr;
+	//
+	isUsingPostProcessingTemporaryFrameBuffer = false;
 }
 
 Engine::~Engine() {
@@ -161,8 +163,8 @@ Engine::~Engine() {
 	delete gui;
 	delete partition;
 	if (frameBuffer != nullptr) delete frameBuffer;
-	if (postProcessingFrameBuffer[0] != nullptr) delete postProcessingFrameBuffer[0];
-	if (postProcessingFrameBuffer[1] != nullptr) delete postProcessingFrameBuffer[1];
+	if (postProcessingFrameBuffer1 != nullptr) delete postProcessingFrameBuffer1;
+	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
 	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
 	if (shadowMappingEnabled == true) {
 		delete shadowMapping;
@@ -209,7 +211,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	// create object 3d vbo renderer
 	offScreenEngine->object3DVBORenderer = new Object3DVBORenderer(offScreenEngine, renderer);
 	offScreenEngine->object3DVBORenderer->initialize();
-	// create framebuffer
+	// create framebuffers
 	offScreenEngine->frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
 	// create camera, frustum partition
@@ -343,9 +345,14 @@ Object3DVBORenderer* Engine::getObject3DVBORenderer()
 	return object3DVBORenderer;
 }
 
-Color4& Engine::getSceneColor()
+const Color4& Engine::getSceneColor() const
 {
 	return sceneColor;
+}
+
+void Engine::setSceneColor(const Color4& sceneColor)
+{
+	this->sceneColor = sceneColor;
 }
 
 int32_t Engine::getEntityCount()
@@ -590,6 +597,7 @@ void Engine::initialize(bool debug)
 	}
 
 	// check if initialized
+	// initialized &= objectsFrameBuffer->isInitialized();
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
@@ -615,8 +623,8 @@ void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 	if (frameBuffer != nullptr) frameBuffer->reshape(width, height);
 
 	// update post processing frame buffer if we have one
-	if (postProcessingFrameBuffer[0] != nullptr) postProcessingFrameBuffer[0]->reshape(width, height);
-	if (postProcessingFrameBuffer[1] != nullptr) postProcessingFrameBuffer[1]->reshape(width, height);
+	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->reshape(width, height);
+	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->reshape(width, height);
 	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(width, height);
 
 	// update shadow mapping
@@ -756,31 +764,31 @@ void Engine::display()
 
 	// create post processing frame buffers if having post processing
 	if (postProcessingPrograms.size() > 0) {
-		if (postProcessingFrameBuffer[0] == nullptr) {
-			postProcessingFrameBuffer[0] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
-			postProcessingFrameBuffer[0]->initialize();
+		if (postProcessingFrameBuffer1 == nullptr) {
+			postProcessingFrameBuffer1 = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer1->initialize();
 		}
-		if (postProcessingFrameBuffer[1] == nullptr) {
-			postProcessingFrameBuffer[1] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
-			postProcessingFrameBuffer[1]->initialize();
+		if (postProcessingFrameBuffer2 == nullptr) {
+			postProcessingFrameBuffer2 = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer2->initialize();
 		}
-		postProcessingFrameBuffer[0]->enableFrameBuffer();
+		postProcessingFrameBuffer1->enableFrameBuffer();
 	} else {
-		if (postProcessingFrameBuffer[0] != nullptr) {
-			postProcessingFrameBuffer[0]->dispose();
-			delete postProcessingFrameBuffer[0];
-			postProcessingFrameBuffer[0] = nullptr;
+		if (postProcessingFrameBuffer1 != nullptr) {
+			postProcessingFrameBuffer1->dispose();
+			delete postProcessingFrameBuffer1;
+			postProcessingFrameBuffer1 = nullptr;
 		}
-		if (postProcessingFrameBuffer[1] != nullptr) {
-			postProcessingFrameBuffer[1]->dispose();
-			delete postProcessingFrameBuffer[1];
-			postProcessingFrameBuffer[1] = nullptr;
+		if (postProcessingFrameBuffer2 != nullptr) {
+			postProcessingFrameBuffer2->dispose();
+			delete postProcessingFrameBuffer2;
+			postProcessingFrameBuffer2 = nullptr;
 		}
-		// switch back to framebuffer if we have one
+		// render objects to target frame buffer or screen
 		if (frameBuffer != nullptr) {
 			frameBuffer->enableFrameBuffer();
 		} else {
-			FrameBuffer::disableFrameBuffer();
+			frameBuffer->disableFrameBuffer();
 		}
 	}
 
@@ -828,6 +836,21 @@ void Engine::display()
 	// disable materials
 	renderer->setMaterialDisabled();
 
+	// clear pre render states
+	renderingInitiated = false;
+	renderingComputedTransformations = false;
+
+	// store matrices
+	modelViewMatrix.set(renderer->getModelViewMatrix());
+	projectionMatrix.set(renderer->getProjectionMatrix());
+
+	// do post processing
+	isUsingPostProcessingTemporaryFrameBuffer = false;
+	if (postProcessingPrograms.size() > 0) {
+		doPostProcessing(PostProcessingProgram::RENDERPASS_OBJECTS, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, postProcessingFrameBuffer1);
+		postProcessingFrameBuffer1->enableFrameBuffer();
+	}
+
 	// use particle shader
 	if (particlesShader != nullptr) {
 		particlesShader->useProgram();
@@ -841,67 +864,22 @@ void Engine::display()
 		particlesShader->unUseProgram();
 	}
 
-	// clear pre render states
-	renderingInitiated = false;
-	renderingComputedTransformations = false;
-
-	// store matrices
-	modelViewMatrix.set(renderer->getModelViewMatrix());
-	projectionMatrix.set(renderer->getProjectionMatrix());
-
-	// do post processing
+	// render objects and particles together
 	if (postProcessingPrograms.size() > 0) {
-		bool isUsingPostProcessingTemporaryFrameBuffer = false;
-		auto postProcessingFrameBufferIdx = 0;
-		for (auto programId: postProcessingPrograms) {
-			auto program = postProcessing->getPostProcessingProgram(programId);
-			if (program != nullptr) {
-				for (auto& step: program->getPostProcessingSteps()) {
-					auto shaderId = step.shaderId;
-					FrameBuffer* source = postProcessingFrameBuffer[postProcessingFrameBufferIdx];
-					FrameBuffer* target = nullptr;
-					switch(step.target) {
-						case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
-							target = postProcessingFrameBuffer[(postProcessingFrameBufferIdx + 1) % 2];
-							break;
-						case PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY:
-							isUsingPostProcessingTemporaryFrameBuffer = true;
-							if (postProcessingTemporaryFrameBuffer == nullptr) {
-								postProcessingTemporaryFrameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
-								postProcessingTemporaryFrameBuffer->initialize();
-							}
-							target = postProcessingTemporaryFrameBuffer;
-							break;
-					}
-					FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr);
-					switch(step.target) {
-						case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
-							postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
-							break;
-						case PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY:
-							break;
-					}
-				}
-			}
-		}
-		// unuse framebuffer if we have one
-		if (frameBuffer != nullptr) {
-			frameBuffer->enableFrameBuffer();
-		} else {
-			frameBuffer->disableFrameBuffer();
-		}
-		postProcessingFrameBuffer[postProcessingFrameBufferIdx]->renderToScreen();
-
-		//
-		if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
-			postProcessingTemporaryFrameBuffer->dispose();
-			delete postProcessingTemporaryFrameBuffer;
-			postProcessingTemporaryFrameBuffer = nullptr;
-		}
+		doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, frameBuffer);
 	}
 
-	// unuse framebuffer if we have one
-	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
+	// render objects to target frame buffer or screen
+	if (frameBuffer != nullptr) {
+		frameBuffer->disableFrameBuffer();
+	}
+
+	// delete post processing termporary buffer if not required anymore
+	if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
+		postProcessingTemporaryFrameBuffer->dispose();
+		delete postProcessingTemporaryFrameBuffer;
+		postProcessingTemporaryFrameBuffer = nullptr;
+	}
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
@@ -1078,12 +1056,11 @@ void Engine::dispose()
 	// dispose shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->dispose();
 
-	// dispose frame buffer
+	// dispose frame buffers
 	if (frameBuffer != nullptr) frameBuffer->dispose();
-
-	// dispose frame buffer
-	if (postProcessingFrameBuffer[0] != nullptr) postProcessingFrameBuffer[0]->dispose();
-	if (postProcessingFrameBuffer[1] != nullptr) postProcessingFrameBuffer[1]->dispose();
+	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->dispose();
+	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->dispose();
+	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->dispose();
 
 	// dispose GUI
 	gui->dispose();
@@ -1146,4 +1123,52 @@ void Engine::clearPostProcessingPrograms() {
 
 void Engine::addPostProcessingProgram(const string& programId) {
 	postProcessingPrograms.push_back(programId);
+}
+
+void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, array<FrameBuffer*, 2> postProcessingFrameBuffers, FrameBuffer* targetFrameBuffer) {
+	auto postProcessingFrameBufferIdx = 0;
+	for (auto programId: postProcessingPrograms) {
+		auto program = postProcessing->getPostProcessingProgram(programId);
+
+		if (program == nullptr) continue;
+
+		if (program->getRenderPass() != renderPass) continue;
+
+		for (auto& step: program->getPostProcessingSteps()) {
+			auto shaderId = step.shaderId;
+			FrameBuffer* source = postProcessingFrameBuffers[postProcessingFrameBufferIdx];
+			FrameBuffer* target = nullptr;
+			switch(step.target) {
+				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
+					target = postProcessingFrameBuffers[(postProcessingFrameBufferIdx + 1) % 2];
+					break;
+				case PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY:
+					isUsingPostProcessingTemporaryFrameBuffer = true;
+					if (postProcessingTemporaryFrameBuffer == nullptr) {
+						postProcessingTemporaryFrameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
+						postProcessingTemporaryFrameBuffer->initialize();
+					}
+					target = postProcessingTemporaryFrameBuffer;
+					break;
+			}
+			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr);
+			switch(step.target) {
+				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
+					postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
+					break;
+				case PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY:
+					break;
+			}
+		}
+	}
+
+	// render back to objects frame buffer
+	if (postProcessingFrameBuffers[postProcessingFrameBufferIdx] != targetFrameBuffer) {
+		if (targetFrameBuffer != nullptr) {
+			targetFrameBuffer->enableFrameBuffer();
+		} else {
+			FrameBuffer::disableFrameBuffer();
+		}
+		postProcessingFrameBuffers[postProcessingFrameBufferIdx]->renderToScreen();
+	}
 }

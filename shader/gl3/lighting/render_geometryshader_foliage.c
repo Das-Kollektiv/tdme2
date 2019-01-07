@@ -28,6 +28,14 @@ uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
 uniform int frame;
 
+{$DEFINITIONS}
+
+#define HAVE_DEPTH_FOG
+
+#if defined(HAVE_DEPTH_FOG)
+	out float fragDepth;
+#endif
+
 {$FUNCTIONS}
 
 void main()
@@ -58,10 +66,19 @@ void main()
 
 	for (int i = 0; i < gl_in.length() / 3; i++) {
 		computeVertex(gl_in[i * 3 + 0].gl_Position, i * 3 + 0, shaderTransformMatrix);
+		#if defined(HAVE_DEPTH_FOG)
+			fragDepth = gl_Position.z;
+		#endif
 		EmitVertex();
 		computeVertex(gl_in[i * 3 + 1].gl_Position, i * 3 + 1, shaderTransformMatrix);
+		#if defined(HAVE_DEPTH_FOG)
+			fragDepth = gl_Position.z;
+		#endif
 		EmitVertex();
 		computeVertex(gl_in[i * 3 + 2].gl_Position, i * 3 + 2, shaderTransformMatrix);
+		#if defined(HAVE_DEPTH_FOG)
+			fragDepth = gl_Position.z;
+		#endif
 		EmitVertex();
 		EndPrimitive();
 	}

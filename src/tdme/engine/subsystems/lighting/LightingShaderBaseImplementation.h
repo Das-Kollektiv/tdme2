@@ -47,7 +47,6 @@ protected:
 	int32_t uniformMVMatrix { -1 };
 	int32_t uniformNormalMatrix { -1 };
 	int32_t uniformTextureMatrix { -1 };
-	int32_t uniformSceneColor { -1 };
 	int32_t uniformEffectColorMul { -1 };
 	int32_t uniformEffectColorAdd { -1 };
 	int32_t uniformMaterialAmbient { -1 };

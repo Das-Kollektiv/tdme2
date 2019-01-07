@@ -38,7 +38,7 @@ public:
 	 * @param color color
 	 * @param distanceFromCamera distance from camera
 	 */
-	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera) {
+	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera, void* cookie) {
 		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
 			Console::println(string("TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
@@ -50,6 +50,7 @@ public:
 		transparentRenderPoint.point.set(point);
 		transparentRenderPoint.color.set(color);
 		transparentRenderPoint.distanceFromCamera = distanceFromCamera;
+		transparentRenderPoint.cookie = cookie;
 	}
 
 	/** 
@@ -66,7 +67,9 @@ public:
 	/** 
 	 * @return transparent render points vector
 	 */
-	vector<TransparentRenderPoint>* getTransparentRenderPoints();
+	inline const vector<TransparentRenderPoint>& getTransparentRenderPoints() {
+		return transparentRenderPoints;
+	}
 
 	/** 
 	 * Sort transparent render points

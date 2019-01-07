@@ -47,6 +47,7 @@ void TransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
 		transparentRenderPoint.point.set(point.point);
 		transparentRenderPoint.color.set(point.color);
 		transparentRenderPoint.distanceFromCamera = point.distanceFromCamera;
+		transparentRenderPoint.cookie = point.cookie;
 	}
 }
 
@@ -56,11 +57,6 @@ void TransparentRenderPointsPool::reset()
 	for (auto& point: transparentRenderPoints) {
 		point.acquired = false;
 	}
-}
-
-vector<TransparentRenderPoint>* TransparentRenderPointsPool::getTransparentRenderPoints()
-{
-	return &transparentRenderPoints;
 }
 
 void TransparentRenderPointsPool::sort()

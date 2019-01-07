@@ -113,7 +113,7 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer)
 	this->renderer = renderer;
 	transparentRenderFacesGroupPool = new Object3DVBORenderer_TransparentRenderFacesGroupPool();
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
-	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(16384);
+	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(65535);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
 		bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
@@ -295,7 +295,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
 		// create group key
-		string transparentRenderFacesGroupKey = TransparentRenderFacesGroup::createKey(model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
+		string transparentRenderFacesGroupKey = TransparentRenderFacesGroup::createKey(model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object3D->getShader());
 		// get group
 		TransparentRenderFacesGroup* trfGroup = nullptr;
 		auto trfGroupIt = transparentRenderFacesGroups.find(transparentRenderFacesGroupKey);
@@ -305,7 +305,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 		if (trfGroup == nullptr) {
 			// we do not have the group, create group
 			trfGroup = transparentRenderFacesGroupPool->allocate();
-			trfGroup->set(this, model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates);
+			trfGroup->set(this, model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object3D->getShader());
 			transparentRenderFacesGroups[transparentRenderFacesGroupKey] = trfGroup;
 		}
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
@@ -928,114 +928,68 @@ void Object3DVBORenderer::clearMaterial()
 	renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 }
 
-const string Object3DVBORenderer::createPseKey(const Color4& effectColorAdd, const Color4& effectColorMul, float pointSize, int32_t textureId, bool depthBuffer, bool sort)
-{
-	auto& efcaData = effectColorAdd.getArray();
-	auto& efcmData = effectColorMul.getArray();
-	string key =
-		to_string(efcmData[0]) +
-		"," +
-		to_string(efcmData[1]) +
-		"," +
-		to_string(efcmData[2]) +
-		"," +
-		to_string(efcmData[3]) +
-		"," +
-		to_string(efcaData[0]) +
-		"," +
-		to_string(efcaData[1]) +
-		"," +
-		to_string(efcaData[2]) +
-		"," +
-		to_string(efcaData[3]) +
-		"," +
-		to_string(pointSize) +
-		"," +
-		to_string(textureId) +
-		"," +
-		(depthBuffer == true ? "DBT" : "DBF") +
-		"," +
-		(sort == true ? "DS" : "NS");
-	return key;
-}
-
 void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visiblePses)
 {
+	// TODO: Move me into own class
+	// TODO: check me performance wise again
 	if (visiblePses.size() == 0) return;
+
+	// switch back to texture unit 0, TODO: check where its set to another value but not set back
+	renderer->setTextureUnit(0);
+
+	// merge ppses and sort them
+	for (auto i = 0; i < visiblePses.size(); i++) {
+		PointsParticleSystemEntityInternal* ppse = visiblePses[i];
+		pseTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
+	}
+	if (pseTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
+	pseTransparentRenderPointsPool->sort();
 
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
 	modelViewMatrix.set(renderer->getModelViewMatrix());
-	//
+
 	// set up GL state
 	renderer->enableBlending();
 	// 	model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
-	// find all keys which differentiate with effect colors and depth buffer
-	unordered_set<string> pseKeys;
-	for (auto i = 0; i < visiblePses.size(); i++) {
-		PointsParticleSystemEntityInternal* ppse = visiblePses[i];
-		auto pseKey = createPseKey(
-			ppse->getEffectColorAdd(),
-			ppse->getEffectColorMul(),
-			ppse->getPointSize(),
-			ppse->getTextureId(),
-			ppse->isPickable(),
-			ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false
-		);
-		pseKeys.insert(pseKey);
-	}
-	// process each key
-	int32_t pseTextureId = 0;
-	float psePointSize = 0.0f;
-	for (auto pseKey: pseKeys) {
-		auto pseSort = false;
-		PointsParticleSystemEntityInternal* currentPse = nullptr;
-		// iterate all pses
-		for (auto j = 0; j < visiblePses.size(); j++) {
-			// check if ppse belongs to current key, otherwise skip this pse
-			PointsParticleSystemEntityInternal* ppse = visiblePses[j];
-			auto innerPseKey = createPseKey(
-				ppse->getEffectColorAdd(),
-				ppse->getEffectColorMul(),
-				ppse->getPointSize(),
-				ppse->getTextureId(),
-				ppse->isPickable(),
-				ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false
-			);
-			if (pseKey != innerPseKey) {
-				continue;
-			} else {
-				currentPse = visiblePses[j];
-				pseSort = ppse->getParticleEmitter()->getColorStart().equals(ppse->getParticleEmitter()->getColorEnd()) == false;
-				pseTextureId = ppse->getTextureId();
-				psePointSize = ppse->getPointSize();
-			}
-			// merge ppse pool
-			pseTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
-		}
-		// sort, we currently always need to sort due to depth buffer writing and testing
-		/*if (pseSort == true) */pseTransparentRenderPointsPool->sort();
-		// put sorted points into batch renderer
-		for (auto& point: *pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
-			if (point.acquired == false)
-				break;
 
-			psePointBatchVBORenderer->addPoint(&point);
+	// render
+	PointsParticleSystemEntity* currentPpse = (PointsParticleSystemEntity*)pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie;
+	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
+		if (point.acquired == false) break;
+		if (point.cookie != (void*)currentPpse) {
+			// issue rendering
+			renderer->setEffectColorAdd(currentPpse->getEffectColorAdd().getArray());
+			renderer->setEffectColorMul(currentPpse->getEffectColorMul().getArray());
+			renderer->onUpdateEffect();
+			// TODO: maybe use onBindTexture() or onUpdatePointSize()
+			engine->getParticlesShader()->setParameters(currentPpse->getTextureId(), currentPpse->getPointSize());
+			// render, clear
+			psePointBatchVBORenderer->render();
+			psePointBatchVBORenderer->clear();
+			//
+			currentPpse = (PointsParticleSystemEntity*)point.cookie;
 		}
-		//
-		renderer->setEffectColorAdd(currentPse->getEffectColorAdd().getArray());
-		renderer->setEffectColorMul(currentPse->getEffectColorMul().getArray());
+		psePointBatchVBORenderer->addPoint(point);
+	}
+
+	if (psePointBatchVBORenderer->hasPoints() == true) {
+		// issue rendering
+		renderer->setEffectColorAdd(currentPpse->getEffectColorAdd().getArray());
+		renderer->setEffectColorMul(currentPpse->getEffectColorMul().getArray());
 		renderer->onUpdateEffect();
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()
-		engine->getParticlesShader()->setParameters(pseTextureId, psePointSize);
-		// TODO: point size
+		engine->getParticlesShader()->setParameters(currentPpse->getTextureId(), currentPpse->getPointSize());
 		// render, clear
 		psePointBatchVBORenderer->render();
 		psePointBatchVBORenderer->clear();
-		pseTransparentRenderPointsPool->reset();
 	}
+
+	// done
+	pseTransparentRenderPointsPool->reset();
+
 	// unbind texture
 	renderer->bindTexture(renderer->ID_NONE);
 	// TODO: before render sort all pps by distance to camera and render them in correct order

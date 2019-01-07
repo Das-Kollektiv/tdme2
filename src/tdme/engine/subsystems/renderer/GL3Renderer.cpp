@@ -361,14 +361,14 @@ void GL3Renderer::disableDepthBufferWriting()
 
 void GL3Renderer::disableDepthBufferTest()
 {
-	glDisable(GL_DEPTH_TEST);
-	// TODO: should be something like: glDepthFunc(GL_ALWAYS);
+	// glDisable(GL_DEPTH_TEST);
+	glDepthFunc(GL_ALWAYS); // TODO: something like this
 }
 
 void GL3Renderer::enableDepthBufferTest()
 {
-	glEnable(GL_DEPTH_TEST);
-	// TODO: should be something like: glDepthFunc(GL_LEQUAL);
+	// glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL); // TODO: something like this
 }
 
 void GL3Renderer::setDepthFunction(int32_t depthFunction)

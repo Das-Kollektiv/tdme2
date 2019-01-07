@@ -56,6 +56,8 @@ private:
 	Material* material {  };
 	bool textureCoordinates {  };
 
+	string shader {  };
+
 	/** 
 	 * Set transparent render faces group
 	 * @param object3DVBORenderer object3D VBO renderer
@@ -66,8 +68,9 @@ private:
 	 * @param effectColorMul effect color mul
 	 * @param material material
 	 * @param textureCoordinates texture coordinates
+	 * @param shader shader
 	 */
-	void set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates);
+	void set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader);
 
 	/** 
 	 * Creates a key for given transparent render faces group attributes
@@ -78,9 +81,10 @@ private:
 	 * @param effectColorMul effect color mul
 	 * @param material material
 	 * @param textureCoordinates texture coordinates
+	 * @param shader shader
 	 * @return
 	 */
-	static const string createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates);
+	static const string createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader);
 
 	/** 
 	 * Adds a vertex to this transparent render faces group

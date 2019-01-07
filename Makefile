@@ -99,7 +99,7 @@ else
 endif
 
 CPPFLAGS := $(INCLUDES)
-CFLAGS := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 #CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_DEBUG := -g -pipe -MMD -MP
@@ -198,6 +198,8 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp \
@@ -237,8 +239,6 @@ SRCS = \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDepthFogImplementation.cpp \
-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
