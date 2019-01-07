@@ -99,7 +99,7 @@ else
 endif
 
 CPPFLAGS := $(INCLUDES)
-CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+CFLAGS := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 #CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_DEBUG := -g -pipe -MMD -MP
