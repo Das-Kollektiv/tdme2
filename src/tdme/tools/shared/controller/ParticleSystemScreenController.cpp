@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -55,7 +55,7 @@ using std::string;
 
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -842,7 +842,7 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 				);
 			} else
 			if (node->getId().compare("button_pps_texture_file") == 0) {
-				vector<string> extensions = TextureLoader::getTextureExtensions();
+				vector<string> extensions = TextureReader::getTextureExtensions();
 				view->getPopUpsViews()->getFileDialogScreenController()->show(
 					modelPath->getPath(),
 					"Load from: ",

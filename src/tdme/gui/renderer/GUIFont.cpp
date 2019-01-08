@@ -7,7 +7,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/gui/renderer/GUIFont_CharacterDefinition.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
@@ -26,7 +26,7 @@ using tdme::gui::renderer::GUIFont;
 using tdme::math::Math;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::renderer::GUIFont_CharacterDefinition;
 using tdme::gui::renderer::GUIRenderer;
@@ -57,7 +57,7 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (F
 	auto info = lines[lineIdx++];
 	auto common = lines[lineIdx++];
 	auto page = lines[lineIdx++];
-	font->texture = TextureLoader::loadTexture(
+	font->texture = TextureReader::read(
 		pathName,
 		StringUtils::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\""))
 	);

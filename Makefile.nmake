@@ -105,7 +105,7 @@ SRCS = \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
 	src/tdme/engine/fileio/models/WFObjReader.cpp \
 	src/tdme/engine/fileio/textures/Texture.cpp \
-	src/tdme/engine/fileio/textures/TextureLoader.cpp \
+	src/tdme/engine/fileio/textures/TextureReader.cpp \
 	src/tdme/engine/model/Animation.cpp \
 	src/tdme/engine/model/AnimationSetup.cpp \
 	src/tdme/engine/model/Face.cpp \

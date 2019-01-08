@@ -3,13 +3,13 @@
 #include <string>
 
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/tools/shared/tools/Tools.h>
 
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::tools::shared::tools::Tools;
 
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -31,7 +31,7 @@ void LevelEditorEntityParticleSystem_PointParticleSystem::setTextureFileName(con
 		return;
 	}
 	this->textureFileName = textureFileName;
-	texture = TextureLoader::loadTexture(
+	texture = TextureReader::read(
 		Tools::getPath(textureFileName),
 		Tools::getFileName(textureFileName)
 	);

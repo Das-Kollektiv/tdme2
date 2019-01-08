@@ -70,7 +70,7 @@ private:
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::fileio::textures::TextureLoader final
+class tdme::engine::fileio::textures::TextureReader final
 {
 public:
 	/**
@@ -84,7 +84,7 @@ public:
 	 * @param fileName file name
 	 * @return texture data instance or null
 	 */
-	static Texture* loadTexture(const string& pathName, const string& fileName);
+	static Texture* read(const string& pathName, const string& fileName);
 
 private:
 	/**

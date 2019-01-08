@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
@@ -19,7 +19,7 @@ using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::GLRenderer;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
@@ -84,10 +84,10 @@ void LightingShaderTerrainImplementation::initialize()
 	if (uniformStoneTextureUnit == -1) return;
 
 	//
-	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureLoader::loadTexture("resources/engine/textures", "terrain_gras.png"));
-	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureLoader::loadTexture("resources/engine/textures", "terrain_dirt.png"));
-	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureLoader::loadTexture("resources/engine/textures", "terrain_snow.png"));
-	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureLoader::loadTexture("resources/engine/textures", "terrain_stone.png"));
+	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_gras.png"));
+	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_dirt.png"));
+	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_snow.png"));
+	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_stone.png"));
 
 	//
 	initialized = true;

@@ -10,7 +10,7 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
@@ -34,7 +34,7 @@ using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -67,7 +67,7 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const str
 	this->particlesToSpawnRemainder = 0.0f;
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureLoader::loadTexture("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
 }
 
 PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {

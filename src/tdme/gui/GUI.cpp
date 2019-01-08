@@ -12,7 +12,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
@@ -45,7 +45,7 @@ using std::vector;
 using tdme::gui::GUI;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::gui::GUIParserException;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent_Type;
@@ -187,7 +187,7 @@ Texture* GUI::getImage(const string& fileName) throw (FileSystemException)
 	auto image = imageIt != imageCache.end() ? imageIt->second : nullptr;
 	if (image == nullptr) {
 		try {
-			image = TextureLoader::loadTexture(path, file);
+			image = TextureReader::read(path, file);
 			image->setUseMipMap(false);
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getImage(): An error occurred: "));

@@ -6,7 +6,7 @@
 
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::Engine;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;

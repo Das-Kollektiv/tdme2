@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
@@ -50,7 +50,7 @@ using std::string;
 using tdme::tools::shared::controller::ModelEditorScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::gui::GUIParser;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -655,7 +655,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
-	auto extensions = TextureLoader::getTextureExtensions();
+	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -669,7 +669,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
-	auto extensions = TextureLoader::getTextureExtensions();
+	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getDiffuseTransparencyTextureFileName() != ""?material->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -683,7 +683,7 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
-	auto extensions = TextureLoader::getTextureExtensions();
+	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getNormalTextureFileName() != ""?material->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
@@ -697,7 +697,7 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
-	auto extensions = TextureLoader::getTextureExtensions();
+	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		material->getSpecularTextureFileName() != ""?material->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",

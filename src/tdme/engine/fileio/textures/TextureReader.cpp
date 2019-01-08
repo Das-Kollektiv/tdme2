@@ -1,4 +1,4 @@
-#include <tdme/engine/fileio/textures/TextureLoader.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 
 #include <stdlib.h>
 
@@ -23,32 +23,32 @@ using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-using tdme::engine::fileio::textures::TextureLoader;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::PNGInputStream;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringUtils;
 
-vector<string> TextureLoader::extensions = {"png"};
+vector<string> TextureReader::extensions = {"png"};
 
-const vector<string>& TextureLoader::getTextureExtensions() {
+const vector<string>& TextureReader::getTextureExtensions() {
 	return extensions;
 }
 
-Texture* TextureLoader::loadTexture(const string& pathName, const string& fileName)
+Texture* TextureReader::read(const string& pathName, const string& fileName)
 {
 	try {
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) {
-			return TextureLoader::loadPNG(pathName, fileName);
+			return TextureReader::loadPNG(pathName, fileName);
 		}
 	} catch (Exception& exception) {
-		Console::println("TextureLoader::loadTexture(): Could not load texture: " + pathName + "/" + fileName + ": " + (exception.what()));
+		Console::println("TextureReader::loadTexture(): Could not load texture: " + pathName + "/" + fileName + ": " + (exception.what()));
 	}
 	return nullptr;
 }
 
-void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead) {
+void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead) {
 	png_voidp io_ptr = png_get_io_ptr(png_ptr);
 	if (io_ptr == nullptr) return;
 
@@ -56,7 +56,7 @@ void TextureLoader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureLoader::loadPNG(const string& pathName, const string& fileName) throw (FileSystemException) {
+Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) throw (FileSystemException) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// canonical file name for id
@@ -89,7 +89,7 @@ Texture* TextureLoader::loadPNG(const string& pathName, const string& fileName) 
 	}
 
 	// set up custom read function
-	png_set_read_fn(png, pngInputStream, TextureLoader::readPNGDataFromMemory);
+	png_set_read_fn(png, pngInputStream, TextureReader::readPNGDataFromMemory);
 
 	// set libpng error handling mechanism
 	if (setjmp(png_jmpbuf(png))) {
