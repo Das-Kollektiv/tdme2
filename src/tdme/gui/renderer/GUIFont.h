@@ -164,9 +164,13 @@ public:
 	 */
 	int32_t getLineHeight();
 
+	/**
+	 * Public constructor
+	 */
 	GUIFont();
 
-private:
-	void init();
-
+	/**
+	 * Destructor
+	 */
+	~GUIFont();
 };

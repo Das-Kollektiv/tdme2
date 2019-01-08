@@ -25,7 +25,7 @@ LevelEditorEntityParticleSystem_PointParticleSystem::LevelEditorEntityParticleSy
 
 void LevelEditorEntityParticleSystem_PointParticleSystem::setTextureFileName(const string& textureFileName) {
 	if (textureFileName.empty() == true) {
-		if (texture != nullptr) delete texture;
+		if (texture != nullptr) texture->releaseReference();;
 		texture = nullptr;
 		this->textureFileName.clear();
 		return;
@@ -39,5 +39,5 @@ void LevelEditorEntityParticleSystem_PointParticleSystem::setTextureFileName(con
 }
 
 LevelEditorEntityParticleSystem_PointParticleSystem::~LevelEditorEntityParticleSystem_PointParticleSystem() {
-	if (texture != nullptr) delete texture;
+	if (texture != nullptr) texture->releaseReference();;
 }

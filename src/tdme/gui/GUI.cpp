@@ -187,7 +187,7 @@ Texture* GUI::getImage(const string& fileName) throw (FileSystemException)
 	auto image = imageIt != imageCache.end() ? imageIt->second : nullptr;
 	if (image == nullptr) {
 		try {
-			image = TextureReader::read(path, file);
+			image = TextureReader::read(path, file, false);
 			image->setUseMipMap(false);
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getImage(): An error occurred: "));
@@ -237,7 +237,9 @@ void GUI::reset()
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
 		removeScreen(entitiesToRemove[i]);
 	}
+	for (auto fontCacheIt: fontCache) delete fontCacheIt.second;
 	fontCache.clear();
+	for (auto imageCacheIt: imageCache) imageCacheIt.second->releaseReference();
 	imageCache.clear();
 }
 

@@ -41,11 +41,11 @@ MutableString GUIFont::LINEHEIGHT_STRING = MutableString("abcdefghijklmnopqrstuv
 
 GUIFont::GUIFont()
 {
-	init();
 }
 
-void GUIFont::init()
+GUIFont::~GUIFont()
 {
+	if (texture != nullptr) texture->releaseReference();
 }
 
 GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (FileSystemException)
@@ -59,7 +59,8 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (F
 	auto page = lines[lineIdx++];
 	font->texture = TextureReader::read(
 		pathName,
-		StringUtils::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\""))
+		StringUtils::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\"")),
+		false
 	);
 	auto done = false;
 	while (lineIdx < lines.size()) {

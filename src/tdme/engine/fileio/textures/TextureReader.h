@@ -1,6 +1,6 @@
-
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -10,6 +10,7 @@
 
 #include <ext/libpng/png.h>
 
+using std::map;
 using std::vector;
 using std::string;
 
@@ -72,6 +73,8 @@ private:
  */
 class tdme::engine::fileio::textures::TextureReader final
 {
+	friend class Texture;
+
 public:
 	/**
 	 * @return texture extensions
@@ -82,9 +85,10 @@ public:
 	 * Loads a texture
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param useCache use cache
 	 * @return texture data instance or null
 	 */
-	static Texture* read(const string& pathName, const string& fileName);
+	static Texture* read(const string& pathName, const string& fileName, bool useCache = true);
 
 private:
 	/**
@@ -96,6 +100,12 @@ private:
 	static void readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead);
 
 	/**
+	 * Remove texture from cache
+	 * @param texture texture
+	 */
+	static void removeFromCache(Texture* texture);
+
+	/**
 	 * Load PNG
 	 * @param path path name
 	 * @param fileName file name
@@ -104,4 +114,7 @@ private:
 
 	//
 	static vector<string> extensions;
+
+	// maybe have a read write lock here for texture cache, but currently I have no multithreaded access to it
+	static map<string, Texture*> textureCache;
 };

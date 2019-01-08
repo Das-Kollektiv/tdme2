@@ -31,21 +31,45 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::StringUtils;
 
 vector<string> TextureReader::extensions = {"png"};
+map<string, Texture*> TextureReader::textureCache;
 
 const vector<string>& TextureReader::getTextureExtensions() {
 	return extensions;
 }
 
-Texture* TextureReader::read(const string& pathName, const string& fileName)
+Texture* TextureReader::read(const string& pathName, const string& fileName, bool useCache)
 {
-	try {
-		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) {
-			return TextureReader::loadPNG(pathName, fileName);
+	Texture* texture = nullptr;
+
+	// make canonical
+	auto canonicalFile = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
+	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFile);
+	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFile);
+
+	// do cache look up
+	if (useCache == true) {
+		auto textureCacheIt = textureCache.find(canonicalPathName + "/" + canonicalFileName);
+		if (textureCacheIt != textureCache.end()) {
+			texture = textureCacheIt->second;
 		}
-	} catch (Exception& exception) {
-		Console::println("TextureReader::loadTexture(): Could not load texture: " + pathName + "/" + fileName + ": " + (exception.what()));
 	}
-	return nullptr;
+
+	// have texture?
+	if (texture == nullptr) {
+		// nope try to load
+		try {
+			if (StringUtils::endsWith(StringUtils::toLowerCase(canonicalFileName), ".png") == true) {
+				texture = TextureReader::loadPNG(canonicalPathName, canonicalFileName);
+				if (texture != nullptr) textureCache[texture->getId()] = texture;
+			}
+		} catch (Exception& exception) {
+			Console::println("TextureReader::loadTexture(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
+		}
+	}
+
+	// done
+	if (texture != nullptr) texture->acquireReference();
+	return texture;
 }
 
 void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead) {
@@ -199,4 +223,9 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 		height,
 		pixelByteBuffer
 	);
+}
+
+void TextureReader::removeFromCache(Texture* texture) {
+	auto textureCacheIt = textureCache.find(texture->getId());
+	if (textureCacheIt != textureCache.end()) textureCache.erase(textureCacheIt);
 }
