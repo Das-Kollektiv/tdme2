@@ -16,14 +16,14 @@ GUINodeConditions::GUINodeConditions(GUIElementNode* elementNode): elementNode(e
 {
 }
 
-vector<string>& GUINodeConditions::getConditions()
+const vector<string>& GUINodeConditions::getConditions( ) const
 {
 	return conditions;
 }
 
-bool GUINodeConditions::has(const string& condition) {
-	for (vector<string>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
-		if (condition == *it) return true;
+bool GUINodeConditions::has(const string& condition) const {
+	for (auto _condition: conditions) {
+		if (condition == condition) return true;
 	}
 	return false;
 }
@@ -64,7 +64,7 @@ bool GUINodeConditions::removeAll()
 	return conditionsChanged;
 }
 
-void GUINodeConditions::updateNode(GUINode* node) {
+void GUINodeConditions::updateNode(GUINode* node) const {
 	node->conditionsMet = node->checkConditions(elementNode);
 	if (node->conditionsMet == false) return;
 
@@ -80,7 +80,7 @@ void GUINodeConditions::updateNode(GUINode* node) {
 	}
 }
 
-void GUINodeConditions::updateElementNode() {
+void GUINodeConditions::updateElementNode() const {
 	if (elementNode == nullptr) return;
 	for (auto i = 0; i < elementNode->subNodes.size(); i++) {
 		auto guiSubNode = elementNode->subNodes[i];
