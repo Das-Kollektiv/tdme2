@@ -19,7 +19,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 	EXTRA_LIBS ?= -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
-	OFLAGS := -O3
+	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	LDFLAGS+= -fuse-ld=bfd
@@ -32,7 +32,7 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
-	OFLAGS := -O3
+	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
@@ -98,10 +98,12 @@ else
 	OFLAGS := -O2
 endif
 
+
 CPPFLAGS := $(INCLUDES)
-CFLAGS := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+CFLAGS := -g $(OFLAGS) -pipe -MMD -MP
 #CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
-CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP
+#CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_DEBUG := -g -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) -std=gnu++11
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) -std=gnu++11
