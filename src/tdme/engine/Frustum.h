@@ -23,7 +23,6 @@ using tdme::math::Vector3;
 
 /** 
  * Frustum class
- * based on http://www.crownandcutlass.com/features/technicaldetails/frustum.html
  * @author Mark Morley, Andreas Drewke
  * @version $Id$
  */

@@ -164,7 +164,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 
 		{
 			// vertex order
-			// 	https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
+			// 	see: https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
 			auto& polygonVertexOrderedFirst = polygonVertices[polygonVerticesOrdered[0]];
 			auto& polygonVertexOrderedLast = polygonVertices[polygonVerticesOrdered[1]];
 			Vector3 ac;

@@ -35,6 +35,7 @@ constexpr int32_t Frustum::PLANE_NEAR;
 
 void Frustum::updateFrustum()
 {
+	// see: http://www.crownandcutlass.com/features/technicaldetails/frustum.html
 	projectionMatrixTransposed.set(renderer->getProjectionMatrix()).transpose();
 	modelViewMatrixTransposed.set(renderer->getModelViewMatrix()).transpose();
 	frustumMatrix.set(projectionMatrixTransposed).multiply(modelViewMatrixTransposed);

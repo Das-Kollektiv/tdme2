@@ -60,7 +60,7 @@ using tdme::utils::Time;
 
 #if defined(_WIN32) && defined(_MSC_VER) == false
 	string exec(const string& cmd) {
-		// https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
+		// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
 		array<char, 128> buffer;
 		string result;
 		shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);

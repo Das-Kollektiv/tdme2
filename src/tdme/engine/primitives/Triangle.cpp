@@ -22,7 +22,7 @@ Triangle::Triangle(const Vector3& vertex0, const Vector3& vertex1, const Vector3
 }
 
 void Triangle::computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const {
-	// based on http://www.gamedev.net/topic/552906-closest-point-on-triangle/
+	// see: http://www.gamedev.net/topic/552906-closest-point-on-triangle/
 	Vector3 edge0;
 	Vector3 edge1;
 	Vector3 v0Point;

@@ -153,7 +153,6 @@ private:
 
 	/** 
 	 * Computes the projection matrix
-	 * based on: http://www.songho.ca/opengl/gl_transform.html
 	 * @param yfieldOfView y field of view
 	 * @param aspect aspect
 	 * @param zNear z near
@@ -164,7 +163,6 @@ private:
 
 	/** 
 	 * Computes frustum matrix
-	 * based on: http://www.songho.ca/opengl/gl_transform.html
 	 * @param left left
 	 * @param right right
 	 * @param bottom top

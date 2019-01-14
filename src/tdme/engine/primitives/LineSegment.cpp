@@ -167,6 +167,7 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 
 bool LineSegment::doesLineSegmentCollideWithTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Vector3& r1, const Vector3& r2, Vector3& contact)
 {
+	// see: https://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
 	Vector3 d1;
 	Vector3 d2;
 	Vector3 n;

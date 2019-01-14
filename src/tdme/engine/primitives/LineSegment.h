@@ -84,7 +84,6 @@ public:
 	 * @param r2 r2 line segment point 2
 	 * @param contact point of intersection
 	 * @return line segment collides with triangle
-	 * @see https://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
 	 */
 	static bool doesLineSegmentCollideWithTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Vector3& r1, const Vector3& r2, Vector3& contact);
 };

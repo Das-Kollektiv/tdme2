@@ -74,6 +74,7 @@ const string GL2Renderer::getGLVersion()
 
 bool GL2Renderer::checkBufferObjectsAvailable()
 {
+	// see: http://www.felixgers.de/teaching/jogl/vertexBufferObject.html
 	// Check if extension is available.
 	auto extensionOK = true; // isExtensionAvailable(u"GL_ARB_vertex_buffer_object"_j);
 	// Check for VBO functions.

@@ -884,7 +884,7 @@ void Engine::display()
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
 {
-	// http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
+	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
 	Matrix4x4 tmpMatrix4x4;
 	Vector4 tmpVector4a;
 	Vector4 tmpVector4b;
@@ -911,7 +911,7 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	if (frameBuffer != nullptr)
 		frameBuffer->enableFrameBuffer();
 
-	// http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
+	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
 	auto z = renderer->readPixelDepth(mouseX, height - mouseY);
 
 	// unuse framebuffer if we have one
