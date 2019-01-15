@@ -6,6 +6,7 @@
 #include <tdme/utils/Time.h>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -20,6 +21,7 @@ using tdme::tools::particlesystem::TDMEParticleSystem;
 using tdme::utils::Time;
 
 using tdme::engine::Engine;
+using tdme::engine::model::Color4;
 using tdme::gui::GUI;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
@@ -121,6 +123,7 @@ void TDMEParticleSystem::dispose()
 void TDMEParticleSystem::initialize()
 {
 	engine->initialize();
+	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	popUps->initialize();

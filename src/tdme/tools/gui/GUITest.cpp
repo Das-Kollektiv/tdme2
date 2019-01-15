@@ -5,6 +5,7 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/effects/GUIColorEffect.h>
@@ -35,6 +36,7 @@ using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
+using tdme::engine::model::Color4;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::effects::GUIColorEffect;
@@ -108,6 +110,7 @@ void GUITest::initialize()
 	};
 	try {
 		engine->initialize();
+		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
 		engine->getGUI()->addRenderScreen("test");

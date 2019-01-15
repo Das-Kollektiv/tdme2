@@ -6,6 +6,7 @@
 #include <tdme/utils/Time.h>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
@@ -28,6 +29,7 @@ using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::utils::Time;
 
 using tdme::engine::Engine;
+using tdme::engine::model::Color4;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
@@ -135,6 +137,7 @@ void TDMELevelEditor::dispose() {
 
 void TDMELevelEditor::initialize() {
 	engine->initialize();
+	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
 	levelEditorEntityLibraryScreenController =
