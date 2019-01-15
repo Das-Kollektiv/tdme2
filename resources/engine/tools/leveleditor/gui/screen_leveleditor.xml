@@ -1,7 +1,7 @@
 <screen id="screen_leveleditor" background-color="#00000000" min-width="1024" min-height="768" max-width="1920" max-height="1080">
 	<layout alignment="vertical" width="100%" height="100%">
 		<panel alignment="none" width="100%" height="30" padding="5" vertical-align="center">
-			<text id="screen_caption" font="resources/gui-system/fonts/Foo_20.fnt" text="Level Editor" width="100%" horizontal-align="center" height="auto" />
+			<text id="screen_caption" font="resources/gui-system/fonts/Roboto_20.fnt" text="Level Editor" width="100%" horizontal-align="center" height="auto" />
 		</panel>
 		<layout width="100%" height="*" alignment="horizontal">
 			<element width="100%" height="100%" ignore-events="true">
@@ -71,13 +71,13 @@
 					<tab-content tab-id="tab_properties_grid" vertical-align="center">
 						<layout width="auto" height="auto" alignment="vertical">
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y position" width="200" height="auto"/>
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Y position" width="200" height="auto"/>
 								<space width="5" />
 								<input id="grid_y_position" name="grid_y_position" width="200" height="auto" text="Y position" />
 							</layout>
 							<space height="5" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Enable" width="200" height="auto"/>
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Enable" width="200" height="auto"/>
 								<space width="5" />
 								<checkbox id="grid_enabled" name="grid_enabled" width="auto" height="auto" value="1" />
 							</layout>
@@ -90,19 +90,19 @@
 					<tab-content tab-id="tab_properties_map" vertical-align="center">
 						<layout width="auto" height="auto" alignment="vertical">
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Width" width="200" height="auto"/>
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Width" width="200" height="auto"/>
 								<space width="5" />
 								<input id="map_width" name="map_width" width="200" height="auto" text="Width" />
 							</layout>
 							<space height="5" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Height" width="200" height="auto"/>
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Height" width="200" height="auto"/>
 								<space width="5" />
 								<input id="map_height" name="map_height" width="200" height="auto" text="Height" />
 							</layout>
 							<space height="5" />
 							<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="resources/gui-system/fonts/Foo_20.fnt" text="Depth" width="200" height="auto"/>
+								<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Depth" width="200" height="auto"/>
 								<space width="5" />
 								<input id="map_depth" name="map_depth" width="200" height="auto" text="Depth" />
 							</layout>
@@ -121,11 +121,11 @@
 								</selectbox>
 								<space height="10" />
 								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Name" width="45" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Name" width="45" height="auto"/>
 									<space width="*" />
 									<input id="map_property_name" name="map_property_name" width="240" height="auto" text="Name" />
 									<space width="*" />
-									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Value" width="45" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Value" width="45" height="auto"/>
 									<space width="*" />
 									<input id="map_property_value" name="map_property_value" width="240" height="auto" text="Value" />
 								</layout>
@@ -145,13 +145,13 @@
 							<layout width="auto" height="auto" alignment="horizontal">
 								<layout width="auto" height="auto" alignment="vertical">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Name" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Name" width="145" height="auto"/>
 										<space width="5" />
 										<input id="object_name" name="object_name" width="150" height="auto" text="Name" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Description" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Description" width="145" height="auto"/>
 										<space width="5" />
 										<input id="object_description" name="object_description" width="150" height="auto" text="Description" />
 									</layout>
@@ -159,13 +159,13 @@
 								<space width="20" />
 								<layout width="auto" height="auto" alignment="vertical">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Model" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Model" width="145" height="auto"/>
 										<space width="5" />
 										<input id="object_model" name="object_model" width="150" height="auto" text="Model" disabled="true" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Center" width="145" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Center" width="145" height="auto"/>
 										<space width="5" />
 										<input id="object_center" name="object_center" width="150" height="auto" text="Center" disabled="true" />
 									</layout>
@@ -182,19 +182,19 @@
 							<layout width="auto" height="auto" alignment="horizontal">
 								<layout width="auto" height="auto" alignment="vertical">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="X" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="X" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_translation_x" name="object_translation_x" width="150" height="auto" text="X" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Y" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_translation_y" name="object_translation_y" width="150" height="auto" text="Y" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Z" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Z" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_translation_z" name="object_translation_z" width="150" height="auto" text="Z" />
 									</layout>
@@ -206,19 +206,19 @@
 								<space width="25" />
 								<layout width="auto" height="auto" alignment="vertical">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="X" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="X" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_scale_x" name="object_scale_x" width="150" height="auto" text="X" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Y" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_scale_y" name="object_scale_y" width="150" height="auto" text="Y" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Z" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Z" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_scale_z" name="object_scale_z" width="150" height="auto" text="Z" />
 									</layout>
@@ -230,19 +230,19 @@
 								<space width="25" />
 								<layout width="auto" height="auto" alignment="vertical">
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="X" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="X" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_rotation_x" name="object_rotation_x" width="150" height="auto" text="X" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Y" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Y" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_rotation_y" name="object_rotation_y" width="150" height="auto" text="Y" />
 									</layout>
 									<space height="5" />
 									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-										<text font="resources/gui-system/fonts/Foo_20.fnt" text="Z" width="20" height="auto"/>
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Z" width="20" height="auto"/>
 										<space width="5" />
 										<input id="object_rotation_z" name="object_rotation_z" width="150" height="auto" text="Z" />
 									</layout>
@@ -277,11 +277,11 @@
 								</selectbox>
 								<space height="10" />
 								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Name" width="45" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Name" width="45" height="auto"/>
 									<space width="*" />
 									<input id="object_property_name" name="object_property_name" width="240" height="auto" text="Name" />
 									<space width="*" />
-									<text font="resources/gui-system/fonts/Foo_20.fnt" text="Value" width="45" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Value" width="45" height="auto"/>
 									<space width="*" />
 									<input id="object_property_value" name="object_property_value" width="240" height="auto" text="Value" />
 								</layout>
