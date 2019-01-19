@@ -197,9 +197,11 @@ SRCS = \
 	src/tdme/engine/primitives/Triangle.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \

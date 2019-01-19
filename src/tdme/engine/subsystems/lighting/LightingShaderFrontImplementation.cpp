@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.h>
 
 #include <string>
 
@@ -10,20 +10,20 @@ using std::to_string;
 using std::string;
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
-using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderFrontImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderSkyImplementation::isSupported(GLRenderer* renderer) {
+bool LightingShaderFrontImplementation::isSupported(GLRenderer* renderer) {
 	return true;
 }
 
-LightingShaderSkyImplementation::LightingShaderSkyImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
+LightingShaderFrontImplementation::LightingShaderFrontImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
 {
 }
 
-void LightingShaderSkyImplementation::initialize()
+void LightingShaderFrontImplementation::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
 
@@ -33,7 +33,7 @@ void LightingShaderSkyImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/lighting",
 		"render_fragmentshader.c",
-		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK\n\n"
+		"#define HAVE_SOLID_SHADING\n#define HAVE_FRONT\n\n"
 	);
 	if (renderLightingFragmentShaderId == 0) return;
 
@@ -42,7 +42,7 @@ void LightingShaderSkyImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/lighting",
 		"render_vertexshader.c",
-		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK\n\n",
+		"#define HAVE_SOLID_SHADING\n#define HAVE_FRONT\n\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + rendererVersion + "/lighting",
 			"render_computevertex.inc.c"

@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderBackImplementation.h>
 
 #include <string>
 
@@ -10,20 +10,20 @@ using std::to_string;
 using std::string;
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
-using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderBackImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderSkyImplementation::isSupported(GLRenderer* renderer) {
+bool LightingShaderBackImplementation::isSupported(GLRenderer* renderer) {
 	return true;
 }
 
-LightingShaderSkyImplementation::LightingShaderSkyImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
+LightingShaderBackImplementation::LightingShaderBackImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
 {
 }
 
-void LightingShaderSkyImplementation::initialize()
+void LightingShaderBackImplementation::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
 

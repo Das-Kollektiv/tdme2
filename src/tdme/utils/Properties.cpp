@@ -46,7 +46,7 @@ void Properties::load(const string& pathName, const string& fileName) throw (Fil
 		int separatorPos = line.find(L'=');
 		if (separatorPos == -1) continue;
 		string key = StringUtils::substring(line, 0, separatorPos);
-		string value = StringUtils::substring(line, 0, separatorPos);
+		string value = StringUtils::substring(line, separatorPos + 1);
 		properties[key] = value;
 	}
 }
