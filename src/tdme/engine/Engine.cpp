@@ -1117,7 +1117,7 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 	return true;
 }
 
-void Engine::clearPostProcessingPrograms() {
+void Engine::resetPostProcessingPrograms() {
 	postProcessingPrograms.clear();
 }
 
