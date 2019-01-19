@@ -213,9 +213,9 @@
 - Other credits
     - Mathias Lenz
     - Dominik Hepp
+    - Kolja Gumpert
     - Mathias Wenzel
     - Sergiu Crăiţoiu
-    - Kolja Gumpert
     - Chantal Zabel
     - others
 
