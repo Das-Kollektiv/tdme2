@@ -1,4 +1,3 @@
-
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 	#if !defined(__arm__) && !defined(__aarch64__)
 		#define GLEW_NO_GLU
@@ -300,8 +299,8 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 #elif defined(__HAIKU__)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 #endif
-	glutInitWindowSize(1024, 768);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(windowWidth, windowHeight);
+	glutInitWindowPosition(windowXPosition, windowYPosition);
 	glutCreateWindow((title).c_str());
 #if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
 	glewExperimental = true;

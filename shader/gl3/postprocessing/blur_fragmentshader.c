@@ -1,9 +1,16 @@
 #version 330
 
-#define MAP_LOOKUPS_NEAR	4
-#define MAP_LOOKUPS_FAR		8
+{$DEFINITIONS}
 
-#define DISTANCE_NEAR		0.96
+#if defined(HAVE_4K)
+	#define MAP_LOOKUPS_NEAR		4
+	#define MAP_LOOKUPS_FAR		8
+#else
+	#define MAP_LOOKUPS_NEAR		2
+	#define MAP_LOOKUPS_FAR		4
+#endif
+
+#define DISTANCE_NEAR	0.96
 #define DISTANCE_FAR		0.98
 #define DISTANCE_MAX		0.985
 

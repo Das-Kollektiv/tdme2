@@ -46,6 +46,66 @@ public:
 	void setInputEventHandler(InputEventHandler* inputEventHandler);
 
 	/**
+	 * @return window X position
+	 */
+	inline int32_t getWindowXPosition() const {
+		return windowXPosition;
+	}
+
+	/**
+	 * Set window X position when initializing
+	 * @param windowXPosition window X position
+	 */
+	inline void setWindowXPosition(int32_t windowXPosition) {
+		this->windowXPosition = windowXPosition;
+	}
+
+	/**
+	 * @return window Y position
+	 */
+	inline int32_t getWindowYPosition() const {
+		return windowYPosition;
+	}
+
+	/**
+	 * Set window Y position when initializing
+	 * @param windowYPosition window Y position
+	 */
+	inline void setWindowYPosition(int32_t windowYPosition) {
+		this->windowYPosition = windowYPosition;
+	}
+
+	/**
+	 * @return window width
+	 */
+	inline int32_t getWindowWidth() const {
+		return windowWidth;
+	}
+
+	/**
+	 * Set window width when initializing
+	 * @param windowWidth window width
+	 */
+	inline void setWindowWidth(int32_t windowWidth) {
+		this->windowWidth = windowWidth;
+	}
+
+	/**
+	 * @return window height
+	 */
+	inline int32_t getWindowHeight() const {
+		return windowHeight;
+	}
+
+	/**
+	 * Set window height when initializing
+	 * @param windowHeight window height
+	 */
+	inline void setWindowHeight(int32_t windowHeight) {
+		this->windowHeight = windowHeight;
+	}
+
+	/**
 	 * Windows only: Install exception handler that will print a stack trace if crashing
 	 */
 	static void installExceptionHandler();
@@ -103,6 +163,10 @@ private:
 	static Application* application;
 	static InputEventHandler* inputEventHandler;
 	bool initialized { false };
+	int32_t windowWidth { 1024 };
+	int32_t windowHeight { 768 };
+	int32_t windowXPosition { 100 };
+	int32_t windowYPosition { 100 };
 	static int64_t timeLast;
 
 	/**

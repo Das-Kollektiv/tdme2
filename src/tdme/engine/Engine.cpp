@@ -132,6 +132,7 @@ SkinningShader* Engine::skinningShader = nullptr;
 GUIShader* Engine::guiShader = nullptr;
 Engine* Engine::currentEngine = nullptr;
 bool Engine::skinningShaderEnabled = false;
+bool Engine::have4K = false;
 
 Engine::Engine() 
 {
@@ -187,6 +188,14 @@ Engine::~Engine() {
 	}
 	// set current engine
 	if (currentEngine == this) currentEngine = nullptr;
+}
+
+bool Engine::is4K() {
+	return Engine::have4K;
+}
+
+void Engine::set4K(bool have4K) {
+	Engine::have4K = have4K;
 }
 
 Engine* Engine::getInstance()
@@ -694,21 +703,6 @@ void Engine::computeTransformations()
 		} \
 	}
 
-	// collect entities that do not have frustum culling enabled
-	for (auto it: noFrustumCullingEntities) {
-		auto entity = it.second;
-
-		// skip on disabled entities
-		if (entity->isEnabled() == false) continue;
-
-		// compute transformations and add to lists
-		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
-			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
-		} else {
-			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
-		}
-	}
-
 	// do particle systems auto emit
 	for (auto it: autoEmitParticleSystemEntities) {
 		auto entity = it.second;
@@ -728,6 +722,21 @@ void Engine::computeTransformations()
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);
+			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
+		} else {
+			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
+		}
+	}
+
+	// collect entities that do not have frustum culling enabled
+	for (auto it: noFrustumCullingEntities) {
+		auto entity = it.second;
+
+		// skip on disabled entities
+		if (entity->isEnabled() == false) continue;
+
+		// compute transformations and add to lists
+		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);

@@ -1,6 +1,12 @@
 #version 330
 
-#define SSAO_MAP_LOOKUPS		4
+{$DEFINITIONS}
+
+#if defined(HAVE_4K)
+	#define SSAO_MAP_LOOKUPS		4
+#else
+	#define SSAO_MAP_LOOKUPS		2
+#endif
 
 // uniforms
 uniform sampler2D colorBufferTextureUnit;
