@@ -302,6 +302,11 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitWindowPosition(windowXPosition, windowYPosition);
 	glutCreateWindow((title).c_str());
+	if (fullScreen == true) {
+		#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+			glutFullScreen();
+		#endif
+	}
 #if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
 	glewExperimental = true;
 	GLenum glewInitStatus = glewInit();
