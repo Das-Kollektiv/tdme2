@@ -255,6 +255,46 @@ void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
 }
 
+int32_t Application::getWindowXPosition() const {
+	return windowXPosition;
+}
+
+void Application::setWindowXPosition(int32_t windowXPosition) {
+	this->windowXPosition = windowXPosition;
+}
+
+int32_t Application::getWindowYPosition() const {
+	return windowYPosition;
+}
+
+void Application::setWindowYPosition(int32_t windowYPosition) {
+	this->windowYPosition = windowYPosition;
+}
+
+int32_t Application::getWindowWidth() const {
+	return windowWidth;
+}
+
+void Application::setWindowWidth(int32_t windowWidth) {
+	this->windowWidth = windowWidth;
+}
+
+int32_t Application::getWindowHeight() const {
+	return windowHeight;
+}
+
+void Application::setWindowHeight(int32_t windowHeight) {
+	this->windowHeight = windowHeight;
+}
+
+bool Application::isFullScreen() const {
+	return fullScreen;
+}
+
+void Application::setFullScreen(bool fullScreen) {
+	this->fullScreen = fullScreen;
+}
+
 void Application::installExceptionHandler() {
 	#if defined(_WIN32)
 		AddVectoredExceptionHandler(1, windowsExceptionHandler);
