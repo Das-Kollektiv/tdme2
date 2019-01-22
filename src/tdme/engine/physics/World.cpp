@@ -340,7 +340,7 @@ Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const
 		}
 	private:
 		Vector3 hitPoint;
-		Body* body;
+		Body* body { nullptr };
 	};
 	reactphysics3d::Vector3 startPoint(start.getX(), start.getY(), start.getZ());
 	reactphysics3d::Vector3 endPoint(end.getX(), end.getY(), end.getZ());
