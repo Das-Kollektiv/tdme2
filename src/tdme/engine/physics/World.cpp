@@ -328,9 +328,14 @@ Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const
 		CustomCallbackClass(const string& actorId): actorId(actorId), body(nullptr) {
 		}
 		virtual reactphysics3d::decimal notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {
-			hitPoint.set(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
-			body = (Body*)info.body->getUserData();
-			return actorId.size() == 0 || body->getId() != actorId?reactphysics3d::decimal(0.0):reactphysics3d::decimal(1.0);
+			auto _body = (Body*)info.body->getUserData();
+			if (actorId.size() == 0 || _body->getId() != actorId) {
+				body = _body;
+				hitPoint.set(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
+				return reactphysics3d::decimal(0.0);
+			} else {
+				return reactphysics3d::decimal(1.0);
+			}
 		};
 		Body* getBody() {
 			return body;
