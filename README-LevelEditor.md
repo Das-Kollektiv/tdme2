@@ -30,7 +30,7 @@
              - color your objects
              - center objects
              - remove objects
-         - setting up object properties
+        - setting up object properties
              - key, value map for what ever reason
         - set up up to 8 lights (for now)
         - see and select entities(models, particle systems, empties and trigger) from entity library to place them on map
