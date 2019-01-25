@@ -297,7 +297,7 @@ void Application::setFullScreen(bool fullScreen) {
 
 void Application::installExceptionHandler() {
 	#if defined(_WIN32)
-		AddVectoredExceptionHandler(1, windowsExceptionHandler);
+		SetUnhandledExceptionFilter(windowsExceptionHandler);
 	#endif
 }
 
