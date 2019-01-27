@@ -249,27 +249,35 @@ void GUI::resetRenderScreens()
 		renderScreens[i]->setGUI(nullptr);
 	}
 	renderScreens.clear();
+
+	// focussed node
 	focussedNode = nullptr;
-	determineFocussedNodes();
 }
 
 void GUI::addRenderScreen(const string& screenId)
 {
 	auto screenIt = screens.find(screenId);
-	if (screenIt == screens.end())
-		return;
+	if (screenIt == screens.end()) return;
 
+	//
 	screenIt->second->setGUI(this);
 	screenIt->second->setConditionsMet();
 	renderScreens.push_back(screenIt->second);
+
+	// focussed node
+	focussedNode = nullptr;
+	determineFocussedNodes();
 }
 
 void GUI::removeRenderScreen(const string& screenId)
 {
 	auto screenIt = screens.find(screenId);
-	if (screenIt == screens.end())
-		return;
+	if (screenIt == screens.end()) return;
 
+	//
+	screenIt->second->setGUI(nullptr);
+
+	//
 	renderScreens.erase(remove(renderScreens.begin(), renderScreens.end(), screenIt->second), renderScreens.end());
 }
 
@@ -407,19 +415,17 @@ void GUI::render()
 	guiRenderer->initRendering();
 	for (auto i = 0; i < renderScreens.size(); i++) {
 		auto screen = renderScreens[i];
-		if (screen->isVisible() == false)
-			continue;
+
+		if (screen->isVisible() == false) continue;
 
 		// reshape if requested
 		if (screen->reshapeRequested == true) reshapeScreen(screen);
 
-		screen->tick();
 		screen->render(guiRenderer);
 	}
 	for (auto i = 0; i < renderScreens.size(); i++) {
 		auto screen = renderScreens[i];
-		if (screen->isVisible() == false)
-			continue;
+		if (screen->isVisible() == false) continue;
 
 		screen->renderFloatingNodes(guiRenderer);
 	}
@@ -644,11 +650,13 @@ void GUI::handleEvents()
 		handleKeyboardEvent(&event);
 	}
 
-	// call input event handler at very last
+	// call tick and input event handler at very last
 	for (int32_t i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
 
 		if (screen->isVisible() == false) continue;
+
+		screen->tick();
 
 		if (screen->getInputEventHandler() != nullptr) {
 			screen->getInputEventHandler()->handleInputEvents();
