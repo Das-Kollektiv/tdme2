@@ -59,6 +59,7 @@ void TDMELevelEditor::main(int argc, char** argv) {
 }
 
 TDMELevelEditor::TDMELevelEditor() {
+	Tools::loadSettings(this);
 	TDMELevelEditor::instance = this;
 	LevelPropertyPresets::getInstance()->setDefaultLevelProperties(&level);
 	engine = Engine::getInstance();

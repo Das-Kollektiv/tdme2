@@ -5,6 +5,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/application/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -15,6 +16,7 @@
 using std::array;
 using std::string;
 
+using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::Transformations;
@@ -191,4 +193,10 @@ public:
 	 * @return file name
 	 */
 	static const string getFileName(const string& fileName);
+
+	/**
+	 * Load settings
+	 * @param application application
+	 */
+	static void loadSettings(Application* application);
 };

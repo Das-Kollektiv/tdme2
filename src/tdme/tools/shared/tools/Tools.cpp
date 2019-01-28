@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -32,8 +33,10 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Integer.h>
+#include <tdme/utils/Properties.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Exception.h>
@@ -43,6 +46,8 @@ using std::string;
 using std::to_string;
 
 using tdme::tools::shared::tools::Tools;
+
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -72,9 +77,11 @@ using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::Float;
 using tdme::utils::Integer;
+using tdme::utils::Properties;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
@@ -436,4 +443,33 @@ const string Tools::getPath(const string& fileName)
 const string Tools::getFileName(const string& fileName)
 {
 	return FileSystem::getInstance()->getFileName(fileName);
+}
+
+void Tools::loadSettings(Application* application) {
+	Properties settings;
+
+	// settings
+	try {
+		settings.load("settings", "settings.properties");
+	} catch (FileSystemException &exception) {
+		Console::println(string("Error loading properties: ") + exception.what());
+	}
+
+	// 4k
+	if (settings.get("4k", "false") == "true") {
+		Console::println("Settings: enable 4k");
+		Engine::set4K(true);
+	}
+
+	// Window
+	Console::println("Settings: window width: " + settings.get("window_width", "1024"));
+	Console::println("Settings: window height: " + settings.get("window_height", "768"));
+	Console::println("Settings: window X position: " + settings.get("window_x", "100"));
+	Console::println("Settings: window Y position: " + settings.get("window_y", "100"));
+	Console::println("Settings: fullscreen: " + settings.get("fullscreen", "false"));
+	application->setWindowWidth(Integer::parseInt(settings.get("window_width", "1024")));
+	application->setWindowHeight(Integer::parseInt(settings.get("window_height", "768")));
+	application->setWindowXPosition(Integer::parseInt(settings.get("window_x", "100")));
+	application->setWindowYPosition(Integer::parseInt(settings.get("window_y", "100")));
+	application->setFullScreen(settings.get("fullscreen", "false") == "true");
 }

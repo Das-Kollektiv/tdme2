@@ -35,6 +35,7 @@ TDMEParticleSystem* TDMEParticleSystem::instance = nullptr;
 
 TDMEParticleSystem::TDMEParticleSystem()
 {
+	Tools::loadSettings(this);
 	TDMEParticleSystem::instance = this;
 	engine = Engine::getInstance();
 	view = nullptr;

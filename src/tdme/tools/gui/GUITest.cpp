@@ -22,6 +22,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -53,6 +54,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -60,6 +62,7 @@ using tdme::utils::MutableString;
 
 GUITest::GUITest(const string& screenFileName)
 {
+	Tools::loadSettings(this);
 	this->screenFileName = screenFileName;
 	this->engine = Engine::getInstance();
 	this->popUps = new PopUps();
