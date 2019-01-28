@@ -125,7 +125,9 @@ Matrix4x4& Camera::computeModelViewMatrix(const Vector3& lookFrom, const Vector3
 void Camera::update(int32_t width, int32_t height)
 {
 	// setup new view port if required
+	auto reshaped = false;
 	if (this->width != width || this->height != height) {
+		reshaped = true;
 		if (height <= 0)
 			height = 1;
 
@@ -133,8 +135,6 @@ void Camera::update(int32_t width, int32_t height)
 		this->width = width;
 		this->height = height;
 		renderer->getViewportMatrix().set(width / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, height / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0 + (width / 2.0f), 0 + (height / 2.0f), 0.0f, 1.0f);
-	} else {
-		aspect = static_cast< float >(width) / static_cast< float >(height);
 	}
 
 	// setup projection and model view and such
@@ -146,6 +146,7 @@ void Camera::update(int32_t width, int32_t height)
 	renderer->onUpdateCameraMatrix();
 
 	frustumChanged =
+		reshaped == true ||
 		lastZNear != zNear ||
 		lastZFar != zFar ||
 		lastUpVector.equals(upVector) == false ||
