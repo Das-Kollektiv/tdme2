@@ -1238,7 +1238,10 @@ void ModelEditorScreenController::onModelLoad()
 			modelEditorScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
 		}
 
-		// Generated
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 */
 		OnModelLoad(ModelEditorScreenController* modelEditorScreenController): modelEditorScreenController(modelEditorScreenController) {
 		}
 
@@ -1282,7 +1285,10 @@ void ModelEditorScreenController::onModelSave()
 			}
 		}
 
-		// Generated
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 */
 		OnModelSave(ModelEditorScreenController* modelEditorScreenController): modelEditorScreenController(modelEditorScreenController) {
 		}
 
