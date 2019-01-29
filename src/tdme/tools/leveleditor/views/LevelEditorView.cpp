@@ -7,6 +7,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionOctTree.h>
@@ -40,7 +41,6 @@
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorScreenController.h>
 #include <tdme/tools/leveleditor/logic/Level.h>
-#include <tdme/tools/leveleditor/views/LevelEditorView_LevelEditorView_1.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -77,6 +77,7 @@ using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityPickingFilter;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionOctTree;
@@ -110,7 +111,6 @@ using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::controller::LevelEditorScreenController;
 using tdme::tools::leveleditor::logic::Level;
-using tdme::tools::leveleditor::views::LevelEditorView_LevelEditorView_1;
 using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -206,7 +206,26 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	camLookRotationY->update();
 	levelEditorGround = createLevelEditorGroundPlateModel();
 	engine = Engine::getInstance();
-	entityPickingFilterNoGrid = new LevelEditorView_LevelEditorView_1(this);
+
+	// entity picking filter
+	class LevelEditorEntityPickingFilter: public virtual EntityPickingFilter
+	{
+	public:
+		bool filterEntity(Entity* entity) override {
+			return StringUtils::startsWith(entity->getId(), "leveleditor.ground@") == false;
+		}
+
+		/**
+		 * Public constructor
+		 * @param levelEditorView level editor view
+		 */
+		LevelEditorEntityPickingFilter(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
+		}
+
+	private:
+		LevelEditorView* levelEditorView;
+	};
+	entityPickingFilterNoGrid = new LevelEditorEntityPickingFilter(this);
 }
 
 LevelEditorView::~LevelEditorView() {

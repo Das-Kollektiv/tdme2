@@ -3,19 +3,20 @@
 #include <string>
 
 #include <tdme/gui/GUIParser.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/tools/leveleditor/controller/TriggerScreenController_TriggerScreenController_1.h>
+#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/TriggerView.h>
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/modeleditor/TDMEModelEditor.h>
+#include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
@@ -25,19 +26,20 @@ using std::string;
 
 using tdme::tools::leveleditor::controller::TriggerScreenController;
 using tdme::gui::GUIParser;
+using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::tools::leveleditor::controller::TriggerScreenController_TriggerScreenController_1;
+using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::viewer::TDMEModelEditor;
+using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
@@ -47,9 +49,32 @@ MutableString TriggerScreenController::TEXT_EMPTY = MutableString("");
 
 TriggerScreenController::TriggerScreenController(TriggerView* view) 
 {
+	class OnSetEntityDataAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			finalView->updateGUIElements();
+			TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
+		}
+
+		/**
+		 * Public constructor
+		 * @param triggerScreenController trigger screen controller
+		 * @param finalView final view
+		 */
+		OnSetEntityDataAction(TriggerScreenController* triggerScreenController, TriggerView* finalView): triggerScreenController(triggerScreenController), finalView(finalView) {
+		}
+
+
+	private:
+		TriggerScreenController *triggerScreenController;
+		TriggerView* finalView;
+
+	};
+
 	this->view = view;
 	auto const finalView = view;
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new TriggerScreenController_TriggerScreenController_1(this, finalView));
+	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 }
 
 GUIScreenNode* TriggerScreenController::getScreenNode()
@@ -128,7 +153,7 @@ void TriggerScreenController::unsetTrigger()
 
 void TriggerScreenController::onQuit()
 {
-	TDMEModelEditor::getInstance()->quit();
+	TDMELevelEditor::getInstance()->quit();
 }
 
 void TriggerScreenController::onTriggerApply()

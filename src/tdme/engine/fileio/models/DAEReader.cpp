@@ -8,7 +8,6 @@
 #include <tdme/math/Math.h>
 #include <tdme/engine/ModelUtilities.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/Animation.h>
@@ -55,7 +54,6 @@ using tdme::engine::fileio::models::DAEReader;
 using tdme::math::Math;
 using tdme::engine::ModelUtilities;
 using tdme::engine::Transformations;
-using tdme::engine::fileio::models::DAEReader_determineDisplacementFilename_1;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::Animation;
@@ -1199,20 +1197,14 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 		}
 	}
 
+	/*
 	// determine displacement map file name
 	string xmlDisplacementFilename;
-	//  by diffuse file name
-	if (xmlDiffuseTextureFilename.length() > 0) {
-		xmlDisplacementFilename = determineDisplacementFilename(pathName, "diffuse", xmlDiffuseTextureFilename);
-	}
-	// 	by normal file name
-	if (xmlDisplacementFilename.length() == 0 && xmlBumpTextureFilename.length() > 0) {
-		xmlDisplacementFilename = determineDisplacementFilename(pathName, "normal", xmlBumpTextureFilename);
-	}
 	// add texture
 	if (xmlDisplacementFilename.length() > 0) {
 		material->setDisplacementTexture(pathName, xmlDisplacementFilename);
 	}
+	*/
 
 	// adjust ambient light with blender
 	if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
@@ -1239,33 +1231,6 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 
 	//
 	return material;
-}
-
-const string DAEReader::determineDisplacementFilename(const string& path, const string& mapType, const string& fileName)
-{
-	// filename to lower case
-	auto tmpFileNameCandidate = StringUtils::toLowerCase(fileName);
-	// remove extension
-	tmpFileNameCandidate = StringUtils::substring(tmpFileNameCandidate, 0, tmpFileNameCandidate.find_last_of(L'.'));
-	// normal - maptype
-	if (StringUtils::endsWith(tmpFileNameCandidate, mapType) == true) {
-		tmpFileNameCandidate = StringUtils::substring(tmpFileNameCandidate, 0, tmpFileNameCandidate.length() - mapType.length());
-	}
-	// +displacment
-	tmpFileNameCandidate = tmpFileNameCandidate + "displacement";
-	// try to find file in path file listing
-	try {
-		vector<string> fileNameCandidates;
-		FileSystem::getInstance()->list(path, fileNameCandidates, new DAEReader_determineDisplacementFilename_1(tmpFileNameCandidate));
-		if (fileNameCandidates.size() > 0) {
-			return fileNameCandidates[0];
-		}
-	} catch (Exception& exception) {
-		Console::print(string("DAEReader::determineDisplacementFilename(): An exception occurred: "));
-		Console::println(string(exception.what()));
-	}
-	// we are done
-	return "";
 }
 
 const string DAEReader::makeFileNameRelative(const string& fileName)

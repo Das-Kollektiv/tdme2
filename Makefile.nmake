@@ -99,7 +99,6 @@ SRCS = \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
-	src/tdme/engine/fileio/models/DAEReader_determineDisplacementFilename_1.cpp \
 	src/tdme/engine/fileio/models/ModelFileIOException.cpp \
 	src/tdme/engine/fileio/models/TMReader.cpp \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
@@ -219,13 +218,10 @@ SRCS = \
 	src/tdme/gui/elements/GUIRadioButtonController.cpp \
 	src/tdme/gui/elements/GUIScrollArea.cpp \
 	src/tdme/gui/elements/GUIScrollAreaController.cpp \
-	src/tdme/gui/elements/GUIScrollAreaController_initialize_1.cpp \
 	src/tdme/gui/elements/GUIScrollAreaHorizontal.cpp \
 	src/tdme/gui/elements/GUIScrollAreaHorizontalController.cpp \
-	src/tdme/gui/elements/GUIScrollAreaHorizontalController_initialize_1.cpp \
 	src/tdme/gui/elements/GUIScrollAreaVertical.cpp \
 	src/tdme/gui/elements/GUIScrollAreaVerticalController.cpp \
-	src/tdme/gui/elements/GUIScrollAreaVerticalController_initialize_1.cpp \
 	src/tdme/gui/elements/GUISelectBox.cpp \
 	src/tdme/gui/elements/GUISelectBoxController.cpp \
 	src/tdme/gui/elements/GUISelectBoxMultiple.cpp \
@@ -334,18 +330,12 @@ SRCS = \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController_onValueChanged_1.cpp \
 	src/tdme/tools/leveleditor/controller/LevelEditorScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/LevelEditorScreenController_onMapLoad_1.cpp \
-	src/tdme/tools/leveleditor/controller/LevelEditorScreenController_onMapSave_2.cpp \
 	src/tdme/tools/leveleditor/controller/TriggerScreenController.cpp \
-	src/tdme/tools/leveleditor/controller/TriggerScreenController_TriggerScreenController_1.cpp \
 	src/tdme/tools/leveleditor/logic/Level.cpp \
 	src/tdme/tools/leveleditor/views/EmptyView.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView.cpp \
-	src/tdme/tools/leveleditor/views/LevelEditorView_LevelEditorView_1.cpp \
 	src/tdme/tools/leveleditor/views/LevelEditorView_ObjectColor.cpp \
 	src/tdme/tools/leveleditor/views/ModelEditorView.cpp \
 	src/tdme/tools/leveleditor/views/ParticleSystemView.cpp \
@@ -355,25 +345,12 @@ SRCS = \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController.cpp \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.cpp \
 	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.cpp \
-	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile.cpp \
-	src/tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile.cpp \
 	src/tdme/tools/shared/controller/EntityDisplaySubScreenController.cpp \
 	src/tdme/tools/shared/controller/FileDialogPath.cpp \
 	src/tdme/tools/shared/controller/FileDialogScreenController.cpp \
-	src/tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.cpp \
 	src/tdme/tools/shared/controller/InfoDialogScreenController.cpp \
 	src/tdme/tools/shared/controller/ModelEditorScreenController.cpp \
-	src/tdme/tools/shared/controller/ModelEditorScreenController_ModelEditorScreenController_1.cpp \
-	src/tdme/tools/shared/controller/ModelEditorScreenController_onMaterialLoadTexture.cpp \
-	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelLoad_2.cpp \
-	src/tdme/tools/shared/controller/ModelEditorScreenController_onModelSave_3.cpp \
-	src/tdme/tools/shared/controller/ModelEditorScreenController_onLODModelLoad.cpp \
 	src/tdme/tools/shared/controller/ParticleSystemScreenController.cpp \
-	src/tdme/tools/shared/controller/ParticleSystemScreenController_ParticleSystemScreenController_1.cpp \
-	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.cpp \
-	src/tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_5.cpp \
-	src/tdme/tools/shared/controller/ParticleSystemScreenController_onEntitySave_3.cpp \
-	src/tdme/tools/shared/controller/ParticleSystemScreenController_onParticleSystemLoad_2.cpp \
 	src/tdme/tools/shared/controller/ProgressBarScreenController.cpp \
 	src/tdme/tools/shared/files/LevelFileExport.cpp \
 	src/tdme/tools/shared/files/LevelFileImport.cpp \

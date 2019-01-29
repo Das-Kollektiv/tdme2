@@ -6,6 +6,7 @@
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -15,7 +16,6 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController_onValueChanged_1.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 #include <tdme/tools/leveleditor/views/ModelEditorView.h>
@@ -45,6 +45,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::model::ModelHelper;
 using tdme::gui::GUIParser;
+using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -54,7 +55,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::leveleditor::TDMELevelEditor;
-using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController_onValueChanged_1;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::leveleditor::views::ModelEditorView;
@@ -365,6 +365,48 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			onPartitionEntity();
 		} else
 		if (node->getController()->getValue().getString() == "create_model") {
+			class OnCreateModel: public virtual Action
+			{
+			public:
+				void performAction() override {
+					try {
+						auto entity = entityLibrary->addModel(
+							LevelEditorEntityLibrary::ID_ALLOCATE,
+							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
+							"",
+							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName(),
+							levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getFileName(),
+							Vector3(0.0f, 0.0f, 0.0f)
+						);
+						entity->setDefaultBoundingVolumes();
+						levelEditorEntityLibraryScreenController->setEntityLibrary();
+						levelEditorEntityLibraryScreenController->entityLibraryListBox->getController()->setValue(MutableString(entity->getId()));
+						levelEditorEntityLibraryScreenController->onEditEntity();
+					} catch (Exception& exception) {
+						levelEditorEntityLibraryScreenController->popUps->getInfoDialogScreenController()->show(
+							"Error",
+							"An error occurred: " + string(exception.what())
+						);
+					}
+					levelEditorEntityLibraryScreenController->modelPath = levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->getPathName();
+					levelEditorEntityLibraryScreenController->popUps->getFileDialogScreenController()->close();
+				}
+
+				/**
+				 * Public constructor
+				 * @param levelEditorEntityLibraryScreenController level editor entity library screen controller
+				 * @param entityLibrary entity library
+				 */
+				OnCreateModel(LevelEditorEntityLibraryScreenController* levelEditorEntityLibraryScreenController, LevelEditorEntityLibrary* entityLibrary)
+					: levelEditorEntityLibraryScreenController(levelEditorEntityLibraryScreenController)
+					, entityLibrary(entityLibrary) {
+				}
+
+			private:
+				LevelEditorEntityLibraryScreenController *levelEditorEntityLibraryScreenController;
+				LevelEditorEntityLibrary* entityLibrary;
+			};
+
 			auto const entityLibrary = TDMELevelEditor::getInstance()->getEntityLibrary();
 			vector<string> extensions = ModelReader::getModelExtensions();
 			extensions.push_back("tmm");
@@ -373,7 +415,7 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 				"Load from: ",
 				extensions,
 				"",
-				new LevelEditorEntityLibraryScreenController_onValueChanged_1(this, entityLibrary)
+				new OnCreateModel(this, entityLibrary)
 			);
 		} else
 		if (node->getController()->getValue().getString() == "create_trigger") {

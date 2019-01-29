@@ -15,9 +15,9 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/controller/FileDialogScreenController_setupFileDialogListBox_1.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/FilenameFilter.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -36,11 +36,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::controller::FileDialogScreenController_setupFileDialogListBox_1;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::FilenameFilter;
+using tdme::utils::MutableString;
+using tdme::utils::StringUtils;
 
 FileDialogScreenController::FileDialogScreenController() 
 {
@@ -89,6 +89,29 @@ void FileDialogScreenController::dispose()
 
 bool FileDialogScreenController::setupFileDialogListBox()
 {
+	class ExtensionFilter: public virtual FilenameFilter
+	{
+	public:
+		bool accept(const string& pathName, const string& fileName) override {
+			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
+			for (auto& extension : fileDialogScreenController->extensions) {
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), "." + extension) == true) return true;
+
+			}
+			return false;
+		}
+
+		/**
+		 * Public constructor
+		 * @param fileDialogScreenController file dialog screen controller
+		 */
+		ExtensionFilter(FileDialogScreenController* fileDialogScreenController): fileDialogScreenController(fileDialogScreenController) {
+		}
+
+	private:
+		FileDialogScreenController* fileDialogScreenController;
+	};
+
 	auto success = true;
 	auto directory = cwd;
 	if (directory.length() > 50) {
@@ -100,7 +123,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	vector<string> fileList;
 	try {
 		auto directory = cwd;
-		FileDialogScreenController_setupFileDialogListBox_1 extensionsFilter(this);
+		ExtensionFilter extensionsFilter(this);
 		FileSystem::getInstance()->list(directory, fileList, &extensionsFilter, FileSystem::getInstance()->isDrive(directory));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));

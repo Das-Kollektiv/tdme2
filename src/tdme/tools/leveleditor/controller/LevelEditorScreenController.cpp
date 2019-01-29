@@ -7,6 +7,7 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -17,8 +18,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorScreenController_onMapLoad_1.h>
-#include <tdme/tools/leveleditor/controller/LevelEditorScreenController_onMapSave_2.h>
 #include <tdme/tools/leveleditor/views/LevelEditorView.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -58,8 +57,6 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::leveleditor::TDMELevelEditor;
-using tdme::tools::leveleditor::controller::LevelEditorScreenController_onMapLoad_1;
-using tdme::tools::leveleditor::controller::LevelEditorScreenController_onMapSave_2;
 using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -667,6 +664,26 @@ void LevelEditorScreenController::onObjectCenter()
 
 void LevelEditorScreenController::onMapLoad()
 {
+	class OnMapLoadAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			levelEditorScreenController->view->loadMap(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			levelEditorScreenController->mapPath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param levelEditorScreenController level editor screen controller
+		 */
+		OnMapLoadAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		}
+
+	private:
+		LevelEditorScreenController* levelEditorScreenController;
+	};
+
 	vector<string> extensions = ModelReader::getModelExtensions();
 	extensions.push_back("tl");
 	view->getPopUps()->getFileDialogScreenController()->show(
@@ -674,12 +691,32 @@ void LevelEditorScreenController::onMapLoad()
 		"Load from: ",
 		extensions,
 		view->getFileName(),
-		new LevelEditorScreenController_onMapLoad_1(this)
+		new OnMapLoadAction(this)
 	);
 }
 
 void LevelEditorScreenController::onMapSave()
 {
+	class OnMapSaveAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			levelEditorScreenController->view->saveMap(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(), levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getFileName());
+			levelEditorScreenController->mapPath->setPath(levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName());
+			levelEditorScreenController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param levelEditorScreenController level editor screen controller
+		 */
+		OnMapSaveAction(LevelEditorScreenController* levelEditorScreenController): levelEditorScreenController(levelEditorScreenController) {
+		}
+
+	private:
+		LevelEditorScreenController* levelEditorScreenController;
+	};
+
 	vector<string> extensions = {
 		"tl",
 	};
@@ -688,7 +725,7 @@ void LevelEditorScreenController::onMapSave()
 		"Save to: ",
 		extensions,
 		view->getFileName(),
-		new LevelEditorScreenController_onMapSave_2(this)
+		new OnMapSaveAction(this)
 	);
 }
 

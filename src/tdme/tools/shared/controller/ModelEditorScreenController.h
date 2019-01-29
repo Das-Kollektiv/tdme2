@@ -45,10 +45,6 @@ class tdme::tools::shared::controller::ModelEditorScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-	friend class ModelEditorScreenController_ModelEditorScreenController_1;
-	friend class ModelEditorScreenController_onModelLoad_2;
-	friend class ModelEditorScreenController_onModelSave_3;
-	friend class ModelEditorScreenController_onLODModelLoad;
 
 private:
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };

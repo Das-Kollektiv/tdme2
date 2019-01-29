@@ -25,13 +25,10 @@ namespace elements {
 	class GUIRadioButtonController;
 	class GUIScrollArea;
 	class GUIScrollAreaController;
-	class GUIScrollAreaController_initialize_1;
 	class GUIScrollAreaHorizontal;
 	class GUIScrollAreaHorizontalController;
-	class GUIScrollAreaHorizontalController_initialize_1;
 	class GUIScrollAreaVertical;
 	class GUIScrollAreaVerticalController;
-	class GUIScrollAreaVerticalController_initialize_1;
 	class GUISelectBox;
 	class GUISelectBoxController;
 	class GUISelectBoxMultiple;

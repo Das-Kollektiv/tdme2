@@ -11,6 +11,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -21,8 +22,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_GenerateConvexMeshes.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile.h>
 #include <tdme/tools/shared/controller/EntityPhysicsSubScreenController_BoundingVolumeType.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -54,6 +53,7 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 using tdme::gui::GUIParser;
+using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -64,8 +64,6 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_GenerateConvexMeshes;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -424,6 +422,41 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEdit
 
 void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx)
 {
+	class OnBoundingVolumeConvexMeshFileAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			entityPhysicsSubScreenController->boundingvolumeConvexMeshFile[idxFinal]->getController()->setValue(
+				MutableString(
+					entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+					"/" +
+					entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				)
+			);
+			entityPhysicsSubScreenController->onBoundingVolumeConvexMeshApply(entityFinal, idxFinal);
+			entityPhysicsSubScreenController->modelPath->setPath(entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+			entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param entityPhysicsSubScreenController entity physics sub screen controller
+		 * @param idxFinal idx final
+		 * @param entityFinal entity final
+		 */
+		OnBoundingVolumeConvexMeshFileAction(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, int32_t idxFinal, LevelEditorEntity* entityFinal)
+			: entityPhysicsSubScreenController(entityPhysicsSubScreenController)
+			, idxFinal(idxFinal)
+			, entityFinal(entityFinal) {
+		}
+
+	private:
+		EntityPhysicsSubScreenController* entityPhysicsSubScreenController;
+		int32_t idxFinal;
+		LevelEditorEntity* entityFinal;
+	};
+
+
 	auto const idxFinal = idx;
 	auto const entityFinal = entity;
 	vector<string> extensions = ModelReader::getModelExtensions();
@@ -432,12 +465,42 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEdito
 		"Load from: ",
 		extensions,
 		entity->getBoundingVolumeAt(idx)->getModelMeshFile().length() > 0 ? entity->getBoundingVolumeAt(idx)->getModelMeshFile() : entity->getFileName(),
-		new EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile(this, idxFinal, entityFinal)
+		new OnBoundingVolumeConvexMeshFileAction(this, idxFinal, entityFinal)
 	);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEditorEntity* entity)
 {
+	class OnBoundingVolumeConvexMeshesFileAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			entityPhysicsSubScreenController->convexMeshesFile->getController()->setValue(
+				MutableString(
+					entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
+					"/" +
+					entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()
+				)
+			);
+			entityPhysicsSubScreenController->modelPath->setPath(entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+			entityPhysicsSubScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param entityPhysicsSubScreenController entity physics sub screen controller
+		 * @param entityFinal entity final
+		 */
+		OnBoundingVolumeConvexMeshesFileAction(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, LevelEditorEntity* entityFinal)
+			: entityPhysicsSubScreenController(entityPhysicsSubScreenController)
+			, entityFinal(entityFinal) {
+		}
+
+	private:
+		EntityPhysicsSubScreenController* entityPhysicsSubScreenController;
+		LevelEditorEntity* entityFinal;
+	};
+
 	auto const entityFinal = entity;
 	vector<string> extensions = ModelReader::getModelExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
@@ -445,7 +508,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshesFile(LevelEdi
 		"Load from: ",
 		extensions,
 		Tools::getFileName(convexMeshesFile->getController()->getValue().getString()),
-		new EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshesFile(this, entityFinal)
+		new OnBoundingVolumeConvexMeshesFileAction(this, entityFinal)
 	);
 }
 

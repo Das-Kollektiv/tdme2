@@ -10,6 +10,7 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -26,11 +27,6 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
-#include <tdme/tools/shared/controller/ParticleSystemScreenController_onParticleSystemLoad_2.h>
-#include <tdme/tools/shared/controller/ParticleSystemScreenController_onEntitySave_3.h>
-#include <tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_4.h>
-#include <tdme/tools/shared/controller/ParticleSystemScreenController_onActionPerformed_5.h>
-#include <tdme/tools/shared/controller/ParticleSystemScreenController_ParticleSystemScreenController_1.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
@@ -61,6 +57,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::gui::GUIParser;
+using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -77,11 +74,6 @@ using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
-using tdme::tools::shared::controller::ParticleSystemScreenController_onParticleSystemLoad_2;
-using tdme::tools::shared::controller::ParticleSystemScreenController_onEntitySave_3;
-using tdme::tools::shared::controller::ParticleSystemScreenController_onActionPerformed_4;
-using tdme::tools::shared::controller::ParticleSystemScreenController_onActionPerformed_5;
-using tdme::tools::shared::controller::ParticleSystemScreenController_ParticleSystemScreenController_1;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
@@ -113,11 +105,30 @@ string ParticleSystemScreenController::EMITTER_SPHEREPARTICLEEMITTER = "Sphere P
 
 ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSystemView* view)
 {
+	class OnSetEntityDataAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+			finalView->updateGUIElements();
+			finalView->onSetEntityData();
+		}
+
+		// Generated
+		OnSetEntityDataAction(ParticleSystemScreenController* particleSystemScreenController, SharedParticleSystemView* finalView)
+			: particleSystemScreenController(particleSystemScreenController)
+			, finalView(finalView) {
+		}
+
+	private:
+		ParticleSystemScreenController* particleSystemScreenController;
+		SharedParticleSystemView* finalView;
+	};
+
 	this->particleSystemPath = new FileDialogPath(".");
 	this->modelPath = new FileDialogPath(".");
 	this->view = view;
 	auto const finalView = view;
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new ParticleSystemScreenController_ParticleSystemScreenController_1(this, finalView));
+	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
 	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
 }
@@ -746,6 +757,23 @@ void ParticleSystemScreenController::setParticleSystemEmitter()
 
 void ParticleSystemScreenController::onParticleSystemLoad()
 {
+	class OnParticleSystemLoad: public virtual Action
+	{
+	public:
+		void performAction() override {
+			particleSystemScreenController->view->loadFile(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
+			particleSystemScreenController->particleSystemPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+			particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		// Generated
+		OnParticleSystemLoad(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+		}
+
+	private:
+		ParticleSystemScreenController* particleSystemScreenController;
+	};
+
 	vector<string> extensions = {
 		"tps"
 	};
@@ -754,12 +782,33 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 		"Load from: ",
 		extensions,
 		view->getFileName(),
-		new ParticleSystemScreenController_onParticleSystemLoad_2(this)
+		new OnParticleSystemLoad(this)
 	);
 }
 
 void ParticleSystemScreenController::onEntitySave()
 {
+	class OnEntitySave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				particleSystemScreenController->view->saveFile(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName(), particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName());
+				particleSystemScreenController->particleSystemPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+				particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+			} catch (Exception& exception) {
+				particleSystemScreenController->showErrorPopUp("Warning", (exception.what()));
+			}
+		}
+
+		// Generated
+		OnEntitySave(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+		}
+
+	private:
+		ParticleSystemScreenController* particleSystemScreenController;
+	};
+
 	auto fileName = view->getEntity()->getEntityFileName();
 	if (fileName.length() == 0) {
 		fileName = "untitle.tps";
@@ -773,7 +822,7 @@ void ParticleSystemScreenController::onEntitySave()
 		"Save from: ",
 		extensions,
 		fileName,
-		new ParticleSystemScreenController_onEntitySave_3(this)
+		new OnEntitySave(this)
 );
 }
 
@@ -832,23 +881,63 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 				onParticleSystemEmitterDataApply();
 			} else
 			if (node->getId().compare("button_ops_model_file") == 0) {
+				class OnLoadModelFile: public virtual Action
+				{
+				public:
+					void performAction() override {
+						particleSystemScreenController->opsModel->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					}
+
+					/**
+					 * Public constructor
+					 * @param particleSystemScreenController particle system screen controller
+					 */
+					OnLoadModelFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+					}
+
+				private:
+					ParticleSystemScreenController* particleSystemScreenController;
+				};
+
 				vector<string> extensions = ModelReader::getModelExtensions();
 				view->getPopUpsViews()->getFileDialogScreenController()->show(
 					modelPath->getPath(),
 					"Load from: ",
 					extensions,
 					"",
-					new ParticleSystemScreenController_onActionPerformed_4(this)
+					new OnLoadModelFile(this)
 				);
 			} else
 			if (node->getId().compare("button_pps_texture_file") == 0) {
+				class OnLoadTextureFile: public virtual Action
+				{
+				public:
+					void performAction() override {
+						particleSystemScreenController->ppsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					}
+
+					/**
+					 * Public constructor
+					 * @param particleSystemScreenController particle system screen controller
+					 */
+					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+					}
+
+				private:
+					ParticleSystemScreenController* particleSystemScreenController;
+				};
+
 				vector<string> extensions = TextureReader::getTextureExtensions();
 				view->getPopUpsViews()->getFileDialogScreenController()->show(
 					modelPath->getPath(),
 					"Load from: ",
 					extensions,
 					"",
-					new ParticleSystemScreenController_onActionPerformed_5(this)
+					new OnLoadTextureFile(this)
 				);
 			} else {
 				Console::println(

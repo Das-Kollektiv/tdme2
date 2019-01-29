@@ -3,15 +3,16 @@
 #include <string>
 
 #include <tdme/gui/GUIParser.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
-#include <tdme/tools/leveleditor/controller/EmptyScreenController_EmptyScreenController_1.h>
+#include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/views/EmptyView.h>
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/tools/modeleditor/TDMEModelEditor.h>
+#include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -20,24 +21,41 @@ using std::string;
 
 using tdme::tools::leveleditor::controller::EmptyScreenController;
 using tdme::gui::GUIParser;
+using tdme::gui::events::Action;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
-using tdme::tools::leveleditor::controller::EmptyScreenController_EmptyScreenController_1;
+using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::views::EmptyView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::views::PopUps;
-using tdme::tools::viewer::TDMEModelEditor;
+using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
 EmptyScreenController::EmptyScreenController(EmptyView* view) 
 {
+	class OnSetEntityDataAction: public virtual Action
+	{
+	public:
+		void performAction() override {
+
+		}
+		OnSetEntityDataAction(EmptyScreenController* emptyScreenController, EmptyView* finalView): emptyScreenController(emptyScreenController), finalView(finalView) {
+			finalView->updateGUIElements();
+			TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
+		}
+
+	private:
+		EmptyScreenController* emptyScreenController;
+		EmptyView* finalView;
+	};
+
 	this->view = view;
 	auto const finalView = view;
-	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new EmptyScreenController_EmptyScreenController_1(this, finalView));
+	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 }
 
 GUIScreenNode* EmptyScreenController::getScreenNode()
@@ -90,7 +108,7 @@ void EmptyScreenController::unsetEntityProperties()
 
 void EmptyScreenController::onQuit()
 {
-	TDMEModelEditor::getInstance()->quit();
+	TDMELevelEditor::getInstance()->quit();
 }
 
 void EmptyScreenController::showErrorPopUp(const string& caption, const string& message)
