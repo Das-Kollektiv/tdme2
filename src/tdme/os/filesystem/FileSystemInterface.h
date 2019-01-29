@@ -90,7 +90,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * List files for given path and filter by a file name filter if not null 
 	 * @param pathName path name
 	 * @param files files
-	 * @param filter filter or null
+	 * @param filter filter or null, this filter can be created on stack as ownership will not be taken over
 	 * @param addDrives add drives to list(applies to Microsoft Windows only)
 	 * @return file names 
 	 */
