@@ -100,7 +100,8 @@ endif
 
 
 CPPFLAGS := $(INCLUDES)
-CFLAGS := -g $(OFLAGS) -pipe -MMD -MP
+CFLAGS := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+#CFLAGS := -g $(OFLAGS) -pipe -MMD -MP
 #CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP
 #CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
