@@ -99,10 +99,10 @@ vec4 fragColor;
 
 #if defined(HAVE_DEPTH_FOG)
 	#define FOG_DISTANCE_NEAR			100.0
-	#define FOG_DISTANCE_MAX			250.0
+	#define FOG_DISTANCE_MAX				250.0
 	#define FOG_RED						(255.0 / 255.0)
 	#define FOG_GREEN					(255.0 / 255.0)
-	#define FOG_BLUE					(255.0 / 255.0)
+	#define FOG_BLUE						(255.0 / 255.0)
 	in float fragDepth;
 #endif
 
@@ -228,68 +228,89 @@ void main (void) {
 		// take effect colors into account
 	fragColor.a = material.diffuse.a * gsEffectColorMul.a;
 
+	#if defined(HAVE_DEPTH_FOG)
+		float fogStrength = 0.0;
+		if (fragDepth > FOG_DISTANCE_NEAR) {
+			fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
+		}
+	#endif
+
 	//
 	#if defined(HAVE_TERRAIN_SHADER)
-		vec4 terrainBlending = vec4(0.0, 0.0, 0.0, 0.0); // gras, dirt, stone, snow
+		if (fogStrength < 1.0) {
+			vec4 terrainBlending = vec4(0.0, 0.0, 0.0, 0.0); // gras, dirt, stone, snow
 
-		// height
-		if (height > TERRAIN_LEVEL_1) {
-			float blendFactorHeight = clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
-			// 10+ meter
-			if (slope >= 45.0) {
-				terrainBlending[2]+= blendFactorHeight; // stone
-			} else
-			if (slope >= 45.0 - TERRAIN_SLOPE_BLEND) {
-				terrainBlending[2]+= blendFactorHeight * ((slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
-				terrainBlending[3]+= blendFactorHeight * (1.0 - (slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // snow
-			} else {
-				terrainBlending[3]+= blendFactorHeight; // snow
-			}
-		}
-		if (height >= TERRAIN_LEVEL_0 && height < TERRAIN_LEVEL_1 + TERRAIN_HEIGHT_BLEND) {
-			float blendFactorHeight = 1.0;
+			// height
 			if (height > TERRAIN_LEVEL_1) {
-				blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
-			} else
+				float blendFactorHeight = clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				// 10+ meter
+				if (slope >= 45.0) {
+					terrainBlending[2]+= blendFactorHeight; // stone
+				} else
+				if (slope >= 45.0 - TERRAIN_SLOPE_BLEND) {
+					terrainBlending[2]+= blendFactorHeight * ((slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
+					terrainBlending[3]+= blendFactorHeight * (1.0 - (slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // snow
+				} else {
+					terrainBlending[3]+= blendFactorHeight; // snow
+				}
+			}
+			if (height >= TERRAIN_LEVEL_0 && height < TERRAIN_LEVEL_1 + TERRAIN_HEIGHT_BLEND) {
+				float blendFactorHeight = 1.0;
+				if (height > TERRAIN_LEVEL_1) {
+					blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				} else
+				if (height < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
+					blendFactorHeight = clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				}
+
+				// 0..10 meter
+				if (slope >= 45.0) {
+					terrainBlending[2]+= blendFactorHeight; // stone
+				} else
+				if (slope >= 45.0 - TERRAIN_SLOPE_BLEND) {
+					terrainBlending[2]+= blendFactorHeight * ((slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
+					terrainBlending[1]+= blendFactorHeight * (1.0 - (slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
+				} else
+				if (slope >= 26.0) {
+					terrainBlending[1]+= blendFactorHeight; // dirt
+				} else
+				if (slope >= 26.0 - TERRAIN_SLOPE_BLEND) {
+					terrainBlending[1]+= blendFactorHeight * ((slope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
+					terrainBlending[0]+= blendFactorHeight * (1.0 - (slope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // gras
+				} else {
+					terrainBlending[0]+= blendFactorHeight; // gras
+				}
+			}
 			if (height < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
-				blendFactorHeight = clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
-			}
-
-			// 0..10 meter
-			if (slope >= 45.0) {
-				terrainBlending[2]+= blendFactorHeight; // stone
-			} else
-			if (slope >= 45.0 - TERRAIN_SLOPE_BLEND) {
-				terrainBlending[2]+= blendFactorHeight * ((slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // stone
-				terrainBlending[1]+= blendFactorHeight * (1.0 - (slope - (45.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
-			} else
-			if (slope >= 26.0) {
+				float blendFactorHeight = 1.0;
+				if (height > TERRAIN_LEVEL_0) {
+					blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
+				}
+				// 0- meter
 				terrainBlending[1]+= blendFactorHeight; // dirt
-			} else
-			if (slope >= 26.0 - TERRAIN_SLOPE_BLEND) {
-				terrainBlending[1]+= blendFactorHeight * ((slope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // dirt
-				terrainBlending[0]+= blendFactorHeight * (1.0 - (slope - (26.0 - TERRAIN_SLOPE_BLEND)) / TERRAIN_SLOPE_BLEND); // gras
-			} else {
-				terrainBlending[0]+= blendFactorHeight; // gras
 			}
-		}
-		if (height < TERRAIN_LEVEL_0 + TERRAIN_HEIGHT_BLEND) {
-			float blendFactorHeight = 1.0;
-			if (height > TERRAIN_LEVEL_0) {
-				blendFactorHeight = 1.0 - clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
-			}
-			// 0- meter
-			terrainBlending[1]+= blendFactorHeight; // dirt
-		}
 
-		//
-		outColor = gsEffectColorAdd;
-		if (terrainBlending[0] > 0.001) outColor+= texture(grasTextureUnit, gsFragTextureUV) * terrainBlending[0];
-		if (terrainBlending[1] > 0.001) outColor+= texture(dirtTextureUnit, gsFragTextureUV) * terrainBlending[1];
-		if (terrainBlending[2] > 0.001) outColor+= texture(stoneTextureUnit, gsFragTextureUV) * terrainBlending[2];
-		if (terrainBlending[3] > 0.001) outColor+= texture(snowTextureUnit, gsFragTextureUV) * terrainBlending[3];
-		outColor*= fragColor;
-		outColor = clamp(outColor, 0.0, 1.0);
+			//
+			outColor = gsEffectColorAdd;
+			if (terrainBlending[0] > 0.001) outColor+= texture(grasTextureUnit, gsFragTextureUV) * terrainBlending[0];
+			if (terrainBlending[1] > 0.001) outColor+= texture(dirtTextureUnit, gsFragTextureUV) * terrainBlending[1];
+			if (terrainBlending[2] > 0.001) outColor+= texture(stoneTextureUnit, gsFragTextureUV) * terrainBlending[2];
+			if (terrainBlending[3] > 0.001) outColor+= texture(snowTextureUnit, gsFragTextureUV) * terrainBlending[3];
+			outColor*= fragColor;
+			outColor = clamp(outColor, 0.0, 1.0);
+			if (fogStrength > 0.0) {
+				outColor = vec4(
+					(outColor.rgb * (1.0 - fogStrength)) +
+					vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
+					1.0
+				);
+			}
+		} else {
+			outColor = vec4(
+				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
+				1.0
+			);
+		}
 	#else
 		if (diffuseTextureAvailable == 1) {
 			outColor = clamp((gsEffectColorAdd + diffuseTextureColor) * fragColor, 0.0, 1.0);
@@ -303,15 +324,14 @@ void main (void) {
 		#if defined(HAVE_FRONT)
 			gl_FragDepth = 0.0;
 		#endif
-	#endif
-	#if defined(HAVE_DEPTH_FOG)
-		if (fragDepth > FOG_DISTANCE_NEAR) {
-			float fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
-			outColor = vec4(
-				(outColor.rgb * (1.0 - fogStrength)) +
-				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
-				1.0
-			);
-		}
+		#if defined(HAVE_DEPTH_FOG)
+			if (fogStrength > 0.0) {
+				outColor = vec4(
+					(outColor.rgb * (1.0 - fogStrength)) +
+					vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
+					1.0
+				);
+			}
+		#endif
 	#endif
 }

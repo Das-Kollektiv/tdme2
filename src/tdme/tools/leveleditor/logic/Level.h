@@ -37,7 +37,19 @@ public:
 	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
 	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
 
+	static int32_t reduceFoliageBy;
 public:
+
+	/**
+	 * @return reduce foliage by returned factor
+	 */
+	static int32_t getReduceFoliageBy();
+
+	/**
+ 	 * Set to reduce foliage by a given factor
+ 	 * @param reduceFoliageBy reduce foliage by factor
+ 	 */
+	static void setReduceFoliageBy(int32_t reduceFoliageBy);
 
 	/** 
 	 * Set lights from level

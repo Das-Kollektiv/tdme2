@@ -471,7 +471,7 @@ void Engine::initialize(bool debug)
 		Console::println(string("TDME::Using GL3+/CORE"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
-		ShadowMapping::setShadowMapSize(2048, 2048);
+		ShadowMapping::setShadowMapSize(1024, 1024);
 		skinningShaderEnabled = false;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 	}

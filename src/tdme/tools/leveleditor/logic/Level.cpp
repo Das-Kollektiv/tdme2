@@ -8,6 +8,7 @@
 #include <map>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3DRenderGroup.h>
@@ -123,6 +124,15 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 
 Model* Level::emptyModel = nullptr;
+int32_t Level::reduceFoliageBy = 1;
+
+int32_t Level::getReduceFoliageBy() {
+	return reduceFoliageBy;
+}
+
+void Level::setReduceFoliageBy(int32_t reduceFoliageBy) {
+	Level::reduceFoliageBy = reduceFoliageBy;
+}
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
@@ -367,7 +377,10 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			object3DRenderGroup->setShader(levelEditorEntity->getShader());
 			object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
 			object3DRenderGroup->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+			auto objectIdx = -1;
 			for (auto transformation: itPartition.second) {
+				objectIdx++;
+				if (objectIdx % reduceFoliageBy != 0) continue;
 				object3DRenderGroup->addObject(*transformation);
 			}
 			object3DRenderGroup->updateRenderGroup();
