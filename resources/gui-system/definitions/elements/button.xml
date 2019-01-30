@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="auto" horizontal-align="center" vertical-align="center" border="2" border-color-top="#C0C0C0" border-color-left="#C0C0C0" border-color-bottom="#404040" border-color-right="#404040" name="{$name}" value="{$value}" disabled="{$disabled}" focusable="true">
+<element id="{$id}" width="auto" height="auto" horizontal-align="center" vertical-align="center" border="2" border-color-top="#C0C0C0" border-color-left="#C0C0C0" border-color-bottom="#404040" border-color-right="#404040" name="{$name}" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" >
 	<!-- unselected, no mouse over -->
 	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" background-color="#FFFFFF">
 		<space width="*" />

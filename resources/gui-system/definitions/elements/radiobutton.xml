@@ -1,4 +1,4 @@
-<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-change="{$on-change}">
+<element id="{$id}" name="{$name}" value="{$value}" selected="{$selected}" disabled="{$disabled}" focusable="true" on-change="{$on-change}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
 	<!-- unselected, no mouse over -->
 	<image effect-color-mul="#F0F0F0" hide-on="disabled,focus,selected,mouseover" src="resources/gui-system/images/elements/radiobutton/background.png" />
 	<image effect-color-mul="#000000" hide-on="disabled,focus,selected,mouseover" src="resources/gui-system/images/elements/radiobutton/border.png" />

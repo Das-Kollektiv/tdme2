@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="auto" border="1" border-color="black" disabled="{$disabled}">
+<element id="{$id}" width="auto" height="auto" border="1" border-color="black" disabled="{$disabled}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}">
 	<!-- unselected, no mouse over -->
 	<text background-color="#F0F0F0" hide-on="disabled,selected,mouseover" width="auto" padding="5" horizontal-align="center" font="resources/gui-system/fonts/Roboto_20.fnt" text="{$text}" color="#000000" />
 	<!-- unselected, mouse over -->
