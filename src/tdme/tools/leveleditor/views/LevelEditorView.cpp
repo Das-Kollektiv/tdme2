@@ -397,7 +397,7 @@ void LevelEditorView::handleInputEvents()
 
 		if (event.getButton() != MOUSE_BUTTON_NONE) {
 			if (mouseDragging == false) {
-				if (mouseDownLastX != event.getX() || mouseDownLastY != event.getY()) {
+				if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
 					mouseDragging = true;
 				}
 			}
@@ -411,7 +411,7 @@ void LevelEditorView::handleInputEvents()
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (mouseDragging == false) {
-				if (mouseDownLastX != event.getX() || mouseDownLastY != event.getY()) {
+				if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
 					mouseDragging = true;
 				}
 			}
@@ -434,9 +434,9 @@ void LevelEditorView::handleInputEvents()
 					levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
 				}
 			}
-			auto selectedEntity = engine->getEntityByMousePosition(event.getX(), event.getY(), entityPickingFilterNoGrid);
+			auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid);
 			if (selectedEntity == nullptr) {
-				selectedEntity = engine->getEntityByMousePosition(event.getX(), event.getY());
+				selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
 			}
 			if (selectedEntity != nullptr) {
 				if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
@@ -467,20 +467,20 @@ void LevelEditorView::handleInputEvents()
 		} else
 		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
 			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
-				mousePanningSide = event.getX() - mouseDownLastX;
-				mousePanningForward = event.getY() - mouseDownLastY;
+				mousePanningSide = event.getXUnscaled() - mouseDownLastX;
+				mousePanningForward = event.getYUnscaled() - mouseDownLastY;
 			}
 		} else
 		if (event.getButton() == MOUSE_BUTTON_MIDDLE) {
 			centerObject();
 			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
-				mouseRotationX = event.getX() - mouseDownLastX;
-				mouseRotationY = event.getY() - mouseDownLastY;
+				mouseRotationX = event.getXUnscaled() - mouseDownLastX;
+				mouseRotationY = event.getYUnscaled() - mouseDownLastY;
 			}
 		}
 		if (event.getButton() != MOUSE_BUTTON_NONE) {
-			mouseDownLastX = event.getX();
-			mouseDownLastY = event.getY();
+			mouseDownLastX = event.getXUnscaled();
+			mouseDownLastY = event.getYUnscaled();
 		}
 		auto mouseWheel = event.getWheelY();
 		if (mouseWheel != 0) {
