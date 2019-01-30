@@ -157,8 +157,8 @@
 
 - What is WIP or planned
     - simple script language for GUI
-    - SSAO post effect
     - Expose shader and post processing programs setup API
+    - Rendering via Vulkan + Metal by Vulkan
     - LOD
     - GUI system port needs to be finished(memory management and other minor things)
     - Some UI elements need some default skinning fixes
