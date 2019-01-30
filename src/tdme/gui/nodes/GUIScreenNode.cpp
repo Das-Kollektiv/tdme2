@@ -421,7 +421,8 @@ void GUIScreenNode::removeTickNode(GUINode* node) {
 }
 
 void GUIScreenNode::tick() {
-	for (auto tickNodesByIdIt: tickNodesById) {
+	auto _tickNodesById = tickNodesById;
+	for (auto tickNodesByIdIt: _tickNodesById) {
 		auto node = tickNodesByIdIt.second;
 		if (node->controller != nullptr) node->controller->tick();
 	}

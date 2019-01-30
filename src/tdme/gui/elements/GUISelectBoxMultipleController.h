@@ -7,8 +7,8 @@
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/utils/MutableString.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 
 using std::vector;
 using std::string;
@@ -16,6 +16,7 @@ using std::string;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
@@ -25,7 +26,7 @@ using tdme::utils::MutableString;
  * @version $Id$
  */
 class tdme::gui::elements::GUISelectBoxMultipleController final
-	: public GUINodeController
+	: public GUIElementController
 {
 	friend class GUISelectBoxMultiple;
 	friend class GUISelectBoxMultipleOptionController;

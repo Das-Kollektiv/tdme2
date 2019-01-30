@@ -4,10 +4,10 @@
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
@@ -16,15 +16,15 @@ using tdme::gui::GUI;
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node) 
-	: GUINodeController(node)
+	: GUIElementController(node)
 {
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
@@ -86,10 +86,14 @@ void GUISelectBoxOptionController::initialize()
 	} else {
 		unselect();
 	}
+
+	//
+	GUIElementController::initialize();
 }
 
 void GUISelectBoxOptionController::dispose()
 {
+	GUIElementController::dispose();
 }
 
 void GUISelectBoxOptionController::postLayout()
@@ -102,6 +106,7 @@ void GUISelectBoxOptionController::postLayout()
 
 void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = (dynamic_cast< GUISelectBoxController* >(selectBoxNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
@@ -118,10 +123,12 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 
 void GUISelectBoxOptionController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
+	GUIElementController::handleKeyboardEvent(node, event);
 }
 
 void GUISelectBoxOptionController::tick()
 {
+	GUIElementController::tick();
 }
 
 void GUISelectBoxOptionController::onFocusGained()

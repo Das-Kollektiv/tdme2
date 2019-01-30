@@ -4,10 +4,10 @@
 #include <tdme/gui/elements/GUISelectBoxMultipleController.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
@@ -31,7 +31,7 @@ string GUISelectBoxMultipleOptionController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxMultipleOptionController::CONDITION_ENABLED = "enabled";
 
 GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node) 
-	: GUINodeController(node)
+	: GUIElementController(node)
 {
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 	this->focussed = false;
@@ -119,10 +119,14 @@ void GUISelectBoxMultipleOptionController::initialize()
 	} else {
 		unselect();
 	}
+
+	//
+	GUIElementController::initialize();
 }
 
 void GUISelectBoxMultipleOptionController::dispose()
 {
+	GUIElementController::dispose();
 }
 
 void GUISelectBoxMultipleOptionController::postLayout()
@@ -135,6 +139,7 @@ void GUISelectBoxMultipleOptionController::postLayout()
 
 void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(selectBoxMultipleNode->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
@@ -152,10 +157,12 @@ void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMo
 
 void GUISelectBoxMultipleOptionController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
+	GUIElementController::handleKeyboardEvent(node, event);
 }
 
 void GUISelectBoxMultipleOptionController::tick()
 {
+	GUIElementController::tick();
 }
 
 void GUISelectBoxMultipleOptionController::onFocusGained()

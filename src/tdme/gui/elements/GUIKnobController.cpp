@@ -8,6 +8,7 @@
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
@@ -27,6 +28,7 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
@@ -40,7 +42,7 @@ using tdme::utils::Time;
 
 using tdme::gui::elements::GUIKnobController;
 
-GUIKnobController::GUIKnobController(GUINode* node): GUINodeController(node)
+GUIKnobController::GUIKnobController(GUINode* node): GUIElementController(node)
 {
 }
 
@@ -55,9 +57,13 @@ void GUIKnobController::setDisabled(bool disabled) {
 void GUIKnobController::initialize() {
 	knobNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_knob");
 	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
+
+	//
+	GUIElementController::initialize();
 }
 
 void GUIKnobController::dispose() {
+	GUIElementController::dispose();
 }
 
 void GUIKnobController::postLayout() {
@@ -65,6 +71,7 @@ void GUIKnobController::postLayout() {
 }
 
 void GUIKnobController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
+	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED == true) {
 		this->node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(this->node));
@@ -91,6 +98,7 @@ void GUIKnobController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 }
 
 void GUIKnobController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) {
+	GUIElementController::handleKeyboardEvent(node, event);
 	if (node == this->node) {
 		switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
@@ -116,6 +124,7 @@ void GUIKnobController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* eve
 }
 
 void GUIKnobController::tick() {
+	GUIElementController::tick();
 }
 
 void GUIKnobController::onFocusGained() {

@@ -8,10 +8,10 @@
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
@@ -25,16 +25,16 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
 GUIDropDownController::GUIDropDownController(GUINode* node) 
-	: GUINodeController(node)
+	: GUIElementController(node)
 {
 	init();
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
@@ -82,11 +82,14 @@ void GUIDropDownController::initialize()
 	textElementNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_layout_horizontal_element"));
 	(dynamic_cast< GUIElementNode* >(node))->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
 	arrowNode->getActiveConditions().add(isOpen_ == true ? CONDITION_OPENED : CONDITION_CLOSED);
-	setDisabled(disabled);
+
+	//
+	GUIElementController::initialize();
 }
 
 void GUIDropDownController::dispose()
 {
+	GUIElementController::dispose();
 }
 
 void GUIDropDownController::postLayout()
@@ -181,6 +184,7 @@ void GUIDropDownController::selectPrevious()
 
 void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == false && node == static_cast< GUINode* >(this->dropDownNode) && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
@@ -192,6 +196,7 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 
 void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
+	GUIElementController::handleKeyboardEvent(node, event);
 	if (disabled == false && node == this->node) {
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
@@ -233,6 +238,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 
 void GUIDropDownController::tick()
 {
+	GUIElementController::tick();
 }
 
 void GUIDropDownController::onFocusGained()

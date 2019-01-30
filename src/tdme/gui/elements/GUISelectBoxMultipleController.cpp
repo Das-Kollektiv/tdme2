@@ -6,10 +6,10 @@
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/MutableString.h>
@@ -21,10 +21,10 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
@@ -35,7 +35,7 @@ string GUISelectBoxMultipleController::CONDITION_DISABLED = "disabled";
 string GUISelectBoxMultipleController::CONDITION_ENABLED = "enabled";
 
 GUISelectBoxMultipleController::GUISelectBoxMultipleController(GUINode* node) 
-	: GUINodeController(node)
+	: GUIElementController(node)
 {
 	init();
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
@@ -65,10 +65,12 @@ void GUISelectBoxMultipleController::initialize()
 		auto value = getValue();
 		setValue(value);
 	}
+	GUIElementController::initialize();
 }
 
 void GUISelectBoxMultipleController::dispose()
 {
+	GUIElementController::dispose();
 }
 
 void GUISelectBoxMultipleController::postLayout()
@@ -175,6 +177,7 @@ void GUISelectBoxMultipleController::toggle()
 
 void GUISelectBoxMultipleController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(this->node->getController()))->isDisabled();
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
@@ -186,6 +189,7 @@ void GUISelectBoxMultipleController::handleMouseEvent(GUINode* node, GUIMouseEve
 
 void GUISelectBoxMultipleController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
+	GUIElementController::handleKeyboardEvent(node, event);
 	if (disabled == false && node == this->node) {
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_UP: {
@@ -216,6 +220,7 @@ void GUISelectBoxMultipleController::handleKeyboardEvent(GUINode* node, GUIKeybo
 
 void GUISelectBoxMultipleController::tick()
 {
+	GUIElementController::tick();
 }
 
 void GUISelectBoxMultipleController::onFocusGained()

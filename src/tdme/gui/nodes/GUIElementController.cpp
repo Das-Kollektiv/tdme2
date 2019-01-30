@@ -146,11 +146,13 @@ void GUIElementController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* 
 
 void GUIElementController::tick()
 {
-	// TODO: Maybe move me into GUIElementController::initialize()
 	if (initialized == false) {
 		auto onInitializeExpression = dynamic_cast<GUIElementNode*>(node)->getOnInitializeExpression();
 		if (onInitializeExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onInitializeExpression);
 		initialized = true;
+		// TODO: check me, the following code has performance relevance!!!
+		// auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
+		// if (onMouseClickExpression.size() == 0) node->getScreenNode()->removeTickNode(node);
 	}
 
 	auto now = Time::getCurrentMillis();

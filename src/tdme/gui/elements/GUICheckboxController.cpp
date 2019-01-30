@@ -6,6 +6,7 @@
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -19,6 +20,7 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
@@ -31,7 +33,7 @@ string GUICheckboxController::CONDITION_DISABLED = "disabled";
 string GUICheckboxController::CONDITION_ENABLED = "enabled";
 
 GUICheckboxController::GUICheckboxController(GUINode* node)
-	: GUINodeController(node)
+	: GUIElementController(node)
 {
 	this->checked = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 	this->disabled = (dynamic_cast< GUIElementNode* >(node))->isDisabled();
@@ -65,12 +67,16 @@ void GUICheckboxController::setDisabled(bool disabled)
 
 void GUICheckboxController::initialize()
 {
+	//
 	setChecked(checked);
-	setDisabled(disabled);
+
+	//
+	GUIElementController::initialize();
 }
 
 void GUICheckboxController::dispose()
 {
+	GUIElementController::dispose();
 }
 
 void GUICheckboxController::postLayout()
@@ -79,6 +85,7 @@ void GUICheckboxController::postLayout()
 
 void GUICheckboxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
@@ -91,6 +98,7 @@ void GUICheckboxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 
 void GUICheckboxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
+	GUIElementController::handleKeyboardEvent(node, event);
 	if (disabled == false && node == this->node) {
 		switch (event->getKeyCode()) {
 		case GUIKeyboardEvent::KEYCODE_SPACE: {
@@ -111,6 +119,7 @@ void GUICheckboxController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 
 void GUICheckboxController::tick()
 {
+	GUIElementController::tick();
 }
 
 void GUICheckboxController::onFocusGained()

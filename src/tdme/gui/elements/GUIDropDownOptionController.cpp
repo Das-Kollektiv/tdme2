@@ -5,10 +5,10 @@
 #include <tdme/gui/elements/GUIDropDownController.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
@@ -20,10 +20,10 @@ using tdme::gui::elements::GUIDropDownOptionController;
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -33,7 +33,7 @@ string GUIDropDownOptionController::CONDITION_SELECTED = "selected";
 string GUIDropDownOptionController::CONDITION_UNSELECTED = "unselected";
 
 GUIDropDownOptionController::GUIDropDownOptionController(GUINode* node) 
-	: GUINodeController(node)
+	: GUIElementController(node)
 {
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
@@ -75,6 +75,7 @@ void GUIDropDownOptionController::unselect()
 
 void GUIDropDownOptionController::initialize()
 {
+	//
 	dropDownNode = node->getParentControllerNode();
 	while (true == true) {
 		if (dynamic_cast< GUIDropDownController* >(dropDownNode->getController()) != nullptr) {
@@ -87,6 +88,9 @@ void GUIDropDownOptionController::initialize()
 	} else {
 		unselect();
 	}
+
+	//
+	GUIElementController::initialize();
 }
 
 void GUIDropDownOptionController::postLayout()
@@ -99,10 +103,12 @@ void GUIDropDownOptionController::postLayout()
 
 void GUIDropDownOptionController::dispose()
 {
+	GUIElementController::dispose();
 }
 
 void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	GUIElementController::handleMouseEvent(node, event);
 	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
@@ -118,10 +124,12 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 
 void GUIDropDownOptionController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
+	GUIElementController::handleKeyboardEvent(node, event);
 }
 
 void GUIDropDownOptionController::tick()
 {
+	GUIElementController::tick();
 }
 
 void GUIDropDownOptionController::onFocusGained()
