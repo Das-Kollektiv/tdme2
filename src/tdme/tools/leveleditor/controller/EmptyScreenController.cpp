@@ -41,7 +41,8 @@ EmptyScreenController::EmptyScreenController(EmptyView* view)
 	{
 	public:
 		void performAction() override {
-
+			finalView->updateGUIElements();
+			TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 		}
 
 		/**
@@ -50,8 +51,6 @@ EmptyScreenController::EmptyScreenController(EmptyView* view)
 		 * @param finalView final view
 		 */
 		OnSetEntityDataAction(EmptyScreenController* emptyScreenController, EmptyView* finalView): emptyScreenController(emptyScreenController), finalView(finalView) {
-			finalView->updateGUIElements();
-			TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 		}
 
 	private:
