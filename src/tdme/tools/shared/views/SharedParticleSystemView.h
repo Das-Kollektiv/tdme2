@@ -89,6 +89,11 @@ public:
 	virtual LevelEditorEntity* getEntity();
 
 	/** 
+	 * Reset view
+	 */
+	virtual void reset();
+
+	/**
 	 * Set entity
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
