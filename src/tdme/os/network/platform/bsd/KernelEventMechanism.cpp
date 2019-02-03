@@ -66,10 +66,9 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 			psd->kqChangeList[1] = kqChangeList1Resized;
 		}
 
-		psd->kqMutex.unlock();
-
 		// failed to reallocate
 		if (reallocated == false) {
+			psd->kqMutex.unlock();
 			throw NIOKEMException("kqueue change list too small");
 		}
 	}
