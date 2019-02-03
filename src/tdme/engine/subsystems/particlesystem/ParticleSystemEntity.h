@@ -24,7 +24,7 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 	/**
 	 * Public destructor
 	 */
-	~ParticleSystemEntity() {}
+	virtual ~ParticleSystemEntity() {}
 
 	/** 
 	 * @return object id
