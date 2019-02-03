@@ -102,8 +102,7 @@ void ModelMetaDataFileExport::export_(const string& pathName, const string& file
 tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEditorEntityLODLevel* lodLevel) {
 	ext::jsonbox::Object jLodLevelRoot;
 	jLodLevelRoot["t"] = static_cast<int>(lodLevel->getType());
-	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
-		lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) {
+	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) {
 		//
 		auto modelPathName = Tools::getPath(lodLevel->getFileName());
 		auto modelFileName =
@@ -117,9 +116,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEd
 		jLodLevelRoot["f"] = (modelPathName + "/" + modelFileName);
 	}
 	jLodLevelRoot["d"] = lodLevel->getMinDistance();
-	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) {
-		jLodLevelRoot["ry"] = lodLevel->getPlaneRotationY();
-	}
 	jLodLevelRoot["cmr"] = lodLevel->getColorMul().getRed();
 	jLodLevelRoot["cmg"] = lodLevel->getColorMul().getGreen();
 	jLodLevelRoot["cmb"] = lodLevel->getColorMul().getBlue();
@@ -179,8 +175,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			auto lodLevel = entity->getLODLevel2();
 			if (lodLevel != nullptr &&
 				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
-				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
-				lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) &&
+				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
 				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);
@@ -190,8 +185,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			auto lodLevel = entity->getLODLevel3();
 			if (lodLevel != nullptr &&
 				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
-				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL ||
-				lodLevel->getType() == LODObject3D::LODLEVELTYPE_PLANE) &&
+				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
 				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);

@@ -6,7 +6,6 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/utils/Console.h>
 
 using std::string;
 
@@ -15,7 +14,6 @@ using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
-using tdme::utils::Console;
 
 LODObject3D::LODObject3D(
 	const string& id,
@@ -25,9 +23,7 @@ LODObject3D::LODObject3D(
 	Model* modelLOD2,
 	LODLevelType levelTypeLOD3,
 	float modelLOD3MinDistance,
-	Model* modelLOD3,
-	float planeRotationYLOD2,
-	float planeRotationYLOD3
+	Model* modelLOD3
 ):
 	id(id),
 	modelLOD1(modelLOD1),
@@ -36,9 +32,7 @@ LODObject3D::LODObject3D(
 	modelLOD2(modelLOD2),
 	levelTypeLOD3(levelTypeLOD3),
 	modelLOD3MinDistance(modelLOD3MinDistance),
-	modelLOD3(modelLOD3),
-	planeRotationYLOD2(planeRotationYLOD2),
-	planeRotationYLOD3(planeRotationYLOD3)
+	modelLOD3(modelLOD3)
 {
 	this->enabled = true;
 	this->pickable = false;
@@ -49,11 +43,19 @@ LODObject3D::LODObject3D(
 	this->effectColorAddLOD2.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->effectColorMulLOD3.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAddLOD3.set(0.0f, 0.0f, 0.0f, 0.0f);
-	transformationsRotationYIndex = -1;
 
-	if (modelLOD1 != nullptr) objectLOD1 = new Object3D(id + ".lod1", modelLOD1);
-	if (modelLOD2 != nullptr) objectLOD2 = new Object3D(id + ".lod2", modelLOD2);
-	if (modelLOD3 != nullptr) objectLOD3 = new Object3D(id + ".lod3", modelLOD3);
+	if (modelLOD1 != nullptr) {
+		objectLOD1 = new Object3D(id + ".lod1", modelLOD1);
+		objectLOD1->setParentEntity(this);
+	}
+	if (modelLOD2 != nullptr) {
+		objectLOD2 = new Object3D(id + ".lod2", modelLOD2);
+		objectLOD1->setParentEntity(this);
+	}
+	if (modelLOD3 != nullptr) {
+		objectLOD3 = new Object3D(id + ".lod3", modelLOD3);
+		objectLOD1->setParentEntity(this);
+	}
 
 	if (objectLOD1 != nullptr) objectLOD1->setShader(shaderId);
 	if (objectLOD2 != nullptr) objectLOD2->setShader(shaderId);
@@ -83,16 +85,6 @@ void LODObject3D::setRenderer(GLRenderer* renderer)
 void LODObject3D::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
-	// determine y axis if required
-	if (levelTypeLOD2 == LODLEVELTYPE_PLANE || levelTypeLOD3 == LODLEVELTYPE_PLANE) {
-		transformationsRotationYIndex = -1;
-		for (auto i = 0; i < this->getRotationCount(); i++) {
-			if (this->getRotationAxis(i).equals(Rotation::Y_AXIS) == true) {
-				transformationsRotationYIndex = i;
-				break;
-			}
-		}
-	}
 	// delegate to LOD objects
 	if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
 	if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
@@ -106,16 +98,6 @@ void LODObject3D::fromTransformations(const Transformations& transformations)
 void LODObject3D::update()
 {
 	Transformations::update();
-	// determine y axis if required
-	if (levelTypeLOD2 == LODLEVELTYPE_PLANE || levelTypeLOD3 == LODLEVELTYPE_PLANE) {
-		transformationsRotationYIndex = -1;
-		for (auto i = 0; i < this->getRotationCount(); i++) {
-			if (this->getRotationAxis(i).equals(Rotation::Y_AXIS) == true) {
-				transformationsRotationYIndex = i;
-				break;
-			}
-		}
-	}
 	// delegate to LOD objects
 	if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
 	if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);

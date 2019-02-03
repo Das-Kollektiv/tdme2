@@ -44,7 +44,7 @@ class tdme::engine::LODObject3D final:
 	public Entity
 {
 public:
-	enum LODLevelType { LODLEVELTYPE_NONE, LODLEVELTYPE_MODEL, LODLEVELTYPE_PLANE, LODLEVELTYPE_IGNORE };
+	enum LODLevelType { LODLEVELTYPE_NONE, LODLEVELTYPE_MODEL, LODLEVELTYPE_IGNORE };
 
 private:
 	Engine* engine { nullptr };
@@ -57,9 +57,6 @@ private:
 	float modelLOD3MinDistance;
 	LODLevelType levelTypeLOD2;
 	LODLevelType levelTypeLOD3;
-	int transformationsRotationYIndex;
-	float planeRotationYLOD2;
-	float planeRotationYLOD3;
 
 	string id;
 	Object3D* objectLOD1 {  };
@@ -110,9 +107,7 @@ public:
 		Model* modelLOD2,
 		LODLevelType levelTypeLOD3,
 		float modelLOD3MinDistance,
-		Model* modelLOD3,
-		float planeRotationYLOD2 = 0.0f,
-		float planeRotationYLOD3 = 0.0f
+		Model* modelLOD3
 	);
 
 public:
@@ -164,34 +159,17 @@ public:
 			if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
 				(objectCamFromLengthSquared = objectCamFromAxis.set(getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD3MinDistance)) {
 				lodLevelType = levelTypeLOD3;
-				planeRotationYLOD = planeRotationYLOD3;
 				objectLOD = objectLOD3;
 				levelLOD = 3;
 			} else
 			if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
 				(objectCamFromLengthSquared = objectCamFromAxis.set(getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared()) >= Math::square(modelLOD2MinDistance)) {
 				lodLevelType = levelTypeLOD2;
-				planeRotationYLOD = planeRotationYLOD2;
 				objectLOD = objectLOD2;
 				levelLOD = 2;
 			} else {
 				objectLOD = objectLOD1;
 				levelLOD = 1;
-			}
-
-			// do plane rotation to viewer on Y axis
-			// TODO: unsure here, works but need to find a better way
-			if (objectLOD != nullptr &&
-				lodLevelType == LODLEVELTYPE_PLANE &&
-				transformationsRotationYIndex != -1 &&
-				objectCamFromLengthSquared > Math::square(Math::EPSILON)) {
-				objectCamFromAxis.setY(0.0f).normalize();
-				auto angle = Vector3::computeAngle(Rotation::Z_AXIS, objectCamFromAxis, Rotation::Y_AXIS);
-				objectLOD->setRotationAngle(
-					transformationsRotationYIndex,
-					planeRotationYLOD + 90 + angle
-				);
-				objectLOD->update();
 			}
 		}
 

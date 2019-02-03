@@ -72,7 +72,6 @@ private:
 	GUIElementNode* lodModelFileLoad {  };
 	GUIElementNode* lodModelFileClear {  };
 	GUIElementNode* lodMinDistance {  };
-	GUIElementNode* lodPlaneRotationY {  };
 	GUIElementNode* lodColorMul {  };
 	GUIElementNode* lodColorAdd {  };
 	GUIElementNode* buttonLodApply {  };

@@ -274,9 +274,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				lodLevel2->getModel(),
 				lodLevel3 != nullptr?lodLevel3->getType():LODObject3D::LODLEVELTYPE_NONE,
 				lodLevel3 != nullptr?lodLevel3->getMinDistance():0.0f,
-				lodLevel3 != nullptr?lodLevel3->getModel():nullptr,
-				lodLevel2->getPlaneRotationY(),
-				lodLevel3 != nullptr?lodLevel3->getPlaneRotationY():0.0f
+				lodLevel3 != nullptr?lodLevel3->getModel():nullptr
 			);
 			auto lodObject = dynamic_cast<LODObject3D*>(entity);
 			lodObject->setEffectColorAddLOD2(lodLevel2->getColorAdd());

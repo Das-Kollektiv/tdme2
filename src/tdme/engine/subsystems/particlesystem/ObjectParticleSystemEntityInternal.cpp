@@ -79,6 +79,7 @@ ObjectParticleSystemEntityInternal::~ObjectParticleSystemEntityInternal() {
 	delete emitter;
 	delete boundingBox;
 	delete boundingBoxTransformed;
+	for (auto i = 0; i < objects.size(); i++) delete objects[i];
 }
 
 const string& ObjectParticleSystemEntityInternal::getId()
@@ -96,6 +97,10 @@ void ObjectParticleSystemEntityInternal::setEngine(Engine* engine)
 
 void ObjectParticleSystemEntityInternal::setRenderer(GLRenderer* renderer)
 {
+	this->renderer = renderer;
+	for (auto i = 0; i < objects.size(); i++) {
+		objects[i]->setRenderer(renderer);
+	}
 }
 
 bool ObjectParticleSystemEntityInternal::isEnabled()

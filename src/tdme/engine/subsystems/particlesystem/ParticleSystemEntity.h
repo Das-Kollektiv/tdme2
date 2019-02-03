@@ -21,6 +21,11 @@ using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 {
 
+	/**
+	 * Public destructor
+	 */
+	~ParticleSystemEntity() {}
+
 	/** 
 	 * @return object id
 	 */

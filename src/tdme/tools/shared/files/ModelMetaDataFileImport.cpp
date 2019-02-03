@@ -531,12 +531,11 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].getInt());
 	LevelEditorEntityLODLevel* lodLevel = new LevelEditorEntityLODLevel(
 		lodType,
-		lodType == LODObject3D::LODLEVELTYPE_MODEL || lodType == LODObject3D::LODLEVELTYPE_PLANE?jLodLevel["f"].getString():"",
+		lodType == LODObject3D::LODLEVELTYPE_MODEL?jLodLevel["f"].getString():"",
 		nullptr,
-		static_cast<float>(jLodLevel["d"].getDouble()),
-		lodType == LODObject3D::LODLEVELTYPE_PLANE?static_cast<float>(jLodLevel["ry"].getDouble()):0.0f
+		static_cast<float>(jLodLevel["d"].getDouble())
 	);
-	if (lodType == LODObject3D::LODLEVELTYPE_MODEL || lodType == LODObject3D::LODLEVELTYPE_PLANE) {
+	if (lodType == LODObject3D::LODLEVELTYPE_MODEL) {
 		auto modelFileName = lodLevel->getFileName();
 		auto modelPathName = getResourcePathName(pathName, modelFileName);
 		lodLevel->setModel(

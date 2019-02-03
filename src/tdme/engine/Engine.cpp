@@ -428,9 +428,9 @@ void Engine::removeEntity(const string& id)
 		// remove from partition if enabled and frustum culling requested
 		if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
 		// dispose entity
-		entity->dispose();
 		entity->setEngine(nullptr);
 		entity->setRenderer(nullptr);
+		entity->dispose();
 		delete entity;
 	}
 }
