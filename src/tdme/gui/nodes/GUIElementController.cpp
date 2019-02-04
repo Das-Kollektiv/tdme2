@@ -96,8 +96,8 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 					} else {
 						auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
 						if (onMouseClickExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseClickExpression);
+						node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
 					}
-					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
 					timeLastClicked = -1LL;
 				} else {
 					auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
@@ -106,7 +106,14 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 					timeLastClicked = -1LL;
 				}
 			} else {
-				timeLastClicked = now;
+				auto onMouseDoubleClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseDoubleClickExpression();
+				if (onMouseDoubleClickExpression.size() > 0) {
+					timeLastClicked = now;
+				} else {
+					auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
+					if (onMouseClickExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseClickExpression);
+					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
+				}
 			}
 		}
 	} else

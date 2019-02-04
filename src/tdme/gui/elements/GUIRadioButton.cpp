@@ -41,6 +41,8 @@ map<string, string>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["name"] = "";
+	attributes["on-mouse-click"] = "";
+	attributes["on-mouse-doubleclick"] = "";
 	attributes["on-change"] = "";
 	return &attributes;
 }

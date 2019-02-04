@@ -36,6 +36,8 @@ map<string, string>* GUIInput::getAttributes(GUIScreenNode* screenNode)
 	attributes["height"] = "auto";
 	attributes["text"] = "";
 	attributes["maxlength"] = "0";
+	attributes["on-mouse-click"] = "";
+	attributes["on-mouse-doubleclick"] = "";
 	attributes["on-change"] = "";
 	return &attributes;
 }

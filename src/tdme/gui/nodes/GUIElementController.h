@@ -27,7 +27,7 @@ class tdme::gui::nodes::GUIElementController
 	friend class GUIElementNode;
 
 private:
-	static constexpr int64_t TIME_DOUBLECLICK { 300LL };
+	static constexpr int64_t TIME_DOUBLECLICK { 200LL };
 
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;

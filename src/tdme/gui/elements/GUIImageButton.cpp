@@ -42,6 +42,8 @@ map<string, string>* GUIImageButton::getAttributes(GUIScreenNode* screenNode)
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "auto";
 	attributes["height"] = "auto";
+	attributes["on-mouse-click"] = "";
+	attributes["on-mouse-doubleclick"] = "";
 	return &attributes;
 }
 
