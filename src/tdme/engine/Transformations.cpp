@@ -40,7 +40,7 @@ void Transformations::fromTransformations(const Transformations& transformations
 	pivot.set(transformations.pivot);
 	// rotations
 	auto rotationIdx = 0;
-	for (auto rotation: transformations.rotations) {
+	for (auto& rotation: transformations.rotations) {
 		// do we have a rotation to reuse?
 		if (rotationIdx == rotations.size()) {
 			// nope, add a rotation

@@ -222,7 +222,7 @@ void World::update(float deltaTime)
 	// update transformations for rigid body
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
 		auto body = rigidBodiesDynamic[i];
-		// skip if enabled
+		// skip if disabled
 		if (body->isEnabled() == false) {
 			continue;
 		}
@@ -231,22 +231,47 @@ void World::update(float deltaTime)
 			continue;
 		}
 
+		// rp3d transform
+		auto transform = body->rigidBody->getTransform();
+		auto transformPosition = transform.getPosition();
+		auto transformOrientation = transform.getOrientation();
+
+		// tdme2 transformations
 		auto& physicsTransformations = body->transformations;
 
-		// set up transformations, keep care that only 1 rotation exists
+		// rotations
+		// keep care that only 1 rotation exists
 		while (physicsTransformations.getRotationCount() > 1) {
 			physicsTransformations.removeRotation(physicsTransformations.getRotationCount() - 1);
 		}
 		if (physicsTransformations.getRotationCount() < 1) {
 			physicsTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 		}
-		// set up position, orientation
-		auto transform = body->rigidBody->getTransform();
-		auto& position = transform.getPosition();
-		auto& orientation = transform.getOrientation();
-		//	set up transformations
-		physicsTransformations.setTranslation(Vector3(position.x, position.y, position.z));
-		physicsTransformations.getRotation(0).fromQuaternion(Quaternion(orientation.x, orientation.y, orientation.z, orientation.w));
+
+		// rotations, also apply additional rotations regarding negative scales
+		Quaternion rotationsQuaternion(transformOrientation.x, transformOrientation.y, transformOrientation.z, transformOrientation.w);
+		if (body->transformationsScale.getZ() < 0.0f) {
+			Quaternion qTmp = Quaternion();
+			qTmp.rotate(180.0f, Vector3(1.0f, 0.0f, 0.0f));
+			rotationsQuaternion.multiply(qTmp);
+		}
+		if (body->transformationsScale.getY() < 0.0f) {
+			Quaternion qTmp = Quaternion();
+			qTmp.rotate(180.0f, Vector3(0.0f, 0.0f, 1.0f));
+			rotationsQuaternion.multiply(qTmp);
+		}
+		if (body->transformationsScale.getX() < 0.0f) {
+			Quaternion qTmp = Quaternion();
+			qTmp.rotate(180.0f, Vector3(0.0f, 1.0f, 0.0f));
+			rotationsQuaternion.multiply(qTmp);
+		}
+		physicsTransformations.getRotation(0).fromQuaternion(rotationsQuaternion);
+
+		// scale
+		physicsTransformations.setScale(body->transformationsScale);
+		// translation
+		physicsTransformations.setTranslation(Vector3(transformPosition.x, transformPosition.y, transformPosition.z));
+		// done
 		physicsTransformations.update();
 	}
 }

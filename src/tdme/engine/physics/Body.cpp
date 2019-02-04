@@ -235,6 +235,7 @@ void Body::resetProxyShapes() {
 		auto scaleVectorTransformed =
 			boundingVolume->collisionShapeLocalTransform.getOrientation() *
 			reactphysics3d::Vector3(transformations.getScale().getX(), transformations.getScale().getY(), transformations.getScale().getZ());
+
 		if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
 		if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
 		if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
