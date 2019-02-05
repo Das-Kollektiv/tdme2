@@ -277,6 +277,7 @@ int32_t Application::getWindowWidth() const {
 
 void Application::setWindowWidth(int32_t windowWidth) {
 	this->windowWidth = windowWidth;
+	if (initialized == true) glutReshapeWindow(windowWidth, windowHeight);
 }
 
 int32_t Application::getWindowHeight() const {
@@ -285,6 +286,7 @@ int32_t Application::getWindowHeight() const {
 
 void Application::setWindowHeight(int32_t windowHeight) {
 	this->windowHeight = windowHeight;
+	if (initialized == true) glutReshapeWindow(windowWidth, windowHeight);
 }
 
 bool Application::isFullScreen() const {
