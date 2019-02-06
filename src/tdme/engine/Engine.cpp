@@ -678,7 +678,7 @@ void Engine::computeTransformations()
 	{ \
 		if ((object = dynamic_cast< Object3D* >(_entity)) != nullptr) { \
 			object->preRender(); \
-			object->computeTransformations(); \
+			object->computeSkinning(); \
 			visibleObjects.push_back(object); \
 		} else \
 		if ((lodObject = dynamic_cast< LODObject3D* >(_entity)) != nullptr) { \
@@ -687,13 +687,13 @@ void Engine::computeTransformations()
 				visibleLODObjects.push_back(lodObject); \
 				visibleObjects.push_back(object); \
 				object->preRender(); \
-				object->computeTransformations(); \
+				object->computeSkinning(); \
 			} \
 		} else \
 		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(_entity)) != nullptr) { \
 			for (auto object: *opse->getEnabledObjects()) { \
 				object->preRender(); \
-				object->computeTransformations(); \
+				object->computeSkinning(); \
 				visibleObjects.push_back(object); \
 			} \
 			visibleOpses.push_back(opse); \
