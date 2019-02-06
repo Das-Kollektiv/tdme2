@@ -15,6 +15,9 @@ using tdme::utils::Enum;
 using tdme::math::Vector3;
 using tdme::engine::model::RotationOrder;
 
+/**
+ * Represents rotation orders of a model
+ */
 class tdme::engine::model::RotationOrder final
 	: public Enum
 {

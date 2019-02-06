@@ -12,7 +12,7 @@ using std::string;
 using tdme::math::Vector3;
 
 /** 
- * Audio Entity Class
+ * Audio entity base class
  * @author Andreas Drewke
  * @version $Id$
  */

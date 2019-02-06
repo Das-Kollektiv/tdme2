@@ -22,7 +22,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 
 /** 
- * Represents a 3d model
+ * Representation of a 3d model
  * @author andreas.drewke
  * @version $Id$
  */

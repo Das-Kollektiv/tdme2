@@ -1,4 +1,4 @@
-#pragma once
+##pragma once
 
 #include <string>
 
@@ -13,7 +13,7 @@ using tdme::utils::ByteBuffer;
 using tdme::utils::ReferenceCounter;
 
 /** 
- * Texture
+ * Texture entity
  * @version $Id$
  * @author Andreas Drewke
  */

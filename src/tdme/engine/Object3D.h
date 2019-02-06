@@ -37,7 +37,7 @@ using tdme::math::Vector3;
 using tdme::math::Quaternion;
 
 /** 
- * Object 3D
+ * Object 3D to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */

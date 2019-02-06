@@ -23,7 +23,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /** 
- * 3d object group
+ * Model group
  * @author andreas.drewke
  * @version $Id$
  */

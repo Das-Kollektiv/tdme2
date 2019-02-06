@@ -15,7 +15,7 @@ using tdme::audio::AudioEntity;
 using tdme::utils::ByteBuffer;
 
 /** 
- * Audio Stream 
+ * Audio stream
  * @author Andreas Drewke
  * @version $Id$
  */

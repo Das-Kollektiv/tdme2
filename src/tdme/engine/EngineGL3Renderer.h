@@ -7,11 +7,15 @@
 using tdme::engine::subsystems::renderer::GL3Renderer;
 using tdme::engine::Engine;
 
-class tdme::engine::EngineGL3Renderer
-	: public GL3Renderer
-{
+/**
+ * Engine connector of GL3 renderer to other engine functionality
+ * @author Andreas Drewke
+ */
 
+class tdme::engine::EngineGL3Renderer: public GL3Renderer
+{
 public:
+	// overriden methods
 	void onUpdateProjectionMatrix() override;
 	void onUpdateCameraMatrix() override;
 	void onUpdateModelViewMatrix() override;

@@ -21,7 +21,7 @@ using tdme::math::Vector3;
 using tdme::utils::VectorIteratorMultiple;
 
 /** 
- * PartitionQuadTree none implementation
+ * Bogus partition implementation
  * @author Andreas Drewke
  * @version $Id$
  */

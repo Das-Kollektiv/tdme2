@@ -24,7 +24,7 @@
 #define KEYBOARD_KEYCODE_DOWN GLUT_KEY_DOWN
 
 /** 
- * Application input events handler
+ * Application input event handler interface
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -7,11 +7,15 @@
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 using tdme::engine::Engine;
 
-class tdme::engine::EngineGLES2Renderer
-	: public GLES2Renderer
+/**
+ * Engine connector of GLES2 renderer to other engine functionality
+ * @author Andreas Drewke
+ */
+class tdme::engine::EngineGLES2Renderer: public GLES2Renderer
 {
 
 public:
+	// overriden methods
 	void onUpdateProjectionMatrix() override;
 	void onUpdateCameraMatrix() override;
 	void onUpdateModelViewMatrix() override;
@@ -24,9 +28,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param *engine engine
+	 * @param engine engine
 	 */
-	EngineGLES2Renderer(Engine *engine);
+	EngineGLES2Renderer(Engine* engine);
 private:
 	Engine* engine;
 };

@@ -19,7 +19,7 @@ using tdme::math::Vector3;
 using tdme::math::Quaternion;
 
 /** 
- * Transformations
+ * Transformations which contain scale, rotations and translation
  * @author Andreas Drewke
  * @version $Id$
  */

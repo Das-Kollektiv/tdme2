@@ -15,7 +15,7 @@ using tdme::engine::model::Color4;
 using tdme::math::Matrix2D3x3;
 
 /** 
- * Represents a object material
+ * Represents a faces entity material
  * @author andreas.drewke
  * @version $Id$
  */

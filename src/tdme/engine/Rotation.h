@@ -10,7 +10,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
 /** 
- * Rotation
+ * Rotation representation
  * @author Andreas Drewke
  * @version $Id$
  */

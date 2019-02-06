@@ -21,7 +21,7 @@ using tdme::engine::model::RotationOrder;
 using tdme::os::filesystem::FileSystemException;
 
 /** 
- * FBX reader
+ * FBX model reader
  * @author Andreas Drewke
  * @version $Id$
  */

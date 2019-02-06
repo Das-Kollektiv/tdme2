@@ -6,7 +6,7 @@
 using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 
 /** 
- * Model Utilities
+ * Model utilities
  * @author Andreas Drewke
  * @version $Id$
  */

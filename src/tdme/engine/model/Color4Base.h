@@ -11,7 +11,7 @@ using std::array;
 using tdme::math::Math;
 
 /** 
- * Color 4 base definition
+ * Color 4 base definition class
  * @author Andreas Drewke
  * @version $Id$
  */

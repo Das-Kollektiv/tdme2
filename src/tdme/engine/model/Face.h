@@ -10,7 +10,7 @@ using std::array;
 using tdme::engine::model::Group;
 
 /** 
- * Represents a object group face, consisting of vertex indices and texture coordinate indices
+ * Represents a model face, consisting of vertex, normal, tangent and bitangent vectors, indices and texture coordinate
  * @author andreas.drewke
  * @version $Id$
  */

@@ -15,7 +15,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 
 /** 
- * Light 
+ * Light representation
  * @author Andreas Drewke
  * @version $Id$
  */

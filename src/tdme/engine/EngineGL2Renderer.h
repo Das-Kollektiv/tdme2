@@ -7,11 +7,15 @@
 using tdme::engine::subsystems::renderer::GL2Renderer;
 using tdme::engine::Engine;
 
-class tdme::engine::EngineGL2Renderer
-	: public GL2Renderer
+/**
+ * Engine connector of GL2 renderer to other engine functionality
+ * @author Andreas Drewke
+ */
+class tdme::engine::EngineGL2Renderer: public GL2Renderer
 {
 
 public:
+	// overriden methods
 	void onUpdateProjectionMatrix() override;
 	void onUpdateCameraMatrix() override;
 	void onUpdateModelViewMatrix() override;

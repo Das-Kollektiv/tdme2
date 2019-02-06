@@ -35,7 +35,7 @@ using tdme::math::Vector3;
 using tdme::utils::Console;
 
 /** 
- * LOD Object 3D
+ * LOD object 3D to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */

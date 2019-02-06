@@ -11,6 +11,9 @@ using tdme::utils::Enum;
 using tdme::engine::model::Model;
 using tdme::engine::model::UpVector;
 
+/**
+ * Model up vector
+ */
 class tdme::engine::model::UpVector final
 	: public Enum
 {
