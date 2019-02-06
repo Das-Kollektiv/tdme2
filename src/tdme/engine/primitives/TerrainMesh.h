@@ -19,7 +19,7 @@ using tdme::engine::primitives::Triangle;
 using tdme::engine::Object3DModel;
 
 /** 
- * Terrain mesh collision object
+ * Terrain mesh physics primitive
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -21,7 +21,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /** 
- * Shadow map class
+ * Shadow map
  * @author Andreas Drewke
  * @version $Id$
  */

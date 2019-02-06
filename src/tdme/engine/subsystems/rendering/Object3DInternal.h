@@ -22,7 +22,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix2D3x3;
 
 /** 
- * TDME Object 3D
+ * Object 3D
  * @author Andreas Drewke
  * @version $Id$
  */

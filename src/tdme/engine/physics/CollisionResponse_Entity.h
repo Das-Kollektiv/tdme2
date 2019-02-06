@@ -17,7 +17,7 @@ using tdme::math::Vector3;
 using tdme::utils::Console;
 
 /** 
- * Collision Response Entity
+ * Collision response entity
  * @author Andreas Drewke
  * @version $Id$
  */

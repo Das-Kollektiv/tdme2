@@ -29,6 +29,10 @@ using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
+/**
+ * Object 3D group mesh specifically for rendering
+ * @author Andreas Drewke
+ */
 class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 {
 	friend class ModelUtilitiesInternal;

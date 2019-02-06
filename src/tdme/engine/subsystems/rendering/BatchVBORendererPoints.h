@@ -16,7 +16,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
 /** 
- * Batch VBO renderer
+ * Batch VBO renderer for points
  * @author andreas.drewke
  * @version $Id$
  */

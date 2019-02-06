@@ -21,6 +21,10 @@ using tdme::audio::decoder::AudioDecoderException;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utils::ByteBuffer;
 
+/**
+ * OGG/Vorbis audio decoder
+ * @author Andreas Drewke
+ */
 class tdme::audio::decoder::VorbisDecoder: public AudioDecoder
 {
 public:

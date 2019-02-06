@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -13,7 +12,7 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::math::Matrix4x4;
 
 /** 
- * Interface to particles shader program
+ * Particles shader program
  * @author Andreas Drewke
  * @version $Id$
  */

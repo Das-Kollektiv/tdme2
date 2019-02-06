@@ -16,7 +16,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /** 
- * Shadow mapping shader for render shadows pass
+ * Shadow mapping base shader to render shadows
  * @author Andreas Drewke
  * @version $Id$
  */

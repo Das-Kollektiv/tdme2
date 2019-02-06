@@ -10,7 +10,7 @@ using std::vector;
 using tdme::math::Vector3;
 
 /** 
- * Triangle primitive
+ * Triangle entity, this is not directly connectable with physics engine
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -30,7 +30,7 @@ using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
 
 /** 
- * Batch VBO renderer
+ * Batch VBO renderer for transparent triangles
  * @author andreas.drewke
  * @version $Id$
  */

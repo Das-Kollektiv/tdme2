@@ -10,8 +10,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Vector3;
 
 /** 
- * Line segment
- * This class should be used on a per thread basis
+ * Line segment helper functions
  * @author Andreas Drewke
  * @version $Id$
  */

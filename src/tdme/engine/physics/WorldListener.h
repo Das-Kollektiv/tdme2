@@ -13,7 +13,7 @@ using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingVolume;
 
 /** 
- * World listener
+ * World listener which is about notifying adding or removing bodies
  * @author Andreas Drewke
  * @version $Id$
  */

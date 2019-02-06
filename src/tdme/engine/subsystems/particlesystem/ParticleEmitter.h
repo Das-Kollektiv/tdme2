@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -14,7 +13,7 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::math::Vector3;
 
 /** 
- * Particle Emitter Interface
+ * Particle emitter interface
  * @author Andreas Drewke
  * @version $Id$
  */

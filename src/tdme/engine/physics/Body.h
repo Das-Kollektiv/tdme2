@@ -34,8 +34,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /** 
- * Rigid Body class
- * ported from "game physics - a practical introduction/ben kenwright"
+ * Dynamic rigid/static rigid/collision body class
  * @author Andreas Drewke
  * @version $Id$
  */

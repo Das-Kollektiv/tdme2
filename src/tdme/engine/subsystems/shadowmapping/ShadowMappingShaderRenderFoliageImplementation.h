@@ -10,7 +10,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImpl
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageImplementation;
 
 /** 
- * Shadow mapping shader for render shadows pass
+ * Shadow mapping foliage shader to render shadows
  * @author Andreas Drewke
  * @version $Id$
  */

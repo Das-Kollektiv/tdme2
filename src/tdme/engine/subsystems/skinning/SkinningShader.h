@@ -19,7 +19,7 @@ using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 
 /** 
- * Interface to gl4.3 skinning shader program
+ * Interface to compute shader skinning shader program
  * @author Andreas Drewke
  * @version $Id$
  */

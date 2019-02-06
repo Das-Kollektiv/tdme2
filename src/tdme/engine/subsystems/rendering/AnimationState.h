@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -6,8 +5,9 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 
 using tdme::engine::model::AnimationSetup;
+
 /** 
- * Animation state class
+ * Animation state entity
  * @author Andreas Drewke
  * @version $Id$
  */

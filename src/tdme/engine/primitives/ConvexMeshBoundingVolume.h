@@ -20,7 +20,7 @@ using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 
 /** 
- * Convex mesh bounding volume
+ * Convex mesh physics primitive base class
  * @author Andreas Drewke
  * @version $Id$
  */

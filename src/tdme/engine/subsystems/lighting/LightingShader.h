@@ -16,7 +16,7 @@ using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::GLRenderer;
 
 /** 
- * Interface to gl3 lighting shader program
+ * Interface to lighting shader program
  * @author Andreas Drewke
  * @version $Id$
  */

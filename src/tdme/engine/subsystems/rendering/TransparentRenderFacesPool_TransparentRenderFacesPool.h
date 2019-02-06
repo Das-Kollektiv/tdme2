@@ -8,6 +8,10 @@ using tdme::utils::Pool;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 
+/**
+ * Transparent render faces pool
+ * @author Andreas Drewke
+ */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesPool_TransparentRenderFacesPool
 	: public Pool<TransparentRenderFace*>
 {

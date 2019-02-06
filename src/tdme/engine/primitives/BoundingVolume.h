@@ -17,7 +17,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Vector3;
 
 /** 
- * Bounding Volume Interface
+ * Bounding volume interface
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -25,7 +25,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::Sphere;
 
 /** 
- * Class to create primitives model
+ * Helper class to create models from physics primitive bounding volumes
  * @author Andreas Drewke
  * @version $Id$
  */

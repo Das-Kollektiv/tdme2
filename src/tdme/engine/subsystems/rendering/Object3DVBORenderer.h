@@ -36,7 +36,7 @@ using tdme::utils::ByteBuffer;
 using tdme::utils::Pool;
 
 /** 
- * VBO renderer class
+ * Rendering class
  * @author Andreas Drewke
  * @version $Id$
  */

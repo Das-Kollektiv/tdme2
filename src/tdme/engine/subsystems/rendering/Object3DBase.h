@@ -32,7 +32,7 @@ using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 
 /** 
- * Object3DInternal base class, contains 
+ * Object3D base class
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::rendering::Object3DBase

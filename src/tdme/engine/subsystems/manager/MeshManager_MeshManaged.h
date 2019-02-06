@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -13,7 +12,7 @@ using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 
 /** 
- * Managed Mesh entity
+ * Managed mesh entity
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::manager::MeshManager_MeshManaged

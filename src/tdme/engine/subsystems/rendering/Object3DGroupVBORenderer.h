@@ -17,7 +17,7 @@ using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
 /** 
- * Object 3D group render 
+ * Object 3D group VBO renderer
  * @author Andreas Drewke
  * @version $Id$
  */
