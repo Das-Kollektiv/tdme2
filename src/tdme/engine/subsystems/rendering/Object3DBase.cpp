@@ -81,7 +81,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	transformationsMatrices.push_back(new map<string, Matrix4x4*>());
 	createTransformationsMatrices(transformationsMatrices[0], model->getSubGroups());
 	// calculate transformations matrices
-	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), &baseAnimations[0], transformationsMatrices[0], 0);
+	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0], transformationsMatrices[0], 0);
 	if (hasSkinning == true) updateSkinningTransformationsMatrices(transformationsMatrices[0]);
 	// object 3d groups
 	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, object3dGroups);
@@ -147,6 +147,8 @@ void Object3DBase::setAnimation(const string& id)
 			auto& baseAnimationLast = baseAnimations[baseAnimationIdxLast];
 			baseAnimationLast.endAtTime = baseAnimationLast.currentAtTime;
 		}
+	} else {
+		Console::println("Object3DBase::setAnimation(): " + model->getId() + ": missing animation: " + id);
 	}
 }
 
@@ -284,7 +286,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
 		// TODO: check if its better to not compute animation matrix if finished
-		if (animation != nullptr) {
+		if (animation != nullptr && animationState != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
 			auto frames = animationState->setup->getFrames();
 			auto fps = model->getFPS();
