@@ -301,10 +301,12 @@ SRCS = \
 	src/tdme/os/network/Network.cpp \
 	src/tdme/os/network/NIOException.cpp \
 	src/tdme/os/network/NIOIOException.cpp \
+	src/tdme/os/network/NIOIOSocketClosedException.cpp \
 	src/tdme/os/network/NIOKEMException.cpp \
 	src/tdme/os/network/NIONetworkSocket.cpp \
 	src/tdme/os/network/NIOSocketException.cpp \
 	src/tdme/os/network/NIOUDPSocket.cpp \
+	src/tdme/os/network/NIOTCPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \
@@ -573,6 +575,7 @@ MAIN_SRCS = \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
+	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \

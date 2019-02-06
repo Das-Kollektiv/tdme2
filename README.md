@@ -156,6 +156,7 @@
     - documentation
 
 - What is WIP or planned
+    - simple HTTP client
     - simple script language for GUI
     - Expose shader and post processing programs setup API
     - Rendering via Vulkan + Metal by Vulkan
