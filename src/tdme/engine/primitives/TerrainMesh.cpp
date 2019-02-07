@@ -12,6 +12,7 @@
 #include <tdme/utils/Console.h>
 
 using std::vector;
+using std::to_string;
 
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::Object3DModel;
@@ -27,25 +28,24 @@ TerrainMesh::TerrainMesh(Object3DModel* model, const Transformations& transforma
 {
 	// fetch vertices and indices
 	vector<Triangle> triangles;
+	vector<Vector3> indexedVertices;
 	model->getTriangles(triangles);
 	Vector3 vertexTransformed;
 	for (auto& triangle: triangles) {
-		auto verticesIdx = vertices.size() / 3;
-		transformations.getTransformationsMatrix().multiply(triangle.getVertices()[0], vertexTransformed);
-		vertices.push_back(vertexTransformed[0]);
-		vertices.push_back(vertexTransformed[1]);
-		vertices.push_back(vertexTransformed[2]);
-		transformations.getTransformationsMatrix().multiply(triangle.getVertices()[1], vertexTransformed);
-		vertices.push_back(vertexTransformed[0]);
-		vertices.push_back(vertexTransformed[1]);
-		vertices.push_back(vertexTransformed[2]);
-		transformations.getTransformationsMatrix().multiply(triangle.getVertices()[2], vertexTransformed);
-		vertices.push_back(vertexTransformed[0]);
-		vertices.push_back(vertexTransformed[1]);
-		vertices.push_back(vertexTransformed[2]);
-		indices.push_back(verticesIdx + 0);
-		indices.push_back(verticesIdx + 1);
-		indices.push_back(verticesIdx + 2);
+		for (const auto& vertex: triangle.getVertices()) {
+			transformations.getTransformationsMatrix().multiply(vertex, vertexTransformed);
+			auto i = 0;
+			for (; i < indexedVertices.size(); i++) {
+				if (indexedVertices[i].equals(vertexTransformed) == true) break;
+			}
+			if (i == indexedVertices.size()) {
+				indexedVertices.push_back(vertexTransformed);
+				vertices.push_back(vertexTransformed[0]);
+				vertices.push_back(vertexTransformed[1]);
+				vertices.push_back(vertexTransformed[2]);
+			}
+			indices.push_back(i);
+		}
 	}
 	vertices.shrink_to_fit();
 	indices.shrink_to_fit();
@@ -59,6 +59,9 @@ TerrainMesh::~TerrainMesh() {
 }
 
 void TerrainMesh::setScale(const Vector3& scale) {
+	if (scale.equals(Vector3(1.0f, 1.0f, 1.0f)) == false) {
+		Console::println("TerrainMesh::setScale(): != 1.0f: Not supported!");
+	}
 	// store new scale
 	this->scale.set(scale);
 
@@ -72,7 +75,7 @@ void TerrainMesh::setScale(const Vector3& scale) {
 		vertices.size() / 3,
 		vertices.data(),
 		3 * sizeof(float),
-		vertices.size() / 3 / 3,
+		indices.size() / 3,
 		indices.data(),
 		3 * sizeof(int),
 		reactphysics3d::TriangleVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
@@ -88,6 +91,14 @@ void TerrainMesh::setScale(const Vector3& scale) {
 
 	// compute bounding box
 	computeBoundingBox();
+
+	//
+	vertices.clear();
+	indices.clear();;
+}
+
+void TerrainMesh::fromTransformations(const Transformations& transformations) {
+	Console::println("TerrainMesh::fromTransformations(): Not supported!");
 }
 
 TerrainMesh::BoundingVolume* TerrainMesh::clone() const {
