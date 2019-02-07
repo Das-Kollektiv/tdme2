@@ -347,6 +347,7 @@ SRCS = \
 	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
+	src/tdme/network/httpclient/HTTPClient.cpp \
 	src/tdme/network/udpclient/NIOClientException.cpp \
 	src/tdme/network/udpclient/NIOUDPClient.cpp \
 	src/tdme/network/udpclient/NIOUDPClientMessage.cpp \
