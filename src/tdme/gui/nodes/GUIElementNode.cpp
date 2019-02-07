@@ -332,14 +332,6 @@ GUINodeConditions& GUIElementNode::getActiveConditions()
 	return activeConditions;
 }
 
-void GUIElementNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
-{
-	if (conditionsMet == false)
-		return;
-
-	GUIParentNode::determineMouseEventNodes(event, eventNodeIds);
-}
-
 void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
 	if (ignoreEvents == true)

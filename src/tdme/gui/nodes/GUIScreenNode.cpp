@@ -336,13 +336,12 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	}
 }
 
-void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
+void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds)
 {
 	for (auto i = 0; i < floatingNodes.size(); i++) {
-		auto floatingNode = floatingNodes[i];
-		floatingNode->determineMouseEventNodes(event, eventNodeIds);
+		floatingNodes[i]->determineMouseEventNodes(event, floatingNode == true || flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds);
 	}
-	GUIParentNode::determineMouseEventNodes(event, eventNodeIds);
+	GUIParentNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds);
 }
 
 void GUIScreenNode::handleKeyboardEvent(GUIKeyboardEvent* event)

@@ -290,7 +290,7 @@ public:
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
 
 	// overriden methods
-	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 	/** 

@@ -217,7 +217,6 @@ public:
 	GUINodeConditions& getActiveConditions();
 
 	// overriden methods
-	void determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;
 
 private:
