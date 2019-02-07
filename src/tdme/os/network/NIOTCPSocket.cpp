@@ -1,5 +1,7 @@
 #include <tdme/os/network/NIOTCPSocket.h>
 
+#include <string>
+
 #include <tdme/os/network/NIOIOException.h>
 #include <tdme/os/network/NIONetworkSocket.h>
 #include <tdme/os/network/NIOSocketException.h>
@@ -14,6 +16,9 @@
 	#include <ws2tcpip.h>
 	#define socklen_t int
 	#define BUF_CAST(buf) ((char*)buf)
+	#if defined(_MSC_VER)
+		#define ssize_t int
+	#endif
 #else
 	#include <arpa/inet.h>
 	#include <netinet/tcp.h>
@@ -23,6 +28,8 @@
 #endif
 
 using tdme::os::network::NIOTCPSocket;
+
+using std::to_string;
 
 using tdme::os::network::NIOIOException;
 using tdme::os::network::NIONetworkSocket;
@@ -50,7 +57,7 @@ size_t NIOTCPSocket::read(void* buf, const size_t bytes) throw (NIOIOException) 
 }
 
 size_t NIOTCPSocket::write(void* buf, const size_t bytes) throw (NIOIOException) {
-	#ifdef __APPLE__
+	#if defined(__APPLE__) || defined(_WIN32)
 		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, 0);
 	#else
 		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL);
@@ -78,7 +85,7 @@ void NIOTCPSocket::create(NIOTCPSocket& socket, IpVersion ipVersion) throw (NIOS
 		msg+= strerror(errno);
 		throw NIOSocketException(msg);
 	}
-	#ifdef __APPLE__
+	#if defined(__APPLE__)
 		int flag = 1;
 		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
 			std::string msg = "Could not set no sig pipe on socket: ";
@@ -160,7 +167,11 @@ void NIOTCPSocket::createServerSocket(NIOTCPSocket& socket, const std::string& i
 
 void NIOTCPSocket::setTCPNoDelay() throw (NIOSocketException) {
 	int flag = 1;
-	if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (void*)&flag, sizeof(flag)) == -1) {
+	#if defined(_WIN32)
+		if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (const char*)&flag, sizeof(flag)) == -1) {
+	#else
+		if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (void*)&flag, sizeof(flag)) == -1) {
+	#endif
 		std::string msg = "Could not set tcp no delay: ";
 		msg+= strerror(errno);
 		throw NIOSocketException(msg);

@@ -13,6 +13,7 @@ SRCS_PLATFORM = \
 #	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
 
 INCLUDES = \
+	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
 	/I "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" \
 	/I "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include" \
 	/I src \
@@ -34,6 +35,7 @@ INCLUDES = \
 #	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64\libucrt.lib" \
 
 EXTRA_LIBS = \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64\libucrt.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\libcmt.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\oldnames.lib" \
 	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\kernel32.lib" \
@@ -135,9 +137,11 @@ SRCS = \
 	src/tdme/engine/primitives/Triangle.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
