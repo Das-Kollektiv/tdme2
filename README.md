@@ -161,7 +161,6 @@
     - simple script language for GUI
     - Expose shader and post processing programs setup API
     - Rendering via Vulkan + Metal by Vulkan
-    - LOD
     - GUI system port needs to be finished(memory management and other minor things)
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
