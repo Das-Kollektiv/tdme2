@@ -8,10 +8,19 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
-#include <arpa/inet.h>
-#include <netinet/tcp.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
+
+#if defined(_WIN32)
+	#include <winsock2.h>
+	#include <ws2tcpip.h>
+	#define socklen_t int
+	#define BUF_CAST(buf) ((char*)buf)
+#else
+	#include <arpa/inet.h>
+	#include <netinet/tcp.h>
+	#include <netinet/in.h>
+	#include <sys/socket.h>
+	#define BUF_CAST(buf) ((void*)buf)
+#endif
 
 using tdme::os::network::NIOTCPSocket;
 
@@ -27,7 +36,7 @@ NIOTCPSocket::~NIOTCPSocket() {
 }
 
 size_t NIOTCPSocket::read(void* buf, const size_t bytes) throw (NIOIOException) {
-	ssize_t bytesRead = ::recv(descriptor, buf, bytes, 0);
+	ssize_t bytesRead = ::recv(descriptor, BUF_CAST(buf), bytes, 0);
 	if (bytesRead == -1) {
 		std::string msg = "error while reading from socket: ";
 		msg+= strerror(errno);
@@ -42,9 +51,9 @@ size_t NIOTCPSocket::read(void* buf, const size_t bytes) throw (NIOIOException) 
 
 size_t NIOTCPSocket::write(void* buf, const size_t bytes) throw (NIOIOException) {
 	#ifdef __APPLE__
-		ssize_t bytesWritten = ::send(descriptor, buf, bytes, 0);
+		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, 0);
 	#else
-		ssize_t bytesWritten = ::send(descriptor, buf, bytes, MSG_NOSIGNAL);
+		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, MSG_NOSIGNAL);
 	#endif
 	if (bytesWritten == -1) {
 		if (errno == ECONNRESET || errno == EPIPE) {
