@@ -372,7 +372,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	//
 	for (auto i = 0; i < floatingNodesCache.size(); i++) {
 		auto guiSubNode = floatingNodesCache[i];
-		floatingNodes.push_back(guiSubNode);
+		if (guiSubNode->conditionsMet == true) floatingNodes.push_back(guiSubNode);
 	}
 
 	//
@@ -444,9 +444,6 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& 
 	if (conditionsMet == false)
 		return;
 
-	if (screenNode->mouseEventProcessedByFloatingNode == true)
-		return;
-
 	if (isEventBelongingToNode(event) == true || flow == GUINode_Flow::FLOATING) {
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_WHEEL_MOVED) {
 			if (event->getWheelX() != 0.0f && overflowX == GUIParentNode_Overflow::SCROLL) {
@@ -480,9 +477,6 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& 
 	}
 
 	GUINode::determineMouseEventNodes(event, eventNodeIds);
-	if (flow == GUINode_Flow::FLOATING && event->isProcessed() == true) {
-		screenNode->mouseEventProcessedByFloatingNode = true;
-	}
 }
 
 void GUIParentNode::handleKeyboardEvent(GUIKeyboardEvent* event)

@@ -17,6 +17,7 @@
 #include <tdme/utils/MutableString.h>
 
 using std::string;
+using std::to_string;
 
 using tdme::gui::elements::GUIDropDownController;
 using tdme::gui::GUI;
@@ -185,7 +186,7 @@ void GUIDropDownController::selectPrevious()
 void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
-	if (disabled == false && node == static_cast< GUINode* >(this->dropDownNode) && node->isEventBelongingToNode(event) && event->getButton() == 1) {
+	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) == true && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			toggleOpenState();

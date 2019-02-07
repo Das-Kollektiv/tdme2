@@ -1,5 +1,6 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 
+#include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
@@ -11,6 +12,8 @@
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController_State.h>
 
 using tdme::gui::nodes::GUIVerticalScrollbarInternalController;
+
+using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUILayoutNode;
@@ -98,13 +101,16 @@ void GUIVerticalScrollbarInternalController::setDraggedY(float draggedY)
 
 void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
-	if (node != this->node)
-		return;
-
-	if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
-		state = GUIVerticalScrollbarInternalController_State::MOUSEOVER;
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+		if (this->node->isEventBelongingToNode(event) == true) {
+			state = GUIVerticalScrollbarInternalController_State::MOUSEOVER;
+			this->node->getScreenNode()->getGUI()->addMouseOutCandidateElementNode(this->node);
+		} else {
+			state = GUIVerticalScrollbarInternalController_State::NONE;
+		}
 		event->setProcessed(true);
-	} else if (event->getButton() == 1) {
+	} else
+	if (this->node == node && event->getButton() == 1) {
 		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			auto barTop = getBarTop();
 			auto barHeight = getBarHeight();
@@ -112,27 +118,29 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 				float elementHeight = contentNode->computedConstraints.height;
 				auto scrollableHeight = contentHeight - elementHeight;
 				setDraggedY(-elementHeight * ((node->computedConstraints.height - barHeight) / scrollableHeight));
-			} else if (event->getY() > barTop + barHeight) {
+			} else
+			if (event->getY() > barTop + barHeight) {
 				float elementHeight = contentNode->computedConstraints.height;
 				auto scrollableHeight = contentHeight - elementHeight;
 				setDraggedY(+elementHeight * ((node->computedConstraints.height - barHeight) / scrollableHeight));
-			} else if (event->getY() >= barTop && event->getY() < barTop + barHeight) {
+			} else
+			if (event->getY() >= barTop && event->getY() < barTop + barHeight) {
 				mouseYOffset = static_cast< int32_t >((event->getY() - barTop));
 				state = GUIVerticalScrollbarInternalController_State::DRAGGING;
 			}
 			event->setProcessed(true);
-		} else if (state == GUIVerticalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		} else
+		if (state == GUIVerticalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			mouseYOffset = -1;
 			state = GUIVerticalScrollbarInternalController_State::NONE;
 			event->setProcessed(true);
-		} else if (state == GUIVerticalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		} else
+		if (state == GUIVerticalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 			auto barTop = getBarTop();
 			auto draggedY = event->getY() - barTop - mouseYOffset;
 			setDraggedY(draggedY);
 			event->setProcessed(true);
 		}
-	} else {
-		state = GUIVerticalScrollbarInternalController_State::NONE;
 	}
 }
 

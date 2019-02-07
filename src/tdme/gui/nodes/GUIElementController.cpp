@@ -74,57 +74,67 @@ void GUIElementController::postLayout()
 void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	if (disabled == true) return;
-	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
+	auto elementNode = dynamic_cast< GUIElementNode* >(this->node);
+	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == 1) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+			elementNode->getActiveConditions().add(GUIElementNode::CONDITION_CLICK);
 			isActionPerforming = true;
-			if ((dynamic_cast< GUIElementNode* >(node))->isFocusable() == true) {
-				node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
+			if (elementNode->isFocusable() == true) {
+				node->getScreenNode()->getGUI()->setFoccussedNode(elementNode);
 			}
 		} else
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 			isActionPerforming = true;
 		} else
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);
 			isActionPerforming = false;
 			auto now = Time::getCurrentMillis();
 			if (timeLastClicked != -1LL) {
 				if (now - timeLastClicked < TIME_DOUBLECLICK) {
-					auto onMouseDoubleClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseDoubleClickExpression();
+					auto onMouseDoubleClickExpression = elementNode->getOnMouseDoubleClickExpression();
 					if (onMouseDoubleClickExpression.size() > 0) {
-						dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseDoubleClickExpression);
+						elementNode->executeExpression(onMouseDoubleClickExpression);
 					} else {
-						auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
-						if (onMouseClickExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseClickExpression);
-						node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
+						auto onMouseClickExpression = elementNode->getOnMouseClickExpression();
+						if (onMouseClickExpression.size() > 0) elementNode->executeExpression(onMouseClickExpression);
+						node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, elementNode);
 					}
 					timeLastClicked = -1LL;
 				} else {
-					auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
-					if (onMouseClickExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseClickExpression);
-					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
+					auto onMouseClickExpression = elementNode->getOnMouseClickExpression();
+					if (onMouseClickExpression.size() > 0) elementNode->executeExpression(onMouseClickExpression);
+					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, elementNode);
 					timeLastClicked = -1LL;
 				}
 			} else {
-				auto onMouseDoubleClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseDoubleClickExpression();
+				auto onMouseDoubleClickExpression = elementNode->getOnMouseDoubleClickExpression();
 				if (onMouseDoubleClickExpression.size() > 0) {
 					timeLastClicked = now;
 				} else {
-					auto onMouseClickExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
-					if (onMouseClickExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseClickExpression);
-					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, dynamic_cast< GUIElementNode* >(node));
+					auto onMouseClickExpression = elementNode->getOnMouseClickExpression();
+					if (onMouseClickExpression.size() > 0) elementNode->executeExpression(onMouseClickExpression);
+					node->getScreenNode()->delegateActionPerformed(GUIActionListener_Type::PERFORMED, elementNode);
 				}
 			}
 		}
 	} else
-	if (node == this->node && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+	if (node == elementNode && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && event->getButton() == 1) {
+		elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);
 		event->setProcessed(true);
-		if (node->isEventBelongingToNode(event)) {
-			auto onMouseOverExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseOverExpression();
-			if (onMouseOverExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseOverExpression);
+	} else
+	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
+		if (elementNode->isEventBelongingToNode(event) == true) {
+			node->getScreenNode()->delegateMouseOver(elementNode);
+			elementNode->getActiveConditions().add(GUIElementNode::CONDITION_ONMOUSEOVER);
+			node->getScreenNode()->getGUI()->addMouseOutCandidateElementNode(elementNode);
+			auto onMouseOverExpression = elementNode->getOnMouseOverExpression();
+			if (onMouseOverExpression.size() > 0) elementNode->executeExpression(onMouseOverExpression);
 		} else {
-			auto onMouseOutExpression = dynamic_cast<GUIElementNode*>(node)->getOnMouseOutExpression();
-			if (onMouseOutExpression.size() > 0) dynamic_cast< GUIElementNode* >(node)->executeExpression(onMouseOutExpression);
+			elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_ONMOUSEOVER);
+			auto onMouseOutExpression = elementNode->getOnMouseOutExpression();
+			if (onMouseOutExpression.size() > 0) elementNode->executeExpression(onMouseOutExpression);
 		}
 	} else {
 		isActionPerforming = false;

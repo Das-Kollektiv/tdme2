@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -53,6 +54,7 @@ using tdme::gui::renderer::GUIRenderer;
  */
 class tdme::gui::nodes::GUINode
 {
+	friend class tdme::gui::GUI;
 	friend class GUIElementNode;
 	friend class GUIImageNode;
 	friend class GUILayoutNode;

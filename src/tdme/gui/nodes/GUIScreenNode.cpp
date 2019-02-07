@@ -338,7 +338,6 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 
 void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>& eventNodeIds)
 {
-	mouseEventProcessedByFloatingNode = false;
 	for (auto i = 0; i < floatingNodes.size(); i++) {
 		auto floatingNode = floatingNodes[i];
 		floatingNode->determineMouseEventNodes(event, eventNodeIds);

@@ -6,6 +6,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/utils/Console.h>
 
+using std::find;
 using std::vector;
 
 using tdme::gui::nodes::GUIElementNode;
@@ -22,21 +23,12 @@ const vector<string>& GUINodeConditions::getConditions( ) const
 }
 
 bool GUINodeConditions::has(const string& condition) const {
-	for (auto _condition: conditions) {
-		if (condition == _condition) return true;
-	}
-	return false;
+	return find(conditions.begin(), conditions.end(), condition) != conditions.end();
 }
 
 bool GUINodeConditions::add(const string& condition)
 {
-	auto conditionsChanged = true;
-	for (vector<string>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
-		if (condition == *it) {
-			conditionsChanged = false;
-			break;
-		}
-	}
+	auto conditionsChanged = has(condition) == false;
 	if (conditionsChanged == true) conditions.push_back(condition);
 	if (conditionsChanged == true) updateElementNode();
 	return conditionsChanged;
@@ -44,14 +36,8 @@ bool GUINodeConditions::add(const string& condition)
 
 bool GUINodeConditions::remove(const string& condition)
 {
-	auto conditionsChanged = false;
-	for (vector<string>::iterator it = conditions.begin(); it != conditions.end(); ++it) {
-		if (condition == *it) {
-			conditions.erase(it);
-			conditionsChanged = true;
-			break;
-		}
-	}
+	auto conditionsChanged = has(condition);
+	conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
 	if (conditionsChanged == true) updateElementNode();
 	return conditionsChanged;
 }

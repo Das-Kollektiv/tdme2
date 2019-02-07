@@ -337,26 +337,6 @@ void GUIElementNode::determineMouseEventNodes(GUIMouseEvent* event, set<string>&
 	if (conditionsMet == false)
 		return;
 
-	activeConditions.remove(CONDITION_ONMOUSEOVER);
-	activeConditions.remove(CONDITION_CLICK);
-	if (screenNode->mouseEventProcessedByFloatingNode == true)
-		return;
-
-	if (isEventBelongingToNode(event)) {
-		{
-			auto v = event->getType();
-			if (v == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
-				activeConditions.add(CONDITION_ONMOUSEOVER);
-				if (ignoreEvents == false) event->setProcessed(true);
-			} else
-			if (v == GUIMouseEvent_Type::MOUSEEVENT_PRESSED ||
-				v == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
-				activeConditions.add(CONDITION_CLICK);
-				if (ignoreEvents == false) event->setProcessed(true);
-			}
-		}
-	}
-
 	GUIParentNode::determineMouseEventNodes(event, eventNodeIds);
 }
 
