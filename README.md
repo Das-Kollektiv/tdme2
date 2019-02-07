@@ -157,6 +157,7 @@
 
 - What is WIP or planned
     - simple HTTP client
+    - PBR lighting shader for GL3/CORE+
     - simple script language for GUI
     - Expose shader and post processing programs setup API
     - Rendering via Vulkan + Metal by Vulkan
