@@ -26,4 +26,10 @@ public:
 	 */
 	static char toUpperCase(char character);
 
+	/**
+	 * Returns if character is alpha numeric
+	 * @return if character is alpha numeric
+	 */
+	static bool isAlphaNumeric(char character);
+
 };
