@@ -1,0 +1,178 @@
+#pragma once
+
+#include <sstream>
+#include <unordered_map>
+#include <vector>
+
+#include <tdme/network/httpclient/fwd-tdme.h>
+
+#include <tdme/tdme.h>
+
+using std::string;
+using std::stringstream;
+using std::unordered_map;
+using std::vector;
+
+/**
+ * Basic HTTP client
+ */
+class tdme::network::httpclient::HTTPClient {
+
+private:
+	string url;
+	string method;
+	unordered_map<string, string> getParameters;
+	unordered_map<string, string> postParameters;
+	string body;
+
+	stringstream rawResponse;
+	int16_t httpStatusCode;
+	vector<string> httpHeader;
+
+	/**
+	 * Create HTTP request headers
+	 * @param hostName host name
+	 * @param method method
+	 * @param relativeUrl url relative to server root
+	 * @param getParameters get parameters
+	 * @param postParameter post parameters
+	 * @param body body
+	 */
+	string createHTTPRequestHeaders(const string& hostName, const string& method, const string& relativeUrl, const unordered_map<string, string>& getParameters, const unordered_map<string, string>& postParameters, const string& body);
+
+	/**
+	 * Parse HTTP response headers
+	 * @param rawResponse raw response
+	 * @param httpStatusCode HTTP status code
+	 * @param httpHeader HTTP header
+	 */
+	void parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader);
+
+public:
+
+	static const constexpr int16_t HTTP_STATUSCODE_OK { 200 };
+
+	static const string HTTP_METHOD_GET;
+	static const string HTTP_METHOD_HEAD;
+	static const string HTTP_METHOD_POST;
+	static const string HTTP_METHOD_PUT;
+	static const string HTTP_METHOD_DELETE;
+
+	/**
+	 * Get URL
+	 * @return URL
+	 */
+	inline const string& getURL() {
+		return url;
+	}
+
+	/**
+	 * Set URL
+	 * @param url URL
+	 */
+	inline void setURL(const string& url) {
+		this->url = url;
+	}
+
+	/**
+	 * Get method
+	 * @return method
+	 */
+	inline const string& getMethod() {
+		return method;
+	}
+
+	/**
+	 * Set method
+	 * @param method method
+	 */
+	inline void setMethod(const string& method) {
+		this->method = method;
+	}
+
+	/**
+	 * Get GET parameter
+	 * @return GET parameter
+	 */
+	inline const unordered_map<string, string>& getGETParameters() {
+		return getParameters;
+	}
+
+	/**
+	 * Set GET parameter
+	 * @param GET parameter
+	 */
+	inline void setGETParameters(const unordered_map<string, string>& parameters) {
+		this->getParameters = parameters;
+	}
+
+	/**
+	 * Get POST parameter
+	 * @return POST parameter
+	 */
+	inline const unordered_map<string, string>& getPOSTParameters() {
+		return postParameters;
+	}
+
+	/**
+	 * Set POST parameter
+	 * @param POST parameter
+	 */
+	inline void setPOSTParameters(const unordered_map<string, string>& parameters) {
+		this->postParameters = parameters;
+	}
+
+	/**
+	 * Get body
+	 * @return method
+	 */
+	inline const string& getBody() {
+		return body;
+	}
+
+	/**
+	 * Set body
+	 * @param body body
+	 */
+	inline void setBody(const string& body) {
+		this->body = body;
+	}
+
+	/**
+	 * Reset this HTTP client
+	 */
+	void reset();
+
+	/**
+	 * Execute HTTP request
+	 */
+	void execute();
+
+	/**
+	 * @return complete response stream
+	 */
+	inline stringstream& getResponse() {
+		return rawResponse;
+	}
+
+	/**
+	 * @return HTTP status code
+	 */
+	inline int16_t getStatusCode() {
+		return httpStatusCode;
+	}
+
+	/**
+	 * @return HTTP response headers
+	 */
+	inline const vector<string>& getResponseHeaders() {
+		return httpHeader;
+	}
+
+	/**
+	 * Returns a URL encoded representation of value
+	 * @return URL encoded value
+	 */
+	static string urlEncode(const string& value);
+
+};
