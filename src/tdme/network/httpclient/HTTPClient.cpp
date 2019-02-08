@@ -6,15 +6,16 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/network/httpclient/HTTPClientException.h>
+#include <tdme/os/network/Network.h>
+#include <tdme/os/network/NIOTCPSocket.h>
+#include <tdme/os/network/NIOSocketException.h>
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
-
-#include <tdme/os/network/Network.h>
-#include <tdme/os/network/NIOTCPSocket.h>
 
 using std::hex;
 using std::nouppercase;
@@ -27,7 +28,9 @@ using std::unordered_map;
 using std::uppercase;
 using std::vector;
 
+using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
+using tdme::os::network::NIOSocketException;
 using tdme::os::network::NIOTCPSocket;
 using tdme::utils::Character;
 using tdme::utils::Console;
@@ -143,15 +146,12 @@ void HTTPClient::reset() {
 
 }
 
-void HTTPClient::execute() {
+void HTTPClient::execute() throw (HTTPClientException, NIOException) {
 	NIOTCPSocket socket;
 	try {
-		if (StringUtils::startsWith(url, "http://") == false) {
-			// TODO: Exception?
-			Console::println("HTTPClient::execute(): Cannot execute HTTP request: " + url + ": only HTTP is supported for now");
-		}
-
+		if (StringUtils::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
 		auto relativeUrl = StringUtils::substring(url, string("http://").size());
+		if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
 		auto slashIdx = relativeUrl.find('/');
 		auto hostName = relativeUrl;
 		if (slashIdx != -1) hostName = StringUtils::substring(relativeUrl, 0, slashIdx);
@@ -162,6 +162,10 @@ void HTTPClient::execute() {
 
 		Console::print("HTTPClient::execute(): Resolving name to IP: " + hostName + ": ");
 		auto ip = Network::getIpByHostName(hostName);
+		if (ip.size() == 0) {
+			Console::println("Failed");
+			throw HTTPClientException("Could not resolve host IP by host name");
+		}
 		Console::println(ip);
 
 		NIOTCPSocket::create(socket, NIOTCPSocket::determineIpVersion(ip));

@@ -45,7 +45,7 @@ const unsigned int NIONetworkSocket::getPort() {
 }
 
 void NIONetworkSocket::shutdown() {
-	::shutdown(descriptor, SHUT_RDWR);
+	if (descriptor != -1) ::shutdown(descriptor, SHUT_RDWR);
 }
 
 void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) throw (NIOSocketException) {

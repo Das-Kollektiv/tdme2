@@ -1,7 +1,7 @@
-#include <tdme/network/httpclient/HTTPClient.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/network/httpclient/HTTPClient.h>
 
 using std::string;
 using std::stringstream;
