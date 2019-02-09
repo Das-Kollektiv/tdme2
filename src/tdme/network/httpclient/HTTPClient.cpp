@@ -83,6 +83,10 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string
 		string("User-Agent: tdme2-httpclient\r\n") +
 		string("Host: " + hostName + "\r\n") +
 		string("Connection: close\r\n");
+	if (contentType.size() > 0) {
+		request+=
+			string("Content-Type: " + contentType + "\r\n");
+	}
 	if (method == HTTP_METHOD_POST || method == HTTP_METHOD_PUT) {
 		string _body;
 		if (postParameters.size() > 0) {
@@ -139,11 +143,11 @@ void HTTPClient::reset() {
 	getParameters.clear();
 	postParameters.clear();
 	body.clear();
+	contentType.clear();
 
 	rawResponse.clear();
 	httpStatusCode = -1;
 	httpHeader.clear();
-
 }
 
 void HTTPClient::execute() throw (HTTPClientException, NIOException) {
