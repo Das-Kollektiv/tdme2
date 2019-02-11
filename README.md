@@ -137,6 +137,11 @@
             - has single thread with a simple threadsafe API
             - supports all features required by UDP server
             - IPV6 ready
+        - Simple HTTP client
+            - uses a blocking TCP socket, thus it has a simple blocking API
+            - Ready for REST providing all methods, setting content type and body
+            - be able to set GET and POST via unordered map 
+            - IPV6 ready
     - Operating system abstraction layer
         - file system
             - standard file system
