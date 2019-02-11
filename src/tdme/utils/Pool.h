@@ -12,7 +12,7 @@ namespace tdme {
 namespace utils {
 
 /** 
- * Pool 
+ * Pool template class
  * @author Andreas Drewke
  * @version $Id$
  * @param<E>

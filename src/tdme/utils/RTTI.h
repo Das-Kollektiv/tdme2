@@ -7,7 +7,7 @@
 using std::string;
 
 /**
- * Class
+ * Run time type information utility class
  * @author Andreas Drewke
  */
 class tdme::utils::RTTI {

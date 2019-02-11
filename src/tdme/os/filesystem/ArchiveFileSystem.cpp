@@ -7,8 +7,8 @@
 
 #include <ext/zlib/zlib.h>
 
+#include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/FilenameFilter.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/Console.h>
@@ -68,7 +68,7 @@ const string ArchiveFileSystem::getFileName(const string& pathName, const string
 	return pathName + "/" + fileName;
 }
 
-void ArchiveFileSystem::list(const string& pathName, vector<string>& files, FilenameFilter* filter, bool addDrives) throw (FileSystemException)
+void ArchiveFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives) throw (FileSystemException)
 {
 	throw FileSystemException("ArchiveFileSystem::list(): Not implemented yet");
 }

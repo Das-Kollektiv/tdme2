@@ -3,7 +3,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 /**
- * Reference counter implementation which should be used with inheritance
+ * Reference counter implementation to be used with inheritance
  * @author Andreas Drewke
  */
 class tdme::utils::ReferenceCounter {

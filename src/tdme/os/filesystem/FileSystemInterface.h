@@ -11,17 +11,21 @@
 using std::vector;
 using std::string;
 
-using tdme::utils::FilenameFilter;
-
+using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystemException;
 
 /** 
- * Interface to file system
+ * File system interface
  * @author Andreas Drewke
  * @version $Id$
  */
 struct tdme::os::filesystem::FileSystemInterface
 {
+	/**
+	 * Destructor
+	 */
+	virtual ~FileSystemInterface() {}
+
 	/**
 	 * Get file name
 	 * @param pathName path name
@@ -94,7 +98,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param addDrives add drives to list(applies to Microsoft Windows only)
 	 * @return file names 
 	 */
-	virtual void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) = 0;
+	virtual void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) = 0;
 
 	/**
 	 * Check if file is a path

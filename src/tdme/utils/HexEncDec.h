@@ -9,7 +9,7 @@
 using std::string;
 
 /**
- * Integer to hex string conversion
+ * Integer to hex string conversion utility class
  * @author Andreas Drewke
  */
 class tdme::utils::HexEncDec {

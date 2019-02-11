@@ -7,7 +7,7 @@
 #include <tdme/math/fwd-tdme.h>
 
 /** 
- * Math
+ * Standard math functions
  * @author Andreas Drewke
  * @version $Id$
  */

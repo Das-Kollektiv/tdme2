@@ -28,7 +28,7 @@ using tdme::utils::PathFindingNode;
 using tdme::utils::PathFindingCustomTest;
 
 /**
- * Path Finding
+ * Path finding class
  * @author Andreas Drewke
  * @version $Id$
  */

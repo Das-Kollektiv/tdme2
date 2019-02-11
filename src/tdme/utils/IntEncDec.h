@@ -9,7 +9,7 @@
 using std::string;
 
 /**
- * Integer to string conversion and vice versa
+ * Integer to string conversion and vice versa utility class
  * @author Andreas Drewke
  */
 class tdme::utils::IntEncDec {

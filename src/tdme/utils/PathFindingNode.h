@@ -7,7 +7,7 @@
 using std::string;
 
 /**
- * Path Finding Node
+ * Path finding node entity
  * @author Andreas Drewke
  * @version $Id$
  */

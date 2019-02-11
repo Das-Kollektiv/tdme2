@@ -5,7 +5,7 @@
 using tdme::os::filesystem::FileSystemInterface;
 
 /** 
- * File system 
+ * File system singleton class
  * @author Andreas Drewke
  * @version $Id$
  */

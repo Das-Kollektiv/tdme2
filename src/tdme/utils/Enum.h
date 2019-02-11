@@ -7,8 +7,8 @@
 using std::string;
 
 /**
- * Enum entity class
-class tdme::utils::Enum
+ * Enum base class
+ * @author Andreas Drewke
  */
 class tdme::utils::Enum {
 private:

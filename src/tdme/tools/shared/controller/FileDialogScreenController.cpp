@@ -13,11 +13,11 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
-#include <tdme/utils/FilenameFilter.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -34,11 +34,11 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
 using tdme::utils::Exception;
-using tdme::utils::FilenameFilter;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 
@@ -89,7 +89,7 @@ void FileDialogScreenController::dispose()
 
 bool FileDialogScreenController::setupFileDialogListBox()
 {
-	class ExtensionFilter: public virtual FilenameFilter
+	class ExtensionFilter: public virtual FileNameFilter
 	{
 	public:
 		bool accept(const string& pathName, const string& fileName) override {

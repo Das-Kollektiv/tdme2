@@ -4,7 +4,7 @@
 #include <tdme/utils/fwd-tdme.h>
 
 /**
- * Character
+ * Character class
  * @author Andreas Drewke
  * @version $Id$
  */

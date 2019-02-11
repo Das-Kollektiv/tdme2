@@ -1,11 +1,11 @@
 #include <string>
 #include <vector>
 
+#include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
-#include <tdme/utils/FilenameFilter.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -13,16 +13,16 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
 using tdme::utils::Exception;
-using tdme::utils::FilenameFilter;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 void scanDir(const string& folder, vector<string>& totalFiles) {
-	class ListFilter : public virtual FilenameFilter {
+	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
 

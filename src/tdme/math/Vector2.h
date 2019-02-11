@@ -11,7 +11,7 @@ using std::array;
 using tdme::math::Math;
 
 /** 
- * Vector 2 class
+ * 2D vector 2 class
  * @author Andreas Drewke
  * @version $Id$
  */

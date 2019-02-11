@@ -9,7 +9,7 @@ using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 
 /**
- * Time-related utilities
+ * Time utility class
  * @author mahula
  * @version $Id$
  */

@@ -12,7 +12,7 @@ using std::numeric_limits;
 using std::string;
 
 /**
- * Float
+ * Float class
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -15,12 +15,12 @@ using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
 
 /** 
- * Quaternion
+ * Quaternion class
  * @author Andreas Drewke
- * @see http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
  */
 class tdme::math::Quaternion final
 {
+// see http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
 private:
 	array<float, 4> data {  };
 

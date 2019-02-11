@@ -11,18 +11,18 @@ using std::string;
 using std::vector;
 
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::FilenameFilter;
+using tdme::os::filesystem::FileNameFilter;
 
 /**
- * Standard file system
+ * Standard file system implementation
+ * @author Andreas Drewke
  */
-class tdme::os::filesystem::StandardFileSystem final
-	: public FileSystemInterface
+class tdme::os::filesystem::StandardFileSystem final: public FileSystemInterface
 {
 
 public:
 	const string getFileName(const string& path, const string& fileName) throw (FileSystemException) override;
-	void list(const string& pathName, vector<string>& files, FilenameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) override;
+	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) override;
 	bool isPath(const string& pathName) throw (FileSystemException) override;
 	bool isDrive(const string& pathName) throw (FileSystemException) override;
 	bool fileExists(const string& fileName) throw (FileSystemException) override;
@@ -40,4 +40,5 @@ public:
 	void removePath(const string& pathName) throw (FileSystemException) override;
 	void removeFile(const string& pathName, const string& fileName) throw (FileSystemException) override;
 	StandardFileSystem();
+	virtual ~StandardFileSystem();
 };
