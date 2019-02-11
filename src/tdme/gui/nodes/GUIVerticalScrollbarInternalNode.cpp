@@ -10,7 +10,6 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUIVerticalScrollbarInternalController_State.h>
 #include <tdme/gui/nodes/GUIVerticalScrollbarInternalController.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 
@@ -93,13 +92,13 @@ void GUIVerticalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector<G
 	array<float, 4> barColorArray;
 	{
 		auto v = controller->getState();
-		if (v == GUIVerticalScrollbarInternalController_State::NONE) {
+		if (v == GUIVerticalScrollbarInternalController::STATE_NONE) {
 			barColorArray = barColorNone.getArray();
 		} else
-		if (v == GUIVerticalScrollbarInternalController_State::MOUSEOVER) {
+		if (v == GUIVerticalScrollbarInternalController::STATE_MOUSEOVER) {
 			barColorArray = barColorMouseOver.getArray();
 		} else
-		if (v == GUIVerticalScrollbarInternalController_State::DRAGGING) {
+		if (v == GUIVerticalScrollbarInternalController::STATE_DRAGGING) {
 			barColorArray = barColorDragging.getArray();
 		}
 	}

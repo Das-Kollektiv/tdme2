@@ -9,7 +9,7 @@ using tdme::gui::events::Action;
 using tdme::gui::renderer::GUIRenderer;
 
 /** 
- * GUI Effect base class
+ * GUI effect base class
  * @author Andreas Drewke
  * @version $Id$
  */

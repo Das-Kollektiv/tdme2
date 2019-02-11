@@ -19,12 +19,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
 /** 
- * GUI Checkbox
+ * GUI radio button element
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUIRadioButton final
-	: public GUIElement
+class tdme::gui::elements::GUIRadioButton final: public GUIElement
 {
 
 private:

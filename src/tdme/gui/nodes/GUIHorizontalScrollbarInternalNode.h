@@ -26,7 +26,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 
 /** 
- * GUI horizontal scrollbar internal node
+ * GUI horizontal scroll bar internal node
  * @author Andreas Drewke
  * @version $Id$
  */

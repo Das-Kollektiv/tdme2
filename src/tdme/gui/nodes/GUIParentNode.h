@@ -34,7 +34,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUIParserException;
 
 /** 
- * A parent node supporting child notes
+ * GUI parent node base class thats supporting child nodes
  * @author Andreas Drewke
  * @version $Id$
  */

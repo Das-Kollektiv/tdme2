@@ -1,4 +1,4 @@
-#include <tdme/gui/events/GUIMouseEvent.h>
+	#include <tdme/gui/events/GUIMouseEvent.h>
 
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 
@@ -16,6 +16,9 @@ GUIMouseEvent::GUIMouseEvent()
 	this->wheelY = 0.0f;
 	this->wheelZ = 0.0f;
 	this->processed = false;
+}
+
+GUIMouseEvent::~GUIMouseEvent() {
 }
 
 int64_t GUIMouseEvent::getTime()

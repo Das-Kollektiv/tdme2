@@ -23,8 +23,7 @@ using tdme::os::filesystem::FileSystemException;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUITabContent final
-	: public GUIElement
+class tdme::gui::elements::GUITabContent final: public GUIElement
 {
 
 private:

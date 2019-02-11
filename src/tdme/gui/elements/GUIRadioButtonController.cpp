@@ -25,6 +25,13 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
+string GUIRadioButtonController::CONDITION_SELECTED = "selected";
+string GUIRadioButtonController::CONDITION_UNSELECTED = "unselected";
+string GUIRadioButtonController::CONDITION_DISABLED = "disabled";
+string GUIRadioButtonController::CONDITION_ENABLED = "enabled";
+
+map<string, vector<GUIElementNode*>> GUIRadioButtonController::radioButtonGroupNodesByName;
+
 GUIRadioButtonController::GUIRadioButtonController(GUINode* node) 
 	: GUIElementController(node)
 {
@@ -38,13 +45,6 @@ GUIRadioButtonController::GUIRadioButtonController(GUINode* node)
 void GUIRadioButtonController::init()
 {
 }
-
-string GUIRadioButtonController::CONDITION_SELECTED = "selected";
-string GUIRadioButtonController::CONDITION_UNSELECTED = "unselected";
-string GUIRadioButtonController::CONDITION_DISABLED = "disabled";
-string GUIRadioButtonController::CONDITION_ENABLED = "enabled";
-
-map<string, vector<GUIElementNode*>> GUIRadioButtonController::radioButtonGroupNodesByName;
 
 bool GUIRadioButtonController::isSelected()
 {

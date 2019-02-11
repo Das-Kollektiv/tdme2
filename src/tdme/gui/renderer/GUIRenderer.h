@@ -29,7 +29,7 @@ using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 
 /** 
- * GUI
+ * GUI renderer
  * @author Andreas Drewke
  * @version $Id$
  */

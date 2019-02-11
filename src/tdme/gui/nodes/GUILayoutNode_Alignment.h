@@ -11,8 +11,11 @@ using tdme::utils::Enum;
 using tdme::gui::nodes::GUILayoutNode;
 using tdme::gui::nodes::GUILayoutNode_Alignment;
 
-class tdme::gui::nodes::GUILayoutNode_Alignment final
-	: public Enum
+/**
+ * GUI layout node alignment enum
+ * @author Andreas Drewke
+ */
+class tdme::gui::nodes::GUILayoutNode_Alignment final: public Enum
 {
 	friend class GUILayoutNode;
 

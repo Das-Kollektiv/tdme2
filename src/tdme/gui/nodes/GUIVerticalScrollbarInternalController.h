@@ -15,7 +15,7 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 using tdme::utils::MutableString;
 
 /** 
- * GUI Scrollbar controller
+ * GUI vertical scroll bar internal controller
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -23,12 +23,13 @@ class tdme::gui::nodes::GUIVerticalScrollbarInternalController
 	: public GUINodeController
 {
 	friend class GUIVerticalScrollbarInternalNode;
-	friend class GUIVerticalScrollbarInternalController_State;
+public:
+	enum State {STATE_NONE, STATE_MOUSEOVER, STATE_DRAGGING};
 
 private:
 	GUILayoutNode* contentNode {  };
 	float contentHeight {  };
-	GUIVerticalScrollbarInternalController_State* state {  };
+	State state { STATE_NONE };
 	int32_t mouseYOffset {  };
 	MutableString value {  };
 
@@ -42,7 +43,7 @@ public:
 	/** 
 	 * @return state
 	 */
-	virtual GUIVerticalScrollbarInternalController_State* getState();
+	virtual State getState();
 
 private:
 

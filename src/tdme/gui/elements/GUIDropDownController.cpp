@@ -34,6 +34,11 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
+string GUIDropDownController::CONDITION_DISABLED = "disabled";
+string GUIDropDownController::CONDITION_ENABLED = "enabled";
+string GUIDropDownController::CONDITION_OPENED = "opened";
+string GUIDropDownController::CONDITION_CLOSED = "closed";
+
 GUIDropDownController::GUIDropDownController(GUINode* node) 
 	: GUIElementController(node)
 {
@@ -48,14 +53,6 @@ void GUIDropDownController::init()
 	arrowNode = nullptr;
 	textElementNode = nullptr;
 }
-
-string GUIDropDownController::CONDITION_DISABLED = "disabled";
-
-string GUIDropDownController::CONDITION_ENABLED = "enabled";
-
-string GUIDropDownController::CONDITION_OPENED = "opened";
-
-string GUIDropDownController::CONDITION_CLOSED = "closed";
 
 bool GUIDropDownController::isDisabled()
 {

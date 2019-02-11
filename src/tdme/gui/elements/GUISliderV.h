@@ -20,12 +20,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
 /** 
- * GUI vertical slider
+ * GUI vertical slider element
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUISliderV final
-	: public GUIElement
+class tdme::gui::elements::GUISliderV final: public GUIElement
 {
 
 private:

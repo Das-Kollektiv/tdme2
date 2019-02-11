@@ -257,11 +257,9 @@ SRCS = \
 	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \
 	src/tdme/gui/nodes/GUIElementNode.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.cpp \
-	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController_State.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp \
 	src/tdme/gui/nodes/GUIImageNode.cpp \
 	src/tdme/gui/nodes/GUIInputInternalController.cpp \
-	src/tdme/gui/nodes/GUIInputInternalController_CursorMode.cpp \
 	src/tdme/gui/nodes/GUIInputInternalNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp \
@@ -280,7 +278,6 @@ SRCS = \
 	src/tdme/gui/nodes/GUISpaceNode.cpp \
 	src/tdme/gui/nodes/GUITextNode.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
-	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController_State.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
 	src/tdme/gui/renderer/GUIFont.cpp \
 	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \

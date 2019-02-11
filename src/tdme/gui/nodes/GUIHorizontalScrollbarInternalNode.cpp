@@ -5,7 +5,6 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController_State.h>
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -93,13 +92,13 @@ void GUIHorizontalScrollbarInternalNode::render(GUIRenderer* guiRenderer, vector
 	array<float, 4> barColorArray;
 	{
 		auto v = controller->getState();
-		if (v == GUIHorizontalScrollbarInternalController_State::NONE) {
+		if (v == GUIHorizontalScrollbarInternalController::STATE_NONE) {
 			barColorArray = barColorNone.getArray();
 		} else
-		if (v == GUIHorizontalScrollbarInternalController_State::MOUSEOVER) {
+		if (v == GUIHorizontalScrollbarInternalController::STATE_MOUSEOVER) {
 			barColorArray = barColorMouseOver.getArray();
 		} else
-		if (v == GUIHorizontalScrollbarInternalController_State::DRAGGING) {
+		if (v == GUIHorizontalScrollbarInternalController::STATE_DRAGGING) {
 			barColorArray = barColorDragging.getArray();
 		}
 	}

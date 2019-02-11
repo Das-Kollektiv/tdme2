@@ -4,7 +4,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 
 /** 
- * Screen node size constraints
+ * GUI screen node size constraints entity
  * @author Andreas Drewke
  * @version $Id$
  */

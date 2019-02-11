@@ -6,7 +6,6 @@
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIInputInternalController_CursorMode.h>
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -52,7 +51,7 @@ GUIInputInternalController::GUIInputInternalController(GUINode* node)
 void GUIInputInternalController::init()
 {
 	cursorModeStarted = -1LL;
-	cursorMode = GUIInputInternalController_CursorMode::SHOW;
+	cursorMode = CURSORMODE_SHOW;
 	draggingTickLast = -1LL;
 }
 
@@ -96,17 +95,17 @@ int32_t GUIInputInternalController::getOffset()
 void GUIInputInternalController::resetCursorMode()
 {
 	cursorModeStarted = Time::getCurrentMillis();
-	cursorMode = GUIInputInternalController_CursorMode::SHOW;
+	cursorMode = CURSORMODE_SHOW;
 }
 
-GUIInputInternalController_CursorMode* GUIInputInternalController::getCursorMode()
+GUIInputInternalController::CursorMode GUIInputInternalController::getCursorMode()
 {
 	if (cursorModeStarted == -1) {
 		resetCursorMode();
 		return cursorMode;
 	}
 	if (Time::getCurrentMillis() - cursorModeStarted > CURSOR_MODE_DURATION) {
-		cursorMode = cursorMode == GUIInputInternalController_CursorMode::SHOW ? GUIInputInternalController_CursorMode::HIDE : GUIInputInternalController_CursorMode::SHOW;
+		cursorMode = cursorMode == CURSORMODE_SHOW ? CURSORMODE_HIDE : CURSORMODE_SHOW;
 		cursorModeStarted = Time::getCurrentMillis();
 	}
 	return cursorMode;

@@ -7,7 +7,7 @@
 using tdme::engine::subsystems::renderer::GLRenderer;
 
 /** 
- * GUI Shader
+ * GUI shader
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -4,7 +4,7 @@
 
 
 /** 
- * GUI input event handler
+ * GUI input event handler interface
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -3,7 +3,6 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/nodes/GUIHorizontalScrollbarInternalController_State.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -33,7 +32,7 @@ GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalControll
 
 void GUIHorizontalScrollbarInternalController::init()
 {
-	state = GUIHorizontalScrollbarInternalController_State::NONE;
+	state = STATE_NONE;
 	mouseXOffset = -1;
 }
 
@@ -59,7 +58,7 @@ void GUIHorizontalScrollbarInternalController::postLayout()
 	contentWidth = contentNode->getContentWidth();
 }
 
-GUIHorizontalScrollbarInternalController_State* GUIHorizontalScrollbarInternalController::getState()
+GUIHorizontalScrollbarInternalController::State GUIHorizontalScrollbarInternalController::getState()
 {
 	return state;
 }
@@ -103,10 +102,10 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 {
 	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED) {
 		if (this->node->isEventBelongingToNode(event) == true) {
-			state = GUIHorizontalScrollbarInternalController_State::MOUSEOVER;
+			state = STATE_MOUSEOVER;
 			this->node->getScreenNode()->getGUI()->addMouseOutCandidateElementNode(this->node);
 		} else {
-			state = GUIHorizontalScrollbarInternalController_State::NONE;
+			state = STATE_NONE;
 		}
 		event->setProcessed(true);
 	} else
@@ -126,16 +125,16 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 			} else
 			if (event->getX() >= barLeft && event->getX() < barLeft + barWidth) {
 				mouseXOffset = static_cast< int32_t >((event->getX() - barLeft));
-				state = GUIHorizontalScrollbarInternalController_State::DRAGGING;
+				state = STATE_DRAGGING;
 			}
 			event->setProcessed(true);
 		} else
-		if (state == GUIHorizontalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+		if (state == STATE_DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			mouseXOffset = -1;
-			state = GUIHorizontalScrollbarInternalController_State::NONE;
+			state = STATE_NONE;
 			event->setProcessed(true);
 		} else
-		if (state == GUIHorizontalScrollbarInternalController_State::DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		if (state == STATE_DRAGGING && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 			auto barLeft = getBarLeft();
 			auto draggedX = event->getX() - barLeft - mouseXOffset;
 			setDraggedX(draggedX);

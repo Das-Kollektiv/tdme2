@@ -11,7 +11,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
 /** 
- * GUI element controller
+ * GUI node controller base class
  * @author Andreas Drewke
  * @version $Id$
  */

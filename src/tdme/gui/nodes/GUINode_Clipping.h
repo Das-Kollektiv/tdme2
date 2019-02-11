@@ -6,7 +6,7 @@
 using tdme::gui::nodes::GUINode_Clipping;
 
 /** 
- * Clipping
+ * GUI node clipping entity
  * @author Andreas Drewke
  * @version $Id$
  */

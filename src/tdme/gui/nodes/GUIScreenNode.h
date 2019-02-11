@@ -46,7 +46,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::MutableString;
 
 /** 
- * GUI Screen Node
+ * GUI screen node that represents a screen that can be rendered via GUI system
  * @author Andreas Drewke
  * @version $Id$
  */

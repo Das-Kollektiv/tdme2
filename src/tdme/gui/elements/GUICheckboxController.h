@@ -19,7 +19,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
 /** 
- * GUI Checkbox controller
+ * GUI check box controller
  * @author Andreas Drewke
  * @version $Id$
  */

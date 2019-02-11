@@ -16,7 +16,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::utils::MutableString;
 
 /** 
- * GUI Scrollbar controller
+ * GUI scroll bar controller
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -24,12 +24,13 @@ class tdme::gui::nodes::GUIHorizontalScrollbarInternalController
 	: public GUINodeController
 {
 	friend class GUIHorizontalScrollbarInternalNode;
-	friend class GUIHorizontalScrollbarInternalController_State;
+public:
+	enum State { STATE_NONE, STATE_MOUSEOVER, STATE_DRAGGING };
 
 private:
 	GUILayoutNode* contentNode {  };
 	float contentWidth { };
-	GUIHorizontalScrollbarInternalController_State* state {  };
+	State state { STATE_NONE };
 	int32_t mouseXOffset {  };
 	MutableString value;
 
@@ -46,7 +47,7 @@ public:
 	/** 
 	 * @return state
 	 */
-	virtual GUIHorizontalScrollbarInternalController_State* getState();
+	virtual State getState();
 
 private:
 

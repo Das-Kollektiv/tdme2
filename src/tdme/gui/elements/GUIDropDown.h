@@ -19,12 +19,11 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystemException;
 
 /** 
- * GUI select box
+ * GUI drop down element
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUIDropDown final
-	: public GUIElement
+class tdme::gui::elements::GUIDropDown final: public GUIElement
 {
 
 private:

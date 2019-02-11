@@ -25,8 +25,7 @@ using tdme::utils::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUITabController final
-	: public GUIElementController
+class tdme::gui::elements::GUITabController final: public GUIElementController
 {
 	friend class GUITabsController;
 	friend class GUITabsHeaderController;

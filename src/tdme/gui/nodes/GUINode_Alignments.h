@@ -13,7 +13,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode;
 
 /** 
- * Alignments
+ * GUI node alignments
  * @author Andreas Drewke
  * @version $Id$
  */

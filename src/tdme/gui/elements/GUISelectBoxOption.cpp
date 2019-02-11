@@ -13,12 +13,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
+string GUISelectBoxOption::NAME = "selectbox-option";
+
 GUISelectBoxOption::GUISelectBoxOption() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-option.xml");
 }
-
-string GUISelectBoxOption::NAME = "selectbox-option";
 
 const string& GUISelectBoxOption::getName()
 {

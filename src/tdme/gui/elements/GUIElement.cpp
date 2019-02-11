@@ -6,3 +6,6 @@ GUIElement::GUIElement()
 {
 }
 
+GUIElement::~GUIElement()
+{
+}

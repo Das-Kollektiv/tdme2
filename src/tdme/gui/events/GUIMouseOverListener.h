@@ -12,6 +12,10 @@ using tdme::gui::nodes::GUIElementNode;
  */
 struct tdme::gui::events::GUIMouseOverListener
 {
+	/**
+	 * Destructor
+	 */
+	virtual ~GUIMouseOverListener() {}
 
 	/** 
 	 * On mouse over

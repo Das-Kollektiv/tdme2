@@ -19,12 +19,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
+string GUITabContent::NAME = "tab-content";
+
 GUITabContent::GUITabContent() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tab-content.xml");
 }
-
-string GUITabContent::NAME = "tab-content";
 
 const string& GUITabContent::getName()
 {

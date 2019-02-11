@@ -23,16 +23,16 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
+string GUISelectBoxOptionController::CONDITION_SELECTED = "selected";
+string GUISelectBoxOptionController::CONDITION_UNSELECTED = "unselected";
+string GUISelectBoxOptionController::CONDITION_DISABLED = "disabled";
+string GUISelectBoxOptionController::CONDITION_ENABLED = "enabled";
+
 GUISelectBoxOptionController::GUISelectBoxOptionController(GUINode* node) 
 	: GUIElementController(node)
 {
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 }
-
-string GUISelectBoxOptionController::CONDITION_SELECTED = "selected";
-string GUISelectBoxOptionController::CONDITION_UNSELECTED = "unselected";
-string GUISelectBoxOptionController::CONDITION_DISABLED = "disabled";
-string GUISelectBoxOptionController::CONDITION_ENABLED = "enabled";
 
 bool GUISelectBoxOptionController::isDisabled()
 {

@@ -19,8 +19,10 @@ using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 
-class tdme::gui::nodes::GUINode_AlignmentVertical final
-	: public Enum
+/**
+ * GUI node vertical alignment enum
+ */
+class tdme::gui::nodes::GUINode_AlignmentVertical final: public Enum
 {
 	friend class GUINode;
 	friend class GUINode_Flow;

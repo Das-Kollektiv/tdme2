@@ -18,8 +18,10 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode;
 
-class tdme::gui::nodes::GUILayoutNode
-	: public GUIParentNode
+/**
+ * GUI layout node
+ */
+class tdme::gui::nodes::GUILayoutNode: public GUIParentNode
 {
 	friend class tdme::gui::GUIParser;
 

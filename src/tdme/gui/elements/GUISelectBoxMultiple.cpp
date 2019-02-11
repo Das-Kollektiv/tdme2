@@ -13,12 +13,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
+string GUISelectBoxMultiple::NAME = "selectbox-multiple";
+
 GUISelectBoxMultiple::GUISelectBoxMultiple() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-multiple.xml");
 }
-
-string GUISelectBoxMultiple::NAME = "selectbox-multiple";
 
 const string& GUISelectBoxMultiple::getName()
 {

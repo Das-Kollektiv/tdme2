@@ -4,7 +4,6 @@
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIInputInternalController_CursorMode.h>
 #include <tdme/gui/nodes/GUIInputInternalController.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -25,7 +24,6 @@ using tdme::gui::GUI;
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIInputInternalController_CursorMode;
 using tdme::gui::nodes::GUIInputInternalController;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
@@ -137,7 +135,7 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& fl
 	auto inputController = dynamic_cast< GUIInputController* >(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();
 	font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
-	if (static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController_CursorMode::SHOW) {
+	if (static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW) {
 		auto screenWidth = screenNode->getScreenWidth();
 		auto screenHeight = screenNode->getScreenHeight();
 		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex());

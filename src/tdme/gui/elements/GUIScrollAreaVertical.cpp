@@ -13,12 +13,12 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
+string GUIScrollAreaVertical::NAME = "scrollarea-vertical";
+
 GUIScrollAreaVertical::GUIScrollAreaVertical() throw (FileSystemException)
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea-vertical.xml");
 }
-
-string GUIScrollAreaVertical::NAME = "scrollarea-vertical";
 
 const string& GUIScrollAreaVertical::getName()
 {

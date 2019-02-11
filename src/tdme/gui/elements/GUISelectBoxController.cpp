@@ -29,6 +29,9 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::MutableString;
 
+string GUISelectBoxController::CONDITION_DISABLED = "disabled";
+string GUISelectBoxController::CONDITION_ENABLED = "enabled";
+
 GUISelectBoxController::GUISelectBoxController(GUINode* node) 
 	: GUIElementController(node)
 {
@@ -39,9 +42,6 @@ GUISelectBoxController::GUISelectBoxController(GUINode* node)
 void GUISelectBoxController::init()
 {
 }
-
-string GUISelectBoxController::CONDITION_DISABLED = "disabled";
-string GUISelectBoxController::CONDITION_ENABLED = "enabled";
 
 bool GUISelectBoxController::isDisabled()
 {

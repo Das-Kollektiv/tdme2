@@ -11,8 +11,11 @@ using tdme::utils::Enum;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 
-class tdme::gui::nodes::GUIParentNode_Overflow final
-	: public Enum
+/**
+ * GUI parent node overflow enum
+ * @author Andreas Drewke
+ */
+class tdme::gui::nodes::GUIParentNode_Overflow final: public Enum
 {
 	friend class GUIParentNode;
 
