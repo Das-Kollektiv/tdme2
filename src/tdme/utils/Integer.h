@@ -8,7 +8,7 @@
 using std::string;
 
 /**
- * Key
+ * Integer class
  * @author Andreas Drewke
  * @version $Id$
  */
