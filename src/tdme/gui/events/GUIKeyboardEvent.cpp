@@ -8,6 +8,7 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
 int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
 	switch(key) {
 		case(9): return KEYCODE_TAB;
+		case(13): return KEYCODE_RETURN;
 		case(25): return KEYCODE_TAB_SHIFT;
 		case(27): return KEYCODE_ESCAPE;
 		case(32): return KEYCODE_SPACE;
@@ -40,6 +41,8 @@ constexpr int32_t GUIKeyboardEvent::KEYCODE_TAB;
 constexpr int32_t GUIKeyboardEvent::KEYCODE_TAB_SHIFT;
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_BACKSPACE;
+
+constexpr int32_t GUIKeyboardEvent::KEYCODE_RETURN;
 
 constexpr int32_t GUIKeyboardEvent::KEYCODE_SPACE;
 

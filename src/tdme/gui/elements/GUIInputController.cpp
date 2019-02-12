@@ -6,6 +6,7 @@
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIInputInternalController.h>
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -19,6 +20,7 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIInputInternalController;
 using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
@@ -75,7 +77,6 @@ void GUIInputController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 
 void GUIInputController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event)
 {
-	GUIElementController::handleKeyboardEvent(node, event);
 }
 
 void GUIInputController::tick()
@@ -104,4 +105,5 @@ const MutableString& GUIInputController::getValue()
 void GUIInputController::setValue(const MutableString& value)
 {
 	textInputNode->getText().set(value);
+	dynamic_cast<GUIInputInternalController*>(textInputNode->getController())->reset();
 }
