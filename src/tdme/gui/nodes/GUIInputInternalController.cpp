@@ -249,6 +249,23 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 					}
 				}
 				break;
+			case GUIKeyboardEvent::KEYCODE_POS1: {
+					if (disabled == false) {
+						event->setProcessed(true);
+						resetCursorMode();
+						index = 0;
+						checkOffset();
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_END: {
+					if (disabled == false) {
+						resetCursorMode();
+						index = textInputNode->getText().length();
+						checkOffset();
+					}
+				}
+				break;
 			}
 		}
 	}

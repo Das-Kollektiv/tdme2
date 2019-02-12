@@ -32,6 +32,8 @@ public:
 	static constexpr int32_t KEYCODE_UP { GLUT_KEY_UP };
 	static constexpr int32_t KEYCODE_RIGHT { GLUT_KEY_RIGHT };
 	static constexpr int32_t KEYCODE_DOWN { GLUT_KEY_DOWN };
+	static constexpr int32_t KEYCODE_POS1 { 106 };
+	static constexpr int32_t KEYCODE_END { 107 };
 	static constexpr int32_t KEYCODE_ESCAPE { 27 };
 
 private:
