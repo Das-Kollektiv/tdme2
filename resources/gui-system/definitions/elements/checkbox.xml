@@ -26,5 +26,5 @@
 	<!-- checked, disabled -->
 	<image effect-color-mul="#A0A0A0" hide-on="unchecked" show-on="disabled" src="resources/gui-system/images/elements/checkbox/background.png" />
 	<image effect-color-mul="#A0A0A0" hide-on="unchecked" show-on="disabled" src="resources/gui-system/images/elements/checkbox/border.png" />
-	<image effect-color-mul="#A0A0A0" hide-on="unchecked" show-on="disabled" src="resources/gui-system/images/elements/checkbox/squaremark.png" />
+	<image effect-color-mul="#FFFFFF" hide-on="unchecked" show-on="disabled" src="resources/gui-system/images/elements/checkbox/squaremark.png" />
 </element>
