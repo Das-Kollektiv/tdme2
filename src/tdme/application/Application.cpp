@@ -295,6 +295,14 @@ bool Application::isFullScreen() const {
 
 void Application::setFullScreen(bool fullScreen) {
 	this->fullScreen = fullScreen;
+	if (initialized == true) {
+		if (fullScreen == true) {
+			glutFullScreen();
+		} else {
+			glutPositionWindow(windowXPosition, windowYPosition);
+			glutReshapeWindow(windowWidth, windowHeight);
+		}
+	}
 }
 
 void Application::installExceptionHandler() {
