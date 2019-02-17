@@ -196,7 +196,7 @@
             - V-HACD
     - targeted platforms and its current state
         - Windows/MINGW(port completed)
-        - Windows/MSC(port is WIP)
+        - Windows/MSC(port completed)
         - Linux(port completed)
         - Mac Os X(port completed)
         - FreeBSD(port completed)

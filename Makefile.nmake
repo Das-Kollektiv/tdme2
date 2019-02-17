@@ -614,7 +614,7 @@ OBJECTS = *.obj
 all: \
 	compile link clean \
 	ext-compile ext-link ext-clean\
-	AngleTest AudioTest CrashTest EngineTest GUITest LODTest PathFindingTest \
+	AngleTest AudioTest CrashTest EngineTest GUITest HTTPClientTest LODTest PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
 	SkinningTest \
 	ThreadingTest \
@@ -667,6 +667,9 @@ CrashTest:
 
 EngineTest: 
 	cl /FeEngineTest $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+HTTPClientTest:
+	cl /FeHTMLClientTest $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 LODTest: 
 	cl /FeLODTest $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
@@ -721,3 +724,4 @@ TDMEModelEditor:
 
 TDMEParticleSystem:
 	cl /FeTDMEParticleSystem $(FLAGS) $(INCLUDES) src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	
