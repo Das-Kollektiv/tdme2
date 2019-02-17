@@ -10,6 +10,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -44,9 +45,9 @@ using tdme::utils::Time;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::GUI final
-	: public virtual InputEventHandler
+class tdme::gui::GUI final: public virtual InputEventHandler
 {
+	friend class tdme::gui::elements::GUIDropDownController;
 	friend class tdme::gui::nodes::GUIElementController;
 	friend class tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
 	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;
@@ -72,15 +73,22 @@ private:
 	int32_t height {  };
 	int32_t mouseButtonLast { };
 	map<string, set<string>> mouseOutCandidateEventNodeIds;
+	map<string, set<string>> mouseOutClickCandidateEventNodeIds;
 	map<string, set<string>> mousePressedEventNodeIds;
 	map<string, set<string>> mouseDraggingEventNodeIds;
 	map<string, bool> mouseIsDragging;
 
 	/**
-	 * Add element node that is a possible mouse out candidate as it received a mouse over
+	 * Add node that is a possible mouse out candidate as it received a mouse over
 	 * @param node element node
 	 */
 	void addMouseOutCandidateElementNode(GUINode* node);
+
+	/**
+	 * Add node that is a possible mouse click out candidate as it received a mouse click
+	 * @param node element node
+	 */
+	void addMouseOutClickCandidateElementNode(GUINode* node);
 
 public:
 
@@ -258,10 +266,11 @@ private:
 	 * @param node node
 	 * @param event event
 	 * @param mouseOutCandidateEventNodeIds mouse out candidate event node ids
+	 * @param mouseOutClickCandidateEventNodeIds mouse out click candidate event node ids
 	 * @param mousePressedEventNodeIds mouse pressed event node ids
 	 * @param floatingNodes check if to gather floating nodes only
 	 */
-	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string>& mouseOutCandidateEventNodeIds, set<string>& mousePressedEventNodeIds, bool floatingNodes);
+	void handleMouseEvent(GUINode* node, GUIMouseEvent* event, const set<string>& mouseOutCandidateEventNodeIds, const set<string>& mouseOutClickCandidateEventNodeIds, set<string>& mousePressedEventNodeIds, bool floatingNodes);
 
 	/**
 	 * Handle mouse event for given node

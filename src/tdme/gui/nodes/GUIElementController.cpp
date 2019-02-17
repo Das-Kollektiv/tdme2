@@ -120,7 +120,7 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 			}
 		}
 	} else
-	if (node == elementNode && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && event->getButton() == 1) {
+	if (node == elementNode && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && event->getButton() == 1 && elementNode->getActiveConditions().has(GUIElementNode::CONDITION_CLICK)) {
 		elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);
 		event->setProcessed(true);
 	} else

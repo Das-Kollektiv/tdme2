@@ -183,11 +183,23 @@ void GUIDropDownController::selectPrevious()
 void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
-	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) == true && event->getButton() == 1) {
-		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
-			toggleOpenState();
-			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(this->node));
+	if (disabled == true) return;
+	auto elementNode  = dynamic_cast< GUIElementNode* >(this->node);
+	if (event->getButton() == 1) {
+		if (node == this->node && node->isEventBelongingToNode(event) == true) {
+			if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+				event->setProcessed(true);
+				toggleOpenState();
+				node->getScreenNode()->getGUI()->setFoccussedNode(elementNode);
+			}
+		} else {
+			if (isOpen_ == true) {
+				auto innerNode = this->node->getScreenNode()->getNodeById(this->node->getId() + "_inner");
+				if (node == this->node && innerNode->isEventBelongingToNode(event) == false) {
+					event->setProcessed(true);
+					toggleOpenState();
+				}
+			}
 		}
 	}
 }
@@ -237,6 +249,7 @@ void GUIDropDownController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent*
 void GUIDropDownController::tick()
 {
 	GUIElementController::tick();
+	if (isOpen_ == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(dynamic_cast< GUIElementNode* >(this->node));
 }
 
 void GUIDropDownController::onFocusGained()
@@ -245,7 +258,6 @@ void GUIDropDownController::onFocusGained()
 
 void GUIDropDownController::onFocusLost()
 {
-	if (isOpen() == true) toggleOpenState();
 }
 
 bool GUIDropDownController::hasValue()
