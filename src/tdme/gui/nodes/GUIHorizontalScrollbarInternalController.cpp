@@ -111,19 +111,20 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 	} else
 	if (this->node == node && event->getButton() == 1) {
 		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+			auto barOffsetX = node->computeParentChildrenRenderOffsetXTotal();
 			auto barLeft = getBarLeft();
 			auto barWidth = getBarWidth();
-			if (event->getX() < barLeft) {
+			if (event->getX() + barOffsetX < barLeft) {
 				float elementWidth = contentNode->computedConstraints.width;
 				auto scrollableWidth = contentWidth - elementWidth;
 				setDraggedX(-elementWidth * ((node->computedConstraints.width - barWidth) / scrollableWidth));
 			} else
-			if (event->getX() > barLeft + barWidth) {
+			if (event->getX() + barOffsetX > barLeft + barWidth) {
 				float elementWidth = contentNode->computedConstraints.width;
 				auto scrollableWidth = contentWidth - elementWidth;
 				setDraggedX(+elementWidth * ((node->computedConstraints.width - barWidth) / scrollableWidth));
 			} else
-			if (event->getX() >= barLeft && event->getX() < barLeft + barWidth) {
+			if (event->getX() + barOffsetX >= barLeft && event->getX() + barOffsetX < barLeft + barWidth) {
 				mouseXOffset = static_cast< int32_t >((event->getX() - barLeft));
 				state = STATE_DRAGGING;
 			}

@@ -47,7 +47,8 @@ void GUIScrollAreaVerticalController::initialize()
 					childrenRenderOffsetY = 0.0f;
 
 				contentNode->setChildrenRenderOffsetY(childrenRenderOffsetY);
-			} else if (node == downArrowNode) {
+			} else
+			if (node == downArrowNode) {
 				float elementHeight = contentNode->getComputedConstraints().height;
 				float contentHeight = contentNode->getContentHeight();
 				auto scrollableHeight = contentHeight - elementHeight;

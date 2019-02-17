@@ -111,19 +111,20 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 	} else
 	if (this->node == node && event->getButton() == 1) {
 		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+			auto barOffsetY = node->computeParentChildrenRenderOffsetYTotal();
 			auto barTop = getBarTop();
 			auto barHeight = getBarHeight();
-			if (event->getY() < barTop) {
+			if (event->getY() + barOffsetY < barTop) {
 				float elementHeight = contentNode->computedConstraints.height;
 				auto scrollableHeight = contentHeight - elementHeight;
 				setDraggedY(-elementHeight * ((node->computedConstraints.height - barHeight) / scrollableHeight));
 			} else
-			if (event->getY() > barTop + barHeight) {
+			if (event->getY() + barOffsetY > barTop + barHeight) {
 				float elementHeight = contentNode->computedConstraints.height;
 				auto scrollableHeight = contentHeight - elementHeight;
 				setDraggedY(+elementHeight * ((node->computedConstraints.height - barHeight) / scrollableHeight));
 			} else
-			if (event->getY() >= barTop && event->getY() < barTop + barHeight) {
+			if (event->getY() + barOffsetY >= barTop && event->getY() + barOffsetY < barTop + barHeight) {
 				mouseYOffset = static_cast< int32_t >((event->getY() - barTop));
 				state = STATE_DRAGGING;
 			}

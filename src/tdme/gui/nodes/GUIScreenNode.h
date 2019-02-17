@@ -99,17 +99,23 @@ public:
 	/** 
 	 * @return screen width
 	 */
-	int32_t getScreenWidth();
+	inline int32_t getScreenWidth() {
+		return screenWidth;
+	}
 
 	/** 
 	 * @return screen height
 	 */
-	int32_t getScreenHeight();
+	inline int32_t getScreenHeight() {
+		return screenHeight;
+	}
 
 	/** 
 	 * @return is visible
 	 */
-	bool isVisible();
+	inline bool isVisible() {
+		return visible;
+	}
 
 	/** 
 	 * Set visible
@@ -120,7 +126,9 @@ public:
 	/** 
 	 * @return is pop up
 	 */
-	bool isPopUp();
+	inline bool isPopUp() {
+		return popUp;
+	}
 
 	/** 
 	 * Set pop up

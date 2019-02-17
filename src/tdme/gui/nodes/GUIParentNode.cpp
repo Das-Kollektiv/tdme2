@@ -356,11 +356,17 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	}
 	auto renderOffsetX = renderOffsetXPixel / (screenWidth / 2.0f);
 	auto renderOffsetY = renderOffsetYPixel / (screenHeight / 2.0f);
-	auto renderAreaLeft = ((left) / (screenWidth / 2.0f)) - 1.0f;
-	auto renderAreaTop = ((screenHeight - top) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
-	auto renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
-	auto renderAreaBottom = ((screenHeight - top - height) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
-	// TODO: fix me, sub render area is wrong with floating nodes within scrollable
+	auto renderAreaLeft = renderAreaLeftCurrent;
+	auto renderAreaTop = renderAreaTopCurrent;
+	auto renderAreaRight = renderAreaRightCurrent;
+	auto renderAreaBottom = renderAreaBottomCurrent;
+	// Floating node does not have correct dimension and such due non existance when layouting
+	if (flow == GUINode_Flow::INTEGRATED) {
+		renderAreaLeft = ((left) / (screenWidth / 2.0f)) - 1.0f;
+		renderAreaTop = ((screenHeight - top) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
+		renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
+		renderAreaBottom = ((screenHeight - top - height) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
+	}
 	guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 	guiRenderer->setSubRenderAreaTop(renderAreaTop);
 	guiRenderer->setSubRenderAreaRight(renderAreaRight);
@@ -386,7 +392,6 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 			guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
 			guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
 			guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
-			// TODO: fix me, sub render area is wrong with floating nodes within scrollable
 			guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 			guiRenderer->setSubRenderAreaTop(renderAreaTop);
 			guiRenderer->setSubRenderAreaRight(renderAreaRight);
@@ -419,7 +424,6 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 			guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
 			guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
 			guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
-			// TODO: fix me, sub render area is wrong with floating nodes within scrollable
 			guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 			guiRenderer->setSubRenderAreaTop(renderAreaTop);
 			guiRenderer->setSubRenderAreaRight(renderAreaRight);
@@ -469,7 +473,6 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 				return;
 			}
 		}
-
 		for (auto i = 0; i < vieportSubNodesCache.size(); i++) {
 			auto subNode = vieportSubNodesCache[i];
 			subNode->determineMouseEventNodes(event, floatingNode == true || subNode->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds);

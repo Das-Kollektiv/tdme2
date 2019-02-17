@@ -47,7 +47,8 @@ void GUIScrollAreaHorizontalController::initialize()
 					childrenRenderOffsetX = 0.0f;
 
 				contentNode->setChildrenRenderOffsetX(childrenRenderOffsetX);
-			} else if (node == rightArrowNode) {
+			} else
+			if (node == rightArrowNode) {
 				float elementWidth = contentNode->getComputedConstraints().width;
 				float contentWidth = contentNode->getContentWidth();
 				auto scrollableWidth = contentWidth - elementWidth;

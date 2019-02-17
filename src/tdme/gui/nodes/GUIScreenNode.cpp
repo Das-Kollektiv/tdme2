@@ -119,32 +119,12 @@ void GUIScreenNode::setGUI(GUI* gui)
 	this->gui = gui;
 }
 
-int32_t GUIScreenNode::getScreenWidth()
-{
-	return screenWidth;
-}
-
-int32_t GUIScreenNode::getScreenHeight()
-{
-	return screenHeight;
-}
-
-bool GUIScreenNode::isVisible()
-{
-	return visible;
-}
-
 void GUIScreenNode::setVisible(bool visible)
 {
 	this->visible = visible;
 	if (gui != nullptr)
 		gui->invalidateFocussedNode();
 
-}
-
-bool GUIScreenNode::isPopUp()
-{
-	return popUp;
 }
 
 void GUIScreenNode::setPopUp(bool popUp)
@@ -312,6 +292,10 @@ void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 		effect->apply(guiRenderer);
 	}
 	for (auto i = 0; i < floatingNodes.size(); i++) {
+		guiRenderer->setRenderAreaLeft(GUIRenderer::SCREEN_LEFT);
+		guiRenderer->setRenderAreaTop(GUIRenderer::SCREEN_TOP);
+		guiRenderer->setRenderAreaRight(GUIRenderer::SCREEN_RIGHT);
+		guiRenderer->setRenderAreaBottom(GUIRenderer::SCREEN_BOTTOM);
 		floatingNodes[i]->render(guiRenderer, subFloatingNodes);
 	}
 	guiRenderer->doneScreen();
