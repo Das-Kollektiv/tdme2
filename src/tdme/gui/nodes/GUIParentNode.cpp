@@ -331,7 +331,7 @@ void GUIParentNode::setConditionsMet()
 	}
 }
 
-void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
+void GUIParentNode::render(GUIRenderer* guiRenderer)
 {
 	if (conditionsMet == false)
 		return;
@@ -373,13 +373,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 	guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
-	GUINode::render(guiRenderer, floatingNodes);
-
-	//
-	for (auto i = 0; i < floatingNodesCache.size(); i++) {
-		auto guiSubNode = floatingNodesCache[i];
-		if (guiSubNode->conditionsMet == true) floatingNodes.push_back(guiSubNode);
-	}
+	GUINode::render(guiRenderer);
 
 	//
 	if (computeViewportCache == true) {
@@ -412,7 +406,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 				((left) / (screenWidth / 2.0f)) - 1.0f,
 				((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
 				//
-				guiSubNode->render(guiRenderer, floatingNodes);
+				guiSubNode->render(guiRenderer);
 				vieportSubNodesCache.push_back(guiSubNode);
 			}
 		}
@@ -430,7 +424,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingN
 			guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 			guiRenderer->setRenderOffsetX(renderOffsetX);
 			guiRenderer->setRenderOffsetY(renderOffsetY);
-			guiSubNode->render(guiRenderer, floatingNodes);
+			guiSubNode->render(guiRenderer);
 		}
 	}
 

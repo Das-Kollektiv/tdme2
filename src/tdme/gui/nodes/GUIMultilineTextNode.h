@@ -115,7 +115,7 @@ public:
 	 */
 	void setText(const MutableString& text);
 
-	// override methods
+	// overriden methods
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
+	void render(GUIRenderer* guiRenderer) override;
 };

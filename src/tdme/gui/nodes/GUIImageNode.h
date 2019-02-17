@@ -98,10 +98,11 @@ protected:
 	) throw(GUIParserException);
 
 public:
+	// overriden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
+	void render(GUIRenderer* guiRenderer) override;
 
 	/**
 	 * Set image source

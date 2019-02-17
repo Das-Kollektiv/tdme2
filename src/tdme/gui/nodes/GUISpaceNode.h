@@ -75,6 +75,7 @@ protected:
 	);
 
 public:
+	// overriden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
 
@@ -87,7 +88,9 @@ public:
 	 * @return requested constraints
 	 */
 	static GUINode_RequestedConstraints createRequestedConstraints(const string& left, const string& top, const string& width, const string& height);
+
+	// overriden methods
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
+	void render(GUIRenderer* guiRenderer) override;
 
 };

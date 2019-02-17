@@ -43,15 +43,10 @@ protected:
 	bool isContentNode() override;
 
 public:
+	// overriden methods
 	int32_t getContentWidth() override;
 	int32_t getContentHeight() override;
-
-	/** 
-	 * Render
-	 * @param guiRenderer gui renderer
-	 * @param floatingNodes floating nodes
-	 */
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
+	void render(GUIRenderer* guiRenderer) override;
 
 	/**
 	 * Constructor

@@ -124,7 +124,9 @@ public:
 	 * @return max length
 	 */
 	int32_t getMaxLength();
+
+	// overriden methods
 	void dispose() override;
-	void render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes) override;
+	void render(GUIRenderer* guiRenderer) override;
 
 };

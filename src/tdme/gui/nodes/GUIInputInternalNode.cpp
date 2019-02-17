@@ -125,12 +125,12 @@ void GUIInputInternalNode::dispose()
 	this->controller->dispose();
 }
 
-void GUIInputInternalNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
+void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 {
 	if (conditionsMet == false)
 		return;
 
-	GUINode::render(guiRenderer, floatingNodes);
+	GUINode::render(guiRenderer);
 	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);
 	auto inputController = dynamic_cast< GUIInputController* >(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();

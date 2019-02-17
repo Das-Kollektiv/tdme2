@@ -167,12 +167,12 @@ void GUIMultilineTextNode::dispose()
 	GUINode::dispose();
 }
 
-void GUIMultilineTextNode::render(GUIRenderer* guiRenderer, vector<GUINode*>& floatingNodes)
+void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 {
 	if (conditionsMet == false)
 		return;
 
-	GUINode::render(guiRenderer, floatingNodes);
+	GUINode::render(guiRenderer);
 
 	{
 		// indents
