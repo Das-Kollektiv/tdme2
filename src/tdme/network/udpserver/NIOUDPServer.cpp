@@ -136,6 +136,8 @@ void NIOUDPServer::run() {
 	ClientKeySet _clientKeySet = getClientKeySet();
 	for (ClientKeySet::iterator i = _clientKeySet.begin(); i != _clientKeySet.end(); ++i) {
 		NIOUDPServerClient* client = getClientByKey(*i);
+		// continue if gone already
+		if (client == NULL) continue;
 		// client close logic
 		client->close();
 		// remove from udp client list
