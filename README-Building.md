@@ -41,6 +41,13 @@ make clean && make -j HARDWARE_THREADS mains
 ```
 
 # 2. Running a TDME2 binary
+
+You find binaries in
+- ./bin/tdme/tests/
+- ./bin/tdme/tools/
+
+You have to execute the binaries from tdme2 root folder like:
+
 ```bash
 $ pwd
 /usr/home/andreas/Development/drewke.net/tdme2
@@ -53,5 +60,6 @@ $ ./bin/tdme/tests/AngleTest
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
     - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
+    - TDME2 How to build, see [README-Building.md](./README-Building.md)
 
 - Build instructions will follow for FreeBSD, NetBSD, Windows-MINGW, Windows-MSC, ...  

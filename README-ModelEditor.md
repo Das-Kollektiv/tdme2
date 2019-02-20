@@ -49,6 +49,7 @@
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
     - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
+    - TDME2 How to build, see [README-Building.md](./README-Building.md)
 
 - Credits
     - Dominik Hepp
