@@ -68,15 +68,15 @@ void Object3DInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 
 void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId, const string& facesEntityId)
 {
-	setDynamicDiffuseTexture(groupId, facesEntityId, frameBuffer->getColorBufferTextureId());
+	bindDiffuseTexture(frameBuffer->getColorBufferTextureId(), groupId, facesEntityId);
 }
 
 void Object3DInternal::unbindDiffuseTexture(const string& groupId, const string& facesEntityId)
 {
-	setDynamicDiffuseTexture(groupId, facesEntityId, Object3DGroup::GLTEXTUREID_NONE);
+	bindDiffuseTexture(Object3DGroup::GLTEXTUREID_NONE, groupId, facesEntityId);
 }
 
-void Object3DInternal::setDynamicDiffuseTexture(const string& groupId, const string& facesEntityId, int32_t textureId)
+void Object3DInternal::bindDiffuseTexture(int32_t textureId, const string& groupId, const string& facesEntityId)
 {
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];

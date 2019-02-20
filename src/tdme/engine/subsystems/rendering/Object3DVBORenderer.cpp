@@ -693,7 +693,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					// set up material on first object and update on succeeding
 					auto materialKeyCurrent = materialKey;
 					if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
-						setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent);
+						setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent, materialKey);
 						// only update material for next material calls
 						if (materialUpdateOnly == false) {
 							materialKey = materialKeyCurrent;
@@ -841,7 +841,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey)
+void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
@@ -900,8 +900,10 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
 				object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
 			materialKey+= "," + to_string(diffuseTextureId);
-			renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
-			renderer->bindTexture(diffuseTextureId);
+			if (updateOnly == false || currentMaterialKey.empty() == true) {
+				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+				renderer->bindTexture(diffuseTextureId);
+			}
 		}
 	}
 }

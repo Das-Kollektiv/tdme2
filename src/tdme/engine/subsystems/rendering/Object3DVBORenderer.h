@@ -125,8 +125,9 @@ private:
 	 * @param renderTypes render types
 	 * @param updateOnly update only, means material has been set up already, only do changes
 	 * @param materialKey material key
+	 * @param currentMaterialKey current material key or empty
 	 */
-	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey);
+	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
 
 	/** 
 	 * Clear material for rendering

@@ -41,14 +41,6 @@ protected:
 	BoundingBox* boundingBox {  };
 	BoundingBox* boundingBoxTransformed {  };
 
-	/**
-	 * Bind a texture to a group and faces entity
-	 * @param groupId group id
-	 * @param facesEntityId faces entity id or null if texture should be bound to all faces entities
-	 * @param textureId texture id
-	 */
-	void setDynamicDiffuseTexture(const string& groupId, const string& facesEntityId, int32_t textureId);
-
 public:
 	/** 
 	 * @return object id
@@ -143,20 +135,28 @@ public:
 		return boundingBoxTransformed;
 	}
 
+	/**
+	 * Bind a texture to a group and faces entity
+	 * @param textureId texture id
+	 * @param groupId group id or empty if texture should be bound to all groups
+	 * @param facesEntityId faces entity id or empty if texture should be bound to all faces entities
+	 */
+	void bindDiffuseTexture(int32_t textureId, const string& groupId = string(), const string& facesEntityId = string());
+
 	/** 
 	 * Bind frame buffer color texture to a group and faces entity of this object
 	 * @param frameBuffer frame buffer
 	 * @param groupId group id or empty string for all
 	 * @param facesEntityId faces entity id or empty string for all
 	 */
-	virtual void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId = string(), const string& facesEntityId = string());
+	void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId = string(), const string& facesEntityId = string());
 
 	/** 
 	 * Unbind dynamic texture to a group and faces entity of this object
 	 * @param groupId group id or empty string for all
 	 * @param facesEntityId faces entity id orempty string for all
 	 */
-	virtual void unbindDiffuseTexture(const string& groupId = string(), const string& facesEntityId = string());
+	void unbindDiffuseTexture(const string& groupId = string(), const string& facesEntityId = string());
 
 	/**
 	 * Set texture matrix
