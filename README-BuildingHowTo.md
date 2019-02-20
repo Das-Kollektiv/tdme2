@@ -32,9 +32,9 @@ gmake clean && gmake -j HARDWARE_THREADS mains
 ### 1.2.1 Install packages
 
 ```bash
-sudo apt install git
-sudo apt install make
-sudo apt install g++
+sudo apt-get install git
+sudo apt-get install make
+sudo apt-get install g++
 sudo apt-get install libglew-dev
 sudo apt-get install libopenal-dev
 sudo apt-get install freeglut3-dev
@@ -87,7 +87,7 @@ $ ./bin/tdme/tests/AngleTest
 # 3. Other information
 
 - Links
-	- TDME2 Engine, see [README.md](./README.md)
+    - TDME2 Engine, see [README.md](./README.md)
     - TDME2 Model Editor, see [README-ModelEditor.md](./README-ModelEditor.md)
     - TDME2 Particle System Editor, see [README-ParticleSystemEditor.md](./README-ParticleSystemEditor.md)
     - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
