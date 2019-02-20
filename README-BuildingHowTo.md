@@ -1,16 +1,18 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logo/tdme_logo_full.png)
 
 # 1. How to build TDME2?
-## 1.1. Ubuntu(tested on XUBUNTU 18.04)
+
+## 1.1. FreeBSD(tested on FreeBSD 12.0)
 ### 1.1.1 Install packages
 
 ```bash
-sudo apt install git
-sudo apt install make
-sudo apt install g++
-sudo apt-get install libopenal-dev
-sudo apt-get install libglew-dev
-sudo apt-get install freeglut3-dev
+su -
+pkg install git
+pkg install gmake
+pkg install glew
+pkg install openal-soft
+pkg install freeglut
+exit
 ```
 
 ### 1.1.2. Clone repository
@@ -21,13 +23,20 @@ cd tdme2
 
 ### 1.1.3. Build
 ```bash
-make clean && make -j HARDWARE_THREADS mains
+gmake clean && gmake -j HARDWARE_THREADS mains
 ```
 
-## 1.2. Mac OS X
+## 1.2. Ubuntu(tested on XUBUNTU 18.04)
 ### 1.2.1 Install packages
-You have to install XCode or XCode command line tools.
 
+```bash
+sudo apt install git
+sudo apt install make
+sudo apt install g++
+sudo apt-get install libglew-dev
+sudo apt-get install libopenal-dev
+sudo apt-get install freeglut3-dev
+```
 
 ### 1.2.2. Clone repository
 ```bash
@@ -36,6 +45,22 @@ cd tdme2
 ```
 
 ### 1.2.3. Build
+```bash
+make clean && make -j HARDWARE_THREADS mains
+```
+
+## 1.3. Mac OS X
+### 1.3.1 Install packages
+You have to install XCode or XCode command line tools.
+
+
+### 1.3.2. Clone repository
+```bash
+git clone https://github.com/andreasdr/tdme2
+cd tdme2
+```
+
+### 1.3.3. Build
 ```bash
 make clean && make -j HARDWARE_THREADS mains
 ```
