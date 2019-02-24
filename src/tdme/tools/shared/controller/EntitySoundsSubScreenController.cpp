@@ -2,21 +2,14 @@
 
 #include <string>
 
-#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/AnimationSetup.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
-#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/math/Matrix4x4.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -40,32 +33,17 @@ using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 
 using tdme::engine::model::Model;
 using tdme::engine::model::AnimationSetup;
-using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::Transformations;
-using tdme::engine::primitives::BoundingBox;
-using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::primitives::Capsule;
-using tdme::engine::primitives::ConvexMesh;
-using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::primitives::Sphere;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::math::Matrix4x4;
-using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
-using tdme::tools::shared::model::LevelEditorEntityPhysics;
-using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
+using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PopUps;

@@ -8,12 +8,10 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 
 using std::array;
 using std::vector;
@@ -22,8 +20,6 @@ using std::string;
 using tdme::engine::model::Model;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::FileDialogPath;
@@ -31,7 +27,6 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::SharedModelEditorView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::MutableString;
 
 /** 
  * Entity sounds sub screen controller
