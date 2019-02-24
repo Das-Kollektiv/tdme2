@@ -229,9 +229,9 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 		if (v == GUIActionListener_Type::PERFORMED)
 		{
 			if (node->getId().compare("filedialog_apply") == 0) {
-				if (applyAction != nullptr)
-					applyAction->performAction();
-			} else if (node->getId().compare("filedialog_abort") == 0) {
+				if (applyAction != nullptr) applyAction->performAction();
+			} else
+			if (node->getId().compare("filedialog_abort") == 0) {
 				close();
 			}
 		}

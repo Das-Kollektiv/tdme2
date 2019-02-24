@@ -19,8 +19,9 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/EntityBaseSubScreenController.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -57,8 +58,9 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -111,11 +113,11 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
 	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, true);
+	this->entitySoundsSubScreenController = new EntitySoundsSubScreenController(view, view->getPopUpsViews(), audioPath);
 }
 
 ModelEditorScreenController::~ModelEditorScreenController() {
 	delete modelPath;
-	delete audioPath;
 	delete entityBaseSubScreenController;
 	delete entityDisplaySubScreenController;
 	delete entityPhysicsSubScreenController;
@@ -135,6 +137,11 @@ EntityPhysicsSubScreenController* ModelEditorScreenController::getEntityPhysicsS
 	return entityPhysicsSubScreenController;
 }
 
+EntitySoundsSubScreenController* ModelEditorScreenController::getEntitySoundsSubScreenController()
+{
+	return entitySoundsSubScreenController;
+}
+
 GUIScreenNode* ModelEditorScreenController::getScreenNode()
 {
 	return screenNode;
@@ -145,7 +152,8 @@ FileDialogPath* ModelEditorScreenController::getModelPath()
 	return modelPath;
 }
 
-FileDialogPath* ModelEditorScreenController::getAudioPath() {
+FileDialogPath* ModelEditorScreenController::getAudioPath()
+{
 	return audioPath;
 }
 
@@ -211,15 +219,6 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
 		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
-		animationsAnimationSoundFile = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_file"));
-		animationsAnimationSoundLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_load"));
-		animationsAnimationSoundClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_clear"));
-		animationsAnimationSoundGain = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_gain"));
-		animationsAnimationSoundPitch = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_pitch"));
-		animationsAnimationSoundOffset = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_offset"));
-		animationsAnimationSoundLooping = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_looping"));
-		animationsAnimationSoundFixed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_sound_fixed"));
-		animationsAnimationSoundApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_sound_apply"));
 		buttonToolsComputeNormals = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_computenormals"));
 		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
 		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
@@ -233,6 +232,7 @@ void ModelEditorScreenController::initialize()
 	entityBaseSubScreenController->initialize(screenNode);
 	entityDisplaySubScreenController->initialize(screenNode);
 	entityPhysicsSubScreenController->initialize(screenNode);
+	entitySoundsSubScreenController->initialize(screenNode);
 }
 
 void ModelEditorScreenController::dispose()
@@ -999,27 +999,7 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 	animationsAnimationName->getController()->setValue(MutableString(animationSetup->getId()));
 	animationsAnimationName->getController()->setDisabled(defaultAnimation);
 	animationsAnimationApply->getController()->setDisabled(defaultAnimation);
-	if (animationSetup != &newAnimationSetup) {
-		auto animationSound = view->getEntity()->getModelSettings()->createAnimationSound(animationName);
-		animationsAnimationSoundFile->getController()->setValue(MutableString(animationSound->getFileName()));
-		animationsAnimationSoundFile->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundLoad->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundClear->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundGain->getController()->setValue(MutableString(animationSound->getGain(), 4));
-		animationsAnimationSoundGain->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundPitch->getController()->setValue(MutableString(animationSound->getPitch(), 4));
-		animationsAnimationSoundPitch->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundOffset->getController()->setValue(MutableString(animationSound->getOffset()));
-		animationsAnimationSoundOffset->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundLooping->getController()->setValue(MutableString(animationSound->isLooping() == true?"1":""));
-		animationsAnimationSoundLooping->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundFixed->getController()->setValue(MutableString(animationSound->isFixed() == true?"1":""));
-		animationsAnimationSoundFixed->getController()->setDisabled(defaultAnimation);
-		animationsAnimationSoundApply->getController()->setDisabled(defaultAnimation);
-		view->playAnimation(animationSetup->getId());
-	} else {
-		unsetAnimationSound();
-	}
+	if (animationSetup != &newAnimationSetup) view->playAnimation(animationSetup->getId());
 }
 
 void ModelEditorScreenController::onAnimationDropDownDelete() {
@@ -1027,7 +1007,6 @@ void ModelEditorScreenController::onAnimationDropDownDelete() {
 	if (model == nullptr) return;
 
 	auto animationName = animationsDropDown->getController()->getValue().getString();
-	view->getEntity()->getModelSettings()->removeAnimationSound(animationName);
 	auto animationSetup = model->getAnimationSetup(animationName);
 	auto it = model->getAnimationSetups()->find(animationSetup->getId());
 	it = model->getAnimationSetups()->erase(it);
@@ -1060,7 +1039,6 @@ void ModelEditorScreenController::onAnimationApply() {
 			if (model->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
 				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
-			view->getEntity()->getModelSettings()->renameAnimationSound(animationSetup->getId(), animationsAnimationName->getController()->getValue().getString());
 			(*model->getAnimationSetups()).erase(animationSetup->getId());
 			animationSetup = model->addAnimationSetup(
 				animationsAnimationName->getController()->getValue().getString(),
@@ -1075,61 +1053,8 @@ void ModelEditorScreenController::onAnimationApply() {
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
 		setAnimations(view->getEntity());
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
-		view->getEntity()->getModelSettings()->createAnimationSound(animationName);
 		onAnimationDropDownApply();
 		view->playAnimation(animationSetup->getId());
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-}
-
-void ModelEditorScreenController::onAnimationSoundClear() {
-	animationsAnimationSoundFile->getController()->setValue(MutableString(""));
-}
-
-void ModelEditorScreenController::onAnimationSoundLoad() {
-	class LoadSoundAction: public virtual Action
-	{
-	public:
-		LoadSoundAction(ModelEditorScreenController* modelEditorScreenController): modelEditorScreenController(modelEditorScreenController) {
-		}
-		void performAction() override {
-			modelEditorScreenController->animationsAnimationSoundFile->getController()->setValue(
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName() +
-				"/" +
-				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName()
-			);
-			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
-		}
-	private:
-		ModelEditorScreenController* modelEditorScreenController;
-	};
-
-	auto animationName = animationsDropDown->getController()->getValue().getString();
-	auto animationSound = view->getEntity()->getModelSettings()->getAnimationSound(animationName);
-
-	vector<string> extensions = {{"ogg"}};
-	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		animationSound != nullptr && animationSound->getFileName().length() > 0?Tools::getPath(animationSound->getFileName()):audioPath->getPath(),
-		"Load from: ",
-		extensions,
-		animationSound != nullptr && animationSound->getFileName().length() > 0?Tools::getFileName(animationSound->getFileName()):"",
-		new LoadSoundAction(this)
-	);
-
-}
-
-void ModelEditorScreenController::onAnimationSoundApply() {
-	auto animationName = animationsDropDown->getController()->getValue().getString();
-	auto animationSound = view->getEntity()->getModelSettings()->getAnimationSound(animationName);
-	try {
-		animationSound->setFileName(animationsAnimationSoundFile->getController()->getValue().getString());
-		animationSound->setGain(Float::parseFloat(animationsAnimationSoundGain->getController()->getValue().getString()));
-		animationSound->setPitch(Float::parseFloat(animationsAnimationSoundPitch->getController()->getValue().getString()));
-		animationSound->setOffset(Integer::parseInt(animationsAnimationSoundOffset->getController()->getValue().getString()));
-		animationSound->setLooping(animationsAnimationSoundLooping->getController()->getValue().getString() == "1");
-		animationSound->setFixed(animationsAnimationSoundFixed->getController()->getValue().getString() == "1");
-		view->playAnimation(animationSound->getAnimation());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -1153,28 +1078,7 @@ void ModelEditorScreenController::unsetAnimations() {
 	animationsAnimationName->getController()->setValue(MutableString(""));
 	animationsAnimationName->getController()->setDisabled(true);
 	animationsAnimationApply->getController()->setDisabled(true);
-	unsetAnimationSound();
 }
-
-
-void ModelEditorScreenController::unsetAnimationSound() {
-	animationsAnimationSoundFile->getController()->setValue(MutableString(""));
-	animationsAnimationSoundFile->getController()->setDisabled(true);
-	animationsAnimationSoundLoad->getController()->setDisabled(true);
-	animationsAnimationSoundClear->getController()->setDisabled(true);
-	animationsAnimationSoundGain->getController()->setValue(MutableString(""));
-	animationsAnimationSoundGain->getController()->setDisabled(true);
-	animationsAnimationSoundPitch->getController()->setValue(MutableString(""));
-	animationsAnimationSoundPitch->getController()->setDisabled(true);
-	animationsAnimationSoundOffset->getController()->setValue(MutableString(""));
-	animationsAnimationSoundOffset->getController()->setDisabled(true);
-	animationsAnimationSoundLooping->getController()->setValue(MutableString(""));
-	animationsAnimationSoundLooping->getController()->setDisabled(true);
-	animationsAnimationSoundFixed->getController()->setValue(MutableString(""));
-	animationsAnimationSoundFixed->getController()->setDisabled(true);
-	animationsAnimationSoundApply->getController()->setDisabled(true);
-}
-
 
 void ModelEditorScreenController::setStatistics(int32_t statsOpaqueFaces, int32_t statsTransparentFaces, int32_t statsMaterialCount)
 {
@@ -1356,6 +1260,7 @@ void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 	} else {
 		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
 		entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
+		entitySoundsSubScreenController->onValueChanged(node, view->getEntity());
 	}
 }
 
@@ -1364,6 +1269,7 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityDisplaySubScreenController->onActionPerformed(type, node);
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
+	entitySoundsSubScreenController->onActionPerformed(type, node, view->getEntity());
 	{
 		auto v = type;
 		if (v == GUIActionListener_Type::PERFORMED) {
@@ -1433,30 +1339,8 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 			if (node->getId().compare("button_animations_animation_apply") == 0) {
 				onAnimationApply();
 			} else
-			if (node->getId().compare("animations_animation_sound_clear") == 0) {
-				onAnimationSoundClear();
-			} else
-			if (node->getId().compare("animations_animation_sound_load") == 0) {
-				onAnimationSoundLoad();
-			} else
-			if (node->getId().compare("button_animations_sound_apply") == 0) {
-				onAnimationSoundApply();
-			} else
 			if (node->getId().compare("button_tools_computenormals") == 0) {
 				onToolsComputeNormal();
-			} else {
-				Console::println(
-					string(
-						"ModelEditorScreenController::onActionPerformed()::unknown, type='" +
-						type->getName() +
-						"', id = '" +
-						node->getId() +
-						"'" +
-						", name = '" +
-						node->getName() +
-						"'"
-					)
-				);
 			}
 		}
 	}

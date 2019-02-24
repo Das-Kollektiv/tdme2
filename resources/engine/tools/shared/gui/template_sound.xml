@@ -4,10 +4,8 @@
 		<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
 			<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Animation" width="85" height="auto" />
 			<space width="23" />
-			<dropdown id="sounds_sound_animation_{$sound-id}" name="sounds_sound_animation_{$sound-id}" width="398" height="auto" text="Test">		
+			<dropdown id="sounds_sound_animation_{$sound-id}" name="sounds_sound_animation_{$sound-id}" width="492" height="auto" text="Test">		
 			</dropdown>
-			<space width="10" />
-			<button id="sounds_sound_animation_apply_{$sound-id}" name="sounds_sound_animation_apply_{$sound-id}" text="Apply" width="80" />
 		</layout>
 		<space height="10" />
 		<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
@@ -59,7 +57,7 @@
 		</layout>
 		<space height="20" />
 		<layout width="auto" height="auto" alignment="none" horizontal-align="center">
-			<button id="button_animations_sound_apply_{$sound-id}" name="button_animations_sound_apply_{$sound-id}" text="Apply" />
+			<button id="sounds_sound_apply_{$sound-id}" name="sounds_sound_apply_{$sound-id}" text="Apply" />
 		</layout>
 		<space height="20" />
 	</scrollarea-vertical>

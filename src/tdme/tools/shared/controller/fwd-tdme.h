@@ -6,10 +6,11 @@ namespace tools {
 namespace shared {
 namespace controller {
 	class EntityBaseSubScreenController;
+	class EntityDisplaySubScreenController;
 	class EntityPhysicsSubScreenController;
 	class EntityPhysicsSubScreenController_BoundingVolumeType;
 	class EntityPhysicsSubScreenController_GenerateConvexMeshes;
-	class EntityDisplaySubScreenController;
+	class EntitySoundsSubScreenController;
 	class FileDialogPath;
 	class FileDialogScreenController;
 	class InfoDialogScreenController;

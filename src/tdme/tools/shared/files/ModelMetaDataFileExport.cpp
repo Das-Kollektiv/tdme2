@@ -21,6 +21,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
@@ -154,22 +155,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 		}
 		*/
 		jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
-		if (entity->getModelSettings()->getAnimationSounds().size() > 0) {
-			ext::jsonbox::Array jAnimationSounds;
-			for (auto animationSound: entity->getModelSettings()->getAnimationSounds()) {
-				if (animationSound->getFileName().length() == 0) continue;
-				ext::jsonbox::Object jAnimationSound;
-				jAnimationSound["i"] = animationSound->getAnimation();
-				jAnimationSound["file"] = animationSound->getFileName();
-				jAnimationSound["g"] = animationSound->getGain();
-				jAnimationSound["p"] = animationSound->getPitch();
-				jAnimationSound["o"] = animationSound->getOffset();
-				jAnimationSound["l"] = animationSound->isLooping();
-				jAnimationSound["f"] = animationSound->isFixed();
-				jAnimationSounds.push_back(jAnimationSound);
-			}
-			jEntityRoot["as"] = jAnimationSounds;
-		}
 		int lodLevelIdx = 2;
 		{
 			auto lodLevel = entity->getLODLevel2();
@@ -199,6 +184,24 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 	jEntityRoot["px"] = static_cast< double >(entity->getPivot().getX());
 	jEntityRoot["py"] = static_cast< double >(entity->getPivot().getY());
 	jEntityRoot["pz"] = static_cast< double >(entity->getPivot().getZ());
+	if (entity->getSounds().size() > 0) {
+		ext::jsonbox::Array jSounds;
+		for (auto sound: entity->getSounds()) {
+			if (sound->getFileName().length() == 0) continue;
+			ext::jsonbox::Object jSound;
+			jSound["i"] = sound->getId();
+			jSound["a"] = sound->getAnimation();
+			jSound["file"] = sound->getFileName();
+			jSound["g"] = sound->getGain();
+			jSound["p"] = sound->getPitch();
+			jSound["o"] = sound->getOffset();
+			jSound["l"] = sound->isLooping();
+			jSound["f"] = sound->isFixed();
+			jSounds.push_back(jSound);
+		}
+		jEntityRoot["sd"] = jSounds;
+	}
+
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = entity->getParticleSystem();
 		ext::jsonbox::Object jParticleSystem;

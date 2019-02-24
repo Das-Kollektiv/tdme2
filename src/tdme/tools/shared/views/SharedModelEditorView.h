@@ -22,6 +22,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityBoundingVolumeView;
 using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::tools::shared::views::View;
 
@@ -43,6 +44,7 @@ private:
 	ModelEditorScreenController* modelEditorScreenController {  };
 	EntityDisplayView* entityDisplayView {  };
 	EntityBoundingVolumeView* entityBoundingVolumeView {  };
+	EntitySoundsView* entitySoundsView {  };
 	LevelEditorEntity* entity {  };
 	bool loadModelRequested {  };
 	bool initModelRequested {  };
@@ -190,6 +192,11 @@ public:
 	 * Play animation
 	 */
 	virtual void playAnimation(const string& animationId);
+
+	/**
+	 * Play sound
+	 */
+	virtual void playSound(const string& soundId);
 
 	/**
 	 * Update rendering options

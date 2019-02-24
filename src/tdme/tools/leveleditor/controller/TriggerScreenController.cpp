@@ -186,19 +186,6 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 		if (v == GUIActionListener_Type::PERFORMED) {
 			if (node->getId().compare("button_trigger_apply") == 0) {
 				onTriggerApply();
-			} else {
-				Console::println(
-					string(
-						"TriggerScreenController::onActionPerformed()::unknown, type='" +
-						type->getName() +
-						"', id = '" +
-						node->getId() +
-						"'" +
-						", name = '" +
-						node->getName() +
-						"'"
-					)
-				);
 			}
 		}
 	}

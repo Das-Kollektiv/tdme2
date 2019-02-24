@@ -17,8 +17,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -36,6 +37,7 @@
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
+#include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
@@ -94,6 +96,8 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	audio = Audio::getInstance();
 	modelEditorScreenController = nullptr;
 	entityDisplayView = nullptr;
+	entityBoundingVolumeView = nullptr;
+	entitySoundsView = nullptr;
 	loadModelRequested = false;
 	initModelRequested = false;
 	initModelRequestedReset = false;
@@ -260,7 +264,8 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setLODLevel(entity, lodLevel);
 		modelEditorScreenController->setMaterials(entity);
 		modelEditorScreenController->setAnimations(entity);
-		modelEditorScreenController->setTools();
+		modelEditorScreenController->unsetTools();
+		entitySoundsView->setSounds(entity);
 	} else {
 		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");
 		modelEditorScreenController->unsetEntityProperties();
@@ -275,6 +280,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetMaterials();
 		modelEditorScreenController->unsetAnimations();
 		modelEditorScreenController->unsetTools();
+		entitySoundsView->unsetSounds();
 	}
 }
 
@@ -303,8 +309,9 @@ void SharedModelEditorView::initialize()
 	try {
 		modelEditorScreenController = new ModelEditorScreenController(this);
 		modelEditorScreenController->initialize();
-		entityDisplayView = modelEditorScreenController->getEntityDisplaySubScreenController()->getView();
 		entityBoundingVolumeView = modelEditorScreenController->getEntityPhysicsSubScreenController()->getView();
+		entityDisplayView = modelEditorScreenController->getEntityDisplaySubScreenController()->getView();
+		entitySoundsView = modelEditorScreenController->getEntitySoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
 		modelEditorScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -419,29 +426,37 @@ void SharedModelEditorView::playAnimation(const string& animationId) {
 	if (object != nullptr) {
 		audio->removeEntity("sound");
 		object->setAnimation(animationId);
-		auto animationSound = entity->getModelSettings()->getAnimationSound(animationId);
-		if (animationSound != nullptr && animationSound->getFileName().length() > 0) {
+	}
+}
+
+void SharedModelEditorView::playSound(const string& soundId) {
+	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (object != nullptr) {
+		audio->removeEntity("sound");
+		auto soundDefinition = entity->getSound(soundId);
+		if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
+			if (soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
 			string pathName = ModelMetaDataFileImport::getResourcePathName(
 				Tools::getPath(entity->getEntityFileName()),
-				animationSound->getFileName()
+				soundDefinition->getFileName()
 			);
-			string fileName = Tools::getFileName(animationSound->getFileName());
+			string fileName = Tools::getFileName(soundDefinition->getFileName());
 			auto sound = new Sound(
 				"sound",
 				pathName,
 				fileName
 			);
-			sound->setGain(animationSound->getGain());
-			sound->setPitch(animationSound->getPitch());
-			sound->setLooping(animationSound->isLooping());
+			sound->setGain(soundDefinition->getGain());
+			sound->setPitch(soundDefinition->getPitch());
+			sound->setLooping(soundDefinition->isLooping());
 			sound->setFixed(true);
 			audio->addEntity(sound);
 			audioStarted = Time::getCurrentMillis();
 			audioOffset = -1LL;
-			if (animationSound->getOffset() <= 0) {
+			if (soundDefinition->getOffset() <= 0) {
 				sound->play();
 			} else {
-				audioOffset = animationSound->getOffset();
+				audioOffset = soundDefinition->getOffset();
 			}
 		}
 	}

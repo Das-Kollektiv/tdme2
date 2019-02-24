@@ -86,19 +86,6 @@ void EntityDisplaySubScreenController::onActionPerformed(GUIActionListener_Type*
 		if (v == GUIActionListener_Type::PERFORMED) {
 			if (node->getId().compare("button_display_apply") == 0) {
 				onDisplayApply();
-			} else {
-				Console::println(
-					string(
-						"EntityDisplaySubScreenController::onActionPerformed()::unknown, type='" +
-						type->getName() +
-						"', id = '" +
-						node->getId() +
-						"'" +
-						", name = '" +
-						node->getName() +
-						"'"
-					)
-				);
 			}
 		}
 	}

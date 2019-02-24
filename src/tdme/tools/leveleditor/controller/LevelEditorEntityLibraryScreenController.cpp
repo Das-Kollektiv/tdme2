@@ -462,8 +462,6 @@ void LevelEditorEntityLibraryScreenController::onValueChanged(GUIElementNode* no
 			Console::println("LevelEditorEntityLibraryScreenController::onValueChanged: dropdown_model_create: " + node->getController()->getValue().getString());
 		}
 		node->getController()->setValue(MutableString("action"));
-	} else {
-		Console::println("LevelEditorEntityLibraryScreenController::onValueChanged: " + node->getId());
 	}
 }
 
@@ -474,8 +472,6 @@ void LevelEditorEntityLibraryScreenController::onActionPerformed(GUIActionListen
 			onPlaceEntity();
 		} else if (node->getId().compare("button_level_edit") == 0) {
 			onEditLevel();
-		} else {
-			Console::println("LevelEditorScreenController::onActionPerformed: " + node->getId());
 		}
 	}
 }

@@ -27,8 +27,9 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
@@ -50,6 +51,7 @@ private:
 	EntityBaseSubScreenController* entityBaseSubScreenController {  };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController {  };
+	EntitySoundsSubScreenController* entitySoundsSubScreenController {  };
 	SharedModelEditorView* view {  };
 	GUIScreenNode* screenNode {  };
 	GUITextNode* screenCaption {  };
@@ -107,15 +109,6 @@ private:
 	GUIElementNode* animationsAnimationLoop {  };
 	GUIElementNode* animationsAnimationName {  };
 	GUIElementNode* animationsAnimationApply {  };
-	GUIElementNode* animationsAnimationSoundFile {  };
-	GUIElementNode* animationsAnimationSoundLoad {  };
-	GUIElementNode* animationsAnimationSoundClear {  };
-	GUIElementNode* animationsAnimationSoundGain {  };
-	GUIElementNode* animationsAnimationSoundPitch {  };
-	GUIElementNode* animationsAnimationSoundOffset {  };
-	GUIElementNode* animationsAnimationSoundLooping {  };
-	GUIElementNode* animationsAnimationSoundFixed {  };
-	GUIElementNode* animationsAnimationSoundApply {  };
 	GUIElementNode* buttonToolsComputeNormals {  };
 	GUIElementNode* statsOpaqueFaces {  };
 	GUIElementNode* statsTransparentFaces {  };
@@ -149,6 +142,13 @@ public:
 	 * @return entity bounding volume sub screen controller
 	 */
 	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
+
+	/**
+	 * @return entity sounds sub screen controller
+	 */
+	EntitySoundsSubScreenController* getEntitySoundsSubScreenController();
+
+	// overriden method
 	GUIScreenNode* getScreenNode() override;
 
 	/** 
@@ -324,29 +324,9 @@ public:
 	void onAnimationApply();
 
 	/**
-	 * On animation sound clear
-	 */
-	void onAnimationSoundClear();
-
-	/**
-	 * On animation sound load
-	 */
-	void onAnimationSoundLoad();
-
-	/**
-	 * On animation sound apply
-	 */
-	void onAnimationSoundApply();
-
-	/**
 	 * Unset animations
 	 */
 	void unsetAnimations();
-
-	/**
-	 * Unset animation sound
-	 */
-	void unsetAnimationSound();
 
 	/** 
 	 * Set up model statistics

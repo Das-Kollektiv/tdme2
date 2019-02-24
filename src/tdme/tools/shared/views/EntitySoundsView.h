@@ -20,7 +20,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::PopUps;
 
 /** 
- * Entity display view
+ * Entity sounds view
  * @author Andreas Drewke
  * @version $Id$
  */

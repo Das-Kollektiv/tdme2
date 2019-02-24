@@ -32,6 +32,7 @@
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>

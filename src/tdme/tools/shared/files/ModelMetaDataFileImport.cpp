@@ -15,6 +15,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
@@ -173,22 +174,24 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 			)
 		);
 	}
+	if (jEntityRoot["sd"].isNull() == false) {
+		for (auto jSound: jEntityRoot["sd"].getArray()) {
+			auto id = jSound["i"].getString();
+			auto sound = levelEditorEntity->addSound(id);
+			if (sound == nullptr) continue;
+			sound->setAnimation(jSound["a"].getString());
+			sound->setFileName(jSound["file"].getString());
+			sound->setGain(static_cast<float>(jSound["g"].getDouble()));
+			sound->setPitch(static_cast<float>(jSound["p"].getDouble()));
+			sound->setOffset(static_cast<float>(jSound["o"].getInt()));
+			sound->setLooping(jSound["l"].getBoolean());
+			sound->setFixed(jSound["f"].getBoolean());
+		}
+	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
 		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
 		if (jEntityRoot["ll2"].isNull() == false) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
 		if (jEntityRoot["ll3"].isNull() == false) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
-		if (jEntityRoot["as"].isNull() == false) {
-			for (auto jAnimationSound: jEntityRoot["as"].getArray()) {
-				auto animationName = jAnimationSound["i"].getString();
-				auto animationSound = levelEditorEntity->getModelSettings()->createAnimationSound(animationName);
-				animationSound->setFileName(jAnimationSound["file"].getString());
-				animationSound->setGain(static_cast<float>(jAnimationSound["g"].getDouble()));
-				animationSound->setPitch(static_cast<float>(jAnimationSound["p"].getDouble()));
-				animationSound->setOffset(static_cast<float>(jAnimationSound["o"].getInt()));
-				animationSound->setLooping(jAnimationSound["l"].getBoolean());
-				animationSound->setFixed(jAnimationSound["f"].getBoolean());
-			}
-		}
 	} else
 	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		auto particleSystem = levelEditorEntity->getParticleSystem();

@@ -761,19 +761,6 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 			} else
 			if (node->getId() == "physics_body_apply") {
 				onPhysicsBodyApply(entity);
-			} else {
-				Console::println(
-					string(
-						"EntityPhysicsSubScreenController::onActionPerformed()::unknown, type='" +
-						type->getName() +
-						"', id = '" +
-						node->getId() +
-						"'" +
-						", name = '" +
-						node->getName() +
-						"'"
-					)
-				);
 			}
 		}
 	}

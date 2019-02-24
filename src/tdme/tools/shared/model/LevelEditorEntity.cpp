@@ -3,7 +3,9 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
+#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
+#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
@@ -12,12 +14,15 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
+using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
 constexpr int32_t LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
+constexpr int32_t LevelEditorEntity::MODEL_SOUNDS_COUNT;
+
 char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT] = {
 	"model_bv.0",
 	"model_bv.1",
@@ -83,9 +88,8 @@ LevelEditorEntity::~LevelEditorEntity() {
 	if (physics != nullptr) delete physics;
 	if (particleSystem != nullptr) delete particleSystem;
 	if (modelSettings != nullptr) delete modelSettings;
-	for (auto i = 0; i < boundingVolumes.size(); i++) {
-		delete boundingVolumes[i];
-	}
+	for (auto i = 0; i < boundingVolumes.size(); i++) delete boundingVolumes[i];
+	for (auto sound: sounds) delete sound;
 }
 
 bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
@@ -121,3 +125,14 @@ void LevelEditorEntity::setLODLevel3(LevelEditorEntityLODLevel* lodLevel) {
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	lodLevel3 = lodLevel;
 }
+
+LevelEditorEntityAudio* LevelEditorEntity::addSound(const string& id) {
+	if (sounds.size() == MODEL_SOUNDS_COUNT) return nullptr;
+	auto sound = getSound(id);
+	if (sound != nullptr) return nullptr;
+	auto audio = new LevelEditorEntityAudio(this, id);
+	soundsById[id] = audio;
+	sounds.push_back(audio);
+	return audio;
+}
+

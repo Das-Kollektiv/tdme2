@@ -18,6 +18,7 @@ class tdme::tools::shared::model::LevelEditorEntityAudio
 {
 private:
 	LevelEditorEntity* entity;
+	string id { "" };
 	string animation { "" };
 	string fileName { "" };
 	float gain { 1.0f };
@@ -31,8 +32,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param levelEditorEntity level editor entity
+	 * @param id id
 	 */
-	inline LevelEditorEntityAudio(LevelEditorEntity* entity, const string& animation): entity(entity), animation(animation) {
+	inline LevelEditorEntityAudio(LevelEditorEntity* entity, const string& id): entity(entity), id(id) {
 	}
 
 	/**
@@ -48,10 +50,33 @@ public:
 	}
 
 	/**
+	 * @return id
+	 */
+	inline const string& getId() {
+		return id;
+	}
+
+	/**
+	 * Set sound id
+	 * @param id
+	 */
+	inline void setId(const string& id) {
+		this->id = id;
+	}
+
+	/**
 	 * @return animation
 	 */
 	inline const string& getAnimation() {
 		return animation;
+	}
+
+	/**
+	 * Set animation
+	 * @param animation animation
+	 */
+	inline void setAnimation(const string& animation) {
+		this->animation = animation;
 	}
 
 	/**

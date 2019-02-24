@@ -1,27 +1,29 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
-#include <tdme/tools/shared/model/ModelProperties.h>
-#include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 
-using std::vector;
+using std::map;
 using std::string;
+using std::vector;
+using std::remove;
 
 using tdme::engine::LODObject3D;
 using tdme::engine::model::Model;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
+using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
@@ -42,6 +44,7 @@ class tdme::tools::shared::model::LevelEditorEntity final
 public:
 	static constexpr int32_t ID_NONE { -1 };
 	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 24 };
+	static constexpr int32_t MODEL_SOUNDS_COUNT { 16 };
 	static char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT];
 
 private:
@@ -65,6 +68,9 @@ private:
 	string distanceShaderId {  };
 	float distanceShaderDistance {  };
 	bool dynamicShadowing {  };
+	map<string, LevelEditorEntityAudio*> soundsById;
+	vector<LevelEditorEntityAudio*> sounds;
+
 public:
 
 	/** 
@@ -318,6 +324,58 @@ public:
 	inline void setDistanceShaderDistance(float distance) {
 		this->distanceShaderDistance = distance;
 	}
+
+	/**
+	 * @return sounds list
+	 */
+	inline const vector<LevelEditorEntityAudio*>& getSounds() {
+		return sounds;
+	}
+
+	/**
+	 * Returns sound of given sound id
+	 * @param id id
+	 * @return sound with given id
+	 */
+	inline LevelEditorEntityAudio* getSound(const string& id) {
+		auto soundIt = soundsById.find(id);
+		if (soundIt == soundsById.end()) return nullptr;
+		return soundIt->second;
+	}
+
+	/**
+	 * Remove sound of given sound id
+	 * @param id id
+	 * @return sound with given id
+	 */
+	inline void removeSound(const string& id) {
+		auto soundIt = soundsById.find(id);
+		if (soundIt == soundsById.end()) return;
+		sounds.erase(remove(sounds.begin(), sounds.end(), soundIt->second), sounds.end());
+		soundsById.erase(soundIt);
+	}
+
+	/**
+	 * Returns sound of given sound id
+	 * @param id id
+	 * @return success
+	 */
+	inline bool renameSound(const string& id, const string& newId) {
+		auto soundIt = soundsById.find(id);
+		if (soundIt == soundsById.end()) return false;
+		auto sound = soundIt->second;
+		soundsById.erase(soundIt);
+		soundsById[newId] = sound;
+		return true;
+	}
+
+	/**
+	 * Set up sound
+	 * @param id id
+	 * @param audio audio
+	 * @return success
+	 */
+	LevelEditorEntityAudio* addSound(const string& id);
 
 	/**
 	 * Creates a level editor model
