@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <tdme/audio/Audio.h>
+#include <tdme/audio/Sound.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/PartitionNone.h>
@@ -13,8 +15,9 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
+#include <tdme/tools/shared/controller/EntitySoundsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
@@ -23,12 +26,16 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
+#include <tdme/tools/shared/views/EntitySoundsView.h>
+#include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
+#include <tdme/tools/shared/views/View.h>
 #include <tdme/utils/Properties.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Exception.h>
@@ -37,6 +44,9 @@
 using std::string;
 
 using tdme::tools::shared::views::SharedParticleSystemView;
+
+using tdme::audio::Audio;
+using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::PartitionNone;
@@ -48,8 +58,9 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::EntitySoundsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
@@ -58,12 +69,16 @@ using tdme::tools::shared::files::ModelMetaDataFileExport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::View;
 using tdme::utils::Properties;
 using tdme::utils::StringUtils;
 using tdme::utils::Exception;
@@ -73,9 +88,11 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	engine = Engine::getInstance();
+	audio = Audio::getInstance();
 	particleSystemScreenController = nullptr;
 	entityDisplayView = nullptr;
 	entityPhysicsView = nullptr;
+	entitySoundsView = nullptr;
 	loadParticleSystemRequested = false;
 	initParticleSystemRequested = false;
 	particleSystemFile = "";
@@ -174,6 +191,11 @@ void SharedParticleSystemView::handleInputEvents()
 
 void SharedParticleSystemView::display()
 {
+	if (audioOffset > 0 && Time::getCurrentMillis() - audioStarted >= audioOffset) {
+		auto sound = audio->getEntity("sound");
+		if (sound != nullptr) sound->play();
+		audioOffset = -1LL;
+	}
 	if (loadParticleSystemRequested == true) {
 		initParticleSystemRequested = true;
 		loadParticleSystemRequested = false;
@@ -206,12 +228,14 @@ void SharedParticleSystemView::updateGUIElements()
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
 		entityPhysicsView->setBoundingVolumes(entity);
 		entityPhysicsView->setPhysics(entity);
+		entitySoundsView->setSounds(entity);
 	} else {
 		particleSystemScreenController->setScreenCaption("Particle System - no entity loaded");
 		particleSystemScreenController->unsetEntityProperties();
 		particleSystemScreenController->unsetEntityData();
 		entityPhysicsView->unsetBoundingVolumes();
 		entityPhysicsView->unsetPhysics();
+		entitySoundsView->unsetSounds();
 	}
 }
 
@@ -242,6 +266,7 @@ void SharedParticleSystemView::initialize()
 		particleSystemScreenController->initialize();
 		entityDisplayView = particleSystemScreenController->getEntityDisplaySubScreenController()->getView();
 		entityPhysicsView = particleSystemScreenController->getEntityPhysicsSubScreenController()->getView();
+		entitySoundsView = particleSystemScreenController->getEntitySoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -299,11 +324,13 @@ void SharedParticleSystemView::storeSettings()
 void SharedParticleSystemView::dispose()
 {
 	storeSettings();
-	Engine::getInstance()->reset();
+	engine->reset();
+	audio->reset();
 }
 
 void SharedParticleSystemView::deactivate()
 {
+	audio->removeEntity("sound");
 }
 
 void SharedParticleSystemView::onLoadParticleSystem(LevelEditorEntity* oldEntity, LevelEditorEntity* entity)
@@ -343,3 +370,33 @@ LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(const string& na
 void SharedParticleSystemView::onSetEntityData()
 {
 }
+
+void SharedParticleSystemView::playSound(const string& soundId) {
+	audio->removeEntity("sound");
+	auto soundDefinition = entity->getSound(soundId);
+	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
+		string pathName = ModelMetaDataFileImport::getResourcePathName(
+			Tools::getPath(entity->getEntityFileName()),
+			soundDefinition->getFileName()
+		);
+		string fileName = Tools::getFileName(soundDefinition->getFileName());
+		auto sound = new Sound(
+			"sound",
+			pathName,
+			fileName
+		);
+		sound->setGain(soundDefinition->getGain());
+		sound->setPitch(soundDefinition->getPitch());
+		sound->setLooping(soundDefinition->isLooping());
+		sound->setFixed(true);
+		audio->addEntity(sound);
+		audioStarted = Time::getCurrentMillis();
+		audioOffset = -1LL;
+		if (soundDefinition->getOffset() <= 0) {
+			sound->play();
+		} else {
+			audioOffset = soundDefinition->getOffset();
+		}
+	}
+}
+

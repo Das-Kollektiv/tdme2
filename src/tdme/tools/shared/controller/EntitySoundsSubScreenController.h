@@ -26,6 +26,7 @@ using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::SharedModelEditorView;
+using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 
 /** 
@@ -44,7 +45,7 @@ private:
 	GUIScreenNode* screenNode {  };
 	FileDialogPath* audioPath {  };
 	EntitySoundsView* view {  };
-	SharedModelEditorView* modelEditorView {  };
+	PlayableSoundView* playableSoundView {  };
 	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundAnimationDropDown {  };
 	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundKey {  };
 	array<GUIElementNode*, LevelEditorEntity::MODEL_SOUNDS_COUNT> soundsSoundFile {  };
@@ -140,10 +141,11 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param playableSoundView view that supports playing sounds
 	 * @param popUps pop ups
 	 * @param audioPath audio path
 	 */
-	EntitySoundsSubScreenController(SharedModelEditorView* modelEditorView, PopUps* popUps, FileDialogPath* audioPath);
+	EntitySoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath);
 
 	/**
 	 * Destructor

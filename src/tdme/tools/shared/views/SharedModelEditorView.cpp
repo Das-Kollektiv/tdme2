@@ -38,6 +38,7 @@
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/EntitySoundsView.h>
+#include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
@@ -83,6 +84,8 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
 using tdme::utils::StringUtils;
@@ -354,12 +357,13 @@ void SharedModelEditorView::storeSettings()
 
 void SharedModelEditorView::deactivate()
 {
+	audio->removeEntity("sound");
 }
 
 void SharedModelEditorView::dispose()
 {
 	storeSettings();
-	Engine::getInstance()->reset();
+	engine->reset();
 	audio->reset();
 }
 
@@ -431,33 +435,31 @@ void SharedModelEditorView::playAnimation(const string& animationId) {
 
 void SharedModelEditorView::playSound(const string& soundId) {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
-	if (object != nullptr) {
-		audio->removeEntity("sound");
-		auto soundDefinition = entity->getSound(soundId);
-		if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
-			if (soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
-			string pathName = ModelMetaDataFileImport::getResourcePathName(
-				Tools::getPath(entity->getEntityFileName()),
-				soundDefinition->getFileName()
-			);
-			string fileName = Tools::getFileName(soundDefinition->getFileName());
-			auto sound = new Sound(
-				"sound",
-				pathName,
-				fileName
-			);
-			sound->setGain(soundDefinition->getGain());
-			sound->setPitch(soundDefinition->getPitch());
-			sound->setLooping(soundDefinition->isLooping());
-			sound->setFixed(true);
-			audio->addEntity(sound);
-			audioStarted = Time::getCurrentMillis();
-			audioOffset = -1LL;
-			if (soundDefinition->getOffset() <= 0) {
-				sound->play();
-			} else {
-				audioOffset = soundDefinition->getOffset();
-			}
+	audio->removeEntity("sound");
+	auto soundDefinition = entity->getSound(soundId);
+	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
+		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
+		string pathName = ModelMetaDataFileImport::getResourcePathName(
+			Tools::getPath(entity->getEntityFileName()),
+			soundDefinition->getFileName()
+		);
+		string fileName = Tools::getFileName(soundDefinition->getFileName());
+		auto sound = new Sound(
+			"sound",
+			pathName,
+			fileName
+		);
+		sound->setGain(soundDefinition->getGain());
+		sound->setPitch(soundDefinition->getPitch());
+		sound->setLooping(soundDefinition->isLooping());
+		sound->setFixed(true);
+		audio->addEntity(sound);
+		audioStarted = Time::getCurrentMillis();
+		audioOffset = -1LL;
+		if (soundDefinition->getOffset() <= 0) {
+			sound->play();
+		} else {
+			audioOffset = soundDefinition->getOffset();
 		}
 	}
 }

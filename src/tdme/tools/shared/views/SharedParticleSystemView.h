@@ -3,23 +3,29 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
+#include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
 using std::string;
 
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
+using tdme::audio::Audio;
 using tdme::engine::Engine;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::View;
+using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 
 /** 
@@ -29,21 +35,26 @@ using tdme::tools::shared::views::PopUps;
  */
 class tdme::tools::shared::views::SharedParticleSystemView
 	: public virtual View
+	, public virtual PlayableSoundView
 	, public virtual GUIInputEventHandler
 {
 protected:
 	Engine* engine {  };
+	Audio* audio {  };
 
 private:
 	PopUps* popUps {  };
 	ParticleSystemScreenController* particleSystemScreenController {  };
 	EntityDisplayView* entityDisplayView {  };
 	EntityPhysicsView* entityPhysicsView {  };
+	EntitySoundsView* entitySoundsView {  };
 	LevelEditorEntity* entity {  };
 	bool loadParticleSystemRequested {  };
 	bool initParticleSystemRequested {  };
 	string particleSystemFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
+	int64_t audioStarted { -1LL };
+	int64_t audioOffset { -1LL };
 
 	/**
 	 * Load settings
@@ -143,6 +154,7 @@ public:
 	void activate() override;
 	void dispose() override;
 	void deactivate() override;
+	void playSound(const string& soundId) override;
 
 	/** 
 	 * On load particle system

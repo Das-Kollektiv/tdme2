@@ -18,6 +18,7 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/SharedModelEditorView.h>
+#include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -46,6 +47,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -54,10 +56,10 @@ using tdme::utils::Integer;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 
-EntitySoundsSubScreenController::EntitySoundsSubScreenController(SharedModelEditorView* modelEditorView, PopUps* popUps, FileDialogPath* audioPath)
+EntitySoundsSubScreenController::EntitySoundsSubScreenController(PlayableSoundView* playableSoundView, PopUps* popUps, FileDialogPath* audioPath)
 {
 	this->audioPath = audioPath;
-	this->modelEditorView = modelEditorView;
+	this->playableSoundView = playableSoundView;
 	this->view = new EntitySoundsView(this, popUps);
 }
 
@@ -270,7 +272,7 @@ void EntitySoundsSubScreenController::onSoundApply(int soundIdx, LevelEditorEnti
 		sound->setOffset(Integer::parseInt(soundsSoundOffset[soundIdx]->getController()->getValue().getString()));
 		sound->setLooping(soundsSoundLooping[soundIdx]->getController()->getValue().getString() == "1");
 		sound->setFixed(soundsSoundFixed[soundIdx]->getController()->getValue().getString() == "1");
-		modelEditorView->playSound(sound->getId());
+		playableSoundView->playSound(sound->getId());
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}

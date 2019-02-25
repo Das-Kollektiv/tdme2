@@ -10,6 +10,7 @@ namespace views {
 	class EntityPhysicsView;
 	class EntitySoundsView;
 	class EntityDisplayView;
+	struct PlayableSoundView;
 	class PopUps;
 	class SharedModelEditorView;
 	class SharedParticleSystemView;
