@@ -32,7 +32,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -73,7 +73,7 @@ using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::EntityBoundingVolumeView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Console;
 using tdme::utils::Exception;

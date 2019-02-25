@@ -18,7 +18,7 @@ using tdme::engine::Engine;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityBoundingVolumeView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 
@@ -38,7 +38,7 @@ private:
 	PopUps* popUps {  };
 	ParticleSystemScreenController* particleSystemScreenController {  };
 	EntityDisplayView* entityDisplayView {  };
-	EntityBoundingVolumeView* entityBoundingVolumeView {  };
+	EntityPhysicsView* entityPhysicsView {  };
 	LevelEditorEntity* entity {  };
 	bool loadParticleSystemRequested {  };
 	bool initParticleSystemRequested {  };

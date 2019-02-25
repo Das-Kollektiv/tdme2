@@ -27,7 +27,7 @@ using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::views::EntityBoundingVolumeView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 
@@ -46,7 +46,7 @@ class tdme::tools::shared::controller::EntityPhysicsSubScreenController
 private:
 	GUIScreenNode* screenNode {  };
 	FileDialogPath* modelPath {  };
-	EntityBoundingVolumeView* view {  };
+	EntityPhysicsView* view {  };
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown {  };
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeNoneApply {  };
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume {  };
@@ -95,7 +95,7 @@ public:
 	/** 
 	 * @return view
 	 */
-	virtual EntityBoundingVolumeView* getView();
+	virtual EntityPhysicsView* getView();
 
 	/**
 	 * @return screen node

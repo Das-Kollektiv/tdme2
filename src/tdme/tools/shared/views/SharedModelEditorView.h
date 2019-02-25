@@ -20,7 +20,7 @@ using tdme::math::Vector3;
 using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityBoundingVolumeView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntitySoundsView;
 using tdme::tools::shared::views::PopUps;
@@ -43,7 +43,7 @@ private:
 	PopUps* popUps {  };
 	ModelEditorScreenController* modelEditorScreenController {  };
 	EntityDisplayView* entityDisplayView {  };
-	EntityBoundingVolumeView* entityBoundingVolumeView {  };
+	EntityPhysicsView* entityPhysicsView {  };
 	EntitySoundsView* entitySoundsView {  };
 	LevelEditorEntity* entity {  };
 	bool loadModelRequested {  };

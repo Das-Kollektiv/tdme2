@@ -32,7 +32,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
@@ -73,7 +73,7 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::EntityBoundingVolumeView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
@@ -83,7 +83,7 @@ using tdme::utils::Exception;
 EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
 {
 	this->modelPath = modelPath;
-	this->view = new EntityBoundingVolumeView(this, popUps);
+	this->view = new EntityPhysicsView(this, popUps);
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 }
 
@@ -91,7 +91,7 @@ EntityPhysicsSubScreenController::~EntityPhysicsSubScreenController() {
 	delete view;
 }
 
-EntityBoundingVolumeView* EntityPhysicsSubScreenController::getView()
+EntityPhysicsView* EntityPhysicsSubScreenController::getView()
 {
 	return view;
 }

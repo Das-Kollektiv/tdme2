@@ -26,7 +26,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
-#include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Properties.h>
@@ -61,7 +61,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityBoundingVolumeView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
@@ -75,6 +75,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 	engine = Engine::getInstance();
 	particleSystemScreenController = nullptr;
 	entityDisplayView = nullptr;
+	entityPhysicsView = nullptr;
 	loadParticleSystemRequested = false;
 	initParticleSystemRequested = false;
 	particleSystemFile = "";
@@ -203,14 +204,14 @@ void SharedParticleSystemView::updateGUIElements()
 		auto preset = entity->getProperty("preset");
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		particleSystemScreenController->setEntityData(entity->getName(), entity->getDescription());
-		entityBoundingVolumeView->setBoundingVolumes(entity);
-		entityBoundingVolumeView->setPhysics(entity);
+		entityPhysicsView->setBoundingVolumes(entity);
+		entityPhysicsView->setPhysics(entity);
 	} else {
 		particleSystemScreenController->setScreenCaption("Particle System - no entity loaded");
 		particleSystemScreenController->unsetEntityProperties();
 		particleSystemScreenController->unsetEntityData();
-		entityBoundingVolumeView->unsetBoundingVolumes();
-		entityBoundingVolumeView->unsetPhysics();
+		entityPhysicsView->unsetBoundingVolumes();
+		entityPhysicsView->unsetPhysics();
 	}
 }
 
@@ -240,7 +241,7 @@ void SharedParticleSystemView::initialize()
 		particleSystemScreenController = new ParticleSystemScreenController(this);
 		particleSystemScreenController->initialize();
 		entityDisplayView = particleSystemScreenController->getEntityDisplaySubScreenController()->getView();
-		entityBoundingVolumeView = particleSystemScreenController->getEntityPhysicsSubScreenController()->getView();
+		entityPhysicsView = particleSystemScreenController->getEntityPhysicsSubScreenController()->getView();
 		engine->getGUI()->addScreen(particleSystemScreenController->getScreenNode()->getId(), particleSystemScreenController->getScreenNode());
 		particleSystemScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
@@ -249,7 +250,7 @@ void SharedParticleSystemView::initialize()
 	}
 
 	loadSettings();
-	entityBoundingVolumeView->initialize();
+	entityPhysicsView->initialize();
 	vector<string> particleSystemTypes;
 	particleSystemTypes.push_back("None");
 	particleSystemTypes.push_back("Object Particle System");

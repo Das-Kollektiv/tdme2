@@ -35,7 +35,7 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
-#include <tdme/tools/shared/views/EntityBoundingVolumeView.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/EntitySoundsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
@@ -81,7 +81,7 @@ using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
-using tdme::tools::shared::views::EntityBoundingVolumeView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
@@ -96,7 +96,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	audio = Audio::getInstance();
 	modelEditorScreenController = nullptr;
 	entityDisplayView = nullptr;
-	entityBoundingVolumeView = nullptr;
+	entityPhysicsView = nullptr;
 	entitySoundsView = nullptr;
 	loadModelRequested = false;
 	initModelRequested = false;
@@ -256,10 +256,10 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
 		modelEditorScreenController->setEntityData(entity->getName(), entity->getDescription());
 		modelEditorScreenController->setPivot(entity->getPivot());
-		entityBoundingVolumeView->setBoundingVolumes(entity);
-		entityBoundingVolumeView->setPhysics(entity);
-		entityBoundingVolumeView->setTerrainMesh(entity);
-		entityBoundingVolumeView->setConvexMeshes(entity);
+		entityPhysicsView->setBoundingVolumes(entity);
+		entityPhysicsView->setPhysics(entity);
+		entityPhysicsView->setTerrainMesh(entity);
+		entityPhysicsView->setConvexMeshes(entity);
 		modelEditorScreenController->setRendering(entity);
 		modelEditorScreenController->setLODLevel(entity, lodLevel);
 		modelEditorScreenController->setMaterials(entity);
@@ -271,10 +271,10 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->unsetEntityProperties();
 		modelEditorScreenController->unsetEntityData();
 		modelEditorScreenController->unsetPivot();
-		entityBoundingVolumeView->unsetBoundingVolumes();
-		entityBoundingVolumeView->unsetPhysics();
-		entityBoundingVolumeView->unsetTerrainMesh();
-		entityBoundingVolumeView->unsetConvexMeshes();
+		entityPhysicsView->unsetBoundingVolumes();
+		entityPhysicsView->unsetPhysics();
+		entityPhysicsView->unsetTerrainMesh();
+		entityPhysicsView->unsetConvexMeshes();
 		modelEditorScreenController->unsetRendering();
 		modelEditorScreenController->unsetLODLevel();
 		modelEditorScreenController->unsetMaterials();
@@ -309,7 +309,7 @@ void SharedModelEditorView::initialize()
 	try {
 		modelEditorScreenController = new ModelEditorScreenController(this);
 		modelEditorScreenController->initialize();
-		entityBoundingVolumeView = modelEditorScreenController->getEntityPhysicsSubScreenController()->getView();
+		entityPhysicsView = modelEditorScreenController->getEntityPhysicsSubScreenController()->getView();
 		entityDisplayView = modelEditorScreenController->getEntityDisplaySubScreenController()->getView();
 		entitySoundsView = modelEditorScreenController->getEntitySoundsSubScreenController()->getView();
 		engine->getGUI()->addScreen(modelEditorScreenController->getScreenNode()->getId(), modelEditorScreenController->getScreenNode());
@@ -320,7 +320,7 @@ void SharedModelEditorView::initialize()
 	}
 	loadSettings();
 	modelEditorScreenController->getEntityDisplaySubScreenController()->setupDisplay();
-	entityBoundingVolumeView->initialize();
+	entityPhysicsView->initialize();
 	updateGUIElements();
 }
 
