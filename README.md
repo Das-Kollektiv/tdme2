@@ -96,6 +96,7 @@
             - all nodes are in the GUI node tree and can be made visible or unvisible depending on conditions
         - adds some improvements like
             - support auto keyword with nodes width and height attributes
+            - layouting on demand in combination with conditions
         - supported primitive nodes from which compounds are built of
             - element
             - image
