@@ -192,6 +192,7 @@ void GUIElementNode::layoutSubNodes()
 
 void GUIElementNode::layout()
 {
+	if (conditionsMet == false) return;
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
 		auto subNodesHeight = requestedConstraints.height - border.top - border.bottom - padding.top - padding.bottom;
 		for (auto i = 0; i < subNodes.size(); i++) {

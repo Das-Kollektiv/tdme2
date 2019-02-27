@@ -127,8 +127,7 @@ void GUIInputInternalNode::dispose()
 
 void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false)
-		return;
+	if (conditionsMet == false) return;
 
 	GUINode::render(guiRenderer);
 	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);

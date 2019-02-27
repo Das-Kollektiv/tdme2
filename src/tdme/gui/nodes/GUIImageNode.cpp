@@ -103,8 +103,7 @@ void GUIImageNode::dispose()
 
 void GUIImageNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false)
-		return;
+	if (conditionsMet == false) return;
 
 	GUINode::render(guiRenderer);
 

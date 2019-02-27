@@ -106,6 +106,7 @@ GUINode::GUINode(
 	this->hideOn = hideOn;
 	this->controller = nullptr;
 	this->conditionsMet = false;
+	this->layouted = false;
 }
 
 GUINode::~GUINode() {
@@ -177,6 +178,10 @@ void GUINode::setTop(int32_t top)
 
 void GUINode::layout()
 {
+	if (conditionsMet == false) {
+		layouted = false;
+		return;
+	}
 	auto parentNodeContentWidth = parentNode->computedConstraints.width - parentNode->border.left - parentNode->border.right - parentNode->padding.left - parentNode->padding.right;
 	auto parentNodeContentHeight = parentNode->computedConstraints.height - parentNode->border.top - parentNode->border.bottom - parentNode->padding.top - parentNode->padding.bottom;
 	computedConstraints.left = parentNode->computedConstraints.left + layoutConstraintPixel(requestedConstraints.leftType, 0, parentNodeContentWidth, requestedConstraints.left);
@@ -184,6 +189,7 @@ void GUINode::layout()
 	computedConstraints.width = layoutConstraintPixel(requestedConstraints.widthType, getAutoWidth(), parentNodeContentWidth, requestedConstraints.width);
 	computedConstraints.height = layoutConstraintPixel(requestedConstraints.heightType, getAutoHeight(), parentNodeContentHeight, requestedConstraints.height);
 	computeContentAlignment();
+	layouted = true;
 }
 
 void GUINode::computeContentAlignment()
@@ -425,10 +431,30 @@ void GUINode::setConditionsMet()
 	conditionsMet = checkConditions();
 }
 
+void GUINode::layoutOnDemand() {
+	if (conditionsMet == false) return;
+	if (screenNode->layouted == false || layouted == false) {
+		auto i = 0;
+		auto nodeToLayoutCandidate = this->parentNode;
+		auto nodeToLayout = static_cast<GUINode*>(nullptr);
+		while (nodeToLayoutCandidate != nullptr) {
+			if (nodeToLayout == nullptr && nodeToLayoutCandidate->layouted == true && dynamic_cast<GUIParentNode*>(nodeToLayoutCandidate) != nullptr) {
+				nodeToLayout = nodeToLayoutCandidate;
+			} else
+			if (nodeToLayout != nullptr && nodeToLayoutCandidate->layouted == false) {
+				nodeToLayout = nullptr;
+			}
+
+			nodeToLayoutCandidate = nodeToLayoutCandidate->parentNode;
+			i++;
+		}
+		screenNode->layout(nodeToLayout != nullptr && nodeToLayout->parentNode != nullptr?nodeToLayout->parentNode:screenNode);
+	}
+}
+
 void GUINode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false)
-		return;
+	if (conditionsMet == false) return;
 
 	auto screenWidth = screenNode->getScreenWidth();
 	auto screenHeight = screenNode->getScreenHeight();
@@ -1049,13 +1075,14 @@ void GUINode::dumpNode(GUINode* node, int indent) {
 		node->id + ": " +
 		to_string(node->computedConstraints.left) + ", " +
 		to_string(node->computedConstraints.top) + ", " +
-		to_string(node->computedConstraints.width) + ", " +
+		to_string(node->computedConstraints.width) + "; " +
 		to_string(node->computedConstraints.height) + ", " +
 		to_string(node->computedConstraints.alignmentLeft) + ", " +
-		to_string(node->computedConstraints.alignmentTop) + ", " +
+		to_string(node->computedConstraints.alignmentTop) + "; " +
 		to_string(node->computedConstraints.contentAlignmentLeft) + ", " +
 		to_string(node->computedConstraints.contentAlignmentTop) + ": " +
-		to_string(node->conditionsMet)
+		to_string(node->conditionsMet) + "; " +
+		to_string(node->layouted)
 	);
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = dynamic_cast< GUIParentNode* >(node);

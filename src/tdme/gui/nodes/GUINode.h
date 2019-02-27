@@ -90,6 +90,7 @@ protected:
 	GUINodeConditions hideOn;
 	GUINodeController* controller {  };
 	bool conditionsMet {  };
+	bool layouted {  };
 
 	/** 
 	 * @return node type
@@ -353,6 +354,11 @@ public:
 	 * Set conditions met for this node and its subnodes
 	 */
 	virtual void setConditionsMet();
+
+	/**
+	 * Layout on demand
+	 */
+	virtual void layoutOnDemand();
 
 	/**
 	 * Render

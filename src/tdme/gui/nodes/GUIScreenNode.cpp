@@ -186,25 +186,36 @@ void GUIScreenNode::layout()
 			controller->postLayout();
 		}
 	}
+	layouted = true;
 }
 
 void GUIScreenNode::layout(GUINode* node)
 {
 	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
 		auto parentNode = dynamic_cast< GUIParentNode* >(node);
-		parentNode->layoutSubNodes();
-		parentNode->getChildControllerNodes(childControllerNodes);
-		for (auto i = 0; i < childControllerNodes.size(); i++) {
-			auto childNode = childControllerNodes[i];
-			auto controller = childNode->getController();
+		if (parentNode->conditionsMet == true) {
+			parentNode->layoutSubNodes();
+			parentNode->getChildControllerNodes(childControllerNodes);
+			for (auto i = 0; i < childControllerNodes.size(); i++) {
+				auto childNode = childControllerNodes[i];
+				auto controller = childNode->getController();
+				if (controller != nullptr) controller->postLayout();
+			}
+			auto controller = parentNode->getController();
 			if (controller != nullptr) controller->postLayout();
+			parentNode->layouted = true;
+		} else {
+			parentNode->layouted = false;
 		}
-		auto controller = parentNode->getController();
-		if (controller != nullptr) controller->postLayout();
 	} else {
-		node->computeContentAlignment();
-		auto controller = node->getController();
-		if (controller != nullptr) controller->postLayout();
+		if (node->conditionsMet == true) {
+			node->computeContentAlignment();
+			node->layouted = true;
+			auto controller = node->getController();
+			if (controller != nullptr) controller->postLayout();
+		} else {
+			node->layouted = false;
+		}
 	}
 }
 
@@ -220,6 +231,7 @@ void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 	this->computedConstraints.top = 0;
 	this->computedConstraints.width = width;
 	this->computedConstraints.height = height;
+	layouted = false;
 }
 
 const string GUIScreenNode::getNodeType()
@@ -288,6 +300,7 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer)
 			effect->apply(guiRenderer);
 		}
 	}
+	GUIParentNode::layoutOnDemand();
 	GUIParentNode::render(guiRenderer);
 	guiRenderer->doneScreen();
 }
@@ -304,6 +317,7 @@ void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 		guiRenderer->setRenderAreaTop(GUIRenderer::SCREEN_TOP);
 		guiRenderer->setRenderAreaRight(GUIRenderer::SCREEN_RIGHT);
 		guiRenderer->setRenderAreaBottom(GUIRenderer::SCREEN_BOTTOM);
+		floatingNodes[i]->layoutOnDemand();
 		floatingNodes[i]->render(guiRenderer);
 	}
 	guiRenderer->doneScreen();

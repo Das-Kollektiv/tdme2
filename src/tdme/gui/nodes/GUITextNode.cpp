@@ -88,8 +88,7 @@ void GUITextNode::dispose()
 
 void GUITextNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false)
-		return;
+	if (conditionsMet == false) return;
 
 	GUINode::render(guiRenderer);
 	font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, 0, 0, color);

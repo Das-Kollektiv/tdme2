@@ -14,7 +14,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 GUIScrollAreaVerticalController::GUIScrollAreaVerticalController(GUINode* node) 
-	: GUINodeController(node)
+	: GUINodeController(node), actionListener(this)
 {
 }
 
@@ -89,11 +89,12 @@ void GUIScrollAreaVerticalController::initialize()
 	auto const contentNode = dynamic_cast< GUIParentNode* >(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
 	auto const upArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_up"));
 	auto const downArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_down"));
-	node->getScreenNode()->addActionListener(new GUIScrollAreaVerticalControllerActionListener(this, upArrowNode, contentNode, downArrowNode));
+	node->getScreenNode()->addActionListener(actionListener = new GUIScrollAreaVerticalControllerActionListener(this, upArrowNode, contentNode, downArrowNode));
 }
 
 void GUIScrollAreaVerticalController::dispose()
 {
+	if (actionListener != nullptr) node->getScreenNode()->removeActionListener(actionListener);
 }
 
 void GUIScrollAreaVerticalController::postLayout()

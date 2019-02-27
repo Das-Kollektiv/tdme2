@@ -7,6 +7,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/utils/MutableString.h>
 
+using tdme::gui::events::GUIActionListener;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -39,6 +40,7 @@ public:
 
 private:
 	MutableString value;
+	GUIActionListener* actionListener;
 
 	/**
 	 * Private constructor

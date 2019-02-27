@@ -910,7 +910,7 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 			Console::println(string(exception.what()));
 		}
 		// TODO: this usually works most of the time out of the box, so custom layouting is not required, but in this case not, need to find out whats going wrong there
-		animationsDropDown->getScreenNode()->layout(animationsDropDown);
+		// animationsDropDown->getScreenNode()->layout(animationsDropDown);
 	}
 
 	{

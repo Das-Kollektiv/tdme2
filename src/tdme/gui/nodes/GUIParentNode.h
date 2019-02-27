@@ -197,6 +197,7 @@ public:
 	// overriden methods
 	void dispose() override;
 	void setConditionsMet() override;
+	void layoutOnDemand() override;
 	void render(GUIRenderer* guiRenderer) override;
 	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, set<string>& eventNodeIds, set<string>& eventFloatingNodeIds) override;
 	void handleKeyboardEvent(GUIKeyboardEvent* event) override;

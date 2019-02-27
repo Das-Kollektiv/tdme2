@@ -7,6 +7,7 @@
 #include <tdme/utils/MutableString.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 
+using tdme::gui::events::GUIActionListener;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -22,7 +23,6 @@ class tdme::gui::elements::GUIScrollAreaVerticalController
 	: public GUINodeController
 {
 	friend class GUIScrollAreaVertical;
-	friend class GUIScrollAreaVerticalController_initialize_1;
 
 public:
 	bool isDisabled() override;
@@ -41,6 +41,7 @@ public:
 
 private:
 	MutableString value;
+	GUIActionListener* actionListener;
 
 	/**
 	 * Private constructor

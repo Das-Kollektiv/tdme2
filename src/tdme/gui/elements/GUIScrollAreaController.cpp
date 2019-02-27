@@ -14,7 +14,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 
 GUIScrollAreaController::GUIScrollAreaController(GUINode* node) 
-	: GUINodeController(node)
+	: GUINodeController(node), actionListener(nullptr)
 {
 }
 
@@ -119,11 +119,12 @@ void GUIScrollAreaController::initialize()
 	auto const downArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_vertical_layout_down"));
 	auto const leftArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_left"));
 	auto const rightArrowNode = dynamic_cast< GUIElementNode* >(node->getScreenNode()->getNodeById(node->getId() + "_scrollbar_horizontal_layout_right"));
-	node->getScreenNode()->addActionListener(new GUIScrollAreaControllerActionListener(this, upArrowNode, contentNode, downArrowNode, leftArrowNode, rightArrowNode));
+	node->getScreenNode()->addActionListener(actionListener = new GUIScrollAreaControllerActionListener(this, upArrowNode, contentNode, downArrowNode, leftArrowNode, rightArrowNode));
 }
 
 void GUIScrollAreaController::dispose()
 {
+	if (actionListener != nullptr) node->getScreenNode()->removeActionListener(actionListener);
 }
 
 void GUIScrollAreaController::postLayout()
