@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/Console.h>
 
 using std::find;
@@ -11,6 +12,7 @@ using std::vector;
 
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeConditions;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::Console;
 
 GUINodeConditions::GUINodeConditions(GUIElementNode* elementNode): elementNode(elementNode)
@@ -52,7 +54,10 @@ bool GUINodeConditions::removeAll()
 
 void GUINodeConditions::updateNode(GUINode* node) const {
 	node->conditionsMet = node->checkConditions(elementNode);
-	if (node->conditionsMet == false) return;
+	if (node->conditionsMet == false) {
+		node->parentNode->layouted = false;
+		return;
+	}
 
 	auto asElementNode = dynamic_cast<GUIElementNode*>(node);
 	if (asElementNode != nullptr) return;
