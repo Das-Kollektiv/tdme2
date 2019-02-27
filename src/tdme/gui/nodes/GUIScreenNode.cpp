@@ -317,7 +317,6 @@ void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 		guiRenderer->setRenderAreaTop(GUIRenderer::SCREEN_TOP);
 		guiRenderer->setRenderAreaRight(GUIRenderer::SCREEN_RIGHT);
 		guiRenderer->setRenderAreaBottom(GUIRenderer::SCREEN_BOTTOM);
-		floatingNodes[i]->layoutOnDemand();
 		floatingNodes[i]->render(guiRenderer);
 	}
 	guiRenderer->doneScreen();
