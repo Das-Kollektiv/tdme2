@@ -34,6 +34,7 @@ private:
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
 	GUIParentNode* dropDownNode {  };
+	bool initialPostLayout {  };
 	bool selected {  };
 	MutableString value;
 

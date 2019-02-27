@@ -33,6 +33,7 @@ string GUISelectBoxMultipleOptionController::CONDITION_ENABLED = "enabled";
 GUISelectBoxMultipleOptionController::GUISelectBoxMultipleOptionController(GUINode* node) 
 	: GUIElementController(node)
 {
+	this->initialPostLayout = true;
 	this->selected = (dynamic_cast< GUIElementNode* >(node))->isSelected();
 	this->focussed = false;
 }
@@ -131,10 +132,12 @@ void GUISelectBoxMultipleOptionController::dispose()
 
 void GUISelectBoxMultipleOptionController::postLayout()
 {
+	if (initialPostLayout != true) return;
 	if (selected == true) {
 		node->scrollToNodeX(selectBoxMultipleNode);
 		node->scrollToNodeY(selectBoxMultipleNode);
 	}
+	initialPostLayout = false;
 }
 
 void GUISelectBoxMultipleOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)

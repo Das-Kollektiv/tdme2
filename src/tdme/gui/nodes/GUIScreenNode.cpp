@@ -182,7 +182,7 @@ void GUIScreenNode::layout()
 	for (auto i = 0; i < childControllerNodes.size(); i++) {
 		auto node = childControllerNodes[i];
 		auto controller = node->getController();
-		if (controller != nullptr) {
+		if (controller != nullptr && node->layouted == true) {
 			controller->postLayout();
 		}
 	}
@@ -199,7 +199,7 @@ void GUIScreenNode::layout(GUINode* node)
 			for (auto i = 0; i < childControllerNodes.size(); i++) {
 				auto childNode = childControllerNodes[i];
 				auto controller = childNode->getController();
-				if (controller != nullptr) controller->postLayout();
+				if (controller != nullptr && childNode->layouted == true) controller->postLayout();
 			}
 			auto controller = parentNode->getController();
 			if (controller != nullptr) controller->postLayout();
