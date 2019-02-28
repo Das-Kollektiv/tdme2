@@ -29,7 +29,11 @@
 #include <cstdlib>
 #include <cassert>
 
+#include <tdme/os/threading/Mutex.h>
+
 using namespace reactphysics3d;
+
+using tdme::os::threading::Mutex;
 
 // Initialization of static variables
 bool PoolAllocator::isMapSizeToHeadIndexInitialized = false;
@@ -37,7 +41,7 @@ size_t PoolAllocator::mUnitSizes[NB_HEAPS];
 int PoolAllocator::mMapSizeToHeapIndex[MAX_UNIT_SIZE + 1];
 
 // Constructor
-PoolAllocator::PoolAllocator() {
+PoolAllocator::PoolAllocator(): mutex("rp3d-poolallocator") {
 
     // Allocate some memory to manage the blocks
     mNbAllocatedMemoryBlocks = 64;
@@ -103,13 +107,14 @@ void* PoolAllocator::allocate(size_t size) {
     // We cannot allocate zero bytes
     if (size == 0) return nullptr;
 
+    mutex.lock();
 #ifndef NDEBUG
         mNbTimesAllocateMethodCalled++;
 #endif
 
     // If we need to allocate more than the maximum memory unit size
     if (size > MAX_UNIT_SIZE) {
-
+    	mutex.unlock();
         // Allocate memory using default allocation
         return MemoryManager::getBaseAllocator().allocate(size);
     }
@@ -124,6 +129,7 @@ void* PoolAllocator::allocate(size_t size) {
         // Return a pointer to the memory unit
         MemoryUnit* unit = mFreeMemoryUnits[indexHeap];
         mFreeMemoryUnits[indexHeap] = unit->nextUnit;
+        mutex.unlock();
         return unit;
     }
     else {  // If there is no more free memory units in the corresponding heap
@@ -164,7 +170,7 @@ void* PoolAllocator::allocate(size_t size) {
         // Add the new allocated block into the list of free memory units in the heap
         mFreeMemoryUnits[indexHeap] = newBlock->memoryUnits->nextUnit;
         mNbCurrentMemoryBlocks++;
-
+        mutex.unlock();
         // Return the pointer to the first memory unit of the new allocated block
         return newBlock->memoryUnits;
     }
@@ -176,15 +182,17 @@ void PoolAllocator::release(void* pointer, size_t size) {
     // Cannot release a 0-byte allocated memory
     if (size == 0) return;
 
+    mutex.lock();
+
 #ifndef NDEBUG
         mNbTimesAllocateMethodCalled--;
 #endif
 
     // If the size is larger than the maximum memory unit size
     if (size > MAX_UNIT_SIZE) {
-
         // Release the memory using the default deallocation
         MemoryManager::getBaseAllocator().release(pointer, size);
+        mutex.unlock();
         return;
     }
 
@@ -197,4 +205,5 @@ void PoolAllocator::release(void* pointer, size_t size) {
     MemoryUnit* releasedUnit = static_cast<MemoryUnit*>(pointer);
     releasedUnit->nextUnit = mFreeMemoryUnits[indexHeap];
     mFreeMemoryUnits[indexHeap] = releasedUnit;
+    mutex.unlock();
 }

@@ -26,9 +26,13 @@
 #ifndef REACTPHYSICS3D_SINGLE_FRAME_ALLOCATOR_H
 #define REACTPHYSICS3D_SINGLE_FRAME_ALLOCATOR_H
 
+#include <tdme/os/threading/Mutex.h>
+
 // Libraries
 #include "MemoryAllocator.h"
 #include "configuration.h"
+
+using tdme::os::threading::Mutex;
 
 /// ReactPhysics3D namespace
 namespace reactphysics3d {
@@ -41,6 +45,7 @@ namespace reactphysics3d {
 class SingleFrameAllocator : public MemoryAllocator {
 
     private :
+		Mutex mutex;
 
         // -------------------- Constants -------------------- //
 

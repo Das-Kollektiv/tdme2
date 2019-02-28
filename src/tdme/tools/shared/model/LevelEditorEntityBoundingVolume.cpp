@@ -188,7 +188,7 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 		PrimitiveModel::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
 	} catch (Exception& exception) {
-		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: "));
+		Console::print(string("LevelEditorEntityBoundingVolume::setupConvexMesh(): An error occurred: " + modelMeshFile + ": "));
 		Console::println(string(exception.what()));
 	}
 	if (boundingVolume == nullptr) boundingVolume = new ConvexMesh();

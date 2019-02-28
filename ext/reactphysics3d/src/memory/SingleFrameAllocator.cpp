@@ -34,7 +34,7 @@ using namespace reactphysics3d;
 // Constructor
 SingleFrameAllocator::SingleFrameAllocator()
     : mTotalSizeBytes(INIT_SINGLE_FRAME_ALLOCATOR_NB_BYTES),
-      mCurrentOffset(0), mNbFramesTooMuchAllocated(0), mNeedToAllocatedMore(false) {
+      mCurrentOffset(0), mNbFramesTooMuchAllocated(0), mNeedToAllocatedMore(false), mutex("rp3d-singleframeallocator") {
 
     // Allocate a whole block of memory at the beginning
     mMemoryBufferStart = static_cast<char*>(MemoryManager::getBaseAllocator().allocate(mTotalSizeBytes));
@@ -53,6 +53,8 @@ SingleFrameAllocator::~SingleFrameAllocator() {
 // allocated memory.
 void* SingleFrameAllocator::allocate(size_t size) {
 
+	mutex.lock();
+
     // Check that there is enough remaining memory in the buffer
     if (mCurrentOffset + size > mTotalSizeBytes) {
 
@@ -60,7 +62,9 @@ void* SingleFrameAllocator::allocate(size_t size) {
         mNeedToAllocatedMore = true;
 
         // Return default memory allocation
-        return MemoryManager::getBaseAllocator().allocate(size);
+        auto x = MemoryManager::getBaseAllocator().allocate(size);
+        mutex.unlock();
+        return x;
     }
 
     // Next available memory location
@@ -68,7 +72,7 @@ void* SingleFrameAllocator::allocate(size_t size) {
 
     // Increment the offset
     mCurrentOffset += size;
-
+    mutex.unlock();
     // Return the next available memory location
     return nextAvailableMemory;
 }
@@ -76,6 +80,7 @@ void* SingleFrameAllocator::allocate(size_t size) {
 // Release previously allocated memory.
 void SingleFrameAllocator::release(void* pointer, size_t size) {
 
+	mutex.lock();
     // If allocated memory is not within the single frame allocation range
     char* p = static_cast<char*>(pointer);
     if (p < mMemoryBufferStart || p > mMemoryBufferStart + mTotalSizeBytes) {
@@ -83,11 +88,13 @@ void SingleFrameAllocator::release(void* pointer, size_t size) {
         // Use default deallocation
         MemoryManager::getBaseAllocator().release(pointer, size);
     }
+    mutex.unlock();
 }
 
 // Reset the marker of the current allocated memory
 void SingleFrameAllocator::reset() {
 
+	mutex.lock();
     // If too much memory is allocated
     if (mCurrentOffset < mTotalSizeBytes / 2) {
 
@@ -129,7 +136,7 @@ void SingleFrameAllocator::reset() {
         mNeedToAllocatedMore = false;
         mNbFramesTooMuchAllocated = 0;
     }
-
+    mutex.unlock();
     // Reset the current offset at the beginning of the block
     mCurrentOffset = 0;
 }
