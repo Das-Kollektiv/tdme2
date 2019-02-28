@@ -447,7 +447,9 @@ public:
 	/**
 	 * Dump node
 	 * @param node node to dump
-	 * @param indent indention depth
+	 * @param depth depth
+	 * @param indent indention
+	 * @param depthIdx depth index
 	 */
-	static void dumpNode(GUINode* node, int indent = 0);
+	static void dumpNode(GUINode* node, int depth = 0, int indent = 0, int depthIdx = 0);
 };

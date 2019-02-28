@@ -105,8 +105,8 @@ void GUIParentNode::clearSubNodes()
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */
 {
 	if (resetScrollOffsets == true) {
-		childrenRenderOffsetX = 0.0f;
-		childrenRenderOffsetY = 0.0f;
+		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
+		if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
 	}
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto subNode = subNodes[i];
@@ -128,23 +128,23 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 	setConditionsMet();
 	screenNode->layout(this->parentNode);
 
-	float elementWidth = computedConstraints.width;
-	float contentWidth = getContentWidth();
-	auto scrollableWidth = contentWidth - elementWidth;
-	if (childrenRenderOffsetX < 0)
-		childrenRenderOffsetX = 0;
+	if (overflowX == GUIParentNode_Overflow::SCROLL) {
+		float elementWidth = computedConstraints.width;
+		float contentWidth = getContentWidth();
+		auto scrollableWidth = contentWidth - elementWidth;
+		if (scrollableWidth < 0.0) scrollableWidth = 0.0;
+		if (childrenRenderOffsetX < 0) childrenRenderOffsetX = 0;
+		if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
+	}
 
-	if (childrenRenderOffsetX > scrollableWidth)
-		childrenRenderOffsetX = scrollableWidth;
-
-	float elementHeight = computedConstraints.height;
-	float contentHeight = getContentHeight();
-	auto scrollableHeight = contentHeight - elementHeight;
-	if (childrenRenderOffsetY < 0)
-		childrenRenderOffsetY = 0;
-
-	if (childrenRenderOffsetY > scrollableHeight)
-		childrenRenderOffsetY = scrollableHeight;
+	if (overflowY == GUIParentNode_Overflow::SCROLL) {
+		float elementHeight = computedConstraints.height;
+		float contentHeight = getContentHeight();
+		auto scrollableHeight = contentHeight - elementHeight;
+		if (scrollableHeight < 0.0) scrollableHeight = 0.0;
+		if (childrenRenderOffsetY < 0) childrenRenderOffsetY = 0;
+		if (childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+	}
 }
 
 void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)

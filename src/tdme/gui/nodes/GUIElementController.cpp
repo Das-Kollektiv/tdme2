@@ -89,6 +89,7 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		} else
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);
+			elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_ONMOUSEOVER);
 			isActionPerforming = false;
 			auto now = Time::getCurrentMillis();
 			if (timeLastClicked != -1LL) {
