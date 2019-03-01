@@ -125,7 +125,7 @@ private:
 	 * @param inertiaTensor inertia tensor vector
 	 * @param boundingVolumes bounding volumes
 	 */
-	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
+	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Destructor

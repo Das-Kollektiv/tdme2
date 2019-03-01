@@ -146,15 +146,15 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 				break;
 			}
 	    case PNG_COLOR_TYPE_GRAY_ALPHA:
-	    		{
-	    			bytesPerPixel = 4;
+	    	{
+	    		bytesPerPixel = 4;
 		        png_set_gray_to_rgb(png);
 		        break;
-	    		}
+	    	}
 	    case PNG_COLOR_TYPE_PALETTE:
-	    		{
+	    	{
 				// if transparency, convert it to alpha
-	    			// does not seem to work though
+	    		// does not seem to work though
 				bool alpha = false;
 				if (png_get_valid(png, info, PNG_INFO_tRNS)) {
 					alpha = true;
@@ -163,7 +163,7 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 				bytesPerPixel = alpha?4:3;
 				png_set_expand(png);
 				break;
-	    		}
+	    	}
 	    case PNG_COLOR_TYPE_RGB:
 			{
 				bytesPerPixel = 3;
@@ -175,11 +175,11 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 				break;
 			}
 	    default:
-	    		{
-	    			png_destroy_read_struct(&png, &info, nullptr);
-	    			delete pngInputStream;
-	    			return nullptr;
-	    		}
+    		{
+    			png_destroy_read_struct(&png, &info, nullptr);
+    			delete pngInputStream;
+    			return nullptr;
+    		}
 	}
 
 	// bytes per row

@@ -222,9 +222,10 @@ void LevelEditorLevel::removeObject(const string& id)
 {
 	auto objectByIdIt = objectsById.find(id);
 	if (objectByIdIt != objectsById.end()) {
+		auto object = objectByIdIt->second;
 		objectsById.erase(objectByIdIt);
-		objects.erase(remove(objects.begin(), objects.end(), objectByIdIt->second), objects.end());
-		delete objectByIdIt->second;
+		objects.erase(remove(objects.begin(), objects.end(), object), objects.end());
+		delete object;
 	}
 }
 
