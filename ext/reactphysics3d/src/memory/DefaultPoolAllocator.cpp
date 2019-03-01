@@ -24,24 +24,20 @@
 ********************************************************************************/
 
 // Libraries
-#include "PoolAllocator.h"
+#include "DefaultPoolAllocator.h"
 #include "MemoryManager.h"
 #include <cstdlib>
 #include <cassert>
 
-#include <tdme/os/threading/Mutex.h>
-
 using namespace reactphysics3d;
 
-using tdme::os::threading::Mutex;
-
 // Initialization of static variables
-bool PoolAllocator::isMapSizeToHeadIndexInitialized = false;
-size_t PoolAllocator::mUnitSizes[NB_HEAPS];
-int PoolAllocator::mMapSizeToHeapIndex[MAX_UNIT_SIZE + 1];
+bool DefaultPoolAllocator::isMapSizeToHeadIndexInitialized = false;
+size_t DefaultPoolAllocator::mUnitSizes[NB_HEAPS];
+int DefaultPoolAllocator::mMapSizeToHeapIndex[MAX_UNIT_SIZE + 1];
 
 // Constructor
-PoolAllocator::PoolAllocator(): mutex("rp3d-poolallocator") {
+DefaultPoolAllocator::DefaultPoolAllocator() {
 
     // Allocate some memory to manage the blocks
     mNbAllocatedMemoryBlocks = 64;
@@ -83,7 +79,7 @@ PoolAllocator::PoolAllocator(): mutex("rp3d-poolallocator") {
 }
 
 // Destructor
-PoolAllocator::~PoolAllocator() {
+DefaultPoolAllocator::~DefaultPoolAllocator() {
 
     // Release the memory allocated for each block
     for (uint i=0; i<mNbCurrentMemoryBlocks; i++) {
@@ -102,19 +98,18 @@ PoolAllocator::~PoolAllocator() {
 
 // Allocate memory of a given size (in bytes) and return a pointer to the
 // allocated memory.
-void* PoolAllocator::allocate(size_t size) {
+void* DefaultPoolAllocator::allocate(size_t size) {
 
     // We cannot allocate zero bytes
     if (size == 0) return nullptr;
 
-    mutex.lock();
 #ifndef NDEBUG
         mNbTimesAllocateMethodCalled++;
 #endif
 
     // If we need to allocate more than the maximum memory unit size
     if (size > MAX_UNIT_SIZE) {
-    	mutex.unlock();
+
         // Allocate memory using default allocation
         return MemoryManager::getBaseAllocator().allocate(size);
     }
@@ -129,7 +124,6 @@ void* PoolAllocator::allocate(size_t size) {
         // Return a pointer to the memory unit
         MemoryUnit* unit = mFreeMemoryUnits[indexHeap];
         mFreeMemoryUnits[indexHeap] = unit->nextUnit;
-        mutex.unlock();
         return unit;
     }
     else {  // If there is no more free memory units in the corresponding heap
@@ -141,9 +135,9 @@ void* PoolAllocator::allocate(size_t size) {
             MemoryBlock* currentMemoryBlocks = mMemoryBlocks;
             mNbAllocatedMemoryBlocks += 64;
             mMemoryBlocks = static_cast<MemoryBlock*>(MemoryManager::getBaseAllocator().allocate(mNbAllocatedMemoryBlocks * sizeof(MemoryBlock)));
-            memcpy(mMemoryBlocks, currentMemoryBlocks,mNbCurrentMemoryBlocks * sizeof(MemoryBlock));
+            memcpy(mMemoryBlocks, currentMemoryBlocks, mNbCurrentMemoryBlocks * sizeof(MemoryBlock));
             memset(mMemoryBlocks + mNbCurrentMemoryBlocks, 0, 64 * sizeof(MemoryBlock));
-            free(currentMemoryBlocks);
+            MemoryManager::getBaseAllocator().release(currentMemoryBlocks, mNbCurrentMemoryBlocks * sizeof(MemoryBlock));
         }
 
         // Allocate a new memory blocks for the corresponding heap and divide it in many
@@ -170,19 +164,17 @@ void* PoolAllocator::allocate(size_t size) {
         // Add the new allocated block into the list of free memory units in the heap
         mFreeMemoryUnits[indexHeap] = newBlock->memoryUnits->nextUnit;
         mNbCurrentMemoryBlocks++;
-        mutex.unlock();
+
         // Return the pointer to the first memory unit of the new allocated block
         return newBlock->memoryUnits;
     }
 }
 
 // Release previously allocated memory.
-void PoolAllocator::release(void* pointer, size_t size) {
+void DefaultPoolAllocator::release(void* pointer, size_t size) {
 
     // Cannot release a 0-byte allocated memory
     if (size == 0) return;
-
-    mutex.lock();
 
 #ifndef NDEBUG
         mNbTimesAllocateMethodCalled--;
@@ -190,9 +182,9 @@ void PoolAllocator::release(void* pointer, size_t size) {
 
     // If the size is larger than the maximum memory unit size
     if (size > MAX_UNIT_SIZE) {
+
         // Release the memory using the default deallocation
         MemoryManager::getBaseAllocator().release(pointer, size);
-        mutex.unlock();
         return;
     }
 
@@ -205,5 +197,4 @@ void PoolAllocator::release(void* pointer, size_t size) {
     MemoryUnit* releasedUnit = static_cast<MemoryUnit*>(pointer);
     releasedUnit->nextUnit = mFreeMemoryUnits[indexHeap];
     mFreeMemoryUnits[indexHeap] = releasedUnit;
-    mutex.unlock();
 }
