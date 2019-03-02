@@ -49,13 +49,13 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 }
 
 Model::~Model() {
+	deleteSubGroups(&subGroups);
 	for (auto it = materials.begin(); it != materials.end(); ++it) {
 		delete it->second;
 	}
 	for (auto it = animationSetups.begin(); it != animationSetups.end(); ++it) {
 		delete it->second;
 	}
-	deleteSubGroups(&subGroups);
 	if (boundingBox != nullptr) delete boundingBox;
 }
 
