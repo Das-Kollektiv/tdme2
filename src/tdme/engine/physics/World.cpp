@@ -74,7 +74,8 @@ World::~World()
 
 void World::reset()
 {
-	for (auto body: bodies) removeBody(body->getId());
+	auto _bodies = bodies;
+	for (auto body: _bodies) removeBody(body->getId());
 	bodies.clear();
 	rigidBodiesDynamic.clear();
 	bodiesById.clear();
