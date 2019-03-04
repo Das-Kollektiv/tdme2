@@ -62,5 +62,5 @@ void VBOManager::removeVBO(const string& vboId)
 		}
 		return;
 	}
-	Console::println(string("Warning: vbo not managed by vbo manager"));
+	Console::println(string("Warning: vbo not managed by vbo manager: ") + vboId);
 }
