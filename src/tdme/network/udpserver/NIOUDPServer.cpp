@@ -57,6 +57,18 @@ void NIOUDPServer::run() {
 	Console::println("NIOUDPServer::run(): start");
 
 	// create start up barrier for io threads
+	startUpBarrier = new Barrier("nioudpserver_startup_workers", workerThreadPoolCount + 1);
+
+	// setup worker thread pool
+	workerThreadPool = new NIOServerWorkerThreadPool(startUpBarrier, workerThreadPoolCount, workerThreadPoolMaxElements);
+	workerThreadPool->start();
+
+	// wait on startup barrier and delete it
+	startUpBarrier->wait();
+	delete startUpBarrier;
+	startUpBarrier = NULL;
+
+	// create start up barrier for IO threads
 	startUpBarrier = new Barrier("nioudpserver_startup_iothreads", ioThreadCount + 1);
 
 	// create and start IO threads
@@ -72,17 +84,6 @@ void NIOUDPServer::run() {
 	startUpBarrier = NULL;
 
 	// init worker thread pool
-	startUpBarrier = new Barrier("nioudpserver_startup_workers", workerThreadPoolCount + 1);
-
-	// setup worker thread pool
-	workerThreadPool = new NIOServerWorkerThreadPool(startUpBarrier, workerThreadPoolCount, workerThreadPoolMaxElements);
-	workerThreadPool->start();
-
-	// wait on startup barrier and delete it
-	startUpBarrier->wait();
-	delete startUpBarrier;
-	startUpBarrier = NULL;
-
 	//
 	Console::println("NIOUDPServer::run(): ready");
 
