@@ -59,13 +59,13 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 		// laoded?
 		if (transparencyTexture != nullptr) {
 			// same dimensions and supported pixel depth?
-			if (diffuseTexture->getWidth() == transparencyTexture->getWidth() &&
-				diffuseTexture->getHeight() == transparencyTexture->getHeight()) {
+			if (diffuseTexture->getTextureWidth() == transparencyTexture->getTextureWidth() &&
+				diffuseTexture->getTextureHeight() == transparencyTexture->getTextureHeight()) {
 				auto maskedTransparency = true;
 				// yep, combine diffuse map + diffuse transparency map
-				int width = diffuseTexture->getWidth();
-				int height = diffuseTexture->getHeight();
-				ByteBuffer* pixelByteBuffer = new ByteBuffer(diffuseTexture->getWidth() * diffuseTexture->getHeight() * 4);
+				int width = diffuseTexture->getTextureWidth();
+				int height = diffuseTexture->getTextureHeight();
+				ByteBuffer* pixelByteBuffer = new ByteBuffer(diffuseTexture->getTextureWidth() * diffuseTexture->getTextureHeight() * 4);
 				auto diffuseTextureWithTransparency = new Texture(
 					diffuseTexture->getId() + "+transparency",
 					32,

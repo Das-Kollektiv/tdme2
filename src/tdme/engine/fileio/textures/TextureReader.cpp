@@ -18,6 +18,7 @@
 
 using std::vector;
 using std::string;
+using std::to_string;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
@@ -213,16 +214,69 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 	png_destroy_read_struct(&png, &info, nullptr);
 	delete pngInputStream;
 
+	// make width, height a power of 2
+	int textureWidth = 1;
+	while (textureWidth < width) textureWidth*= 2;
+	int textureHeight = 1;
+	while (textureHeight < height) textureHeight*= 2;
+	if (textureWidth != width || textureHeight != height) {
+		Console::println("TextureReader::loadPNG(): " + pathName + "/" + fileName + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
+		ByteBuffer* pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
+		auto textureYIncrement = (float)textureHeight / (float)height;
+		auto textureYPixelRest = 0.0f;
+		auto textureY = 0;
+		for (auto y = 0; y < height; y++) {
+			for (auto i = 0; i < (int)textureYIncrement + (int)textureYPixelRest; i++) {
+				scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, y);
+				textureY++;
+			}
+			textureYPixelRest-= (int)textureYPixelRest;
+			textureYPixelRest+= textureYIncrement - (int)textureYIncrement;
+
+		}
+		while (textureY < textureHeight) {
+			scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, height - 1);
+			textureY++;
+		}
+		delete pixelByteBuffer;
+		pixelByteBuffer = pixelByteBufferScaled;
+	}
+
 	// thats it
 	return new Texture(
 		canonicalFileName,
 		bytesPerPixel * 8,
 		width,
 		height,
-		width,
-		height,
+		textureWidth,
+		textureHeight,
 		pixelByteBuffer
 	);
+}
+
+void TextureReader::scaleTextureLine(ByteBuffer* pixelByteBuffer, ByteBuffer* pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y) {
+	auto textureXIncrement = (float)textureWidth / (float)width;
+	auto textureXPixelRest = 0.0f;
+	auto textureX = 0;
+	for (auto x = 0; x < width; x++) {
+		for (auto i = 0; i < (int)textureXIncrement + (int)textureXPixelRest; i++) {
+			for (auto bytePerPixel = 0; bytePerPixel < bytesPerPixel; bytePerPixel++) {
+				pixelByteBufferScaled->put(pixelByteBuffer->get((y * width * bytesPerPixel) + (x * bytesPerPixel) + bytePerPixel));
+			}
+			textureX++;
+		}
+		textureXPixelRest-= (int)textureXPixelRest;
+		textureXPixelRest+= textureXIncrement - (int)textureXIncrement;
+	}
+	{
+		auto x = width - 1;
+		while (textureX < textureWidth) {
+			for (auto bytePerPixel = 0; bytePerPixel < bytesPerPixel; bytePerPixel++) {
+				pixelByteBufferScaled->put(pixelByteBuffer->get((y * width * bytesPerPixel) + (x * bytesPerPixel) + bytePerPixel));
+			}
+			textureX++;
+		}
+	}
 }
 
 void TextureReader::removeFromCache(Texture* texture) {
