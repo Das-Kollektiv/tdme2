@@ -2,13 +2,20 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/os/threading/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::string;
+using std::vector;
+
+using tdme::os::threading::Mutex;
+using tdme::os::threading::Thread;
+
 
 /** 
  * Console class
@@ -35,6 +42,27 @@ public:
 	 */
 	static void println();
 
+	/**
+	 * Shutdown console logging and especially writing log to file
+	 */
+	static void forceShutdown();
+
 private:
+	class LogWriterThread: public Thread {
+	public:
+		LogWriterThread();
+		~LogWriterThread();
+		void run();
+		void flush();
+	};
+
+	/**
+	 * Initialize log writer thread
+	 */
+	static void initLogWriterThread();
+
+	//
 	static Mutex mutex;
+	static vector<string> messages;
+	static LogWriterThread logWriterThread;
 };
