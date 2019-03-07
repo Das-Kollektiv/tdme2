@@ -20,6 +20,13 @@ using tdme::engine::subsystems::renderer::GLRenderer;
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation: public PostProcessingShaderBaseImplementation
 {
 public:
+	/**
+	 * Returns if shader is supported on given renderer
+	 * @param renderer renderer
+	 * @return if shader is supported
+	 */
+	static bool isSupported(GLRenderer* renderer);
+
 	// overridden methods
 	virtual void initialize() override;
 

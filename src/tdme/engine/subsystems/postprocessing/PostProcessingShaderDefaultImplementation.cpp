@@ -11,6 +11,10 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShaderDefaultImple
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::Engine;
 
+bool PostProcessingShaderDefaultImplementation::isSupported(GLRenderer* renderer) {
+	return true;
+}
+
 PostProcessingShaderDefaultImplementation::PostProcessingShaderDefaultImplementation(GLRenderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }

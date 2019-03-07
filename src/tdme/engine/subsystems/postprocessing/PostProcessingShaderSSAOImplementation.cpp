@@ -11,6 +11,10 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplemen
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::Engine;
 
+bool PostProcessingShaderSSAOImplementation::isSupported(GLRenderer* renderer) {
+	return renderer->getGLVersion() == "gl3";
+}
+
 PostProcessingShaderSSAOImplementation::PostProcessingShaderSSAOImplementation(GLRenderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }

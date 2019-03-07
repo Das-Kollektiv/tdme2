@@ -16,7 +16,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
 bool LightingShaderFrontImplementation::isSupported(GLRenderer* renderer) {
-	return true;
+	return renderer->getGLVersion() == "gl3";
 }
 
 LightingShaderFrontImplementation::LightingShaderFrontImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)

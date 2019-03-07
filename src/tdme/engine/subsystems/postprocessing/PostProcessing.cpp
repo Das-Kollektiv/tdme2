@@ -15,15 +15,22 @@ PostProcessing::PostProcessing() {
 	{
 		auto program = new PostProcessingProgram(PostProcessingProgram::RENDERPASS_FINAL);
 		program->addPostProcessingStep("depth_blur", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN);
-		programs["depth_blur"] = program;
+		if (program->isSupported() == true) {
+			programs["depth_blur"] = program;
+		} else {
+			delete program;
+		}
 
 	}
 	{
 		auto program = new PostProcessingProgram(PostProcessingProgram::RENDERPASS_OBJECTS);
 		program->addPostProcessingStep("ssao_map", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_TEMPORARY);
 		program->addPostProcessingStep("ssao", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN, true);
-		programs["ssao"] = program;
-
+		if (program->isSupported() == true) {
+			programs["ssao"] = program;
+		} else {
+			delete program;
+		}
 	}
 }
 

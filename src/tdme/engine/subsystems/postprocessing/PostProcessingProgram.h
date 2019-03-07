@@ -68,4 +68,10 @@ public:
 		return steps;
 	}
 
+	/**
+	 * Checks if program is supported
+	 * @return if program is supported
+	 */
+	bool isSupported();
+
 };

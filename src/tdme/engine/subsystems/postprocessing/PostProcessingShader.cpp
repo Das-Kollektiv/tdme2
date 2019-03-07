@@ -22,10 +22,10 @@ using tdme::engine::Engine;
 
 PostProcessingShader::PostProcessingShader(GLRenderer* renderer)
 {
-	shader["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
-	shader["default"] = new PostProcessingShaderDefaultImplementation(renderer);
-	shader["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
-	shader["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
+	if (PostProcessingShaderBlurImplementation::isSupported(renderer) == true) shader["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
+	if (PostProcessingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new PostProcessingShaderDefaultImplementation(renderer);
+	if (PostProcessingShaderSSAOMapImplementation::isSupported(renderer) == true) shader["ssao_map"] = new PostProcessingShaderSSAOMapImplementation(renderer);
+	if (PostProcessingShaderSSAOImplementation::isSupported(renderer) == true) shader["ssao"] = new PostProcessingShaderSSAOImplementation(renderer);
 	implementation = nullptr;
 }
 
@@ -64,6 +64,10 @@ void PostProcessingShader::unUseProgram()
 		implementation->unUseProgram();;
 	}
 	implementation = nullptr;
+}
+
+bool PostProcessingShader::hasShader(const string& id) {
+	return shader.find(id) != shader.end();
 }
 
 void PostProcessingShader::setShader(const string& id) {

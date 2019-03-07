@@ -561,12 +561,12 @@ void Engine::initialize(bool debug)
 	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
 	frameBufferRenderShader->initialize();
 
-	// create post processing
-	postProcessing = new PostProcessing();
-
 	// create post processing shader
 	postProcessingShader = new PostProcessingShader(renderer);
 	postProcessingShader->initialize();
+
+	// create post processing
+	postProcessing = new PostProcessing();
 
 	// check if VBOs are available
 	if (renderer->isBufferObjectsAvailable()) {
@@ -1131,7 +1131,7 @@ void Engine::resetPostProcessingPrograms() {
 }
 
 void Engine::addPostProcessingProgram(const string& programId) {
-	postProcessingPrograms.push_back(programId);
+	if (postProcessing->getPostProcessingProgram(programId) != nullptr) postProcessingPrograms.push_back(programId);
 }
 
 void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, array<FrameBuffer*, 2> postProcessingFrameBuffers, FrameBuffer* targetFrameBuffer) {

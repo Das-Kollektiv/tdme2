@@ -11,6 +11,10 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplemen
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::Engine;
 
+bool PostProcessingShaderBlurImplementation::isSupported(GLRenderer* renderer) {
+	return renderer->getGLVersion() == "gl3";
+}
+
 PostProcessingShaderBlurImplementation::PostProcessingShaderBlurImplementation(GLRenderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }
