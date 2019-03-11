@@ -92,6 +92,17 @@ public:
 	 */
 	static Texture* read(const string& pathName, const string& fileName, bool useCache = true);
 
+	/**
+	 * Reads a texture with additional transparency texture
+	 * @param texturePathName texture path name
+	 * @param textureFileName texture file name
+	 * @param transparencyTexturePathName transparency texture path name
+	 * @param transparencyTextureFileName transparency texture file name
+	 * @param useCache use cache
+	 * @return texture data instance or null
+	 */
+	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true);
+
 private:
 	/**
 	 * Read PNG data from memory

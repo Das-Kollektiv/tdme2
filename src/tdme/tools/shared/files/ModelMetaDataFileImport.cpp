@@ -230,8 +230,11 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 					try {
 						auto particleTextureFileName = jPointParticleSystem["t"].getString();
 						auto particleTexturePathName = getResourcePathName(pathName, particleTextureFileName);
+						auto particleTransparencyTextureFileName = jPointParticleSystem["tt"].isNull() == true?string():jPointParticleSystem["tt"].getString();
+						auto particleTransparencyTexturePathName = particleTransparencyTextureFileName.size() == 0?string():getResourcePathName(pathName, particleTransparencyTextureFileName);
 						pointParticleSystem->setTextureFileName(
-							particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName)
+							particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
+							particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + Tools::getFileName(particleTransparencyTextureFileName)
 						);
 					} catch (Exception& exception) {
 						Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));

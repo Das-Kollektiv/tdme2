@@ -73,6 +73,7 @@ private:
 	GUIElementNode* ppsMaxPoints {  };
 	GUIElementNode* ppsPointSize {  };
 	GUIElementNode* ppsTexture {  };
+	GUIElementNode* ppsTransparencyTexture {  };
 	GUIElementNode* ppeCount {  };
 	GUIElementNode* ppeLifeTime {  };
 	GUIElementNode* ppeLifeTimeRnd {  };

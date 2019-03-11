@@ -238,6 +238,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				jPointParticleSystem["mp"] = particleSystem->getPointParticleSystem()->getMaxPoints();
 				jPointParticleSystem["ps"] = particleSystem->getPointParticleSystem()->getPointSize();
 				jPointParticleSystem["t"] = particleSystem->getPointParticleSystem()->getTextureFileName();
+				jPointParticleSystem["tt"] = particleSystem->getPointParticleSystem()->getTransparencyTextureFileName();
 				jPointParticleSystem["ae"] = particleSystem->getPointParticleSystem()->isAutoEmit();
 				jParticleSystem["pps"] = jPointParticleSystem;
 			} else {

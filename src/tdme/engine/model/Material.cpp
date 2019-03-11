@@ -47,74 +47,37 @@ void Material::setDiffuseTexture(const string& pathName, const string& fileName,
 	// load diffuse texture
 	diffuseTexturePathName = pathName;
 	diffuseTextureFileName = fileName;
-	diffuseTexture = TextureReader::read(pathName, fileName);
-	diffuseTransparencyTexturePathName = "";
-	diffuseTransparencyTextureFileName = "";
-	// check if we have a additional transparency texture
-	if (transparencyFileName.length() != 0) {
-		diffuseTransparencyTexturePathName = transparencyPathName;
-		diffuseTransparencyTextureFileName = transparencyFileName;
-		// yep
-		auto transparencyTexture = TextureReader::read(transparencyPathName, transparencyFileName);
-		// laoded?
-		if (transparencyTexture != nullptr) {
-			// same dimensions and supported pixel depth?
-			if (diffuseTexture->getTextureWidth() == transparencyTexture->getTextureWidth() &&
-				diffuseTexture->getTextureHeight() == transparencyTexture->getTextureHeight()) {
-				auto maskedTransparency = true;
-				// yep, combine diffuse map + diffuse transparency map
-				int width = diffuseTexture->getTextureWidth();
-				int height = diffuseTexture->getTextureHeight();
-				ByteBuffer* pixelByteBuffer = new ByteBuffer(diffuseTexture->getTextureWidth() * diffuseTexture->getTextureHeight() * 4);
-				auto diffuseTextureWithTransparency = new Texture(
-					diffuseTexture->getId() + "+transparency",
-					32,
-					diffuseTexture->getWidth(),
-					diffuseTexture->getHeight(),
-					diffuseTexture->getTextureWidth(),
-					diffuseTexture->getTextureHeight(),
-					pixelByteBuffer
-				);
-				int diffuseTextureBytesPerPixel = diffuseTexture->getDepth() / 8;
-				int transparencyTextureBytesPerPixel = transparencyTexture->getDepth() / 8;
-				for (int y = 0; y < height; y++) {
-					for (int x = 0; x < width; x++) {
-						auto transparencyTextureRed = transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 0);
-						auto transparencyTextureGreen = transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 1);
-						auto transparencyTextureBlue = transparencyTexture->getTextureData()->get((y * width * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 2);
-						if (transparencyTextureRed != 0 && transparencyTextureRed != 255) maskedTransparency = false;
-						if (transparencyTextureGreen != 0 && transparencyTextureGreen != 255) maskedTransparency = false;
-						if (transparencyTextureBlue != 0 && transparencyTextureBlue != 255) maskedTransparency = false;
-						pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 0));
-						pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 1));
-						pixelByteBuffer->put(diffuseTexture->getTextureData()->get((y * width * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 2));
-						pixelByteBuffer->put((uint8_t)((transparencyTextureRed + transparencyTextureGreen + transparencyTextureBlue) * 0.33f));
-					}
-				}
-				diffuseTexture->releaseReference();
-				diffuseTexture = diffuseTextureWithTransparency;
-				if (maskedTransparency == true) setDiffuseTextureMaskedTransparency(true);
-			}
-			transparencyTexture->releaseReference();
-		}
+	diffuseTransparencyTexturePathName = transparencyPathName;
+	diffuseTransparencyTextureFileName = transparencyFileName;
+	if (diffuseTransparencyTextureFileName.size() > 0) {
+		diffuseTexture = TextureReader::read(
+			diffuseTexturePathName,
+			diffuseTextureFileName,
+			diffuseTransparencyTexturePathName,
+			diffuseTransparencyTextureFileName
+		);
+	} else {
+		diffuseTexture = TextureReader::read(
+			diffuseTexturePathName,
+			diffuseTextureFileName
+		);
 	}
 	checkDiffuseTextureTransparency();
 }
 
 void Material::checkDiffuseTextureTransparency()
 {
-	// TODO: check if masked transparency is used
 	diffuseTextureTransparency = false;
+	auto diffuseTextureMaskedTransparencyTest = true;
 	if (diffuseTexture != nullptr && diffuseTexture->getDepth() == 32) {
 		auto textureData = diffuseTexture->getTextureData();
 		for (auto i = 0; i < diffuseTexture->getTextureWidth() * diffuseTexture->getTextureHeight(); i++) {
 			auto alpha = textureData->get(i * 4 + 3);
-			if (alpha != 255) {
-				diffuseTextureTransparency = true;
-				break;
-			}
+			if (alpha != 255) diffuseTextureTransparency = true;
+			if (alpha > 5 || alpha < 250) diffuseTextureMaskedTransparencyTest = false;
 		}
 	}
+	if (diffuseTextureMaskedTransparency == false) diffuseTextureMaskedTransparency = diffuseTextureMaskedTransparencyTest;
 }
 
 void Material::setSpecularTexture(const string& pathName, const string& fileName)

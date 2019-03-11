@@ -199,6 +199,7 @@ void ParticleSystemScreenController::initialize()
 		ppsMaxPoints = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_maxpoints"));
 		ppsPointSize = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_pointsize"));
 		ppsTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_texture"));
+		ppsTransparencyTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_transparency_texture"));
 		ppsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_auto_emit"));
 		ppeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_count"));
 		ppeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_lifetime"));
@@ -401,6 +402,7 @@ void ParticleSystemScreenController::setParticleSystemType()
 			ppsMaxPoints->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getMaxPoints()));
 			ppsPointSize->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getPointSize(), 4));
 			ppsTexture->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureFileName()));
+			ppsTransparencyTexture->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTransparencyTextureFileName()));
 			ppsAutoEmit->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->isAutoEmit() == true ? "1" : ""));
 		} else {
 			Console::println(
@@ -435,7 +437,7 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 				particleSystem->getPointParticleSystem()->setMaxPoints(Tools::convertToInt(ppsMaxPoints->getController()->getValue().getString()));
 				particleSystem->getPointParticleSystem()->setPointSize(Tools::convertToFloat(ppsPointSize->getController()->getValue().getString()));
-				particleSystem->getPointParticleSystem()->setTextureFileName(ppsTexture->getController()->getValue().getString());
+				particleSystem->getPointParticleSystem()->setTextureFileName(ppsTexture->getController()->getValue().getString(), ppsTransparencyTexture->getController()->getValue().getString());
 				particleSystem->getPointParticleSystem()->setAutoEmit(ppsAutoEmit->getController()->getValue().getString() == "1");
 			} else {
 				Console::println(
@@ -966,6 +968,39 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					"",
 					new OnLoadTextureFile(this)
 				);
+			} else
+			if (node->getId().compare("button_pps_transparency_texture_file") == 0) {
+				class OnLoadTextureFile: public virtual Action
+				{
+				public:
+					void performAction() override {
+						particleSystemScreenController->ppsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					}
+
+					/**
+					 * Public constructor
+					 * @param particleSystemScreenController particle system screen controller
+					 */
+					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+					}
+
+				private:
+					ParticleSystemScreenController* particleSystemScreenController;
+				};
+
+				vector<string> extensions = TextureReader::getTextureExtensions();
+				view->getPopUpsViews()->getFileDialogScreenController()->show(
+					modelPath->getPath(),
+					"Load from: ",
+					extensions,
+					"",
+					new OnLoadTextureFile(this)
+				);
+			} else
+			if (node->getId().compare("button_pps_transparency_texture_clear") == 0) {
+				ppsTransparencyTexture->getController()->setValue(MutableString());
 			}
 		}
 	}

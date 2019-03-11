@@ -23,19 +23,24 @@ LevelEditorEntityParticleSystem_PointParticleSystem::LevelEditorEntityParticleSy
 	autoEmit = true;
 }
 
-void LevelEditorEntityParticleSystem_PointParticleSystem::setTextureFileName(const string& textureFileName) {
-	if (textureFileName.empty() == true) {
-		if (texture != nullptr) texture->releaseReference();;
-		texture = nullptr;
-		this->textureFileName.clear();
-		return;
-	}
+void LevelEditorEntityParticleSystem_PointParticleSystem::setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName) {
+	if (texture != nullptr) texture->releaseReference();;
+	texture = nullptr;
 	this->textureFileName = textureFileName;
-	texture = TextureReader::read(
-		Tools::getPath(textureFileName),
-		Tools::getFileName(textureFileName)
-	);
-
+	this->transparencyTextureFileName = transparencyTextureFileName;
+	if (this->transparencyTextureFileName.size() > 0) {
+		texture = TextureReader::read(
+			Tools::getPath(this->textureFileName),
+			Tools::getFileName(this->textureFileName),
+			Tools::getPath(this->transparencyTextureFileName),
+			Tools::getFileName(this->transparencyTextureFileName)
+		);
+	} else {
+		texture = TextureReader::read(
+			Tools::getPath(this->textureFileName),
+			Tools::getFileName(this->textureFileName)
+		);
+	}
 }
 
 LevelEditorEntityParticleSystem_PointParticleSystem::~LevelEditorEntityParticleSystem_PointParticleSystem() {

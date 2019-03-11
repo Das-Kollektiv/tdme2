@@ -73,6 +73,70 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	return texture;
 }
 
+Texture* TextureReader::read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache) {
+	// make canonical
+	auto canonicalFile = FileSystem::getInstance()->getCanonicalPath(texturePathName, textureFileName);
+	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFile);
+	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFile);
+	auto cacheId = canonicalPathName + "/" + canonicalFileName + "/transparency";
+
+	// do cache look up
+	if (useCache == true) {
+		auto textureCacheIt = textureCache.find(cacheId);
+		if (textureCacheIt != textureCache.end()) {
+			return textureCacheIt->second;
+		}
+	}
+
+	// load diffuse texture
+	auto texture = TextureReader::read(texturePathName, textureFileName);
+	if (texture == nullptr) return nullptr;
+	// additional transparency texture
+	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName);
+	// do we have one?
+	if (transparencyTexture == nullptr) {
+		Console::println("TextureReader::read(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
+		if (useCache == true) textureCache[cacheId] = texture;
+		return texture;
+	}
+	// same dimensions and supported pixel depth?
+	if (texture->getTextureWidth() != transparencyTexture->getTextureWidth() || texture->getTextureHeight() != transparencyTexture->getTextureHeight()) {
+		Console::println("TextureReader::read(): texture does not match transparency texture dimension: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
+		if (useCache == true) textureCache[cacheId] = texture;
+		return texture;
+	}
+	// yep, combine diffuse map + diffuse transparency map
+	int textureWidth = texture->getTextureWidth();
+	int textureHeight = texture->getTextureHeight();
+	ByteBuffer* textureByteBuffer = new ByteBuffer(textureWidth * textureHeight * 4);
+	auto textureWithTransparency = new Texture(
+		texture->getId() + "/transparency",
+		32,
+		texture->getWidth(),
+		texture->getHeight(),
+		texture->getTextureWidth(),
+		texture->getTextureHeight(),
+		textureByteBuffer
+	);
+	int diffuseTextureBytesPerPixel = texture->getDepth() / 8;
+	int transparencyTextureBytesPerPixel = transparencyTexture->getDepth() / 8;
+	for (int y = 0; y < textureHeight; y++) {
+		for (int x = 0; x < textureWidth; x++) {
+			auto transparencyTextureRed = transparencyTexture->getTextureData()->get((y * textureWidth * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 0);
+			auto transparencyTextureGreen = transparencyTexture->getTextureData()->get((y * textureWidth * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 1);
+			auto transparencyTextureBlue = transparencyTexture->getTextureData()->get((y * textureWidth * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 2);
+			textureByteBuffer->put(texture->getTextureData()->get((y * textureWidth * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 0));
+			textureByteBuffer->put(texture->getTextureData()->get((y * textureWidth * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 1));
+			textureByteBuffer->put(texture->getTextureData()->get((y * textureWidth * diffuseTextureBytesPerPixel) + (x * diffuseTextureBytesPerPixel) + 2));
+			textureByteBuffer->put((uint8_t)((transparencyTextureRed + transparencyTextureGreen + transparencyTextureBlue) * 0.3333f));
+		}
+	}
+	texture->releaseReference();
+	transparencyTexture->releaseReference();
+	if (useCache == true) textureCache[cacheId] = textureWithTransparency;
+	return textureWithTransparency;
+}
+
 void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead) {
 	png_voidp io_ptr = png_get_io_ptr(png_ptr);
 	if (io_ptr == nullptr) return;

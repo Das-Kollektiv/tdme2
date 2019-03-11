@@ -11,8 +11,11 @@ using tdme::utils::Enum;
 
 using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 
-class tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType final
-	: public Enum
+/**
+ * Level editor entity physics body type
+ * @author Andreas Drewke
+ */
+class tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType final: public Enum
 {
 public:
 	static LevelEditorEntityPhysics_BodyType* NONE;

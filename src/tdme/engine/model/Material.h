@@ -184,7 +184,7 @@ public:
 	 * @param transparencyPathName transparency path name
 	 * @param transparencyFileName transparency file name
 	 */
-	void setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName = "", const string& transparencyFileName = "");
+	void setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName = string(), const string& transparencyFileName = string());
 
 	/**
 	 * @return if material has a diffuse texture
