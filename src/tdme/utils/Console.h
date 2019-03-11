@@ -62,7 +62,7 @@ private:
 	static void initLogWriterThread();
 
 	//
-	static Mutex mutex;
-	static vector<string> messages;
+	static Mutex* mutex;
+	static vector<string>* messages;
 	static LogWriterThread logWriterThread;
 };

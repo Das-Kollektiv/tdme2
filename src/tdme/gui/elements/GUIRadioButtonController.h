@@ -39,7 +39,7 @@ private:
 	static string CONDITION_ENABLED;
 	bool selected {  };
 	bool disabled {  };
-	static map<string, vector<GUIElementNode*>> radioButtonGroupNodesByName;
+	static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
 	MutableString value {  };
 
 	/** 

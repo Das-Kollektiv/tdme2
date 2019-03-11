@@ -242,9 +242,19 @@ using tdme::utils::Time;
 #endif
 
 constexpr int32_t Application::FPS;
+Application::ApplicationShutdown Application::applicationShutdown;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
+
+Application::ApplicationShutdown::~ApplicationShutdown() {
+	if (Application::application != nullptr) {
+		Console::println("Application::ApplicationShutdown::~ApplicationShutdown(): Shutting down application");
+		Application::application->dispose();
+		delete Application::application;
+		Application::application = nullptr;
+	}
+}
 
 Application::Application() {
 	Application::application = this;

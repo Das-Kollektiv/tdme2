@@ -14,11 +14,13 @@ using tdme::os::threading::Thread;
 using tdme::utils::Console;
 using tdme::utils::Time;
 
-Mutex Console::mutex("console");
-vector<string> Console::messages;
+Mutex* Console::mutex = nullptr;
+vector<string>* Console::messages = nullptr;
 Console::LogWriterThread Console::logWriterThread;
 
 Console::LogWriterThread::LogWriterThread(): Thread("console-logwriter-thread") {
+	Console::mutex = new Mutex("console");
+	Console::messages = new vector<string>();
 	ofstream ofs("console.log", ofstream::trunc);
 	ofs.close();
 	start();
@@ -33,51 +35,51 @@ Console::LogWriterThread::~LogWriterThread() {
 void Console::LogWriterThread::run() {
 	Console::println("Console::LogWriterThread(): start");
 	while (isStopRequested() == false) {
-		Console::mutex.lock();
-		if (Console::messages.size() > 100) flush();
-		Console::mutex.unlock();
+		Console::mutex->lock();
+		if (Console::messages->size() > 100) flush();
+		Console::mutex->unlock();
 		Thread::sleep(1000);
 	}
-	Console::mutex.lock();
-	if (Console::messages.size() > 0) flush();
-	Console::mutex.unlock();
+	Console::mutex->lock();
+	if (Console::messages->size() > 0) flush();
+	Console::mutex->unlock();
 	Console::println("Console::LogWriterThread(): done");
 }
 
 void Console::LogWriterThread::flush() {
 	cout << "Console::LogWriterThread::flush()\n";
 	ofstream ofs("console.log", ofstream::app);
-	for (auto message: Console::messages) {
+	for (auto message: *Console::messages) {
 		ofs << message;
 		ofs << "\n";
 	}
 	ofs.close();
-	Console::messages.clear();
+	Console::messages->clear();
 }
 
 void Console::println(const string& str)
 {
-	mutex.lock();
+	mutex->lock();
 	cout << str << endl;
-	messages.push_back(str);
-	mutex.unlock();
+	messages->push_back(str);
+	mutex->unlock();
 }
 
 void Console::print(const string& str)
 {
-	mutex.lock();
+	mutex->lock();
 	cout << str;
-	if (messages.size() == 0) messages.push_back("");
-	messages[messages.size() - 1]+= str;
-	mutex.unlock();
+	if (messages->size() == 0) messages->push_back("");
+	(*messages)[messages->size() - 1]+= str;
+	mutex->unlock();
 }
 
 void Console::println()
 {
-	mutex.lock();
+	mutex->lock();
 	cout << endl;
-	messages.push_back("");
-	mutex.unlock();
+	messages->push_back("");
+	mutex->unlock();
 }
 
 void Console::forceShutdown() {
