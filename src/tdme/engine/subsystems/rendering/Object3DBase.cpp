@@ -365,21 +365,19 @@ void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<str
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
 		// animation timing
-		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
 		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 		auto lastFrameAtTime = timing->getLastFrameAtTime();
 		// do progress of base animation
-		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
-		if (lastFrameAtTime != Timing::UNDEFINED) {
-			baseAnimation.currentAtTime += currentFrameAtTime - lastFrameAtTime;
+		if (lastFrameAtTime != Timing::UNDEFINED && baseAnimation.lastAtTime != -1LL) {
+			baseAnimation.currentAtTime+= currentFrameAtTime - lastFrameAtTime;
 		}
 		// do progress of overlay animations
 		for (auto it: overlayAnimationsById) {
 			AnimationState* overlayAnimationState = it.second;
-			overlayAnimationState->lastAtTime = overlayAnimationState->currentAtTime;
-			if (lastFrameAtTime != Timing::UNDEFINED) {
-				overlayAnimationState->currentAtTime += currentFrameAtTime - lastFrameAtTime;
+			if (lastFrameAtTime != Timing::UNDEFINED && overlayAnimationState->lastAtTime != -1LL) {
+				overlayAnimationState->currentAtTime+= currentFrameAtTime - lastFrameAtTime;
 			}
+			overlayAnimationState->lastAtTime = overlayAnimationState->currentAtTime;
 		}
 		// set up parent transformations matrix
 		Matrix4x4 parentTransformationsMatrix;
@@ -391,6 +389,8 @@ void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<str
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, transformationsMatrices, 0);
 		// do transformations in group render data
 		Object3DGroup::computeTransformations(object3dGroups);
+		//
+		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		// set up parent transformations matrix
@@ -424,7 +424,7 @@ void Object3DBase::computeTransformations(Timing* timing) {
 		for (auto transformationsMatrixIt: *transformationsMatrices[0]) {
 			if (baseAnimationIdxLast != -1 &&
 				baseAnimations[baseAnimationIdxLast].endAtTime != -1LL) {
-				auto blendingAnimationDuration = static_cast<float>(baseAnimations[baseAnimationIdxLast].currentAtTime - baseAnimations[baseAnimationIdxLast].endAtTime) / 258.0f;
+				auto blendingAnimationDuration = static_cast<float>(baseAnimations[baseAnimationIdxLast].currentAtTime - baseAnimations[baseAnimationIdxLast].endAtTime) / Engine::getAnimationBlendingTime();
 				Matrix4x4::interpolateLinear(
 					*transformationsMatrices[1 + baseAnimationIdxLast]->find(transformationsMatrixIt.first)->second,
 					*transformationsMatrices[1 + baseAnimationIdx]->find(transformationsMatrixIt.first)->second,

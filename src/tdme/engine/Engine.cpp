@@ -133,6 +133,7 @@ GUIShader* Engine::guiShader = nullptr;
 Engine* Engine::currentEngine = nullptr;
 bool Engine::skinningShaderEnabled = false;
 bool Engine::have4K = false;
+float Engine::animationBlendingTime = 250.0f;
 
 Engine::Engine() 
 {
@@ -196,6 +197,10 @@ bool Engine::is4K() {
 
 void Engine::set4K(bool have4K) {
 	Engine::have4K = have4K;
+}
+
+void Engine::setAnimationBlendingTime(float animationBlendingTime) {
+	Engine::animationBlendingTime = animationBlendingTime;
 }
 
 Engine* Engine::getInstance()
