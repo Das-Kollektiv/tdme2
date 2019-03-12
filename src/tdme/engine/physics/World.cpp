@@ -425,6 +425,49 @@ bool World::doCollide(Body* body1, Body* body2) {
 	return world.testOverlap(body1->collisionBody, body2->collisionBody);
 }
 
+bool World::determineCollisionHitPoints(Body* body1, Body* body2, vector<Vector3>& hitPoints) {
+	// callback
+	class CustomCollisionCallback: public reactphysics3d::CollisionCallback {
+	    public:
+			CustomCollisionCallback(vector<Vector3>& hitPoints): hitPoints(hitPoints) {
+			}
+
+			void notifyContact(const CollisionCallbackInfo& collisionCallbackInfo) {
+				auto contactManifold = collisionCallbackInfo.contactManifoldElements;
+				while (contactManifold != nullptr) {
+					auto contactPoint = contactManifold->getContactManifold()->getContactPoints();
+					while (contactPoint != nullptr) {
+						auto worldContactPointShape1 = contactManifold->getContactManifold()->getShape1()->getLocalToWorldTransform() * contactPoint->getLocalPointOnShape1();
+						auto worldContactPointShape2 = contactManifold->getContactManifold()->getShape2()->getLocalToWorldTransform() * contactPoint->getLocalPointOnShape2();
+						auto hitPoint1 = Vector3(worldContactPointShape1.x, worldContactPointShape1.y, worldContactPointShape1.z);
+						auto hitPoint2 = Vector3(worldContactPointShape2.x, worldContactPointShape2.y, worldContactPointShape2.z);
+						addHitPoint(hitPoint1);
+						addHitPoint(hitPoint2);
+						contactPoint = contactPoint->getNext();
+					}
+					contactManifold = collisionCallbackInfo.contactManifoldElements->getNext();
+				}
+			}
+
+			inline void addHitPoint(Vector3 hitPoint) {
+				bool addHitPoint = true;
+				for (auto& existingHitPoint: hitPoints) {
+					if (existingHitPoint.equals(hitPoint) == true) {
+						addHitPoint = false;
+						break;
+					}
+				}
+				if (addHitPoint == true) hitPoints.push_back(hitPoint);
+			}
+	    private:
+			vector<Vector3>& hitPoints;
+	};
+	// do the test
+	CustomCollisionCallback customCollisionCallback(hitPoints);
+	world.testCollision(body1->collisionBody, body2->collisionBody, &customCollisionCallback);
+	return hitPoints.size() > 0;
+}
+
 World* World::clone(uint16_t collisionTypeIds)
 {
 	auto clonedWorld = new World();
