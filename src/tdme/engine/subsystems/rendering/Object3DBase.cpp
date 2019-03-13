@@ -274,41 +274,42 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 	// iterate through groups
 	for (auto it: *groups) {
 		Group* group = it.second;
+		auto groupAnimationState = animationState;
 		// check for overlay animation
 		AnimationState* overlayAnimation = nullptr;
 		auto overlayAnimationIt = overlayAnimationsByJointId.find(group->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
 			overlayAnimation = overlayAnimationIt->second;
 		}
-		if (overlayAnimation != nullptr) animationState = overlayAnimation;
+		if (overlayAnimation != nullptr) groupAnimationState = overlayAnimation;
 		// group transformation matrix
 		Matrix4x4 transformationsMatrix;
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
 		// TODO: check if its better to not compute animation matrix if finished
-		if (animation != nullptr && animationState != nullptr) {
+		if (animation != nullptr && groupAnimationState != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
-			auto frames = animationState->setup->getFrames();
+			auto frames = groupAnimationState->setup->getFrames();
 			auto fps = model->getFPS();
 			// determine current and last matrix
-			auto frameAtLast = (animationState->lastAtTime / 1000.0f) * fps;
-			auto frameAtCurrent = (animationState->currentAtTime / 1000.0f) * fps;
+			auto frameAtLast = (groupAnimationState->lastAtTime / 1000.0f) * fps;
+			auto frameAtCurrent = (groupAnimationState->currentAtTime / 1000.0f) * fps;
 			// check if looping is disabled
-			if (animationState->setup->isLoop() == false && frameAtCurrent >= frames) {
+			if (groupAnimationState->setup->isLoop() == false && frameAtCurrent >= frames) {
 				frameAtLast = frames - 1;
 				frameAtCurrent = frames - 1;
-				animationState->finished = true;
+				groupAnimationState->finished = true;
 			}
 			auto matrixAtLast = (static_cast< int32_t >(frameAtLast) % frames);
 			auto matrixAtCurrent = (static_cast< int32_t >(frameAtCurrent) % frames);
-			animationState->time = frames <= 1 ? 0.0f : static_cast< float >(matrixAtCurrent) / static_cast< float >((frames - 1));
+			groupAnimationState->time = frames <= 1 ? 0.0f : static_cast< float >(matrixAtCurrent) / static_cast< float >((frames - 1));
 			// compute animation transformations matrix
 			auto t = frameAtCurrent - static_cast< float >(Math::floor(frameAtLast));
 			if (t < 1.0f) {
 				if (matrixAtLast == matrixAtCurrent) {
 					matrixAtCurrent+= 1;
 					if (matrixAtCurrent >= frames) {
-						if (animationState->setup->isLoop() == true) {
+						if (groupAnimationState->setup->isLoop() == true) {
 							matrixAtCurrent = matrixAtCurrent % frames;
 						} else {
 							matrixAtCurrent = frames - 1;
@@ -316,13 +317,13 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 					}
 				}
 				Matrix4x4::interpolateLinear(
-					(*animationMatrices)[matrixAtLast + animationState->setup->getStartFrame()],
-					(*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()],
+					(*animationMatrices)[matrixAtLast + groupAnimationState->setup->getStartFrame()],
+					(*animationMatrices)[matrixAtCurrent + groupAnimationState->setup->getStartFrame()],
 					t,
 					transformationsMatrix
 				);
 			} else {
-				transformationsMatrix.set((*animationMatrices)[matrixAtCurrent + animationState->setup->getStartFrame()]);
+				transformationsMatrix.set((*animationMatrices)[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
 			}
 		} else {
 			// no animation matrix, set up local transformation matrix up as group matrix
@@ -340,7 +341,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 		if (subGroups->size() > 0) {
 			Matrix4x4 parentTransformationsMatrix;
 			parentTransformationsMatrix.set(transformationsMatrix);
-			computeTransformationsMatrices(subGroups, parentTransformationsMatrix, animationState, transformationsMatrices, depth + 1);
+			computeTransformationsMatrices(subGroups, parentTransformationsMatrix, groupAnimationState, transformationsMatrices, depth + 1);
 		}
 	}
 }
