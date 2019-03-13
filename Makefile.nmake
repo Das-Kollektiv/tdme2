@@ -571,9 +571,9 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/mathematics/Transform.cpp \
 	ext/reactphysics3d/src/mathematics/Vector2.cpp \
 	ext/reactphysics3d/src/mathematics/Vector3.cpp \
-	ext/reactphysics3d/src/memory/PoolAllocator.cpp \
-	ext/reactphysics3d/src/memory/SingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/MemoryManager.cpp \
+	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
+	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
 
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
