@@ -181,13 +181,13 @@ public:
 	bool doCollide(Body* body1, Body* body2);
 
 	/**
-	 * Determine collision hit points
+	 * Get collision response
 	 * @param body1 body 1
 	 * @param body2 body 2
-	 * @param hitPoints hit points
+	 * @param collision collision response
 	 * @return if having hit points
 	 */
-	bool determineCollisionHitPoints(Body* body1, Body* body2, vector<Vector3>& hitPoints);
+	bool getCollisionResponse(Body* body1, Body* body2, CollisionResponse& collision);
 
 	/** 
 	 * Clone this world

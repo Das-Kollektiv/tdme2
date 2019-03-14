@@ -20,6 +20,7 @@
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/CollisionListener.h>
+#include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/BoundingBox.h>
@@ -41,6 +42,7 @@ using tdme::engine::physics::Body;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::physics::CollisionListener;
+using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
@@ -549,14 +551,14 @@ void Body::removeCollisionListener(CollisionListener* listener)
 	collisionListener.erase(remove(collisionListener.begin(), collisionListener.end(), listener), collisionListener.end());
 }
 
-void Body::fireOnCollision(Body* other, CollisionResponse* collisionResponse)
+void Body::fireOnCollision(Body* other, CollisionResponse& collisionResponse)
 {
 	for (auto listener: collisionListener) {
 		listener->onCollision(this, other, collisionResponse);
 	}
 }
 
-void Body::fireOnCollisionBegin(Body* other, CollisionResponse* collisionResponse)
+void Body::fireOnCollisionBegin(Body* other, CollisionResponse& collisionResponse)
 {
 	for (auto listener: collisionListener) {
 		listener->onCollisionBegin(this, other, collisionResponse);

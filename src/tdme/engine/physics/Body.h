@@ -19,6 +19,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/engine/physics/CollisionListener.h>
+#include <tdme/engine/physics/CollisionResponse.h>
 
 using std::remove;
 using std::vector;
@@ -85,14 +86,14 @@ private:
 	 * @param other other
 	 * @param collisionResponse collision response
 	 */
-	void fireOnCollision(Body* other, CollisionResponse* collisionResponse);
+	void fireOnCollision(Body* other, CollisionResponse& collisionResponse);
 
 	/**
 	 * Fire on collision begin
 	 * @param other other
 	 * @param collisionResponse collision response
 	 */
-	void fireOnCollisionBegin(Body* other, CollisionResponse* collisionResponse);
+	void fireOnCollisionBegin(Body* other, CollisionResponse& collisionResponse);
 
 	/**
 	 * Fire on collision end
@@ -337,21 +338,6 @@ public:
 	 * @param torque torque
 	 */
 	void addTorque(const Vector3& torque);
-
-	/**
-	 * Checks if this rigid body does collide with given bounding volume
-	 * @deprecated this method is deprecated, please try to avoid it
-	 * @param boundingVolume bounding volume
-	 * @param collision collision
-	 */
-	bool doesCollideWith(BoundingVolume* boundingVolume, CollisionResponse* collision);
-
-	/**
-	 * Checks if this rigid body does collide with another rigid body
-	 * @param body rigid body
-	 * @param collision collision
-	 */
-	bool doesCollideWith(Body* body, CollisionResponse* collision);
 
 	/** 
 	 * Add a collision listener to this rigid body

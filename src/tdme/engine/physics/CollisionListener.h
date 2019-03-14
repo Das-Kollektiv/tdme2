@@ -27,7 +27,7 @@ struct tdme::engine::physics::CollisionListener
 	 * @param body2 body 2
 	 * @param collisionResponse collision response
 	 */
-	virtual void onCollision(Body* body1, Body* body2, CollisionResponse* collisionResponse) = 0;
+	virtual void onCollision(Body* body1, Body* body2, CollisionResponse& collisionResponse) = 0;
 
 	/** 
 	 * On collision begin
@@ -38,7 +38,7 @@ struct tdme::engine::physics::CollisionListener
 	 * @param body2 body 2
 	 * @param collisionResponse collision response
 	 */
-	virtual void onCollisionBegin(Body* body1, Body* body2, CollisionResponse* collisionResponse) = 0;
+	virtual void onCollisionBegin(Body* body1, Body* body2, CollisionResponse& collisionResponse) = 0;
 
 	/** 
 	 * On collision end

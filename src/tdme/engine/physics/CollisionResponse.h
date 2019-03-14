@@ -155,52 +155,6 @@ public:
 		return &selectedEntity->hitPoints[i];
 	}
 
-	/** 
-	 * Set up response from given collision response
-	 * @param response response
-	 */
-	inline CollisionResponse* fromResponse(CollisionResponse* response) {
-		// copy reponse
-		selectedEntity = nullptr;
-		entities = response->entities;
-		// determine selected entity
-		if (response->selectedEntity != nullptr)
-		for (auto i = 0; i < response->entities.size(); i++) {
-			if (&response->entities[i] == response->selectedEntity) {
-				selectedEntity = &entities[i];
-				return this;
-			}
-		}
-		// done
-		return this;
-	}
-
-	/** 
-	 * Set up response from given collision response
-	 * @param response response
-	 */
-	inline CollisionResponse* mergeResponse(CollisionResponse* response) {
-		// TODO: This does not seem to be used, remove it then!
-		for (auto i = 0; i < response->entities.size(); i++) {
-			auto& srcEntity = response->entities[i];
-			CollisionResponse_Entity* dstEntity = nullptr;
-			if (entities.size() > 0) dstEntity = &entities[0];
-			if (dstEntity == nullptr || srcEntity.distance > dstEntity->distance) {
-				if (dstEntity == nullptr) {
-					entities.push_back(CollisionResponse_Entity());
-					dstEntity = &entities[entities.size() - 1];
-				}
-				dstEntity->distance = srcEntity.distance;
-				dstEntity->normal.set(srcEntity.normal);
-			}
-			selectedEntity = &entities[0];
-			for (auto j = 0; j < srcEntity.hitPoints.size(); j++) {
-				dstEntity->addHitPoint(srcEntity.hitPoints[j]);
-			}
-		}
-		return this;
-	}
-
 	/**
 	 * Public constructor
 	 */

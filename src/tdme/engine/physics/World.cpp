@@ -190,10 +190,10 @@ void World::update(float deltaTime)
 					if (bodyCollisionsLastFrame.find(bodyKey) == bodyCollisionsLastFrame.end() &&
 						bodyCollisionsLastFrame.find(bodyKeyInverted) == bodyCollisionsLastFrame.end()) {
 						// fire on collision begin
-						body1->fireOnCollisionBegin(body2, &collision);
+						body1->fireOnCollisionBegin(body2, collision);
 					}
 					// fire on collision
-					body1->fireOnCollision(body2, &collision);
+					body1->fireOnCollision(body2, collision);
 					// reset collision
 					collision.reset();
 				}
@@ -425,47 +425,45 @@ bool World::doCollide(Body* body1, Body* body2) {
 	return world.testOverlap(body1->collisionBody, body2->collisionBody);
 }
 
-bool World::determineCollisionHitPoints(Body* body1, Body* body2, vector<Vector3>& hitPoints) {
+bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& collision) {
 	// callback
 	class CustomCollisionCallback: public reactphysics3d::CollisionCallback {
 	    public:
-			CustomCollisionCallback(vector<Vector3>& hitPoints): hitPoints(hitPoints) {
+			CustomCollisionCallback(CollisionResponse& collision): collision(collision) {
 			}
 
 			void notifyContact(const CollisionCallbackInfo& collisionCallbackInfo) {
-				auto contactManifold = collisionCallbackInfo.contactManifoldElements;
-				while (contactManifold != nullptr) {
-					auto contactPoint = contactManifold->getContactManifold()->getContactPoints();
+				auto manifold = collisionCallbackInfo.contactManifoldElements;
+				while (manifold != nullptr) {
+					auto contactPoint = manifold->getContactManifold()->getContactPoints();
 					while (contactPoint != nullptr) {
-						auto worldContactPointShape1 = contactManifold->getContactManifold()->getShape1()->getLocalToWorldTransform() * contactPoint->getLocalPointOnShape1();
-						auto worldContactPointShape2 = contactManifold->getContactManifold()->getShape2()->getLocalToWorldTransform() * contactPoint->getLocalPointOnShape2();
-						auto hitPoint1 = Vector3(worldContactPointShape1.x, worldContactPointShape1.y, worldContactPointShape1.z);
-						auto hitPoint2 = Vector3(worldContactPointShape2.x, worldContactPointShape2.y, worldContactPointShape2.z);
-						addHitPoint(hitPoint1);
-						addHitPoint(hitPoint2);
+						// construct collision
+						auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
+						auto normal = contactPoint->getNormal();
+						entity->getNormal().set(normal.x, normal.y, normal.z);
+						auto shape1 = manifold->getContactManifold()->getShape1();
+						auto shape2 = manifold->getContactManifold()->getShape2();
+						auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
+						auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
+						auto& localPoint1 = contactPoint->getLocalPointOnShape1();
+						auto& localPoint2 = contactPoint->getLocalPointOnShape2();
+						auto worldPoint1 = shapeLocalToWorldTransform1 * localPoint1;
+						auto worldPoint2 = shapeLocalToWorldTransform2 * localPoint2;
+						entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));
+						entity->addHitPoint(Vector3(worldPoint2.x, worldPoint2.y, worldPoint2.z));
 						contactPoint = contactPoint->getNext();
 					}
-					contactManifold = collisionCallbackInfo.contactManifoldElements->getNext();
+					manifold = collisionCallbackInfo.contactManifoldElements->getNext();
 				}
 			}
 
-			inline void addHitPoint(Vector3 hitPoint) {
-				bool addHitPoint = true;
-				for (auto& existingHitPoint: hitPoints) {
-					if (existingHitPoint.equals(hitPoint) == true) {
-						addHitPoint = false;
-						break;
-					}
-				}
-				if (addHitPoint == true) hitPoints.push_back(hitPoint);
-			}
 	    private:
-			vector<Vector3>& hitPoints;
+			CollisionResponse& collision;
 	};
 	// do the test
-	CustomCollisionCallback customCollisionCallback(hitPoints);
+	CustomCollisionCallback customCollisionCallback(collision);
 	world.testCollision(body1->collisionBody, body2->collisionBody, &customCollisionCallback);
-	return hitPoints.size() > 0;
+	return collision.getEntityCount() > 0;
 }
 
 World* World::clone(uint16_t collisionTypeIds)
