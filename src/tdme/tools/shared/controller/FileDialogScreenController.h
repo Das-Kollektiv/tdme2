@@ -44,6 +44,8 @@ private:
 	GUIElementNode* fileName {  };
 	GUIElementNode* files {  };
 	Action* applyAction {  };
+	vector<string> fileList;
+	bool filtered {  };
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -68,6 +70,13 @@ private:
 	 * @return success
 	 */
 	bool setupFileDialogListBox();
+
+	/**
+	 * Set up file dialog list box files
+	 * @param fileList file list
+	 * @param selectedFile selected file
+	 */
+	void setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile = string());
 
 public:
 

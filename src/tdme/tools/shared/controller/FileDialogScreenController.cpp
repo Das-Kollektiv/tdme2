@@ -46,6 +46,7 @@ FileDialogScreenController::FileDialogScreenController()
 {
 	this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
 	this->applyAction = nullptr;
+	this->filtered = false;
 }
 
 FileDialogScreenController::~FileDialogScreenController() {
@@ -120,7 +121,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 
 	caption->setText(MutableString(captionText).append(directory));
 
-	vector<string> fileList;
+	fileList.clear();
 	try {
 		auto directory = cwd;
 		ExtensionFilter extensionsFilter(this);
@@ -131,6 +132,17 @@ bool FileDialogScreenController::setupFileDialogListBox()
 		success = false;
 	}
 
+	setupFileDialogListBoxFiles(fileList);
+	fileName->getController()->setValue(MutableString("Type a string to filter the list..."));
+
+	//
+	filtered = false;
+
+	//
+	return success;
+}
+
+void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string>& fileList, const string& selectedFile) {
 	auto filesInnerNode = dynamic_cast< GUIParentNode* >(files->getScreenNode()->getNodeById(files->getId() + "_inner"));
 	auto idx = 1;
 	string filesInnerNodeSubNodesXML = "";
@@ -144,19 +156,18 @@ bool FileDialogScreenController::setupFileDialogListBox()
 			GUIParser::escapeQuotes(file) +
 			"\" value=\"" +
 			GUIParser::escapeQuotes(file) +
-			"\" />\n";
+			"\"" +
+			(selectedFile == file?" selected=\"true\"":"") +
+			"/>\n";
 	}
 	filesInnerNodeSubNodesXML =
 		filesInnerNodeSubNodesXML + "</scrollarea>\n";
 	try {
-		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, true);
+		filesInnerNode->replaceSubNodes(filesInnerNodeSubNodesXML, false);
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-
-	//
-	return success;
 }
 
 void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, Action* applyAction)
@@ -212,7 +223,25 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 					setupFileDialogListBox();
 				}
 			} else {
+				if (filtered == true) {
+					setupFileDialogListBoxFiles(fileList, selectedFile);
+					filtered = false;
+				}
 				fileName->getController()->setValue(selectedFile);
+			}
+		} else
+		if (node->getId() == "filedialog_filename") {
+			auto filterString = StringUtils::toLowerCase(node->getController()->getValue().getString());
+			if (FileSystem::getInstance()->fileExists(cwd + "/" + filterString) == true) {
+				auto selectedFile = node->getController()->getValue().getString();
+				setupFileDialogListBoxFiles(fileList, selectedFile);
+			} else {
+				vector<string> fileListFiltered;
+				for (auto file: fileList) {
+					if (StringUtils::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
+				}
+				setupFileDialogListBoxFiles(fileListFiltered);
+				filtered = true;
 			}
 		}
 	} catch (Exception& exception) {
