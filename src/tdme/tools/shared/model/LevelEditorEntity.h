@@ -11,6 +11,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
+#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 
@@ -61,7 +62,7 @@ private:
 	LevelEditorEntityLODLevel* lodLevel3;
 	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
 	LevelEditorEntityPhysics* physics {  };
-	LevelEditorEntityParticleSystem* particleSystem {  };
+	vector<LevelEditorEntityParticleSystem*> particleSystems {  };
 	LevelEditorEntityModel* modelSettings;
 	bool renderGroups {  };
 	string shaderId {  };
@@ -232,10 +233,39 @@ public:
 	void setLODLevel3(LevelEditorEntityLODLevel* lodLevel);
 
 	/** 
+	 * @return particle systems count
+	 */
+	inline int32_t getParticleSystemsCount() {
+		return particleSystems.size();
+	}
+
+	/**
+	 * Add particle system
+	 */
+	inline void addParticleSystem() {
+		particleSystems.push_back(new LevelEditorEntityParticleSystem());
+	}
+
+	/**
+	 * Remove particle system from given index
+	 * @param idx particle system index
+	 * @return success
+	 */
+	inline bool removeParticleSystemAt(int idx) {
+		if (idx < 0 || idx >= particleSystems.size()) return false;
+		auto particleSystem = particleSystems[idx];
+		particleSystems.erase(remove(particleSystems.begin(), particleSystems.end(), particleSystem), particleSystems.end());
+		delete particleSystem;
+		return true;
+	}
+
+	/**
+	 * Get particle system at given index
+	 * @param idx particle system index
 	 * @return level editor entity particle system
 	 */
-	inline LevelEditorEntityParticleSystem* getParticleSystem() {
-		return particleSystem;
+	inline LevelEditorEntityParticleSystem* getParticleSystemAt(int idx) {
+		return particleSystems[idx];
 	}
 
 	/**

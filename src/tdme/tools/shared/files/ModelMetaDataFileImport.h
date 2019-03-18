@@ -17,6 +17,7 @@ using std::string;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 using tdme::os::filesystem::FileSystemException;
 using tdme::ext::jsonbox::Value;
@@ -84,5 +85,13 @@ private:
 	 * @return level editor lod level
 	 */
 	static LevelEditorEntityLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
+
+	/**
+	 * Parse particle system
+	 * @param particleSystem particle system to be parsed into
+	 * @param pathName path name
+	 * @param jParticleSystem JSON particle system object
+	 */
+	static void parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem);
 
 };

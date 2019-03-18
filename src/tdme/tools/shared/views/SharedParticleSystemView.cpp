@@ -134,12 +134,17 @@ void SharedParticleSystemView::setEntity(LevelEditorEntity* entity)
 {
 	engine->reset();
 	this->entity = entity;
+	this->particleSystemIdx = 0;
 	initParticleSystemRequested = true;
 }
 
 void SharedParticleSystemView::initParticleSystemRequest()
 {
 	initParticleSystemRequested = true;
+}
+
+void SharedParticleSystemView::updateParticleSystemRequest() {
+	updateParticleSystemRequested = true;
 }
 
 void SharedParticleSystemView::initParticleSystem()
@@ -204,10 +209,12 @@ void SharedParticleSystemView::display()
 	}
 	if (initParticleSystemRequested == true) {
 		initParticleSystem();
-		particleSystemScreenController->setParticleSystemType();
-		particleSystemScreenController->setParticleSystemEmitter();
 		initParticleSystemRequested = false;
 		cameraRotationInputHandler->reset();
+	}
+	if (updateParticleSystemRequested == true) {
+		initParticleSystem();
+		updateParticleSystemRequested = false;
 	}
 	auto particleSystemEntity = dynamic_cast< ParticleSystemEntity* >(engine->getEntity("model"));
 	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == false) {
@@ -221,7 +228,7 @@ void SharedParticleSystemView::display()
 
 void SharedParticleSystemView::updateGUIElements()
 {
-	if (entity != nullptr) {
+	if (entity != nullptr && entity->getParticleSystemsCount() > 0) {
 		particleSystemScreenController->setScreenCaption("Particle System - " + (entity->getEntityFileName().length() > 0 ? FileSystem::getInstance()->getFileName(entity->getEntityFileName()) : entity->getName()));
 		auto preset = entity->getProperty("preset");
 		particleSystemScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", entity, "");
@@ -229,13 +236,20 @@ void SharedParticleSystemView::updateGUIElements()
 		entityPhysicsView->setBoundingVolumes(entity);
 		entityPhysicsView->setPhysics(entity);
 		entitySoundsView->setSounds(entity);
+		particleSystemScreenController->setParticleSystemType();
+		particleSystemScreenController->setParticleSystemEmitter();
+		particleSystemScreenController->setParticleSystemListBox(entity->getParticleSystemsCount(), particleSystemIdx);
 	} else {
-		particleSystemScreenController->setScreenCaption("Particle System - no entity loaded");
+		particleSystemScreenController->setScreenCaption("Particle System - no particle system");
 		particleSystemScreenController->unsetEntityProperties();
 		particleSystemScreenController->unsetEntityData();
 		entityPhysicsView->unsetBoundingVolumes();
 		entityPhysicsView->unsetPhysics();
 		entitySoundsView->unsetSounds();
+		particleSystemScreenController->unsetParticleSystemType();
+		particleSystemScreenController->unsetParticleSystemEmitter();
+		particleSystemScreenController->setParticleSystemListBox(0, particleSystemIdx);
+		particleSystemScreenController->unsetParticleSystemListBox();
 	}
 }
 
@@ -370,6 +384,16 @@ LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(const string& na
 void SharedParticleSystemView::onSetEntityData()
 {
 }
+
+int SharedParticleSystemView::getParticleSystemIndex() {
+	return particleSystemIdx;
+}
+
+void SharedParticleSystemView::setParticleSystemIndex(int idx) {
+	this->particleSystemIdx = idx;
+	updateGUIElements();
+}
+
 
 void SharedParticleSystemView::playSound(const string& soundId) {
 	audio->removeEntity("sound");

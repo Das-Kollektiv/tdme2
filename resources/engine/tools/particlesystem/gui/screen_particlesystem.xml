@@ -3,7 +3,55 @@
 		<panel alignment="none" width="100%" height="30" padding="5" vertical-align="center">
 			<text id="screen_caption" font="resources/gui-system/fonts/Roboto_20.fnt" text="Particle System" width="100%" horizontal-align="center" height="auto" />
 		</panel>
-		<element width="100%" height="*" border="1" border-color="#000000" background-color="#FF000000" focusable="true" ignore-events="true" />
+		<element width="100%" height="*" focusable="false" ignore-events="true">
+			<layout alignment="vertical" width="180" height="100%">
+				<space height="*" />
+				<panel alignment="vertical" width="180" height="80%">
+					<selectbox id="particlesystems_listbox" name="particlesystems_listbox" width="100%" height="*">
+						<scrollarea-vertical id="particlesystems_listbox_inner_scrollarea" width="100%" height="100%">
+							<selectbox-option text="Option A" value="1" /> 
+							<selectbox-option text="Option B" value="2" />
+							<selectbox-option text="Option C" value="3" />
+							<selectbox-option text="Option D" value="4" />
+							<selectbox-option text="Option E" value="5" />
+							<selectbox-option text="Option F" value="6" />
+							<selectbox-option text="Option G" value="7" />
+							<selectbox-option text="Option H" value="8" />
+							<selectbox-option text="Option I" value="9" />
+							<selectbox-option text="Option J" value="10" selected="true" />
+							<selectbox-option text="Option K" value="11" />
+							<selectbox-option text="Option L" value="12" />
+							<selectbox-option text="Option M" value="13" />
+							<selectbox-option text="Option N" value="14" />
+							<selectbox-option text="Option O" value="15" />
+							<selectbox-option text="Option P" value="16" />
+							<selectbox-option text="Option Q" value="17" />
+							<selectbox-option text="Option R" value="18" />
+							<selectbox-option text="Option S" value="19" />
+							<selectbox-option text="Option T" value="20" />
+							<selectbox-option text="Option U" value="21" />
+							<selectbox-option text="Option V" value="22" />
+							<selectbox-option text="Option W" value="23" />
+							<selectbox-option text="Option X" value="24" />
+							<selectbox-option text="Option Y" value="25" />
+							<selectbox-option text="Option Z" value="26" />
+						</scrollarea-vertical>
+					</selectbox>
+					<space height="10" />
+					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+						<space width="*" />
+						<button id="button_particlesystem_add" name="button_particlesystem_add" text="Add" width="50" />
+						<space width="*" />
+						<button id="button_particlesystem_remove" name="button_particlesystem_remove" text="Remove" width="90" />
+						<space width="*" />
+						<space height="*" />
+					</layout>
+					<space height="10" />
+				</panel>
+				<space height="*" />
+			</layout>
+			<element width="100%" height="100%" border="1" border-color="#000000" background-color="#FF000000" focusable="true" ignore-events="true" />
+		</element>
 		<panel width="100%" height="200">
 			<tabs alignment="vertical" width="100%" height="100%">
 				<tabs-header>

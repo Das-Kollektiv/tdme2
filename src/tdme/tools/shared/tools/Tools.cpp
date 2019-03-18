@@ -284,7 +284,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	// particle system
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
-		modelEntity = Level::createParticleSystem(entity->getParticleSystem(), "model", true);
+		modelEntity = Level::createEntity(entity, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
 	} else {
 		// model
@@ -327,12 +327,14 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 		}
 	}
 
-	// do a feasible scale
-	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
-	objectScale.scale(1.0f / maxAxisDimension);
-	if (modelEntity != nullptr) {
-		modelEntity->setScale(objectScale);
-		modelEntity->update();
+	if (entity->getType() != LevelEditorEntity_EntityType::PARTICLESYSTEM) {
+		// do a feasible scale
+		float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
+		objectScale.scale(1.0f / maxAxisDimension);
+		if (modelEntity != nullptr) {
+			modelEntity->setScale(objectScale);
+			modelEntity->update();
+		}
 	}
 
 	// generate ground

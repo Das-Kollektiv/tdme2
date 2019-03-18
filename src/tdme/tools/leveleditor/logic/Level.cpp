@@ -17,6 +17,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
@@ -78,6 +79,7 @@ using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::models::ModelReader;
@@ -299,11 +301,26 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 	} else
 	// particle system
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		entity = createParticleSystem(
-			levelEditorEntity->getParticleSystem(),
-			id,
-			false
-		);
+		vector<ParticleSystemEntity*> particleSystems;
+		for (auto i = 0; i < levelEditorEntity->getParticleSystemsCount(); i++) {
+			auto particleSystem = createParticleSystem(
+				levelEditorEntity->getParticleSystemAt(i),
+				id + (i == 0?"":"." + to_string(i)),
+				true
+			);
+			if (particleSystem != nullptr) particleSystems.push_back(dynamic_cast<ParticleSystemEntity*>(particleSystem));
+		}
+		if (particleSystems.size() == 1) {
+			entity = dynamic_cast<Entity*>(particleSystems[0]);
+		} else
+		if (particleSystems.size() > 1) {
+			entity = new ParticleSystemGroup(
+				id,
+				true,
+				true,
+				particleSystems
+			);
+		}
 	}
 
 	//

@@ -64,10 +64,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	this->lodLevel2 = nullptr;
 	this->lodLevel3 = nullptr;
 	this->physics = nullptr;
-	this->particleSystem = nullptr;
 	this->modelSettings = nullptr;
 	if (this->type == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		this->particleSystem = new LevelEditorEntityParticleSystem();
 		this->physics = new LevelEditorEntityPhysics();
 	} else
 	if (this->type == LevelEditorEntity_EntityType::MODEL) {
@@ -86,7 +84,7 @@ LevelEditorEntity::~LevelEditorEntity() {
 	if (lodLevel2 != nullptr) delete lodLevel2;
 	if (lodLevel3 != nullptr) delete lodLevel3;
 	if (physics != nullptr) delete physics;
-	if (particleSystem != nullptr) delete particleSystem;
+	for (auto particleSystem: particleSystems) delete particleSystem;
 	if (modelSettings != nullptr) delete modelSettings;
 	for (auto i = 0; i < boundingVolumes.size(); i++) delete boundingVolumes[i];
 	for (auto sound: sounds) delete sound;

@@ -51,10 +51,12 @@ private:
 	LevelEditorEntity* entity {  };
 	bool loadParticleSystemRequested {  };
 	bool initParticleSystemRequested {  };
+	bool updateParticleSystemRequested {  };
 	string particleSystemFile {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
 	int64_t audioStarted { -1LL };
 	int64_t audioOffset { -1LL };
+	int particleSystemIdx { 0 };
 
 	/**
 	 * Load settings
@@ -89,6 +91,11 @@ public:
 	 */
 	virtual void initParticleSystemRequest();
 
+	/**
+	 * Request update particle system
+	 */
+	virtual void updateParticleSystemRequest();
+
 	/** 
 	 * @return pop up views
 	 */
@@ -108,6 +115,17 @@ public:
 	 * Set entity
 	 */
 	virtual void setEntity(LevelEditorEntity* entity);
+
+	/**
+	 * @return particle system index
+	 */
+	virtual int getParticleSystemIndex();
+
+	/**
+	 * Set particle system index, the particle system to edit
+	 * @param idx index
+	 */
+	virtual void setParticleSystemIndex(int idx);
 
 	/**
 	 * Init particle system

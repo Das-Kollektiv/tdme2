@@ -61,6 +61,7 @@
             - bounding box emitter
             - circle on plane emitter
             - ...
+          - there is also support for particle system groups
         - objects with support for LOD
         - objects with support for render groups for foliage and such
         - object picking
@@ -162,7 +163,6 @@
     - documentation
 
 - What is WIP or planned
-    - Particle system groups
     - PBR lighting shader for GL3/CORE+
     - simple script language for GUI
     - Expose shader and post processing programs setup API
