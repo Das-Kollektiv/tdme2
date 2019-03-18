@@ -20,6 +20,7 @@ namespace engine {
 		class Object3DModel;
 		class Object3DRenderGroup;
 		class ObjectParticleSystemEntity;
+		class ParticleSystemGroup;
 		class Partition;
 		class PartitionNone;
 		class PartitionOctTree;

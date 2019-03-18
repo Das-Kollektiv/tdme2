@@ -11,6 +11,7 @@
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
@@ -121,20 +122,21 @@ void ShadowMap::render(Light* light)
 	LODObject3D* lodObject = nullptr;
 	Object3DRenderGroup* org = nullptr;
 	ObjectParticleSystemEntity* opse = nullptr;
+	ParticleSystemGroup* psg = nullptr;
 	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
-		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
 			if ((object = org->getObject()) != nullptr) {
 				if (object->isDynamicShadowingEnabled() == false) continue;
 				object->preRender();
 				visibleObjects.push_back(object);
 			}
 		} else
-		if ((object = dynamic_cast< Object3D* >(entity)) != nullptr) {
+		if ((object = dynamic_cast<Object3D*>(entity)) != nullptr) {
 			if (object->isDynamicShadowingEnabled() == false) continue;
 			object->preRender();
 			visibleObjects.push_back(object);
 		} else
-		if ((lodObject = dynamic_cast< LODObject3D* >(entity)) != nullptr) {
+		if ((lodObject = dynamic_cast<LODObject3D*>(entity)) != nullptr) {
 			if (lodObject->isDynamicShadowingEnabled() == false) continue;
 			auto object = lodObject->getLODObject();
 			if (object != nullptr) {
@@ -142,13 +144,32 @@ void ShadowMap::render(Light* light)
 				visibleObjects.push_back(object);
 			}
 		} else
-		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(entity)) != nullptr) {
+		if ((opse = dynamic_cast<ObjectParticleSystemEntity*>(entity)) != nullptr) {
 			if (opse->isDynamicShadowingEnabled() == false) continue;
-			for (auto object: *opse->getEnabledObjects()) {
+			for (auto object: opse->getEnabledObjects()) {
 				object->preRender();
 				visibleObjects.push_back(object);
 			}
+		} else
+		if ((opse = dynamic_cast<ObjectParticleSystemEntity*>(entity)) != nullptr) {
+			if (opse->isDynamicShadowingEnabled() == false) continue;
+			for (auto object: opse->getEnabledObjects()) {
+				object->preRender();
+				visibleObjects.push_back(object);
+			}
+		} else
+		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
+			for (auto ps: psg->getParticleSystems()) {
+				opse = dynamic_cast<ObjectParticleSystemEntity*>(ps);
+				if (opse == nullptr) continue;
+				if (opse->isDynamicShadowingEnabled() == false) continue;
+				for (auto object: opse->getEnabledObjects()) {
+					object->preRender();
+					visibleObjects.push_back(object);
+				}
+			}
 		}
+
 	}
 	// generate shadow map texture matrix
 	computeDepthBiasMVPMatrix();

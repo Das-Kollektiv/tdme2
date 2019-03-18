@@ -29,44 +29,32 @@ void ObjectParticleSystemEntity::initialize()
 	for (auto object: objects) object->setParentEntity(this);
 }
 
-BoundingBox* ObjectParticleSystemEntity::getBoundingBox()
-{
-	return boundingBox;
-}
-
-BoundingBox* ObjectParticleSystemEntity::getBoundingBoxTransformed()
-{
-	return boundingBoxTransformed;
-}
-
-const vector<Object3D*>* ObjectParticleSystemEntity::getEnabledObjects()
-{
-	return &enabledObjects;
-}
-
 void ObjectParticleSystemEntity::fromTransformations(const Transformations& transformations)
 {
 	ObjectParticleSystemEntityInternal::fromTransformations(transformations);
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ObjectParticleSystemEntity::update()
 {
 	ObjectParticleSystemEntityInternal::update();
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ObjectParticleSystemEntity::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
-	// frustum culling enabled?
-	if (frustumCulling == true) {
-		// yeo, add or remove from partition
-		if (enabled == true) {
-			if (engine != nullptr) engine->partition->addEntity(this);
-		} else {
-			if (engine != nullptr) engine->partition->removeEntity(this);
+	// frustum if root entity
+	if (parentEntity == nullptr) {
+		// frustum culling enabled?
+		if (frustumCulling == true) {
+			// yeo, add or remove from partition
+			if (enabled == true) {
+				if (engine != nullptr) engine->partition->addEntity(this);
+			} else {
+				if (engine != nullptr) engine->partition->removeEntity(this);
+			}
 		}
 	}
 	// call parent class::setEnabled()
@@ -76,7 +64,7 @@ void ObjectParticleSystemEntity::setEnabled(bool enabled)
 void ObjectParticleSystemEntity::updateParticles()
 {
 	ObjectParticleSystemEntityInternal::updateParticles();
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 bool ObjectParticleSystemEntity::isFrustumCulling() {
@@ -97,14 +85,14 @@ void ObjectParticleSystemEntity::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
 }
 
 void ObjectParticleSystemEntity::setAutoEmit(bool autoEmit) {
 	// delegate to base class
 	ObjectParticleSystemEntityInternal::setAutoEmit(autoEmit);
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
 }
 
 void ObjectParticleSystemEntity::dispose()

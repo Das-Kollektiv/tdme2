@@ -96,18 +96,17 @@ void LevelEditorLevel::computeBoundingBox()
 	Vector3 bbMax;
 	for (auto levelEditorObject: objects) {
 		if (levelEditorObject->getEntity()->getType() != LevelEditorEntity_EntityType::MODEL) continue;
-		auto bv = levelEditorObject->getEntity()->getModel()->getBoundingBox();
-		auto cbv = bv->clone();
-		cbv->fromBoundingVolumeWithTransformations(bv, levelEditorObject->getTransformations());
+		BoundingBox cbv;
+		cbv.fromBoundingVolumeWithTransformations(levelEditorObject->getEntity()->getModel()->getBoundingBox(), levelEditorObject->getTransformations());
 		bbDimension.set(
-			cbv->getDimensions().getX(),
-			cbv->getDimensions().getY(),
-			cbv->getDimensions().getZ()
+			cbv.getDimensions().getX(),
+			cbv.getDimensions().getY(),
+			cbv.getDimensions().getZ()
 		);
 		bbDimension.scale(0.5f);
-		bbMin.set(cbv->getCenter());
+		bbMin.set(cbv.getCenter());
 		bbMin.sub(bbDimension);
-		bbMax.set(cbv->getCenter());
+		bbMax.set(cbv.getCenter());
 		bbMax.add(bbDimension);
 		auto objectLeft = bbMin.getX();
 		auto objectRight = bbMax.getX();
@@ -131,7 +130,6 @@ void LevelEditorLevel::computeBoundingBox()
 			if (objectTop > top) top = objectTop;
 			if (objectBottom < bottom) bottom = objectBottom;
 		}
-		delete cbv;
 	}
 	boundingBox.getMin().set(left, bottom, near);
 	boundingBox.getMax().set(right, top, far);

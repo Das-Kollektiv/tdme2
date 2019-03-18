@@ -94,6 +94,7 @@ SRCS = \
 	src/tdme/engine/Object3DModel.cpp \
 	src/tdme/engine/Object3DRenderGroup.cpp \
 	src/tdme/engine/ObjectParticleSystemEntity.cpp \
+	src/tdme/engine/ParticleSystemGroup.cpp \
 	src/tdme/engine/PartitionNone.cpp \
 	src/tdme/engine/PartitionOctTree.cpp \
 	src/tdme/engine/PointsParticleSystemEntity.cpp \

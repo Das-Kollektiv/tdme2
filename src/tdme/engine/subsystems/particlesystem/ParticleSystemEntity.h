@@ -94,11 +94,6 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
 	virtual void setEffectColorAdd(const Color4& effectColorAdd) = 0;
 
 	/** 
-	 * @return particle emitter
-	 */
-	virtual ParticleEmitter* getParticleEmitter() = 0;
-
-	/** 
 	 * Updates the particle entity
 	 */
 	virtual void updateParticles() = 0;

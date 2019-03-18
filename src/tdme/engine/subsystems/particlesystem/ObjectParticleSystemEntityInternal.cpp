@@ -77,8 +77,6 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const str
 
 ObjectParticleSystemEntityInternal::~ObjectParticleSystemEntityInternal() {
 	delete emitter;
-	delete boundingBox;
-	delete boundingBoxTransformed;
 	for (auto i = 0; i < objects.size(); i++) delete objects[i];
 }
 
@@ -187,11 +185,6 @@ void ObjectParticleSystemEntityInternal::fromTransformations(const Transformatio
 	inverseTransformation.invert();
 }
 
-ParticleEmitter* ObjectParticleSystemEntityInternal::getParticleEmitter()
-{
-	return emitter;
-}
-
 int32_t ObjectParticleSystemEntityInternal::emitParticles()
 {
 	// determine particles to spawn
@@ -242,8 +235,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 {
 	Vector3 velocityForTime;
 	auto first = true;
-	auto& bbMinXYZ = boundingBoxTransformed->getMin().getArray();
-	auto& bbMaxXYZ = boundingBoxTransformed->getMax().getArray();
+	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
+	auto& bbMaxXYZ = boundingBoxTransformed.getMax().getArray();
 	auto timeDelta = engine->getTiming()->getDeltaTime();
 	for (auto i = 0; i < particles.size(); i++) {
 		auto& particle = particles[i];
@@ -272,8 +265,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		object->setTranslation(object->getTranslation().clone().add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f)));
 		object->update();
 		if (first == true) {
-			boundingBoxTransformed->getMin().set(object->getBoundingBoxTransformed()->getMin());
-			boundingBoxTransformed->getMax().set(object->getBoundingBoxTransformed()->getMax());
+			boundingBoxTransformed.getMin().set(object->getBoundingBoxTransformed()->getMin());
+			boundingBoxTransformed.getMax().set(object->getBoundingBoxTransformed()->getMax());
 			first = false;
 		} else {
 			auto& objBbMinXYZ = object->getBoundingBoxTransformed()->getMin().getArray();
@@ -287,8 +280,8 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 		}
 	}
 	// compute bounding boxes
-	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
+	boundingBoxTransformed.update();
+	boundingBox.fromBoundingVolumeWithTransformations(&boundingBoxTransformed, inverseTransformation);
 }
 
 void ObjectParticleSystemEntityInternal::dispose()

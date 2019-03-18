@@ -35,15 +35,6 @@ void Object3D::setRenderer(GLRenderer* renderer)
 {
 }
 
-void Object3D::setParentEntity(Entity* entity) {
-	this->parentEntity = entity;
-}
-
-Entity* Object3D::getParentEntity() {
-	return this->parentEntity;
-}
-
-
 void Object3D::fromTransformations(const Transformations& transformations)
 {
 	Object3DInternal::fromTransformations(transformations);

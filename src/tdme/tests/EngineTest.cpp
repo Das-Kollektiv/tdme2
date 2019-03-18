@@ -10,6 +10,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Timing.h>
@@ -50,6 +51,7 @@ using tdme::engine::Entity;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
+using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystemEntity;
 using tdme::engine::Rotation;
 using tdme::engine::Timing;
@@ -149,7 +151,7 @@ void EngineTest::display()
 	}
 	circleTransformations.setTranslation(circleTranslation);
 	circleTransformations.update();
-	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->getParticleEmitter()->fromTransformations(circleTransformations);
+	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	osEngine->display();
@@ -204,28 +206,6 @@ void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool 
 			player->setAnimation("still");
 		}
 	}
-	/*
-	if (playerBoundingVolumeTransformed->doesCollideWith(cubeBoundingVolumeTransformed, collision) == true && collision->hasPenetration() == true) {
-		player->setTranslation(player->getTranslation().clone().sub(collision->getNormal()->clone().scale(collision->getPenetration())));
-		player->update();
-		playerBoundingVolumeTransformed->fromTransformations(player->getTransformations());
-	}
-	if (playerBoundingVolumeTransformed->doesCollideWith(barrelBoundingVolumeTransformed, collision) == true && collision->hasPenetration() == true) {
-		player->setTranslation(player->getTranslation().clone().sub(collision->getNormal()->clone().scale(collision->getPenetration())));
-		player->update();
-		playerBoundingVolumeTransformed->fromTransformations(player->getTransformations());
-	}
-	for (auto i = 0; i < players.size(); i++) {
-		if (idx == i)
-			continue;
-
-		if (playerBoundingVolumeTransformed->doesCollideWith(playerBoundingVolumesTransformed[i], collision) == true && collision->hasPenetration()) {
-			player->setTranslation(player->getTranslation().clone().sub(collision->getNormal()->clone().scale(collision->getPenetration())));
-			player->update();
-			playerBoundingVolumeTransformed->fromTransformations(player->getTransformations());
-		}
-	}
-	*/
 }
 
 void EngineTest::dispose()
@@ -362,17 +342,21 @@ void EngineTest::initialize()
 		engine->getEntity("water")->setEnabled(true);
 		engine->addEntity(new PointsParticleSystemEntity("snow", new BoundingBoxParticleEmitter(15, 15000, 1000, 0, 0, new OrientedBoundingBox(Vector3(0.0f, 4.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(4.0f, 0.0f, 4.0f)), Vector3(0.0f, -0.5f, 0.0f), Vector3(0.0f, -0.1f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.5f), Color4(0.8f, 0.8f, 1.0f, 0.5f)), 1024, 10.0f, true));
 		engine->getEntity("snow")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true));
-		engine->getEntity("firebase")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity("firetop", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, 10.0f, true));
-		engine->getEntity("firetop")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity("firesmoke", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.4f, 0.0f), Color4(0.8f, 0.8f, 0.8f, 0.1f), Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, 10.0f, true));
-		engine->getEntity("firesmoke")->setEnabled(true);
+		engine->addEntity(
+			new ParticleSystemGroup(
+				"fire",
+				true,
+				true,
+				{
+					new PointsParticleSystemEntity("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
+					new PointsParticleSystemEntity("firetop", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
+					new PointsParticleSystemEntity("firesmoke", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.4f, 0.0f), Color4(0.8f, 0.8f, 0.8f, 0.1f), Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, 10.0f, true)
+				}
+			)
+		);
 		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->setPickable(false);
 		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("snow")))->setPickable(false);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("firebase")))->setPickable(true);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("firetop")))->setPickable(true);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("firesmoke")))->setPickable(true);
+		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("fire")))->setPickable(true);
 	} catch (Exception& exception) {
 		Console::print(string("EngineTest::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

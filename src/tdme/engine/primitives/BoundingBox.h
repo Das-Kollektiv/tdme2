@@ -104,12 +104,6 @@ public:
 	void fromBoundingVolumeWithTransformations(BoundingBox* original, const Transformations& transformations);
 
 	/**
-	 * Clones this bounding volume
-	 * @return cloned bounding volume
-	 */
-	BoundingBox* clone() const;
-
-	/**
 	 * Updates this bounding box
 	 */
 	void update();

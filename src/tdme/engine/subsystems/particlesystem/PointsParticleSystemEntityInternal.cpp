@@ -56,8 +56,6 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const str
 	this->emitter = emitter;
 	particles.resize(maxPoints);
 	this->maxPoints = maxPoints;
-	boundingBox = new BoundingBox();
-	boundingBoxTransformed = new BoundingBox();
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
@@ -71,8 +69,6 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const str
 
 PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {
 	delete emitter;
-	delete boundingBox;
-	delete boundingBoxTransformed;
 	if (pointsRenderPool != nullptr) delete pointsRenderPool;
 	engine->getTextureManager()->removeTexture(texture->getId());
 }
@@ -189,8 +185,8 @@ void PointsParticleSystemEntityInternal::updateParticles()
 	Vector3 velocityForTime;
 	Vector3 point;
 	// bounding box transformed min, max xyz
-	auto& bbMinXYZ = boundingBoxTransformed->getMin().getArray();
-	auto& bbMaxXYZ = boundingBoxTransformed->getMax().getArray();
+	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
+	auto& bbMaxXYZ = boundingBoxTransformed.getMax().getArray();
 	//
 	auto haveBoundingBox = false;
 	// compute distance from camera
@@ -256,20 +252,15 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		return;
 	}
 	// scale a bit up to make picking work better
-	boundingBoxTransformed->getMin().sub(0.05f);
-	boundingBoxTransformed->getMax().add(0.05f);
+	boundingBoxTransformed.getMin().sub(0.05f);
+	boundingBoxTransformed.getMax().add(0.05f);
 	// compute bounding boxes
-	boundingBoxTransformed->update();
-	boundingBox->fromBoundingVolumeWithTransformations(boundingBoxTransformed, inverseTransformation);
+	boundingBoxTransformed.update();
+	boundingBox.fromBoundingVolumeWithTransformations(&boundingBoxTransformed, inverseTransformation);
 }
 
 void PointsParticleSystemEntityInternal::dispose()
 {
-}
-
-ParticleEmitter* PointsParticleSystemEntityInternal::getParticleEmitter()
-{
-	return emitter;
 }
 
 int32_t PointsParticleSystemEntityInternal::emitParticles()

@@ -45,7 +45,6 @@ class tdme::engine::Object3DRenderGroup final:
 private:
 	Engine* engine { nullptr };
 	bool frustumCulling { true };
-	bool groupRendering { true };
 
 	string id;
 	bool enabled {  };

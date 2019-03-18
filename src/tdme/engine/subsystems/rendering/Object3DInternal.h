@@ -6,7 +6,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -38,8 +38,8 @@ protected:
 	bool dynamicShadowing {  };
 	Color4 effectColorMul {  };
 	Color4 effectColorAdd {  };
-	BoundingBox* boundingBox {  };
-	BoundingBox* boundingBoxTransformed {  };
+	BoundingBox boundingBox {  };
+	BoundingBox boundingBoxTransformed {  };
 
 public:
 	/** 
@@ -124,7 +124,7 @@ public:
 	 * @return bounding box
 	 */
 	inline virtual BoundingBox* getBoundingBox() {
-		return boundingBox;
+		return &boundingBox;
 	}
 
 	/** 
@@ -132,7 +132,7 @@ public:
 	 * @return bounding sphere
 	 */
 	inline virtual BoundingBox* getBoundingBoxTransformed() {
-		return boundingBoxTransformed;
+		return &boundingBoxTransformed;
 	}
 
 	/**

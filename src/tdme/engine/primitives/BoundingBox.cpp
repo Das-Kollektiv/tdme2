@@ -92,11 +92,6 @@ void BoundingBox::fromBoundingVolumeWithTransformations(BoundingBox* boundingBox
 	update();
 }
 
-BoundingBox* BoundingBox::clone() const
-{
-	return new BoundingBox(min, max);
-}
-
 void BoundingBox::update() {
 	auto& minXYZ = min.getArray();
 	auto& maxXYZ = max.getArray();

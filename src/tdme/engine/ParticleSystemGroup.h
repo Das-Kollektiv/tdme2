@@ -5,61 +5,56 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/model/Color4.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
+#include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
-#include <tdme/engine/Entity.h>
+#include <tdme/math/Math.h>
 
 using std::vector;
 using std::string;
 
-using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-using tdme::engine::model::Color4;
-using tdme::engine::model::Model;
+using tdme::engine::ObjectParticleSystemEntity;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::particlesystem::ParticleEmitter;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /** 
- * Object particle system entity to be used with engine class
+ * Particle system group, which combines several particle systems into a group, to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::ObjectParticleSystemEntity final
-	: public ObjectParticleSystemEntityInternal
+class tdme::engine::ParticleSystemGroup final
+	: public Transformations
+	, public ParticleSystemEntity
 	, public Entity
 {
 private:
+	Engine* engine { nullptr };
 	bool frustumCulling { true };
-	Entity* parentEntity { nullptr };
+
+	string id;
+	bool enableDynamicShadows {  };
+	bool enabled {  };
+	bool pickable {  };
+	bool autoEmit {  };
+	BoundingBox boundingBox {  };
+	BoundingBox boundingBoxTransformed {  };
+	Color4 effectColorMul {  };
+	Color4 effectColorAdd {  };
+	vector<ParticleSystemEntity*> particleSystems {  };
 
 public:
-	/**
-	 * Set parent entity, needs to be called before adding to engine
-	 * @param entity entity
-	 */
-	inline void setParentEntity(Entity* entity) {
-		this->parentEntity = entity;
-	}
-
-	/**
-	 * @return parent entity
-	 */
-	inline Entity* getParentEntity() {
-		return parentEntity;
-	}
-
 	// overriden methods
 	void initialize() override;
 
@@ -71,11 +66,17 @@ public:
 		return &boundingBoxTransformed;
 	}
 
+	inline bool isActive() override {
+		auto active = true;
+		for (auto particleSystem: particleSystems) active&= particleSystem->isActive();
+		return active;
+	}
+
 	/** 
-	 * @return enabled objects
+	 * @return particle systems
 	 */
-	inline const vector<Object3D*>& getEnabledObjects() {
-		return enabledObjects;
+	inline const vector<ParticleSystemEntity*>& getParticleSystems() {
+		return particleSystems;
 	}
 
 	// overriden methods
@@ -83,21 +84,33 @@ public:
 	void update() override;
 	void setEnabled(bool enabled) override;
 	void updateParticles() override;
-	bool isFrustumCulling() override;
+	inline bool isFrustumCulling() override {
+		return frustumCulling;
+	}
 	void setFrustumCulling(bool frustumCulling) override;
+	inline bool isAutoEmit() override {
+		return autoEmit;
+	}
 	void setAutoEmit(bool autoEmit) override;
+	inline int32_t emitParticles() override {
+		auto emittedParticles = 0;
+		for (auto particleSystem: particleSystems) Math::max(emittedParticles, particleSystem->emitParticles());
+		return emittedParticles;
+	}
 
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param model model
-	 * @param scale scale
 	 * @param autoEmit auto emit
 	 * @param enableDynamicShadows enable dynamic shadows
-	 * @param maxCount max count
-	 * @param emitter emitter
+	 * @param particleSystems particle systems
 	 */
-	ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+	ParticleSystemGroup(const string& id, bool autoEmit, bool enableDynamicShadows, const vector<ParticleSystemEntity*>& particleSystems);
+
+	/**
+	 * Destructor
+	 */
+	~ParticleSystemGroup();
 
 public:
 
@@ -107,43 +120,49 @@ public:
 	virtual void setRenderer(GLRenderer* renderer) override;
 
 	inline virtual const Color4& getEffectColorAdd() const override {
-		return ObjectParticleSystemEntityInternal::getEffectColorAdd();
+		return effectColorAdd;
 	}
 
 	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
-		ObjectParticleSystemEntityInternal::setEffectColorAdd(effectColorAdd);
+		for (auto particleSystem: particleSystems) particleSystem->setEffectColorAdd(effectColorAdd);
+		this->effectColorAdd = effectColorAdd;
 	}
 
 	inline virtual const Color4& getEffectColorMul() const override {
-		return ObjectParticleSystemEntityInternal::getEffectColorMul();
+		return effectColorMul;
 	}
 
 	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
-		ObjectParticleSystemEntityInternal::setEffectColorMul(effectColorMul);
+		for (auto particleSystem: particleSystems) particleSystem->setEffectColorMul(effectColorMul);
+		this->effectColorMul = effectColorMul;
 	}
 
 	inline virtual const string& getId() override {
-		return ObjectParticleSystemEntityInternal::getId();
+		return id;
 	}
 
 	inline virtual bool isDynamicShadowingEnabled() override {
-		return ObjectParticleSystemEntityInternal::isDynamicShadowingEnabled();
+		return enableDynamicShadows;
 	}
 
 	inline virtual bool isEnabled() override {
-		return ObjectParticleSystemEntityInternal::isEnabled();
+		return enabled;
 	}
 
 	inline virtual bool isPickable() override {
-		return ObjectParticleSystemEntityInternal::isPickable();
+		return pickable;
 	}
 
 	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(dynamicShadowing);
+		for (auto particleSystem: particleSystems) {
+			auto ops = dynamic_cast<ObjectParticleSystemEntity*>(particleSystem);
+			if (ops != nullptr) ops->setDynamicShadowingEnabled(dynamicShadowing);
+		}
+		this->enableDynamicShadows = dynamicShadowing;
 	}
 
 	inline virtual void setPickable(bool pickable) override {
-		ObjectParticleSystemEntityInternal::setPickable(pickable);
+		this->pickable = true;
 	}
 
 	inline virtual const Vector3& getTranslation() const override {

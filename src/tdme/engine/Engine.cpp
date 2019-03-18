@@ -20,6 +20,7 @@
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystemEntity.h>
@@ -77,6 +78,7 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystemEntity;
+using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystemEntity;
@@ -661,6 +663,7 @@ void Engine::initRendering()
 	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
+	visiblePsgs.clear();
 	visibleObjectRenderGroups.clear();
 
 	//
@@ -674,6 +677,7 @@ void Engine::computeTransformations()
 
 	Object3D* object = nullptr;
 	LODObject3D* lodObject = nullptr;
+	ParticleSystemGroup* psg = nullptr;
 	ObjectParticleSystemEntity* opse = nullptr;
 	PointsParticleSystemEntity* ppse = nullptr;
 	ParticleSystemEntity* pse = nullptr;
@@ -696,7 +700,7 @@ void Engine::computeTransformations()
 			} \
 		} else \
 		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(_entity)) != nullptr) { \
-			for (auto object: *opse->getEnabledObjects()) { \
+			for (auto object: opse->getEnabledObjects()) { \
 				object->preRender(); \
 				object->computeSkinning(); \
 				visibleObjects.push_back(object); \
@@ -728,6 +732,10 @@ void Engine::computeTransformations()
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);
 			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
+		} else
+		if ((psg = dynamic_cast< ParticleSystemGroup* >(entity)) != nullptr) {
+			visiblePsgs.push_back(psg); \
+			for (auto ps: psg->getParticleSystems()) COMPUTE_ENTITY_TRANSFORMATIONS(ps);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
@@ -1022,6 +1030,21 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	}
 	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visiblePpses) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			// check if match or better match
+			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+				selectedEntity = entity;
+				selectedEntityDistance = entityDistance;
+			}
+		}
+	}
+	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	for (auto entity: visiblePsgs) {
 		// skip if not pickable or ignored by filter
 		if (entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;

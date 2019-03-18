@@ -30,6 +30,7 @@
 
 - What is WIP
     - audio support
+    - particle system groups
 
 - Links
 	- TDME2 Engine, see [README.md](./README.md)
