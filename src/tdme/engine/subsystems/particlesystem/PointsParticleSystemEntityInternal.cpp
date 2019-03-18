@@ -47,11 +47,10 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
+PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
 {
 	this->id = id;
 	this->enabled = true;
-	this->doCollisionTests = doCollisionTests;
 	// will be activated on emit and auto unactivated if no more active particles
 	this->active = false;
 	this->emitter = emitter;
@@ -230,28 +229,6 @@ void PointsParticleSystemEntityInternal::updateParticles()
 		color[3] += colorAdd[3] * static_cast< float >(timeDelta);
 		// transform particle position to camera space
 		modelViewMatrix.multiply(particle.position, point);
-		/*
-		// TODO: remove me completely
-		// check for collision
-		if (doCollisionTests == true) {
-			for (auto _i = engine->getPartition()->getObjectsNearTo(particle.position)->iterator(); _i->hasNext(); ) {
-				Entity* entity = dynamic_cast< Entity* >(_i->next());
-				{
-					// skip on our self
-					if (static_cast< void* >(entity) == static_cast< void* >(this))
-						continue;
-					// skip on other particle systems
-					if (dynamic_cast< ParticleSystemEntity* >(entity) != nullptr)
-						continue;
-					// do we have a collision?
-					if (entity->getBoundingBoxTransformed()->containsPoint(particle.position)) {
-						particle.active = false;
-						continue;
-					}
-				}
-			}
-		}
-		*/
 		//
 		activeParticles++;
 		// compute distance from camera

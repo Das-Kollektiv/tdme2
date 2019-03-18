@@ -57,14 +57,13 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param doCollisionTests do collision tests
 	 * @param emitter emitter
 	 * @param maxPoints max points
 	 * @param pointSize point size
 	 * @param autoEmit auto emit
 	 * @param texture texture
 	 */
-	PointsParticleSystemEntity(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
+	PointsParticleSystemEntity(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
 public:
 	// overridden methods
 	virtual void setEngine(Engine* engine) override;

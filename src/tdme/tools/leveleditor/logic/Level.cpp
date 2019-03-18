@@ -224,7 +224,6 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				auto pointParticleSystem = particleSystem->getPointParticleSystem();
 				return new PointsParticleSystemEntity(
 					id,
-					false,
 					engineEmitter,
 					pointParticleSystem->getMaxPoints(),
 					pointParticleSystem->getPointSize(),

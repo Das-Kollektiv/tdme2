@@ -48,7 +48,6 @@ protected:
 	bool autoEmit {  };
 	bool enabled {  };
 	bool active {  };
-	bool doCollisionTests {  };
 	ParticleEmitter* emitter {  };
 	vector<Particle> particles {  };
 	int32_t maxPoints {  };
@@ -120,14 +119,13 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param doCollisionTests do collision tests
 	 * @param emitter emitter
 	 * @param maxPoints max points
 	 * @param pointSize point size
 	 * @param autoEmit auto emit
 	 * @param texture texture
 	 */
-	PointsParticleSystemEntityInternal(const string& id, bool doCollisionTests, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
+	PointsParticleSystemEntityInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
 
 	/**
 	 * Destructor
