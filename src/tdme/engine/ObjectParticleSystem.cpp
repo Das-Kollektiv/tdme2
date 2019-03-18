@@ -1,4 +1,4 @@
-#include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/ObjectParticleSystem.h>
 
 #include <vector>
 #include <string>
@@ -12,36 +12,36 @@
 using std::vector;
 using std::string;
 
-using tdme::engine::ObjectParticleSystemEntity;
+using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 
-ObjectParticleSystemEntity::ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
-	ObjectParticleSystemEntityInternal(id, model, scale, autoEmit, enableDynamicShadows, maxCount, emitter)
+ObjectParticleSystem::ObjectParticleSystem(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter) :
+	ObjectParticleSystemInternal(id, model, scale, autoEmit, enableDynamicShadows, maxCount, emitter)
 {
 }
 
-void ObjectParticleSystemEntity::initialize()
+void ObjectParticleSystem::initialize()
 {
 	for (auto object: objects) object->setParentEntity(this);
 }
 
-void ObjectParticleSystemEntity::fromTransformations(const Transformations& transformations)
+void ObjectParticleSystem::fromTransformations(const Transformations& transformations)
 {
-	ObjectParticleSystemEntityInternal::fromTransformations(transformations);
+	ObjectParticleSystemInternal::fromTransformations(transformations);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
-void ObjectParticleSystemEntity::update()
+void ObjectParticleSystem::update()
 {
-	ObjectParticleSystemEntityInternal::update();
+	ObjectParticleSystemInternal::update();
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
-void ObjectParticleSystemEntity::setEnabled(bool enabled)
+void ObjectParticleSystem::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
@@ -58,20 +58,20 @@ void ObjectParticleSystemEntity::setEnabled(bool enabled)
 		}
 	}
 	// call parent class::setEnabled()
-	ObjectParticleSystemEntityInternal::setEnabled(enabled);
+	ObjectParticleSystemInternal::setEnabled(enabled);
 }
 
-void ObjectParticleSystemEntity::updateParticles()
+void ObjectParticleSystem::updateParticles()
 {
-	ObjectParticleSystemEntityInternal::updateParticles();
+	ObjectParticleSystemInternal::updateParticles();
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
-bool ObjectParticleSystemEntity::isFrustumCulling() {
+bool ObjectParticleSystem::isFrustumCulling() {
 	return frustumCulling;
 }
 
-void ObjectParticleSystemEntity::setFrustumCulling(bool frustumCulling) {
+void ObjectParticleSystem::setFrustumCulling(bool frustumCulling) {
 	// check if enabled and engine attached
 	if (enabled == true && engine != nullptr) {
 		// had frustum culling
@@ -88,25 +88,25 @@ void ObjectParticleSystemEntity::setFrustumCulling(bool frustumCulling) {
 	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
 }
 
-void ObjectParticleSystemEntity::setAutoEmit(bool autoEmit) {
+void ObjectParticleSystem::setAutoEmit(bool autoEmit) {
 	// delegate to base class
-	ObjectParticleSystemEntityInternal::setAutoEmit(autoEmit);
+	ObjectParticleSystemInternal::setAutoEmit(autoEmit);
 	// delegate change to engine
 	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
 }
 
-void ObjectParticleSystemEntity::dispose()
+void ObjectParticleSystem::dispose()
 {
-	ObjectParticleSystemEntityInternal::dispose();
+	ObjectParticleSystemInternal::dispose();
 }
 
-void ObjectParticleSystemEntity::setEngine(Engine* engine)
+void ObjectParticleSystem::setEngine(Engine* engine)
 {
-	ObjectParticleSystemEntityInternal::setEngine(engine);
+	ObjectParticleSystemInternal::setEngine(engine);
 }
 
-void ObjectParticleSystemEntity::setRenderer(GLRenderer* renderer)
+void ObjectParticleSystem::setRenderer(GLRenderer* renderer)
 {
-	ObjectParticleSystemEntityInternal::setRenderer(renderer);
+	ObjectParticleSystemInternal::setRenderer(renderer);
 }
 

@@ -7,7 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -21,7 +21,7 @@ using std::string;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
-using tdme::engine::ObjectParticleSystemEntity;
+using tdme::engine::ObjectParticleSystem;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -155,7 +155,7 @@ public:
 
 	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		for (auto particleSystem: particleSystems) {
-			auto ops = dynamic_cast<ObjectParticleSystemEntity*>(particleSystem);
+			auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
 			if (ops != nullptr) ops->setDynamicShadowingEnabled(dynamicShadowing);
 		}
 		this->enableDynamicShadows = dynamicShadowing;

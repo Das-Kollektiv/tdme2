@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
+#include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.h>
 
 #include <algorithm>
 #include <string>
@@ -26,7 +26,7 @@ using std::remove;
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
+using tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
@@ -44,7 +44,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
+ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
 {
 	this->id = id;
 	this->enabled = true;
@@ -75,17 +75,17 @@ ObjectParticleSystemEntityInternal::ObjectParticleSystemEntityInternal(const str
 	this->particlesToSpawnRemainder = 0.0f;
 }
 
-ObjectParticleSystemEntityInternal::~ObjectParticleSystemEntityInternal() {
+ObjectParticleSystemInternal::~ObjectParticleSystemInternal() {
 	delete emitter;
 	for (auto i = 0; i < objects.size(); i++) delete objects[i];
 }
 
-const string& ObjectParticleSystemEntityInternal::getId()
+const string& ObjectParticleSystemInternal::getId()
 {
 	return id;
 }
 
-void ObjectParticleSystemEntityInternal::setEngine(Engine* engine)
+void ObjectParticleSystemInternal::setEngine(Engine* engine)
 {
 	this->engine = engine;
 	for (auto i = 0; i < objects.size(); i++) {
@@ -93,7 +93,7 @@ void ObjectParticleSystemEntityInternal::setEngine(Engine* engine)
 	}
 }
 
-void ObjectParticleSystemEntityInternal::setRenderer(GLRenderer* renderer)
+void ObjectParticleSystemInternal::setRenderer(GLRenderer* renderer)
 {
 	this->renderer = renderer;
 	for (auto i = 0; i < objects.size(); i++) {
@@ -101,67 +101,67 @@ void ObjectParticleSystemEntityInternal::setRenderer(GLRenderer* renderer)
 	}
 }
 
-bool ObjectParticleSystemEntityInternal::isEnabled()
+bool ObjectParticleSystemInternal::isEnabled()
 {
 	return enabled;
 }
 
-bool ObjectParticleSystemEntityInternal::isActive()
+bool ObjectParticleSystemInternal::isActive()
 {
 	return enabledObjects.size() > 0;
 }
 
-void ObjectParticleSystemEntityInternal::setEnabled(bool enabled)
+void ObjectParticleSystemInternal::setEnabled(bool enabled)
 {
 	this->enabled = enabled;
 }
 
-const Color4& ObjectParticleSystemEntityInternal::getEffectColorMul() const
+const Color4& ObjectParticleSystemInternal::getEffectColorMul() const
 {
 	return effectColorMul;
 }
 
-void ObjectParticleSystemEntityInternal::setEffectColorMul(const Color4& effectColorMul)
+void ObjectParticleSystemInternal::setEffectColorMul(const Color4& effectColorMul)
 {
 	this->effectColorMul = effectColorMul;
 }
 
-const Color4& ObjectParticleSystemEntityInternal::getEffectColorAdd() const
+const Color4& ObjectParticleSystemInternal::getEffectColorAdd() const
 {
 	return effectColorAdd;
 }
 
-void ObjectParticleSystemEntityInternal::setEffectColorAdd(const Color4& effectColorAdd)
+void ObjectParticleSystemInternal::setEffectColorAdd(const Color4& effectColorAdd)
 {
 	this->effectColorAdd = effectColorAdd;
 }
 
-bool ObjectParticleSystemEntityInternal::isPickable()
+bool ObjectParticleSystemInternal::isPickable()
 {
 	return pickable;
 }
 
-void ObjectParticleSystemEntityInternal::setPickable(bool pickable)
+void ObjectParticleSystemInternal::setPickable(bool pickable)
 {
 	this->pickable = pickable;
 }
 
-bool ObjectParticleSystemEntityInternal::isAutoEmit()
+bool ObjectParticleSystemInternal::isAutoEmit()
 {
 	return autoEmit;
 }
 
-void ObjectParticleSystemEntityInternal::setAutoEmit(bool autoEmit)
+void ObjectParticleSystemInternal::setAutoEmit(bool autoEmit)
 {
 	this->autoEmit = autoEmit;
 }
 
-bool ObjectParticleSystemEntityInternal::isDynamicShadowingEnabled()
+bool ObjectParticleSystemInternal::isDynamicShadowingEnabled()
 {
 	return enableDynamicShadows;
 }
 
-void ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
+void ObjectParticleSystemInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 {
 	enableDynamicShadows = dynamicShadowing;
 	for (auto i = 0; i < objects.size(); i++) {
@@ -169,7 +169,7 @@ void ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamic
 	}
 }
 
-void ObjectParticleSystemEntityInternal::update()
+void ObjectParticleSystemInternal::update()
 {
 	Transformations::update();
 	emitter->fromTransformations(*this);
@@ -177,7 +177,7 @@ void ObjectParticleSystemEntityInternal::update()
 	inverseTransformation.invert();
 }
 
-void ObjectParticleSystemEntityInternal::fromTransformations(const Transformations& transformations)
+void ObjectParticleSystemInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
@@ -185,7 +185,7 @@ void ObjectParticleSystemEntityInternal::fromTransformations(const Transformatio
 	inverseTransformation.invert();
 }
 
-int32_t ObjectParticleSystemEntityInternal::emitParticles()
+int32_t ObjectParticleSystemInternal::emitParticles()
 {
 	// determine particles to spawn
 	auto particlesToSpawn = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
@@ -231,7 +231,7 @@ int32_t ObjectParticleSystemEntityInternal::emitParticles()
 	return particlesSpawned;
 }
 
-void ObjectParticleSystemEntityInternal::updateParticles()
+void ObjectParticleSystemInternal::updateParticles()
 {
 	Vector3 velocityForTime;
 	auto first = true;
@@ -284,7 +284,7 @@ void ObjectParticleSystemEntityInternal::updateParticles()
 	boundingBox.fromBoundingVolumeWithTransformations(&boundingBoxTransformed, inverseTransformation);
 }
 
-void ObjectParticleSystemEntityInternal::dispose()
+void ObjectParticleSystemInternal::dispose()
 {
 	for (auto i = 0; i < objects.size(); i++) {
 		objects[i]->dispose();

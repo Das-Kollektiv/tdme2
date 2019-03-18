@@ -11,7 +11,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/ParticleSystemGroup.h>
-#include <tdme/engine/PointsParticleSystemEntity.h>
+#include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
@@ -52,7 +52,7 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
 using tdme::engine::ParticleSystemGroup;
-using tdme::engine::PointsParticleSystemEntity;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
@@ -336,11 +336,11 @@ void EngineTest::initialize()
 		osCube->setDynamicShadowingEnabled(true);
 		osCube->update();
 		osEngine->addEntity(osCube);
-		engine->addEntity(new PointsParticleSystemEntity("circle", new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, 10.0f, true));
+		engine->addEntity(new PointsParticleSystem("circle", new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, 10.0f, true));
 		engine->getEntity("circle")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity("water", new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, 20.0f, true));
+		engine->addEntity(new PointsParticleSystem("water", new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, 20.0f, true));
 		engine->getEntity("water")->setEnabled(true);
-		engine->addEntity(new PointsParticleSystemEntity("snow", new BoundingBoxParticleEmitter(15, 15000, 1000, 0, 0, new OrientedBoundingBox(Vector3(0.0f, 4.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(4.0f, 0.0f, 4.0f)), Vector3(0.0f, -0.5f, 0.0f), Vector3(0.0f, -0.1f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.5f), Color4(0.8f, 0.8f, 1.0f, 0.5f)), 1024, 10.0f, true));
+		engine->addEntity(new PointsParticleSystem("snow", new BoundingBoxParticleEmitter(15, 15000, 1000, 0, 0, new OrientedBoundingBox(Vector3(0.0f, 4.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(4.0f, 0.0f, 4.0f)), Vector3(0.0f, -0.5f, 0.0f), Vector3(0.0f, -0.1f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.5f), Color4(0.8f, 0.8f, 1.0f, 0.5f)), 1024, 10.0f, true));
 		engine->getEntity("snow")->setEnabled(true);
 		engine->addEntity(
 			new ParticleSystemGroup(
@@ -348,9 +348,9 @@ void EngineTest::initialize()
 				true,
 				true,
 				{
-					new PointsParticleSystemEntity("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
-					new PointsParticleSystemEntity("firetop", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
-					new PointsParticleSystemEntity("firesmoke", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.4f, 0.0f), Color4(0.8f, 0.8f, 0.8f, 0.1f), Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, 10.0f, true)
+					new PointsParticleSystem("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
+					new PointsParticleSystem("firetop", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
+					new PointsParticleSystem("firesmoke", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.4f, 0.0f), Color4(0.8f, 0.8f, 0.8f, 0.1f), Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, 10.0f, true)
 				}
 			)
 		);

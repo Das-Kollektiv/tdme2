@@ -1,30 +1,28 @@
 #pragma once
 
-#include <vector>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.h>
+#include <tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.h>
 #include <tdme/engine/Entity.h>
 
-using std::vector;
 using std::string;
 
-using tdme::engine::subsystems::particlesystem::ObjectParticleSystemEntityInternal;
+using tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -32,12 +30,12 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /** 
- * Object particle system entity to be used with engine class
+ * Point particle system entity to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::ObjectParticleSystemEntity final
-	: public ObjectParticleSystemEntityInternal
+class tdme::engine::PointsParticleSystem final
+	: public PointsParticleSystemInternal
 	, public Entity
 {
 private:
@@ -45,6 +43,7 @@ private:
 	Entity* parentEntity { nullptr };
 
 public:
+
 	/**
 	 * Set parent entity, needs to be called before adding to engine
 	 * @param entity entity
@@ -62,23 +61,12 @@ public:
 
 	// overriden methods
 	void initialize() override;
-
 	inline BoundingBox* getBoundingBox() override {
 		return &boundingBox;
 	}
-
 	inline BoundingBox* getBoundingBoxTransformed() override {
 		return &boundingBoxTransformed;
 	}
-
-	/** 
-	 * @return enabled objects
-	 */
-	inline const vector<Object3D*>& getEnabledObjects() {
-		return enabledObjects;
-	}
-
-	// overriden methods
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;
@@ -90,60 +78,65 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param model model
-	 * @param scale scale
-	 * @param autoEmit auto emit
-	 * @param enableDynamicShadows enable dynamic shadows
-	 * @param maxCount max count
 	 * @param emitter emitter
+	 * @param maxPoints max points
+	 * @param pointSize point size
+	 * @param autoEmit auto emit
+	 * @param texture texture
 	 */
-	ObjectParticleSystemEntity(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
-
+	PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
 public:
-
-	// overriden methods
-	virtual void dispose() override;
+	// overridden methods
 	virtual void setEngine(Engine* engine) override;
 	virtual void setRenderer(GLRenderer* renderer) override;
+	virtual void dispose() override;
 
 	inline virtual const Color4& getEffectColorAdd() const override {
-		return ObjectParticleSystemEntityInternal::getEffectColorAdd();
+		return PointsParticleSystemInternal::getEffectColorAdd();
 	}
 
 	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
-		ObjectParticleSystemEntityInternal::setEffectColorAdd(effectColorAdd);
+		PointsParticleSystemInternal::setEffectColorAdd(effectColorAdd);
 	}
 
 	inline virtual const Color4& getEffectColorMul() const override {
-		return ObjectParticleSystemEntityInternal::getEffectColorMul();
+		return PointsParticleSystemInternal::getEffectColorMul();
 	}
 
 	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
-		ObjectParticleSystemEntityInternal::setEffectColorMul(effectColorMul);
+		PointsParticleSystemInternal::setEffectColorMul(effectColorMul);
 	}
 
 	inline virtual const string& getId() override {
-		return ObjectParticleSystemEntityInternal::getId();
+		return PointsParticleSystemInternal::getId();
 	}
 
 	inline virtual bool isDynamicShadowingEnabled() override {
-		return ObjectParticleSystemEntityInternal::isDynamicShadowingEnabled();
+		return PointsParticleSystemInternal::isDynamicShadowingEnabled();
 	}
 
 	inline virtual bool isEnabled() override {
-		return ObjectParticleSystemEntityInternal::isEnabled();
+		return PointsParticleSystemInternal::isEnabled();
 	}
 
 	inline virtual bool isPickable() override {
-		return ObjectParticleSystemEntityInternal::isPickable();
+		return PointsParticleSystemInternal::isPickable();
 	}
 
 	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		ObjectParticleSystemEntityInternal::setDynamicShadowingEnabled(dynamicShadowing);
+		PointsParticleSystemInternal::setDynamicShadowingEnabled(dynamicShadowing);
+	}
+
+	inline virtual float getPointSize() override {
+		return PointsParticleSystemInternal::getPointSize();
+	}
+
+	inline virtual int32_t getTextureId() override {
+		return PointsParticleSystemInternal::getTextureId();
 	}
 
 	inline virtual void setPickable(bool pickable) override {
-		ObjectParticleSystemEntityInternal::setPickable(pickable);
+		PointsParticleSystemInternal::setPickable(pickable);
 	}
 
 	inline virtual const Vector3& getTranslation() const override {

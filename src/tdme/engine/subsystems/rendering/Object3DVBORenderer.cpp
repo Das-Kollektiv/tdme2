@@ -10,7 +10,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/PointsParticleSystemEntity.h>
+#include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Face.h>
@@ -38,7 +38,7 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
-#include <tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.h>
+#include <tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Math.h>
@@ -63,7 +63,7 @@ using std::unordered_set;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
-using tdme::engine::PointsParticleSystemEntity;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Face;
@@ -92,7 +92,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
-using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
+using tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Math;
@@ -933,7 +933,7 @@ void Object3DVBORenderer::clearMaterial()
 	renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 }
 
-void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visiblePses)
+void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 {
 	// TODO: Move me into own class
 	// TODO: check me performance wise again
@@ -944,7 +944,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 
 	// merge ppses and sort them
 	for (auto i = 0; i < visiblePses.size(); i++) {
-		PointsParticleSystemEntityInternal* ppse = visiblePses[i];
+		PointsParticleSystemInternal* ppse = visiblePses[i];
 		pseTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
 	}
 	if (pseTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
@@ -961,7 +961,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 	renderer->onUpdateModelViewMatrix();
 
 	// render
-	PointsParticleSystemEntity* currentPpse = (PointsParticleSystemEntity*)pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie;
+	PointsParticleSystem* currentPpse = (PointsParticleSystem*)pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie;
 	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
 		if (point.acquired == false) break;
 		if (point.cookie != (void*)currentPpse) {
@@ -975,7 +975,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystemEntity*>& visi
 			psePointBatchVBORenderer->render();
 			psePointBatchVBORenderer->clear();
 			//
-			currentPpse = (PointsParticleSystemEntity*)point.cookie;
+			currentPpse = (PointsParticleSystem*)point.cookie;
 		}
 		psePointBatchVBORenderer->addPoint(point);
 	}

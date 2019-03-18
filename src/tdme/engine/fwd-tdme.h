@@ -19,13 +19,13 @@ namespace engine {
 		class Object3D;
 		class Object3DModel;
 		class Object3DRenderGroup;
-		class ObjectParticleSystemEntity;
+		class ObjectParticleSystem;
 		class ParticleSystemGroup;
 		class Partition;
 		class PartitionNone;
 		class PartitionOctTree;
 		class PartitionOctTree_PartitionTreeNode;
-		class PointsParticleSystemEntity;
+		class PointsParticleSystem;
 		class Rotation;
 		class Timing;
 		class Transformations;

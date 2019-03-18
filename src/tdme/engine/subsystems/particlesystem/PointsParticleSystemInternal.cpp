@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.h>
+#include <tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.h>
 
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@
 using std::string;
 using std::vector;
 
-using tdme::engine::subsystems::particlesystem::PointsParticleSystemEntityInternal;
+using tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
 using tdme::math::Math;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -47,7 +47,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
+PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
 {
 	this->id = id;
 	this->enabled = true;
@@ -67,101 +67,101 @@ PointsParticleSystemEntityInternal::PointsParticleSystemEntityInternal(const str
 	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
 }
 
-PointsParticleSystemEntityInternal::~PointsParticleSystemEntityInternal() {
+PointsParticleSystemInternal::~PointsParticleSystemInternal() {
 	delete emitter;
 	if (pointsRenderPool != nullptr) delete pointsRenderPool;
 	engine->getTextureManager()->removeTexture(texture->getId());
 }
 
-const string& PointsParticleSystemEntityInternal::getId()
+const string& PointsParticleSystemInternal::getId()
 {
 	return id;
 }
 
-void PointsParticleSystemEntityInternal::setRenderer(GLRenderer* renderer)
+void PointsParticleSystemInternal::setRenderer(GLRenderer* renderer)
 {
 	this->renderer = renderer;
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 }
 
-void PointsParticleSystemEntityInternal::setEngine(Engine* engine)
+void PointsParticleSystemInternal::setEngine(Engine* engine)
 {
 	this->engine = engine;
 }
 
-bool PointsParticleSystemEntityInternal::isEnabled()
+bool PointsParticleSystemInternal::isEnabled()
 {
 	return enabled;
 }
 
-bool PointsParticleSystemEntityInternal::isActive()
+bool PointsParticleSystemInternal::isActive()
 {
 	return active;
 }
 
-void PointsParticleSystemEntityInternal::setEnabled(bool enabled)
+void PointsParticleSystemInternal::setEnabled(bool enabled)
 {
 	this->enabled = enabled;
 }
 
-const Color4& PointsParticleSystemEntityInternal::getEffectColorMul() const
+const Color4& PointsParticleSystemInternal::getEffectColorMul() const
 {
 	return effectColorMul;
 }
 
-void PointsParticleSystemEntityInternal::setEffectColorMul(const Color4& effectColorMul)
+void PointsParticleSystemInternal::setEffectColorMul(const Color4& effectColorMul)
 {
 	this->effectColorMul = effectColorMul;
 }
 
-const Color4& PointsParticleSystemEntityInternal::getEffectColorAdd() const
+const Color4& PointsParticleSystemInternal::getEffectColorAdd() const
 {
 	return effectColorAdd;
 }
 
-void PointsParticleSystemEntityInternal::setEffectColorAdd(const Color4& effectColorAdd)
+void PointsParticleSystemInternal::setEffectColorAdd(const Color4& effectColorAdd)
 {
 	this->effectColorAdd = effectColorAdd;
 }
 
-bool PointsParticleSystemEntityInternal::isPickable()
+bool PointsParticleSystemInternal::isPickable()
 {
 	return pickable;
 }
 
-void PointsParticleSystemEntityInternal::setPickable(bool pickable)
+void PointsParticleSystemInternal::setPickable(bool pickable)
 {
 	this->pickable = pickable;
 }
 
-bool PointsParticleSystemEntityInternal::isAutoEmit()
+bool PointsParticleSystemInternal::isAutoEmit()
 {
 	return autoEmit;
 }
 
-void PointsParticleSystemEntityInternal::setAutoEmit(bool autoEmit)
+void PointsParticleSystemInternal::setAutoEmit(bool autoEmit)
 {
 	this->autoEmit = autoEmit;
 }
 
-bool PointsParticleSystemEntityInternal::isDynamicShadowingEnabled()
+bool PointsParticleSystemInternal::isDynamicShadowingEnabled()
 {
 	return false;
 }
 
-void PointsParticleSystemEntityInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
+void PointsParticleSystemInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
 {
 }
 
-float PointsParticleSystemEntityInternal::getPointSize() {
+float PointsParticleSystemInternal::getPointSize() {
 	return pointSize;
 }
 
-int32_t PointsParticleSystemEntityInternal::getTextureId() {
+int32_t PointsParticleSystemInternal::getTextureId() {
 	return textureId;
 }
 
-void PointsParticleSystemEntityInternal::update()
+void PointsParticleSystemInternal::update()
 {
 	Transformations::update();
 	emitter->fromTransformations(*this);
@@ -169,7 +169,7 @@ void PointsParticleSystemEntityInternal::update()
 	inverseTransformation.invert();
 }
 
-void PointsParticleSystemEntityInternal::fromTransformations(const Transformations& transformations)
+void PointsParticleSystemInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	emitter->fromTransformations(transformations);
@@ -177,7 +177,7 @@ void PointsParticleSystemEntityInternal::fromTransformations(const Transformatio
 	inverseTransformation.invert();
 }
 
-void PointsParticleSystemEntityInternal::updateParticles()
+void PointsParticleSystemInternal::updateParticles()
 {
 	if (enabled == false || active == false)
 		return;
@@ -259,11 +259,11 @@ void PointsParticleSystemEntityInternal::updateParticles()
 	boundingBox.fromBoundingVolumeWithTransformations(&boundingBoxTransformed, inverseTransformation);
 }
 
-void PointsParticleSystemEntityInternal::dispose()
+void PointsParticleSystemInternal::dispose()
 {
 }
 
-int32_t PointsParticleSystemEntityInternal::emitParticles()
+int32_t PointsParticleSystemInternal::emitParticles()
 {
 	// enable particle system
 	active = true;
@@ -311,7 +311,7 @@ int32_t PointsParticleSystemEntityInternal::emitParticles()
 	return particlesSpawned;
 }
 
-TransparentRenderPointsPool* PointsParticleSystemEntityInternal::getRenderPointsPool()
+TransparentRenderPointsPool* PointsParticleSystemInternal::getRenderPointsPool()
 {
 	return pointsRenderPool;
 }

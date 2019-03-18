@@ -16,8 +16,8 @@
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
-#include <tdme/engine/ObjectParticleSystemEntity.h>
-#include <tdme/engine/PointsParticleSystemEntity.h>
+#include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
@@ -77,8 +77,8 @@ using tdme::engine::Light;
 using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
-using tdme::engine::ObjectParticleSystemEntity;
-using tdme::engine::PointsParticleSystemEntity;
+using tdme::engine::ObjectParticleSystem;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
@@ -210,7 +210,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 				auto objectParticleSystem = particleSystem->getObjectParticleSystem();
 				if (objectParticleSystem->getModel() == nullptr) return nullptr;
 
-				return new ObjectParticleSystemEntity(
+				return new ObjectParticleSystem(
 					id,
 					objectParticleSystem->getModel(),
 					objectParticleSystem->getScale(),
@@ -222,7 +222,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 			} else
 			if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 				auto pointParticleSystem = particleSystem->getPointParticleSystem();
-				return new PointsParticleSystemEntity(
+				return new PointsParticleSystem(
 					id,
 					engineEmitter,
 					pointParticleSystem->getMaxPoints(),

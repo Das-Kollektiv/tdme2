@@ -19,11 +19,11 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
-#include <tdme/engine/PointsParticleSystemEntity.h>
+#include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/physics/CollisionDetection.h>
@@ -77,11 +77,11 @@ using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::LODObject3D;
-using tdme::engine::ObjectParticleSystemEntity;
+using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
-using tdme::engine::PointsParticleSystemEntity;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::physics::CollisionDetection;
@@ -678,19 +678,19 @@ void Engine::computeTransformations()
 	Object3D* object = nullptr;
 	LODObject3D* lodObject = nullptr;
 	ParticleSystemGroup* psg = nullptr;
-	ObjectParticleSystemEntity* opse = nullptr;
-	PointsParticleSystemEntity* ppse = nullptr;
+	ObjectParticleSystem* opse = nullptr;
+	PointsParticleSystem* ppse = nullptr;
 	ParticleSystemEntity* pse = nullptr;
 	Object3DRenderGroup* org = nullptr;
 
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
 	{ \
-		if ((object = dynamic_cast< Object3D* >(_entity)) != nullptr) { \
+		if ((object = dynamic_cast<Object3D*>(_entity)) != nullptr) { \
 			object->preRender(); \
 			object->computeSkinning(); \
 			visibleObjects.push_back(object); \
 		} else \
-		if ((lodObject = dynamic_cast< LODObject3D* >(_entity)) != nullptr) { \
+		if ((lodObject = dynamic_cast<LODObject3D*>(_entity)) != nullptr) { \
 			auto object = lodObject->determineLODObject(camera); \
 			if (object != nullptr) { \
 				visibleLODObjects.push_back(lodObject); \
@@ -699,7 +699,7 @@ void Engine::computeTransformations()
 				object->computeSkinning(); \
 			} \
 		} else \
-		if ((opse = dynamic_cast< ObjectParticleSystemEntity* >(_entity)) != nullptr) { \
+		if ((opse = dynamic_cast<ObjectParticleSystem*>(_entity)) != nullptr) { \
 			for (auto object: opse->getEnabledObjects()) { \
 				object->preRender(); \
 				object->computeSkinning(); \
@@ -707,7 +707,7 @@ void Engine::computeTransformations()
 			} \
 			visibleOpses.push_back(opse); \
 		} else \
-		if ((ppse = dynamic_cast< PointsParticleSystemEntity* >(_entity)) != nullptr) { \
+		if ((ppse = dynamic_cast<PointsParticleSystem*>(_entity)) != nullptr) { \
 			visiblePpses.push_back(ppse); \
 		} \
 	}
@@ -1043,7 +1043,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
-	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	// iterate visible particle system groups, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visiblePsgs) {
 		// skip if not pickable or ignored by filter
 		if (entity->isPickable() == false) continue;

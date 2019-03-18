@@ -2,14 +2,14 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/engine/PointsParticleSystemEntity.h>
+#include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::PointsParticleSystemEntity;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
 

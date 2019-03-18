@@ -49,7 +49,7 @@ class tdme::engine::Object3D final
 private:
 	friend class Engine;
 	friend class LODObject3D;
-	friend class ObjectParticleSystemEntity;
+	friend class ObjectParticleSystem;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
 
 

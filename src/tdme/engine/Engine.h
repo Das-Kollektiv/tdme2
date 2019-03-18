@@ -79,8 +79,8 @@ class tdme::engine::Engine final
 	friend class Object3DRenderGroup;
 	friend class LODObject3D;
 	friend class ParticleSystemGroup;
-	friend class ObjectParticleSystemEntity;
-	friend class PointsParticleSystemEntity;
+	friend class ObjectParticleSystem;
+	friend class PointsParticleSystem;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::rendering::BatchVBORendererPoints;
 	friend class tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
@@ -151,8 +151,8 @@ private:
 
 	vector<Object3D*> visibleObjects {  };
 	vector<LODObject3D*> visibleLODObjects {  };
-	vector<ObjectParticleSystemEntity*> visibleOpses {  };
-	vector<PointsParticleSystemEntity*> visiblePpses {  };
+	vector<ObjectParticleSystem*> visibleOpses {  };
+	vector<PointsParticleSystem*> visiblePpses {  };
 	vector<ParticleSystemGroup*> visiblePsgs {  };
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };
 	Object3DVBORenderer* object3DVBORenderer {  };

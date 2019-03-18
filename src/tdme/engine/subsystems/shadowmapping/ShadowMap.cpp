@@ -10,7 +10,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
@@ -30,7 +30,7 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::LODObject3D;
-using tdme::engine::ObjectParticleSystemEntity;
+using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -121,7 +121,7 @@ void ShadowMap::render(Light* light)
 	Object3D* object = nullptr;
 	LODObject3D* lodObject = nullptr;
 	Object3DRenderGroup* org = nullptr;
-	ObjectParticleSystemEntity* opse = nullptr;
+	ObjectParticleSystem* opse = nullptr;
 	ParticleSystemGroup* psg = nullptr;
 	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
@@ -144,14 +144,14 @@ void ShadowMap::render(Light* light)
 				visibleObjects.push_back(object);
 			}
 		} else
-		if ((opse = dynamic_cast<ObjectParticleSystemEntity*>(entity)) != nullptr) {
+		if ((opse = dynamic_cast<ObjectParticleSystem*>(entity)) != nullptr) {
 			if (opse->isDynamicShadowingEnabled() == false) continue;
 			for (auto object: opse->getEnabledObjects()) {
 				object->preRender();
 				visibleObjects.push_back(object);
 			}
 		} else
-		if ((opse = dynamic_cast<ObjectParticleSystemEntity*>(entity)) != nullptr) {
+		if ((opse = dynamic_cast<ObjectParticleSystem*>(entity)) != nullptr) {
 			if (opse->isDynamicShadowingEnabled() == false) continue;
 			for (auto object: opse->getEnabledObjects()) {
 				object->preRender();
@@ -160,7 +160,7 @@ void ShadowMap::render(Light* light)
 		} else
 		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
 			for (auto ps: psg->getParticleSystems()) {
-				opse = dynamic_cast<ObjectParticleSystemEntity*>(ps);
+				opse = dynamic_cast<ObjectParticleSystem*>(ps);
 				if (opse == nullptr) continue;
 				if (opse->isDynamicShadowingEnabled() == false) continue;
 				for (auto object: opse->getEnabledObjects()) {

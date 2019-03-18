@@ -5,9 +5,9 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
-#include <tdme/engine/ObjectParticleSystemEntity.h>
+#include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/PointsParticleSystemEntity.h>
+#include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 
@@ -17,9 +17,9 @@ using std::string;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
-using tdme::engine::ObjectParticleSystemEntity;
+using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
-using tdme::engine::PointsParticleSystemEntity;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 
@@ -32,9 +32,9 @@ ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool e
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	// TODO: put parent entity into a interface
 	for (auto particleSystem: particleSystems) {
-		auto ops = dynamic_cast<ObjectParticleSystemEntity*>(particleSystem);
+		auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
 		if (ops != nullptr) ops->setParentEntity(this);
-		auto pps = dynamic_cast<PointsParticleSystemEntity*>(particleSystem);
+		auto pps = dynamic_cast<PointsParticleSystem*>(particleSystem);
 		if (pps != nullptr) pps->setParentEntity(this);
 	}
 }
@@ -131,7 +131,7 @@ void ParticleSystemGroup::setFrustumCulling(bool frustumCulling) {
 }
 
 void ParticleSystemGroup::setAutoEmit(bool autoEmit) {
-	// delegate to base class
+	// delegate to sub particle systems
 	for (auto particleSystem: particleSystems) particleSystem->setAutoEmit(autoEmit);
 	this->autoEmit = autoEmit;
 	// delegate change to engine

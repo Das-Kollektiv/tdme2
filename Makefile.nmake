@@ -93,11 +93,11 @@ SRCS = \
 	src/tdme/engine/Object3D.cpp \
 	src/tdme/engine/Object3DModel.cpp \
 	src/tdme/engine/Object3DRenderGroup.cpp \
-	src/tdme/engine/ObjectParticleSystemEntity.cpp \
+	src/tdme/engine/ObjectParticleSystem.cpp \
 	src/tdme/engine/ParticleSystemGroup.cpp \
 	src/tdme/engine/PartitionNone.cpp \
 	src/tdme/engine/PartitionOctTree.cpp \
-	src/tdme/engine/PointsParticleSystemEntity.cpp \
+	src/tdme/engine/PointsParticleSystem.cpp \
 	src/tdme/engine/Rotation.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
@@ -172,10 +172,10 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp \
-	src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemEntityInternal.cpp \
+	src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
-	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemEntityInternal.cpp \
+	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
 	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessing.cpp \
