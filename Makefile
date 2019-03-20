@@ -2,6 +2,7 @@ STACKFLAGS =
 SRCS_PLATFORM =
 SRCS_DEBUG =
 OFLAGS =
+EXTRAFLAGS =
 LDFLAGS =
 INCLUDES := -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
 
@@ -24,14 +25,23 @@ else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	LDFLAGS+= -fuse-ld=bfd
 	INCLUDES := $(INCLUDES) -I/usr/local/include
+	# OpenGL
+	#SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	#		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+	#		src/tdme/engine/EngineGL2Renderer.cpp \
+	#		src/tdme/engine/EngineGL3Renderer.cpp \
+	#		src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+	#		src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+	#		src/tdme/engine/fileio/models/ModelReader.cpp
+	#EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+	# Vulkan
+	EXTRAFLAGS = -DVULKAN
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/EngineVKRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lopenal -pthread
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD
@@ -101,7 +111,7 @@ endif
 
 CPPFLAGS := $(INCLUDES)
 #CFLAGS := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
-CFLAGS := -g $(OFLAGS) -pipe -MMD -MP
+CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
 #CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 #CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP

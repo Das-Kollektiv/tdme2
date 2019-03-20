@@ -1,23 +1,32 @@
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-	#if !defined(__arm__) && !defined(__aarch64__)
-		#define GLEW_NO_GLU
+#if defined(VULKAN)
+#else
+	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+		#if !defined(__arm__) && !defined(__aarch64__)
+			#define GLEW_NO_GLU
+			#include <GL/glew.h>
+		#endif
+		#include <GL/freeglut.h>
+	#elif defined(__APPLE__)
+		#include <GLUT/glut.h>
+	#elif defined(_WIN32)
 		#include <GL/glew.h>
+		#include <GL/freeglut.h>
+	#elif defined(__HAIKU__)
+		#include <GL/glew.h>
+		#include <GL/glut.h>
 	#endif
-	#include <GL/freeglut.h>
-#elif defined(__APPLE__)
-	#include <GLUT/glut.h>
-	#include <Carbon/Carbon.h>
-#elif defined(_WIN32)
-	#include <GL/glew.h>
-	#include <GL/freeglut.h>
+#endif
+
+#if defined(_WIN32)
 	#include <windows.h>
 	#include <dbghelp.h>
 	#include <stdio.h>
 	#include <string.h>
 	#include <tdme/os/threading/Mutex.h>
-#elif defined(__HAIKU__)
-	#include <GL/glew.h>
-	#include <GL/glut.h>
+#endif
+
+#if defined(__APPLE__)
+	#include <Carbon/Carbon.h>
 #endif
 
 #include <stdlib.h>
@@ -290,7 +299,12 @@ int32_t Application::getWindowWidth() const {
 
 void Application::setWindowWidth(int32_t windowWidth) {
 	this->windowWidth = windowWidth;
-	if (initialized == true) glutReshapeWindow(windowWidth, windowHeight);
+	if (initialized == true) {
+		#if defined(VULKAN)
+		#else
+			glutReshapeWindow(windowWidth, windowHeight);
+		#endif
+	}
 }
 
 int32_t Application::getWindowHeight() const {
@@ -299,7 +313,12 @@ int32_t Application::getWindowHeight() const {
 
 void Application::setWindowHeight(int32_t windowHeight) {
 	this->windowHeight = windowHeight;
-	if (initialized == true) glutReshapeWindow(windowWidth, windowHeight);
+	if (initialized == true) {
+		#if defined(VULKAN)
+		#else
+			glutReshapeWindow(windowWidth, windowHeight);
+		#endif
+	}
 }
 
 bool Application::isFullScreen() const {
@@ -309,12 +328,15 @@ bool Application::isFullScreen() const {
 void Application::setFullScreen(bool fullScreen) {
 	this->fullScreen = fullScreen;
 	if (initialized == true) {
-		if (fullScreen == true) {
-			glutFullScreen();
-		} else {
-			glutPositionWindow(windowXPosition, windowYPosition);
-			glutReshapeWindow(windowWidth, windowHeight);
-		}
+		#if defined(VULKAN)
+		#else
+			if (fullScreen == true) {
+				glutFullScreen();
+			} else {
+				glutPositionWindow(windowXPosition, windowYPosition);
+				glutReshapeWindow(windowWidth, windowHeight);
+			}
+		#endif
 	}
 }
 
@@ -325,7 +347,10 @@ void Application::installExceptionHandler() {
 }
 
 void Application::setMouseCursor(int mouseCursor) {
-	glutSetCursor(mouseCursor);
+	#if defined(VULKAN)
+	#else
+		glutSetCursor(mouseCursor);
+	#endif
 }
 
 void Application::setMousePosition(int x, int y) {
@@ -336,63 +361,72 @@ void Application::setMousePosition(int x, int y) {
 		CGWarpMouseCursorPosition(point);
 		CGAssociateMouseAndMouseCursorPosition(true);
 	#else
-		glutWarpPointer(x, y);
+		#if defined(VULKAN)
+		#else
+			glutWarpPointer(x, y);
+		#endif
 	#endif
 }
 
 void Application::swapBuffers() {
-	glutSwapBuffers();
+	#if defined(VULKAN)
+	#else
+		glutSwapBuffers();
+	#endif
 }
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
-	glutInit(&argc, argv);
-#if defined(__APPLE__)
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32)
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextProfile(GLUT_CORE_PROFILE);
-	/*
-	glutInitContextVersion(3, 1);
-	glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
-	*/
-#elif defined(__linux__) && (defined(__arm__) || defined(__aarch64__))
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextVersion(2,0);
-#elif defined(__HAIKU__)
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-#endif
-	glutInitWindowSize(windowWidth, windowHeight);
-	glutInitWindowPosition(windowXPosition, windowYPosition);
-	glutCreateWindow((title).c_str());
-	if (fullScreen == true) {
-		#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-			glutFullScreen();
+	#if defined(VULKAN)
+	#else
+		glutInit(&argc, argv);
+		#if defined(__APPLE__)
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
+		#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32)
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+			glutInitContextProfile(GLUT_CORE_PROFILE);
+			/*
+			glutInitContextVersion(3, 1);
+			glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
+			 */
+		#elif defined(__linux__) && (defined(__arm__) || defined(__aarch64__))
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+			glutInitContextVersion(2,0);
+		#elif defined(__HAIKU__)
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 		#endif
-	}
-#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
-	glewExperimental = true;
-	GLenum glewInitStatus = glewInit();
-	if (glewInitStatus != GLEW_OK) {
-		Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
-		exit(0);
-	}
-#endif
-	// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-	glutReshapeFunc(Application::glutReshape);
-	glutDisplayFunc(Application::glutDisplay);
-	glutIdleFunc(Application::glutDisplay);
-	glutKeyboardFunc(Application::glutOnKeyDown);
-	glutKeyboardUpFunc(Application::glutOnKeyUp);
-	glutSpecialFunc(Application::glutOnSpecialKeyDown);
-	glutSpecialUpFunc(Application::glutOnSpecialKeyUp);
-	glutMotionFunc(Application::glutOnMouseDragged);
-	glutPassiveMotionFunc(Application::glutOnMouseMoved);
-	glutMouseFunc(Application::glutOnMouseButton);
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
-	glutMouseWheelFunc(Application::glutOnMouseWheel);
-#endif
-	glutMainLoop();
+		glutInitWindowSize(windowWidth, windowHeight);
+		glutInitWindowPosition(windowXPosition, windowYPosition);
+		glutCreateWindow((title).c_str());
+		if (fullScreen == true) {
+			#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+				glutFullScreen();
+			#endif
+		}
+		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
+			glewExperimental = true;
+			GLenum glewInitStatus = glewInit();
+			if (glewInitStatus != GLEW_OK) {
+				Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
+				exit(0);
+			}
+		#endif
+		// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+		glutReshapeFunc(Application::glutReshape);
+		glutDisplayFunc(Application::glutDisplay);
+		glutIdleFunc(Application::glutDisplay);
+		glutKeyboardFunc(Application::glutOnKeyDown);
+		glutKeyboardUpFunc(Application::glutOnKeyUp);
+		glutSpecialFunc(Application::glutOnSpecialKeyDown);
+		glutSpecialUpFunc(Application::glutOnSpecialKeyUp);
+		glutMotionFunc(Application::glutOnMouseDragged);
+		glutPassiveMotionFunc(Application::glutOnMouseMoved);
+		glutMouseFunc(Application::glutOnMouseButton);
+		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
+			glutMouseWheelFunc(Application::glutOnMouseWheel);
+		#endif
+		glutMainLoop();
+	#endif
 }
 
 void Application::glutDisplay() {
@@ -408,7 +442,10 @@ void Application::glutDisplay() {
 	}
 	Application::timeLast = timeNow;
 	Application::application->display();
-	glutSwapBuffers();
+	#if defined(VULKAN)
+	#else
+		glutSwapBuffers();
+	#endif
 }
 
 void Application::glutReshape(int32_t width, int32_t height) {

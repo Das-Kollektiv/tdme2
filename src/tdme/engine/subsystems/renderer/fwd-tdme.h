@@ -6,12 +6,13 @@ namespace tdme {
 namespace engine {
 namespace subsystems {
 namespace renderer {
-				class GL2Renderer;
-				class GL3Renderer;
-				class GLES2Renderer;
-				class GLRenderer;
-				class GLRenderer_Light;
-				class GLRenderer_Material;
+	class GL2Renderer;
+	class GL3Renderer;
+	class GLES2Renderer;
+	class GLRenderer;
+	class GLRenderer_Light;
+	class GLRenderer_Material;
+	class VKRenderer;
 }  // namespace renderer
 }  // namespace subsystems
 }  // namespace engine

@@ -1,8 +1,11 @@
 #include <tdme/engine/Engine.h>
 
-#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32) || defined(__HAIKU__)
-	#define GLEW_NO_GLU
-	#include <GL/glew.h>
+#if defined(VULKAN)
+#else
+	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32) || defined(__HAIKU__)
+		#define GLEW_NO_GLU
+		#include <GL/glew.h>
+	#endif
 #endif
 
 #include <string>
@@ -471,56 +474,59 @@ void Engine::initialize(bool debug)
 	if (initialized == true)
 		return;
 
-	// MacOSX, currently GL3 only
-	#if defined(__APPLE__)
-	{
-		renderer = new EngineGL3Renderer(this);
-		Console::println(string("TDME::Using GL3+/CORE"));
-		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-		shadowMappingEnabled = true;
-		ShadowMapping::setShadowMapSize(1024, 1024);
-		skinningShaderEnabled = false;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-	}
-	// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
-	#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
-	{
-		int glMajorVersion;
-		int glMinorVersion;
-		glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
-		glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
-		if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
-			Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
-			renderer = new EngineGL3Renderer(this);
-		} else {
-			Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
-			renderer = new EngineGL2Renderer(this);
-		}
-		skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
-		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-		shadowMappingEnabled = true;
-		ShadowMapping::setShadowMapSize(2048, 2048);
-		animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
-	}
-	// GLES2 on Linux
-	#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && (defined(__arm__) || defined(__aarch64__))
-	{
-		renderer = new EngineGLES2Renderer(this);
-		Console::println(string("TDME::Using GLES2"));
-		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-		if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
-			shadowMappingEnabled = true;
-			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-			ShadowMapping::setShadowMapSize(512, 512);
-		} else {
-			shadowMappingEnabled = false;
-			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-		}
-		skinningShaderEnabled = false;
-	}
+	#if defined(VULKAN)
 	#else
-		Console::println("Engine::initialize(): unsupported GL!");
-		return;
+		// MacOSX, currently GL3 only
+		#if defined(__APPLE__)
+		{
+			renderer = new EngineGL3Renderer(this);
+			Console::println(string("TDME::Using GL3+/CORE"));
+			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			shadowMappingEnabled = true;
+			ShadowMapping::setShadowMapSize(1024, 1024);
+			skinningShaderEnabled = false;
+			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+		}
+		// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
+		#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
+		{
+			int glMajorVersion;
+			int glMinorVersion;
+			glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
+			glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
+			if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
+				Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				renderer = new EngineGL3Renderer(this);
+			} else {
+				Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				renderer = new EngineGL2Renderer(this);
+			}
+			skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			shadowMappingEnabled = true;
+			ShadowMapping::setShadowMapSize(2048, 2048);
+			animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
+		}
+		// GLES2 on Linux
+		#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && (defined(__arm__) || defined(__aarch64__))
+		{
+			renderer = new EngineGLES2Renderer(this);
+			Console::println(string("TDME::Using GLES2"));
+			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
+				shadowMappingEnabled = true;
+				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+				ShadowMapping::setShadowMapSize(512, 512);
+			} else {
+				shadowMappingEnabled = false;
+				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+			}
+			skinningShaderEnabled = false;
+		}
+		#else
+			Console::println("Engine::initialize(): unsupported GL!");
+			return;
+		#endif
 	#endif
 
 	// init

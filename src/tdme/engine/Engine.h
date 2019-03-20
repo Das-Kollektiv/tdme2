@@ -74,6 +74,7 @@ class tdme::engine::Engine final
 	friend class EngineGL3Renderer;
 	friend class EngineGL2Renderer;
 	friend class EngineGLES2Renderer;
+	friend class EngineVKRenderer;
 	friend class FrameBuffer;
 	friend class Object3D;
 	friend class Object3DRenderGroup;

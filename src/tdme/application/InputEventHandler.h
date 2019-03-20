@@ -1,27 +1,42 @@
 #pragma once
 
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
-	#include <GL/freeglut.h>
-#elif defined(__APPLE__)
-	#include <GLUT/glut.h>
-#elif defined(__HAIKU__)
-	#include <GL/glut.h>
+#if defined(VULKAN)
+	#define KEYBOARD_MODIFIER_SHIFT	-1
+	#define KEYBOARD_MODIFIER_CTRL -2
+	#define KEYBOARD_MODIFIER_ALT -3
+
+	#define MOUSE_BUTTON_DOWN -4
+	#define MOUSE_BUTTON_UP -5
+
+	#define KEYBOARD_KEYCODE_LEFT -6
+	#define KEYBOARD_KEYCODE_UP -7
+	#define KEYBOARD_KEYCODE_RIGHT -8
+	#define KEYBOARD_KEYCODE_DOWN -9
+
+#else
+	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
+		#include <GL/freeglut.h>
+	#elif defined(__APPLE__)
+		#include <GLUT/glut.h>
+	#elif defined(__HAIKU__)
+		#include <GL/glut.h>
+	#endif
+
+	#define KEYBOARD_MODIFIER_SHIFT	GLUT_ACTIVE_SHIFT
+	#define KEYBOARD_MODIFIER_CTRL GLUT_ACTIVE_CTRL
+	#define KEYBOARD_MODIFIER_ALT GLUT_ACTIVE_ALT
+
+	#define MOUSE_BUTTON_DOWN GLUT_DOWN
+	#define MOUSE_BUTTON_UP GLUT_UP
+
+	#define KEYBOARD_KEYCODE_LEFT GLUT_KEY_LEFT
+	#define KEYBOARD_KEYCODE_UP GLUT_KEY_UP
+	#define KEYBOARD_KEYCODE_RIGHT GLUT_KEY_RIGHT
+	#define KEYBOARD_KEYCODE_DOWN GLUT_KEY_DOWN
 #endif
 
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
-
-#define KEYBOARD_MODIFIER_SHIFT	GLUT_ACTIVE_SHIFT
-#define KEYBOARD_MODIFIER_CTRL GLUT_ACTIVE_CTRL
-#define KEYBOARD_MODIFIER_ALT GLUT_ACTIVE_ALT
-
-#define MOUSE_BUTTON_DOWN GLUT_DOWN
-#define MOUSE_BUTTON_UP GLUT_UP
-
-#define KEYBOARD_KEYCODE_LEFT GLUT_KEY_LEFT
-#define KEYBOARD_KEYCODE_UP GLUT_KEY_UP
-#define KEYBOARD_KEYCODE_RIGHT GLUT_KEY_RIGHT
-#define KEYBOARD_KEYCODE_DOWN GLUT_KEY_DOWN
 
 /** 
  * Application input event handler interface
