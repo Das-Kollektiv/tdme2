@@ -292,8 +292,8 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 			auto frames = groupAnimationState->setup->getFrames();
 			auto fps = model->getFPS();
 			// determine current and last matrix
-			auto frameAtLast = (groupAnimationState->lastAtTime / 1000.0f) * fps * animationState->setup->getSpeed();
-			auto frameAtCurrent = (groupAnimationState->currentAtTime / 1000.0f) * fps * animationState->setup->getSpeed();
+			auto frameAtLast = (groupAnimationState->lastAtTime / 1000.0f) * fps * groupAnimationState->setup->getSpeed();
+			auto frameAtCurrent = (groupAnimationState->currentAtTime / 1000.0f) * fps * groupAnimationState->setup->getSpeed();
 			// check if looping is disabled
 			if (groupAnimationState->setup->isLoop() == false && frameAtCurrent >= frames) {
 				frameAtLast = frames - 1;
