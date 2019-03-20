@@ -8,7 +8,7 @@ using tdme::engine::subsystems::renderer::VKRenderer;
 using tdme::engine::Engine;
 
 /**
- * Engine connector of GL3 renderer to other engine functionality
+ * Engine connector of VK renderer to other engine functionality
  * @author Andreas Drewke
  */
 
