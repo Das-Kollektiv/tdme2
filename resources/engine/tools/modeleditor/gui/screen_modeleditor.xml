@@ -697,10 +697,13 @@
 								</layout>
 								<space height="5" />
 								<layout width="600" height="auto" alignment="horizontal" vertical-align="center">
-									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Name" width="85" height="auto" />
-									<space width="23" />
-									<input id="animations_animation_name" name="animations_animation_name" width="180" height="auto" text="" />
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Speed" width="85" height="auto" />
 									<space width="*" />
+									<input id="animations_animation_speed" name="animations_animation_speed" width="180" height="auto" text="" />
+									<space width="*" />
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Name" width="85" height="auto" />
+									<space width="*" />
+									<input id="animations_animation_name" name="animations_animation_name" width="180" height="auto" text="" />
 								</layout>
                                 <space height="10" />
                                 <layout width="auto" height="auto" alignment="none" horizontal-align="center">

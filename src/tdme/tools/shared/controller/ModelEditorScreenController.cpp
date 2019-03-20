@@ -218,6 +218,7 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationEndFrame = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_endframe"));
 		animationsAnimationOverlayFromGroupIdDropDown = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_overlayfromgroupidanimations_dropdown"));
 		animationsAnimationLoop = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_loop"));
+		animationsAnimationSpeed = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_speed"));
 		animationsAnimationName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("animations_animation_name"));
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
 		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
@@ -1003,6 +1004,8 @@ void ModelEditorScreenController::onAnimationDropDownApply() {
 	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(defaultAnimation);
 	animationsAnimationLoop->getController()->setValue(MutableString(animationSetup->isLoop() == true?"1":""));
 	animationsAnimationLoop->getController()->setDisabled(defaultAnimation);
+	animationsAnimationSpeed->getController()->setValue(MutableString(animationSetup->getSpeed(), 4));
+	animationsAnimationSpeed->getController()->setDisabled(defaultAnimation);
 	animationsAnimationName->getController()->setValue(MutableString(animationSetup->getId()));
 	animationsAnimationName->getController()->setDisabled(defaultAnimation);
 	animationsAnimationApply->getController()->setDisabled(defaultAnimation);
@@ -1058,6 +1061,7 @@ void ModelEditorScreenController::onAnimationApply() {
 		animationSetup->setEndFrame(Integer::parseInt(animationsAnimationEndFrame->getController()->getValue().getString()));
 		animationSetup->setOverlayFromGroupId(animationsAnimationOverlayFromGroupIdDropDown->getController()->getValue().getString());
 		animationSetup->setLoop(animationsAnimationLoop->getController()->getValue().getString() == "1");
+		animationSetup->setSpeed(Float::parseFloat(animationsAnimationSpeed->getController()->getValue().getString()));
 		setAnimations(view->getEntity());
 		animationsDropDown->getController()->setValue(MutableString(animationSetup->getId()));
 		onAnimationDropDownApply();
@@ -1082,6 +1086,8 @@ void ModelEditorScreenController::unsetAnimations() {
 	animationsAnimationOverlayFromGroupIdDropDown->getController()->setDisabled(true);
 	animationsAnimationLoop->getController()->setValue(MutableString(""));
 	animationsAnimationLoop->getController()->setDisabled(true);
+	animationsAnimationSpeed->getController()->setValue(MutableString(""));
+	animationsAnimationSpeed->getController()->setDisabled(true);
 	animationsAnimationName->getController()->setValue(MutableString(""));
 	animationsAnimationName->getController()->setDisabled(true);
 	animationsAnimationApply->getController()->setDisabled(true);

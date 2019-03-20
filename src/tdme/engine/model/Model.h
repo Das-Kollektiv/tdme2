@@ -157,9 +157,10 @@ public:
 	 * @param startFrame start frame
 	 * @param endFrame end frame
 	 * @param loop loop
+	 * @param speed speed whereas 1.0 is default speed
 	 * @return animation setup
 	 */
-	AnimationSetup* addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop);
+	AnimationSetup* addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
 
 	/** 
 	 * Adds an overlay animation setup
@@ -168,9 +169,10 @@ public:
 	 * @param startFrame start frame
 	 * @param endFrame end frame
 	 * @param loop loop
+	 * @param speed speed whereas 1.0 is default speed
 	 * @return animation setup
 	 */
-	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop);
+	AnimationSetup* addOverlayAnimationSetup(const string& id, const string& overlayFromGroupId, int32_t startFrame, int32_t endFrame, bool loop, float speed = 1.0f);
 
 	/** 
 	 * @return animation setup for given id or null

@@ -261,9 +261,10 @@ private:
 	 * Read animation setup
 	 * @param is input stream
 	 * @param model model
+	 * @param version version
 	 * @throw model file io exception
 	 */
-	static void readAnimationSetup(TMReaderInputStream* is, Model* model) throw (ModelFileIOException);
+	static void readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version) throw (ModelFileIOException);
 
 	/** 
 	 * Read vertices from input stream

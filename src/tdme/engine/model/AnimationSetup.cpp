@@ -5,7 +5,7 @@
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Model;
 
-AnimationSetup::AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromGroupId)
+AnimationSetup::AnimationSetup(Model* model, const string& id, int32_t startFrame, int32_t endFrame, bool loop, const string& overlayFromGroupId, float speed)
 {
 	this->model = model;
 	this->id = id;
@@ -14,6 +14,7 @@ AnimationSetup::AnimationSetup(Model* model, const string& id, int32_t startFram
 	this->frames = (endFrame - startFrame) + 1;
 	this->loop = loop;
 	this->overlayFromGroupId = overlayFromGroupId;
+	this->speed = speed;
 }
 
 void AnimationSetup::setStartFrame(int32_t startFrame) {
@@ -26,14 +27,6 @@ void AnimationSetup::setEndFrame(int32_t endFrame) {
 	this->endFrame = endFrame;
 	this->frames = (endFrame - startFrame) + 1;
 	if (this->frames < 0) this->frames = 0;
-}
-
-void AnimationSetup::setLoop(bool loop) {
-	this->loop = loop;
-}
-
-void AnimationSetup::setOverlayFromGroupId(const string& overlayFromGroupId) {
-	this->overlayFromGroupId = overlayFromGroupId;
 }
 
 int64_t AnimationSetup::computeDuration()

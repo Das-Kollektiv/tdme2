@@ -60,7 +60,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(10));
+	os.writeByte(static_cast< uint8_t >(11));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -111,6 +111,7 @@ void TMWriter::writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* ani
 	os->writeInt(animationSetup->getStartFrame());
 	os->writeInt(animationSetup->getEndFrame());
 	os->writeBoolean(animationSetup->isLoop());
+	os->writeFloat(animationSetup->getSpeed());
 }
 
 void TMWriter::writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v) throw (ModelFileIOException)
