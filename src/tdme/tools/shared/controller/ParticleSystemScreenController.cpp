@@ -12,6 +12,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -858,6 +859,7 @@ void ParticleSystemScreenController::onParticleSystemLoad()
 		"Load from: ",
 		extensions,
 		view->getFileName(),
+		true,
 		new OnParticleSystemLoad(this)
 	);
 }
@@ -898,9 +900,10 @@ void ParticleSystemScreenController::onEntitySave()
 	};
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		particleSystemPath->getPath(),
-		"Save from: ",
+		"Save to: ",
 		extensions,
 		fileName,
+		false,
 		new OnEntitySave(this)
 );
 }
@@ -1003,7 +1006,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					modelPath->getPath(),
 					"Load from: ",
 					extensions,
-					"",
+					opsModel->getController()->getValue().getString(),
+					true,
 					new OnLoadModelFile(this)
 				);
 			} else
@@ -1033,7 +1037,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					modelPath->getPath(),
 					"Load from: ",
 					extensions,
-					"",
+					ppsTexture->getController()->getValue().getString(),
+					true,
 					new OnLoadTextureFile(this)
 				);
 			} else
@@ -1063,7 +1068,8 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 					modelPath->getPath(),
 					"Load from: ",
 					extensions,
-					"",
+					ppsTransparencyTexture->getController()->getValue().getString(),
+					true,
 					new OnLoadTextureFile(this)
 				);
 			} else

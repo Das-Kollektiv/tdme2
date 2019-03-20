@@ -9,6 +9,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/tools/gui/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 
 using std::string;
 

@@ -20,7 +20,7 @@
 			</scrollarea>
 		</selectbox>
 		<space height="10" />
-		<input id="filedialog_filename" name="filedialog_filename" width="80%" height="auto" text="./file.end" on-mouse-click="filedialog_filename.value=''"/>
+		<input id="filedialog_filename" name="filedialog_filename" width="80%" height="auto" text="./file.end" />
 		<space height="10" />
 		<layout width="100%" height="auto" alignment="horizontal">
 			<space width="*" />

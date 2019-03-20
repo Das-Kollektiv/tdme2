@@ -10,6 +10,7 @@
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUIFocusListener.h>
 
 using std::string;
 using std::vector;
@@ -17,6 +18,7 @@ using std::vector;
 using tdme::tools::shared::controller::ScreenController;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
+using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
@@ -33,6 +35,7 @@ class tdme::tools::shared::controller::FileDialogScreenController
 	: public ScreenController
 	, public virtual GUIActionListener
 	, public virtual GUIChangeListener
+	, public virtual GUIFocusListener
 {
 
 private:
@@ -45,6 +48,7 @@ private:
 	GUIElementNode* files {  };
 	Action* applyAction {  };
 	vector<string> fileList;
+	bool enableFilter { false };
 	bool filtered {  };
 
 public:
@@ -86,21 +90,22 @@ public:
 	 * @param captionText caption text
 	 * @param extensions extensions
 	 * @param fileName file name
+	 * @param enableFilter enable filter
 	 * @param applyAction apply action
 	 * @throws IOException 
 	 */
-	virtual void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, Action* applyAction);
+	virtual void show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction);
 
 	/** 
 	 * Abort the file dialog pop up
 	 */
 	virtual void close();
 
-	/** 
-	 * On value changed
-	 */
+	// overriden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+	void onFocus(GUIElementNode* node) override;
+	void onUnfocus(GUIElementNode* node) override;
 
 	/**
 	 * Public constructor

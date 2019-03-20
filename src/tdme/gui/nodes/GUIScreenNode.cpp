@@ -9,6 +9,7 @@
 #include <tdme/gui/effects/GUIEffect.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -418,6 +419,29 @@ void GUIScreenNode::delegateMouseOver(GUIElementNode* node)
 {
 	for (auto i = 0; i < mouseOverListener.size(); i++) {
 		mouseOverListener[i]->onMouseOver(node);
+	}
+}
+
+void GUIScreenNode::addFocusListener(GUIFocusListener* listener)
+{
+	removeFocusListener(listener);
+	focusListener.push_back(listener);
+}
+
+void GUIScreenNode::removeFocusListener(GUIFocusListener* listener)
+{
+	focusListener.erase(std::remove(focusListener.begin(), focusListener.end(), listener), focusListener.end());
+}
+
+void GUIScreenNode::delegateFocus(GUIElementNode* node) {
+	for (auto i = 0; i < focusListener.size(); i++) {
+		focusListener[i]->onFocus(node);
+	}
+}
+
+void GUIScreenNode::delegateUnfocus(GUIElementNode* node) {
+	for (auto i = 0; i < focusListener.size(); i++) {
+		focusListener[i]->onUnfocus(node);
 	}
 }
 

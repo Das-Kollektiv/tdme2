@@ -7,6 +7,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -46,6 +47,7 @@ FileDialogScreenController::FileDialogScreenController()
 {
 	this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
 	this->applyAction = nullptr;
+	this->enableFilter = false;
 	this->filtered = false;
 }
 
@@ -75,6 +77,7 @@ void FileDialogScreenController::initialize()
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
+		screenNode->addFocusListener(this);
 		caption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("filedialog_caption"));
 		files = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("filedialog_files"));
 		fileName = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("filedialog_filename"));
@@ -133,7 +136,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	}
 
 	setupFileDialogListBoxFiles(fileList);
-	fileName->getController()->setValue(MutableString("Type a string to filter the list..."));
+	if (enableFilter == true) fileName->getController()->setValue(MutableString("Type a string to filter the list..."));
 
 	//
 	filtered = false;
@@ -170,7 +173,7 @@ void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string
 	}
 }
 
-void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, Action* applyAction)
+void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction)
 {
 	try {
 		this->cwd = FileSystem::getInstance()->getCanonicalPath(cwd, "");
@@ -186,6 +189,7 @@ void FileDialogScreenController::show(const string& cwd, const string& captionTe
 	this->captionText = captionText;
 	this->extensions = extensions;
 	this->fileName->getController()->setValue(fileName);
+	this->enableFilter = enableFilter;
 	setupFileDialogListBox();
 	screenNode->setVisible(true);
 	if (this->applyAction != nullptr) delete this->applyAction;
@@ -231,17 +235,19 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 			}
 		} else
 		if (node->getId() == "filedialog_filename") {
-			auto filterString = StringUtils::toLowerCase(node->getController()->getValue().getString());
-			if (FileSystem::getInstance()->fileExists(cwd + "/" + filterString) == true) {
-				auto selectedFile = node->getController()->getValue().getString();
-				setupFileDialogListBoxFiles(fileList, selectedFile);
-			} else {
-				vector<string> fileListFiltered;
-				for (auto file: fileList) {
-					if (StringUtils::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
+			if (enableFilter == true) {
+				auto filterString = StringUtils::toLowerCase(node->getController()->getValue().getString());
+				if (FileSystem::getInstance()->fileExists(cwd + "/" + filterString) == true) {
+					auto selectedFile = node->getController()->getValue().getString();
+					setupFileDialogListBoxFiles(fileList, selectedFile);
+				} else {
+					vector<string> fileListFiltered;
+					for (auto file: fileList) {
+						if (StringUtils::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
+					}
+					setupFileDialogListBoxFiles(fileListFiltered);
+					filtered = true;
 				}
-				setupFileDialogListBoxFiles(fileListFiltered);
-				filtered = true;
 			}
 		}
 	} catch (Exception& exception) {
@@ -265,5 +271,14 @@ void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type,
 			}
 		}
 	}
-
 }
+
+void FileDialogScreenController::onFocus(GUIElementNode* node) {
+	if (node->getId() == "filedialog_filename") {
+		if (enableFilter == true) node->getController()->setValue(MutableString(""));
+	}
+}
+
+void FileDialogScreenController::onUnfocus(GUIElementNode* node) {
+}
+

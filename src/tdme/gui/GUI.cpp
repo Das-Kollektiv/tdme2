@@ -333,9 +333,8 @@ void GUI::unfocusNode()
 		focussedNode->getBorder().leftColor = unfocussedNodeBorderLeftColor;
 		focussedNode->getBorder().bottomColor = unfocussedNodeBorderBottomColor;
 		focussedNode->getBorder().rightColor = unfocussedNodeBorderRightColor;
-		if (focussedNode->getController() != nullptr)
-			focussedNode->getController()->onFocusLost();
-
+		if (focussedNode->getController() != nullptr) focussedNode->getController()->onFocusLost();
+		focussedNode->getScreenNode()->delegateUnfocus(focussedNode);
 	}
 }
 
@@ -351,9 +350,8 @@ void GUI::focusNode()
 		focussedNode->getBorder().leftColor = foccussedBorderColor;
 		focussedNode->getBorder().bottomColor = foccussedBorderColor;
 		focussedNode->getBorder().rightColor = foccussedBorderColor;
-		if (focussedNode->getController() != nullptr)
-			focussedNode->getController()->onFocusGained();
-
+		if (focussedNode->getController() != nullptr) focussedNode->getController()->onFocusGained();
+		focussedNode->getScreenNode()->delegateFocus(focussedNode);
 	}
 }
 

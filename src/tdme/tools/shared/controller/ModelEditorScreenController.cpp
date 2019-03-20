@@ -11,7 +11,9 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
+#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIActionListener_Type.h>
+#include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -462,6 +464,7 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 		"Load from: ",
 		extensions,
 		Tools::getFileName(entityLodLevel->getFileName()),
+		true,
 		new OnLODModelLoad(this)
 	);
 }
@@ -724,6 +727,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 		"Load from: ",
 		extensions,
 		material->getDiffuseTextureFileName(),
+		true,
 		new OnLoadTexture(this, materialsMaterialDiffuseTexture)
 	);
 }
@@ -771,6 +775,7 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 		"Load from: ",
 		extensions,
 		material->getDiffuseTransparencyTextureFileName(),
+		true,
 		new OnLoadTexture(this, materialsMaterialDiffuseTransparencyTexture)
 	);
 }
@@ -818,6 +823,7 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 		"Load from: ",
 		extensions,
 		material->getNormalTextureFileName(),
+		true,
 		new OnLoadTexture(this, materialsMaterialNormalTexture)
 	);
 }
@@ -865,6 +871,7 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 		"Load from: ",
 		extensions,
 		material->getSpecularTextureFileName(),
+		true,
 		new OnLoadTexture(this, materialsMaterialNormalTexture)
 	);
 }
@@ -1151,6 +1158,7 @@ void ModelEditorScreenController::onModelLoad()
 		"Load from: ",
 		extensions,
 		view->getFileName(),
+		true,
 		new OnModelLoad(this)
 	);
 }
@@ -1199,9 +1207,10 @@ void ModelEditorScreenController::onModelSave()
 	fileName = Tools::getFileName(fileName);
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
 		modelPath->getPath(),
-		"Save from: ",
+		"Save to: ",
 		extensions,
 		fileName,
+		false,
 		new OnModelSave(this)
 	);
 }
