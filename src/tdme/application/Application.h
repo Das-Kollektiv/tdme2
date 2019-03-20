@@ -1,15 +1,18 @@
 #pragma once
 
 #if defined(VULKAN)
+	#define MOUSE_CURSOR_DISABLED 0
+	#define MOUSE_CURSOR_ENABLED -1
+#else
 	#if defined(__linux__) || defined(_WIN32)
 		#include <GL/freeglut.h>
 	#elif defined(__APPLE__)
 		#include <GLUT/glut.h>
 	#endif
-#endif
 
-#define MOUSE_CURSOR_DISABLED GLUT_CURSOR_NONE
-#define MOUSE_CURSOR_ENABLED GLUT_CURSOR_INHERIT
+	#define MOUSE_CURSOR_DISABLED GLUT_CURSOR_NONE
+	#define MOUSE_CURSOR_ENABLED GLUT_CURSOR_INHERIT
+#endif
 
 #include <string>
 

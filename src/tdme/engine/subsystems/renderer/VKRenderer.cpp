@@ -60,382 +60,480 @@ VKRenderer::VKRenderer()
 
 const string VKRenderer::getGLVersion()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return "vk";
 }
 
 void VKRenderer::initialize()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::initializeFrame()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	GLRenderer::initializeFrame();
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isDepthTextureAvailable()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isUsingProgramAttributeLocation()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isSpecularMappingAvailable()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isNormalMappingAvailable()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isDisplacementMappingAvailable()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isInstancedRenderingAvailable() {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isUsingShortIndices() {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isGeometryShaderAvailable() {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 int32_t VKRenderer::getTextureUnits()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return activeTextureUnit;
 }
 
 int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::useProgram(int32_t programId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::createProgram()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 bool VKRenderer::linkProgram(int32_t programId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloat(int32_t uniformId, float value)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::updateViewPort()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableCulling()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableCulling()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableBlending()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableBlending()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableDepthBufferWriting()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableDepthBufferWriting()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableDepthBufferTest()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableDepthBufferTest()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunction)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::clear(int32_t mask)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setCullFace(int32_t cullFace)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setFrontFace(int32_t frontFace)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::createTexture()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::uploadTexture(Texture* texture)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindTexture(int32_t textureId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disposeTexture(int32_t textureId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return vector<int32_t>();
 }
 
 void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
-void VKRenderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
+void VKRenderer::bindModelMatricesBufferObject(int32_t bufferObjectId)
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
-void VKRenderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+void VKRenderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId)
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
-void VKRenderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+void VKRenderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId)
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
-void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::unbindBufferObjects()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::getTextureUnit()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return activeTextureUnit;
 }
 
 void VKRenderer::setTextureUnit(int32_t textureUnit)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	this->activeTextureUnit = textureUnit;
 }
 
 float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return 0.0f;
 }
 
 ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return nullptr;
 }
 
 void VKRenderer::initGuiMode()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::doneGuiMode()
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::checkGLError(int line)
 {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::memoryBarrier() {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }

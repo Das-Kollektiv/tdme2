@@ -1,6 +1,8 @@
 #include <tdme/engine/Engine.h>
 
 #if defined(VULKAN)
+	#define GLFW_INCLUDE_VULKAN
+	#include <GLFW/glfw3.h>
 #else
 	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32) || defined(__HAIKU__)
 		#define GLEW_NO_GLU
@@ -15,6 +17,7 @@
 #include <tdme/engine/EngineGL2Renderer.h>
 #include <tdme/engine/EngineGL3Renderer.h>
 #include <tdme/engine/EngineGLES2Renderer.h>
+#include <tdme/engine/EngineVKRenderer.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -73,6 +76,7 @@ using tdme::engine::Camera;
 using tdme::engine::EngineGL3Renderer;
 using tdme::engine::EngineGL2Renderer;
 using tdme::engine::EngineGLES2Renderer;
+using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::Object3DRenderGroup;
@@ -475,6 +479,13 @@ void Engine::initialize(bool debug)
 		return;
 
 	#if defined(VULKAN)
+		renderer = new EngineVKRenderer(this);
+		Console::println(string("TDME::Using Vulkan"));
+		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+		shadowMappingEnabled = false;
+		ShadowMapping::setShadowMapSize(1024, 1024);
+		skinningShaderEnabled = false;
+		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 	#else
 		// MacOSX, currently GL3 only
 		#if defined(__APPLE__)

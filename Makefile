@@ -41,7 +41,7 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/EngineVKRenderer.cpp \
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lopenal -pthread
+	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD

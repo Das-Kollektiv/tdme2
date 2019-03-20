@@ -1,4 +1,6 @@
 #if defined(VULKAN)
+	#define GLFW_INCLUDE_VULKAN
+	#include <GLFW/glfw3.h>
 #else
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 		#if !defined(__arm__) && !defined(__aarch64__)
@@ -378,6 +380,27 @@ void Application::swapBuffers() {
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN)
+		if (glfwInit() == false) {
+			Console::println("glflInit(): failed!");
+			return;
+		}
+		if (glfwVulkanSupported() == false){
+			Console::println("glfwVulkanSupported(): Vulkan not available!");
+			return;
+		}
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+		if (window == nullptr) {
+			Console::println("glfwCreateWindow(): Could not create window");
+			glfwTerminate();
+			return;
+		}
+		while (glfwWindowShouldClose(window) == false) {
+			glutDisplay();
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+		}
+		glfwTerminate();
 	#else
 		glutInit(&argc, argv);
 		#if defined(__APPLE__)
@@ -397,7 +420,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		#endif
 		glutInitWindowSize(windowWidth, windowHeight);
 		glutInitWindowPosition(windowXPosition, windowYPosition);
-		glutCreateWindow((title).c_str());
+		glutCreateWindow(title.c_str());
 		if (fullScreen == true) {
 			#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
 				glutFullScreen();
