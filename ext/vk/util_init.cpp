@@ -33,7 +33,14 @@ samples "init" utility functions
 #include <linux/input.h>
 #endif
 
+#include <string>
+
+#include <tdme/utils/Console.h>
+
 using namespace std;
+
+using std::to_string;
+using tdme::utils::Console;
 
 /*
  * TODO: function description here
@@ -247,7 +254,8 @@ VkResult init_enumerate_device(struct sample_info &info, uint32_t gpu_count) {
     info.gpus.resize(gpu_count);
 
     res = vkEnumeratePhysicalDevices(info.inst, &gpu_count, info.gpus.data());
-    assert(!res && gpu_count >= req_count);
+    Console::println(to_string(res));
+    assert(res == VK_SUCCESS && gpu_count >= req_count);
 
     vkGetPhysicalDeviceQueueFamilyProperties(info.gpus[0], &info.queue_family_count, NULL);
     assert(info.queue_family_count >= 1);
