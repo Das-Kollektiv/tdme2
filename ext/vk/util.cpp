@@ -61,7 +61,7 @@ using namespace std;
 
 #if !(defined(__ANDROID__) || defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
 // Android, iOS, and macOS: main() implemented externally to allow access to Objective-C components
-int main(int argc, char **argv) { return sample_main(argc, argv); }
+// int main(int argc, char **argv) { return sample_main(argc, argv); }
 #endif
 
 void extract_version(uint32_t version, uint32_t &major, uint32_t &minor, uint32_t &patch) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ext/vk/util_init.hpp>
+
 #include <array>
 #include <vector>
 #include <string>
@@ -33,6 +35,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	uint32_t engineVAO {  };
+	struct sample_info context;
 
 public:
 	const string getGLVersion() override;

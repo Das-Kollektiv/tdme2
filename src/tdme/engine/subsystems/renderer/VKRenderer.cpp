@@ -1,5 +1,7 @@
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
 
+#include <ext/vk/util_init.hpp>
+
 #include <string.h>
 
 #include <array>
@@ -67,6 +69,33 @@ const string VKRenderer::getGLVersion()
 void VKRenderer::initialize()
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+    init_global_layer_properties(context);
+    init_instance_extension_names(context);
+    init_device_extension_names(context);
+    init_instance(context, "TDME2 Vulkan Renderer");
+    init_enumerate_device(context);
+    init_window_size(context, 500, 500);
+    init_connection(context);
+    init_window(context);
+    init_swapchain_extension(context);
+    init_device(context);
+    init_command_pool(context);
+    init_command_buffer(context);
+    execute_begin_command_buffer(context);
+    init_device_queue(context);
+    init_swap_chain(context);
+    init_depth_buffer(context);
+    init_texture(context);
+    init_uniform_buffer(context);
+    init_descriptor_and_pipeline_layouts(context, true);
+    init_renderpass(context, true);
+    // init_shaders(context, vertShaderText, fragShaderText);
+    // init_framebuffers(context, depthPresent);
+    // init_vertex_buffer(context, g_vb_texture_Data, sizeof(g_vb_texture_Data), sizeof(g_vb_texture_Data[0]), true);
+    // init_descriptor_pool(context, true);
+    // init_descriptor_set(context, true);
+    // init_pipeline_cache(context);
+    init_pipeline(context, true);
 }
 
 void VKRenderer::initializeFrame()

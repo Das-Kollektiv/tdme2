@@ -143,6 +143,8 @@ VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
 VK = vk
 SPIRV = spirv
+GLSLANG = glslang
+OGLCOMPILERSDLL = OGLCompilersDLL
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -666,6 +668,41 @@ EXT_SPIRV_SRCS = \
 	ext/spirv/disassemble.cpp \
 	ext/spirv/doc.cpp \
 
+EXT_GLSLANG_SRCS = \
+	ext/glslang/MachineIndependent/glslang_tab.cpp \
+	ext/glslang/MachineIndependent/attribute.cpp \
+	ext/glslang/MachineIndependent/Constant.cpp \
+	ext/glslang/MachineIndependent/iomapper.cpp \
+	ext/glslang/MachineIndependent/InfoSink.cpp \
+	ext/glslang/MachineIndependent/Initialize.cpp \
+	ext/glslang/MachineIndependent/IntermTraverse.cpp \
+	ext/glslang/MachineIndependent/Intermediate.cpp \
+	ext/glslang/MachineIndependent/ParseContextBase.cpp \
+	ext/glslang/MachineIndependent/ParseHelper.cpp \
+	ext/glslang/MachineIndependent/PoolAlloc.cpp \
+	ext/glslang/MachineIndependent/RemoveTree.cpp \
+	ext/glslang/MachineIndependent/Scan.cpp \
+ 	ext/glslang/MachineIndependent/ShaderLang.cpp \
+	ext/glslang/MachineIndependent/SymbolTable.cpp \
+	ext/glslang/MachineIndependent/Versions.cpp \
+	ext/glslang/MachineIndependent/intermOut.cpp \
+	ext/glslang/MachineIndependent/limits.cpp \
+	ext/glslang/MachineIndependent/linkValidate.cpp \
+	ext/glslang/MachineIndependent/parseConst.cpp \
+	ext/glslang/MachineIndependent/reflection.cpp \
+	ext/glslang/MachineIndependent/preprocessor/Pp.cpp \
+	ext/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
+	ext/glslang/MachineIndependent/preprocessor/PpContext.cpp \
+	ext/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
+	ext/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
+	ext/glslang/MachineIndependent/propagateNoContraction.cpp \
+	ext/glslang/GenericCodeGen/CodeGen.cpp \
+	ext/glslang/GenericCodeGen/Link.cpp \
+	ext/glslang/OSDependent/Unix/ossource.cpp \
+	
+EXT_OGLCOMPILERSDLL_SRCS = \
+	ext/OGLCompilersDLL/InitializeDll.cpp \
+
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
@@ -707,6 +744,8 @@ EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_VK_OBJS = $(EXT_VK_SRCS:ext/$(VK)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/%.o)
+EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/%.o)
+EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -769,6 +808,12 @@ $(EXT_VK_OBJS):$(OBJ)/%.o: ext/$(VK)/%.cpp | print-opts
 $(EXT_SPIRV_OBJS):$(OBJ)/%.o: ext/$(SPIRV)/%.cpp | print-opts
 	$(cpp-command)
 
+$(EXT_GLSLANG_OBJS):$(OBJ)/%.o: ext/$(GLSLANG)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -777,7 +822,7 @@ $(EXT_SPIRV_OBJS):$(OBJ)/%.o: ext/$(SPIRV)/%.cpp | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_VK_OBJS) $(EXT_SPIRV_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_VK_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
