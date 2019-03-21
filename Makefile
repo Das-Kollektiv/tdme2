@@ -141,6 +141,8 @@ VORBIS = vorbis
 OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
+VK = vk
+SPIRV = spirv
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -649,6 +651,21 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
 
+EXT_VK_SRCS = \
+	ext/vk/util.cpp \
+	ext/vk/util_init.cpp \
+
+EXT_SPIRV_SRCS = \
+	ext/spirv/GlslangToSpv.cpp \
+	ext/spirv/InReadableOrder.cpp \
+	ext/spirv/Logger.cpp \
+	ext/spirv/SPVRemapper.cpp \
+	ext/spirv/SpvBuilder.cpp \
+	ext/spirv/SpvPostProcess.cpp \
+	ext/spirv/SpvTools.cpp \
+	ext/spirv/disassemble.cpp \
+	ext/spirv/doc.cpp \
+
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
@@ -688,6 +705,8 @@ EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
+EXT_VK_OBJS = $(EXT_VK_SRCS:ext/$(VK)/%.cpp=$(OBJ)/%.o)
+EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -744,6 +763,12 @@ $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	$(cpp-command-ext-rp3d)
 
+$(EXT_VK_OBJS):$(OBJ)/%.o: ext/$(VK)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_SPIRV_OBJS):$(OBJ)/%.o: ext/$(SPIRV)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -752,7 +777,7 @@ $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_VK_OBJS) $(EXT_SPIRV_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

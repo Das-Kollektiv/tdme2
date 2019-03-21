@@ -61,7 +61,7 @@ VKRenderer::VKRenderer()
 const string VKRenderer::getGLVersion()
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return "vk";
+	return "gl3";
 }
 
 void VKRenderer::initialize()
