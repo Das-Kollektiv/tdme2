@@ -85,12 +85,18 @@ else ifeq ($(OS), Linux)
 		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
 		# Linux, any other
+		#SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+		#	src/tdme/engine/EngineGL2Renderer.cpp \
+		#	src/tdme/engine/EngineGL3Renderer.cpp \
+		#	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+		#	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+		#EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
+		# Linux, any other, Vulkan
+		EXTRAFLAGS = -DVULKAN
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
+			src/tdme/engine/EngineVKRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 	endif
 	OFLAGS := -O2
 else
