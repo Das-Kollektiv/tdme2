@@ -396,7 +396,7 @@ void VKRenderer::initialize()
 
 	//
 	context.depthStencil = 1.0;
-    context.depthIncrement = -0.01f;
+	context.depthIncrement = -0.01f;
 
 	// Create a WSI surface for the window:
 	glfwCreateWindowSurface(context.inst, Application::window, NULL, &context.surface);
@@ -459,44 +459,43 @@ void VKRenderer::initialize()
 	context.graphics_queue_node_index = graphicsQueueNodeIndex;
 
 	// init_device
-    float queue_priorities[1] = {0.0};
-    const VkDeviceQueueCreateInfo queue = {
-        sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-        pNext: NULL,
+	float queue_priorities[1] = { 0.0 };
+	const VkDeviceQueueCreateInfo queue = {
+		sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+		pNext: NULL,
 		flags: VkDeviceQueueCreateFlags(),
-        queueFamilyIndex:  context.graphics_queue_node_index,
-        queueCount: 1,
-        pQueuePriorities: queue_priorities
-    };
+		queueFamilyIndex: context.graphics_queue_node_index,
+		queueCount: 1,
+		pQueuePriorities: queue_priorities
+	};
 
+	VkPhysicalDeviceFeatures features;
+	memset(&features, 0, sizeof(features));
+	if (context.gpu_features.shaderClipDistance) {
+		features.shaderClipDistance = VK_TRUE;
+	}
 
-    VkPhysicalDeviceFeatures features;
-    memset(&features, 0, sizeof(features));
-    if (context.gpu_features.shaderClipDistance) {
-        features.shaderClipDistance = VK_TRUE;
-    }
-
-    VkDeviceCreateInfo device = {
-        sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-        pNext: NULL,
+	VkDeviceCreateInfo device = {
+		sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+		pNext: NULL,
 		flags: VkDeviceCreateFlags(),
-        queueCreateInfoCount: 1,
-        pQueueCreateInfos: &queue,
-        enabledLayerCount: 0,
-        ppEnabledLayerNames: NULL,
-        enabledExtensionCount: context.enabled_extension_count,
-        ppEnabledExtensionNames: (const char *const *)context.extension_names,
-        pEnabledFeatures: &features
-    };
+		queueCreateInfoCount: 1,
+		pQueueCreateInfos: &queue,
+		enabledLayerCount: 0,
+		ppEnabledLayerNames: NULL,
+		enabledExtensionCount: context.enabled_extension_count,
+		ppEnabledExtensionNames: (const char * const *) context.extension_names,
+		pEnabledFeatures: &features
+	};
 
-    err = vkCreateDevice(context.gpu, &device, NULL, &context.device);
-    assert(!err);
+	err = vkCreateDevice(context.gpu, &device, NULL, &context.device);
+	assert(!err);
 
-    GET_DEVICE_PROC_ADDR(context.device, CreateSwapchainKHR);
-    GET_DEVICE_PROC_ADDR(context.device, DestroySwapchainKHR);
-    GET_DEVICE_PROC_ADDR(context.device, GetSwapchainImagesKHR);
-    GET_DEVICE_PROC_ADDR(context.device, AcquireNextImageKHR);
-    GET_DEVICE_PROC_ADDR(context.device, QueuePresentKHR);
+	GET_DEVICE_PROC_ADDR(context.device, CreateSwapchainKHR);
+	GET_DEVICE_PROC_ADDR(context.device, DestroySwapchainKHR);
+	GET_DEVICE_PROC_ADDR(context.device, GetSwapchainImagesKHR);
+	GET_DEVICE_PROC_ADDR(context.device, AcquireNextImageKHR);
+	GET_DEVICE_PROC_ADDR(context.device, QueuePresentKHR);
 
 	vkGetDeviceQueue(context.device, context.graphics_queue_node_index, 0, &context.queue);
 
