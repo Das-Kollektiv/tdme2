@@ -257,6 +257,10 @@ Application::ApplicationShutdown Application::applicationShutdown;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
+#if defined(VULKAN)
+	GLFWwindow* Application::window = nullptr;
+#endif
+
 
 Application::ApplicationShutdown::~ApplicationShutdown() {
 	if (Application::application != nullptr) {
@@ -384,12 +388,12 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			Console::println("glflInit(): failed!");
 			return;
 		}
-		if (glfwVulkanSupported() == false){
+		if (glfwVulkanSupported() == false) {
 			Console::println("glfwVulkanSupported(): Vulkan not available!");
 			return;
 		}
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+		window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		if (window == nullptr) {
 			Console::println("glfwCreateWindow(): Could not create window");
 			glfwTerminate();

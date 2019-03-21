@@ -1,6 +1,7 @@
 #pragma once
 
-#include <ext/vk/util_init.hpp>
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 
 #include <array>
 #include <vector>
@@ -35,7 +36,112 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	uint32_t engineVAO {  };
-	struct sample_info context;
+
+	struct texture_object {
+		VkSampler sampler;
+
+		VkImage image;
+		VkImageLayout imageLayout;
+
+		VkDeviceMemory mem;
+		VkImageView view;
+		int32_t tex_width, tex_height;
+	};
+
+	typedef struct {
+		VkImage image;
+		VkCommandBuffer cmd;
+		VkImageView view;
+	} SwapchainBuffers;
+
+	struct context {
+		GLFWwindow* window;
+		VkSurfaceKHR surface;
+		bool use_staging_buffer;
+
+		VkInstance inst;
+		VkPhysicalDevice gpu;
+		VkDevice device;
+		VkQueue queue;
+		VkPhysicalDeviceProperties gpu_props;
+		VkPhysicalDeviceFeatures gpu_features;
+		VkQueueFamilyProperties *queue_props;
+		uint32_t graphics_queue_node_index;
+
+		uint32_t enabled_extension_count;
+		uint32_t enabled_layer_count;
+		const char *extension_names[64];
+		const char *enabled_layers[64];
+
+		int width, height;
+		VkFormat format;
+		VkColorSpaceKHR color_space;
+
+		PFN_vkGetPhysicalDeviceSurfaceSupportKHR fpGetPhysicalDeviceSurfaceSupportKHR;
+		PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR fpGetPhysicalDeviceSurfaceCapabilitiesKHR;
+		PFN_vkGetPhysicalDeviceSurfaceFormatsKHR fpGetPhysicalDeviceSurfaceFormatsKHR;
+		PFN_vkGetPhysicalDeviceSurfacePresentModesKHR fpGetPhysicalDeviceSurfacePresentModesKHR;
+		PFN_vkCreateSwapchainKHR fpCreateSwapchainKHR;
+		PFN_vkDestroySwapchainKHR fpDestroySwapchainKHR;
+		PFN_vkGetSwapchainImagesKHR fpGetSwapchainImagesKHR;
+		PFN_vkAcquireNextImageKHR fpAcquireNextImageKHR;
+		PFN_vkQueuePresentKHR fpQueuePresentKHR;
+		uint32_t swapchainImageCount;
+		VkSwapchainKHR swapchain;
+		SwapchainBuffers *buffers;
+
+		VkCommandPool cmd_pool;
+
+		struct {
+			VkFormat format;
+
+			VkImage image;
+			VkDeviceMemory mem;
+			VkImageView view;
+		} depth;
+
+		struct vector<texture_object> textures;
+
+		struct {
+			VkBuffer buf;
+			VkDeviceMemory mem;
+
+			VkPipelineVertexInputStateCreateInfo vi;
+			VkVertexInputBindingDescription vi_bindings[1];
+			VkVertexInputAttributeDescription vi_attrs[2];
+		} vertices;
+
+		VkCommandBuffer setup_cmd; // Command Buffer for initialization commands
+		VkCommandBuffer draw_cmd;  // Command Buffer for drawing commands
+		VkPipelineLayout pipeline_layout;
+		VkDescriptorSetLayout desc_layout;
+		VkPipelineCache pipelineCache;
+		VkRenderPass render_pass;
+		VkPipeline pipeline;
+
+		VkShaderModule vert_shader_module;
+		VkShaderModule frag_shader_module;
+
+		VkDescriptorPool desc_pool;
+		VkDescriptorSet desc_set;
+
+		VkFramebuffer *framebuffers;
+
+		VkPhysicalDeviceMemoryProperties memory_properties;
+
+		bool validate;
+		bool use_break;
+		PFN_vkCreateDebugReportCallbackEXT CreateDebugReportCallback;
+		PFN_vkDestroyDebugReportCallbackEXT DestroyDebugReportCallback;
+		VkDebugReportCallbackEXT msg_callback;
+		PFN_vkDebugReportMessageEXT DebugReportMessage;
+
+		float depthStencil;
+		float depthIncrement;
+
+		uint32_t current_buffer;
+		uint32_t queue_count;
+	} context;
 
 public:
 	const string getGLVersion() override;

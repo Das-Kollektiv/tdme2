@@ -1,6 +1,8 @@
 #pragma once
 
 #if defined(VULKAN)
+	#define GLFW_INCLUDE_VULKAN
+	#include <GLFW/glfw3.h>
 	#define MOUSE_CURSOR_DISABLED 0
 	#define MOUSE_CURSOR_ENABLED -1
 #else
@@ -19,6 +21,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/application/InputEventHandler.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using std::string;
 
@@ -31,7 +34,10 @@ using tdme::application::InputEventHandler;
  */
 class tdme::application::Application
 {
+	friend class tdme::engine::subsystems::renderer::VKRenderer;
+
 public:
+
 	static constexpr int32_t FPS { 60 };
 
 	/**
@@ -174,6 +180,10 @@ private:
 	int32_t windowYPosition { 100 };
 	bool fullScreen { false };
 	static int64_t timeLast;
+
+	#if defined(VULKAN)
+		static GLFWwindow* window;
+	#endif
 
 	/**
 	 * GLUT display function
