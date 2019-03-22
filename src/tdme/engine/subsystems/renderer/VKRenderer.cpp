@@ -518,6 +518,7 @@ void VKRenderer::initialize()
 	assert(!err);
 	VkSurfaceFormatKHR *surfFormats = (VkSurfaceFormatKHR *) malloc(formatCount * sizeof(VkSurfaceFormatKHR));
 	err = context.fpGetPhysicalDeviceSurfaceFormatsKHR(context.gpu, context.surface, &formatCount, surfFormats);
+
 	assert(!err);
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED,
 	// the surface has no preferred format.  Otherwise, at least one
@@ -833,31 +834,32 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	}
 	auto& buffer = bufferIt->second;
 
-	const VkBufferCreateInfo buf_info = {
-		sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		pNext: NULL,
-		flags: 0,
-		size: size,
-		usage: usage,
-		sharingMode: VkSharingMode(),
-		queueFamilyIndexCount: 0,
-		pQueueFamilyIndices: 0
-	};
-	VkMemoryAllocateInfo mem_alloc = {
-		sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		pNext: NULL,
-		allocationSize: 0,
-		memoryTypeIndex: 0
-	};
-
-	VkMemoryRequirements mem_reqs;
 	VkResult err;
-	bool pass;
 	void* uploadData;
 
 	// (re)create buffer if required
 	if (buffer.size == 0 || buffer.size != size) {
 		if (buffer.size > 0) vkDestroyBuffer(context.device, buffer.buf, NULL);
+
+		const VkBufferCreateInfo buf_info = {
+			sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+			pNext: NULL,
+			flags: 0,
+			size: size,
+			usage: usage,
+			sharingMode: VkSharingMode(),
+			queueFamilyIndexCount: 0,
+			pQueueFamilyIndices: 0
+		};
+		VkMemoryAllocateInfo mem_alloc = {
+			sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+			pNext: NULL,
+			allocationSize: 0,
+			memoryTypeIndex: 0
+		};
+
+		VkMemoryRequirements mem_reqs;
+		bool pass;
 
 		err = vkCreateBuffer(context.device, &buf_info, NULL, &buffer.buf);
 		assert(err == VK_SUCCESS);
@@ -868,12 +870,14 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &mem_alloc.memoryTypeIndex);
 		assert(pass);
 
+		buffer.allocSize = mem_alloc.allocationSize;
+
 		err = vkAllocateMemory(context.device, &mem_alloc, NULL, &buffer.mem);
 		assert(err == VK_SUCCESS);
 	}
 
 	// upload
-	err = vkMapMemory(context.device, buffer.mem, 0, mem_alloc.allocationSize, 0, &uploadData);
+	err = vkMapMemory(context.device, buffer.mem, 0, buffer.allocSize, 0, &uploadData);
 	assert(err == VK_SUCCESS);
 
 	memcpy(uploadData, data, size);

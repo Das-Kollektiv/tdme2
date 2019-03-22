@@ -43,6 +43,7 @@ private:
 		VkBuffer buf;
 		VkDeviceMemory mem;
 		uint32_t id;
+		uint32_t allocSize;
 		uint32_t size;
 	};
 
