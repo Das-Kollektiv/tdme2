@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -15,6 +16,7 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::string;
 
@@ -36,6 +38,13 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	uint32_t engineVAO {  };
+
+	struct buffer_object {
+		VkBuffer buf;
+		VkDeviceMemory mem;
+		uint32_t id;
+		uint32_t size;
+	};
 
 	struct texture_object {
 		VkSampler sampler;
@@ -88,19 +97,20 @@ private:
 		PFN_vkQueuePresentKHR fpQueuePresentKHR;
 		uint32_t swapchainImageCount;
 		VkSwapchainKHR swapchain;
-		SwapchainBuffers *buffers;
+		SwapchainBuffers* swapChainBuffers;
 
 		VkCommandPool cmd_pool;
 
 		struct {
 			VkFormat format;
-
 			VkImage image;
 			VkDeviceMemory mem;
 			VkImageView view;
 		} depth;
 
-		struct vector<texture_object> textures;
+		uint32_t bufferIdx { 1 };
+		struct map<uint32_t, buffer_object> buffers;
+		struct map<uint32_t, texture_object> textures;
 
 		struct {
 			VkBuffer buf;
@@ -144,6 +154,10 @@ private:
 	} context;
 
 public:
+	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
+	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
+	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
+
 	const string getGLVersion() override;
 	void initialize() override;
 	void initializeFrame() override;

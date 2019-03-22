@@ -12,6 +12,7 @@
 
 #include <array>
 #include <cassert>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -54,9 +55,10 @@
     }
 
 using std::array;
-using std::vector;
+using std::map;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::subsystems::renderer::VKRenderer;
 using tdme::application::Application;
@@ -93,17 +95,24 @@ VKRenderer::VKRenderer()
 	DEPTHFUNCTION_GREATEREQUAL = -1;;
 }
 
-const string VKRenderer::getGLVersion()
-{
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return "gl3";
+bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
+    uint32_t i;
+    // Search memtypes to find first index with those properties
+    for (i = 0; i < VK_MAX_MEMORY_TYPES; i++) {
+        if ((typeBits & 1) == 1) {
+            // Type is available, does it match user properties?
+            if ((context.memory_properties.memoryTypes[i].propertyFlags & requirements_mask) == requirements_mask) {
+                *typeIndex = i;
+                return true;
+            }
+        }
+        typeBits >>= 1;
+    }
+    // No memory types matched, return failure
+    return false;
 }
 
-/**
- * Return 1 (true) if all layer names specified in check_names
- * can be found in given layer properties.
- */
-static VkBool32 vulkan_check_layers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers) {
+VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers) {
 	uint32_t i, j;
 	for (i = 0; i < check_count; i++) {
 		VkBool32 found = 0;
@@ -119,6 +128,12 @@ static VkBool32 vulkan_check_layers(uint32_t check_count, const char **check_nam
 		}
 	}
 	return 1;
+}
+
+const string VKRenderer::getGLVersion()
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	return "gl3";
 }
 
 void VKRenderer::initialize()
@@ -161,7 +176,7 @@ void VKRenderer::initialize()
 			err = vkEnumerateInstanceLayerProperties(&instance_layer_count, instance_layers);
 			assert(!err);
 
-			validation_found = vulkan_check_layers(
+			validation_found = checkLayers(
 				ARRAY_SIZE(instance_validation_layers_alt1),
 				instance_validation_layers,
 				instance_layer_count,
@@ -175,7 +190,7 @@ void VKRenderer::initialize()
 				// use alternative set of validation layers
 				instance_validation_layers = (const char**) instance_validation_layers_alt2;
 				context.enabled_layer_count = ARRAY_SIZE(instance_validation_layers_alt2);
-				validation_found = vulkan_check_layers(
+				validation_found = checkLayers(
 					ARRAY_SIZE(instance_validation_layers_alt2),
 					instance_validation_layers,
 					instance_layer_count,
@@ -223,11 +238,9 @@ void VKRenderer::initialize()
 		NULL, &instance_extension_count, instance_extensions);
 		assert(!err);
 		for (i = 0; i < instance_extension_count; i++) {
-			if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
-					instance_extensions[i].extensionName)) {
+			if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instance_extensions[i].extensionName)) {
 				if (context.validate) {
-					context.extension_names[context.enabled_extension_count++] =
-					VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
+					context.extension_names[context.enabled_extension_count++] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
 				}
 			}
 			assert(context.enabled_extension_count < 64);
@@ -800,22 +813,87 @@ void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return vector<int32_t>();
+	vector<int32_t> bufferIds;
+	for (auto i = 0; i < buffers; i++) {
+		buffer_object buffer;
+		buffer.id = context.bufferIdx++;
+		buffer.size = 0;
+		context.buffers[buffer.id] = buffer;
+		bufferIds.push_back(buffer.id);
+	}
+	return bufferIds;
+}
+
+void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto bufferIt = context.buffers.find(bufferObjectId);
+	if (bufferIt == context.buffers.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+		return;
+	}
+	auto& buffer = bufferIt->second;
+
+	const VkBufferCreateInfo buf_info = {
+		sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		size: size,
+		usage: usage,
+		sharingMode: VkSharingMode(),
+		queueFamilyIndexCount: 0,
+		pQueueFamilyIndices: 0
+	};
+	VkMemoryAllocateInfo mem_alloc = {
+		sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		pNext: NULL,
+		allocationSize: 0,
+		memoryTypeIndex: 0
+	};
+
+	VkMemoryRequirements mem_reqs;
+	VkResult err;
+	bool pass;
+	void* uploadData;
+
+	// (re)create buffer if required
+	if (buffer.size == 0 || buffer.size != size) {
+		if (buffer.size > 0) vkDestroyBuffer(context.device, buffer.buf, NULL);
+
+		err = vkCreateBuffer(context.device, &buf_info, NULL, &buffer.buf);
+		assert(err == VK_SUCCESS);
+
+		vkGetBufferMemoryRequirements(context.device, buffer.buf, &mem_reqs);
+
+		mem_alloc.allocationSize = mem_reqs.size;
+		pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &mem_alloc.memoryTypeIndex);
+		assert(pass);
+
+		err = vkAllocateMemory(context.device, &mem_alloc, NULL, &buffer.mem);
+		assert(err == VK_SUCCESS);
+	}
+
+	// upload
+	err = vkMapMemory(context.device, buffer.mem, 0, mem_alloc.allocationSize, 0, &uploadData);
+	assert(err == VK_SUCCESS);
+
+	memcpy(uploadData, data, size);
+
+	vkUnmapMemory(context.device, buffer.mem);
 }
 
 void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT); // TODO: Vertices only here?
 }
 
 void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
 }
 
 void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
 }
 
 void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
@@ -901,6 +979,16 @@ void VKRenderer::unbindBufferObjects()
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	for (auto bufferObjectId: bufferObjectIds) {
+		auto bufferIt = context.buffers.find(bufferObjectId);
+		if (bufferIt == context.buffers.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+			continue;
+		}
+		auto& buffer = bufferIt->second;
+		vkDestroyBuffer(context.device, buffer.buf, NULL);
+		context.buffers.erase(bufferIt);
+	}
 }
 
 int32_t VKRenderer::getTextureUnit()
