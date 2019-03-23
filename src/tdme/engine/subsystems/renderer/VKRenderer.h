@@ -37,12 +37,10 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public GLRenderer
 {
 private:
-	uint32_t engineVAO {  };
-
 	struct buffer_object {
 		VkBuffer buf;
 		VkDeviceMemory mem;
-		uint32_t id;
+		int32_t id;
 		uint32_t allocSize;
 		uint32_t size;
 	};
@@ -58,11 +56,24 @@ private:
 		int32_t tex_width, tex_height;
 	};
 
-	typedef struct {
+	struct depth_buffer {
+		VkFormat format;
+		VkImage image;
+		VkDeviceMemory mem;
+		VkImageView view;
+		int32_t id;
+	};
+
+	struct color_buffer {
+		VkImage image;
+		VkImageView view;
+	};
+
+	struct swapchain_buffer_type {
 		VkImage image;
 		VkCommandBuffer cmd;
 		VkImageView view;
-	} SwapchainBuffers;
+	};
 
 	struct context {
 		GLFWwindow* window;
@@ -96,22 +107,20 @@ private:
 		PFN_vkGetSwapchainImagesKHR fpGetSwapchainImagesKHR;
 		PFN_vkAcquireNextImageKHR fpAcquireNextImageKHR;
 		PFN_vkQueuePresentKHR fpQueuePresentKHR;
-		uint32_t swapchainImageCount;
-		VkSwapchainKHR swapchain;
-		SwapchainBuffers* swapChainBuffers;
+
+		uint32_t swapchain_image_count { 0 };
+		VkSwapchainKHR swapchain { VK_NULL_HANDLE };
+		swapchain_buffer_type* swapchain_buffers { nullptr };
 
 		VkCommandPool cmd_pool;
 
-		struct {
-			VkFormat format;
-			VkImage image;
-			VkDeviceMemory mem;
-			VkImageView view;
-		} depth;
-
-		uint32_t bufferIdx { 1 };
-		struct map<uint32_t, buffer_object> buffers;
-		struct map<uint32_t, texture_object> textures;
+		int32_t depth_buffer_idx { 0 };
+		int32_t color_buffer_idx { 0 };
+		int32_t buffer_idx { 0 };
+		struct map<int32_t, depth_buffer> depth_buffers;
+		struct map<int32_t, depth_buffer> color_buffers;
+		struct map<int32_t, buffer_object> buffers;
+		struct map<int32_t, texture_object> textures;
 
 		struct {
 			VkBuffer buf;
@@ -136,7 +145,7 @@ private:
 		VkDescriptorPool desc_pool;
 		VkDescriptorSet desc_set;
 
-		VkFramebuffer *framebuffers;
+		VkFramebuffer* framebuffers;
 
 		VkPhysicalDeviceMemoryProperties memory_properties;
 
@@ -157,7 +166,9 @@ private:
 public:
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
+	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
+	void initializeSwapChain();
 
 	const string getGLVersion() override;
 	void initialize() override;

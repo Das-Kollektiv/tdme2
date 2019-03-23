@@ -130,6 +130,217 @@ VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names,
 	return 1;
 }
 
+void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
+	VkResult err;
+
+	if (context.setup_cmd == VK_NULL_HANDLE) {
+		const VkCommandBufferAllocateInfo cmd = {
+			sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+			pNext: NULL,
+			commandPool: context.cmd_pool,
+			level: VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+			commandBufferCount: 1,
+		};
+
+		err = vkAllocateCommandBuffers(context.device, &cmd, &context.setup_cmd);
+		assert(!err);
+
+		VkCommandBufferBeginInfo cmd_buf_info = {
+			sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+			pNext: NULL,
+			flags: 0,
+			pInheritanceInfo: NULL,
+		};
+		err = vkBeginCommandBuffer(context.setup_cmd, &cmd_buf_info);
+		assert(!err);
+	}
+
+	VkImageMemoryBarrier image_memory_barrier = {
+		sType: VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		pNext: NULL,
+		srcAccessMask: srcAccessMask,
+		dstAccessMask: 0,
+		oldLayout: old_image_layout,
+		newLayout: new_image_layout,
+	    srcQueueFamilyIndex: 0,
+	    dstQueueFamilyIndex: 0,
+		image: image,
+		subresourceRange: { aspectMask, 0, 1, 0, 1 }
+	};
+
+	if (new_image_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+		/* Make sure anything that was copying from this image has completed */
+		image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+	}
+
+	if (new_image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+		image_memory_barrier.dstAccessMask =
+				VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	}
+
+	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+		image_memory_barrier.dstAccessMask =
+				VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	}
+
+	if (new_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+		/* Make sure any Copy or CPU writes to image are flushed */
+		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT
+				| VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+	}
+
+	VkImageMemoryBarrier* pmemory_barrier = &image_memory_barrier;
+
+	VkPipelineStageFlags src_stages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+	VkPipelineStageFlags dest_stages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+
+	vkCmdPipelineBarrier(context.setup_cmd, src_stages, dest_stages, 0, 0, NULL, 0, NULL, 1, pmemory_barrier);
+}
+
+void VKRenderer::initializeSwapChain() {
+
+	VkResult err;
+	VkSwapchainKHR oldSwapchain = context.swapchain;
+
+	// Check the surface capabilities and formats
+	VkSurfaceCapabilitiesKHR surfCapabilities;
+	err = context.fpGetPhysicalDeviceSurfaceCapabilitiesKHR(context.gpu, context.surface, &surfCapabilities);
+	assert(err == VK_SUCCESS);
+
+	uint32_t presentModeCount;
+	err = context.fpGetPhysicalDeviceSurfacePresentModesKHR(context.gpu, context.surface, &presentModeCount, NULL);
+	assert(err == VK_SUCCESS);
+	VkPresentModeKHR *presentModes = (VkPresentModeKHR *) malloc(presentModeCount * sizeof(VkPresentModeKHR));
+	assert(presentModes);
+	err = context.fpGetPhysicalDeviceSurfacePresentModesKHR(context.gpu, context.surface, &presentModeCount, presentModes);
+	assert(err == VK_SUCCESS);
+
+	VkExtent2D swapchainExtent;
+	// width and height are either both 0xFFFFFFFF, or both not 0xFFFFFFFF.
+	if (surfCapabilities.currentExtent.width == 0xFFFFFFFF) {
+		// If the surface size is undefined, the size is set to the size
+		// of the images requested, which must fit within the minimum and
+		// maximum values.
+		swapchainExtent.width = context.width;
+		swapchainExtent.height = context.height;
+
+		if (swapchainExtent.width < surfCapabilities.minImageExtent.width) {
+			swapchainExtent.width = surfCapabilities.minImageExtent.width;
+		} else if (swapchainExtent.width > surfCapabilities.maxImageExtent.width) {
+			swapchainExtent.width = surfCapabilities.maxImageExtent.width;
+		}
+
+		if (swapchainExtent.height < surfCapabilities.minImageExtent.height) {
+			swapchainExtent.height = surfCapabilities.minImageExtent.height;
+		} else if (swapchainExtent.height > surfCapabilities.maxImageExtent.height) {
+			swapchainExtent.height = surfCapabilities.maxImageExtent.height;
+		}
+	} else {
+		// If the surface size is defined, the swap chain size must match
+		swapchainExtent = surfCapabilities.currentExtent;
+		context.width = surfCapabilities.currentExtent.width;
+		context.height = surfCapabilities.currentExtent.height;
+	}
+
+	VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
+
+	// Determine the number of VkImage's to use in the swap chain.
+	// Application desires to only acquire 1 image at a time (which is
+	// "surfCapabilities.minImageCount").
+	uint32_t desiredNumOfSwapchainImages = surfCapabilities.minImageCount;
+	// If maxImageCount is 0, we can ask for as many images as we want;
+	// otherwise we're limited to maxImageCount
+	if ((surfCapabilities.maxImageCount > 0) && (desiredNumOfSwapchainImages > surfCapabilities.maxImageCount)) {
+		// Application must settle for fewer images than desired:
+		desiredNumOfSwapchainImages = surfCapabilities.maxImageCount;
+	}
+
+	VkSurfaceTransformFlagsKHR preTransform;
+	if (surfCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) {
+		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+	} else {
+		preTransform = surfCapabilities.currentTransform;
+	}
+
+	const VkSwapchainCreateInfoKHR swapchain = {
+		sType: VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+		pNext: NULL,
+		flags: 0,
+		surface: context.surface,
+		minImageCount: desiredNumOfSwapchainImages,
+		imageFormat: context.format,
+		imageColorSpace: context.color_space,
+		imageExtent: {
+			width: swapchainExtent.width,
+			height: swapchainExtent.height,
+		},
+		imageArrayLayers: 1,
+		imageUsage: VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
+		queueFamilyIndexCount: 0,
+		pQueueFamilyIndices: NULL,
+		preTransform: (VkSurfaceTransformFlagBitsKHR)preTransform, /// TODO: a.drewke, ???
+		compositeAlpha: VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+		presentMode: swapchainPresentMode,
+		clipped: true,
+		oldSwapchain: oldSwapchain,
+	};
+	uint32_t i;
+
+	err = context.fpCreateSwapchainKHR(context.device, &swapchain, NULL, &context.swapchain);
+	assert(!err);
+
+	// If we just re-created an existing swapchain, we should destroy the old
+	// swapchain at this point.
+	// Note: destroying the swapchain also cleans up all its associated
+	// presentable images once the platform is done with them.
+	if (oldSwapchain != VK_NULL_HANDLE) {
+		context.fpDestroySwapchainKHR(context.device, oldSwapchain, NULL);
+	}
+
+	err = context.fpGetSwapchainImagesKHR(context.device, context.swapchain, &context.swapchain_image_count, NULL);
+	assert(err == VK_SUCCESS);
+
+	VkImage* swapchainImages = (VkImage*)malloc(context.swapchain_image_count * sizeof(VkImage));
+	assert(swapchainImages != NULL);
+	err = context.fpGetSwapchainImagesKHR(context.device, context.swapchain, &context.swapchain_image_count, swapchainImages);
+	assert(err == VK_SUCCESS);
+
+	context.swapchain_buffers = (swapchain_buffer_type*)malloc(sizeof(swapchain_buffer_type) * context.swapchain_image_count);
+	assert(context.swapchain_buffers != NULL);
+
+	for (i = 0; i < context.swapchain_image_count; i++) {
+		VkImageViewCreateInfo color_attachment_view = {
+			sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+			pNext: NULL,
+			flags: 0,
+			image: swapchainImages[i],
+			viewType: VK_IMAGE_VIEW_TYPE_2D,
+			format: context.format,
+			components: {
+				r: VK_COMPONENT_SWIZZLE_R,
+				g: VK_COMPONENT_SWIZZLE_G,
+				b: VK_COMPONENT_SWIZZLE_B,
+				a: VK_COMPONENT_SWIZZLE_A
+			},
+			subresourceRange: {
+				aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
+				baseMipLevel: 0,
+				levelCount: 1,
+				baseArrayLayer: 0,
+				layerCount: 1
+			}
+		};
+		context.swapchain_buffers[i].image = swapchainImages[i];
+		err = vkCreateImageView(context.device, &color_attachment_view, NULL, &context.swapchain_buffers[i].view);
+		assert(err == VK_SUCCESS);
+	}
+
+	context.current_buffer = 0;
+
+	if (NULL != presentModes) free(presentModes);
+}
+
 const string VKRenderer::getGLVersion()
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
@@ -260,7 +471,7 @@ void VKRenderer::initialize()
 	VkInstanceCreateInfo inst_info = {
 		sType: VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		pNext: NULL,
-		flags: VkInstanceCreateFlags(),
+		flags: 0,
 		pApplicationInfo: &app,
 		enabledLayerCount: context.enabled_layer_count,
 		ppEnabledLayerNames: (const char * const *)instance_validation_layers,
@@ -476,7 +687,7 @@ void VKRenderer::initialize()
 	const VkDeviceQueueCreateInfo queue = {
 		sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		pNext: NULL,
-		flags: VkDeviceQueueCreateFlags(),
+		flags: 0,
 		queueFamilyIndex: context.graphics_queue_node_index,
 		queueCount: 1,
 		pQueuePriorities: queue_priorities
@@ -491,7 +702,7 @@ void VKRenderer::initialize()
 	VkDeviceCreateInfo device = {
 		sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		pNext: NULL,
-		flags: VkDeviceCreateFlags(),
+		flags: 0,
 		queueCreateInfoCount: 1,
 		pQueueCreateInfos: &queue,
 		enabledLayerCount: 0,
@@ -533,6 +744,9 @@ void VKRenderer::initialize()
 
 	// Get Memory information and properties
 	vkGetPhysicalDeviceMemoryProperties(context.gpu, &context.memory_properties);
+
+	//
+	initializeSwapChain();
 }
 
 void VKRenderer::initializeFrame()
@@ -761,12 +975,132 @@ int32_t VKRenderer::createTexture()
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	auto& depth_buffer = context.depth_buffers[context.depth_buffer_idx];
+	depth_buffer.id = context.depth_buffer_idx++;
+
+	const VkFormat depth_format = VK_FORMAT_D32_SFLOAT;
+	const VkImageCreateInfo image = {
+		sType: VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		imageType: VK_IMAGE_TYPE_2D,
+		format: depth_format,
+		extent: {
+			width: width,
+			height: height,
+			depth: 1
+		},
+		mipLevels: 1,
+		arrayLayers: 1,
+		samples: VK_SAMPLE_COUNT_1_BIT,
+		tiling: VK_IMAGE_TILING_OPTIMAL,
+		usage: VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+		sharingMode: VkSharingMode(),
+		queueFamilyIndexCount: 0,
+		pQueueFamilyIndices: 0,
+		initialLayout: VkImageLayout(),
+	};
+	VkMemoryAllocateInfo mem_alloc = {
+		sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		pNext: NULL,
+		allocationSize: 0,
+		memoryTypeIndex: 0,
+	};
+	VkImageViewCreateInfo view = {
+		sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		image: VK_NULL_HANDLE,
+		viewType: VK_IMAGE_VIEW_TYPE_2D,
+		format: depth_format,
+		components: VkComponentMapping(),
+		subresourceRange: {
+			aspectMask: VK_IMAGE_ASPECT_DEPTH_BIT,
+			baseMipLevel: 0,
+			levelCount: 1,
+			baseArrayLayer: 0,
+			layerCount: 1
+		},
+	};
+
+	VkMemoryRequirements mem_reqs;
+	VkResult err;
+	bool pass;
+
+	depth_buffer.format = depth_format;
+
+	/* create image */
+	err = vkCreateImage(context.device, &image, NULL, &depth_buffer.image);
+	assert(!err);
+
+	/* get memory requirements for this object */
+	vkGetImageMemoryRequirements(context.device, depth_buffer.image, &mem_reqs);
+
+	/* select memory size and type */
+	mem_alloc.allocationSize = mem_reqs.size;
+	pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, 0, &mem_alloc.memoryTypeIndex);
+	assert(pass);
+
+	/* allocate memory */
+	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &depth_buffer.mem);
+	assert(!err);
+
+	/* bind memory */
+	err = vkBindImageMemory(context.device, depth_buffer.image, depth_buffer.mem, 0);
+	assert(!err);
+
+	setImageLayout(
+		depth_buffer.image,
+		VK_IMAGE_ASPECT_DEPTH_BIT,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		(VkAccessFlagBits)0
+	);
+
+	/* create image view */
+	view.image = depth_buffer.image;
+	err = vkCreateImageView(context.device, &view, NULL, &depth_buffer.view);
+
+	assert(!err);
+
 	return -1;
 }
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	auto& color_buffer = context.color_buffers[context.color_buffer_idx];
+	color_buffer.id = context.color_buffer_idx++;
+
+	VkResult err;
+	VkImageViewCreateInfo color_attachment_view =
+		{
+			sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+			pNext: NULL,
+			flags: 0,
+			image: color_buffer.image,
+			viewType: VK_IMAGE_VIEW_TYPE_2D,
+			format: VK_FORMAT_R8G8B8A8_UNORM,
+			components: {
+				r: VK_COMPONENT_SWIZZLE_R,
+				g: VK_COMPONENT_SWIZZLE_G,
+				b: VK_COMPONENT_SWIZZLE_B,
+				a: VK_COMPONENT_SWIZZLE_A,
+			},
+			subresourceRange: {
+				aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
+				baseMipLevel: 0,
+				levelCount: 1,
+				baseArrayLayer: 0,
+				layerCount: 1
+			},
+		};
+
+	err = vkCreateImageView(context.device, &color_attachment_view, NULL, &color_buffer.view);
+	assert(!err);
+
 	return -1;
 }
 
@@ -817,7 +1151,7 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 	vector<int32_t> bufferIds;
 	for (auto i = 0; i < buffers; i++) {
 		buffer_object buffer;
-		buffer.id = context.bufferIdx++;
+		buffer.id = context.buffer_idx++;
 		buffer.size = 0;
 		context.buffers[buffer.id] = buffer;
 		bufferIds.push_back(buffer.id);
