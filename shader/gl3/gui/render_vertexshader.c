@@ -8,9 +8,11 @@ layout (location = 3) in vec4 inColor;
 // uniforms
 uniform mat3 textureMatrix;
 
+{$UNIFORMS}
+
 // will be passed to fragment shader
-out vec4 vsFragColor;
-out vec2 vsFragTextureUV;
+layout (location = 4) out vec4 vsFragColor;
+layout (location = 5) out vec2 vsFragTextureUV;
 
 // main
 void main(void) {

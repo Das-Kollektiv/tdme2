@@ -1,17 +1,20 @@
 #version 330
 
 // uniforms
-uniform sampler2D diffuseTextureUnit;
+layout(binding = 0) uniform sampler2D diffuseTextureUnit;
+
 uniform int diffuseTextureAvailable;
 uniform vec4 effectColorMul;
 uniform vec4 effectColorAdd;
 
+{$UNIFORMS}
+
 // passed from vertex shader
-in vec2 vsFragTextureUV;
-in vec4 vsFragColor;
+layout (location = 4) in vec2 vsFragTextureUV;
+layout (location = 5) in vec4 vsFragColor;
 
 // passed out
-out vec4 outColor;
+layout (location = 6) out vec4 outColor;
 
 // main
 void main (void) {

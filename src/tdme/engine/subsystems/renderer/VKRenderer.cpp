@@ -1,11 +1,15 @@
 /**
- * based on https://github.com/glfw/glfw/blob/master/tests/vulkan.c
+ * based on https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
  */
 
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
+#include <ext/glslang/Public/ShaderLang.h>
+#include <ext/OGLCompilersDLL/InitializeDll.h>
+#include <ext/spirv/GlslangToSpv.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -14,6 +18,7 @@
 #include <cassert>
 #include <map>
 #include <vector>
+#include <stack>
 #include <string>
 
 #include <tdme/application/Application.h>
@@ -28,6 +33,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
@@ -56,6 +62,7 @@
 
 using std::array;
 using std::map;
+using std::stack;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -73,6 +80,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 VKRenderer::VKRenderer()
@@ -85,10 +93,10 @@ VKRenderer::VKRenderer()
 	CULLFACE_BACK = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
-	SHADER_FRAGMENT_SHADER = -1;
-	SHADER_VERTEX_SHADER = -1;
-	SHADER_COMPUTE_SHADER = -1;
-	SHADER_GEOMETRY_SHADER = -1;
+	SHADER_FRAGMENT_SHADER = VK_SHADER_STAGE_FRAGMENT_BIT;
+	SHADER_VERTEX_SHADER = VK_SHADER_STAGE_VERTEX_BIT;
+	SHADER_COMPUTE_SHADER = VK_SHADER_STAGE_COMPUTE_BIT;
+	SHADER_GEOMETRY_SHADER = VK_SHADER_STAGE_GEOMETRY_BIT;
 	DEPTHFUNCTION_ALWAYS = -1;;
 	DEPTHFUNCTION_EQUAL = -1;;
 	DEPTHFUNCTION_LESSEQUAL = -1;;
@@ -195,6 +203,129 @@ void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, Vk
 	VkPipelineStageFlags dest_stages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
 
 	vkCmdPipelineBarrier(context.setup_cmd, src_stages, dest_stages, 0, 0, NULL, 0, NULL, 1, pmemory_barrier);
+}
+
+void VKRenderer::shaderInitResources(TBuiltInResource &resources) {
+    resources.maxLights = 32;
+    resources.maxClipPlanes = 6;
+    resources.maxTextureUnits = 32;
+    resources.maxTextureCoords = 32;
+    resources.maxVertexAttribs = 64;
+    resources.maxVertexUniformComponents = 4096;
+    resources.maxVaryingFloats = 64;
+    resources.maxVertexTextureImageUnits = 32;
+    resources.maxCombinedTextureImageUnits = 80;
+    resources.maxTextureImageUnits = 32;
+    resources.maxFragmentUniformComponents = 4096;
+    resources.maxDrawBuffers = 32;
+    resources.maxVertexUniformVectors = 128;
+    resources.maxVaryingVectors = 8;
+    resources.maxFragmentUniformVectors = 16;
+    resources.maxVertexOutputVectors = 16;
+    resources.maxFragmentInputVectors = 15;
+    resources.minProgramTexelOffset = -8;
+    resources.maxProgramTexelOffset = 7;
+    resources.maxClipDistances = 8;
+    resources.maxComputeWorkGroupCountX = 65535;
+    resources.maxComputeWorkGroupCountY = 65535;
+    resources.maxComputeWorkGroupCountZ = 65535;
+    resources.maxComputeWorkGroupSizeX = 1024;
+    resources.maxComputeWorkGroupSizeY = 1024;
+    resources.maxComputeWorkGroupSizeZ = 64;
+    resources.maxComputeUniformComponents = 1024;
+    resources.maxComputeTextureImageUnits = 16;
+    resources.maxComputeImageUniforms = 8;
+    resources.maxComputeAtomicCounters = 8;
+    resources.maxComputeAtomicCounterBuffers = 1;
+    resources.maxVaryingComponents = 60;
+    resources.maxVertexOutputComponents = 64;
+    resources.maxGeometryInputComponents = 64;
+    resources.maxGeometryOutputComponents = 128;
+    resources.maxFragmentInputComponents = 128;
+    resources.maxImageUnits = 8;
+    resources.maxCombinedImageUnitsAndFragmentOutputs = 8;
+    resources.maxCombinedShaderOutputResources = 8;
+    resources.maxImageSamples = 0;
+    resources.maxVertexImageUniforms = 0;
+    resources.maxTessControlImageUniforms = 0;
+    resources.maxTessEvaluationImageUniforms = 0;
+    resources.maxGeometryImageUniforms = 0;
+    resources.maxFragmentImageUniforms = 8;
+    resources.maxCombinedImageUniforms = 8;
+    resources.maxGeometryTextureImageUnits = 16;
+    resources.maxGeometryOutputVertices = 256;
+    resources.maxGeometryTotalOutputComponents = 1024;
+    resources.maxGeometryUniformComponents = 1024;
+    resources.maxGeometryVaryingComponents = 64;
+    resources.maxTessControlInputComponents = 128;
+    resources.maxTessControlOutputComponents = 128;
+    resources.maxTessControlTextureImageUnits = 16;
+    resources.maxTessControlUniformComponents = 1024;
+    resources.maxTessControlTotalOutputComponents = 4096;
+    resources.maxTessEvaluationInputComponents = 128;
+    resources.maxTessEvaluationOutputComponents = 128;
+    resources.maxTessEvaluationTextureImageUnits = 16;
+    resources.maxTessEvaluationUniformComponents = 1024;
+    resources.maxTessPatchComponents = 120;
+    resources.maxPatchVertices = 32;
+    resources.maxTessGenLevel = 64;
+    resources.maxViewports = 16;
+    resources.maxVertexAtomicCounters = 0;
+    resources.maxTessControlAtomicCounters = 0;
+    resources.maxTessEvaluationAtomicCounters = 0;
+    resources.maxGeometryAtomicCounters = 0;
+    resources.maxFragmentAtomicCounters = 8;
+    resources.maxCombinedAtomicCounters = 8;
+    resources.maxAtomicCounterBindings = 1;
+    resources.maxVertexAtomicCounterBuffers = 0;
+    resources.maxTessControlAtomicCounterBuffers = 0;
+    resources.maxTessEvaluationAtomicCounterBuffers = 0;
+    resources.maxGeometryAtomicCounterBuffers = 0;
+    resources.maxFragmentAtomicCounterBuffers = 1;
+    resources.maxCombinedAtomicCounterBuffers = 1;
+    resources.maxAtomicCounterBufferSize = 16384;
+    resources.maxTransformFeedbackBuffers = 4;
+    resources.maxTransformFeedbackInterleavedComponents = 64;
+    resources.maxCullDistances = 8;
+    resources.maxCombinedClipAndCullDistances = 8;
+    resources.maxSamples = 4;
+    resources.maxMeshOutputVerticesNV = 256;
+    resources.maxMeshOutputPrimitivesNV = 512;
+    resources.maxMeshWorkGroupSizeX_NV = 32;
+    resources.maxMeshWorkGroupSizeY_NV = 1;
+    resources.maxMeshWorkGroupSizeZ_NV = 1;
+    resources.maxTaskWorkGroupSizeX_NV = 32;
+    resources.maxTaskWorkGroupSizeY_NV = 1;
+    resources.maxTaskWorkGroupSizeZ_NV = 1;
+    resources.maxMeshViewCountNV = 4;
+    resources.limits.nonInductiveForLoops = 1;
+    resources.limits.whileLoops = 1;
+    resources.limits.doWhileLoops = 1;
+    resources.limits.generalUniformIndexing = 1;
+    resources.limits.generalAttributeMatrixVectorIndexing = 1;
+    resources.limits.generalVaryingIndexing = 1;
+    resources.limits.generalSamplerIndexing = 1;
+    resources.limits.generalVariableIndexing = 1;
+    resources.limits.generalConstantMatrixVectorIndexing = 1;
+}
+
+EShLanguage VKRenderer::shaderFindLanguage(const VkShaderStageFlagBits shaderType) {
+    switch (shaderType) {
+        case VK_SHADER_STAGE_VERTEX_BIT:
+            return EShLangVertex;
+        case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT:
+            return EShLangTessControl;
+        case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT:
+            return EShLangTessEvaluation;
+        case VK_SHADER_STAGE_GEOMETRY_BIT:
+            return EShLangGeometry;
+        case VK_SHADER_STAGE_FRAGMENT_BIT:
+            return EShLangFragment;
+        case VK_SHADER_STAGE_COMPUTE_BIT:
+            return EShLangCompute;
+        default:
+            return EShLangVertex;
+    }
 }
 
 void VKRenderer::initializeSwapChain() {
@@ -343,13 +474,18 @@ void VKRenderer::initializeSwapChain() {
 
 const string VKRenderer::getGLVersion()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return "gl3";
 }
 
 void VKRenderer::initialize()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	//
+	glslang::InitProcess();
+	glslang::InitThread();
+	ShInitialize();
 
 	VkResult err;
 	uint32_t i = 0;
@@ -751,230 +887,390 @@ void VKRenderer::initialize()
 
 void VKRenderer::initializeFrame()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	GLRenderer::initializeFrame();
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isDepthTextureAvailable()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isUsingProgramAttributeLocation()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isSpecularMappingAvailable()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isNormalMappingAvailable()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isDisplacementMappingAvailable()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isInstancedRenderingAvailable() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return true;
 }
 
 bool VKRenderer::isUsingShortIndices() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 bool VKRenderer::isGeometryShaderAvailable() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 int32_t VKRenderer::getTextureUnits()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return activeTextureUnit;
 }
 
 int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return -1;
+	/*if (VERBOSE == true) */Console::println("VKRenderer::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
+
+	auto& shaderStruct = context.shaders[context.shader_idx];
+	shaderStruct.type = (VkShaderStageFlagBits)type;
+	shaderStruct.id = context.shader_idx++;
+
+	// shader source
+	auto shaderSource = StringUtils::replace(
+		StringUtils::replace(
+			FileSystem::getInstance()->getContentAsString(pathName, fileName),
+			"{$DEFINITIONS}",
+			definitions
+		),
+		"{$FUNCTIONS}",
+		functions
+	);
+
+	// do some shader adjustments
+	{
+		// pre parse shader code
+		string newShaderSource;
+		vector<string> definitions;
+		vector<string> uniforms;
+		shaderSource = StringUtils::replace(shaderSource, "\r", "");
+		shaderSource = StringUtils::replace(shaderSource, "#version 330", "#version 430");
+		StringTokenizer t;
+		t.tokenize(shaderSource, "\n");
+		stack<string> testedDefinitions;
+		while (t.hasMoreTokens() == true) {
+			auto line = StringUtils::trim(t.nextToken());
+			auto position = -1;
+			if ((position = line.find("uniform ")) != -1) {
+				if (line.find("sampler2D") != -1) {
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform with sampler2D: skipping: " + line);
+					newShaderSource+= line + "\n";
+				} else {
+					string uniform;
+					if (StringUtils::startsWith(line, "uniform") == true) {
+						uniform = StringUtils::substring(line, string("uniform").size() + 1);
+					} else
+					if (StringUtils::startsWith(line, "layout") == true) {
+						uniform = StringUtils::substring(line, line.find(") uniform") + string(") uniform").size());
+					}
+					uniforms.push_back(uniform);
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
+				}
+			} else
+			if ((position = line.find("#define ")) != -1) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have define: " + line);
+				newShaderSource+= line + "\n";
+			} else
+			if ((position = line.find("#if defined(")) != -1) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + line);
+				testedDefinitions.push("TODO");
+				newShaderSource+= line + "\n";
+			} else
+			if ((position = line.find("#endif")) != -1) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test end: " + line);
+				if (testedDefinitions.size() == 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test end: invalid depth"); else testedDefinitions.pop();
+				newShaderSource+= line + "\n";
+			} else {
+				newShaderSource+= line + "\n";
+			}
+		}
+
+		// generate new uniform block
+		shaderSource = newShaderSource;
+		string uniformsBlock = "\n";
+		uniformsBlock+= "layout(binding=0) uniform UniformBufferObject\n";
+		uniformsBlock+= "{\n";
+		for (auto uniform: uniforms) {
+			uniformsBlock+= "\t" + uniform + "\n";
+		}
+		uniformsBlock+= "} ubo;\n";
+
+		// replace uniforms to use ubo
+		//	TODO: improve me as this will not work in all cases
+		for (auto uniform: uniforms) {
+			t.tokenize(uniform, "\t ;");
+			string uniformName;
+			while (t.hasMoreTokens() == true) uniformName = t.nextToken();
+			shaderSource = StringUtils::replace(
+				shaderSource,
+				uniformName,
+				"ubo." + uniformName
+			);
+		}
+
+		// finally inject uniforms
+		shaderSource = StringUtils::replace(
+			shaderSource,
+			"{$UNIFORMS}",
+			uniformsBlock
+		);
+	}
+
+	char* sourceHeap = new char[shaderSource.length() + 1];
+	strcpy(sourceHeap, shaderSource.c_str());
+
+    EShLanguage stage = shaderFindLanguage((VkShaderStageFlagBits)type);
+    glslang::TShader glslShader(stage);
+    glslang::TProgram glslProgram;
+    const char *shaderStrings[1];
+    TBuiltInResource resources;
+    shaderInitResources(resources);
+
+    // Enable SPIR-V and Vulkan rules when parsing GLSL
+    EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
+
+    shaderStrings[0] = sourceHeap;
+    glslShader.setStrings(shaderStrings, 1);
+
+    if (!glslShader.parse(&resources, 100, false, messages)) {
+		// be verbose
+		Console::println(
+			string(
+				string("GL3Renderer::loadShader") +
+				string("[") +
+				to_string(shaderStruct.id) +
+				string("]") +
+				pathName +
+				string("/") +
+				fileName +
+				string(": parsing failed: ") +
+				glslShader.getInfoLog() + ": " +
+				glslShader.getInfoDebugLog()
+			 )
+		);
+		Console::println(shaderSource);
+		context.shaders.erase(shaderStruct.id);
+        return false;
+    }
+
+    glslProgram.addShader(&glslShader);
+
+    // Program-level processing...
+    if (glslProgram.link(messages) == false) {
+		// be verbose
+		Console::println(
+			string(
+				string("GL3Renderer::loadShader") +
+				string("[") +
+				to_string(shaderStruct.id) +
+				string("]") +
+				pathName +
+				string("/") +
+				fileName +
+				string(": linking failed: ") +
+				glslShader.getInfoLog() + ": " +
+				glslShader.getInfoDebugLog()
+			 )
+		);
+		Console::println(shaderSource);
+		context.shaders.erase(shaderStruct.id);
+        return false;
+    } else {
+    	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): SUCCESS: " + pathName + "/" + fileName + ": " + definitions);
+    }
+
+    glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shaderStruct.spirv);
+
+	return shaderStruct.id;
 }
 
 void VKRenderer::useProgram(int32_t programId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::createProgram()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 bool VKRenderer::linkProgram(int32_t programId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;
 }
 
 int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloat(int32_t uniformId, float value)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::updateViewPort()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableCulling()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableCulling()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableBlending()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableBlending()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableDepthBufferWriting()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableDepthBufferWriting()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disableDepthBufferTest()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::enableDepthBufferTest()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunction)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::clear(int32_t mask)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setCullFace(int32_t cullFace)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::setFrontFace(int32_t frontFace)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::createTexture()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	auto& depth_buffer = context.depth_buffers[context.depth_buffer_idx];
 	depth_buffer.id = context.depth_buffer_idx++;
@@ -1069,7 +1365,7 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	auto& color_buffer = context.color_buffers[context.color_buffer_idx];
 	color_buffer.id = context.color_buffer_idx++;
@@ -1106,48 +1402,48 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 
 void VKRenderer::uploadTexture(Texture* texture)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindTexture(int32_t textureId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disposeTexture(int32_t textureId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return -1;
 }
 
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
 	for (auto i = 0; i < buffers; i++) {
 		buffer_object buffer;
@@ -1160,7 +1456,7 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 }
 
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto bufferIt = context.buffers.find(bufferObjectId);
 	if (bufferIt == context.buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
@@ -1236,87 +1532,87 @@ void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size,
 
 void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindModelMatricesBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::unbindBufferObjects()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	for (auto bufferObjectId: bufferObjectIds) {
 		auto bufferIt = context.buffers.find(bufferObjectId);
 		if (bufferIt == context.buffers.end()) {
@@ -1331,87 +1627,87 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 
 int32_t VKRenderer::getTextureUnit()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return activeTextureUnit;
 }
 
 void VKRenderer::setTextureUnit(int32_t textureUnit)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	this->activeTextureUnit = textureUnit;
 }
 
 float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return 0.0f;
 }
 
 ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return nullptr;
 }
 
 void VKRenderer::initGuiMode()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::doneGuiMode()
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::checkGLError(int line)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::memoryBarrier() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }

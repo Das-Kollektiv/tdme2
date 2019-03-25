@@ -3,6 +3,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <spirv/GlslangToSpv.h>
+
 #include <array>
 #include <map>
 #include <vector>
@@ -37,6 +39,14 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public GLRenderer
 {
 private:
+	static constexpr bool VERBOSE { false };
+
+	struct shader_type {
+		vector<unsigned int> spirv;
+		VkShaderStageFlagBits type;
+		int32_t id;
+	};
+
 	struct buffer_object {
 		VkBuffer buf;
 		VkDeviceMemory mem;
@@ -114,9 +124,11 @@ private:
 
 		VkCommandPool cmd_pool;
 
-		int32_t depth_buffer_idx { 0 };
-		int32_t color_buffer_idx { 0 };
-		int32_t buffer_idx { 0 };
+		int32_t shader_idx { 1 };
+		int32_t depth_buffer_idx { 1 };
+		int32_t color_buffer_idx { 1 };
+		int32_t buffer_idx { 1 };
+		struct map<int32_t, shader_type> shaders;
 		struct map<int32_t, depth_buffer> depth_buffers;
 		struct map<int32_t, depth_buffer> color_buffers;
 		struct map<int32_t, buffer_object> buffers;
@@ -168,6 +180,8 @@ public:
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
+	void shaderInitResources(TBuiltInResource &resources);
+	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 
 	const string getGLVersion() override;

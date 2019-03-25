@@ -571,11 +571,11 @@ void Engine::initialize(bool debug)
 
 	// create lighting shader
 	lightingShader = new LightingShader(renderer);
-	lightingShader->initialize();
+	//lightingShader->initialize();
 
 	// create particles shader
 	particlesShader = new ParticlesShader(this, renderer);
-	particlesShader->initialize();
+	//particlesShader->initialize();
 
 	// create gui shader
 	guiShader = new GUIShader(renderer);
@@ -583,11 +583,11 @@ void Engine::initialize(bool debug)
 
 	// create frame buffer render shader
 	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
-	frameBufferRenderShader->initialize();
+	// frameBufferRenderShader->initialize();
 
 	// create post processing shader
 	postProcessingShader = new PostProcessingShader(renderer);
-	postProcessingShader->initialize();
+	// postProcessingShader->initialize();
 
 	// create post processing
 	postProcessing = new PostProcessing();
