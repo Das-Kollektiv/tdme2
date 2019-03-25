@@ -42,8 +42,19 @@ private:
 	static constexpr bool VERBOSE { false };
 
 	struct shader_type {
+		struct uniform_type {
+			string name;
+			uint32_t position;
+			uint32_t size;
+		};
+		map<string, uniform_type> uniforms;
 		vector<unsigned int> spirv;
 		VkShaderStageFlagBits type;
+		int32_t id;
+	};
+
+	struct program_type {
+		vector<int32_t> shaderIds;
 		int32_t id;
 	};
 
@@ -125,9 +136,11 @@ private:
 		VkCommandPool cmd_pool;
 
 		int32_t shader_idx { 1 };
+		int32_t program_idx { 1 };
 		int32_t depth_buffer_idx { 1 };
 		int32_t color_buffer_idx { 1 };
 		int32_t buffer_idx { 1 };
+		struct map<int32_t, program_type> programs;
 		struct map<int32_t, shader_type> shaders;
 		struct map<int32_t, depth_buffer> depth_buffers;
 		struct map<int32_t, depth_buffer> color_buffers;

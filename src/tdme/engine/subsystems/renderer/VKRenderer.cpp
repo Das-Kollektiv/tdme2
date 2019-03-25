@@ -182,19 +182,16 @@ void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, Vk
 	}
 
 	if (new_image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
-		image_memory_barrier.dstAccessMask =
-				VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		image_memory_barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	}
 
 	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-		image_memory_barrier.dstAccessMask =
-				VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		image_memory_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 	}
 
 	if (new_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
 		/* Make sure any Copy or CPU writes to image are flushed */
-		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT
-				| VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
 	}
 
 	VkImageMemoryBarrier* pmemory_barrier = &image_memory_barrier;
@@ -1027,15 +1024,52 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 
 		// replace uniforms to use ubo
 		//	TODO: improve me as this will not work in all cases
+		auto position = 0;
 		for (auto uniform: uniforms) {
 			t.tokenize(uniform, "\t ;");
+			string uniformType;
 			string uniformName;
+			if (t.hasMoreTokens() == true) uniformType = t.nextToken();
 			while (t.hasMoreTokens() == true) uniformName = t.nextToken();
+			if (uniformType == "int") {
+				auto size = 4;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
+				position+= size;
+			} else
+			if (uniformType == "vec3") {
+				auto size = 4 * 3;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
+				position+= size;
+			} else
+			if (uniformType == "vec4") {
+				auto size = 4 * 4;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
+				position+= size;
+			} else
+			if (uniformType == "mat3") {
+				auto size = 4 * 9;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
+				position+= size;
+			} else
+			if (uniformType == "mat4") {
+				auto size = 4 * 16;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
+				position+= size;
+			} else {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType);
+				context.shaders.erase(shaderStruct.id);
+		        return false;
+			}
 			shaderSource = StringUtils::replace(
 				shaderSource,
 				uniformName,
 				"ubo." + uniformName
 			);
+		}
+
+		// debug uniforms
+		for (auto uniformIt: shaderStruct.uniforms) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Uniform: " + uniformIt.second.name + ": " + to_string(uniformIt.second.position) + " / " + to_string(uniformIt.second.size));
 		}
 
 		// finally inject uniforms
@@ -1121,18 +1155,26 @@ void VKRenderer::useProgram(int32_t programId)
 
 int32_t VKRenderer::createProgram()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return -1;
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto& programStruct = context.programs[context.program_idx];
+	programStruct.id = context.program_idx++;
+	return programStruct.id;
 }
 
 void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto programIt = context.programs.find(programId);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
+		return;
+	}
+	programIt->second.shaderIds.push_back(shaderId);
 }
 
 bool VKRenderer::linkProgram(int32_t programId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): NO OP");
 	return false;
 }
 
