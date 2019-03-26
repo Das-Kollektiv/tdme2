@@ -915,6 +915,65 @@ void VKRenderer::initialize()
 	context.depth_buffer_default = createDepthBufferTexture(context.width, context.height);
 	assert(context.depth_buffer_default >= 0);
 
+	// render pass
+	const VkAttachmentDescription attachments[2] = {
+		[0] = {
+				flags: 0,
+				format: context.format,
+				samples: VK_SAMPLE_COUNT_1_BIT,
+				loadOp: VK_ATTACHMENT_LOAD_OP_CLEAR,
+				storeOp: VK_ATTACHMENT_STORE_OP_STORE,
+				stencilLoadOp: VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				stencilStoreOp: VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				initialLayout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				finalLayout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			},
+		[1] = {
+				flags: 0,
+				format: VK_FORMAT_D32_SFLOAT,
+				samples: VK_SAMPLE_COUNT_1_BIT,
+				loadOp: VK_ATTACHMENT_LOAD_OP_CLEAR,
+				storeOp: VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				stencilLoadOp: VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				stencilStoreOp: VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				initialLayout: VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+				finalLayout: VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+			},
+	};
+	const VkAttachmentReference color_reference = {
+		attachment: 0,
+		layout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+	};
+	const VkAttachmentReference depth_reference = {
+		attachment: 1,
+		layout: VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+	};
+	const VkSubpassDescription subpass = {
+		flags: 0,
+		pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
+		inputAttachmentCount: 0,
+		pInputAttachments: NULL,
+		colorAttachmentCount: 1,
+		pColorAttachments: &color_reference,
+		pResolveAttachments: NULL,
+		pDepthStencilAttachment: &depth_reference,
+		preserveAttachmentCount: 0,
+		pPreserveAttachments: NULL
+	};
+	const VkRenderPassCreateInfo rp_info = {
+		sType: VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		attachmentCount: 2,
+		pAttachments: attachments,
+		subpassCount: 1,
+		pSubpasses: &subpass,
+		dependencyCount: 0,
+		pDependencies: NULL,
+	};
+	err = vkCreateRenderPass(context.device, &rp_info, NULL, &context.render_pass);
+	assert(!err);
+
 	// frame buffers
 	initializeFrameBuffers();
 }
