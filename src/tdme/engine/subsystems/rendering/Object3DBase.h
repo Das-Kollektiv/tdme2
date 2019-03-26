@@ -145,8 +145,15 @@ public:
 	/** 
 	 * Sets up a base animation to play
 	 * @param id id
+	 * @param speed speed whereas 1.0 is default speed
 	 */
-	virtual void setAnimation(const string& id);
+	virtual void setAnimation(const string& id, float speed = 1.0f);
+
+	/**
+	 * Set up animation speed
+	 * @param speed speed whereas 1.0 is default speed
+	 */
+	virtual void setAnimationSpeed(float speed);
 
 	/** 
 	 * Overlays a animation above the base animation
