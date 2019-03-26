@@ -189,6 +189,8 @@ private:
 
 		uint32_t current_buffer;
 		uint32_t queue_count;
+
+		VkSemaphore imageAcquiredSemaphore, drawCompleteSemaphore;
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
@@ -204,6 +206,7 @@ public:
 	const string getGLVersion() override;
 	void initialize() override;
 	void initializeFrame() override;
+	void finishFrame() override;
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;
 	bool isUsingProgramAttributeLocation() override;

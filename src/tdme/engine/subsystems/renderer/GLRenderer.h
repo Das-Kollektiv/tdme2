@@ -85,6 +85,11 @@ public:
 	virtual void initializeFrame();
 
 	/** 
+	 * Finish frame
+	 */
+	virtual void finishFrame() = 0;
+
+	/**
 	 * @return renderer version e.g. gl2, gl3 or gles2
 	 */
 	virtual const string getGLVersion() = 0;

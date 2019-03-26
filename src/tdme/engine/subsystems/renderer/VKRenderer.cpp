@@ -1012,7 +1012,124 @@ void VKRenderer::initializeFrameBuffers() {
 void VKRenderer::initializeFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	//
 	GLRenderer::initializeFrame();
+
+	//
+	VkResult err;
+	VkSemaphoreCreateInfo semaphoreCreateInfo = {
+		sType: VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+		pNext: NULL,
+		flags: 0
+	};
+
+	err = vkCreateSemaphore(context.device, &semaphoreCreateInfo, NULL, &context.imageAcquiredSemaphore);
+	assert(!err);
+
+	err = vkCreateSemaphore(context.device, &semaphoreCreateInfo, NULL, &context.drawCompleteSemaphore);
+	assert(!err);
+
+	// get the index of the next available swapchain image:
+	err = context.fpAcquireNextImageKHR(context.device, context.swapchain, UINT64_MAX, context.imageAcquiredSemaphore, (VkFence) 0, &context.current_buffer);
+
+	//
+	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
+		// TODO: a.drewke
+		// demo->swapchain is out of date (e.g. the window was resized) and
+		// must be recreated:
+		// resize (demo);
+		// draw(demo);
+		// vkDestroySemaphore(context.device, context.imageAcquiredSemaphore, NULL);
+		// vkDestroySemaphore(context.device, context.drawCompleteSemaphore, NULL);
+	} else
+	if (err == VK_SUBOPTIMAL_KHR) {
+		// demo->swapchain is not as optimal as it could be, but the platform's
+		// presentation engine will still present the image correctly.
+	} else {
+		assert(!err);
+	}
+}
+
+void VKRenderer::finishFrame()
+{
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	VkResult err;
+	if (context.setup_cmd != VK_NULL_HANDLE) {
+		err = vkEndCommandBuffer(context.setup_cmd);
+		assert(!err);
+
+		const VkCommandBuffer cmd_bufs[] = { context.setup_cmd };
+		VkFence nullFence = { VK_NULL_HANDLE };
+		VkSubmitInfo submit_info = {
+			sType: VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			pNext: NULL,
+			waitSemaphoreCount: 0,
+			pWaitSemaphores: NULL,
+			pWaitDstStageMask: NULL,
+			commandBufferCount: 1,
+			pCommandBuffers: cmd_bufs,
+			signalSemaphoreCount: 0,
+			pSignalSemaphores: NULL
+		};
+
+		err = vkQueueSubmit(context.queue, 1, &submit_info, nullFence);
+		assert(!err);
+
+		err = vkQueueWaitIdle(context.queue);
+		assert(!err);
+
+		vkFreeCommandBuffers(context.device, context.cmd_pool, 1, cmd_bufs);
+		context.setup_cmd = VK_NULL_HANDLE;
+	}
+
+	//
+	VkFence nullFence = VK_NULL_HANDLE;
+	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	VkSubmitInfo submit_info = {
+		sType: VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		pNext: NULL,
+		waitSemaphoreCount: 1,
+		pWaitSemaphores: &context.imageAcquiredSemaphore,
+		pWaitDstStageMask: &pipe_stage_flags,
+		commandBufferCount: 1,
+		pCommandBuffers: &context.draw_cmd,
+		signalSemaphoreCount: 1,
+		pSignalSemaphores: &context.drawCompleteSemaphore
+	};
+
+	err = vkQueueSubmit(context.queue, 1, &submit_info, nullFence);
+	assert(!err);
+
+	VkPresentInfoKHR present = {
+		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+		.pNext = NULL,
+		.waitSemaphoreCount = 1,
+		.pWaitSemaphores = &context.drawCompleteSemaphore,
+		.swapchainCount = 1,
+		.pSwapchains = &context.swapchain,
+		.pImageIndices = &context.current_buffer,
+	};
+
+	err = context.fpQueuePresentKHR(context.queue, &present);
+	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
+		// context.swapchain is out of date (e.g. the window was resized) and
+		// must be recreated:
+		// resize (demo);
+	} else
+	if (err == VK_SUBOPTIMAL_KHR) {
+		// context.swapchain is not as optimal as it could be, but the platform's
+		// presentation engine will still present the image correctly.
+	} else {
+		assert(!err);
+	}
+
+	err = vkQueueWaitIdle(context.queue);
+	assert(err == VK_SUCCESS);
+
+	vkDestroySemaphore(context.device, context.imageAcquiredSemaphore, NULL);
+	vkDestroySemaphore(context.device, context.drawCompleteSemaphore, NULL);
 }
 
 bool VKRenderer::isBufferObjectsAvailable()

@@ -919,6 +919,9 @@ void Engine::display()
 		delete postProcessingTemporaryFrameBuffer;
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
+
+	// finish frame
+	Engine::renderer->finishFrame();
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
