@@ -191,7 +191,6 @@ private:
 		uint32_t queue_count;
 	} context;
 
-public:
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
@@ -201,6 +200,7 @@ public:
 	void initializeSwapChain();
 	void initializeFrameBuffers();
 
+public:
 	const string getGLVersion() override;
 	void initialize() override;
 	void initializeFrame() override;
