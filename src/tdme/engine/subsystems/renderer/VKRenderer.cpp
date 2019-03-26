@@ -880,6 +880,7 @@ void VKRenderer::initialize()
 
 	//
 	initializeSwapChain();
+
 }
 
 void VKRenderer::initializeFrame()
@@ -1139,12 +1140,30 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		Console::println(shaderSource);
 		context.shaders.erase(shaderStruct.id);
         return false;
-    } else {
-    	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): SUCCESS: " + pathName + "/" + fileName + ": " + definitions);
     }
 
     glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shaderStruct.spirv);
 
+    // create shader module
+    {
+		VkResult err;
+		VkShaderModuleCreateInfo moduleCreateInfo;
+		moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		moduleCreateInfo.pNext = NULL;
+		moduleCreateInfo.codeSize = shaderStruct.spirv.size() * sizeof(uint32_t);
+		moduleCreateInfo.pCode = shaderStruct.spirv.data();
+		moduleCreateInfo.flags = 0;
+		err = vkCreateShaderModule(context.device, &moduleCreateInfo, NULL, &shaderStruct.module);
+		if (err == VK_SUCCESS) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): SUCCESS: " + pathName + "/" + fileName + ": " + definitions);
+		} else {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): FAILED: could not create module: " + pathName + "/" + fileName + ": " + definitions);
+			context.shaders.erase(shaderStruct.id);
+			return false;
+		}
+    }
+
+    //
 	return shaderStruct.id;
 }
 

@@ -50,6 +50,7 @@ private:
 		map<string, uniform_type> uniforms;
 		vector<unsigned int> spirv;
 		VkShaderStageFlagBits type;
+		VkShaderModule module;
 		int32_t id;
 	};
 
