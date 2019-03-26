@@ -479,6 +479,9 @@ void VKRenderer::initialize()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
+	context.width = Application::application->getWindowWidth();
+	context.height = Application::application->getWindowHeight();
+
 	//
 	glslang::InitProcess();
 	glslang::InitThread();
@@ -643,11 +646,13 @@ void VKRenderer::initialize()
 		context.gpu = physical_devices[0];
 		free(physical_devices);
 	} else {
-		ERR_EXIT("vkEnumeratePhysicalDevices reported zero accessible devices."
-				"\n\nDo you have a compatible Vulkan installable client"
-				" driver (ICD) installed?\nPlease look at the Getting Started"
-				" guide for additional information.\n",
-				"vkEnumeratePhysicalDevices Failure");
+		ERR_EXIT(
+			"vkEnumeratePhysicalDevices reported zero accessible devices."
+			"\n\nDo you have a compatible Vulkan installable client"
+			" driver (ICD) installed?\nPlease look at the Getting Started"
+			" guide for additional information.\n",
+			"vkEnumeratePhysicalDevices Failure"
+		);
 	}
 
 	/* Look for device extensions */
@@ -719,12 +724,16 @@ void VKRenderer::initialize()
 		case VK_SUCCESS:
 			break;
 		case VK_ERROR_OUT_OF_HOST_MEMORY:
-			ERR_EXIT("CreateDebugReportCallback: out of host memory\n",
-					"CreateDebugReportCallback Failure");
+			ERR_EXIT(
+				"CreateDebugReportCallback: out of host memory\n",
+				"CreateDebugReportCallback Failure"
+			);
 			break;
 		default:
-			ERR_EXIT("CreateDebugReportCallback: unknown failure\n",
-					"CreateDebugReportCallback Failure");
+			ERR_EXIT(
+				"CreateDebugReportCallback: unknown failure\n",
+				"CreateDebugReportCallback Failure"
+			);
 			break;
 		}
 	}
@@ -878,9 +887,67 @@ void VKRenderer::initialize()
 	// Get Memory information and properties
 	vkGetPhysicalDeviceMemoryProperties(context.gpu, &context.memory_properties);
 
-	//
+	// command pool
+	const VkCommandPoolCreateInfo cmd_pool_info = {
+		sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+		pNext: NULL,
+		flags: VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+		queueFamilyIndex: context.graphics_queue_node_index
+	};
+	err = vkCreateCommandPool(context.device, &cmd_pool_info, NULL, &context.cmd_pool);
+	assert(!err);
+
+	// draw command buffers
+	const VkCommandBufferAllocateInfo cmd = {
+		sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+		pNext: NULL,
+		commandPool: context.cmd_pool,
+		level: VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+		commandBufferCount: 1,
+	};
+	err = vkAllocateCommandBuffers(context.device, &cmd, &context.draw_cmd);
+	assert(!err);
+
+	// swap chain
 	initializeSwapChain();
 
+	// depth buffer
+	context.depth_buffer_default = createDepthBufferTexture(context.width, context.height);
+	assert(context.depth_buffer_default >= 0);
+
+	// frame buffers
+	initializeFrameBuffers();
+}
+
+void VKRenderer::initializeFrameBuffers() {
+	VkImageView attachments[2];
+	auto depthBufferIt = context.depth_buffers.find(context.depth_buffer_default);
+	assert(depthBufferIt != context.depth_buffers.end());
+	attachments[1] = depthBufferIt->second.view;
+
+	const VkFramebufferCreateInfo fb_info = {
+		sType: VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		renderPass: context.render_pass,
+		attachmentCount: 2,
+		pAttachments: attachments,
+		width: context.width,
+		height: context.height,
+		layers: 1,
+	};
+
+	VkResult err;
+	uint32_t i;
+
+	context.framebuffers = (VkFramebuffer *) malloc(context.swapchain_image_count * sizeof(VkFramebuffer));
+	assert(context.framebuffers);
+
+	for (i = 0; i < context.swapchain_image_count; i++) {
+		attachments[0] = context.swapchain_buffers[i].view;
+		err = vkCreateFramebuffer(context.device, &fb_info, NULL, &context.framebuffers[i]);
+		assert(!err);
+	}
 }
 
 void VKRenderer::initializeFrame()
@@ -1421,7 +1488,8 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 
 	assert(!err);
 
-	return -1;
+	// done
+	return depth_buffer.id;
 }
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
@@ -1458,7 +1526,7 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 	err = vkCreateImageView(context.device, &color_attachment_view, NULL, &color_buffer.view);
 	assert(!err);
 
-	return -1;
+	return color_buffer.id;
 }
 
 void VKRenderer::uploadTexture(Texture* texture)

@@ -134,7 +134,7 @@ private:
 		VkSwapchainKHR swapchain { VK_NULL_HANDLE };
 		swapchain_buffer_type* swapchain_buffers { nullptr };
 
-		VkCommandPool cmd_pool;
+		VkCommandPool cmd_pool { VK_NULL_HANDLE };
 
 		int32_t shader_idx { 1 };
 		int32_t program_idx { 1 };
@@ -148,6 +148,8 @@ private:
 		struct map<int32_t, buffer_object> buffers;
 		struct map<int32_t, texture_object> textures;
 
+		int depth_buffer_default;
+
 		struct {
 			VkBuffer buf;
 			VkDeviceMemory mem;
@@ -157,8 +159,8 @@ private:
 			VkVertexInputAttributeDescription vi_attrs[2];
 		} vertices;
 
-		VkCommandBuffer setup_cmd; // Command Buffer for initialization commands
-		VkCommandBuffer draw_cmd;  // Command Buffer for drawing commands
+		VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
+		VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
 		VkPipelineLayout pipeline_layout;
 		VkDescriptorSetLayout desc_layout;
 		VkPipelineCache pipelineCache;
@@ -197,6 +199,7 @@ public:
 	void shaderInitResources(TBuiltInResource &resources);
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
+	void initializeFrameBuffers();
 
 	const string getGLVersion() override;
 	void initialize() override;
