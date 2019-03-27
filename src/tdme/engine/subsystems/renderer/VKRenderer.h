@@ -151,15 +151,6 @@ private:
 
 		int depth_buffer_default;
 
-		struct {
-			VkBuffer buf;
-			VkDeviceMemory mem;
-
-			VkPipelineVertexInputStateCreateInfo vi;
-			VkVertexInputBindingDescription vi_bindings[1];
-			VkVertexInputAttributeDescription vi_attrs[2];
-		} vertices;
-
 		VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
 		VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
 		VkPipelineLayout pipeline_layout;
@@ -178,12 +169,7 @@ private:
 
 		VkPhysicalDeviceMemoryProperties memory_properties;
 
-		bool validate;
-		bool use_break;
-		PFN_vkCreateDebugReportCallbackEXT CreateDebugReportCallback;
-		PFN_vkDestroyDebugReportCallbackEXT DestroyDebugReportCallback;
-		VkDebugReportCallbackEXT msg_callback;
-		PFN_vkDebugReportMessageEXT DebugReportMessage;
+		bool validate { true };
 
 		float depthStencil;
 		float depthIncrement;

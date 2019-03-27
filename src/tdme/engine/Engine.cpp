@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/EngineGL2Renderer.h>
 #include <tdme/engine/EngineGL3Renderer.h>
@@ -63,6 +63,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Console.h>
@@ -70,8 +71,8 @@
 using std::string;
 using std::to_string;
 
+using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::utils::ByteBuffer;
 using tdme::engine::Camera;
 using tdme::engine::EngineGL3Renderer;
 using tdme::engine::EngineGL2Renderer;
@@ -120,6 +121,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utils::ByteBuffer;
 using tdme::utils::Float;
 using tdme::utils::Console;
 
@@ -146,8 +148,13 @@ float Engine::animationBlendingTime = 250.0f;
 
 Engine::Engine() 
 {
-	width = 0;
-	height = 0;
+	#if defined(VULKAN)
+		width = Application::application->getWindowWidth();
+		height = Application::application->getWindowHeight();
+	#else
+		width = 0;
+		height = 0;
+	#endif
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);

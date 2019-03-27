@@ -21,6 +21,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/fwd-tdme.h>
 #include <tdme/application/InputEventHandler.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using std::string;
@@ -34,6 +35,7 @@ using tdme::application::InputEventHandler;
  */
 class tdme::application::Application
 {
+	friend class tdme::engine::Engine;
 	friend class tdme::engine::subsystems::renderer::VKRenderer;
 
 public:

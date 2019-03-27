@@ -198,12 +198,8 @@ void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, Vk
 		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
 	}
 
-	VkImageMemoryBarrier* pmemory_barrier = &image_memory_barrier;
-
-	VkPipelineStageFlags src_stages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-	VkPipelineStageFlags dest_stages = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-
-	vkCmdPipelineBarrier(context.setup_cmd, src_stages, dest_stages, 0, 0, NULL, 0, NULL, 1, pmemory_barrier);
+	//
+	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
 void VKRenderer::shaderInitResources(TBuiltInResource &resources) {
@@ -515,9 +511,8 @@ void VKRenderer::initialize()
 	};
 
 	/* Look for validation layers */
-	VkBool32 validation_found = 0;
-	if (context.validate) {
-
+	if (context.validate == true) {
+		VkBool32 validation_found = 0;
 		err = vkEnumerateInstanceLayerProperties(&instance_layer_count, NULL);
 		assert(!err);
 
@@ -585,8 +580,7 @@ void VKRenderer::initialize()
 
 	if (instance_extension_count > 0) {
 		VkExtensionProperties* instance_extensions = (VkExtensionProperties*)malloc(sizeof(VkExtensionProperties) * instance_extension_count);
-		err = vkEnumerateInstanceExtensionProperties(
-		NULL, &instance_extension_count, instance_extensions);
+		err = vkEnumerateInstanceExtensionProperties(NULL, &instance_extension_count, instance_extensions);
 		assert(!err);
 		for (i = 0; i < instance_extension_count; i++) {
 			if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instance_extensions[i].extensionName)) {
@@ -692,54 +686,6 @@ void VKRenderer::initialize()
 			"look at the Getting Started guide for additional "
 			"information.\n", "vkCreateInstance Failure"
 		);
-	}
-
-	if (context.validate) {
-		context.CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(context.inst, "vkCreateDebugReportCallbackEXT");
-		context.DestroyDebugReportCallback = (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(context.inst, "vkDestroyDebugReportCallbackEXT");
-		if (!context.CreateDebugReportCallback) {
-			ERR_EXIT(
-				"GetProcAddr: Unable to find vkCreateDebugReportCallbackEXT\n",
-				"vkGetProcAddr Failure"
-			);
-		}
-		if (!context.DestroyDebugReportCallback) {
-			ERR_EXIT(
-				"GetProcAddr: Unable to find vkDestroyDebugReportCallbackEXT\n",
-				"vkGetProcAddr Failure"
-			);
-		}
-		context.DebugReportMessage = (PFN_vkDebugReportMessageEXT) vkGetInstanceProcAddr(context.inst, "vkDebugReportMessageEXT");
-		if (!context.DebugReportMessage) {
-			ERR_EXIT(
-				"GetProcAddr: Unable to find vkDebugReportMessageEXT\n",
-				"vkGetProcAddr Failure"
-			);
-		}
-
-		VkDebugReportCallbackCreateInfoEXT dbgCreateInfo;
-		dbgCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
-		dbgCreateInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
-		// TODO: a.drewke; dbgCreateInfo.pfnCallback = context.use_break ? BreakCallback : dbgFunc;
-		dbgCreateInfo.pUserData = &context;
-		dbgCreateInfo.pNext = NULL;
-		err = context.CreateDebugReportCallback(context.inst, &dbgCreateInfo, NULL, &context.msg_callback);
-		switch (err) {
-		case VK_SUCCESS:
-			break;
-		case VK_ERROR_OUT_OF_HOST_MEMORY:
-			ERR_EXIT(
-				"CreateDebugReportCallback: out of host memory\n",
-				"CreateDebugReportCallback Failure"
-			);
-			break;
-		default:
-			ERR_EXIT(
-				"CreateDebugReportCallback: unknown failure\n",
-				"CreateDebugReportCallback Failure"
-			);
-			break;
-		}
 	}
 
 	// Having these GIPA queries of device extension entry points both
@@ -917,7 +863,7 @@ void VKRenderer::initialize()
 
 	// depth buffer
 	context.depth_buffer_default = createDepthBufferTexture(context.width, context.height);
-	assert(context.depth_buffer_default >= 0);
+	assert(context.depth_buffer_default > 0 && context.depth_buffers.find(context.depth_buffer_default) != context.depth_buffers.end());
 
 	// render pass
 	const VkAttachmentDescription attachments[2] = {
@@ -1097,22 +1043,24 @@ void VKRenderer::initializeFrame()
 	// We can use LAYOUT_UNDEFINED as a wildcard here because we don't care what
 	// happens to the previous contents of the image
 	VkImageMemoryBarrier image_memory_barrier = {
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.pNext = NULL,
-		.srcAccessMask = 0,
-		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-		.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = context.swapchain_buffers[context.current_buffer].image,
-		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
+		sType: VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		pNext: NULL,
+		srcAccessMask: 0,
+		dstAccessMask: VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		oldLayout: VK_IMAGE_LAYOUT_UNDEFINED,
+		newLayout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+		dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+		image: context.swapchain_buffers[context.current_buffer].image,
+		subresourceRange: { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
 	};
 
 	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 	vkCmdBeginRenderPass(context.draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
-	//vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline);
-	//vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline_layout, 0, 1, &context.desc_set, 0, NULL);
+
+	//
+	// vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline);
+	// vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline_layout, 0, 1, &context.desc_set, 0, NULL);
 }
 
 void VKRenderer::finishFrame()
@@ -1222,6 +1170,7 @@ void VKRenderer::finishFrame()
 	//
 	vkDeviceWaitIdle(context.device);
 
+	//
 	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
 }
 
@@ -1694,14 +1643,14 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 
 	auto& depth_buffer = context.depth_buffers[context.depth_buffer_idx];
 	depth_buffer.id = context.depth_buffer_idx++;
+	depth_buffer.format = VK_FORMAT_D32_SFLOAT;
 
-	const VkFormat depth_format = VK_FORMAT_D32_SFLOAT;
 	const VkImageCreateInfo image = {
 		sType: VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		pNext: NULL,
 		flags: 0,
 		imageType: VK_IMAGE_TYPE_2D,
-		format: depth_format,
+		format: depth_buffer.format,
 		extent: {
 			width: width,
 			height: height,
@@ -1712,10 +1661,10 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 		samples: VK_SAMPLE_COUNT_1_BIT,
 		tiling: VK_IMAGE_TILING_OPTIMAL,
 		usage: VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		sharingMode: VkSharingMode(),
+		sharingMode: (VkSharingMode)0,
 		queueFamilyIndexCount: 0,
 		pQueueFamilyIndices: 0,
-		initialLayout: VkImageLayout(),
+		initialLayout: (VkImageLayout)0,
 	};
 	VkMemoryAllocateInfo mem_alloc = {
 		sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
@@ -1723,28 +1672,10 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 		allocationSize: 0,
 		memoryTypeIndex: 0,
 	};
-	VkImageViewCreateInfo view = {
-		sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		pNext: NULL,
-		flags: 0,
-		image: VK_NULL_HANDLE,
-		viewType: VK_IMAGE_VIEW_TYPE_2D,
-		format: depth_format,
-		components: VkComponentMapping(),
-		subresourceRange: {
-			aspectMask: VK_IMAGE_ASPECT_DEPTH_BIT,
-			baseMipLevel: 0,
-			levelCount: 1,
-			baseArrayLayer: 0,
-			layerCount: 1
-		},
-	};
 
 	VkMemoryRequirements mem_reqs;
 	VkResult err;
 	bool pass;
-
-	depth_buffer.format = depth_format;
 
 	/* create image */
 	err = vkCreateImage(context.device, &image, NULL, &depth_buffer.image);
@@ -1774,10 +1705,25 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 		(VkAccessFlagBits)0
 	);
 
-	/* create image view */
-	view.image = depth_buffer.image;
-	err = vkCreateImageView(context.device, &view, NULL, &depth_buffer.view);
+	VkImageViewCreateInfo view = {
+		sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		image: depth_buffer.image,
+		viewType: VK_IMAGE_VIEW_TYPE_2D,
+		format: depth_buffer.format,
+		components: VkComponentMapping(),
+		subresourceRange: {
+			aspectMask: VK_IMAGE_ASPECT_DEPTH_BIT,
+			baseMipLevel: 0,
+			levelCount: 1,
+			baseArrayLayer: 0,
+			layerCount: 1
+		},
+	};
 
+	/* create image view */
+	err = vkCreateImageView(context.device, &view, NULL, &depth_buffer.view);
 	assert(!err);
 
 	// done
@@ -1953,16 +1899,19 @@ void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size,
 
 void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
+	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
+	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
 void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
 {
+	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
@@ -1973,6 +1922,7 @@ void VKRenderer::bindNormalsBufferObject(int32_t bufferObjectId)
 
 void VKRenderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
+	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
@@ -2008,6 +1958,7 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
+	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
@@ -2041,6 +1992,10 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 			continue;
 		}
 		auto& buffer = bufferIt->second;
+		if (buffer.size == 0) {
+			context.buffers.erase(bufferIt);
+			continue;
+		}
 		vkDestroyBuffer(context.device, buffer.buf, NULL);
 		context.buffers.erase(bufferIt);
 	}
