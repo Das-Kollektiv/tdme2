@@ -48,6 +48,7 @@ private:
 			uint32_t size;
 		};
 		map<string, uniform_type> uniforms;
+		uint32_t ubo_size;
 		vector<unsigned int> spirv;
 		VkShaderStageFlagBits type;
 		VkShaderModule module;

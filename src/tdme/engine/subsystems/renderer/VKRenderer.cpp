@@ -1361,7 +1361,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 
 		// replace uniforms to use ubo
 		//	TODO: improve me as this will not work in all cases
-		auto position = 0;
+		shaderStruct.ubo_size = 0;
 		for (auto uniform: uniforms) {
 			t.tokenize(uniform, "\t ;");
 			string uniformType;
@@ -1369,29 +1369,29 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (t.hasMoreTokens() == true) uniformType = t.nextToken();
 			while (t.hasMoreTokens() == true) uniformName = t.nextToken();
 			if (uniformType == "int") {
-				auto size = 4;
-				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
-				position+= size;
+				auto size = sizeof(int32_t);
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
+				shaderStruct.ubo_size+= size;
 			} else
 			if (uniformType == "vec3") {
-				auto size = 4 * 3;
-				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
-				position+= size;
+				auto size = sizeof(float) * 3;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
+				shaderStruct.ubo_size+= size;
 			} else
 			if (uniformType == "vec4") {
-				auto size = 4 * 4;
-				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
-				position+= size;
+				auto size = sizeof(float) * 4;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
+				shaderStruct.ubo_size+= size;
 			} else
 			if (uniformType == "mat3") {
-				auto size = 4 * 9;
-				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
-				position+= size;
+				auto size = sizeof(float) * 9;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
+				shaderStruct.ubo_size+= size;
 			} else
 			if (uniformType == "mat4") {
-				auto size = 4 * 16;
-				shaderStruct.uniforms[uniformName] = {name: uniformName, position: position, size: size};
-				position+= size;
+				auto size = sizeof(float) * 16;
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
+				shaderStruct.ubo_size+= size;
 			} else {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType);
 				context.shaders.erase(shaderStruct.id);
