@@ -810,6 +810,7 @@ void Engine::display()
 	// update camera
 	camera->update(width, height);
 
+	/*
 	// create shadow maps
 	if (shadowMapping != nullptr)
 		shadowMapping->createShadowMaps();
@@ -850,6 +851,7 @@ void Engine::display()
 	// enable materials
 	renderer->setMaterialEnabled();
 
+	/*
 	// use lighting shader
 	if (lightingShader != nullptr) {
 		lightingShader->useProgram(this);
@@ -881,10 +883,6 @@ void Engine::display()
 
 	// disable materials
 	renderer->setMaterialDisabled();
-
-	// clear pre render states
-	renderingInitiated = false;
-	renderingComputedTransformations = false;
 
 	// store matrices
 	modelViewMatrix.set(renderer->getModelViewMatrix());
@@ -926,6 +924,11 @@ void Engine::display()
 		delete postProcessingTemporaryFrameBuffer;
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
+	*/
+
+	// clear pre render states
+	renderingInitiated = false;
+	renderingComputedTransformations = false;
 
 	// finish frame
 	Engine::renderer->finishFrame();

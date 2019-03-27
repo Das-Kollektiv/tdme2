@@ -1,4 +1,4 @@
-/**
+f/**
  * based on https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
  */
 
@@ -1067,6 +1067,11 @@ void VKRenderer::finishFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
+	context.boundIndicesBuffer = 0;
+	context.boundBuffers.fill(0);
+	context.uniformBufferObject[0].clear();
+	context.uniformBufferObject[1].clear();
+
 	//
 	VkResult err;
 
@@ -1171,7 +1176,7 @@ void VKRenderer::finishFrame()
 	vkDeviceWaitIdle(context.device);
 
 	//
-	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
+	if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
@@ -1354,7 +1359,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		}
 
 		// debug uniforms
-		for (auto uniformIt: shaderStruct.uniforms) {
+		for (auto& uniformIt: shaderStruct.uniforms) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Uniform: " + uniformIt.second.name + ": " + to_string(uniformIt.second.position) + " / " + to_string(uniformIt.second.size));
 		}
 
@@ -1454,7 +1459,23 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 
 void VKRenderer::useProgram(int32_t programId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
+	context.program_id = 0;
+	auto programIt = context.programs.find(programId);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
+		return;
+	}
+	auto shaderIdx = 0;
+	for (auto& shaderId: programIt->second.shaderIds) {
+		auto shaderIt = context.shaders.find(shaderId);
+		if (shaderIt == context.shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+			return;
+		}
+		context.uniformBufferObject[shaderIdx++].resize(shaderIt->second.ubo_size);
+	}
+	context.program_id = programId;
 }
 
 int32_t VKRenderer::createProgram()
@@ -1468,6 +1489,11 @@ int32_t VKRenderer::createProgram()
 void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto shaderIt = context.shaders.find(shaderId);
+	if (shaderIt == context.shaders.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
+		return;
+	}
 	auto programIt = context.programs.find(programId);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
@@ -1478,49 +1504,133 @@ void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 
 bool VKRenderer::linkProgram(int32_t programId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): NO OP");
-	return false;
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto programIt = context.programs.find(programId);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
+		return false;
+	}
+	map<string, int32_t> uniformsByName;
+	auto uniformIdx = 1;
+	for (auto& shaderId: programIt->second.shaderIds) {
+		auto shaderIt = context.shaders.find(shaderId);
+		if (shaderIt == context.shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
+			return false;
+		}
+		for (auto& uniformIt: shaderIt->second.uniforms) {
+			uniformsByName[uniformIt.first] = uniformIdx++;
+		}
+	}
+	for (auto& uniformIt: uniformsByName) {
+		programIt->second.uniforms[uniformIt.second] = uniformIt.first;
+	}
+	return true;
 }
 
 int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto programIt = context.programs.find(programId);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
+		return -1;
+	}
+	for (auto& uniformIt: programIt->second.uniforms) {
+		if (uniformIt.second == name) {
+			return uniformIt.first;
+		}
+	}
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
 	return -1;
+}
+
+void VKRenderer::setProgramUniformInternal(int32_t uniformId, uint8_t* data, int32_t size) {
+	auto programIt = context.programs.find(context.program_id);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program not found: " + to_string(context.program_id));
+		return;
+	}
+	auto uniformIt = programIt->second.uniforms.find(uniformId);
+	if (uniformIt == programIt->second.uniforms.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform does not exist: " + to_string(uniformId));
+		return;
+	}
+
+	auto changedUniforms = 0;
+	auto shaderIdx = 0;
+	for (auto shaderId: programIt->second.shaderIds) {
+		auto shaderIt = context.shaders.find(shaderId);
+		if (shaderIt == context.shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: shader does not exist");
+			return;
+		}
+		auto shaderUniformIt = shaderIt->second.uniforms.find(uniformIt->second);
+		if (shaderUniformIt == shaderIt->second.uniforms.end()) {
+			shaderIdx++;
+			continue;
+		}
+		if (context.uniformBufferObject[shaderIdx].size() < shaderUniformIt->second.position + size) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform buffer is too small");
+			shaderIdx++;
+			continue;
+		}
+		if (shaderUniformIt->second.size != size) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform size mismatch");
+			shaderIdx++;
+			continue;
+		}
+		for (auto i = 0; i < size; i++) {
+			context.uniformBufferObject[shaderIdx][shaderUniformIt->second.position + i] = data[i];
+		}
+		changedUniforms++;
+		shaderIdx++;
+	}
+	if (changedUniforms == 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: no uniform: " + uniformIt->second);
+	}
 }
 
 void VKRenderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(uniformId, (uint8_t*)&value, sizeof(int32_t));
 }
 
 void VKRenderer::setProgramUniformFloat(int32_t uniformId, float value)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(uniformId, (uint8_t*)&value, sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(uniformId, (uint8_t*)data->getBuffer(), count * sizeof(float) * 16);
 }
 
 void VKRenderer::setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
@@ -1899,41 +2009,44 @@ void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size,
 
 void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
 {
-	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundIndicesBuffer = bufferObjectId;
 }
 
 void VKRenderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
-	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundBuffers[2] = bufferObjectId;
 }
 
 void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
 {
-	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundBuffers[0] = bufferObjectId;
 }
 
 void VKRenderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundBuffers[1] = bufferObjectId;
 }
 
 void VKRenderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
-	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundBuffers[3] = bufferObjectId;
 }
 
 void VKRenderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundBuffers[4] = bufferObjectId;
 }
 
 void VKRenderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundBuffers[5] = bufferObjectId;
 }
 
 void VKRenderer::bindModelMatricesBufferObject(int32_t bufferObjectId)
@@ -1980,6 +2093,8 @@ void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffse
 void VKRenderer::unbindBufferObjects()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.boundIndicesBuffer = 0;
+	context.boundBuffers.fill(0);
 }
 
 void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)

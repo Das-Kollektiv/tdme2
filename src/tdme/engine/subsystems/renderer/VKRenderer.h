@@ -57,6 +57,7 @@ private:
 
 	struct program_type {
 		vector<int32_t> shaderIds;
+		map<int32_t, string> uniforms;
 		int32_t id;
 	};
 
@@ -184,12 +185,17 @@ private:
 		float clear_blue { 0.0f };
 		float clear_alpha { 1.0f };
 
+		int32_t program_id { 0 };
+		int32_t boundIndicesBuffer { 0 };
+		array<int32_t, 12> boundBuffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		array<vector<uint8_t>, 2> uniformBufferObject;
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
+	void setProgramUniformInternal(int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
