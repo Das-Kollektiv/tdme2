@@ -22,6 +22,8 @@
 #include <string>
 
 #include <tdme/application/Application.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/utils/Buffer.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
@@ -69,6 +71,8 @@ using std::vector;
 
 using tdme::engine::subsystems::renderer::VKRenderer;
 using tdme::application::Application;
+using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::utils::Buffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
@@ -1049,13 +1053,97 @@ void VKRenderer::initializeFrame()
 	} else {
 		assert(!err);
 	}
+
+	const VkCommandBufferBeginInfo cmd_buf_info = {
+		sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		pNext: NULL,
+		flags: 0,
+		pInheritanceInfo: NULL
+	};
+
+	const VkClearValue clear_values[2] = {
+		[0] =
+			{
+				color: { context.clear_red, context.clear_green, context.clear_blue, context.clear_alpha, }
+			},
+		[1] =
+			{
+				depthStencil: { context.depthStencil, 0 }
+			}
+	};
+
+	const VkRenderPassBeginInfo rp_begin = {
+		sType: VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+		pNext: NULL,
+		renderPass: context.render_pass,
+		framebuffer: context.framebuffers[context.current_buffer],
+		renderArea: {
+			offset: {
+				x: 0,
+				y: 0
+			},
+			extent: {
+				width: context.width,
+				height: context.height,
+			}
+		},
+		clearValueCount: 2,
+		pClearValues: clear_values,
+	};
+
+	err = vkBeginCommandBuffer(context.draw_cmd, &cmd_buf_info);
+	assert(!err);
+
+	// We can use LAYOUT_UNDEFINED as a wildcard here because we don't care what
+	// happens to the previous contents of the image
+	VkImageMemoryBarrier image_memory_barrier = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		.pNext = NULL,
+		.srcAccessMask = 0,
+		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+		.image = context.swapchain_buffers[context.current_buffer].image,
+		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
+	};
+
+	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	vkCmdBeginRenderPass(context.draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
+	//vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline);
+	//vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline_layout, 0, 1, &context.desc_set, 0, NULL);
 }
 
 void VKRenderer::finishFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
+	//
 	VkResult err;
+
+	//
+	vkCmdEndRenderPass(context.draw_cmd);
+
+	VkImageMemoryBarrier prePresentBarrier = {
+		sType: VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		pNext: NULL,
+		srcAccessMask: VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		dstAccessMask: VK_ACCESS_MEMORY_READ_BIT,
+		oldLayout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		newLayout: VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+		dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+		image: context.swapchain_buffers[context.current_buffer].image,
+		subresourceRange: { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
+	};
+
+	VkImageMemoryBarrier *pmemory_barrier = &prePresentBarrier;
+	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, pmemory_barrier);
+
+	err = vkEndCommandBuffer(context.draw_cmd);
+	assert(!err);
+
 	if (context.setup_cmd != VK_NULL_HANDLE) {
 		err = vkEndCommandBuffer(context.setup_cmd);
 		assert(!err);
@@ -1130,6 +1218,11 @@ void VKRenderer::finishFrame()
 
 	vkDestroySemaphore(context.device, context.imageAcquiredSemaphore, NULL);
 	vkDestroySemaphore(context.device, context.drawCompleteSemaphore, NULL);
+
+	//
+	vkDeviceWaitIdle(context.device);
+
+	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
@@ -1489,6 +1582,23 @@ void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location
 void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	//
+	VkViewport viewport;
+	memset(&viewport, 0, sizeof(viewport));
+	viewport.height = (float)width;
+	viewport.width = (float)height;
+	viewport.minDepth = (float)x;
+	viewport.maxDepth = (float)y;
+	vkCmdSetViewport(context.draw_cmd, 0, 1, &viewport);
+
+	VkRect2D scissor;
+	memset(&scissor, 0, sizeof(scissor));
+	scissor.extent.width = width;
+	scissor.extent.height = height;
+	scissor.offset.x = x;
+	scissor.offset.y = y;
+	vkCmdSetScissor(context.draw_cmd, 0, 1, &scissor);
 }
 
 void VKRenderer::updateViewPort()
@@ -1499,6 +1609,12 @@ void VKRenderer::updateViewPort()
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	//
+	context.clear_red = red;
+	context.clear_green = green;
+	context.clear_blue = blue;
+	context.clear_alpha = alpha;
 }
 
 void VKRenderer::enableCulling()

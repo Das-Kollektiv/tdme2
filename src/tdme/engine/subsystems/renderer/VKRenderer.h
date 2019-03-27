@@ -39,7 +39,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public GLRenderer
 {
 private:
-	static constexpr bool VERBOSE { false };
+	static constexpr bool VERBOSE { true };
 
 	struct shader_type {
 		struct uniform_type {
@@ -191,6 +191,12 @@ private:
 		uint32_t queue_count;
 
 		VkSemaphore imageAcquiredSemaphore, drawCompleteSemaphore;
+
+		float clear_red { 0.0f };
+		float clear_green { 0.0f };
+		float clear_blue { 0.0f };
+		float clear_alpha { 1.0f };
+
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
