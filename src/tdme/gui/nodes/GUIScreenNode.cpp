@@ -65,6 +65,8 @@ GUIScreenNode::GUIScreenNode(
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
 	const GUINode_Scale9Grid& backgroundImageScale9Grid,
+	const GUIColor& backgroundImageEffectColorMul,
+	const GUIColor& backgroundImageEffectColorAdd,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUIScreenNode_SizeConstraints& sizeConstraints,
@@ -73,7 +75,7 @@ GUIScreenNode::GUIScreenNode(
 	bool scrollable,
 	bool popUp
 ) throw(GUIParserException):
-	GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
+	GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->sizeConstraints = sizeConstraints;
 	init();

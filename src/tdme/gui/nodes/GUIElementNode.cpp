@@ -57,6 +57,8 @@ GUIElementNode::GUIElementNode(
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
 	const GUINode_Scale9Grid& backgroundImageScaleGrid,
+	const GUIColor& backgroundImageEffectColorMul,
+	const GUIColor& backgroundImageEffectColorAdd,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
@@ -74,7 +76,7 @@ GUIElementNode::GUIElementNode(
 	const string& onMouseOutExpression,
 	const string& onChangeExpression
 	) throw (GUIParserException) :
-	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, border, padding, showOn, hideOn),
+	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
 	activeConditions(this)
 {
 	init();

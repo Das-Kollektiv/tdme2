@@ -77,6 +77,8 @@ GUINode::GUINode(
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
 	const GUINode_Scale9Grid& backgroundImageScale9Grid,
+	const GUIColor& backgroundImageEffectColorMul,
+	const GUIColor& backgroundImageEffectColorAdd,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
@@ -100,6 +102,8 @@ GUINode::GUINode(
 		this->backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture);
 	}
 	this->backgroundImageScale9Grid = backgroundImageScale9Grid;
+	this->backgroundImageEffectColorMul = backgroundImageEffectColorMul;
+	this->backgroundImageEffectColorAdd = backgroundImageEffectColorAdd;
 	this->border = border;
 	this->padding = padding;
 	this->showOn = showOn;
@@ -518,6 +522,8 @@ void GUINode::render(GUIRenderer* guiRenderer)
 	}
 	if (backgroundTexture != nullptr) {
 		guiRenderer->bindTexture(backgroundTextureId);
+		guiRenderer->setEffectColorMul(backgroundImageEffectColorMul);
+		guiRenderer->setEffectColorAdd(backgroundImageEffectColorAdd);
 		GUINode_Scale9Grid& scale9Grid = backgroundImageScale9Grid;
 		if (scale9Grid.left == 0 &&
 			scale9Grid.right == 0 &&

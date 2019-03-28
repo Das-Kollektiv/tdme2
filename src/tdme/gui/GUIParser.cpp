@@ -159,6 +159,8 @@ GUIScreenNode* GUIParser::parse(const string& xml) throw (GUIParserException, Fi
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-right"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-bottom")))
 		),
+		GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+		GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 		GUINode::createBorder(
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("border-left"))),
@@ -246,6 +248,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -306,6 +310,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -364,6 +370,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -422,6 +430,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -491,6 +501,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -564,6 +576,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -623,6 +637,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -682,6 +698,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -743,6 +761,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),
@@ -802,6 +822,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("background-image-scale9-bottom")))
 					),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
+					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("background-image-effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createBorder(
 						string(AVOID_NULLPTR_STRING(node->Attribute("border"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("border-left"))),

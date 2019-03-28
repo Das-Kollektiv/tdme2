@@ -184,6 +184,8 @@ protected:
 	 * @param backgroundColor background color
 	 * @param backgroundImage background image
 	 * @param backgroundImageScale9Grid background image scale 9 grid
+	 * @param backgroundImageEffectColorMul background image effect color mul
+	 * @param backgroundImageEffectColorAdd background image effect color add
 	 * @param border border
 	 * @param padding padding
 	 * @param sizeConstraints size constraints
@@ -202,6 +204,8 @@ protected:
 		const GUIColor& backgroundColor,
 		const string& backgroundImage,
 		const GUINode_Scale9Grid& backgroundImageScale9Grid,
+		const GUIColor& backgroundImageEffectColorMul,
+		const GUIColor& backgroundImageEffectColorAdd,
 		const GUINode_Border& border,
 		const GUINode_Padding& padding,
 		const GUIScreenNode_SizeConstraints& sizeConstraints,

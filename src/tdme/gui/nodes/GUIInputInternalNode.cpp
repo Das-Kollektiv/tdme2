@@ -49,6 +49,8 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const GUIColor& backgroundColor,
 	const string& backgroundImage,
 	const GUINode_Scale9Grid& backgroundImageScale9Grid,
+	const GUIColor& backgroundImageEffectColorMul,
+	const GUIColor& backgroundImageEffectColorAdd,
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
@@ -59,7 +61,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const MutableString& text,
 	int32_t maxLength
 	) throw (Exception):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
