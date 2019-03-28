@@ -401,19 +401,36 @@ bool GUINode::checkConditions(GUIElementNode* elementNode)
 		if (elementNode == nullptr) return true;
 	}
 
+	StringTokenizer t;
 	for (auto i = 0; i < hideOn.size(); i++) {
-		for (auto j = 0; j < elementNode->activeConditions.conditions.size(); j++) {
-			if (hideOn[i] == elementNode->activeConditions.conditions[j])
-				return false;
-
+		string elementNodeId;
+		auto condition = hideOn[i];
+		if (condition.find('.') != -1) {
+			t.tokenize(condition, ".");
+			elementNodeId = t.nextToken();
+			condition = t.nextToken();
 		}
+		auto elementNodeToCheck = elementNodeId.size() == 0?elementNode:dynamic_cast<GUIElementNode*>(screenNode->getNodeById(elementNodeId));
+		if (elementNodeToCheck == nullptr) {
+			Console::println("GUINode::checkConditions(): element node '" + elementNodeId + "': not found");
+			continue;
+		}
+		if (elementNodeToCheck->activeConditions.has(condition) == true) return false;
 	}
 	for (auto i = 0; i < showOn.size(); i++) {
-		for (auto j = 0; j < elementNode->activeConditions.conditions.size(); j++) {
-			if (showOn[i] == elementNode->activeConditions.conditions[j])
-				return true;
-
+		string elementNodeId;
+		auto condition = showOn[i];
+		if (condition.find('.') != -1) {
+			t.tokenize(condition, ".");
+			elementNodeId = t.nextToken();
+			condition = t.nextToken();
 		}
+		auto elementNodeToCheck = elementNodeId.size() == 0?elementNode:dynamic_cast<GUIElementNode*>(screenNode->getNodeById(elementNodeId));
+		if (elementNodeToCheck == nullptr) {
+			Console::println("GUINode::checkConditions(): element node '" + elementNodeId + "': not found");
+			continue;
+		}
+		if (elementNodeToCheck->activeConditions.has(condition) == true) return true;
 	}
 
 	return showOn.size() == 0;
