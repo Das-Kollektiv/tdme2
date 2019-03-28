@@ -93,7 +93,11 @@ private:
 	 * @param charId character id
 	 * @return character definition
 	 */
-	GUIFont_CharacterDefinition* getCharacter(int32_t charId);
+	inline GUIFont_CharacterDefinition* getCharacter(int32_t charId) {
+		auto charIt = chars.find(charId);
+		if (charIt != chars.end()) return charIt->second;
+		return nullptr;
+	}
 
 public:
 
