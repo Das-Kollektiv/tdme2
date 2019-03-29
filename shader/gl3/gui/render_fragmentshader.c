@@ -10,11 +10,11 @@ uniform vec4 effectColorAdd;
 {$UNIFORMS}
 
 // passed from vertex shader
-layout (location = 4) in vec2 vsFragTextureUV;
-layout (location = 5) in vec4 vsFragColor;
+layout (location = 0) in vec4 vsFragColor;
+layout (location = 1) in vec2 vsFragTextureUV;
 
 // passed out
-layout (location = 6) out vec4 outColor;
+layout (location = 0) out vec4 outColor;
 
 // main
 void main (void) {

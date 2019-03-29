@@ -1639,8 +1639,8 @@ void VKRenderer::useProgram(int32_t programId)
 	vi_bindings[3].binding = 3;
 	vi_bindings[3].stride = sizeof(float) * 4;
 	vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[3].binding = 2;
-	vi_attrs[3].location = 2;
+	vi_attrs[3].binding = 3;
+	vi_attrs[3].location = 3;
 	vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 	vi_attrs[3].offset = 0;
 
