@@ -16,14 +16,14 @@ class tdme::gui::renderer::GUIShader final
 
 private:
 	GLRenderer* renderer {  };
-	int32_t vertexShaderGlId {  };
-	int32_t fragmentShaderGlId {  };
-	int32_t programGlId {  };
-	int32_t uniformDiffuseTextureUnit {  };
-	int32_t uniformDiffuseTextureAvailable {  };
-	int32_t uniformEffectColorMul {  };
-	int32_t uniformEffectColorAdd {  };
-	int32_t uniformTextureMatrix {  };
+	int32_t vertexShaderId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t programId { -1 };
+	int32_t uniformDiffuseTextureUnit { -1 };
+	int32_t uniformDiffuseTextureAvailable { -1 };
+	int32_t uniformEffectColorMul { -1 };
+	int32_t uniformEffectColorAdd { -1 };
+	int32_t uniformTextureMatrix { -1 };
 	bool initialized {  };
 	bool isRunning {  };
 

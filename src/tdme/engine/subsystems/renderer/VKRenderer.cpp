@@ -1,4 +1,4 @@
-f/**
+/**
  * based on https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
  */
 
@@ -1530,7 +1530,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + name);
 	auto programIt = context.programs.find(programId);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
@@ -1538,6 +1538,7 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
 	}
 	for (auto& uniformIt: programIt->second.uniforms) {
 		if (uniformIt.second == name) {
+			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + name + " -- > " + to_string(uniformIt.first));
 			return uniformIt.first;
 		}
 	}
