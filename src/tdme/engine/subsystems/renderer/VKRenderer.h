@@ -154,11 +154,11 @@ private:
 
 		VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
 		VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
-		VkPipelineLayout pipeline_layout;
-		VkDescriptorSetLayout desc_layout;
-		VkPipelineCache pipelineCache;
-		VkRenderPass render_pass;
-		VkPipeline pipeline;
+		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
+		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
+		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
+		VkRenderPass render_pass { VK_NULL_HANDLE };
+		VkPipeline pipeline { VK_NULL_HANDLE };
 
 		VkShaderModule vert_shader_module;
 		VkShaderModule frag_shader_module;

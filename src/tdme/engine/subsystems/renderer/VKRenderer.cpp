@@ -1466,16 +1466,205 @@ void VKRenderer::useProgram(int32_t programId)
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
 		return;
 	}
+
+	program_type& program = programIt->second;
+
+	//
+	VkResult err;
+	int textureCount = 0;
+	const VkDescriptorSetLayoutBinding layout_binding = {
+		binding: 0,
+		descriptorType: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		descriptorCount: textureCount,
+		stageFlags: VK_SHADER_STAGE_FRAGMENT_BIT,
+		pImmutableSamplers: NULL
+	};
+	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		bindingCount: 0, // 1,
+		pBindings: NULL//&layout_binding,
+	};
+
+	err = vkCreateDescriptorSetLayout(context.device, &descriptor_layout, NULL, &context.desc_layout);
+	assert(!err);
+
+	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+		sType: VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		setLayoutCount: 0, // 1
+		pSetLayouts: NULL // &context.desc_layout,
+	};
+
+	err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &context.pipeline_layout);
+	assert(!err);
+
+	//
+	VkGraphicsPipelineCreateInfo pipeline;
+	memset(&pipeline, 0, sizeof(pipeline));
+
+	// Two stages: vs and fs
+	pipeline.stageCount = program.shaderIds.size();
+	VkPipelineShaderStageCreateInfo shaderStages[program.shaderIds.size()];
+	memset(&shaderStages, 0, program.shaderIds.size() * sizeof(VkPipelineShaderStageCreateInfo));
+
 	auto shaderIdx = 0;
-	for (auto& shaderId: programIt->second.shaderIds) {
+	for (auto& shaderId: program.shaderIds) {
 		auto shaderIt = context.shaders.find(shaderId);
 		if (shaderIt == context.shaders.end()) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
 			return;
 		}
-		context.uniformBufferObject[shaderIdx++].resize(shaderIt->second.ubo_size);
+		auto& shader = shaderIt->second;
+		context.uniformBufferObject[shaderIdx].resize(shader.ubo_size);
+		shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		shaderStages[shaderIdx].stage = shader.type;
+		shaderStages[shaderIdx].module = shader.module;
+		shaderStages[shaderIdx].pName = "main";
+		shaderIdx++;
 	}
 	context.program_id = programId;
+
+	// create pipepine
+	VkPipelineCacheCreateInfo pipelineCache;
+
+	VkPipelineVertexInputStateCreateInfo vi;
+	VkPipelineInputAssemblyStateCreateInfo ia;
+	VkPipelineRasterizationStateCreateInfo rs;
+	VkPipelineColorBlendStateCreateInfo cb;
+	VkPipelineDepthStencilStateCreateInfo ds;
+	VkPipelineViewportStateCreateInfo vp;
+	VkPipelineMultisampleStateCreateInfo ms;
+	VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
+	VkPipelineDynamicStateCreateInfo dynamicState;
+
+	memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
+	memset(&dynamicState, 0, sizeof dynamicState);
+	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.pDynamicStates = dynamicStateEnables;
+
+	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipeline.layout = context.pipeline_layout;
+
+	memset(&ia, 0, sizeof(ia));
+	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+	memset(&rs, 0, sizeof(rs));
+	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rs.polygonMode = VK_POLYGON_MODE_FILL;
+	rs.cullMode = VK_CULL_MODE_BACK_BIT;
+	rs.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	rs.depthClampEnable = VK_FALSE;
+	rs.rasterizerDiscardEnable = VK_FALSE;
+	rs.depthBiasEnable = VK_FALSE;
+	rs.lineWidth = 1.0f;
+
+	memset(&cb, 0, sizeof(cb));
+	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	VkPipelineColorBlendAttachmentState att_state[1];
+	memset(att_state, 0, sizeof(att_state));
+	att_state[0].colorWriteMask = 0xf;
+	att_state[0].blendEnable = VK_FALSE;
+	cb.attachmentCount = 1;
+	cb.pAttachments = att_state;
+
+	memset(&vp, 0, sizeof(vp));
+	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	vp.viewportCount = 1;
+	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+	vp.scissorCount = 1;
+	dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+
+	memset(&ds, 0, sizeof(ds));
+	ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	ds.depthTestEnable = VK_TRUE;
+	ds.depthWriteEnable = VK_TRUE;
+	ds.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+	ds.depthBoundsTestEnable = VK_FALSE;
+	ds.back.failOp = VK_STENCIL_OP_KEEP;
+	ds.back.passOp = VK_STENCIL_OP_KEEP;
+	ds.back.compareOp = VK_COMPARE_OP_ALWAYS;
+	ds.stencilTestEnable = VK_FALSE;
+	ds.front = ds.back;
+
+	memset(&ms, 0, sizeof(ms));
+	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	ms.pSampleMask = NULL;
+	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	VkVertexInputBindingDescription vi_bindings[4];
+	memset(&vi_bindings, 0, sizeof(vi_bindings));
+	VkVertexInputAttributeDescription vi_attrs[4];
+	memset(&vi_attrs, 0, sizeof(vi_attrs));
+
+	memset(&vi, 0, sizeof(vi));
+	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vi.pNext = NULL;
+	vi.vertexBindingDescriptionCount = 4;
+	vi.pVertexBindingDescriptions = vi_bindings;
+	vi.vertexAttributeDescriptionCount = 4;
+	vi.pVertexAttributeDescriptions = vi_attrs;
+
+	// vertices
+	vi_bindings[0].binding = 0;
+	vi_bindings[0].stride = sizeof(float) * 3;
+	vi_bindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[0].binding = 0;
+	vi_attrs[0].location = 0;
+	vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+	vi_attrs[0].offset = 0;
+
+	// normals
+	vi_bindings[1].binding = 1;
+	vi_bindings[1].stride = sizeof(float) * 3;
+	vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[1].binding = 1;
+	vi_attrs[1].location = 1;
+	vi_attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+	vi_attrs[1].offset = 0;
+
+	// texture coordinates
+	vi_bindings[2].binding = 2;
+	vi_bindings[2].stride = sizeof(float) * 2;
+	vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[2].binding = 2;
+	vi_attrs[2].location = 2;
+	vi_attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
+	vi_attrs[2].offset = 0;
+
+	// colors
+	vi_bindings[3].binding = 3;
+	vi_bindings[3].stride = sizeof(float) * 4;
+	vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[3].binding = 2;
+	vi_attrs[3].location = 2;
+	vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	vi_attrs[3].offset = 0;
+
+	pipeline.pVertexInputState = &vi;
+	pipeline.pInputAssemblyState = &ia;
+	pipeline.pRasterizationState = &rs;
+	pipeline.pColorBlendState = &cb;
+	pipeline.pMultisampleState = &ms;
+	pipeline.pViewportState = &vp;
+	pipeline.pDepthStencilState = &ds;
+	pipeline.pStages = shaderStages;
+	pipeline.renderPass = context.render_pass;
+	pipeline.pDynamicState = &dynamicState;
+
+	memset(&pipelineCache, 0, sizeof(pipelineCache));
+	pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+
+	err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &context.pipelineCache);
+	assert(!err);
+
+	err = vkCreateGraphicsPipelines(context.device, context.pipelineCache, 1, &pipeline, NULL, &context.pipeline);
+	assert(!err);
+
+	vkDestroyPipelineCache(context.device, context.pipelineCache, NULL);
 }
 
 int32_t VKRenderer::createProgram()
