@@ -1236,6 +1236,14 @@ int32_t VKRenderer::getTextureUnits()
 	return activeTextureUnit;
 }
 
+int32_t VKRenderer::getUniformBufferObjectBindingIdx(int32_t shaderType) {
+	if (shaderType == SHADER_FRAGMENT_SHADER) return 1;
+	if (shaderType == SHADER_VERTEX_SHADER) return 0;
+	if (shaderType == SHADER_COMPUTE_SHADER) return 0;
+	if (shaderType == SHADER_GEOMETRY_SHADER) return 2;
+	return -1;
+}
+
 int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	/*if (VERBOSE == true) */Console::println("VKRenderer::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
@@ -1304,9 +1312,10 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		}
 
 		// generate new uniform block
+		auto bindingIdx = getUniformBufferObjectBindingIdx(type);
 		shaderSource = newShaderSource;
 		string uniformsBlock = "\n";
-		uniformsBlock+= "layout(binding=0) uniform UniformBufferObject\n";
+		uniformsBlock+= "layout(binding=" + to_string(bindingIdx) + ") uniform UniformBufferObject\n";
 		uniformsBlock+= "{\n";
 		for (auto uniform: uniforms) {
 			uniformsBlock+= "\t" + uniform + "\n";
@@ -1472,34 +1481,9 @@ void VKRenderer::useProgram(int32_t programId)
 	//
 	VkResult err;
 	int textureCount = 0;
-	const VkDescriptorSetLayoutBinding layout_binding = {
-		binding: 0,
-		descriptorType: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		descriptorCount: textureCount,
-		stageFlags: VK_SHADER_STAGE_FRAGMENT_BIT,
-		pImmutableSamplers: NULL
-	};
-	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
-		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		pNext: NULL,
-		flags: 0,
-		bindingCount: 0, // 1,
-		pBindings: NULL//&layout_binding,
-	};
-
-	err = vkCreateDescriptorSetLayout(context.device, &descriptor_layout, NULL, &context.desc_layout);
-	assert(!err);
-
-	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
-		sType: VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-		pNext: NULL,
-		flags: 0,
-		setLayoutCount: 0, // 1
-		pSetLayouts: NULL // &context.desc_layout,
-	};
-
-	err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &context.pipeline_layout);
-	assert(!err);
+	int layoutBindingIdx = 0;
+	VkDescriptorSetLayoutBinding layout_bindings[16];
+	memset(&layout_bindings, 0, sizeof(layout_bindings));
 
 	//
 	VkGraphicsPipelineCreateInfo pipeline;
@@ -1523,9 +1507,50 @@ void VKRenderer::useProgram(int32_t programId)
 		shaderStages[shaderIdx].stage = shader.type;
 		shaderStages[shaderIdx].module = shader.module;
 		shaderStages[shaderIdx].pName = "main";
+		if (shader.ubo_size > 0) {
+			layout_bindings[getUniformBufferObjectBindingIdx(shader.type)] = {
+				binding: layoutBindingIdx,
+				descriptorType: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				descriptorCount: 1,
+				stageFlags: shader.type,
+				pImmutableSamplers: NULL
+			};
+			layoutBindingIdx++;
+		}
 		shaderIdx++;
 	}
 	context.program_id = programId;
+
+	/*
+	const VkDescriptorSetLayoutBinding layout_binding[0] = {
+		binding: 0,
+		descriptorType: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		descriptorCount: textureCount,
+		stageFlags: VK_SHADER_STAGE_FRAGMENT_BIT,
+		pImmutableSamplers: NULL
+	};
+	*/
+	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		bindingCount: layoutBindingIdx,
+		pBindings: layout_bindings,
+	};
+
+	err = vkCreateDescriptorSetLayout(context.device, &descriptor_layout, NULL, &context.desc_layout);
+	assert(!err);
+
+	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+		sType: VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		setLayoutCount: 1,
+		pSetLayouts: &context.desc_layout,
+	};
+
+	err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &context.pipeline_layout);
+	assert(!err);
 
 	// create pipepine
 	VkPipelineCacheCreateInfo pipelineCache;
