@@ -275,8 +275,13 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 		x2 = renderAreaRight;
 		x3 = renderAreaRight;
 	}
+	#if defined(VULKAN)
+		#define YAXIS(y) (-y)
+	#else
+		#define YAXIS(y) y
+	#endif
 	fbVertices.put(x1);
-	fbVertices.put(y1);
+	fbVertices.put(YAXIS(y1));
 	fbVertices.put(0.0f);
 	fbColors.put(colorR1);
 	fbColors.put(colorG1);
@@ -285,7 +290,7 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	fbTextureCoordinates.put(tu1);
 	fbTextureCoordinates.put(tv1);
 	fbVertices.put(x2);
-	fbVertices.put(y2);
+	fbVertices.put(YAXIS(y2));
 	fbVertices.put(0.0f);
 	fbColors.put(colorR2);
 	fbColors.put(colorG2);
@@ -294,7 +299,7 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	fbTextureCoordinates.put(tu2);
 	fbTextureCoordinates.put(tv2);
 	fbVertices.put(x3);
-	fbVertices.put(y3);
+	fbVertices.put(YAXIS(y3));
 	fbVertices.put(0.0f);
 	fbColors.put(colorR3);
 	fbColors.put(colorG3);
@@ -303,7 +308,7 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	fbTextureCoordinates.put(tu3);
 	fbTextureCoordinates.put(tv3);
 	fbVertices.put(x4);
-	fbVertices.put(y4);
+	fbVertices.put(YAXIS(y4));
 	fbVertices.put(0.0f);
 	fbColors.put(colorR4);
 	fbColors.put(colorG4);

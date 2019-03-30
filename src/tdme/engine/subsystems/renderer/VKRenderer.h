@@ -102,7 +102,6 @@ private:
 	struct context {
 		GLFWwindow* window;
 		VkSurfaceKHR surface;
-		bool use_staging_buffer;
 
 		VkInstance inst;
 		VkPhysicalDevice gpu;
@@ -195,6 +194,7 @@ private:
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	int32_t getUniformBufferObjectBindingIdx(int32_t shaderType);
+	VkBuffer getBufferObjectInternal(int32_t bufferObjectId);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);

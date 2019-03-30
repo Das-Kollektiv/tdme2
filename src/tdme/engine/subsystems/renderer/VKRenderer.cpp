@@ -1057,10 +1057,6 @@ void VKRenderer::initializeFrame()
 
 	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 	vkCmdBeginRenderPass(context.draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
-
-	//
-	// vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline);
-	// vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline_layout, 0, 1, &context.desc_set, 0, NULL);
 }
 
 void VKRenderer::finishFrame()
@@ -1090,9 +1086,7 @@ void VKRenderer::finishFrame()
 		image: context.swapchain_buffers[context.current_buffer].image,
 		subresourceRange: { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
 	};
-
-	VkImageMemoryBarrier *pmemory_barrier = &prePresentBarrier;
-	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, pmemory_barrier);
+	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &prePresentBarrier);
 
 	err = vkEndCommandBuffer(context.draw_cmd);
 	assert(!err);
@@ -1176,7 +1170,7 @@ void VKRenderer::finishFrame()
 	vkDeviceWaitIdle(context.device);
 
 	//
-	if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
+	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
@@ -1605,8 +1599,8 @@ void VKRenderer::useProgram(int32_t programId)
 
 	memset(&ds, 0, sizeof(ds));
 	ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-	ds.depthTestEnable = VK_TRUE;
-	ds.depthWriteEnable = VK_TRUE;
+	ds.depthTestEnable = VK_FALSE;
+	ds.depthWriteEnable = VK_FALSE;
 	ds.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 	ds.depthBoundsTestEnable = VK_FALSE;
 	ds.back.failOp = VK_STENCIL_OP_KEEP;
@@ -1625,49 +1619,58 @@ void VKRenderer::useProgram(int32_t programId)
 	VkVertexInputAttributeDescription vi_attrs[4];
 	memset(&vi_attrs, 0, sizeof(vi_attrs));
 
+	//
+	auto bindingIdx = 0;
+
+	// vertices
+	vi_bindings[bindingIdx].binding = bindingIdx;
+	vi_bindings[bindingIdx].stride = sizeof(float) * 3;
+	vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[bindingIdx].binding = bindingIdx;
+	vi_attrs[bindingIdx].location = bindingIdx;
+	vi_attrs[bindingIdx].format = VK_FORMAT_R32G32B32_SFLOAT;
+	vi_attrs[bindingIdx].offset = 0;
+	bindingIdx++;
+
+	// normals
+	/*
+	vi_bindings[bindingIdx].binding = 1;
+	vi_bindings[bindingIdx].stride = sizeof(float) * 3;
+	vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[bindingIdx].binding = 1;
+	vi_attrs[bindingIdx].location = 1;
+	vi_attrs[bindingIdx].format = VK_FORMAT_R32G32B32_SFLOAT;
+	vi_attrs[bindingIdx].offset = 0;
+	bindingIdx++;
+	*/
+
+	// texture coordinates
+	vi_bindings[bindingIdx].binding = bindingIdx;
+	vi_bindings[bindingIdx].stride = sizeof(float) * 2;
+	vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[bindingIdx].binding = bindingIdx;
+	vi_attrs[bindingIdx].location = bindingIdx;
+	vi_attrs[bindingIdx].format = VK_FORMAT_R32G32_SFLOAT;
+	vi_attrs[bindingIdx].offset = 0;
+	bindingIdx++;
+
+	// colors
+	vi_bindings[bindingIdx].binding = bindingIdx;
+	vi_bindings[bindingIdx].stride = sizeof(float) * 4;
+	vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	vi_attrs[bindingIdx].binding = bindingIdx;
+	vi_attrs[bindingIdx].location = bindingIdx;
+	vi_attrs[bindingIdx].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	vi_attrs[bindingIdx].offset = 0;
+	bindingIdx++;
+
 	memset(&vi, 0, sizeof(vi));
 	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vi.pNext = NULL;
-	vi.vertexBindingDescriptionCount = 4;
+	vi.vertexBindingDescriptionCount = bindingIdx;
 	vi.pVertexBindingDescriptions = vi_bindings;
-	vi.vertexAttributeDescriptionCount = 4;
+	vi.vertexAttributeDescriptionCount = bindingIdx;
 	vi.pVertexAttributeDescriptions = vi_attrs;
-
-	// vertices
-	vi_bindings[0].binding = 0;
-	vi_bindings[0].stride = sizeof(float) * 3;
-	vi_bindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[0].binding = 0;
-	vi_attrs[0].location = 0;
-	vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[0].offset = 0;
-
-	// normals
-	vi_bindings[1].binding = 1;
-	vi_bindings[1].stride = sizeof(float) * 3;
-	vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[1].binding = 1;
-	vi_attrs[1].location = 1;
-	vi_attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-	vi_attrs[1].offset = 0;
-
-	// texture coordinates
-	vi_bindings[2].binding = 2;
-	vi_bindings[2].stride = sizeof(float) * 2;
-	vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[2].binding = 2;
-	vi_attrs[2].location = 2;
-	vi_attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
-	vi_attrs[2].offset = 0;
-
-	// colors
-	vi_bindings[3].binding = 3;
-	vi_bindings[3].stride = sizeof(float) * 4;
-	vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-	vi_attrs[3].binding = 3;
-	vi_attrs[3].location = 3;
-	vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	vi_attrs[3].offset = 0;
 
 	pipeline.pVertexInputState = &vi;
 	pipeline.pInputAssemblyState = &ia;
@@ -1690,6 +1693,10 @@ void VKRenderer::useProgram(int32_t programId)
 	assert(!err);
 
 	vkDestroyPipelineCache(context.device, context.pipelineCache, NULL);
+
+	//
+	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline);
+	// vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline_layout, 0, 1, &context.desc_set, 0, NULL);
 }
 
 int32_t VKRenderer::createProgram()
@@ -1860,10 +1867,12 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	//
 	VkViewport viewport;
 	memset(&viewport, 0, sizeof(viewport));
-	viewport.height = (float)width;
-	viewport.width = (float)height;
-	viewport.minDepth = (float)x;
-	viewport.maxDepth = (float)y;
+	viewport.width = (float)width;
+	viewport.height = (float)height;
+	viewport.x = (float)x;
+	viewport.y = (float)y;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
 	vkCmdSetViewport(context.draw_cmd, 0, 1, &viewport);
 
 	VkRect2D scissor;
@@ -2147,6 +2156,16 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 	return bufferIds;
 }
 
+VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
+	if (VERBOSE == true) Console::println("getBufferObjectInternal::" + string(__FUNCTION__) + "()");
+	auto bufferIt = context.buffers.find(bufferObjectId);
+	if (bufferIt == context.buffers.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+		return VK_NULL_HANDLE;
+	}
+	return bufferIt->second.buf;
+}
+
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto bufferIt = context.buffers.find(bufferObjectId);
@@ -2205,6 +2224,11 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	memcpy(uploadData, data, size);
 
 	vkUnmapMemory(context.device, buffer.mem);
+	assert(!err);
+
+	// bind
+    err = vkBindBufferMemory(context.device, buffer.buf, buffer.mem, 0);
+    assert(!err);
 }
 
 void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
@@ -2231,7 +2255,8 @@ void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
 void VKRenderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	context.boundBuffers[2] = bufferObjectId;
+	// context.boundBuffers[2] = bufferObjectId;
+	context.boundBuffers[1] = bufferObjectId;
 }
 
 void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
@@ -2243,25 +2268,24 @@ void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
 void VKRenderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	context.boundBuffers[1] = bufferObjectId;
+	// context.boundBuffers[1] = bufferObjectId;
 }
 
 void VKRenderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	context.boundBuffers[3] = bufferObjectId;
+	//context.boundBuffers[3] = bufferObjectId;
+	context.boundBuffers[2] = bufferObjectId;
 }
 
 void VKRenderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	context.boundBuffers[4] = bufferObjectId;
 }
 
 void VKRenderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	context.boundBuffers[5] = bufferObjectId;
 }
 
 void VKRenderer::bindModelMatricesBufferObject(int32_t bufferObjectId)
@@ -2288,6 +2312,11 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 {
 	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	vkCmdBindIndexBuffer(context.draw_cmd, getBufferObjectInternal(context.boundIndicesBuffer), 0, VK_INDEX_TYPE_UINT32);
+	VkBuffer vertexBuffersBuffer[3] = {getBufferObjectInternal(context.boundBuffers[0]), getBufferObjectInternal(context.boundBuffers[1]), getBufferObjectInternal(context.boundBuffers[2])};
+	VkDeviceSize vertexBuffersOffsets[3] = { 0, 0, 0 };
+	vkCmdBindVertexBuffers(context.draw_cmd, 0, 3, vertexBuffersBuffer, vertexBuffersOffsets);
+	vkCmdDrawIndexed(context.draw_cmd, triangles * 3, 1, trianglesOffset * 3, 0, 0);
 }
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)

@@ -22,6 +22,7 @@ void main (void) {
 //	if (diffuseTextureAvailable == 1) {
 //		outColor = clamp((effectColorAdd + texture(diffuseTextureUnit, vsFragTextureUV) * vsFragColor * effectColorMul), 0.0, 1.0);
 //	} else {
-		outColor = clamp(effectColorAdd + vsFragColor * effectColorMul, 0.0, 1.0);
+//		outColor = clamp(effectColorAdd + vsFragColor * effectColorMul, 0.0, 1.0);
+		outColor = vsFragColor;
 //	}
 }

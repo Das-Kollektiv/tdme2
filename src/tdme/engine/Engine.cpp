@@ -801,8 +801,15 @@ void Engine::display()
 	// set up clear color
 	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
 
+
+	// finish frame
+	if (timing->getFrame() > 1) Engine::renderer->finishFrame();
+
 	// init frame
 	Engine::renderer->initializeFrame();
+
+	//
+	Engine::renderer->setViewPort(0, 0, width, height); // TODO: can be removed later
 
 	// clear previous frame values
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
@@ -929,9 +936,6 @@ void Engine::display()
 	// clear pre render states
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
-
-	// finish frame
-	Engine::renderer->finishFrame();
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
