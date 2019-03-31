@@ -39,7 +39,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public GLRenderer
 {
 private:
-	static constexpr bool VERBOSE { true };
+	static constexpr bool VERBOSE { false };
 
 	struct shader_type {
 		struct uniform_type {
@@ -49,16 +49,22 @@ private:
 		};
 		map<string, uniform_type> uniforms;
 		uint32_t ubo_size;
-		int32_t uniformBuffer;
+		int32_t uniform_buffer;
+		bool bound_buffer;
 		vector<unsigned int> spirv;
+		int32_t id;
 		VkShaderStageFlagBits type;
 		VkShaderModule module;
-		int32_t id;
 	};
 
 	struct program_type {
-		vector<int32_t> shaderIds;
+		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
+		bool created_pipeline;
+		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
+		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
+		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
+		VkPipeline pipeline { VK_NULL_HANDLE };
 		int32_t id;
 	};
 
@@ -66,7 +72,7 @@ private:
 		VkBuffer buf;
 		VkDeviceMemory mem;
 		int32_t id;
-		uint32_t allocSize;
+		uint32_t alloc_size;
 		uint32_t size;
 	};
 
@@ -74,7 +80,7 @@ private:
 		VkSampler sampler;
 
 		VkImage image;
-		VkImageLayout imageLayout;
+		VkImageLayout image_layout;
 
 		VkDeviceMemory mem;
 		VkImageView view;
@@ -154,11 +160,7 @@ private:
 
 		VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
 		VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
-		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
-		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
 		VkRenderPass render_pass { VK_NULL_HANDLE };
-		VkPipeline pipeline { VK_NULL_HANDLE };
 
 		VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 		VkDescriptorSet desc_set { VK_NULL_HANDLE };
@@ -169,13 +171,10 @@ private:
 
 		bool validate { true };
 
-		float depthStencil;
-		float depthIncrement;
-
 		uint32_t current_buffer;
 		uint32_t queue_count;
 
-		VkSemaphore imageAcquiredSemaphore, drawCompleteSemaphore;
+		VkSemaphore image_acquired_semaphore, draw_complete_semaphore;
 
 		float clear_red { 0.0f };
 		float clear_green { 0.0f };
@@ -183,9 +182,12 @@ private:
 		float clear_alpha { 1.0f };
 
 		int32_t program_id { 0 };
-		int32_t boundIndicesBuffer { 0 };
-		array<int32_t, 12> boundBuffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		array<vector<uint8_t>, 2> uniformBufferObject;
+		int32_t bound_indices_buffer { 0 };
+		array<int32_t, 12> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		array<vector<uint8_t>, 4> uniform_buffers;
+
+		vector<VkDeviceMemory> memory_delete;
+		vector<VkBuffer> buffers_delete;
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
