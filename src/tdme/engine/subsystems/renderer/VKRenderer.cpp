@@ -38,6 +38,8 @@
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 
+using std::to_string;
+
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define ERR_EXIT(err_msg, err_class)                                           \
     do {                                                                       \
@@ -924,6 +926,29 @@ void VKRenderer::initialize()
 	err = vkCreateRenderPass(context.device, &rp_info, NULL, &context.render_pass);
 	assert(!err);
 
+	// create descriptor pool
+	const VkDescriptorPoolSize types_count[2] = {
+		[0] = {
+			type: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			descriptorCount: 16
+		},
+		[1] = {
+			type: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			descriptorCount: 16
+		}
+	};
+	const VkDescriptorPoolCreateInfo descriptor_pool = {
+		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		maxSets: 1,
+		poolSizeCount: 2,
+		pPoolSizes: types_count,
+	};
+
+	err = vkCreateDescriptorPool(context.device, &descriptor_pool, NULL, &context.desc_pool);
+	assert(!err);
+
 	// frame buffers
 	initializeFrameBuffers();
 }
@@ -1170,7 +1195,7 @@ void VKRenderer::finishFrame()
 	vkDeviceWaitIdle(context.device);
 
 	//
-	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
+	if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
@@ -1270,6 +1295,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		stack<string> testedDefinitions;
 		while (t.hasMoreTokens() == true) {
 			auto line = StringUtils::trim(t.nextToken());
+			if (StringUtils::startsWith(line, "//") == true) continue;
 			auto position = -1;
 			if ((position = line.find("uniform ")) != -1) {
 				if (line.find("sampler2D") != -1) {
@@ -1308,13 +1334,16 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		// generate new uniform block
 		auto bindingIdx = getUniformBufferObjectBindingIdx(type);
 		shaderSource = newShaderSource;
-		string uniformsBlock = "\n";
-		uniformsBlock+= "layout(binding=" + to_string(bindingIdx) + ") uniform UniformBufferObject\n";
-		uniformsBlock+= "{\n";
-		for (auto uniform: uniforms) {
-			uniformsBlock+= "\t" + uniform + "\n";
+		string uniformsBlock = "";
+		if (uniforms.size() > 0) {
+			uniformsBlock+= "\n";
+			uniformsBlock+= "layout(binding=" + to_string(bindingIdx) + ") uniform UniformBufferObject\n";
+			uniformsBlock+= "{\n";
+			for (auto uniform: uniforms) {
+				uniformsBlock+= "\t" + uniform + "\n";
+			}
+			uniformsBlock+= "} ubo;\n";
 		}
-		uniformsBlock+= "} ubo;\n";
 
 		// replace uniforms to use ubo
 		//	TODO: improve me as this will not work in all cases
@@ -1330,10 +1359,15 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
 				shaderStruct.ubo_size+= size;
 			} else
+			if (uniformType == "float") {
+				auto size = sizeof(float);
+				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
+				shaderStruct.ubo_size+= size;
+			} else
 			if (uniformType == "vec3") {
 				auto size = sizeof(float) * 3;
 				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
-				shaderStruct.ubo_size+= size;
+				shaderStruct.ubo_size+= sizeof(float) * 4;
 			} else
 			if (uniformType == "vec4") {
 				auto size = sizeof(float) * 4;
@@ -1343,7 +1377,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (uniformType == "mat3") {
 				auto size = sizeof(float) * 9;
 				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
-				shaderStruct.ubo_size+= size;
+				shaderStruct.ubo_size+= sizeof(float) * 12;
 			} else
 			if (uniformType == "mat4") {
 				auto size = sizeof(float) * 16;
@@ -1437,6 +1471,8 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 
     glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shaderStruct.spirv);
 
+    shaderStruct.uniformBuffer = createBufferObjects(1)[0];
+
     // create shader module
     {
 		VkResult err;
@@ -1472,10 +1508,29 @@ void VKRenderer::useProgram(int32_t programId)
 
 	program_type& program = programIt->second;
 
-	//
 	VkResult err;
-	int textureCount = 0;
-	int layoutBindingIdx = 0;
+	auto textureCount = 0;
+	// TODO: a.drewke
+	if (textureCount > 0) {
+		VkDescriptorImageInfo tex_descs[textureCount];
+		memset(&tex_descs, 0, sizeof(tex_descs));
+		for (auto i = 0; i < textureCount; i++) {
+			tex_descs[i].sampler = context.textures[i].sampler;
+			tex_descs[i].imageView = context.textures[i].view;
+			tex_descs[i].imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		}
+
+		VkWriteDescriptorSet write;
+		memset(&write, 0, sizeof(write));
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.dstSet = context.desc_set;
+		write.descriptorCount = textureCount;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		write.pImageInfo = tex_descs;
+		vkUpdateDescriptorSets(context.device, 1, &write, 0, NULL);
+	}
+
+	//
 	VkDescriptorSetLayoutBinding layout_bindings[16];
 	memset(&layout_bindings, 0, sizeof(layout_bindings));
 
@@ -1488,6 +1543,7 @@ void VKRenderer::useProgram(int32_t programId)
 	VkPipelineShaderStageCreateInfo shaderStages[program.shaderIds.size()];
 	memset(&shaderStages, 0, program.shaderIds.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
+	int layoutBindingIdx = 0;
 	auto shaderIdx = 0;
 	for (auto& shaderId: program.shaderIds) {
 		auto shaderIt = context.shaders.find(shaderId);
@@ -1502,8 +1558,9 @@ void VKRenderer::useProgram(int32_t programId)
 		shaderStages[shaderIdx].module = shader.module;
 		shaderStages[shaderIdx].pName = "main";
 		if (shader.ubo_size > 0) {
-			layout_bindings[getUniformBufferObjectBindingIdx(shader.type)] = {
-				binding: layoutBindingIdx,
+			auto uboBindingIdx = getUniformBufferObjectBindingIdx(shader.type);
+			layout_bindings[uboBindingIdx] = {
+				binding: uboBindingIdx,
 				descriptorType: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				descriptorCount: 1,
 				stageFlags: shader.type,
@@ -1514,12 +1571,11 @@ void VKRenderer::useProgram(int32_t programId)
 		shaderIdx++;
 	}
 	context.program_id = programId;
-
 	/*
-	const VkDescriptorSetLayoutBinding layout_binding[0] = {
-		binding: 0,
+	layout_bindings[layoutBindingIdx++] = {
+		binding: 2,
 		descriptorType: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-		descriptorCount: textureCount,
+		descriptorCount: 1,
 		stageFlags: VK_SHADER_STAGE_FRAGMENT_BIT,
 		pImmutableSamplers: NULL
 	};
@@ -1542,6 +1598,17 @@ void VKRenderer::useProgram(int32_t programId)
 		setLayoutCount: 1,
 		pSetLayouts: &context.desc_layout,
 	};
+
+	//
+	VkDescriptorSetAllocateInfo alloc_info = {
+		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+		pNext: NULL,
+		descriptorPool: context.desc_pool,
+		descriptorSetCount: 1,
+		pSetLayouts: &context.desc_layout
+	};
+	err = vkAllocateDescriptorSets(context.device, &alloc_info, &context.desc_set);
+	assert(!err);
 
 	err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &context.pipeline_layout);
 	assert(!err);
@@ -1773,37 +1840,40 @@ void VKRenderer::setProgramUniformInternal(int32_t uniformId, uint8_t* data, int
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program not found: " + to_string(context.program_id));
 		return;
 	}
-	auto uniformIt = programIt->second.uniforms.find(uniformId);
-	if (uniformIt == programIt->second.uniforms.end()) {
+	auto& program = programIt->second;
+	auto uniformIt = program.uniforms.find(uniformId);
+	if (uniformIt == program.uniforms.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform does not exist: " + to_string(uniformId));
 		return;
 	}
 
 	auto changedUniforms = 0;
 	auto shaderIdx = 0;
-	for (auto shaderId: programIt->second.shaderIds) {
+	for (auto shaderId: program.shaderIds) {
 		auto shaderIt = context.shaders.find(shaderId);
 		if (shaderIt == context.shaders.end()) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: shader does not exist");
 			return;
 		}
-		auto shaderUniformIt = shaderIt->second.uniforms.find(uniformIt->second);
-		if (shaderUniformIt == shaderIt->second.uniforms.end()) {
+		auto& shader = shaderIt->second;
+		auto shaderUniformIt = shader.uniforms.find(uniformIt->second);
+		if (shaderUniformIt == shader.uniforms.end()) {
 			shaderIdx++;
 			continue;
 		}
-		if (context.uniformBufferObject[shaderIdx].size() < shaderUniformIt->second.position + size) {
+		auto& shaderUniform = shaderUniformIt->second;
+		if (context.uniformBufferObject[shaderIdx].size() < shaderUniform.position + size) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform buffer is too small");
 			shaderIdx++;
 			continue;
 		}
-		if (shaderUniformIt->second.size != size) {
+		if (shaderUniform.size != size) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform size mismatch");
 			shaderIdx++;
 			continue;
 		}
 		for (auto i = 0; i < size; i++) {
-			context.uniformBufferObject[shaderIdx][shaderUniformIt->second.position + i] = data[i];
+			context.uniformBufferObject[shaderIdx][shaderUniform.position + i] = data[i];
 		}
 		changedUniforms++;
 		shaderIdx++;
@@ -2312,6 +2382,56 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 {
 	// TODO
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	// upload uniforms
+	auto programIt = context.programs.find(context.program_id);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
+		return;
+	}
+	program_type& program = programIt->second;
+	auto shaderIdx = 0;
+	for (auto& shaderId: program.shaderIds) {
+		auto shaderIt = context.shaders.find(shaderId);
+		if (shaderIt == context.shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+			return;
+		}
+		auto& shader = shaderIt->second;
+
+		if (shader.ubo_size == 0) {
+			shaderIdx++;
+			continue;
+		}
+
+		uploadBufferObjectInternal(shader.uniformBuffer, context.uniformBufferObject[shaderIdx].size(), context.uniformBufferObject[shaderIdx].data(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		auto uboBindingIdx = getUniformBufferObjectBindingIdx(shader.type);
+		const VkDescriptorBufferInfo bufferInfo = {
+			buffer: getBufferObjectInternal(shader.uniformBuffer),
+			offset: 0,
+			range: shader.ubo_size
+		};
+
+		VkWriteDescriptorSet write = {
+			sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			pNext: NULL,
+			dstSet: context.desc_set,
+			dstBinding: uboBindingIdx,
+			dstArrayElement: 0,
+			descriptorCount: 1,
+			descriptorType: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			pImageInfo: NULL,
+			pBufferInfo: &bufferInfo,
+			pTexelBufferView: NULL,
+		};
+		vkUpdateDescriptorSets(context.device, 1, &write, 0, NULL);
+
+		shaderIdx++;
+	}
+
+	//
+	vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline_layout, 0, 1, &context.desc_set, 0, nullptr);
 	vkCmdBindIndexBuffer(context.draw_cmd, getBufferObjectInternal(context.boundIndicesBuffer), 0, VK_INDEX_TYPE_UINT32);
 	VkBuffer vertexBuffersBuffer[3] = {getBufferObjectInternal(context.boundBuffers[0]), getBufferObjectInternal(context.boundBuffers[1]), getBufferObjectInternal(context.boundBuffers[2])};
 	VkDeviceSize vertexBuffersOffsets[3] = { 0, 0, 0 };

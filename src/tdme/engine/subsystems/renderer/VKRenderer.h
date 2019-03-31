@@ -49,6 +49,7 @@ private:
 		};
 		map<string, uniform_type> uniforms;
 		uint32_t ubo_size;
+		int32_t uniformBuffer;
 		vector<unsigned int> spirv;
 		VkShaderStageFlagBits type;
 		VkShaderModule module;
@@ -159,11 +160,8 @@ private:
 		VkRenderPass render_pass { VK_NULL_HANDLE };
 		VkPipeline pipeline { VK_NULL_HANDLE };
 
-		VkShaderModule vert_shader_module;
-		VkShaderModule frag_shader_module;
-
-		VkDescriptorPool desc_pool;
-		VkDescriptorSet desc_set;
+		VkDescriptorPool desc_pool { VK_NULL_HANDLE };
+		VkDescriptorSet desc_set { VK_NULL_HANDLE };
 
 		VkFramebuffer* framebuffers;
 

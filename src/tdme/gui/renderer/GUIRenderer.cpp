@@ -347,7 +347,7 @@ void GUIRenderer::render()
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];
 	effectColorMulFinal[3] = guiEffectColorMul[3] * effectColorMul[3] * fontColor[3];
-	effectColorAddFinal[0] = guiEffectColorAdd[0] + effectColorAdd[0];
+	effectColorAddFinal[0] = guiEffectColorAdd[0] + effectColorAdd[0] + 1.0f;
 	effectColorAddFinal[1] = guiEffectColorAdd[1] + effectColorAdd[1];
 	effectColorAddFinal[2] = guiEffectColorAdd[2] + effectColorAdd[2];
 	effectColorAddFinal[3] = 0.0f;
