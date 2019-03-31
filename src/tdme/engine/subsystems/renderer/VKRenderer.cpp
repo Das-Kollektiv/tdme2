@@ -1,5 +1,5 @@
 /**
- * based on https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
+ * based on https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples, https://vulkan-tutorial.com
  */
 
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
@@ -1651,12 +1651,20 @@ void VKRenderer::useProgram(int32_t programId)
 		rs.depthBiasEnable = VK_FALSE;
 		rs.lineWidth = 1.0f;
 
-		memset(&cb, 0, sizeof(cb));
-		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		VkPipelineColorBlendAttachmentState att_state[1];
 		memset(att_state, 0, sizeof(att_state));
-		att_state[0].colorWriteMask = 0xf;
-		att_state[0].blendEnable = VK_FALSE;
+		att_state[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		att_state[0].blendEnable = VK_TRUE;
+		att_state[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		att_state[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		att_state[0].colorBlendOp = VK_BLEND_OP_ADD;
+		att_state[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		att_state[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		att_state[0].alphaBlendOp = VK_BLEND_OP_ADD;
+
+		memset(&cb, 0, sizeof(cb));
+		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		cb.logicOpEnable = VK_FALSE;
 		cb.attachmentCount = 1;
 		cb.pAttachments = att_state;
 
