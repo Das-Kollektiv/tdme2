@@ -77,11 +77,11 @@ private:
 	};
 
 	struct texture_object {
+		bool uploaded;
+		int32_t id;
 		VkSampler sampler;
-
 		VkImage image;
 		VkImageLayout image_layout;
-
 		VkDeviceMemory mem;
 		VkImageView view;
 		int32_t tex_width, tex_height;
@@ -149,6 +149,7 @@ private:
 		int32_t depth_buffer_idx { 1 };
 		int32_t color_buffer_idx { 1 };
 		int32_t buffer_idx { 1 };
+		int32_t texture_idx { 1 };
 		struct map<int32_t, program_type> programs;
 		struct map<int32_t, shader_type> shaders;
 		struct map<int32_t, depth_buffer> depth_buffers;
@@ -185,6 +186,7 @@ private:
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 12> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
+		int32_t bound_texture_id { 0 };
 
 		vector<VkDeviceMemory> memory_delete;
 		vector<VkBuffer> buffers_delete;
@@ -193,6 +195,7 @@ private:
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
+	void prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture);
 	int32_t getUniformBufferObjectBindingIdx(int32_t shaderType);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
