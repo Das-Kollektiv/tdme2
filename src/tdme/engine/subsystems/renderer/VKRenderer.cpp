@@ -21,9 +21,13 @@
 #include <stack>
 #include <string>
 
+
 #include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/utils/Buffer.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
@@ -75,6 +79,10 @@ using tdme::engine::subsystems::renderer::VKRenderer;
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::subsystems::manager::TextureManager;
+
 using tdme::utils::Buffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
@@ -144,10 +152,10 @@ VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names,
 	return 1;
 }
 
-void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
+void VKRenderer::setImageLayout(bool setup, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
 	VkResult err;
 
-	if (context.setup_cmd == VK_NULL_HANDLE) {
+	if (setup == true && context.setup_cmd == VK_NULL_HANDLE) {
 		const VkCommandBufferAllocateInfo cmd = {
 			sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 			pNext: NULL,
@@ -201,11 +209,15 @@ void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, Vk
 	}
 
 	//
-	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	if (setup == true) {
+		vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	} else {
+		vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	}
 }
 
 void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture) {
-	const VkFormat tex_format = VK_FORMAT_B8G8R8A8_UNORM;
+	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8_UNORM;
 	VkResult err;
 	bool pass;
 
@@ -275,7 +287,7 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 
 		for (y = 0; y < tex_obj->tex_height; y++) {
 			uint32_t *row = (uint32_t*)((char *)data + layout.rowPitch * y);
-			for (x = 0; x < tex_obj->tex_width; x++) row[x] = 0; // TODO
+			for (x = 0; x < tex_obj->tex_width; x++) row[x] = 0xff0000; // TODO
 		}
 
 		vkUnmapMemory(context.device, tex_obj->mem);
@@ -283,6 +295,7 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 
 	tex_obj->image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	setImageLayout(
+		false,
 		tex_obj->image,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_LAYOUT_PREINITIALIZED,
@@ -948,6 +961,9 @@ void VKRenderer::initialize()
 	context.depth_buffer_default = createDepthBufferTexture(context.width, context.height);
 	assert(context.depth_buffer_default > 0 && context.depth_buffers.find(context.depth_buffer_default) != context.depth_buffers.end());
 
+	//
+	context.white_texture_default = 0;
+
 	// render pass
 	const VkAttachmentDescription attachments[2] = {
 		[0] = {
@@ -1198,6 +1214,7 @@ void VKRenderer::finishFrame()
 	err = vkEndCommandBuffer(context.draw_cmd);
 	assert(!err);
 
+	/*
 	if (context.setup_cmd != VK_NULL_HANDLE) {
 		err = vkEndCommandBuffer(context.setup_cmd);
 		assert(!err);
@@ -1225,6 +1242,7 @@ void VKRenderer::finishFrame()
 		vkFreeCommandBuffers(context.device, context.cmd_pool, 1, cmd_bufs);
 		context.setup_cmd = VK_NULL_HANDLE;
 	}
+	*/
 
 	//
 	VkFence nullFence = VK_NULL_HANDLE;
@@ -2220,6 +2238,7 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 	assert(!err);
 
 	setImageLayout(
+		true,
 		depth_buffer.image,
 		VK_IMAGE_ASPECT_DEPTH_BIT,
 		VK_IMAGE_LAYOUT_UNDEFINED,
@@ -2299,13 +2318,13 @@ void VKRenderer::uploadTexture(Texture* texture)
 	}
 	auto& texture_object = textureObjectIt->second;
 
-	const VkFormat tex_format = VK_FORMAT_B8G8R8A8_UNORM;
+	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8_UNORM;
 	VkFormatProperties props;
 	VkResult err;
 
 	vkGetPhysicalDeviceFormatProperties(context.gpu, tex_format, &props);
 
-	if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+	if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		/* Must use staging buffer to copy linear texture to optimized */
 		struct texture_object staging_texture;
 
@@ -2324,6 +2343,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 			texture
 		);
 		setImageLayout(
+			false,
 			staging_texture.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			staging_texture.image_layout,
@@ -2331,6 +2351,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 			(VkAccessFlagBits)0
 		);
 		setImageLayout(
+			false,
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			texture_object.image_layout,
@@ -2367,7 +2388,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 			},
 		};
 		vkCmdCopyImage(
-			context.setup_cmd,
+			context.draw_cmd,
 			staging_texture.image,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			texture_object.image,
@@ -2377,6 +2398,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 		);
 
 		setImageLayout(
+			false,
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -2384,11 +2406,10 @@ void VKRenderer::uploadTexture(Texture* texture)
 			(VkAccessFlagBits)0
 		);
 
-		// demo_flush_init_cmd (demo);
-
-		// demo_destroy_texture_image(demo, &staging_texture);
+		vkDestroyImage(context.device, staging_texture.image, NULL);
+		vkFreeMemory(context.device, staging_texture.mem, NULL);
 	} else
-	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT)) {
+	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT)) {
 		/* Device can texture using linear textures */
 		prepareTextureImage(
 			&texture_object,
@@ -2466,7 +2487,7 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 void VKRenderer::bindTexture(int32_t textureId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	auto textureObjectIt = context.textures.find(context.bound_texture_id);
+	auto textureObjectIt = context.textures.find(textureId);
 	context.bound_texture_id = 0;
 	if (textureObjectIt == context.textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_texture_id));
@@ -2724,8 +2745,37 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 		shaderIdx++;
 	}
 
+	auto textureObjectIt = context.textures.find(context.bound_texture_id);
+	if (textureObjectIt == context.textures.end()) {
+		textureObjectIt = context.textures.find(context.white_texture_default);
+	}
+	if (textureObjectIt == context.textures.end()) {
+		context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "white_pixel.png"));
+		textureObjectIt = context.textures.find(context.white_texture_default);
+	}
+
+	VkDescriptorImageInfo tex_descs;
+	auto& texture_object = textureObjectIt->second;
+	tex_descs.sampler = texture_object.sampler;
+	tex_descs.imageView = texture_object.view;
+	tex_descs.imageLayout = texture_object.image_layout;
+
+	VkWriteDescriptorSet write = {
+		sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		pNext: NULL,
+		dstSet: context.desc_set,
+		dstBinding: 2,
+		dstArrayElement: 0,
+		descriptorCount: 1,
+		descriptorType: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		pImageInfo: &tex_descs,
+		pBufferInfo: VK_NULL_HANDLE,
+		pTexelBufferView: VK_NULL_HANDLE
+	};
+
 	//
 	vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &context.desc_set, 0, nullptr);
+	vkUpdateDescriptorSets(context.device, 1, &write, 0, NULL);
 	vkCmdBindIndexBuffer(context.draw_cmd, getBufferObjectInternal(context.bound_indices_buffer), 0, VK_INDEX_TYPE_UINT32);
 	VkBuffer vertexBuffersBuffer[3] = {getBufferObjectInternal(context.bound_buffers[0]), getBufferObjectInternal(context.bound_buffers[1]), getBufferObjectInternal(context.bound_buffers[2])};
 	VkDeviceSize vertexBuffersOffsets[3] = { 0, 0, 0 };
