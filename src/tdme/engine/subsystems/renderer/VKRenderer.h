@@ -40,6 +40,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
+	static constexpr int DESC_MAX { 4096 };
 
 	struct shader_type {
 		struct uniform_type {
@@ -58,10 +59,13 @@ private:
 	};
 
 	struct program_type {
+		int32_t desc_max { DESC_MAX };
+		int32_t desc_used;
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		bool created_pipeline;
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
+		VkDescriptorSet desc_set[DESC_MAX] { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
 		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
 		VkPipeline pipeline { VK_NULL_HANDLE };
@@ -165,7 +169,6 @@ private:
 		VkRenderPass render_pass { VK_NULL_HANDLE };
 
 		VkDescriptorPool desc_pool { VK_NULL_HANDLE };
-		VkDescriptorSet desc_set { VK_NULL_HANDLE };
 
 		VkFramebuffer* framebuffers;
 
@@ -191,6 +194,7 @@ private:
 
 		vector<VkDeviceMemory> memory_delete;
 		vector<VkBuffer> buffers_delete;
+		vector<VkImage> images_delete;
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);

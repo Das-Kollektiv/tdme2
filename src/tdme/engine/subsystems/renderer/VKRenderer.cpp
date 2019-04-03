@@ -217,7 +217,7 @@ void VKRenderer::setImageLayout(bool setup, VkImage image, VkImageAspectFlags as
 }
 
 void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture) {
-	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8_UNORM;
+	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkResult err;
 	bool pass;
 
@@ -270,6 +270,8 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 	err = vkBindImageMemory(context.device, tex_obj->image, tex_obj->mem, 0);
 	assert(!err);
 
+	auto textureData = texture->getTextureData();
+
 	if (required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
 		const VkImageSubresource subres = {
 			aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
@@ -287,13 +289,14 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 
 		for (y = 0; y < tex_obj->tex_height; y++) {
 			uint32_t *row = (uint32_t*)((char *)data + layout.rowPitch * y);
-			for (x = 0; x < tex_obj->tex_width; x++) row[x] = 0xff0000; // TODO
+			for (x = 0; x < tex_obj->tex_width; x++) row[x] = 0xffffffff; // TODO
 		}
 
 		vkUnmapMemory(context.device, tex_obj->mem);
 	}
 
 	tex_obj->image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
 	setImageLayout(
 		false,
 		tex_obj->image,
@@ -1027,18 +1030,18 @@ void VKRenderer::initialize()
 	const VkDescriptorPoolSize types_count[2] = {
 		[0] = {
 			type: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			descriptorCount: 16
+			descriptorCount: 1 * DESC_MAX
 		},
 		[1] = {
 			type: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			descriptorCount: 16
+			descriptorCount: 2 * DESC_MAX
 		}
 	};
 	const VkDescriptorPoolCreateInfo descriptor_pool = {
 		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		pNext: NULL,
 		flags: 0,
-		maxSets: 1,
+		maxSets: DESC_MAX,
 		poolSizeCount: 2,
 		pPoolSizes: types_count,
 	};
@@ -1185,12 +1188,6 @@ void VKRenderer::finishFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	context.bound_indices_buffer = 0;
-	context.bound_buffers.fill(0);
-	context.uniform_buffers[0].clear();
-	context.uniform_buffers[1].clear();
-	context.bound_texture_id = 0;
-
 	//
 	VkResult err;
 
@@ -1214,7 +1211,7 @@ void VKRenderer::finishFrame()
 	err = vkEndCommandBuffer(context.draw_cmd);
 	assert(!err);
 
-	/*
+	//
 	if (context.setup_cmd != VK_NULL_HANDLE) {
 		err = vkEndCommandBuffer(context.setup_cmd);
 		assert(!err);
@@ -1242,7 +1239,6 @@ void VKRenderer::finishFrame()
 		vkFreeCommandBuffers(context.device, context.cmd_pool, 1, cmd_bufs);
 		context.setup_cmd = VK_NULL_HANDLE;
 	}
-	*/
 
 	//
 	VkFence nullFence = VK_NULL_HANDLE;
@@ -1296,9 +1292,23 @@ void VKRenderer::finishFrame()
 
 	// delete buffers and memory
 	for (auto buffer: context.buffers_delete) vkDestroyBuffer(context.device, buffer, NULL);
+	for (auto image: context.images_delete) vkDestroyImage(context.device, image, NULL);
 	for (auto memory: context.memory_delete) vkFreeMemory(context.device, memory, NULL);
 	context.buffers_delete.clear();
+	context.images_delete.clear();
 	context.memory_delete.clear();
+
+	// unset bound buffers and such
+	context.bound_indices_buffer = 0;
+	context.bound_buffers.fill(0);
+	context.uniform_buffers[0].clear();
+	context.uniform_buffers[1].clear();
+	context.bound_texture_id = 0;
+
+	// reset programs
+	for (auto& programIt: context.programs) {
+		programIt.second.desc_used = 0;
+	}
 
 	//
 	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
@@ -1552,6 +1562,8 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
         return false;
     }
 
+    Console::println(shaderSource);
+
     glslProgram.addShader(&glslShader);
 
     // Program-level processing...
@@ -1620,26 +1632,6 @@ void VKRenderer::useProgram(int32_t programId)
 
 	if (program.created_pipeline == false) {
 		VkResult err;
-		auto textureCount = 0;
-		// TODO: a.drewke
-		if (textureCount > 0) {
-			VkDescriptorImageInfo tex_descs[textureCount];
-			memset(&tex_descs, 0, sizeof(tex_descs));
-			for (auto i = 0; i < textureCount; i++) {
-				tex_descs[i].sampler = context.textures[i].sampler;
-				tex_descs[i].imageView = context.textures[i].view;
-				tex_descs[i].imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-			}
-
-			VkWriteDescriptorSet write;
-			memset(&write, 0, sizeof(write));
-			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = context.desc_set;
-			write.descriptorCount = textureCount;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			write.pImageInfo = tex_descs;
-			vkUpdateDescriptorSets(context.device, 1, &write, 0, NULL);
-		}
 
 		//
 		VkDescriptorSetLayoutBinding layout_bindings[16];
@@ -1681,13 +1673,16 @@ void VKRenderer::useProgram(int32_t programId)
 			}
 			shaderIdx++;
 		}
-		layout_bindings[layoutBindingIdx++] = {
+
+		layout_bindings[layoutBindingIdx] = {
 			binding: layoutBindingIdx,
 			descriptorType: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			descriptorCount: 1,
 			stageFlags: VK_SHADER_STAGE_FRAGMENT_BIT,
 			pImmutableSamplers: NULL
 		};
+		layoutBindingIdx++;
+
 		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
 			sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			pNext: NULL,
@@ -1699,7 +1694,6 @@ void VKRenderer::useProgram(int32_t programId)
 		err = vkCreateDescriptorSetLayout(context.device, &descriptor_layout, NULL, &program.desc_layout);
 		assert(!err);
 
-
 		const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
 			sType: VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 			pNext: NULL,
@@ -1708,15 +1702,18 @@ void VKRenderer::useProgram(int32_t programId)
 			pSetLayouts: &program.desc_layout,
 		};
 
+		VkDescriptorSetLayout desc_layouts[DESC_MAX];
+		for (auto i = 0; i < program.desc_max; i++) desc_layouts[i] = program.desc_layout;
+
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			pNext: NULL,
 			descriptorPool: context.desc_pool,
-			descriptorSetCount: 1,
-			pSetLayouts: &program.desc_layout
+			descriptorSetCount: program.desc_max,
+			pSetLayouts: desc_layouts
 		};
-		err = vkAllocateDescriptorSets(context.device, &alloc_info, &context.desc_set);
+		err = vkAllocateDescriptorSets(context.device, &alloc_info, program.desc_set);
 		assert(!err);
 
 		err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
@@ -1904,6 +1901,7 @@ int32_t VKRenderer::createProgram()
 	auto& programStruct = context.programs[context.program_idx];
 	programStruct.id = context.program_idx++;
 	programStruct.created_pipeline = false;
+	programStruct.desc_used = 0;
 	return programStruct.id;
 }
 
@@ -2318,14 +2316,19 @@ void VKRenderer::uploadTexture(Texture* texture)
 	}
 	auto& texture_object = textureObjectIt->second;
 
-	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8_UNORM;
+	if (texture_object.uploaded == true) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(context.bound_texture_id));
+		return;
+	}
+
+	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties props;
 	VkResult err;
 
 	vkGetPhysicalDeviceFormatProperties(context.gpu, tex_format, &props);
-
+	/*
 	if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
-		/* Must use staging buffer to copy linear texture to optimized */
+		// Must use staging buffer to copy linear texture to optimized
 		struct texture_object staging_texture;
 
 		memset(&staging_texture, 0, sizeof(staging_texture));
@@ -2406,14 +2409,17 @@ void VKRenderer::uploadTexture(Texture* texture)
 			(VkAccessFlagBits)0
 		);
 
-		vkDestroyImage(context.device, staging_texture.image, NULL);
-		vkFreeMemory(context.device, staging_texture.mem, NULL);
+		// mark for deletion
+		context.images_delete.push_back(staging_texture.image);
+		context.memory_delete.push_back(staging_texture.mem);
 	} else
+	*/
 	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT)) {
 		/* Device can texture using linear textures */
 		prepareTextureImage(
 			&texture_object,
-			VK_IMAGE_TILING_LINEAR, VK_IMAGE_USAGE_SAMPLED_BIT,
+			VK_IMAGE_TILING_LINEAR,
+			VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			texture
 		);
@@ -2446,7 +2452,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 		sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		pNext: NULL,
 		flags: 0,
-		image: VK_NULL_HANDLE,
+		image: texture_object.image,
 		viewType: VK_IMAGE_VIEW_TYPE_2D,
 		format: tex_format,
 		components: {
@@ -2464,14 +2470,16 @@ void VKRenderer::uploadTexture(Texture* texture)
 		},
 	};
 
-	/* create sampler */
+	// create sampler
 	err = vkCreateSampler(context.device, &sampler, NULL, &texture_object.sampler);
 	assert(!err);
 
-	/* create image view */
-	view.image = texture_object.image;
+	// create image view
 	err = vkCreateImageView(context.device, &view, NULL, &texture_object.view);
 	assert(!err);
+
+	//
+	texture_object.uploaded = true;
 }
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -2489,9 +2497,11 @@ void VKRenderer::bindTexture(int32_t textureId)
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto textureObjectIt = context.textures.find(textureId);
 	context.bound_texture_id = 0;
-	if (textureObjectIt == context.textures.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_texture_id));
-		return;
+	if (textureId != 0) {
+		if (textureObjectIt == context.textures.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_texture_id));
+			return;
+		}
 	}
 	context.bound_texture_id = textureId;
 }
@@ -2702,6 +2712,14 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 	}
 	program_type& program = programIt->second;
 
+	if (program.desc_used == program.desc_max) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): max descriptor set reached: " + to_string(context.program_id));
+		return;
+	}
+
+	VkDescriptorBufferInfo bufferInfos[2];
+	VkWriteDescriptorSet descriptorSetWrites[3];
+
 	auto shaderIdx = 0;
 	for (auto& shaderId: program.shader_ids) {
 		auto shaderIt = context.shaders.find(shaderId);
@@ -2718,30 +2736,29 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 
 		uploadBufferObjectInternal(shader.uniform_buffer, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		if (shader.bound_buffer == false) {
+		// if (shader.bound_buffer == false) {
 			auto uboBindingIdx = getUniformBufferObjectBindingIdx(shader.type);
-			const VkDescriptorBufferInfo bufferInfo = {
+			bufferInfos[uboBindingIdx] = {
 				buffer: getBufferObjectInternal(shader.uniform_buffer),
 				offset: 0,
 				range: shader.ubo_size
 			};
 
-			VkWriteDescriptorSet write = {
+			descriptorSetWrites[uboBindingIdx] = {
 				sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				pNext: NULL,
-				dstSet: context.desc_set,
+				dstSet: program.desc_set[program.desc_used],
 				dstBinding: uboBindingIdx,
 				dstArrayElement: 0,
 				descriptorCount: 1,
 				descriptorType: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				pImageInfo: NULL,
-				pBufferInfo: &bufferInfo,
+				pBufferInfo: &bufferInfos[uboBindingIdx],
 				pTexelBufferView: NULL,
 			};
-			vkUpdateDescriptorSets(context.device, 1, &write, 0, NULL);
-			shader.bound_buffer = true;
-		}
 
+			shader.bound_buffer = true;
+		// }
 		shaderIdx++;
 	}
 
@@ -2760,10 +2777,10 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 	tex_descs.imageView = texture_object.view;
 	tex_descs.imageLayout = texture_object.image_layout;
 
-	VkWriteDescriptorSet write = {
+	descriptorSetWrites[2] = {
 		sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 		pNext: NULL,
-		dstSet: context.desc_set,
+		dstSet: program.desc_set[program.desc_used],
 		dstBinding: 2,
 		dstArrayElement: 0,
 		descriptorCount: 1,
@@ -2774,13 +2791,15 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 	};
 
 	//
-	vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &context.desc_set, 0, nullptr);
-	vkUpdateDescriptorSets(context.device, 1, &write, 0, NULL);
+	vkUpdateDescriptorSets(context.device, 3, descriptorSetWrites, 0, NULL);
+	vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
 	vkCmdBindIndexBuffer(context.draw_cmd, getBufferObjectInternal(context.bound_indices_buffer), 0, VK_INDEX_TYPE_UINT32);
 	VkBuffer vertexBuffersBuffer[3] = {getBufferObjectInternal(context.bound_buffers[0]), getBufferObjectInternal(context.bound_buffers[1]), getBufferObjectInternal(context.bound_buffers[2])};
 	VkDeviceSize vertexBuffersOffsets[3] = { 0, 0, 0 };
 	vkCmdBindVertexBuffers(context.draw_cmd, 0, 3, vertexBuffersBuffer, vertexBuffersOffsets);
 	vkCmdDrawIndexed(context.draw_cmd, triangles * 3, 1, trianglesOffset * 3, 0, 0);
+
+	program.desc_used++;
 }
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)

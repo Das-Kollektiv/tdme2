@@ -550,6 +550,7 @@ void Engine::initialize(bool debug)
 	// init
 	initialized = true;
 	renderer->initialize();
+	renderer->initializeFrame();
 
 	// create manager
 	textureManager = new TextureManager(renderer);
@@ -791,6 +792,9 @@ void Engine::computeTransformations()
 
 void Engine::display()
 {
+	// finish frame
+	Engine::renderer->finishFrame();
+
 	// set current engine
 	currentEngine = this;
 
@@ -800,10 +804,6 @@ void Engine::display()
 
 	// set up clear color
 	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-
-
-	// finish frame
-	if (timing->getFrame() > 1) Engine::renderer->finishFrame();
 
 	// init frame
 	Engine::renderer->initializeFrame();

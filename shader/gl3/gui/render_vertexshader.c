@@ -18,7 +18,7 @@ layout (location = 1) out vec2 vsFragTextureUV;
 void main(void) {
 	// pass to fragment shader
 	vsFragColor = inColor;
-	vsFragTextureUV = /*vec2(textureMatrix * vec3(*/inTextureUV.xy/*, 1.0))*/;
+	vsFragTextureUV = inTextureUV; /*vec2(textureMatrix * vec3(inTextureUV, 1.0))*/;
 
 	// compute gl position
 	gl_Position = vec4(inVertex, 1.0);
