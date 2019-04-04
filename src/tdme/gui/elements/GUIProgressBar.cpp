@@ -43,6 +43,7 @@ map<string, string>* GUIProgressBar::getAttributes(GUIScreenNode* screenNode)
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";
 	attributes["width"] = "223";
+	attributes["height"] = "53";
 	return &attributes;
 }
 

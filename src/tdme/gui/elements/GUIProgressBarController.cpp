@@ -8,6 +8,7 @@
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -27,6 +28,7 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -39,7 +41,7 @@ using tdme::utils::Time;
 
 using tdme::gui::elements::GUIProgressBarController;
 
-GUIProgressBarController::GUIProgressBarController(GUINode* node): GUINodeController(node)
+GUIProgressBarController::GUIProgressBarController(GUINode* node): GUIElementController(node)
 {
 }
 
@@ -56,9 +58,11 @@ void GUIProgressBarController::initialize() {
 	barNode = dynamic_cast<GUIImageNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_bar"));
 	textNode = dynamic_cast<GUITextNode*>(this->node->getScreenNode()->getNodeById(this->node->getId() + "_text"));
 	setValue(MutableString(dynamic_cast<GUIElementNode*>(node)->getValue()));
+	GUIElementController::initialize();
 }
 
 void GUIProgressBarController::dispose() {
+	GUIElementController::dispose();
 }
 
 void GUIProgressBarController::postLayout() {
@@ -66,12 +70,15 @@ void GUIProgressBarController::postLayout() {
 }
 
 void GUIProgressBarController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
+	GUIElementController::handleMouseEvent(node, event);
 }
 
 void GUIProgressBarController::handleKeyboardEvent(GUINode* node, GUIKeyboardEvent* event) {
+	GUIElementController::handleKeyboardEvent(node, event);
 }
 
 void GUIProgressBarController::tick() {
+	GUIElementController::tick();
 }
 
 void GUIProgressBarController::onFocusGained() {
