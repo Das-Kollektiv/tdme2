@@ -51,7 +51,6 @@ private:
 		map<string, uniform_type> uniforms;
 		uint32_t ubo_size;
 		int32_t uniform_buffer;
-		bool bound_buffer;
 		vector<unsigned int> spirv;
 		int32_t id;
 		VkShaderStageFlagBits type;
@@ -63,6 +62,7 @@ private:
 		int32_t desc_used;
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
+		vector<int32_t> uniformBuffers;
 		bool created_pipeline;
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		VkDescriptorSet desc_set[DESC_MAX] { VK_NULL_HANDLE };
@@ -73,6 +73,7 @@ private:
 	};
 
 	struct buffer_object {
+		bool uploaded;
 		VkBuffer buf;
 		VkDeviceMemory mem;
 		int32_t id;

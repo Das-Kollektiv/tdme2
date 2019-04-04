@@ -82,16 +82,13 @@ void GUIShader::unUseProgram()
 
 void GUIShader::bindTexture(GLRenderer* renderer, int32_t textureId)
 {
-	if (isRunning == false)
-		return;
-
+	if (isRunning == false) return;
 	renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 }
 
 void GUIShader::updateEffect(GLRenderer* renderer)
 {
 	if (isRunning == false) return;
-
 	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
 	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
 }

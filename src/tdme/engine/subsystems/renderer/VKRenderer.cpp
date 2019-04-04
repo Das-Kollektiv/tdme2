@@ -155,7 +155,7 @@ VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names,
 void VKRenderer::setImageLayout(bool setup, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
 	VkResult err;
 
-	if (setup == true && context.setup_cmd == VK_NULL_HANDLE) {
+	if (context.setup_cmd == VK_NULL_HANDLE) {
 		const VkCommandBufferAllocateInfo cmd = {
 			sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 			pNext: NULL,
@@ -209,11 +209,7 @@ void VKRenderer::setImageLayout(bool setup, VkImage image, VkImageAspectFlags as
 	}
 
 	//
-	if (setup == true) {
-		vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
-	} else {
-		vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
-	}
+	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
 void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture) {
@@ -233,7 +229,8 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 		extent: {
 			width: tex_obj->tex_width,
 			height: tex_obj->tex_height,
-			depth: 1 },
+			depth: 1
+		},
 		mipLevels:1,
 		arrayLayers: 1,
 		samples: VK_SAMPLE_COUNT_1_BIT,
@@ -280,16 +277,24 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 		};
 		VkSubresourceLayout layout;
 		void *data;
-		int32_t x, y;
 
 		vkGetImageSubresourceLayout(context.device, tex_obj->image, &subres, &layout);
 
 		err = vkMapMemory(context.device, tex_obj->mem, 0, mem_alloc.allocationSize, 0, &data);
 		assert(!err);
 
-		for (y = 0; y < tex_obj->tex_height; y++) {
-			uint32_t *row = (uint32_t*)((char *)data + layout.rowPitch * y);
-			for (x = 0; x < tex_obj->tex_width; x++) row[x] = 0xffffffff; // TODO
+		auto bytesPerPixel = texture->getDepth() / 8;
+		auto textureBuffer = texture->getTextureData();
+		auto textureWidth = texture->getTextureWidth();
+		Console::println(to_string(layout.rowPitch) + " / " + to_string(textureWidth) + " / " + to_string(bytesPerPixel));
+		for (auto y = 0; y < tex_obj->tex_height; y++) {
+			char* row = (char*)(data + layout.rowPitch * y);
+			for (auto x = 0; x < tex_obj->tex_width; x++) {
+				row[x * 4 + 0] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
+				row[x * 4 + 1] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
+				row[x * 4 + 2] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 2);
+				row[x * 4 + 3] = bytesPerPixel == 4?textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
+			}
 		}
 
 		vkUnmapMemory(context.device, tex_obj->mem);
@@ -1208,6 +1213,7 @@ void VKRenderer::finishFrame()
 	};
 	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &prePresentBarrier);
 
+
 	err = vkEndCommandBuffer(context.draw_cmd);
 	assert(!err);
 
@@ -1384,7 +1390,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 	/*if (VERBOSE == true) */Console::println("VKRenderer::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
 
 	auto& shaderStruct = context.shaders[context.shader_idx];
-	shaderStruct.bound_buffer = false;
 	shaderStruct.type = (VkShaderStageFlagBits)type;
 	shaderStruct.id = context.shader_idx++;
 
@@ -1591,8 +1596,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
     glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shaderStruct.spirv);
 
     //
-    shaderStruct.uniform_buffer = createBufferObjects(1)[0];
-	shaderStruct.bound_buffer = false;
+	shaderStruct.uniform_buffer = createBufferObjects(1)[0];
 
     // create shader module
     {
@@ -1796,9 +1800,9 @@ void VKRenderer::useProgram(int32_t programId)
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
 		VkVertexInputBindingDescription vi_bindings[4];
-		memset(&vi_bindings, 0, sizeof(vi_bindings));
+		memset(vi_bindings, 0, sizeof(vi_bindings));
 		VkVertexInputAttributeDescription vi_attrs[4];
-		memset(&vi_attrs, 0, sizeof(vi_attrs));
+		memset(vi_attrs, 0, sizeof(vi_attrs));
 
 		//
 		auto bindingIdx = 0;
@@ -2326,20 +2330,21 @@ void VKRenderer::uploadTexture(Texture* texture)
 	VkResult err;
 
 	vkGetPhysicalDeviceFormatProperties(context.gpu, tex_format, &props);
-	/*
 	if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// Must use staging buffer to copy linear texture to optimized
 		struct texture_object staging_texture;
 
 		memset(&staging_texture, 0, sizeof(staging_texture));
 
-		prepareTextureImage(&staging_texture,
+		prepareTextureImage(
+			&staging_texture,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			texture
 		);
-		prepareTextureImage(&texture_object,
+		prepareTextureImage(
+			&texture_object,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -2413,7 +2418,6 @@ void VKRenderer::uploadTexture(Texture* texture)
 		context.images_delete.push_back(staging_texture.image);
 		context.memory_delete.push_back(staging_texture.mem);
 	} else
-	*/
 	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT)) {
 		/* Device can texture using linear textures */
 		prepareTextureImage(
@@ -2534,7 +2538,9 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 	for (auto i = 0; i < buffers; i++) {
 		buffer_object buffer;
 		buffer.id = context.buffer_idx++;
+		buffer.alloc_size = 0;
 		buffer.size = 0;
+		buffer.uploaded = false;
 		context.buffers[buffer.id] = buffer;
 		bufferIds.push_back(buffer.id);
 	}
@@ -2564,7 +2570,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	void* uploadData;
 
 	// (re)create buffer if required
-	if (buffer.size == 0 || buffer.size != size) {
+	if (buffer.size == 0 || buffer.size != size || buffer.uploaded == true) {
 		if (buffer.size > 0) {
 			context.memory_delete.push_back(buffer.mem);
 			context.buffers_delete.push_back(buffer.buf);
@@ -2608,8 +2614,11 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		buffer.size = size;
 
 		// bind
-	    err = vkBindBufferMemory(context.device, buffer.buf, buffer.mem, 0);
-	    assert(!err);
+		err = vkBindBufferMemory(context.device, buffer.buf, buffer.mem, 0);
+		assert(!err);
+
+		//
+		buffer.uploaded = true;
 	}
 
 	// upload
@@ -2736,29 +2745,25 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 
 		uploadBufferObjectInternal(shader.uniform_buffer, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		// if (shader.bound_buffer == false) {
-			auto uboBindingIdx = getUniformBufferObjectBindingIdx(shader.type);
-			bufferInfos[uboBindingIdx] = {
-				buffer: getBufferObjectInternal(shader.uniform_buffer),
-				offset: 0,
-				range: shader.ubo_size
-			};
+		auto uboBindingIdx = getUniformBufferObjectBindingIdx(shader.type);
+		bufferInfos[uboBindingIdx] = {
+			buffer: getBufferObjectInternal(shader.uniform_buffer),
+			offset: 0,
+			range: shader.ubo_size
+		};
 
-			descriptorSetWrites[uboBindingIdx] = {
-				sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				pNext: NULL,
-				dstSet: program.desc_set[program.desc_used],
-				dstBinding: uboBindingIdx,
-				dstArrayElement: 0,
-				descriptorCount: 1,
-				descriptorType: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				pImageInfo: NULL,
-				pBufferInfo: &bufferInfos[uboBindingIdx],
-				pTexelBufferView: NULL,
-			};
-
-			shader.bound_buffer = true;
-		// }
+		descriptorSetWrites[uboBindingIdx] = {
+			sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			pNext: NULL,
+			dstSet: program.desc_set[program.desc_used],
+			dstBinding: uboBindingIdx,
+			dstArrayElement: 0,
+			descriptorCount: 1,
+			descriptorType: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			pImageInfo: NULL,
+			pBufferInfo: &bufferInfos[uboBindingIdx],
+			pTexelBufferView: NULL,
+		};
 		shaderIdx++;
 	}
 
@@ -2767,7 +2772,8 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 		textureObjectIt = context.textures.find(context.white_texture_default);
 	}
 	if (textureObjectIt == context.textures.end()) {
-		context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "white_pixel.png"));
+		// context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "white_pixel.png"));
+		context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/gui-system/fonts", "Roboto_20_0.png"));
 		textureObjectIt = context.textures.find(context.white_texture_default);
 	}
 
