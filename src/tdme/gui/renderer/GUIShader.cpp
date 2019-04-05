@@ -25,16 +25,14 @@ void GUIShader::initialize()
 		"shader/" + rendererVersion + "/gui",
 		"render_vertexshader.c"
 	);
-	if (vertexShaderId == 0)
-		return;
+	if (vertexShaderId == 0) return;
 
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/gui",
 		"render_fragmentshader.c"
 	);
-	if (fragmentShaderId == 0)
-		return;
+	if (fragmentShaderId == 0) return;
 
 	programId = renderer->createProgram();
 	renderer->attachShaderToProgram(programId, vertexShaderId);
@@ -44,22 +42,18 @@ void GUIShader::initialize()
 		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
 		renderer->setProgramAttributeLocation(programId, 3, "inColor");
 	}
-	if (renderer->linkProgram(programId) == false)
-		return;
+	if (renderer->linkProgram(programId) == false) return;
 
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programId, "diffuseTextureUnit");
 
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programId, "diffuseTextureAvailable");
-	if (uniformDiffuseTextureAvailable == -1)
-		return;
+	if (uniformDiffuseTextureAvailable == -1) return;
 
 	uniformEffectColorMul = renderer->getProgramUniformLocation(programId, "effectColorMul");
-	if (uniformEffectColorMul == -1)
-		return;
+	if (uniformEffectColorMul == -1) return;
 
 	uniformEffectColorAdd = renderer->getProgramUniformLocation(programId, "effectColorAdd");
-	if (uniformEffectColorAdd == -1)
-		return;
+	if (uniformEffectColorAdd == -1) return;
 
 	// texture matrix
 	uniformTextureMatrix = renderer->getProgramUniformLocation(programId, "textureMatrix");

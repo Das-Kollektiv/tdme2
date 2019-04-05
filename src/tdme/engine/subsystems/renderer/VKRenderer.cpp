@@ -236,7 +236,7 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 		samples: VK_SAMPLE_COUNT_1_BIT,
 		tiling: tiling,
 		usage: usage,
-		sharingMode: VkSharingMode(),
+		sharingMode: VK_SHARING_MODE_EXCLUSIVE,
 	    queueFamilyIndexCount: 0,
 	    pQueueFamilyIndices: 0,
 		initialLayout: VK_IMAGE_LAYOUT_PREINITIALIZED
@@ -286,9 +286,8 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 		auto bytesPerPixel = texture->getDepth() / 8;
 		auto textureBuffer = texture->getTextureData();
 		auto textureWidth = texture->getTextureWidth();
-		Console::println(to_string(layout.rowPitch) + " / " + to_string(textureWidth) + " / " + to_string(bytesPerPixel));
 		for (auto y = 0; y < tex_obj->tex_height; y++) {
-			char* row = (char*)(data + layout.rowPitch * y);
+			char* row = (char*)(data + layout.offset + layout.rowPitch * y);
 			for (auto x = 0; x < tex_obj->tex_width; x++) {
 				row[x * 4 + 0] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
 				row[x * 4 + 1] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
@@ -518,7 +517,7 @@ void VKRenderer::initializeSwapChain() {
 		imageUsage: VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 		imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
 		queueFamilyIndexCount: 0,
-		pQueueFamilyIndices: NULL,
+		pQueueFamilyIndices: 0,
 		preTransform: (VkSurfaceTransformFlagBitsKHR)preTransform, /// TODO: a.drewke, ???
 		compositeAlpha: VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		presentMode: swapchainPresentMode,
@@ -1652,7 +1651,7 @@ void VKRenderer::useProgram(int32_t programId)
 
 		int layoutBindingIdx = 0;
 		auto shaderIdx = 0;
-		for (auto& shaderId: program.shader_ids) {
+		for (auto shaderId: program.shader_ids) {
 			auto shaderIt = context.shaders.find(shaderId);
 			if (shaderIt == context.shaders.end()) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
@@ -1751,7 +1750,7 @@ void VKRenderer::useProgram(int32_t programId)
 		memset(&rs, 0, sizeof(rs));
 		rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		rs.polygonMode = VK_POLYGON_MODE_FILL;
-		rs.cullMode = VK_CULL_MODE_BACK_BIT;
+		rs.cullMode = VK_CULL_MODE_NONE;
 		rs.frontFace = VK_FRONT_FACE_CLOCKWISE;
 		rs.depthClampEnable = VK_FALSE;
 		rs.rasterizerDiscardEnable = VK_FALSE;
@@ -1883,7 +1882,7 @@ void VKRenderer::useProgram(int32_t programId)
 		program.created_pipeline = true;
 	} else {
 		auto shaderIdx = 0;
-		for (auto& shaderId: program.shader_ids) {
+		for (auto shaderId: program.shader_ids) {
 			auto shaderIt = context.shaders.find(shaderId);
 			if (shaderIt == context.shaders.end()) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
@@ -1935,7 +1934,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 	}
 	map<string, int32_t> uniformsByName;
 	auto uniformIdx = 1;
-	for (auto& shaderId: programIt->second.shader_ids) {
+	for (auto shaderId: programIt->second.shader_ids) {
 		auto shaderIt = context.shaders.find(shaderId);
 		if (shaderIt == context.shaders.end()) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
@@ -1984,7 +1983,7 @@ void VKRenderer::setProgramUniformInternal(int32_t uniformId, uint8_t* data, int
 
 	auto changedUniforms = 0;
 	auto shaderIdx = 0;
-	for (auto shaderId: program.shader_ids) {
+	for (auto& shaderId: program.shader_ids) {
 		auto shaderIt = context.shaders.find(shaderId);
 		if (shaderIt == context.shaders.end()) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: shader does not exist");
@@ -2203,7 +2202,7 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 		samples: VK_SAMPLE_COUNT_1_BIT,
 		tiling: VK_IMAGE_TILING_OPTIMAL,
 		usage: VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-		sharingMode: (VkSharingMode)0,
+		sharingMode: VK_SHARING_MODE_EXCLUSIVE,
 		queueFamilyIndexCount: 0,
 		pQueueFamilyIndices: 0,
 		initialLayout: (VkImageLayout)0,
@@ -2330,6 +2329,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 	VkResult err;
 
 	vkGetPhysicalDeviceFormatProperties(context.gpu, tex_format, &props);
+	/*
 	if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// Must use staging buffer to copy linear texture to optimized
 		struct texture_object staging_texture;
@@ -2418,6 +2418,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 		context.images_delete.push_back(staging_texture.image);
 		context.memory_delete.push_back(staging_texture.mem);
 	} else
+	*/
 	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT)) {
 		/* Device can texture using linear textures */
 		prepareTextureImage(
@@ -2508,6 +2509,7 @@ void VKRenderer::bindTexture(int32_t textureId)
 		}
 	}
 	context.bound_texture_id = textureId;
+	onBindTexture(textureId);
 }
 
 void VKRenderer::disposeTexture(int32_t textureId)
@@ -2576,13 +2578,16 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 			context.buffers_delete.push_back(buffer.buf);
 		}
 
+		buffer.mem = VK_NULL_HANDLE;
+		buffer.buf = VK_NULL_HANDLE;
+
 		const VkBufferCreateInfo buf_info = {
 			sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 			pNext: NULL,
 			flags: 0,
 			size: size,
 			usage: usage,
-			sharingMode: VkSharingMode(),
+			sharingMode: VK_SHARING_MODE_EXCLUSIVE,
 			queueFamilyIndexCount: 0,
 			pQueueFamilyIndices: 0
 		};
@@ -2628,7 +2633,20 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	memcpy(uploadData, data, size);
 
 	vkUnmapMemory(context.device, buffer.mem);
-	assert(!err);
+
+	VkBufferMemoryBarrier buffer_memory_barrier = {
+		sType: VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+		pNext: NULL,
+		srcAccessMask: VK_ACCESS_HOST_WRITE_BIT,
+		dstAccessMask: VK_ACCESS_SHADER_READ_BIT,
+	    srcQueueFamilyIndex: 0,
+	    dstQueueFamilyIndex: 0,
+	    buffer: buffer.buf,
+	    offset: 0,
+	    size: size
+	};
+
+	// vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 1, &buffer_memory_barrier, 0, NULL);
 }
 
 void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
@@ -2772,8 +2790,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 		textureObjectIt = context.textures.find(context.white_texture_default);
 	}
 	if (textureObjectIt == context.textures.end()) {
-		// context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "white_pixel.png"));
-		context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/gui-system/fonts", "Roboto_20_0.png"));
+		context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"));
 		textureObjectIt = context.textures.find(context.white_texture_default);
 	}
 

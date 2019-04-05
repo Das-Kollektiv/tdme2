@@ -22,4 +22,5 @@ void main(void) {
 
 	// compute gl position
 	gl_Position = vec4(inVertex, 1.0);
+	gl_Position.y*= -1.0;
 }

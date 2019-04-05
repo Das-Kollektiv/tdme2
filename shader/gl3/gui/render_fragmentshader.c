@@ -3,7 +3,6 @@
 // uniforms
 layout(binding = 2) uniform sampler2D diffuseTextureUnit;
 
-
 uniform int diffuseTextureAvailable;
 uniform int padding1;
 uniform int padding2;
@@ -22,9 +21,9 @@ layout (location = 0) out vec4 outColor;
 
 // main
 void main (void) {
-//	if (diffuseTextureAvailable == 1) {
+	if (diffuseTextureAvailable == 1) {
 		outColor = clamp((effectColorAdd + texture(diffuseTextureUnit, vsFragTextureUV) * vsFragColor * effectColorMul), 0.0, 1.0);
-//	} else {
-//		outColor = clamp(effectColorAdd + vsFragColor * effectColorMul, 0.0, 1.0);
-//	}
+	} else {
+		outColor = clamp(effectColorAdd + vsFragColor * effectColorMul, 0.0, 1.0);
+	}
 }

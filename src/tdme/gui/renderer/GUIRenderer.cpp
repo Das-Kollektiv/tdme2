@@ -100,7 +100,6 @@ void GUIRenderer::initialize()
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 3)));
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
 			}
-			// sbIndices->flip();
 			renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 		} else {
 			auto ibIndices = sbIndicesByteBuffer->asIntBuffer();
@@ -112,7 +111,6 @@ void GUIRenderer::initialize()
 				ibIndices.put(i * 4 + 3);
 				ibIndices.put(i * 4 + 0);
 			}
-			// sbIndices->flip();
 			renderer->uploadIndicesBufferObject((*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 		}
 	}
@@ -235,22 +233,16 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
 	renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 	renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
+
 	auto quadBottom = y3;
-	if (quadBottom > renderAreaTop) {
-		return;
-	}
+	if (quadBottom > renderAreaTop) return;
 	auto quadTop = y1;
-	if (quadTop < renderAreaBottom) {
-		return;
-	}
+	if (quadTop < renderAreaBottom) return;
 	auto quadLeft = x1;
-	if (quadLeft > renderAreaRight) {
-		return;
-	}
+	if (quadLeft > renderAreaRight) return;
 	auto quadRight = x2;
-	if (quadRight < renderAreaLeft) {
-		return;
-	}
+	if (quadRight < renderAreaLeft) return;
+
 	if (quadBottom < renderAreaBottom) {
 		tv3 = tv1 + ((tv3 - tv1) * ((y1 - renderAreaBottom) / (y1 - y3)));
 		tv4 = tv2 + ((tv4 - tv2) * ((y2 - renderAreaBottom) / (y1 - y4)));
@@ -275,13 +267,9 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 		x2 = renderAreaRight;
 		x3 = renderAreaRight;
 	}
-	#if defined(VULKAN)
-		#define YAXIS(y) (-y)
-	#else
-		#define YAXIS(y) y
-	#endif
+
 	fbVertices.put(x1);
-	fbVertices.put(YAXIS(y1));
+	fbVertices.put(y1);
 	fbVertices.put(0.0f);
 	fbColors.put(colorR1);
 	fbColors.put(colorG1);
@@ -290,7 +278,7 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	fbTextureCoordinates.put(tu1);
 	fbTextureCoordinates.put(tv1);
 	fbVertices.put(x2);
-	fbVertices.put(YAXIS(y2));
+	fbVertices.put(y2);
 	fbVertices.put(0.0f);
 	fbColors.put(colorR2);
 	fbColors.put(colorG2);
@@ -299,7 +287,7 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	fbTextureCoordinates.put(tu2);
 	fbTextureCoordinates.put(tv2);
 	fbVertices.put(x3);
-	fbVertices.put(YAXIS(y3));
+	fbVertices.put(y3);
 	fbVertices.put(0.0f);
 	fbColors.put(colorR3);
 	fbColors.put(colorG3);
@@ -308,7 +296,7 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	fbTextureCoordinates.put(tu3);
 	fbTextureCoordinates.put(tv3);
 	fbVertices.put(x4);
-	fbVertices.put(YAXIS(y4));
+	fbVertices.put(y4);
 	fbVertices.put(0.0f);
 	fbColors.put(colorR4);
 	fbColors.put(colorG4);
