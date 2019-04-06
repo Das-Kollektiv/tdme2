@@ -59,7 +59,6 @@ private:
 
 	struct program_type {
 		int32_t desc_max { DESC_MAX };
-		int32_t desc_used;
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniformBuffers;
@@ -111,7 +110,7 @@ private:
 		VkImageView view;
 	};
 
-	struct context {
+	struct context_type {
 		GLFWwindow* window;
 		VkSurfaceKHR surface;
 
@@ -196,6 +195,29 @@ private:
 		vector<VkDeviceMemory> memory_delete;
 		vector<VkBuffer> buffers_delete;
 		vector<VkImage> images_delete;
+
+		struct render_command {
+			struct texture {
+				VkSampler sampler { VK_NULL_HANDLE };
+				VkImageView view { VK_NULL_HANDLE };
+				VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
+			};
+			VkBuffer indices_buffer { VK_NULL_HANDLE };
+			array<VkBuffer, 12> vertex_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+			};
+			array<VkBuffer, 2> ubo_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE
+			};
+
+			array<texture, 1> textures;
+			int32_t count { 0 };
+			int32_t offset { 0 };
+		};
+
+		vector<render_command> render_commands;
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
@@ -210,6 +232,12 @@ private:
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
+	void flushCommands();
+	void preparePipeline(program_type& program);
+	void createPipeline(program_type& program);
+	void finishPipeline();
+	void prepareSetupCommandBuffer();
+	void finishSetupCommandBuffer();
 
 public:
 	const string getGLVersion() override;

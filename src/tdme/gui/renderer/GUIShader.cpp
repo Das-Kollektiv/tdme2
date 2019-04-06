@@ -71,6 +71,7 @@ void GUIShader::useProgram()
 
 void GUIShader::unUseProgram()
 {
+	renderer->useProgram(renderer->ID_NONE);
 	isRunning = false;
 }
 
