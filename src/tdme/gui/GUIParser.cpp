@@ -411,7 +411,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					GUINode::createFlow(string(AVOID_NULLPTR_STRING(node->Attribute("flow")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-x")))),
 					GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(node->Attribute("overflow-y")))),
-					GUINode::createAlignments(
+					GUIElementNode::createAlignments(
 						string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-align"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("vertical-align")))
 					),
