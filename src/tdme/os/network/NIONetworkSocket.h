@@ -80,8 +80,8 @@ public:
 
 	// MINGW: Have some missing posix functions
 	#if defined(__MINGW32__)
-		#define inet_pton inet_pton6
-		#define inet_ntop inet_ntop6
+		#define inet_pton NIONetworkSocket::inet_pton6
+		#define inet_ntop NIONetworkSocket::inet_ntop6
 		static size_t strlcpy(char* __restrict dst, const char* __restrict src, size_t siz);
 		static int inet_pton4(const char* src, void* dst);
 		static int inet_pton6(int af, const char* src, void* dst);

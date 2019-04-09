@@ -100,16 +100,24 @@ else ifeq ($(OS), Linux)
 	endif
 	OFLAGS := -O2
 else
-	# Windows via MINGW64/MSYS2
+	EXTRAFLAGS = -DVULKAN
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/EngineVKRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
-	EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include
+	EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lvulkan -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+	# Windows via MINGW64/MSYS2
+	# SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	# 		src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+	# 		src/tdme/engine/EngineGL2Renderer.cpp \
+	# 		src/tdme/engine/EngineGL3Renderer.cpp \
+	# 		src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+	# 		src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+	# 		src/tdme/engine/fileio/models/ModelReader.cpp
+	# INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
+	# EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
 endif
@@ -147,7 +155,6 @@ VORBIS = vorbis
 OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
-VK = vk
 SPIRV = spirv
 GLSLANG = glslang
 OGLCOMPILERSDLL = OGLCompilersDLL
@@ -659,10 +666,6 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
 
-EXT_VK_SRCS = \
-	ext/vk/util.cpp \
-	ext/vk/util_init.cpp \
-
 EXT_SPIRV_SRCS = \
 	ext/spirv/GlslangToSpv.cpp \
 	ext/spirv/InReadableOrder.cpp \
@@ -704,7 +707,9 @@ EXT_GLSLANG_SRCS = \
 	ext/glslang/MachineIndependent/propagateNoContraction.cpp \
 	ext/glslang/GenericCodeGen/CodeGen.cpp \
 	ext/glslang/GenericCodeGen/Link.cpp \
-	ext/glslang/OSDependent/Unix/ossource.cpp \
+	ext/glslang/OSDependent/Windows/ossource.cpp \
+
+#	ext/glslang/OSDependent/Unix/ossource.cpp \
 	
 EXT_OGLCOMPILERSDLL_SRCS = \
 	ext/OGLCompilersDLL/InitializeDll.cpp \
@@ -748,7 +753,6 @@ EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
-EXT_VK_OBJS = $(EXT_VK_SRCS:ext/$(VK)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/%.o)
@@ -808,9 +812,6 @@ $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	$(cpp-command-ext-rp3d)
 
-$(EXT_VK_OBJS):$(OBJ)/%.o: ext/$(VK)/%.cpp | print-opts
-	$(cpp-command)
-
 $(EXT_SPIRV_OBJS):$(OBJ)/%.o: ext/$(SPIRV)/%.cpp | print-opts
 	$(cpp-command)
 
@@ -828,7 +829,7 @@ $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | print-opt
 
 $(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_VK_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
