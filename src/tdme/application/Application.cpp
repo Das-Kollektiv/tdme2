@@ -459,6 +459,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 void Application::glutDisplay() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
+		#if defined(VULKAN)
+			Application::application->reshape(Application::application->windowWidth, Application::application->windowHeight);
+		#endif
 		Application::application->initialized = true;
 	}
 	int64_t timeNow = Time::getCurrentMillis();

@@ -1249,9 +1249,11 @@ void VKRenderer::finishFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
+	//
+	finishSetupCommandBuffer();
+
 	// flush command buffers
 	if (context.program_id != 0) {
-		finishSetupCommandBuffer();
 		flushCommands();
 		finishPipeline();
 		context.program_id = 0;
@@ -1645,7 +1647,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 }
 
 void VKRenderer::preparePipeline(program_type& program) {
-	int layoutBindingIdx = 0;
 	auto shaderIdx = 0;
 	for (auto shaderId: program.shader_ids) {
 		auto shaderIt = context.shaders.find(shaderId);
@@ -1673,7 +1674,7 @@ void VKRenderer::createPipeline(program_type& program) {
 
 		//
 		VkDescriptorSetLayoutBinding layout_bindings[16];
-		memset(&layout_bindings, 0, sizeof(layout_bindings));
+		memset(layout_bindings, 0, sizeof(layout_bindings));
 
 		//
 		VkGraphicsPipelineCreateInfo pipeline;
@@ -1682,7 +1683,7 @@ void VKRenderer::createPipeline(program_type& program) {
 		// Two stages: vs and fs
 		pipeline.stageCount = program.shader_ids.size();
 		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
-		memset(&shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 		int layoutBindingIdx = 0;
 		auto shaderIdx = 0;
@@ -1785,7 +1786,7 @@ void VKRenderer::createPipeline(program_type& program) {
 		rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		rs.polygonMode = VK_POLYGON_MODE_FILL;
 		rs.cullMode = VK_CULL_MODE_NONE;
-		rs.frontFace = VK_FRONT_FACE_CLOCKWISE;
+		rs.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		rs.depthClampEnable = VK_FALSE;
 		rs.rasterizerDiscardEnable = VK_FALSE;
 		rs.depthBiasEnable = VK_FALSE;
@@ -2609,7 +2610,6 @@ VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
 		return VK_NULL_HANDLE;
 	}
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): retrieve: " + to_string(bufferObjectId) + ": " + to_string(bufferIt->second.buf));
 	return bufferIt->second.buf;
 }
 
@@ -2626,7 +2626,6 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	VkResult err;
 
 	if (buffer.size > 0) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): mark for deletion: " + to_string(bufferObjectId) + ": " + to_string(buffer.buf));
 		context.memory_delete.push_back(buffer.mem);
 		context.buffers_delete.push_back(buffer.buf);
 	}
@@ -2657,8 +2656,6 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	err = vkCreateBuffer(context.device, &buf_info, NULL, &buffer.buf);
 	assert(err == VK_SUCCESS);
 
-	Console::println("new buffer: " + to_string(bufferObjectId) + ": " + to_string(buffer.buf));
-
 	vkGetBufferMemoryRequirements(context.device, buffer.buf, &mem_reqs);
 
 	mem_alloc.allocationSize = mem_reqs.size;
@@ -2677,9 +2674,6 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	void* buffer_data;
 	err = vkMapMemory(context.device, buffer.mem, 0, buffer.alloc_size, 0, &buffer_data);
 	assert(err == VK_SUCCESS);
-
-	//
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uploading: " + to_string(bufferObjectId) + ": " + to_string(buffer.buf) + ": " + to_string(buffer.alloc_size));
 
 	//
 	memcpy(buffer_data, data, size);
@@ -2846,18 +2840,22 @@ void VKRenderer::flushCommands() {
 	}
 	auto& program = programIt->second;
 
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): rendering");
-
+	// create pipeline
 	createPipeline(program);
-	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
 
 	VkDescriptorBufferInfo bufferInfos[2];
 	VkWriteDescriptorSet descriptorSetWrites[3];
+	vector<VKRenderer::context_type::render_command> render_commands_left;
+
+	//
+	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
+
+	//
 	auto desc_used = 0;
 	for (auto& command: context.render_commands) {
 		if (desc_used == program.desc_max) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
-			continue;
+			break;
 		}
 		auto shaderIdx = 0;
 		for (auto& shaderId: program.shader_ids) {
@@ -2917,13 +2915,6 @@ void VKRenderer::flushCommands() {
 		vkUpdateDescriptorSets(context.device, 3, descriptorSetWrites, 0, NULL);
 		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[desc_used], 0, nullptr);
 		vkCmdBindIndexBuffer(context.draw_cmd, command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
-		Console::println(
-			"rendering: " +
-			to_string(command.indices_buffer) + ", " +
-			to_string(command.vertex_buffers[0]) + ", " +
-			to_string(command.vertex_buffers[1]) + ", " +
-			to_string(command.vertex_buffers[2])
-		);
 		VkBuffer vertexBuffersBuffer[3] = {command.vertex_buffers[0], command.vertex_buffers[1], command.vertex_buffers[2]};
 		VkDeviceSize vertexBuffersOffsets[3] = { 0, 0, 0 };
 		vkCmdBindVertexBuffers(context.draw_cmd, 0, 3, vertexBuffersBuffer, vertexBuffersOffsets);
@@ -2931,6 +2922,8 @@ void VKRenderer::flushCommands() {
 
 		desc_used++;
 	}
+
+	//
 	context.render_commands.clear();
 }
 

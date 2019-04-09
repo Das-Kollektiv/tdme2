@@ -707,10 +707,10 @@ EXT_GLSLANG_SRCS = \
 	ext/glslang/MachineIndependent/propagateNoContraction.cpp \
 	ext/glslang/GenericCodeGen/CodeGen.cpp \
 	ext/glslang/GenericCodeGen/Link.cpp \
-	ext/glslang/OSDependent/Windows/ossource.cpp \
+	ext/glslang/OSDependent/Unix/ossource.cpp \
 
-#	ext/glslang/OSDependent/Unix/ossource.cpp \
-	
+	#ext/glslang/OSDependent/Windows/ossource.cpp \
+
 EXT_OGLCOMPILERSDLL_SRCS = \
 	ext/OGLCompilersDLL/InitializeDll.cpp \
 
