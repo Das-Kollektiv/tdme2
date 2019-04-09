@@ -1832,9 +1832,9 @@ void VKRenderer::createPipeline(program_type& program) {
 		ms.pSampleMask = NULL;
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-		VkVertexInputBindingDescription vi_bindings[4];
+		VkVertexInputBindingDescription vi_bindings[3];
 		memset(vi_bindings, 0, sizeof(vi_bindings));
-		VkVertexInputAttributeDescription vi_attrs[4];
+		VkVertexInputAttributeDescription vi_attrs[3];
 		memset(vi_attrs, 0, sizeof(vi_attrs));
 
 		//
@@ -2596,7 +2596,6 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 		buffer.id = context.buffer_idx++;
 		buffer.alloc_size = 0;
 		buffer.size = 0;
-		buffer.uploaded = false;
 		context.buffers[buffer.id] = buffer;
 		bufferIds.push_back(buffer.id);
 	}
@@ -2610,6 +2609,7 @@ VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
 		return VK_NULL_HANDLE;
 	}
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): retrieve: " + to_string(bufferObjectId) + ": " + to_string(bufferIt->second.buf));
 	return bufferIt->second.buf;
 }
 
@@ -2624,68 +2624,65 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 
 	//
 	VkResult err;
-	void* uploadData;
 
-	// (re)create buffer if required
-	if (buffer.size == 0 || buffer.size != size || buffer.uploaded == true) {
-		if (buffer.size > 0) {
-			context.memory_delete.push_back(buffer.mem);
-			context.buffers_delete.push_back(buffer.buf);
-		}
-
-		buffer.mem = VK_NULL_HANDLE;
-		buffer.buf = VK_NULL_HANDLE;
-
-		const VkBufferCreateInfo buf_info = {
-			sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-			pNext: NULL,
-			flags: 0,
-			size: size,
-			usage: usage,
-			sharingMode: VK_SHARING_MODE_EXCLUSIVE,
-			queueFamilyIndexCount: 0,
-			pQueueFamilyIndices: 0
-		};
-		VkMemoryAllocateInfo mem_alloc = {
-			sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-			pNext: NULL,
-			allocationSize: 0,
-			memoryTypeIndex: 0
-		};
-
-		VkMemoryRequirements mem_reqs;
-		bool pass;
-
-		err = vkCreateBuffer(context.device, &buf_info, NULL, &buffer.buf);
-		assert(err == VK_SUCCESS);
-
-		vkGetBufferMemoryRequirements(context.device, buffer.buf, &mem_reqs);
-
-		mem_alloc.allocationSize = mem_reqs.size;
-		pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &mem_alloc.memoryTypeIndex);
-		assert(pass);
-
-		buffer.alloc_size = mem_alloc.allocationSize;
-
-		err = vkAllocateMemory(context.device, &mem_alloc, NULL, &buffer.mem);
-		assert(err == VK_SUCCESS);
-
-		//
-		buffer.size = size;
-
-		// bind
-		err = vkBindBufferMemory(context.device, buffer.buf, buffer.mem, 0);
-		assert(!err);
-
-		//
-		buffer.uploaded = true;
+	if (buffer.size > 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): mark for deletion: " + to_string(bufferObjectId) + ": " + to_string(buffer.buf));
+		context.memory_delete.push_back(buffer.mem);
+		context.buffers_delete.push_back(buffer.buf);
 	}
 
-	// upload
-	err = vkMapMemory(context.device, buffer.mem, 0, buffer.alloc_size, 0, &uploadData);
+	buffer.mem = VK_NULL_HANDLE;
+	buffer.buf = VK_NULL_HANDLE;
+
+	const VkBufferCreateInfo buf_info = {
+		sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		size: size,
+		usage: usage,
+		sharingMode: VK_SHARING_MODE_EXCLUSIVE,
+		queueFamilyIndexCount: 0,
+		pQueueFamilyIndices: NULL
+	};
+	VkMemoryAllocateInfo mem_alloc = {
+		sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		pNext: NULL,
+		allocationSize: 0,
+		memoryTypeIndex: 0
+	};
+
+	VkMemoryRequirements mem_reqs;
+	bool pass;
+
+	err = vkCreateBuffer(context.device, &buf_info, NULL, &buffer.buf);
 	assert(err == VK_SUCCESS);
 
-	memcpy(uploadData, data, size);
+	Console::println("new buffer: " + to_string(bufferObjectId) + ": " + to_string(buffer.buf));
+
+	vkGetBufferMemoryRequirements(context.device, buffer.buf, &mem_reqs);
+
+	mem_alloc.allocationSize = mem_reqs.size;
+	pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &mem_alloc.memoryTypeIndex);
+	assert(pass);
+
+	buffer.alloc_size = mem_alloc.allocationSize;
+
+	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &buffer.mem);
+	assert(err == VK_SUCCESS);
+
+	//
+	buffer.size = size;
+
+	// map memory
+	void* buffer_data;
+	err = vkMapMemory(context.device, buffer.mem, 0, buffer.alloc_size, 0, &buffer_data);
+	assert(err == VK_SUCCESS);
+
+	//
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uploading: " + to_string(bufferObjectId) + ": " + to_string(buffer.buf) + ": " + to_string(buffer.alloc_size));
+
+	//
+	memcpy(buffer_data, data, size);
 	VkMappedMemoryRange mappedMemoryRange = {
 		sType: VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
 		pNext: NULL,
@@ -2695,22 +2692,27 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	};
 	vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 
+	//
 	vkUnmapMemory(context.device, buffer.mem);
+
+	// bind if (re)created
+	err = vkBindBufferMemory(context.device, buffer.buf, buffer.mem, 0);
+	assert(!err);
 }
 
 void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT); // TODO: Vertices only here?
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 }
 
 void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
 void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
 void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
@@ -2806,7 +2808,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 		}
 
 		auto uboBindingIdx = getUniformBufferObjectBindingIdx(shader.type);
-		uploadBufferObjectInternal(shader.uniform_buffer, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		uploadBufferObjectInternal(shader.uniform_buffer, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		render_command.ubo_buffers[uboBindingIdx] = getBufferObjectInternal(shader.uniform_buffer);
 		shaderIdx++;
 	}
@@ -2843,6 +2845,8 @@ void VKRenderer::flushCommands() {
 		return;
 	}
 	auto& program = programIt->second;
+
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): rendering");
 
 	createPipeline(program);
 	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
@@ -2913,6 +2917,13 @@ void VKRenderer::flushCommands() {
 		vkUpdateDescriptorSets(context.device, 3, descriptorSetWrites, 0, NULL);
 		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[desc_used], 0, nullptr);
 		vkCmdBindIndexBuffer(context.draw_cmd, command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
+		Console::println(
+			"rendering: " +
+			to_string(command.indices_buffer) + ", " +
+			to_string(command.vertex_buffers[0]) + ", " +
+			to_string(command.vertex_buffers[1]) + ", " +
+			to_string(command.vertex_buffers[2])
+		);
 		VkBuffer vertexBuffersBuffer[3] = {command.vertex_buffers[0], command.vertex_buffers[1], command.vertex_buffers[2]};
 		VkDeviceSize vertexBuffersOffsets[3] = { 0, 0, 0 };
 		vkCmdBindVertexBuffers(context.draw_cmd, 0, 3, vertexBuffersBuffer, vertexBuffersOffsets);

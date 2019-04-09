@@ -72,7 +72,6 @@ private:
 	};
 
 	struct buffer_object {
-		bool uploaded;
 		VkBuffer buf;
 		VkDeviceMemory mem;
 		int32_t id;
