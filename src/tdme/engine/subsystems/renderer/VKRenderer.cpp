@@ -647,7 +647,7 @@ void VKRenderer::initialize()
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
-	glfwGetWindowSize(Application::application->window, &context.width, &context.height);
+	glfwGetWindowSize(Application::glfwWindow, &context.width, &context.height);
 
 	//
 	glslang::InitProcess();
@@ -874,7 +874,7 @@ void VKRenderer::initialize()
 	vkGetPhysicalDeviceFeatures(context.gpu, &context.gpu_features);
 
 	// Create a WSI surface for the window:
-	glfwCreateWindowSurface(context.inst, Application::window, NULL, &context.surface);
+	glfwCreateWindowSurface(context.inst, Application::glfwWindow, NULL, &context.surface);
 
 	// Iterate over each queue to learn whether it supports presenting:
 	VkBool32 *supportsPresent = (VkBool32 *) malloc(context.queue_count * sizeof(VkBool32));
@@ -1156,7 +1156,7 @@ void VKRenderer::reshape() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
-	glfwGetWindowSize(Application::application->window, &context.width, &context.height);
+	glfwGetWindowSize(Application::glfwWindow, &context.width, &context.height);
 
 	//
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(context.width) + " x " + to_string(context.height));

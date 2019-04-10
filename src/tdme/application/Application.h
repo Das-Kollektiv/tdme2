@@ -5,6 +5,8 @@
 	#include <GLFW/glfw3.h>
 	#define MOUSE_CURSOR_DISABLED 0
 	#define MOUSE_CURSOR_ENABLED -1
+	#include <array>
+	using std::array;
 #else
 	#if defined(__linux__) || defined(_WIN32)
 		#include <GL/freeglut.h>
@@ -35,6 +37,7 @@ using tdme::application::InputEventHandler;
  */
 class tdme::application::Application
 {
+	friend class InputEventHandler;
 	friend class tdme::engine::Engine;
 	friend class tdme::engine::subsystems::renderer::VKRenderer;
 
@@ -184,83 +187,127 @@ private:
 	static int64_t timeLast;
 
 	#if defined(VULKAN)
-		static GLFWwindow* window;
+		static GLFWwindow* glfwWindow;
+		static array<uint32_t, 10> glfwButtonDownFrames;
+		static int glfwMods;
 	#endif
 
 	/**
-	 * GLUT display function
+	 * Display function
 	 */
-	static void glutDisplay();
+	static void displayInternal();
 
 	/**
-	 * GLUT reshape function
+	 * Reshape function
 	 * @param width width
 	 * @param height height
 	 */
-	static void glutReshape(int32_t width, int32_t height);
+	static void reshapeInternal(int32_t width, int32_t height);
 
-	/**
-	 * GLUT on key down
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnKeyDown (unsigned char key, int x, int y);
+	#if defined(VULKAN)
+		/**
+		 * @return if key should be treated as special key
+		 */
+		static bool glfwIsSpecialKey(int key);
 
-	/**
-	 * GLUT on key up
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnKeyUp(unsigned char key, int x, int y);
+		/**
+		 * GLFW on key
+		 * @param window window
+		 * @param key key
+		 * @param scanCode scan code
+		 * @param action action
+		 * @param mods modifier keys
+		 */
+		static void glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods);
 
-	/**
-	 * GLUT on special key down
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnSpecialKeyDown (int key, int x, int y);
+		/**
+		 * GLFW on mouse moved
+		 * @param window window
+		 * @param x x
+		 * @param y y
+		 */
+		static void glfwOnMouseMoved(GLFWwindow* window, double x, double y);
 
-	/**
-	 * GLUT on special key up
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnSpecialKeyUp(int key, int x, int y);
+		/**
+		 * GLFW on key
+		 * @param window window
+		 * @param button button
+		 * @param action action
+		 * @param mods modifier keys
+		 */
+		static void glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods);
 
-	/**
-	 * GLUT on mouse dragged
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnMouseDragged(int x, int y) ;
+		/**
+		 * GLFW on key
+		 * @param window window
+		 * @param x x
+		 * @param y y
+		 */
+		static void glfwOnMouseWheel(GLFWwindow* window, double x, double y);
+	#else
+		/**
+		 * On key down
+		 * @param key key
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnKeyDown (unsigned char key, int x, int y);
 
-	/**
-	 * GLUT on mouse moved
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnMouseMoved(int x, int y);
+		/**
+		 * On key up
+		 * @param key key
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnKeyUp(unsigned char key, int x, int y);
 
-	/**
-	 * On mouse button
-	 * @param button button
-	 * @param state state
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnMouseButton(int button, int state, int x, int y);
+		/**
+		 * On special key down
+		 * @param key key
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnSpecialKeyDown (int key, int x, int y);
 
-	/**
-	 * On mouse wheel
-	 * @param button button
-	 * @param direction direction
-	 * @param x x
-	 * @param y y
-	 */
-	static void glutOnMouseWheel(int button, int direction, int x, int y);
+		/**
+		 * On special key up
+		 * @param key key
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnSpecialKeyUp(int key, int x, int y);
 
+		/**
+		 * On mouse dragged
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnMouseDragged(int x, int y) ;
+
+		/**
+		 * On mouse moved
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnMouseMoved(int x, int y);
+
+		/**
+		 * On mouse button
+		 * @param button button
+		 * @param state state
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnMouseButton(int button, int state, int x, int y);
+
+		/**
+		 * On mouse wheel
+		 * @param button button
+		 * @param direction direction
+		 * @param x x
+		 * @param y y
+		 */
+		static void glutOnMouseWheel(int button, int direction, int x, int y);
+
+	#endif
 };

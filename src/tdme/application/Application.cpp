@@ -44,6 +44,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
+#include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/HexEncDec.h>
 #include <tdme/utils/RTTI.h>
@@ -61,6 +62,7 @@ using tdme::application::InputEventHandler;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
+using tdme::utils::Character;
 using tdme::utils::Console;
 using tdme::utils::HexEncDec;
 using tdme::utils::RTTI;
@@ -258,9 +260,10 @@ Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
 #if defined(VULKAN)
-	GLFWwindow* Application::window = nullptr;
+	GLFWwindow* Application::glfwWindow = nullptr;
+	array<uint32_t, 10> Application::glfwButtonDownFrames;
+	int Application::glfwMods = 0;
 #endif
-
 
 Application::ApplicationShutdown::~ApplicationShutdown() {
 	if (Application::application != nullptr) {
@@ -393,15 +396,19 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			return;
 		}
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
-		if (window == nullptr) {
+		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+		if (glfwWindow == nullptr) {
 			Console::println("glfwCreateWindow(): Could not create window");
 			glfwTerminate();
 			return;
 		}
-		while (glfwWindowShouldClose(window) == false) {
-			glutDisplay();
-			glfwSwapBuffers(window);
+		glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
+		glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
+		glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
+		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
+		while (glfwWindowShouldClose(glfwWindow) == false) {
+			displayInternal();
+			glfwSwapBuffers(glfwWindow);
 			glfwPollEvents();
 		}
 		glfwTerminate();
@@ -439,9 +446,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			}
 		#endif
 		// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-		glutReshapeFunc(Application::glutReshape);
-		glutDisplayFunc(Application::glutDisplay);
-		glutIdleFunc(Application::glutDisplay);
+		glutReshapeFunc(Application::reshapeInternal);
+		glutDisplayFunc(Application::displayInternal);
+		glutIdleFunc(Application::displayInternal);
 		glutKeyboardFunc(Application::glutOnKeyDown);
 		glutKeyboardUpFunc(Application::glutOnKeyUp);
 		glutSpecialFunc(Application::glutOnSpecialKeyDown);
@@ -456,7 +463,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	#endif
 }
 
-void Application::glutDisplay() {
+void Application::displayInternal() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
 		#if defined(VULKAN)
@@ -478,7 +485,7 @@ void Application::glutDisplay() {
 	#endif
 }
 
-void Application::glutReshape(int32_t width, int32_t height) {
+void Application::reshapeInternal(int32_t width, int32_t height) {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
 		Application::application->initialized = true;
@@ -486,42 +493,111 @@ void Application::glutReshape(int32_t width, int32_t height) {
 	Application::application->reshape(width, height);
 }
 
-void Application::glutOnKeyDown (unsigned char key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onKeyDown(key, x, y);
-}
+#if defined(VULKAN)
+	bool Application::glfwIsSpecialKey(int key) {
+		return
+			key == GLFW_KEY_UP ||
+			key == GLFW_KEY_DOWN ||
+			key == GLFW_KEY_LEFT ||
+			key == GLFW_KEY_RIGHT ||
+			key == GLFW_KEY_TAB ||
+			key == GLFW_KEY_BACKSPACE ||
+			key == GLFW_KEY_ENTER ||
+			key == GLFW_KEY_DELETE ||
+			key == GLFW_KEY_HOME ||
+			key == GLFW_KEY_END ||
+			key == GLFW_KEY_ESCAPE;
+	}
 
-void Application::glutOnKeyUp(unsigned char key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onKeyUp(key, x, y);
-}
+	void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+		if (Application::inputEventHandler == nullptr) return;
+		glfwMods = mods;
+		if (mods & GLFW_MOD_SHIFT == 0) key = Character::toLowerCase(key);
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		Console::println(to_string(key) + " / " + to_string(scanCode));
+		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+			if (glfwIsSpecialKey(key) == true) {
+				Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
+			} else {
+				Application::inputEventHandler->onKeyDown(key, (int)mouseX, (int)mouseY);
+			}
+		} else
+		if (action == GLFW_RELEASE) {
+			if (glfwIsSpecialKey(key) == true) {
+				Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
+			} else {
+				Application::inputEventHandler->onKeyUp(key, (int)mouseX, (int)mouseY);
+			}
+		}
+	}
 
-void Application::glutOnSpecialKeyDown (int key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onSpecialKeyDown(key, x, y);
-}
+	void Application::glfwOnMouseMoved(GLFWwindow* window, double x, double y) {
+		if (Application::inputEventHandler == nullptr) return;
+		if (glfwButtonDownFrames[0] > 0) {
+			Application::inputEventHandler->onMouseDragged((int)x, (int)y);
+		} else {
+			Application::inputEventHandler->onMouseMoved((int)x, (int)y);
+		}
+	}
 
-void Application::glutOnSpecialKeyUp(int key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onSpecialKeyUp(key, x, y);
-}
+	void Application::glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods) {
+		if (Application::inputEventHandler == nullptr) return;
+		glfwMods = mods;
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, (int)mouseX, (int)mouseY);
+		if (action == GLFW_PRESS) {
+			glfwButtonDownFrames[button]++;
+		} else {
+			glfwButtonDownFrames[button] = 0;
+		}
+	}
+	void Application::glfwOnMouseWheel(GLFWwindow* window, double x, double y) {
+		if (Application::inputEventHandler == nullptr) return;
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		if (x != 0.0) Application::inputEventHandler->onMouseWheel(0, (int)x, (int)mouseX, (int)mouseY);
+		if (y != 0.0) Application::inputEventHandler->onMouseWheel(1, (int)y, (int)mouseX, (int)mouseY);
+	}
+#else
+	void Application::glutOnKeyDown (unsigned char key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onKeyDown(key, x, y);
+	}
 
-void Application::glutOnMouseDragged(int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseDragged(x, y);
-}
+	void Application::glutOnKeyUp(unsigned char key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onKeyUp(key, x, y);
+	}
 
-void Application::glutOnMouseMoved(int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseMoved(x, y);
-}
+	void Application::glutOnSpecialKeyDown (int key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onSpecialKeyDown(key, x, y);
+	}
 
-void Application::glutOnMouseButton(int button, int state, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseButton(button, state, x, y);
-}
+	void Application::glutOnSpecialKeyUp(int key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onSpecialKeyUp(key, x, y);
+	}
 
-void Application::glutOnMouseWheel(int button, int direction, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseWheel(button, direction, x, y);
-}
+	void Application::glutOnMouseDragged(int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseDragged(x, y);
+	}
+
+	void Application::glutOnMouseMoved(int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseMoved(x, y);
+	}
+
+	void Application::glutOnMouseButton(int button, int state, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseButton(button, state, x, y);
+	}
+
+	void Application::glutOnMouseWheel(int button, int direction, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseWheel(button, direction, x, y);
+	}
+#endif

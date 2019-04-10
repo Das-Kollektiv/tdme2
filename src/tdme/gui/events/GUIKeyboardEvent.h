@@ -13,21 +13,20 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
  */
 class tdme::gui::events::GUIKeyboardEvent
 {
-
 public:
-	static constexpr int32_t KEYCODE_TAB { 9 };
-	static constexpr int32_t KEYCODE_TAB_SHIFT { 25 };
-	static constexpr int32_t KEYCODE_BACKSPACE { 8 };
-	static constexpr int32_t KEYCODE_RETURN { 13 };
-	static constexpr int32_t KEYCODE_DELETE { 46 };
-	static constexpr int32_t KEYCODE_SPACE { 32 };
+	static constexpr int32_t KEYCODE_TAB { KEYBOARD_KEYCODE_TAB };
+	static constexpr int32_t KEYCODE_TAB_SHIFT { KEYBOARD_KEYCODE_TAB_SHIFT };
+	static constexpr int32_t KEYCODE_BACKSPACE { KEYBOARD_KEYCODE_BACKSPACE };
+	static constexpr int32_t KEYCODE_RETURN { KEYBOARD_KEYCODE_RETURN };
+	static constexpr int32_t KEYCODE_DELETE { KEYBOARD_KEYCODE_DELETE };
+	static constexpr int32_t KEYCODE_SPACE { KEYBOARD_KEYCODE_SPACE };
 	static constexpr int32_t KEYCODE_LEFT { KEYBOARD_KEYCODE_LEFT };
 	static constexpr int32_t KEYCODE_UP { KEYBOARD_KEYCODE_UP };
 	static constexpr int32_t KEYCODE_RIGHT { KEYBOARD_KEYCODE_RIGHT };
 	static constexpr int32_t KEYCODE_DOWN { KEYBOARD_KEYCODE_DOWN };
-	static constexpr int32_t KEYCODE_POS1 { 106 };
-	static constexpr int32_t KEYCODE_END { 107 };
-	static constexpr int32_t KEYCODE_ESCAPE { 27 };
+	static constexpr int32_t KEYCODE_POS1 { KEYBOARD_KEYCODE_POS1 };
+	static constexpr int32_t KEYCODE_END { KEYBOARD_KEYCODE_END };
+	static constexpr int32_t KEYCODE_ESCAPE { KEYBOARD_KEYCODE_ESCAPE };
 
 private:
 	int64_t time {  };
