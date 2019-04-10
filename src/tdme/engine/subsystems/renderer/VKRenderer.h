@@ -82,24 +82,11 @@ private:
 	struct texture_object {
 		bool uploaded;
 		int32_t id;
+		VkFormat format;
 		VkSampler sampler;
 		VkImage image;
 		VkImageLayout image_layout;
 		VkDeviceMemory mem;
-		VkImageView view;
-		int32_t tex_width, tex_height;
-	};
-
-	struct depth_buffer {
-		VkFormat format;
-		VkImage image;
-		VkDeviceMemory mem;
-		VkImageView view;
-		int32_t id;
-	};
-
-	struct color_buffer {
-		VkImage image;
 		VkImageView view;
 	};
 
@@ -149,19 +136,15 @@ private:
 
 		int32_t shader_idx { 1 };
 		int32_t program_idx { 1 };
-		int32_t depth_buffer_idx { 1 };
-		int32_t color_buffer_idx { 1 };
 		int32_t buffer_idx { 1 };
 		int32_t texture_idx { 1 };
 		struct map<int32_t, program_type> programs;
 		struct map<int32_t, shader_type> shaders;
-		struct map<int32_t, depth_buffer> depth_buffers;
-		struct map<int32_t, depth_buffer> color_buffers;
 		struct map<int32_t, buffer_object> buffers;
 		struct map<int32_t, texture_object> textures;
 
-		int depth_buffer_default;
-		int white_texture_default;
+		int depth_buffer_default { 0 };
+		int white_texture_default { 0 };
 
 		VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
 		VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
@@ -217,6 +200,9 @@ private:
 		};
 
 		vector<render_command> render_commands;
+
+		VkViewport viewport;
+		VkRect2D scissor;
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
@@ -232,11 +218,13 @@ private:
 	void initializeSwapChain();
 	void initializeFrameBuffers();
 	void flushCommands();
+	void initializeRenderPass();
 	void preparePipeline(program_type& program);
 	void createPipeline(program_type& program);
 	void finishPipeline();
 	void prepareSetupCommandBuffer();
 	void finishSetupCommandBuffer();
+	void reshape();
 
 public:
 	const string getGLVersion() override;

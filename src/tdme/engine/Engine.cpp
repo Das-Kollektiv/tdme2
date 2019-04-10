@@ -148,13 +148,6 @@ float Engine::animationBlendingTime = 250.0f;
 
 Engine::Engine() 
 {
-	#if defined(VULKAN)
-		width = Application::application->getWindowWidth();
-		height = Application::application->getWindowHeight();
-	#else
-		width = 0;
-		height = 0;
-	#endif
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);

@@ -264,8 +264,8 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 	VkResult err;
 	bool pass;
 
-	tex_obj->tex_width = texture->getTextureWidth();
-	tex_obj->tex_height = texture->getTextureHeight();
+	auto textureWidth = texture->getTextureWidth();
+	auto textureHeight = texture->getTextureHeight();
 
 	const VkImageCreateInfo image_create_info = {
 		sType: VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -274,8 +274,8 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 		imageType: VK_IMAGE_TYPE_2D,
 		format: tex_format,
 		extent: {
-			width: tex_obj->tex_width,
-			height: tex_obj->tex_height,
+			width: textureWidth,
+			height: textureHeight,
 			depth: 1
 		},
 		mipLevels:1,
@@ -332,10 +332,9 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 
 		auto bytesPerPixel = texture->getDepth() / 8;
 		auto textureBuffer = texture->getTextureData();
-		auto textureWidth = texture->getTextureWidth();
-		for (auto y = 0; y < tex_obj->tex_height; y++) {
+		for (auto y = 0; y < textureHeight; y++) {
 			char* row = (char*)(data + layout.offset + layout.rowPitch * y);
-			for (auto x = 0; x < tex_obj->tex_width; x++) {
+			for (auto x = 0; x < textureWidth; x++) {
 				row[x * 4 + 0] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
 				row[x * 4 + 1] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
 				row[x * 4 + 2] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 2);
@@ -647,8 +646,8 @@ void VKRenderer::initialize()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	context.width = Application::application->getWindowWidth();
-	context.height = Application::application->getWindowHeight();
+	//
+	glfwGetWindowSize(Application::application->window, &context.width, &context.height);
 
 	//
 	glslang::InitProcess();
@@ -1021,9 +1020,43 @@ void VKRenderer::initialize()
 	// swap chain
 	initializeSwapChain();
 
+	// create descriptor pool
+	const VkDescriptorPoolSize types_count[2] = {
+		[0] = {
+			type: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+			descriptorCount: 1 * DESC_MAX
+		},
+		[1] = {
+			type: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+			descriptorCount: 2 * DESC_MAX
+		}
+	};
+	const VkDescriptorPoolCreateInfo descriptor_pool = {
+		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+		pNext: NULL,
+		flags: 0,
+		maxSets: DESC_MAX,
+		poolSizeCount: 2,
+		pPoolSizes: types_count,
+	};
+
+	err = vkCreateDescriptorPool(context.device, &descriptor_pool, NULL, &context.desc_pool);
+	assert(!err);
+
+	//
+	initializeRenderPass();
+	initializeFrameBuffers();
+}
+
+void VKRenderer::initializeRenderPass() {
+	VkResult err;
+
+	//
+	if (context.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(context.device, context.render_pass, NULL);
+
 	// depth buffer
+	if (context.depth_buffer_default != 0) disposeTexture(context.depth_buffer_default);
 	context.depth_buffer_default = createDepthBufferTexture(context.width, context.height);
-	assert(context.depth_buffer_default > 0 && context.depth_buffers.find(context.depth_buffer_default) != context.depth_buffers.end());
 
 	//
 	context.white_texture_default = 0;
@@ -1086,38 +1119,12 @@ void VKRenderer::initialize()
 	};
 	err = vkCreateRenderPass(context.device, &rp_info, NULL, &context.render_pass);
 	assert(!err);
-
-	// create descriptor pool
-	const VkDescriptorPoolSize types_count[2] = {
-		[0] = {
-			type: VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			descriptorCount: 1 * DESC_MAX
-		},
-		[1] = {
-			type: VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			descriptorCount: 2 * DESC_MAX
-		}
-	};
-	const VkDescriptorPoolCreateInfo descriptor_pool = {
-		sType: VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		pNext: NULL,
-		flags: 0,
-		maxSets: DESC_MAX,
-		poolSizeCount: 2,
-		pPoolSizes: types_count,
-	};
-
-	err = vkCreateDescriptorPool(context.device, &descriptor_pool, NULL, &context.desc_pool);
-	assert(!err);
-
-	// frame buffers
-	initializeFrameBuffers();
 }
 
 void VKRenderer::initializeFrameBuffers() {
 	VkImageView attachments[2];
-	auto depthBufferIt = context.depth_buffers.find(context.depth_buffer_default);
-	assert(depthBufferIt != context.depth_buffers.end());
+	auto depthBufferIt = context.textures.find(context.depth_buffer_default);
+	assert(depthBufferIt != context.textures.end());
 	attachments[1] = depthBufferIt->second.view;
 
 	const VkFramebufferCreateInfo fb_info = {
@@ -1143,6 +1150,32 @@ void VKRenderer::initializeFrameBuffers() {
 		err = vkCreateFramebuffer(context.device, &fb_info, NULL, &context.framebuffers[i]);
 		assert(!err);
 	}
+}
+
+void VKRenderer::reshape() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	// new dimensions
+	glfwGetWindowSize(Application::application->window, &context.width, &context.height);
+
+	//
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(context.width) + " x " + to_string(context.height));
+
+	//
+	auto frame_buffers_last = context.framebuffers;
+
+	// reinit swapchain, renderpass and framebuffers
+	initializeSwapChain();
+	initializeRenderPass();
+	initializeFrameBuffers();
+	context.current_buffer = 0;
+
+	// dispose old frame buffers
+	for (auto i = 0; i < context.swapchain_image_count; i++) vkDestroyFramebuffer(context.device, frame_buffers_last[i], NULL);
+	delete [] frame_buffers_last;
+
+	//
+	Engine::getInstance()->reshape(0, 0, context.width, context.height);
 }
 
 void VKRenderer::initializeFrame()
@@ -1172,12 +1205,21 @@ void VKRenderer::initializeFrame()
 	//
 	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
 		// TODO: a.drewke
-		// demo->swapchain is out of date (e.g. the window was resized) and
-		// must be recreated:
-		// resize (demo);
-		// draw(demo);
-		// vkDestroySemaphore(context.device, context.imageAcquiredSemaphore, NULL);
-		// vkDestroySemaphore(context.device, context.drawCompleteSemaphore, NULL);
+		//
+		finishSetupCommandBuffer();
+		vkCmdEndRenderPass(context.draw_cmd);
+		vkDestroySemaphore(context.device, context.image_acquired_semaphore, NULL);
+		vkDestroySemaphore(context.device, context.draw_complete_semaphore, NULL);
+
+		//
+		reshape();
+
+		// recreate semaphores
+		err = vkCreateSemaphore(context.device, &semaphoreCreateInfo, NULL, &context.image_acquired_semaphore);
+		assert(!err);
+
+		err = vkCreateSemaphore(context.device, &semaphoreCreateInfo, NULL, &context.draw_complete_semaphore);
+		assert(!err);
 	} else
 	if (err == VK_SUBOPTIMAL_KHR) {
 		// demo->swapchain is not as optimal as it could be, but the platform's
@@ -1311,10 +1353,9 @@ void VKRenderer::finishFrame()
 	};
 
 	err = context.fpQueuePresentKHR(context.queue, &present);
+	auto needsReshape = false;
 	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
-		// context.swapchain is out of date (e.g. the window was resized) and
-		// must be recreated:
-		// resize (demo);
+		needsReshape = true;
 	} else
 	if (err == VK_SUBOPTIMAL_KHR) {
 		// context.swapchain is not as optimal as it could be, but the platform's
@@ -1343,6 +1384,8 @@ void VKRenderer::finishFrame()
 	//
 	finishPipeline();
 	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
+
+	if (needsReshape == true) reshape();
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
@@ -2123,28 +2166,30 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
-	VkViewport viewport;
-	memset(&viewport, 0, sizeof(viewport));
-	viewport.width = (float)width;
-	viewport.height = (float)height;
-	viewport.x = (float)x;
-	viewport.y = (float)y;
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-	vkCmdSetViewport(context.draw_cmd, 0, 1, &viewport);
+	memset(&context.viewport, 0, sizeof(context.viewport));
+	context.viewport.width = (float)width;
+	context.viewport.height = (float)height;
+	context.viewport.x = (float)x;
+	context.viewport.y = (float)y;
+	context.viewport.minDepth = 0.0f;
+	context.viewport.maxDepth = 1.0f;
 
-	VkRect2D scissor;
-	memset(&scissor, 0, sizeof(scissor));
-	scissor.extent.width = width;
-	scissor.extent.height = height;
-	scissor.offset.x = x;
-	scissor.offset.y = y;
-	vkCmdSetScissor(context.draw_cmd, 0, 1, &scissor);
+	memset(&context.scissor, 0, sizeof(context.scissor));
+	context.scissor.extent.width = width;
+	context.scissor.extent.height = height;
+	context.scissor.offset.x = x;
+	context.scissor.offset.y = y;
+
+	//
+	vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
+	vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
 }
 
 void VKRenderer::updateViewPort()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
+	vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
 }
 
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
@@ -2236,16 +2281,17 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	auto& depth_buffer = context.depth_buffers[context.depth_buffer_idx];
-	depth_buffer.id = context.depth_buffer_idx++;
-	depth_buffer.format = VK_FORMAT_D32_SFLOAT;
+	auto& depth_buffer_texture = context.textures[context.texture_idx];
+	depth_buffer_texture.id = context.texture_idx++;
+	depth_buffer_texture.format = VK_FORMAT_D32_SFLOAT;
+	depth_buffer_texture.uploaded = false;
 
 	const VkImageCreateInfo image = {
 		sType: VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		pNext: NULL,
 		flags: 0,
 		imageType: VK_IMAGE_TYPE_2D,
-		format: depth_buffer.format,
+		format: depth_buffer_texture.format,
 		extent: {
 			width: width,
 			height: height,
@@ -2273,11 +2319,11 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 	bool pass;
 
 	/* create image */
-	err = vkCreateImage(context.device, &image, NULL, &depth_buffer.image);
+	err = vkCreateImage(context.device, &image, NULL, &depth_buffer_texture.image);
 	assert(!err);
 
 	/* get memory requirements for this object */
-	vkGetImageMemoryRequirements(context.device, depth_buffer.image, &mem_reqs);
+	vkGetImageMemoryRequirements(context.device, depth_buffer_texture.image, &mem_reqs);
 
 	/* select memory size and type */
 	mem_alloc.allocationSize = mem_reqs.size;
@@ -2285,20 +2331,22 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 	assert(pass);
 
 	/* allocate memory */
-	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &depth_buffer.mem);
+	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &depth_buffer_texture.mem);
 	assert(!err);
 
 	/* bind memory */
-	err = vkBindImageMemory(context.device, depth_buffer.image, depth_buffer.mem, 0);
+	err = vkBindImageMemory(context.device, depth_buffer_texture.image, depth_buffer_texture.mem, 0);
 	assert(!err);
 
 	Console::println(string(__FUNCTION__) + ": " + to_string(__LINE__) + ": setImageLayout()");
+
+	depth_buffer_texture.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 	setImageLayout(
 		true,
-		depth_buffer.image,
+		depth_buffer_texture.image,
 		VK_IMAGE_ASPECT_DEPTH_BIT,
 		VK_IMAGE_LAYOUT_UNDEFINED,
-		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		depth_buffer_texture.image_layout,
 		(VkAccessFlagBits)0
 	);
 
@@ -2306,9 +2354,9 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 		sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		pNext: NULL,
 		flags: 0,
-		image: depth_buffer.image,
+		image: depth_buffer_texture.image,
 		viewType: VK_IMAGE_VIEW_TYPE_2D,
-		format: depth_buffer.format,
+		format: depth_buffer_texture.format,
 		components: VkComponentMapping(),
 		subresourceRange: {
 			aspectMask: VK_IMAGE_ASPECT_DEPTH_BIT,
@@ -2320,20 +2368,23 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 	};
 
 	/* create image view */
-	err = vkCreateImageView(context.device, &view, NULL, &depth_buffer.view);
+	err = vkCreateImageView(context.device, &view, NULL, &depth_buffer_texture.view);
 	assert(!err);
 
+	depth_buffer_texture.sampler = VK_NULL_HANDLE;
+
 	// done
-	return depth_buffer.id;
+	return depth_buffer_texture.id;
 }
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	auto& color_buffer = context.color_buffers[context.color_buffer_idx];
-	color_buffer.id = context.color_buffer_idx++;
+	auto& color_buffer = context.textures[context.texture_idx];
+	color_buffer.id = context.texture_idx++;
 
+	/*
 	VkResult err;
 	VkImageViewCreateInfo color_attachment_view =
 		{
@@ -2360,6 +2411,7 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 
 	err = vkCreateImageView(context.device, &color_attachment_view, NULL, &color_buffer.view);
 	assert(!err);
+	*/
 
 	return color_buffer.id;
 }
@@ -2570,6 +2622,22 @@ void VKRenderer::bindTexture(int32_t textureId)
 void VKRenderer::disposeTexture(int32_t textureId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	Console::println(to_string(textureId));
+
+	auto textureObjectIt = context.textures.find(textureId);
+	if (textureObjectIt == context.textures.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		return;
+	}
+
+	auto& texture = textureObjectIt->second;
+	vkDestroyImageView(context.device, texture.view, NULL);
+	vkDestroyImage(context.device, texture.image, NULL);
+	vkFreeMemory(context.device, texture.mem, NULL);
+	vkDestroySampler(context.device, texture.sampler, NULL);
+
+	context.textures.erase(textureObjectIt);
 }
 
 int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
