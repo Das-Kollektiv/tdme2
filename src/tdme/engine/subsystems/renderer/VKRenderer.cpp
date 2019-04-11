@@ -1475,62 +1475,99 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 	// do some shader adjustments
 	{
 		// pre parse shader code
-		string newShaderSource;
-		vector<string> definitions;
+		vector<string> newShaderSourceLines;
 		vector<string> uniforms;
 		shaderSource = StringUtils::replace(shaderSource, "\r", "");
-		shaderSource = StringUtils::replace(shaderSource, "#version 330", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n");
+		shaderSource = StringUtils::replace(shaderSource, "\t", " ");
+		shaderSource = StringUtils::replace(shaderSource, "#version 330", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n\n");
 		StringTokenizer t;
 		t.tokenize(shaderSource, "\n");
+		vector<string> definitions;
 		stack<string> testedDefinitions;
+		vector<bool> matchedDefinitions;
+		auto inLocationCount = 0;
+		auto outLocationCount = 0;
 		while (t.hasMoreTokens() == true) {
+			auto matchedAllDefinitions = true;
+			for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
 			auto line = StringUtils::trim(t.nextToken());
 			if (StringUtils::startsWith(line, "//") == true) continue;
 			auto position = -1;
-			if ((position = line.find("uniform ")) != -1) {
-				if (line.find("sampler2D") != -1) {
-					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform with sampler2D: skipping: " + line);
-					newShaderSource+= line + "\n";
-				} else {
-					string uniform;
-					if (StringUtils::startsWith(line, "uniform") == true) {
-						uniform = StringUtils::substring(line, string("uniform").size() + 1);
-					} else
-					if (StringUtils::startsWith(line, "layout") == true) {
-						uniform = StringUtils::substring(line, line.find(") uniform") + string(") uniform").size());
+			if (StringUtils::startsWith(line, "#if defined(") == true) {
+				auto definition = StringUtils::trim(StringUtils::substring(line, string("#if defined(").size(), (position = line.find(")")) != -1?position:line.size()));
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
+				testedDefinitions.push(definition);
+				bool matched = false;
+				for (auto availableDefinition: definitions) {
+					if (definition == availableDefinition) {
+						matched = true;
+						break;
 					}
-					uniforms.push_back(uniform);
-					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
 				}
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition + ": " + to_string(matched));
+				matchedDefinitions.push_back(matched);
+				newShaderSourceLines.push_back("// " + line);
 			} else
-			if ((position = line.find("#define ")) != -1) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have define: " + line);
-				newShaderSource+= line + "\n";
+			if (StringUtils::startsWith(line, "#define ") == true) {
+				auto definition = StringUtils::trim(StringUtils::substring(line, string("#define ").size()));
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have define: " + definition);
+				definitions.push_back(definition);
+				newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
 			} else
-			if ((position = line.find("#if defined(")) != -1) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + line);
-				testedDefinitions.push("TODO");
-				newShaderSource+= line + "\n";
+			if (StringUtils::startsWith(line, "#else") == true) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else: " + line);
+				matchedDefinitions[matchedDefinitions.size() - 1] = !matchedDefinitions[matchedDefinitions.size() - 1];
+				newShaderSourceLines.push_back("// " + line);
+				matchedAllDefinitions = true;
+				for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
 			} else
-			if ((position = line.find("#endif")) != -1) {
+			if (StringUtils::startsWith(line, "#endif") == true) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test end: " + line);
-				if (testedDefinitions.size() == 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test end: invalid depth"); else testedDefinitions.pop();
-				newShaderSource+= line + "\n";
+				if (testedDefinitions.size() == 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test end: invalid depth"); else {
+					testedDefinitions.pop();
+					matchedDefinitions.pop_back();
+				}
+				newShaderSourceLines.push_back("// " + line);
+			} else
+			if (matchedAllDefinitions == true) {
+				if ((StringUtils::startsWith(line, "uniform ")) == true) {
+					if (line.find("sampler2D") != -1) {
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform with sampler2D: skipping: " + line);
+						newShaderSourceLines.push_back(line);
+					} else {
+						string uniform;
+						if (StringUtils::startsWith(line, "uniform") == true) {
+							uniform = StringUtils::substring(line, string("uniform").size() + 1);
+						} else
+						if (StringUtils::startsWith(line, "layout") == true) {
+							uniform = StringUtils::substring(line, line.find(") uniform") + string(") uniform").size());
+						}
+						uniforms.push_back(uniform);
+						newShaderSourceLines.push_back("// " + line);
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
+					}
+				} else
+				if (StringUtils::startsWith(line, "out ") == true) {
+					newShaderSourceLines.push_back("layout (location = " + to_string(outLocationCount++) + ") " + line);
+				} else
+				if (StringUtils::startsWith(line, "in ") == true) {
+					newShaderSourceLines.push_back("layout (location = " + to_string(inLocationCount++) + ") " + line);
+				} else {
+					newShaderSourceLines.push_back(line);
+				}
 			} else {
-				newShaderSource+= line + "\n";
+				newShaderSourceLines.push_back("// " + line);
 			}
 		}
 
 		// generate new uniform block
 		auto bindingIdx = getUniformBufferObjectBindingIdx(type);
-		shaderSource = newShaderSource;
 		string uniformsBlock = "";
 		if (uniforms.size() > 0) {
-			uniformsBlock+= "\n";
 			uniformsBlock+= "layout(std430, binding=" + to_string(bindingIdx) + ") uniform UniformBufferObject\n";
 			uniformsBlock+= "{\n";
 			for (auto uniform: uniforms) {
-				uniformsBlock+= "\t" + uniform + "\n";
+				uniformsBlock+= uniform + "\n";
 			}
 			uniformsBlock+= "} ubo_generated;\n";
 		}
@@ -1578,24 +1615,42 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				context.shaders.erase(shaderStruct.id);
 		        return false;
 			}
-			shaderSource = StringUtils::replace(
-				shaderSource,
-				uniformName,
-				"ubo_generated." + uniformName
-			);
+		}
+
+		// construct new shader from vector and flip y, also inject uniforms
+		shaderSource.clear();
+		auto injectedYFlip = false;
+		auto injectedUniforms = false;
+		for (int i = newShaderSourceLines.size() - 1; i >= 0; i--) {
+			auto line = newShaderSourceLines[i] + "\n";
+			if (StringUtils::startsWith(line, "//") == true) {
+				shaderSource = line + shaderSource;
+			} else {
+				for (auto& uniformIt: shaderStruct.uniforms) {
+					line = StringUtils::replace(
+						line,
+						uniformIt.second.name,
+						"ubo_generated." + uniformIt.second.name
+					);
+				}
+
+				if (type == SHADER_VERTEX_SHADER && injectedYFlip == false && StringUtils::startsWith(line, "}") == true) {
+					shaderSource = "gl_Position.y*= -1.0;\n" + line + shaderSource;
+					injectedYFlip = true;
+				} else
+				if (injectedUniforms == false && StringUtils::startsWith(line, "void main(") == true) {
+					shaderSource = uniformsBlock + line + shaderSource;
+					injectedUniforms = true;
+				}  else {
+					shaderSource = line + shaderSource;
+				}
+			}
 		}
 
 		// debug uniforms
 		for (auto& uniformIt: shaderStruct.uniforms) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Uniform: " + uniformIt.second.name + ": " + to_string(uniformIt.second.position) + " / " + to_string(uniformIt.second.size));
 		}
-
-		// finally inject uniforms
-		shaderSource = StringUtils::replace(
-			shaderSource,
-			"{$UNIFORMS}",
-			uniformsBlock
-		);
 	}
 
 	char* sourceHeap = new char[shaderSource.length() + 1];

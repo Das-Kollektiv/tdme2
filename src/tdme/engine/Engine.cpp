@@ -572,11 +572,11 @@ void Engine::initialize(bool debug)
 
 	// create lighting shader
 	lightingShader = new LightingShader(renderer);
-	//lightingShader->initialize();
+	// lightingShader->initialize();
 
 	// create particles shader
 	particlesShader = new ParticlesShader(this, renderer);
-	//particlesShader->initialize();
+	// particlesShader->initialize();
 
 	// create gui shader
 	guiShader = new GUIShader(renderer);

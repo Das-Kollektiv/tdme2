@@ -8,11 +8,9 @@ layout (location = 2) in vec4 inColor;
 // uniforms
 uniform mat3 textureMatrix;
 
-{$UNIFORMS}
-
 // will be passed to fragment shader
-layout (location = 0) out vec4 vsFragColor;
-layout (location = 1) out vec2 vsFragTextureUV;
+out vec4 vsFragColor;
+out vec2 vsFragTextureUV;
 
 // main
 void main(void) {
@@ -22,5 +20,4 @@ void main(void) {
 
 	// compute gl position
 	gl_Position = vec4(inVertex, 1.0);
-	gl_Position.y*= -1.0;
 }
