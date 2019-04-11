@@ -1479,7 +1479,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		vector<string> definitions;
 		vector<string> uniforms;
 		shaderSource = StringUtils::replace(shaderSource, "\r", "");
-		shaderSource = StringUtils::replace(shaderSource, "#version 330", "#version 430");
+		shaderSource = StringUtils::replace(shaderSource, "#version 330", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n");
 		StringTokenizer t;
 		t.tokenize(shaderSource, "\n");
 		stack<string> testedDefinitions;
@@ -1527,12 +1527,12 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		string uniformsBlock = "";
 		if (uniforms.size() > 0) {
 			uniformsBlock+= "\n";
-			uniformsBlock+= "layout(binding=" + to_string(bindingIdx) + ") uniform UniformBufferObject\n";
+			uniformsBlock+= "layout(std430, binding=" + to_string(bindingIdx) + ") uniform UniformBufferObject\n";
 			uniformsBlock+= "{\n";
 			for (auto uniform: uniforms) {
 				uniformsBlock+= "\t" + uniform + "\n";
 			}
-			uniformsBlock+= "} ubo;\n";
+			uniformsBlock+= "} ubo_generated;\n";
 		}
 
 		// replace uniforms to use ubo
@@ -1547,17 +1547,17 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (uniformType == "int") {
 				auto size = sizeof(int32_t);
 				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
-				shaderStruct.ubo_size+= size;
+				shaderStruct.ubo_size+= 16;
 			} else
 			if (uniformType == "float") {
 				auto size = sizeof(float);
 				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
-				shaderStruct.ubo_size+= size;
+				shaderStruct.ubo_size+= 16;
 			} else
 			if (uniformType == "vec3") {
 				auto size = sizeof(float) * 3;
 				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
-				shaderStruct.ubo_size+= sizeof(float) * 4;
+				shaderStruct.ubo_size+= 16;
 			} else
 			if (uniformType == "vec4") {
 				auto size = sizeof(float) * 4;
@@ -1565,9 +1565,9 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				shaderStruct.ubo_size+= size;
 			} else
 			if (uniformType == "mat3") {
-				auto size = sizeof(float) * 9;
+				auto size = sizeof(float) * 12;
 				shaderStruct.uniforms[uniformName] = {name: uniformName, position: shaderStruct.ubo_size, size: size};
-				shaderStruct.ubo_size+= sizeof(float) * 12;
+				shaderStruct.ubo_size+= size;
 			} else
 			if (uniformType == "mat4") {
 				auto size = sizeof(float) * 16;
@@ -1581,7 +1581,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			shaderSource = StringUtils::replace(
 				shaderSource,
 				uniformName,
-				"ubo." + uniformName
+				"ubo_generated." + uniformName
 			);
 		}
 
@@ -2098,11 +2098,6 @@ void VKRenderer::setProgramUniformInternal(int32_t uniformId, uint8_t* data, int
 			shaderIdx++;
 			continue;
 		}
-		if (shaderUniform.size != size) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform size mismatch");
-			shaderIdx++;
-			continue;
-		}
 		for (auto i = 0; i < size; i++) {
 			context.uniform_buffers[shaderIdx][shaderUniform.position + i] = data[i];
 		}
@@ -2129,7 +2124,20 @@ void VKRenderer::setProgramUniformFloat(int32_t uniformId, float value)
 void VKRenderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	setProgramUniformInternal(uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+	array<float, 12> _data;
+	_data[0] = data[0];
+	_data[1] = data[1];
+	_data[2] = data[2];
+	_data[3] = 0.0;
+	_data[4] = data[3];
+	_data[5] = data[4];
+	_data[6] = data[5];
+	_data[7] = 0.0;
+	_data[8] = data[6];
+	_data[9] = data[7];
+	_data[10] = data[8];
+	_data[11] = 0.0;
+	setProgramUniformInternal(uniformId, (uint8_t*)_data.data(), _data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)

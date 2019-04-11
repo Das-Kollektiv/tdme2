@@ -4,9 +4,6 @@
 layout(binding = 2) uniform sampler2D diffuseTextureUnit;
 
 uniform int diffuseTextureAvailable;
-uniform int padding1;
-uniform int padding2;
-uniform int padding3;
 uniform vec4 effectColorMul;
 uniform vec4 effectColorAdd;
 
