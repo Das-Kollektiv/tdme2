@@ -402,6 +402,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			glfwTerminate();
 			return;
 		}
+		glfwSetCharCallback(glfwWindow, Application::glfwOnChar);
 		glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
 		glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
 		glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
@@ -494,6 +495,15 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 }
 
 #if defined(VULKAN)
+
+	void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
+		if (Application::inputEventHandler == nullptr) return;
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		Application::inputEventHandler->onKeyDown(key, (int)mouseX, (int)mouseY);
+		Application::inputEventHandler->onKeyUp(key, (int)mouseX, (int)mouseY);
+	}
+
 	bool Application::glfwIsSpecialKey(int key) {
 		return
 			key == GLFW_KEY_UP ||
@@ -506,29 +516,28 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 			key == GLFW_KEY_DELETE ||
 			key == GLFW_KEY_HOME ||
 			key == GLFW_KEY_END ||
-			key == GLFW_KEY_ESCAPE;
+			key == GLFW_KEY_ESCAPE ||
+			key == GLFW_KEY_LEFT_SHIFT ||
+			key == GLFW_KEY_LEFT_CONTROL ||
+			key == GLFW_KEY_LEFT_ALT ||
+			key == GLFW_KEY_LEFT_SUPER ||
+			key == GLFW_KEY_RIGHT_SHIFT ||
+			key == GLFW_KEY_RIGHT_CONTROL ||
+			key == GLFW_KEY_RIGHT_ALT ||
+			key == GLFW_KEY_RIGHT_SUPER;
 	}
 
 	void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
 		if (Application::inputEventHandler == nullptr) return;
+		if (glfwIsSpecialKey(key) == false) return;
 		glfwMods = mods;
-		if (mods & GLFW_MOD_SHIFT == 0) key = Character::toLowerCase(key);
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
-		Console::println(to_string(key) + " / " + to_string(scanCode));
 		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-			if (glfwIsSpecialKey(key) == true) {
-				Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
-			} else {
-				Application::inputEventHandler->onKeyDown(key, (int)mouseX, (int)mouseY);
-			}
+			Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
 		} else
 		if (action == GLFW_RELEASE) {
-			if (glfwIsSpecialKey(key) == true) {
-				Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
-			} else {
-				Application::inputEventHandler->onKeyUp(key, (int)mouseX, (int)mouseY);
-			}
+			Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
 		}
 	}
 

@@ -206,6 +206,13 @@ private:
 
 	#if defined(VULKAN)
 		/**
+		 * GLFW on char
+		 * @param window window
+		 * @param key key
+		 */
+		static void glfwOnChar(GLFWwindow* window, unsigned int key);
+
+		/**
 		 * @return if key should be treated as special key
 		 */
 		static bool glfwIsSpecialKey(int key);
