@@ -36,28 +36,6 @@ GUIKeyboardEvent::GUIKeyboardEvent()
 	this->processed = false;
 }
 
-constexpr int32_t GUIKeyboardEvent::KEYCODE_TAB;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_TAB_SHIFT;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_BACKSPACE;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_RETURN;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_SPACE;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_DELETE;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_LEFT;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_UP;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_RIGHT;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_DOWN;
-
-constexpr int32_t GUIKeyboardEvent::KEYCODE_ESCAPE;
-
 GUIKeyboardEvent::~GUIKeyboardEvent() {
 }
 

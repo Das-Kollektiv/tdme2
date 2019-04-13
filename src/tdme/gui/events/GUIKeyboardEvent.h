@@ -35,6 +35,18 @@ public:
 	static constexpr int32_t KEYCODE_POS1 { 106 };
 	static constexpr int32_t KEYCODE_END { 107 };
 	static constexpr int32_t KEYCODE_ESCAPE { 27 };
+	static constexpr int32_t KEYCODE_F1 { GLUT_KEY_F1 };
+	static constexpr int32_t KEYCODE_F2 { GLUT_KEY_F2 };
+	static constexpr int32_t KEYCODE_F3 { GLUT_KEY_F3 };
+	static constexpr int32_t KEYCODE_F4 { GLUT_KEY_F4 };
+	static constexpr int32_t KEYCODE_F5 { GLUT_KEY_F5 };
+	static constexpr int32_t KEYCODE_F6 { GLUT_KEY_F6 };
+	static constexpr int32_t KEYCODE_F7 { GLUT_KEY_F7 };
+	static constexpr int32_t KEYCODE_F8 { GLUT_KEY_F8 };
+	static constexpr int32_t KEYCODE_F9 { GLUT_KEY_F9 };
+	static constexpr int32_t KEYCODE_F10 { GLUT_KEY_F10 };
+	static constexpr int32_t KEYCODE_F11 { GLUT_KEY_F11 };
+	static constexpr int32_t KEYCODE_F12 { GLUT_KEY_F12 };
 
 private:
 	int64_t time {  };
