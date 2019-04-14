@@ -1,7 +1,7 @@
 #version 330
 
 // uniforms
-layout(binding = 2) uniform sampler2D diffuseTextureUnit;
+uniform sampler2D diffuseTextureUnit;
 
 uniform int diffuseTextureAvailable;
 uniform vec4 effectColorMul;

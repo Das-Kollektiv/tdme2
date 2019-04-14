@@ -45,6 +45,7 @@ void GUIShader::initialize()
 	if (renderer->linkProgram(programId) == false) return;
 
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programId, "diffuseTextureUnit");
+	if (uniformDiffuseTextureUnit == -1) return;
 
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programId, "diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1) return;
@@ -65,7 +66,7 @@ void GUIShader::initialize()
 void GUIShader::useProgram()
 {
 	renderer->useProgram(programId);
-	if (uniformDiffuseTextureUnit != -1) renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, 0);
+	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, 0);
 	isRunning = true;
 }
 
