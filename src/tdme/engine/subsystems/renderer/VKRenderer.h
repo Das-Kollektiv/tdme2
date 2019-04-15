@@ -144,6 +144,7 @@ private:
 		struct map<int32_t, buffer_object> buffers;
 		struct map<int32_t, texture_object> textures;
 
+		int empty_vertex_buffer { 0 };
 		int depth_buffer_default { 0 };
 		int white_texture_default { 0 };
 
@@ -171,7 +172,7 @@ private:
 
 		int32_t program_id { 0 };
 		int32_t bound_indices_buffer { 0 };
-		array<int32_t, 12> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		array<int32_t, 8> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
 		int32_t bound_texture_id { 0 };
 
@@ -186,10 +187,9 @@ private:
 				VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
 			};
 			VkBuffer indices_buffer { VK_NULL_HANDLE };
-			array<VkBuffer, 12> vertex_buffers = {
+			array<VkBuffer, 8> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 			array<VkBuffer, 2> ubo_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE

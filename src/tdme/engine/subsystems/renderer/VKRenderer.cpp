@@ -1047,6 +1047,16 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	//
+	context.empty_vertex_buffer = createBufferObjects(1)[0];
+	array<float, 16> bogusVertexBuffer = {{
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f,
+	}};
+	uploadBufferObjectInternal(context.empty_vertex_buffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
+
+	//
 	initializeRenderPass();
 	initializeFrameBuffers();
 }
@@ -1863,7 +1873,6 @@ void VKRenderer::createPipeline(program_type& program) {
 		bindingIdx++;
 
 		// normals
-		/*
 		vi_bindings[bindingIdx].binding = 1;
 		vi_bindings[bindingIdx].stride = sizeof(float) * 3;
 		vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -1872,7 +1881,6 @@ void VKRenderer::createPipeline(program_type& program) {
 		vi_attrs[bindingIdx].format = VK_FORMAT_R32G32B32_SFLOAT;
 		vi_attrs[bindingIdx].offset = 0;
 		bindingIdx++;
-		*/
 
 		// texture coordinates
 		vi_bindings[bindingIdx].binding = bindingIdx;
@@ -2890,8 +2898,7 @@ void VKRenderer::bindIndicesBufferObject(int32_t bufferObjectId)
 void VKRenderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	// context.boundBuffers[2] = bufferObjectId;
-	context.bound_buffers[1] = bufferObjectId;
+	context.bound_buffers[2] = bufferObjectId;
 }
 
 void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
@@ -2903,39 +2910,43 @@ void VKRenderer::bindVerticesBufferObject(int32_t bufferObjectId)
 void VKRenderer::bindNormalsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	// context.boundBuffers[1] = bufferObjectId;
+	context.bound_buffers[1] = bufferObjectId;
 }
 
 void VKRenderer::bindColorsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	//context.boundBuffers[3] = bufferObjectId;
-	context.bound_buffers[2] = bufferObjectId;
+	context.bound_buffers[3] = bufferObjectId;
 }
 
 void VKRenderer::bindTangentsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[4] = bufferObjectId;
 }
 
 void VKRenderer::bindBitangentsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[5] = bufferObjectId;
 }
 
 void VKRenderer::bindModelMatricesBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[6] = bufferObjectId;
 }
 
 void VKRenderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[7] = bufferObjectId;
 }
 
 void VKRenderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[8] = bufferObjectId;
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
@@ -2991,9 +3002,10 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 
 	//
 	render_command.indices_buffer = getBufferObjectInternal(context.bound_indices_buffer);
-	render_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0]);
-	render_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1]);
-	render_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2]);
+	render_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
+	render_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
+	render_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
+	render_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
 	render_command.textures[0].sampler = texture_object.sampler;
 	render_command.textures[0].view = texture_object.view;
 	render_command.textures[0].image_layout = texture_object.image_layout;
@@ -3097,9 +3109,15 @@ void VKRenderer::flushCommands() {
 		vkUpdateDescriptorSets(context.device, 3, descriptorSetWrites, 0, NULL);
 		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[desc_used], 0, nullptr);
 		vkCmdBindIndexBuffer(context.draw_cmd, command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
-		VkBuffer vertexBuffersBuffer[3] = {command.vertex_buffers[0], command.vertex_buffers[1], command.vertex_buffers[2]};
-		VkDeviceSize vertexBuffersOffsets[3] = { 0, 0, 0 };
-		vkCmdBindVertexBuffers(context.draw_cmd, 0, 3, vertexBuffersBuffer, vertexBuffersOffsets);
+		#define VERTEX_BUFFER_COUNT	4
+		VkBuffer vertexBuffersBuffer[VERTEX_BUFFER_COUNT] = {
+			command.vertex_buffers[0],
+			command.vertex_buffers[1],
+			command.vertex_buffers[2],
+			command.vertex_buffers[3]
+		};
+		VkDeviceSize vertexBuffersOffsets[VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
+		vkCmdBindVertexBuffers(context.draw_cmd, 0, VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 		vkCmdDrawIndexed(context.draw_cmd, command.count * 3, 1, command.offset * 3, 0, 0);
 
 		desc_used++;
