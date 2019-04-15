@@ -540,15 +540,15 @@ void Engine::initialize(bool debug)
 		#endif
 	#endif
 
-	// init
-	initialized = true;
-	renderer->initialize();
-	renderer->initializeFrame();
-
 	// create manager
 	textureManager = new TextureManager(renderer);
 	vboManager = new VBOManager(renderer);
 	meshManager = new MeshManager();
+
+	// init
+	initialized = true;
+	renderer->initialize();
+	renderer->initializeFrame();
 
 	// create object 3d vbo renderer
 	object3DVBORenderer = new Object3DVBORenderer(this, renderer);
@@ -576,7 +576,7 @@ void Engine::initialize(bool debug)
 
 	// create particles shader
 	particlesShader = new ParticlesShader(this, renderer);
-	// particlesShader->initialize();
+	particlesShader->initialize();
 
 	// create gui shader
 	guiShader = new GUIShader(renderer);
@@ -584,11 +584,11 @@ void Engine::initialize(bool debug)
 
 	// create frame buffer render shader
 	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
-	// frameBufferRenderShader->initialize();
+	frameBufferRenderShader->initialize();
 
 	// create post processing shader
 	postProcessingShader = new PostProcessingShader(renderer);
-	// postProcessingShader->initialize();
+	postProcessingShader->initialize();
 
 	// create post processing
 	postProcessing = new PostProcessing();

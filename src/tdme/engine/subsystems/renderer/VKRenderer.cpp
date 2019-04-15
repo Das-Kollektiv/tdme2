@@ -17,10 +17,10 @@
 #include <array>
 #include <cassert>
 #include <map>
-#include <vector>
 #include <stack>
 #include <string>
-
+#include <unordered_map>
+#include <vector>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
@@ -73,6 +73,7 @@ using std::map;
 using std::stack;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::VKRenderer;
@@ -1047,6 +1048,10 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	//
+	initializeRenderPass();
+	initializeFrameBuffers();
+
+	//
 	context.empty_vertex_buffer = createBufferObjects(1)[0];
 	array<float, 16> bogusVertexBuffer = {{
 		0.0f, 0.0f, 0.0f, 0.0f,
@@ -1057,8 +1062,7 @@ void VKRenderer::initialize()
 	uploadBufferObjectInternal(context.empty_vertex_buffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
 	//
-	initializeRenderPass();
-	initializeFrameBuffers();
+	context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"));
 }
 
 void VKRenderer::initializeRenderPass() {
@@ -1070,9 +1074,6 @@ void VKRenderer::initializeRenderPass() {
 	// depth buffer
 	if (context.depth_buffer_default != 0) disposeTexture(context.depth_buffer_default);
 	context.depth_buffer_default = createDepthBufferTexture(context.width, context.height);
-
-	//
-	context.white_texture_default = 0;
 
 	// render pass
 	const VkAttachmentDescription attachments[2] = {
@@ -1493,6 +1494,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		vector<bool> matchedDefinitions;
 		auto inLocationCount = 0;
 		auto outLocationCount = 0;
+		auto uboUniformCount = 0;
 		while (t.hasMoreTokens() == true) {
 			auto matchedAllDefinitions = true;
 			for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
@@ -1541,12 +1543,9 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					if (line.find("sampler2D") != -1) {
 						uniform = StringUtils::substring(line, string("uniform").size() + 1);
 						newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING" + to_string(shaderStruct.samplers++) + "_IDX}) " + line);
-					} else
-					if (StringUtils::startsWith(line, "uniform") == true) {
+					} else {
 						uniform = StringUtils::substring(line, string("uniform").size() + 1);
-					} else
-					if (StringUtils::startsWith(line, "layout") == true) {
-						uniform = StringUtils::substring(line, line.find(") uniform") + string(") uniform").size());
+						uboUniformCount++;
 					}
 					uniforms.push_back(uniform);
 					newShaderSourceLines.push_back("// " + line);
@@ -1573,66 +1572,82 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		shaderStruct.samplers = 0;
 		shaderStruct.ubo_size = 0;
 		if (uniforms.size() > 0) {
-			uniformsBlock+= "layout(std430, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
-			uniformsBlock+= "{\n";
+			if (uboUniformCount > 0) {
+				uniformsBlock+= "layout(std430, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
+				uniformsBlock+= "{\n";
+			}
 			for (auto uniform: uniforms) {
 				t.tokenize(uniform, "\t ;");
 				string uniformType;
 				string uniformName;
 				if (t.hasMoreTokens() == true) uniformType = t.nextToken();
 				while (t.hasMoreTokens() == true) uniformName = t.nextToken();
+				// TODO: arrays
+				// if (uniformName.find('[') != -1) uniformName = StringUtils::substring(uniformName, 0, uniformName.find('['));
 				if (uniformType == "int") {
 					auto size = sizeof(int32_t);
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size};
+					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
 					shaderStruct.ubo_size+= 16;
 				} else
 				if (uniformType == "float") {
 					auto size = sizeof(float);
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size};
+					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
 					shaderStruct.ubo_size+= 16;
 				} else
 				if (uniformType == "vec3") {
 					auto size = sizeof(float) * 3;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size};
+					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
 					shaderStruct.ubo_size+= 16;
 				} else
 				if (uniformType == "vec4") {
 					auto size = sizeof(float) * 4;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size};
+					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
 					shaderStruct.ubo_size+= size;
 				} else
 				if (uniformType == "mat3") {
 					auto size = sizeof(float) * 12;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size};
+					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
 					shaderStruct.ubo_size+= size;
 				} else
 				if (uniformType == "mat4") {
 					auto size = sizeof(float) * 16;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size};
+					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
 					shaderStruct.ubo_size+= size;
 				} else
 				if (uniformType == "sampler2D") {
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::SAMPLER2D, position: -1, size: 0};
+					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::SAMPLER2D, position: -1, size: 0, texture_unit: -1};
 					continue;
 				} else {
 					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Unknown uniform type: " + uniformType);
 					context.shaders.erase(shaderStruct.id);
 					return false;
 				}
-				uniformsBlock+= uniform + "\n";
+				if (uboUniformCount > 0) uniformsBlock+= uniform + "\n";
 			}
-			uniformsBlock+= "} ubo_generated;\n";
+			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
 		}
 
 		// construct new shader from vector and flip y, also inject uniforms
 		shaderSource.clear();
+		auto injectedUniformsAt = -1;
 		auto injectedYFlip = false;
-		auto injectedUniforms = false;
+		// inject uniform before first method
+		for (auto i = 0; i < newShaderSourceLines.size(); i++) {
+			auto line = newShaderSourceLines[i];
+			if (line.find('(') != -1 && line.find(')') != -1 && StringUtils::startsWith(line, "layout") == false) {
+				injectedUniformsAt = i;
+				break;
+			}
+		}
 		for (int i = newShaderSourceLines.size() - 1; i >= 0; i--) {
 			auto line = newShaderSourceLines[i] + "\n";
+			if (i == injectedUniformsAt) {
+				shaderSource = uniformsBlock + line + shaderSource;
+			} else
 			if (StringUtils::startsWith(line, "//") == true) {
 				shaderSource = line + shaderSource;
 			} else {
+				// rename uniforms to ubo uniforms
 				for (auto& uniformIt: shaderStruct.uniforms) {
 					if (uniformIt.second.type == shader_type::uniform_type::SAMPLER2D) continue;
 					line = StringUtils::replace(
@@ -1641,15 +1656,11 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						"ubo_generated." + uniformIt.second.name
 					);
 				}
-
+				// inject gl_Position flip before last } from main
 				if (type == SHADER_VERTEX_SHADER && injectedYFlip == false && StringUtils::startsWith(line, "}") == true) {
 					shaderSource = "gl_Position.y*= -1.0;\n" + line + shaderSource;
 					injectedYFlip = true;
-				} else
-				if (injectedUniforms == false && StringUtils::startsWith(line, "void main(") == true) {
-					shaderSource = uniformsBlock + line + shaderSource;
-					injectedUniforms = true;
-				}  else {
+				} else  {
 					shaderSource = line + shaderSource;
 				}
 			}
@@ -1686,7 +1697,7 @@ void VKRenderer::finishPipeline() {
 	context.bound_indices_buffer = 0;
 	context.bound_buffers.fill(0);
 	for (auto& ubo: context.uniform_buffers) ubo.clear();
-	context.bound_texture_id = 0;
+	context.bound_textures.fill(0);
 }
 
 void VKRenderer::createPipeline(program_type& program) {
@@ -2197,13 +2208,17 @@ void VKRenderer::setProgramUniformInternal(int32_t uniformId, uint8_t* data, int
 			continue;
 		}
 		auto& shaderUniform = shaderUniformIt->second;
-		if (context.uniform_buffers[shaderIdx].size() < shaderUniform.position + size) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform buffer is too small");
-			shaderIdx++;
-			continue;
-		}
-		for (auto i = 0; i < size; i++) {
-			context.uniform_buffers[shaderIdx][shaderUniform.position + i] = data[i];
+		if (shaderUniform.type == shader_type::uniform_type::SAMPLER2D) {
+			shaderUniform.texture_unit = *((int32_t*)data);
+		} else {
+			if (context.uniform_buffers[shaderIdx].size() < shaderUniform.position + size) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform buffer is too small");
+				shaderIdx++;
+				continue;
+			}
+			for (auto i = 0; i < size; i++) {
+				context.uniform_buffers[shaderIdx][shaderUniform.position + i] = data[i];
+			}
 		}
 		changedUniforms++;
 		shaderIdx++;
@@ -2531,15 +2546,15 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
 void VKRenderer::uploadTexture(Texture* texture)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	auto textureObjectIt = context.textures.find(context.bound_texture_id);
+	auto textureObjectIt = context.textures.find(context.bound_textures[activeTextureUnit]);
 	if (textureObjectIt == context.textures.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_texture_id));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_textures[activeTextureUnit]));
 		return;
 	}
 	auto& texture_object = textureObjectIt->second;
 
 	if (texture_object.uploaded == true) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(context.bound_texture_id));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(context.bound_textures[activeTextureUnit]));
 		return;
 	}
 
@@ -2720,14 +2735,14 @@ void VKRenderer::bindTexture(int32_t textureId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto textureObjectIt = context.textures.find(textureId);
-	context.bound_texture_id = 0;
+	context.bound_textures[activeTextureUnit] = 0;
 	if (textureId != 0) {
 		if (textureObjectIt == context.textures.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_texture_id));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_textures[activeTextureUnit]));
 			return;
 		}
 	}
-	context.bound_texture_id = textureId;
+	context.bound_textures[activeTextureUnit] = textureId;
 	onBindTexture(textureId);
 }
 
@@ -2989,16 +3004,21 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 		shaderIdx++;
 	}
 
-	auto textureObjectIt = context.textures.find(context.bound_texture_id);
-	if (textureObjectIt == context.textures.end()) {
-		textureObjectIt = context.textures.find(context.white_texture_default);
+	for (auto i = 0; i < context.bound_textures.size(); i++) {
+		auto textureId = context.bound_textures[i];
+		if (textureId == 0) continue;
+		auto textureObjectIt = context.textures.find(textureId);
+		if (textureObjectIt == context.textures.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(context.bound_textures[i]));
+			continue;
+		}
+		auto& texture_object = textureObjectIt->second;
+		render_command.textures[i] = {
+			sampler: texture_object.sampler,
+			view: texture_object.view,
+			image_layout: texture_object.image_layout
+		};
 	}
-	if (textureObjectIt == context.textures.end()) {
-		context.white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"));
-		textureObjectIt = context.textures.find(context.white_texture_default);
-	}
-
-	auto& texture_object = textureObjectIt->second;
 
 	//
 	render_command.indices_buffer = getBufferObjectInternal(context.bound_indices_buffer);
@@ -3006,9 +3026,6 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 	render_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
 	render_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
 	render_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
-	render_command.textures[0].sampler = texture_object.sampler;
-	render_command.textures[0].view = texture_object.view;
-	render_command.textures[0].image_layout = texture_object.image_layout;
 	render_command.count = triangles;
 	render_command.offset = trianglesOffset;
 }
@@ -3026,7 +3043,7 @@ void VKRenderer::flushCommands() {
 	// create pipeline
 	createPipeline(program);
 
-	VkDescriptorBufferInfo bufferInfos[4];
+	VkDescriptorBufferInfo bufferInfos[program.layout_bindings];
 	VkWriteDescriptorSet descriptorSetWrites[program.layout_bindings];
 	VkDescriptorImageInfo texDescs[program.layout_bindings];
 	vector<VKRenderer::context_type::render_command> render_commands_left;
@@ -3056,11 +3073,23 @@ void VKRenderer::flushCommands() {
 			for (auto uniformIt: shader.uniforms) {
 				auto& uniform = uniformIt.second;
 				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
-				texDescs[samplerIdx] = {
-					sampler: command.textures[samplerIdx].sampler,
-					imageView: command.textures[samplerIdx].view,
-					imageLayout: command.textures[samplerIdx].image_layout
-				};
+				auto commandTextureIt = command.textures.find(uniform.texture_unit);
+				if (commandTextureIt == command.textures.end()) {
+					auto contextTextureIt = context.textures.find(context.white_texture_default);
+					auto texture = contextTextureIt->second;
+					texDescs[samplerIdx] = {
+						sampler: texture.sampler,
+						imageView: texture.view,
+						imageLayout: texture.image_layout
+					};
+				} else {
+					auto& texture = commandTextureIt->second;
+					texDescs[samplerIdx] = {
+						sampler: texture.sampler,
+						imageView: texture.view,
+						imageLayout: texture.image_layout
+					};
+				}
 				descriptorSetWrites[uniform.position] = {
 					sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					pNext: NULL,
@@ -3106,7 +3135,7 @@ void VKRenderer::flushCommands() {
 		}
 
 		//
-		vkUpdateDescriptorSets(context.device, 3, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
 		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[desc_used], 0, nullptr);
 		vkCmdBindIndexBuffer(context.draw_cmd, command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
 		#define VERTEX_BUFFER_COUNT	4
@@ -3119,7 +3148,6 @@ void VKRenderer::flushCommands() {
 		VkDeviceSize vertexBuffersOffsets[VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
 		vkCmdBindVertexBuffers(context.draw_cmd, 0, VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 		vkCmdDrawIndexed(context.draw_cmd, command.count * 3, 1, command.offset * 3, 0, 0);
-
 		desc_used++;
 	}
 

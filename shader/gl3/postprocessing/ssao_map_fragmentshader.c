@@ -42,7 +42,7 @@ vec3 normal_from_depth(float depth, vec2 texCoord) {
 }
 
 // main
-void main (void) {
+void main(void) {
 	float depth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 
 	vec3 random = normalize(texture(randomTextureUnit, vsFragTextureUV * 64.0).rgb);

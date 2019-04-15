@@ -18,7 +18,7 @@ out vec4 outColor;
 	in float fragDepth;
 #endif
 
-void main (void) {
+void main(void) {
 	outColor = clamp(effectColorAdd + texture(diffuseTextureUnit, gl_PointCoord) * fragColor * effectColorMul, 0.0, 1.0);
 	#if defined(HAVE_DEPTH_FOG)
 		if (fragDepth > FOG_DISTANCE_NEAR) {

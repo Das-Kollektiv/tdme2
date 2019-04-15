@@ -27,7 +27,7 @@ in vec2 vsFragTextureUV;
 out vec4 outColor;
 
 // main
-void main (void) {
+void main(void) {
 	float depth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 	vec4 originalColor = texture(colorBufferTextureUnit, vsFragTextureUV);
 	vec4 blurredColor = vec4(0.0, 0.0, 0.0, 0.0);

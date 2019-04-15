@@ -7,8 +7,9 @@
 
 #include <array>
 #include <map>
-#include <vector>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -19,8 +20,9 @@
 
 using std::array;
 using std::map;
-using std::vector;
 using std::string;
+using std::unordered_map;
+using std::vector;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
 using tdme::utils::ByteBuffer;
@@ -49,6 +51,7 @@ private:
 			uniform_type_enum type;
 			int32_t position;
 			uint32_t size;
+			int32_t texture_unit;
 		};
 		map<string, uniform_type> uniforms;
 		uint32_t ubo_size { 0 };
@@ -174,7 +177,7 @@ private:
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 8> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
-		int32_t bound_texture_id { 0 };
+		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		vector<VkDeviceMemory> memory_delete;
 		vector<VkBuffer> buffers_delete;
@@ -182,20 +185,20 @@ private:
 
 		struct render_command {
 			struct texture {
-				VkSampler sampler { VK_NULL_HANDLE };
-				VkImageView view { VK_NULL_HANDLE };
-				VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
+				VkSampler sampler;
+				VkImageView view;
+				VkImageLayout image_layout;
 			};
 			VkBuffer indices_buffer { VK_NULL_HANDLE };
 			array<VkBuffer, 8> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
-			array<VkBuffer, 2> ubo_buffers = {
-				VK_NULL_HANDLE, VK_NULL_HANDLE
+			array<VkBuffer, 4> ubo_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 
-			array<texture, 1> textures;
+			unordered_map<uint8_t, texture> textures;
 			int32_t count { 0 };
 			int32_t offset { 0 };
 		};

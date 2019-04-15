@@ -172,7 +172,7 @@ vec4 fragColor;
 	}
 #endif
 
-void main (void) {
+void main(void) {
 	// retrieve diffuse texture color value
 	#if defined(HAVE_TERRAIN_SHADER)
 		// no op
