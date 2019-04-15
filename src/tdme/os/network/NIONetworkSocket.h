@@ -88,11 +88,11 @@ protected:
 // MINGW: Have some missing posix functions
 #if defined(__MINGW32__)
 	// TODO: move those somewhere else as they are not only socket specific
+	size_t strlcpy(char* __restrict dst, const char* __restrict src, size_t siz);
+	int inet_pton4(const char* src, void* dst);
+	int inet_pton6(int af, const char* src, void* dst);
+	char* inet_ntop4(const void* src, char* dst, size_t size);
+	char* inet_ntop6(int af, const void* src, char* dst, size_t size);
 	#define inet_pton inet_pton6
 	#define inet_ntop inet_ntop6
-	static size_t strlcpy(char* __restrict dst, const char* __restrict src, size_t siz);
-	static int inet_pton4(const char* src, void* dst);
-	static int inet_pton6(int af, const char* src, void* dst);
-	static char* inet_ntop4(const void* src, char* dst, size_t size);
-	static char* inet_ntop6(int af, const void* src, char* dst, size_t size);
 #endif
