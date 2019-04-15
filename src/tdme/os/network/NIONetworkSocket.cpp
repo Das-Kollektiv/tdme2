@@ -142,7 +142,7 @@ NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& i
 	#define NS_INT16SZ   2
 
 	// author: Paul Vixie, 1996.
-	int NIONetworkSocket::inet_pton4(const char* src, void* dst) {
+	int inet_pton4(const char* src, void* dst) {
 		uint8_t tmp[NS_INADDRSZ], *tp;
 
 		int saw_digit = 0;
@@ -183,7 +183,7 @@ NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& i
 	}
 
 	// author: Paul Vixie, 1996.
-	int NIONetworkSocket::inet_pton6(int af, const char* src, void* dst) {
+	int inet_pton6(int af, const char* src, void* dst) {
 		static const char xdigits[] = "0123456789abcdef";
 		uint8_t tmp[NS_IN6ADDRSZ];
 
@@ -283,7 +283,7 @@ NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& i
 	 * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 	 * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 	 */
-	size_t NIONetworkSocket::strlcpy(char* __restrict dst, const char* __restrict src, size_t siz)
+	size_t strlcpy(char* __restrict dst, const char* __restrict src, size_t siz)
 	{
 		char *d = dst;
 		const char *s = src;
@@ -310,7 +310,7 @@ NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& i
 	}
 
 	// author: Paul Vixie, 1996.
-	char* NIONetworkSocket::inet_ntop4(const void* src, char* dst, size_t size) {
+	char* inet_ntop4(const void* src, char* dst, size_t size) {
 		static const char fmt[128] = "%u.%u.%u.%u";
 		char tmp[sizeof "255.255.255.255"];
 		int l;
@@ -325,7 +325,7 @@ NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& i
 	}
 
 	// author: Paul Vixie, 1996.
-	char* NIONetworkSocket::inet_ntop6(int af, const void* src, char* dst, size_t size)
+	char* inet_ntop6(int af, const void* src, char* dst, size_t size)
 	{
 		/*
 		 * Note that int32_t and int16_t need only be "at least" large enough
