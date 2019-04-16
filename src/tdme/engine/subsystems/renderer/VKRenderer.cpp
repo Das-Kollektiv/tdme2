@@ -1955,60 +1955,116 @@ void VKRenderer::createPipeline(program_type& program) {
 		ms.pSampleMask = NULL;
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-		VkVertexInputBindingDescription vi_bindings[3];
+		VkVertexInputBindingDescription vi_bindings[9];
 		memset(vi_bindings, 0, sizeof(vi_bindings));
-		VkVertexInputAttributeDescription vi_attrs[3];
+		VkVertexInputAttributeDescription vi_attrs[11];
 		memset(vi_attrs, 0, sizeof(vi_attrs));
 
-		//
-		auto bindingIdx = 0;
-
 		// vertices
-		vi_bindings[bindingIdx].binding = bindingIdx;
-		vi_bindings[bindingIdx].stride = sizeof(float) * 3;
-		vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		vi_attrs[bindingIdx].binding = bindingIdx;
-		vi_attrs[bindingIdx].location = bindingIdx;
-		vi_attrs[bindingIdx].format = VK_FORMAT_R32G32B32_SFLOAT;
-		vi_attrs[bindingIdx].offset = 0;
-		bindingIdx++;
+		vi_bindings[0].binding = 0;
+		vi_bindings[0].stride = sizeof(float) * 3;
+		vi_bindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[0].binding = 0;
+		vi_attrs[0].location = 0;
+		vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[0].offset = 0;
 
 		// normals
-		vi_bindings[bindingIdx].binding = 1;
-		vi_bindings[bindingIdx].stride = sizeof(float) * 3;
-		vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		vi_attrs[bindingIdx].binding = 1;
-		vi_attrs[bindingIdx].location = 1;
-		vi_attrs[bindingIdx].format = VK_FORMAT_R32G32B32_SFLOAT;
-		vi_attrs[bindingIdx].offset = 0;
-		bindingIdx++;
+		vi_bindings[1].binding = 1;
+		vi_bindings[1].stride = sizeof(float) * 3;
+		vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[1].binding = 1;
+		vi_attrs[1].location = 1;
+		vi_attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[1].offset = 0;
 
 		// texture coordinates
-		vi_bindings[bindingIdx].binding = bindingIdx;
-		vi_bindings[bindingIdx].stride = sizeof(float) * 2;
-		vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		vi_attrs[bindingIdx].binding = bindingIdx;
-		vi_attrs[bindingIdx].location = bindingIdx;
-		vi_attrs[bindingIdx].format = VK_FORMAT_R32G32_SFLOAT;
-		vi_attrs[bindingIdx].offset = 0;
-		bindingIdx++;
+		vi_bindings[2].binding = 2;
+		vi_bindings[2].stride = sizeof(float) * 2;
+		vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[2].binding = 2;
+		vi_attrs[2].location = 2;
+		vi_attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
+		vi_attrs[2].offset = 0;
 
 		// colors
-		vi_bindings[bindingIdx].binding = bindingIdx;
-		vi_bindings[bindingIdx].stride = sizeof(float) * 4;
-		vi_bindings[bindingIdx].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		vi_attrs[bindingIdx].binding = bindingIdx;
-		vi_attrs[bindingIdx].location = bindingIdx;
-		vi_attrs[bindingIdx].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-		vi_attrs[bindingIdx].offset = 0;
-		bindingIdx++;
+		vi_bindings[3].binding = 3;
+		vi_bindings[3].stride = sizeof(float) * 4;
+		vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[3].binding = 3;
+		vi_attrs[3].location = 3;
+		vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[3].offset = 0;
+
+		// tangents
+		vi_bindings[4].binding = 4;
+		vi_bindings[4].stride = sizeof(float) * 3;
+		vi_bindings[4].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[4].binding = 4;
+		vi_attrs[4].location = 4;
+		vi_attrs[4].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[4].offset = 0;
+
+		// bitangents
+		vi_bindings[5].binding = 5;
+		vi_bindings[5].stride = sizeof(float) * 3;
+		vi_bindings[5].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[5].binding = 5;
+		vi_attrs[5].location = 5;
+		vi_attrs[5].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[5].offset = 0;
+
+		// model matrices 1
+		vi_bindings[6].binding = 6;
+		vi_bindings[6].stride = sizeof(float) * 4 * 4;
+		vi_bindings[6].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+		vi_attrs[6].binding = 6;
+		vi_attrs[6].location = 6;
+		vi_attrs[6].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[6].offset = sizeof(float) * 4 * 0;
+
+		// model matrices 2
+		vi_attrs[7].binding = 6;
+		vi_attrs[7].location = 7;
+		vi_attrs[7].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[7].offset = sizeof(float) * 4 * 1;
+
+		// model matrices 3
+		vi_attrs[8].binding = 6;
+		vi_attrs[8].location = 8;
+		vi_attrs[8].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[8].offset = sizeof(float) * 4 * 2;
+
+		// model matrices 3
+		vi_attrs[9].binding = 6;
+		vi_attrs[9].location = 9;
+		vi_attrs[9].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[9].offset = sizeof(float) * 4 * 3;
+
+		// effect color mul
+		vi_bindings[7].binding = 7;
+		vi_bindings[7].stride = sizeof(float) * 4;
+		vi_bindings[7].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+		vi_attrs[10].binding = 7;
+		vi_attrs[10].location = 10;
+		vi_attrs[10].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[10].offset = 0;
+
+		// effect color add
+		vi_bindings[8].binding = 8;
+		vi_bindings[8].stride = sizeof(float) * 4;
+		vi_bindings[8].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+		vi_attrs[11].binding = 8;
+		vi_attrs[11].location = 11;
+		vi_attrs[11].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[11].offset = 0;
 
 		memset(&vi, 0, sizeof(vi));
 		vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vi.pNext = NULL;
-		vi.vertexBindingDescriptionCount = bindingIdx;
+		vi.vertexBindingDescriptionCount = 9;
 		vi.pVertexBindingDescriptions = vi_bindings;
-		vi.vertexAttributeDescriptionCount = bindingIdx;
+		vi.vertexAttributeDescriptionCount = 12;
 		vi.pVertexAttributeDescriptions = vi_attrs;
 
 		pipeline.pVertexInputState = &vi;
@@ -2922,7 +2978,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
 		pNext: NULL,
 		flags: 0,
-		size: size,
+		size: size == 0?16:size, // TODO: workaround for having buffers with zero size
 		usage: usage,
 		sharingMode: VK_SHARING_MODE_EXCLUSIVE,
 		queueFamilyIndexCount: 0,
@@ -2955,24 +3011,27 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	//
 	buffer.size = size;
 
-	// map memory
-	void* buffer_data;
-	err = vkMapMemory(context.device, buffer.mem, 0, buffer.alloc_size, 0, &buffer_data);
-	assert(err == VK_SUCCESS);
+	// TODO: workaround for having buffers with zeŕo size
+	if (size > 0) {
+		// map memory
+		void* buffer_data;
+		err = vkMapMemory(context.device, buffer.mem, 0, buffer.alloc_size, 0, &buffer_data);
+		assert(err == VK_SUCCESS);
 
-	//
-	memcpy(buffer_data, data, size);
-	VkMappedMemoryRange mappedMemoryRange = {
-		sType: VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-		pNext: NULL,
-		memory: buffer.mem,
-		offset: 0,
-		size: buffer.alloc_size
-	};
-	vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
+		//
+		memcpy(buffer_data, data, size);
+		VkMappedMemoryRange mappedMemoryRange = {
+			sType: VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
+			pNext: NULL,
+			memory: buffer.mem,
+			offset: 0,
+			size: buffer.alloc_size
+		};
+		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 
-	//
-	vkUnmapMemory(context.device, buffer.mem);
+		//
+		vkUnmapMemory(context.device, buffer.mem);
+	}
 
 	// bind if (re)created
 	err = vkBindBufferMemory(context.device, buffer.buf, buffer.mem, 0);
@@ -3057,12 +3116,6 @@ void VKRenderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId)
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-}
-
-void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
-{
-	// TODO
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// upload uniforms
 	auto programIt = context.programs.find(context.program_id);
@@ -3116,8 +3169,22 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 	render_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
 	render_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
 	render_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
+	render_command.vertex_buffers[4] = getBufferObjectInternal(context.bound_buffers[4] == 0?context.empty_vertex_buffer:context.bound_buffers[4]);
+	render_command.vertex_buffers[5] = getBufferObjectInternal(context.bound_buffers[5] == 0?context.empty_vertex_buffer:context.bound_buffers[5]);
+	render_command.vertex_buffers[6] = getBufferObjectInternal(context.bound_buffers[6] == 0?context.empty_vertex_buffer:context.bound_buffers[6]);
+	render_command.vertex_buffers[7] = getBufferObjectInternal(context.bound_buffers[7] == 0?context.empty_vertex_buffer:context.bound_buffers[7]);
+	render_command.vertex_buffers[8] = getBufferObjectInternal(context.bound_buffers[8] == 0?context.empty_vertex_buffer:context.bound_buffers[8]);
 	render_command.count = triangles;
 	render_command.offset = trianglesOffset;
+	render_command.instances = instances;
+}
+
+void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
+{
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	//
+	drawInstancedIndexedTrianglesFromBufferObjects(triangles, trianglesOffset, 1);
 }
 
 void VKRenderer::flushCommands() {
@@ -3228,16 +3295,21 @@ void VKRenderer::flushCommands() {
 		vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
 		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[desc_used], 0, nullptr);
 		vkCmdBindIndexBuffer(context.draw_cmd, command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
-		#define VERTEX_BUFFER_COUNT	4
+		#define VERTEX_BUFFER_COUNT	9
 		VkBuffer vertexBuffersBuffer[VERTEX_BUFFER_COUNT] = {
 			command.vertex_buffers[0],
 			command.vertex_buffers[1],
 			command.vertex_buffers[2],
-			command.vertex_buffers[3]
+			command.vertex_buffers[3],
+			command.vertex_buffers[4],
+			command.vertex_buffers[5],
+			command.vertex_buffers[6],
+			command.vertex_buffers[7],
+			command.vertex_buffers[8]
 		};
-		VkDeviceSize vertexBuffersOffsets[VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
+		VkDeviceSize vertexBuffersOffsets[VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		vkCmdBindVertexBuffers(context.draw_cmd, 0, VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
-		vkCmdDrawIndexed(context.draw_cmd, command.count * 3, 1, command.offset * 3, 0, 0);
+		vkCmdDrawIndexed(context.draw_cmd, command.count * 3, command.instances, command.offset * 3, 0, 0);
 		desc_used++;
 	}
 

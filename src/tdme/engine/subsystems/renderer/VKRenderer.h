@@ -177,7 +177,7 @@ private:
 
 		int32_t program_id { 0 };
 		int32_t bound_indices_buffer { 0 };
-		array<int32_t, 8> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0 };
+		array<int32_t, 9> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
 		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -192,9 +192,10 @@ private:
 				VkImageLayout image_layout;
 			};
 			VkBuffer indices_buffer { VK_NULL_HANDLE };
-			array<VkBuffer, 8> vertex_buffers = {
+			array<VkBuffer, 9> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+				VK_NULL_HANDLE
 			};
 			array<VkBuffer, 4> ubo_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
@@ -203,6 +204,7 @@ private:
 			unordered_map<uint8_t, texture> textures;
 			int32_t count { 0 };
 			int32_t offset { 0 };
+			int32_t instances { 0 };
 		};
 
 		vector<render_command> render_commands;
