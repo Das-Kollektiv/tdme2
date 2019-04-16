@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -22,6 +23,7 @@ using std::array;
 using std::map;
 using std::string;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::GLRenderer;
@@ -228,6 +230,15 @@ private:
 	void prepareSetupCommandBuffer();
 	void finishSetupCommandBuffer();
 	void reshape();
+	bool addToShaderUniformBufferObject(
+		shader_type& shader,
+		const unordered_map<string, string>& definitionValues,
+		const unordered_map<string, vector<string>>& structs,
+		const vector<string>& uniforms,
+		const string& prefix,
+		unordered_set<string>& uniformArrays,
+		string& uniformsBlock
+	);
 
 public:
 	const string getGLVersion() override;
