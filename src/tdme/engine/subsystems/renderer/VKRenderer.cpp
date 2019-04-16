@@ -20,6 +20,7 @@
 #include <stack>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/application/Application.h>
@@ -39,6 +40,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -74,6 +76,7 @@ using std::stack;
 using std::string;
 using std::to_string;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::VKRenderer;
@@ -95,6 +98,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+using tdme::utils::Integer;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
@@ -1489,7 +1493,9 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		shaderSource = StringUtils::replace(shaderSource, "#version 330", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n\n");
 		StringTokenizer t;
 		t.tokenize(shaderSource, "\n");
+		StringTokenizer t2;
 		vector<string> definitions;
+		unordered_map<string, string> definitionValues;
 		stack<string> testedDefinitions;
 		vector<bool> matchedDefinitions;
 		auto inLocationCount = 0;
@@ -1518,9 +1524,19 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			} else
 			if (StringUtils::startsWith(line, "#define ") == true) {
 				auto definition = StringUtils::trim(StringUtils::substring(line, string("#define ").size()));
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have define: " + definition);
-				definitions.push_back(definition);
-				newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
+				if (definition.find(' ') != -1 || definition.find('\t') != -1) {
+					t2.tokenize(definition, "\t ");
+					definition = t2.nextToken();
+					string value;
+					while (t2.hasMoreTokens() == true) value+= t2.nextToken();
+					definitionValues[definition] = value;
+					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have define with value: " + definition + " --> " + value);
+				} else {
+					definitions.push_back(definition);
+					newShaderSourceLines.push_back((matchedAllDefinitions == true?"":"// ") + line);
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have define: " + definition);
+				}
 			} else
 			if (StringUtils::startsWith(line, "#else") == true) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else: " + line);
@@ -1565,6 +1581,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		}
 
 		// generate new uniform block
+		unordered_set<string> uniformArrays;
 		string uniformsBlock = "";
 
 		// replace uniforms to use ubo
@@ -1573,46 +1590,72 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		shaderStruct.ubo_size = 0;
 		if (uniforms.size() > 0) {
 			if (uboUniformCount > 0) {
-				uniformsBlock+= "layout(std430, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
+				uniformsBlock+= "layout(/*std430, */binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
 				uniformsBlock+= "{\n";
 			}
 			for (auto uniform: uniforms) {
 				t.tokenize(uniform, "\t ;");
 				string uniformType;
 				string uniformName;
+				auto isArray = false;
+				auto arraySize = 1;
 				if (t.hasMoreTokens() == true) uniformType = t.nextToken();
 				while (t.hasMoreTokens() == true) uniformName = t.nextToken();
-				// TODO: arrays
-				// if (uniformName.find('[') != -1) uniformName = StringUtils::substring(uniformName, 0, uniformName.find('['));
+				if (uniformName.find('[') != -1 && uniformName.find(']') != -1) {
+					isArray = true;
+					auto arraySizeString = StringUtils::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
+					for (auto definitionValueIt: definitionValues) arraySizeString = StringUtils::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
+					arraySize = Integer::parseInt(arraySizeString);
+					uniformName = StringUtils::substring(uniformName, 0, uniformName.find('['));
+					uniformArrays.insert(uniformName);
+				}
 				if (uniformType == "int") {
-					auto size = sizeof(int32_t);
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
-					shaderStruct.ubo_size+= 16;
+					for (auto i = 0; i < arraySize; i++) {
+						auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+						auto size = sizeof(int32_t);
+						shaderStruct.uniforms[uniformName + suffix] = {name: uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
+						shaderStruct.ubo_size+= 16;
+					}
 				} else
 				if (uniformType == "float") {
-					auto size = sizeof(float);
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
-					shaderStruct.ubo_size+= 16;
+					for (auto i = 0; i < arraySize; i++) {
+						auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+						auto size = sizeof(float);
+						shaderStruct.uniforms[uniformName + suffix] = {name: uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
+						shaderStruct.ubo_size+= 16;
+					}
 				} else
 				if (uniformType == "vec3") {
-					auto size = sizeof(float) * 3;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
-					shaderStruct.ubo_size+= 16;
+					for (auto i = 0; i < arraySize; i++) {
+						auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+						auto size = sizeof(float) * 3;
+						shaderStruct.uniforms[uniformName + suffix] = {name: uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
+						shaderStruct.ubo_size+= 16;
+					}
 				} else
 				if (uniformType == "vec4") {
-					auto size = sizeof(float) * 4;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
-					shaderStruct.ubo_size+= size;
+					for (auto i = 0; i < arraySize; i++) {
+						auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+						auto size = sizeof(float) * 4;
+						shaderStruct.uniforms[uniformName + suffix] = {name: uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
+						shaderStruct.ubo_size+= size;
+					}
 				} else
 				if (uniformType == "mat3") {
-					auto size = sizeof(float) * 12;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
-					shaderStruct.ubo_size+= size;
+					for (auto i = 0; i < arraySize; i++) {
+						auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+						auto size = sizeof(float) * 12;
+						shaderStruct.uniforms[uniformName + suffix] = {name: uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
+						shaderStruct.ubo_size+= size;
+					}
 				} else
 				if (uniformType == "mat4") {
-					auto size = sizeof(float) * 16;
-					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
-					shaderStruct.ubo_size+= size;
+					for (auto i = 0; i < arraySize; i++) {
+						auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+						auto size = sizeof(float) * 16;
+						shaderStruct.uniforms[uniformName + suffix] = {name: uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shaderStruct.ubo_size, size: size, texture_unit: -1};
+						shaderStruct.ubo_size+= size;
+					}
 				} else
 				if (uniformType == "sampler2D") {
 					shaderStruct.uniforms[uniformName] = {name: uniformName, type: shader_type::uniform_type::SAMPLER2D, position: -1, size: 0, texture_unit: -1};
@@ -1650,10 +1693,19 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				// rename uniforms to ubo uniforms
 				for (auto& uniformIt: shaderStruct.uniforms) {
 					if (uniformIt.second.type == shader_type::uniform_type::SAMPLER2D) continue;
+					auto uniformName = uniformIt.second.name;
 					line = StringUtils::replace(
 						line,
-						uniformIt.second.name,
-						"ubo_generated." + uniformIt.second.name
+						uniformName,
+						"ubo_generated." + uniformName
+					);
+				}
+				// rename arrays to ubo uniforms
+				for (auto& uniformName: uniformArrays) {
+					line = StringUtils::replace(
+						line,
+						uniformName,
+						"ubo_generated." + uniformName
 					);
 				}
 				// inject gl_Position flip before last } from main
