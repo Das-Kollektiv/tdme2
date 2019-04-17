@@ -79,11 +79,11 @@ uniform int normalTextureAvailable;
 	// will be passed to fragment shader
 	out vec2 gsFragTextureUV;
 	out vec3 gsNormal;
+
 	out vec3 gsTangent;
 	out vec3 gsBitangent;
 	out vec4 gsEffectColorMul;
 	out vec4 gsEffectColorAdd;
-	out vec3 gsPosition;
 
 	#define vsModelMatrix inModelMatrix
 	#define vsFragTextureUV inTextureUV

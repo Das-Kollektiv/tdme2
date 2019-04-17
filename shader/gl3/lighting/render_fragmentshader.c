@@ -83,8 +83,8 @@ uniform Light lights[MAX_LIGHTS];
 
 // passed from geometry shader
 in vec2 gsFragTextureUV;
-in vec3 gsPosition;
 in vec3 gsNormal;
+in vec3 gsPosition;
 in vec3 gsTangent;
 in vec3 gsBitangent;
 in vec4 gsEffectColorMul;

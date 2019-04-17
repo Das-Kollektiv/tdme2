@@ -1463,6 +1463,63 @@ int32_t VKRenderer::getTextureUnits()
 	return activeTextureUnit;
 }
 
+int VKRenderer::determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms) {
+	StringTokenizer t;
+	auto alignmentMax = 0;
+	for (auto uniform: uniforms) {
+		t.tokenize(uniform, "\t ;");
+		string uniformType;
+		string uniformName;
+		auto isArray = false;
+		auto arraySize = 1;
+		if (t.hasMoreTokens() == true) uniformType = t.nextToken();
+		while (t.hasMoreTokens() == true) uniformName = t.nextToken();
+		if (uniformName.find('[') != -1 && uniformName.find(']') != -1) {
+			uniformName = StringUtils::substring(uniformName, 0, uniformName.find('['));
+		}
+		if (uniformType == "int") {
+			auto size = sizeof(int32_t);
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
+		if (uniformType == "float") {
+			auto size = sizeof(float);
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
+		if (uniformType == "vec3") {
+			auto size = sizeof(float) * 3;
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
+		if (uniformType == "vec4") {
+			auto size = sizeof(float) * 4;
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
+		if (uniformType == "mat3") {
+			auto size = sizeof(float) * 3;
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
+		if (uniformType == "mat4") {
+			auto size = sizeof(float) * 4;
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
+		if (uniformType == "sampler2D") {
+			// no op
+		} else {
+			if (structs.find(uniformType) != structs.end()) {
+				auto size = determineAlignment(structs, structs.find(uniformType)->second);
+				alignmentMax = Math::max(alignmentMax, size);
+			} else {
+				return false;
+			}
+		}
+	}
+	return alignmentMax;
+}
+
+int VKRenderer::align(int alignment, int offset) {
+	auto alignRemainder = offset % alignment;
+	return alignRemainder == 0?offset:offset + (alignment - alignRemainder);
+}
+
 bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unordered_map<string, string>& definitionValues, const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms, const string& prefix, unordered_set<string>& uniformArrays, string& uniformsBlock) {
 	StringTokenizer t;
 	for (auto uniform: uniforms) {
@@ -1485,48 +1542,54 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				auto size = sizeof(int32_t);
-				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shader.ubo_size, size: size, texture_unit: -1};
-				shader.ubo_size+= 16;
+				auto position = align(size, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: position, size: size, texture_unit: -1};
+				shader.ubo_size = position + size;
 			}
 		} else
 		if (uniformType == "float") {
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				auto size = sizeof(float);
-				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shader.ubo_size, size: size, texture_unit: -1};
-				shader.ubo_size+= 16;
+				auto position = align(size, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: position, size: size, texture_unit: -1};
+				shader.ubo_size = position + size;
 			}
 		} else
 		if (uniformType == "vec3") {
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				auto size = sizeof(float) * 3;
-				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shader.ubo_size, size: size, texture_unit: -1};
-				shader.ubo_size+= 16;
+				auto position = align(sizeof(float) * 4, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: position, size: size, texture_unit: -1};
+				shader.ubo_size = position + size;
 			}
 		} else
 		if (uniformType == "vec4") {
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				auto size = sizeof(float) * 4;
-				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shader.ubo_size, size: size, texture_unit: -1};
-				shader.ubo_size+= size;
+				auto position = align(size, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: position, size: size, texture_unit: -1};
+				shader.ubo_size = position + size;
 			}
 		} else
 		if (uniformType == "mat3") {
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				auto size = sizeof(float) * 12;
-				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shader.ubo_size, size: size, texture_unit: -1};
-				shader.ubo_size+= size;
+				auto position = align(sizeof(float) * 4, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: position, size: size, texture_unit: -1};
+				shader.ubo_size = position + size;
 			}
 		} else
 		if (uniformType == "mat4") {
 			for (auto i = 0; i < arraySize; i++) {
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				auto size = sizeof(float) * 16;
-				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: shader.ubo_size, size: size, texture_unit: -1};
-				shader.ubo_size+= size;
+				auto position = align(sizeof(float) * 4, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {name: prefix + uniformName + suffix, type: shader_type::uniform_type::UNIFORM, position: position, size: size, texture_unit: -1};
+				shader.ubo_size = position + size;
 			}
 		} else
 		if (uniformType == "sampler2D") {
@@ -1537,7 +1600,13 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 				for (auto i = 0; i < arraySize; i++) {
 					auto structPrefix = prefix + uniformName + (isArray == true?"[" + to_string(i) + "]":"") + ".";
 					string uniformsBlockIgnore;
+					auto alignment = determineAlignment(structs, structs.find(uniformType)->second);
+					Console::println(uniformType + ": " + to_string(alignment));
+					shader.ubo_size = align(alignment, shader.ubo_size);
+					Console::println("a: " + to_string(shader.ubo_size));
 					auto success = addToShaderUniformBufferObject(shader, definitionValues, structs, structs.find(uniformType)->second, structPrefix, uniformArrays, uniformsBlockIgnore);
+					shader.ubo_size = align(alignment, shader.ubo_size);
+					Console::println("b: " + to_string(shader.ubo_size));
 					if (success == false) return false;
 				}
 			} else {
@@ -1700,7 +1769,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		shaderStruct.ubo_size = 0;
 		if (uniforms.size() > 0) {
 			if (uboUniformCount > 0) {
-				uniformsBlock+= "layout(/*std430, */binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
+				uniformsBlock+= "layout(std430, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
@@ -1957,7 +2026,7 @@ void VKRenderer::createPipeline(program_type& program) {
 
 		VkVertexInputBindingDescription vi_bindings[9];
 		memset(vi_bindings, 0, sizeof(vi_bindings));
-		VkVertexInputAttributeDescription vi_attrs[11];
+		VkVertexInputAttributeDescription vi_attrs[12];
 		memset(vi_attrs, 0, sizeof(vi_attrs));
 
 		// vertices
@@ -2035,7 +2104,7 @@ void VKRenderer::createPipeline(program_type& program) {
 		vi_attrs[8].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		vi_attrs[8].offset = sizeof(float) * 4 * 2;
 
-		// model matrices 3
+		// model matrices 4
 		vi_attrs[9].binding = 6;
 		vi_attrs[9].location = 9;
 		vi_attrs[9].format = VK_FORMAT_R32G32B32A32_SFLOAT;
@@ -2220,7 +2289,6 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 	    shaderStrings[0] = shader.source.c_str();
 	    glslShader.setStrings(shaderStrings, 1);
-
 
 	    if (!glslShader.parse(&resources, 100, false, messages)) {
 			// be verbose

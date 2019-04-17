@@ -232,6 +232,8 @@ private:
 	void prepareSetupCommandBuffer();
 	void finishSetupCommandBuffer();
 	void reshape();
+	int determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms);
+	int align(int alignment, int offset);
 	bool addToShaderUniformBufferObject(
 		shader_type& shader,
 		const unordered_map<string, string>& definitionValues,
