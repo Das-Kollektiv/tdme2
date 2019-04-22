@@ -44,7 +44,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int DESC_MAX { 1024 };
+	static constexpr int DESC_MAX { 128 };
 
 	struct shader_type {
 		struct uniform_type {
@@ -68,11 +68,11 @@ private:
 	};
 
 	struct program_type {
-		int32_t desc_max { DESC_MAX };
+		uint32_t desc_max { DESC_MAX };
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniformBuffers;
-		int32_t layout_bindings { 0 };
+		uint32_t layout_bindings { 0 };
 		bool created_pipeline { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		VkDescriptorSet desc_set[DESC_MAX] { VK_NULL_HANDLE };
@@ -119,8 +119,8 @@ private:
 		VkQueueFamilyProperties *queue_props { nullptr };
 		uint32_t graphics_queue_node_index { 0 };
 
-		int width { -1 };
-		int height { -1 };
+		uint32_t width { 0 };
+		uint32_t height { 0 };
 		VkFormat format { VK_FORMAT_UNDEFINED };
 		VkColorSpaceKHR color_space;
 
@@ -163,7 +163,7 @@ private:
 
 		VkPhysicalDeviceMemoryProperties memory_properties;
 
-		bool validate { true };
+		bool validate { false };
 
 		uint32_t current_buffer { 0 };
 		uint32_t queue_count { 0 };
