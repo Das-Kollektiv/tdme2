@@ -2965,8 +2965,6 @@ void VKRenderer::disposeTexture(int32_t textureId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	Console::println(to_string(textureId));
-
 	auto textureObjectIt = context.textures.find(textureId);
 	if (textureObjectIt == context.textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
