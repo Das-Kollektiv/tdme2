@@ -103,7 +103,7 @@ class tdme::engine::Engine final
 
 public:
 	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
-	static constexpr int LIGHTS_MAX { 1 };
+	static constexpr int LIGHTS_MAX { 8 };
 
 protected:
 	static Engine* currentEngine;

@@ -164,7 +164,7 @@ private:
 
 		VkPhysicalDeviceMemoryProperties memory_properties;
 
-		bool validate { false };
+		bool validate { true };
 
 		uint32_t current_buffer { 0 };
 		uint32_t queue_count { 0 };
@@ -212,6 +212,11 @@ private:
 
 		VkViewport viewport;
 		VkRect2D scissor;
+
+		bool depthBufferWriting { true };
+		bool depthBufferTesting { true };
+		int depthFunction { VK_COMPARE_OP_LESS_OR_EQUAL };
+
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);

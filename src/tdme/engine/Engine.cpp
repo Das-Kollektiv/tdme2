@@ -890,6 +890,7 @@ void Engine::display()
 		postProcessingFrameBuffer1->enableFrameBuffer();
 	}
 
+	/*
 	// use particle shader
 	if (particlesShader != nullptr) {
 		particlesShader->useProgram();
@@ -919,6 +920,7 @@ void Engine::display()
 		delete postProcessingTemporaryFrameBuffer;
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
+	*/
 
 	// clear pre render states
 	renderingInitiated = false;
