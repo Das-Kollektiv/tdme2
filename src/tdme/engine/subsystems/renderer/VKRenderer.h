@@ -44,7 +44,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int DESC_MAX { 128 };
+	static constexpr int DESC_MAX { 512 };
 
 	struct shader_type {
 		struct uniform_type {
