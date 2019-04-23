@@ -1320,6 +1320,11 @@ void VKRenderer::finishFrame()
 		context.program_id = 0;
 	}
 
+	// unset progam desc used
+	for (auto& programIt: context.programs) {
+		programIt.second.desc_used = 0;
+	}
+
 	//
 	VkResult err;
 
@@ -1748,10 +1753,14 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
 				} else
 				if (StringUtils::startsWith(line, "out ") == true) {
-					newShaderSourceLines.push_back("layout (location = " + to_string(outLocationCount++) + ") " + line);
+					newShaderSourceLines.push_back("layout (location = " + to_string(outLocationCount) + ") " + line);
+					Console::println("layout (location = " + to_string(outLocationCount) + ") " + line);
+					outLocationCount++;
 				} else
 				if (StringUtils::startsWith(line, "in ") == true) {
-					newShaderSourceLines.push_back("layout (location = " + to_string(inLocationCount++) + ") " + line);
+					newShaderSourceLines.push_back("layout (location = " + to_string(inLocationCount) + ") " + line);
+					Console::println("layout (location = " + to_string(inLocationCount) + ") " + line);
+					inLocationCount++;
 				} else {
 					newShaderSourceLines.push_back(line);
 				}
@@ -1770,13 +1779,15 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		shaderStruct.ubo_size = 0;
 		if (uniforms.size() > 0) {
 			if (uboUniformCount > 0) {
-				uniformsBlock+= "layout(std430, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
+				uniformsBlock+= "layout(std430, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
 			addToShaderUniformBufferObject(shaderStruct, definitionValues, structs, uniforms, "", uniformArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
 			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
 		}
+
+		Console::println("uniformsBlock: \n" + uniformsBlock);
 
 		// construct new shader from vector and flip y, also inject uniforms
 		shaderSource.clear();
@@ -1847,6 +1858,9 @@ void VKRenderer::preparePipeline(program_type& program) {
 			return;
 		}
 		auto& shader = shaderIt->second;
+		if (shader.ubo_binding_idx == -1) {
+			continue;
+		}
 		context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
 		shaderIdx++;
 	}
@@ -2161,18 +2175,6 @@ void VKRenderer::createPipeline(program_type& program) {
 
 		//
 		program.created_pipeline = true;
-	} else {
-		auto shaderIdx = 0;
-		for (auto shaderId: program.shader_ids) {
-			auto shaderIt = context.shaders.find(shaderId);
-			if (shaderIt == context.shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
-			context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
-			shaderIdx++;
-		}
 	}
 }
 
@@ -2416,7 +2418,12 @@ void VKRenderer::setProgramUniformInternal(int32_t uniformId, uint8_t* data, int
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: shader does not exist");
 			return;
 		}
+
 		auto& shader = shaderIt->second;
+		if (shader.ubo_binding_idx == -1) {
+			shaderIdx++;
+			continue;
+		}
 		auto shaderUniformIt = shader.uniforms.find(uniformIt->second);
 		if (shaderUniformIt == shader.uniforms.end()) {
 			shaderIdx++;
@@ -2462,15 +2469,12 @@ void VKRenderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<
 	_data[0] = data[0];
 	_data[1] = data[1];
 	_data[2] = data[2];
-	_data[3] = 0.0;
 	_data[4] = data[3];
 	_data[5] = data[4];
 	_data[6] = data[5];
-	_data[7] = 0.0;
 	_data[8] = data[6];
 	_data[9] = data[7];
 	_data[10] = data[8];
-	_data[11] = 0.0;
 	setProgramUniformInternal(uniformId, (uint8_t*)_data.data(), _data.size() * sizeof(float));
 }
 
@@ -3078,7 +3082,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	//
 	buffer.size = size;
 
-	// TODO: workaround for having buffers with zeŕo size
+	// TODO: workaround for having buffers with zero size
 	if (size > 0) {
 		// map memory
 		void* buffer_data;
@@ -3182,7 +3186,8 @@ void VKRenderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId)
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println(to_string(triangles) + ": " + to_string(trianglesOffset) + ": " + to_string(instances));
 
 	// upload uniforms
 	auto programIt = context.programs.find(context.program_id);
@@ -3208,7 +3213,6 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 			shaderIdx++;
 			continue;
 		}
-
 		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
 		shaderIdx++;
@@ -3230,6 +3234,18 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 		};
 	}
 
+	Console::println("a");
+	Console::println(to_string(context.bound_indices_buffer));
+	Console::println(to_string(context.bound_buffers[0]));
+	Console::println(to_string(context.bound_buffers[1]));
+	Console::println(to_string(context.bound_buffers[2]));
+	Console::println(to_string(context.bound_buffers[3]));
+	Console::println(to_string(context.bound_buffers[4]));
+	Console::println(to_string(context.bound_buffers[5]));
+	Console::println(to_string(context.bound_buffers[6]));
+	Console::println(to_string(context.bound_buffers[7]));
+	Console::println(to_string(context.bound_buffers[8]));
+
 	//
 	render_command.indices_buffer = getBufferObjectInternal(context.bound_indices_buffer);
 	render_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
@@ -3248,7 +3264,7 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
 	drawInstancedIndexedTrianglesFromBufferObjects(triangles, trianglesOffset, 1);
@@ -3276,9 +3292,8 @@ void VKRenderer::flushCommands() {
 	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
 
 	//
-	auto desc_used = 0;
 	for (auto& command: context.render_commands) {
-		if (desc_used == program.desc_max) {
+		if (program.desc_used == program.desc_max) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
 			break;
 		}
@@ -3317,7 +3332,7 @@ void VKRenderer::flushCommands() {
 				descriptorSetWrites[uniform.position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = NULL,
-					.dstSet = program.desc_set[desc_used],
+					.dstSet = program.desc_set[program.desc_used],
 					.dstBinding = static_cast<uint32_t>(uniform.position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
@@ -3344,7 +3359,7 @@ void VKRenderer::flushCommands() {
 			descriptorSetWrites[shaderUboIdx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
-				.dstSet = program.desc_set[desc_used],
+				.dstSet = program.desc_set[program.desc_used],
 				.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -3360,7 +3375,7 @@ void VKRenderer::flushCommands() {
 
 		//
 		vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
-		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[desc_used], 0, nullptr);
+		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
 		vkCmdBindIndexBuffer(context.draw_cmd, command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
 		#define VERTEX_BUFFER_COUNT	9
 		VkBuffer vertexBuffersBuffer[VERTEX_BUFFER_COUNT] = {
@@ -3376,8 +3391,9 @@ void VKRenderer::flushCommands() {
 		};
 		VkDeviceSize vertexBuffersOffsets[VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		vkCmdBindVertexBuffers(context.draw_cmd, 0, VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
+		Console::println("xxx: " + to_string(command.count) + ", " + to_string(command.instances));
 		vkCmdDrawIndexed(context.draw_cmd, command.count * 3, command.instances, command.offset * 3, 0, 0);
-		desc_used++;
+		program.desc_used++;
 	}
 
 	//

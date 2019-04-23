@@ -113,7 +113,7 @@ void LightingShaderBaseImplementation::initialize()
 	uniformMaterialShininess = renderer->getProgramUniformLocation(renderLightingProgramId, "material.shininess");
 
 	//	lights
-	for (auto i = 0; i < LightingShaderConstants::MAX_LIGHTS; i++) {
+	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) +"].enabled");
 		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId,"lights[" + to_string(i) + "].ambient");
 		uniformLightDiffuse[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "lights[" + to_string(i) + "].diffuse");
@@ -158,7 +158,7 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine)
 	// initialize dynamic uniforms
 	updateEffect(renderer);
 	updateMaterial(renderer);
-	for (auto i = 0; i < LightingShaderConstants::MAX_LIGHTS; i++) {
+	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		updateLight(renderer, i);
 	}
 	// frame

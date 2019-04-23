@@ -69,6 +69,7 @@ private:
 
 	struct program_type {
 		uint32_t desc_max { DESC_MAX };
+		uint32_t desc_used { 0 };
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniformBuffers;

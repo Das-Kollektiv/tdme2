@@ -103,6 +103,7 @@ class tdme::engine::Engine final
 
 public:
 	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
+	static constexpr int LIGHTS_MAX { 1 };
 
 protected:
 	static Engine* currentEngine;
@@ -138,7 +139,7 @@ private:
 
 	Partition* partition {  };
 
-	array<Light, 8> lights {  };
+	array<Light, LIGHTS_MAX> lights {  };
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	FrameBuffer* postProcessingFrameBuffer1 {  };
