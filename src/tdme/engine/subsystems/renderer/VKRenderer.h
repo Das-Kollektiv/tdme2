@@ -58,7 +58,7 @@ private:
 		map<string, uniform_type> uniforms;
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
-		uint32_t binding_max { 0 };
+		int32_t binding_max { -1 };
 		int32_t ubo { 0 };
 		int32_t ubo_binding_idx { -1 };
  		string source;
@@ -210,9 +210,13 @@ private:
 		};
 
 		struct compute_command {
-			array<VkBuffer, 9> vertex_buffers = {
+			array<VkBuffer, 8> storage_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+			};
+			array<uint32_t, 8> storage_buffer_sizes = {
+				0, 0, 0, 0,
+				0, 0, 0, 0,
 			};
 			array<VkBuffer, 4> ubo_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
@@ -240,6 +244,7 @@ private:
 	void setImageLayout(bool setup, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	void prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId);
+	uint32_t getBufferSizeInternal(int32_t bufferObjectId);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);

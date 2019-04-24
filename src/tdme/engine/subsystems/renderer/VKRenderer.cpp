@@ -1886,7 +1886,6 @@ void VKRenderer::finishPipeline() {
 }
 
 void VKRenderer::createObjectRenderingPipeline(program_type& program) {
-	// Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	if (program.created_pipeline == false) {
 		VkResult err;
 
@@ -2191,7 +2190,6 @@ void VKRenderer::createObjectRenderingPipeline(program_type& program) {
 }
 
 void VKRenderer::createSkinningComputingPipeline(program_type& program) {
-	// Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	if (program.created_pipeline == false) {
 		VkResult err;
 
@@ -2215,6 +2213,17 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 			shaderStages[shaderIdx].stage = shader.type;
 			shaderStages[shaderIdx].module = shader.module;
 			shaderStages[shaderIdx].pName = "main";
+
+			for (int i = 0; i <= shader.binding_max; i++) {
+				layout_bindings[i] = {
+					.binding = i,
+					.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+					.descriptorCount = 1,
+					.stageFlags = shader.type,
+					.pImmutableSamplers = NULL
+				};
+			}
+
 			if (shader.ubo_binding_idx != -1) {
 				layout_bindings[shader.ubo_binding_idx] = {
 					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
@@ -2298,8 +2307,6 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 
 void VKRenderer::useProgram(int32_t programId)
 {
-	// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
-
 	// if unsetting program flush command buffers
 	if (context.program_id != 0) {
 		finishSetupCommandBuffer();
@@ -2345,7 +2352,7 @@ void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 
 bool VKRenderer::linkProgram(int32_t programId)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
 	auto programIt = context.programs.find(programId);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
@@ -2363,7 +2370,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 		//
 		auto& shader = shaderIt->second;
-		bindingIdx = Math::max(shader.binding_max, bindingIdx);
+		bindingIdx = Math::max(shader.binding_max + 1, bindingIdx);
 	}
 
 	auto uniformIdx = 1;
@@ -2440,7 +2447,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 			Console::println(shader.source);
 			return false;
 	    }
-	    Console::println(shader.source);
+
 	    glslProgram.addShader(&glslShader);
 		if (glslProgram.link(messages) == false) {
 			// be verbose
@@ -3156,6 +3163,16 @@ VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
 	return bufferIt->second.buf;
 }
 
+uint32_t VKRenderer::getBufferSizeInternal(int32_t bufferObjectId) {
+	if (VERBOSE == true) Console::println("getBufferObjectInternal::" + string(__FUNCTION__) + "()");
+	auto bufferIt = context.buffers.find(bufferObjectId);
+	if (bufferIt == context.buffers.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+		return 0;
+	}
+	return bufferIt->second.size;
+}
+
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(bufferObjectId) + " / " + to_string(size) + " / " + to_string((int)usage));
 	auto bufferIt = context.buffers.find(bufferObjectId);
@@ -3242,7 +3259,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 
 void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
@@ -3377,7 +3394,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 }
 
 void VKRenderer::flushCommands() {
-	if (context.render_commands.size() == 0) return;
+	if (context.render_commands.size() == 0 && context.compute_commands.size() == 0) return;
 
 	auto programIt = context.programs.find(context.program_id);
 	if (programIt == context.programs.end()) {
@@ -3478,7 +3495,7 @@ void VKRenderer::flushCommands() {
 					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 					.pImageInfo = NULL,
 					.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
-					.pTexelBufferView = NULL,
+					.pTexelBufferView = NULL
 				};
 			}
 
@@ -3506,8 +3523,7 @@ void VKRenderer::flushCommands() {
 
 		//
 		context.render_commands.clear();
-	}
-
+	} else
 	if (context.compute_commands.size() > 0) {
 		//
 		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline);
@@ -3518,7 +3534,6 @@ void VKRenderer::flushCommands() {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
 				break;
 			}
-			auto samplerIdx = 0;
 			for (auto& shaderId: program.shader_ids) {
 				auto shaderIt = context.shaders.find(shaderId);
 				if (shaderIt == context.shaders.end()) {
@@ -3526,6 +3541,26 @@ void VKRenderer::flushCommands() {
 					return;
 				}
 				auto& shader = shaderIt->second;
+
+				for (int i = 0; i <= shader.binding_max; i++) {
+					bufferInfos[i] = {
+						.buffer = compute_command.storage_buffers[i],
+						.offset = 0,
+						.range = compute_command.storage_buffer_sizes[i]
+					};
+					descriptorSetWrites[i] = {
+						.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+						.pNext = NULL,
+						.dstSet = program.desc_set[program.desc_used],
+						.dstBinding = i,
+						.dstArrayElement = 0,
+						.descriptorCount = 1,
+						.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+						.pImageInfo = NULL,
+						.pBufferInfo = &bufferInfos[i],
+						.pTexelBufferView = NULL
+					};
+				}
 
 				// uniform buffer
 				if (shader.ubo_binding_idx == -1) {
@@ -3555,19 +3590,6 @@ void VKRenderer::flushCommands() {
 			//
 			vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
 			vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
-			#define COMPUTECOMMAND_VERTEX_BUFFER_COUNT	8
-			VkBuffer vertexBuffersBuffer[COMPUTECOMMAND_VERTEX_BUFFER_COUNT] = {
-				compute_command.vertex_buffers[0],
-				compute_command.vertex_buffers[1],
-				compute_command.vertex_buffers[2],
-				compute_command.vertex_buffers[3],
-				compute_command.vertex_buffers[4],
-				compute_command.vertex_buffers[5],
-				compute_command.vertex_buffers[6],
-				compute_command.vertex_buffers[7]
-			};
-			VkDeviceSize vertexBuffersOffsets[COMPUTECOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-			vkCmdBindVertexBuffers(context.draw_cmd, 0, COMPUTECOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 			vkCmdDispatch(context.draw_cmd, compute_command.num_groups_x, compute_command.num_groups_y, compute_command.num_groups_z);
 			program.desc_used++;
 		}
@@ -3690,15 +3712,23 @@ void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t
 		shaderIdx++;
 	}
 
-	//
-	compute_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
-	compute_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
-	compute_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
-	compute_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
-	compute_command.vertex_buffers[4] = getBufferObjectInternal(context.bound_buffers[4] == 0?context.empty_vertex_buffer:context.bound_buffers[4]);
-	compute_command.vertex_buffers[5] = getBufferObjectInternal(context.bound_buffers[5] == 0?context.empty_vertex_buffer:context.bound_buffers[5]);
-	compute_command.vertex_buffers[6] = getBufferObjectInternal(context.bound_buffers[6] == 0?context.empty_vertex_buffer:context.bound_buffers[6]);
-	compute_command.vertex_buffers[7] = getBufferObjectInternal(context.bound_buffers[7] == 0?context.empty_vertex_buffer:context.bound_buffers[7]);
+	// TODO: improve me to only use one buffer map lookup
+	compute_command.storage_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
+	compute_command.storage_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
+	compute_command.storage_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
+	compute_command.storage_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
+	compute_command.storage_buffers[4] = getBufferObjectInternal(context.bound_buffers[4] == 0?context.empty_vertex_buffer:context.bound_buffers[4]);
+	compute_command.storage_buffers[5] = getBufferObjectInternal(context.bound_buffers[5] == 0?context.empty_vertex_buffer:context.bound_buffers[5]);
+	compute_command.storage_buffers[6] = getBufferObjectInternal(context.bound_buffers[6] == 0?context.empty_vertex_buffer:context.bound_buffers[6]);
+	compute_command.storage_buffers[7] = getBufferObjectInternal(context.bound_buffers[7] == 0?context.empty_vertex_buffer:context.bound_buffers[7]);
+	compute_command.storage_buffer_sizes[0] = getBufferSizeInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
+	compute_command.storage_buffer_sizes[1] = getBufferSizeInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
+	compute_command.storage_buffer_sizes[2] = getBufferSizeInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
+	compute_command.storage_buffer_sizes[3] = getBufferSizeInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
+	compute_command.storage_buffer_sizes[4] = getBufferSizeInternal(context.bound_buffers[4] == 0?context.empty_vertex_buffer:context.bound_buffers[4]);
+	compute_command.storage_buffer_sizes[5] = getBufferSizeInternal(context.bound_buffers[5] == 0?context.empty_vertex_buffer:context.bound_buffers[5]);
+	compute_command.storage_buffer_sizes[6] = getBufferSizeInternal(context.bound_buffers[6] == 0?context.empty_vertex_buffer:context.bound_buffers[6]);
+	compute_command.storage_buffer_sizes[7] = getBufferSizeInternal(context.bound_buffers[7] == 0?context.empty_vertex_buffer:context.bound_buffers[7]);
 	compute_command.num_groups_x = numGroupsX;
 	compute_command.num_groups_y = numGroupsY;
 	compute_command.num_groups_z = numGroupsZ;
