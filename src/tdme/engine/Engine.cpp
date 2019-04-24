@@ -484,8 +484,8 @@ void Engine::initialize(bool debug)
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = false;
 		ShadowMapping::setShadowMapSize(1024, 1024);
-		skinningShaderEnabled = false;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+		skinningShaderEnabled = true;
+		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
 	#else
 		// MacOSX, currently GL3 only
 		#if defined(__APPLE__)

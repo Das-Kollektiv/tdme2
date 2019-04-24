@@ -1651,6 +1651,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		shaderSource = StringUtils::replace(shaderSource, "\r", "");
 		shaderSource = StringUtils::replace(shaderSource, "\t", " ");
 		shaderSource = StringUtils::replace(shaderSource, "#version 330", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n\n");
+		shaderSource = StringUtils::replace(shaderSource, "#version 430 core", "#version 430\n#extension GL_EXT_scalar_block_layout: require\n\n");
 		StringTokenizer t;
 		t.tokenize(shaderSource, "\n");
 		StringTokenizer t2;
@@ -1878,7 +1879,7 @@ void VKRenderer::finishPipeline() {
 	context.bound_textures.fill(0);
 }
 
-void VKRenderer::createPipeline(program_type& program) {
+void VKRenderer::createObjectRenderingPipeline(program_type& program) {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	if (program.created_pipeline == false) {
 		Console::println("creating");
@@ -2181,8 +2182,113 @@ void VKRenderer::createPipeline(program_type& program) {
 
 		//
 		program.created_pipeline = true;
-	} else {
-		Console::println("not creating");
+	}
+}
+
+void VKRenderer::createSkinningComputingPipeline(program_type& program) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (program.created_pipeline == false) {
+		Console::println("creating");
+		VkResult err;
+
+		//
+		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+		memset(layout_bindings, 0, sizeof(layout_bindings));
+
+		// Stages
+		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
+		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+
+		auto shaderIdx = 0;
+		for (auto shaderId: program.shader_ids) {
+			auto shaderIt = context.shaders.find(shaderId);
+			if (shaderIt == context.shaders.end()) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+				return;
+			}
+			auto& shader = shaderIt->second;
+			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			shaderStages[shaderIdx].stage = shader.type;
+			shaderStages[shaderIdx].module = shader.module;
+			shaderStages[shaderIdx].pName = "main";
+			if (shader.ubo_binding_idx != -1) {
+				layout_bindings[shader.ubo_binding_idx] = {
+					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.descriptorCount = 1,
+					.stageFlags = shader.type,
+					.pImmutableSamplers = NULL
+				};
+			}
+			shaderIdx++;
+		}
+		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.bindingCount = program.layout_bindings,
+			.pBindings = layout_bindings,
+		};
+
+		err = vkCreateDescriptorSetLayout(context.device, &descriptor_layout, NULL, &program.desc_layout);
+		assert(!err);
+
+		const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.setLayoutCount = 1,
+			.pSetLayouts = &program.desc_layout,
+		};
+
+		VkDescriptorSetLayout desc_layouts[DESC_MAX];
+		for (auto i = 0; i < program.desc_max; i++) desc_layouts[i] = program.desc_layout;
+
+		//
+		VkDescriptorSetAllocateInfo alloc_info = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+			.pNext = NULL,
+			.descriptorPool = context.desc_pool,
+			.descriptorSetCount = program.desc_max,
+			.pSetLayouts = desc_layouts
+		};
+		err = vkAllocateDescriptorSets(context.device, &alloc_info, program.desc_set);
+		assert(!err);
+
+		err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
+		assert(!err);
+
+		// create pipepine
+		VkPipelineCacheCreateInfo pipelineCache = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.initialDataSize = 0,
+			.pInitialData = NULL
+		};
+
+		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &program.pipelineCache);
+		assert(!err);
+
+		// create pipepine
+		VkComputePipelineCreateInfo pipeline = {
+		    .sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+		    .pNext = NULL,
+		    .flags = 0,
+			.stage = shaderStages[0],
+			.layout = program.pipeline_layout,
+		    .basePipelineHandle = NULL,
+		    .basePipelineIndex = 0
+
+		};
+
+		err = vkCreateComputePipelines(context.device, program.pipelineCache, 1, &pipeline, NULL, &program.pipeline);
+		assert(!err);
+
+		vkDestroyPipelineCache(context.device, program.pipelineCache, NULL);
+
+		//
+		program.created_pipeline = true;
 	}
 }
 
@@ -2191,11 +2297,10 @@ void VKRenderer::useProgram(int32_t programId)
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
 
 	// if unsetting program flush command buffers
-	if (programId == 0) {
+	if (context.program_id != 0) {
 		finishSetupCommandBuffer();
 		flushCommands();
 		finishPipeline();
-		return;
 	}
 
 	context.program_id = 0;
@@ -3263,117 +3368,198 @@ void VKRenderer::flushCommands() {
 	}
 	auto& program = programIt->second;
 
+	Console::println("a: " + to_string(context.render_commands.size()));
+	Console::println("b: " + to_string(context.compute_commands.size()));
+
 	// create pipeline
-	createPipeline(program);
+	if (context.render_commands.size() > 0) {
+		createObjectRenderingPipeline(program);
+	} else
+	if (context.compute_commands.size() > 0) {
+		createSkinningComputingPipeline(program);
+	} else {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(context.program_id));
+		return;
+	}
 
 	VkDescriptorBufferInfo bufferInfos[program.layout_bindings];
 	VkWriteDescriptorSet descriptorSetWrites[program.layout_bindings];
 	VkDescriptorImageInfo texDescs[program.layout_bindings];
-	vector<VKRenderer::context_type::render_command> render_commands_left;
 
-	//
-	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
+	// do render commands
+	if (context.render_commands.size() > 0) {
+		//
+		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
 
-	//
-	for (auto& command: context.render_commands) {
-		if (program.desc_used == program.desc_max) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
-			break;
-		}
-		auto samplerIdx = 0;
-		for (auto& shaderId: program.shader_ids) {
-			auto shaderIt = context.shaders.find(shaderId);
-			if (shaderIt == context.shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
+		// do render commands
+		for (auto& render_command: context.render_commands) {
+			if (program.desc_used == program.desc_max) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
+				break;
 			}
-			auto& shader = shaderIt->second;
-
-			// sampler2D
-			for (auto uniformIt: shader.uniforms) {
-				auto& uniform = uniformIt.second;
-				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
-				auto commandTextureIt = command.textures.find(uniform.texture_unit);
-				if (commandTextureIt == command.textures.end()) {
-					auto contextTextureIt = context.textures.find(context.white_texture_default);
-					auto texture = contextTextureIt->second;
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.image_layout
-					};
-				} else {
-					auto& texture = commandTextureIt->second;
-					texDescs[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.image_layout
-					};
+			auto samplerIdx = 0;
+			for (auto& shaderId: program.shader_ids) {
+				auto shaderIt = context.shaders.find(shaderId);
+				if (shaderIt == context.shaders.end()) {
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+					return;
 				}
-				descriptorSetWrites[uniform.position] = {
+				auto& shader = shaderIt->second;
+
+				// sampler2D
+				for (auto uniformIt: shader.uniforms) {
+					auto& uniform = uniformIt.second;
+					if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
+					auto commandTextureIt = render_command.textures.find(uniform.texture_unit);
+					if (commandTextureIt == render_command.textures.end()) {
+						auto contextTextureIt = context.textures.find(context.white_texture_default);
+						auto texture = contextTextureIt->second;
+						texDescs[samplerIdx] = {
+							.sampler = texture.sampler,
+							.imageView = texture.view,
+							.imageLayout = texture.image_layout
+						};
+					} else {
+						auto& texture = commandTextureIt->second;
+						texDescs[samplerIdx] = {
+							.sampler = texture.sampler,
+							.imageView = texture.view,
+							.imageLayout = texture.image_layout
+						};
+					}
+					descriptorSetWrites[uniform.position] = {
+						.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+						.pNext = NULL,
+						.dstSet = program.desc_set[program.desc_used],
+						.dstBinding = static_cast<uint32_t>(uniform.position),
+						.dstArrayElement = 0,
+						.descriptorCount = 1,
+						.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+						.pImageInfo = &texDescs[samplerIdx],
+						.pBufferInfo = VK_NULL_HANDLE,
+						.pTexelBufferView = VK_NULL_HANDLE
+					};
+					samplerIdx++;
+				}
+
+				// uniform buffer
+				if (shader.ubo_binding_idx == -1) {
+					continue;
+				}
+
+				bufferInfos[shader.ubo_binding_idx] = {
+					.buffer = render_command.ubo_buffers[shader.ubo_binding_idx],
+					.offset = 0,
+					.range = shader.ubo_size
+				};
+
+				descriptorSetWrites[shader.ubo_binding_idx] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = NULL,
 					.dstSet = program.desc_set[program.desc_used],
-					.dstBinding = static_cast<uint32_t>(uniform.position),
+					.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.pImageInfo = &texDescs[samplerIdx],
-					.pBufferInfo = VK_NULL_HANDLE,
-					.pTexelBufferView = VK_NULL_HANDLE
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.pImageInfo = NULL,
+					.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
+					.pTexelBufferView = NULL,
 				};
-				samplerIdx++;
 			}
 
-			// uniform buffer
-			if (shader.ubo_binding_idx == -1) {
-				continue;
-			}
-
-			bufferInfos[shader.ubo_binding_idx] = {
-				.buffer = command.ubo_buffers[shader.ubo_binding_idx],
-				.offset = 0,
-				.range = shader.ubo_size
+			//
+			vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
+			vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
+			vkCmdBindIndexBuffer(context.draw_cmd, render_command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
+			#define RENDERCOMMAND_VERTEX_BUFFER_COUNT	9
+			VkBuffer vertexBuffersBuffer[RENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
+				render_command.vertex_buffers[0],
+				render_command.vertex_buffers[1],
+				render_command.vertex_buffers[2],
+				render_command.vertex_buffers[3],
+				render_command.vertex_buffers[4],
+				render_command.vertex_buffers[5],
+				render_command.vertex_buffers[6],
+				render_command.vertex_buffers[7],
+				render_command.vertex_buffers[8]
 			};
-
-			descriptorSetWrites[shader.ubo_binding_idx] = {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = NULL,
-				.dstSet = program.desc_set[program.desc_used],
-				.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = NULL,
-				.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
-				.pTexelBufferView = NULL,
-			};
+			VkDeviceSize vertexBuffersOffsets[RENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			vkCmdBindVertexBuffers(context.draw_cmd, 0, RENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
+			vkCmdDrawIndexed(context.draw_cmd, render_command.count * 3, render_command.instances, render_command.offset * 3, 0, 0);
+			program.desc_used++;
 		}
 
 		//
-		vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
-		vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
-		vkCmdBindIndexBuffer(context.draw_cmd, command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
-		#define VERTEX_BUFFER_COUNT	9
-		VkBuffer vertexBuffersBuffer[VERTEX_BUFFER_COUNT] = {
-			command.vertex_buffers[0],
-			command.vertex_buffers[1],
-			command.vertex_buffers[2],
-			command.vertex_buffers[3],
-			command.vertex_buffers[4],
-			command.vertex_buffers[5],
-			command.vertex_buffers[6],
-			command.vertex_buffers[7],
-			command.vertex_buffers[8]
-		};
-		VkDeviceSize vertexBuffersOffsets[VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		vkCmdBindVertexBuffers(context.draw_cmd, 0, VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
-		vkCmdDrawIndexed(context.draw_cmd, command.count * 3, command.instances, command.offset * 3, 0, 0);
-		program.desc_used++;
+		context.render_commands.clear();
 	}
 
-	//
-	context.render_commands.clear();
+	if (context.compute_commands.size() > 0) {
+		//
+		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline);
+
+		// do render commands
+		for (auto& compute_command: context.compute_commands) {
+			if (program.desc_used == program.desc_max) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
+				break;
+			}
+			auto samplerIdx = 0;
+			for (auto& shaderId: program.shader_ids) {
+				auto shaderIt = context.shaders.find(shaderId);
+				if (shaderIt == context.shaders.end()) {
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+					return;
+				}
+				auto& shader = shaderIt->second;
+
+				// uniform buffer
+				if (shader.ubo_binding_idx == -1) {
+					continue;
+				}
+
+				bufferInfos[shader.ubo_binding_idx] = {
+					.buffer = compute_command.ubo_buffers[shader.ubo_binding_idx],
+					.offset = 0,
+					.range = shader.ubo_size
+				};
+
+				descriptorSetWrites[shader.ubo_binding_idx] = {
+					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+					.pNext = NULL,
+					.dstSet = program.desc_set[program.desc_used],
+					.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
+					.dstArrayElement = 0,
+					.descriptorCount = 1,
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.pImageInfo = NULL,
+					.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
+					.pTexelBufferView = NULL,
+				};
+			}
+
+			//
+			vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
+			vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
+			#define COMPUTECOMMAND_VERTEX_BUFFER_COUNT	8
+			VkBuffer vertexBuffersBuffer[COMPUTECOMMAND_VERTEX_BUFFER_COUNT] = {
+				compute_command.vertex_buffers[0],
+				compute_command.vertex_buffers[1],
+				compute_command.vertex_buffers[2],
+				compute_command.vertex_buffers[3],
+				compute_command.vertex_buffers[4],
+				compute_command.vertex_buffers[5],
+				compute_command.vertex_buffers[6],
+				compute_command.vertex_buffers[7]
+			};
+			VkDeviceSize vertexBuffersOffsets[COMPUTECOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+			vkCmdBindVertexBuffers(context.draw_cmd, 0, COMPUTECOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
+			vkCmdDispatch(context.draw_cmd, compute_command.num_groups_x, compute_command.num_groups_y, compute_command.num_groups_z);
+			program.desc_used++;
+		}
+
+		//
+		context.compute_commands.clear();
+	}
 }
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
@@ -3460,7 +3646,47 @@ void VKRenderer::checkGLError(int line)
 }
 
 void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	// upload uniforms
+	auto programIt = context.programs.find(context.program_id);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
+		return;
+	}
+	program_type& program = programIt->second;
+
+	context.compute_commands.push_back(context_type::compute_command());
+	auto& compute_command = context.compute_commands[context.compute_commands.size() - 1];
+
+	auto shaderIdx = 0;
+	for (auto& shaderId: program.shader_ids) {
+		auto shaderIt = context.shaders.find(shaderId);
+		if (shaderIt == context.shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+			return;
+		}
+		auto& shader = shaderIt->second;
+
+		if (shader.ubo_binding_idx == -1) {
+			shaderIdx++;
+			continue;
+		}
+		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		compute_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
+		shaderIdx++;
+	}
+
+	//
+	compute_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
+	compute_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
+	compute_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
+	compute_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
+	compute_command.vertex_buffers[4] = getBufferObjectInternal(context.bound_buffers[4] == 0?context.empty_vertex_buffer:context.bound_buffers[4]);
+	compute_command.vertex_buffers[5] = getBufferObjectInternal(context.bound_buffers[5] == 0?context.empty_vertex_buffer:context.bound_buffers[5]);
+	compute_command.vertex_buffers[6] = getBufferObjectInternal(context.bound_buffers[6] == 0?context.empty_vertex_buffer:context.bound_buffers[6]);
+	compute_command.vertex_buffers[7] = getBufferObjectInternal(context.bound_buffers[7] == 0?context.empty_vertex_buffer:context.bound_buffers[7]);
+	compute_command.num_groups_x = numGroupsX;
+	compute_command.num_groups_y = numGroupsY;
+	compute_command.num_groups_z = numGroupsZ;
 }
 
 void VKRenderer::memoryBarrier() {
@@ -3468,41 +3694,41 @@ void VKRenderer::memoryBarrier() {
 }
 
 void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[0] = bufferObjectId;
 }
 
 void VKRenderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[1] = bufferObjectId;
 }
 
 void VKRenderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[2] = bufferObjectId;
 }
 
 void VKRenderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[3] = bufferObjectId;
 }
 
 void VKRenderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[4] = bufferObjectId;
 }
 
 void VKRenderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[5] = bufferObjectId;
 }
 
 void VKRenderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[6] = bufferObjectId;
 }
 
 void VKRenderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.bound_buffers[7] = bufferObjectId;
 }

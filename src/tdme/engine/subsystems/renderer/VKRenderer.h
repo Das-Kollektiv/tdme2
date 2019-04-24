@@ -208,7 +208,22 @@ private:
 			int32_t instances { 0 };
 		};
 
+		struct compute_command {
+			array<VkBuffer, 9> vertex_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
+			};
+			array<VkBuffer, 4> ubo_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
+			};
+
+			int32_t num_groups_x { 0 };
+			int32_t num_groups_y { 0 };
+			int32_t num_groups_z { 0 };
+		};
+
 		vector<render_command> render_commands;
+		vector<compute_command> compute_commands;
 
 		VkViewport viewport;
 		VkRect2D scissor;
@@ -233,7 +248,8 @@ private:
 	void flushCommands();
 	void initializeRenderPass();
 	void preparePipeline(program_type& program);
-	void createPipeline(program_type& program);
+	void createObjectRenderingPipeline(program_type& program);
+	void createSkinningComputingPipeline(program_type& program);
 	void finishPipeline();
 	void prepareSetupCommandBuffer();
 	void finishSetupCommandBuffer();
