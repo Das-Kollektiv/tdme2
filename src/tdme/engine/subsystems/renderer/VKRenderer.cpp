@@ -1740,7 +1740,14 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					string uniform;
 					if (line.find("sampler2D") != -1) {
 						uniform = StringUtils::substring(line, string("uniform").size() + 1);
-						newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING" + to_string(shaderStruct.samplers++) + "_IDX}) " + line);
+						StringTokenizer t;
+						t.tokenize(uniform, "\t ;");
+						string uniformType;
+						string uniformName;
+						if (t.hasMoreTokens() == true) uniformType = t.nextToken();
+						while (t.hasMoreTokens() == true) uniformName = t.nextToken();
+						newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING_" + uniformName + "_IDX}) " + line);
+						shaderStruct.samplers++;
 					} else {
 						uniform = StringUtils::substring(line, string("uniform").size() + 1);
 						uboUniformCount++;
@@ -2274,7 +2281,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 			auto& uniform = uniformIt.second;
 			//
 			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
-				shader.source = StringUtils::replace(shader.source, "{$SAMPLER2D_BINDING" + to_string(shaderSamplerIdx++) + "_IDX}", to_string(bindingIdx));
+				shader.source = StringUtils::replace(shader.source, "{$SAMPLER2D_BINDING_" + uniform.name + "_IDX}", to_string(bindingIdx));
 				uniform.position = bindingIdx++;
 			}
 			uniformsByName[uniform.name] = uniformIdx++;
@@ -3273,8 +3280,6 @@ void VKRenderer::flushCommands() {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
 			break;
 		}
-		auto shaderIdx = 0;
-		auto shaderUboIdx = 0;
 		auto samplerIdx = 0;
 		for (auto& shaderId: program.shader_ids) {
 			auto shaderIt = context.shaders.find(shaderId);
@@ -3322,17 +3327,16 @@ void VKRenderer::flushCommands() {
 
 			// uniform buffer
 			if (shader.ubo_binding_idx == -1) {
-				shaderIdx++;
 				continue;
 			}
 
-			bufferInfos[shaderUboIdx] = {
-				.buffer = command.ubo_buffers[shaderUboIdx],
+			bufferInfos[shader.ubo_binding_idx] = {
+				.buffer = command.ubo_buffers[shader.ubo_binding_idx],
 				.offset = 0,
 				.range = shader.ubo_size
 			};
 
-			descriptorSetWrites[shaderUboIdx] = {
+			descriptorSetWrites[shader.ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
 				.dstSet = program.desc_set[program.desc_used],
@@ -3341,12 +3345,9 @@ void VKRenderer::flushCommands() {
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.pImageInfo = NULL,
-				.pBufferInfo = &bufferInfos[shaderUboIdx],
+				.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
 				.pTexelBufferView = NULL,
 			};
-
-			shaderUboIdx++;
-			shaderIdx++;
 		}
 
 		//
