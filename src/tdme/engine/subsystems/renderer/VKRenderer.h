@@ -58,9 +58,10 @@ private:
 		map<string, uniform_type> uniforms;
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
+		uint32_t binding_max { 0 };
 		int32_t ubo { 0 };
 		int32_t ubo_binding_idx { -1 };
-		string source;
+ 		string source;
 		vector<unsigned int> spirv;
 		int32_t id { 0 };
 		VkShaderStageFlagBits type;

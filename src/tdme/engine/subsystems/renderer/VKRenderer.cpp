@@ -1643,7 +1643,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 	);
 
 	// do some shader adjustments
-	shaderStruct.samplers = 0;
 	{
 		// pre parse shader code
 		vector<string> newShaderSourceLines;
@@ -1741,12 +1740,11 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					string uniform;
 					if (line.find("sampler2D") != -1) {
 						uniform = StringUtils::substring(line, string("uniform").size() + 1);
-						StringTokenizer t;
-						t.tokenize(uniform, "\t ;");
+						t2.tokenize(uniform, "\t ;");
 						string uniformType;
 						string uniformName;
-						if (t.hasMoreTokens() == true) uniformType = t.nextToken();
-						while (t.hasMoreTokens() == true) uniformName = t.nextToken();
+						if (t2.hasMoreTokens() == true) uniformType = t2.nextToken();
+						while (t2.hasMoreTokens() == true) uniformName = t2.nextToken();
 						newShaderSourceLines.push_back("layout(binding = {$SAMPLER2D_BINDING_" + uniformName + "_IDX}) " + line);
 						shaderStruct.samplers++;
 					} else {
@@ -1766,6 +1764,19 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					newShaderSourceLines.push_back("layout (location = " + to_string(inLocationCount) + ") " + line);
 					Console::println("layout (location = " + to_string(inLocationCount) + ") " + line);
 					inLocationCount++;
+				} else
+				if (StringUtils::startsWith(line, "layout") == true && line.find("binding=") != -1) {
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have layout with binding: " + line);
+					t2.tokenize(line, "(,)= \t");
+					while (t2.hasMoreTokens() == true) {
+						auto token = t2.nextToken();
+						if (token == "binding" && t2.hasMoreTokens() == true) {
+							auto nextToken = t2.nextToken();
+							shaderStruct.binding_max = Math::max(Integer::parseInt(nextToken), shaderStruct.binding_max);
+							break;
+						}
+					}
+					newShaderSourceLines.push_back(line);
 				} else {
 					newShaderSourceLines.push_back(line);
 				}
@@ -1779,9 +1790,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		string uniformsBlock = "";
 
 		// replace uniforms to use ubo
-		//	TODO: improve me as this will not work in all cases
-		shaderStruct.samplers = 0;
-		shaderStruct.ubo_size = 0;
 		if (uniforms.size() > 0) {
 			if (uboUniformCount > 0) {
 				uniformsBlock+= "layout(std430, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
@@ -1791,8 +1799,6 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			addToShaderUniformBufferObject(shaderStruct, definitionValues, structs, uniforms, "", uniformArrays, uboUniformCount > 0?uniformsBlock:uniformsBlockIgnore);
 			if (uboUniformCount > 0) uniformsBlock+= "} ubo_generated;\n";
 		}
-
-		Console::println("uniformsBlock: \n" + uniformsBlock);
 
 		// construct new shader from vector and flip y, also inject uniforms
 		shaderSource.clear();
@@ -1880,9 +1886,8 @@ void VKRenderer::finishPipeline() {
 }
 
 void VKRenderer::createObjectRenderingPipeline(program_type& program) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	// Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	if (program.created_pipeline == false) {
-		Console::println("creating");
 		VkResult err;
 
 		//
@@ -2186,9 +2191,8 @@ void VKRenderer::createObjectRenderingPipeline(program_type& program) {
 }
 
 void VKRenderer::createSkinningComputingPipeline(program_type& program) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	// Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	if (program.created_pipeline == false) {
-		Console::println("creating");
 		VkResult err;
 
 		//
@@ -2294,7 +2298,7 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 
 void VKRenderer::useProgram(int32_t programId)
 {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
+	// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
 
 	// if unsetting program flush command buffers
 	if (context.program_id != 0) {
@@ -2347,8 +2351,21 @@ bool VKRenderer::linkProgram(int32_t programId)
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist");
 		return false;
 	}
+
 	map<string, int32_t> uniformsByName;
 	auto bindingIdx = 0;
+	for (auto shaderId: programIt->second.shader_ids) {
+		auto shaderIt = context.shaders.find(shaderId);
+		if (shaderIt == context.shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
+			return false;
+		}
+
+		//
+		auto& shader = shaderIt->second;
+		bindingIdx = Math::max(shader.binding_max, bindingIdx);
+	}
+
 	auto uniformIdx = 1;
 	for (auto shaderId: programIt->second.shader_ids) {
 		auto shaderIt = context.shaders.find(shaderId);
@@ -2423,6 +2440,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 			Console::println(shader.source);
 			return false;
 	    }
+	    Console::println(shader.source);
 	    glslProgram.addShader(&glslShader);
 		if (glslProgram.link(messages) == false) {
 			// be verbose
@@ -3367,9 +3385,6 @@ void VKRenderer::flushCommands() {
 		return;
 	}
 	auto& program = programIt->second;
-
-	Console::println("a: " + to_string(context.render_commands.size()));
-	Console::println("b: " + to_string(context.compute_commands.size()));
 
 	// create pipeline
 	if (context.render_commands.size() > 0) {
