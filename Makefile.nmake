@@ -599,6 +599,7 @@ MAIN_SRCS = \
 	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
+	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 
@@ -625,6 +626,7 @@ all: \
 	UDPServerTest \
 	archive \
 	converttotm \
+	copyanimationsetups \
 	levelfixmodelszup2yup \
 	fixdoxygen \
 	TDMELevelEditor \
@@ -712,6 +714,9 @@ archive:
 
 converttotm:
 	cl /Feconverttotm $(FLAGS) $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+copyanimationsetups:
+	cl /Fecopyanimationsetups $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 levelfixmodelszup2yup:
 	cl /Felevelfixmodelszup2yup $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
