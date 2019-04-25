@@ -1140,6 +1140,46 @@ void VKRenderer::initializeRenderPass() {
 	assert(!err);
 }
 
+void VKRenderer::startRenderPass() {
+	if (context.renderPassStarted == true) return;
+	context.renderPassStarted = true;
+	const VkClearValue clear_values[2] = {
+		[0] =
+			{
+				.color = { context.clear_red, context.clear_green, context.clear_blue, context.clear_alpha, }
+			},
+		[1] =
+			{
+				.depthStencil = { 1.0f, 0 }
+			}
+	};
+	const VkRenderPassBeginInfo rp_begin = {
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+		.pNext = NULL,
+		.renderPass = context.render_pass,
+		.framebuffer = context.framebuffers[context.current_buffer],
+		.renderArea = {
+			.offset = {
+				.x = 0,
+				.y = 0
+			},
+			.extent = {
+				.width = context.width,
+				.height = context.height,
+			}
+		},
+		.clearValueCount = 2,
+		.pClearValues = clear_values,
+	};
+	vkCmdBeginRenderPass(context.draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void VKRenderer::endRenderPass() {
+	if (context.renderPassStarted == false) return;
+	context.renderPassStarted = false;
+	vkCmdEndRenderPass(context.draw_cmd);
+}
+
 void VKRenderer::initializeFrameBuffers() {
 	VkImageView attachments[2];
 	auto depthBufferIt = context.textures.find(context.depth_buffer_default);
@@ -1226,7 +1266,7 @@ void VKRenderer::initializeFrame()
 		// TODO: a.drewke
 		//
 		finishSetupCommandBuffer();
-		vkCmdEndRenderPass(context.draw_cmd);
+		endRenderPass();
 		vkDestroySemaphore(context.device, context.image_acquired_semaphore, NULL);
 		vkDestroySemaphore(context.device, context.draw_complete_semaphore, NULL);
 
@@ -1254,36 +1294,7 @@ void VKRenderer::initializeFrame()
 		.pInheritanceInfo = NULL
 	};
 
-	const VkClearValue clear_values[2] = {
-		[0] =
-			{
-				.color = { context.clear_red, context.clear_green, context.clear_blue, context.clear_alpha, }
-			},
-		[1] =
-			{
-				.depthStencil = { 1.0f, 0 }
-			}
-	};
-
-	const VkRenderPassBeginInfo rp_begin = {
-		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-		.pNext = NULL,
-		.renderPass = context.render_pass,
-		.framebuffer = context.framebuffers[context.current_buffer],
-		.renderArea = {
-			.offset = {
-				.x = 0,
-				.y = 0
-			},
-			.extent = {
-				.width = context.width,
-				.height = context.height,
-			}
-		},
-		.clearValueCount = 2,
-		.pClearValues = clear_values,
-	};
-
+	//
 	err = vkBeginCommandBuffer(context.draw_cmd, &cmd_buf_info);
 	assert(!err);
 
@@ -1303,7 +1314,6 @@ void VKRenderer::initializeFrame()
 	};
 
 	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
-	vkCmdBeginRenderPass(context.draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
 }
 
 void VKRenderer::finishFrame()
@@ -1328,8 +1338,8 @@ void VKRenderer::finishFrame()
 	//
 	VkResult err;
 
-	//
-	vkCmdEndRenderPass(context.draw_cmd);
+	// end render pass
+	endRenderPass();
 
 	VkImageMemoryBarrier prePresentBarrier = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -3420,6 +3430,8 @@ void VKRenderer::flushCommands() {
 
 	// do render commands
 	if (context.render_commands.size() > 0) {
+		if (context.renderPassStarted == false) startRenderPass();
+
 		//
 		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
 

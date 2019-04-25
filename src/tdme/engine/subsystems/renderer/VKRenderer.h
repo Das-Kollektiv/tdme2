@@ -236,6 +236,7 @@ private:
 		bool depthBufferWriting { true };
 		bool depthBufferTesting { true };
 		int depthFunction { VK_COMPARE_OP_LESS_OR_EQUAL };
+		bool renderPassStarted { false };
 
 	} context;
 
@@ -253,6 +254,8 @@ private:
 	void initializeFrameBuffers();
 	void flushCommands();
 	void initializeRenderPass();
+	void startRenderPass();
+	void endRenderPass();
 	void preparePipeline(program_type& program);
 	void createObjectRenderingPipeline(program_type& program);
 	void createSkinningComputingPipeline(program_type& program);
