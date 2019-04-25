@@ -187,7 +187,7 @@ private:
 		vector<VkBuffer> buffers_delete;
 		vector<VkImage> images_delete;
 
-		struct render_command {
+		struct objects_render_command {
 			struct texture {
 				VkSampler sampler;
 				VkImageView view;
@@ -209,6 +209,24 @@ private:
 			int32_t instances { 0 };
 		};
 
+		struct points_render_command {
+			struct texture {
+				VkSampler sampler;
+				VkImageView view;
+				VkImageLayout image_layout;
+			};
+			array<VkBuffer, 4> vertex_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
+			};
+			array<VkBuffer, 4> ubo_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
+			};
+
+			unordered_map<uint8_t, texture> textures;
+			int32_t count { 0 };
+			int32_t offset { 0 };
+		};
+
 		struct compute_command {
 			array<VkBuffer, 8> storage_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
@@ -227,7 +245,8 @@ private:
 			int32_t num_groups_z { 0 };
 		};
 
-		vector<render_command> render_commands;
+		vector<objects_render_command> objects_render_commands;
+		vector<points_render_command> points_render_commands;
 		vector<compute_command> compute_commands;
 
 		VkViewport viewport;
@@ -257,7 +276,8 @@ private:
 	void startRenderPass();
 	void endRenderPass();
 	void preparePipeline(program_type& program);
-	void createObjectRenderingPipeline(program_type& program);
+	void createObjectsRenderingPipeline(program_type& program);
+	void createPointsRenderingPipeline(program_type& program);
 	void createSkinningComputingPipeline(program_type& program);
 	void finishPipeline();
 	void prepareSetupCommandBuffer();

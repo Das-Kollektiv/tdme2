@@ -890,7 +890,6 @@ void Engine::display()
 		postProcessingFrameBuffer1->enableFrameBuffer();
 	}
 
-	/*
 	// use particle shader
 	if (particlesShader != nullptr) {
 		particlesShader->useProgram();
@@ -904,6 +903,7 @@ void Engine::display()
 		particlesShader->unUseProgram();
 	}
 
+	/*
 	// render objects and particles together
 	if (postProcessingPrograms.size() > 0) {
 		doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, frameBuffer);

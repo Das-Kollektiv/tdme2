@@ -1895,7 +1895,7 @@ void VKRenderer::finishPipeline() {
 	context.bound_textures.fill(0);
 }
 
-void VKRenderer::createObjectRenderingPipeline(program_type& program) {
+void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 	if (program.created_pipeline == false) {
 		VkResult err;
 
@@ -2199,6 +2199,248 @@ void VKRenderer::createObjectRenderingPipeline(program_type& program) {
 	}
 }
 
+void VKRenderer::createPointsRenderingPipeline(program_type& program) {
+	if (program.created_pipeline == false) {
+		VkResult err;
+
+		//
+		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+		memset(layout_bindings, 0, sizeof(layout_bindings));
+
+		//
+		VkGraphicsPipelineCreateInfo pipeline;
+		memset(&pipeline, 0, sizeof(pipeline));
+
+		// Stages
+		pipeline.stageCount = program.shader_ids.size();
+		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
+		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+
+		auto shaderIdx = 0;
+		for (auto shaderId: program.shader_ids) {
+			auto shaderIt = context.shaders.find(shaderId);
+			if (shaderIt == context.shaders.end()) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+				return;
+			}
+			auto& shader = shaderIt->second;
+			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			shaderStages[shaderIdx].stage = shader.type;
+			shaderStages[shaderIdx].module = shader.module;
+			shaderStages[shaderIdx].pName = "main";
+			if (shader.ubo_binding_idx != -1) {
+				layout_bindings[shader.ubo_binding_idx] = {
+					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.descriptorCount = 1,
+					.stageFlags = shader.type,
+					.pImmutableSamplers = NULL
+				};
+			}
+			for (auto uniformIt: shader.uniforms) {
+				auto& uniform = uniformIt.second;
+				if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
+					layout_bindings[uniform.position] = {
+						.binding = static_cast<uint32_t>(uniform.position),
+						.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+						.descriptorCount = 1,
+						.stageFlags = shader.type,
+						.pImmutableSamplers = NULL
+					};
+				}
+			}
+			shaderIdx++;
+		}
+
+		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.bindingCount = program.layout_bindings,
+			.pBindings = layout_bindings,
+		};
+
+		err = vkCreateDescriptorSetLayout(context.device, &descriptor_layout, NULL, &program.desc_layout);
+		assert(!err);
+
+		const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.setLayoutCount = 1,
+			.pSetLayouts = &program.desc_layout,
+		};
+
+		VkDescriptorSetLayout desc_layouts[DESC_MAX];
+		for (auto i = 0; i < program.desc_max; i++) desc_layouts[i] = program.desc_layout;
+
+		//
+		VkDescriptorSetAllocateInfo alloc_info = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+			.pNext = NULL,
+			.descriptorPool = context.desc_pool,
+			.descriptorSetCount = program.desc_max,
+			.pSetLayouts = desc_layouts
+		};
+		err = vkAllocateDescriptorSets(context.device, &alloc_info, program.desc_set);
+		assert(!err);
+
+		err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
+		assert(!err);
+
+		// create pipepine
+		VkPipelineCacheCreateInfo pipelineCache;
+
+		VkPipelineVertexInputStateCreateInfo vi;
+		VkPipelineInputAssemblyStateCreateInfo ia;
+		VkPipelineRasterizationStateCreateInfo rs;
+		VkPipelineColorBlendStateCreateInfo cb;
+		VkPipelineDepthStencilStateCreateInfo ds;
+		VkPipelineViewportStateCreateInfo vp;
+		VkPipelineMultisampleStateCreateInfo ms;
+		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
+		VkPipelineDynamicStateCreateInfo dynamicState;
+
+		memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
+		memset(&dynamicState, 0, sizeof dynamicState);
+		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+		dynamicState.pDynamicStates = dynamicStateEnables;
+
+		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipeline.layout = program.pipeline_layout;
+
+		memset(&ia, 0, sizeof(ia));
+		ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		ia.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+
+		memset(&rs, 0, sizeof(rs));
+		rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		rs.polygonMode = VK_POLYGON_MODE_FILL;
+		rs.cullMode = VK_CULL_MODE_NONE;
+		rs.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rs.depthClampEnable = VK_FALSE;
+		rs.rasterizerDiscardEnable = VK_FALSE;
+		rs.depthBiasEnable = VK_FALSE;
+		rs.lineWidth = 1.0f;
+
+		VkPipelineColorBlendAttachmentState att_state[1];
+		memset(att_state, 0, sizeof(att_state));
+		att_state[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		att_state[0].blendEnable = VK_TRUE;
+		att_state[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		att_state[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		att_state[0].colorBlendOp = VK_BLEND_OP_ADD;
+		att_state[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		att_state[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		att_state[0].alphaBlendOp = VK_BLEND_OP_ADD;
+
+		memset(&cb, 0, sizeof(cb));
+		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		cb.logicOpEnable = VK_FALSE;
+		cb.attachmentCount = 1;
+		cb.pAttachments = att_state;
+
+		memset(&vp, 0, sizeof(vp));
+		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+		vp.viewportCount = 1;
+		dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
+		vp.scissorCount = 1;
+		dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
+
+		memset(&ds, 0, sizeof(ds));
+		ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		ds.depthTestEnable = context.depthBufferTesting == true?VK_TRUE:VK_FALSE;
+		ds.depthWriteEnable = context.depthBufferWriting == true?VK_TRUE:VK_FALSE;
+		ds.depthCompareOp = (VkCompareOp)context.depthFunction;
+		ds.depthBoundsTestEnable = VK_FALSE;
+		ds.back.failOp = VK_STENCIL_OP_KEEP;
+		ds.back.passOp = VK_STENCIL_OP_KEEP;
+		ds.back.compareOp = VK_COMPARE_OP_ALWAYS;
+		ds.stencilTestEnable = VK_FALSE;
+		ds.front = ds.back;
+
+		memset(&ms, 0, sizeof(ms));
+		ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+		ms.pSampleMask = NULL;
+		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+		VkVertexInputBindingDescription vi_bindings[4];
+		memset(vi_bindings, 0, sizeof(vi_bindings));
+		VkVertexInputAttributeDescription vi_attrs[4];
+		memset(vi_attrs, 0, sizeof(vi_attrs));
+
+		// vertices
+		vi_bindings[0].binding = 0;
+		vi_bindings[0].stride = sizeof(float) * 3;
+		vi_bindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[0].binding = 0;
+		vi_attrs[0].location = 0;
+		vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[0].offset = 0;
+
+		// normals
+		vi_bindings[1].binding = 1;
+		vi_bindings[1].stride = sizeof(float) * 3;
+		vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[1].binding = 1;
+		vi_attrs[1].location = 1;
+		vi_attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[1].offset = 0;
+
+		// texture coordinates
+		vi_bindings[2].binding = 2;
+		vi_bindings[2].stride = sizeof(float) * 2;
+		vi_bindings[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[2].binding = 2;
+		vi_attrs[2].location = 2;
+		vi_attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
+		vi_attrs[2].offset = 0;
+
+		// colors
+		vi_bindings[3].binding = 3;
+		vi_bindings[3].stride = sizeof(float) * 4;
+		vi_bindings[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[3].binding = 3;
+		vi_attrs[3].location = 3;
+		vi_attrs[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vi_attrs[3].offset = 0;
+
+
+		memset(&vi, 0, sizeof(vi));
+		vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+		vi.pNext = NULL;
+		vi.vertexBindingDescriptionCount = 4;
+		vi.pVertexBindingDescriptions = vi_bindings;
+		vi.vertexAttributeDescriptionCount = 4;
+		vi.pVertexAttributeDescriptions = vi_attrs;
+
+		pipeline.pVertexInputState = &vi;
+		pipeline.pInputAssemblyState = &ia;
+		pipeline.pRasterizationState = &rs;
+		pipeline.pColorBlendState = &cb;
+		pipeline.pMultisampleState = &ms;
+		pipeline.pViewportState = &vp;
+		pipeline.pDepthStencilState = &ds;
+		pipeline.pStages = shaderStages;
+		pipeline.renderPass = context.render_pass;
+		pipeline.pDynamicState = &dynamicState;
+
+		memset(&pipelineCache, 0, sizeof(pipelineCache));
+		pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+
+		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &program.pipelineCache);
+		assert(!err);
+
+		err = vkCreateGraphicsPipelines(context.device, program.pipelineCache, 1, &pipeline, NULL, &program.pipeline);
+		assert(!err);
+
+		vkDestroyPipelineCache(context.device, program.pipelineCache, NULL);
+
+		//
+		program.created_pipeline = true;
+	}
+}
+
 void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 	if (program.created_pipeline == false) {
 		VkResult err;
@@ -2325,11 +2567,14 @@ void VKRenderer::useProgram(int32_t programId)
 	}
 
 	context.program_id = 0;
+	if (programId == 0) return;
+
 	auto programIt = context.programs.find(programId);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
 		return;
 	}
+
 	auto& program = programIt->second;
 	preparePipeline(program);
 	context.program_id = programId;
@@ -2677,6 +2922,9 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	//
 	vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
 	vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
+
+	//
+	this->pointSize = width > height ? width / 120.0f : height / 120.0f * 16 / 9;
 }
 
 void VKRenderer::updateViewPort()
@@ -3342,8 +3590,8 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 	}
 	program_type& program = programIt->second;
 
-	context.render_commands.push_back(context_type::render_command());
-	auto& render_command = context.render_commands[context.render_commands.size() - 1];
+	context.objects_render_commands.push_back(context_type::objects_render_command());
+	auto& objects_render_command = context.objects_render_commands[context.objects_render_commands.size() - 1];
 
 	auto shaderIdx = 0;
 	for (auto& shaderId: program.shader_ids) {
@@ -3359,7 +3607,7 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 			continue;
 		}
 		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
-		render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
+		objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
 		shaderIdx++;
 	}
 
@@ -3372,7 +3620,7 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 			continue;
 		}
 		auto& texture_object = textureObjectIt->second;
-		render_command.textures[i] = {
+		objects_render_command.textures[i] = {
 			.sampler = texture_object.sampler,
 			.view = texture_object.view,
 			.image_layout = texture_object.image_layout
@@ -3380,19 +3628,19 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 	}
 
 	//
-	render_command.indices_buffer = getBufferObjectInternal(context.bound_indices_buffer);
-	render_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
-	render_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
-	render_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
-	render_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
-	render_command.vertex_buffers[4] = getBufferObjectInternal(context.bound_buffers[4] == 0?context.empty_vertex_buffer:context.bound_buffers[4]);
-	render_command.vertex_buffers[5] = getBufferObjectInternal(context.bound_buffers[5] == 0?context.empty_vertex_buffer:context.bound_buffers[5]);
-	render_command.vertex_buffers[6] = getBufferObjectInternal(context.bound_buffers[6] == 0?context.empty_vertex_buffer:context.bound_buffers[6]);
-	render_command.vertex_buffers[7] = getBufferObjectInternal(context.bound_buffers[7] == 0?context.empty_vertex_buffer:context.bound_buffers[7]);
-	render_command.vertex_buffers[8] = getBufferObjectInternal(context.bound_buffers[8] == 0?context.empty_vertex_buffer:context.bound_buffers[8]);
-	render_command.count = triangles;
-	render_command.offset = trianglesOffset;
-	render_command.instances = instances;
+	objects_render_command.indices_buffer = getBufferObjectInternal(context.bound_indices_buffer);
+	objects_render_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
+	objects_render_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
+	objects_render_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
+	objects_render_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
+	objects_render_command.vertex_buffers[4] = getBufferObjectInternal(context.bound_buffers[4] == 0?context.empty_vertex_buffer:context.bound_buffers[4]);
+	objects_render_command.vertex_buffers[5] = getBufferObjectInternal(context.bound_buffers[5] == 0?context.empty_vertex_buffer:context.bound_buffers[5]);
+	objects_render_command.vertex_buffers[6] = getBufferObjectInternal(context.bound_buffers[6] == 0?context.empty_vertex_buffer:context.bound_buffers[6]);
+	objects_render_command.vertex_buffers[7] = getBufferObjectInternal(context.bound_buffers[7] == 0?context.empty_vertex_buffer:context.bound_buffers[7]);
+	objects_render_command.vertex_buffers[8] = getBufferObjectInternal(context.bound_buffers[8] == 0?context.empty_vertex_buffer:context.bound_buffers[8]);
+	objects_render_command.count = triangles;
+	objects_render_command.offset = trianglesOffset;
+	objects_render_command.instances = instances;
 }
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -3404,7 +3652,11 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 }
 
 void VKRenderer::flushCommands() {
-	if (context.render_commands.size() == 0 && context.compute_commands.size() == 0) return;
+	if (context.objects_render_commands.size() == 0 &&
+		context.points_render_commands.size() == 0 &&
+		context.compute_commands.size() == 0) {
+		return;
+	}
 
 	auto programIt = context.programs.find(context.program_id);
 	if (programIt == context.programs.end()) {
@@ -3414,8 +3666,11 @@ void VKRenderer::flushCommands() {
 	auto& program = programIt->second;
 
 	// create pipeline
-	if (context.render_commands.size() > 0) {
-		createObjectRenderingPipeline(program);
+	if (context.objects_render_commands.size() > 0) {
+		createObjectsRenderingPipeline(program);
+	} else
+	if (context.points_render_commands.size() > 0) {
+		createPointsRenderingPipeline(program);
 	} else
 	if (context.compute_commands.size() > 0) {
 		createSkinningComputingPipeline(program);
@@ -3429,14 +3684,14 @@ void VKRenderer::flushCommands() {
 	VkDescriptorImageInfo texDescs[program.layout_bindings];
 
 	// do render commands
-	if (context.render_commands.size() > 0) {
+	if (context.objects_render_commands.size() > 0) {
 		if (context.renderPassStarted == false) startRenderPass();
 
 		//
 		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
 
 		// do render commands
-		for (auto& render_command: context.render_commands) {
+		for (auto& objects_render_command: context.objects_render_commands) {
 			if (program.desc_used == program.desc_max) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
 				break;
@@ -3454,8 +3709,8 @@ void VKRenderer::flushCommands() {
 				for (auto uniformIt: shader.uniforms) {
 					auto& uniform = uniformIt.second;
 					if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
-					auto commandTextureIt = render_command.textures.find(uniform.texture_unit);
-					if (commandTextureIt == render_command.textures.end()) {
+					auto commandTextureIt = objects_render_command.textures.find(uniform.texture_unit);
+					if (commandTextureIt == objects_render_command.textures.end()) {
 						auto contextTextureIt = context.textures.find(context.white_texture_default);
 						auto texture = contextTextureIt->second;
 						texDescs[samplerIdx] = {
@@ -3492,7 +3747,7 @@ void VKRenderer::flushCommands() {
 				}
 
 				bufferInfos[shader.ubo_binding_idx] = {
-					.buffer = render_command.ubo_buffers[shader.ubo_binding_idx],
+					.buffer = objects_render_command.ubo_buffers[shader.ubo_binding_idx],
 					.offset = 0,
 					.range = shader.ubo_size
 				};
@@ -3514,27 +3769,128 @@ void VKRenderer::flushCommands() {
 			//
 			vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
 			vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
-			vkCmdBindIndexBuffer(context.draw_cmd, render_command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
-			#define RENDERCOMMAND_VERTEX_BUFFER_COUNT	9
-			VkBuffer vertexBuffersBuffer[RENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
-				render_command.vertex_buffers[0],
-				render_command.vertex_buffers[1],
-				render_command.vertex_buffers[2],
-				render_command.vertex_buffers[3],
-				render_command.vertex_buffers[4],
-				render_command.vertex_buffers[5],
-				render_command.vertex_buffers[6],
-				render_command.vertex_buffers[7],
-				render_command.vertex_buffers[8]
+			vkCmdBindIndexBuffer(context.draw_cmd, objects_render_command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
+			#define OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	9
+			VkBuffer vertexBuffersBuffer[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
+				objects_render_command.vertex_buffers[0],
+				objects_render_command.vertex_buffers[1],
+				objects_render_command.vertex_buffers[2],
+				objects_render_command.vertex_buffers[3],
+				objects_render_command.vertex_buffers[4],
+				objects_render_command.vertex_buffers[5],
+				objects_render_command.vertex_buffers[6],
+				objects_render_command.vertex_buffers[7],
+				objects_render_command.vertex_buffers[8]
 			};
-			VkDeviceSize vertexBuffersOffsets[RENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			vkCmdBindVertexBuffers(context.draw_cmd, 0, RENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
-			vkCmdDrawIndexed(context.draw_cmd, render_command.count * 3, render_command.instances, render_command.offset * 3, 0, 0);
+			VkDeviceSize vertexBuffersOffsets[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+			vkCmdBindVertexBuffers(context.draw_cmd, 0, OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
+			vkCmdDrawIndexed(context.draw_cmd, objects_render_command.count * 3, objects_render_command.instances, objects_render_command.offset * 3, 0, 0);
 			program.desc_used++;
 		}
 
 		//
-		context.render_commands.clear();
+		context.objects_render_commands.clear();
+	} else
+	if (context.points_render_commands.size() > 0) {
+		if (context.renderPassStarted == false) startRenderPass();
+
+		//
+		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
+
+		// do render commands
+		for (auto& points_render_command: context.points_render_commands) {
+			if (program.desc_used == program.desc_max) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
+				break;
+			}
+			auto samplerIdx = 0;
+			for (auto& shaderId: program.shader_ids) {
+				auto shaderIt = context.shaders.find(shaderId);
+				if (shaderIt == context.shaders.end()) {
+					Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+					return;
+				}
+				auto& shader = shaderIt->second;
+
+				// sampler2D
+				for (auto uniformIt: shader.uniforms) {
+					auto& uniform = uniformIt.second;
+					if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
+					auto commandTextureIt = points_render_command.textures.find(uniform.texture_unit);
+					if (commandTextureIt == points_render_command.textures.end()) {
+						auto contextTextureIt = context.textures.find(context.white_texture_default);
+						auto texture = contextTextureIt->second;
+						texDescs[samplerIdx] = {
+							.sampler = texture.sampler,
+							.imageView = texture.view,
+							.imageLayout = texture.image_layout
+						};
+					} else {
+						auto& texture = commandTextureIt->second;
+						texDescs[samplerIdx] = {
+							.sampler = texture.sampler,
+							.imageView = texture.view,
+							.imageLayout = texture.image_layout
+						};
+					}
+					descriptorSetWrites[uniform.position] = {
+						.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+						.pNext = NULL,
+						.dstSet = program.desc_set[program.desc_used],
+						.dstBinding = static_cast<uint32_t>(uniform.position),
+						.dstArrayElement = 0,
+						.descriptorCount = 1,
+						.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+						.pImageInfo = &texDescs[samplerIdx],
+						.pBufferInfo = VK_NULL_HANDLE,
+						.pTexelBufferView = VK_NULL_HANDLE
+					};
+					samplerIdx++;
+				}
+
+				// uniform buffer
+				if (shader.ubo_binding_idx == -1) {
+					continue;
+				}
+
+				bufferInfos[shader.ubo_binding_idx] = {
+					.buffer = points_render_command.ubo_buffers[shader.ubo_binding_idx],
+					.offset = 0,
+					.range = shader.ubo_size
+				};
+
+				descriptorSetWrites[shader.ubo_binding_idx] = {
+					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+					.pNext = NULL,
+					.dstSet = program.desc_set[program.desc_used],
+					.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
+					.dstArrayElement = 0,
+					.descriptorCount = 1,
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.pImageInfo = NULL,
+					.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
+					.pTexelBufferView = NULL
+				};
+			}
+
+			//
+			vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
+			vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
+			#define POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	4
+			VkBuffer vertexBuffersBuffer[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
+				points_render_command.vertex_buffers[0],
+				points_render_command.vertex_buffers[1],
+				points_render_command.vertex_buffers[2],
+				points_render_command.vertex_buffers[3]
+			};
+			VkDeviceSize vertexBuffersOffsets[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
+			vkCmdBindVertexBuffers(context.draw_cmd, 0, POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
+			vkCmdDraw(context.draw_cmd, points_render_command.count, 1, points_render_command.offset, 0);
+			program.desc_used++;
+		}
+
+		//
+		context.points_render_commands.clear();
 	} else
 	if (context.compute_commands.size() > 0) {
 		//
@@ -3623,7 +3979,59 @@ void VKRenderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trian
 
 void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(points) + " / " + to_string(pointsOffset));
+	// upload uniforms
+	auto programIt = context.programs.find(context.program_id);
+	if (programIt == context.programs.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
+		return;
+	}
+	program_type& program = programIt->second;
+
+	context.points_render_commands.push_back(context_type::points_render_command());
+	auto& points_render_command = context.points_render_commands[context.points_render_commands.size() - 1];
+
+	auto shaderIdx = 0;
+	for (auto& shaderId: program.shader_ids) {
+		auto shaderIt = context.shaders.find(shaderId);
+		if (shaderIt == context.shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+			return;
+		}
+		auto& shader = shaderIt->second;
+
+		if (shader.ubo_binding_idx == -1) {
+			shaderIdx++;
+			continue;
+		}
+		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
+		shaderIdx++;
+	}
+
+	for (auto i = 0; i < context.bound_textures.size(); i++) {
+		auto textureId = context.bound_textures[i];
+		if (textureId == 0) continue;
+		auto textureObjectIt = context.textures.find(textureId);
+		if (textureObjectIt == context.textures.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(context.bound_textures[i]));
+			continue;
+		}
+		auto& texture_object = textureObjectIt->second;
+		points_render_command.textures[i] = {
+			.sampler = texture_object.sampler,
+			.view = texture_object.view,
+			.image_layout = texture_object.image_layout
+		};
+	}
+
+	//
+	points_render_command.vertex_buffers[0] = getBufferObjectInternal(context.bound_buffers[0] == 0?context.empty_vertex_buffer:context.bound_buffers[0]);
+	points_render_command.vertex_buffers[1] = getBufferObjectInternal(context.bound_buffers[1] == 0?context.empty_vertex_buffer:context.bound_buffers[1]);
+	points_render_command.vertex_buffers[2] = getBufferObjectInternal(context.bound_buffers[2] == 0?context.empty_vertex_buffer:context.bound_buffers[2]);
+	points_render_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
+	points_render_command.count = points;
+	points_render_command.offset = pointsOffset;
 }
 
 void VKRenderer::unbindBufferObjects()

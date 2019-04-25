@@ -7,8 +7,6 @@ uniform vec4 effectColorAdd;
 in vec4 fragColor;
 out vec4 outColor;
 
-#define HAVE_DEPTH_FOG
-
 #if defined(HAVE_DEPTH_FOG)
 	#define FOG_DISTANCE_NEAR			100.0
 	#define FOG_DISTANCE_MAX			250.0

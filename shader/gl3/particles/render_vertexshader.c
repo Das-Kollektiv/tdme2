@@ -16,8 +16,6 @@ uniform float pointSize;
 // will be passed to fragment shader
 out vec4 fragColor;
 
-#define HAVE_DEPTH_FOG
-
 #if defined(HAVE_DEPTH_FOG)
 	out float fragDepth;
 #endif
