@@ -6,6 +6,7 @@
 #include <spirv/GlslangToSpv.h>
 
 #include <array>
+#include <list>
 #include <map>
 #include <string>
 #include <unordered_map>
@@ -20,6 +21,7 @@
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
 
 using std::array;
+using std::list;
 using std::map;
 using std::string;
 using std::unordered_map;
@@ -85,11 +87,19 @@ private:
 	};
 
 	struct buffer_object {
-		VkBuffer buf { VK_NULL_HANDLE };
-		VkDeviceMemory mem { VK_NULL_HANDLE };
+		struct reusable_buffer {
+			int64_t frame_used_last { -1 };
+			VkBuffer buf { VK_NULL_HANDLE };
+			VkDeviceMemory mem { VK_NULL_HANDLE };
+			uint32_t alloc_size { 0 };
+			uint32_t size { 0 };
+			void* data { nullptr };
+		};
 		int32_t id { 0 };
-		uint32_t alloc_size { 0 };
-		uint32_t size { 0 };
+		map<uint32_t, list<reusable_buffer>> buffers;
+		uint32_t buffer_count { 0 };
+		int64_t frame_cleaned_last { 0 };
+		reusable_buffer* current_buffer { nullptr };
 	};
 
 	struct texture_object {
@@ -256,6 +266,7 @@ private:
 		bool depthBufferTesting { true };
 		int depthFunction { VK_COMPARE_OP_LESS_OR_EQUAL };
 		bool renderPassStarted { false };
+		int64_t frame { 0 };
 
 	} context;
 

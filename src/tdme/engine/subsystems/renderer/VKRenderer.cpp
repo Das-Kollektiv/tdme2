@@ -16,6 +16,7 @@
 
 #include <array>
 #include <cassert>
+#include <iterator>
 #include <map>
 #include <stack>
 #include <string>
@@ -71,6 +72,7 @@ using std::to_string;
     }
 
 using std::array;
+using std::iterator;
 using std::map;
 using std::stack;
 using std::string;
@@ -1420,6 +1422,9 @@ void VKRenderer::finishFrame()
 	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
 
 	if (needsReshape == true) reshape();
+
+	//
+	context.frame++;
 }
 
 bool VKRenderer::isBufferObjectsAvailable()
@@ -3403,8 +3408,6 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
 	for (auto i = 0; i < buffers; i++) {
 		buffer_object buffer;
 		buffer.id = context.buffer_idx++;
-		buffer.alloc_size = 0;
-		buffer.size = 0;
 		context.buffers[buffer.id] = buffer;
 		bufferIds.push_back(buffer.id);
 	}
@@ -3418,7 +3421,11 @@ VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
 		return VK_NULL_HANDLE;
 	}
-	return bufferIt->second.buf;
+	if (bufferIt->second.current_buffer == nullptr) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " has no current data attached");
+		return VK_NULL_HANDLE;
+	}
+	return bufferIt->second.current_buffer->buf;
 }
 
 uint32_t VKRenderer::getBufferSizeInternal(int32_t bufferObjectId) {
@@ -3428,7 +3435,11 @@ uint32_t VKRenderer::getBufferSizeInternal(int32_t bufferObjectId) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
 		return 0;
 	}
-	return bufferIt->second.size;
+	if (bufferIt->second.current_buffer == nullptr) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " has no current data attached");
+		return 0;
+	}
+	return bufferIt->second.current_buffer->size;
 }
 
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
@@ -3440,79 +3451,137 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	}
 	auto& buffer = bufferIt->second;
 
+	if (size == 0) return;
+
 	//
 	VkResult err;
 
-	if (buffer.size > 0) {
-		context.memory_delete.push_back(buffer.mem);
-		context.buffers_delete.push_back(buffer.buf);
+	// find a reusable buffer
+	buffer_object::reusable_buffer* reusableBuffer = nullptr;
+	auto reusableBuffersIt = buffer.buffers.find(size);
+	if (reusableBuffersIt != buffer.buffers.end()) {
+		for (auto& reusableBufferCandidate: reusableBuffersIt->second) {
+			if (reusableBufferCandidate.frame_used_last < context.frame) {
+				reusableBuffer = &reusableBufferCandidate;
+				break;
+			}
+		}
 	}
 
-	buffer.mem = VK_NULL_HANDLE;
-	buffer.buf = VK_NULL_HANDLE;
+	// nope, create one
+	if (reusableBuffer == nullptr) {
+		buffer.buffers[size].push_back(buffer_object::reusable_buffer());
+		reusableBuffer = &buffer.buffers[size].back();
+		buffer.buffer_count++;
+	}
 
-	const VkBufferCreateInfo buf_info = {
-		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.pNext = NULL,
-		.flags = 0,
-		.size = size == 0?16:static_cast<uint32_t>(size), // TODO = workaround for having buffers with zero size
-		.usage = usage,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = NULL
-	};
-	VkMemoryAllocateInfo mem_alloc = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = NULL,
-		.allocationSize = 0,
-		.memoryTypeIndex = 0
-	};
+	// create if not yet done
+	if (reusableBuffer->size == 0) {
+		const VkBufferCreateInfo buf_info = {
+			.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.size = static_cast<uint32_t>(size),
+			.usage = usage,
+			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+			.queueFamilyIndexCount = 0,
+			.pQueueFamilyIndices = NULL
+		};
+		VkMemoryAllocateInfo mem_alloc = {
+			.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+			.pNext = NULL,
+			.allocationSize = 0,
+			.memoryTypeIndex = 0
+		};
 
-	VkMemoryRequirements mem_reqs;
-	bool pass;
+		VkMemoryRequirements mem_reqs;
+		bool pass;
 
-	err = vkCreateBuffer(context.device, &buf_info, NULL, &buffer.buf);
-	assert(err == VK_SUCCESS);
+		err = vkCreateBuffer(context.device, &buf_info, NULL, &reusableBuffer->buf);
+		assert(err == VK_SUCCESS);
 
-	vkGetBufferMemoryRequirements(context.device, buffer.buf, &mem_reqs);
+		vkGetBufferMemoryRequirements(context.device, reusableBuffer->buf, &mem_reqs);
 
-	mem_alloc.allocationSize = mem_reqs.size;
-	pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &mem_alloc.memoryTypeIndex);
-	assert(pass);
+		mem_alloc.allocationSize = mem_reqs.size;
+		pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &mem_alloc.memoryTypeIndex);
+		assert(pass);
 
-	buffer.alloc_size = mem_alloc.allocationSize;
+		reusableBuffer->alloc_size = mem_alloc.allocationSize;
 
-	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &buffer.mem);
-	assert(err == VK_SUCCESS);
-
-	//
-	buffer.size = size;
-
-	// TODO: workaround for having buffers with zero size
-	if (size > 0) {
-		// map memory
-		void* buffer_data;
-		err = vkMapMemory(context.device, buffer.mem, 0, buffer.alloc_size, 0, &buffer_data);
+		err = vkAllocateMemory(context.device, &mem_alloc, NULL, &reusableBuffer->mem);
 		assert(err == VK_SUCCESS);
 
 		//
-		memcpy(buffer_data, data, size);
+		reusableBuffer->size = size;
+
+		// TODO: workaround for having buffers with zero size
+		if (size > 0) {
+			// map memory
+			err = vkMapMemory(context.device, reusableBuffer->mem, 0, reusableBuffer->alloc_size, 0, &reusableBuffer->data);
+			assert(err == VK_SUCCESS);
+
+			// bind if (re)created
+			err = vkBindBufferMemory(context.device, reusableBuffer->buf, reusableBuffer->mem, 0);
+			assert(!err);
+		}
+	}
+
+	// TODO: workaround for having buffers with zero size
+	if (size > 0) {
+		// copy to buffer
+		memcpy(reusableBuffer->data, data, size);
+
+		// flush
 		VkMappedMemoryRange mappedMemoryRange = {
 			.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
 			.pNext = NULL,
-			.memory = buffer.mem,
+			.memory = reusableBuffer->mem,
 			.offset = 0,
-			.size = buffer.alloc_size
+			.size = reusableBuffer->alloc_size
 		};
 		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
-
-		//
-		vkUnmapMemory(context.device, buffer.mem);
 	}
 
-	// bind if (re)created
-	err = vkBindBufferMemory(context.device, buffer.buf, buffer.mem, 0);
-	assert(!err);
+	// frame and current buffer
+	reusableBuffer->frame_used_last = context.frame;
+	buffer.current_buffer = reusableBuffer;
+
+	// clean up
+	if (buffer.buffer_count > 1 && context.frame > buffer.frame_cleaned_last + 60) {
+		vector<int> bufferArraysToRemove;
+		for (auto& reusableBuffersIt: buffer.buffers) {
+			auto i = 0;
+			vector<int> buffersToRemove;
+			auto& bufferList = reusableBuffersIt.second;
+			for (auto& reusableBufferCandidate: bufferList) {
+				if (buffer.current_buffer != &reusableBufferCandidate &&
+					buffer.frame_cleaned_last > reusableBufferCandidate.frame_used_last - 60) {
+					vkUnmapMemory(context.device, reusableBufferCandidate.mem);
+					vkDestroyBuffer(context.device, reusableBufferCandidate.buf, NULL);
+					vkFreeMemory(context.device, reusableBufferCandidate.mem, NULL);
+					buffersToRemove.push_back(i);
+				}
+				i++;
+			}
+			if (buffersToRemove.size() == bufferList.size()) {
+				bufferArraysToRemove.push_back(reusableBuffersIt.first);
+			} else {
+				auto buffersRemoved = 0;
+				for (auto bufferToRemove: buffersToRemove) {
+					auto listIt = reusableBuffersIt.second.begin();
+					advance(listIt, bufferToRemove - buffersRemoved);
+					reusableBuffersIt.second.erase(listIt);
+					buffersRemoved++;
+					buffer.buffer_count--;
+				}
+			}
+		}
+		for (auto bufferArrayToRemove: bufferArraysToRemove) {
+			buffer.buffer_count-= buffer.buffers.find(bufferArrayToRemove)->second.size();
+			buffer.buffers.erase(bufferArrayToRemove);
+		}
+		buffer.frame_cleaned_last = context.frame;
+	}
 }
 
 void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
@@ -4051,13 +4120,12 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 			continue;
 		}
 		auto& buffer = bufferIt->second;
-		if (buffer.size == 0) {
-			context.buffers.erase(bufferIt);
-			continue;
-		}
-		if (buffer.size > 0) {
-			vkDestroyBuffer(context.device, buffer.buf, NULL);
-			vkFreeMemory(context.device, buffer.mem, NULL);
+		for (auto bufferIt: buffer.buffers) {
+			for (auto& reusableBuffer: bufferIt.second) {
+				if (reusableBuffer.size == 0) continue;
+				vkDestroyBuffer(context.device, reusableBuffer.buf, NULL);
+				vkFreeMemory(context.device, reusableBuffer.mem, NULL);
+			}
 		}
 		context.buffers.erase(bufferIt);
 	}
