@@ -169,11 +169,11 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 		// add faces
 		for (auto& face: *facesEntity.getFaces()) {
 			// get face vertices and such
-			auto& faceVertexIndices = *face.getVertexIndices();
-			auto& faceNormalIndices = *face.getNormalIndices();
-			auto& faceTextureCoordinatesIndices = *face.getTextureCoordinateIndices();
-			auto& faceTangentIndices = *face.getTangentIndices();
-			auto& faceBitangentIndices = *face.getBitangentIndices();
+			auto& faceVertexIndices = face.getVertexIndices();
+			auto& faceNormalIndices = face.getNormalIndices();
+			auto& faceTextureCoordinatesIndices = face.getTextureCoordinateIndices();
+			auto& faceTangentIndices = face.getTangentIndices();
+			auto& faceBitangentIndices = face.getBitangentIndices();
 
 			//
 			combinedModelGroupFacesEntity->getFaces()->push_back(

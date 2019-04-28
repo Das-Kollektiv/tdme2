@@ -285,9 +285,9 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 				// vertex indices
 				auto vertexIndicesModel1 = (*facesModel1)[k].getVertexIndices();
 				auto vertexIndicesModel2 = (*facesModel2)[k].getVertexIndices();
-				if ((*vertexIndicesModel1)[0] != (*vertexIndicesModel2)[0] ||
-					(*vertexIndicesModel1)[1] != (*vertexIndicesModel2)[1] ||
-					(*vertexIndicesModel1)[2] != (*vertexIndicesModel2)[2]) {
+				if (vertexIndicesModel1[0] != vertexIndicesModel2[0] ||
+					vertexIndicesModel1[1] != vertexIndicesModel2[1] ||
+					vertexIndicesModel1[2] != vertexIndicesModel2[2]) {
 					return false;
 				}
 				// TODO: maybe other indices

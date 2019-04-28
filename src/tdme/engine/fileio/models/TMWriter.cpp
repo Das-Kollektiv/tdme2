@@ -127,7 +127,7 @@ void TMWriter::writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v)
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException) // TODO: change std::vector* argument to std::vector& ?
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) throw (ModelFileIOException)
 {
 	if (tc == nullptr) {
 		os->writeBoolean(false);
@@ -140,16 +140,12 @@ void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureC
 	}
 }
 
-void TMWriter::writeIndices(TMWriterOutputStream* os, const array<int32_t, 3>* indices) throw (ModelFileIOException) // TODO: change std::array* argument to std::array& ?
+void TMWriter::writeIndices(TMWriterOutputStream* os, const array<int32_t, 3>& indices) throw (ModelFileIOException)
 {
-	if (indices == nullptr) {
-		os->writeBoolean(false);
-	} else {
-		os->writeBoolean(true);
-		os->writeInt(indices->size());
-		for (auto i = 0; i < indices->size(); i++) {
-			os->writeInt((*indices)[i]);
-		}
+	os->writeBoolean(true);
+	os->writeInt(indices.size());
+	for (auto i = 0; i < indices.size(); i++) {
+		os->writeInt(indices[i]);
 	}
 }
 

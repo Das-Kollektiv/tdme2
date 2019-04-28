@@ -93,16 +93,16 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 		for (auto& face : *faceEntity.getFaces()) {
 			// Shortcuts for vertices
 			auto verticesIndexes = face.getVertexIndices();
-			auto v0 = &(*vertices)[(*verticesIndexes)[0]];
-			auto v1 = &(*vertices)[(*verticesIndexes)[1]];
-			auto v2 = &(*vertices)[(*verticesIndexes)[2]];
+			auto v0 = &(*vertices)[verticesIndexes[0]];
+			auto v1 = &(*vertices)[verticesIndexes[1]];
+			auto v2 = &(*vertices)[verticesIndexes[2]];
 			// shortcuts for UVs
 			auto textureCoordinatesIndexes = face.getTextureCoordinateIndices();
-			uv0.set((*textureCoordinates)[(*textureCoordinatesIndexes)[0]].getArray());
+			uv0.set((*textureCoordinates)[textureCoordinatesIndexes[0]].getArray());
 			uv0.setY(1.0f - uv0.getY());
-			uv1.set((*textureCoordinates)[(*textureCoordinatesIndexes)[1]].getArray());
+			uv1.set((*textureCoordinates)[textureCoordinatesIndexes[1]].getArray());
 			uv1.setY(1.0f - uv1.getY());
-			uv2.set((*textureCoordinates)[(*textureCoordinatesIndexes)[2]].getArray());
+			uv2.set((*textureCoordinates)[textureCoordinatesIndexes[2]].getArray());
 			uv2.setY(1.0f - uv2.getY());
 			// edges of the triangle : position delta
 			deltaPos1.set(*v1).sub(*v0);
@@ -139,9 +139,9 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 		if (faceEntity.getMaterial() != nullptr && faceEntity.getMaterial()->hasNormalTexture() == true) {
 			for (auto& face : *faceEntity.getFaces())
 			for (auto i = 0; i < 3; i++) {
-				auto normal = &(*normals)[(*face.getNormalIndices())[i]];
-				auto tangent = &(*tangents)[(*face.getTangentIndices())[i]];
-				auto bitangent = &(*bitangents)[(*face.getBitangentIndices())[i]];
+				auto normal = &(*normals)[face.getNormalIndices()[i]];
+				auto tangent = &(*tangents)[face.getTangentIndices()[i]];
+				auto bitangent = &(*bitangents)[face.getBitangentIndices()[i]];
 				tangent->sub(tmpVector3.set(*normal).scale(Vector3::computeDotProduct(*normal, *tangent))).normalize();
 				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(*normal, *tangent, tmpVector3), *bitangent) < 0.0f) {
 					tangent->scale(-1.0f);
@@ -185,11 +185,11 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 				auto faceBitangentIndices = face.getBitangentIndices();
 				array<int32_t, 3> indexedFaceVertexIndices;
 				for (int16_t idx = 0; idx < 3; idx++) {
-					auto groupVertexIndex = (*faceVertexIndices)[idx];
-					auto groupNormalIndex = (*faceNormalIndices)[idx];
-					auto groupTextureCoordinateIndex = faceTextureIndices != nullptr ? (*faceTextureIndices)[idx] : 0;
-					auto groupTangentIndex = faceTangentIndices != nullptr ? (*faceTangentIndices)[idx] : 0;
-					auto groupBitangentIndex = faceBitangentIndices != nullptr ? (*faceBitangentIndices)[idx] : 0;
+					auto groupVertexIndex = faceVertexIndices[idx];
+					auto groupNormalIndex = faceNormalIndices[idx];
+					auto groupTextureCoordinateIndex = faceTextureIndices[idx];
+					auto groupTangentIndex = faceTangentIndices[idx];
+					auto groupBitangentIndex = faceBitangentIndices[idx];
 					auto vertex = &(*groupVertices)[groupVertexIndex];
 					auto normal = &(*groupNormals)[groupNormalIndex];
 					auto textureCoordinate = groupTextureCoordinates->size() > 0 ? &(*groupTextureCoordinates)[groupTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
@@ -459,11 +459,11 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
 		for (auto& face: *facesEntity.getFaces()) {
 			// get face vertices and such
-			auto& vertexIndices = *face.getVertexIndices();
-			auto& normalIndices = *face.getNormalIndices();
-			auto& textureCoordinatesIndices = *face.getTextureCoordinateIndices();
-			auto& tangentIndices = *face.getTangentIndices();
-			auto& bitangentIndices = *face.getBitangentIndices();
+			auto& vertexIndices = face.getVertexIndices();
+			auto& normalIndices = face.getNormalIndices();
+			auto& textureCoordinatesIndices = face.getTextureCoordinateIndices();
+			auto& tangentIndices = face.getTangentIndices();
+			auto& bitangentIndices = face.getBitangentIndices();
 			vertex0.set((*sourceGroup->getVertices())[vertexIndices[0]]);
 			vertex1.set((*sourceGroup->getVertices())[vertexIndices[1]]);
 			vertex2.set((*sourceGroup->getVertices())[vertexIndices[2]]);
@@ -676,7 +676,7 @@ float ModelHelper::computeNormals(Group* group, ProgressCallback* progressCallba
 	for (auto& facesEntity: *group->getFacesEntities()) {
 		for (auto& face: *facesEntity.getFaces()) {
 			for (auto i = 0; i < vertices.size(); i++) {
-				vertices[i] = (*group->getVertices())[(*face.getVertexIndices())[i]];
+				vertices[i] = (*group->getVertices())[face.getVertexIndices()[i]];
 			}
 			computeNormal(vertices, normal);
 			face.setNormalIndices(group->getNormals()->size(), group->getNormals()->size() + 1, group->getNormals()->size() + 2);
@@ -695,8 +695,8 @@ float ModelHelper::computeNormals(Group* group, ProgressCallback* progressCallba
 	for (auto& facesEntity: *group->getFacesEntities()) {
 		for (auto& face: *facesEntity.getFaces()) {
 			for (auto i = 0; i < vertices.size(); i++) {
-				if (interpolateNormal(group, (*group->getVertices())[(*face.getVertexIndices())[i]], normals, normal) == true) {
-					(*group->getNormals())[(*face.getNormalIndices())[i]].set(normal);
+				if (interpolateNormal(group, (*group->getVertices())[face.getVertexIndices()[i]], normals, normal) == true) {
+					(*group->getNormals())[face.getNormalIndices()[i]].set(normal);
 				}
 			}
 			if (progressCallback != nullptr) {

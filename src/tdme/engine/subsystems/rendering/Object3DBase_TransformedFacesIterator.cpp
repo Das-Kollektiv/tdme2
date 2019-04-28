@@ -66,9 +66,9 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 	// compute vertices
 	auto faceVertexIndices = face.getVertexIndices();
 	auto groupVerticesTransformed = object3DGroup->mesh->vertices;
-	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[0]], vertices[0]);
-	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[1]], vertices[1]);
-	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[2]], vertices[2]);
+	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[0]], vertices[0]);
+	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[1]], vertices[1]);
+	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[2]], vertices[2]);
 	// increment to next face
 	faceIdxTotal++;
 	faceIdx++;

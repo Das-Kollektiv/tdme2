@@ -75,9 +75,9 @@ private:
 			// set up face
 			auto faceVertexIndices = (*faces)[i].getVertexIndices();
 			tmpVector3.set(0.0f, 0.0f, 0.0f);
-			tmpVector3.add((*groupTransformedVertices)[(*faceVertexIndices)[0]]);
-			tmpVector3.add((*groupTransformedVertices)[(*faceVertexIndices)[1]]);
-			tmpVector3.add((*groupTransformedVertices)[(*faceVertexIndices)[2]]);
+			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[0]]);
+			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[1]]);
+			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[2]]);
 			tmpVector3.scale(1.0f / 3.0f);
 			modelViewMatrix.multiply(tmpVector3, tmpVector3);
 			distanceFromCamera = -tmpVector3.getZ();

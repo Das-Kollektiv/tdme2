@@ -135,7 +135,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* objec
 		auto j = 0;
 		for (auto& facesEntity : *group->getFacesEntities())
 		for (auto& face : *facesEntity.getFaces())
-		for (auto& vertexIndex : *face.getVertexIndices()) {
+		for (auto& vertexIndex : face.getVertexIndices()) {
 			mesh->indices[j++] = vertexIndex;
 		}
 	}

@@ -177,12 +177,12 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// normals
 	auto axes = orientedBoundingBox->getAxes();
 	vector<Vector3> normals;
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[0].clone().scale(-1.0f))));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[0].clone())));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[1].clone().scale(-1.0f))));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[1].clone())));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[2].clone().scale(-1.0f))));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[2].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[0].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[0].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[1].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[1].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[2].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[2].clone())));
 	// faces
 	vector<Face> faces;
 	//	left

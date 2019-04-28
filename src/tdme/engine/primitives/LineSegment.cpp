@@ -132,10 +132,10 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 	auto& obbHalfExtensionXYZ = obbHalfExtension.getArray();
 	d.set(q).sub(p);
 	for (auto i = 0; i < 3; i++) {
-		auto directionLengthOnAxis = Vector3::computeDotProduct(d, (*obbAxes)[i]);
+		auto directionLengthOnAxis = Vector3::computeDotProduct(d, obbAxes[i]);
 		auto obbExtensionLengthOnAxis = obbHalfExtensionXYZ[i];
-		auto obbCenterLengthOnAxis = Vector3::computeDotProduct(obbCenter, (*obbAxes)[i]);
-		auto pointLengthOnAxis = Vector3::computeDotProduct(p, (*obbAxes)[i]);
+		auto obbCenterLengthOnAxis = Vector3::computeDotProduct(obbCenter, obbAxes[i]);
+		auto pointLengthOnAxis = Vector3::computeDotProduct(p, obbAxes[i]);
 		if (Math::abs(directionLengthOnAxis) < Math::EPSILON &&
 			(pointLengthOnAxis <= obbCenterLengthOnAxis - obbExtensionLengthOnAxis ||
 			pointLengthOnAxis >= obbCenterLengthOnAxis + obbExtensionLengthOnAxis)) {

@@ -46,12 +46,12 @@ public:
 	/** 
 	 * @return vertex indices
 	 */
-	array<int32_t, 3>* getVertexIndices();
+	const array<int32_t, 3>& getVertexIndices();
 
 	/** 
 	 * @return normal indices
 	 */
-	array<int32_t, 3>* getNormalIndices();
+	const array<int32_t, 3>& getNormalIndices();
 
 	/** 
 	 * Set normal indices
@@ -72,7 +72,7 @@ public:
 	/** 
 	 * @return texture coordinate indices or null (optional)
 	 */
-	array<int32_t, 3>* getTextureCoordinateIndices();
+	const array<int32_t, 3>& getTextureCoordinateIndices();
 
 	/** 
 	 * Set tangent indices
@@ -85,7 +85,7 @@ public:
 	/** 
 	 * @return tangent indices
 	 */
-	array<int32_t, 3>* getTangentIndices();
+	const array<int32_t, 3>& getTangentIndices();
 
 	/** 
 	 * Set bitangent indices
@@ -98,7 +98,7 @@ public:
 	/** 
 	 * @return bi tangent indices
 	 */
-	array<int32_t, 3>* getBitangentIndices();
+	const array<int32_t, 3>& getBitangentIndices();
 
 	/**
 	 * Public constructor
