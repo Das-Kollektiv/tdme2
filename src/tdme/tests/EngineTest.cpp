@@ -151,7 +151,7 @@ void EngineTest::display()
 	}
 	circleTransformations.setTranslation(circleTranslation);
 	circleTransformations.update();
-	//(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->fromTransformations(circleTransformations);
+	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	//osEngine->display();
@@ -338,7 +338,6 @@ void EngineTest::initialize()
 		osCube->setDynamicShadowingEnabled(true);
 		osCube->update();
 		//osEngine->addEntity(osCube);
-		/*
 		engine->addEntity(new PointsParticleSystem("circle", new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, 10.0f, true));
 		engine->getEntity("circle")->setEnabled(true);
 		engine->addEntity(new PointsParticleSystem("water", new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, 20.0f, true));
@@ -360,7 +359,6 @@ void EngineTest::initialize()
 		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->setPickable(false);
 		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("snow")))->setPickable(false);
 		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("fire")))->setPickable(true);
-		*/
 	} catch (Exception& exception) {
 		Console::print(string("EngineTest::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

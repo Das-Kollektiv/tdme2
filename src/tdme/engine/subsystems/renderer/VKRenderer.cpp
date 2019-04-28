@@ -2071,8 +2071,8 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		dynamicState.pDynamicStates = dynamicStateEnables;
 
-		pipeline.stageCount = program.shader_ids.size();
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipeline.stageCount = program.shader_ids.size();
 		pipeline.layout = program.pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
@@ -2377,6 +2377,7 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		dynamicState.pDynamicStates = dynamicStateEnables;
 
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipeline.stageCount = program.shader_ids.size();
 		pipeline.layout = program.pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
