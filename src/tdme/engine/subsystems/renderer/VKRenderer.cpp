@@ -110,10 +110,10 @@ VKRenderer::VKRenderer()
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = -1;
 	CLEAR_COLOR_BUFFER_BIT = -1;
-	CULLFACE_FRONT = -1;
-	CULLFACE_BACK = -1;
-	FRONTFACE_CW = -1;
-	FRONTFACE_CCW = -1;
+	CULLFACE_FRONT = VK_CULL_MODE_FRONT_BIT;
+	CULLFACE_BACK = VK_CULL_MODE_BACK_BIT;
+	FRONTFACE_CW = VK_FRONT_FACE_CLOCKWISE;
+	FRONTFACE_CCW = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	SHADER_FRAGMENT_SHADER = VK_SHADER_STAGE_FRAGMENT_BIT;
 	SHADER_VERTEX_SHADER = VK_SHADER_STAGE_VERTEX_BIT;
 	SHADER_COMPUTE_SHADER = VK_SHADER_STAGE_COMPUTE_BIT;
@@ -1143,8 +1143,8 @@ void VKRenderer::initializeRenderPass() {
 }
 
 void VKRenderer::startRenderPass() {
-	if (context.renderPassStarted == true) return;
-	context.renderPassStarted = true;
+	if (context.render_pass_started == true) return;
+	context.render_pass_started = true;
 	const VkClearValue clear_values[2] = {
 		[0] =
 			{
@@ -1177,8 +1177,8 @@ void VKRenderer::startRenderPass() {
 }
 
 void VKRenderer::endRenderPass() {
-	if (context.renderPassStarted == false) return;
-	context.renderPassStarted = false;
+	if (context.render_pass_started == false) return;
+	context.render_pass_started = false;
 	vkCmdEndRenderPass(context.draw_cmd);
 }
 
@@ -1322,9 +1322,6 @@ void VKRenderer::finishFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
-	//
-	finishSetupCommandBuffer();
-
 	// flush command buffers
 	if (context.program_id != 0) {
 		flushCommands();
@@ -1408,14 +1405,6 @@ void VKRenderer::finishFrame()
 
 	//
 	vkDeviceWaitIdle(context.device);
-
-	// delete buffers and memory
-	for (auto buffer: context.buffers_delete) vkDestroyBuffer(context.device, buffer, NULL);
-	for (auto image: context.images_delete) vkDestroyImage(context.device, image, NULL);
-	for (auto memory: context.memory_delete) vkFreeMemory(context.device, memory, NULL);
-	context.buffers_delete.clear();
-	context.images_delete.clear();
-	context.memory_delete.clear();
 
 	//
 	finishPipeline();
@@ -1900,23 +1889,64 @@ void VKRenderer::finishPipeline() {
 	context.bound_textures.fill(0);
 }
 
+void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
+	memset(&rs, 0, sizeof(rs));
+	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rs.polygonMode = VK_POLYGON_MODE_FILL;
+	rs.cullMode = context.culling_enabled == true?context.cull_mode:VK_CULL_MODE_NONE;
+	rs.frontFace = context.front_face;
+	rs.depthClampEnable = VK_FALSE;
+	rs.rasterizerDiscardEnable = VK_FALSE;
+	rs.depthBiasEnable = VK_FALSE;
+	rs.lineWidth = 1.0f;
+}
+
+void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state) {
+	memset(&att_state, 0, sizeof(att_state));
+	att_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	att_state.blendEnable = context.blending_enabled = true?VK_TRUE:VK_FALSE;
+	att_state.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+	att_state.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	att_state.colorBlendOp = VK_BLEND_OP_ADD;
+	att_state.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+	att_state.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+	att_state.alphaBlendOp = VK_BLEND_OP_ADD;
+}
+
+void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds) {
+	memset(&ds, 0, sizeof(ds));
+	ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	ds.depthTestEnable = context.depth_buffer_testing == true?VK_TRUE:VK_FALSE;
+	ds.depthWriteEnable = context.depth_buffer_writing == true?VK_TRUE:VK_FALSE;
+	ds.depthCompareOp = (VkCompareOp)context.depth_function;
+	ds.depthBoundsTestEnable = VK_FALSE;
+	ds.back.failOp = VK_STENCIL_OP_KEEP;
+	ds.back.passOp = VK_STENCIL_OP_KEEP;
+	ds.back.compareOp = VK_COMPARE_OP_ALWAYS;
+	ds.stencilTestEnable = VK_FALSE;
+	ds.front = ds.back;
+}
+
+const string VKRenderer::createPipelineId() {
+	return
+		to_string(context.culling_enabled) + "," +
+		to_string(context.cull_mode) + "," +
+		to_string(context.front_face) + "," +
+		to_string(context.blending_enabled) + "," +
+		to_string(context.depth_buffer_testing) + "," +
+		to_string(context.depth_buffer_writing) + "," +
+		to_string(context.depth_buffer_testing == false?0:context.depth_function);
+}
+
 void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
-	if (program.created_pipeline == false) {
+	if (program.created == false) {
 		VkResult err;
 
 		//
 		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
 		memset(layout_bindings, 0, sizeof(layout_bindings));
 
-		//
-		VkGraphicsPipelineCreateInfo pipeline;
-		memset(&pipeline, 0, sizeof(pipeline));
-
-		// Stages
-		pipeline.stageCount = program.shader_ids.size();
-		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
-		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
-
+		// ubos, samplers
 		auto shaderIdx = 0;
 		for (auto shaderId: program.shader_ids) {
 			auto shaderIt = context.shaders.find(shaderId);
@@ -1925,10 +1955,6 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 				return;
 			}
 			auto& shader = shaderIt->second;
-			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			shaderStages[shaderIdx].stage = shader.type;
-			shaderStages[shaderIdx].module = shader.module;
-			shaderStages[shaderIdx].pName = "main";
 			if (shader.ubo_binding_idx != -1) {
 				layout_bindings[shader.ubo_binding_idx] = {
 					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
@@ -1989,6 +2015,22 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
 		assert(!err);
 
+		//
+		program.created = true;
+	}
+
+	auto pipelineId = createPipelineId();
+	auto pipelinesIt = program.pipelines.find(pipelineId);
+	if (pipelinesIt == program.pipelines.end()) {
+		auto& programPipeline = program.pipelines[pipelineId];
+
+		//
+		VkResult err;
+
+		//
+		VkGraphicsPipelineCreateInfo pipeline;
+		memset(&pipeline, 0, sizeof(pipeline));
+
 		// create pipepine
 		VkPipelineCacheCreateInfo pipelineCache;
 
@@ -2002,11 +2044,34 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
+		createRasterizationStateCreateInfo(rs);
+		createDepthStencilStateCreateInfo(ds);
+
+		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
+		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+
+		// shader stages
+		auto shaderIdx = 0;
+		for (auto shaderId: program.shader_ids) {
+			auto shaderIt = context.shaders.find(shaderId);
+			if (shaderIt == context.shaders.end()) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+				return;
+			}
+			auto& shader = shaderIt->second;
+			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			shaderStages[shaderIdx].stage = shader.type;
+			shaderStages[shaderIdx].module = shader.module;
+			shaderStages[shaderIdx].pName = "main";
+			shaderIdx++;
+		}
+
 		memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
 		memset(&dynamicState, 0, sizeof dynamicState);
 		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		dynamicState.pDynamicStates = dynamicStateEnables;
 
+		pipeline.stageCount = program.shader_ids.size();
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipeline.layout = program.pipeline_layout;
 
@@ -2014,32 +2079,14 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 
-		memset(&rs, 0, sizeof(rs));
-		rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-		rs.polygonMode = VK_POLYGON_MODE_FILL;
-		rs.cullMode = VK_CULL_MODE_NONE;
-		rs.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		rs.depthClampEnable = VK_FALSE;
-		rs.rasterizerDiscardEnable = VK_FALSE;
-		rs.depthBiasEnable = VK_FALSE;
-		rs.lineWidth = 1.0f;
-
-		VkPipelineColorBlendAttachmentState att_state[1];
-		memset(att_state, 0, sizeof(att_state));
-		att_state[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		att_state[0].blendEnable = VK_TRUE;
-		att_state[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		att_state[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		att_state[0].colorBlendOp = VK_BLEND_OP_ADD;
-		att_state[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		att_state[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		att_state[0].alphaBlendOp = VK_BLEND_OP_ADD;
+		VkPipelineColorBlendAttachmentState att_state;
+		createColorBlendAttachmentState(att_state);
 
 		memset(&cb, 0, sizeof(cb));
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.logicOpEnable = VK_FALSE;
 		cb.attachmentCount = 1;
-		cb.pAttachments = att_state;
+		cb.pAttachments = &att_state;
 
 		memset(&vp, 0, sizeof(vp));
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -2047,18 +2094,6 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
 		vp.scissorCount = 1;
 		dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
-
-		memset(&ds, 0, sizeof(ds));
-		ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		ds.depthTestEnable = context.depthBufferTesting == true?VK_TRUE:VK_FALSE;
-		ds.depthWriteEnable = context.depthBufferWriting == true?VK_TRUE:VK_FALSE;
-		ds.depthCompareOp = (VkCompareOp)context.depthFunction;
-		ds.depthBoundsTestEnable = VK_FALSE;
-		ds.back.failOp = VK_STENCIL_OP_KEEP;
-		ds.back.passOp = VK_STENCIL_OP_KEEP;
-		ds.back.compareOp = VK_COMPARE_OP_ALWAYS;
-		ds.stencilTestEnable = VK_FALSE;
-		ds.front = ds.back;
 
 		memset(&ms, 0, sizeof(ms));
 		ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -2191,36 +2226,31 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		memset(&pipelineCache, 0, sizeof(pipelineCache));
 		pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &program.pipelineCache);
+		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &programPipeline.pipelineCache);
 		assert(!err);
 
-		err = vkCreateGraphicsPipelines(context.device, program.pipelineCache, 1, &pipeline, NULL, &program.pipeline);
+		err = vkCreateGraphicsPipelines(context.device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
 		assert(!err);
 
-		vkDestroyPipelineCache(context.device, program.pipelineCache, NULL);
+		vkDestroyPipelineCache(context.device, programPipeline.pipelineCache, NULL);
 
 		//
-		program.created_pipeline = true;
+		pipelinesIt = program.pipelines.find(pipelineId);
 	}
+
+	//
+	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelinesIt->second.pipeline);
 }
 
 void VKRenderer::createPointsRenderingPipeline(program_type& program) {
-	if (program.created_pipeline == false) {
+	if (program.created == false) {
 		VkResult err;
 
 		//
 		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
 		memset(layout_bindings, 0, sizeof(layout_bindings));
 
-		//
-		VkGraphicsPipelineCreateInfo pipeline;
-		memset(&pipeline, 0, sizeof(pipeline));
-
-		// Stages
-		pipeline.stageCount = program.shader_ids.size();
-		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
-		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
-
+		// ubos, samplers
 		auto shaderIdx = 0;
 		for (auto shaderId: program.shader_ids) {
 			auto shaderIt = context.shaders.find(shaderId);
@@ -2229,10 +2259,6 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 				return;
 			}
 			auto& shader = shaderIt->second;
-			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			shaderStages[shaderIdx].stage = shader.type;
-			shaderStages[shaderIdx].module = shader.module;
-			shaderStages[shaderIdx].pName = "main";
 			if (shader.ubo_binding_idx != -1) {
 				layout_bindings[shader.ubo_binding_idx] = {
 					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
@@ -2293,6 +2319,42 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
 		assert(!err);
 
+		//
+		program.created = true;
+	}
+
+	auto pipelineId = createPipelineId();
+	auto pipelinesIt = program.pipelines.find(pipelineId);
+	if (pipelinesIt == program.pipelines.end()) {
+		auto& programPipeline = program.pipelines[pipelineId];
+
+		//
+		VkResult err;
+
+		//
+		VkGraphicsPipelineCreateInfo pipeline;
+		memset(&pipeline, 0, sizeof(pipeline));
+
+		// Stages
+		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
+		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+
+		// shader stages
+		auto shaderIdx = 0;
+		for (auto shaderId: program.shader_ids) {
+			auto shaderIt = context.shaders.find(shaderId);
+			if (shaderIt == context.shaders.end()) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+				return;
+			}
+			auto& shader = shaderIt->second;
+			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			shaderStages[shaderIdx].stage = shader.type;
+			shaderStages[shaderIdx].module = shader.module;
+			shaderStages[shaderIdx].pName = "main";
+			shaderIdx++;
+		}
+
 		// create pipepine
 		VkPipelineCacheCreateInfo pipelineCache;
 
@@ -2306,6 +2368,9 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
+		createRasterizationStateCreateInfo(rs);
+		createDepthStencilStateCreateInfo(ds);
+
 		memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
 		memset(&dynamicState, 0, sizeof dynamicState);
 		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
@@ -2318,32 +2383,14 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		ia.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 
-		memset(&rs, 0, sizeof(rs));
-		rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-		rs.polygonMode = VK_POLYGON_MODE_FILL;
-		rs.cullMode = VK_CULL_MODE_NONE;
-		rs.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		rs.depthClampEnable = VK_FALSE;
-		rs.rasterizerDiscardEnable = VK_FALSE;
-		rs.depthBiasEnable = VK_FALSE;
-		rs.lineWidth = 1.0f;
-
-		VkPipelineColorBlendAttachmentState att_state[1];
-		memset(att_state, 0, sizeof(att_state));
-		att_state[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		att_state[0].blendEnable = VK_TRUE;
-		att_state[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		att_state[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		att_state[0].colorBlendOp = VK_BLEND_OP_ADD;
-		att_state[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		att_state[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		att_state[0].alphaBlendOp = VK_BLEND_OP_ADD;
+		VkPipelineColorBlendAttachmentState att_state;
+		createColorBlendAttachmentState(att_state);
 
 		memset(&cb, 0, sizeof(cb));
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.logicOpEnable = VK_FALSE;
 		cb.attachmentCount = 1;
-		cb.pAttachments = att_state;
+		cb.pAttachments = &att_state;
 
 		memset(&vp, 0, sizeof(vp));
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -2351,18 +2398,6 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_VIEWPORT;
 		vp.scissorCount = 1;
 		dynamicStateEnables[dynamicState.dynamicStateCount++] = VK_DYNAMIC_STATE_SCISSOR;
-
-		memset(&ds, 0, sizeof(ds));
-		ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		ds.depthTestEnable = context.depthBufferTesting == true?VK_TRUE:VK_FALSE;
-		ds.depthWriteEnable = context.depthBufferWriting == true?VK_TRUE:VK_FALSE;
-		ds.depthCompareOp = (VkCompareOp)context.depthFunction;
-		ds.depthBoundsTestEnable = VK_FALSE;
-		ds.back.failOp = VK_STENCIL_OP_KEEP;
-		ds.back.passOp = VK_STENCIL_OP_KEEP;
-		ds.back.compareOp = VK_COMPARE_OP_ALWAYS;
-		ds.stencilTestEnable = VK_FALSE;
-		ds.front = ds.back;
 
 		memset(&ms, 0, sizeof(ms));
 		ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -2433,22 +2468,28 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		memset(&pipelineCache, 0, sizeof(pipelineCache));
 		pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &program.pipelineCache);
+		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &programPipeline.pipelineCache);
 		assert(!err);
 
-		err = vkCreateGraphicsPipelines(context.device, program.pipelineCache, 1, &pipeline, NULL, &program.pipeline);
+		err = vkCreateGraphicsPipelines(context.device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
 		assert(!err);
-
-		vkDestroyPipelineCache(context.device, program.pipelineCache, NULL);
 
 		//
-		program.created_pipeline = true;
+		vkDestroyPipelineCache(context.device, programPipeline.pipelineCache, NULL);
+
+		//
+		pipelinesIt = program.pipelines.find(pipelineId);
 	}
+
+	//
+	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelinesIt->second.pipeline);
 }
 
 void VKRenderer::createSkinningComputingPipeline(program_type& program) {
-	if (program.created_pipeline == false) {
+	if (program.created == false) {
 		VkResult err;
+
+		auto& programPipeline = program.pipelines["default"];
 
 		//
 		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
@@ -2537,7 +2578,7 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 			.pInitialData = NULL
 		};
 
-		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &program.pipelineCache);
+		err = vkCreatePipelineCache(context.device, &pipelineCache, NULL, &programPipeline.pipelineCache);
 		assert(!err);
 
 		// create pipepine
@@ -2552,21 +2593,23 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 
 		};
 
-		err = vkCreateComputePipelines(context.device, program.pipelineCache, 1, &pipeline, NULL, &program.pipeline);
+		err = vkCreateComputePipelines(context.device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
 		assert(!err);
 
-		vkDestroyPipelineCache(context.device, program.pipelineCache, NULL);
+		vkDestroyPipelineCache(context.device, programPipeline.pipelineCache, NULL);
 
 		//
-		program.created_pipeline = true;
+		program.created = true;
 	}
+
+	//
+	vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipelines.find("default")->second.pipeline);
 }
 
 void VKRenderer::useProgram(int32_t programId)
 {
 	// if unsetting program flush command buffers
 	if (context.program_id != 0) {
-		finishSetupCommandBuffer();
 		flushCommands();
 		finishPipeline();
 	}
@@ -2590,7 +2633,6 @@ int32_t VKRenderer::createProgram()
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto& programStruct = context.programs[context.program_idx];
 	programStruct.id = context.program_idx++;
-	programStruct.created_pipeline = false;
 	return programStruct.id;
 }
 
@@ -2952,47 +2994,65 @@ void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 
 void VKRenderer::enableCulling()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.culling_enabled == true) return;
+	flushCommands();
+	context.culling_enabled = true;
 }
 
 void VKRenderer::disableCulling()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.culling_enabled == false) return;
+	flushCommands();
+	context.culling_enabled = false;
 }
 
 void VKRenderer::enableBlending()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.blending_enabled == true) return;
+	flushCommands();
+	context.blending_enabled = true;
 }
 
 void VKRenderer::disableBlending()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.blending_enabled == false) return;
+	flushCommands();
+	context.blending_enabled = false;
 }
 
 void VKRenderer::enableDepthBufferWriting()
 {
-	context.depthBufferWriting = true;
+	if (context.depth_buffer_writing == true) return;
+	flushCommands();
+	context.depth_buffer_writing = true;
 }
 
 void VKRenderer::disableDepthBufferWriting()
 {
-	context.depthBufferWriting = false;
+	if (context.depth_buffer_writing == false) return;
+	flushCommands();
+	context.depth_buffer_writing = false;
 }
 
 void VKRenderer::disableDepthBufferTest()
 {
-	context.depthBufferTesting = false;
+	if (context.depth_buffer_testing == false) return;
+	flushCommands();
+	context.depth_buffer_testing = false;
 }
 
 void VKRenderer::enableDepthBufferTest()
 {
-	context.depthBufferTesting = true;
+	if (context.depth_buffer_testing == true) return;
+	flushCommands();
+	context.depth_buffer_testing = true;
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunction)
 {
-	context.depthFunction = depthFunction;
+	if (context.depth_function == depthFunction) return;
+	flushCommands();
+	context.depth_function = depthFunction;
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
@@ -3007,12 +3067,16 @@ void VKRenderer::clear(int32_t mask)
 
 void VKRenderer::setCullFace(int32_t cullFace)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.cull_mode == cullFace) return;
+	flushCommands();
+	context.cull_mode = (VkCullModeFlagBits)cullFace;
 }
 
 void VKRenderer::setFrontFace(int32_t frontFace)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.front_face == frontFace) return;
+	flushCommands();
+	context.front_face = (VkFrontFace)frontFace;
 }
 
 int32_t VKRenderer::createTexture()
@@ -3727,6 +3791,10 @@ void VKRenderer::flushCommands() {
 		return;
 	}
 
+	//
+	finishSetupCommandBuffer();
+
+	//
 	auto programIt = context.programs.find(context.program_id);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
@@ -3754,10 +3822,7 @@ void VKRenderer::flushCommands() {
 
 	// do render commands
 	if (context.objects_render_commands.size() > 0) {
-		if (context.renderPassStarted == false) startRenderPass();
-
-		//
-		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
+		if (context.render_pass_started == false) startRenderPass();
 
 		// do render commands
 		for (auto& objects_render_command: context.objects_render_commands) {
@@ -3861,10 +3926,7 @@ void VKRenderer::flushCommands() {
 		context.objects_render_commands.clear();
 	} else
 	if (context.points_render_commands.size() > 0) {
-		if (context.renderPassStarted == false) startRenderPass();
-
-		//
-		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline);
+		if (context.render_pass_started == false) startRenderPass();
 
 		// do render commands
 		for (auto& points_render_command: context.points_render_commands) {
@@ -3962,9 +4024,6 @@ void VKRenderer::flushCommands() {
 		context.points_render_commands.clear();
 	} else
 	if (context.compute_commands.size() > 0) {
-		//
-		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline);
-
 		// do render commands
 		for (auto& compute_command: context.compute_commands) {
 			if (program.desc_used == program.desc_max) {
@@ -4157,12 +4216,16 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 
 void VKRenderer::initGuiMode()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	disableCulling();
+	disableDepthBufferTest();
+	disableDepthBufferWriting();
 }
 
 void VKRenderer::doneGuiMode()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	enableDepthBufferWriting();
+	enableDepthBufferTest();
+	enableCulling();
 }
 
 void VKRenderer::checkGLError(int line)

@@ -71,18 +71,21 @@ private:
 	};
 
 	struct program_type {
+		struct pipeline_struct {
+			VkPipelineCache pipelineCache { VK_NULL_HANDLE };
+			VkPipeline pipeline { VK_NULL_HANDLE };
+		};
+		unordered_map<string, pipeline_struct> pipelines;
 		uint32_t desc_max { DESC_MAX };
 		uint32_t desc_used { 0 };
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
-		vector<int32_t> uniformBuffers;
+		vector<int32_t> uniform_buffers;
 		uint32_t layout_bindings { 0 };
-		bool created_pipeline { false };
+		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		VkDescriptorSet desc_set[DESC_MAX] { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
-		VkPipelineCache pipelineCache { VK_NULL_HANDLE };
-		VkPipeline pipeline { VK_NULL_HANDLE };
 		int32_t id { 0 };
 	};
 
@@ -96,7 +99,7 @@ private:
 			void* data { nullptr };
 		};
 		int32_t id { 0 };
-		map<uint32_t, list<reusable_buffer>> buffers;
+		unordered_map<uint32_t, list<reusable_buffer>> buffers;
 		uint32_t buffer_count { 0 };
 		int64_t frame_cleaned_last { 0 };
 		reusable_buffer* current_buffer { nullptr };
@@ -193,10 +196,6 @@ private:
 		array<vector<uint8_t>, 4> uniform_buffers;
 		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-		vector<VkDeviceMemory> memory_delete;
-		vector<VkBuffer> buffers_delete;
-		vector<VkImage> images_delete;
-
 		struct objects_render_command {
 			struct texture {
 				VkSampler sampler;
@@ -262,10 +261,15 @@ private:
 		VkViewport viewport;
 		VkRect2D scissor;
 
-		bool depthBufferWriting { true };
-		bool depthBufferTesting { true };
-		int depthFunction { VK_COMPARE_OP_LESS_OR_EQUAL };
-		bool renderPassStarted { false };
+
+		bool culling_enabled { false };
+		bool blending_enabled { false };
+		VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
+		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
+		bool depth_buffer_writing { true };
+		bool depth_buffer_testing { true };
+		int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
+		bool render_pass_started { false };
 		int64_t frame { 0 };
 
 	} context;
@@ -305,6 +309,10 @@ private:
 		unordered_set<string>& uniformArrays,
 		string& uniformsBlock
 	);
+	void createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs);
+	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
+	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
+	const string createPipelineId();
 
 public:
 	const string getGLVersion() override;
