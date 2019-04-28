@@ -178,7 +178,11 @@ private:
 
 		VkPhysicalDeviceMemoryProperties memory_properties;
 
-		bool validate { true };
+		#if defined(__FreeBSD__)
+			bool validate { false }; // TODO: Why no validation layers here?
+		#else
+			bool validate { true };
+		#endif
 
 		uint32_t current_buffer { 0 };
 		uint32_t queue_count { 0 };

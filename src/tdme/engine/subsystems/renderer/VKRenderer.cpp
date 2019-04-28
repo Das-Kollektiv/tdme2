@@ -2515,7 +2515,7 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 
 			for (int i = 0; i <= shader.binding_max; i++) {
 				layout_bindings[i] = {
-					.binding = i,
+					.binding = static_cast<uint32_t>(i),
 					.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 					.descriptorCount = 1,
 					.stageFlags = shader.type,
@@ -4133,7 +4133,7 @@ void VKRenderer::flushCommands() {
 						.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 						.pNext = NULL,
 						.dstSet = program.desc_set[program.desc_used],
-						.dstBinding = i,
+						.dstBinding = static_cast<uint32_t>(i),
 						.dstArrayElement = 0,
 						.descriptorCount = 1,
 						.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
