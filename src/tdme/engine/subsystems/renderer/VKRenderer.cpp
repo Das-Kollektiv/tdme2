@@ -3089,14 +3089,22 @@ int32_t VKRenderer::createTexture()
 	return texture_object.id;
 }
 
-int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
-{
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
+int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height) {
 	auto& depth_buffer_texture = context.textures[context.texture_idx];
 	depth_buffer_texture.id = context.texture_idx++;
+	createDepthBufferTexture(depth_buffer_texture.id, width, height);
+	return depth_buffer_texture.id;
+}
+
+void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
+{
+	auto& depth_buffer_texture = context.textures[textureId];
 	depth_buffer_texture.format = VK_FORMAT_D32_SFLOAT;
-	depth_buffer_texture.uploaded = false;
+
+	if (depth_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(context.device, depth_buffer_texture.view, NULL);
+	if (depth_buffer_texture.image != VK_NULL_HANDLE) vkDestroyImage(context.device, depth_buffer_texture.image, NULL);
+	if (depth_buffer_texture.mem != VK_NULL_HANDLE) vkFreeMemory(context.device, depth_buffer_texture.mem, NULL);
+	if (depth_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(context.device, depth_buffer_texture.sampler, NULL);
 
 	const VkImageCreateInfo image = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -3184,48 +3192,116 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height)
 	assert(!err);
 
 	depth_buffer_texture.sampler = VK_NULL_HANDLE;
-
-	// done
-	return depth_buffer_texture.id;
 }
 
-int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height)
+int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height) {
+	auto& color_buffer_texture = context.textures[context.texture_idx];
+	color_buffer_texture.id = context.texture_idx++;
+	createColorBufferTexture(color_buffer_texture.id, width, height);
+	return color_buffer_texture.id;
+}
+
+void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	auto& color_buffer_texture = context.textures[textureId];
+	color_buffer_texture.format = VK_FORMAT_R8G8B8A8_UNORM;
 
-	auto& color_buffer = context.textures[context.texture_idx];
-	color_buffer.id = context.texture_idx++;
+	if (color_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(context.device, color_buffer_texture.view, NULL);
+	if (color_buffer_texture.image != VK_NULL_HANDLE) vkDestroyImage(context.device, color_buffer_texture.image, NULL);
+	if (color_buffer_texture.mem != VK_NULL_HANDLE) vkFreeMemory(context.device, color_buffer_texture.mem, NULL);
+	if (color_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(context.device, color_buffer_texture.sampler, NULL);
 
-	/*
+	const VkImageCreateInfo image = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+		.pNext = NULL,
+		.flags = 0,
+		.imageType = VK_IMAGE_TYPE_2D,
+		.format = color_buffer_texture.format,
+		.extent = {
+			.width = static_cast<uint32_t>(width),
+			.height = static_cast<uint32_t>(height),
+			.depth = 1
+		},
+		.mipLevels = 1,
+		.arrayLayers = 1,
+		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.tiling = VK_IMAGE_TILING_OPTIMAL,
+		.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.queueFamilyIndexCount = 0,
+		.pQueueFamilyIndices = 0,
+		.initialLayout = (VkImageLayout)0,
+	};
+	VkMemoryAllocateInfo mem_alloc = {
+		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		.pNext = NULL,
+		.allocationSize = 0,
+		.memoryTypeIndex = 0,
+	};
+
+	VkMemoryRequirements mem_reqs;
 	VkResult err;
-	VkImageViewCreateInfo color_attachment_view =
-		{
-			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-			.pNext = NULL,
-			.flags = 0,
-			.image = color_buffer.image,
-			.viewType = VK_IMAGE_VIEW_TYPE_2D,
-			.format = VK_FORMAT_R8G8B8A8_UNORM,
-			.components = {
-				.r = VK_COMPONENT_SWIZZLE_R,
-				.g = VK_COMPONENT_SWIZZLE_G,
-				.b = VK_COMPONENT_SWIZZLE_B,
-				.a = VK_COMPONENT_SWIZZLE_A,
-			},
-			.subresourceRange = {
-				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-				.baseMipLevel = 0,
-				.levelCount = 1,
-				.baseArrayLayer = 0,
-				.layerCount = 1
-			}
-		};
+	bool pass;
 
-	err = vkCreateImageView(context.device, &color_attachment_view, NULL, &color_buffer.view);
+	/* create image */
+	err = vkCreateImage(context.device, &image, NULL, &color_buffer_texture.image);
 	assert(!err);
-	*/
 
-	return color_buffer.id;
+	/* get memory requirements for this object */
+	vkGetImageMemoryRequirements(context.device, color_buffer_texture.image, &mem_reqs);
+
+	/* select memory size and type */
+	mem_alloc.allocationSize = mem_reqs.size;
+	pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, 0, &mem_alloc.memoryTypeIndex);
+	assert(pass);
+
+	/* allocate memory */
+	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &color_buffer_texture.mem);
+	assert(!err);
+
+	/* bind memory */
+	err = vkBindImageMemory(context.device, color_buffer_texture.image, color_buffer_texture.mem, 0);
+	assert(!err);
+
+	Console::println(string(__FUNCTION__) + ": " + to_string(__LINE__) + ": setImageLayout()");
+
+	color_buffer_texture.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	setImageLayout(
+		true,
+		color_buffer_texture.image,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		VK_IMAGE_LAYOUT_UNDEFINED,
+		color_buffer_texture.image_layout,
+		(VkAccessFlagBits)0
+	);
+
+	VkImageViewCreateInfo view = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+		.pNext = NULL,
+		.flags = 0,
+		.image = color_buffer_texture.image,
+		.viewType = VK_IMAGE_VIEW_TYPE_2D,
+		.format = color_buffer_texture.format,
+		.components = {
+			.r = VK_COMPONENT_SWIZZLE_R,
+			.g = VK_COMPONENT_SWIZZLE_G,
+			.b = VK_COMPONENT_SWIZZLE_B,
+			.a = VK_COMPONENT_SWIZZLE_A,
+		},
+		.subresourceRange = {
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.baseMipLevel = 0,
+			.levelCount = 1,
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		},
+	};
+
+	/* create image view */
+	err = vkCreateImageView(context.device, &view, NULL, &color_buffer_texture.view);
+	assert(!err);
+
+	color_buffer_texture.sampler = VK_NULL_HANDLE;
 }
 
 void VKRenderer::uploadTexture(Texture* texture)
@@ -3408,12 +3484,20 @@ void VKRenderer::uploadTexture(Texture* texture)
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.textures.find(textureId) == context.textures.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		return;
+	}
+	createDepthBufferTexture(textureId, width, height);
 }
 
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (context.textures.find(textureId) == context.textures.end()) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		return;
+	}
+	createDepthBufferTexture(textureId, width, height);
 }
 
 void VKRenderer::bindTexture(int32_t textureId)

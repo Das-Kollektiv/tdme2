@@ -272,6 +272,8 @@ private:
 		bool render_pass_started { false };
 		int64_t frame { 0 };
 
+		int32_t frame_buffer { 0 };
+
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
@@ -313,6 +315,8 @@ private:
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
 	const string createPipelineId();
+	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height);
+	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
 
 public:
 	const string getGLVersion() override;
