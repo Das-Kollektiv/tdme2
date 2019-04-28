@@ -46,14 +46,14 @@ Group* Face::getGroup()
 	return group;
 }
 
-array<int32_t, 3>* Face::getVertexIndices()
+const array<int32_t, 3>& Face::getVertexIndices()
 {
-	return &vertexIndices;
+	return vertexIndices;
 }
 
-array<int32_t, 3>* Face::getNormalIndices()
+const array<int32_t, 3>& Face::getNormalIndices()
 {
-	return &normalIndices;
+	return normalIndices;
 }
 
 void Face::setNormalIndices(int32_t ni0, int32_t ni1, int32_t ni2)
@@ -70,9 +70,9 @@ void Face::setTextureCoordinateIndices(int32_t vt0, int32_t vt1, int32_t vt2)
 	textureCoordinateIndices[2] = vt2;
 }
 
-array<int32_t, 3>* Face::getTextureCoordinateIndices()
+const array<int32_t, 3>& Face::getTextureCoordinateIndices()
 {
-	return &textureCoordinateIndices;
+	return textureCoordinateIndices;
 }
 
 void Face::setTangentIndices(int32_t ti0, int32_t ti1, int32_t ti2)
@@ -82,9 +82,9 @@ void Face::setTangentIndices(int32_t ti0, int32_t ti1, int32_t ti2)
 	tangentIndices[2] = ti2;
 }
 
-array<int32_t, 3>* Face::getTangentIndices()
+const array<int32_t, 3>& Face::getTangentIndices()
 {
-	return &tangentIndices;
+	return tangentIndices;
 }
 
 void Face::setBitangentIndices(int32_t bi0, int32_t bi1, int32_t bi2)
@@ -94,9 +94,9 @@ void Face::setBitangentIndices(int32_t bi0, int32_t bi1, int32_t bi2)
 	bitangentIndices[2] = bi2;
 }
 
-array<int32_t, 3>* Face::getBitangentIndices()
+const array<int32_t, 3>& Face::getBitangentIndices()
 {
-	return &bitangentIndices;
+	return bitangentIndices;
 }
 
 void Face::setIndexedRenderingIndices(const array<int32_t, 3>& indices)

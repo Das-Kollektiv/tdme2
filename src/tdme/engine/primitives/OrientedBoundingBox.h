@@ -45,7 +45,7 @@ public:
 	/**
 	 * @return 3 axes
 	 */
-	const array<Vector3, 3>* getAxes() const;
+	const array<Vector3, 3>& getAxes() const;
 
 	/** 
 	 * @return half extension
