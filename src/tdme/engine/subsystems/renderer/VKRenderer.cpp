@@ -4064,7 +4064,7 @@ void VKRenderer::flushCommands() {
 				}
 
 				bufferInfos[shader.ubo_binding_idx] = {
-					.buffer = compute_command.ubo_buffers[shader.ubo_binding_idx],
+					.buffer = compute_command.ubo_buffers[0],
 					.offset = 0,
 					.range = shader.ubo_size
 				};
@@ -4259,7 +4259,7 @@ void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t
 			continue;
 		}
 		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
-		compute_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
+		compute_command.ubo_buffers[0] = getBufferObjectInternal(shader.ubo); // TODO: do not use static 0 ubo buffer
 		shaderIdx++;
 	}
 
