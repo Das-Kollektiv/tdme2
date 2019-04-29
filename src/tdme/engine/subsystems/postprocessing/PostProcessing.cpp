@@ -12,7 +12,6 @@ using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 
 PostProcessing::PostProcessing() {
-	/*
 	{
 		auto program = new PostProcessingProgram(PostProcessingProgram::RENDERPASS_FINAL);
 		program->addPostProcessingStep("depth_blur", PostProcessingProgram::FRAMEBUFFERSOURCE_SCREEN, PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN);
@@ -33,7 +32,6 @@ PostProcessing::PostProcessing() {
 			delete program;
 		}
 	}
-	*/
 }
 
 PostProcessingProgram* PostProcessing::getPostProcessingProgram(const string& programId) {

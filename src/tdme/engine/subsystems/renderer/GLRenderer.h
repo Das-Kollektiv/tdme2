@@ -903,10 +903,6 @@ public:
 	virtual ~GLRenderer();
 
 private:
-	/**
-	 * Init
-	 */
-	void init();
 
 	//
 	friend class GLRenderer_Material;

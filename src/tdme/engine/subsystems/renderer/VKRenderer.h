@@ -116,6 +116,12 @@ private:
 		VkImageView view { VK_NULL_HANDLE };
 	};
 
+	struct framebuffer_object {
+		int32_t id { 0 };
+		int32_t depth_texture_id { 0 };
+		int32_t color_texture_id { 0 };
+	};
+
 	struct swapchain_buffer_type {
 		VkImage image { VK_NULL_HANDLE };
 		VkCommandBuffer cmd { VK_NULL_HANDLE };
@@ -159,10 +165,12 @@ private:
 		int32_t program_idx { 1 };
 		int32_t buffer_idx { 1 };
 		int32_t texture_idx { 1 };
+		int32_t framebuffer_idx { 1 };
 		struct map<int32_t, program_type> programs;
 		struct map<int32_t, shader_type> shaders;
 		struct map<int32_t, buffer_object> buffers;
 		struct map<int32_t, texture_object> textures;
+		struct map<int32_t, framebuffer_object> framebuffers;
 
 		int empty_vertex_buffer { 0 };
 		int depth_buffer_default { 0 };
@@ -174,7 +182,7 @@ private:
 
 		VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
-		VkFramebuffer* framebuffers;
+		VkFramebuffer* window_framebuffers;
 
 		VkPhysicalDeviceMemoryProperties memory_properties;
 
@@ -199,6 +207,7 @@ private:
 		array<int32_t, 9> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
 		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		int32_t bound_frame_buffer { 0 };
 
 		struct objects_render_command {
 			struct texture {
@@ -265,7 +274,6 @@ private:
 		VkViewport viewport;
 		VkRect2D scissor;
 
-
 		bool culling_enabled { false };
 		bool blending_enabled { false };
 		VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
@@ -275,8 +283,6 @@ private:
 		int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
 		bool render_pass_started { false };
 		int64_t frame { 0 };
-
-		int32_t frame_buffer { 0 };
 
 	} context;
 

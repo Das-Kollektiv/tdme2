@@ -154,7 +154,7 @@ void EngineTest::display()
 	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
-	//osEngine->display();
+	osEngine->display();
 	engine->display();
 	if (mouseClicked == true) {
 		if (entityClicked != nullptr) {
@@ -217,7 +217,6 @@ void EngineTest::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
-	/*
 	if (osEngine == nullptr) {
 		osEngine = Engine::createOffScreenInstance(512, 512);
 		auto osLight0 = osEngine->getLightAt(0);
@@ -234,7 +233,6 @@ void EngineTest::initialize()
 		osCam->setUpVector(osCam->computeUpVector(osCam->getLookFrom(), osCam->getLookAt()));
 		osEngine->setSceneColor(Color4(0.5f, 0.0f, 0.0f, 1.0f));
 	}
-	*/
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
@@ -278,7 +276,7 @@ void EngineTest::initialize()
 			"wall"
 		);
 
-		//farPlane->bindDiffuseTexture(osEngine->getFrameBuffer(), "wall", "wall");
+		farPlane->bindDiffuseTexture(osEngine->getFrameBuffer(), "wall", "wall");
 		engine->addEntity(farPlane);
 		auto _grass = ModelReader::read("resources/tests/models/grass", "grass.dae");
 		auto grass = new Object3D("ground", _grass);
@@ -337,7 +335,7 @@ void EngineTest::initialize()
 		osCube->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		osCube->setDynamicShadowingEnabled(true);
 		osCube->update();
-		//osEngine->addEntity(osCube);
+		osEngine->addEntity(osCube);
 		engine->addEntity(new PointsParticleSystem("circle", new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, 10.0f, true));
 		engine->getEntity("circle")->setEnabled(true);
 		engine->addEntity(new PointsParticleSystem("water", new SphereParticleEmitter(4000, 1000, 0, 0.1f, 0.0f, new Sphere(Vector3(-1.0f, 1.0f, 0.0f), 0.05f), Vector3(-4.0f, 0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f), Color4(0.8f, 0.8f, 1.0f, 0.25f), Color4(0.8f, 0.8f, 1.0f, 0.25f)), 4000, 20.0f, true));

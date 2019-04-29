@@ -903,7 +903,6 @@ void Engine::display()
 		particlesShader->unUseProgram();
 	}
 
-	/*
 	// render objects and particles together
 	if (postProcessingPrograms.size() > 0) {
 		doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, frameBuffer);
@@ -920,7 +919,6 @@ void Engine::display()
 		delete postProcessingTemporaryFrameBuffer;
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
-	*/
 
 	// clear pre render states
 	renderingInitiated = false;

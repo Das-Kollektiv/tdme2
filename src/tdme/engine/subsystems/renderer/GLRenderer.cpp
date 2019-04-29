@@ -14,28 +14,6 @@ using tdme::math::Matrix4x4;
 
 GLRenderer::GLRenderer() 
 {
-	init();
-	// set up lights
-	for (auto i = 0; i < lights.size(); i++) {
-		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
-	}
-	projectionMatrix.identity();
-	cameraMatrix.identity();
-	modelViewMatrix.identity();
-	viewportMatrix.identity();
-	viewPortX = 0;
-	viewPortY = 0;
-	viewPortWidth = 0;
-	viewPortHeight = 0;
-	TEXTUREUNITS_MAX = 2;
-	activeTextureUnit = 0;
-}
-
-GLRenderer::~GLRenderer() {
-}
-
-void GLRenderer::init()
-{
 	ID_NONE = -1;
 	CLEAR_DEPTH_BUFFER_BIT = -1;
 	CLEAR_COLOR_BUFFER_BIT = -1;
@@ -53,6 +31,24 @@ void GLRenderer::init()
 	FRAMEBUFFER_DEFAULT = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
+
+	// set up lights
+	for (auto i = 0; i < lights.size(); i++) {
+		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
+	}
+	projectionMatrix.identity();
+	cameraMatrix.identity();
+	modelViewMatrix.identity();
+	viewportMatrix.identity();
+	viewPortX = 0;
+	viewPortY = 0;
+	viewPortWidth = 0;
+	viewPortHeight = 0;
+	TEXTUREUNITS_MAX = 2;
+	activeTextureUnit = 0;
+}
+
+GLRenderer::~GLRenderer() {
 }
 
 void GLRenderer::initializeFrame() {
