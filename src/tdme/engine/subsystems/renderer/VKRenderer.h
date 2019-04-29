@@ -120,6 +120,7 @@ private:
 		int32_t id { 0 };
 		int32_t depth_texture_id { 0 };
 		int32_t color_texture_id { 0 };
+		VkFramebuffer frame_buffer;
 	};
 
 	struct swapchain_buffer_type {
@@ -327,6 +328,7 @@ private:
 	const string createPipelineId();
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
+	void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
 
 public:
 	const string getGLVersion() override;
