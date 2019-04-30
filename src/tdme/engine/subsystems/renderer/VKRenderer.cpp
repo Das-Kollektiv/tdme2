@@ -1153,19 +1153,21 @@ void VKRenderer::startRenderPass() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(context.bound_frame_buffer));
 
 	auto frameBuffer = context.window_framebuffers[context.current_buffer];
+	auto renderPass = context.render_pass;
 	if (context.bound_frame_buffer != 0) {
 		auto frameBufferIt = context.framebuffers.find(context.bound_frame_buffer);
 		if (frameBufferIt == context.framebuffers.end()) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(context.bound_frame_buffer));
 		} else {
 			frameBuffer = frameBufferIt->second.frame_buffer;
+			renderPass = frameBufferIt->second.render_pass;
 		}
 	}
 
 	const VkRenderPassBeginInfo rp_begin = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.pNext = NULL,
-		.renderPass = context.render_pass,
+		.renderPass = renderPass,
 		.framebuffer = frameBuffer,
 		.renderArea = {
 			.offset = {
@@ -1899,14 +1901,14 @@ void VKRenderer::finishPipeline() {
 	context.bound_textures.fill(0);
 }
 
-void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
+void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs, bool rasterizerDiscardEnable) {
 	memset(&rs, 0, sizeof(rs));
 	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rs.polygonMode = VK_POLYGON_MODE_FILL;
 	rs.cullMode = context.culling_enabled == true?context.cull_mode:VK_CULL_MODE_NONE;
 	rs.frontFace = context.front_face;
 	rs.depthClampEnable = VK_FALSE;
-	rs.rasterizerDiscardEnable = VK_FALSE;
+	rs.rasterizerDiscardEnable = rasterizerDiscardEnable == true?VK_TRUE:VK_FALSE;
 	rs.depthBiasEnable = VK_FALSE;
 	rs.lineWidth = 1.0f;
 }
@@ -1945,7 +1947,8 @@ const string VKRenderer::createPipelineId() {
 		to_string(context.blending_enabled) + "," +
 		to_string(context.depth_buffer_testing) + "," +
 		to_string(context.depth_buffer_writing) + "," +
-		to_string(context.depth_buffer_testing == false?0:context.depth_function);
+		to_string(context.depth_buffer_testing == false?0:context.depth_function) + "," +
+		to_string(context.bound_frame_buffer);
 }
 
 void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
@@ -2034,6 +2037,17 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 	if (pipelinesIt == program.pipelines.end()) {
 		auto& programPipeline = program.pipelines[pipelineId];
 
+		VkRenderPass renderPass = context.render_pass;
+		auto haveDepthBuffer = true;
+		auto haveColorBuffer = true;
+		if (context.bound_frame_buffer != 0) {
+			auto frameBufferIt = context.framebuffers.find(context.bound_frame_buffer);
+			auto& frameBufferStruct = frameBufferIt->second;
+			haveDepthBuffer = frameBufferStruct.depth_texture_id != 0;
+			haveColorBuffer = frameBufferStruct.color_texture_id != 0;
+			renderPass = frameBufferStruct.render_pass;
+		}
+
 		//
 		VkResult err;
 
@@ -2054,7 +2068,7 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
-		createRasterizationStateCreateInfo(rs);
+		createRasterizationStateCreateInfo(rs, haveColorBuffer == false);
 		createDepthStencilStateCreateInfo(ds);
 
 		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
@@ -2095,8 +2109,8 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		memset(&cb, 0, sizeof(cb));
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.logicOpEnable = VK_FALSE;
-		cb.attachmentCount = 1;
-		cb.pAttachments = &att_state;
+		cb.attachmentCount = haveColorBuffer == true?1:0;
+		cb.pAttachments = haveColorBuffer == true?&att_state:NULL;
 
 		memset(&vp, 0, sizeof(vp));
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -2226,11 +2240,11 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		pipeline.pInputAssemblyState = &ia;
 		pipeline.pRasterizationState = &rs;
 		pipeline.pColorBlendState = &cb;
-		pipeline.pMultisampleState = &ms;
+		pipeline.pMultisampleState = haveColorBuffer == true?&ms:NULL;
 		pipeline.pViewportState = &vp;
-		pipeline.pDepthStencilState = &ds;
+		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:NULL;
 		pipeline.pStages = shaderStages;
-		pipeline.renderPass = context.render_pass;
+		pipeline.renderPass = renderPass;
 		pipeline.pDynamicState = &dynamicState;
 
 		memset(&pipelineCache, 0, sizeof(pipelineCache));
@@ -2338,6 +2352,17 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 	if (pipelinesIt == program.pipelines.end()) {
 		auto& programPipeline = program.pipelines[pipelineId];
 
+		VkRenderPass renderPass = context.render_pass;
+		auto haveDepthBuffer = true;
+		auto haveColorBuffer = true;
+		if (context.bound_frame_buffer != 0) {
+			auto frameBufferIt = context.framebuffers.find(context.bound_frame_buffer);
+			auto& frameBufferStruct = frameBufferIt->second;
+			haveDepthBuffer = frameBufferStruct.depth_texture_id != 0;
+			haveColorBuffer = frameBufferStruct.color_texture_id != 0;
+			renderPass = frameBufferStruct.render_pass;
+		}
+
 		//
 		VkResult err;
 
@@ -2378,7 +2403,7 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
-		createRasterizationStateCreateInfo(rs);
+		createRasterizationStateCreateInfo(rs, haveColorBuffer == false);
 		createDepthStencilStateCreateInfo(ds);
 
 		memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
@@ -2400,8 +2425,8 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		memset(&cb, 0, sizeof(cb));
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.logicOpEnable = VK_FALSE;
-		cb.attachmentCount = 1;
-		cb.pAttachments = &att_state;
+		cb.attachmentCount = haveColorBuffer == true?1:0;
+		cb.pAttachments = haveColorBuffer == true?&att_state:NULL;
 
 		memset(&vp, 0, sizeof(vp));
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -2469,11 +2494,11 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		pipeline.pInputAssemblyState = &ia;
 		pipeline.pRasterizationState = &rs;
 		pipeline.pColorBlendState = &cb;
-		pipeline.pMultisampleState = &ms;
+		pipeline.pMultisampleState = haveColorBuffer == true?&ms:NULL;
 		pipeline.pViewportState = &vp;
-		pipeline.pDepthStencilState = &ds;
+		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:NULL;
 		pipeline.pStages = shaderStages;
-		pipeline.renderPass = context.render_pass;
+		pipeline.renderPass = renderPass;
 		pipeline.pDynamicState = &dynamicState;
 
 		memset(&pipelineCache, 0, sizeof(pipelineCache));
@@ -3605,51 +3630,122 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 	}
 	auto& frameBufferStruct = frameBufferIt->second;
 
+	texture_object* depthBufferTexture = nullptr;
+	texture_object* colorBufferTexture = nullptr;
+
 	auto depthBufferTextureIt = context.textures.find(frameBufferStruct.depth_texture_id);
 	if (depthBufferTextureIt == context.textures.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(frameBufferStruct.depth_texture_id));
-		return;
+		if (frameBufferStruct.depth_texture_id != 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer texture not found: " + to_string(frameBufferStruct.depth_texture_id));
+	} else {
+		depthBufferTexture = &depthBufferTextureIt->second;
 	}
 	auto colorBufferTextureIt = context.textures.find(frameBufferStruct.color_texture_id);
 	if (colorBufferTextureIt == context.textures.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(frameBufferStruct.color_texture_id));
-		return;
+		if (frameBufferStruct.color_texture_id != 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer texture not found: " + to_string(frameBufferStruct.color_texture_id));
+	} else {
+		colorBufferTexture = &colorBufferTextureIt->second;
 	}
 
-	auto& depthBufferTexture = depthBufferTextureIt->second;
-	auto& colorBufferTexture = colorBufferTextureIt->second;
-
 	//
-	if (depthBufferTexture.width != colorBufferTexture.width ||
-		depthBufferTexture.height != colorBufferTexture.height) {
+	if (depthBufferTexture != nullptr && colorBufferTexture != nullptr &&
+		(depthBufferTexture->width != colorBufferTexture->width ||
+		depthBufferTexture->height != colorBufferTexture->height)) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): attachments with different dimension found: Not creating!");
 		return;
 	}
 
-	depthBufferTexture.frame_buffer_object_id = frameBufferStruct.id;
-	colorBufferTexture.frame_buffer_object_id = frameBufferStruct.id;
-
-	if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(context.device, frameBufferIt->second.frame_buffer, NULL);
-
-	VkImageView attachments[2];
-	const VkFramebufferCreateInfo fb_info = {
-		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-		.pNext = NULL,
-		.flags = 0,
-		.renderPass = context.render_pass,
-		.attachmentCount = 2,
-		.pAttachments = attachments,
-		.width = context.width,
-		.height = context.height,
-		.layers = 1
-	};
-
-	attachments[0] = colorBufferTexture.view;
-	attachments[1] = depthBufferTexture.view;
+	if (depthBufferTexture != nullptr) depthBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
+	if (colorBufferTexture != nullptr) colorBufferTexture->frame_buffer_object_id = frameBufferStruct.id;
 
 	VkResult err;
-	err = vkCreateFramebuffer(context.device, &fb_info, NULL, &frameBufferStruct.frame_buffer);
-	assert(!err);
+
+	{
+		if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(context.device, frameBufferStruct.render_pass, NULL);
+
+		auto attachmentIdx = 0;
+		VkAttachmentDescription attachments[2];
+		if (colorBufferTexture != nullptr) {
+			attachments[attachmentIdx++] = {
+				.flags = 0,
+				.format = context.format,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+			};
+		}
+		if (depthBufferTexture != nullptr) {
+			attachments[attachmentIdx++] = {
+				.flags = 0,
+				.format = VK_FORMAT_D32_SFLOAT,
+				.samples = VK_SAMPLE_COUNT_1_BIT,
+				.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+			};
+		}
+		const VkAttachmentReference color_reference = {
+			.attachment = 0,
+			.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		};
+		const VkAttachmentReference depth_reference = {
+			.attachment = colorBufferTexture != nullptr?1:0,
+			.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+		};
+		const VkSubpassDescription subpass = {
+			.flags = 0,
+			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+			.inputAttachmentCount = 0,
+			.pInputAttachments = NULL,
+			.colorAttachmentCount = colorBufferTexture != nullptr?1:0,
+			.pColorAttachments = colorBufferTexture != nullptr?&color_reference:NULL,
+			.pResolveAttachments = NULL,
+			.pDepthStencilAttachment = depthBufferTexture != nullptr?&depth_reference:NULL,
+			.preserveAttachmentCount = 0,
+			.pPreserveAttachments = NULL
+		};
+		const VkRenderPassCreateInfo rp_info = {
+			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.attachmentCount = attachmentIdx,
+			.pAttachments = attachments,
+			.subpassCount = 1,
+			.pSubpasses = &subpass,
+			.dependencyCount = 0,
+			.pDependencies = NULL
+		};
+		err = vkCreateRenderPass(context.device, &rp_info, NULL, &frameBufferStruct.render_pass);
+		assert(!err);
+	}
+
+	{
+		if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(context.device, frameBufferStruct.frame_buffer, NULL);
+		auto attachmentIdx = 0;
+		VkImageView attachments[2];
+		if (colorBufferTexture != nullptr) attachments[attachmentIdx++] = colorBufferTexture->view;
+		if (depthBufferTexture != nullptr) attachments[attachmentIdx++] = depthBufferTexture->view;
+		const VkFramebufferCreateInfo fb_info = {
+			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.renderPass = frameBufferStruct.render_pass,
+			.attachmentCount = attachmentIdx,
+			.pAttachments = attachments,
+			.width = context.width,
+			.height = context.height,
+			.layers = 1
+		};
+		err = vkCreateFramebuffer(context.device, &fb_info, NULL, &frameBufferStruct.frame_buffer);
+		assert(!err);
+	}
+
 }
 
 int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId)
@@ -4022,15 +4118,15 @@ void VKRenderer::flushCommands() {
 
 		auto attachmentIdx = 0;
 		VkClearAttachment attachments[2];
-		if (context.clear_mask & CLEAR_COLOR_BUFFER_BIT == CLEAR_COLOR_BUFFER_BIT) {
+		if ((context.clear_mask & CLEAR_COLOR_BUFFER_BIT) == CLEAR_COLOR_BUFFER_BIT) {
 			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			attachments[attachmentIdx].colorAttachment = 0;
+			attachments[attachmentIdx].colorAttachment = attachmentIdx;
 			attachments[attachmentIdx].clearValue.color = { context.clear_red, context.clear_green, context.clear_blue, context.clear_alpha };
 			attachmentIdx++;
 		}
-		if (context.clear_mask & CLEAR_DEPTH_BUFFER_BIT == CLEAR_DEPTH_BUFFER_BIT) {
+		if ((context.clear_mask & CLEAR_DEPTH_BUFFER_BIT) == CLEAR_DEPTH_BUFFER_BIT) {
 			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-			attachments[attachmentIdx].colorAttachment = 1;
+			attachments[attachmentIdx].colorAttachment = attachmentIdx;
 			attachments[attachmentIdx].clearValue.depthStencil = { 1.0f, 0 };
 			attachmentIdx++;
 		}

@@ -482,7 +482,7 @@ void Engine::initialize(bool debug)
 		renderer = new EngineVKRenderer(this);
 		Console::println(string("TDME::Using Vulkan"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-		shadowMappingEnabled = false;
+		shadowMappingEnabled = true;
 		ShadowMapping::setShadowMapSize(1024, 1024);
 		skinningShaderEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;

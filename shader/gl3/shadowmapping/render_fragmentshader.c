@@ -24,9 +24,9 @@ uniform float lightQuadraticAttenuation;
 
 // passed from geometry shader
 in vec2 gsFragTextureUV;
-in vec3 gsPosition;
 in vec4 gsShadowCoord;
 in float gsShadowIntensity;
+in vec3 gsPosition;
 
 // fragment color
 out vec4 outColor;

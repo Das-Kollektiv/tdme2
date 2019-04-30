@@ -123,7 +123,8 @@ private:
 		int32_t id { 0 };
 		int32_t depth_texture_id { 0 };
 		int32_t color_texture_id { 0 };
-		VkFramebuffer frame_buffer;
+		VkFramebuffer frame_buffer { VK_NULL_HANDLE };
+		VkRenderPass render_pass { VK_NULL_HANDLE };
 	};
 
 	struct swapchain_buffer_type {
@@ -326,7 +327,7 @@ private:
 		unordered_set<string>& uniformArrays,
 		string& uniformsBlock
 	);
-	void createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs);
+	void createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs, bool rasterizerDiscardEnable);
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
 	const string createPipelineId();
