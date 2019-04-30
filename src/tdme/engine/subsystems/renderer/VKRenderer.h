@@ -282,6 +282,7 @@ private:
 		bool depth_buffer_writing { true };
 		bool depth_buffer_testing { true };
 		int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
+		int clear_mask { 0 };
 		bool render_pass_started { false };
 		int64_t frame { 0 };
 

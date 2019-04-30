@@ -96,13 +96,23 @@ void FrameBufferRenderShader::initialize()
 	{
 		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(6 * 2 * sizeof(float))->asFloatBuffer();
 
-		fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
-		fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(+1.0f);
-		fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
+		#if defined(VULKAN)
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
 
-		fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
-		fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
-		fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(1.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
+		#else
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
+
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(1.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
+		#endif
 
 		renderer->uploadBufferObject(vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	}

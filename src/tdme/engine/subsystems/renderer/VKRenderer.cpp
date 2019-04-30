@@ -108,8 +108,8 @@ VKRenderer::VKRenderer()
 {
 	// setup GL3 consts
 	ID_NONE = 0;
-	CLEAR_DEPTH_BUFFER_BIT = -1;
-	CLEAR_COLOR_BUFFER_BIT = -1;
+	CLEAR_DEPTH_BUFFER_BIT = 2;
+	CLEAR_COLOR_BUFFER_BIT = 1;
 	CULLFACE_FRONT = VK_CULL_MODE_FRONT_BIT;
 	CULLFACE_BACK = VK_CULL_MODE_BACK_BIT;
 	FRONTFACE_CW = VK_FRONT_FACE_CLOCKWISE;
@@ -244,26 +244,30 @@ void VKRenderer::setImageLayout(bool setup, VkImage image, VkImageAspectFlags as
 		}
 	};
 
+	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
 		// Make sure anything that was copying from this image has completed
 		image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 	}
-
+	*/
+	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
 		image_memory_barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	}
-
+	*/
+	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
 		image_memory_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 	}
-
+	 */
+	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
 		// Make sure any Copy or CPU writes to image are flushed
 		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
 	}
+	*/
 
 	//
-	Console::println(string(__FUNCTION__) + ": " + to_string(__LINE__) + ": vkCmdPipelineBarrier(): ");
 	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
@@ -1088,7 +1092,7 @@ void VKRenderer::initializeRenderPass() {
 			.flags = 0,
 			.format = context.format,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
-			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -1099,7 +1103,7 @@ void VKRenderer::initializeRenderPass() {
 			.flags = 0,
 			.format = VK_FORMAT_D32_SFLOAT,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
-			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -1158,16 +1162,6 @@ void VKRenderer::startRenderPass() {
 		}
 	}
 
-	const VkClearValue clear_values[2] = {
-		[0] =
-			{
-				.color = { context.clear_red, context.clear_green, context.clear_blue, context.clear_alpha, }
-			},
-		[1] =
-			{
-				.depthStencil = { 1.0f, 0 }
-			}
-	};
 	const VkRenderPassBeginInfo rp_begin = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.pNext = NULL,
@@ -1183,8 +1177,8 @@ void VKRenderer::startRenderPass() {
 				.height = context.height,
 			}
 		},
-		.clearValueCount = 2,
-		.pClearValues = clear_values,
+		.clearValueCount = 0,
+		.pClearValues = NULL
 	};
 	vkCmdBeginRenderPass(context.draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
 }
@@ -1254,8 +1248,6 @@ void VKRenderer::reshape() {
 
 void VKRenderer::initializeFrame()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-
 	//
 	GLRenderer::initializeFrame();
 
@@ -1335,9 +1327,11 @@ void VKRenderer::finishFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
+	//
+	flushCommands();
+
 	// flush command buffers
 	if (context.program_id != 0) {
-		flushCommands();
 		finishPipeline();
 		context.program_id = 0;
 	}
@@ -3078,7 +3072,7 @@ void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 
 void VKRenderer::clear(int32_t mask)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	context.clear_mask = mask;
 }
 
 void VKRenderer::setCullFace(int32_t cullFace)
@@ -3642,9 +3636,16 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
-	if (context.bound_frame_buffer == frameBufferId) return;
-	context.bound_frame_buffer = frameBufferId;
+	if (frameBufferId != 0) {
+		auto frameBufferIt = context.framebuffers.find(frameBufferId);
+		if (frameBufferIt == context.framebuffers.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
+			frameBufferId = 0;
+		}
+	}
+	flushCommands();
 	endRenderPass();
+	context.bound_frame_buffer = frameBufferId;
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
@@ -3981,6 +3982,49 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 }
 
 void VKRenderer::flushCommands() {
+	if (context.clear_mask != 0) {
+		if (context.render_pass_started == false) startRenderPass();
+
+		auto attachmentIdx = 0;
+		VkClearAttachment attachments[2];
+		if (context.clear_mask & CLEAR_COLOR_BUFFER_BIT == CLEAR_COLOR_BUFFER_BIT) {
+			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			attachments[attachmentIdx].colorAttachment = 0;
+			attachments[attachmentIdx].clearValue.color = { context.clear_red, context.clear_green, context.clear_blue, context.clear_alpha };
+			attachmentIdx++;
+		}
+		if (context.clear_mask & CLEAR_DEPTH_BUFFER_BIT == CLEAR_DEPTH_BUFFER_BIT) {
+			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+			attachments[attachmentIdx].colorAttachment = 1;
+			attachments[attachmentIdx].clearValue.depthStencil = { 1.0f, 0 };
+			attachmentIdx++;
+		}
+		VkClearRect clearRect = {
+			.rect = {
+				.offset = {
+					.x = 0,
+					.y = 0
+				},
+				.extent = {
+					.width = context.width,
+					.height = context.height,
+				}
+			},
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		};
+		vkCmdClearAttachments(
+			context.draw_cmd,
+			attachmentIdx,
+			attachments,
+			1,
+			&clearRect
+		);
+
+		//
+		context.clear_mask = 0;
+	}
+
 	if (context.objects_render_commands.size() == 0 &&
 		context.points_render_commands.size() == 0 &&
 		context.compute_commands.size() == 0) {
@@ -4224,6 +4268,8 @@ void VKRenderer::flushCommands() {
 		context.points_render_commands.clear();
 	} else
 	if (context.compute_commands.size() > 0) {
+		if (context.render_pass_started == true) endRenderPass();
+
 		// do render commands
 		for (auto& compute_command: context.compute_commands) {
 			if (program.desc_used == program.desc_max) {

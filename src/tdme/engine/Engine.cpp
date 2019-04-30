@@ -795,14 +795,8 @@ void Engine::display()
 	if (renderingInitiated == false) initRendering();
 	if (renderingComputedTransformations == false) computeTransformations();
 
-	// set up clear color
-	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
-
 	// init frame
 	Engine::renderer->initializeFrame();
-
-	// clear previous frame values
-	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 
 	// update camera
 	camera->update(width, height);
@@ -840,6 +834,12 @@ void Engine::display()
 			frameBuffer->disableFrameBuffer();
 		}
 	}
+
+	// set up clear color
+	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
+
+	// clear previous frame values
+	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 
 	// restore camera from shadow map rendering
 	camera->update(width, height);
