@@ -108,6 +108,9 @@ private:
 	struct texture_object {
 		bool uploaded { false };
 		int32_t id { 0 };
+		int32_t frame_buffer_object_id { 0 };
+		uint32_t width { 0 };
+		uint32_t height { 0 };
 		VkFormat format { VK_FORMAT_UNDEFINED };
 		VkSampler sampler { VK_NULL_HANDLE };
 		VkImage image { VK_NULL_HANDLE };
@@ -330,6 +333,7 @@ private:
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
+	void createFramebufferObject(int32_t frameBufferId);
 
 public:
 	const string getGLVersion() override;
