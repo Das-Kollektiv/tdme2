@@ -279,9 +279,9 @@ private:
 		VkViewport viewport;
 		VkRect2D scissor;
 
-		bool culling_enabled { false };
-		bool blending_enabled { false };
-		VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
+		bool culling_enabled { true };
+		bool blending_enabled { true };
+		VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT };
 		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
 		bool depth_buffer_writing { true };
 		bool depth_buffer_testing { true };
@@ -327,7 +327,7 @@ private:
 		unordered_set<string>& uniformArrays,
 		string& uniformsBlock
 	);
-	void createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs, bool rasterizerDiscardEnable);
+	void createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs);
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
 	const string createPipelineId();

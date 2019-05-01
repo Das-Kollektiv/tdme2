@@ -45,7 +45,21 @@ ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height
 	this->shadowMapping = shadowMapping;
 	lightCamera = new Camera(shadowMapping->renderer);
 	frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
-	biasMatrix.set(0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
+	#if defined(VULKAN)
+		biasMatrix.set(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.5f, 0.0f,
+			0.5f, 0.5f, 0.5f, 1.0f
+		);
+	#else
+		biasMatrix.set(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.5f, 0.0f,
+			0.5f, 0.5f, 0.5f, 1.0f
+		);
+	#endif
 	depthBiasMVPMatrix.identity();
 }
 

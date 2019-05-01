@@ -1169,16 +1169,7 @@ void VKRenderer::startRenderPass() {
 		.pNext = NULL,
 		.renderPass = renderPass,
 		.framebuffer = frameBuffer,
-		.renderArea = {
-			.offset = {
-				.x = 0,
-				.y = 0
-			},
-			.extent = {
-				.width = context.width,
-				.height = context.height,
-			}
-		},
+		.renderArea = context.scissor,
 		.clearValueCount = 0,
 		.pClearValues = NULL
 	};
@@ -1854,7 +1845,10 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				}
 				// inject gl_Position flip before last } from main
 				if (type == SHADER_VERTEX_SHADER && injectedYFlip == false && StringUtils::startsWith(line, "}") == true) {
-					shaderSource = "gl_Position.y*= -1.0;\n" + line + shaderSource;
+					shaderSource =
+						"gl_Position.y*= -1.0;\n" +
+						line +
+						shaderSource;
 					injectedYFlip = true;
 				} else  {
 					shaderSource = line + shaderSource;
@@ -1895,20 +1889,17 @@ void VKRenderer::preparePipeline(program_type& program) {
 
 void VKRenderer::finishPipeline() {
 	// unset bound buffers and such
-	context.bound_indices_buffer = 0;
-	context.bound_buffers.fill(0);
 	for (auto& ubo: context.uniform_buffers) ubo.clear();
-	context.bound_textures.fill(0);
 }
 
-void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs, bool rasterizerDiscardEnable) {
+void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
 	memset(&rs, 0, sizeof(rs));
 	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rs.polygonMode = VK_POLYGON_MODE_FILL;
 	rs.cullMode = context.culling_enabled == true?context.cull_mode:VK_CULL_MODE_NONE;
 	rs.frontFace = context.front_face;
 	rs.depthClampEnable = VK_FALSE;
-	rs.rasterizerDiscardEnable = rasterizerDiscardEnable == true?VK_TRUE:VK_FALSE;
+	rs.rasterizerDiscardEnable = VK_FALSE;
 	rs.depthBiasEnable = VK_FALSE;
 	rs.lineWidth = 1.0f;
 }
@@ -1947,7 +1938,7 @@ const string VKRenderer::createPipelineId() {
 		to_string(context.blending_enabled) + "," +
 		to_string(context.depth_buffer_testing) + "," +
 		to_string(context.depth_buffer_writing) + "," +
-		to_string(context.depth_buffer_testing == false?0:context.depth_function) + "," +
+		to_string(context.depth_function) + "," +
 		to_string(context.bound_frame_buffer);
 }
 
@@ -2068,7 +2059,7 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
-		createRasterizationStateCreateInfo(rs, haveColorBuffer == false);
+		createRasterizationStateCreateInfo(rs);
 		createDepthStencilStateCreateInfo(ds);
 
 		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
@@ -2239,8 +2230,8 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		pipeline.pVertexInputState = &vi;
 		pipeline.pInputAssemblyState = &ia;
 		pipeline.pRasterizationState = &rs;
-		pipeline.pColorBlendState = &cb;
-		pipeline.pMultisampleState = haveColorBuffer == true?&ms:NULL;
+		pipeline.pColorBlendState = haveColorBuffer == true?&cb:NULL;
+		pipeline.pMultisampleState = &ms;
 		pipeline.pViewportState = &vp;
 		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:NULL;
 		pipeline.pStages = shaderStages;
@@ -2403,7 +2394,7 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
-		createRasterizationStateCreateInfo(rs, haveColorBuffer == false);
+		createRasterizationStateCreateInfo(rs);
 		createDepthStencilStateCreateInfo(ds);
 
 		memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
@@ -2493,8 +2484,8 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		pipeline.pVertexInputState = &vi;
 		pipeline.pInputAssemblyState = &ia;
 		pipeline.pRasterizationState = &rs;
-		pipeline.pColorBlendState = &cb;
-		pipeline.pMultisampleState = haveColorBuffer == true?&ms:NULL;
+		pipeline.pColorBlendState = haveColorBuffer == true?&cb:NULL;
+		pipeline.pMultisampleState = &ms;
 		pipeline.pViewportState = &vp;
 		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:NULL;
 		pipeline.pStages = shaderStages;
@@ -2984,7 +2975,7 @@ void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location
 
 void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(x) + ", " + to_string(y) + "; " + to_string(width) + ", " + to_string(height));
 
 	//
 	memset(&context.viewport, 0, sizeof(context.viewport));
@@ -3002,18 +2993,12 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	context.scissor.offset.y = y;
 
 	//
-	vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
-	vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
-
-	//
 	this->pointSize = width > height ? width / 120.0f : height / 120.0f * 16 / 9;
 }
 
 void VKRenderer::updateViewPort()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
-	vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
 }
 
 void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
@@ -3097,6 +3082,7 @@ void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 
 void VKRenderer::clear(int32_t mask)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(context.clear_mask));
 	context.clear_mask = mask;
 }
 
@@ -3738,8 +3724,8 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.renderPass = frameBufferStruct.render_pass,
 			.attachmentCount = attachmentIdx,
 			.pAttachments = attachments,
-			.width = context.width,
-			.height = context.height,
+			.width = colorBufferTexture != nullptr?colorBufferTexture->width:depthBufferTexture->width,
+			.height = colorBufferTexture != nullptr?colorBufferTexture->height:depthBufferTexture->height,
 			.layers = 1
 		};
 		err = vkCreateFramebuffer(context.device, &fb_info, NULL, &frameBufferStruct.frame_buffer);
@@ -4114,6 +4100,11 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 
 void VKRenderer::flushCommands() {
 	if (context.clear_mask != 0) {
+		finishSetupCommandBuffer();
+
+		vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
+		vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
+
 		if (context.render_pass_started == false) startRenderPass();
 
 		auto attachmentIdx = 0;
@@ -4131,16 +4122,7 @@ void VKRenderer::flushCommands() {
 			attachmentIdx++;
 		}
 		VkClearRect clearRect = {
-			.rect = {
-				.offset = {
-					.x = 0,
-					.y = 0
-				},
-				.extent = {
-					.width = context.width,
-					.height = context.height,
-				}
-			},
+			.rect = context.scissor,
 			.baseArrayLayer = 0,
 			.layerCount = 1
 		};
@@ -4164,6 +4146,10 @@ void VKRenderer::flushCommands() {
 
 	//
 	finishSetupCommandBuffer();
+
+	//
+	vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
+	vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
 
 	//
 	auto programIt = context.programs.find(context.program_id);
@@ -4569,13 +4555,13 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 
 int32_t VKRenderer::getTextureUnit()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(activeTextureUnit));
 	return activeTextureUnit;
 }
 
 void VKRenderer::setTextureUnit(int32_t textureUnit)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureUnit));
 	this->activeTextureUnit = textureUnit;
 }
 

@@ -75,6 +75,11 @@ public:
 	void bindDepthBufferTexture();
 
 	/** 
+	 * Bind color texture
+	 */
+	void bindColorBufferTexture();
+
+	/**
 	 * @return color buffer texture id
 	 */
 	int32_t getColorBufferTextureId();

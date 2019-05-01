@@ -90,6 +90,11 @@ void FrameBuffer::bindDepthBufferTexture()
 	Engine::renderer->bindTexture(depthBufferTextureId);
 }
 
+void FrameBuffer::bindColorBufferTexture()
+{
+	Engine::renderer->bindTexture(colorBufferTextureId);
+}
+
 int32_t FrameBuffer::getColorBufferTextureId()
 {
 	return colorBufferTextureId;
