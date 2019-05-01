@@ -3681,7 +3681,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
 		};
 		const VkAttachmentReference depth_reference = {
-			.attachment = colorBufferTexture != nullptr?1:0,
+			.attachment = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
 			.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		};
 		const VkSubpassDescription subpass = {
@@ -3689,7 +3689,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 			.inputAttachmentCount = 0,
 			.pInputAttachments = NULL,
-			.colorAttachmentCount = colorBufferTexture != nullptr?1:0,
+			.colorAttachmentCount = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
 			.pColorAttachments = colorBufferTexture != nullptr?&color_reference:NULL,
 			.pResolveAttachments = NULL,
 			.pDepthStencilAttachment = depthBufferTexture != nullptr?&depth_reference:NULL,
@@ -3700,7 +3700,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
 			.pNext = NULL,
 			.flags = 0,
-			.attachmentCount = attachmentIdx,
+			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
 			.pAttachments = attachments,
 			.subpassCount = 1,
 			.pSubpasses = &subpass,
@@ -3722,7 +3722,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.pNext = NULL,
 			.flags = 0,
 			.renderPass = frameBufferStruct.render_pass,
-			.attachmentCount = attachmentIdx,
+			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
 			.pAttachments = attachments,
 			.width = colorBufferTexture != nullptr?colorBufferTexture->width:depthBufferTexture->width,
 			.height = colorBufferTexture != nullptr?colorBufferTexture->height:depthBufferTexture->height,

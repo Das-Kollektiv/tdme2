@@ -163,11 +163,10 @@
     - documentation
 
 - What is WIP or planned
+    - Improve on Vulkan and support Vulkan on MacOSX via Metal
     - PBR lighting shader for GL3/CORE+
     - simple script language for GUI
     - Expose shader and post processing programs setup API
-    - Improve on Vulkan and support Vulkan on MacOSX via Metal
-    - GUI system port needs to be finished(memory management and other minor things)
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
     - Integrate LUA to be able to write TDME2 applications completely via LUA or game logics
@@ -188,6 +187,7 @@
             - glew
             - pthreads
             - Vulkan(optional)
+            - GLFW3(optional, required for Vulkan)
         - included in TDME2 repository
             - Vorbis/OGG
             - JsonBox
