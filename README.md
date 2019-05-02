@@ -25,7 +25,7 @@
             - supports animation blending when switching base animations
         - skinning via
             - CPU on GL2, GL3+/CORE, GLES2
-            - GPU via compute shaders with GL4.3+/CORE
+            - GPU via compute shaders with GL4.3+/CORE, Vulkan
         - object transformations
             - scaling
             - rotations
@@ -37,11 +37,11 @@
             - via texture matrices
         - lighting
             - supports phong lighting
-            - supports phong shading on GL3+/CORE, GL2
+            - supports phong shading on GL2, GL3+/CORE, 
             - supports gouraud shading on GLES2
-            - supports diffuse mapping on GL3+/CORE, GL2, GLES2
-            - supports specular shininess mapping on GL3+/CORE
-            - supports normal mapping on GL3+/CORE
+            - supports diffuse mapping on GLES2, GL2, GL3+/CORE, Vulkan
+            - supports specular shininess mapping on GL3+/CORE, Vulkan
+            - supports normal mapping on GL3+/CORE, Vulkan
         - custum shaders that currently include
           - lighting + depth fog
           - lighting + foliage + depth fog
@@ -73,7 +73,7 @@
             - rendering can be used (in other engine instances) as diffuse texture
         - screenshot ability
         - multiple renderer
-          - GL2, GL3+/CORE and GLES2
+          - GLES2, GL2, GL3+/CORE and Vulkan 
     - physics via ReactPhysics3D 0.7.0
         - have sphere, capsule, obb, convex mesh, concave terrain mesh bounding volumes
         - have multiple bounding volumes per body
@@ -166,7 +166,7 @@
     - PBR lighting shader for GL3/CORE+
     - simple script language for GUI
     - Expose shader and post processing programs setup API
-    - Rendering via Vulkan + Metal by Vulkan
+    - Improve on Vulkan and support Vulkan on MacOSX via Metal
     - GUI system port needs to be finished(memory management and other minor things)
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
@@ -187,8 +187,9 @@
             - OpenAL
             - glew
             - pthreads
+            - Vulkan(optional)
         - included in TDME2 repository
-            - Vorbis/OGG,
+            - Vorbis/OGG
             - JsonBox
             - zlib
             - libpng
@@ -196,6 +197,9 @@
             - ReactPhysics3D
             - FBXSDK
             - V-HACD
+            - glslang
+            - OGLCompilersDLL
+            - spirv
     - targeted platforms and its current state
         - Windows/MINGW(port completed)
         - Windows/MSC(port completed)

@@ -106,6 +106,10 @@ void GL3Renderer::initializeFrame()
 	GLRenderer::initializeFrame();
 }
 
+void GL3Renderer::finishFrame()
+{
+}
+
 bool GL3Renderer::isBufferObjectsAvailable()
 {
 	return true;

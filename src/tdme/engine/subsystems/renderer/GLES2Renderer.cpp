@@ -90,6 +90,10 @@ void GLES2Renderer::initializeFrame()
 	GLRenderer::initializeFrame();
 }
 
+void GLES2Renderer::finishFrame()
+{
+}
+
 bool GLES2Renderer::isBufferObjectsAvailable()
 {
 	return true;

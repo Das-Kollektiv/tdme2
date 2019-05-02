@@ -115,6 +115,10 @@ void GL2Renderer::initializeFrame()
 	GLRenderer::initializeFrame();
 }
 
+void GL2Renderer::finishFrame()
+{
+}
+
 bool GL2Renderer::isBufferObjectsAvailable()
 {
 	return bufferObjectsAvailable;
