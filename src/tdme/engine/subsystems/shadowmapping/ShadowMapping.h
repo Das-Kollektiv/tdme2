@@ -104,6 +104,12 @@ public:
 	void createShadowMaps();
 
 	/** 
+	 * @return shadow map
+	 * @param idx index
+	 */
+	ShadowMap* getShadowMap(int idx);
+
+	/**
 	 * Render shadow maps
 	 * @param visibleObjects visible objects
 	 */

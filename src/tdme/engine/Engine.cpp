@@ -49,6 +49,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
@@ -107,6 +108,7 @@ using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;

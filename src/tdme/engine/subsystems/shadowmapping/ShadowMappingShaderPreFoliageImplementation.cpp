@@ -26,13 +26,13 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 
 	// load shadow mapping shaders
 	//	pre render
-	vertexShaderGlId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
 		"pre_vertexshader.c",
 		"#define HAVE_GEOMETRY_SHADER\n\n"
 	);
-	if (vertexShaderGlId == 0) return;
+	if (vertexShaderId == 0) return;
 	if (renderer->isGeometryShaderAvailable() == true) {
 		geometryShaderGlId = renderer->loadShader(
 			renderer->SHADER_GEOMETRY_SHADER,
@@ -56,21 +56,21 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 		);
 		if (geometryShaderGlId == 0) return;
 	}
-	fragmentShaderGlId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
 		"pre_fragmentshader.c"
 	);
-	if (fragmentShaderGlId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	// create shadow mapping render program
 	//	pre
-	programGlId = renderer->createProgram();
-	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
+	programId = renderer->createProgram();
+	renderer->attachShaderToProgram(programId, vertexShaderId);
 	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->attachShaderToProgram(programGlId, geometryShaderGlId);
+		renderer->attachShaderToProgram(programId, geometryShaderGlId);
 	}
-	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	ShadowMappingShaderPreBaseImplementation::initialize();

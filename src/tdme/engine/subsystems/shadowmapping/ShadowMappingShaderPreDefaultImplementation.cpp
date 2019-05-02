@@ -26,7 +26,7 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 
 	// load shadow mapping shaders
 	//	pre render
-	vertexShaderGlId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
 		"pre_vertexshader.c",
@@ -36,19 +36,19 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 			"pre_computevertex.inc.c"
 		)
 	);
-	if (vertexShaderGlId == 0) return;
-	fragmentShaderGlId = renderer->loadShader(
+	if (vertexShaderId == 0) return;
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
 		"pre_fragmentshader.c"
 	);
-	if (fragmentShaderGlId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	// create shadow mapping render program
 	//	pre
-	programGlId = renderer->createProgram();
-	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
-	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
+	programId = renderer->createProgram();
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	ShadowMappingShaderPreBaseImplementation::initialize();

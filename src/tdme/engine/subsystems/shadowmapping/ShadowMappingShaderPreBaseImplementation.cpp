@@ -39,37 +39,37 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 {
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(programGlId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(programGlId, 2, "inTextureUV");
+		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
 	}
 	// link
-	if (renderer->linkProgram(programGlId) == false) return;
+	if (renderer->linkProgram(programId) == false) return;
 
 	// uniforms
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		//	uniforms
-		uniformProjectionMatrix = renderer->getProgramUniformLocation(programGlId, "projectionMatrix");
+		uniformProjectionMatrix = renderer->getProgramUniformLocation(programId, "projectionMatrix");
 		if (uniformProjectionMatrix == -1) return;
-		uniformCameraMatrix = renderer->getProgramUniformLocation(programGlId, "cameraMatrix");
+		uniformCameraMatrix = renderer->getProgramUniformLocation(programId, "cameraMatrix");
 		if (uniformCameraMatrix == -1) return;
 	} else {
 		//	uniforms
-		uniformMVPMatrix = renderer->getProgramUniformLocation(programGlId, "mvpMatrix");
+		uniformMVPMatrix = renderer->getProgramUniformLocation(programId, "mvpMatrix");
 		if (uniformMVPMatrix == -1) return;
 	}
-	uniformTextureMatrix = renderer->getProgramUniformLocation(programGlId, "textureMatrix");
+	uniformTextureMatrix = renderer->getProgramUniformLocation(programId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programGlId, "diffuseTextureUnit");
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(programId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1) return;
-	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programGlId, "diffuseTextureAvailable");
+	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programId, "diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1) return;
-	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(programGlId, "diffuseTextureMaskedTransparency");
+	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(programId, "diffuseTextureMaskedTransparency");
 	if (uniformDiffuseTextureMaskedTransparency == -1) return;
-	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(programGlId, "diffuseTextureMaskedTransparencyThreshold");
+	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(programId, "diffuseTextureMaskedTransparencyThreshold");
 	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 
 	//
-	uniformFrame = renderer->getProgramUniformLocation(programGlId, "frame");
+	uniformFrame = renderer->getProgramUniformLocation(programId, "frame");
 
 	//
 	initialized = true;
@@ -77,7 +77,8 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 
 void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine)
 {
-	renderer->useProgram(programGlId);
+	renderer->useProgram(programId);
+	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, engine->getTiming()->getFrame());
 }
 

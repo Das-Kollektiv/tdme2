@@ -125,6 +125,10 @@ void ShadowMapping::createShadowMaps()
 	runState = ShadowMapping_RunState::NONE;
 }
 
+ShadowMap* ShadowMapping::getShadowMap(int idx) {
+	return shadowMaps[idx];
+}
+
 void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 {
 	runState = ShadowMapping_RunState::RENDER;
