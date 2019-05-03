@@ -1,7 +1,7 @@
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -13,12 +13,12 @@ using tdme::engine::Engine;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 
-FrameBufferRenderShader::FrameBufferRenderShader(GLRenderer* renderer)
+FrameBufferRenderShader::FrameBufferRenderShader(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;

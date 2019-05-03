@@ -28,7 +28,7 @@ using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
@@ -49,7 +49,7 @@ private:
 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
 
 	Engine* engine {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	vector<int32_t>* vboInstancedRenderingIds {  };
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
 	unordered_map<string, vector<Object3D*>> visibleObjectsByModels {  };
@@ -186,7 +186,7 @@ public:
 	 * @param engine engine
 	 * @param renderer renderer
 	 */
-	Object3DVBORenderer(Engine* engine, GLRenderer* renderer);
+	Object3DVBORenderer(Engine* engine, Renderer* renderer);
 
 	/**
 	 * Destructor

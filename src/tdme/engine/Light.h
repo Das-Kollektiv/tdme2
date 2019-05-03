@@ -10,7 +10,7 @@
 #include <tdme/math/Vector4.h>
 
 using tdme::engine::model::Color4;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 
@@ -34,7 +34,7 @@ private:
 	float constantAttenuation {  };
 	float linearAttenuation {  };
 	float quadraticAttenuation {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 public:
 
 	/** 
@@ -225,5 +225,5 @@ public:
 	 * @param renderer renderer
 	 * @param id id
 	 */
-	Light(GLRenderer* renderer, int32_t id);
+	Light(Renderer* renderer, int32_t id);
 };

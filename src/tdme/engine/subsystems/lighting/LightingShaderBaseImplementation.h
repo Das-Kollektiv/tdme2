@@ -17,7 +17,7 @@ using std::array;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -74,7 +74,7 @@ protected:
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	bool isRunning {  };
 	bool initialized {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 public:
 
 	// overriden methods
@@ -82,16 +82,16 @@ public:
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine) override;
 	virtual void unUseProgram() override;
-	virtual void updateEffect(GLRenderer* renderer) override;
-	virtual void updateMaterial(GLRenderer* renderer) override;
-	virtual void updateLight(GLRenderer* renderer, int32_t lightId) override;
-	virtual void updateMatrices(GLRenderer* renderer) override;
-	virtual void updateTextureMatrix(GLRenderer* renderer) override;
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
+	virtual void updateEffect(Renderer* renderer) override;
+	virtual void updateMaterial(Renderer* renderer) override;
+	virtual void updateLight(Renderer* renderer, int32_t lightId) override;
+	virtual void updateMatrices(Renderer* renderer) override;
+	virtual void updateTextureMatrix(Renderer* renderer) override;
+	virtual void bindTexture(Renderer* renderer, int32_t textureId) override;
 
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	LightingShaderBaseImplementation(GLRenderer* renderer);
+	LightingShaderBaseImplementation(Renderer* renderer);
 };

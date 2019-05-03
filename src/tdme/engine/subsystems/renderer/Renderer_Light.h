@@ -10,7 +10,7 @@ using std::array;
 /** 
  * Bean holding light data
  */
-struct tdme::engine::subsystems::renderer::GLRenderer_Light
+struct tdme::engine::subsystems::renderer::Renderer_Light
 {
 	int32_t enabled { 0 };
 	array<float, 4> ambient {{ 0.0f, 0.0f, 0.0f, 1.0f }};

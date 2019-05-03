@@ -10,7 +10,7 @@
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
@@ -36,7 +36,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
@@ -45,7 +45,7 @@ using tdme::utils::Console;
 using tdme::utils::IntBuffer;
 using tdme::utils::FloatBuffer;
 
-SkinningShader::SkinningShader(GLRenderer* renderer)
+SkinningShader::SkinningShader(Renderer* renderer)
 {
 	this->renderer = renderer;
 	isRunning = false;

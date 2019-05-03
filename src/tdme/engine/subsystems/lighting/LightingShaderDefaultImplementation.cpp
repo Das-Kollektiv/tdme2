@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
@@ -11,15 +11,15 @@ using std::string;
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderDefaultImplementation::isSupported(GLRenderer* renderer) {
+bool LightingShaderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-LightingShaderDefaultImplementation::LightingShaderDefaultImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
+LightingShaderDefaultImplementation::LightingShaderDefaultImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
 {
 }
 

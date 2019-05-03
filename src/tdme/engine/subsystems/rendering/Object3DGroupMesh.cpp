@@ -17,7 +17,7 @@
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -40,7 +40,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
@@ -296,7 +296,7 @@ bool Object3DGroupMesh::getRecreatedBuffers()
 	}
 }
 
-void Object3DGroupMesh::setupVertexIndicesBuffer(GLRenderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer* renderer, int32_t vboId)
 {
 	if (renderer->isUsingShortIndices() == true) {
 		if (indices.size() > 65535) {
@@ -325,7 +325,7 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(GLRenderer* renderer, int32_t v
 	}
 }
 
-void Object3DGroupMesh::setupTextureCoordinatesBuffer(GLRenderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupTextureCoordinatesBuffer(Renderer* renderer, int32_t vboId)
 {
 	// check if we have texture coordinates
 	auto groupTextureCoordinates = group->getTextureCoordinates();
@@ -340,7 +340,7 @@ void Object3DGroupMesh::setupTextureCoordinatesBuffer(GLRenderer* renderer, int3
 	renderer->uploadBufferObject(vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 }
 
-void Object3DGroupMesh::setupVerticesBuffer(GLRenderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupVerticesBuffer(Renderer* renderer, int32_t vboId)
 {
 	auto fbVertices = ObjectBuffer::getByteBuffer(vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create vertices buffers
@@ -351,7 +351,7 @@ void Object3DGroupMesh::setupVerticesBuffer(GLRenderer* renderer, int32_t vboId)
 	renderer->uploadBufferObject(vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
 }
 
-void Object3DGroupMesh::setupNormalsBuffer(GLRenderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupNormalsBuffer(Renderer* renderer, int32_t vboId)
 {
 	auto fbNormals = ObjectBuffer::getByteBuffer(normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create normals buffers
@@ -362,7 +362,7 @@ void Object3DGroupMesh::setupNormalsBuffer(GLRenderer* renderer, int32_t vboId)
 	renderer->uploadBufferObject(vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
 }
 
-void Object3DGroupMesh::setupTangentsBuffer(GLRenderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupTangentsBuffer(Renderer* renderer, int32_t vboId)
 {
 	// check if we have tangents
 	if (tangents == nullptr) return;
@@ -375,7 +375,7 @@ void Object3DGroupMesh::setupTangentsBuffer(GLRenderer* renderer, int32_t vboId)
 	renderer->uploadBufferObject(vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
 }
 
-void Object3DGroupMesh::setupBitangentsBuffer(GLRenderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, int32_t vboId)
 {
 	// check if we have bitangents
 	if (bitangents == nullptr) return;

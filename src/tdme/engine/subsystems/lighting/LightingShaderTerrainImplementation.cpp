@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
@@ -18,17 +18,17 @@ using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
 
-bool LightingShaderTerrainImplementation::isSupported(GLRenderer* renderer) {
+bool LightingShaderTerrainImplementation::isSupported(Renderer* renderer) {
 	return renderer->getGLVersion() == "gl3";
 }
 
-LightingShaderTerrainImplementation::LightingShaderTerrainImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
+LightingShaderTerrainImplementation::LightingShaderTerrainImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
 {
 }
 

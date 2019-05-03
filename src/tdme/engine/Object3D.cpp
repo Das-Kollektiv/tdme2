@@ -31,7 +31,7 @@ void Object3D::setEngine(Engine* engine)
 	this->engine = engine;
 }
 
-void Object3D::setRenderer(GLRenderer* renderer)
+void Object3D::setRenderer(Renderer* renderer)
 {
 }
 

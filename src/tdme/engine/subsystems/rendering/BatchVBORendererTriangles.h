@@ -11,7 +11,7 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -24,7 +24,7 @@ using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::engine::model::Color4;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
@@ -41,7 +41,7 @@ class tdme::engine::subsystems::rendering::BatchVBORendererTriangles final
 private:
 	static constexpr int32_t TRIANGLE_COUNT { 1024 };
 	static constexpr int32_t VERTEX_COUNT { TRIANGLE_COUNT * 3 };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	vector<int32_t>* vboIds {  };
 	int32_t id {  };
 	bool acquired {  };
@@ -121,7 +121,7 @@ public:
 	 * @param renderer renderer
 	 * @param id id
 	 */
-	BatchVBORendererTriangles(GLRenderer* renderer, int32_t id);
+	BatchVBORendererTriangles(Renderer* renderer, int32_t id);
 
 	/**
 	 * Destructor

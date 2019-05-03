@@ -5,13 +5,13 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using tdme::engine::FrameBuffer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers) 
 {

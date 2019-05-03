@@ -21,7 +21,7 @@ using std::vector;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
@@ -47,7 +47,7 @@ private:
 	static constexpr int32_t QUAD_COUNT { 1024 };
 
 	GUI* gui {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	vector<int32_t>* vboIds {  };
 	int32_t quadCount {  };
 	ByteBuffer* sbIndicesByteBuffer {  };
@@ -398,7 +398,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	GUIRenderer(GLRenderer* renderer);
+	GUIRenderer(Renderer* renderer);
 
 	/**
 	 * Destructor

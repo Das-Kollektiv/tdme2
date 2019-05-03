@@ -9,13 +9,13 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::array;
 using std::vector;
 using std::string;
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
@@ -29,7 +29,7 @@ using tdme::math::Matrix4x4;
  * @version $Id$
  */
 class tdme::engine::subsystems::renderer::GL3Renderer
-	: public GLRenderer
+	: public Renderer
 {
 private:
 	uint32_t engineVAO {  };

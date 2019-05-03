@@ -7,7 +7,7 @@
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -70,27 +70,27 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImpleme
 	 * Set up pre program texture matrix
 	 * @param renderer renderer
 	 */
-	virtual void updateTextureMatrix(GLRenderer* renderer) = 0;
+	virtual void updateTextureMatrix(Renderer* renderer) = 0;
 
 	/**
 	 * Update material
 	 * @param renderer renderer
 	 */
-	virtual void updateMaterial(GLRenderer* renderer) = 0;
+	virtual void updateMaterial(Renderer* renderer) = 0;
 
 	/**
 	 * Update light
 	 * @param renderer renderer
 	 * @param lightId light id
 	 */
-	virtual void updateLight(GLRenderer* renderer, int32_t lightId) = 0;
+	virtual void updateLight(Renderer* renderer, int32_t lightId) = 0;
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) = 0;
+	virtual void bindTexture(Renderer* renderer, int32_t textureId) = 0;
 
 	/** 
 	 * Set up program depth bias mvp matrix

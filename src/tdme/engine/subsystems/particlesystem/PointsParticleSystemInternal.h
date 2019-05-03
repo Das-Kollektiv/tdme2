@@ -29,7 +29,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -45,7 +45,7 @@ class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
 protected:
 	string id {  };
 	Engine* engine {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	bool autoEmit {  };
 	bool enabled {  };
 	bool active {  };
@@ -67,7 +67,7 @@ protected:
 
 public:
 	const string& getId() override;
-	virtual void setRenderer(GLRenderer* renderer);
+	virtual void setRenderer(Renderer* renderer);
 	virtual void setEngine(Engine* engine);
 	bool isEnabled() override;
 	bool isActive() override;

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
@@ -11,15 +11,15 @@ using std::string;
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFrontImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool LightingShaderFrontImplementation::isSupported(GLRenderer* renderer) {
+bool LightingShaderFrontImplementation::isSupported(Renderer* renderer) {
 	return renderer->getGLVersion() == "gl3";
 }
 
-LightingShaderFrontImplementation::LightingShaderFrontImplementation(GLRenderer* renderer): LightingShaderBaseImplementation(renderer)
+LightingShaderFrontImplementation::LightingShaderFrontImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
 {
 }
 

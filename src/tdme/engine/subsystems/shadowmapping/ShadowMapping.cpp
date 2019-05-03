@@ -6,7 +6,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
@@ -24,7 +24,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Light;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
@@ -37,7 +37,7 @@ using tdme::utils::Console;
 int32_t ShadowMapping::shadowMapWidth = 2048;
 int32_t ShadowMapping::shadowMapHeight = 2048;
 
-ShadowMapping::ShadowMapping(Engine* engine, GLRenderer* renderer, Object3DVBORenderer* object3DVBORenderer) 
+ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, Object3DVBORenderer* object3DVBORenderer) 
 {
 	width = shadowMapWidth;
 	height = shadowMapHeight;
@@ -226,7 +226,7 @@ void ShadowMapping::endObjectTransformations()
 	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
-void ShadowMapping::updateTextureMatrix(GLRenderer* renderer)
+void ShadowMapping::updateTextureMatrix(Renderer* renderer)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
@@ -254,7 +254,7 @@ void ShadowMapping::updateTextureMatrix(GLRenderer* renderer)
 	}
 }
 
-void ShadowMapping::updateMatrices(GLRenderer* renderer)
+void ShadowMapping::updateMatrices(Renderer* renderer)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
@@ -291,7 +291,7 @@ void ShadowMapping::updateMatrices(GLRenderer* renderer)
 	}
 }
 
-void ShadowMapping::updateMaterial(GLRenderer* renderer) {
+void ShadowMapping::updateMaterial(Renderer* renderer) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 	{
@@ -312,13 +312,13 @@ void ShadowMapping::updateMaterial(GLRenderer* renderer) {
 	}
 }
 
-void ShadowMapping::updateLight(GLRenderer* renderer, int32_t lightId) {
+void ShadowMapping::updateLight(Renderer* renderer, int32_t lightId) {
 	if (runState == ShadowMapping_RunState::RENDER) {
 		Engine::getShadowMappingShaderRender()->updateLight(renderer, lightId);
 	}
 }
 
-void ShadowMapping::bindTexture(GLRenderer* renderer, int32_t textureId) {
+void ShadowMapping::bindTexture(Renderer* renderer, int32_t textureId) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 	{

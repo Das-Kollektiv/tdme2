@@ -103,7 +103,7 @@ void GL3Renderer::initialize()
 
 void GL3Renderer::initializeFrame()
 {
-	GLRenderer::initializeFrame();
+	Renderer::initializeFrame();
 }
 
 void GL3Renderer::finishFrame()

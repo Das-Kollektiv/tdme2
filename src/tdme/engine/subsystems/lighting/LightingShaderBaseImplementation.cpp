@@ -5,9 +5,9 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
+#include <tdme/engine/subsystems/renderer/Renderer_Material.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Console.h>
 
@@ -18,13 +18,13 @@ using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer_Light;
-using tdme::engine::subsystems::renderer::GLRenderer_Material;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer_Light;
+using tdme::engine::subsystems::renderer::Renderer_Material;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Console;
 
-LightingShaderBaseImplementation::LightingShaderBaseImplementation(GLRenderer* renderer)
+LightingShaderBaseImplementation::LightingShaderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	isRunning = false;
@@ -172,7 +172,7 @@ void LightingShaderBaseImplementation::unUseProgram()
 	isRunning = false;
 }
 
-void LightingShaderBaseImplementation::updateEffect(GLRenderer* renderer)
+void LightingShaderBaseImplementation::updateEffect(Renderer* renderer)
 {
 	// skip if not running
 	if (isRunning == false) return;
@@ -185,7 +185,7 @@ void LightingShaderBaseImplementation::updateEffect(GLRenderer* renderer)
 	}
 }
 
-void LightingShaderBaseImplementation::updateMaterial(GLRenderer* renderer)
+void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer)
 {
 	// skip if not running
 	if (isRunning == false) return;
@@ -219,7 +219,7 @@ void LightingShaderBaseImplementation::updateMaterial(GLRenderer* renderer)
 	}
 }
 
-void LightingShaderBaseImplementation::updateLight(GLRenderer* renderer, int32_t lightId)
+void LightingShaderBaseImplementation::updateLight(Renderer* renderer, int32_t lightId)
 {
 	// skip if not running
 	if (isRunning == false) return;
@@ -240,7 +240,7 @@ void LightingShaderBaseImplementation::updateLight(GLRenderer* renderer, int32_t
 	}
 }
 
-void LightingShaderBaseImplementation::updateMatrices(GLRenderer* renderer)
+void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer)
 {
 	// skip if not running
 	if (isRunning == false) return;
@@ -266,7 +266,7 @@ void LightingShaderBaseImplementation::updateMatrices(GLRenderer* renderer)
 	}
 }
 
-void LightingShaderBaseImplementation::updateTextureMatrix(GLRenderer* renderer) {
+void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer) {
 	// skip if not running
 	if (isRunning == false) return;
 
@@ -275,7 +275,7 @@ void LightingShaderBaseImplementation::updateTextureMatrix(GLRenderer* renderer)
 }
 
 
-void LightingShaderBaseImplementation::bindTexture(GLRenderer* renderer, int32_t textureId)
+void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	// skip if not running
 	if (isRunning == false) return;

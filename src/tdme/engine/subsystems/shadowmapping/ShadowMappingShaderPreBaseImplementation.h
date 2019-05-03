@@ -9,7 +9,7 @@
 #include <tdme/math/fwd-tdme.h>
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
@@ -21,7 +21,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation: public ShadowMappingShaderPreImplementation
 {
 protected:
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	int32_t vertexShaderId {  };
 	int32_t geometryShaderId {  };
 	int32_t fragmentShaderId {  };
@@ -45,15 +45,15 @@ public:
 	virtual void useProgram(Engine* engine) override;
 	virtual void unUseProgram() override;
 	virtual void updateMatrices(const Matrix4x4& mvpMatrix) override;
-	virtual void updateTextureMatrix(GLRenderer* renderer) override;
-	virtual void updateMaterial(GLRenderer* renderer) override;
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
+	virtual void updateTextureMatrix(Renderer* renderer) override;
+	virtual void updateMaterial(Renderer* renderer) override;
+	virtual void bindTexture(Renderer* renderer, int32_t textureId) override;
 
 	/**
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderPreBaseImplementation(GLRenderer* renderer);
+	ShadowMappingShaderPreBaseImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor

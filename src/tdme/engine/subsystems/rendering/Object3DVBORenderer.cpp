@@ -39,7 +39,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -93,7 +93,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
@@ -107,7 +107,7 @@ using tdme::utils::Console;
 constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
 constexpr int32_t Object3DVBORenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 
-Object3DVBORenderer::Object3DVBORenderer(Engine* engine, GLRenderer* renderer) 
+Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer) 
 {
 	this->engine = engine;
 	this->renderer = renderer;

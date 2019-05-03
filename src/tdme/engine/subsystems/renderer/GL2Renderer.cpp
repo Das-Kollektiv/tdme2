@@ -112,7 +112,7 @@ void GL2Renderer::initialize()
 
 void GL2Renderer::initializeFrame()
 {
-	GLRenderer::initializeFrame();
+	Renderer::initializeFrame();
 }
 
 void GL2Renderer::finishFrame()

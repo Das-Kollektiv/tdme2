@@ -9,7 +9,7 @@
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
@@ -24,12 +24,12 @@ using tdme::engine::model::Color4;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 
 constexpr int32_t BatchVBORendererPoints::POINT_COUNT;
 
-BatchVBORendererPoints::BatchVBORendererPoints(GLRenderer* renderer, int32_t id) 
+BatchVBORendererPoints::BatchVBORendererPoints(Renderer* renderer, int32_t id) 
 {
 	this->id = id;
 	this->renderer = renderer;

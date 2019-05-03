@@ -1231,7 +1231,7 @@ void VKRenderer::reshape() {
 void VKRenderer::initializeFrame()
 {
 	//
-	GLRenderer::initializeFrame();
+	Renderer::initializeFrame();
 
 	//
 	VkResult err;

@@ -18,7 +18,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::array;
 using std::list;
@@ -28,7 +28,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
@@ -42,7 +42,7 @@ using tdme::math::Matrix4x4;
  * @version $Id$
  */
 class tdme::engine::subsystems::renderer::VKRenderer
-	: public GLRenderer
+	: public Renderer
 {
 private:
 	static constexpr bool VERBOSE { false };

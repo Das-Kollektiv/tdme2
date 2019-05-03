@@ -14,7 +14,7 @@ using std::array;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -54,38 +54,38 @@ struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 	 * Update effect to program
 	 * @param renderer renderer
 	 */
-	virtual void updateEffect(GLRenderer* renderer) = 0;
+	virtual void updateEffect(Renderer* renderer) = 0;
 
 	/** 
 	 * Update material to program
 	 * @param renderer gl3 renderer
 	 */
-	virtual void updateMaterial(GLRenderer* renderer) = 0;
+	virtual void updateMaterial(Renderer* renderer) = 0;
 
 	/** 
 	 * Update light to program
 	 * @param renderer renderer
 	 * @param lightId light id
 	 */
-	virtual void updateLight(GLRenderer* renderer, int32_t lightId) = 0;
+	virtual void updateLight(Renderer* renderer, int32_t lightId) = 0;
 
 	/** 
 	 * Update matrices to program
 	 * @param renderer renderer
 	 */
-	virtual void updateMatrices(GLRenderer* renderer) = 0;
+	virtual void updateMatrices(Renderer* renderer) = 0;
 
 	/** 
 	 * Update texture matrix to program
 	 * @param renderer renderer
 	 */
-	virtual void updateTextureMatrix(GLRenderer* renderer) = 0;
+	virtual void updateTextureMatrix(Renderer* renderer) = 0;
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) = 0;
+	virtual void bindTexture(Renderer* renderer, int32_t textureId) = 0;
 
 };

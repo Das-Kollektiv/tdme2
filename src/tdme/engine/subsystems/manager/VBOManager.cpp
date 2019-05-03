@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utils/Console.h>
 
 using std::map;
@@ -12,10 +12,10 @@ using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::Console;
 
-VBOManager::VBOManager(GLRenderer* renderer) 
+VBOManager::VBOManager(Renderer* renderer) 
 {
 	this->renderer = renderer;
 }

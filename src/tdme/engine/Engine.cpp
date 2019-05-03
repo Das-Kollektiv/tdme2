@@ -48,7 +48,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
@@ -107,7 +107,7 @@ using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
@@ -128,7 +128,7 @@ using tdme::utils::Float;
 using tdme::utils::Console;
 
 Engine* Engine::instance = nullptr;
-GLRenderer* Engine::renderer = nullptr;
+Renderer* Engine::renderer = nullptr;
 TextureManager* Engine::textureManager = nullptr;
 VBOManager* Engine::vboManager = nullptr;
 MeshManager* Engine::meshManager = nullptr;

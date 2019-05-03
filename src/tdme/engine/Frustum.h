@@ -17,7 +17,7 @@ using std::array;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::Plane;
 using tdme::engine::primitives::Sphere;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -29,7 +29,7 @@ using tdme::math::Vector3;
 class tdme::engine::Frustum final
 {
 private:
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 
 	// right, left, bottom, top, far, near
 	static constexpr int32_t PLANE_RIGHT { 0 };
@@ -116,5 +116,5 @@ public:
 	/**
 	 * Public constructor
 	 */
-	Frustum(GLRenderer* renderer);
+	Frustum(Renderer* renderer);
 };

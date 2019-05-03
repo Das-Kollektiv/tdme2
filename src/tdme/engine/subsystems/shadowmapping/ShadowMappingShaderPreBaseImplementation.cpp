@@ -4,7 +4,7 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -15,13 +15,13 @@ using tdme::engine::Timing;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
 
-ShadowMappingShaderPreBaseImplementation::ShadowMappingShaderPreBaseImplementation(GLRenderer* renderer)
+ShadowMappingShaderPreBaseImplementation::ShadowMappingShaderPreBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;
@@ -96,17 +96,17 @@ void ShadowMappingShaderPreBaseImplementation::updateMatrices(const Matrix4x4& m
 	}
 }
 
-void ShadowMappingShaderPreBaseImplementation::updateTextureMatrix(GLRenderer* renderer) {
+void ShadowMappingShaderPreBaseImplementation::updateTextureMatrix(Renderer* renderer) {
 	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
 }
 
-void ShadowMappingShaderPreBaseImplementation::updateMaterial(GLRenderer* renderer)
+void ShadowMappingShaderPreBaseImplementation::updateMaterial(Renderer* renderer)
 {
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
 }
 
-void ShadowMappingShaderPreBaseImplementation::bindTexture(GLRenderer* renderer, int32_t textureId)
+void ShadowMappingShaderPreBaseImplementation::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	switch (renderer->getTextureUnit()) {
 		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:

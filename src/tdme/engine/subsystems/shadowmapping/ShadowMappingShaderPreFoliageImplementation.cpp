@@ -1,19 +1,19 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
 
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderPreFoliageImplementation::isSupported(GLRenderer* renderer) {
+bool ShadowMappingShaderPreFoliageImplementation::isSupported(Renderer* renderer) {
 	return renderer->isGeometryShaderAvailable();
 }
 
-ShadowMappingShaderPreFoliageImplementation::ShadowMappingShaderPreFoliageImplementation(GLRenderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
+ShadowMappingShaderPreFoliageImplementation::ShadowMappingShaderPreFoliageImplementation(Renderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
 {
 }
 

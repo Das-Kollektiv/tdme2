@@ -9,7 +9,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -27,7 +27,7 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
@@ -35,7 +35,7 @@ using tdme::gui::renderer::GUIShader;
 using tdme::math::Matrix2D3x3;
 using tdme::utils::Console;
 
-GUIRenderer::GUIRenderer(GLRenderer* renderer) 
+GUIRenderer::GUIRenderer(Renderer* renderer) 
 {
 	this->renderer = renderer;
 	init();

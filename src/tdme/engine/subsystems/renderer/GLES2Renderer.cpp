@@ -87,7 +87,7 @@ void GLES2Renderer::initialize()
 
 void GLES2Renderer::initializeFrame()
 {
-	GLRenderer::initializeFrame();
+	Renderer::initializeFrame();
 }
 
 void GLES2Renderer::finishFrame()

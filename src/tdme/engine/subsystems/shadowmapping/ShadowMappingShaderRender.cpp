@@ -2,7 +2,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.h>
@@ -14,10 +14,10 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-ShadowMappingShaderRender::ShadowMappingShaderRender(GLRenderer* renderer) 
+ShadowMappingShaderRender::ShadowMappingShaderRender(Renderer* renderer) 
 {
 	if (ShadowMappingShaderRenderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderRenderDefaultImplementation(renderer);
 	if (ShadowMappingShaderRenderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderRenderFoliageImplementation(renderer);
@@ -80,23 +80,23 @@ void ShadowMappingShaderRender::setProgramNormalMatrix(const Matrix4x4& normalMa
 	implementation->setProgramNormalMatrix(normalMatrix);
 }
 
-void ShadowMappingShaderRender::updateTextureMatrix(GLRenderer* renderer) {
+void ShadowMappingShaderRender::updateTextureMatrix(Renderer* renderer) {
 	if (implementation == nullptr) return;
 	implementation->updateTextureMatrix(renderer);
 }
 
-void ShadowMappingShaderRender::updateMaterial(GLRenderer* renderer)
+void ShadowMappingShaderRender::updateMaterial(Renderer* renderer)
 {
 	if (implementation == nullptr) return;
 	implementation->updateMaterial(renderer);
 }
 
-void ShadowMappingShaderRender::updateLight(GLRenderer* renderer, int32_t lightId) {
+void ShadowMappingShaderRender::updateLight(Renderer* renderer, int32_t lightId) {
 	if (implementation == nullptr) return;
 	implementation->updateLight(renderer, lightId);
 }
 
-void ShadowMappingShaderRender::bindTexture(GLRenderer* renderer, int32_t textureId)
+void ShadowMappingShaderRender::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	if (implementation == nullptr) return;
 	implementation->bindTexture(renderer, textureId);

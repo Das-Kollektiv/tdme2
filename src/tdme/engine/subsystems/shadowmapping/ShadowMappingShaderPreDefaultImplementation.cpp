@@ -1,19 +1,19 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
 
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderPreDefaultImplementation::isSupported(GLRenderer* renderer) {
+bool ShadowMappingShaderPreDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-ShadowMappingShaderPreDefaultImplementation::ShadowMappingShaderPreDefaultImplementation(GLRenderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
+ShadowMappingShaderPreDefaultImplementation::ShadowMappingShaderPreDefaultImplementation(Renderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
 {
 }
 

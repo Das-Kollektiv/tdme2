@@ -52,7 +52,7 @@ using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
@@ -110,7 +110,7 @@ protected:
 
 private:
 	static Engine* instance;
-	static GLRenderer* renderer;
+	static Renderer* renderer;
 
 	static TextureManager* textureManager;
 	static VBOManager* vboManager;

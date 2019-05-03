@@ -1,11 +1,11 @@
 #include <tdme/gui/renderer/GUIShader.h>
 
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using tdme::gui::renderer::GUIShader;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
-GUIShader::GUIShader(GLRenderer* renderer) 
+GUIShader::GUIShader(Renderer* renderer) 
 {
 	this->renderer = renderer;
 	initialized = false;
@@ -76,13 +76,13 @@ void GUIShader::unUseProgram()
 	isRunning = false;
 }
 
-void GUIShader::bindTexture(GLRenderer* renderer, int32_t textureId)
+void GUIShader::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	if (isRunning == false) return;
 	renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 }
 
-void GUIShader::updateEffect(GLRenderer* renderer)
+void GUIShader::updateEffect(Renderer* renderer)
 {
 	if (isRunning == false) return;
 	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
@@ -90,7 +90,7 @@ void GUIShader::updateEffect(GLRenderer* renderer)
 }
 
 
-void GUIShader::updateTextureMatrix(GLRenderer* renderer) {
+void GUIShader::updateTextureMatrix(Renderer* renderer) {
 	if (isRunning == false) return;
 
 	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());

@@ -7,7 +7,7 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Matrix4x4.h>
@@ -22,7 +22,7 @@ using tdme::engine::Timing;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Math;
@@ -31,7 +31,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-ShadowMappingShaderRenderBaseImplementation::ShadowMappingShaderRenderBaseImplementation(GLRenderer* renderer)
+ShadowMappingShaderRenderBaseImplementation::ShadowMappingShaderRenderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;
@@ -154,17 +154,17 @@ void ShadowMappingShaderRenderBaseImplementation::setProgramNormalMatrix(const M
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformNormalMatrix, normalMatrix.getArray());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(GLRenderer* renderer) {
+void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(Renderer* renderer) {
 	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateMaterial(GLRenderer* renderer)
+void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* renderer)
 {
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateLight(GLRenderer* renderer, int32_t lightId) {
+void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer, int32_t lightId) {
 	if (lightId != this->lightId) {
 		return;
 	}
@@ -187,7 +187,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(GLRenderer* render
 	renderer->setProgramUniformFloat(renderUniformTexturePixelHeight, 1.0f / static_cast< float >(ShadowMapping::getShadowMapHeight()));
 }
 
-void ShadowMappingShaderRenderBaseImplementation::bindTexture(GLRenderer* renderer, int32_t textureId)
+void ShadowMappingShaderRenderBaseImplementation::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	switch (renderer->getTextureUnit()) {
 		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:

@@ -3,19 +3,19 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
-bool PostProcessingShaderBlurImplementation::isSupported(GLRenderer* renderer) {
+bool PostProcessingShaderBlurImplementation::isSupported(Renderer* renderer) {
 	return renderer->getGLVersion() == "gl3";
 }
 
-PostProcessingShaderBlurImplementation::PostProcessingShaderBlurImplementation(GLRenderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderBlurImplementation::PostProcessingShaderBlurImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }
 

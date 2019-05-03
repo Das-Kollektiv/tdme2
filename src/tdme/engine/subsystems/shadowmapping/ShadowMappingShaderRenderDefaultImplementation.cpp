@@ -2,22 +2,22 @@
 
 #include <string>
 
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::to_string;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderRenderDefaultImplementation::isSupported(GLRenderer* renderer) {
+bool ShadowMappingShaderRenderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-ShadowMappingShaderRenderDefaultImplementation::ShadowMappingShaderRenderDefaultImplementation(GLRenderer* renderer): ShadowMappingShaderRenderBaseImplementation(renderer)
+ShadowMappingShaderRenderDefaultImplementation::ShadowMappingShaderRenderDefaultImplementation(Renderer* renderer): ShadowMappingShaderRenderBaseImplementation(renderer)
 {
 }
 

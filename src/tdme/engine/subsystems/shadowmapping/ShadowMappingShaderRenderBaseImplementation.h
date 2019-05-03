@@ -10,7 +10,7 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -23,7 +23,7 @@ using tdme::math::Vector3;
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation: public ShadowMappingShaderRenderImplementation
 {
 protected:
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	int32_t renderVertexShaderId {  };
 	int32_t renderGeometryShaderId {  };
 	int32_t renderFragmentShaderId {  };
@@ -64,10 +64,10 @@ public:
 	virtual void setProgramMVMatrix(const Matrix4x4& mvMatrix) override;
 	virtual void setProgramMVPMatrix(const Matrix4x4& mvpMatrix) override;
 	virtual void setProgramNormalMatrix(const Matrix4x4& normalMatrix) override;
-	virtual void updateTextureMatrix(GLRenderer* renderer) override;
-	virtual void updateMaterial(GLRenderer* renderer) override;
-	virtual void updateLight(GLRenderer* renderer, int32_t lightId) override;
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
+	virtual void updateTextureMatrix(Renderer* renderer) override;
+	virtual void updateMaterial(Renderer* renderer) override;
+	virtual void updateLight(Renderer* renderer, int32_t lightId) override;
+	virtual void bindTexture(Renderer* renderer, int32_t textureId) override;
 	virtual void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix) override;
 	virtual void setRenderLightId(int32_t lightId) override;
 
@@ -75,7 +75,7 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderRenderBaseImplementation(GLRenderer* renderer);
+	ShadowMappingShaderRenderBaseImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor

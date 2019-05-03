@@ -12,7 +12,7 @@ using std::map;
 using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * VBO manager
@@ -24,7 +24,7 @@ class tdme::engine::subsystems::manager::VBOManager final
 	friend class VBOManager_VBOManaged;
 
 private:
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	map<string, VBOManager_VBOManaged*> vbos {  };
 
 public:
@@ -46,7 +46,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	VBOManager(GLRenderer* renderer);
+	VBOManager(Renderer* renderer);
 
 	/**
 	 * Destructor

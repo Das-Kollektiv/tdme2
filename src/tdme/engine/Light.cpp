@@ -3,14 +3,14 @@
 #include <string>
 
 #include <tdme/engine/model/Color4.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 
 using tdme::engine::Light;
 using tdme::engine::model::Color4;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -32,7 +32,7 @@ Light::Light()
 	quadraticAttenuation = 0.0f;
 }
 
-Light::Light(GLRenderer* renderer, int32_t id) 
+Light::Light(Renderer* renderer, int32_t id) 
 {
 	this->renderer = renderer;
 	this->id = id;

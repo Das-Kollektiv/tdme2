@@ -265,7 +265,7 @@ void Object3DRenderGroup::setEngine(Engine* engine)
 	if (combinedObject != nullptr) combinedObject->setEngine(engine);
 }
 
-void Object3DRenderGroup::setRenderer(GLRenderer* renderer)
+void Object3DRenderGroup::setRenderer(Renderer* renderer)
 {
 }
 

@@ -149,7 +149,7 @@ void ParticleSystemGroup::setEngine(Engine* engine)
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setEngine(engine);
 }
 
-void ParticleSystemGroup::setRenderer(GLRenderer* renderer)
+void ParticleSystemGroup::setRenderer(Renderer* renderer)
 {
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setRenderer(renderer);
 }

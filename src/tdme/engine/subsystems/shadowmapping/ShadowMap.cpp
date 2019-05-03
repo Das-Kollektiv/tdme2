@@ -14,7 +14,7 @@
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -33,7 +33,7 @@ using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

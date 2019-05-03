@@ -280,7 +280,7 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
-	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
+	src/tdme/engine/subsystems/renderer/Renderer.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessing.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \

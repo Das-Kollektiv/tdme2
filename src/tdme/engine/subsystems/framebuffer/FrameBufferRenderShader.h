@@ -4,7 +4,7 @@
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Frame buffer render shader
@@ -15,7 +15,7 @@ class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader final
 {
 
 private:
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	int32_t vertexShaderId {  };
 	int32_t fragmentShaderId {  };
 	int32_t programId {  };
@@ -66,7 +66,7 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	FrameBufferRenderShader(GLRenderer* renderer);
+	FrameBufferRenderShader(Renderer* renderer);
 
 	/**
 	 * Public destructor

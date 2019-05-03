@@ -9,9 +9,9 @@ namespace renderer {
 	class GL2Renderer;
 	class GL3Renderer;
 	class GLES2Renderer;
-	class GLRenderer;
-	class GLRenderer_Light;
-	class GLRenderer_Material;
+	class Renderer;
+	class Renderer_Light;
+	class Renderer_Material;
 	class VKRenderer;
 }  // namespace renderer
 }  // namespace subsystems
