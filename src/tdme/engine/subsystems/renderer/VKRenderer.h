@@ -94,11 +94,11 @@ private:
 			int64_t frame_used_last { -1 };
 			VkBuffer buf { VK_NULL_HANDLE };
 			VkDeviceMemory mem { VK_NULL_HANDLE };
-			uint32_t alloc_size { 0 };
 			uint32_t size { 0 };
 			void* data { nullptr };
 		};
 		int32_t id { 0 };
+		bool useGPUMemory { false };
 		unordered_map<uint32_t, list<reusable_buffer>> buffers;
 		uint32_t buffer_count { 0 };
 		int64_t frame_cleaned_last { 0 };
@@ -194,7 +194,7 @@ private:
 		#if defined(__FreeBSD__)
 			bool validate { false }; // TODO: Why no validation layers here?
 		#else
-			bool validate { true };
+			bool validate { false };
 		#endif
 
 		uint32_t current_buffer { 0 };
@@ -290,14 +290,18 @@ private:
 		bool render_pass_started { false };
 		int64_t frame { 0 };
 
+		vector<VkImage> delete_images;
+		vector<VkBuffer> delete_buffers;
+		vector<VkDeviceMemory> delete_memory;
 	} context;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
-	void setImageLayout(bool setup, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
+	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	void prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId);
 	uint32_t getBufferSizeInternal(int32_t bufferObjectId);
+	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
@@ -392,7 +396,7 @@ public:
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
-	vector<int32_t> createBufferObjects(int32_t buffers) override;
+	vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;

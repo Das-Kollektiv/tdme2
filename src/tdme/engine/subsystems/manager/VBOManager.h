@@ -33,8 +33,9 @@ public:
 	 * Adds a VBO to manager
 	 * @param vboId VBO id
 	 * @param ids VBOs to allocate
+	 * @param use GPU memory
 	 */
-	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids);
+	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids, bool useGPUMemory);
 
 	/** 
 	 * Removes a VBO from manager

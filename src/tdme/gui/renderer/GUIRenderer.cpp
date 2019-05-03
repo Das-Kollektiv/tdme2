@@ -88,7 +88,7 @@ GUI* GUIRenderer::getGUI()
 void GUIRenderer::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4, false);
 		vboIds = vboManaged->getVBOGlIds();
 		if (renderer->isUsingShortIndices() == true) {
 			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();

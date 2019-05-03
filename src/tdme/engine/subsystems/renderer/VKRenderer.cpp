@@ -219,7 +219,7 @@ void VKRenderer::finishSetupCommandBuffer() {
 	}
 }
 
-void VKRenderer::setImageLayout(bool setup, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
+void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
 	VkResult err;
 
 	//
@@ -244,28 +244,20 @@ void VKRenderer::setImageLayout(bool setup, VkImage image, VkImageAspectFlags as
 		}
 	};
 
-	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
 		// Make sure anything that was copying from this image has completed
 		image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 	}
-	*/
-	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
 		image_memory_barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	}
-	*/
-	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
 		image_memory_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 	}
-	 */
-	/*
 	if (new_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
 		// Make sure any Copy or CPU writes to image are flushed
 		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
 	}
-	*/
 
 	//
 	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
@@ -326,19 +318,16 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 	err = vkBindImageMemory(context.device, tex_obj->image, tex_obj->mem, 0);
 	assert(!err);
 
-	auto textureData = texture->getTextureData();
-
-	if (required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
+	if ((required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
 		const VkImageSubresource subres = {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.mipLevel = 0,
 			.arrayLayer = 0,
 		};
 		VkSubresourceLayout layout;
-		void* data;
-
 		vkGetImageSubresourceLayout(context.device, tex_obj->image, &subres, &layout);
 
+		void* data;
 		err = vkMapMemory(context.device, tex_obj->mem, 0, mem_alloc.allocationSize, 0, &data);
 		assert(!err);
 
@@ -368,9 +357,7 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 
 	tex_obj->image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-	Console::println(string(__FUNCTION__) + ": " + to_string(__LINE__) + ": setImageLayout()");
 	setImageLayout(
-		false,
 		tex_obj->image,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_LAYOUT_PREINITIALIZED,
@@ -1063,7 +1050,7 @@ void VKRenderer::initialize()
 	initializeFrameBuffers();
 
 	//
-	context.empty_vertex_buffer = createBufferObjects(1)[0];
+	context.empty_vertex_buffer = createBufferObjects(1, true)[0];
 	array<float, 16> bogusVertexBuffer = {{
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
@@ -1322,12 +1309,20 @@ void VKRenderer::finishFrame()
 
 	//
 	flushCommands();
+	finishSetupCommandBuffer();
 
 	// flush command buffers
 	if (context.program_id != 0) {
 		finishPipeline();
 		context.program_id = 0;
 	}
+
+	for (auto buf: context.delete_buffers) vkDestroyBuffer(context.device, buf, NULL);
+	for (auto mem: context.delete_memory) vkFreeMemory(context.device, mem, NULL);
+	for (auto image: context.delete_images) vkDestroyImage(context.device, image, NULL);
+	context.delete_buffers.clear();
+	context.delete_memory.clear();
+	context.delete_images.clear();
 
 	// unset progam desc used
 	for (auto& programIt: context.programs) {
@@ -2716,7 +2711,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 		// do we need a uniform buffer object for this shader stage?
 		if (shader.ubo_size > 0) {
 			// yep, inject UBO index
-			shader.ubo = createBufferObjects(1)[0];
+			shader.ubo = createBufferObjects(1, false)[0];
 			shader.ubo_binding_idx = bindingIdx;
 			shader.source = StringUtils::replace(shader.source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
 			bindingIdx++;
@@ -3179,11 +3174,8 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	err = vkBindImageMemory(context.device, depth_buffer_texture.image, depth_buffer_texture.mem, 0);
 	assert(!err);
 
-	Console::println(string(__FUNCTION__) + ": " + to_string(__LINE__) + ": setImageLayout()");
-
 	depth_buffer_texture.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 	setImageLayout(
-		true,
 		depth_buffer_texture.image,
 		VK_IMAGE_ASPECT_DEPTH_BIT,
 		VK_IMAGE_LAYOUT_UNDEFINED,
@@ -3307,11 +3299,8 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	err = vkBindImageMemory(context.device, color_buffer_texture.image, color_buffer_texture.mem, 0);
 	assert(!err);
 
-	Console::println(string(__FUNCTION__) + ": " + to_string(__LINE__) + ": setImageLayout()");
-
 	color_buffer_texture.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 	setImageLayout(
-		true,
 		color_buffer_texture.image,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_LAYOUT_UNDEFINED,
@@ -3390,12 +3379,16 @@ void VKRenderer::uploadTexture(Texture* texture)
 	VkFormatProperties props;
 	VkResult err;
 
+
 	vkGetPhysicalDeviceFormatProperties(context.gpu, tex_format, &props);
-	/*
-	if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+	if ((props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
+		// we need a setup command buffer here
+		prepareSetupCommandBuffer();
+
 		// Must use staging buffer to copy linear texture to optimized
 		struct texture_object staging_texture;
 
+		//
 		memset(&staging_texture, 0, sizeof(staging_texture));
 
 		prepareTextureImage(
@@ -3413,21 +3406,21 @@ void VKRenderer::uploadTexture(Texture* texture)
 			texture
 		);
 		setImageLayout(
-			false,
 			staging_texture.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			staging_texture.image_layout,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			(VkAccessFlagBits)0
 		);
+
 		setImageLayout(
-			false,
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			texture_object.image_layout,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			(VkAccessFlagBits)0
 		);
+
 		VkImageCopy copy_region = {
 			.srcSubresource = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -3452,13 +3445,14 @@ void VKRenderer::uploadTexture(Texture* texture)
 				.z = 0
 			},
 			.extent = {
-				.width = staging_texture.tex_width,
-				.height = staging_texture.tex_height,
+				.width = texture_object.width,
+				.height = texture_object.height,
 				.depth = 1
 			}
 		};
+
 		vkCmdCopyImage(
-			context.draw_cmd,
+			context.setup_cmd,
 			staging_texture.image,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			texture_object.image,
@@ -3468,7 +3462,6 @@ void VKRenderer::uploadTexture(Texture* texture)
 		);
 
 		setImageLayout(
-			false,
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -3477,10 +3470,9 @@ void VKRenderer::uploadTexture(Texture* texture)
 		);
 
 		// mark for deletion
-		context.images_delete.push_back(staging_texture.image);
-		context.memory_delete.push_back(staging_texture.mem);
+		context.delete_images.push_back(staging_texture.image);
+		context.delete_memory.push_back(staging_texture.mem);
 	} else
-	*/
 	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// Device can texture using linear textures
 		prepareTextureImage(
@@ -3776,13 +3768,14 @@ void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 	context.framebuffers.erase(frameBufferIt);
 }
 
-vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers)
+vector<int32_t> VKRenderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
 	for (auto i = 0; i < buffers; i++) {
 		buffer_object& buffer = context.buffers[context.buffer_idx];
 		buffer.id = context.buffer_idx++;
+		buffer.useGPUMemory = useGPUMemory;
 		bufferIds.push_back(buffer.id);
 	}
 	return bufferIds;
@@ -3816,7 +3809,48 @@ uint32_t VKRenderer::getBufferSizeInternal(int32_t bufferObjectId) {
 	return bufferIt->second.current_buffer->size;
 }
 
+void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+	 //
+	VkResult err;
+
+	const VkBufferCreateInfo buf_info = {
+		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		.pNext = NULL,
+		.flags = 0,
+		.size = static_cast<uint32_t>(size),
+		.usage = usage,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		.queueFamilyIndexCount = 0,
+		.pQueueFamilyIndices = NULL
+	};
+	VkMemoryAllocateInfo mem_alloc = {
+		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		.pNext = NULL,
+		.allocationSize = 0,
+		.memoryTypeIndex = 0
+	};
+
+	err = vkCreateBuffer(context.device, &buf_info, NULL, &buffer);
+	assert(err == VK_SUCCESS);
+
+	VkMemoryRequirements mem_reqs;
+	vkGetBufferMemoryRequirements(context.device, buffer, &mem_reqs);
+
+	auto pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, properties,
+	&mem_alloc.memoryTypeIndex);
+	assert(pass);
+
+	 //
+	mem_alloc.allocationSize = mem_reqs.size;
+	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &bufferMemory);
+	assert(err == VK_SUCCESS);
+
+	vkBindBufferMemory(context.device, buffer, bufferMemory, 0);
+}
+
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
+	if (size == 0) return;
+
 	// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(bufferObjectId) + " / " + to_string(size) + " / " + to_string((int)usage));
 	auto bufferIt = context.buffers.find(bufferObjectId);
 	if (bufferIt == context.buffers.end()) {
@@ -3824,8 +3858,6 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		return;
 	}
 	auto& buffer = bufferIt->second;
-
-	if (size == 0) return;
 
 	//
 	VkResult err;
@@ -3849,59 +3881,62 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		buffer.buffer_count++;
 	}
 
-	// create if not yet done
-	if (reusableBuffer->size == 0) {
-		const VkBufferCreateInfo buf_info = {
-			.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-			.pNext = NULL,
-			.flags = 0,
-			.size = static_cast<uint32_t>(size),
-			.usage = usage,
-			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-			.queueFamilyIndexCount = 0,
-			.pQueueFamilyIndices = NULL
-		};
-		VkMemoryAllocateInfo mem_alloc = {
-			.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-			.pNext = NULL,
-			.allocationSize = 0,
-			.memoryTypeIndex = 0
-		};
+	// create buffer
+	if (buffer.useGPUMemory == true) {
+		prepareSetupCommandBuffer();
 
-		VkMemoryRequirements mem_reqs;
-		bool pass;
+		void* stagingData;
+		VkBuffer stagingBuffer;
+		VkDeviceMemory stagingBufferMemory;
+		VkDeviceSize stagingBufferAllocationSize;
+		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-		err = vkCreateBuffer(context.device, &buf_info, NULL, &reusableBuffer->buf);
-		assert(err == VK_SUCCESS);
+		// mark staging buffer for deletion when finishing frame
+		context.delete_buffers.push_back(stagingBuffer);
+		context.delete_memory.push_back(stagingBufferMemory);
 
-		vkGetBufferMemoryRequirements(context.device, reusableBuffer->buf, &mem_reqs);
-
-		mem_alloc.allocationSize = mem_reqs.size;
-		pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &mem_alloc.memoryTypeIndex);
-		assert(pass);
-
-		reusableBuffer->alloc_size = mem_alloc.allocationSize;
-
-		err = vkAllocateMemory(context.device, &mem_alloc, NULL, &reusableBuffer->mem);
-		assert(err == VK_SUCCESS);
-
-		//
-		reusableBuffer->size = size;
-
-		// TODO: workaround for having buffers with zero size
-		if (size > 0) {
-			// map memory
-			err = vkMapMemory(context.device, reusableBuffer->mem, 0, reusableBuffer->alloc_size, 0, &reusableBuffer->data);
-			assert(err == VK_SUCCESS);
-
-			// bind if (re)created
-			err = vkBindBufferMemory(context.device, reusableBuffer->buf, reusableBuffer->mem, 0);
-			assert(!err);
+		// create GPU buffer if not yet done
+		if (reusableBuffer->size == 0) {
+			createBuffer(size, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, reusableBuffer->buf, reusableBuffer->mem);
+			reusableBuffer->size = size;
 		}
-	}
 
-	// TODO: workaround for having buffers with zero size
-	if (size > 0) {
+		// map memory
+		err = vkMapMemory(context.device, stagingBufferMemory, 0, size, 0, &stagingData);
+		assert(err == VK_SUCCESS);
+
+		// copy to staging buffer
+		memcpy(stagingData, data, size);
+
+		// flush
+		VkMappedMemoryRange mappedMemoryRange = {
+			.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
+			.pNext = NULL,
+			.memory = stagingBufferMemory,
+			.offset = 0,
+			.size = size
+		};
+		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
+
+		// copy to GPU buffer
+		VkBufferCopy copyRegion = {
+			.srcOffset = 0,
+			.dstOffset = 0,
+			.size = size
+		};
+		vkCmdCopyBuffer(context.setup_cmd, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
+	} else {
+		if (reusableBuffer->size == 0) {
+			createBuffer(size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, reusableBuffer->buf, reusableBuffer->mem);
+
+			//
+			reusableBuffer->size = size;
+
+			// map memory
+			err = vkMapMemory(context.device, reusableBuffer->mem, 0, reusableBuffer->size, 0, &reusableBuffer->data);
+			assert(err == VK_SUCCESS);
+		}
+
 		// copy to buffer
 		memcpy(reusableBuffer->data, data, size);
 
@@ -3911,7 +3946,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 			.pNext = NULL,
 			.memory = reusableBuffer->mem,
 			.offset = 0,
-			.size = reusableBuffer->alloc_size
+			.size = size
 		};
 		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 	}

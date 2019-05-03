@@ -29,6 +29,7 @@ private:
 	struct ModelSkinningCache {
 		string id;
 		vector<int32_t>* vboIds;
+		vector<int32_t>* matricesVboIds;
 	};
 
 	int32_t programId {  };

@@ -135,7 +135,7 @@ Object3DVBORenderer::~Object3DVBORenderer() {
 void Object3DVBORenderer::initialize()
 {
 	psePointBatchVBORenderer->initialize();
-	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3dvborenderer.instancedrendering", 3);
+	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3dvborenderer.instancedrendering", 3, false);
 	vboInstancedRenderingIds = vboManaged->getVBOGlIds();
 }
 

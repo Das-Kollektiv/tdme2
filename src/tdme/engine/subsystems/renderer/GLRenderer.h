@@ -476,9 +476,10 @@ public:
 	/** 
 	 * Generate buffer objects for vertex data and such
 	 * @param buffers buffers
+	 * @param use GPU memory
 	 * @return ids
 	 */
-	virtual vector<int32_t> createBufferObjects(int32_t buffers) = 0;
+	virtual vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory) = 0;
 
 	/** 
 	 * Uploads buffer data to buffer object

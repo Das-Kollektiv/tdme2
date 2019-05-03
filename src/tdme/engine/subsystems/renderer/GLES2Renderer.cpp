@@ -486,7 +486,7 @@ void GLES2Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (const uint32_t*)&frameBufferId);
 }
 
-vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers)
+vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
 {
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);

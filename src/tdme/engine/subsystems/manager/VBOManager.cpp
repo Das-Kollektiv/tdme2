@@ -26,7 +26,7 @@ VBOManager::~VBOManager() {
 	}
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids)
+VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory)
 {
 	// check if we already manage this vbo
 	auto vboManagedIt = vbos.find(vboId);
@@ -37,7 +37,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids)
 		return vboManaged;
 	}
 	// create vertex buffer objects
-	auto vboIds = renderer->createBufferObjects(ids);
+	auto vboIds = renderer->createBufferObjects(ids, useGPUMemory);
 	// create managed texture
 	auto vboManaged = new VBOManager_VBOManaged(vboId, vboIds);
 	// add it to our textures
