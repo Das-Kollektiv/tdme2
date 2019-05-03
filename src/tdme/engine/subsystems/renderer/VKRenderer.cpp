@@ -3951,7 +3951,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 			.pNext = NULL,
 			.memory = stagingBufferMemory,
 			.offset = 0,
-			.size = size
+			.size = static_cast<VkDeviceSize>(size)
 		};
 		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 
@@ -3959,7 +3959,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		VkBufferCopy copyRegion = {
 			.srcOffset = 0,
 			.dstOffset = 0,
-			.size = size
+			.size = static_cast<VkDeviceSize>(size)
 		};
 		vkCmdCopyBuffer(context.setup_cmd, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
 	} else {
@@ -3983,7 +3983,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 			.pNext = NULL,
 			.memory = reusableBuffer->mem,
 			.offset = 0,
-			.size = size
+			.size = static_cast<VkDeviceSize>(size)
 		};
 		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 	}
