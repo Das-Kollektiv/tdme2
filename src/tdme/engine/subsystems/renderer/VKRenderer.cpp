@@ -1874,15 +1874,32 @@ void VKRenderer::preparePipeline(program_type& program) {
 		auto& shader = shaderIt->second;
 		if (shader.ubo_binding_idx == -1) {
 			context.uniform_buffers[shaderIdx].resize(0);
+			context.uniform_buffers_changed[shaderIdx] = false;
 			shaderIdx++;
 			continue;
 		}
 		context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
+		context.uniform_buffers_changed[shaderIdx] = true;
 		shaderIdx++;
+	}
+	if (program.created == true) {
+		context.uniform_buffers = program.uniform_buffers_last;
+		context.uniform_buffers_changed = program.uniform_buffers_changed_last;
 	}
 }
 
 void VKRenderer::finishPipeline() {
+	if (context.program_id != 0) {
+		auto programIt = context.programs.find(context.program_id);
+		if (programIt == context.programs.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
+			return;
+		}
+		auto& program = programIt->second;
+		program.uniform_buffers_last = context.uniform_buffers;
+		program.uniform_buffers_changed_last = context.uniform_buffers_changed;
+	}
+
 	// unset bound buffers and such
 	for (auto& ubo: context.uniform_buffers) ubo.clear();
 }
@@ -2013,6 +2030,9 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 
 		err = vkCreatePipelineLayout(context.device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
 		assert(!err);
+
+		//
+		context.uniform_buffers_changed.fill(true);
 
 		//
 		program.created = true;
@@ -2330,6 +2350,9 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		assert(!err);
 
 		//
+		context.uniform_buffers_changed.fill(true);
+
+		//
 		program.created = true;
 	}
 
@@ -2622,6 +2645,9 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 
 		//
 		program.created = true;
+
+		//
+		context.uniform_buffers_changed.fill(true);
 	}
 
 	//
@@ -2899,9 +2925,14 @@ void VKRenderer::setProgramUniformInternal(int32_t uniformId, uint8_t* data, int
 				shaderIdx++;
 				continue;
 			}
+			auto uniformNoChange = true;
+			auto byteChanged = false;
 			for (auto i = 0; i < size; i++) {
-				context.uniform_buffers[shaderIdx][shaderUniform.position + i] = data[i];
+				byteChanged = context.uniform_buffers[shaderIdx][shaderUniform.position + i] != data[i];
+				if (byteChanged == true) context.uniform_buffers[shaderIdx][shaderUniform.position + i] = data[i];
+				uniformNoChange&= !byteChanged;
 			}
+			if (uniformNoChange == false) context.uniform_buffers_changed[shaderIdx] = true;
 		}
 		changedUniforms++;
 		shaderIdx++;
@@ -4064,7 +4095,7 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangle
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
 {
-	// upload uniforms
+	//
 	auto programIt = context.programs.find(context.program_id);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
@@ -4088,7 +4119,9 @@ void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int3
 			shaderIdx++;
 			continue;
 		}
-		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		if (context.uniform_buffers_changed[shaderIdx] == true) {
+			uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		}
 		objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
 		shaderIdx++;
 	}
@@ -4123,6 +4156,9 @@ void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int3
 	objects_render_command.count = triangles;
 	objects_render_command.offset = trianglesOffset;
 	objects_render_command.instances = instances;
+
+	//
+	context.uniform_buffers_changed.fill(false);
 }
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -4428,6 +4464,8 @@ void VKRenderer::flushCommands() {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
 				break;
 			}
+
+			//
 			for (auto& shaderId: program.shader_ids) {
 				auto shaderIt = context.shaders.find(shaderId);
 				if (shaderIt == context.shaders.end()) {
@@ -4435,7 +4473,6 @@ void VKRenderer::flushCommands() {
 					return;
 				}
 				auto& shader = shaderIt->second;
-
 				for (int i = 0; i <= shader.binding_max; i++) {
 					bufferInfos[i] = {
 						.buffer = compute_command.storage_buffers[i],
@@ -4485,6 +4522,8 @@ void VKRenderer::flushCommands() {
 			vkUpdateDescriptorSets(context.device, program.layout_bindings, descriptorSetWrites, 0, NULL);
 			vkCmdBindDescriptorSets(context.draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline_layout, 0, 1, &program.desc_set[program.desc_used], 0, nullptr);
 			vkCmdDispatch(context.draw_cmd, compute_command.num_groups_x, compute_command.num_groups_y, compute_command.num_groups_z);
+
+			//
 			program.desc_used++;
 		}
 
@@ -4530,7 +4569,9 @@ void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffse
 			shaderIdx++;
 			continue;
 		}
-		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		if (context.uniform_buffers_changed[shaderIdx] == true) {
+			uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		}
 		points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
 		shaderIdx++;
 	}
@@ -4558,6 +4599,9 @@ void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffse
 	points_render_command.vertex_buffers[3] = getBufferObjectInternal(context.bound_buffers[3] == 0?context.empty_vertex_buffer:context.bound_buffers[3]);
 	points_render_command.count = points;
 	points_render_command.offset = pointsOffset;
+
+	//
+	context.uniform_buffers_changed.fill(false);
 }
 
 void VKRenderer::unbindBufferObjects()
@@ -4632,7 +4676,6 @@ void VKRenderer::checkGLError(int line)
 }
 
 void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	// upload uniforms
 	auto programIt = context.programs.find(context.program_id);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
@@ -4656,7 +4699,9 @@ void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t
 			shaderIdx++;
 			continue;
 		}
-		uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		if (context.uniform_buffers_changed[shaderIdx] == true) {
+			uploadBufferObjectInternal(shader.ubo, context.uniform_buffers[shaderIdx].size(), context.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		}
 		compute_command.ubo_buffers[0] = getBufferObjectInternal(shader.ubo); // TODO: do not use static 0 ubo buffer
 		shaderIdx++;
 	}
@@ -4681,6 +4726,9 @@ void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t
 	compute_command.num_groups_x = numGroupsX;
 	compute_command.num_groups_y = numGroupsY;
 	compute_command.num_groups_z = numGroupsZ;
+
+	//
+	context.uniform_buffers_changed.fill(false);
 }
 
 void VKRenderer::memoryBarrier() {

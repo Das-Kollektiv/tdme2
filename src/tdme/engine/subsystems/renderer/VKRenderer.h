@@ -81,6 +81,8 @@ private:
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
+		array<vector<uint8_t>, 4> uniform_buffers_last;
+		array<bool, 4> uniform_buffers_changed_last;
 		uint32_t layout_bindings { 0 };
 		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
@@ -211,6 +213,7 @@ private:
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 9> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
+		array<bool, 4> uniform_buffers_changed;
 		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int32_t bound_frame_buffer { 0 };
 
