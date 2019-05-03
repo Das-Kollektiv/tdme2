@@ -79,7 +79,7 @@ void BatchVBORendererTriangles::initialize()
 	// initialize if not yet done
 	if (vboIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborenderertriangles." + to_string(id), 6, false);
-		vboIds = vboManaged->getVBOGlIds();
+		vboIds = vboManaged->getVBOIds();
 	}
 }
 

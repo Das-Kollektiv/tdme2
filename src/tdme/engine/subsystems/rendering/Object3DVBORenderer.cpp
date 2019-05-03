@@ -136,7 +136,7 @@ void Object3DVBORenderer::initialize()
 {
 	psePointBatchVBORenderer->initialize();
 	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3dvborenderer.instancedrendering", 3, false);
-	vboInstancedRenderingIds = vboManaged->getVBOGlIds();
+	vboInstancedRenderingIds = vboManaged->getVBOIds();
 }
 
 void Object3DVBORenderer::dispose()
@@ -215,7 +215,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		renderer->getTextureMatrix().identity();
 		renderer->onUpdateTextureMatrix();
 		// actually this should not make any difference as culling is disabled
-		// but having a fixed value is not a bad idea except that it is a GL call
+		// but having a fixed value is not a bad idea except that it is a renderer call
 		// TODO: confirm this
 		renderer->setFrontFace(renderer->FRONTFACE_CCW);
 		for (auto transparentRenderFace: *transparentRenderFacesPool->getTransparentRenderFaces()) {
@@ -460,21 +460,21 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					materialUpdateOnly = true;
 				}
 				// bind buffer base objects if not bound yet
-				auto currentVBOGlIds = _object3DGroup->renderer->vboBaseIds;
-				if (boundVBOBaseIds != currentVBOGlIds) {
-					boundVBOBaseIds = currentVBOGlIds;
+				auto currentVBOIds = _object3DGroup->renderer->vboBaseIds;
+				if (boundVBOBaseIds != currentVBOIds) {
+					boundVBOBaseIds = currentVBOIds;
 					//	texture coordinates
 					if (isTextureCoordinatesAvailable == true &&
 						(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
 						((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && material != nullptr && material->hasDiffuseTextureMaskedTransparency() == true))) {
-						renderer->bindTextureCoordinatesBufferObject((*currentVBOGlIds)[3]);
+						renderer->bindTextureCoordinatesBufferObject((*currentVBOIds)[3]);
 					}
 					// 	indices
-					renderer->bindIndicesBufferObject((*currentVBOGlIds)[0]);
+					renderer->bindIndicesBufferObject((*currentVBOIds)[0]);
 					// 	vertices
-					renderer->bindVerticesBufferObject((*currentVBOGlIds)[1]);
+					renderer->bindVerticesBufferObject((*currentVBOIds)[1]);
 					// 	normals
-					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject((*currentVBOGlIds)[2]);
+					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject((*currentVBOIds)[2]);
 				}
 				// bind tangent, bitangend buffers if not yet bound
 				auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
@@ -896,7 +896,7 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 			material->hasDiffuseTextureMaskedTransparency() == true) {
 			auto diffuseTextureId =
-				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::GLTEXTUREID_NONE ?
+				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
 				object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
 			materialKey+= "," + to_string(diffuseTextureId);
@@ -954,7 +954,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 	Matrix4x4 modelViewMatrix;
 	modelViewMatrix.set(renderer->getModelViewMatrix());
 
-	// set up GL state
+	// set up renderer state
 	renderer->enableBlending();
 	// 	model view matrix
 	renderer->getModelViewMatrix().identity();
@@ -998,9 +998,9 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 	// unbind texture
 	renderer->bindTexture(renderer->ID_NONE);
 	// TODO: before render sort all pps by distance to camera and render them in correct order
-	// unset GL state
+	// unset renderer state
 	renderer->disableBlending();
-	// restore gl state
+	// restore renderer state
 	renderer->unbindBufferObjects();
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }

@@ -24,10 +24,10 @@ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImpl
 {
 protected:
 	GLRenderer* renderer {  };
-	int32_t renderVertexShaderGlId {  };
-	int32_t renderGeometryShaderGlId {  };
-	int32_t renderFragmentShaderGlId {  };
-	int32_t renderProgramGlId {  };
+	int32_t renderVertexShaderId {  };
+	int32_t renderGeometryShaderId {  };
+	int32_t renderFragmentShaderId {  };
+	int32_t renderProgramId {  };
 	int32_t renderUniformTextureUnit { -1 };
 	int32_t renderUniformTexturePixelWidth { -1 };
 	int32_t renderUniformTexturePixelHeight { -1 };

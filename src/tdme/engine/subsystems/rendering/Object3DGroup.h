@@ -49,8 +49,8 @@ class tdme::engine::subsystems::rendering::Object3DGroup final
 private:
 	static int64_t counter;
 
-	static constexpr int32_t GLTEXTUREID_NONE { -1 };
-	static constexpr int32_t GLTEXTUREID_NOTUSED { 0 };
+	static constexpr int32_t TEXTUREID_NONE { -1 };
+	static constexpr int32_t TEXTUREID_NOTUSED { 0 };
 
 	string id {  };
 	Object3DBase* object {  };

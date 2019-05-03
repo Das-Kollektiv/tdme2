@@ -113,11 +113,11 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 		// vbos
 		{
 			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 6, true);
-			modelSkinningCache.vboIds = vboManaged->getVBOGlIds();
+			modelSkinningCache.vboIds = vboManaged->getVBOIds();
 		}
 		{
 			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices", 1, false);
-			modelSkinningCache.matricesVboIds = vboManaged->getVBOGlIds();
+			modelSkinningCache.matricesVboIds = vboManaged->getVBOIds();
 		}
 
 		// vertices

@@ -23,7 +23,7 @@ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImpleme
 protected:
 	GLRenderer* renderer {  };
 	int32_t vertexShaderId {  };
-	int32_t geometryShaderGlId {  };
+	int32_t geometryShaderId {  };
 	int32_t fragmentShaderId {  };
 	int32_t programId {  };
 	int32_t uniformProjectionMatrix { -1 };

@@ -53,8 +53,8 @@ void VBOManager::removeVBO(const string& vboId)
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
 		if (vboManaged->decrementReferenceCounter()) {
-			auto vboIds = vboManaged->getVBOGlIds();
-			// delete vbos from open gl
+			auto vboIds = vboManaged->getVBOIds();
+			// delete vbos from renderer
 			renderer->disposeBufferObjects(*vboIds);
 			// remove from our list
 			vbos.erase(vboManagedIt);

@@ -38,25 +38,25 @@ bool FrameBufferRenderShader::isInitialized()
 void FrameBufferRenderShader::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
-	vertexShaderGlId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/framebuffer",
 		"render_vertexshader.c"
 	);
-	if (vertexShaderGlId == 0)
+	if (vertexShaderId == 0)
 		return;
 
-	fragmentShaderGlId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/framebuffer",
 		"render_fragmentshader.c"
 	);
-	if (fragmentShaderGlId == 0)
+	if (fragmentShaderId == 0)
 		return;
 
 	programId = renderer->createProgram();
-	renderer->attachShaderToProgram(programId, vertexShaderGlId);
-	renderer->attachShaderToProgram(programId, fragmentShaderGlId);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
@@ -74,8 +74,8 @@ void FrameBufferRenderShader::initialize()
 
 	// create vbos
 	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2, true);
-	vboVertices = (*vboManaged->getVBOGlIds())[0];
-	vboTextureCoordinates = (*vboManaged->getVBOGlIds())[1];
+	vboVertices = (*vboManaged->getVBOIds())[0];
+	vboTextureCoordinates = (*vboManaged->getVBOIds())[1];
 
 	// vertices
 	{

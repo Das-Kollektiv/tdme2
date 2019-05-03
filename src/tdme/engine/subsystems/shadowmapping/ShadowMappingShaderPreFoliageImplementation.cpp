@@ -34,7 +34,7 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 	);
 	if (vertexShaderId == 0) return;
 	if (renderer->isGeometryShaderAvailable() == true) {
-		geometryShaderGlId = renderer->loadShader(
+		geometryShaderId = renderer->loadShader(
 			renderer->SHADER_GEOMETRY_SHADER,
 			"shader/" + rendererVersion + "/shadowmapping",
 			"pre_geometryshader_foliage.c",
@@ -54,7 +54,7 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 				"create_translation_matrix.inc.c"
 			)
 		);
-		if (geometryShaderGlId == 0) return;
+		if (geometryShaderId == 0) return;
 	}
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
@@ -68,7 +68,7 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 	programId = renderer->createProgram();
 	renderer->attachShaderToProgram(programId, vertexShaderId);
 	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->attachShaderToProgram(programId, geometryShaderGlId);
+		renderer->attachShaderToProgram(programId, geometryShaderId);
 	}
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 

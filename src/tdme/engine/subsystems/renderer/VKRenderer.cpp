@@ -215,6 +215,8 @@ void VKRenderer::finishSetupCommandBuffer() {
 		assert(!err);
 
 		vkFreeCommandBuffers(context.device, context.cmd_pool, 1, cmd_bufs);
+
+		//
 		context.setup_cmd = VK_NULL_HANDLE;
 	}
 }
@@ -2957,16 +2959,20 @@ void VKRenderer::setProgramUniformFloat(int32_t uniformId, float value)
 void VKRenderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	array<float, 12> _data;
-	_data[0] = data[0];
-	_data[1] = data[1];
-	_data[2] = data[2];
-	_data[4] = data[3];
-	_data[5] = data[4];
-	_data[6] = data[5];
-	_data[8] = data[6];
-	_data[9] = data[7];
-	_data[10] = data[8];
+	array<float, 12> _data = {
+		data[0],
+		data[1],
+		data[2],
+		0.0,
+		data[3],
+		data[4],
+		data[5],
+		0.0,
+		data[6],
+		data[7],
+		data[8],
+		0.0
+	};
 	setProgramUniformInternal(uniformId, (uint8_t*)_data.data(), _data.size() * sizeof(float));
 }
 

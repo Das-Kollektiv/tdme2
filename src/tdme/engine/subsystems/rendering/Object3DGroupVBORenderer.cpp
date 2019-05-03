@@ -41,7 +41,7 @@ void Object3DGroupVBORenderer::preRender()
 	// initialize if not yet done
 	if (vboBaseIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, object3DGroup->mesh->group->getTextureCoordinates() != nullptr ? 4 : 3, true);
-		vboBaseIds = vboManaged->getVBOGlIds();
+		vboBaseIds = vboManaged->getVBOIds();
 		meshUploaded = vboManaged->isUploaded();
 	}
 
@@ -51,7 +51,7 @@ void Object3DGroupVBORenderer::preRender()
 		object3DGroup->mesh->group->getBitangents()->size() > 0 &&
 		vboTangentBitangentIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".tangentbitangent", 2, true);
-		vboTangentBitangentIds = vboManaged->getVBOGlIds();
+		vboTangentBitangentIds = vboManaged->getVBOIds();
 	}
 
 	//

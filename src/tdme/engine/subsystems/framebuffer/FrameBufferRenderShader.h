@@ -16,8 +16,8 @@ class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader final
 
 private:
 	GLRenderer* renderer {  };
-	int32_t vertexShaderGlId {  };
-	int32_t fragmentShaderGlId {  };
+	int32_t vertexShaderId {  };
+	int32_t fragmentShaderId {  };
 	int32_t programId {  };
 	int32_t uniformColorBufferTextureUnit { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };

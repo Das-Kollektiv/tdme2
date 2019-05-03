@@ -89,7 +89,7 @@ void GUIRenderer::initialize()
 {
 	if (vboIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4, false);
-		vboIds = vboManaged->getVBOGlIds();
+		vboIds = vboManaged->getVBOIds();
 		if (renderer->isUsingShortIndices() == true) {
 			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();
 			for (auto i = 0; i < QUAD_COUNT; i++) {
