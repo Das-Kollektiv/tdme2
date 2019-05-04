@@ -52,9 +52,9 @@ Material* FacesEntity::getMaterial()
 	return material;
 }
 
-vector<Face>* FacesEntity::getFaces()
+vector<Face>& FacesEntity::getFaces()
 {
-	return &faces;
+	return faces;
 }
 
 void FacesEntity::setFaces(const vector<Face>* faces)
@@ -71,10 +71,10 @@ void FacesEntity::setFaces(const vector<Face>* faces)
 
 void FacesEntity::determineFeatures()
 {
-	textureCoordinatesAvailable = group->getTextureCoordinates()->size() > 0;
+	textureCoordinatesAvailable = group->getTextureCoordinates().size() > 0;
 	tangentBitangentAvailable =
-		group->getTangents()->size() > 0 && group->getBitangents()->size() > 0 &&
-		group->getTangents()->size() == group->getBitangents()->size();
+		group->getTangents().size() > 0 && group->getBitangents().size() > 0 &&
+		group->getTangents().size() == group->getBitangents().size();
 }
 
 bool FacesEntity::isTextureCoordinatesAvailable()

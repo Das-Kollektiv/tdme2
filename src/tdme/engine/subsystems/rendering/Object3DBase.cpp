@@ -325,13 +325,13 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 					}
 				}
 				Matrix4x4::interpolateLinear(
-					(*animationMatrices)[matrixAtLast + groupAnimationState->setup->getStartFrame()],
-					(*animationMatrices)[matrixAtCurrent + groupAnimationState->setup->getStartFrame()],
+					animationMatrices[matrixAtLast + groupAnimationState->setup->getStartFrame()],
+					animationMatrices[matrixAtCurrent + groupAnimationState->setup->getStartFrame()],
 					t,
 					transformationsMatrix
 				);
 			} else {
-				transformationsMatrix.set((*animationMatrices)[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
+				transformationsMatrix.set(animationMatrices[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
 			}
 		} else {
 			// no animation matrix, set up local transformation matrix up as group matrix
@@ -357,7 +357,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 void Object3DBase::updateSkinningTransformationsMatrices(map<string, Matrix4x4*>* transformationsMatrices) {
 	// TODO: Maybe optimize regarding map look ups
 	for (auto i = 0; i < skinningGroups.size(); i++) {
-		for (auto& skinningJoint: *skinningGroups[i]->getSkinning()->getJoints()) {
+		for (auto& skinningJoint: skinningGroups[i]->getSkinning()->getJoints()) {
 			auto transformationsMatrixIt = transformationsMatrices->find(skinningJoint.getGroupId());
 			auto transformationsMatrix = transformationsMatrixIt != transformationsMatrices->end()?transformationsMatrixIt->second:nullptr;
 			if (transformationsMatrix == nullptr) continue;
@@ -469,8 +469,8 @@ void Object3DBase::getTriangles(vector<Triangle>& triangles, int groupIdx)
 	if (groupIdx == -1) {
 		for (auto object3DGroup : object3dGroups) {
 			auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
-			for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
-			for (auto& face : *facesEntity.getFaces()) {
+			for (auto& facesEntity : object3DGroup->group->getFacesEntities())
+			for (auto& face : facesEntity.getFaces()) {
 				auto faceVertexIndices = face.getVertexIndices();
 				triangles.push_back(
 					Triangle(
@@ -484,8 +484,8 @@ void Object3DBase::getTriangles(vector<Triangle>& triangles, int groupIdx)
 	} else {
 		auto object3DGroup = object3dGroups[groupIdx];
 		auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
-		for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
-		for (auto& face : *facesEntity.getFaces()) {
+		for (auto& facesEntity : object3DGroup->group->getFacesEntities())
+		for (auto& face : facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
 			triangles.push_back(
 				Triangle(

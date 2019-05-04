@@ -48,8 +48,8 @@ void TransparentRenderFacesPool::reset()
 	transparentRenderFaces.clear();
 }
 
-vector<TransparentRenderFace*>* TransparentRenderFacesPool::getTransparentRenderFaces()
+const vector<TransparentRenderFace*>& TransparentRenderFacesPool::getTransparentRenderFaces()
 {
-	return &transparentRenderFaces;
+	return transparentRenderFaces;
 }
 

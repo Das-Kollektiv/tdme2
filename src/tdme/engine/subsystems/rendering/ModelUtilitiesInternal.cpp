@@ -159,7 +159,7 @@ void ModelUtilitiesInternal::invertNormals(map<string, Group*>* groups)
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
-		for (auto& normal : *group->getNormals()) {
+		for (auto& normal : group->getNormals()) {
 			// invert
 			normal.scale(-1.0f);
 		}
@@ -182,10 +182,10 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 	for (auto object3DGroup : object3DModelInternal->object3dGroups) {
 		// check each faces entity
 		auto facesEntities = object3DGroup->group->getFacesEntities();
-		auto facesEntityIdxCount = facesEntities->size();
+		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-			auto& facesEntity = (*facesEntities)[faceEntityIdx];
-			auto faces = facesEntity.getFaces()->size();
+			auto& facesEntity = facesEntities[faceEntityIdx];
+			auto faces = facesEntity.getFaces().size();
 			// material
 			auto material = facesEntity.getMaterial();
 			// determine if transparent
@@ -240,51 +240,51 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 		if (object3DGroupModel1->group->getTransformationsMatrix().equals(object3DGroupModel2->group->getTransformationsMatrix()) == false)
 			return false;
 		// check vertices count
-		if (group1->getVertices()->size() != group2->getVertices()->size())
+		if (group1->getVertices().size() != group2->getVertices().size())
 			return false;
 		// check vertices
-		for (auto j = 0; j < group1->getVertices()->size(); j++) {
-			if ((*group1->getVertices())[j].equals((*group2->getVertices())[j]) == false)
+		for (auto j = 0; j < group1->getVertices().size(); j++) {
+			if (group1->getVertices()[j].equals(group2->getVertices()[j]) == false)
 				return false;
 		}
 		// check normals count
-		if (group1->getNormals()->size() != group2->getNormals()->size())
+		if (group1->getNormals().size() != group2->getNormals().size())
 			return false;
 		// check normals
-		for (auto j = 0; j < group1->getNormals()->size(); j++) {
-			if ((*group1->getNormals())[j].equals((*group2->getNormals())[j]) == false)
+		for (auto j = 0; j < group1->getNormals().size(); j++) {
+			if (group1->getNormals()[j].equals(group2->getNormals()[j]) == false)
 				return false;
 		}
 		// check number of faces entities
-		if (facesEntitiesModel1->size() != facesEntitiesModel2->size())
+		if (facesEntitiesModel1.size() != facesEntitiesModel2.size())
 			return false;
 		// check each faces entity
-		for (auto j = 0; j < facesEntitiesModel1->size(); j++) {
-			auto facesEntityModel1 = &(*facesEntitiesModel1)[j];
-			auto facesEntityModel2 = &(*facesEntitiesModel2)[j];
+		for (auto j = 0; j < facesEntitiesModel1.size(); j++) {
+			auto facesEntityModel1 = facesEntitiesModel1[j];
+			auto facesEntityModel2 = facesEntitiesModel2[j];
 			// check material
 			//	TODO: check if it should be allowed to have NULL material
-			if (facesEntityModel1->getMaterial() == nullptr && facesEntityModel2->getMaterial() != nullptr)
+			if (facesEntityModel1.getMaterial() == nullptr && facesEntityModel2.getMaterial() != nullptr)
 				return false;
 
-			if (facesEntityModel1->getMaterial() != nullptr && facesEntityModel2->getMaterial() == nullptr)
+			if (facesEntityModel1.getMaterial() != nullptr && facesEntityModel2.getMaterial() == nullptr)
 				return false;
 
-			if (facesEntityModel1->getMaterial() != nullptr && facesEntityModel2->getMaterial() != nullptr &&
-				facesEntityModel1->getMaterial()->getId() != facesEntityModel2->getMaterial()->getId()) {
+			if (facesEntityModel1.getMaterial() != nullptr && facesEntityModel2.getMaterial() != nullptr &&
+				facesEntityModel1.getMaterial()->getId() != facesEntityModel2.getMaterial()->getId()) {
 				return false;
 			}
 			// check faces
-			auto facesModel1 = facesEntityModel1->getFaces();
-			auto facesModel2 = facesEntityModel2->getFaces();
+			auto facesModel1 = facesEntityModel1.getFaces();
+			auto facesModel2 = facesEntityModel2.getFaces();
 			// number of faces in faces entity
-			if (facesModel1->size() != facesModel2->size())
+			if (facesModel1.size() != facesModel2.size())
 				return false;
 			// face indices
-			for (auto k = 0; k < facesModel1->size(); k++) {
+			for (auto k = 0; k < facesModel1.size(); k++) {
 				// vertex indices
-				auto vertexIndicesModel1 = (*facesModel1)[k].getVertexIndices();
-				auto vertexIndicesModel2 = (*facesModel2)[k].getVertexIndices();
+				auto vertexIndicesModel1 = facesModel1[k].getVertexIndices();
+				auto vertexIndicesModel2 = facesModel2[k].getVertexIndices();
 				if (vertexIndicesModel1[0] != vertexIndicesModel2[0] ||
 					vertexIndicesModel1[1] != vertexIndicesModel2[1] ||
 					vertexIndicesModel1[2] != vertexIndicesModel2[2]) {

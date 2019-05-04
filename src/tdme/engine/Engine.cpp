@@ -747,7 +747,7 @@ void Engine::computeTransformations()
 	}
 
 	// add visible entities to related lists by querying frustum
-	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
+	for (auto entity: partition->getVisibleEntities(camera->getFrustum())) {
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);

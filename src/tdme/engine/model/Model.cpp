@@ -194,8 +194,8 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matr
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
 		if (animation != nullptr) {
-			auto animationMatrices = animation->getTransformationsMatrices();
-			transformationsMatrix.set((*animationMatrices)[frame % animationMatrices->size()]);
+			auto& animationMatrices = animation->getTransformationsMatrices();
+			transformationsMatrix.set(animationMatrices[frame % animationMatrices.size()]);
 		} else {
 			// no animation matrix, set up local transformation matrix up as group matrix
 			transformationsMatrix.set(group->getTransformationsMatrix());

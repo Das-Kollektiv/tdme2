@@ -140,7 +140,7 @@ void ShadowMap::render(Light* light)
 	Object3DRenderGroup* org = nullptr;
 	ObjectParticleSystem* opse = nullptr;
 	ParticleSystemGroup* psg = nullptr;
-	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
+	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
 			if ((orgEntity = org->getEntity()) != nullptr) {
 				if (orgEntity->isDynamicShadowingEnabled() == false) continue;

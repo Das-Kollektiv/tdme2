@@ -88,7 +88,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	auto fvi = BoundingBox::getFacesVerticesIndexes();
 	// vertices
 	vector<Vector3> vertices;
-	for (auto& vertex : *boundingBox->getVertices()) {
+	for (auto& vertex : boundingBox->getVertices()) {
 		vertices.push_back(vertex);
 	}
 	// normals
@@ -515,7 +515,7 @@ void PrimitiveModel::setupConvexMeshMaterial(map<string, Group*>* groups, Materi
 {
 	for (auto it: *groups) {
 		Group* group = it.second;
-		for (auto& faceEntity : *group->getFacesEntities()) {
+		for (auto& faceEntity : group->getFacesEntities()) {
 			faceEntity.setMaterial(material);
 		}
 		setupConvexMeshMaterial(group->getSubGroups(), material);

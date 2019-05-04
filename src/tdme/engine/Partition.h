@@ -49,7 +49,7 @@ struct tdme::engine::Partition
 	 * @param frustum frustum
 	 * @return visible entities
 	 */
-	virtual const vector<Entity*>* getVisibleEntities(Frustum* frustum) = 0;
+	virtual const vector<Entity*>& getVisibleEntities(Frustum* frustum) = 0;
 
 	/** 
 	 * Get objects near to bounding volume

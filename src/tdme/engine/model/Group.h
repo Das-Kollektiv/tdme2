@@ -86,7 +86,7 @@ public:
 	/** 
 	 * @return vertices
 	 */
-	vector<Vector3>* getVertices();
+	vector<Vector3>& getVertices();
 
 	/** 
 	 * Set vertices
@@ -97,7 +97,7 @@ public:
 	/** 
 	 * @return normals
 	 */
-	vector<Vector3>* getNormals();
+	vector<Vector3>& getNormals();
 
 	/** 
 	 * Set normals
@@ -108,7 +108,7 @@ public:
 	/** 
 	 * @return texture coordinates or null (optional)
 	 */
-	vector<TextureCoordinate>* getTextureCoordinates();
+	vector<TextureCoordinate>& getTextureCoordinates();
 
 	/** 
 	 * Set texture coordinates
@@ -119,7 +119,7 @@ public:
 	/** 
 	 * @return tangents
 	 */
-	vector<Vector3>* getTangents();
+	vector<Vector3>& getTangents();
 
 	/** 
 	 * Set tangents
@@ -130,7 +130,7 @@ public:
 	/** 
 	 * @return bitangents
 	 */
-	vector<Vector3>* getBitangents();
+	vector<Vector3>& getBitangents();
 
 	/** 
 	 * Set bitangents
@@ -169,7 +169,7 @@ public:
 	/** 
 	 * @return faces entities
 	 */
-	vector<FacesEntity>* getFacesEntities();
+	vector<FacesEntity>& getFacesEntities();
 
 	/** 
 	 * Set up faces entities

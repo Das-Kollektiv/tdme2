@@ -32,7 +32,7 @@ public:
 	 * Returns transformation matrices
 	 * @return transformation matrices
 	 */
-	vector<Matrix4x4>* getTransformationsMatrices();
+	vector<Matrix4x4>& getTransformationsMatrices();
 
 	// Generated
 	Animation(int32_t frames);

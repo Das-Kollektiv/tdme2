@@ -269,9 +269,9 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g)
 	} else {
 		array<float, 16> matrixArray;
 		g->createAnimation(is->readInt());
-		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->size(); i++) {
+		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices().size(); i++) {
 			is->readFloatArray(matrixArray);
-			(*g->getAnimation()->getTransformationsMatrices())[i].set(matrixArray);
+			(g->getAnimation()->getTransformationsMatrices())[i].set(matrixArray);
 		}
 		return g->getAnimation();
 	}

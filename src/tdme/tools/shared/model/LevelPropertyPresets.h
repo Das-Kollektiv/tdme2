@@ -53,7 +53,7 @@ public:
 	/** 
 	 * @return map properties preset
 	 */
-	const vector<PropertyModelClass*>* getMapPropertiesPreset() const;
+	const vector<PropertyModelClass*>& getMapPropertiesPreset() const;
 
 	/** 
 	 * @return object property presets

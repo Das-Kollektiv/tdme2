@@ -294,7 +294,7 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	auto animation = group->getAnimation();
 	if (animation != nullptr) {
 		auto animationMatrices = animation->getTransformationsMatrices();
-		transformationsMatrix.set((*animationMatrices)[0 % animationMatrices->size()]);
+		transformationsMatrix.set(animationMatrices[0 % animationMatrices.size()]);
 	} else {
 		// no animation matrix, set up local transformation matrix up as group matrix
 		transformationsMatrix.set(group->getTransformationsMatrix());
@@ -304,7 +304,7 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	transformationsMatrix.multiply(parentTransformationsMatrix);
 
 	// check if no mesh?
-	if (group->getVertices()->size() == 0 && group->getSubGroups()->size() > 0) {
+	if (group->getVertices().size() == 0 && group->getSubGroups()->size() > 0) {
 		// ok, check sub meshes
 		for (auto subGroupIt: *group->getSubGroups()) {
 			determineMeshGroups(level, subGroupIt.second, groupId, transformationsMatrix.clone(), meshGroups);
@@ -421,7 +421,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				scale.scale(1.0f / importFixScale);
 			}
 			auto entityType = LevelEditorEntity_EntityType::MODEL;
-			if (meshGroup.group->getVertices()->size() == 0) {
+			if (meshGroup.group->getVertices().size() == 0) {
 				entityType = LevelEditorEntity_EntityType::EMPTY;
 				delete model;
 				model = nullptr;

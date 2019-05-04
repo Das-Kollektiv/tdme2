@@ -19,9 +19,9 @@ Skinning::Skinning()
 {
 }
 
-vector<float>* Skinning::getWeights()
+const vector<float>& Skinning::getWeights()
 {
-	return &weights;
+	return weights;
 }
 
 void Skinning::setWeights(const vector<float>& weights)
@@ -33,9 +33,9 @@ void Skinning::setWeights(const vector<float>& weights)
 	}
 }
 
-vector<Joint>* Skinning::getJoints()
+vector<Joint>& Skinning::getJoints()
 {
-	return &joints;
+	return joints;
 }
 
 void Skinning::setJoints(const vector<Joint>& joints)

@@ -211,10 +211,10 @@ private:
 		array<Vector3, 3> vertices;
 		auto normalCount = 0;
 		normal.set(0.0f, 0.0f, 0.0f);
-		for (auto& facesEntity: *group->getFacesEntities()) {
-			for (auto& face: *facesEntity.getFaces()) {
+		for (auto& facesEntity: group->getFacesEntities()) {
+			for (auto& face: facesEntity.getFaces()) {
 				for (auto i = 0; i < vertices.size(); i++) {
-					if (vertex.equals((*group->getVertices())[face.getVertexIndices()[i]]) == true) {
+					if (vertex.equals(group->getVertices()[face.getVertexIndices()[i]]) == true) {
 						normal.add(normals[face.getNormalIndices()[0]]);
 						normalCount++;
 						break;

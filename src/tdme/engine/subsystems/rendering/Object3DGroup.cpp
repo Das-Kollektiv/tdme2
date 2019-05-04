@@ -119,21 +119,21 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 					object3D->getSkinningGroupsMatrices(group)
 				);
 			}
-			object3DGroup->textureMatricesByEntities.resize(group->getFacesEntities()->size());
-			for (auto j = 0; j < group->getFacesEntities()->size(); j++) {
-				auto material = (*group->getFacesEntities())[j].getMaterial();
+			object3DGroup->textureMatricesByEntities.resize(group->getFacesEntities().size());
+			for (auto j = 0; j < group->getFacesEntities().size(); j++) {
+				auto material = group->getFacesEntities()[j].getMaterial();
 				if (material != nullptr) {
 					object3DGroup->textureMatricesByEntities[j].set(material->getTextureMatrix());
 				} else {
 					object3DGroup->textureMatricesByEntities[j].identity();
 				}
 			}
-			object3DGroup->materialDiffuseTextureIdsByEntities.resize(group->getFacesEntities()->size());
-			object3DGroup->dynamicDiffuseTextureIdsByEntities.resize(group->getFacesEntities()->size());
-			object3DGroup->materialSpecularTextureIdsByEntities.resize(group->getFacesEntities()->size());
-			object3DGroup->materialDisplacementTextureIdsByEntities.resize(group->getFacesEntities()->size());
-			object3DGroup->materialNormalTextureIdsByEntities.resize(group->getFacesEntities()->size());
-			for (auto j = 0; j < group->getFacesEntities()->size(); j++) {
+			object3DGroup->materialDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->dynamicDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->materialSpecularTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->materialDisplacementTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->materialNormalTextureIdsByEntities.resize(group->getFacesEntities().size());
+			for (auto j = 0; j < group->getFacesEntities().size(); j++) {
 				object3DGroup->materialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->materialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
@@ -159,7 +159,7 @@ void Object3DGroup::computeTransformations(void* context, vector<Object3DGroup*>
 void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
-	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
+	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr)
 		material = Material::getDefaultMaterial();
@@ -204,9 +204,9 @@ void Object3DGroup::dispose()
 	auto textureManager = engine->getTextureManager();
 	auto facesEntities = group->getFacesEntities();
 	// dispose textures
-	for (auto j = 0; j < facesEntities->size(); j++) {
+	for (auto j = 0; j < facesEntities.size(); j++) {
 		// get entity's material
-		auto material = (*facesEntities)[j].getMaterial();
+		auto material = facesEntities[j].getMaterial();
 		//	skip if no material was set up
 		if (material == nullptr)
 			continue;
