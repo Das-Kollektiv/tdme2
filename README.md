@@ -73,7 +73,7 @@
             - rendering can be used (in other engine instances) as diffuse texture
         - screenshot ability
         - multiple renderer
-          - GLES2, GL2, GL3+/CORE and Vulkan 
+          - GLES2, GL2, GL3+/CORE and Vulkan(still experimental)
     - physics via ReactPhysics3D 0.7.0
         - have sphere, capsule, obb, convex mesh, concave terrain mesh bounding volumes
         - have multiple bounding volumes per body
