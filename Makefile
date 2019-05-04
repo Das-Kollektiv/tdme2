@@ -681,51 +681,58 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
 
-EXT_SPIRV_SRCS = \
-	ext/spirv/GlslangToSpv.cpp \
-	ext/spirv/InReadableOrder.cpp \
-	ext/spirv/Logger.cpp \
-	ext/spirv/SPVRemapper.cpp \
-	ext/spirv/SpvBuilder.cpp \
-	ext/spirv/SpvPostProcess.cpp \
-	ext/spirv/SpvTools.cpp \
-	ext/spirv/disassemble.cpp \
-	ext/spirv/doc.cpp \
+ifeq ($(VULKAN), YES)
+	EXT_SPIRV_SRCS = \
+		ext/spirv/GlslangToSpv.cpp \
+		ext/spirv/InReadableOrder.cpp \
+		ext/spirv/Logger.cpp \
+		ext/spirv/SPVRemapper.cpp \
+		ext/spirv/SpvBuilder.cpp \
+		ext/spirv/SpvPostProcess.cpp \
+		ext/spirv/SpvTools.cpp \
+		ext/spirv/disassemble.cpp \
+		ext/spirv/doc.cpp \
+	
+	EXT_GLSLANG_SRCS := \
+		ext/glslang/MachineIndependent/glslang_tab.cpp \
+		ext/glslang/MachineIndependent/attribute.cpp \
+		ext/glslang/MachineIndependent/Constant.cpp \
+		ext/glslang/MachineIndependent/iomapper.cpp \
+		ext/glslang/MachineIndependent/InfoSink.cpp \
+		ext/glslang/MachineIndependent/Initialize.cpp \
+		ext/glslang/MachineIndependent/IntermTraverse.cpp \
+		ext/glslang/MachineIndependent/Intermediate.cpp \
+		ext/glslang/MachineIndependent/ParseContextBase.cpp \
+		ext/glslang/MachineIndependent/ParseHelper.cpp \
+		ext/glslang/MachineIndependent/PoolAlloc.cpp \
+		ext/glslang/MachineIndependent/RemoveTree.cpp \
+		ext/glslang/MachineIndependent/Scan.cpp \
+	 	ext/glslang/MachineIndependent/ShaderLang.cpp \
+		ext/glslang/MachineIndependent/SymbolTable.cpp \
+		ext/glslang/MachineIndependent/Versions.cpp \
+		ext/glslang/MachineIndependent/intermOut.cpp \
+		ext/glslang/MachineIndependent/limits.cpp \
+		ext/glslang/MachineIndependent/linkValidate.cpp \
+		ext/glslang/MachineIndependent/parseConst.cpp \
+		ext/glslang/MachineIndependent/reflection.cpp \
+		ext/glslang/MachineIndependent/preprocessor/Pp.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpContext.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
+		ext/glslang/MachineIndependent/propagateNoContraction.cpp \
+		ext/glslang/GenericCodeGen/CodeGen.cpp \
+		ext/glslang/GenericCodeGen/Link.cpp \
+		$(EXT_GLSLANG_PLATFORM_SRCS)
+	
+	EXT_OGLCOMPILERSDLL_SRCS = \
+		ext/OGLCompilersDLL/InitializeDll.cpp \
 
-EXT_GLSLANG_SRCS := \
-	ext/glslang/MachineIndependent/glslang_tab.cpp \
-	ext/glslang/MachineIndependent/attribute.cpp \
-	ext/glslang/MachineIndependent/Constant.cpp \
-	ext/glslang/MachineIndependent/iomapper.cpp \
-	ext/glslang/MachineIndependent/InfoSink.cpp \
-	ext/glslang/MachineIndependent/Initialize.cpp \
-	ext/glslang/MachineIndependent/IntermTraverse.cpp \
-	ext/glslang/MachineIndependent/Intermediate.cpp \
-	ext/glslang/MachineIndependent/ParseContextBase.cpp \
-	ext/glslang/MachineIndependent/ParseHelper.cpp \
-	ext/glslang/MachineIndependent/PoolAlloc.cpp \
-	ext/glslang/MachineIndependent/RemoveTree.cpp \
-	ext/glslang/MachineIndependent/Scan.cpp \
- 	ext/glslang/MachineIndependent/ShaderLang.cpp \
-	ext/glslang/MachineIndependent/SymbolTable.cpp \
-	ext/glslang/MachineIndependent/Versions.cpp \
-	ext/glslang/MachineIndependent/intermOut.cpp \
-	ext/glslang/MachineIndependent/limits.cpp \
-	ext/glslang/MachineIndependent/linkValidate.cpp \
-	ext/glslang/MachineIndependent/parseConst.cpp \
-	ext/glslang/MachineIndependent/reflection.cpp \
-	ext/glslang/MachineIndependent/preprocessor/Pp.cpp \
-	ext/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
-	ext/glslang/MachineIndependent/preprocessor/PpContext.cpp \
-	ext/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
-	ext/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
-	ext/glslang/MachineIndependent/propagateNoContraction.cpp \
-	ext/glslang/GenericCodeGen/CodeGen.cpp \
-	ext/glslang/GenericCodeGen/Link.cpp \
-	$(EXT_GLSLANG_PLATFORM_SRCS)
-
-EXT_OGLCOMPILERSDLL_SRCS = \
-	ext/OGLCompilersDLL/InitializeDll.cpp \
+else
+	EXT_SPIRV_SRCS =
+	EXT_GLSLANG_SRCS =
+	EXT_GLSLANG_SRCS =
+endif
 
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
