@@ -6,7 +6,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using tdme::engine::FrameBuffer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Post processing shader
@@ -71,7 +71,7 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	PostProcessingShader(GLRenderer* renderer);
+	PostProcessingShader(Renderer* renderer);
 
 	/**
 	 * Public destructor

@@ -139,7 +139,7 @@ void Level::setReduceFoliageBy(int32_t reduceFoliageBy) {
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
-	for (auto i = 0; i < level->getLightCount(); i++) {
+	for (auto i = 0; i < Engine::LIGHTS_MAX && i < level->getLightCount(); i++) {
 		engine->getLightAt(i)->setAmbient(Color4(level->getLightAt(i)->getAmbient()));
 		engine->getLightAt(i)->setDiffuse(Color4(level->getLightAt(i)->getDiffuse()));
 		engine->getLightAt(i)->setSpecular(Color4(level->getLightAt(i)->getSpecular()));

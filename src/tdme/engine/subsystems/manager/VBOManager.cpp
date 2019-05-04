@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utils/Console.h>
 
 using std::map;
@@ -12,10 +12,10 @@ using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::Console;
 
-VBOManager::VBOManager(GLRenderer* renderer) 
+VBOManager::VBOManager(Renderer* renderer) 
 {
 	this->renderer = renderer;
 }
@@ -26,7 +26,7 @@ VBOManager::~VBOManager() {
 	}
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids)
+VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory)
 {
 	// check if we already manage this vbo
 	auto vboManagedIt = vbos.find(vboId);
@@ -37,7 +37,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids)
 		return vboManaged;
 	}
 	// create vertex buffer objects
-	auto vboIds = renderer->createBufferObjects(ids);
+	auto vboIds = renderer->createBufferObjects(ids, useGPUMemory);
 	// create managed texture
 	auto vboManaged = new VBOManager_VBOManaged(vboId, vboIds);
 	// add it to our textures
@@ -53,8 +53,8 @@ void VBOManager::removeVBO(const string& vboId)
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
 		if (vboManaged->decrementReferenceCounter()) {
-			auto vboIds = vboManaged->getVBOGlIds();
-			// delete vbos from open gl
+			auto vboIds = vboManaged->getVBOIds();
+			// delete vbos from renderer
 			renderer->disposeBufferObjects(*vboIds);
 			// remove from our list
 			vbos.erase(vboManagedIt);

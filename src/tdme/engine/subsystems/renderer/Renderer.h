@@ -8,8 +8,8 @@
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer_Light.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer_Material.h>
+#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
+#include <tdme/engine/subsystems/renderer/Renderer_Material.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -23,17 +23,17 @@ using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::GLRenderer_Light;
-using tdme::engine::subsystems::renderer::GLRenderer_Material;
+using tdme::engine::subsystems::renderer::Renderer_Light;
+using tdme::engine::subsystems::renderer::Renderer_Material;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
 /** 
- * OpenGL renderer interface
+ * Renderer interface
  * @author Andreas Drewke
  * @ersion $Id$
  */
-class tdme::engine::subsystems::renderer::GLRenderer
+class tdme::engine::subsystems::renderer::Renderer
 {
 public:
 	int32_t ID_NONE {  };
@@ -55,8 +55,8 @@ public:
 	int32_t FRONTFACE_CCW {  };
 	array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
-	GLRenderer_Material material;
-	array<GLRenderer_Light, 8> lights;
+	Renderer_Material material;
+	array<Renderer_Light, 8> lights;
 	string shaderId {  };
 
 protected:
@@ -85,6 +85,11 @@ public:
 	virtual void initializeFrame();
 
 	/** 
+	 * Finish frame
+	 */
+	virtual void finishFrame() = 0;
+
+	/**
 	 * @return renderer version e.g. gl2, gl3 or gles2
 	 */
 	virtual const string getGLVersion() = 0;
@@ -471,9 +476,10 @@ public:
 	/** 
 	 * Generate buffer objects for vertex data and such
 	 * @param buffers buffers
+	 * @param use GPU memory
 	 * @return ids
 	 */
-	virtual vector<int32_t> createBufferObjects(int32_t buffers) = 0;
+	virtual vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory) = 0;
 
 	/** 
 	 * Uploads buffer data to buffer object
@@ -890,20 +896,16 @@ public:
 	/**
 	 * Public constructor
 	 */
-	GLRenderer();
+	Renderer();
 
 	/**
 	 * Destructor
 	 */
-	virtual ~GLRenderer();
+	virtual ~Renderer();
 
 private:
-	/**
-	 * Init
-	 */
-	void init();
 
 	//
-	friend class GLRenderer_Material;
-	friend class GLRenderer_Light;
+	friend class Renderer_Material;
+	friend class Renderer_Light;
 };

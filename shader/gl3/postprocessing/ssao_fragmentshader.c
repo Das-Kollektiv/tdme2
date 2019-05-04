@@ -23,7 +23,7 @@ in vec2 vsFragTextureUV;
 out vec4 outColor;
 
 // main
-void main (void) {
+void main(void) {
 	float depth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 	vec3 originalColor = texture(colorBufferTextureUnit, vsFragTextureUV).rgb;
 

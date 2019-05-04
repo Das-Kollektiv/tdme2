@@ -13,7 +13,7 @@ in vec2 vsFragTextureUV;
 out vec4 outColor;
 
 // main
-void main (void) {
+void main(void) {
 	outColor = texture(colorBufferTextureUnit, vsFragTextureUV);
 	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 }

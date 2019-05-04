@@ -24,7 +24,7 @@ using tdme::engine::model::Group;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::engine::subsystems::rendering::Object3DGroup;
@@ -49,8 +49,8 @@ class tdme::engine::subsystems::rendering::Object3DGroup final
 private:
 	static int64_t counter;
 
-	static constexpr int32_t GLTEXTUREID_NONE { -1 };
-	static constexpr int32_t GLTEXTUREID_NOTUSED { 0 };
+	static constexpr int32_t TEXTUREID_NONE { -1 };
+	static constexpr int32_t TEXTUREID_NOTUSED { 0 };
 
 	string id {  };
 	Object3DBase* object {  };
@@ -88,7 +88,7 @@ private:
 	 * @param object3DGroup object 3D group
 	 * @param facesEntityIdx faces entity idx
 	 */
-	static void setupTextures(GLRenderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx);
+	static void setupTextures(Renderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx);
 
 	/**
 	 * Creates a object 3d groups recursively for given group and it sub groups

@@ -3,19 +3,19 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
-bool PostProcessingShaderSSAOImplementation::isSupported(GLRenderer* renderer) {
+bool PostProcessingShaderSSAOImplementation::isSupported(Renderer* renderer) {
 	return renderer->getGLVersion() == "gl3";
 }
 
-PostProcessingShaderSSAOImplementation::PostProcessingShaderSSAOImplementation(GLRenderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderSSAOImplementation::PostProcessingShaderSSAOImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }
 

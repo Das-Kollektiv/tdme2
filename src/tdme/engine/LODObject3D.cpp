@@ -78,7 +78,7 @@ void LODObject3D::setEngine(Engine* engine)
 	if (objectLOD3 != nullptr) objectLOD3->setEngine(engine);
 }
 
-void LODObject3D::setRenderer(GLRenderer* renderer)
+void LODObject3D::setRenderer(Renderer* renderer)
 {
 }
 

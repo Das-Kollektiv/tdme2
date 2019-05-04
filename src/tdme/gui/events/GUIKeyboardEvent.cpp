@@ -6,21 +6,25 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 
 int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
-	switch(key) {
-		case(9): return KEYCODE_TAB;
-		case(13): return KEYCODE_RETURN;
-		case(25): return KEYCODE_TAB_SHIFT;
-		case(27): return KEYCODE_ESCAPE;
-		case(32): return KEYCODE_SPACE;
-		#if defined(__APPLE__)
-			case(8): return KEYCODE_DELETE;
-			case(127): return KEYCODE_BACKSPACE;
-		#else
-			case(127): return KEYCODE_DELETE;
-			case(8): return KEYCODE_BACKSPACE;
-		#endif
-		default: return -1;
-	}
+	#if defined(VULKAN)
+		return -1;
+	#else
+		switch(key) {
+			case(9): return KEYBOARD_KEYCODE_TAB;
+			case(13): return KEYBOARD_KEYCODE_RETURN;
+			case(25): return KEYBOARD_KEYCODE_TAB_SHIFT;
+			case(27): return KEYBOARD_KEYCODE_ESCAPE;
+			case(32): return KEYBOARD_KEYCODE_SPACE;
+			#if defined(__APPLE__)
+				case(8): return KEYBOARD_KEYCODE_DELETE;
+				case(127): return KEYBOARD_KEYCODE_BACKSPACE;
+			#else
+				case(127): return KEYBOARD_KEYCODE_DELETE;
+				case(8): return KEYBOARD_KEYCODE_BACKSPACE;
+			#endif
+			default: return -1;
+		}
+	#endif
 }
 
 GUIKeyboardEvent::GUIKeyboardEvent() 

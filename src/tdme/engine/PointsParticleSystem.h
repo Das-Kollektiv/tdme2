@@ -25,7 +25,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -90,7 +90,7 @@ public:
 public:
 	// overridden methods
 	virtual void setEngine(Engine* engine) override;
-	virtual void setRenderer(GLRenderer* renderer) override;
+	virtual void setRenderer(Renderer* renderer) override;
 	virtual void dispose() override;
 
 	inline virtual const Color4& getEffectColorAdd() const override {

@@ -1,7 +1,7 @@
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -13,12 +13,12 @@ using tdme::engine::Engine;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 
-FrameBufferRenderShader::FrameBufferRenderShader(GLRenderer* renderer)
+FrameBufferRenderShader::FrameBufferRenderShader(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;
@@ -38,25 +38,25 @@ bool FrameBufferRenderShader::isInitialized()
 void FrameBufferRenderShader::initialize()
 {
 	auto rendererVersion = renderer->getGLVersion();
-	vertexShaderGlId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/framebuffer",
 		"render_vertexshader.c"
 	);
-	if (vertexShaderGlId == 0)
+	if (vertexShaderId == 0)
 		return;
 
-	fragmentShaderGlId = renderer->loadShader(
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/framebuffer",
 		"render_fragmentshader.c"
 	);
-	if (fragmentShaderGlId == 0)
+	if (fragmentShaderId == 0)
 		return;
 
 	programId = renderer->createProgram();
-	renderer->attachShaderToProgram(programId, vertexShaderGlId);
-	renderer->attachShaderToProgram(programId, fragmentShaderGlId);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
@@ -73,9 +73,9 @@ void FrameBufferRenderShader::initialize()
 
 
 	// create vbos
-	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2);
-	vboVertices = (*vboManaged->getVBOGlIds())[0];
-	vboTextureCoordinates = (*vboManaged->getVBOGlIds())[1];
+	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2, true);
+	vboVertices = (*vboManaged->getVBOIds())[0];
+	vboTextureCoordinates = (*vboManaged->getVBOIds())[1];
 
 	// vertices
 	{
@@ -96,13 +96,23 @@ void FrameBufferRenderShader::initialize()
 	{
 		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(6 * 2 * sizeof(float))->asFloatBuffer();
 
-		fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
-		fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(+1.0f);
-		fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
+		#if defined(VULKAN)
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
 
-		fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
-		fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
-		fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(1.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
+		#else
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(+1.0f);
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
+
+			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
+			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
+		#endif
 
 		renderer->uploadBufferObject(vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	}

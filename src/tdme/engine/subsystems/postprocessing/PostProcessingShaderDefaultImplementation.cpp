@@ -3,19 +3,19 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDefaultImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
-bool PostProcessingShaderDefaultImplementation::isSupported(GLRenderer* renderer) {
+bool PostProcessingShaderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-PostProcessingShaderDefaultImplementation::PostProcessingShaderDefaultImplementation(GLRenderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderDefaultImplementation::PostProcessingShaderDefaultImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }
 

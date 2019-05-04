@@ -6,7 +6,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Post processing shader SSAO rendering implementation
@@ -21,7 +21,7 @@ public:
 	 * @param renderer renderer
 	 * @return if shader is supported
 	 */
-	static bool isSupported(GLRenderer* renderer);
+	static bool isSupported(Renderer* renderer);
 
 	// overridden methods
 	virtual void initialize() override;
@@ -30,6 +30,6 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	PostProcessingShaderSSAOImplementation(GLRenderer* renderer);
+	PostProcessingShaderSSAOImplementation(Renderer* renderer);
 
 };

@@ -93,7 +93,7 @@ void ObjectParticleSystemInternal::setEngine(Engine* engine)
 	}
 }
 
-void ObjectParticleSystemInternal::setRenderer(GLRenderer* renderer)
+void ObjectParticleSystemInternal::setRenderer(Renderer* renderer)
 {
 	this->renderer = renderer;
 	for (auto i = 0; i < objects.size(); i++) {

@@ -1,9 +1,15 @@
+NAME = tdme
+LIB := lib$(NAME).a
+EXT_LIB := lib$(NAME)-ext.a
+
 STACKFLAGS =
 SRCS_PLATFORM =
+EXT_GLSLANG_PLATFORM_SRCS =
 SRCS_DEBUG =
 OFLAGS =
+EXTRAFLAGS =
 LDFLAGS =
-INCLUDES := -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
+INCLUDES = -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -11,97 +17,135 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
-	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-	EXTRA_LIBS ?= -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+	EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
-	LDFLAGS+= -fuse-ld=bfd
+	LDFLAGS = -fuse-ld=bfd
 	INCLUDES := $(INCLUDES) -I/usr/local/include
-	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	# FreeBSD, Vulkan
+	ifeq ($(VULKAN), YES)
+		EXTRAFLAGS := -DVULKAN
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+				src/tdme/engine/EngineVKRenderer.cpp \
+				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
+				src/tdme/engine/fileio/models/ModelReader.cpp
+		EXT_GLSLANG_PLATFORM_SRCS = \
+			ext/glslang/OSDependent/Unix/ossource.cpp
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread
+	else
+		#FreeBSD, GL
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+	endif
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
-	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lfreeglut -lopenal -pthread
+	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lfreeglut -lopenal -pthread
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
-	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
+	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
-	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	ifeq ($(ARCH), aarch64)
-		# Linux, ARM64
-		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+		# Linux, ARM64, GL
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
-		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else ifeq ($(ARCH), armv7l)
-		# Linux, ARM
-		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+		# Linux, ARM, GL
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GES2Renderer.cpp
-		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
-		# Linux, any other
-		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
+		# Linux, Vulkan
+		ifeq ($(VULKAN), YES)
+			EXTRAFLAGS := -DVULKAN
+			SRCS_PLATFORM := $(SRCS_PLATFORM) \
+				src/tdme/engine/EngineVKRenderer.cpp \
+				src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+			EXT_GLSLANG_PLATFORM_SRCS = \
+				ext/glslang/OSDependent/Unix/ossource.cpp
+			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
+		else
+			# Linux, GL
+			SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+				src/tdme/engine/EngineGL2Renderer.cpp \
+				src/tdme/engine/EngineGL3Renderer.cpp \
+				src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+				src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
+		endif
 	endif
 	OFLAGS := -O2
 else
-	# Windows via MINGW64/MSYS2
-	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+	# Windows, VULKAN
+	ifeq ($(VULKAN), YES)
+		EXTRAFLAGS = -DVULKAN
+		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+				src/tdme/engine/EngineVKRenderer.cpp \
+				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
+				src/tdme/engine/fileio/models/ModelReader.cpp
+		EXT_GLSLANG_PLATFORM_SRCS = \
+				ext/glslang/OSDependent/Windows/ossource.cpp
+		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include
+		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lvulkan -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+	else
+		# Windows, GL
+		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
-	EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
+		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+	endif
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
 endif
 
-
 CPPFLAGS := $(INCLUDES)
 #CFLAGS := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
-CFLAGS := -g $(OFLAGS) -pipe -MMD -MP
+CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
 #CFLAGS := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 #CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP
@@ -111,16 +155,11 @@ CXXFLAGS := $(CFLAGS) -std=gnu++11
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) -std=gnu++11
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) -std=gnu++11
 
-BIN := bin
-OBJ := obj
-OBJ_DEBUG := obj-debug
+BIN = bin
+OBJ = obj
+OBJ_DEBUG = obj-debug
 
-NAME := tdme
-
-LIB = lib$(NAME).a
-EXT_LIB = lib$(NAME)-ext.a
-
-LIBS = $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
+LIBS := $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
 
 SRC = src
 TINYXML = tinyxml
@@ -131,6 +170,9 @@ VORBIS = vorbis
 OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
+SPIRV = spirv
+GLSLANG = glslang
+OGLCOMPILERSDLL = OGLCompilersDLL
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -238,7 +280,7 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
-	src/tdme/engine/subsystems/renderer/GLRenderer.cpp \
+	src/tdme/engine/subsystems/renderer/Renderer.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessing.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp \
 	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \
@@ -639,6 +681,59 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
 
+ifeq ($(VULKAN), YES)
+	EXT_SPIRV_SRCS = \
+		ext/spirv/GlslangToSpv.cpp \
+		ext/spirv/InReadableOrder.cpp \
+		ext/spirv/Logger.cpp \
+		ext/spirv/SPVRemapper.cpp \
+		ext/spirv/SpvBuilder.cpp \
+		ext/spirv/SpvPostProcess.cpp \
+		ext/spirv/SpvTools.cpp \
+		ext/spirv/disassemble.cpp \
+		ext/spirv/doc.cpp \
+	
+	EXT_GLSLANG_SRCS := \
+		ext/glslang/MachineIndependent/glslang_tab.cpp \
+		ext/glslang/MachineIndependent/attribute.cpp \
+		ext/glslang/MachineIndependent/Constant.cpp \
+		ext/glslang/MachineIndependent/iomapper.cpp \
+		ext/glslang/MachineIndependent/InfoSink.cpp \
+		ext/glslang/MachineIndependent/Initialize.cpp \
+		ext/glslang/MachineIndependent/IntermTraverse.cpp \
+		ext/glslang/MachineIndependent/Intermediate.cpp \
+		ext/glslang/MachineIndependent/ParseContextBase.cpp \
+		ext/glslang/MachineIndependent/ParseHelper.cpp \
+		ext/glslang/MachineIndependent/PoolAlloc.cpp \
+		ext/glslang/MachineIndependent/RemoveTree.cpp \
+		ext/glslang/MachineIndependent/Scan.cpp \
+	 	ext/glslang/MachineIndependent/ShaderLang.cpp \
+		ext/glslang/MachineIndependent/SymbolTable.cpp \
+		ext/glslang/MachineIndependent/Versions.cpp \
+		ext/glslang/MachineIndependent/intermOut.cpp \
+		ext/glslang/MachineIndependent/limits.cpp \
+		ext/glslang/MachineIndependent/linkValidate.cpp \
+		ext/glslang/MachineIndependent/parseConst.cpp \
+		ext/glslang/MachineIndependent/reflection.cpp \
+		ext/glslang/MachineIndependent/preprocessor/Pp.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpContext.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
+		ext/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
+		ext/glslang/MachineIndependent/propagateNoContraction.cpp \
+		ext/glslang/GenericCodeGen/CodeGen.cpp \
+		ext/glslang/GenericCodeGen/Link.cpp \
+		$(EXT_GLSLANG_PLATFORM_SRCS)
+	
+	EXT_OGLCOMPILERSDLL_SRCS = \
+		ext/OGLCompilersDLL/InitializeDll.cpp \
+
+else
+	EXT_SPIRV_SRCS =
+	EXT_GLSLANG_SRCS =
+	EXT_GLSLANG_SRCS =
+endif
+
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
@@ -679,6 +774,9 @@ EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
+EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/%.o)
+EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/%.o)
+EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/%.o)
 
 all: $(LIBS)
 
@@ -735,6 +833,15 @@ $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	$(cpp-command-ext-rp3d)
 
+$(EXT_SPIRV_OBJS):$(OBJ)/%.o: ext/$(SPIRV)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_GLSLANG_OBJS):$(OBJ)/%.o: ext/$(GLSLANG)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -743,7 +850,7 @@ $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 
 $(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

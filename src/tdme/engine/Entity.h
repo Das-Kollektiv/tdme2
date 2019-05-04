@@ -17,7 +17,7 @@ using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -39,7 +39,7 @@ struct tdme::engine::Entity
 	 * Set up renderer
 	 * @param renderer renderer
 	 */
-	virtual void setRenderer(GLRenderer* renderer) = 0;
+	virtual void setRenderer(Renderer* renderer) = 0;
 
 	/** 
 	 * @return object id

@@ -21,7 +21,7 @@ class tdme::engine::subsystems::manager::VBOManager_VBOManaged
 
 private:
 	string id {  };
-	vector<int32_t> vboGlIds {  };
+	vector<int32_t> vboIds {  };
 	int32_t referenceCounter {  };
 	bool uploaded {  };
 
@@ -35,7 +35,7 @@ public:
 	/** 
 	 * @return vbo gl ids
 	 */
-	virtual vector<int32_t>* getVBOGlIds();
+	virtual vector<int32_t>* getVBOIds();
 
 private:
 
@@ -63,5 +63,10 @@ public:
 	virtual bool isUploaded();
 
 private:
-	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboGlIds);
+	/**
+	 * Private constructor
+	 * @param id id
+	 * @param vboIds VBO ids
+	 */
+	VBOManager_VBOManaged(const string& id, vector<int32_t>& vboIds);
 };

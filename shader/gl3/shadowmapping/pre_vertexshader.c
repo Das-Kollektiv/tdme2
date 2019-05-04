@@ -19,7 +19,7 @@ uniform mat3 textureMatrix;
 	out vec2 vsFragTextureUV;
 	out mat4 vsModelMatrix;
 #else
-	// will be passed to fragement shader
+	// will be passed to fragment shader
 	out vec2 gsFragTextureUV;
 	out mat4 gsModelMatrix;
 

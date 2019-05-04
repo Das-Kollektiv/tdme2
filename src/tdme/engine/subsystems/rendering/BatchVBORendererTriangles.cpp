@@ -9,7 +9,7 @@
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
@@ -23,12 +23,12 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 
 constexpr int32_t BatchVBORendererTriangles::VERTEX_COUNT;
 
-BatchVBORendererTriangles::BatchVBORendererTriangles(GLRenderer* renderer, int32_t id) 
+BatchVBORendererTriangles::BatchVBORendererTriangles(Renderer* renderer, int32_t id) 
 {
 	this->id = id;
 	this->renderer = renderer;
@@ -78,8 +78,8 @@ void BatchVBORendererTriangles::initialize()
 {
 	// initialize if not yet done
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborenderertriangles." + to_string(id), 6);
-		vboIds = vboManaged->getVBOGlIds();
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborenderertriangles." + to_string(id), 6, false);
+		vboIds = vboManaged->getVBOIds();
 	}
 }
 

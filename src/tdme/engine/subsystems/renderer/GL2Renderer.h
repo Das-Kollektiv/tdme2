@@ -9,13 +9,13 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::array;
 using std::vector;
 using std::string;
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
@@ -28,7 +28,7 @@ using tdme::math::Matrix4x4;
  * @version $Id$
  */
 class tdme::engine::subsystems::renderer::GL2Renderer
-	: public GLRenderer
+	: public Renderer
 {
 private:
 	bool bufferObjectsAvailable {  };
@@ -59,6 +59,7 @@ public:
 	bool isDepthTextureAvailable() override;
 	void initialize() override;
 	void initializeFrame() override;
+	void finishFrame() override;
 	bool isBufferObjectsAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
 	bool isSpecularMappingAvailable() override;
@@ -109,7 +110,7 @@ public:
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
-	vector<int32_t> createBufferObjects(int32_t buffers) override;
+	vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory) override;
 	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;

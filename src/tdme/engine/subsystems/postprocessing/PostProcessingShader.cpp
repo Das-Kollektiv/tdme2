@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::string;
 
@@ -17,10 +17,10 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplemen
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderDefaultImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOImplementation;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
-PostProcessingShader::PostProcessingShader(GLRenderer* renderer)
+PostProcessingShader::PostProcessingShader(Renderer* renderer)
 {
 	if (PostProcessingShaderBlurImplementation::isSupported(renderer) == true) shader["depth_blur"] = new PostProcessingShaderBlurImplementation(renderer);
 	if (PostProcessingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new PostProcessingShaderDefaultImplementation(renderer);

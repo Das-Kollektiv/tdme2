@@ -18,7 +18,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 
@@ -42,13 +42,11 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
 int64_t Object3DGroup::counter = 0;
-constexpr int32_t Object3DGroup::GLTEXTUREID_NONE;
-constexpr int32_t Object3DGroup::GLTEXTUREID_NOTUSED;
 
 Object3DGroup::Object3DGroup()
 {
@@ -136,11 +134,11 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 			object3DGroup->materialDisplacementTextureIdsByEntities.resize(group->getFacesEntities()->size());
 			object3DGroup->materialNormalTextureIdsByEntities.resize(group->getFacesEntities()->size());
 			for (auto j = 0; j < group->getFacesEntities()->size(); j++) {
-				object3DGroup->materialDiffuseTextureIdsByEntities[j] = GLTEXTUREID_NONE;
-				object3DGroup->dynamicDiffuseTextureIdsByEntities[j] = GLTEXTUREID_NONE;
-				object3DGroup->materialSpecularTextureIdsByEntities[j] = GLTEXTUREID_NONE;
-				object3DGroup->materialDisplacementTextureIdsByEntities[j] = GLTEXTUREID_NONE;
-				object3DGroup->materialNormalTextureIdsByEntities[j] = GLTEXTUREID_NONE;
+				object3DGroup->materialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->dynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->materialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->materialDisplacementTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->materialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// determine group transformations matrix
 			auto groupTransformationsMatrixIt = object3D->transformationsMatrices[0]->find(group->getId());
@@ -158,7 +156,7 @@ void Object3DGroup::computeTransformations(vector<Object3DGroup*>& object3DGroup
 	}
 }
 
-void Object3DGroup::setupTextures(GLRenderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx)
+void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
@@ -167,35 +165,35 @@ void Object3DGroup::setupTextures(GLRenderer* renderer, Object3DGroup* object3DG
 		material = Material::getDefaultMaterial();
 
 	// load diffuse texture
-	if (object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] == GLTEXTUREID_NONE) {
+	if (object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getDiffuseTexture() != nullptr) {
 			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getDiffuseTexture());
 		} else {
-			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = GLTEXTUREID_NOTUSED;
+			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
 	// load specular texture
-	if (renderer->isSpecularMappingAvailable() == true && object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] == GLTEXTUREID_NONE) {
+	if (renderer->isSpecularMappingAvailable() == true && object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getSpecularTexture() != nullptr) {
 			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getSpecularTexture());
 		} else {
-			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = GLTEXTUREID_NOTUSED;
+			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
 	// load displacement texture
-	if (renderer->isDisplacementMappingAvailable() == true && object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] == GLTEXTUREID_NONE) {
+	if (renderer->isDisplacementMappingAvailable() == true && object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getDisplacementTexture() != nullptr) {
 			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getDisplacementTexture());
 		} else {
-			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = GLTEXTUREID_NOTUSED;
+			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
 	// load normal texture
-	if (renderer->isNormalMappingAvailable() == true && object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] == GLTEXTUREID_NONE) {
+	if (renderer->isNormalMappingAvailable() == true && object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getNormalTexture() != nullptr) {
 			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getNormalTexture());
 		} else {
-			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = GLTEXTUREID_NOTUSED;
+			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
 }
@@ -213,40 +211,40 @@ void Object3DGroup::dispose()
 		if (material == nullptr)
 			continue;
 		// diffuse texture
-		auto glDiffuseTextureId = materialDiffuseTextureIdsByEntities[j];
-		if (glDiffuseTextureId != Object3DGroup::GLTEXTUREID_NONE && glDiffuseTextureId != Object3DGroup::GLTEXTUREID_NOTUSED) {
+		auto diffuseTextureId = materialDiffuseTextureIdsByEntities[j];
+		if (diffuseTextureId != Object3DGroup::TEXTUREID_NONE && diffuseTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
 			// remove texture from texture manager
 			if (material->getDiffuseTexture() != nullptr)
 				textureManager->removeTexture(material->getDiffuseTexture()->getId());
 			// mark as removed
-			materialDiffuseTextureIdsByEntities[j] = Object3DGroup::GLTEXTUREID_NONE;
+			materialDiffuseTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 		// specular texture
-		auto glSpecularTextureId = materialSpecularTextureIdsByEntities[j];
-		if (glSpecularTextureId != Object3DGroup::GLTEXTUREID_NONE && glSpecularTextureId != Object3DGroup::GLTEXTUREID_NOTUSED) {
+		auto specularTextureId = materialSpecularTextureIdsByEntities[j];
+		if (specularTextureId != Object3DGroup::TEXTUREID_NONE && specularTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
 			// remove texture from texture manager
 			if (material->getSpecularTexture() != nullptr)
 				textureManager->removeTexture(material->getSpecularTexture()->getId());
 			// mark as removed
-			materialSpecularTextureIdsByEntities[j] = Object3DGroup::GLTEXTUREID_NONE;
+			materialSpecularTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 		// displacement texture
-		auto glDisplacementTextureId = materialDisplacementTextureIdsByEntities[j];
-		if (glDisplacementTextureId != Object3DGroup::GLTEXTUREID_NONE && glDisplacementTextureId != Object3DGroup::GLTEXTUREID_NOTUSED) {
+		auto displacementTextureId = materialDisplacementTextureIdsByEntities[j];
+		if (displacementTextureId != Object3DGroup::TEXTUREID_NONE && displacementTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
 			// remove texture from texture manager
 			if (material->getDisplacementTexture() != nullptr)
 				textureManager->removeTexture(material->getDisplacementTexture()->getId());
 			// mark as removed
-			materialDisplacementTextureIdsByEntities[j] = Object3DGroup::GLTEXTUREID_NONE;
+			materialDisplacementTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 		// normal texture
-		auto glNormalTextureId = materialNormalTextureIdsByEntities[j];
-		if (glNormalTextureId != Object3DGroup::GLTEXTUREID_NONE && glNormalTextureId != Object3DGroup::GLTEXTUREID_NOTUSED) {
+		auto normalTextureId = materialNormalTextureIdsByEntities[j];
+		if (normalTextureId != Object3DGroup::TEXTUREID_NONE && normalTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
 			// remove texture from texture manager
 			if (material->getNormalTexture() != nullptr)
 				textureManager->removeTexture(material->getNormalTexture()->getId());
 			// mark as removed
-			materialNormalTextureIdsByEntities[j] = Object3DGroup::GLTEXTUREID_NONE;
+			materialNormalTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 	}
 }

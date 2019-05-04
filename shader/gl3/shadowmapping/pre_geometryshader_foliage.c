@@ -18,8 +18,7 @@ uniform int frame;
 
 {$FUNCTIONS}
 
-void main()
-{
+void main() {
 	vec3 verticesMin;
 	vec3 verticesMax;
 	vec3 verticesCenter;

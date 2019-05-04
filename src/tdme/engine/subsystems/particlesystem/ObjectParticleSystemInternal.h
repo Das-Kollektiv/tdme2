@@ -32,7 +32,7 @@ using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Particle system which displays objects as particles
@@ -45,7 +45,7 @@ class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
 {
 protected:
 	Engine* engine {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	string id {  };
 	bool enabled {  };
 	Model* model {  };
@@ -66,7 +66,7 @@ protected:
 public:
 	const string& getId() override;
 	virtual void setEngine(Engine* engine);
-	virtual void setRenderer(GLRenderer* renderer);
+	virtual void setRenderer(Renderer* renderer);
 	bool isEnabled() override;
 	bool isActive() override;
 	void setEnabled(bool enabled) override;

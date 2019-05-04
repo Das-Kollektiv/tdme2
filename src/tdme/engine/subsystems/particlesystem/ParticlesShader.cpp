@@ -1,17 +1,17 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
-ParticlesShader::ParticlesShader(Engine* engine, GLRenderer* renderer) 
+ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer) 
 {
 	this->engine = engine;
 	this->renderer = renderer;
@@ -88,7 +88,7 @@ void ParticlesShader::useProgram()
 	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, 0);
 }
 
-void ParticlesShader::updateEffect(GLRenderer* renderer)
+void ParticlesShader::updateEffect(Renderer* renderer)
 {
 	// skip if not running
 	if (isRunning == false)
@@ -104,7 +104,7 @@ void ParticlesShader::unUseProgram()
 	renderer->bindTexture(renderer->ID_NONE);
 }
 
-void ParticlesShader::updateMatrices(GLRenderer* renderer)
+void ParticlesShader::updateMatrices(Renderer* renderer)
 {
 	// skip if not running
 	if (isRunning == false)

@@ -18,7 +18,7 @@ class tdme::engine::subsystems::manager::TextureManager_TextureManaged
 	friend class TextureManager;
 private:
 	string id {  };
-	int32_t glId {  };
+	int32_t rendererId {  };
 	int32_t referenceCounter {  };
 private:
 
@@ -28,9 +28,9 @@ private:
 	const string& getId();
 
 	/** 
-	 * @return texture open gl id
+	 * @return texture renderer id
 	 */
-	int32_t getGlId();
+	int32_t getRendererId();
 
 	/** 
 	 * @return reference counter
@@ -51,7 +51,7 @@ private:
 	/**
 	 * Protected constructor
 	 * @param id id
-	 * @param glId gl id
+	 * @param rendererId renderer id
 	 */
-	TextureManager_TextureManaged(const string& id, int32_t glId);
+	TextureManager_TextureManaged(const string& id, int32_t rendererId);
 };

@@ -1,23 +1,34 @@
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-	#if !defined(__arm__) && !defined(__aarch64__)
-		#define GLEW_NO_GLU
+#if defined(VULKAN)
+	#define GLFW_INCLUDE_VULKAN
+	#include <GLFW/glfw3.h>
+#else
+	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+		#if !defined(__arm__) && !defined(__aarch64__)
+			#define GLEW_NO_GLU
+			#include <GL/glew.h>
+		#endif
+		#include <GL/freeglut.h>
+	#elif defined(__APPLE__)
+		#include <GLUT/glut.h>
+	#elif defined(_WIN32)
 		#include <GL/glew.h>
+		#include <GL/freeglut.h>
+	#elif defined(__HAIKU__)
+		#include <GL/glew.h>
+		#include <GL/glut.h>
 	#endif
-	#include <GL/freeglut.h>
-#elif defined(__APPLE__)
-	#include <GLUT/glut.h>
-	#include <Carbon/Carbon.h>
-#elif defined(_WIN32)
-	#include <GL/glew.h>
-	#include <GL/freeglut.h>
+#endif
+
+#if defined(_WIN32)
 	#include <windows.h>
 	#include <dbghelp.h>
 	#include <stdio.h>
 	#include <string.h>
 	#include <tdme/os/threading/Mutex.h>
-#elif defined(__HAIKU__)
-	#include <GL/glew.h>
-	#include <GL/glut.h>
+#endif
+
+#if defined(__APPLE__)
+	#include <Carbon/Carbon.h>
 #endif
 
 #include <stdlib.h>
@@ -33,6 +44,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
+#include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/HexEncDec.h>
 #include <tdme/utils/RTTI.h>
@@ -50,6 +62,7 @@ using tdme::application::InputEventHandler;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
+using tdme::utils::Character;
 using tdme::utils::Console;
 using tdme::utils::HexEncDec;
 using tdme::utils::RTTI;
@@ -246,6 +259,11 @@ Application::ApplicationShutdown Application::applicationShutdown;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
+#if defined(VULKAN)
+	GLFWwindow* Application::glfwWindow = nullptr;
+	array<uint32_t, 10> Application::glfwButtonDownFrames;
+	int Application::glfwMods = 0;
+#endif
 
 Application::ApplicationShutdown::~ApplicationShutdown() {
 	if (Application::application != nullptr) {
@@ -290,7 +308,12 @@ int32_t Application::getWindowWidth() const {
 
 void Application::setWindowWidth(int32_t windowWidth) {
 	this->windowWidth = windowWidth;
-	if (initialized == true) glutReshapeWindow(windowWidth, windowHeight);
+	if (initialized == true) {
+		#if defined(VULKAN)
+		#else
+			glutReshapeWindow(windowWidth, windowHeight);
+		#endif
+	}
 }
 
 int32_t Application::getWindowHeight() const {
@@ -299,7 +322,12 @@ int32_t Application::getWindowHeight() const {
 
 void Application::setWindowHeight(int32_t windowHeight) {
 	this->windowHeight = windowHeight;
-	if (initialized == true) glutReshapeWindow(windowWidth, windowHeight);
+	if (initialized == true) {
+		#if defined(VULKAN)
+		#else
+			glutReshapeWindow(windowWidth, windowHeight);
+		#endif
+	}
 }
 
 bool Application::isFullScreen() const {
@@ -309,12 +337,15 @@ bool Application::isFullScreen() const {
 void Application::setFullScreen(bool fullScreen) {
 	this->fullScreen = fullScreen;
 	if (initialized == true) {
-		if (fullScreen == true) {
-			glutFullScreen();
-		} else {
-			glutPositionWindow(windowXPosition, windowYPosition);
-			glutReshapeWindow(windowWidth, windowHeight);
-		}
+		#if defined(VULKAN)
+		#else
+			if (fullScreen == true) {
+				glutFullScreen();
+			} else {
+				glutPositionWindow(windowXPosition, windowYPosition);
+				glutReshapeWindow(windowWidth, windowHeight);
+			}
+		#endif
 	}
 }
 
@@ -325,7 +356,10 @@ void Application::installExceptionHandler() {
 }
 
 void Application::setMouseCursor(int mouseCursor) {
-	glutSetCursor(mouseCursor);
+	#if defined(VULKAN)
+	#else
+		glutSetCursor(mouseCursor);
+	#endif
 }
 
 void Application::setMousePosition(int x, int y) {
@@ -336,68 +370,106 @@ void Application::setMousePosition(int x, int y) {
 		CGWarpMouseCursorPosition(point);
 		CGAssociateMouseAndMouseCursorPosition(true);
 	#else
-		glutWarpPointer(x, y);
+		#if defined(VULKAN)
+		#else
+			glutWarpPointer(x, y);
+		#endif
 	#endif
 }
 
 void Application::swapBuffers() {
-	glutSwapBuffers();
+	#if defined(VULKAN)
+	#else
+		glutSwapBuffers();
+	#endif
 }
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
-	glutInit(&argc, argv);
-#if defined(__APPLE__)
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32)
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextProfile(GLUT_CORE_PROFILE);
-	/*
-	glutInitContextVersion(3, 1);
-	glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
-	*/
-#elif defined(__linux__) && (defined(__arm__) || defined(__aarch64__))
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitContextVersion(2,0);
-#elif defined(__HAIKU__)
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-#endif
-	glutInitWindowSize(windowWidth, windowHeight);
-	glutInitWindowPosition(windowXPosition, windowYPosition);
-	glutCreateWindow((title).c_str());
-	if (fullScreen == true) {
-		#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-			glutFullScreen();
+	#if defined(VULKAN)
+		if (glfwInit() == false) {
+			Console::println("glflInit(): failed!");
+			return;
+		}
+		if (glfwVulkanSupported() == false) {
+			Console::println("glfwVulkanSupported(): Vulkan not available!");
+			return;
+		}
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+		if (glfwWindow == nullptr) {
+			Console::println("glfwCreateWindow(): Could not create window");
+			glfwTerminate();
+			return;
+		}
+		glfwSetCharCallback(glfwWindow, Application::glfwOnChar);
+		glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
+		glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
+		glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
+		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
+		while (glfwWindowShouldClose(glfwWindow) == false) {
+			displayInternal();
+			glfwSwapBuffers(glfwWindow);
+			glfwPollEvents();
+		}
+		glfwTerminate();
+	#else
+		glutInit(&argc, argv);
+		#if defined(__APPLE__)
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
+		#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32)
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+			glutInitContextProfile(GLUT_CORE_PROFILE);
+			/*
+			glutInitContextVersion(3, 1);
+			glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
+			 */
+		#elif defined(__linux__) && (defined(__arm__) || defined(__aarch64__))
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+			glutInitContextVersion(2,0);
+		#elif defined(__HAIKU__)
+			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 		#endif
-	}
-#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
-	glewExperimental = true;
-	GLenum glewInitStatus = glewInit();
-	if (glewInitStatus != GLEW_OK) {
-		Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
-		exit(0);
-	}
-#endif
-	// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-	glutReshapeFunc(Application::glutReshape);
-	glutDisplayFunc(Application::glutDisplay);
-	glutIdleFunc(Application::glutDisplay);
-	glutKeyboardFunc(Application::glutOnKeyDown);
-	glutKeyboardUpFunc(Application::glutOnKeyUp);
-	glutSpecialFunc(Application::glutOnSpecialKeyDown);
-	glutSpecialUpFunc(Application::glutOnSpecialKeyUp);
-	glutMotionFunc(Application::glutOnMouseDragged);
-	glutPassiveMotionFunc(Application::glutOnMouseMoved);
-	glutMouseFunc(Application::glutOnMouseButton);
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
-	glutMouseWheelFunc(Application::glutOnMouseWheel);
-#endif
-	glutMainLoop();
+		glutInitWindowSize(windowWidth, windowHeight);
+		glutInitWindowPosition(windowXPosition, windowYPosition);
+		glutCreateWindow(title.c_str());
+		if (fullScreen == true) {
+			#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+				glutFullScreen();
+			#endif
+		}
+		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
+			glewExperimental = true;
+			GLenum glewInitStatus = glewInit();
+			if (glewInitStatus != GLEW_OK) {
+				Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
+				exit(0);
+			}
+		#endif
+		// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+		glutReshapeFunc(Application::reshapeInternal);
+		glutDisplayFunc(Application::displayInternal);
+		glutIdleFunc(Application::displayInternal);
+		glutKeyboardFunc(Application::glutOnKeyDown);
+		glutKeyboardUpFunc(Application::glutOnKeyUp);
+		glutSpecialFunc(Application::glutOnSpecialKeyDown);
+		glutSpecialUpFunc(Application::glutOnSpecialKeyUp);
+		glutMotionFunc(Application::glutOnMouseDragged);
+		glutPassiveMotionFunc(Application::glutOnMouseMoved);
+		glutMouseFunc(Application::glutOnMouseButton);
+		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
+			glutMouseWheelFunc(Application::glutOnMouseWheel);
+		#endif
+		glutMainLoop();
+	#endif
 }
 
-void Application::glutDisplay() {
+void Application::displayInternal() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
+		#if defined(VULKAN)
+			Application::application->reshape(Application::application->windowWidth, Application::application->windowHeight);
+		#endif
 		Application::application->initialized = true;
 	}
 	int64_t timeNow = Time::getCurrentMillis();
@@ -408,10 +480,13 @@ void Application::glutDisplay() {
 	}
 	Application::timeLast = timeNow;
 	Application::application->display();
-	glutSwapBuffers();
+	#if defined(VULKAN)
+	#else
+		glutSwapBuffers();
+	#endif
 }
 
-void Application::glutReshape(int32_t width, int32_t height) {
+void Application::reshapeInternal(int32_t width, int32_t height) {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
 		Application::application->initialized = true;
@@ -419,42 +494,119 @@ void Application::glutReshape(int32_t width, int32_t height) {
 	Application::application->reshape(width, height);
 }
 
-void Application::glutOnKeyDown (unsigned char key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onKeyDown(key, x, y);
-}
+#if defined(VULKAN)
 
-void Application::glutOnKeyUp(unsigned char key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onKeyUp(key, x, y);
-}
+	void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
+		if (Application::inputEventHandler == nullptr) return;
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		Application::inputEventHandler->onKeyDown(key, (int)mouseX, (int)mouseY);
+		Application::inputEventHandler->onKeyUp(key, (int)mouseX, (int)mouseY);
+	}
 
-void Application::glutOnSpecialKeyDown (int key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onSpecialKeyDown(key, x, y);
-}
+	bool Application::glfwIsSpecialKey(int key) {
+		return
+			key == GLFW_KEY_UP ||
+			key == GLFW_KEY_DOWN ||
+			key == GLFW_KEY_LEFT ||
+			key == GLFW_KEY_RIGHT ||
+			key == GLFW_KEY_TAB ||
+			key == GLFW_KEY_BACKSPACE ||
+			key == GLFW_KEY_ENTER ||
+			key == GLFW_KEY_DELETE ||
+			key == GLFW_KEY_HOME ||
+			key == GLFW_KEY_END ||
+			key == GLFW_KEY_ESCAPE ||
+			key == GLFW_KEY_LEFT_SHIFT ||
+			key == GLFW_KEY_LEFT_CONTROL ||
+			key == GLFW_KEY_LEFT_ALT ||
+			key == GLFW_KEY_LEFT_SUPER ||
+			key == GLFW_KEY_RIGHT_SHIFT ||
+			key == GLFW_KEY_RIGHT_CONTROL ||
+			key == GLFW_KEY_RIGHT_ALT ||
+			key == GLFW_KEY_RIGHT_SUPER;
+	}
 
-void Application::glutOnSpecialKeyUp(int key, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onSpecialKeyUp(key, x, y);
-}
+	void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+		if (Application::inputEventHandler == nullptr) return;
+		if (glfwIsSpecialKey(key) == false) return;
+		glfwMods = mods;
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+			Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
+		} else
+		if (action == GLFW_RELEASE) {
+			Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
+		}
+	}
 
-void Application::glutOnMouseDragged(int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseDragged(x, y);
-}
+	void Application::glfwOnMouseMoved(GLFWwindow* window, double x, double y) {
+		if (Application::inputEventHandler == nullptr) return;
+		if (glfwButtonDownFrames[0] > 0) {
+			Application::inputEventHandler->onMouseDragged((int)x, (int)y);
+		} else {
+			Application::inputEventHandler->onMouseMoved((int)x, (int)y);
+		}
+	}
 
-void Application::glutOnMouseMoved(int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseMoved(x, y);
-}
+	void Application::glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods) {
+		if (Application::inputEventHandler == nullptr) return;
+		glfwMods = mods;
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, (int)mouseX, (int)mouseY);
+		if (action == GLFW_PRESS) {
+			glfwButtonDownFrames[button]++;
+		} else {
+			glfwButtonDownFrames[button] = 0;
+		}
+	}
+	void Application::glfwOnMouseWheel(GLFWwindow* window, double x, double y) {
+		if (Application::inputEventHandler == nullptr) return;
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+		if (x != 0.0) Application::inputEventHandler->onMouseWheel(0, (int)x, (int)mouseX, (int)mouseY);
+		if (y != 0.0) Application::inputEventHandler->onMouseWheel(1, (int)y, (int)mouseX, (int)mouseY);
+	}
+#else
+	void Application::glutOnKeyDown (unsigned char key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onKeyDown(key, x, y);
+	}
 
-void Application::glutOnMouseButton(int button, int state, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseButton(button, state, x, y);
-}
+	void Application::glutOnKeyUp(unsigned char key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onKeyUp(key, x, y);
+	}
 
-void Application::glutOnMouseWheel(int button, int direction, int x, int y) {
-	if (Application::inputEventHandler == nullptr) return;
-	Application::inputEventHandler->onMouseWheel(button, direction, x, y);
-}
+	void Application::glutOnSpecialKeyDown (int key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onSpecialKeyDown(key, x, y);
+	}
+
+	void Application::glutOnSpecialKeyUp(int key, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onSpecialKeyUp(key, x, y);
+	}
+
+	void Application::glutOnMouseDragged(int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseDragged(x, y);
+	}
+
+	void Application::glutOnMouseMoved(int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseMoved(x, y);
+	}
+
+	void Application::glutOnMouseButton(int button, int state, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseButton(button, state, x, y);
+	}
+
+	void Application::glutOnMouseWheel(int button, int direction, int x, int y) {
+		if (Application::inputEventHandler == nullptr) return;
+		Application::inputEventHandler->onMouseWheel(button, direction, x, y);
+	}
+#endif

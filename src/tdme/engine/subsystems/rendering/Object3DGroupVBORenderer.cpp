@@ -10,7 +10,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
@@ -24,7 +24,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 
 Object3DGroupVBORenderer::Object3DGroupVBORenderer(Object3DGroup* object3DGroup) 
@@ -40,8 +40,8 @@ void Object3DGroupVBORenderer::preRender()
 
 	// initialize if not yet done
 	if (vboBaseIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, object3DGroup->mesh->group->getTextureCoordinates() != nullptr ? 4 : 3);
-		vboBaseIds = vboManaged->getVBOGlIds();
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, object3DGroup->mesh->group->getTextureCoordinates() != nullptr ? 4 : 3, true);
+		vboBaseIds = vboManaged->getVBOIds();
 		meshUploaded = vboManaged->isUploaded();
 	}
 
@@ -50,8 +50,8 @@ void Object3DGroupVBORenderer::preRender()
 		object3DGroup->mesh->group->getTangents()->size() > 0 &&
 		object3DGroup->mesh->group->getBitangents()->size() > 0 &&
 		vboTangentBitangentIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".tangentbitangent", 2);
-		vboTangentBitangentIds = vboManaged->getVBOGlIds();
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".tangentbitangent", 2, true);
+		vboTangentBitangentIds = vboManaged->getVBOIds();
 	}
 
 	//

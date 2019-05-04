@@ -8,7 +8,7 @@
 #include <tdme/engine/subsystems/rendering/BatchVBORendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Console.h>
 
@@ -22,7 +22,7 @@ using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Key;
 using tdme::utils::Console;
@@ -88,7 +88,7 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 	return key;
 }
 
-void TransparentRenderFacesGroup::render(GLRenderer* renderer)
+void TransparentRenderFacesGroup::render(Renderer* renderer)
 {
 	if (renderer->shaderId != shader) {
 		renderer->setShader(shader);

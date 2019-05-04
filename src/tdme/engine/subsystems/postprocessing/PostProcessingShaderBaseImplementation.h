@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using tdme::engine::FrameBuffer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Post processing shader base implementation
@@ -31,7 +31,7 @@ protected:
 
 	bool isRunning {  };
 	bool initialized {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 
 public:
 
@@ -47,6 +47,6 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	PostProcessingShaderBaseImplementation(GLRenderer* renderer);
+	PostProcessingShaderBaseImplementation(Renderer* renderer);
 
 };

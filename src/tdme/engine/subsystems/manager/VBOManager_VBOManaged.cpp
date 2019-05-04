@@ -9,10 +9,10 @@ using std::string;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
 
-VBOManager_VBOManaged::VBOManager_VBOManaged(const string& id, vector<int32_t>& vboGlIds)
+VBOManager_VBOManaged::VBOManager_VBOManaged(const string& id, vector<int32_t>& vboIds)
 {
 	this->id = id;
-	this->vboGlIds = vboGlIds;
+	this->vboIds = vboIds;
 	this->referenceCounter = 0;
 }
 
@@ -21,9 +21,9 @@ const string& VBOManager_VBOManaged::getId()
 	return id;
 }
 
-vector<int32_t>* VBOManager_VBOManaged::getVBOGlIds()
+vector<int32_t>* VBOManager_VBOManaged::getVBOIds()
 {
-	return &vboGlIds;
+	return &vboIds;
 }
 
 int32_t VBOManager_VBOManaged::getReferenceCounter()
