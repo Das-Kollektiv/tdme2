@@ -14,7 +14,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 
@@ -29,6 +29,7 @@ private:
 	struct ModelSkinningCache {
 		string id;
 		vector<int32_t>* vboIds;
+		vector<int32_t>* matricesVboIds;
 	};
 
 	int32_t programId {  };
@@ -36,7 +37,7 @@ private:
 	int32_t uniformSkinningCount { -1 };
 	bool isRunning {  };
 	bool initialized {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	map<string, ModelSkinningCache> cache;
 
 public:
@@ -76,5 +77,5 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	SkinningShader(GLRenderer* renderer);
+	SkinningShader(Renderer* renderer);
 };

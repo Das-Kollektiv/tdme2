@@ -52,7 +52,7 @@ using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
@@ -74,6 +74,7 @@ class tdme::engine::Engine final
 	friend class EngineGL3Renderer;
 	friend class EngineGL2Renderer;
 	friend class EngineGLES2Renderer;
+	friend class EngineVKRenderer;
 	friend class FrameBuffer;
 	friend class Object3D;
 	friend class Object3DRenderGroup;
@@ -102,13 +103,14 @@ class tdme::engine::Engine final
 
 public:
 	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
+	static constexpr int LIGHTS_MAX { 8 };
 
 protected:
 	static Engine* currentEngine;
 
 private:
 	static Engine* instance;
-	static GLRenderer* renderer;
+	static Renderer* renderer;
 
 	static TextureManager* textureManager;
 	static VBOManager* vboManager;
@@ -137,7 +139,7 @@ private:
 
 	Partition* partition {  };
 
-	array<Light, 8> lights {  };
+	array<Light, LIGHTS_MAX> lights {  };
 	Color4 sceneColor {  };
 	FrameBuffer* frameBuffer {  };
 	FrameBuffer* postProcessingFrameBuffer1 {  };

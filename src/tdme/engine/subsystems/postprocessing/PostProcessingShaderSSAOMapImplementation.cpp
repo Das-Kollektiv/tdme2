@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Vector3.h>
 
 using std::array;
@@ -19,15 +19,15 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::math::Vector3;
 
-bool PostProcessingShaderSSAOMapImplementation::isSupported(GLRenderer* renderer) {
+bool PostProcessingShaderSSAOMapImplementation::isSupported(Renderer* renderer) {
 	return renderer->getGLVersion() == "gl3";
 }
 
-PostProcessingShaderSSAOMapImplementation::PostProcessingShaderSSAOMapImplementation(GLRenderer* renderer): PostProcessingShaderBaseImplementation(renderer)
+PostProcessingShaderSSAOMapImplementation::PostProcessingShaderSSAOMapImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
 {
 }
 

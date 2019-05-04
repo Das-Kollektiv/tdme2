@@ -4,7 +4,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * GUI shader
@@ -15,15 +15,15 @@ class tdme::gui::renderer::GUIShader final
 {
 
 private:
-	GLRenderer* renderer {  };
-	int32_t vertexShaderGlId {  };
-	int32_t fragmentShaderGlId {  };
-	int32_t programGlId {  };
-	int32_t uniformDiffuseTextureUnit {  };
-	int32_t uniformDiffuseTextureAvailable {  };
-	int32_t uniformEffectColorMul {  };
-	int32_t uniformEffectColorAdd {  };
-	int32_t uniformTextureMatrix {  };
+	Renderer* renderer {  };
+	int32_t vertexShaderId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t programId { -1 };
+	int32_t uniformDiffuseTextureUnit { -1 };
+	int32_t uniformDiffuseTextureAvailable { -1 };
+	int32_t uniformEffectColorMul { -1 };
+	int32_t uniformEffectColorAdd { -1 };
+	int32_t uniformTextureMatrix { -1 };
 	bool initialized {  };
 	bool isRunning {  };
 
@@ -54,22 +54,22 @@ public:
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	void bindTexture(GLRenderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, int32_t textureId);
 
 	/** 
 	 * Update effect to program
 	 * @param renderer renderer
 	 */
-	void updateEffect(GLRenderer* renderer);
+	void updateEffect(Renderer* renderer);
 
 	/**
 	 * Update texure matrix to program
 	 * @param renderer renderer
 	 */
-	void updateTextureMatrix(GLRenderer* renderer);
+	void updateTextureMatrix(Renderer* renderer);
 
 	/**
 	 * Public constructor
 	 */
-	GUIShader(GLRenderer* renderer);
+	GUIShader(Renderer* renderer);
 };

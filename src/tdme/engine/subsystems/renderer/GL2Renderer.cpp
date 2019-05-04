@@ -112,7 +112,11 @@ void GL2Renderer::initialize()
 
 void GL2Renderer::initializeFrame()
 {
-	GLRenderer::initializeFrame();
+	Renderer::initializeFrame();
+}
+
+void GL2Renderer::finishFrame()
+{
 }
 
 bool GL2Renderer::isBufferObjectsAvailable()
@@ -515,7 +519,7 @@ void GL2Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (uint32_t*)&frameBufferId);
 }
 
-vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers)
+vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
 {
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);

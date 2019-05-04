@@ -1,14 +1,7 @@
 #pragma once
 
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
-        #include <GL/freeglut.h>
-#elif defined(__APPLE__)
-        #include <GLUT/glut.h>
-#elif defined(__HAIKU__)
-	#include <GL/glut.h>
-#endif
-
 #include <tdme/tdme.h>
+#include <tdme/application/InputEventHandler.h>
 #include <tdme/gui/events/fwd-tdme.h>
 
 using tdme::gui::events::GUIKeyboardEvent_Type;
@@ -20,33 +13,33 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
  */
 class tdme::gui::events::GUIKeyboardEvent
 {
-
 public:
-	static constexpr int32_t KEYCODE_TAB { 9 };
-	static constexpr int32_t KEYCODE_TAB_SHIFT { 25 };
-	static constexpr int32_t KEYCODE_BACKSPACE { 8 };
-	static constexpr int32_t KEYCODE_RETURN { 13 };
-	static constexpr int32_t KEYCODE_DELETE { 46 };
-	static constexpr int32_t KEYCODE_SPACE { 32 };
-	static constexpr int32_t KEYCODE_LEFT { GLUT_KEY_LEFT };
-	static constexpr int32_t KEYCODE_UP { GLUT_KEY_UP };
-	static constexpr int32_t KEYCODE_RIGHT { GLUT_KEY_RIGHT };
-	static constexpr int32_t KEYCODE_DOWN { GLUT_KEY_DOWN };
-	static constexpr int32_t KEYCODE_POS1 { 106 };
-	static constexpr int32_t KEYCODE_END { 107 };
-	static constexpr int32_t KEYCODE_ESCAPE { 27 };
-	static constexpr int32_t KEYCODE_F1 { GLUT_KEY_F1 };
-	static constexpr int32_t KEYCODE_F2 { GLUT_KEY_F2 };
-	static constexpr int32_t KEYCODE_F3 { GLUT_KEY_F3 };
-	static constexpr int32_t KEYCODE_F4 { GLUT_KEY_F4 };
-	static constexpr int32_t KEYCODE_F5 { GLUT_KEY_F5 };
-	static constexpr int32_t KEYCODE_F6 { GLUT_KEY_F6 };
-	static constexpr int32_t KEYCODE_F7 { GLUT_KEY_F7 };
-	static constexpr int32_t KEYCODE_F8 { GLUT_KEY_F8 };
-	static constexpr int32_t KEYCODE_F9 { GLUT_KEY_F9 };
-	static constexpr int32_t KEYCODE_F10 { GLUT_KEY_F10 };
-	static constexpr int32_t KEYCODE_F11 { GLUT_KEY_F11 };
-	static constexpr int32_t KEYCODE_F12 { GLUT_KEY_F12 };
+
+	static constexpr int32_t KEYCODE_TAB { KEYBOARD_KEYCODE_TAB };
+	static constexpr int32_t KEYCODE_TAB_SHIFT { KEYBOARD_KEYCODE_TAB_SHIFT };
+	static constexpr int32_t KEYCODE_BACKSPACE { KEYBOARD_KEYCODE_BACKSPACE };
+	static constexpr int32_t KEYCODE_RETURN { KEYBOARD_KEYCODE_RETURN };
+	static constexpr int32_t KEYCODE_DELETE { KEYBOARD_KEYCODE_DELETE };
+	static constexpr int32_t KEYCODE_SPACE { KEYBOARD_KEYCODE_SPACE };
+	static constexpr int32_t KEYCODE_LEFT { KEYBOARD_KEYCODE_LEFT };
+	static constexpr int32_t KEYCODE_UP { KEYBOARD_KEYCODE_UP };
+	static constexpr int32_t KEYCODE_RIGHT { KEYBOARD_KEYCODE_RIGHT };
+	static constexpr int32_t KEYCODE_DOWN { KEYBOARD_KEYCODE_DOWN };
+	static constexpr int32_t KEYCODE_POS1 { KEYBOARD_KEYCODE_POS1 };
+	static constexpr int32_t KEYCODE_END { KEYBOARD_KEYCODE_END };
+	static constexpr int32_t KEYCODE_ESCAPE { KEYBOARD_KEYCODE_ESCAPE };
+	static constexpr int32_t KEYCODE_F1 { KEYBOARD_KEYCODE_F1 };
+	static constexpr int32_t KEYCODE_F2 { KEYBOARD_KEYCODE_F2 };
+	static constexpr int32_t KEYCODE_F3 { KEYBOARD_KEYCODE_F3 };
+	static constexpr int32_t KEYCODE_F4 { KEYBOARD_KEYCODE_F4 };
+	static constexpr int32_t KEYCODE_F5 { KEYBOARD_KEYCODE_F5 };
+	static constexpr int32_t KEYCODE_F6 { KEYBOARD_KEYCODE_F6 };
+	static constexpr int32_t KEYCODE_F7 { KEYBOARD_KEYCODE_F7 };
+	static constexpr int32_t KEYCODE_F8 { KEYBOARD_KEYCODE_F8 };
+	static constexpr int32_t KEYCODE_F9 { KEYBOARD_KEYCODE_F9 };
+	static constexpr int32_t KEYCODE_F10 { KEYBOARD_KEYCODE_F10 };
+	static constexpr int32_t KEYCODE_F11 { KEYBOARD_KEYCODE_F11 };
+	static constexpr int32_t KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
 
 private:
 	int64_t time {  };

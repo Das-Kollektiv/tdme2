@@ -123,8 +123,8 @@ void LODTest::initialize()
 	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.FBX.tm");
 	auto treePineLOD2 = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03_LOD_Plane.FBX.tm");
 	int treeIdx = 0;
-	for (float z = -240.0f; z < 240.0f; z+= 5.0f)
-	for (float x = -240.0f; x < 240.0f; x+= 5.0f) {
+	for (float z = -24.0f; z < 24.0f; z+= 5.0f)
+	for (float x = -24.0f; x < 24.0f; x+= 5.0f) {
 		auto entity = new LODObject3D(
 			"tree." + to_string(treeIdx++),
 			treePine,

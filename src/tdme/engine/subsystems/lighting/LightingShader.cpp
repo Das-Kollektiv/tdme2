@@ -8,7 +8,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utils/Console.h>
 
 using tdme::engine::subsystems::lighting::LightingShader;
@@ -20,18 +20,18 @@ using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderSolidImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::Console;
 
-LightingShader::LightingShader(GLRenderer* renderer) 
+LightingShader::LightingShader(Renderer* renderer) 
 {
-	if (LightingShaderBackImplementation::isSupported(renderer) == true) shader["back"] = new LightingShaderBackImplementation(renderer);
+	//if (LightingShaderBackImplementation::isSupported(renderer) == true) shader["back"] = new LightingShaderBackImplementation(renderer);
 	if (LightingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new LightingShaderDefaultImplementation(renderer);
-	if (LightingShaderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new LightingShaderFoliageImplementation(renderer);
-	if (LightingShaderFrontImplementation::isSupported(renderer) == true) shader["front"] = new LightingShaderFrontImplementation(renderer);
-	if (LightingShaderSkyImplementation::isSupported(renderer) == true) shader["sky"] = new LightingShaderSkyImplementation(renderer);
-	if (LightingShaderSolidImplementation::isSupported(renderer) == true) shader["solid"] = new LightingShaderSolidImplementation(renderer);
-	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) shader["terrain"] = new LightingShaderTerrainImplementation(renderer);
+//	if (LightingShaderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new LightingShaderFoliageImplementation(renderer);
+//	if (LightingShaderFrontImplementation::isSupported(renderer) == true) shader["front"] = new LightingShaderFrontImplementation(renderer);
+//	if (LightingShaderSkyImplementation::isSupported(renderer) == true) shader["sky"] = new LightingShaderSkyImplementation(renderer);
+//	if (LightingShaderSolidImplementation::isSupported(renderer) == true) shader["solid"] = new LightingShaderSolidImplementation(renderer);
+//	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) shader["terrain"] = new LightingShaderTerrainImplementation(renderer);
 	implementation = nullptr;
 }
 
@@ -76,31 +76,31 @@ void LightingShader::unUseProgram()
 	engine = nullptr;
 }
 
-void LightingShader::updateEffect(GLRenderer* renderer)
+void LightingShader::updateEffect(Renderer* renderer)
 {
 	if (implementation == nullptr) return;
 	implementation->updateEffect(renderer);
 }
 
-void LightingShader::updateMaterial(GLRenderer* renderer)
+void LightingShader::updateMaterial(Renderer* renderer)
 {
 	if (implementation == nullptr) return;
 	implementation->updateMaterial(renderer);
 }
 
-void LightingShader::updateLight(GLRenderer* renderer, int32_t lightId)
+void LightingShader::updateLight(Renderer* renderer, int32_t lightId)
 {
 	if (implementation == nullptr) return;
 	implementation->updateLight(renderer, lightId);
 }
 
-void LightingShader::updateMatrices(GLRenderer* renderer)
+void LightingShader::updateMatrices(Renderer* renderer)
 {
 	if (implementation == nullptr) return;
 	implementation->updateMatrices(renderer);
 }
 
-void LightingShader::updateTextureMatrix(GLRenderer* renderer) {
+void LightingShader::updateTextureMatrix(Renderer* renderer) {
 	if (implementation == nullptr) return;
 	implementation->updateTextureMatrix(renderer);
 }
@@ -121,7 +121,7 @@ void LightingShader::setShader(const string& id) {
 	}
 }
 
-void LightingShader::bindTexture(GLRenderer* renderer, int32_t textureId)
+void LightingShader::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	if (implementation == nullptr) return;
 	implementation->bindTexture(renderer, textureId);

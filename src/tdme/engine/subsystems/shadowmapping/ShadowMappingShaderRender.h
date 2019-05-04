@@ -13,7 +13,7 @@ using std::map;
 using std::string;
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImplementation;
 using tdme::math::Matrix4x4;
 
@@ -82,27 +82,27 @@ public:
 	 * Set up pre program texture matrix
 	 * @param renderer renderer
 	 */
-	void updateTextureMatrix(GLRenderer* renderer);
+	void updateTextureMatrix(Renderer* renderer);
 
 	/**
 	 * Update material
 	 * @param renderer renderer
 	 */
-	void updateMaterial(GLRenderer* renderer);
+	void updateMaterial(Renderer* renderer);
 
 	/**
 	 * Update light
 	 * @param renderer renderer
 	 * @param lightId light id
 	 */
-	void updateLight(GLRenderer* renderer, int32_t lightId);
+	void updateLight(Renderer* renderer, int32_t lightId);
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	void bindTexture(GLRenderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, int32_t textureId);
 
 	/** 
 	 * Set up program depth bias mvp matrix
@@ -126,7 +126,7 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderRender(GLRenderer* renderer);
+	ShadowMappingShaderRender(Renderer* renderer);
 
 	/**
 	 * Destructor

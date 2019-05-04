@@ -113,42 +113,42 @@ private:
 	 * @param renderer renderer
 	 * @param vboId vbo id
 	 */
-	void setupVertexIndicesBuffer(GLRenderer* renderer, int32_t vboId);
+	void setupVertexIndicesBuffer(Renderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up texture coordinates buffer
 	 * @param renderer renderer
 	 * @param vboId vbo id
 	 */
-	void setupTextureCoordinatesBuffer(GLRenderer* renderer, int32_t vboId);
+	void setupTextureCoordinatesBuffer(Renderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up vertices buffer
 	 * @param renderer renderer
 	 * @param vboId vbo id
 	 */
-	void setupVerticesBuffer(GLRenderer* renderer, int32_t vboId);
+	void setupVerticesBuffer(Renderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up normals buffer
 	 * @param renderer renderer
 	 * @param vboId vbo id
 	 */
-	void setupNormalsBuffer(GLRenderer* renderer, int32_t vboId);
+	void setupNormalsBuffer(Renderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up tangents buffer
 	 * @param renderer renderer
 	 * @param vboId vbo id
 	 */
-	void setupTangentsBuffer(GLRenderer* renderer, int32_t vboId);
+	void setupTangentsBuffer(Renderer* renderer, int32_t vboId);
 
 	/** 
 	 * Set up bitangents buffer
 	 * @param renderer renderer
 	 * @param vboId vbo id
 	 */
-	void setupBitangentsBuffer(GLRenderer* renderer, int32_t vboId);
+	void setupBitangentsBuffer(Renderer* renderer, int32_t vboId);
 
 	// Generated
 

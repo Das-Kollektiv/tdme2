@@ -7,7 +7,7 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Matrix4x4.h>
@@ -22,7 +22,7 @@ using tdme::engine::Timing;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Math;
@@ -31,7 +31,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-ShadowMappingShaderRenderBaseImplementation::ShadowMappingShaderRenderBaseImplementation(GLRenderer* renderer)
+ShadowMappingShaderRenderBaseImplementation::ShadowMappingShaderRenderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	initialized = false;
@@ -52,67 +52,67 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderProgramGlId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(renderProgramGlId, 1, "inNormal");
-		renderer->setProgramAttributeLocation(renderProgramGlId, 2, "inTextureUV");
+		renderer->setProgramAttributeLocation(renderProgramId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(renderProgramId, 1, "inNormal");
+		renderer->setProgramAttributeLocation(renderProgramId, 2, "inTextureUV");
 	}
 	// link
-	if (renderer->linkProgram(renderProgramGlId) == false)
+	if (renderer->linkProgram(renderProgramId) == false)
 		return;
 
 	//	uniforms
-	renderUniformTextureUnit = renderer->getProgramUniformLocation(renderProgramGlId, "textureUnit");
+	renderUniformTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "textureUnit");
 	if (renderUniformTextureUnit == -1) return;
-	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(renderProgramGlId, "texturePixelWidth");
+	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(renderProgramId, "texturePixelWidth");
 	if (renderUniformTexturePixelWidth == -1) return;
-	renderUniformTexturePixelHeight = renderer->getProgramUniformLocation(renderProgramGlId, "texturePixelHeight");
+	renderUniformTexturePixelHeight = renderer->getProgramUniformLocation(renderProgramId, "texturePixelHeight");
 	if (renderUniformTexturePixelHeight == -1) return;
-	renderUniformDepthBiasMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "depthBiasMVPMatrix");
+	renderUniformDepthBiasMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "depthBiasMVPMatrix");
 	if (renderUniformDepthBiasMVPMatrix == -1) return;
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderUniformProjectionMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "projectionMatrix");
+		renderUniformProjectionMatrix = renderer->getProgramUniformLocation(renderProgramId, "projectionMatrix");
 		if (renderUniformProjectionMatrix == -1) return;
-		renderUniformCameraMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "cameraMatrix");
+		renderUniformCameraMatrix = renderer->getProgramUniformLocation(renderProgramId, "cameraMatrix");
 		if (renderUniformCameraMatrix == -1) return;
 	} else {
-		renderUniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "mvpMatrix");
+		renderUniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
 		if (renderUniformMVPMatrix == -1) return;
-		renderUniformNormalMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "normalMatrix");
+		renderUniformNormalMatrix = renderer->getProgramUniformLocation(renderProgramId, "normalMatrix");
 		if (renderUniformNormalMatrix == -1) return;
 	}
-	uniformTextureMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "textureMatrix");
+	uniformTextureMatrix = renderer->getProgramUniformLocation(renderProgramId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureUnit");
+	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1) return;
-	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureAvailable");
+	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1) return;
-	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureMaskedTransparency");
+	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureMaskedTransparency");
 	if (uniformDiffuseTextureMaskedTransparency == -1) return;
-	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderProgramGlId, "diffuseTextureMaskedTransparencyThreshold");
+	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureMaskedTransparencyThreshold");
 	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
-	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramGlId, "lightDirection");
+	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramId, "lightDirection");
 	if (renderUniformLightDirection == -1) return;
 	if (rendererVersion != "gles2") {
 		if (renderer->isInstancedRenderingAvailable() == false) {
-			renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramGlId, "mvMatrix");
+			renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvMatrix");
 			if (renderUniformMVMatrix == -1) return;
 		}
-		renderUniformLightPosition = renderer->getProgramUniformLocation(renderProgramGlId, "lightPosition");
+		renderUniformLightPosition = renderer->getProgramUniformLocation(renderProgramId, "lightPosition");
 		if (renderUniformLightPosition == -1) return;
-		renderUniformLightSpotExponent = renderer->getProgramUniformLocation(renderProgramGlId, "lightSpotExponent");
+		renderUniformLightSpotExponent = renderer->getProgramUniformLocation(renderProgramId, "lightSpotExponent");
 		if (renderUniformLightSpotExponent == -1) return;
-		renderUniformLightSpotCosCutoff = renderer->getProgramUniformLocation(renderProgramGlId, "lightSpotCosCutoff");
+		renderUniformLightSpotCosCutoff = renderer->getProgramUniformLocation(renderProgramId, "lightSpotCosCutoff");
 		if (renderUniformLightSpotCosCutoff == -1) return;
-		renderUniformLightConstantAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, "lightConstantAttenuation");
+		renderUniformLightConstantAttenuation = renderer->getProgramUniformLocation(renderProgramId, "lightConstantAttenuation");
 		if (renderUniformLightConstantAttenuation == -1) return;
-		renderUniformLightLinearAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, "lightLinearAttenuation");
+		renderUniformLightLinearAttenuation = renderer->getProgramUniformLocation(renderProgramId, "lightLinearAttenuation");
 		if (renderUniformLightLinearAttenuation == -1) return;
-		renderUniformLightQuadraticAttenuation = renderer->getProgramUniformLocation(renderProgramGlId, "lightQuadraticAttenuation");
+		renderUniformLightQuadraticAttenuation = renderer->getProgramUniformLocation(renderProgramId, "lightQuadraticAttenuation");
 		if (renderUniformLightQuadraticAttenuation == -1) return;
 	}
 
 	//
-	uniformFrame = renderer->getProgramUniformLocation(renderProgramGlId, "frame");
+	uniformFrame = renderer->getProgramUniformLocation(renderProgramId, "frame");
 
 	//
 	initialized = true;
@@ -120,7 +120,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 
 void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine)
 {
-	renderer->useProgram(renderProgramGlId);
+	renderer->useProgram(renderProgramId);
 	renderer->setProgramUniformInteger(renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(uniformFrame, engine->getTiming()->getFrame());
 }
@@ -154,17 +154,17 @@ void ShadowMappingShaderRenderBaseImplementation::setProgramNormalMatrix(const M
 	renderer->setProgramUniformFloatMatrix4x4(renderUniformNormalMatrix, normalMatrix.getArray());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(GLRenderer* renderer) {
+void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(Renderer* renderer) {
 	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateMaterial(GLRenderer* renderer)
+void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* renderer)
 {
 	renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
 }
 
-void ShadowMappingShaderRenderBaseImplementation::updateLight(GLRenderer* renderer, int32_t lightId) {
+void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer, int32_t lightId) {
 	if (lightId != this->lightId) {
 		return;
 	}
@@ -187,7 +187,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(GLRenderer* render
 	renderer->setProgramUniformFloat(renderUniformTexturePixelHeight, 1.0f / static_cast< float >(ShadowMapping::getShadowMapHeight()));
 }
 
-void ShadowMappingShaderRenderBaseImplementation::bindTexture(GLRenderer* renderer, int32_t textureId)
+void ShadowMappingShaderRenderBaseImplementation::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	switch (renderer->getTextureUnit()) {
 		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:

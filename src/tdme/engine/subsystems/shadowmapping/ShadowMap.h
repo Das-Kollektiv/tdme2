@@ -105,4 +105,9 @@ public:
 	 * Destructor
 	 */
 	~ShadowMap();
+
+	/**
+	 * @return frame buffer
+	 */
+	FrameBuffer* getFrameBuffer();
 };

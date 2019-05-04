@@ -18,7 +18,7 @@
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -42,7 +42,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -78,7 +78,7 @@ const string& PointsParticleSystemInternal::getId()
 	return id;
 }
 
-void PointsParticleSystemInternal::setRenderer(GLRenderer* renderer)
+void PointsParticleSystemInternal::setRenderer(Renderer* renderer)
 {
 	this->renderer = renderer;
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);

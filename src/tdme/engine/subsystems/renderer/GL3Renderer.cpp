@@ -103,7 +103,11 @@ void GL3Renderer::initialize()
 
 void GL3Renderer::initializeFrame()
 {
-	GLRenderer::initializeFrame();
+	Renderer::initializeFrame();
+}
+
+void GL3Renderer::finishFrame()
+{
 }
 
 bool GL3Renderer::isBufferObjectsAvailable()
@@ -513,7 +517,7 @@ void GL3Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (uint32_t*)&frameBufferId);
 }
 
-vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers)
+vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
 {
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);

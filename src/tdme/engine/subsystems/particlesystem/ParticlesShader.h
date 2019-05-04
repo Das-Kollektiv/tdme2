@@ -8,7 +8,7 @@
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -32,7 +32,7 @@ private:
 	bool isRunning {  };
 	bool initialized {  };
 	Engine* engine {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 
 public:
 
@@ -55,7 +55,7 @@ public:
 	 * Update effect to program
 	 * @param renderer renderer
 	 */
-	void updateEffect(GLRenderer* renderer);
+	void updateEffect(Renderer* renderer);
 
 	/** 
 	 * Unuse lighting program
@@ -66,7 +66,7 @@ public:
 	 * Update matrices to program
 	 * @param renderer renderer
 	 */
-	void updateMatrices(GLRenderer* renderer);
+	void updateMatrices(Renderer* renderer);
 
 	/**
 	 * Set parameters
@@ -80,5 +80,5 @@ public:
 	 * @param engine engine
 	 * @param renderer renderer
 	 */
-	ParticlesShader(Engine* engine, GLRenderer* renderer);
+	ParticlesShader(Engine* engine, Renderer* renderer);
 };

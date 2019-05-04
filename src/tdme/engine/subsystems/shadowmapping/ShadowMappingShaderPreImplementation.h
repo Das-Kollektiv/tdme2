@@ -8,7 +8,7 @@
 #include <tdme/math/fwd-tdme.h>
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -54,18 +54,18 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
 	 * Set up pre program texture matrix
 	 * @param renderer renderer
 	 */
-	virtual void updateTextureMatrix(GLRenderer* renderer) = 0;
+	virtual void updateTextureMatrix(Renderer* renderer) = 0;
 
 	/**
 	 * Update material
 	 * @param renderer renderer
 	 */
-	virtual void updateMaterial(GLRenderer* renderer) = 0;
+	virtual void updateMaterial(Renderer* renderer) = 0;
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) = 0;
+	virtual void bindTexture(Renderer* renderer, int32_t textureId) = 0;
 };

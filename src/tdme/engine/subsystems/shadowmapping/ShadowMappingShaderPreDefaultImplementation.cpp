@@ -1,19 +1,19 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
 
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-bool ShadowMappingShaderPreDefaultImplementation::isSupported(GLRenderer* renderer) {
+bool ShadowMappingShaderPreDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-ShadowMappingShaderPreDefaultImplementation::ShadowMappingShaderPreDefaultImplementation(GLRenderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
+ShadowMappingShaderPreDefaultImplementation::ShadowMappingShaderPreDefaultImplementation(Renderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
 {
 }
 
@@ -26,7 +26,7 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 
 	// load shadow mapping shaders
 	//	pre render
-	vertexShaderGlId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
 		"pre_vertexshader.c",
@@ -36,19 +36,19 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 			"pre_computevertex.inc.c"
 		)
 	);
-	if (vertexShaderGlId == 0) return;
-	fragmentShaderGlId = renderer->loadShader(
+	if (vertexShaderId == 0) return;
+	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + rendererVersion + "/shadowmapping",
 		"pre_fragmentshader.c"
 	);
-	if (fragmentShaderGlId == 0) return;
+	if (fragmentShaderId == 0) return;
 
 	// create shadow mapping render program
 	//	pre
-	programGlId = renderer->createProgram();
-	renderer->attachShaderToProgram(programGlId, vertexShaderGlId);
-	renderer->attachShaderToProgram(programGlId, fragmentShaderGlId);
+	programId = renderer->createProgram();
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//
 	ShadowMappingShaderPreBaseImplementation::initialize();

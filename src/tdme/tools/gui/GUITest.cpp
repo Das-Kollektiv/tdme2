@@ -110,24 +110,36 @@ void GUITest::initialize()
 				guiTest->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 			}
 		}
-
 	};
+
 	try {
 		engine->initialize();
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
-		engine->getGUI()->addRenderScreen("test");
-		engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
-		engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
-		popUps->getFileDialogScreenController()->show(
-			FileSystem::getInstance()->getPathName(screenFileName),
-			"Open screen from",
-			{"xml"},
-			FileSystem::getInstance()->getFileName(screenFileName),
-			true,
-			new ScreenLoaderAction(this)
-		);
+		if (screenFileName.size() > 0) {
+			engine->getGUI()->addScreen("test",
+				GUIParser::parse(
+					FileSystem::getInstance()->getPathName(screenFileName),
+					FileSystem::getInstance()->getFileName(screenFileName)
+				)
+			);
+			engine->getGUI()->resetRenderScreens();
+			engine->getGUI()->getScreen("test")->addActionListener(this);
+			engine->getGUI()->getScreen("test")->addChangeListener(this);
+			engine->getGUI()->addRenderScreen("test");
+		} else {
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
+			popUps->getFileDialogScreenController()->show(
+				FileSystem::getInstance()->getPathName(screenFileName),
+				"Open screen from",
+				{"xml"},
+				FileSystem::getInstance()->getFileName(screenFileName),
+				true,
+				new ScreenLoaderAction(this)
+			);
+		}
 	} catch (Exception& exception) {
 		engine->getGUI()->resetRenderScreens();
 		engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
@@ -171,7 +183,7 @@ void GUITest::main(int argc, char** argv)
 		Console::println("Usage: GUITest [screen.xml]");
 		exit(0);
 	}
-	string screenFileName = argc == 2?argv[1]:"resources/screens/test.xml";
+	string screenFileName = argc == 2?argv[1]:"";
 	Console::println("Loading: " + screenFileName);
 	Console::println();
 	auto guiTest = new GUITest(screenFileName);

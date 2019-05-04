@@ -10,7 +10,7 @@
 #include <tdme/math/Vector3.h>
 
 using tdme::engine::Frustum;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -23,7 +23,7 @@ class tdme::engine::Camera final
 {
 private:
 	static Vector3 defaultUp;
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	int32_t width {  };
 	int32_t height {  };
 	float aspect {  };
@@ -195,7 +195,7 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	Camera(GLRenderer* renderer);
+	Camera(Renderer* renderer);
 
 	/**
 	 * Destructor

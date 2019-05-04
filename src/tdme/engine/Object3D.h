@@ -27,7 +27,7 @@ using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
 using tdme::engine::subsystems::rendering::Object3DInternal;
@@ -95,7 +95,7 @@ private:
 
 public:
 	void setEngine(Engine* engine) override;
-	void setRenderer(GLRenderer* renderer) override;
+	void setRenderer(Renderer* renderer) override;
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;

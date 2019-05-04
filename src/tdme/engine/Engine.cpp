@@ -1,17 +1,23 @@
 #include <tdme/engine/Engine.h>
 
-#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32) || defined(__HAIKU__)
-	#define GLEW_NO_GLU
-	#include <GL/glew.h>
+#if defined(VULKAN)
+	#define GLFW_INCLUDE_VULKAN
+	#include <GLFW/glfw3.h>
+#else
+	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32) || defined(__HAIKU__)
+		#define GLEW_NO_GLU
+		#include <GL/glew.h>
+	#endif
 #endif
 
 #include <string>
 
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/EngineGL2Renderer.h>
 #include <tdme/engine/EngineGL3Renderer.h>
 #include <tdme/engine/EngineGLES2Renderer.h>
+#include <tdme/engine/EngineVKRenderer.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -42,7 +48,8 @@
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h>
@@ -57,6 +64,7 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/VectorIteratorMultiple.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Console.h>
@@ -64,12 +72,13 @@
 using std::string;
 using std::to_string;
 
+using tdme::application::Application;
 using tdme::engine::Engine;
-using tdme::utils::ByteBuffer;
 using tdme::engine::Camera;
 using tdme::engine::EngineGL3Renderer;
 using tdme::engine::EngineGL2Renderer;
 using tdme::engine::EngineGLES2Renderer;
+using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::Object3DRenderGroup;
@@ -98,7 +107,8 @@ using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender;
@@ -113,11 +123,12 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utils::ByteBuffer;
 using tdme::utils::Float;
 using tdme::utils::Console;
 
 Engine* Engine::instance = nullptr;
-GLRenderer* Engine::renderer = nullptr;
+Renderer* Engine::renderer = nullptr;
 TextureManager* Engine::textureManager = nullptr;
 VBOManager* Engine::vboManager = nullptr;
 MeshManager* Engine::meshManager = nullptr;
@@ -139,8 +150,6 @@ float Engine::animationBlendingTime = 250.0f;
 
 Engine::Engine() 
 {
-	width = 0;
-	height = 0;
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -471,66 +480,77 @@ void Engine::initialize(bool debug)
 	if (initialized == true)
 		return;
 
-	// MacOSX, currently GL3 only
-	#if defined(__APPLE__)
-	{
-		renderer = new EngineGL3Renderer(this);
-		Console::println(string("TDME::Using GL3+/CORE"));
+	#if defined(VULKAN)
+		renderer = new EngineVKRenderer(this);
+		Console::println(string("TDME::Using Vulkan"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		ShadowMapping::setShadowMapSize(1024, 1024);
-		skinningShaderEnabled = false;
-		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-	}
-	// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
-	#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
-	{
-		int glMajorVersion;
-		int glMinorVersion;
-		glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
-		glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
-		if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
-			Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
-			renderer = new EngineGL3Renderer(this);
-		} else {
-			Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
-			renderer = new EngineGL2Renderer(this);
-		}
-		skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
-		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-		shadowMappingEnabled = true;
-		ShadowMapping::setShadowMapSize(2048, 2048);
-		animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
-	}
-	// GLES2 on Linux
-	#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && (defined(__arm__) || defined(__aarch64__))
-	{
-		renderer = new EngineGLES2Renderer(this);
-		Console::println(string("TDME::Using GLES2"));
-		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-		if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
-			shadowMappingEnabled = true;
-			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-			ShadowMapping::setShadowMapSize(512, 512);
-		} else {
-			shadowMappingEnabled = false;
-			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-		}
-		skinningShaderEnabled = false;
-	}
+		skinningShaderEnabled = true;
+		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
 	#else
-		Console::println("Engine::initialize(): unsupported GL!");
-		return;
+		// MacOSX, currently GL3 only
+		#if defined(__APPLE__)
+		{
+			renderer = new EngineGL3Renderer(this);
+			Console::println(string("TDME::Using GL3+/CORE"));
+			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			shadowMappingEnabled = true;
+			ShadowMapping::setShadowMapSize(1024, 1024);
+			skinningShaderEnabled = false;
+			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+		}
+		// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
+		#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
+		{
+			int glMajorVersion;
+			int glMinorVersion;
+			glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
+			glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
+			if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
+				Console::println(string("TDME::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				renderer = new EngineGL3Renderer(this);
+			} else {
+				Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
+				renderer = new EngineGL2Renderer(this);
+			}
+			skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			shadowMappingEnabled = true;
+			ShadowMapping::setShadowMapSize(2048, 2048);
+			animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
+		}
+		// GLES2 on Linux
+		#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && (defined(__arm__) || defined(__aarch64__))
+		{
+			renderer = new EngineGLES2Renderer(this);
+			Console::println(string("TDME::Using GLES2"));
+			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
+				shadowMappingEnabled = true;
+				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+				ShadowMapping::setShadowMapSize(512, 512);
+			} else {
+				shadowMappingEnabled = false;
+				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+			}
+			skinningShaderEnabled = false;
+		}
+		#else
+			Console::println("Engine::initialize(): unsupported GL!");
+			return;
+		#endif
 	#endif
-
-	// init
-	initialized = true;
-	renderer->initialize();
 
 	// create manager
 	textureManager = new TextureManager(renderer);
 	vboManager = new VBOManager(renderer);
 	meshManager = new MeshManager();
+
+	// init
+	initialized = true;
+	renderer->initialize();
+	renderer->initializeFrame();
 
 	// create object 3d vbo renderer
 	object3DVBORenderer = new Object3DVBORenderer(this, renderer);
@@ -767,6 +787,9 @@ void Engine::computeTransformations()
 
 void Engine::display()
 {
+	// finish frame
+	Engine::renderer->finishFrame();
+
 	// set current engine
 	currentEngine = this;
 
@@ -814,14 +837,14 @@ void Engine::display()
 		}
 	}
 
-	// restore camera from shadow map rendering
-	camera->update(width, height);
-
 	// set up clear color
 	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
 
 	// clear previous frame values
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
+
+	// restore camera from shadow map rendering
+	camera->update(width, height);
 
 	// enable materials
 	renderer->setMaterialEnabled();
@@ -857,10 +880,6 @@ void Engine::display()
 
 	// disable materials
 	renderer->setMaterialDisabled();
-
-	// clear pre render states
-	renderingInitiated = false;
-	renderingComputedTransformations = false;
 
 	// store matrices
 	modelViewMatrix.set(renderer->getModelViewMatrix());
@@ -902,6 +921,10 @@ void Engine::display()
 		delete postProcessingTemporaryFrameBuffer;
 		postProcessingTemporaryFrameBuffer = nullptr;
 	}
+
+	// clear pre render states
+	renderingInitiated = false;
+	renderingComputedTransformations = false;
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)

@@ -12,7 +12,7 @@ using std::map;
 using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * VBO manager
@@ -24,7 +24,7 @@ class tdme::engine::subsystems::manager::VBOManager final
 	friend class VBOManager_VBOManaged;
 
 private:
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	map<string, VBOManager_VBOManaged*> vbos {  };
 
 public:
@@ -33,8 +33,9 @@ public:
 	 * Adds a VBO to manager
 	 * @param vboId VBO id
 	 * @param ids VBOs to allocate
+	 * @param use GPU memory
 	 */
-	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids);
+	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids, bool useGPUMemory);
 
 	/** 
 	 * Removes a VBO from manager
@@ -45,7 +46,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	VBOManager(GLRenderer* renderer);
+	VBOManager(Renderer* renderer);
 
 	/**
 	 * Destructor

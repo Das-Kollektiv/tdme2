@@ -13,7 +13,7 @@ using std::vector;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Batch VBO renderer for points
@@ -26,7 +26,7 @@ class tdme::engine::subsystems::rendering::BatchVBORendererPoints final
 
 private:
 	static constexpr int32_t POINT_COUNT { 65535 };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	vector<int32_t>* vboIds {  };
 	int32_t id {  };
 	bool acquired {  };
@@ -64,7 +64,7 @@ private:
 	/**
 	 * Public constructor
 	 */
-	BatchVBORendererPoints(GLRenderer* renderer, int32_t id);
+	BatchVBORendererPoints(Renderer* renderer, int32_t id);
 
 	/**
 	 * Destructor

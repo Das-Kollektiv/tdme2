@@ -7,8 +7,6 @@ uniform vec4 effectColorAdd;
 in vec4 fragColor;
 out vec4 outColor;
 
-#define HAVE_DEPTH_FOG
-
 #if defined(HAVE_DEPTH_FOG)
 	#define FOG_DISTANCE_NEAR			100.0
 	#define FOG_DISTANCE_MAX			250.0
@@ -18,7 +16,7 @@ out vec4 outColor;
 	in float fragDepth;
 #endif
 
-void main (void) {
+void main(void) {
 	outColor = clamp(effectColorAdd + texture(diffuseTextureUnit, gl_PointCoord) * fragColor * effectColorMul, 0.0, 1.0);
 	#if defined(HAVE_DEPTH_FOG)
 		if (fragDepth > FOG_DISTANCE_NEAR) {

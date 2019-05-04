@@ -4,7 +4,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h>
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
 
 /** 
@@ -19,7 +19,7 @@ public:
 	 * @return if supported by renderer
 	 * @param renderer renderer
 	 */
-	static bool isSupported(GLRenderer* renderer);
+	static bool isSupported(Renderer* renderer);
 
 	// overriden methods
 	virtual void initialize() override;
@@ -28,7 +28,7 @@ public:
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderPreFoliageImplementation(GLRenderer* renderer);
+	ShadowMappingShaderPreFoliageImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor

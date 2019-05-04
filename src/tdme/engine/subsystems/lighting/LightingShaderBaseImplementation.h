@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderImplementation.h>
@@ -16,7 +17,7 @@ using std::array;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -56,24 +57,24 @@ protected:
 	int32_t uniformMaterialShininess { -1 };
 	int32_t uniformFrame { -1 };
 	int32_t uniformApplyFoliageAnimation { -1 };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightEnabled {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightAmbient {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightDiffuse {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightSpecular {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightPosition {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightSpotDirection {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightSpotExponent {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightSpotCosCutoff {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightConstantAttenuation {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightLinearAttenuation {  };
-	array<int32_t, LightingShaderConstants::MAX_LIGHTS> uniformLightQuadraticAttenuation {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpecular {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightPosition {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotDirection {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotExponent {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotCosCutoff {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightConstantAttenuation {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightLinearAttenuation {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation {  };
 	Matrix4x4 mvMatrix {  };
 	Matrix4x4 mvpMatrix {  };
 	Matrix4x4 normalMatrix {  };
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	bool isRunning {  };
 	bool initialized {  };
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 public:
 
 	// overriden methods
@@ -81,16 +82,16 @@ public:
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine) override;
 	virtual void unUseProgram() override;
-	virtual void updateEffect(GLRenderer* renderer) override;
-	virtual void updateMaterial(GLRenderer* renderer) override;
-	virtual void updateLight(GLRenderer* renderer, int32_t lightId) override;
-	virtual void updateMatrices(GLRenderer* renderer) override;
-	virtual void updateTextureMatrix(GLRenderer* renderer) override;
-	virtual void bindTexture(GLRenderer* renderer, int32_t textureId) override;
+	virtual void updateEffect(Renderer* renderer) override;
+	virtual void updateMaterial(Renderer* renderer) override;
+	virtual void updateLight(Renderer* renderer, int32_t lightId) override;
+	virtual void updateMatrices(Renderer* renderer) override;
+	virtual void updateTextureMatrix(Renderer* renderer) override;
+	virtual void bindTexture(Renderer* renderer, int32_t textureId) override;
 
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	LightingShaderBaseImplementation(GLRenderer* renderer);
+	LightingShaderBaseImplementation(Renderer* renderer);
 };

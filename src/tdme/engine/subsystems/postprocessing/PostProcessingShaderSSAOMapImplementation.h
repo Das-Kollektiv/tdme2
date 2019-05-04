@@ -10,7 +10,7 @@
 
 using std::array;
 
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Post processing shader SSAO map generation implementation
@@ -25,7 +25,7 @@ public:
 	 * @param renderer renderer
 	 * @return if shader is supported
 	 */
-	static bool isSupported(GLRenderer* renderer);
+	static bool isSupported(Renderer* renderer);
 
 	// overridden methods
 	virtual void initialize() override;
@@ -34,7 +34,7 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	PostProcessingShaderSSAOMapImplementation(GLRenderer* renderer);
+	PostProcessingShaderSSAOMapImplementation(Renderer* renderer);
 
 	// overriden methods
 	virtual void useProgram() override;

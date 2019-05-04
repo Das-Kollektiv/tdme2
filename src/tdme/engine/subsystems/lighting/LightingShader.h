@@ -13,7 +13,7 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Interface to lighting shader program
@@ -54,32 +54,32 @@ public:
 	 * Update effect to program
 	 * @param renderer renderer
 	 */
-	void updateEffect(GLRenderer* renderer);
+	void updateEffect(Renderer* renderer);
 
 	/** 
 	 * Update material to program
 	 * @param renderer gl3 renderer
 	 */
-	void updateMaterial(GLRenderer* renderer);
+	void updateMaterial(Renderer* renderer);
 
 	/** 
 	 * Update light to program
 	 * @param renderer renderer
 	 * @param lightId light id
 	 */
-	void updateLight(GLRenderer* renderer, int32_t lightId);
+	void updateLight(Renderer* renderer, int32_t lightId);
 
 	/** 
 	 * Update matrices to program
 	 * @param renderer renderer
 	 */
-	void updateMatrices(GLRenderer* renderer);
+	void updateMatrices(Renderer* renderer);
 
 	/** 
 	 * Update texture matrix to program
 	 * @param renderer renderer
 	 */
-	void updateTextureMatrix(GLRenderer* renderer);
+	void updateTextureMatrix(Renderer* renderer);
 
 	/**
 	 * Set shader
@@ -92,13 +92,13 @@ public:
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	void bindTexture(GLRenderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, int32_t textureId);
 
 	/**
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	LightingShader(GLRenderer* renderer);
+	LightingShader(Renderer* renderer);
 
 	/**
 	 * Destructor

@@ -27,7 +27,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -123,7 +123,7 @@ private:
 	 * Render this transparent render faces group
 	 * @param renderer renderer
 	 */
-	void render(GLRenderer* renderer);
+	void render(Renderer* renderer);
 
 	/**
 	 * Public constructor

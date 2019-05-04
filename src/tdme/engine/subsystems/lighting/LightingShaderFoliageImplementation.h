@@ -6,7 +6,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
  * Lighting shader implementation
@@ -20,7 +20,7 @@ public:
 	 * @return if supported by renderer
 	 * @param renderer renderer
 	 */
-	static bool isSupported(GLRenderer* renderer);
+	static bool isSupported(Renderer* renderer);
 
 	// overriden methods
 	virtual void initialize() override;
@@ -29,5 +29,5 @@ public:
 	 * Public constructor
 	 * @param renderer renderer
 	 */
-	LightingShaderFoliageImplementation(GLRenderer* renderer);
+	LightingShaderFoliageImplementation(Renderer* renderer);
 };

@@ -5,7 +5,7 @@
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utils/Console.h>
 
 using std::map;
@@ -14,10 +14,10 @@ using std::string;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::Console;;
 
-TextureManager::TextureManager(GLRenderer* renderer) 
+TextureManager::TextureManager(Renderer* renderer) 
 {
 	this->renderer = renderer;
 }
@@ -36,8 +36,8 @@ int32_t TextureManager::addTexture(Texture* texture)
 		//
 		auto textureManaged = textureManagedIt->second;
 		textureManaged->incrementReferenceCounter();
-		// yep, return open gl id
-		return textureManaged->getGlId();
+		// yep, return open renderer id
+		return textureManaged->getRendererId();
 	}
 	// create texture
 	auto textureId = renderer->createTexture();
@@ -52,7 +52,7 @@ int32_t TextureManager::addTexture(Texture* texture)
 	// add it to our textures
 	textureManaged->incrementReferenceCounter();
 	textures[texture->getId()] = textureManaged;
-	// return open gl id
+	// return renderer id
 	return textureId;
 }
 
@@ -63,7 +63,7 @@ void TextureManager::removeTexture(const string& textureId)
 		auto textureManaged = textureManagedIt->second;
 		if (textureManaged->decrementReferenceCounter()) {
 			// delete texture
-			renderer->disposeTexture(textureManaged->getGlId());
+			renderer->disposeTexture(textureManaged->getRendererId());
 			// remove from our list
 			textures.erase(textureManagedIt);
 			delete textureManaged;

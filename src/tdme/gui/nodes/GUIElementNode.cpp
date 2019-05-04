@@ -354,7 +354,7 @@ void GUIElementNode::handleKeyboardEvent(GUIKeyboardEvent* event)
 GUINode_Alignments GUIElementNode::createAlignments(const string& horizontal, const string& vertical)
 {
 	GUINode_Alignments alignments;
-	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : "CENTER");
-	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : "CENTER");
+	alignments.horizontal = GUINode_AlignmentHorizontal::valueOf(horizontal.empty() == false && horizontal.length() > 0 ? StringUtils::toUpperCase(horizontal) : "LEFT");
+	alignments.vertical = GUINode_AlignmentVertical::valueOf(vertical.empty() == false && vertical.length() > 0 ? StringUtils::toUpperCase(vertical) : "TOP");
 	return alignments;
 }

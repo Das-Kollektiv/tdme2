@@ -29,7 +29,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -87,7 +87,7 @@ private:
 public:
 	// overriden methods
 	void setEngine(Engine* engine) override;
-	void setRenderer(GLRenderer* renderer) override;
+	void setRenderer(Renderer* renderer) override;
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;

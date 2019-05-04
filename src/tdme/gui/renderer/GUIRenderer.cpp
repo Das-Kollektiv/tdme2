@@ -9,7 +9,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -27,7 +27,7 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
@@ -35,7 +35,7 @@ using tdme::gui::renderer::GUIShader;
 using tdme::math::Matrix2D3x3;
 using tdme::utils::Console;
 
-GUIRenderer::GUIRenderer(GLRenderer* renderer) 
+GUIRenderer::GUIRenderer(Renderer* renderer) 
 {
 	this->renderer = renderer;
 	init();
@@ -88,8 +88,8 @@ GUI* GUIRenderer::getGUI()
 void GUIRenderer::initialize()
 {
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4);
-		vboIds = vboManaged->getVBOGlIds();
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4, false);
+		vboIds = vboManaged->getVBOIds();
 		if (renderer->isUsingShortIndices() == true) {
 			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();
 			for (auto i = 0; i < QUAD_COUNT; i++) {
@@ -100,7 +100,6 @@ void GUIRenderer::initialize()
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 3)));
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
 			}
-			// sbIndices->flip();
 			renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 		} else {
 			auto ibIndices = sbIndicesByteBuffer->asIntBuffer();
@@ -112,7 +111,6 @@ void GUIRenderer::initialize()
 				ibIndices.put(i * 4 + 3);
 				ibIndices.put(i * 4 + 0);
 			}
-			// sbIndices->flip();
 			renderer->uploadIndicesBufferObject((*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 		}
 	}
@@ -235,22 +233,16 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 	renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
 	renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 	renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
+
 	auto quadBottom = y3;
-	if (quadBottom > renderAreaTop) {
-		return;
-	}
+	if (quadBottom > renderAreaTop) return;
 	auto quadTop = y1;
-	if (quadTop < renderAreaBottom) {
-		return;
-	}
+	if (quadTop < renderAreaBottom) return;
 	auto quadLeft = x1;
-	if (quadLeft > renderAreaRight) {
-		return;
-	}
+	if (quadLeft > renderAreaRight) return;
 	auto quadRight = x2;
-	if (quadRight < renderAreaLeft) {
-		return;
-	}
+	if (quadRight < renderAreaLeft) return;
+
 	if (quadBottom < renderAreaBottom) {
 		tv3 = tv1 + ((tv3 - tv1) * ((y1 - renderAreaBottom) / (y1 - y3)));
 		tv4 = tv2 + ((tv4 - tv2) * ((y2 - renderAreaBottom) / (y1 - y4)));
@@ -275,6 +267,7 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 		x2 = renderAreaRight;
 		x3 = renderAreaRight;
 	}
+
 	fbVertices.put(x1);
 	fbVertices.put(y1);
 	fbVertices.put(0.0f);

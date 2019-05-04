@@ -71,7 +71,7 @@ void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer, const string
 
 void Object3DInternal::unbindDiffuseTexture(const string& groupId, const string& facesEntityId)
 {
-	bindDiffuseTexture(Object3DGroup::GLTEXTUREID_NONE, groupId, facesEntityId);
+	bindDiffuseTexture(Object3DGroup::TEXTUREID_NONE, groupId, facesEntityId);
 }
 
 void Object3DInternal::bindDiffuseTexture(int32_t textureId, const string& groupId, const string& facesEntityId)

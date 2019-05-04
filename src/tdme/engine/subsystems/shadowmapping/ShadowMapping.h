@@ -15,7 +15,7 @@ using std::vector;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -36,7 +36,7 @@ private:
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 
-	GLRenderer* renderer {  };
+	Renderer* renderer {  };
 	Object3DVBORenderer* object3DVBORenderer {  };
 	float lightEyeDistanceScale {  };
 
@@ -104,6 +104,12 @@ public:
 	void createShadowMaps();
 
 	/** 
+	 * @return shadow map
+	 * @param idx index
+	 */
+	ShadowMap* getShadowMap(int idx);
+
+	/**
 	 * Render shadow maps
 	 * @param visibleObjects visible objects
 	 */
@@ -128,18 +134,18 @@ public:
 	/** 
 	 * Update model view and projection matrix
 	 */
-	void updateMatrices(GLRenderer* renderer);
+	void updateMatrices(Renderer* renderer);
 
 	/**
 	 * Update texture matrix
 	 */
-	void updateTextureMatrix(GLRenderer* renderer);
+	void updateTextureMatrix(Renderer* renderer);
 
 	/**
 	 * Update material
 	 * @param renderer renderer
 	 */
-	void updateMaterial(GLRenderer* renderer);
+	void updateMaterial(Renderer* renderer);
 
 	/**
 	 * Set shader
@@ -152,14 +158,14 @@ public:
 	 * @param renderer renderer
 	 * @param lightId light id
 	 */
-	void updateLight(GLRenderer* renderer, int32_t lightId);
+	void updateLight(Renderer* renderer, int32_t lightId);
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	void bindTexture(GLRenderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, int32_t textureId);
 
 	/** 
 	 * Update depth bias mvp matrix with given matrix
@@ -177,7 +183,7 @@ public:
 	 * @param renderer renderer
 	 * @param object3DVBORenderer object 3d vbo renderer
 	 */
-	ShadowMapping(Engine* engine, GLRenderer* renderer, Object3DVBORenderer* object3DVBORenderer);
+	ShadowMapping(Engine* engine, Renderer* renderer, Object3DVBORenderer* object3DVBORenderer);
 
 	/**
 	 * Destructor

@@ -2,15 +2,15 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.h>
-#include <tdme/engine/subsystems/renderer/GLRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBaseImplementation;
-using tdme::engine::subsystems::renderer::GLRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
-PostProcessingShaderBaseImplementation::PostProcessingShaderBaseImplementation(GLRenderer* renderer)
+PostProcessingShaderBaseImplementation::PostProcessingShaderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
 	isRunning = false;
