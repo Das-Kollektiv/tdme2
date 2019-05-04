@@ -50,7 +50,7 @@ public:
 	/** 
 	 * @return entity's faces
 	 */
-	vector<Face>* getFaces();
+	vector<Face>& getFaces();
 
 	/** 
 	 * Set up entity's faces

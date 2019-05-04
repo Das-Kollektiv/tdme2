@@ -65,8 +65,8 @@ public:
 	 * Returns bounding box vertices
 	 * @return vertices
 	 */
-	const vector<Vector3>* getVertices() const {
-		return &vertices;
+	const vector<Vector3>& getVertices() const {
+		return vertices;
 	}
 
 	/**

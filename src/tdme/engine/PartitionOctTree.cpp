@@ -127,7 +127,7 @@ void PartitionOctTree::removeEntity(Entity* entity)
 	entityPartitionNodes.erase(objectPartitionsVectorIt);
 }
 
-vector<Entity*>* PartitionOctTree::getVisibleEntities(Frustum* frustum)
+const vector<Entity*>& PartitionOctTree::getVisibleEntities(Frustum* frustum)
 {
 	visibleEntities.clear();
 	visibleEntitiesById.clear();
@@ -135,7 +135,7 @@ vector<Entity*>* PartitionOctTree::getVisibleEntities(Frustum* frustum)
 	for (auto& subNode: treeRoot.subNodes) {
 		lookUps += doPartitionTreeLookUpVisibleObjects(frustum, &subNode);
 	}
-	return &visibleEntities;
+	return visibleEntities;
 }
 
 VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)

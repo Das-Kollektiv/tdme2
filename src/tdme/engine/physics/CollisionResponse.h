@@ -34,6 +34,7 @@ private:
 	static constexpr int32_t HITPOINT_COUNT { 30 };
 	vector<CollisionResponse_Entity> entities {  };
 	CollisionResponse_Entity* selectedEntity {  };
+	vector<Vector3> fallbackHitPointsVector;
 
 	/**
 	 * Invert normals
@@ -132,9 +133,9 @@ public:
 	/**
 	 * @return get hit points
 	 */
-	inline vector<Vector3>* getHitPoints() {
-		if (selectedEntity == nullptr) return nullptr;
-		return &selectedEntity->hitPoints;
+	inline const vector<Vector3>& getHitPoints() {
+		if (selectedEntity == nullptr) return fallbackHitPointsVector;
+		return selectedEntity->hitPoints;
 	}
 
 	/** 

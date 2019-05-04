@@ -59,21 +59,21 @@ private:
 	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx) {
 		// retrieve objects we need
 		auto facesEntities = object3DGroup->group->getFacesEntities();
-		auto& facesEntity = (*facesEntities)[facesEntityIdx];
+		auto& facesEntity = facesEntities[facesEntityIdx];
 		auto faces = facesEntity.getFaces();
 		auto groupTransformedVertices = object3DGroup->mesh->vertices;
 		// objects we will use for calculations
 		float distanceFromCamera;
 		Vector3 tmpVector3;
 		// create transparent render faces
-		for (auto i = 0; i < faces->size(); i++) {
+		for (auto i = 0; i < faces.size(); i++) {
 			// check for pool overflow
 			if (transparentRenderFacesPool.size() >= FACES_MAX) {
 				Console::println(string("TransparentRenderFacesPool::createTransparentRenderFaces(): Too many transparent render faces"));
 				break;
 			}
 			// set up face
-			auto faceVertexIndices = (*faces)[i].getVertexIndices();
+			auto faceVertexIndices = faces[i].getVertexIndices();
 			tmpVector3.set(0.0f, 0.0f, 0.0f);
 			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[0]]);
 			tmpVector3.add((*groupTransformedVertices)[faceVertexIndices[1]]);
@@ -100,7 +100,7 @@ private:
 	/** 
 	 * @return transparent render faces vector
 	 */
-	vector<TransparentRenderFace*>* getTransparentRenderFaces();
+	const vector<TransparentRenderFace*>& getTransparentRenderFaces();
 
 	/**
 	 * Public constructor

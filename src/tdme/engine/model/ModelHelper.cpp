@@ -88,21 +88,21 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 	auto vertices = group->getVertices();
 	auto normals = group->getNormals();
 	auto textureCoordinates = group->getTextureCoordinates();
-	for (auto& faceEntity : *group->getFacesEntities())
+	for (auto& faceEntity : group->getFacesEntities())
 	if (faceEntity.getMaterial() != nullptr && faceEntity.getMaterial()->hasNormalTexture() == true) {
-		for (auto& face : *faceEntity.getFaces()) {
+		for (auto& face : faceEntity.getFaces()) {
 			// Shortcuts for vertices
 			auto verticesIndexes = face.getVertexIndices();
-			auto v0 = &(*vertices)[verticesIndexes[0]];
-			auto v1 = &(*vertices)[verticesIndexes[1]];
-			auto v2 = &(*vertices)[verticesIndexes[2]];
+			auto v0 = &vertices[verticesIndexes[0]];
+			auto v1 = &vertices[verticesIndexes[1]];
+			auto v2 = &vertices[verticesIndexes[2]];
 			// shortcuts for UVs
 			auto textureCoordinatesIndexes = face.getTextureCoordinateIndices();
-			uv0.set((*textureCoordinates)[textureCoordinatesIndexes[0]].getArray());
+			uv0.set(textureCoordinates[textureCoordinatesIndexes[0]].getArray());
 			uv0.setY(1.0f - uv0.getY());
-			uv1.set((*textureCoordinates)[textureCoordinatesIndexes[1]].getArray());
+			uv1.set(textureCoordinates[textureCoordinatesIndexes[1]].getArray());
 			uv1.setY(1.0f - uv1.getY());
-			uv2.set((*textureCoordinates)[textureCoordinatesIndexes[2]].getArray());
+			uv2.set(textureCoordinates[textureCoordinatesIndexes[2]].getArray());
 			uv2.setY(1.0f - uv2.getY());
 			// edges of the triangle : position delta
 			deltaPos1.set(*v1).sub(*v0);
@@ -135,18 +135,18 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 		// going further
 		auto tangents = group->getTangents();
 		auto bitangents = group->getBitangents();
-		for (auto& faceEntity : *group->getFacesEntities())
+		for (auto& faceEntity : group->getFacesEntities())
 		if (faceEntity.getMaterial() != nullptr && faceEntity.getMaterial()->hasNormalTexture() == true) {
-			for (auto& face : *faceEntity.getFaces())
+			for (auto& face : faceEntity.getFaces())
 			for (auto i = 0; i < 3; i++) {
-				auto normal = &(*normals)[face.getNormalIndices()[i]];
-				auto tangent = &(*tangents)[face.getTangentIndices()[i]];
-				auto bitangent = &(*bitangents)[face.getBitangentIndices()[i]];
-				tangent->sub(tmpVector3.set(*normal).scale(Vector3::computeDotProduct(*normal, *tangent))).normalize();
-				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(*normal, *tangent, tmpVector3), *bitangent) < 0.0f) {
-					tangent->scale(-1.0f);
+				auto& normal = normals[face.getNormalIndices()[i]];
+				auto& tangent = tangents[face.getTangentIndices()[i]];
+				auto& bitangent = bitangents[face.getBitangentIndices()[i]];
+				tangent.sub(tmpVector3.set(normal).scale(Vector3::computeDotProduct(normal, tangent))).normalize();
+				if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent, tmpVector3), bitangent) < 0.0f) {
+					tangent.scale(-1.0f);
 				}
-				bitangent->normalize();
+				bitangent.normalize();
 			}
 		}
 	}
@@ -176,8 +176,8 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 		vector<Vector3> indexedBitangents;
 		// construct indexed vertex data suitable for GL
 		auto preparedIndices = 0;
-		for (auto& facesEntity : *group->getFacesEntities()) {
-			for (auto& face : *facesEntity.getFaces()) {
+		for (auto& facesEntity : group->getFacesEntities()) {
+			for (auto& face : facesEntity.getFaces()) {
 				auto faceVertexIndices = face.getVertexIndices();
 				auto faceNormalIndices = face.getNormalIndices();
 				auto faceTextureIndices = face.getTextureCoordinateIndices();
@@ -190,11 +190,11 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 					auto groupTextureCoordinateIndex = faceTextureIndices[idx];
 					auto groupTangentIndex = faceTangentIndices[idx];
 					auto groupBitangentIndex = faceBitangentIndices[idx];
-					auto vertex = &(*groupVertices)[groupVertexIndex];
-					auto normal = &(*groupNormals)[groupNormalIndex];
-					auto textureCoordinate = groupTextureCoordinates->size() > 0 ? &(*groupTextureCoordinates)[groupTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
-					auto tangent = groupTangents->size() > 0 ? &(*groupTangents)[groupTangentIndex] : static_cast< Vector3* >(nullptr);
-					auto bitangent = groupBitangents->size() > 0 ? &(*groupBitangents)[groupBitangentIndex] : static_cast< Vector3* >(nullptr);
+					auto vertex = &groupVertices[groupVertexIndex];
+					auto normal = &groupNormals[groupNormalIndex];
+					auto textureCoordinate = groupTextureCoordinates.size() > 0 ? &groupTextureCoordinates[groupTextureCoordinateIndex] : static_cast< TextureCoordinate* >(nullptr);
+					auto tangent = groupTangents.size() > 0 ? &groupTangents[groupTangentIndex] : static_cast< Vector3* >(nullptr);
+					auto bitangent = groupBitangents.size() > 0 ? &groupBitangents[groupBitangentIndex] : static_cast< Vector3* >(nullptr);
 					auto newIndex = preparedIndices;
 					for (auto i = 0; i < preparedIndices; i++)
 					if (indexedVertices[i].equals(*vertex) &&
@@ -226,13 +226,11 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 		}
 		group->setVertices(indexedVertices);
 		group->setNormals(indexedNormals);
-		if (groupTextureCoordinates->size() > 0) {
+		if (groupTextureCoordinates.size() > 0) {
 			group->setTextureCoordinates(indexedTextureCoordinates);
 		}
-		if (groupTangents != nullptr && groupBitangents != nullptr) {
-			group->setTangents(indexedTangents);
-			group->setBitangents(indexedBitangents);
-		}
+		group->setTangents(indexedTangents);
+		group->setBitangents(indexedBitangents);
 		// process sub groups
 		prepareForIndexedRendering(group->getSubGroups());
 	}
@@ -273,7 +271,7 @@ void ModelHelper::setupJoints(Model* model)
 		// do we have a skinning
 		if (skinning != nullptr) {
 			// yep
-			for (auto& joint : *skinning->getJoints()) {
+			for (auto& joint : skinning->getJoints()) {
 				auto jointGroupIt = groups->find(joint.getGroupId());
 				if (jointGroupIt != groups->end()) {
 					setJoint(jointGroupIt->second);
@@ -309,10 +307,10 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 	auto animation = root->getAnimation();
 	vector<Matrix4x4>* transformationsMatrices;
 	if (animation != nullptr) {
-		transformationsMatrices = root->getAnimation()->getTransformationsMatrices();
+		transformationsMatrices = &root->getAnimation()->getTransformationsMatrices();
 		animation = root->createAnimation(frames);
 		for (auto i = 0; i < transformationsMatrices->size(); i++) {
-			(*animation->getTransformationsMatrices())[i].set((*transformationsMatrices)[i]);
+			animation->getTransformationsMatrices()[i].set((*transformationsMatrices)[i]);
 		}
 	}
 	for (auto it: *root->getSubGroups()) {
@@ -383,15 +381,15 @@ Material* ModelHelper::cloneMaterial(Material* material) {
 
 void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup) {
 	auto clonedGroup = new Group(targetModel, targetParentGroup, sourceGroup->getId(), sourceGroup->getName());
-	clonedGroup->setVertices(*(sourceGroup->getVertices()));
-	clonedGroup->setNormals(*(sourceGroup->getNormals()));
-	clonedGroup->setTextureCoordinates(*(sourceGroup->getTextureCoordinates()));
-	clonedGroup->setTangents(*(sourceGroup->getTangents()));
-	clonedGroup->setBitangents(*(sourceGroup->getBitangents()));
-	clonedGroup->setFacesEntities(*(sourceGroup->getFacesEntities()));
+	clonedGroup->setVertices(sourceGroup->getVertices());
+	clonedGroup->setNormals(sourceGroup->getNormals());
+	clonedGroup->setTextureCoordinates(sourceGroup->getTextureCoordinates());
+	clonedGroup->setTangents(sourceGroup->getTangents());
+	clonedGroup->setBitangents(sourceGroup->getBitangents());
+	clonedGroup->setFacesEntities(sourceGroup->getFacesEntities());
 	clonedGroup->setJoint(false);
 	clonedGroup->getTransformationsMatrix().set(sourceGroup->getTransformationsMatrix());
-	for (auto& facesEntity: *clonedGroup->getFacesEntities()) {
+	for (auto& facesEntity: clonedGroup->getFacesEntities()) {
 		if (facesEntity.getMaterial() == nullptr) continue;
 		Material* material = nullptr;
 		auto materialIt = (*targetModel->getMaterials()).find(facesEntity.getMaterial()->getId());
@@ -454,34 +452,34 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 		sourceGroupName = StringUtils::substring(sourceGroupName, 0, StringUtils::lastIndexOf(sourceGroupName, '.') - 1);
 	}
 
-	for (auto& facesEntity: *sourceGroup->getFacesEntities()) {
+	for (auto& facesEntity: sourceGroup->getFacesEntities()) {
 		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
 		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
-		for (auto& face: *facesEntity.getFaces()) {
+		for (auto& face: facesEntity.getFaces()) {
 			// get face vertices and such
 			auto& vertexIndices = face.getVertexIndices();
 			auto& normalIndices = face.getNormalIndices();
 			auto& textureCoordinatesIndices = face.getTextureCoordinateIndices();
 			auto& tangentIndices = face.getTangentIndices();
 			auto& bitangentIndices = face.getBitangentIndices();
-			vertex0.set((*sourceGroup->getVertices())[vertexIndices[0]]);
-			vertex1.set((*sourceGroup->getVertices())[vertexIndices[1]]);
-			vertex2.set((*sourceGroup->getVertices())[vertexIndices[2]]);
-			normal0.set((*sourceGroup->getNormals())[normalIndices[0]]);
-			normal1.set((*sourceGroup->getNormals())[normalIndices[1]]);
-			normal2.set((*sourceGroup->getNormals())[normalIndices[2]]);
+			vertex0.set(sourceGroup->getVertices()[vertexIndices[0]]);
+			vertex1.set(sourceGroup->getVertices()[vertexIndices[1]]);
+			vertex2.set(sourceGroup->getVertices()[vertexIndices[2]]);
+			normal0.set(sourceGroup->getNormals()[normalIndices[0]]);
+			normal1.set(sourceGroup->getNormals()[normalIndices[1]]);
+			normal2.set(sourceGroup->getNormals()[normalIndices[2]]);
 			if (haveTextureCoordinates == true) {
-				textureCoordinate0.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[0]]);
-				textureCoordinate1.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[1]]);
-				textureCoordinate2.set((*sourceGroup->getTextureCoordinates())[textureCoordinatesIndices[2]]);
+				textureCoordinate0.set(sourceGroup->getTextureCoordinates()[textureCoordinatesIndices[0]]);
+				textureCoordinate1.set(sourceGroup->getTextureCoordinates()[textureCoordinatesIndices[1]]);
+				textureCoordinate2.set(sourceGroup->getTextureCoordinates()[textureCoordinatesIndices[2]]);
 			}
 			if (haveTangentsBitangents == true) {
-				tangent0.set((*sourceGroup->getTangents())[tangentIndices[0]]);
-				tangent1.set((*sourceGroup->getTangents())[tangentIndices[1]]);
-				tangent2.set((*sourceGroup->getTangents())[tangentIndices[2]]);
-				bitangent0.set((*sourceGroup->getBitangents())[bitangentIndices[0]]);
-				bitangent1.set((*sourceGroup->getBitangents())[bitangentIndices[1]]);
-				bitangent2.set((*sourceGroup->getBitangents())[bitangentIndices[2]]);
+				tangent0.set(sourceGroup->getTangents()[tangentIndices[0]]);
+				tangent1.set(sourceGroup->getTangents()[tangentIndices[1]]);
+				tangent2.set(sourceGroup->getTangents()[tangentIndices[2]]);
+				bitangent0.set(sourceGroup->getBitangents()[bitangentIndices[0]]);
+				bitangent1.set(sourceGroup->getBitangents()[bitangentIndices[1]]);
+				bitangent2.set(sourceGroup->getBitangents()[bitangentIndices[2]]);
 			}
 
 			// find out partition by transforming vertices into world coordinates
@@ -540,49 +538,49 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 
 			// get faces entity
 			FacesEntity* partitionModelGroupFacesEntity = nullptr;
-			for (auto& partitionModelGroupFacesEntityExisting: *partitionModelGroup->getFacesEntities()) {
+			for (auto& partitionModelGroupFacesEntityExisting: partitionModelGroup->getFacesEntities()) {
 				if (partitionModelGroupFacesEntityExisting.getId() == facesEntity.getId()) {
 					partitionModelGroupFacesEntity = &partitionModelGroupFacesEntityExisting;
 				}
 			}
 			if (partitionModelGroupFacesEntity == nullptr) {
-				partitionModelGroup->getFacesEntities()->push_back(
+				partitionModelGroup->getFacesEntities().push_back(
 					FacesEntity(
 						partitionModelGroup,
 						facesEntity.getId()
 					)
 				);
-				partitionModelGroupFacesEntity = &(*partitionModelGroup->getFacesEntities())[partitionModelGroup->getFacesEntities()->size() - 1];
+				partitionModelGroupFacesEntity = &partitionModelGroup->getFacesEntities()[partitionModelGroup->getFacesEntities().size() - 1];
 				auto partitionModelGroupFacesEntityMaterial = (*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()];
 				if (partitionModelGroupFacesEntityMaterial == nullptr) {
 					partitionModelGroupFacesEntityMaterial = cloneMaterial(facesEntity.getMaterial());
 					(*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()] = partitionModelGroupFacesEntityMaterial;
 				}
-				(*partitionModelGroup->getFacesEntities())[partitionModelGroup->getFacesEntities()->size() - 1].setMaterial(partitionModelGroupFacesEntityMaterial);
+				partitionModelGroup->getFacesEntities()[partitionModelGroup->getFacesEntities().size() - 1].setMaterial(partitionModelGroupFacesEntityMaterial);
 			}
 
 			// add vertices and such
-			auto verticesIdx = partitionModelGroup->getVertices()->size();
-			partitionModelGroup->getVertices()->push_back(vertex0);
-			partitionModelGroup->getVertices()->push_back(vertex1);
-			partitionModelGroup->getVertices()->push_back(vertex2);
-			partitionModelGroup->getNormals()->push_back(normal0);
-			partitionModelGroup->getNormals()->push_back(normal1);
-			partitionModelGroup->getNormals()->push_back(normal2);
+			auto verticesIdx = partitionModelGroup->getVertices().size();
+			partitionModelGroup->getVertices().push_back(vertex0);
+			partitionModelGroup->getVertices().push_back(vertex1);
+			partitionModelGroup->getVertices().push_back(vertex2);
+			partitionModelGroup->getNormals().push_back(normal0);
+			partitionModelGroup->getNormals().push_back(normal1);
+			partitionModelGroup->getNormals().push_back(normal2);
 			if (haveTextureCoordinates == true) {
-				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate0);
-				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate1);
-				partitionModelGroup->getTextureCoordinates()->push_back(textureCoordinate2);
+				partitionModelGroup->getTextureCoordinates().push_back(textureCoordinate0);
+				partitionModelGroup->getTextureCoordinates().push_back(textureCoordinate1);
+				partitionModelGroup->getTextureCoordinates().push_back(textureCoordinate2);
 			}
 			if (haveTangentsBitangents == true) {
-				partitionModelGroup->getTangents()->push_back(tangent0);
-				partitionModelGroup->getTangents()->push_back(tangent1);
-				partitionModelGroup->getTangents()->push_back(tangent2);
-				partitionModelGroup->getBitangents()->push_back(bitangent0);
-				partitionModelGroup->getBitangents()->push_back(bitangent1);
-				partitionModelGroup->getBitangents()->push_back(bitangent2);
+				partitionModelGroup->getTangents().push_back(tangent0);
+				partitionModelGroup->getTangents().push_back(tangent1);
+				partitionModelGroup->getTangents().push_back(tangent2);
+				partitionModelGroup->getBitangents().push_back(bitangent0);
+				partitionModelGroup->getBitangents().push_back(bitangent1);
+				partitionModelGroup->getBitangents().push_back(bitangent2);
 			}
-			partitionModelGroupFacesEntity->getFaces()->push_back(
+			partitionModelGroupFacesEntity->getFaces().push_back(
 				Face(
 					partitionModelGroup,
 					verticesIdx + 0,
@@ -594,19 +592,19 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 				)
 			);
 			if (haveTextureCoordinates == true) {
-				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setTextureCoordinateIndices(
+				partitionModelGroupFacesEntity->getFaces()[partitionModelGroupFacesEntity->getFaces().size() - 1].setTextureCoordinateIndices(
 					verticesIdx + 0,
 					verticesIdx + 1,
 					verticesIdx + 2
 				);
 			}
 			if (haveTangentsBitangents == true) {
-				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setTangentIndices(
+				partitionModelGroupFacesEntity->getFaces()[partitionModelGroupFacesEntity->getFaces().size() - 1].setTangentIndices(
 					verticesIdx + 0,
 					verticesIdx + 1,
 					verticesIdx + 2
 				);
-				(*partitionModelGroupFacesEntity->getFaces())[partitionModelGroupFacesEntity->getFaces()->size() - 1].setBitangentIndices(
+				partitionModelGroupFacesEntity->getFaces()[partitionModelGroupFacesEntity->getFaces().size() - 1].setBitangentIndices(
 					verticesIdx + 0,
 					verticesIdx + 1,
 					verticesIdx + 2
@@ -644,16 +642,16 @@ void ModelHelper::partition(Model* model, const Transformations& transformations
 }
 
 void ModelHelper::shrinkToFit(Group* group) {
-	for (auto& facesEntity: *group->getFacesEntities()) {
-		facesEntity.getFaces()->shrink_to_fit();
+	for (auto& facesEntity: group->getFacesEntities()) {
+		facesEntity.getFaces().shrink_to_fit();
 	}
 
-	group->getFacesEntities()->shrink_to_fit();
-	group->getVertices()->shrink_to_fit();
-	group->getNormals()->shrink_to_fit();
-	group->getTextureCoordinates()->shrink_to_fit();
-	group->getTangents()->shrink_to_fit();
-	group->getBitangents()->shrink_to_fit();
+	group->getFacesEntities().shrink_to_fit();
+	group->getVertices().shrink_to_fit();
+	group->getNormals().shrink_to_fit();
+	group->getTextureCoordinates().shrink_to_fit();
+	group->getTangents().shrink_to_fit();
+	group->getBitangents().shrink_to_fit();
 
 	// do child groups
 	for (auto groupIt: *group->getSubGroups()) {
@@ -669,20 +667,20 @@ void ModelHelper::shrinkToFit(Model* model) {
 }
 
 float ModelHelper::computeNormals(Group* group, ProgressCallback* progressCallback, float incrementPerFace, float progress) {
-	group->getNormals()->clear();
+	group->getNormals().clear();
 	array<Vector3, 3> vertices;
 	Vector3 normal;
 	auto facesEntityProcessed = 0;
-	for (auto& facesEntity: *group->getFacesEntities()) {
-		for (auto& face: *facesEntity.getFaces()) {
+	for (auto& facesEntity: group->getFacesEntities()) {
+		for (auto& face: facesEntity.getFaces()) {
 			for (auto i = 0; i < vertices.size(); i++) {
-				vertices[i] = (*group->getVertices())[face.getVertexIndices()[i]];
+				vertices[i] = group->getVertices()[face.getVertexIndices()[i]];
 			}
 			computeNormal(vertices, normal);
-			face.setNormalIndices(group->getNormals()->size(), group->getNormals()->size() + 1, group->getNormals()->size() + 2);
-			group->getNormals()->push_back(normal);
-			group->getNormals()->push_back(normal);
-			group->getNormals()->push_back(normal);
+			face.setNormalIndices(group->getNormals().size(), group->getNormals().size() + 1, group->getNormals().size() + 2);
+			group->getNormals().push_back(normal);
+			group->getNormals().push_back(normal);
+			group->getNormals().push_back(normal);
 			if (progressCallback != nullptr) {
 				progress+= incrementPerFace / 2.0f;
 				if (facesEntityProcessed == 0 || facesEntityProcessed % 1000 == 0) progressCallback->progress(progress);
@@ -691,12 +689,12 @@ float ModelHelper::computeNormals(Group* group, ProgressCallback* progressCallba
 		}
 	}
 	facesEntityProcessed = 0;
-	auto normals = *group->getNormals();
-	for (auto& facesEntity: *group->getFacesEntities()) {
-		for (auto& face: *facesEntity.getFaces()) {
+	auto normals = group->getNormals();
+	for (auto& facesEntity: group->getFacesEntities()) {
+		for (auto& face: facesEntity.getFaces()) {
 			for (auto i = 0; i < vertices.size(); i++) {
-				if (interpolateNormal(group, (*group->getVertices())[face.getVertexIndices()[i]], normals, normal) == true) {
-					(*group->getNormals())[face.getNormalIndices()[i]].set(normal);
+				if (interpolateNormal(group, group->getVertices()[face.getVertexIndices()[i]], normals, normal) == true) {
+					group->getNormals()[face.getNormalIndices()[i]].set(normal);
 				}
 			}
 			if (progressCallback != nullptr) {

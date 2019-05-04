@@ -35,7 +35,7 @@ public:
 	/** 
 	 * @return weights
 	 */
-	vector<float>* getWeights();
+	const vector<float>& getWeights();
 
 
 	/** 
@@ -47,7 +47,7 @@ public:
 	/** 
 	 * @return all joints
 	 */
-	vector<Joint>* getJoints();
+	vector<Joint>& getJoints();
 
 	/** 
 	 * Set up joints

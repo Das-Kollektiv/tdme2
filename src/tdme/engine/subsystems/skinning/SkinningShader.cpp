@@ -100,7 +100,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	//
 	ModelSkinningCache* modelSkinningCacheCached = nullptr;
 	auto group = object3DGroupMesh->group;
-	auto& vertices = *group->getVertices();
+	auto& vertices = group->getVertices();
 	auto id = group->getModel()->getId() + "." + group->getId();
 	auto cacheIt = cache.find(id);
 	if (cacheIt == cache.end()) {
@@ -108,7 +108,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 
 		auto skinning = group->getSkinning();
 		auto& verticesJointsWeights = *skinning->getVerticesJointsWeights();
-		auto& weights = *skinning->getWeights();
+		auto& weights = skinning->getWeights();
 
 		// vbos
 		{
@@ -179,8 +179,8 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	{
 		auto skinning = group->getSkinning();
 		auto skinningJoints = skinning->getJoints();
-		auto fbMatrices = ObjectBuffer::getByteBuffer(skinningJoints->size() * 16 * sizeof(float))->asFloatBuffer();
-		for (auto& joint: *skinningJoints) {
+		auto fbMatrices = ObjectBuffer::getByteBuffer(skinningJoints.size() * 16 * sizeof(float))->asFloatBuffer();
+		for (auto& joint: skinningJoints) {
 			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());
 		}
 		renderer->uploadSkinningBufferObject((*modelSkinningCacheCached->matricesVboIds)[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);

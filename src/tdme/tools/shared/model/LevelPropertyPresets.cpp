@@ -146,9 +146,9 @@ void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
 	}
 }
 
-const vector<PropertyModelClass*>* LevelPropertyPresets::getMapPropertiesPreset() const
+const vector<PropertyModelClass*>& LevelPropertyPresets::getMapPropertiesPreset() const
 {
-	return &mapPropertiesPreset;
+	return mapPropertiesPreset;
 }
 
 const map<string, vector<PropertyModelClass*>>* LevelPropertyPresets::getObjectPropertiesPresets() const

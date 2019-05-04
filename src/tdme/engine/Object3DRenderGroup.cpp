@@ -115,49 +115,49 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 	}
 
 	// add vertices and such
-	auto combinedModelGroupVerticesIdx = combinedModelGroup->getVertices()->size();
-	auto combinedModelGroupNormalsIdx = combinedModelGroup->getNormals()->size();
-	auto combinedModelGroupTextureCoordinatesIdx = combinedModelGroup->getTextureCoordinates()->size();
-	auto combinedModelGroupTangentsIdx = combinedModelGroup->getTangents()->size();
-	auto combinedModelGroupBitangentsIdx = combinedModelGroup->getBitangents()->size();
+	auto combinedModelGroupVerticesIdx = combinedModelGroup->getVertices().size();
+	auto combinedModelGroupNormalsIdx = combinedModelGroup->getNormals().size();
+	auto combinedModelGroupTextureCoordinatesIdx = combinedModelGroup->getTextureCoordinates().size();
+	auto combinedModelGroupTangentsIdx = combinedModelGroup->getTangents().size();
+	auto combinedModelGroupBitangentsIdx = combinedModelGroup->getBitangents().size();
 	Vector3 tmpVector3;
-	for (auto& vertex: *sourceGroup->getVertices()) {
-		combinedModelGroup->getVertices()->push_back(transformationsMatrix.multiply(vertex, tmpVector3));
+	for (auto& vertex: sourceGroup->getVertices()) {
+		combinedModelGroup->getVertices().push_back(transformationsMatrix.multiply(vertex, tmpVector3));
 	}
-	for (auto& normal: *sourceGroup->getNormals()) {
-		combinedModelGroup->getNormals()->push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
+	for (auto& normal: sourceGroup->getNormals()) {
+		combinedModelGroup->getNormals().push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
 	}
-	for (auto& textureCoordinate: *sourceGroup->getTextureCoordinates()) {
-		combinedModelGroup->getTextureCoordinates()->push_back(textureCoordinate);
+	for (auto& textureCoordinate: sourceGroup->getTextureCoordinates()) {
+		combinedModelGroup->getTextureCoordinates().push_back(textureCoordinate);
 	}
-	for (auto& tangent: *sourceGroup->getTangents()) {
-		combinedModelGroup->getTangents()->push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
+	for (auto& tangent: sourceGroup->getTangents()) {
+		combinedModelGroup->getTangents().push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
 	}
-	for (auto& bitangent: *sourceGroup->getBitangents()) {
-		combinedModelGroup->getBitangents()->push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
+	for (auto& bitangent: sourceGroup->getBitangents()) {
+		combinedModelGroup->getBitangents().push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
 	}
 
 	//
-	for (auto& facesEntity: *sourceGroup->getFacesEntities()) {
+	for (auto& facesEntity: sourceGroup->getFacesEntities()) {
 		bool haveTextureCoordinates = facesEntity.isTextureCoordinatesAvailable();
 		bool haveTangentsBitangents = facesEntity.isTangentBitangentAvailable();
 
 		// get faces entity
 		FacesEntity* combinedModelGroupFacesEntity = nullptr;
-		for (auto& combinedModelGroupFacesEntityExisting: *combinedModelGroup->getFacesEntities()) {
+		for (auto& combinedModelGroupFacesEntityExisting: combinedModelGroup->getFacesEntities()) {
 			if (combinedModelGroupFacesEntityExisting.getId() == facesEntity.getId()) {
 				combinedModelGroupFacesEntity = &combinedModelGroupFacesEntityExisting;
 			}
 		}
 		// create
 		if (combinedModelGroupFacesEntity == nullptr) {
-			combinedModelGroup->getFacesEntities()->push_back(
+			combinedModelGroup->getFacesEntities().push_back(
 				FacesEntity(
 					combinedModelGroup,
 					facesEntity.getId()
 				)
 			);
-			combinedModelGroupFacesEntity = &(*combinedModelGroup->getFacesEntities())[combinedModelGroup->getFacesEntities()->size() - 1];
+			combinedModelGroupFacesEntity = &combinedModelGroup->getFacesEntities()[combinedModelGroup->getFacesEntities().size() - 1];
 			auto combinedModelGroupFacesEntityMaterial = (*combinedModel->getMaterials())[facesEntity.getMaterial()->getId()];
 			if (combinedModelGroupFacesEntityMaterial == nullptr) {
 				combinedModelGroupFacesEntityMaterial = ModelHelper::cloneMaterial(facesEntity.getMaterial());
@@ -167,7 +167,7 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 		}
 
 		// add faces
-		for (auto& face: *facesEntity.getFaces()) {
+		for (auto& face: facesEntity.getFaces()) {
 			// get face vertices and such
 			auto& faceVertexIndices = face.getVertexIndices();
 			auto& faceNormalIndices = face.getNormalIndices();
@@ -176,7 +176,7 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 			auto& faceBitangentIndices = face.getBitangentIndices();
 
 			//
-			combinedModelGroupFacesEntity->getFaces()->push_back(
+			combinedModelGroupFacesEntity->getFaces().push_back(
 				Face(
 					combinedModelGroup,
 					combinedModelGroupVerticesIdx + faceVertexIndices[0],
@@ -188,19 +188,19 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 				)
 			);
 			if (haveTextureCoordinates == true) {
-				(*combinedModelGroupFacesEntity->getFaces())[combinedModelGroupFacesEntity->getFaces()->size() - 1].setTextureCoordinateIndices(
+				combinedModelGroupFacesEntity->getFaces()[combinedModelGroupFacesEntity->getFaces().size() - 1].setTextureCoordinateIndices(
 					combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[0],
 					combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[1],
 					combinedModelGroupTextureCoordinatesIdx + faceTextureCoordinatesIndices[2]
 				);
 			}
 			if (haveTangentsBitangents == true) {
-				(*combinedModelGroupFacesEntity->getFaces())[combinedModelGroupFacesEntity->getFaces()->size() - 1].setTangentIndices(
+				combinedModelGroupFacesEntity->getFaces()[combinedModelGroupFacesEntity->getFaces().size() - 1].setTangentIndices(
 					combinedModelGroupTangentsIdx + faceTangentIndices[0],
 					combinedModelGroupTangentsIdx + faceTangentIndices[1],
 					combinedModelGroupTangentsIdx + faceTangentIndices[2]
 				);
-				(*combinedModelGroupFacesEntity->getFaces())[combinedModelGroupFacesEntity->getFaces()->size() - 1].setBitangentIndices(
+				combinedModelGroupFacesEntity->getFaces()[combinedModelGroupFacesEntity->getFaces().size() - 1].setBitangentIndices(
 					combinedModelGroupBitangentsIdx + faceBitangentIndices[0],
 					combinedModelGroupBitangentsIdx + faceBitangentIndices[1],
 					combinedModelGroupBitangentsIdx + faceBitangentIndices[2]

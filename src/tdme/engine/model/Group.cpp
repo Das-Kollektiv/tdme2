@@ -79,9 +79,9 @@ Matrix4x4& Group::getTransformationsMatrix()
 	return transformationsMatrix;
 }
 
-vector<Vector3>* Group::getVertices()
+vector<Vector3>& Group::getVertices()
 {
-	return &vertices;
+	return vertices;
 }
 
 void Group::setVertices(const vector<Vector3>& vertices)
@@ -93,9 +93,9 @@ void Group::setVertices(const vector<Vector3>& vertices)
 	}
 }
 
-vector<Vector3>* Group::getNormals()
+vector<Vector3>& Group::getNormals()
 {
-	return &normals;
+	return normals;
 }
 
 void Group::setNormals(const vector<Vector3>& normals)
@@ -107,9 +107,9 @@ void Group::setNormals(const vector<Vector3>& normals)
 	}
 }
 
-vector<TextureCoordinate>* Group::getTextureCoordinates()
+vector<TextureCoordinate>& Group::getTextureCoordinates()
 {
-	return &textureCoordinates;
+	return textureCoordinates;
 }
 
 void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
@@ -121,9 +121,9 @@ void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordi
 	}
 }
 
-vector<Vector3>* Group::getTangents()
+vector<Vector3>& Group::getTangents()
 {
-	return &tangents;
+	return tangents;
 }
 
 void Group::setTangents(const vector<Vector3>& tangents)
@@ -135,9 +135,9 @@ void Group::setTangents(const vector<Vector3>& tangents)
 	}
 }
 
-vector<Vector3>* Group::getBitangents()
+vector<Vector3>& Group::getBitangents()
 {
-	return &bitangents;
+	return bitangents;
 }
 
 void Group::setBitangents(const vector<Vector3>& bitangents)
@@ -176,14 +176,14 @@ int32_t Group::getFaceCount()
 {
 	auto faceCount = 0;
 	for (auto& facesEntity : facesEntities) {
-		faceCount += facesEntity.getFaces()->size();
+		faceCount += facesEntity.getFaces().size();
 	}
 	return faceCount;
 }
 
-vector<FacesEntity>* Group::getFacesEntities()
+vector<FacesEntity>& Group::getFacesEntities()
 {
-	return &facesEntities;
+	return facesEntities;
 }
 
 void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)

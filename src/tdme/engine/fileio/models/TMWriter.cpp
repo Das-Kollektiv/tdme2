@@ -155,9 +155,9 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a) throw (Mod
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(a->getTransformationsMatrices()->size());
-		for (auto i = 0; i < a->getTransformationsMatrices()->size(); i++) {
-			os->writeFloatArray((*a->getTransformationsMatrices())[i].getArray());
+		os->writeInt(a->getTransformationsMatrices().size());
+		for (auto i = 0; i < a->getTransformationsMatrices().size(); i++) {
+			os->writeFloatArray(a->getTransformationsMatrices()[i].getArray());
 		}
 	}
 }
@@ -174,9 +174,9 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>&
 			os->writeBoolean(true);
 			os->writeString(fe.getMaterial()->getId());
 		}
-		os->writeInt(fe.getFaces()->size());
-		for (auto j = 0; j < fe.getFaces()->size(); j++) {
-			auto& f = (*fe.getFaces())[j];
+		os->writeInt(fe.getFaces().size());
+		for (auto j = 0; j < fe.getFaces().size(); j++) {
+			auto& f = fe.getFaces()[j];
 			writeIndices(os, f.getVertexIndices());
 			writeIndices(os, f.getNormalIndices());
 			writeIndices(os, f.getTextureCoordinateIndices());
@@ -204,10 +204,10 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeFloatArray(*skinning->getWeights());
-		os->writeInt(skinning->getJoints()->size());
-		for (auto i = 0; i < skinning->getJoints()->size(); i++) {
-			writeSkinningJoint(os, &(*skinning->getJoints())[i]);
+		os->writeFloatArray(skinning->getWeights());
+		os->writeInt(skinning->getJoints().size());
+		for (auto i = 0; i < skinning->getJoints().size(); i++) {
+			writeSkinningJoint(os, &skinning->getJoints()[i]);
 		}
 		os->writeInt(skinning->getVerticesJointsWeights()->size());
 		for (auto i = 0; i < skinning->getVerticesJointsWeights()->size(); i++) {
@@ -234,13 +234,13 @@ void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g) throw (ModelFileIO
 	os->writeString(g->getName());
 	os->writeBoolean(g->isJoint());
 	os->writeFloatArray(g->getTransformationsMatrix().getArray());
-	writeVertices(os, *g->getVertices());
-	writeVertices(os, *g->getNormals());
-	writeTextureCoordinates(os, g->getTextureCoordinates());
-	writeVertices(os, *g->getTangents());
-	writeVertices(os, *g->getBitangents());
+	writeVertices(os, g->getVertices());
+	writeVertices(os, g->getNormals());
+	writeTextureCoordinates(os, &g->getTextureCoordinates());
+	writeVertices(os, g->getTangents());
+	writeVertices(os, g->getBitangents());
 	writeAnimation(os, g->getAnimation());
 	writeSkinning(os, g->getSkinning());
-	writeFacesEntities(os, *g->getFacesEntities());
+	writeFacesEntities(os, g->getFacesEntities());
 	writeSubGroups(os, g->getSubGroups());
 }

@@ -19,7 +19,7 @@ int32_t Animation::getFrames()
 	return frames;
 }
 
-vector<tdme::math::Matrix4x4>* Animation::getTransformationsMatrices()
+vector<Matrix4x4>& Animation::getTransformationsMatrices()
 {
-	return &transformationsMatrices;
+	return transformationsMatrices;
 }

@@ -387,7 +387,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 											frameIdx++;
 											continue;
 										}
-										Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), (*transformationsMatrices)[frameIdx]);
+										Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), transformationsMatrices[frameIdx]);
 										frameIdx++;
 									}
 									timeStampLast = timeStamp;
@@ -581,15 +581,15 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 		if (string(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id"))) == xmlJointsInverseBindMatricesSource) {
 			t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())), " \n\r");
 			auto _joints = skinning->getJoints();
-			for (auto i = 0; i < _joints->size(); i++) {
+			for (auto i = 0; i < _joints.size(); i++) {
 				// The vertices are defined in model space
 				// The transformation to the local space of the joint is called the inverse bind matrix
 				array<float, 16> bindMatrixArray;
 				for (auto i = 0; i < bindMatrixArray.size(); i++) {
 					bindMatrixArray[i] = Float::parseFloat(t.nextToken());
 				}
-				(*_joints)[i].getBindMatrix().multiply(bindShapeMatrix);
-				(*_joints)[i].getBindMatrix().multiply((Matrix4x4(bindMatrixArray)).transpose());
+				_joints[i].getBindMatrix().multiply(bindShapeMatrix);
+				_joints[i].getBindMatrix().multiply((Matrix4x4(bindMatrixArray)).transpose());
 			}
 		}
 	}
@@ -684,13 +684,13 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 
 void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException)
 {
-	vector<FacesEntity> facesEntities = *group->getFacesEntities();
-	auto verticesOffset = group->getVertices()->size();
-	vector<Vector3> vertices = *group->getVertices();
-	auto normalsOffset = group->getNormals()->size();
-	vector<Vector3> normals = *group->getNormals();;
-	auto textureCoordinatesOffset = group->getTextureCoordinates()->size();
-	vector<TextureCoordinate> textureCoordinates = *group->getTextureCoordinates();
+	vector<FacesEntity> facesEntities = group->getFacesEntities();
+	auto verticesOffset = group->getVertices().size();
+	vector<Vector3> vertices = group->getVertices();
+	auto normalsOffset = group->getNormals().size();
+	vector<Vector3> normals = group->getNormals();;
+	auto textureCoordinatesOffset = group->getTextureCoordinates().size();
+	vector<TextureCoordinate> textureCoordinates = group->getTextureCoordinates();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
 		if (string(AVOID_NULLPTR_STRING(xmlGeometry->Attribute("id"))) == xmlNodeId) {
