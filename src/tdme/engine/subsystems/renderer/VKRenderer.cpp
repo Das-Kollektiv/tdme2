@@ -246,7 +246,7 @@ void VKRenderer::finishCommandBuffers() {
 		.waitSemaphoreCount = 0,
 		.pWaitSemaphores = NULL,
 		.pWaitDstStageMask = NULL,
-		.commandBufferCount = 1 + (context.setup_cmd != VK_NULL_HANDLE?1:0),
+		.commandBufferCount = static_cast<uint32_t>(1 + (context.setup_cmd != VK_NULL_HANDLE?1:0)),
 		.pCommandBuffers = cmd_bufs,
 		.signalSemaphoreCount = 0,
 		.pSignalSemaphores = NULL
