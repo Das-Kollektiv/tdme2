@@ -221,13 +221,24 @@ void VKRenderer::finishSetupCommandBuffer() {
 	}
 }
 
-void VKRenderer::finishDrawCommandBuffer() {
+void VKRenderer::finishCommandBuffers() {
 	VkResult err;
 
-	err = vkEndCommandBuffer(context.draw_cmd);
-	assert(!err);
+	auto inRenderPass = context.render_pass_started;
+	if (inRenderPass == true) endRenderPass();
 
-	const VkCommandBuffer cmd_bufs[] = { context.draw_cmd };
+	//
+	if (context.setup_cmd != VK_NULL_HANDLE) {
+		assert(!err);
+		err = vkEndCommandBuffer(context.setup_cmd);
+	}
+
+	if (context.draw_cmd_started == true) {
+		err = vkEndCommandBuffer(context.draw_cmd);
+		assert(!err);
+	}
+
+	const VkCommandBuffer cmd_bufs[] = { context.draw_cmd, context.setup_cmd };
 	VkFence nullFence = { VK_NULL_HANDLE };
 	VkSubmitInfo submit_info = {
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -235,7 +246,7 @@ void VKRenderer::finishDrawCommandBuffer() {
 		.waitSemaphoreCount = 0,
 		.pWaitSemaphores = NULL,
 		.pWaitDstStageMask = NULL,
-		.commandBufferCount = 1,
+		.commandBufferCount = 1 + (context.setup_cmd != VK_NULL_HANDLE?1:0),
 		.pCommandBuffers = cmd_bufs,
 		.signalSemaphoreCount = 0,
 		.pSignalSemaphores = NULL
@@ -246,6 +257,29 @@ void VKRenderer::finishDrawCommandBuffer() {
 
 	err = vkQueueWaitIdle(context.queue);
 	assert(!err);
+
+	if (context.draw_cmd_started == true) {
+		const VkCommandBufferBeginInfo cmd_buf_info = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.pInheritanceInfo = NULL
+		};
+
+		//
+		err = vkBeginCommandBuffer(context.draw_cmd, &cmd_buf_info);
+		assert(!err);
+	}
+
+	if (context.setup_cmd != VK_NULL_HANDLE) {
+		vkFreeCommandBuffers(context.device, context.cmd_pool, 1, &cmd_bufs[1]);
+
+		//
+		context.setup_cmd = VK_NULL_HANDLE;
+	}
+
+	//
+	if (inRenderPass == true) startRenderPass();
 }
 
 void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
@@ -377,7 +411,7 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 			.pNext = NULL,
 			.memory = tex_obj->mem,
 			.offset = 0,
-			.size = mem_reqs.size
+			.size = VK_WHOLE_SIZE
 		};
 		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 
@@ -1052,22 +1086,26 @@ void VKRenderer::initialize()
 	initializeSwapChain();
 
 	// create descriptor pool
-	const VkDescriptorPoolSize types_count[2] = {
+	const VkDescriptorPoolSize types_count[3] = {
 		[0] = {
 			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = 128 * DESC_MAX // 32 shader * 4 image sampler
+			.descriptorCount = 32 * 4 * COMMANDS_MAX // 32 shader * 4 image sampler
 		},
 		[1] = {
 			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 128 * DESC_MAX // 32 shader * 4 uniform buffer
+			.descriptorCount = 32 * 4 * COMMANDS_MAX // 32 shader * 4 uniform buffer
+		},
+		[2] = {
+			.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+			.descriptorCount = 32 * 10 * COMMANDS_MAX // 32 shader * 10 storage buffer
 		}
 	};
 	const VkDescriptorPoolCreateInfo descriptor_pool = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
-		.maxSets = DESC_MAX,
-		.poolSizeCount = 2,
+		.maxSets = COMMANDS_MAX * 32, // COMMANDS_MAX * 32 shader
+		.poolSizeCount = 3,
 		.pPoolSizes = types_count,
 	};
 
@@ -1310,9 +1348,12 @@ void VKRenderer::initializeFrame()
 		.pInheritanceInfo = NULL
 	};
 
-	//
-	err = vkBeginCommandBuffer(context.draw_cmd, &cmd_buf_info);
-	assert(!err);
+	// start draw command buffer if required
+	if (context.draw_cmd_started == false) {
+		context.draw_cmd_started = true;
+		err = vkBeginCommandBuffer(context.draw_cmd, &cmd_buf_info);
+		assert(!err);
+	}
 
 	// We can use LAYOUT_UNDEFINED as a wildcard here because we don't care what
 	// happens to the previous contents of the image
@@ -1338,24 +1379,11 @@ void VKRenderer::finishFrame()
 
 	//
 	flushCommands();
-	finishSetupCommandBuffer();
 
 	// flush command buffers
 	if (context.program_id != 0) {
 		finishPipeline();
 		context.program_id = 0;
-	}
-
-	for (auto buf: context.delete_buffers) vkDestroyBuffer(context.device, buf, NULL);
-	for (auto mem: context.delete_memory) vkFreeMemory(context.device, mem, NULL);
-	for (auto image: context.delete_images) vkDestroyImage(context.device, image, NULL);
-	context.delete_buffers.clear();
-	context.delete_memory.clear();
-	context.delete_images.clear();
-
-	// unset progam desc used
-	for (auto& programIt: context.programs) {
-		programIt.second.desc_used = 0;
 	}
 
 	//
@@ -1378,8 +1406,12 @@ void VKRenderer::finishFrame()
 	};
 	vkCmdPipelineBarrier(context.draw_cmd, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &prePresentBarrier);
 
-	err = vkEndCommandBuffer(context.draw_cmd);
-	assert(!err);
+	//
+	if (context.draw_cmd_started == true) {
+		context.draw_cmd_started = false;
+		err = vkEndCommandBuffer(context.draw_cmd);
+		assert(!err);
+	}
 
 	//
 	VkFence nullFence = VK_NULL_HANDLE;
@@ -1417,6 +1449,7 @@ void VKRenderer::finishFrame()
 	if (err == VK_SUBOPTIMAL_KHR) {
 		// context.swapchain is not as optimal as it could be, but the platform's
 		// presentation engine will still present the image correctly.
+		needsReshape = true;
 	} else {
 		assert(!err);
 	}
@@ -1430,9 +1463,13 @@ void VKRenderer::finishFrame()
 	//
 	vkDeviceWaitIdle(context.device);
 
-	//
-	finishPipeline();
-	// if (Engine::getInstance()->getTiming()->getFrame() == 2) exit(0);
+	// remove marked vulkan resources
+	for (auto buf: context.delete_buffers) vkDestroyBuffer(context.device, buf, NULL);
+	for (auto mem: context.delete_memory) vkFreeMemory(context.device, mem, NULL);
+	for (auto image: context.delete_images) vkDestroyImage(context.device, image, NULL);
+	context.delete_buffers.clear();
+	context.delete_memory.clear();
+	context.delete_images.clear();
 
 	if (needsReshape == true) reshape();
 
@@ -2043,15 +2080,15 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 			.pSetLayouts = &program.desc_layout,
 		};
 
-		VkDescriptorSetLayout desc_layouts[DESC_MAX];
-		for (auto i = 0; i < program.desc_max; i++) desc_layouts[i] = program.desc_layout;
+		VkDescriptorSetLayout desc_layouts[COMMANDS_MAX];
+		for (auto i = 0; i < COMMANDS_MAX; i++) desc_layouts[i] = program.desc_layout;
 
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = NULL,
 			.descriptorPool = context.desc_pool,
-			.descriptorSetCount = program.desc_max,
+			.descriptorSetCount = COMMANDS_MAX,
 			.pSetLayouts = desc_layouts
 		};
 		err = vkAllocateDescriptorSets(context.device, &alloc_info, program.desc_set);
@@ -2361,15 +2398,15 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 			.pSetLayouts = &program.desc_layout,
 		};
 
-		VkDescriptorSetLayout desc_layouts[DESC_MAX];
-		for (auto i = 0; i < program.desc_max; i++) desc_layouts[i] = program.desc_layout;
+		VkDescriptorSetLayout desc_layouts[COMMANDS_MAX];
+		for (auto i = 0; i < COMMANDS_MAX; i++) desc_layouts[i] = program.desc_layout;
 
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = NULL,
 			.descriptorPool = context.desc_pool,
-			.descriptorSetCount = program.desc_max,
+			.descriptorSetCount = COMMANDS_MAX,
 			.pSetLayouts = desc_layouts
 		};
 		err = vkAllocateDescriptorSets(context.device, &alloc_info, program.desc_set);
@@ -2626,15 +2663,15 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 			.pSetLayouts = &program.desc_layout,
 		};
 
-		VkDescriptorSetLayout desc_layouts[DESC_MAX];
-		for (auto i = 0; i < program.desc_max; i++) desc_layouts[i] = program.desc_layout;
+		VkDescriptorSetLayout desc_layouts[COMMANDS_MAX];
+		for (auto i = 0; i < COMMANDS_MAX; i++) desc_layouts[i] = program.desc_layout;
 
 		//
 		VkDescriptorSetAllocateInfo alloc_info = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = NULL,
 			.descriptorPool = context.desc_pool,
-			.descriptorSetCount = program.desc_max,
+			.descriptorSetCount = COMMANDS_MAX,
 			.pSetLayouts = desc_layouts
 		};
 		err = vkAllocateDescriptorSets(context.device, &alloc_info, program.desc_set);
@@ -3978,7 +4015,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 			.pNext = NULL,
 			.memory = stagingBufferMemory,
 			.offset = 0,
-			.size = static_cast<VkDeviceSize>(size)
+			.size = VK_WHOLE_SIZE
 		};
 		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 
@@ -4010,7 +4047,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 			.pNext = NULL,
 			.memory = reusableBuffer->mem,
 			.offset = 0,
-			.size = static_cast<VkDeviceSize>(size)
+			.size = VK_WHOLE_SIZE
 		};
 		vkFlushMappedMemoryRanges(context.device, 1, &mappedMemoryRange);
 	}
@@ -4194,9 +4231,8 @@ void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int3
 	context.uniform_buffers_changed.fill(false);
 
 	//
-	if (context.compute_commands.size() == COMMANDS_MAX) {
+	if (context.objects_render_commands.size() == COMMANDS_MAX) {
 		flushCommands();
-		finishDrawCommandBuffer();
 	}
 }
 
@@ -4209,10 +4245,11 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 }
 
 void VKRenderer::flushCommands() {
+	finishCommandBuffers();
+
 	if (context.clear_mask != 0 &&
 		(context.objects_render_commands.size() > 0 ||
 		context.points_render_commands.size() > 0)) {
-		finishSetupCommandBuffer();
 
 		vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
 		vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
@@ -4257,13 +4294,6 @@ void VKRenderer::flushCommands() {
 	}
 
 	//
-	finishSetupCommandBuffer();
-
-	//
-	vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
-	vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
-
-	//
 	auto programIt = context.programs.find(context.program_id);
 	if (programIt == context.programs.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(context.program_id));
@@ -4271,11 +4301,32 @@ void VKRenderer::flushCommands() {
 	}
 	auto& program = programIt->second;
 
+	// start draw command buffer, it not yet done
+	if (context.draw_cmd_started == false) {
+		const VkCommandBufferBeginInfo cmd_buf_info = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+			.pNext = NULL,
+			.flags = 0,
+			.pInheritanceInfo = NULL
+		};
+		//
+		VkResult err;
+		err = vkBeginCommandBuffer(context.draw_cmd, &cmd_buf_info);
+		assert(!err);
+		context.draw_cmd_started = true;
+	}
+
 	// create pipeline
 	if (context.objects_render_commands.size() > 0) {
+		vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
+		vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
+		if (context.render_pass_started == false) startRenderPass();
 		createObjectsRenderingPipeline(program);
 	} else
 	if (context.points_render_commands.size() > 0) {
+		vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
+		vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
+		if (context.render_pass_started == false) startRenderPass();
 		createPointsRenderingPipeline(program);
 	} else
 	if (context.compute_commands.size() > 0) {
@@ -4295,8 +4346,8 @@ void VKRenderer::flushCommands() {
 
 		// do render commands
 		for (auto& objects_render_command: context.objects_render_commands) {
-			if (program.desc_used == program.desc_max) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
+			if (program.desc_used == COMMANDS_MAX) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == COMMANDS_MAX: " + to_string(context.objects_render_commands.size()));
 				break;
 			}
 			auto samplerIdx = 0;
@@ -4396,6 +4447,7 @@ void VKRenderer::flushCommands() {
 		}
 
 		//
+		program.desc_used = 0;
 		context.objects_render_commands.clear();
 	} else
 	if (context.points_render_commands.size() > 0) {
@@ -4403,8 +4455,8 @@ void VKRenderer::flushCommands() {
 
 		// do render commands
 		for (auto& points_render_command: context.points_render_commands) {
-			if (program.desc_used == program.desc_max) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
+			if (program.desc_used == COMMANDS_MAX) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == COMMANDS_MAX: " + to_string(context.points_render_commands.size()));
 				break;
 			}
 			auto samplerIdx = 0;
@@ -4494,6 +4546,7 @@ void VKRenderer::flushCommands() {
 		}
 
 		//
+		program.desc_used = 0;
 		context.points_render_commands.clear();
 	} else
 	if (context.compute_commands.size() > 0) {
@@ -4501,8 +4554,8 @@ void VKRenderer::flushCommands() {
 
 		// do render commands
 		for (auto& compute_command: context.compute_commands) {
-			if (program.desc_used == program.desc_max) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == desc_max");
+			if (program.desc_used == COMMANDS_MAX) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): desc_used == COMMANDS_MAX: " + to_string(context.compute_commands.size()));
 				break;
 			}
 
@@ -4569,6 +4622,7 @@ void VKRenderer::flushCommands() {
 		}
 
 		//
+		program.desc_used = 0;
 		context.compute_commands.clear();
 	}
 }
@@ -4645,9 +4699,8 @@ void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffse
 	context.uniform_buffers_changed.fill(false);
 
 	//
-	if (context.compute_commands.size() == COMMANDS_MAX) {
+	if (context.points_render_commands.size() == COMMANDS_MAX) {
 		flushCommands();
-		finishDrawCommandBuffer();
 	}
 }
 
@@ -4780,7 +4833,6 @@ void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t
 	//
 	if (context.compute_commands.size() == COMMANDS_MAX) {
 		flushCommands();
-		finishDrawCommandBuffer();
 	}
 }
 

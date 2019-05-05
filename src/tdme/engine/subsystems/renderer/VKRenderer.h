@@ -46,8 +46,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int DESC_MAX { 512 };
-	static constexpr int COMMANDS_MAX { 8 };
+	static constexpr int COMMANDS_MAX { 32 };
 
 	struct shader_type {
 		struct uniform_type {
@@ -77,7 +76,6 @@ private:
 			VkPipeline pipeline { VK_NULL_HANDLE };
 		};
 		unordered_map<string, pipeline_struct> pipelines;
-		uint32_t desc_max { DESC_MAX };
 		uint32_t desc_used { 0 };
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
@@ -87,7 +85,7 @@ private:
 		uint32_t layout_bindings { 0 };
 		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		VkDescriptorSet desc_set[DESC_MAX] { VK_NULL_HANDLE };
+		VkDescriptorSet desc_set[COMMANDS_MAX] { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
 		int32_t id { 0 };
 	};
@@ -197,7 +195,7 @@ private:
 		#if defined(__FreeBSD__)
 			bool validate { false }; // TODO: Why no validation layers here?
 		#else
-			bool validate { true };
+			bool validate { false };
 		#endif
 
 		uint32_t current_buffer { 0 };
@@ -292,6 +290,7 @@ private:
 		int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
 		int clear_mask { 0 };
 		bool render_pass_started { false };
+		bool draw_cmd_started { false };
 		int64_t frame { 0 };
 
 		vector<VkImage> delete_images;
@@ -323,7 +322,7 @@ private:
 	void finishPipeline();
 	void prepareSetupCommandBuffer();
 	void finishSetupCommandBuffer();
-	void finishDrawCommandBuffer();
+	void finishCommandBuffers();
 	void reshape();
 	int determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms);
 	int align(int alignment, int offset);
