@@ -47,6 +47,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int DESC_MAX { 512 };
+	static constexpr int COMMANDS_MAX { 8 };
 
 	struct shader_type {
 		struct uniform_type {
@@ -322,6 +323,7 @@ private:
 	void finishPipeline();
 	void prepareSetupCommandBuffer();
 	void finishSetupCommandBuffer();
+	void finishDrawCommandBuffer();
 	void reshape();
 	int determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms);
 	int align(int alignment, int offset);

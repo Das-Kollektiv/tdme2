@@ -221,6 +221,33 @@ void VKRenderer::finishSetupCommandBuffer() {
 	}
 }
 
+void VKRenderer::finishDrawCommandBuffer() {
+	VkResult err;
+
+	err = vkEndCommandBuffer(context.draw_cmd);
+	assert(!err);
+
+	const VkCommandBuffer cmd_bufs[] = { context.draw_cmd };
+	VkFence nullFence = { VK_NULL_HANDLE };
+	VkSubmitInfo submit_info = {
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = NULL,
+		.waitSemaphoreCount = 0,
+		.pWaitSemaphores = NULL,
+		.pWaitDstStageMask = NULL,
+		.commandBufferCount = 1,
+		.pCommandBuffers = cmd_bufs,
+		.signalSemaphoreCount = 0,
+		.pSignalSemaphores = NULL
+	};
+
+	err = vkQueueSubmit(context.queue, 1, &submit_info, nullFence);
+	assert(!err);
+
+	err = vkQueueWaitIdle(context.queue);
+	assert(!err);
+}
+
 void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
 	VkResult err;
 
@@ -1248,7 +1275,7 @@ void VKRenderer::initializeFrame()
 	assert(!err);
 
 	// get the index of the next available swapchain image:
-	err = context.fpAcquireNextImageKHR(context.device, context.swapchain, UINT64_MAX, context.image_acquired_semaphore, (VkFence) 0, &context.current_buffer);
+	err = context.fpAcquireNextImageKHR(context.device, context.swapchain, UINT64_MAX, context.image_acquired_semaphore, (VkFence)0, &context.current_buffer);
 
 	//
 	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -4165,6 +4192,12 @@ void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int3
 
 	//
 	context.uniform_buffers_changed.fill(false);
+
+	//
+	if (context.compute_commands.size() == COMMANDS_MAX) {
+		flushCommands();
+		finishDrawCommandBuffer();
+	}
 }
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
@@ -4176,7 +4209,9 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 }
 
 void VKRenderer::flushCommands() {
-	if (context.clear_mask != 0) {
+	if (context.clear_mask != 0 &&
+		(context.objects_render_commands.size() > 0 ||
+		context.points_render_commands.size() > 0)) {
 		finishSetupCommandBuffer();
 
 		vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
@@ -4608,6 +4643,12 @@ void VKRenderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffse
 
 	//
 	context.uniform_buffers_changed.fill(false);
+
+	//
+	if (context.compute_commands.size() == COMMANDS_MAX) {
+		flushCommands();
+		finishDrawCommandBuffer();
+	}
 }
 
 void VKRenderer::unbindBufferObjects()
@@ -4735,6 +4776,12 @@ void VKRenderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t
 
 	//
 	context.uniform_buffers_changed.fill(false);
+
+	//
+	if (context.compute_commands.size() == COMMANDS_MAX) {
+		flushCommands();
+		finishDrawCommandBuffer();
+	}
 }
 
 void VKRenderer::memoryBarrier() {
