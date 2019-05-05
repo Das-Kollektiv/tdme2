@@ -32,7 +32,7 @@ else ifeq ($(OS), FreeBSD)
 	INCLUDES := $(INCLUDES) -I/usr/local/include
 	# FreeBSD, Vulkan
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS:= -DVULKAN
+		EXTRAFLAGS := -DVULKAN
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
@@ -50,7 +50,7 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-		EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
 	endif
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
@@ -75,7 +75,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
+	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -110,7 +110,7 @@ else ifeq ($(OS), Linux)
 				src/tdme/engine/EngineGL3Renderer.cpp \
 				src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 				src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-			EXTRA_LIBS ?= -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
+			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
 		endif
 	endif
 	OFLAGS := -O2
@@ -137,7 +137,7 @@ else
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
-		EXTRA_LIBS ?= -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	endif
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
