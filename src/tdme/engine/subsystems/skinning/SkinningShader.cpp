@@ -112,7 +112,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 
 		// vbos
 		{
-			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 6, true);
+			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 5, true);
 			modelSkinningCache.vboIds = vboManaged->getVBOIds();
 		}
 		{

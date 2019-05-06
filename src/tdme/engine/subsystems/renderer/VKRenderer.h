@@ -107,7 +107,9 @@ private:
 	};
 
 	struct texture_object {
+		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_FRAMEBUFFER_COLORBUFFER, TYPE_FRAMEBUFFER_DEPTHBUFFER };
 		bool uploaded { false };
+		type type { TYPE_NONE };
 		int32_t id { 0 };
 		int32_t frame_buffer_object_id { 0 };
 		uint32_t width { 0 };
@@ -195,7 +197,7 @@ private:
 		#if defined(__FreeBSD__)
 			bool validate { false }; // TODO: Why no validation layers here?
 		#else
-			bool validate { false };
+			bool validate { true };
 		#endif
 
 		uint32_t current_buffer { 0 };
@@ -301,7 +303,7 @@ private:
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
-	void prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture);
+	void prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId);
 	uint32_t getBufferSizeInternal(int32_t bufferObjectId);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

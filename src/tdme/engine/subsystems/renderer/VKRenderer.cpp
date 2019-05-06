@@ -106,7 +106,7 @@ using tdme::utils::StringUtils;
 
 VKRenderer::VKRenderer()
 {
-	// setup GL3 consts
+	// setup consts
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = 2;
 	CLEAR_COLOR_BUFFER_BIT = 1;
@@ -308,7 +308,6 @@ void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, Vk
 	};
 
 	if (new_image_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-		// Make sure anything that was copying from this image has completed
 		image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 	}
 	if (new_image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
@@ -318,15 +317,17 @@ void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, Vk
 		image_memory_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 	}
 	if (new_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-		// Make sure any Copy or CPU writes to image are flushed
+		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+	}
+	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) {
 		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
 	}
 
 	//
-	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
-void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture) {
+void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
 	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkResult err;
 	bool pass;
@@ -418,8 +419,9 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 		vkUnmapMemory(context.device, tex_obj->mem);
 	}
 
-	tex_obj->image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
+	//
+	tex_obj->image_layout = image_layout;
+	tex_obj->type = texture_object::TYPE_TEXTURE;
 	setImageLayout(
 		tex_obj->image,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -427,7 +429,6 @@ void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTili
 		tex_obj->image_layout,
 		VK_ACCESS_HOST_WRITE_BIT
 	);
-	// setting the image layout does not reference the actual memory so no need to add a mem ref
 }
 
 void VKRenderer::shaderInitResources(TBuiltInResource &resources) {
@@ -3275,7 +3276,11 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	err = vkBindImageMemory(context.device, depth_buffer_texture.image, depth_buffer_texture.mem, 0);
 	assert(!err);
 
+	//
+	depth_buffer_texture.type = texture_object::TYPE_FRAMEBUFFER_DEPTHBUFFER;
 	depth_buffer_texture.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	//
 	setImageLayout(
 		depth_buffer_texture.image,
 		VK_IMAGE_ASPECT_DEPTH_BIT,
@@ -3339,7 +3344,7 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height) {
 void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
 	auto& color_buffer_texture = context.textures[textureId];
-	color_buffer_texture.format = VK_FORMAT_B8G8R8A8_SRGB; //VK_FORMAT_R8G8B8A8_UNORM;
+	color_buffer_texture.format = context.format;
 	color_buffer_texture.width = width;
 	color_buffer_texture.height = height;
 
@@ -3400,7 +3405,11 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	err = vkBindImageMemory(context.device, color_buffer_texture.image, color_buffer_texture.mem, 0);
 	assert(!err);
 
+	//
+	color_buffer_texture.type = texture_object::TYPE_FRAMEBUFFER_COLORBUFFER;
 	color_buffer_texture.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	//
 	setImageLayout(
 		color_buffer_texture.image,
 		VK_IMAGE_ASPECT_COLOR_BIT,
@@ -3497,14 +3506,16 @@ void VKRenderer::uploadTexture(Texture* texture)
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			texture
+			texture,
+			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
 		);
 		prepareTextureImage(
 			&texture_object,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			texture
+			texture,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
 		);
 		setImageLayout(
 			staging_texture.image,
@@ -3513,7 +3524,6 @@ void VKRenderer::uploadTexture(Texture* texture)
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			(VkAccessFlagBits)0
 		);
-
 		setImageLayout(
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
@@ -3521,6 +3531,7 @@ void VKRenderer::uploadTexture(Texture* texture)
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			(VkAccessFlagBits)0
 		);
+		texture_object.image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		VkImageCopy copy_region = {
 			.srcSubresource = {
@@ -3581,7 +3592,8 @@ void VKRenderer::uploadTexture(Texture* texture)
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			texture
+			texture,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		);
 	} else {
 		// Can't support VK_FORMAT_B8G8R8A8_UNORM !?
@@ -3669,15 +3681,58 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 void VKRenderer::bindTexture(int32_t textureId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	auto textureObjectIt = context.textures.find(textureId);
+
+	//
 	context.bound_textures[activeTextureUnit] = 0;
+
+	//
+	auto textureObjectIt = context.textures.find(textureId);
 	if (textureId != 0) {
 		if (textureObjectIt == context.textures.end()) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(context.bound_textures[activeTextureUnit]));
 			return;
 		}
 	}
+
+	// bin
 	context.bound_textures[activeTextureUnit] = textureId;
+	if (textureId == 0) {
+		onBindTexture(textureId);
+		return;
+	}
+
+	//
+	auto& textureObject = textureObjectIt->second;
+	if (textureObject.type == texture_object::TYPE_FRAMEBUFFER_DEPTHBUFFER) {
+		if (textureObject.image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+			prepareSetupCommandBuffer();
+			setImageLayout(
+				textureObject.image,
+				VK_IMAGE_ASPECT_DEPTH_BIT,
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+				VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+				(VkAccessFlagBits)0
+			);
+			textureObject.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+			finishSetupCommandBuffer();
+		}
+	} else
+	if (textureObject.type == texture_object::TYPE_FRAMEBUFFER_COLORBUFFER) {
+		if (textureObject.image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+			prepareSetupCommandBuffer();
+			setImageLayout(
+				textureObject.image,
+				VK_IMAGE_ASPECT_COLOR_BIT,
+				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+				VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+				(VkAccessFlagBits)0
+			);
+			textureObject.image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			finishSetupCommandBuffer();
+		}
+	}
+
+	// done
 	onBindTexture(textureId);
 }
 
@@ -3845,6 +3900,8 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureGlId, int3
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+
+	//
 	if (frameBufferId != 0) {
 		auto frameBufferIt = context.framebuffers.find(frameBufferId);
 		if (frameBufferIt == context.framebuffers.end()) {
@@ -3854,7 +3911,47 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	}
 	flushCommands();
 	endRenderPass();
+
 	context.bound_frame_buffer = frameBufferId;
+
+	if (context.bound_frame_buffer != 0) {
+		auto frameBufferIt = context.framebuffers.find(context.bound_frame_buffer);
+		if (frameBufferIt == context.framebuffers.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(context.bound_frame_buffer));
+		} else {
+			auto depthBufferTextureId = frameBufferIt->second.depth_texture_id;
+			auto colorBufferTextureId = frameBufferIt->second.color_texture_id;
+			prepareSetupCommandBuffer();
+			if (depthBufferTextureId != 0) {
+				auto& depth_buffer_texture = context.textures[depthBufferTextureId];
+				if (depth_buffer_texture.image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) {
+					setImageLayout(
+						depth_buffer_texture.image,
+						VK_IMAGE_ASPECT_DEPTH_BIT,
+						VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
+						VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+						(VkAccessFlagBits)0
+					);
+					depth_buffer_texture.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+				}
+			}
+			if (colorBufferTextureId != 0) {
+				auto& color_buffer_texture = context.textures[colorBufferTextureId];
+				if (color_buffer_texture.image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+					setImageLayout(
+						color_buffer_texture.image,
+						VK_IMAGE_ASPECT_COLOR_BIT,
+						VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+						VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+						(VkAccessFlagBits)0
+					);
+					color_buffer_texture.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				}
+			}
+			finishSetupCommandBuffer();
+		}
+	}
+
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
@@ -3941,7 +4038,7 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 	&mem_alloc.memoryTypeIndex);
 	assert(pass);
 
-	 //
+	//
 	mem_alloc.allocationSize = mem_reqs.size;
 	err = vkAllocateMemory(context.device, &mem_alloc, NULL, &bufferMemory);
 	assert(err == VK_SUCCESS);
@@ -4057,6 +4154,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	buffer.current_buffer = reusableBuffer;
 
 	// clean up
+	// TODO: a.drewke, this has a bug currently
 	if (buffer.buffer_count > 1 && context.frame > buffer.frame_cleaned_last + 60) {
 		vector<int> bufferArraysToRemove;
 		for (auto& reusableBuffersIt: buffer.buffers) {
@@ -4065,9 +4163,9 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 			auto& bufferList = reusableBuffersIt.second;
 			for (auto& reusableBufferCandidate: bufferList) {
 				if (buffer.current_buffer != &reusableBufferCandidate &&
-					buffer.frame_cleaned_last > reusableBufferCandidate.frame_used_last - 60) {
-					vkUnmapMemory(context.device, reusableBufferCandidate.mem);
+					context.frame > reusableBufferCandidate.frame_used_last + 60) {
 					vkDestroyBuffer(context.device, reusableBufferCandidate.buf, NULL);
+					vkUnmapMemory(context.device, reusableBufferCandidate.mem);
 					vkFreeMemory(context.device, reusableBufferCandidate.mem, NULL);
 					buffersToRemove.push_back(i);
 				}
@@ -4247,10 +4345,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 void VKRenderer::flushCommands() {
 	finishCommandBuffers();
 
-	if (context.clear_mask != 0 &&
-		(context.objects_render_commands.size() > 0 ||
-		context.points_render_commands.size() > 0)) {
-
+	if (context.clear_mask != 0) {
 		vkCmdSetViewport(context.draw_cmd, 0, 1, &context.viewport);
 		vkCmdSetScissor(context.draw_cmd, 0, 1, &context.scissor);
 

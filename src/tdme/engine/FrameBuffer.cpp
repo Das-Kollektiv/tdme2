@@ -137,6 +137,17 @@ void FrameBuffer::renderToScreen()
 	// unbind buffers
 	renderer->unbindBufferObjects();
 
+	// unbind color buffer texture
+	renderer->setTextureUnit(0);
+	renderer->bindTexture(renderer->ID_NONE);
+
+	// unbind depth buffer texture
+	renderer->setTextureUnit(1);
+	renderer->bindTexture(renderer->ID_NONE);
+
+	// switch back to diffuse texture unit
+	renderer->setTextureUnit(0);
+
 	//
 	frameBufferRenderShader->unUseProgram();
 
@@ -197,6 +208,26 @@ void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, con
 
 	// unbind buffers
 	renderer->unbindBufferObjects();
+
+	// unbind color buffer texture
+	renderer->setTextureUnit(0);
+	renderer->bindTexture(renderer->ID_NONE);
+
+	// unbind depth buffer texture
+	renderer->setTextureUnit(1);
+	renderer->bindTexture(renderer->ID_NONE);
+
+	// unbind temporary if any given
+	if (temporary != nullptr) {
+		renderer->setTextureUnit(2);
+		renderer->bindTexture(renderer->ID_NONE);
+
+		renderer->setTextureUnit(3);
+		renderer->bindTexture(renderer->ID_NONE);
+	}
+
+	// switch back to diffuse texture unit
+	renderer->setTextureUnit(0);
 
 	//
 	postProcessingShader->unUseProgram();
