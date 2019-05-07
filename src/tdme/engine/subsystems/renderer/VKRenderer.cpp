@@ -1151,6 +1151,7 @@ void VKRenderer::initializeRenderPass() {
 			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			// TODO: a.drewke, was: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, check me later, something with changing image layouts is wrong here sometimes
 			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 			.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		},
@@ -3990,6 +3991,7 @@ VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " has no current data attached");
 		return VK_NULL_HANDLE;
 	}
+	bufferIt->second.current_buffer->frame_used_last = context.frame;
 	return bufferIt->second.current_buffer->buf;
 }
 
@@ -4154,32 +4156,29 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 	buffer.current_buffer = reusableBuffer;
 
 	// clean up
-	// TODO: a.drewke, this has a bug currently
-	if (buffer.buffer_count > 1 && context.frame > buffer.frame_cleaned_last + 60) {
+	vector<int> buffersToRemove;
+	if (buffer.buffer_count > 1 && context.frame >= buffer.frame_cleaned_last + 60) {
 		vector<int> bufferArraysToRemove;
 		for (auto& reusableBuffersIt: buffer.buffers) {
 			auto i = 0;
-			vector<int> buffersToRemove;
+			buffersToRemove.clear();
 			auto& bufferList = reusableBuffersIt.second;
 			for (auto& reusableBufferCandidate: bufferList) {
-				if (buffer.current_buffer != &reusableBufferCandidate &&
-					context.frame > reusableBufferCandidate.frame_used_last + 60) {
+				if (context.frame >= reusableBufferCandidate.frame_used_last + 60) {
 					vkDestroyBuffer(context.device, reusableBufferCandidate.buf, NULL);
 					vkUnmapMemory(context.device, reusableBufferCandidate.mem);
 					vkFreeMemory(context.device, reusableBufferCandidate.mem, NULL);
-					buffersToRemove.push_back(i);
+					buffersToRemove.push_back(i - buffersToRemove.size());
 				}
 				i++;
 			}
 			if (buffersToRemove.size() == bufferList.size()) {
 				bufferArraysToRemove.push_back(reusableBuffersIt.first);
 			} else {
-				auto buffersRemoved = 0;
 				for (auto bufferToRemove: buffersToRemove) {
-					auto listIt = reusableBuffersIt.second.begin();
-					advance(listIt, bufferToRemove - buffersRemoved);
-					reusableBuffersIt.second.erase(listIt);
-					buffersRemoved++;
+					auto listIt = bufferList.begin();
+					advance(listIt, bufferToRemove);
+					bufferList.erase(listIt);
 					buffer.buffer_count--;
 				}
 			}
