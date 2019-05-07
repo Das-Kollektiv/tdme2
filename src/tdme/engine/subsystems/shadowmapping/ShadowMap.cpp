@@ -38,8 +38,6 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-constexpr int32_t ShadowMap::TEXTUREUNIT;
-
 ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height)
 {
 	this->shadowMapping = shadowMapping;

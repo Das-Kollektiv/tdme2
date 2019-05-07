@@ -81,7 +81,7 @@ private:
 	void updateDepthBiasMVPMatrix();
 
 public:
-	static constexpr int32_t TEXTUREUNIT { 4 };
+	static constexpr int32_t TEXTUREUNIT { 8 };
 
 	/**
 	 * @return width

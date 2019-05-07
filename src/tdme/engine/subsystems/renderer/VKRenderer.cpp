@@ -1473,6 +1473,13 @@ void VKRenderer::finishFrame()
 	context.delete_memory.clear();
 	context.delete_images.clear();
 
+	// work around for AMD drivers not telling if window needs to be reshaped
+	if (needsReshape == false) {
+		int32_t currentWidth;
+		int32_t currentHeight;
+		glfwGetWindowSize(Application::glfwWindow, &currentWidth, &currentHeight);
+		needsReshape = currentWidth != context.width || currentHeight != context.height;
+	}
 	if (needsReshape == true) reshape();
 
 	//

@@ -30,7 +30,8 @@ out vec4 outColor;
 void main(void) {
 	float depth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 	vec4 originalColor = texture(colorBufferTextureUnit, vsFragTextureUV);
-	vec4 blurredColor = vec4(0.0, 0.0, 0.0, 0.0);
+	originalColor.a = 1.0;
+	vec4 blurredColor = vec4(0.0, 0.0, 0.0, 1.0);
 	outColor = originalColor;
 	if (depth == 0.0) {
 		for (int y = 0; y < MAP_LOOKUPS_FAR; y++)
@@ -63,6 +64,7 @@ void main(void) {
 		blurredColor/= MAP_LOOKUPS_NEAR * MAP_LOOKUPS_NEAR;
 		blurredColor*= intensity;
 		blurredColor+= originalColor * (1.0 - intensity);
+		blurredColor.a = 1.0;
 		outColor = blurredColor;
 	}
 	if (depth > DISTANCE_FAR) {
@@ -83,6 +85,7 @@ void main(void) {
 		blurredColor/= MAP_LOOKUPS_FAR * MAP_LOOKUPS_FAR;
 		blurredColor*= intensity;
 		blurredColor+= originalColor * (1.0 - intensity);
+		blurredColor.a = 1.0;
 		outColor = blurredColor;
 	}
 	gl_FragDepth = depth;
