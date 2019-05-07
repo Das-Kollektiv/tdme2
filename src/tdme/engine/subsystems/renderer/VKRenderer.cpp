@@ -4723,7 +4723,7 @@ void VKRenderer::flushCommands() {
 
 void VKRenderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	drawInstancedTrianglesFromBufferObjects(triangles, trianglesOffset, VK_NULL_HANDLE, instances);
 }
 
 void VKRenderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
