@@ -163,7 +163,7 @@
     - documentation
 
 - What is WIP or planned
-    - Improve on Vulkan and support Vulkan on MacOSX via Metal
+    - Improve on Vulkan
     - PBR lighting shader for GL3/CORE+
     - simple script language for GUI
     - Expose shader and post processing programs setup API
