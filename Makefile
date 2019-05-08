@@ -1,3 +1,4 @@
+
 NAME = tdme
 LIB := lib$(NAME).a
 EXT_LIB := lib$(NAME)-ext.a
@@ -17,13 +18,27 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
-	SRCS_PLATFORM := $(SRCS_PLATFORM) \
+	ifeq ($(VULKAN), YES)
+		EXTRAFLAGS := -DVULKAN
+		INCLUDES := $(INCLUDES) -Iext/moltenvk/include -Iext/glfw3/include
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+				src/tdme/engine/EngineVKRenderer.cpp \
+				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
+				src/tdme/engine/fileio/models/FBXReader.cpp \
+				src/tdme/engine/fileio/models/ModelReaderFBX.cpp
+		EXT_GLSLANG_PLATFORM_SRCS = \
+			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3.3 -Lext/moltenvk/MacOs/dynamic -l MoltenVK -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+	else
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-	EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+	endif
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
@@ -39,7 +54,7 @@ else ifeq ($(OS), FreeBSD)
 				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 				src/tdme/engine/fileio/models/ModelReader.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
-			ext/glslang/OSDependent/Unix/ossource.cpp
+			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread
 	else
 		#FreeBSD, GL
@@ -101,7 +116,7 @@ else ifeq ($(OS), Linux)
 				src/tdme/engine/EngineVKRenderer.cpp \
 				src/tdme/engine/subsystems/renderer/VKRenderer.cpp
 			EXT_GLSLANG_PLATFORM_SRCS = \
-				ext/glslang/OSDependent/Unix/ossource.cpp
+				ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 		else
 			# Linux, GL
@@ -124,7 +139,7 @@ else
 				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
 				src/tdme/engine/fileio/models/ModelReader.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
-				ext/glslang/OSDependent/Windows/ossource.cpp
+				ext/vulkan/glslang/OSDependent/Windows/ossource.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lvulkan -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	else
@@ -170,9 +185,9 @@ VORBIS = vorbis
 OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
-SPIRV = spirv
-GLSLANG = glslang
-OGLCOMPILERSDLL = OGLCompilersDLL
+SPIRV = vulkan/spirv
+GLSLANG = vulkan/glslang
+OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -683,50 +698,50 @@ EXT_REACTPHYSICS3D_SRCS = \
 
 ifeq ($(VULKAN), YES)
 	EXT_SPIRV_SRCS = \
-		ext/spirv/GlslangToSpv.cpp \
-		ext/spirv/InReadableOrder.cpp \
-		ext/spirv/Logger.cpp \
-		ext/spirv/SPVRemapper.cpp \
-		ext/spirv/SpvBuilder.cpp \
-		ext/spirv/SpvPostProcess.cpp \
-		ext/spirv/SpvTools.cpp \
-		ext/spirv/disassemble.cpp \
-		ext/spirv/doc.cpp \
-	
+		ext/vulkan/spirv/GlslangToSpv.cpp \
+		ext/vulkan/spirv/InReadableOrder.cpp \
+		ext/vulkan/spirv/Logger.cpp \
+		ext/vulkan/spirv/SPVRemapper.cpp \
+		ext/vulkan/spirv/SpvBuilder.cpp \
+		ext/vulkan/spirv/SpvPostProcess.cpp \
+		ext/vulkan/spirv/SpvTools.cpp \
+		ext/vulkan/spirv/disassemble.cpp \
+		ext/vulkan/spirv/doc.cpp \
+
 	EXT_GLSLANG_SRCS := \
-		ext/glslang/MachineIndependent/glslang_tab.cpp \
-		ext/glslang/MachineIndependent/attribute.cpp \
-		ext/glslang/MachineIndependent/Constant.cpp \
-		ext/glslang/MachineIndependent/iomapper.cpp \
-		ext/glslang/MachineIndependent/InfoSink.cpp \
-		ext/glslang/MachineIndependent/Initialize.cpp \
-		ext/glslang/MachineIndependent/IntermTraverse.cpp \
-		ext/glslang/MachineIndependent/Intermediate.cpp \
-		ext/glslang/MachineIndependent/ParseContextBase.cpp \
-		ext/glslang/MachineIndependent/ParseHelper.cpp \
-		ext/glslang/MachineIndependent/PoolAlloc.cpp \
-		ext/glslang/MachineIndependent/RemoveTree.cpp \
-		ext/glslang/MachineIndependent/Scan.cpp \
-	 	ext/glslang/MachineIndependent/ShaderLang.cpp \
-		ext/glslang/MachineIndependent/SymbolTable.cpp \
-		ext/glslang/MachineIndependent/Versions.cpp \
-		ext/glslang/MachineIndependent/intermOut.cpp \
-		ext/glslang/MachineIndependent/limits.cpp \
-		ext/glslang/MachineIndependent/linkValidate.cpp \
-		ext/glslang/MachineIndependent/parseConst.cpp \
-		ext/glslang/MachineIndependent/reflection.cpp \
-		ext/glslang/MachineIndependent/preprocessor/Pp.cpp \
-		ext/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
-		ext/glslang/MachineIndependent/preprocessor/PpContext.cpp \
-		ext/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
-		ext/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
-		ext/glslang/MachineIndependent/propagateNoContraction.cpp \
-		ext/glslang/GenericCodeGen/CodeGen.cpp \
-		ext/glslang/GenericCodeGen/Link.cpp \
+		ext/vulkan/glslang/MachineIndependent/glslang_tab.cpp \
+		ext/vulkan/glslang/MachineIndependent/attribute.cpp \
+		ext/vulkan/glslang/MachineIndependent/Constant.cpp \
+		ext/vulkan/glslang/MachineIndependent/iomapper.cpp \
+		ext/vulkan/glslang/MachineIndependent/InfoSink.cpp \
+		ext/vulkan/glslang/MachineIndependent/Initialize.cpp \
+		ext/vulkan/glslang/MachineIndependent/IntermTraverse.cpp \
+		ext/vulkan/glslang/MachineIndependent/Intermediate.cpp \
+		ext/vulkan/glslang/MachineIndependent/ParseContextBase.cpp \
+		ext/vulkan/glslang/MachineIndependent/ParseHelper.cpp \
+		ext/vulkan/glslang/MachineIndependent/PoolAlloc.cpp \
+		ext/vulkan/glslang/MachineIndependent/RemoveTree.cpp \
+		ext/vulkan/glslang/MachineIndependent/Scan.cpp \
+		ext/vulkan/glslang/MachineIndependent/ShaderLang.cpp \
+		ext/vulkan/glslang/MachineIndependent/SymbolTable.cpp \
+		ext/vulkan/glslang/MachineIndependent/Versions.cpp \
+		ext/vulkan/glslang/MachineIndependent/intermOut.cpp \
+		ext/vulkan/glslang/MachineIndependent/limits.cpp \
+		ext/vulkan/glslang/MachineIndependent/linkValidate.cpp \
+		ext/vulkan/glslang/MachineIndependent/parseConst.cpp \
+		ext/vulkan/glslang/MachineIndependent/reflection.cpp \
+		ext/vulkan/glslang/MachineIndependent/preprocessor/Pp.cpp \
+		ext/vulkan/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
+		ext/vulkan/glslang/MachineIndependent/preprocessor/PpContext.cpp \
+		ext/vulkan/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
+		ext/vulkan/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
+		ext/vulkan/glslang/MachineIndependent/propagateNoContraction.cpp \
+		ext/vulkan/glslang/GenericCodeGen/CodeGen.cpp \
+		ext/vulkan/glslang/GenericCodeGen/Link.cpp \
 		$(EXT_GLSLANG_PLATFORM_SRCS)
-	
+    	
 	EXT_OGLCOMPILERSDLL_SRCS = \
-		ext/OGLCompilersDLL/InitializeDll.cpp \
+		ext/vulkan/OGLCompilersDLL/InitializeDll.cpp \
 
 else
 	EXT_SPIRV_SRCS =
@@ -774,9 +789,9 @@ EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
 EXT_OGG_OBJS = $(EXT_OGG_SRCS:ext/$(OGG)/%.c=$(OBJ)/%.o)
 EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
-EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/%.o)
-EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/%.o)
-EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/%.o)
+EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
+EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
+EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
 
 all: $(LIBS)
 
@@ -833,13 +848,13 @@ $(EXT_VHACD_OBJS):$(OBJ)/%.o: ext/$(VHACD)/%.cpp | print-opts
 $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	$(cpp-command-ext-rp3d)
 
-$(EXT_SPIRV_OBJS):$(OBJ)/%.o: ext/$(SPIRV)/%.cpp | print-opts
+$(EXT_SPIRV_OBJS):$(OBJ)/vulkan/%.o: ext/$(SPIRV)/%.cpp | print-opts
 	$(cpp-command)
 
-$(EXT_GLSLANG_OBJS):$(OBJ)/%.o: ext/$(GLSLANG)/%.cpp | print-opts
+$(EXT_GLSLANG_OBJS):$(OBJ)/vulkan/%.o: ext/$(GLSLANG)/%.cpp | print-opts
 	$(cpp-command)
 
-$(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | print-opts
+$(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | print-opts
 	$(cpp-command)
 
 %.a:

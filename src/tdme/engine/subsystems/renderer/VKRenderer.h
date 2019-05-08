@@ -3,7 +3,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <spirv/GlslangToSpv.h>
+#include <ext/vulkan/spirv/GlslangToSpv.h>
 
 #include <array>
 #include <list>

@@ -27,7 +27,7 @@
 	#include <tdme/os/threading/Mutex.h>
 #endif
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) && !defined(VULKAN)
 	#include <Carbon/Carbon.h>
 #endif
 
@@ -363,14 +363,14 @@ void Application::setMouseCursor(int mouseCursor) {
 }
 
 void Application::setMousePosition(int x, int y) {
-	#if defined(__APPLE__)
-		CGPoint point;
-		point.x = glutGet((GLenum)GLUT_WINDOW_X) + x;
-		point.y = glutGet((GLenum)GLUT_WINDOW_Y) + y;
-		CGWarpMouseCursorPosition(point);
-		CGAssociateMouseAndMouseCursorPosition(true);
+	#if defined(VULKAN)
 	#else
-		#if defined(VULKAN)
+		#if defined(__APPLE__)
+			CGPoint point;
+			point.x = glutGet((GLenum)GLUT_WINDOW_X) + x;
+			point.y = glutGet((GLenum)GLUT_WINDOW_Y) + y;
+			CGWarpMouseCursorPosition(point);
+			CGAssociateMouseAndMouseCursorPosition(true);
 		#else
 			glutWarpPointer(x, y);
 		#endif

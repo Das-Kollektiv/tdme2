@@ -7,9 +7,9 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <ext/glslang/Public/ShaderLang.h>
-#include <ext/OGLCompilersDLL/InitializeDll.h>
-#include <ext/spirv/GlslangToSpv.h>
+#include <ext/vulkan/glslang/Public/ShaderLang.h>
+#include <ext/vulkan/OGLCompilersDLL/InitializeDll.h>
+#include <ext/vulkan/spirv/GlslangToSpv.h>
 
 #include <stdlib.h>
 #include <string.h>
