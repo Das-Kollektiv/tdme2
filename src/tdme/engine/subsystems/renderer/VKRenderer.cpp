@@ -125,7 +125,7 @@ VKRenderer::VKRenderer()
 	FRAMEBUFFER_DEFAULT = 0;
 }
 
-bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
+inline bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
     uint32_t i;
     // Search memtypes to find first index with those properties
     for (i = 0; i < VK_MAX_MEMORY_TYPES; i++) {
@@ -142,7 +142,7 @@ bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirement
     return false;
 }
 
-VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers) {
+inline VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers) {
 	uint32_t i, j;
 	for (i = 0; i < check_count; i++) {
 		VkBool32 found = 0;
@@ -221,41 +221,7 @@ void VKRenderer::finishSetupCommandBuffer() {
 	}
 }
 
-void VKRenderer::finishCommandBuffers() {
-	VkResult err;
-
-	//
-	if (context.setup_cmd != VK_NULL_HANDLE) {
-		assert(!err);
-		err = vkEndCommandBuffer(context.setup_cmd);
-
-		const VkCommandBuffer cmd_bufs[] = { context.setup_cmd };
-		VkFence nullFence = { VK_NULL_HANDLE };
-		VkSubmitInfo submit_info = {
-			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-			.pNext = NULL,
-			.waitSemaphoreCount = 0,
-			.pWaitSemaphores = NULL,
-			.pWaitDstStageMask = NULL,
-			.commandBufferCount = 1,
-			.pCommandBuffers = cmd_bufs,
-			.signalSemaphoreCount = 0,
-			.pSignalSemaphores = NULL
-		};
-
-		err = vkQueueSubmit(context.queue, 1, &submit_info, nullFence);
-		assert(!err);
-
-		err = vkQueueWaitIdle(context.queue);
-		assert(!err);
-
-		vkFreeCommandBuffers(context.device, context.cmd_pool, 1, &context.setup_cmd);
-
-		context.setup_cmd = VK_NULL_HANDLE;
-	}
-}
-
-void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
+inline void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
 	VkResult err;
 
 	//
@@ -300,7 +266,7 @@ void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, Vk
 	vkCmdPipelineBarrier(context.setup_cmd, VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
-void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
+inline void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
 	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkResult err;
 	bool pass;
@@ -1920,7 +1886,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 	return shaderStruct.id;
 }
 
-void VKRenderer::preparePipeline(program_type& program) {
+inline void VKRenderer::preparePipeline(program_type& program) {
 	auto shaderIdx = 0;
 	for (auto shaderId: program.shader_ids) {
 		auto shaderIt = context.shaders.find(shaderId);
@@ -1945,7 +1911,7 @@ void VKRenderer::preparePipeline(program_type& program) {
 	}
 }
 
-void VKRenderer::finishPipeline() {
+inline void VKRenderer::finishPipeline() {
 	if (context.program_id != 0) {
 		auto programIt = context.programs.find(context.program_id);
 		if (programIt == context.programs.end()) {
@@ -1964,7 +1930,7 @@ void VKRenderer::finishPipeline() {
 	context.pipeline = VK_NULL_HANDLE;
 }
 
-void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
+inline void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
 	memset(&rs, 0, sizeof(rs));
 	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rs.polygonMode = VK_POLYGON_MODE_FILL;
@@ -1976,7 +1942,7 @@ void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationState
 	rs.lineWidth = 1.0f;
 }
 
-void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state) {
+inline void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state) {
 	memset(&att_state, 0, sizeof(att_state));
 	att_state.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	att_state.blendEnable = context.blending_enabled = true?VK_TRUE:VK_FALSE;
@@ -1988,7 +1954,7 @@ void VKRenderer::createColorBlendAttachmentState(VkPipelineColorBlendAttachmentS
 	att_state.alphaBlendOp = VK_BLEND_OP_ADD;
 }
 
-void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds) {
+inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds) {
 	memset(&ds, 0, sizeof(ds));
 	ds.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 	ds.depthTestEnable = context.depth_buffer_testing == true?VK_TRUE:VK_FALSE;
@@ -2002,7 +1968,7 @@ void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCr
 	ds.front = ds.back;
 }
 
-const string VKRenderer::createPipelineId() {
+inline const string VKRenderer::createPipelineId() {
 	return
 		to_string(context.culling_enabled) + "," +
 		to_string(context.cull_mode) + "," +
@@ -2328,7 +2294,17 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		pipelinesIt = program.pipelines.find(pipelineId);
 	}
 
+}
+
+inline void VKRenderer::setupObjectsRenderingPipeline(program_type& program) {
+	auto pipelineId = createPipelineId();
+	auto pipelinesIt = program.pipelines.find(pipelineId);
+	if (program.created == false || pipelinesIt == program.pipelines.end()) {
+		createObjectsRenderingPipeline(program);
+	}
+
 	//
+	pipelinesIt = program.pipelines.find(pipelineId);
 	auto newPipeline = pipelinesIt->second.pipeline;
 	if (newPipeline != context.pipeline) {
 		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
@@ -2593,8 +2569,17 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		//
 		pipelinesIt = program.pipelines.find(pipelineId);
 	}
+}
+
+inline void VKRenderer::setupPointsRenderingPipeline(program_type& program) {
+	auto pipelineId = createPipelineId();
+	auto pipelinesIt = program.pipelines.find(pipelineId);
+	if (program.created == false || pipelinesIt == program.pipelines.end()) {
+		createPointsRenderingPipeline(program);
+	}
 
 	//
+	pipelinesIt = program.pipelines.find(pipelineId);
 	auto newPipeline = pipelinesIt->second.pipeline;
 	if (newPipeline != context.pipeline) {
 		vkCmdBindPipeline(context.draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
@@ -2606,7 +2591,7 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 	}
 }
 
-void VKRenderer::createSkinningComputingPipeline(program_type& program) {
+inline void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 	if (program.created == false) {
 		VkResult err;
 
@@ -2725,8 +2710,13 @@ void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 		//
 		context.uniform_buffers_changed.fill(true);
 	}
+}
 
-	//
+inline void VKRenderer::setupSkinningComputingPipeline(program_type& program) {
+	if (program.created == false || program.pipelines.find("default") == program.pipelines.end()) {
+		createSkinningComputingPipeline(program);
+	}
+
 	//
 	auto newPipeline = program.pipelines.find("default")->second.pipeline;
 	if (newPipeline != context.pipeline) {
@@ -4368,7 +4358,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_
 }
 
 inline void VKRenderer::flushCommands() {
-	finishCommandBuffers();
+	finishSetupCommandBuffer();
 
 	if (context.clear_mask != 0) {
 		if (context.render_pass_started == false) startRenderPass();
@@ -4438,14 +4428,14 @@ inline void VKRenderer::flushCommands() {
 	// create pipeline
 	if (context.command_type == context_type::COMMAND_OBJECTS) {
 		if (context.render_pass_started == false) startRenderPass();
-		createObjectsRenderingPipeline(program);
+		setupObjectsRenderingPipeline(program);
 	} else
-		if (context.command_type == context_type::COMMAND_POINTS) {
+	if (context.command_type == context_type::COMMAND_POINTS) {
 		if (context.render_pass_started == false) startRenderPass();
-		createPointsRenderingPipeline(program);
+		setupPointsRenderingPipeline(program);
 	} else
 		if (context.command_type == context_type::COMMAND_COMPUTE) {
-		createSkinningComputingPipeline(program);
+		setupSkinningComputingPipeline(program);
 	} else {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(context.program_id));
 		return;

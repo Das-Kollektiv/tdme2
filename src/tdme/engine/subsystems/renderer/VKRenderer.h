@@ -323,12 +323,14 @@ private:
 	void endRenderPass();
 	void preparePipeline(program_type& program);
 	void createObjectsRenderingPipeline(program_type& program);
+	void setupObjectsRenderingPipeline(program_type& program);
 	void createPointsRenderingPipeline(program_type& program);
+	void setupPointsRenderingPipeline(program_type& program);
 	void createSkinningComputingPipeline(program_type& program);
+	void setupSkinningComputingPipeline(program_type& program);
 	void finishPipeline();
 	void prepareSetupCommandBuffer();
 	void finishSetupCommandBuffer();
-	void finishCommandBuffers();
 	void reshape();
 	int determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms);
 	int align(int alignment, int offset);
