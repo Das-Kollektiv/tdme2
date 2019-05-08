@@ -310,6 +310,7 @@ void Application::setWindowWidth(int32_t windowWidth) {
 	this->windowWidth = windowWidth;
 	if (initialized == true) {
 		#if defined(VULKAN)
+			glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 		#else
 			glutReshapeWindow(windowWidth, windowHeight);
 		#endif
@@ -324,6 +325,7 @@ void Application::setWindowHeight(int32_t windowHeight) {
 	this->windowHeight = windowHeight;
 	if (initialized == true) {
 		#if defined(VULKAN)
+			glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 		#else
 			glutReshapeWindow(windowWidth, windowHeight);
 		#endif
@@ -357,6 +359,12 @@ void Application::installExceptionHandler() {
 
 void Application::setMouseCursor(int mouseCursor) {
 	#if defined(VULKAN)
+		if (mouseCursor == MOUSE_CURSOR_DISABLED) {
+			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		} else
+		if (mouseCursor == MOUSE_CURSOR_ENABLED) {
+			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		}
 	#else
 		glutSetCursor(mouseCursor);
 	#endif
@@ -371,6 +379,7 @@ void Application::setMousePosition(int x, int y) {
 		CGAssociateMouseAndMouseCursorPosition(true);
 	#else
 		#if defined(VULKAN)
+			glfwSetCursorPos(glfwWindow, x, y);
 		#else
 			glutWarpPointer(x, y);
 		#endif

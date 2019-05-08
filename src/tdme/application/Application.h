@@ -4,7 +4,7 @@
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
 	#define MOUSE_CURSOR_DISABLED 0
-	#define MOUSE_CURSOR_ENABLED -1
+	#define MOUSE_CURSOR_ENABLED 1
 	#include <array>
 	using std::array;
 #else

@@ -4081,6 +4081,22 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		}
 	}
 
+	// nope check if to reuse a bigger one
+	if (reusableBuffer == nullptr) {
+		for (auto& bufferIt: buffer.buffers) {
+			if (bufferIt.first >= size) {
+				auto& buffers = bufferIt.second;
+				for (auto& reusableBufferCandidate: buffers) {
+					if (reusableBufferCandidate.frame_used_last < context.frame) {
+						reusableBuffer = &reusableBufferCandidate;
+						break;
+					}
+				}
+			}
+			if (reusableBuffer != nullptr) break;
+		}
+	}
+
 	// nope, create one
 	if (reusableBuffer == nullptr) {
 		buffer.buffers[size].push_back(buffer_object::reusable_buffer());
