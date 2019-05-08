@@ -14,10 +14,13 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
-#include <tdme/engine/EngineGL2Renderer.h>
-#include <tdme/engine/EngineGL3Renderer.h>
-#include <tdme/engine/EngineGLES2Renderer.h>
-#include <tdme/engine/EngineVKRenderer.h>
+#if defined(VULKAN)
+	#include <tdme/engine/EngineVKRenderer.h>
+#else
+	#include <tdme/engine/EngineGL2Renderer.h>
+	#include <tdme/engine/EngineGL3Renderer.h>
+	#include <tdme/engine/EngineGLES2Renderer.h>
+#endif
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/FrameBuffer.h>

@@ -3,7 +3,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include <spirv/GlslangToSpv.h>
+#include <ext/vulkan/spirv/GlslangToSpv.h>
 
 #include <array>
 #include <list>
@@ -46,7 +46,8 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int COMMANDS_MAX { 32 };
+	static constexpr int COMMANDS_MAX { 1 };
+	static constexpr int DESC_MAX { 512 };
 
 	struct shader_type {
 		struct uniform_type {
@@ -76,7 +77,6 @@ private:
 			VkPipeline pipeline { VK_NULL_HANDLE };
 		};
 		unordered_map<string, pipeline_struct> pipelines;
-		uint32_t desc_used { 0 };
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
@@ -85,8 +85,9 @@ private:
 		uint32_t layout_bindings { 0 };
 		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		VkDescriptorSet desc_set[COMMANDS_MAX] { VK_NULL_HANDLE };
+		VkDescriptorSet desc_set[DESC_MAX] { VK_NULL_HANDLE };
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
+		uint32_t desc_idx { 0 };
 		int32_t id { 0 };
 	};
 
@@ -217,6 +218,7 @@ private:
 		array<bool, 4> uniform_buffers_changed;
 		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		int32_t bound_frame_buffer { 0 };
+		VkPipeline pipeline { VK_NULL_HANDLE };
 
 		struct objects_render_command {
 			struct texture {
@@ -276,9 +278,11 @@ private:
 			int32_t num_groups_z { 0 };
 		};
 
-		vector<objects_render_command> objects_render_commands;
-		vector<points_render_command> points_render_commands;
-		vector<compute_command> compute_commands;
+		enum command_type { COMMAND_NONE, COMMAND_OBJECTS, COMMAND_POINTS, COMMAND_COMPUTE };
+		command_type command_type { COMMAND_NONE };
+		objects_render_command objects_render_command;
+		points_render_command points_render_command;
+		compute_command compute_command;
 
 		VkViewport viewport;
 		VkRect2D scissor;
