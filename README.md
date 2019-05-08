@@ -200,6 +200,7 @@
             - glslang
             - OGLCompilersDLL
             - spirv
+            - MoltenVK
     - targeted platforms and its current state
         - Windows/MINGW(port completed)
         - Windows/MSC(port completed)
