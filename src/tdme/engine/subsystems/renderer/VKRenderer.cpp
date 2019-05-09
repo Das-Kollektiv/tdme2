@@ -4922,24 +4922,27 @@ void VKRenderer::memoryBarrier() {
 	}
 
 	const VkCommandBuffer cmd_bufs[] = { context.draw_cmd, context.setup_cmd };
-	VkFence nullFence = { VK_NULL_HANDLE };
-	VkSubmitInfo submit_info = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = NULL,
-		.waitSemaphoreCount = 0,
-		.pWaitSemaphores = NULL,
-		.pWaitDstStageMask = NULL,
-		.commandBufferCount = static_cast<uint32_t>(1 + (context.setup_cmd != VK_NULL_HANDLE?1:0)),
-		.pCommandBuffers = cmd_bufs,
-		.signalSemaphoreCount = 0,
-		.pSignalSemaphores = NULL
-	};
 
-	err = vkQueueSubmit(context.queue, 1, &submit_info, nullFence);
-	assert(!err);
+	if (context.draw_cmd_started == true || context.setup_cmd != VK_NULL_HANDLE) {
+		VkFence nullFence = { VK_NULL_HANDLE };
+		VkSubmitInfo submit_info = {
+			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			.pNext = NULL,
+			.waitSemaphoreCount = 0,
+			.pWaitSemaphores = NULL,
+			.pWaitDstStageMask = NULL,
+			.commandBufferCount = static_cast<uint32_t>((context.draw_cmd_started == true?1:0) + (context.setup_cmd != VK_NULL_HANDLE?1:0)),
+			.pCommandBuffers = context.draw_cmd_started == true?&cmd_bufs[0]:&cmd_bufs[1],
+			.signalSemaphoreCount = 0,
+			.pSignalSemaphores = NULL
+		};
 
-	err = vkQueueWaitIdle(context.queue);
-	assert(!err);
+		err = vkQueueSubmit(context.queue, 1, &submit_info, nullFence);
+		assert(!err);
+
+		err = vkQueueWaitIdle(context.queue);
+		assert(!err);
+	}
 
 	if (context.draw_cmd_started == true) {
 		const VkCommandBufferBeginInfo cmd_buf_info = {
