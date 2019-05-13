@@ -46,6 +46,9 @@ class tdme::engine::Object3D final
 	, public Entity
 {
 
+public:
+	enum RenderPass { RENDERPASS_OBJECTS, RENDERPASS_POST_POSTPROCESSING };
+
 private:
 	friend class Engine;
 	friend class LODObject3D;
@@ -59,6 +62,7 @@ private:
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
+	RenderPass renderPass { RENDERPASS_OBJECTS };
 
 	/**
 	 * Compute skinning
@@ -94,6 +98,7 @@ private:
 	}
 
 public:
+
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
 	void fromTransformations(const Transformations& transformations) override;
@@ -109,7 +114,6 @@ public:
 	 */
 	Object3D(const string& id, Model* model);
 
-public:
 	// overriden methods
 	virtual void dispose() override;
 
@@ -282,6 +286,21 @@ public:
 	 */
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;
+	}
+
+	/**
+	 * @return render pass
+	 */
+	inline RenderPass getRenderPass() const {
+		return renderPass;
+	}
+
+	/**
+	 * Set render pass
+	 * @param renderPass render pass
+	 */
+	inline void setRenderPass(RenderPass renderPass) {
+		this->renderPass = renderPass;
 	}
 
 };

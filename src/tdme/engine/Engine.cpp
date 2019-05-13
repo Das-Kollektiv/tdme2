@@ -683,6 +683,7 @@ void Engine::initRendering()
 
 	// clear lists of visible objects
 	visibleObjects.clear();
+	visibleObjectsPostPostProcessing.clear();
 	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
@@ -711,22 +712,34 @@ void Engine::computeTransformations()
 		if ((object = dynamic_cast<Object3D*>(_entity)) != nullptr) { \
 			object->preRender(); \
 			object->computeSkinning(); \
-			visibleObjects.push_back(object); \
+			if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
+				visibleObjectsPostPostProcessing.push_back(object); \
+			} else { \
+				visibleObjects.push_back(object); \
+			} \
 		} else \
 		if ((lodObject = dynamic_cast<LODObject3D*>(_entity)) != nullptr) { \
 			auto object = lodObject->determineLODObject(camera); \
 			if (object != nullptr) { \
 				visibleLODObjects.push_back(lodObject); \
-				visibleObjects.push_back(object); \
 				object->preRender(); \
 				object->computeSkinning(); \
+				if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
+					visibleObjectsPostPostProcessing.push_back(object); \
+				} else { \
+					visibleObjects.push_back(object); \
+				} \
 			} \
 		} else \
 		if ((opse = dynamic_cast<ObjectParticleSystem*>(_entity)) != nullptr) { \
 			for (auto object: opse->getEnabledObjects()) { \
 				object->preRender(); \
 				object->computeSkinning(); \
-				visibleObjects.push_back(object); \
+				if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
+					visibleObjectsPostPostProcessing.push_back(object); \
+				} else { \
+					visibleObjects.push_back(object); \
+				} \
 			} \
 			visibleOpses.push_back(opse); \
 		} else \
@@ -918,6 +931,44 @@ void Engine::display()
 		frameBuffer->disableFrameBuffer();
 	}
 
+	// render objects that are have post post processing render pass
+	if (visibleObjectsPostPostProcessing.size() > 0) {
+		// enable materials
+		renderer->setMaterialEnabled();
+
+		// use lighting shader
+		if (lightingShader != nullptr) {
+			lightingShader->useProgram(this);
+		}
+
+		// render post processing objects
+		object3DVBORenderer->render(
+			visibleObjectsPostPostProcessing,
+			true,
+			Object3DVBORenderer::RENDERTYPE_NORMALS |
+			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS |
+			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DVBORenderer::RENDERTYPE_EFFECTCOLORS |
+			Object3DVBORenderer::RENDERTYPE_MATERIALS |
+			Object3DVBORenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DVBORenderer::RENDERTYPE_TEXTURES |
+			Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DVBORenderer::RENDERTYPE_LIGHTS
+		);
+
+		// unuse lighting shader
+		if (lightingShader != nullptr) {
+			lightingShader->unUseProgram();
+		}
+
+		// render shadows if required
+		if (shadowMapping != nullptr)
+			shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+
+		// disable materials
+		renderer->setMaterialDisabled();
+	}
+
 	// delete post processing termporary buffer if not required anymore
 	if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
 		postProcessingTemporaryFrameBuffer->dispose();
@@ -992,6 +1043,29 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
 	for (auto entity: visibleObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
+				auto vertices = _i->next();
+				{
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// iterate visible objects that have post post processing renderpass, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleObjectsPostPostProcessing) {
 		// skip if not pickable or ignored by filter
 		if (entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
