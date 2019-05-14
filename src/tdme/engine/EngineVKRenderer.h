@@ -19,11 +19,11 @@ public:
 	void onUpdateProjectionMatrix() override;
 	void onUpdateCameraMatrix() override;
 	void onUpdateModelViewMatrix() override;
-	void onBindTexture(int32_t textureId) override;
-	void onUpdateTextureMatrix() override;
-	void onUpdateEffect() override;
-	void onUpdateLight(int32_t lightId) override;
-	void onUpdateMaterial() override;
+	void onBindTexture(void* context, int32_t textureId) override;
+	void onUpdateTextureMatrix(void* context) override;
+	void onUpdateEffect(void* context) override;
+	void onUpdateLight(void* context, int32_t lightId) override;
+	void onUpdateMaterial(void* context) override;
 	void onUpdateShader() override;
 
 	/**

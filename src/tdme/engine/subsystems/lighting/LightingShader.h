@@ -47,52 +47,60 @@ public:
 
 	/** 
 	 * Unuse lighting program
+	 * @param context context
 	 */
-	void unUseProgram();
+	void unUseProgram(void* context);
 
 	/** 
 	 * Update effect to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateEffect(Renderer* renderer);
+	void updateEffect(Renderer* renderer, void* context);
 
 	/** 
 	 * Update material to program
-	 * @param renderer gl3 renderer
+	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateMaterial(Renderer* renderer);
+	void updateMaterial(Renderer* renderer, void* context);
 
 	/** 
 	 * Update light to program
 	 * @param renderer renderer
+	 * @param context context
 	 * @param lightId light id
 	 */
-	void updateLight(Renderer* renderer, int32_t lightId);
+	void updateLight(Renderer* renderer, void* context, int32_t lightId);
 
 	/** 
 	 * Update matrices to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateMatrices(Renderer* renderer);
+	void updateMatrices(Renderer* renderer, void* context);
 
 	/** 
 	 * Update texture matrix to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateTextureMatrix(Renderer* renderer);
+	void updateTextureMatrix(Renderer* renderer, void* context);
 
 	/**
 	 * Set shader
 	 * @param id id
+	 * @param context context
 	 */
-	void setShader(const string& id);
+	void setShader(const string& id, void* context);
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
+	 * @param context context
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, void* context, int32_t textureId);
 
 	/**
 	 * Public constructor

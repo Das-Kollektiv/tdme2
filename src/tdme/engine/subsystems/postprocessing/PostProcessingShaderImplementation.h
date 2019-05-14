@@ -33,8 +33,9 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 
 	/** 
 	 * Use program
+	 * @param context context
 	 */
-	virtual void useProgram() = 0;
+	virtual void useProgram(void* context) = 0;
 
 	/** 
 	 * Unuse program
@@ -43,14 +44,16 @@ struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementat
 
 	/**
 	 * Set source buffer pixel width
+	 * @param context context
 	 * @param pixelWidth pixel width
 	 */
-	virtual void setBufferPixelWidth(float pixelWidth) = 0;
+	virtual void setBufferPixelWidth(void* context, float pixelWidth) = 0;
 
 	/**
 	 * Set source buffer pixel height
+	 * @param context context
 	 * @param pixelHeight pixel height
 	 */
-	virtual void setBufferPixelHeight(float pixelHeight) = 0;
+	virtual void setBufferPixelHeight(void* context, float pixelHeight) = 0;
 
 };

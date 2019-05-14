@@ -48,7 +48,7 @@ bool ShadowMappingShaderRenderBaseImplementation::isInitialized()
 
 void ShadowMappingShaderRenderBaseImplementation::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
@@ -92,7 +92,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramId, "lightDirection");
 	if (renderUniformLightDirection == -1) return;
-	if (rendererVersion != "gles2") {
+	if (shaderVersion != "gles2") {
 		if (renderer->isInstancedRenderingAvailable() == false) {
 			renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvMatrix");
 			if (renderUniformMVMatrix == -1) return;

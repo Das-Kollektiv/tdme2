@@ -197,6 +197,8 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 			objectsByModel.clear();
 		}
 	}
+	// use default context
+	auto context = renderer->getDefaultContext();
 	// render transparent render faces if any exist
 	auto transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
 	if (transparentRenderFaces->size() > 0) {
@@ -212,8 +214,8 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		renderer->setShader("default");
 		renderer->onUpdateShader();
 		// have identity texture matrix
-		renderer->getTextureMatrix().identity();
-		renderer->onUpdateTextureMatrix();
+		renderer->getTextureMatrix(context).identity();
+		renderer->onUpdateTextureMatrix(context);
 		// actually this should not make any difference as culling is disabled
 		// but having a fixed value is not a bad idea except that it is a renderer call
 		// TODO: confirm this
@@ -246,7 +248,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 			groupTransparentRenderFaces.clear();
 		}
 		// render transparent faces groups
-		renderTransparentFacesGroups();
+		renderTransparentFacesGroups(context);
 		//	no blending, but culling and depth buffer
 		renderer->disableBlending();
 		renderer->enableCulling();
@@ -324,10 +326,9 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	}
 }
 
-void Object3DVBORenderer::renderTransparentFacesGroups()
-{
+void Object3DVBORenderer::renderTransparentFacesGroups(void* context) {
 	for (auto it: transparentRenderFacesGroups) {
-		it.second->render(renderer);
+		it.second->render(renderer, context);
 	}
 }
 
@@ -351,6 +352,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 {
 	Vector3 objectCamFromAxis;
 	auto camera = engine->getCamera();
+
+	// use default context
+	auto context = renderer->getDefaultContext();
 
 	//
 	auto shadowMapping = engine->getShadowMapping();
@@ -449,13 +453,13 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					renderer->onUpdateShader();
 					// update lights
 					for (auto j = 0; j < engine->lights.size(); j++) {
-						engine->lights[j].update();
+						engine->lights[j].update(context);
 					}
 				}
 				// set up material on first object
 				string materialKey;
 				if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
-					setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
+					setupMaterial(context, _object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKey);
 					// only update materials for next calls
 					materialUpdateOnly = true;
 				}
@@ -467,23 +471,23 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 					if (isTextureCoordinatesAvailable == true &&
 						(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
 						((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && material != nullptr && material->hasDiffuseTextureMaskedTransparency() == true))) {
-						renderer->bindTextureCoordinatesBufferObject((*currentVBOIds)[3]);
+						renderer->bindTextureCoordinatesBufferObject(context, (*currentVBOIds)[3]);
 					}
 					// 	indices
-					renderer->bindIndicesBufferObject((*currentVBOIds)[0]);
+					renderer->bindIndicesBufferObject(context, (*currentVBOIds)[0]);
 					// 	vertices
-					renderer->bindVerticesBufferObject((*currentVBOIds)[1]);
+					renderer->bindVerticesBufferObject(context, (*currentVBOIds)[1]);
 					// 	normals
-					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject((*currentVBOIds)[2]);
+					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject(context, (*currentVBOIds)[2]);
 				}
 				// bind tangent, bitangend buffers if not yet bound
 				auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
 				if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
 					renderer->isNormalMappingAvailable() && currentVBOTangentBitangentIds != nullptr && currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
 					// tangent
-					renderer->bindTangentsBufferObject((*currentVBOTangentBitangentIds)[0]);
+					renderer->bindTangentsBufferObject(context, (*currentVBOTangentBitangentIds)[0]);
 					// bitangent
-					renderer->bindBitangentsBufferObject((*currentVBOTangentBitangentIds)[1]);
+					renderer->bindBitangentsBufferObject(context, (*currentVBOTangentBitangentIds)[1]);
 				}
 				// set up local -> world transformations matrix
 				renderer->getModelViewMatrix().set(
@@ -503,9 +507,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				}
 				// set up effect color
 				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-					renderer->setEffectColorMul(object->effectColorMul.getArray());
-					renderer->setEffectColorAdd(object->effectColorAdd.getArray());
-					renderer->onUpdateEffect();
+					renderer->setEffectColorMul(context, object->effectColorMul.getArray());
+					renderer->setEffectColorAdd(context, object->effectColorAdd.getArray());
+					renderer->onUpdateEffect(context);
 				}
 				// do transformation start to shadow mapping
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
@@ -520,11 +524,11 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				//	TODO: check if texture is in use
 				if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 					(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
-					renderer->getTextureMatrix().set(_object3DGroup->textureMatricesByEntities[faceEntityIdx]);
-					renderer->onUpdateTextureMatrix();
+					renderer->getTextureMatrix(context).set(_object3DGroup->textureMatricesByEntities[faceEntityIdx]);
+					renderer->onUpdateTextureMatrix(context);
 				}
 				// draw
-				renderer->drawIndexedTrianglesFromBufferObjects(faces, faceIdx);
+				renderer->drawIndexedTrianglesFromBufferObjects(context, faces, faceIdx);
 				// do transformations end to shadow mapping
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 					shadowMapping != nullptr) {
@@ -541,7 +545,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 		}
 	}
 	// unbind buffers
-	renderer->unbindBufferObjects();
+	renderer->unbindBufferObjects(context);
 	// restore model view matrix / view matrix
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
@@ -549,6 +553,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 
 void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	//
 	Vector3 objectCamFromAxis;
 	auto camera = engine->getCamera();
 
@@ -640,7 +648,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				renderer->onUpdateProjectionMatrix();
 				// update lights
 				for (auto j = 0; j < engine->lights.size(); j++) {
-					engine->lights[j].update();
+					engine->lights[j].update(context);
 				}
 				// draw objects
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
@@ -693,7 +701,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					// set up material on first object and update on succeeding
 					auto materialKeyCurrent = materialKey;
 					if (materialUpdateOnly == false || checkMaterialChangable(_object3DGroup, faceEntityIdx, renderTypes) == true) {
-						setupMaterial(_object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent, materialKey);
+						setupMaterial(context, _object3DGroup, faceEntityIdx, renderTypes, materialUpdateOnly, materialKeyCurrent, materialKey);
 						// only update material for next material calls
 						if (materialUpdateOnly == false) {
 							materialKey = materialKeyCurrent;
@@ -715,15 +723,15 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						if (isTextureCoordinatesAvailable == true &&
 							(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
 							((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && material != nullptr && material->hasDiffuseTextureMaskedTransparency() == true))) {
-							renderer->bindTextureCoordinatesBufferObject((*currentVBOBaseIds)[3]);
+							renderer->bindTextureCoordinatesBufferObject(context, (*currentVBOBaseIds)[3]);
 						}
 						// 	indices
-						renderer->bindIndicesBufferObject((*currentVBOBaseIds)[0]);
+						renderer->bindIndicesBufferObject(context, (*currentVBOBaseIds)[0]);
 						// 	vertices
-						renderer->bindVerticesBufferObject((*currentVBOBaseIds)[1]);
+						renderer->bindVerticesBufferObject(context, (*currentVBOBaseIds)[1]);
 						// 	normals
 						if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) {
-							renderer->bindNormalsBufferObject((*currentVBOBaseIds)[2]);
+							renderer->bindNormalsBufferObject(context, (*currentVBOBaseIds)[2]);
 						}
 					} else
 					// check if buffers did change, then skip and render in next step
@@ -738,9 +746,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						// bind tangent, bitangend buffers if not yet done
 						if (boundVBOTangentBitangentIds == nullptr) {
 							// tangent
-							renderer->bindTangentsBufferObject((*currentVBOTangentBitangentIds)[0]);
+							renderer->bindTangentsBufferObject(context, (*currentVBOTangentBitangentIds)[0]);
 							// bitangent
-							renderer->bindBitangentsBufferObject((*currentVBOTangentBitangentIds)[1]);
+							renderer->bindBitangentsBufferObject(context, (*currentVBOTangentBitangentIds)[1]);
 							//
 							boundVBOTangentBitangentIds = currentVBOTangentBitangentIds;
 						} else
@@ -790,28 +798,28 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					// upload model view matrices
 					{
 						renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
-						renderer->bindModelMatricesBufferObject((*vboInstancedRenderingIds)[0]);
+						renderer->bindModelMatricesBufferObject(context, (*vboInstancedRenderingIds)[0]);
 					}
 
 					// upload effects
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 						// upload effect color mul
 						renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-						renderer->bindEffectColorMulsBufferObject((*vboInstancedRenderingIds)[1]);
+						renderer->bindEffectColorMulsBufferObject(context, (*vboInstancedRenderingIds)[1]);
 						renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-						renderer->bindEffectColorAddsBufferObject((*vboInstancedRenderingIds)[2]);
+						renderer->bindEffectColorAddsBufferObject(context, (*vboInstancedRenderingIds)[2]);
 					}
 
 					// set up texture matrix
 					//	TODO: check if texture is in use
 					if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 						(renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
-						renderer->getTextureMatrix().set(currentTextureMatrix);
-						renderer->onUpdateTextureMatrix();
+						renderer->getTextureMatrix(context).set(currentTextureMatrix);
+						renderer->onUpdateTextureMatrix(context);
 					}
 
 					// draw
-					renderer->drawInstancedIndexedTrianglesFromBufferObjects(faces, faceIdx, objectsToRenderIssue);
+					renderer->drawInstancedIndexedTrianglesFromBufferObjects(context, faces, faceIdx, objectsToRenderIssue);
 				}
 
 				// set up next objects to render
@@ -836,12 +844,12 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	objectsNotRendered.clear();
 
 	// unbind buffers
-	renderer->unbindBufferObjects();
+	renderer->unbindBufferObjects(context);
 	// restore model view matrix / view matrix
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
+void Object3DVBORenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
@@ -858,41 +866,41 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 	if (updateOnly == false) {
 		// apply materials
 		if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-			renderer->setMaterialAmbient(material->getAmbientColor().getArray());
-			renderer->setMaterialDiffuse(material->getDiffuseColor().getArray());
-			renderer->setMaterialSpecular(material->getSpecularColor().getArray());
-			renderer->setMaterialEmission(material->getEmissionColor().getArray());
-			renderer->setMaterialShininess(material->getShininess());
-			renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
-			renderer->setMaterialDiffuseTextureMaskedTransparencyThreshold(material->getDiffuseTextureMaskedTransparencyThreshold());
-			renderer->onUpdateMaterial();
+			renderer->setMaterialAmbient(context, material->getAmbientColor().getArray());
+			renderer->setMaterialDiffuse(context, material->getDiffuseColor().getArray());
+			renderer->setMaterialSpecular(context, material->getSpecularColor().getArray());
+			renderer->setMaterialEmission(context, material->getEmissionColor().getArray());
+			renderer->setMaterialShininess(context, material->getShininess());
+			renderer->setMaterialDiffuseTextureMaskedTransparency(context, material->hasDiffuseTextureMaskedTransparency());
+			renderer->setMaterialDiffuseTextureMaskedTransparencyThreshold(context, material->getDiffuseTextureMaskedTransparencyThreshold());
+			renderer->onUpdateMaterial(context);
 		}
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
 			// bind specular texture
 			if (renderer->isSpecularMappingAvailable() == true) {
-				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_SPECULAR);
-				renderer->bindTexture(object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
+				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
+				renderer->bindTexture(context, object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
 			}
 			// bind displacement texture
 			if (renderer->isDisplacementMappingAvailable() == true) {
-				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
-				renderer->bindTexture(object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
+				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
+				renderer->bindTexture(context, object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
 			}
 			// bind normal texture
 			if (renderer->isNormalMappingAvailable() == true) {
-				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_NORMAL);
-				renderer->bindTexture(object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
+				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_NORMAL);
+				renderer->bindTexture(context, object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
 			}
 			// switch back texture unit to diffuse unit
-			renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+			renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 		}
 	}
 
 	// bind diffuse texture
 	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
-		renderer->setMaterialDiffuseTextureMaskedTransparency(material->hasDiffuseTextureMaskedTransparency());
-		renderer->onUpdateMaterial();
+		renderer->setMaterialDiffuseTextureMaskedTransparency(context, material->hasDiffuseTextureMaskedTransparency());
+		renderer->onUpdateMaterial(context);
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 			material->hasDiffuseTextureMaskedTransparency() == true) {
 			auto diffuseTextureId =
@@ -901,36 +909,36 @@ void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t fa
 				object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
 			materialKey+= "," + to_string(diffuseTextureId);
 			if (updateOnly == false || currentMaterialKey.empty() == true) {
-				renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
-				renderer->bindTexture(diffuseTextureId);
+				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+				renderer->bindTexture(context, diffuseTextureId);
 			}
 		}
 	}
 }
 
-void Object3DVBORenderer::clearMaterial()
+void Object3DVBORenderer::clearMaterial(void* context)
 {
 	// TODO: optimize me! We do not need always to clear material
 	// unbind diffuse texture
-	renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
-	renderer->bindTexture(renderer->ID_NONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	renderer->bindTexture(context, renderer->ID_NONE);
 	// unbind specular texture
 	if (renderer->isSpecularMappingAvailable() == true) {
-		renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_SPECULAR);
-		renderer->bindTexture(renderer->ID_NONE);
+		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
+		renderer->bindTexture(context, renderer->ID_NONE);
 	}
 	// unbind displacement texture
 	if (renderer->isDisplacementMappingAvailable() == true) {
-		renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
-		renderer->bindTexture(renderer->ID_NONE);
+		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
+		renderer->bindTexture(context, renderer->ID_NONE);
 	}
 	// unbind normal texture
 	if (renderer->isNormalMappingAvailable()) {
-		renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_NORMAL);
-		renderer->bindTexture(renderer->ID_NONE);
+		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_NORMAL);
+		renderer->bindTexture(context, renderer->ID_NONE);
 	}
 	// set diffuse texture unit
-	renderer->setTextureUnit(LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 }
 
 void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePses)
@@ -939,8 +947,11 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 	// TODO: check me performance wise again
 	if (visiblePses.size() == 0) return;
 
+	// use default context
+	auto context = renderer->getDefaultContext();
+
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
-	renderer->setTextureUnit(0);
+	renderer->setTextureUnit(context, 0);
 
 	// merge ppses and sort them
 	for (auto i = 0; i < visiblePses.size(); i++) {
@@ -966,13 +977,13 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 		if (point.acquired == false) break;
 		if (point.cookie != (void*)currentPpse) {
 			// issue rendering
-			renderer->setEffectColorAdd(currentPpse->getEffectColorAdd().getArray());
-			renderer->setEffectColorMul(currentPpse->getEffectColorMul().getArray());
-			renderer->onUpdateEffect();
+			renderer->setEffectColorAdd(context, currentPpse->getEffectColorAdd().getArray());
+			renderer->setEffectColorMul(context, currentPpse->getEffectColorMul().getArray());
+			renderer->onUpdateEffect(context);
 			// TODO: maybe use onBindTexture() or onUpdatePointSize()
-			engine->getParticlesShader()->setParameters(currentPpse->getTextureId(), currentPpse->getPointSize());
+			engine->getParticlesShader()->setParameters(context, currentPpse->getTextureId(), currentPpse->getPointSize());
 			// render, clear
-			psePointBatchVBORenderer->render();
+			psePointBatchVBORenderer->render(context);
 			psePointBatchVBORenderer->clear();
 			//
 			currentPpse = (PointsParticleSystem*)point.cookie;
@@ -982,13 +993,13 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 
 	if (psePointBatchVBORenderer->hasPoints() == true) {
 		// issue rendering
-		renderer->setEffectColorAdd(currentPpse->getEffectColorAdd().getArray());
-		renderer->setEffectColorMul(currentPpse->getEffectColorMul().getArray());
-		renderer->onUpdateEffect();
+		renderer->setEffectColorAdd(context, currentPpse->getEffectColorAdd().getArray());
+		renderer->setEffectColorMul(context, currentPpse->getEffectColorMul().getArray());
+		renderer->onUpdateEffect(context);
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()
-		engine->getParticlesShader()->setParameters(currentPpse->getTextureId(), currentPpse->getPointSize());
+		engine->getParticlesShader()->setParameters(context, currentPpse->getTextureId(), currentPpse->getPointSize());
 		// render, clear
-		psePointBatchVBORenderer->render();
+		psePointBatchVBORenderer->render(context);
 		psePointBatchVBORenderer->clear();
 	}
 
@@ -996,11 +1007,11 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 	pseTransparentRenderPointsPool->reset();
 
 	// unbind texture
-	renderer->bindTexture(renderer->ID_NONE);
+	renderer->bindTexture(context, renderer->ID_NONE);
 	// TODO: before render sort all pps by distance to camera and render them in correct order
 	// unset renderer state
 	renderer->disableBlending();
 	// restore renderer state
-	renderer->unbindBufferObjects();
+	renderer->unbindBufferObjects(context);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }

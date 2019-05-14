@@ -816,6 +816,9 @@ void Engine::display()
 	// init frame
 	Engine::renderer->initializeFrame();
 
+	// default context
+	auto defaultContext = Engine::renderer->getDefaultContext();
+
 	// update camera
 	camera->update(width, height);
 
@@ -862,9 +865,6 @@ void Engine::display()
 	// restore camera from shadow map rendering
 	camera->update(width, height);
 
-	// enable materials
-	renderer->setMaterialEnabled();
-
 	// use lighting shader
 	if (lightingShader != nullptr) {
 		lightingShader->useProgram(this);
@@ -887,15 +887,12 @@ void Engine::display()
 
 	// unuse lighting shader
 	if (lightingShader != nullptr) {
-		lightingShader->unUseProgram();
+		lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
 	}
 
 	// render shadows if required
 	if (shadowMapping != nullptr)
 		shadowMapping->renderShadowMaps(visibleObjects);
-
-	// disable materials
-	renderer->setMaterialDisabled();
 
 	// store matrices
 	modelViewMatrix.set(renderer->getModelViewMatrix());
@@ -910,7 +907,7 @@ void Engine::display()
 
 	// use particle shader
 	if (particlesShader != nullptr) {
-		particlesShader->useProgram();
+		particlesShader->useProgram(defaultContext);
 	}
 
 	// render points based particle systems
@@ -918,7 +915,7 @@ void Engine::display()
 
 	// unuse particle shader
 	if (particlesShader != nullptr) {
-		particlesShader->unUseProgram();
+		particlesShader->unUseProgram(defaultContext);
 	}
 
 	// render objects and particles together
@@ -933,9 +930,6 @@ void Engine::display()
 
 	// render objects that are have post post processing render pass
 	if (visibleObjectsPostPostProcessing.size() > 0) {
-		// enable materials
-		renderer->setMaterialEnabled();
-
 		// use lighting shader
 		if (lightingShader != nullptr) {
 			lightingShader->useProgram(this);
@@ -958,15 +952,12 @@ void Engine::display()
 
 		// unuse lighting shader
 		if (lightingShader != nullptr) {
-			lightingShader->unUseProgram();
+			lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
 		}
 
 		// render shadows if required
 		if (shadowMapping != nullptr)
 			shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
-
-		// disable materials
-		renderer->setMaterialDisabled();
 	}
 
 	// delete post processing termporary buffer if not required anymore

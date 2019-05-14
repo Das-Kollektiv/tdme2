@@ -55,7 +55,7 @@ void EngineGL2Renderer::onUpdateModelViewMatrix()
 
 }
 
-void EngineGL2Renderer::onBindTexture(int32_t textureId)
+void EngineGL2Renderer::onBindTexture(void* context, int32_t textureId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->bindTexture(this, textureId);
@@ -67,7 +67,7 @@ void EngineGL2Renderer::onBindTexture(int32_t textureId)
 		Engine::currentEngine->shadowMapping->bindTexture(this, textureId);
 }
 
-void EngineGL2Renderer::onUpdateTextureMatrix()
+void EngineGL2Renderer::onUpdateTextureMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateTextureMatrix(this);
@@ -79,19 +79,19 @@ void EngineGL2Renderer::onUpdateTextureMatrix()
 		Engine::guiShader->updateTextureMatrix(this);
 }
 
-void EngineGL2Renderer::onUpdateEffect()
+void EngineGL2Renderer::onUpdateEffect(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateEffect(this);
+		Engine::lightingShader->updateEffect(this, context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateEffect(this);
+		Engine::particlesShader->updateEffect(this, context);
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateEffect(this);
 }
 
-void EngineGL2Renderer::onUpdateLight(int32_t lightId)
+void EngineGL2Renderer::onUpdateLight(void* context, int32_t lightId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateLight(this, lightId);
@@ -100,7 +100,7 @@ void EngineGL2Renderer::onUpdateLight(int32_t lightId)
 		Engine::currentEngine->shadowMapping->updateLight(this, lightId);
 }
 
-void EngineGL2Renderer::onUpdateMaterial()
+void EngineGL2Renderer::onUpdateMaterial(void* context)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMaterial(this);

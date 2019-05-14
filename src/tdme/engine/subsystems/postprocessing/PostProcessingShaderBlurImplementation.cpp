@@ -12,7 +12,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 
 bool PostProcessingShaderBlurImplementation::isSupported(Renderer* renderer) {
-	return renderer->getGLVersion() == "gl3";
+	return renderer->getShaderVersion() == "gl3";
 }
 
 PostProcessingShaderBlurImplementation::PostProcessingShaderBlurImplementation(Renderer* renderer): PostProcessingShaderBaseImplementation(renderer)
@@ -21,12 +21,12 @@ PostProcessingShaderBlurImplementation::PostProcessingShaderBlurImplementation(R
 
 void PostProcessingShaderBlurImplementation::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	//	fragment shader
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/postprocessing",
+		"shader/" + shaderVersion + "/postprocessing",
 		"blur_fragmentshader.c",
 		Engine::is4K() == true?"#define HAVE_4K":""
 	);
@@ -35,7 +35,7 @@ void PostProcessingShaderBlurImplementation::initialize()
 	//	vertex shader
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/postprocessing",
+		"shader/" + shaderVersion + "/postprocessing",
 		"blur_vertexshader.c"
 	);
 	if (vertexShaderId == 0) return;

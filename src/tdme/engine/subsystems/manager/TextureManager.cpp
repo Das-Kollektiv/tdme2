@@ -30,6 +30,9 @@ TextureManager::~TextureManager() {
 
 int32_t TextureManager::addTexture(Texture* texture)
 {
+	// use default content here
+	auto context = renderer->getDefaultContext();
+
 	// check if we already manage this texture
 	auto textureManagedIt = textures.find(texture->getId());
 	if (textureManagedIt != textures.end()) {
@@ -42,11 +45,11 @@ int32_t TextureManager::addTexture(Texture* texture)
 	// create texture
 	auto textureId = renderer->createTexture();
 	// bind texture
-	renderer->bindTexture(textureId);
+	renderer->bindTexture(context, textureId);
 	// upload texture
-	renderer->uploadTexture(texture);
+	renderer->uploadTexture(context, texture);
 	// unbind texture
-	renderer->bindTexture(renderer->ID_NONE);
+	renderer->bindTexture(context, renderer->ID_NONE);
 	// create managed texture
 	auto textureManaged = new TextureManager_TextureManaged(texture->getId(), textureId);
 	// add it to our textures

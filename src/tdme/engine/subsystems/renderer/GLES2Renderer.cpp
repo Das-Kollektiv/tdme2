@@ -63,7 +63,7 @@ GLES2Renderer::GLES2Renderer()
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 }
 
-const string GLES2Renderer::getGLVersion()
+const string GLES2Renderer::getShaderVersion()
 {
 	return "gles2";
 }
@@ -246,42 +246,42 @@ int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const string
 	return uniformLocation;
 }
 
-void GLES2Renderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
+void GLES2Renderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
 {
 	glUniform1i(uniformId, value);
 }
 
-void GLES2Renderer::setProgramUniformFloat(int32_t uniformId, float value)
+void GLES2Renderer::setProgramUniformFloat(void* context, int32_t uniformId, float value)
 {
 	glUniform1f(uniformId, value);
 }
 
-void GLES2Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
+void GLES2Renderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& data)
 {
 	glUniformMatrix3fv(uniformId, 1, false, data.data());
 }
 
-void GLES2Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)
+void GLES2Renderer::setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& data)
 {
 	glUniformMatrix4fv(uniformId, 1, false, data.data());
 }
 
-void GLES2Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
+void GLES2Renderer::setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data)
 {
 	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
 }
 
-void GLES2Renderer::setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data)
+void GLES2Renderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
 {
 	glUniform4fv(uniformId, 1, data.data());
 }
 
-void GLES2Renderer::setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data)
+void GLES2Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
 {
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
+void GLES2Renderer::setProgramAttributeLocation(void* context, int32_t programId, int32_t location, const string& name)
 {
 	glBindAttribLocation(programId, location, (name).c_str());
 }
@@ -414,7 +414,7 @@ int32_t GLES2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 	return colorBufferTextureGlId;
 }
 
-void GLES2Renderer::uploadTexture(Texture* texture)
+void GLES2Renderer::uploadTexture(void* context, Texture* texture)
 {
 	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
@@ -436,10 +436,10 @@ void GLES2Renderer::resizeColorBufferTexture(int32_t textureId, int32_t width, i
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void GLES2Renderer::bindTexture(int32_t textureId)
+void GLES2Renderer::bindTexture(void* context, int32_t textureId)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	onBindTexture(textureId);
+	onBindTexture(context, textureId);
 }
 
 void GLES2Renderer::disposeTexture(int32_t textureId)
@@ -513,87 +513,87 @@ void GLES2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t si
 	Console::println("GLES2Renderer::uploadIndicesBufferObject()::not implemented");
 }
 
-void GLES2Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
+void GLES2Renderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 }
 
-void GLES2Renderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
+void GLES2Renderer::bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindVerticesBufferObject(int32_t bufferObjectId)
+void GLES2Renderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindNormalsBufferObject(int32_t bufferObjectId)
+void GLES2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindColorsBufferObject(int32_t bufferObjectId)
+void GLES2Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GLES2Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
+void GLES2Renderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
 {
 	Console::println("GLES2Renderer::bindTangentsBufferObject()::not implemented");
 }
 
-void GLES2Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
+void GLES2Renderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectId)
 {
 	Console::println("GLES2Renderer::bindBitangentsBufferObject()::not implemented");
 }
 
-void GLES2Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println(string("GLES2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 
-void GLES2Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println(string("GLES2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
 }
 
-void GLES2Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println(string("GLES2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
 }
 
-void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	Console::println(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
-void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
+void GLES2Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_SHORT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 2LL));
 }
 
-void GLES2Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+void GLES2Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
 	Console::println(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
-void GLES2Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
+void GLES2Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
 }
 
-void GLES2Renderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset)
+void GLES2Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
 }
 
-void GLES2Renderer::unbindBufferObjects()
+void GLES2Renderer::unbindBufferObjects(void* context)
 {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -608,12 +608,12 @@ void GLES2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
-int32_t GLES2Renderer::getTextureUnit()
+int32_t GLES2Renderer::getTextureUnit(void* context)
 {
 	return activeTextureUnit;
 }
 
-void GLES2Renderer::setTextureUnit(int32_t textureUnit)
+void GLES2Renderer::setTextureUnit(void* context, int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
@@ -631,7 +631,7 @@ ByteBuffer* GLES2Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32
 
 void GLES2Renderer::initGuiMode()
 {
-	setTextureUnit(0);
+	setTextureUnit(nullptr, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -646,7 +646,7 @@ void GLES2Renderer::doneGuiMode()
 	glEnable(GL_CULL_FACE);
 }
 
-void GLES2Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+void GLES2Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	Console::println("GLES2Renderer::dispatchCompute(): Not implemented");
 }
 
@@ -662,35 +662,35 @@ void GLES2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t s
 	Console::println("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+void GLES2Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }
 

@@ -25,8 +25,8 @@ public:
 
 	// overriden methods
 	virtual void initialize() override;
-	virtual void useProgram(Engine* engine) override;
-	virtual void unUseProgram() override;
+	virtual void useProgram(Engine* engine, void* context) override;
+	virtual void unUseProgram(void* context) override;
 
 	/**
 	 * Public constructor

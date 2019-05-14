@@ -22,24 +22,24 @@ ShadowMappingShaderPreDefaultImplementation::~ShadowMappingShaderPreDefaultImple
 
 void ShadowMappingShaderPreDefaultImplementation::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	// load shadow mapping shaders
 	//	pre render
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
+		"shader/" + shaderVersion + "/shadowmapping",
 		"pre_vertexshader.c",
 		"",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + rendererVersion + "/shadowmapping",
+			"shader/" + shaderVersion + "/shadowmapping",
 			"pre_computevertex.inc.c"
 		)
 	);
 	if (vertexShaderId == 0) return;
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
+		"shader/" + shaderVersion + "/shadowmapping",
 		"pre_fragmentshader.c"
 	);
 	if (fragmentShaderId == 0) return;

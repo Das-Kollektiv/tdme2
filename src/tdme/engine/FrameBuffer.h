@@ -71,13 +71,15 @@ public:
 
 	/** 
 	 * Bind depth texture
+	 * @param context context
 	 */
-	void bindDepthBufferTexture();
+	void bindDepthBufferTexture(void* context);
 
 	/** 
 	 * Bind color texture
+	 * @param context context
 	 */
-	void bindColorBufferTexture();
+	void bindColorBufferTexture(void* context);
 
 	/**
 	 * @return color buffer texture id

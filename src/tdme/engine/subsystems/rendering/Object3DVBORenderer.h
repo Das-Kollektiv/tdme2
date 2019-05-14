@@ -76,8 +76,9 @@ private:
 
 	/** 
 	 * Render transparent faces groups
+	 * @param context context
 	 */
-	void renderTransparentFacesGroups();
+	void renderTransparentFacesGroups(void* context);
 
 	/** 
 	 * Release transparent faces groups
@@ -120,6 +121,7 @@ private:
 
 	/**
 	 * Set ups a material for rendering
+	 * @param context context
 	 * @param object3DGroup object 3d group
 	 * @param facesEntityIdx faces entity idx
 	 * @param renderTypes render types
@@ -127,12 +129,13 @@ private:
 	 * @param materialKey material key
 	 * @param currentMaterialKey current material key or empty
 	 */
-	void setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
+	void setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
 
 	/** 
 	 * Clear material for rendering
+	 * @param context context
 	 */
-	void clearMaterial();
+	void clearMaterial(void* context);
 
 public:
 	static constexpr int32_t RENDERTYPE_NORMALS { 1 };

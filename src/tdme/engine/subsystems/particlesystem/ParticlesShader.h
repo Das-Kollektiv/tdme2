@@ -48,32 +48,37 @@ public:
 
 	/** 
 	 * Use lighting program
+	 * @param context context
 	 */
-	void useProgram();
+	void useProgram(void* context);
 
 	/** 
 	 * Update effect to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateEffect(Renderer* renderer);
+	void updateEffect(Renderer* renderer, void* context);
 
 	/** 
-	 * Unuse lighting program
+	 * Unuse particles shader program
+	 * @param context context
 	 */
-	void unUseProgram();
+	void unUseProgram(void* context);
 
 	/** 
 	 * Update matrices to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateMatrices(Renderer* renderer);
+	void updateMatrices(Renderer* renderer, void* context);
 
 	/**
 	 * Set parameters
+	 * @param context context
 	 * @param textureId texture id
 	 * @param pointSize point size
 	 */
-	void setParameters(int32_t textureId, float pointSize);
+	void setParameters(void* context, int32_t textureId, float pointSize);
 
 	/**
 	 * Public constructor

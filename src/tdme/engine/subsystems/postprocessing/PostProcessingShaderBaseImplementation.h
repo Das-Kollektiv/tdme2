@@ -38,10 +38,10 @@ public:
 	// overridden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
-	virtual void useProgram() override;
+	virtual void useProgram(void* context) override;
 	virtual void unUseProgram() override;
-	virtual void setBufferPixelWidth(float pixelWidth) override;
-	virtual void setBufferPixelHeight(float pixelHeight) override;
+	virtual void setBufferPixelWidth(void* context, float pixelWidth) override;
+	virtual void setBufferPixelHeight(void* context, float pixelHeight) override;
 
 	/**
 	 * Public constructor

@@ -57,7 +57,7 @@ void EngineVKRenderer::onUpdateModelViewMatrix()
 
 }
 
-void EngineVKRenderer::onBindTexture(int32_t textureId)
+void EngineVKRenderer::onBindTexture(void* context, int32_t textureId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->bindTexture(this, textureId);
@@ -69,7 +69,7 @@ void EngineVKRenderer::onBindTexture(int32_t textureId)
 		Engine::currentEngine->shadowMapping->bindTexture(this, textureId);
 }
 
-void EngineVKRenderer::onUpdateTextureMatrix()
+void EngineVKRenderer::onUpdateTextureMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateTextureMatrix(this);
@@ -81,7 +81,7 @@ void EngineVKRenderer::onUpdateTextureMatrix()
 		Engine::guiShader->updateTextureMatrix(this);
 }
 
-void EngineVKRenderer::onUpdateEffect()
+void EngineVKRenderer::onUpdateEffect(void* context)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateEffect(this);
@@ -94,7 +94,7 @@ void EngineVKRenderer::onUpdateEffect()
 
 }
 
-void EngineVKRenderer::onUpdateLight(int32_t lightId)
+void EngineVKRenderer::onUpdateLight(void* context, int32_t lightId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateLight(this, lightId);
@@ -103,7 +103,7 @@ void EngineVKRenderer::onUpdateLight(int32_t lightId)
 		Engine::currentEngine->shadowMapping->updateLight(this, lightId);
 }
 
-void EngineVKRenderer::onUpdateMaterial()
+void EngineVKRenderer::onUpdateMaterial(void* context)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMaterial(this);

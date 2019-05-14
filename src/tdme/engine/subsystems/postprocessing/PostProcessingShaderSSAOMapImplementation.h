@@ -37,7 +37,7 @@ public:
 	PostProcessingShaderSSAOMapImplementation(Renderer* renderer);
 
 	// overriden methods
-	virtual void useProgram() override;
+	virtual void useProgram(void* context) override;
 
 private:
 	array<int32_t, 16> uniformSphere;

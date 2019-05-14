@@ -16,7 +16,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
 bool LightingShaderSkyImplementation::isSupported(Renderer* renderer) {
-	return renderer->getGLVersion() == "gl3";
+	return renderer->getShaderVersion() == "gl3";
 }
 
 LightingShaderSkyImplementation::LightingShaderSkyImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
@@ -25,13 +25,13 @@ LightingShaderSkyImplementation::LightingShaderSkyImplementation(Renderer* rende
 
 void LightingShaderSkyImplementation::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	// lighting
 	//	fragment shader
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting",
 		"render_fragmentshader.c",
 		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK\n\n"
 	);
@@ -40,11 +40,11 @@ void LightingShaderSkyImplementation::initialize()
 	//	vertex shader
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting",
 		"render_vertexshader.c",
 		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK\n\n",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + rendererVersion + "/lighting",
+			"shader/" + shaderVersion + "/lighting",
 			"render_computevertex.inc.c"
 		)
 	);

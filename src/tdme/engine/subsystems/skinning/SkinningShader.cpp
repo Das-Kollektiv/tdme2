@@ -59,12 +59,12 @@ bool SkinningShader::isInitialized()
 
 void SkinningShader::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	// shader
 	shaderId = renderer->loadShader(
 		renderer->SHADER_COMPUTE_SHADER,
-		"shader/" + rendererVersion + "/skinning",
+		"shader/" + shaderVersion + "/skinning",
 		"skinning.c"
 	);
 	if (shaderId == 0) return;

@@ -70,9 +70,17 @@ GL3Renderer::GL3Renderer()
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 }
 
-const string GL3Renderer::getGLVersion()
+const string GL3Renderer::getShaderVersion()
 {
 	return "gl3";
+}
+
+bool GL3Renderer::isSupportingMultithreadedRendering() {
+	return false;
+}
+
+bool GL3Renderer::isSupportingMultipleRenderQueues() {
+	return false;
 }
 
 void GL3Renderer::initialize()
@@ -274,42 +282,42 @@ int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& 
 	return uniformLocation;
 }
 
-void GL3Renderer::setProgramUniformInteger(int32_t uniformId, int32_t value)
+void GL3Renderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
 {
 	glUniform1i(uniformId, value);
 }
 
-void GL3Renderer::setProgramUniformFloat(int32_t uniformId, float value)
+void GL3Renderer::setProgramUniformFloat(void* context, int32_t uniformId, float value)
 {
 	glUniform1f(uniformId, value);
 }
 
-void GL3Renderer::setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& data)
+void GL3Renderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& data)
 {
 	glUniformMatrix3fv(uniformId, 1, false, data.data());
 }
 
-void GL3Renderer::setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& data)
+void GL3Renderer::setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& data)
 {
 	glUniformMatrix4fv(uniformId, 1, false, data.data());
 }
 
-void GL3Renderer::setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data)
+void GL3Renderer::setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data)
 {
 	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
 }
 
-void GL3Renderer::setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data)
+void GL3Renderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
 {
 	glUniform4fv(uniformId, 1, data.data());
 }
 
-void GL3Renderer::setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data)
+void GL3Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
 {
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GL3Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
+void GL3Renderer::setProgramAttributeLocation(void* context, int32_t programId, int32_t location, const string& name)
 {
 	glBindAttribLocation(programId, location, (name).c_str());
 }
@@ -445,7 +453,7 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height)
 	return colorBufferTextureGlId;
 }
 
-void GL3Renderer::uploadTexture(Texture* texture)
+void GL3Renderer::uploadTexture(void* context, Texture* texture)
 {
 	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
@@ -467,10 +475,10 @@ void GL3Renderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void GL3Renderer::bindTexture(int32_t textureId)
+void GL3Renderer::bindTexture(void* context, int32_t textureId)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	onBindTexture(textureId);
+	onBindTexture(context, textureId);
 }
 
 void GL3Renderer::disposeTexture(int32_t textureId)
@@ -544,54 +552,54 @@ void GL3Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
-void GL3Renderer::bindIndicesBufferObject(int32_t bufferObjectId)
+void GL3Renderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 }
 
-void GL3Renderer::bindTextureCoordinatesBufferObject(int32_t bufferObjectId)
+void GL3Renderer::bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindVerticesBufferObject(int32_t bufferObjectId)
+void GL3Renderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindNormalsBufferObject(int32_t bufferObjectId)
+void GL3Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindColorsBufferObject(int32_t bufferObjectId)
+void GL3Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindTangentsBufferObject(int32_t bufferObjectId)
+void GL3Renderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindBitangentsBufferObject(int32_t bufferObjectId)
+void GL3Renderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(5);
 	glVertexAttribPointer(5, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(6);
 	glEnableVertexAttribArray(7);
@@ -607,47 +615,47 @@ void GL3Renderer::bindModelMatricesBufferObject(int32_t bufferObjectId) {
 	glVertexAttribDivisor(9, 1);
 }
 
-void GL3Renderer::bindEffectColorMulsBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(10);
 	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
 	glVertexAttribDivisor(10, 1);
 }
 
-void GL3Renderer::bindEffectColorAddsBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(11);
 	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
 	glVertexAttribDivisor(11, 1);
 }
 
-void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances)
+void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL), instances);
 }
 
-void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
+void GL3Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
 }
 
-void GL3Renderer::drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+void GL3Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
 	glDrawArraysInstanced(GL_TRIANGLES, trianglesOffset * 3, triangles * 3, instances);
 }
 
-void GL3Renderer::drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset)
+void GL3Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
 }
 
-void GL3Renderer::drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset)
+void GL3Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
 }
 
-void GL3Renderer::unbindBufferObjects()
+void GL3Renderer::unbindBufferObjects(void* context)
 {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -670,12 +678,12 @@ void GL3Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
-int32_t GL3Renderer::getTextureUnit()
+int32_t GL3Renderer::getTextureUnit(void* context)
 {
 	return activeTextureUnit;
 }
 
-void GL3Renderer::setTextureUnit(int32_t textureUnit)
+void GL3Renderer::setTextureUnit(void* context, int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
@@ -701,7 +709,7 @@ ByteBuffer* GL3Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t
 
 void GL3Renderer::initGuiMode()
 {
-	setTextureUnit(0);
+	setTextureUnit(nullptr, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -726,7 +734,7 @@ void GL3Renderer::checkGLError(int line)
 	}
 }
 
-void GL3Renderer::dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::dispatchCompute(): Not implemented");
 	#else
@@ -763,7 +771,7 @@ void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t siz
 	#endif
 }
 
-void GL3Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningVerticesBufferObject(): Not implemented");
 	#else
@@ -771,7 +779,7 @@ void GL3Renderer::bindSkinningVerticesBufferObject(int32_t bufferObjectId) {
 	#endif
 }
 
-void GL3Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningNormalsBufferObject(): Not implemented");
 	#else
@@ -779,7 +787,7 @@ void GL3Renderer::bindSkinningNormalsBufferObject(int32_t bufferObjectId) {
 	#endif
 }
 
-void GL3Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
 	#else
@@ -787,7 +795,7 @@ void GL3Renderer::bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) {
 	#endif
 }
 
-void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
 	#else
@@ -795,7 +803,7 @@ void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId
 	#endif
 }
 
-void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
 	#else
@@ -803,7 +811,7 @@ void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjec
 	#endif
 }
 
-void GL3Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
 	#else
@@ -811,7 +819,7 @@ void GL3Renderer::bindSkinningVerticesResultBufferObject(int32_t bufferObjectId)
 	#endif
 }
 
-void GL3Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
 	#else
@@ -819,7 +827,7 @@ void GL3Renderer::bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) 
 	#endif
 }
 
-void GL3Renderer::bindSkinningMatricesBufferObject(int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 	#else

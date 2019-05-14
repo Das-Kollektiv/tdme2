@@ -66,46 +66,46 @@ void LightingShader::useProgram(Engine* engine)
 	this->engine = engine;
 }
 
-void LightingShader::unUseProgram()
+void LightingShader::unUseProgram(void* context)
 {
 	running = false;
 	if (implementation != nullptr) {
-		implementation->unUseProgram();;
+		implementation->unUseProgram(context);
 	}
 	implementation = nullptr;
 	engine = nullptr;
 }
 
-void LightingShader::updateEffect(Renderer* renderer)
+void LightingShader::updateEffect(Renderer* renderer, void* context)
 {
 	if (implementation == nullptr) return;
-	implementation->updateEffect(renderer);
+	implementation->updateEffect(renderer, context);
 }
 
-void LightingShader::updateMaterial(Renderer* renderer)
+void LightingShader::updateMaterial(Renderer* renderer, void* context)
 {
 	if (implementation == nullptr) return;
-	implementation->updateMaterial(renderer);
+	implementation->updateMaterial(renderer, context);
 }
 
-void LightingShader::updateLight(Renderer* renderer, int32_t lightId)
+void LightingShader::updateLight(Renderer* renderer, void* context, int32_t lightId)
 {
 	if (implementation == nullptr) return;
-	implementation->updateLight(renderer, lightId);
+	implementation->updateLight(renderer, context, lightId);
 }
 
-void LightingShader::updateMatrices(Renderer* renderer)
+void LightingShader::updateMatrices(Renderer* renderer, void* context)
 {
 	if (implementation == nullptr) return;
-	implementation->updateMatrices(renderer);
+	implementation->updateMatrices(renderer, context);
 }
 
-void LightingShader::updateTextureMatrix(Renderer* renderer) {
+void LightingShader::updateTextureMatrix(Renderer* renderer, void* context) {
 	if (implementation == nullptr) return;
-	implementation->updateTextureMatrix(renderer);
+	implementation->updateTextureMatrix(renderer, context);
 }
 
-void LightingShader::setShader(const string& id) {
+void LightingShader::setShader(const string& id, void* context) {
 	if (running == false) return;
 
 	auto currentImplementation = implementation;
@@ -116,13 +116,13 @@ void LightingShader::setShader(const string& id) {
 	implementation = shaderIt->second;
 
 	if (currentImplementation != implementation) {
-		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
-		implementation->useProgram(engine);
+		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		implementation->useProgram(engine, context);
 	}
 }
 
-void LightingShader::bindTexture(Renderer* renderer, int32_t textureId)
+void LightingShader::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	if (implementation == nullptr) return;
-	implementation->bindTexture(renderer, textureId);
+	implementation->bindTexture(renderer, context, textureId);
 }

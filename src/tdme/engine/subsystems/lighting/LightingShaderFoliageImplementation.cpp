@@ -26,13 +26,13 @@ LightingShaderFoliageImplementation::LightingShaderFoliageImplementation(Rendere
 
 void LightingShaderFoliageImplementation::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	// lighting
 	//	fragment shader
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting",
 		"render_fragmentshader.c",
 		"#define HAVE_DEPTH_FOG\n\n"
 	);
@@ -41,21 +41,21 @@ void LightingShaderFoliageImplementation::initialize()
 	// geometry shader
 	renderLightingGeometryShaderId = renderer->loadShader(
 		renderer->SHADER_GEOMETRY_SHADER,
-		"shader/" + rendererVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting",
 		"render_geometryshader_foliage.c",
 		"#define HAVE_DEPTH_FOG\n\n",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + rendererVersion + "/lighting",
+			"shader/" + shaderVersion + "/lighting",
 			"render_computevertex.inc.c"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + rendererVersion + "/functions",
+			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.c"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + rendererVersion + "/functions",
+			"shader/" + shaderVersion + "/functions",
 			"create_translation_matrix.inc.c"
 		)
 	);
@@ -64,7 +64,7 @@ void LightingShaderFoliageImplementation::initialize()
 	//	vertex shader
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting",
 		"render_vertexshader.c",
 		"#define HAVE_GEOMETRY_SHADER\n#define HAVE_DEPTH_FOG\n\n"
 	);

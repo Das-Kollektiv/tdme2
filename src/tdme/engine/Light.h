@@ -211,8 +211,9 @@ public:
 
 	/** 
 	 * Update light
+	 * @param context context
 	 */
-	void update();
+	void update(void* context);
 
 
 	/**

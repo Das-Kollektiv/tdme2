@@ -26,12 +26,12 @@ bool ParticlesShader::isInitialized()
 
 void ParticlesShader::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 	// particles
 	//	fragment shader
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/particles",
+		"shader/" + shaderVersion + "/particles",
 		"render_fragmentshader.c",
 		"#define HAVE_DEPTH_FOG\n\n"
 	);
@@ -40,7 +40,7 @@ void ParticlesShader::initialize()
 	//	vertex shader
 	renderVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/particles",
+		"shader/" + shaderVersion + "/particles",
 		"render_vertexshader.c",
 		"#define HAVE_DEPTH_FOG\n\n"
 	);
@@ -81,30 +81,30 @@ void ParticlesShader::initialize()
 	initialized = true;
 }
 
-void ParticlesShader::useProgram()
+void ParticlesShader::useProgram(void* context)
 {
 	isRunning = true;
 	renderer->useProgram(renderProgramId);
-	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, 0);
+	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
 }
 
-void ParticlesShader::updateEffect(Renderer* renderer)
+void ParticlesShader::updateEffect(Renderer* renderer, void* context)
 {
 	// skip if not running
 	if (isRunning == false)
 		return;
 	// effect color
-	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
-	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->effectColorMul);
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->effectColorAdd);
 }
 
-void ParticlesShader::unUseProgram()
+void ParticlesShader::unUseProgram(void* context)
 {
 	isRunning = false;
-	renderer->bindTexture(renderer->ID_NONE);
+	renderer->bindTexture(context, renderer->ID_NONE);
 }
 
-void ParticlesShader::updateMatrices(Renderer* renderer)
+void ParticlesShader::updateMatrices(Renderer* renderer, void* context)
 {
 	// skip if not running
 	if (isRunning == false)
@@ -112,11 +112,11 @@ void ParticlesShader::updateMatrices(Renderer* renderer)
 	// object to screen matrix
 	mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
 	// upload matrices
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
-	renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, renderer->getModelViewMatrix().getArray());
+	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
+	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, renderer->getModelViewMatrix().getArray());
 }
 
-void ParticlesShader::setParameters(int32_t textureId, float pointSize) {
-	renderer->setProgramUniformFloat(uniformPointSize, renderer->pointSize * pointSize);
-	renderer->bindTexture(textureId);
+void ParticlesShader::setParameters(void* context, int32_t textureId, float pointSize) {
+	renderer->setProgramUniformFloat(context, uniformPointSize, renderer->pointSize * pointSize);
+	renderer->bindTexture(context, textureId);
 }

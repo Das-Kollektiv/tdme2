@@ -88,7 +88,7 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 	return key;
 }
 
-void TransparentRenderFacesGroup::render(Renderer* renderer)
+void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
 {
 	if (renderer->shaderId != shader) {
 		renderer->setShader(shader);
@@ -98,12 +98,12 @@ void TransparentRenderFacesGroup::render(Renderer* renderer)
 	Matrix4x4 modelViewMatrix;
 	modelViewMatrix.set(renderer->getModelViewMatrix());
 	// effect
-	renderer->setEffectColorMul(effectColorMul.getArray());
-	renderer->setEffectColorAdd(effectColorAdd.getArray());
-	renderer->onUpdateEffect();
+	renderer->setEffectColorMul(context, effectColorMul.getArray());
+	renderer->setEffectColorAdd(context, effectColorAdd.getArray());
+	renderer->onUpdateEffect(context);
 	// material
 	string materialKey;
-	object3DVBORenderer->setupMaterial(object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL, false, materialKey);
+	object3DVBORenderer->setupMaterial(context, object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix();
@@ -115,7 +115,7 @@ void TransparentRenderFacesGroup::render(Renderer* renderer)
 	}
 	batchVBORenderers.clear();
 	// restore GL state, model view matrix
-	renderer->unbindBufferObjects();
+	renderer->unbindBufferObjects(context);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 	renderer->onUpdateModelViewMatrix();
 }

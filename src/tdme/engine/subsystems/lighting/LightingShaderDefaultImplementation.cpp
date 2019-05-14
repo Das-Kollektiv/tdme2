@@ -25,13 +25,13 @@ LightingShaderDefaultImplementation::LightingShaderDefaultImplementation(Rendere
 
 void LightingShaderDefaultImplementation::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	// lighting
 	//	fragment shader
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting",
 		"render_fragmentshader.c",
 		"#define HAVE_DEPTH_FOG\n\n"
 	);
@@ -40,11 +40,11 @@ void LightingShaderDefaultImplementation::initialize()
 	//	vertex shader
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting",
 		"render_vertexshader.c",
 		"#define HAVE_DEPTH_FOG\n\n",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + rendererVersion + "/lighting",
+			"shader/" + shaderVersion + "/lighting",
 			"render_computevertex.inc.c"
 		)
 	);

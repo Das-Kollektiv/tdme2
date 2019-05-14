@@ -19,17 +19,17 @@ bool GUIShader::isInitialized()
 
 void GUIShader::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/gui",
+		"shader/" + shaderVersion + "/gui",
 		"render_vertexshader.c"
 	);
 	if (vertexShaderId == 0) return;
 
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/gui",
+		"shader/" + shaderVersion + "/gui",
 		"render_fragmentshader.c"
 	);
 	if (fragmentShaderId == 0) return;

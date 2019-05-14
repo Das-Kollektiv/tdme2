@@ -42,50 +42,58 @@ struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 	/** 
 	 * Use lighting program
 	 * @param engine engine
+	 * @param context context
 	 */
-	virtual void useProgram(Engine* engine) = 0;
+	virtual void useProgram(Engine* engine, void* context) = 0;
 
 	/** 
 	 * Unuse lighting program
+	 * @param context context
 	 */
-	virtual void unUseProgram() = 0;
+	virtual void unUseProgram(void* context) = 0;
 
 	/** 
 	 * Update effect to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	virtual void updateEffect(Renderer* renderer) = 0;
+	virtual void updateEffect(Renderer* renderer, void* context) = 0;
 
 	/** 
 	 * Update material to program
-	 * @param renderer gl3 renderer
+	 * @param renderer renderer
+	 * @param context context
 	 */
-	virtual void updateMaterial(Renderer* renderer) = 0;
+	virtual void updateMaterial(Renderer* renderer, void* context) = 0;
 
 	/** 
 	 * Update light to program
 	 * @param renderer renderer
+	 * @param context context
 	 * @param lightId light id
 	 */
-	virtual void updateLight(Renderer* renderer, int32_t lightId) = 0;
+	virtual void updateLight(Renderer* renderer, void* context, int32_t lightId) = 0;
 
 	/** 
 	 * Update matrices to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	virtual void updateMatrices(Renderer* renderer) = 0;
+	virtual void updateMatrices(Renderer* renderer, void* context) = 0;
 
 	/** 
 	 * Update texture matrix to program
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	virtual void updateTextureMatrix(Renderer* renderer) = 0;
+	virtual void updateTextureMatrix(Renderer* renderer, void* context) = 0;
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
+	 * @param context context
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(Renderer* renderer, int32_t textureId) = 0;
+	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) = 0;
 
 };

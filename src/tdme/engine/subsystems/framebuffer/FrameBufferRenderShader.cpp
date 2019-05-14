@@ -37,10 +37,10 @@ bool FrameBufferRenderShader::isInitialized()
 
 void FrameBufferRenderShader::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/framebuffer",
+		"shader/" + shaderVersion + "/framebuffer",
 		"render_vertexshader.c"
 	);
 	if (vertexShaderId == 0)
@@ -48,7 +48,7 @@ void FrameBufferRenderShader::initialize()
 
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/framebuffer",
+		"shader/" + shaderVersion + "/framebuffer",
 		"render_fragmentshader.c"
 	);
 	if (fragmentShaderId == 0)
@@ -124,8 +124,9 @@ void FrameBufferRenderShader::initialize()
 void FrameBufferRenderShader::useProgram()
 {
 	renderer->useProgram(programId);
-	renderer->setProgramUniformInteger(uniformColorBufferTextureUnit, 0);
-	renderer->setProgramUniformInteger(uniformDepthBufferTextureUnit, 1);
+	auto context = renderer->getDefaultContext();
+	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
+	renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
 	isRunning = true;
 }
 

@@ -74,6 +74,11 @@ protected:
 public:
 	float pointSize {  };
 
+	/**
+	 * @return default context
+	 */
+	virtual void* getDefaultContext();
+
 	/** 
 	 * Initialize renderer
 	 */
@@ -90,11 +95,21 @@ public:
 	virtual void finishFrame() = 0;
 
 	/**
-	 * @return renderer version e.g. gl2, gl3 or gles2
+	 * @return shader version e.g. gl2, gl3 or gles2
 	 */
-	virtual const string getGLVersion() = 0;
+	virtual const string getShaderVersion() = 0;
 
 	/** 
+	 * @return if renderer is supporting multi threaded rendering
+	 */
+	virtual bool isSupportingMultithreadedRendering() = 0;
+
+	/**
+	 * @return if renderer is supporting multiple render queues
+	 */
+	virtual bool isSupportingMultipleRenderQueues() = 0;
+
+	/**
 	 * Checks if buffer objects is available
 	 * @return buffer objects availability
 	 */
@@ -194,53 +209,60 @@ public:
 
 	/** 
 	 * Set up a integer uniform value
+	 * @param context context
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformInteger(int32_t uniformId, int32_t value) = 0;
+	virtual void setProgramUniformInteger(void* context, int32_t uniformId, int32_t value) = 0;
 
 	/** 
 	 * Set up a float uniform value
+	 * @param context context
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformFloat(int32_t uniformId, float value) = 0;
+	virtual void setProgramUniformFloat(void* context, int32_t uniformId, float value) = 0;
 
 	/** 
 	 * Set up a float matrix 3x3 uniform value
+	 * @param context context
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformFloatMatrix3x3(int32_t uniformId, const array<float, 9>& value) = 0;
+	virtual void setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& value) = 0;
 
 	/**
 	 * Set up a float matrix 4x4 uniform value
+	 * @param context context
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformFloatMatrix4x4(int32_t uniformId, const array<float, 16>& value) = 0;
+	virtual void setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& value) = 0;
 
 	/** 
 	 * Set up a float matrices 4x4 uniform values
+	 * @param context context
 	 * @param uniformId uniform id
 	 * @param count count
 	 * @param data data
 	 */
-	virtual void setProgramUniformFloatMatrices4x4(int32_t uniformId, int32_t count, FloatBuffer* data) = 0;
+	virtual void setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data) = 0;
 
 	/** 
 	 * Set up a float vec4 uniform value
+	 * @param context context
 	 * @param uniformId uniform id
 	 * @param data data
 	 */
-	virtual void setProgramUniformFloatVec4(int32_t uniformId, const array<float, 4>& data) = 0;
+	virtual void setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data) = 0;
 
 	/** 
 	 * Set up a float vec3 uniform value
+	 * @param context context
 	 * @param uniformId uniform id
 	 * @param data data
 	 */
-	virtual void setProgramUniformFloatVec3(int32_t uniformId, const array<float, 3>& data) = 0;
+	virtual void setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data) = 0;
 
 	/** 
 	 * Bind attribute to a input location
@@ -300,14 +322,17 @@ public:
 	virtual Matrix4x4& getViewportMatrix();
 
 	/** 
+	 * Get texture matrix
+	 * @param context context
 	 * @return texture matrix
 	 */
-	virtual Matrix2D3x3& getTextureMatrix();
+	virtual Matrix2D3x3& getTextureMatrix(void* context);
 
 	/**
 	 * Update texture matrix for active texture unit event
+	 * @param context context
 	 */
-	virtual void onUpdateTextureMatrix() = 0;
+	virtual void onUpdateTextureMatrix(void* context) = 0;
 
 	/** 
 	 * Set up clear color
@@ -415,9 +440,10 @@ public:
 
 	/** 
 	 * Uploads texture data to current bound texture
+	 * @param context context
 	 * @param texture texture
 	 */
-	virtual void uploadTexture(Texture* texture) = 0;
+	virtual void uploadTexture(void* context, Texture* texture) = 0;
 
 	/** 
 	 * Resizes a depth texture
@@ -437,15 +463,17 @@ public:
 
 	/** 
 	 * Binds a texture with given id or unbinds when using ID_NONE
+	 * @param context context
 	 * @param textureId textureId
 	 */
-	virtual void bindTexture(int32_t textureId) = 0;
+	virtual void bindTexture(void* context, int32_t textureId) = 0;
 
 	/** 
 	 * On bind texture event
+	 * @param context context
 	 * @param textureId textureId
 	 */
-	virtual void onBindTexture(int32_t textureId) = 0;
+	virtual void onBindTexture(void* context, int32_t textureId) = 0;
 
 	/** 
 	 * Dispose a texture
@@ -507,105 +535,121 @@ public:
 
 	/** 
 	 * Bind indices buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindIndicesBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind texture coordinates buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindTextureCoordinatesBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind vertices buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindVerticesBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindVerticesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind normals buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindNormalsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind colors buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindColorsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindColorsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind tangents buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindTangentsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindTangentsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind bitangents buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindBitangentsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind model matrices buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindModelMatricesBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind effect color muls buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindEffectColorMulsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind effect color adds buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindEffectColorAddsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Draw instanced indexed triangles from buffer objects
+	 * @param context context
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 * @param instances instances
 	 */
-	virtual void drawInstancedIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+	virtual void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
 
 	/**
 	 * Draw indexed triangles from buffer objects
+	 * @param context context
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 */
-	virtual void drawIndexedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) = 0;
+	virtual void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/** 
 	 * Draw instanced triangles from buffer objects
+	 * @param context context
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 * @param instances instances
 	 */
-	virtual void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+	virtual void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
 
 	/** 
 	 * Draw triangles from buffer objects
+	 * @param context context
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 */
-	virtual void drawTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset) = 0;
+	virtual void drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/**
 	 * Draw points from buffer objects 
+	 * @param context context
 	 * @param points points
 	 * @param pointsOffset points offset
 	 */
-	virtual void drawPointsFromBufferObjects(int32_t points, int32_t pointsOffset) = 0;
+	virtual void drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
 
 	/** 
 	 * Unbind buffer objects
+	 * @param context context
 	 */
-	virtual void unbindBufferObjects() = 0;
+	virtual void unbindBufferObjects(void* context) = 0;
 
 	/** 
 	 * Disposes a frame buffer object
@@ -614,168 +658,186 @@ public:
 	virtual void disposeBufferObjects(vector<int32_t>& bufferObjectIds) = 0;
 
 	/** 
+	 * Get texture unit
+	 * @param context context
 	 * @return active texture unit
 	 */
-	virtual int32_t getTextureUnit() = 0;
+	virtual int32_t getTextureUnit(void* context) = 0;
 
 	/** 
 	 * Sets up texture unit
+	 * @param context context
 	 * @param textureUnit texture unit
 	 */
-	virtual void setTextureUnit(int32_t textureUnit) = 0;
+	virtual void setTextureUnit(void* context, int32_t textureUnit) = 0;
 
 	/** 
 	 * Enable light
+	 * @param context context
 	 * @param lightId light id
 	 */
-	virtual void setLightEnabled(int32_t lightId);
+	virtual void setLightEnabled(void* context, int32_t lightId);
 
 	/** 
 	 * Disable light
+	 * @param context context
 	 * @param lightId light id
 	 */
-	virtual void setLightDisabled(int32_t lightId);
+	virtual void setLightDisabled(void* context, int32_t lightId);
 
 	/** 
 	 * Set light ambient color
+	 * @param context context
 	 * @param lightId light id
 	 * @param ambient ambient
 	 */
-	virtual void setLightAmbient(int32_t lightId, const array<float, 4>& ambient);
+	virtual void setLightAmbient(void* context, int32_t lightId, const array<float, 4>& ambient);
 
 	/** 
 	 * Set light diffuse color
+	 * @param context context
 	 * @param lightId light id
 	 * @param diffuse diffuse
 	 */
-	virtual void setLightDiffuse(int32_t lightId, const array<float, 4>& diffuse);
+	virtual void setLightDiffuse(void* context, int32_t lightId, const array<float, 4>& diffuse);
 
 	/** 
 	 * Set light position
+	 * @param context context
 	 * @param lightId light id
 	 * @param position position
 	 */
-	virtual void setLightPosition(int32_t lightId, const array<float, 4>& position);
+	virtual void setLightPosition(void* context, int32_t lightId, const array<float, 4>& position);
 
 	/** 
 	 * Set light spot direction
+	 * @param context context
 	 * @param lightId light id
 	 * @param spotDirection spot direction
 	 */
-	virtual void setLightSpotDirection(int32_t lightId, const array<float, 3>& spotDirection);
+	virtual void setLightSpotDirection(void* context, int32_t lightId, const array<float, 3>& spotDirection);
 
 	/** 
 	 * Set light spot exponent
+	 * @param context context
 	 * @param lightId light id
 	 * @param spotExponent spot exponent
 	 */
-	virtual void setLightSpotExponent(int32_t lightId, float spotExponent);
+	virtual void setLightSpotExponent(void* context, int32_t lightId, float spotExponent);
 
 	/** 
 	 * Set light spot cut off
+	 * @param context context
 	 * @param lightId light id
 	 * @param spotCutOff spot cut off
 	 */
-	virtual void setLightSpotCutOff(int32_t lightId, float spotCutOff);
+	virtual void setLightSpotCutOff(void* context, int32_t lightId, float spotCutOff);
 
 	/** 
 	 * Set light constant attenuation
+	 * @param context context
 	 * @param lightId light id
 	 * @param constantAttenuation constant attenuation
 	 */
-	virtual void setLightConstantAttenuation(int32_t lightId, float constantAttenuation);
+	virtual void setLightConstantAttenuation(void* context, int32_t lightId, float constantAttenuation);
 
 	/** 
 	 * Set light linear attenuation
+	 * @param context context
 	 * @param lightId light id
 	 * @param linearAttenuation linear attenuation
 	 */
-	virtual void setLightLinearAttenuation(int32_t lightId, float linearAttenuation);
+	virtual void setLightLinearAttenuation(void* context, int32_t lightId, float linearAttenuation);
 
 	/** 
 	 * Set light quadratic attenuation
+	 * @param context context
 	 * @param lightId light id
 	 * @param QuadraticAttenuation quadratic attenuation
 	 */
-	virtual void setLightQuadraticAttenuation(int32_t lightId, float QuadraticAttenuation);
+	virtual void setLightQuadraticAttenuation(void* context, int32_t lightId, float QuadraticAttenuation);
 
 	/** 
 	 * Update light
+	 * @param context context
 	 * @param lightId light id
 	 */
-	virtual void onUpdateLight(int32_t lightId) = 0;
+	virtual void onUpdateLight(void* context, int32_t lightId) = 0;
 
 	/** 
 	 * Set up effect color multiplication
+	 * @param context context
 	 * @param effectColorMul effect color for multiplication
 	 */
-	virtual void setEffectColorMul(const array<float, 4>& effectColorMul);
+	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
 
 	/** 
 	 * Set up effect color addition
+	 * @param context context
 	 * @param effectColorAdd effect color for addition
 	 */
-	virtual void setEffectColorAdd(const array<float, 4>& effectColorAdd);
+	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
 
 	/** 
 	 * Update material
+	 * @param context context
 	 */
-	virtual void onUpdateEffect() = 0;
-
-	/** 
-	 * Enable materials
-	 */
-	virtual void setMaterialEnabled();
-
-	/** 
-	 * Disable materials
-	 */
-	virtual void setMaterialDisabled();
+	virtual void onUpdateEffect(void* context) = 0;
 
 	/** 
 	 * Set material ambient color
+	 * @param context context
 	 * @param ambient ambient
 	 */
-	virtual void setMaterialAmbient(const array<float, 4>& ambient);
+	virtual void setMaterialAmbient(void* context, const array<float, 4>& ambient);
 
 	/** 
 	 * Set material diffuse color
+	 * @param context context
 	 * @param diffuse diffuse
 	 */
-	virtual void setMaterialDiffuse(const array<float, 4>& diffuse);
+	virtual void setMaterialDiffuse(void* context, const array<float, 4>& diffuse);
 
 	/** 
 	 * Set material specular color
+	 * @param context context
 	 * @param specular specular
 	 */
-	virtual void setMaterialSpecular(const array<float, 4>& specular);
+	virtual void setMaterialSpecular(void* context, const array<float, 4>& specular);
 
 	/** 
 	 * Set material emission color
+	 * @param context context
 	 * @param emission emission
 	 */
-	virtual void setMaterialEmission(const array<float, 4>& emission);
+	virtual void setMaterialEmission(void* context, const array<float, 4>& emission);
 
 	/** 
 	 * Set material shininess
+	 * @param context context
 	 * @param shininess shininess
 	 */
-	virtual void setMaterialShininess(float shininess);
+	virtual void setMaterialShininess(void* context, float shininess);
 
 	/**
 	 * Set material diffuse texture masked transparency
+	 * @param context context
+	 * @param diffuseTextureMaskedTransparency  diffuse texture masked transparency
 	 */
-	virtual void setMaterialDiffuseTextureMaskedTransparency(bool diffuseTextureMaskedTransparency);
+	virtual void setMaterialDiffuseTextureMaskedTransparency(void* context, bool diffuseTextureMaskedTransparency);
 
 	/**
 	 * Set material diffuse texture masked transparency threshold
+	 * @param context context
+	 * @param diffuseTextureMaskedTransparencyThreshold diffuse texture masked transparency threshold
 	 */
-	virtual void setMaterialDiffuseTextureMaskedTransparencyThreshold(float diffuseTextureMaskedTransparencyThreshold);
+	virtual void setMaterialDiffuseTextureMaskedTransparencyThreshold(void* context, float diffuseTextureMaskedTransparencyThreshold);
 
 	/** 
 	 * On update material
+	 * @param context context
 	 */
-	virtual void onUpdateMaterial() = 0;
+	virtual void onUpdateMaterial(void* context) = 0;
 
 	/**
 	 * Set shader
@@ -808,11 +870,12 @@ public:
 
 	/**
 	 * Dispatch compute
+	 * @param context context
 	 * @param numGroupsX num groups x
 	 * @param numGroupsY num groups y
 	 * @param numGroupsZ num groups z
 	 */
-	virtual void dispatchCompute(int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) = 0;
+	virtual void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) = 0;
 
 	/**
 	 * Memory barrier
@@ -837,51 +900,59 @@ public:
 
 	/**
 	 * Bind skinning vertices buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVerticesBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning normal buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningNormalsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertex joints buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVertexJointsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertex joint indices buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVertexJointIdxsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertex joint weights buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVertexJointWeightsBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertices result buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVerticesResultBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning normals result buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningNormalsResultBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
-	 * Bind skinning matrices result buffer objec
+	 * Bind skinning matrices result buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningMatricesBufferObject(int32_t bufferObjectId) = 0;
+	virtual void bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Set up renderer for GUI rendering

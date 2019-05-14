@@ -134,45 +134,45 @@ void LightingShaderBaseImplementation::initialize()
 	initialized = true;
 }
 
-void LightingShaderBaseImplementation::useProgram(Engine* engine)
+void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	isRunning = true;
 	renderer->useProgram(renderLightingProgramId);
 	// initialize static uniforms
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(uniformCameraMatrix, renderer->getCameraMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	}
 	if (uniformDiffuseTextureUnit != -1) {
-		renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+		renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 	}
 	if (renderer->isSpecularMappingAvailable() == true && uniformSpecularTextureUnit != -1) {
-		renderer->setProgramUniformInteger(uniformSpecularTextureUnit, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
+		renderer->setProgramUniformInteger(context, uniformSpecularTextureUnit, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
 	}
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
-		renderer->setProgramUniformInteger(uniformNormalTextureUnit, LightingShaderConstants::TEXTUREUNIT_NORMAL);
+		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::TEXTUREUNIT_NORMAL);
 	}
 	if (renderer->isDisplacementMappingAvailable() == true && uniformDisplacementTextureUnit != -1) {
-		renderer->setProgramUniformInteger(uniformDisplacementTextureUnit, LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
+		renderer->setProgramUniformInteger(context, uniformDisplacementTextureUnit, LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
 	}
 	// initialize dynamic uniforms
-	updateEffect(renderer);
-	updateMaterial(renderer);
+	updateEffect(renderer, context);
+	updateMaterial(renderer, context);
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
-		updateLight(renderer, i);
+		updateLight(renderer, context, i);
 	}
 	// frame
 	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->setProgramUniformInteger(uniformFrame, engine->getTiming()->getFrame());
+		renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 	}
 }
 
-void LightingShaderBaseImplementation::unUseProgram()
+void LightingShaderBaseImplementation::unUseProgram(void* context)
 {
 	isRunning = false;
 }
 
-void LightingShaderBaseImplementation::updateEffect(Renderer* renderer)
+void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* context)
 {
 	// skip if not running
 	if (isRunning == false) return;
@@ -180,12 +180,12 @@ void LightingShaderBaseImplementation::updateEffect(Renderer* renderer)
 	// skip if using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		//
-		renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
-		renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
+		renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->effectColorMul);
+		renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->effectColorAdd);
 	}
 }
 
-void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer)
+void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
 	// skip if not running
 	if (isRunning == false) return;
@@ -196,59 +196,59 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer)
 	// ambient without alpha, as we only use alpha from diffuse color
 	tmpColor4 = renderer->material.ambient;
 	tmpColor4[3] = 0.0f;
-	if (uniformMaterialAmbient != -1) renderer->setProgramUniformFloatVec4(uniformMaterialAmbient, tmpColor4);
+	if (uniformMaterialAmbient != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialAmbient, tmpColor4);
 	// diffuse
-	renderer->setProgramUniformFloatVec4(uniformMaterialDiffuse, renderer->material.diffuse);
+	renderer->setProgramUniformFloatVec4(context, uniformMaterialDiffuse, renderer->material.diffuse);
 	// specular without alpha, as we only use alpha from diffuse color
 	tmpColor4 = renderer->material.specular;
 	tmpColor4[3] = 0.0f;
-	if (uniformMaterialSpecular != -1) renderer->setProgramUniformFloatVec4(uniformMaterialSpecular, tmpColor4);
+	if (uniformMaterialSpecular != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialSpecular, tmpColor4);
 	// emission without alpha, as we only use alpha from diffuse color
 	tmpColor4 = renderer->material.emission;
 	tmpColor4[3] = 0.0f;
-	renderer->setProgramUniformFloatVec4(uniformMaterialEmission, tmpColor4);
+	renderer->setProgramUniformFloatVec4(context, uniformMaterialEmission, tmpColor4);
 	// shininess
-	if (uniformMaterialShininess != -1) renderer->setProgramUniformFloat(uniformMaterialShininess, renderer->material.shininess);
+	if (uniformMaterialShininess != -1) renderer->setProgramUniformFloat(context, uniformMaterialShininess, renderer->material.shininess);
 	// diffuse texture masked transparency
 	if (uniformDiffuseTextureMaskedTransparency != -1) {
-		renderer->setProgramUniformInteger(uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+		renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
 	}
 	// diffuse texture masked transparency threshold
 	if (uniformDiffuseTextureMaskedTransparencyThreshold != -1) {
-		renderer->setProgramUniformFloat(uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
+		renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
 	}
 }
 
-void LightingShaderBaseImplementation::updateLight(Renderer* renderer, int32_t lightId)
+void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)
 {
 	// skip if not running
 	if (isRunning == false) return;
 
 	// lights
-	renderer->setProgramUniformInteger(uniformLightEnabled[lightId], renderer->lights[lightId].enabled);
+	renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], renderer->lights[lightId].enabled);
 	if (renderer->lights[lightId].enabled == 1) {
-		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(uniformLightAmbient[lightId], renderer->lights[lightId].ambient);
-		if (uniformLightDiffuse[lightId] != -1) renderer->setProgramUniformFloatVec4(uniformLightDiffuse[lightId], renderer->lights[lightId].diffuse);
-		if (uniformLightSpecular[lightId] != -1) renderer->setProgramUniformFloatVec4(uniformLightSpecular[lightId], renderer->lights[lightId].specular);
-		if (uniformLightPosition[lightId] != -1) renderer->setProgramUniformFloatVec4(uniformLightPosition[lightId], renderer->lights[lightId].position);
-		if (uniformLightSpotDirection[lightId] != -1) renderer->setProgramUniformFloatVec3(uniformLightSpotDirection[lightId], renderer->lights[lightId].spotDirection);
-		if (uniformLightSpotExponent[lightId] != -1) renderer->setProgramUniformFloat(uniformLightSpotExponent[lightId], renderer->lights[lightId].spotExponent);
-		if (uniformLightSpotCosCutoff[lightId] != -1) renderer->setProgramUniformFloat(uniformLightSpotCosCutoff[lightId], renderer->lights[lightId].spotCosCutoff);
-		if (uniformLightConstantAttenuation[lightId] != -1) renderer->setProgramUniformFloat(uniformLightConstantAttenuation[lightId], renderer->lights[lightId].constantAttenuation);
-		if (uniformLightLinearAttenuation[lightId] != -1) renderer->setProgramUniformFloat(uniformLightLinearAttenuation[lightId], renderer->lights[lightId].linearAttenuation);
-		if (uniformLightQuadraticAttenuation[lightId] != -1) renderer->setProgramUniformFloat(uniformLightQuadraticAttenuation[lightId], renderer->lights[lightId].quadraticAttenuation);
+		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], renderer->lights[lightId].ambient);
+		if (uniformLightDiffuse[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightDiffuse[lightId], renderer->lights[lightId].diffuse);
+		if (uniformLightSpecular[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightSpecular[lightId], renderer->lights[lightId].specular);
+		if (uniformLightPosition[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightPosition[lightId], renderer->lights[lightId].position);
+		if (uniformLightSpotDirection[lightId] != -1) renderer->setProgramUniformFloatVec3(context, uniformLightSpotDirection[lightId], renderer->lights[lightId].spotDirection);
+		if (uniformLightSpotExponent[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightSpotExponent[lightId], renderer->lights[lightId].spotExponent);
+		if (uniformLightSpotCosCutoff[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightSpotCosCutoff[lightId], renderer->lights[lightId].spotCosCutoff);
+		if (uniformLightConstantAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightConstantAttenuation[lightId], renderer->lights[lightId].constantAttenuation);
+		if (uniformLightLinearAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightLinearAttenuation[lightId], renderer->lights[lightId].linearAttenuation);
+		if (uniformLightQuadraticAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightQuadraticAttenuation[lightId], renderer->lights[lightId].quadraticAttenuation);
 	}
 }
 
-void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer)
+void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* context)
 {
 	// skip if not running
 	if (isRunning == false) return;
 
 	// set up camera and projection matrices if using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(uniformCameraMatrix, renderer->getCameraMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	}
 
 	// skip if using instanced rendering
@@ -260,49 +260,49 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer)
 		// normal matrix
 		normalMatrix.set(mvMatrix).invert().transpose();
 		// upload matrices
-		renderer->setProgramUniformFloatMatrix4x4(uniformMVPMatrix, mvpMatrix.getArray());
-		renderer->setProgramUniformFloatMatrix4x4(uniformMVMatrix, mvMatrix.getArray());
-		renderer->setProgramUniformFloatMatrix4x4(uniformNormalMatrix, normalMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, mvMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, uniformNormalMatrix, normalMatrix.getArray());
 	}
 }
 
-void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer) {
+void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
 	// skip if not running
 	if (isRunning == false) return;
 
 	//
-	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
+	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
 }
 
 
-void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, int32_t textureId)
+void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	// skip if not running
 	if (isRunning == false) return;
 
-	switch (renderer->getTextureUnit()) {
+	switch (renderer->getTextureUnit(context)) {
 		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
 			if (uniformDiffuseTextureAvailable != -1) {
-				renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+				renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			}
 			break;
 		case LightingShaderConstants::TEXTUREUNIT_SPECULAR:
 			if (renderer->isSpecularMappingAvailable() == false)
 				break;
 
-			if (uniformSpecularTextureAvailable != -1) renderer->setProgramUniformInteger(uniformSpecularTextureAvailable, textureId == 0 ? 0 : 1);
+			if (uniformSpecularTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformSpecularTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 		case LightingShaderConstants::TEXTUREUNIT_NORMAL:
 			if (renderer->isNormalMappingAvailable() == false)
 				break;
 
-			if (uniformNormalTextureAvailable != -1) renderer->setProgramUniformInteger(uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
+			if (uniformNormalTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 		case LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT:
 			if (renderer->isDisplacementMappingAvailable() == false)
 				break;
 
-			renderer->setProgramUniformInteger(uniformDisplacementTextureAvailable, textureId == 0 ? 0 : 1);
+			renderer->setProgramUniformInteger(context, uniformDisplacementTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
 

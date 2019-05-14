@@ -80,14 +80,14 @@ public:
 	// overriden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
-	virtual void useProgram(Engine* engine) override;
-	virtual void unUseProgram() override;
-	virtual void updateEffect(Renderer* renderer) override;
-	virtual void updateMaterial(Renderer* renderer) override;
-	virtual void updateLight(Renderer* renderer, int32_t lightId) override;
-	virtual void updateMatrices(Renderer* renderer) override;
-	virtual void updateTextureMatrix(Renderer* renderer) override;
-	virtual void bindTexture(Renderer* renderer, int32_t textureId) override;
+	virtual void useProgram(Engine* engine, void* context) override;
+	virtual void unUseProgram(void* context) override;
+	virtual void updateEffect(Renderer* renderer, void* context) override;
+	virtual void updateMaterial(Renderer* renderer, void* context) override;
+	virtual void updateLight(Renderer* renderer, void* context, int32_t lightId) override;
+	virtual void updateMatrices(Renderer* renderer, void* context) override;
+	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
+	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
 
 	/**
 	 * Public constructor

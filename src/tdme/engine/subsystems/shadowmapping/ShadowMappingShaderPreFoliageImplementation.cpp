@@ -22,13 +22,13 @@ ShadowMappingShaderPreFoliageImplementation::~ShadowMappingShaderPreFoliageImple
 
 void ShadowMappingShaderPreFoliageImplementation::initialize()
 {
-	auto rendererVersion = renderer->getGLVersion();
+	auto shaderVersion = renderer->getShaderVersion();
 
 	// load shadow mapping shaders
 	//	pre render
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
+		"shader/" + shaderVersion + "/shadowmapping",
 		"pre_vertexshader.c",
 		"#define HAVE_GEOMETRY_SHADER\n\n"
 	);
@@ -36,21 +36,21 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 	if (renderer->isGeometryShaderAvailable() == true) {
 		geometryShaderId = renderer->loadShader(
 			renderer->SHADER_GEOMETRY_SHADER,
-			"shader/" + rendererVersion + "/shadowmapping",
+			"shader/" + shaderVersion + "/shadowmapping",
 			"pre_geometryshader_foliage.c",
 			"",
 			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/shadowmapping",
+				"shader/" + shaderVersion + "/shadowmapping",
 				"pre_computevertex.inc.c"
 			) +
 			"\n\n" +
 			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
+				"shader/" + shaderVersion + "/functions",
 				"create_rotation_matrix.inc.c"
 			) +
 			"\n\n" +
 			FileSystem::getInstance()->getContentAsString(
-				"shader/" + rendererVersion + "/functions",
+				"shader/" + shaderVersion + "/functions",
 				"create_translation_matrix.inc.c"
 			)
 		);
@@ -58,7 +58,7 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 	}
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + rendererVersion + "/shadowmapping",
+		"shader/" + shaderVersion + "/shadowmapping",
 		"pre_fragmentshader.c"
 	);
 	if (fragmentShaderId == 0) return;
