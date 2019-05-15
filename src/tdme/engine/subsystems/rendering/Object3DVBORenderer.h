@@ -16,6 +16,8 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/os/threading/Condition.h>
 #include <tdme/os/threading/Mutex.h>
@@ -39,6 +41,7 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
@@ -73,6 +76,8 @@ private:
 		int faceIdx;
 		bool isTextureCoordinatesAvailable;
 		Material* material;
+		int32_t frontFace;
+		Matrix2D3x3 textureMatrix;
 	};
 
 	class RenderThread: public Thread {

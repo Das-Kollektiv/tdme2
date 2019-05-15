@@ -577,7 +577,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, InstancedRenderFunctionStruct& parameters, vector<Object3D*>& objectsNotRendered) {
+inline void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, InstancedRenderFunctionStruct& parameters, vector<Object3D*>& objectsNotRendered) {
+	Matrix4x4Negative matrix4x4Negative;
+
 	Vector3 objectCamFromAxis;
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
@@ -586,13 +588,11 @@ void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, 
 	FloatBuffer fbEffectColorAdds = bbEffectColorAdds[threadIdx]->asFloatBuffer();
 	FloatBuffer fbMvMatrices = bbMvMatrices[threadIdx]->asFloatBuffer();
 
-	auto currentFrontFace = -1;
 	string materialKey;
 	bool materialUpdateOnly = false;
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 	auto objectCount = objectsToRender.size();
-	auto currentTextureMatrix = objectsToRender[0]->object3dGroups[parameters.object3DGroupIdx]->textureMatricesByEntities[parameters.faceEntityIdx];
 	// issue upload matrices
 	renderer->onUpdateCameraMatrix(context);
 	renderer->onUpdateProjectionMatrix(context);
@@ -635,12 +635,10 @@ void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, 
 		}
 
 		// check if texture matrix did change
-		/*
-		if (_object3DGroup->textureMatricesByEntities[parameters.faceEntityIdx].equals(currentTextureMatrix) == false) {
+		if (_object3DGroup->textureMatricesByEntities[parameters.faceEntityIdx].equals(parameters.textureMatrix) == false) {
 			objectsNotRendered.push_back(object);
 			continue;
 		}
-		*/
 
 		// check if shader did change
 		// shader
@@ -724,20 +722,13 @@ void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, 
 				multiply(object->getTransformationsMatrix())
 		);
 
-		/*
 		// set up front face
 		auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
-		// if not yet done
-		if (currentFrontFace == -1) {
-			renderer->setFrontFace(objectFrontFace);
-			currentFrontFace = objectFrontFace;
-		} else
 		// if front face changed just render in next step
-		if (objectFrontFace != currentFrontFace) {
+		if (objectFrontFace != parameters.frontFace) {
 			objectsNotRendered.push_back(object);
 			continue;
 		}
-		*/
 
 		// set up effect color
 		if ((parameters.renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
@@ -772,7 +763,7 @@ void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, 
 		//	TODO: check if texture is in use
 		if ((parameters.renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 			(parameters.renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) {
-			renderer->getTextureMatrix(context).set(currentTextureMatrix);
+			renderer->getTextureMatrix(context).set(parameters.textureMatrix);
 			renderer->onUpdateTextureMatrix(context);
 		}
 
@@ -822,7 +813,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 			if (material != nullptr) {
 				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
 				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					//renderer->disableCulling();
+					renderer->disableCulling();
 				}
 			}
 			// skip, if requested
@@ -857,11 +848,20 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 			// draw this faces entity for each object
 			objectsToRender = objects;
 			do {
-				parameters.shader = objectsToRender[0]->getDistanceShader().length() == 0?
-					objectsToRender[0]->getShader():
-					objectCamFromAxis.set(objectsToRender[0]->getBoundingBoxTransformed()->getCenter()).sub(parameters.camera->getLookFrom()).computeLengthSquared() < Math::square(objectsToRender[0]->getDistanceShaderDistance())?
-						objectsToRender[0]->getShader():
-						objectsToRender[0]->getDistanceShader();
+				auto firstObjectToRender = objectsToRender[0];
+				auto object3DGroupToRender = firstObjectToRender->object3dGroups[object3DGroupIdx];
+				modelViewMatrix.set(
+					(object3DGroupToRender->mesh->skinning == true ?
+						modelViewMatrixTemp.identity() :
+						modelViewMatrixTemp.set(*object3DGroupToRender->groupTransformationsMatrix)
+					).
+						multiply(firstObjectToRender->getTransformationsMatrix())
+				);
+				parameters.shader = firstObjectToRender->getDistanceShader().length() == 0?
+					firstObjectToRender->getShader():
+					objectCamFromAxis.set(firstObjectToRender->getBoundingBoxTransformed()->getCenter()).sub(parameters.camera->getLookFrom()).computeLengthSquared() < Math::square(firstObjectToRender->getDistanceShaderDistance())?
+						firstObjectToRender->getShader():
+						firstObjectToRender->getDistanceShader();
 				parameters.renderTypes = renderTypes;
 				parameters.camera = engine->getCamera();
 				parameters.cameraMatrix = cameraMatrix;
@@ -871,8 +871,11 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				parameters.faceIdx = faceIdx;
 				parameters.isTextureCoordinatesAvailable = isTextureCoordinatesAvailable;
 				parameters.material = material;
+				parameters.frontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+				parameters.textureMatrix = object3DGroupToRender->textureMatricesByEntities[parameters.faceEntityIdx];
 
 				// shader
+				renderer->setFrontFace(parameters.frontFace);
 				renderer->setShader(parameters.shader);
 				for (auto i = 0; i < threadCount; i++) renderer->onUpdateShader(renderer->getContext(i));
 				// multiple threads
@@ -898,7 +901,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 			faceIdx += faces;
 			if (material != nullptr) {
 				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					//renderer->enableCulling();
+					renderer->enableCulling();
 				}
 			}
 		}
