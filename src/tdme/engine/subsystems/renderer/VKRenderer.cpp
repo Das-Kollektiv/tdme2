@@ -131,8 +131,7 @@ VKRenderer::VKRenderer():
 	DEPTHFUNCTION_LESSEQUAL = VK_COMPARE_OP_LESS_OR_EQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = VK_COMPARE_OP_GREATER_OR_EQUAL;
 	FRAMEBUFFER_DEFAULT = 0;
-	auto i = 0;
-	for (auto& context: contexts) context.idx = i;
+	for (auto i = 0; i < contexts.size(); i++) contexts[i].idx = i;
 }
 
 inline bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
@@ -659,6 +658,10 @@ const string VKRenderer::getShaderVersion()
 
 void* VKRenderer::getDefaultContext() {
 	return &contexts[0];
+}
+
+void* VKRenderer::getContext(int contextIdx) {
+	return &contexts[contextIdx];
 }
 
 bool VKRenderer::isSupportingMultithreadedRendering() {
@@ -2768,6 +2771,7 @@ inline void VKRenderer::setupSkinningComputingPipeline(program_type& program) {
 
 void VKRenderer::useProgram(int32_t programId)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
 	// if unsetting program flush command buffers
 	if (program_id != 0) {
 		flushCommandsAllContexts();
@@ -4115,7 +4119,7 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (size == 0) return;
 
-	buffers_rwlock.readLock();
+	buffers_rwlock.writeLock();
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
@@ -4123,7 +4127,6 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		return;
 	}
 	auto& buffer = bufferIt->second;
-	buffers_rwlock.unlock();
 
 	//
 	VkResult err;
@@ -4162,6 +4165,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		reusableBuffer = &buffer.buffers[size].back();
 		buffer.buffer_count++;
 	}
+	buffers_rwlock.unlock();
 
 	// create buffer
 	if (buffer.useGPUMemory == true) {
@@ -4430,14 +4434,17 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::flushCommandsAllContexts() {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	for (auto& context: contexts) flushCommands(&context);
 }
 
 inline void VKRenderer::flushCommands(void* context) {
-	finishSetupCommandBuffer();
-
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
+
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx));
+
+	finishSetupCommandBuffer();
 
 	//
 	draw_cmd_mutex.lock();

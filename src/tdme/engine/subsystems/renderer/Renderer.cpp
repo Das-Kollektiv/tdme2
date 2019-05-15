@@ -55,6 +55,10 @@ void* Renderer::getDefaultContext() {
 	return nullptr;
 }
 
+void* Renderer::getContext(int contextIdx) {
+	return nullptr;
+}
+
 void Renderer::initializeFrame() {
 }
 

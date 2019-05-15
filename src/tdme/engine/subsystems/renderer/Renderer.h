@@ -79,6 +79,11 @@ public:
 	 */
 	virtual void* getDefaultContext();
 
+	/**
+	 * @return context by index
+	 */
+	virtual void* getContext(int contextIdx);
+
 	/** 
 	 * Initialize renderer
 	 */

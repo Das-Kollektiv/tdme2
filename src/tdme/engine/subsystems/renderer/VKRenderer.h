@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -30,6 +31,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
@@ -52,7 +54,7 @@ private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int COMMANDS_MAX { 1 };
 	static constexpr int DESC_MAX { 512 };
-	static constexpr int CONTEXT_COUNT { 2 };
+	static constexpr int CONTEXT_COUNT { Engine::RENDERING_THREADS_MAX };
 
 	struct shader_type {
 		struct uniform_type {
@@ -370,6 +372,7 @@ private:
 public:
 	const string getShaderVersion() override;
 	void* getDefaultContext() override;
+	void* getContext(int contextIdx);
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
