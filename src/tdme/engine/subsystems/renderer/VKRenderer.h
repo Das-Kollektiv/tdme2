@@ -90,9 +90,9 @@ private:
 		uint32_t layout_bindings { 0 };
 		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		VkDescriptorSet desc_set[DESC_MAX] { VK_NULL_HANDLE };
+		array<VkDescriptorSet[DESC_MAX], CONTEXT_COUNT> desc_sets;
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
-		uint32_t desc_idx { 0 };
+		array<uint32_t, CONTEXT_COUNT> desc_idxs;
 		int32_t id { 0 };
 	};
 
