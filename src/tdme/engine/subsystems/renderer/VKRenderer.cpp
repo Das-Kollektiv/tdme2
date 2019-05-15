@@ -4119,7 +4119,7 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (size == 0) return;
 
-	buffers_rwlock.writeLock();
+	buffers_rwlock.readLock();
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
@@ -4127,6 +4127,7 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		return;
 	}
 	auto& buffer = bufferIt->second;
+	buffers_rwlock.unlock();
 
 	//
 	VkResult err;
@@ -4165,7 +4166,6 @@ void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size
 		reusableBuffer = &buffer.buffers[size].back();
 		buffer.buffer_count++;
 	}
-	buffers_rwlock.unlock();
 
 	// create buffer
 	if (buffer.useGPUMemory == true) {

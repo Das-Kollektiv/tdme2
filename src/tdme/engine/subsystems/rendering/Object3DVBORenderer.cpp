@@ -126,6 +126,7 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer): co
 		bbEffectColorMuls.resize(threadCount);
 		bbEffectColorAdds.resize(threadCount);
 		bbMvMatrices.resize(threadCount);
+		vboInstancedRenderingIds.resize(threadCount);
 		for (auto i = 0; i < threadCount; i++) {
 			bbEffectColorMuls[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
 			bbEffectColorAdds[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
@@ -147,8 +148,10 @@ Object3DVBORenderer::~Object3DVBORenderer() {
 void Object3DVBORenderer::initialize()
 {
 	psePointBatchVBORenderer->initialize();
-	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3dvborenderer.instancedrendering", 3, false);
-	vboInstancedRenderingIds = vboManaged->getVBOIds();
+	for (auto i = 0; i < threadCount; i++) {
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3dvborenderer.instancedrendering." + to_string(i), 3, false);
+		vboInstancedRenderingIds[i] = vboManaged->getVBOIds();
+	}
 	if (threadCount > 1) {
 		threads.resize(threadCount);
 		for (auto i = 0; i < threadCount; i++) {
@@ -160,6 +163,10 @@ void Object3DVBORenderer::initialize()
 
 void Object3DVBORenderer::dispose()
 {
+	// dispose VBOs
+	for (auto i = 0; i < threadCount; i++) {
+		Engine::getInstance()->getVBOManager()->removeVBO("tdme.object3dvborenderer.instancedrendering." + to_string(i));
+	}
 	// dispose batch vbo renderer
 	for (auto batchVBORenderer: trianglesBatchVBORenderers) {
 		batchVBORenderer->dispose();
@@ -748,17 +755,17 @@ void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, 
 
 		// upload model view matrices
 		{
-			renderer->uploadBufferObject((*vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
-			renderer->bindModelMatricesBufferObject(context, (*vboInstancedRenderingIds)[0]);
+			renderer->uploadBufferObject((*vboInstancedRenderingIds[threadIdx])[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
+			renderer->bindModelMatricesBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0]);
 		}
 
 		// upload effects
 		if ((parameters.renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 			// upload effect color mul
-			renderer->uploadBufferObject((*vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-			renderer->bindEffectColorMulsBufferObject(context, (*vboInstancedRenderingIds)[1]);
-			renderer->uploadBufferObject((*vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-			renderer->bindEffectColorAddsBufferObject(context, (*vboInstancedRenderingIds)[2]);
+			renderer->uploadBufferObject((*vboInstancedRenderingIds[threadIdx])[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+			renderer->bindEffectColorMulsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[1]);
+			renderer->uploadBufferObject((*vboInstancedRenderingIds[threadIdx])[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+			renderer->bindEffectColorAddsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[2]);
 		}
 
 		// set up texture matrix

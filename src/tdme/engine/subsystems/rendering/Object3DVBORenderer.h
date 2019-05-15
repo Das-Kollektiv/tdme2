@@ -116,7 +116,7 @@ private:
 
 	Engine* engine {  };
 	Renderer* renderer {  };
-	vector<int32_t>* vboInstancedRenderingIds {  };
+	vector<vector<int32_t>*> vboInstancedRenderingIds {  };
 	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
 	unordered_map<string, vector<Object3D*>> visibleObjectsByModels {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
