@@ -90,9 +90,10 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 
 void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
 {
+	//
 	if (renderer->shaderId != shader) {
 		renderer->setShader(shader);
-		renderer->onUpdateShader();
+		renderer->onUpdateShader(context);
 	}
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
@@ -106,7 +107,7 @@ void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
 	object3DVBORenderer->setupMaterial(context, object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	renderer->getModelViewMatrix().identity();
-	renderer->onUpdateModelViewMatrix();
+	renderer->onUpdateModelViewMatrix(context);
 	// render, reset
 	for (auto batchVBORendererTriangles: batchVBORenderers) {
 		batchVBORendererTriangles->render();
@@ -117,5 +118,5 @@ void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
 	// restore GL state, model view matrix
 	renderer->unbindBufferObjects(context);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
-	renderer->onUpdateModelViewMatrix();
+	renderer->onUpdateModelViewMatrix(context);
 }

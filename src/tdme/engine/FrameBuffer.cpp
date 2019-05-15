@@ -184,9 +184,9 @@ void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, con
 	// use post processing shader
 	auto postProcessingShader = Engine::getInstance()->getPostProcessingShader();
 	postProcessingShader->useProgram();
-	postProcessingShader->setShader(shaderId);
-	postProcessingShader->setBufferPixelWidth(1.0f / static_cast<float>(source->getWidth()));
-	postProcessingShader->setBufferPixelHeight(1.0f / static_cast<float>(source->getHeight()));
+	postProcessingShader->setShader(context, shaderId);
+	postProcessingShader->setBufferPixelWidth(context, 1.0f / static_cast<float>(source->getWidth()));
+	postProcessingShader->setBufferPixelHeight(context, 1.0f / static_cast<float>(source->getHeight()));
 
 	// bind color buffer texture
 	renderer->setTextureUnit(context, 0);

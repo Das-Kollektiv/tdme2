@@ -55,34 +55,39 @@ public:
 
 	/** 
 	 * Set up pre program mvp matrix
+	 * @param context context
 	 * @param mvpMatrix mvp matrix
 	 */
-	void updateMatrices(const Matrix4x4& mvpMatrix);
+	void updateMatrices(void* context, const Matrix4x4& mvpMatrix);
 
 	/**
 	 * Set up pre program texture matrix
+	 * @param context context
 	 * @param renderer renderer
 	 */
-	void updateTextureMatrix(Renderer* renderer);
+	void updateTextureMatrix(Renderer* renderer, void* context);
 
 	/**
 	 * Update material
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateMaterial(Renderer* renderer);
+	void updateMaterial(Renderer* renderer, void* context);
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
+	 * @param context context
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, void* context, int32_t textureId);
 
 	/**
 	 * Set shader
+	 * @param context
 	 * @param id shader id
 	 */
-	void setShader(const string& id);
+	void setShader(void* context, const string& id);
 
 	/**
 	 * Constructor

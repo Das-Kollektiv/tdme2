@@ -36,8 +36,9 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
 	/** 
 	 * Use pre render shadow mapping program
 	 * @param engine engine
+	 * @param context context
 	 */
-	virtual void useProgram(Engine* engine) = 0;
+	virtual void useProgram(Engine* engine, void* context) = 0;
 
 	/** 
 	 * Un use pre render shadow mapping program
@@ -46,26 +47,30 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
 
 	/** 
 	 * Set up pre program mvp matrix
+	 * @param context context
 	 * @param mvpMatrix mvp matrix
 	 */
-	virtual void updateMatrices(const Matrix4x4& mvpMatrix) = 0;
+	virtual void updateMatrices(void* context, const Matrix4x4& mvpMatrix) = 0;
 
 	/**
 	 * Set up pre program texture matrix
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	virtual void updateTextureMatrix(Renderer* renderer) = 0;
+	virtual void updateTextureMatrix(Renderer* renderer, void* context) = 0;
 
 	/**
 	 * Update material
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	virtual void updateMaterial(Renderer* renderer) = 0;
+	virtual void updateMaterial(Renderer* renderer, void* context) = 0;
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
+	 * @param context context
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(Renderer* renderer, int32_t textureId) = 0;
+	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) = 0;
 };

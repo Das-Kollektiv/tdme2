@@ -89,10 +89,10 @@ public:
 
 	/**
 	 * Set shader
-	 * @param id id
 	 * @param context context
+	 * @param id id
 	 */
-	void setShader(const string& id, void* context);
+	void setShader(void* context, const string& id);
 
 	/**
 	 * Bind texture

@@ -105,7 +105,7 @@ void LightingShader::updateTextureMatrix(Renderer* renderer, void* context) {
 	implementation->updateTextureMatrix(renderer, context);
 }
 
-void LightingShader::setShader(const string& id, void* context) {
+void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 
 	auto currentImplementation = implementation;

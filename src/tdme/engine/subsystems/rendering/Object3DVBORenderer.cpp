@@ -212,7 +212,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		renderer->enableBlending();
 		// disable foliage animation
 		renderer->setShader("default");
-		renderer->onUpdateShader();
+		renderer->onUpdateShader(context);
 		// have identity texture matrix
 		renderer->getTextureMatrix(context).identity();
 		renderer->onUpdateTextureMatrix(context);
@@ -450,7 +450,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				if (currentShader != objectShader) {
 					currentShader = objectShader;
 					renderer->setShader(currentShader);
-					renderer->onUpdateShader();
+					renderer->onUpdateShader(context);
 					// update lights
 					for (auto j = 0; j < engine->lights.size(); j++) {
 						engine->lights[j].update(context);
@@ -498,7 +498,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 						multiply(object->getTransformationsMatrix()).
 						multiply(cameraMatrix)
 				);
-				renderer->onUpdateModelViewMatrix();
+				renderer->onUpdateModelViewMatrix(context);
 				// set up front face
 				auto objectFrontFace = matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 				if (objectFrontFace != currentFrontFace) {
@@ -515,6 +515,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 					shadowMapping != nullptr) {
 					shadowMapping->startObjectTransformations(
+						context,
 						(_object3DGroup->mesh->skinning == true ?
 							modelViewMatrix.identity() :
 							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
@@ -642,10 +643,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 						objectsToRender[0]->getShader():
 						objectsToRender[0]->getDistanceShader();
 				renderer->setShader(currentShader);
-				renderer->onUpdateShader();
+				renderer->onUpdateShader(context);
 				// issue upload matrices
-				renderer->onUpdateCameraMatrix();
-				renderer->onUpdateProjectionMatrix();
+				renderer->onUpdateCameraMatrix(context);
+				renderer->onUpdateProjectionMatrix(context);
 				// update lights
 				for (auto j = 0; j < engine->lights.size(); j++) {
 					engine->lights[j].update(context);
@@ -969,7 +970,7 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 	renderer->enableBlending();
 	// 	model view matrix
 	renderer->getModelViewMatrix().identity();
-	renderer->onUpdateModelViewMatrix();
+	renderer->onUpdateModelViewMatrix(context);
 
 	// render
 	PointsParticleSystem* currentPpse = (PointsParticleSystem*)pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie;

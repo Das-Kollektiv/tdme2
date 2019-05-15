@@ -58,17 +58,17 @@ public:
 	// overriden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
-	virtual void useProgram(Engine* engine) override;
+	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void unUseProgram() override;
-	virtual void setProgramViewMatrices() override;
-	virtual void setProgramMVMatrix(const Matrix4x4& mvMatrix) override;
-	virtual void setProgramMVPMatrix(const Matrix4x4& mvpMatrix) override;
-	virtual void setProgramNormalMatrix(const Matrix4x4& normalMatrix) override;
-	virtual void updateTextureMatrix(Renderer* renderer) override;
-	virtual void updateMaterial(Renderer* renderer) override;
-	virtual void updateLight(Renderer* renderer, int32_t lightId) override;
-	virtual void bindTexture(Renderer* renderer, int32_t textureId) override;
-	virtual void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix) override;
+	virtual void setProgramViewMatrices(void* context) override;
+	virtual void setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix) override;
+	virtual void setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix) override;
+	virtual void setProgramNormalMatrix(void* context, const Matrix4x4& normalMatrix) override;
+	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
+	virtual void updateMaterial(Renderer* renderer, void* context) override;
+	virtual void updateLight(Renderer* renderer, void* context, int32_t lightId) override;
+	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
+	virtual void setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) override;
 	virtual void setRenderLightId(int32_t lightId) override;
 
 	/**

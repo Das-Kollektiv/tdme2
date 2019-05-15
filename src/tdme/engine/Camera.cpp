@@ -122,7 +122,7 @@ Matrix4x4& Camera::computeModelViewMatrix(const Vector3& lookFrom, const Vector3
 	return modelViewMatrix;
 }
 
-void Camera::update(int32_t width, int32_t height)
+void Camera::update(void* context, int32_t width, int32_t height)
 {
 	// setup new view port if required
 	auto reshaped = false;
@@ -139,11 +139,11 @@ void Camera::update(int32_t width, int32_t height)
 
 	// setup projection and model view and such
 	renderer->getProjectionMatrix().set(computeProjectionMatrix(fovY, aspect, zNear, zFar));
-	renderer->onUpdateProjectionMatrix();
+	renderer->onUpdateProjectionMatrix(context);
 	renderer->getModelViewMatrix().set(computeModelViewMatrix(lookFrom, lookAt, upVector));
-	renderer->onUpdateModelViewMatrix();
+	renderer->onUpdateModelViewMatrix(context);
 	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
-	renderer->onUpdateCameraMatrix();
+	renderer->onUpdateCameraMatrix(context);
 
 	frustumChanged =
 		reshaped == true ||

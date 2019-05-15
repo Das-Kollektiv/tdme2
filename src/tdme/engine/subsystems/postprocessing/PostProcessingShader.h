@@ -52,20 +52,23 @@ public:
 
 	/**
 	 * Set post processing shader
+	 * @param context context
 	 */
-	void setShader(const string& id);
+	void setShader(void* context, const string& id);
 
 	/**
 	 * Set source buffer pixel width
+	 * @param context context
 	 * @param pixelWidth pixel width
 	 */
-	void setBufferPixelWidth(float pixelWidth);
+	void setBufferPixelWidth(void* context, float pixelWidth);
 
 	/**
 	 * Set source buffer pixel height
+	 * @param context context
 	 * @param pixelHeight pixel height
 	 */
-	void setBufferPixelHeight(float pixelHeight);
+	void setBufferPixelHeight(void* context, float pixelHeight);
 
 	/**
 	 * Public constructor

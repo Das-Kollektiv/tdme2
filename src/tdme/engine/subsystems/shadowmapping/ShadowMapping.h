@@ -122,9 +122,10 @@ public:
 
 	/** 
 	 * Start object transformations
+	 * @param context context
 	 * @param transformationsMatrix transformations matrix
 	 */
-	void startObjectTransformations(Matrix4x4& transformationsMatrix);
+	void startObjectTransformations(void* context, Matrix4x4& transformationsMatrix);
 
 	/** 
 	 * End object transformations
@@ -133,49 +134,58 @@ public:
 
 	/** 
 	 * Update model view and projection matrix
+	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateMatrices(Renderer* renderer);
+	void updateMatrices(Renderer* renderer, void* context);
 
 	/**
 	 * Update texture matrix
+	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateTextureMatrix(Renderer* renderer);
+	void updateTextureMatrix(Renderer* renderer, void* context);
 
 	/**
 	 * Update material
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateMaterial(Renderer* renderer);
+	void updateMaterial(Renderer* renderer, void* context);
 
 	/**
 	 * Set shader
+	 * @param context context
 	 * @param id shader id
 	 */
-	void setShader(const string& id);
+	void setShader(void* context, const string& id);
 
 	/**
 	 * Upload light
 	 * @param renderer renderer
 	 * @param lightId light id
 	 */
-	void updateLight(Renderer* renderer, int32_t lightId);
+	void updateLight(Renderer* renderer, void* context, int32_t lightId);
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, void* context, int32_t textureId);
 
 	/** 
 	 * Update depth bias mvp matrix with given matrix
+	 * @param context context
+	 * @param depthBiasMVPMatrix depth bias MVP matrix
 	 */
-	void updateDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix);
+	void updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBiasMVPMatrix);
 
 	/** 
 	 * Update depth bias mvp matrix / upload only
+	 * @param context context
 	 */
-	void updateDepthBiasMVPMatrix();
+	void updateDepthBiasMVPMatrix(void* context);
 
 	/**
 	 * Constructor

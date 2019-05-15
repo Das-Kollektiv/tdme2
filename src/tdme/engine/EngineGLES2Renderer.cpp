@@ -17,55 +17,55 @@ EngineGLES2Renderer::EngineGLES2Renderer(Engine *engine) :
 {
 }
 
-void EngineGLES2Renderer::onUpdateProjectionMatrix()
+void EngineGLES2Renderer::onUpdateProjectionMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateMatrices(this);
+		Engine::lightingShader->updateMatrices(this, context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateMatrices(this);
+		Engine::particlesShader->updateMatrices(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMatrices(this);
+		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 }
 
-void EngineGLES2Renderer::onUpdateCameraMatrix()
+void EngineGLES2Renderer::onUpdateCameraMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateMatrices(this);
+		Engine::lightingShader->updateMatrices(this, context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateMatrices(this);
+		Engine::particlesShader->updateMatrices(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMatrices(this);
+		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 }
 
-void EngineGLES2Renderer::onUpdateModelViewMatrix()
+void EngineGLES2Renderer::onUpdateModelViewMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateMatrices(this);
+		Engine::lightingShader->updateMatrices(this, context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateMatrices(this);
+		Engine::particlesShader->updateMatrices(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMatrices(this);
+		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 }
 
 void EngineGLES2Renderer::onBindTexture(void* context, int32_t textureId)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->bindTexture(this, textureId);
+		Engine::lightingShader->bindTexture(this, context, textureId);
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->bindTexture(this, textureId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->bindTexture(this, textureId);
+		Engine::currentEngine->shadowMapping->bindTexture(this, context, textureId);
 }
 
 void EngineGLES2Renderer::onUpdateTextureMatrix(void* context)
@@ -74,7 +74,7 @@ void EngineGLES2Renderer::onUpdateTextureMatrix(void* context)
 		Engine::lightingShader->updateTextureMatrix(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateTextureMatrix(this);
+		Engine::currentEngine->shadowMapping->updateTextureMatrix(this, context);
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateTextureMatrix(this);
@@ -99,7 +99,7 @@ void EngineGLES2Renderer::onUpdateLight(void* context, int32_t lightId)
 		Engine::lightingShader->updateLight(this, context, lightId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateLight(this, lightId);
+		Engine::currentEngine->shadowMapping->updateLight(this, context, lightId);
 }
 
 void EngineGLES2Renderer::onUpdateMaterial(void* context)
@@ -108,13 +108,13 @@ void EngineGLES2Renderer::onUpdateMaterial(void* context)
 		Engine::lightingShader->updateMaterial(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMaterial(this);
+		Engine::currentEngine->shadowMapping->updateMaterial(this, context);
 }
 
-void EngineGLES2Renderer::onUpdateShader() {
+void EngineGLES2Renderer::onUpdateShader(void* context) {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->setShader(shaderId, nullptr); // TODO: a.drewke
+		Engine::lightingShader->setShader(context, shaderId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->setShader(shaderId);
+		Engine::currentEngine->shadowMapping->setShader(context, shaderId);
 }

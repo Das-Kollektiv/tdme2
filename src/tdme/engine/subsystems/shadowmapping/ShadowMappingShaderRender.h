@@ -62,53 +62,61 @@ public:
 
 	/**
 	 * Set up program model view matrix
+	 * @param context context
 	 * @param mvMatrix model view matrix
 	 */
-	void setProgramMVMatrix(const Matrix4x4& mvMatrix);
+	void setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix);
 
 	/** 
 	 * Set up program mvp matrix
+	 * @param context context
 	 * @param mvpMatrix mvp matrix
 	 */
-	void setProgramMVPMatrix(const Matrix4x4& mvpMatrix);
+	void setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix);
 
 	/** 
 	 * Set up program normal matrix
+	 * @param context context
 	 * @param normalMatrix normal matrix
 	 */
-	void setProgramNormalMatrix(const Matrix4x4& normalMatrix);
+	void setProgramNormalMatrix(void* context, const Matrix4x4& normalMatrix);
 
 	/**
 	 * Set up pre program texture matrix
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateTextureMatrix(Renderer* renderer);
+	void updateTextureMatrix(Renderer* renderer, void* context);
 
 	/**
 	 * Update material
 	 * @param renderer renderer
+	 * @param context context
 	 */
-	void updateMaterial(Renderer* renderer);
+	void updateMaterial(Renderer* renderer, void* context);
 
 	/**
 	 * Update light
 	 * @param renderer renderer
+	 * @param context context
 	 * @param lightId light id
 	 */
-	void updateLight(Renderer* renderer, int32_t lightId);
+	void updateLight(Renderer* renderer, void* context, int32_t lightId);
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
+	 * @param context context
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, int32_t textureId);
+	void bindTexture(Renderer* renderer, void* context, int32_t textureId);
 
 	/** 
 	 * Set up program depth bias mvp matrix
+	 * @param context context
 	 * @param depthBiasMVPMatrix depth bias mvp matrix
 	 */
-	void setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix);
+	void setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix);
 
 	/**
 	 * Set light id
@@ -120,7 +128,7 @@ public:
 	 * Set shader
 	 * @param id id
 	 */
-	void setShader(const string& id);
+	void setShader(void* context, const string& id);
 
 	/**
 	 * Public constructor

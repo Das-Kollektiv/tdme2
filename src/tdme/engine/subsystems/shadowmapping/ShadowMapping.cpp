@@ -131,6 +131,9 @@ ShadowMap* ShadowMapping::getShadowMap(int idx) {
 
 void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 {
+	// use default context
+	auto context = renderer->getDefaultContext();
+
 	runState = ShadowMapping_RunState::RENDER;
 	// render using shadow mapping program
 	auto shader = Engine::getShadowMappingShaderRender();
@@ -151,13 +154,13 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		// set light to render
 		shader->setRenderLightId(i);
 		// set up light shader uniforms
-		shadowMap->updateDepthBiasMVPMatrix();
+		shadowMap->updateDepthBiasMVPMatrix(context);
 		// bind shadow map texture on shadow map texture unit
-		auto textureUnit = renderer->getTextureUnit();
-		renderer->setTextureUnit(ShadowMap::TEXTUREUNIT);
-		shadowMap->bindDepthBufferTexture();
+		auto textureUnit = renderer->getTextureUnit(context);
+		renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
+		shadowMap->bindDepthBufferTexture(context);
 		// switch back to texture last unit
-		renderer->setTextureUnit(textureUnit);
+		renderer->setTextureUnit(context, textureUnit);
 		// render objects, enable blending
 		//	will be disabled after rendering transparent faces
 		renderer->enableBlending();
@@ -178,10 +181,10 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	shader->unUseProgram();
 
 	// restore texture unit
-	auto textureUnit = renderer->getTextureUnit();
-	renderer->setTextureUnit(ShadowMap::TEXTUREUNIT);
-	renderer->bindTexture(renderer->ID_NONE);
-	renderer->setTextureUnit(textureUnit);
+	auto textureUnit = renderer->getTextureUnit(context);
+	renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
+	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(context, textureUnit);
 	// restore render defaults
 	renderer->disableBlending();
 	renderer->enableDepthBufferWriting();
@@ -202,7 +205,7 @@ void ShadowMapping::dispose()
 	}
 }
 
-void ShadowMapping::startObjectTransformations(Matrix4x4& transformationsMatrix)
+void ShadowMapping::startObjectTransformations(void* context, Matrix4x4& transformationsMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
@@ -215,7 +218,7 @@ void ShadowMapping::startObjectTransformations(Matrix4x4& transformationsMatrix)
 	depthBiasMVPMatrix.set(transformationsMatrix).multiply(tmpMatrix);
 
 	//
-	updateDepthBiasMVPMatrix();
+	updateDepthBiasMVPMatrix(context);
 }
 
 void ShadowMapping::endObjectTransformations()
@@ -226,7 +229,7 @@ void ShadowMapping::endObjectTransformations()
 	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
-void ShadowMapping::updateTextureMatrix(Renderer* renderer)
+void ShadowMapping::updateTextureMatrix(Renderer* renderer, void* context)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
@@ -235,13 +238,13 @@ void ShadowMapping::updateTextureMatrix(Renderer* renderer)
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->updateTextureMatrix(renderer);
+				Engine::getShadowMappingShaderPre()->updateTextureMatrix(renderer, context);
 				goto end_switch0;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->updateTextureMatrix(renderer);
+				Engine::getShadowMappingShaderRender()->updateTextureMatrix(renderer, context);
 				goto end_switch0;
 			}
 		} else {
@@ -254,7 +257,7 @@ void ShadowMapping::updateTextureMatrix(Renderer* renderer)
 	}
 }
 
-void ShadowMapping::updateMatrices(Renderer* renderer)
+void ShadowMapping::updateMatrices(Renderer* renderer, void* context)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
@@ -269,16 +272,16 @@ void ShadowMapping::updateMatrices(Renderer* renderer)
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->updateMatrices(mvpMatrix);
+				Engine::getShadowMappingShaderPre()->updateMatrices(context, mvpMatrix);
 				goto end_switch0;;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
 				auto shader = Engine::getShadowMappingShaderRender();
-				shader->setProgramMVMatrix(mvMatrix);
-				shader->setProgramMVPMatrix(mvpMatrix);
-				shader->setProgramNormalMatrix(normalMatrix);
+				shader->setProgramMVMatrix(context, mvMatrix);
+				shader->setProgramMVPMatrix(context, mvpMatrix);
+				shader->setProgramNormalMatrix(context, normalMatrix);
 				goto end_switch0;;
 			}
 		} else {
@@ -291,20 +294,20 @@ void ShadowMapping::updateMatrices(Renderer* renderer)
 	}
 }
 
-void ShadowMapping::updateMaterial(Renderer* renderer) {
+void ShadowMapping::updateMaterial(Renderer* renderer, void* context) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 	{
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->updateMaterial(renderer);
+				Engine::getShadowMappingShaderPre()->updateMaterial(renderer, context);
 				goto end_switch0;;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->updateMaterial(renderer);
+				Engine::getShadowMappingShaderRender()->updateMaterial(renderer, context);
 				goto end_switch0;;
 			}
 		}
@@ -312,26 +315,26 @@ void ShadowMapping::updateMaterial(Renderer* renderer) {
 	}
 }
 
-void ShadowMapping::updateLight(Renderer* renderer, int32_t lightId) {
+void ShadowMapping::updateLight(Renderer* renderer, void* context, int32_t lightId) {
 	if (runState == ShadowMapping_RunState::RENDER) {
-		Engine::getShadowMappingShaderRender()->updateLight(renderer, lightId);
+		Engine::getShadowMappingShaderRender()->updateLight(renderer, context, lightId);
 	}
 }
 
-void ShadowMapping::bindTexture(Renderer* renderer, int32_t textureId) {
+void ShadowMapping::bindTexture(Renderer* renderer, void* context, int32_t textureId) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 	{
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->bindTexture(renderer, textureId);
+				Engine::getShadowMappingShaderPre()->bindTexture(renderer, context, textureId);
 				goto end_switch0;;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->bindTexture(renderer, textureId);
+				Engine::getShadowMappingShaderRender()->bindTexture(renderer, context, textureId);
 				goto end_switch0;;
 			}
 		}
@@ -339,35 +342,35 @@ void ShadowMapping::bindTexture(Renderer* renderer, int32_t textureId) {
 	}
 }
 
-void ShadowMapping::updateDepthBiasMVPMatrix(Matrix4x4& depthBiasMVPMatrix)
+void ShadowMapping::updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBiasMVPMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 	// copy matrix
 	this->depthBiasMVPMatrix.set(depthBiasMVPMatrix);
 	// upload
-	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
+	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }
 
-void ShadowMapping::updateDepthBiasMVPMatrix()
+void ShadowMapping::updateDepthBiasMVPMatrix(void* context)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
 	// upload
-	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
+	Engine::getShadowMappingShaderRender()->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }
 
-void ShadowMapping::setShader(const string& id) {
+void ShadowMapping::setShader(void* context, const string& id) {
 	{
 		if (runState == ShadowMapping_RunState::NONE) {
 			// no op
 		} else
 		if (runState == ShadowMapping_RunState::PRE) {
-			Engine::getShadowMappingShaderPre()->setShader(id);
+			Engine::getShadowMappingShaderPre()->setShader(context, id);
 		} else
 		if (runState == ShadowMapping_RunState::RENDER) {
-			Engine::getShadowMappingShaderRender()->setShader(id);
+			Engine::getShadowMappingShaderRender()->setShader(context, id);
 		} else {
 			Console::println(string("ShadowMapping::setShader(): unsupported run state '" + to_string(runState)));
 		}

@@ -94,6 +94,9 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 {
 	if (isRunning == false) useProgram();
 
+	// use default context
+	auto context = renderer->getDefaultContext();
+
 	// vbo base ids
 	auto vboBaseIds = object3DGroupMesh->object3DGroupVBORenderer->vboBaseIds;
 
@@ -187,22 +190,22 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	}
 
 	// bind
-	renderer->bindSkinningVerticesBufferObject((*modelSkinningCacheCached->vboIds)[0]);
-	renderer->bindSkinningNormalsBufferObject((*modelSkinningCacheCached->vboIds)[1]);
-	renderer->bindSkinningVertexJointsBufferObject((*modelSkinningCacheCached->vboIds)[2]);
-	renderer->bindSkinningVertexJointIdxsBufferObject((*modelSkinningCacheCached->vboIds)[3]);
-	renderer->bindSkinningVertexJointWeightsBufferObject((*modelSkinningCacheCached->vboIds)[4]);
-	renderer->bindSkinningMatricesBufferObject((*modelSkinningCacheCached->matricesVboIds)[0]);
+	renderer->bindSkinningVerticesBufferObject(context, (*modelSkinningCacheCached->vboIds)[0]);
+	renderer->bindSkinningNormalsBufferObject(context, (*modelSkinningCacheCached->vboIds)[1]);
+	renderer->bindSkinningVertexJointsBufferObject(context, (*modelSkinningCacheCached->vboIds)[2]);
+	renderer->bindSkinningVertexJointIdxsBufferObject(context, (*modelSkinningCacheCached->vboIds)[3]);
+	renderer->bindSkinningVertexJointWeightsBufferObject(context, (*modelSkinningCacheCached->vboIds)[4]);
+	renderer->bindSkinningMatricesBufferObject(context, (*modelSkinningCacheCached->matricesVboIds)[0]);
 
 	// bind output / result buffers
-	renderer->bindSkinningVerticesResultBufferObject((*vboBaseIds)[1]);
-	renderer->bindSkinningNormalsResultBufferObject((*vboBaseIds)[2]);
+	renderer->bindSkinningVerticesResultBufferObject(context, (*vboBaseIds)[1]);
+	renderer->bindSkinningNormalsResultBufferObject(context, (*vboBaseIds)[2]);
 
 	// skinning count
-	renderer->setProgramUniformInteger(uniformSkinningCount, vertices.size());
+	renderer->setProgramUniformInteger(context, uniformSkinningCount, vertices.size());
 
 	// do it so
-	renderer->dispatchCompute((int)Math::ceil(vertices.size() / 16.0f), 1, 1);
+	renderer->dispatchCompute(context, (int)Math::ceil(vertices.size() / 16.0f), 1, 1);
 }
 
 void SkinningShader::unUseProgram()

@@ -62,58 +62,58 @@ void ShadowMappingShaderRender::unUseProgram()
 	engine = nullptr;
 }
 
-void ShadowMappingShaderRender::setProgramMVMatrix(const Matrix4x4& mvMatrix)
+void ShadowMappingShaderRender::setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix)
 {
 	if (implementation == nullptr) return;
-	implementation->setProgramMVMatrix(mvMatrix);
+	implementation->setProgramMVMatrix(context, mvMatrix);
 }
 
-void ShadowMappingShaderRender::setProgramMVPMatrix(const Matrix4x4& mvpMatrix)
+void ShadowMappingShaderRender::setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix)
 {
 	if (implementation == nullptr) return;
-	implementation->setProgramMVPMatrix(mvpMatrix);
+	implementation->setProgramMVPMatrix(context, mvpMatrix);
 }
 
-void ShadowMappingShaderRender::setProgramNormalMatrix(const Matrix4x4& normalMatrix)
+void ShadowMappingShaderRender::setProgramNormalMatrix(void* context, const Matrix4x4& normalMatrix)
 {
 	if (implementation == nullptr) return;
-	implementation->setProgramNormalMatrix(normalMatrix);
+	implementation->setProgramNormalMatrix(context, normalMatrix);
 }
 
-void ShadowMappingShaderRender::updateTextureMatrix(Renderer* renderer) {
+void ShadowMappingShaderRender::updateTextureMatrix(Renderer* renderer, void* context) {
 	if (implementation == nullptr) return;
-	implementation->updateTextureMatrix(renderer);
+	implementation->updateTextureMatrix(renderer, context);
 }
 
-void ShadowMappingShaderRender::updateMaterial(Renderer* renderer)
+void ShadowMappingShaderRender::updateMaterial(Renderer* renderer, void* context)
 {
 	if (implementation == nullptr) return;
-	implementation->updateMaterial(renderer);
+	implementation->updateMaterial(renderer, context);
 }
 
-void ShadowMappingShaderRender::updateLight(Renderer* renderer, int32_t lightId) {
+void ShadowMappingShaderRender::updateLight(Renderer* renderer, void* context, int32_t lightId) {
 	if (implementation == nullptr) return;
-	implementation->updateLight(renderer, lightId);
+	implementation->updateLight(renderer, context, lightId);
 }
 
-void ShadowMappingShaderRender::bindTexture(Renderer* renderer, int32_t textureId)
+void ShadowMappingShaderRender::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	if (implementation == nullptr) return;
-	implementation->bindTexture(renderer, textureId);
+	implementation->bindTexture(renderer, context, textureId);
 }
 
-void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(const Matrix4x4& depthBiasMVPMatrix)
+void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
 {
 	this->depthBiasMVPMatrix = depthBiasMVPMatrix;
 	if (implementation == nullptr) return;
-	implementation->setProgramDepthBiasMVPMatrix(this->depthBiasMVPMatrix);
+	implementation->setProgramDepthBiasMVPMatrix(context, this->depthBiasMVPMatrix);
 }
 
 void ShadowMappingShaderRender::setRenderLightId(int32_t lightId) {
 	this->lightId = lightId;
 }
 
-void ShadowMappingShaderRender::setShader(const string& id) {
+void ShadowMappingShaderRender::setShader(void* context, const string& id) {
 	auto currentImplementation = implementation;
 
 	auto shaderIt = shader.find(id);
@@ -124,9 +124,9 @@ void ShadowMappingShaderRender::setShader(const string& id) {
 
 	if (currentImplementation != implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
-		implementation->useProgram(engine);
+		implementation->useProgram(engine, context);
 	}
 
-	implementation->setProgramDepthBiasMVPMatrix(depthBiasMVPMatrix);
+	implementation->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 	implementation->setRenderLightId(lightId);
 }

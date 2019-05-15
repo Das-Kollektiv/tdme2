@@ -56,8 +56,9 @@ private:
 
 	/** 
 	 * Binds frame buffer depth texture
+	 * @param context context
 	 */
-	void bindDepthBufferTexture();
+	void bindDepthBufferTexture(void* context);
 
 	/** 
 	 * @return lightCamera
@@ -77,8 +78,9 @@ private:
 
 	/** 
 	 * Set up shadow texture matrix computed and stored before
+	 * @param context context
 	 */
-	void updateDepthBiasMVPMatrix();
+	void updateDepthBiasMVPMatrix(void* context);
 
 public:
 	static constexpr int32_t TEXTUREUNIT { 8 };

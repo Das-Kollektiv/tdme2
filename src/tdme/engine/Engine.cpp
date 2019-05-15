@@ -678,9 +678,6 @@ void Engine::initRendering()
 	// update timing
 	timing->updateTiming();
 
-	// update camera
-	camera->update(width, height);
-
 	// clear lists of visible objects
 	visibleObjects.clear();
 	visibleObjectsPostPostProcessing.clear();
@@ -817,10 +814,10 @@ void Engine::display()
 	Engine::renderer->initializeFrame();
 
 	// default context
-	auto defaultContext = Engine::renderer->getDefaultContext();
+	auto context = Engine::renderer->getDefaultContext();
 
 	// update camera
-	camera->update(width, height);
+	camera->update(context, width, height);
 
 	// create shadow maps
 	if (shadowMapping != nullptr)
@@ -863,7 +860,7 @@ void Engine::display()
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 
 	// restore camera from shadow map rendering
-	camera->update(width, height);
+	camera->update(context, width, height);
 
 	// use lighting shader
 	if (lightingShader != nullptr) {
@@ -907,7 +904,7 @@ void Engine::display()
 
 	// use particle shader
 	if (particlesShader != nullptr) {
-		particlesShader->useProgram(defaultContext);
+		particlesShader->useProgram(context);
 	}
 
 	// render points based particle systems
@@ -915,7 +912,7 @@ void Engine::display()
 
 	// unuse particle shader
 	if (particlesShader != nullptr) {
-		particlesShader->unUseProgram(defaultContext);
+		particlesShader->unUseProgram(context);
 	}
 
 	// render objects and particles together

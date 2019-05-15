@@ -293,8 +293,9 @@ public:
 
 	/** 
 	 * Update projection matrix event
+	 * @param context context
 	 */
-	virtual void onUpdateProjectionMatrix() = 0;
+	virtual void onUpdateProjectionMatrix(void* context) = 0;
 
 	/** 
 	 * @return camera matrix
@@ -303,8 +304,9 @@ public:
 
 	/** 
 	 * Update camera matrix event
+	 * @param context context
 	 */
-	virtual void onUpdateCameraMatrix() = 0;
+	virtual void onUpdateCameraMatrix(void* context) = 0;
 
 	/** 
 	 * @return model view matrix
@@ -313,8 +315,9 @@ public:
 
 	/** 
 	 * Update model view matrix event
+	 * @param context context
 	 */
-	virtual void onUpdateModelViewMatrix() = 0;
+	virtual void onUpdateModelViewMatrix(void* context) = 0;
 
 	/** 
 	 * @return view port matrix
@@ -847,8 +850,9 @@ public:
 
 	/**
 	 * On update shader
+	 * @param context context
 	 */
-	virtual void onUpdateShader() = 0;
+	virtual void onUpdateShader(void* context) = 0;
 
 	/** 
 	 * Reads a pixel depth

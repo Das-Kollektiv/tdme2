@@ -90,9 +90,9 @@ void ShadowMap::dispose()
 	frameBuffer->dispose();
 }
 
-void ShadowMap::bindDepthBufferTexture()
+void ShadowMap::bindDepthBufferTexture(void* context)
 {
-	frameBuffer->bindDepthBufferTexture();
+	frameBuffer->bindDepthBufferTexture(context);
 }
 
 Camera* ShadowMap::getCamera()
@@ -102,6 +102,9 @@ Camera* ShadowMap::getCamera()
 
 void ShadowMap::render(Light* light)
 {
+	// use default context
+	auto context = shadowMapping->renderer->getDefaultContext();
+
 	// clear visible objects
 	visibleObjects.clear();
 	// viewers camera
@@ -124,7 +127,7 @@ void ShadowMap::render(Light* light)
 	lightCamera->setLookFrom(lightLookFrom);
 	lightCamera->setLookAt(lightLookAt);
 	lightCamera->setUpVector(lightCamera->computeUpVector(lightCamera->getLookFrom(), lightCamera->getLookAt()));
-	lightCamera->update(frameBuffer->getWidth(), frameBuffer->getHeight());
+	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
 	// Bind frame buffer to shadow map fbo id
 	frameBuffer->enableFrameBuffer();
 	// clear depth buffer
@@ -205,7 +208,7 @@ void ShadowMap::computeDepthBiasMVPMatrix()
 	depthBiasMVPMatrix.set(modelViewMatrix).multiply(projectionMatrix).multiply(biasMatrix);
 }
 
-void ShadowMap::updateDepthBiasMVPMatrix()
+void ShadowMap::updateDepthBiasMVPMatrix(void* context)
 {
-	shadowMapping->updateDepthBiasMVPMatrix(depthBiasMVPMatrix);
+	shadowMapping->updateDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }

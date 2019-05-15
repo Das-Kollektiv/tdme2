@@ -66,7 +66,7 @@ void GUIShader::initialize()
 void GUIShader::useProgram()
 {
 	renderer->useProgram(programId);
-	renderer->setProgramUniformInteger(uniformDiffuseTextureUnit, 0);
+	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureUnit, 0);
 	isRunning = true;
 }
 
@@ -79,19 +79,28 @@ void GUIShader::unUseProgram()
 void GUIShader::bindTexture(Renderer* renderer, int32_t textureId)
 {
 	if (isRunning == false) return;
-	renderer->setProgramUniformInteger(uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 }
 
 void GUIShader::updateEffect(Renderer* renderer)
 {
 	if (isRunning == false) return;
-	renderer->setProgramUniformFloatVec4(uniformEffectColorMul, renderer->effectColorMul);
-	renderer->setProgramUniformFloatVec4(uniformEffectColorAdd, renderer->effectColorAdd);
+
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	//
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->effectColorMul);
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->effectColorAdd);
 }
 
 
 void GUIShader::updateTextureMatrix(Renderer* renderer) {
 	if (isRunning == false) return;
 
-	renderer->setProgramUniformFloatMatrix3x3(uniformTextureMatrix, renderer->getTextureMatrix().getArray());
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	//
+	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
 }

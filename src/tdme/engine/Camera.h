@@ -186,10 +186,11 @@ public:
 
 	/** 
 	 * Sets up camera while resizing the view port
+	 * @param context context
 	 * @param width width
 	 * @param height height
 	 */
-	void update(int32_t width, int32_t height);
+	void update(void* context, int32_t width, int32_t height);
 
 	/**
 	 * Public constructor

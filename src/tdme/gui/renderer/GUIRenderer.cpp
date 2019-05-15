@@ -131,12 +131,12 @@ void GUIRenderer::initRendering()
 	setRenderAreaRight(SCREEN_RIGHT);
 	setRenderAreaBottom(SCREEN_BOTTOM);
 	Engine::getGUIShader()->useProgram();
-	renderer->getTextureMatrix().identity();
+	renderer->getTextureMatrix(renderer->getDefaultContext()).identity();
 }
 
 void GUIRenderer::doneRendering()
 {
-	renderer->unbindBufferObjects();
+	renderer->unbindBufferObjects(renderer->getDefaultContext());
 	Engine::getGUIShader()->unUseProgram();
 }
 
@@ -308,12 +308,12 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 }
 
 void GUIRenderer::setTexureMatrix(const Matrix2D3x3& textureMatrix) {
-	renderer->getTextureMatrix().set(textureMatrix);
+	renderer->getTextureMatrix(renderer->getDefaultContext()).set(textureMatrix);
 }
 
 void GUIRenderer::bindTexture(int32_t textureId)
 {
-	renderer->bindTexture(textureId);
+	renderer->bindTexture(renderer->getDefaultContext(), textureId);
 }
 
 void GUIRenderer::render()
@@ -324,13 +324,15 @@ void GUIRenderer::render()
 		effectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
 		return;
 	}
+	// use default context
+	auto context = renderer->getDefaultContext();
 	renderer->uploadBufferObject((*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
 	renderer->uploadBufferObject((*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
 	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
-	renderer->bindIndicesBufferObject((*vboIds)[0]);
-	renderer->bindVerticesBufferObject((*vboIds)[1]);
-	renderer->bindColorsBufferObject((*vboIds)[2]);
-	renderer->bindTextureCoordinatesBufferObject((*vboIds)[3]);
+	renderer->bindIndicesBufferObject(context, (*vboIds)[0]);
+	renderer->bindVerticesBufferObject(context, (*vboIds)[1]);
+	renderer->bindColorsBufferObject(context, (*vboIds)[2]);
+	renderer->bindTextureCoordinatesBufferObject(context, (*vboIds)[3]);
 	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];
@@ -339,11 +341,11 @@ void GUIRenderer::render()
 	effectColorAddFinal[1] = guiEffectColorAdd[1] + effectColorAdd[1];
 	effectColorAddFinal[2] = guiEffectColorAdd[2] + effectColorAdd[2];
 	effectColorAddFinal[3] = 0.0f;
-	renderer->setEffectColorMul(effectColorMulFinal);
-	renderer->setEffectColorAdd(effectColorAddFinal);
-	renderer->onUpdateEffect();
-	renderer->onUpdateTextureMatrix();
-	renderer->drawIndexedTrianglesFromBufferObjects(quadCount * 2, 0);
+	renderer->setEffectColorMul(context, effectColorMulFinal);
+	renderer->setEffectColorAdd(context, effectColorAddFinal);
+	renderer->onUpdateEffect(context);
+	renderer->onUpdateTextureMatrix(context);
+	renderer->drawIndexedTrianglesFromBufferObjects(context, quadCount * 2, 0);
 	quadCount = 0;
 	fbVertices.clear();
 	fbColors.clear();

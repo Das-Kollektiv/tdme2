@@ -102,7 +102,7 @@ void GL3Renderer::initialize()
 		glEnable(GL_POINT_SPRITE);
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	setTextureUnit(0);
+	setTextureUnit(nullptr, 0);
 	// generate a "engine" VAO as
 	//	we do not support VAO's in our engine control flow
 	glGenVertexArrays(1, &engineVAO);
@@ -317,7 +317,7 @@ void GL3Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, c
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GL3Renderer::setProgramAttributeLocation(void* context, int32_t programId, int32_t location, const string& name)
+void GL3Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
 	glBindAttribLocation(programId, location, (name).c_str());
 }

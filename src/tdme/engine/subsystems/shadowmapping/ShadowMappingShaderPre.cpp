@@ -59,30 +59,30 @@ void ShadowMappingShaderPre::unUseProgram()
 	engine = nullptr;
 }
 
-void ShadowMappingShaderPre::updateMatrices(const Matrix4x4& mvpMatrix)
+void ShadowMappingShaderPre::updateMatrices(void* context, const Matrix4x4& mvpMatrix)
 {
 	if (implementation == nullptr) return;
-	implementation->updateMatrices(mvpMatrix);
+	implementation->updateMatrices(context, mvpMatrix);
 }
 
-void ShadowMappingShaderPre::updateTextureMatrix(Renderer* renderer) {
+void ShadowMappingShaderPre::updateTextureMatrix(Renderer* renderer, void* context) {
 	if (implementation == nullptr) return;
-	implementation->updateTextureMatrix(renderer);
+	implementation->updateTextureMatrix(renderer, context);
 }
 
-void ShadowMappingShaderPre::updateMaterial(Renderer* renderer)
+void ShadowMappingShaderPre::updateMaterial(Renderer* renderer, void* context)
 {
 	if (implementation == nullptr) return;
-	implementation->updateMaterial(renderer);
+	implementation->updateMaterial(renderer, context);
 }
 
-void ShadowMappingShaderPre::bindTexture(Renderer* renderer, int32_t textureId)
+void ShadowMappingShaderPre::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	if (implementation == nullptr) return;
-	implementation->bindTexture(renderer, textureId);
+	implementation->bindTexture(renderer, context, textureId);
 }
 
-void ShadowMappingShaderPre::setShader(const string& id) {
+void ShadowMappingShaderPre::setShader(void* context, const string& id) {
 	auto currentImplementation = implementation;
 
 	auto shaderIt = shader.find(id);
@@ -93,6 +93,6 @@ void ShadowMappingShaderPre::setShader(const string& id) {
 
 	if (currentImplementation != implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
-		implementation->useProgram(engine);
+		implementation->useProgram(engine, context);
 	}
 }
