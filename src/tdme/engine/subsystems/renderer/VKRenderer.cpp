@@ -4440,6 +4440,7 @@ inline void VKRenderer::flushCommands(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	//
+	draw_cmd_mutex.lock();
 	if (clear_mask != 0) {
 		if (render_pass_started == false) startRenderPass();
 
@@ -4473,6 +4474,7 @@ inline void VKRenderer::flushCommands(void* context) {
 		//
 		clear_mask = 0;
 	}
+	draw_cmd_mutex.unlock();
 
 	if (contextTyped.command_type == context_type::COMMAND_NONE) return;
 
@@ -4491,6 +4493,7 @@ inline void VKRenderer::flushCommands(void* context) {
 	}
 
 	// start draw command buffer, it not yet done
+	draw_cmd_mutex.lock();
 	if (draw_cmd_started == false) {
 		const VkCommandBufferBeginInfo cmd_buf_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -4520,6 +4523,7 @@ inline void VKRenderer::flushCommands(void* context) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(program_id));
 		return;
 	}
+	draw_cmd_mutex.unlock();
 
 	VkDescriptorBufferInfo bufferInfos[program.layout_bindings];
 	VkWriteDescriptorSet descriptorSetWrites[program.layout_bindings];
