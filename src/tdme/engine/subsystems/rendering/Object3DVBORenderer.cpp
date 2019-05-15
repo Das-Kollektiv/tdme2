@@ -884,8 +884,8 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					threadsFinishedCount = 0;
 					mutex.lock();
 					condition.broadcast();
+					condition.wait(mutex);
 					mutex.unlock();
-					while (threadsFinishedCount < threadCount); // TODO: do a nano sleep here maybe or also use a condition
 					for (auto i = 0; i < threadCount; i++) objectsNotRendered.insert(objectsNotRendered.end(), threads[i]->getObjectsNotRendered().begin(), threads[i]->getObjectsNotRendered().end());
 				} else {
 					// nope, single one

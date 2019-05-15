@@ -114,6 +114,11 @@ private:
 				#else
 					__sync_add_and_fetch(finishedCount, 1);
 				#endif
+				if (*finishedCount == object3DVBORenderer->threadCount) {
+					m->lock();
+					c->signal();
+					m->unlock();
+				}
 			}
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 		}
