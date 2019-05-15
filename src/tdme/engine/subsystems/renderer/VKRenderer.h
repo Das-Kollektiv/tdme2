@@ -48,6 +48,7 @@ private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int COMMANDS_MAX { 1 };
 	static constexpr int DESC_MAX { 512 };
+	static constexpr int CONTEXT_COUNT { 2 };
 
 	struct shader_type {
 		struct uniform_type {
@@ -62,7 +63,7 @@ private:
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
-		int32_t ubo { 0 };
+		array<int32_t, CONTEXT_COUNT> ubo { 0 };
 		int32_t ubo_binding_idx { -1 };
  		string source;
 		vector<unsigned int> spirv;
@@ -80,8 +81,8 @@ private:
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
-		array<vector<uint8_t>, 4> uniform_buffers_last;
-		array<bool, 4> uniform_buffers_changed_last;
+		array<array<vector<uint8_t>, 4>, CONTEXT_COUNT> uniform_buffers_last;
+		array<array<bool, 4>, CONTEXT_COUNT> uniform_buffers_changed_last;
 		uint32_t layout_bindings { 0 };
 		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
@@ -138,6 +139,7 @@ private:
 	};
 
 	struct context_type {
+		int32_t idx { 0 };
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 9> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
@@ -208,7 +210,7 @@ private:
 		objects_render_command objects_render_command;
 		points_render_command points_render_command;
 		compute_command compute_command;
-	} default_context;
+	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
 
@@ -305,6 +307,8 @@ private:
 	vector<VkDeviceMemory> delete_memory;
 
 	VkPipeline pipeline { VK_NULL_HANDLE };
+
+	array<context_type, CONTEXT_COUNT> contexts;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);

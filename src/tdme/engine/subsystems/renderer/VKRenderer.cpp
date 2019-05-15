@@ -123,6 +123,8 @@ VKRenderer::VKRenderer()
 	DEPTHFUNCTION_LESSEQUAL = VK_COMPARE_OP_LESS_OR_EQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = VK_COMPARE_OP_GREATER_OR_EQUAL;
 	FRAMEBUFFER_DEFAULT = 0;
+	auto i = 0;
+	for (auto& context: contexts) context.idx = i;
 }
 
 inline bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
@@ -644,7 +646,7 @@ const string VKRenderer::getShaderVersion()
 }
 
 void* VKRenderer::getDefaultContext() {
-	return &default_context;
+	return &contexts[0];
 }
 
 bool VKRenderer::isSupportingMultithreadedRendering() {
@@ -1899,27 +1901,29 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 }
 
 inline void VKRenderer::preparePipeline(program_type& program) {
-	auto shaderIdx = 0;
-	for (auto shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
-			default_context.uniform_buffers[shaderIdx].resize(0);
-			default_context.uniform_buffers_changed[shaderIdx] = false;
+	for (auto& context: contexts) {
+		auto shaderIdx = 0;
+		for (auto shaderId: program.shader_ids) {
+			auto shaderIt = shaders.find(shaderId);
+			if (shaderIt == shaders.end()) {
+				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+				return;
+			}
+			auto& shader = shaderIt->second;
+			if (shader.ubo_binding_idx == -1) {
+				context.uniform_buffers[shaderIdx].resize(0);
+				context.uniform_buffers_changed[shaderIdx] = false;
+				shaderIdx++;
+				continue;
+			}
+			context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
+			context.uniform_buffers_changed[shaderIdx] = true;
 			shaderIdx++;
-			continue;
 		}
-		default_context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
-		default_context.uniform_buffers_changed[shaderIdx] = true;
-		shaderIdx++;
-	}
-	if (program.created == true) {
-		default_context.uniform_buffers = program.uniform_buffers_last;
-		default_context.uniform_buffers_changed = program.uniform_buffers_changed_last;
+		if (program.created == true) {
+			context.uniform_buffers = program.uniform_buffers_last[context.idx];
+			context.uniform_buffers_changed = program.uniform_buffers_changed_last[context.idx];
+		}
 	}
 }
 
@@ -1931,12 +1935,16 @@ inline void VKRenderer::finishPipeline() {
 			return;
 		}
 		auto& program = programIt->second;
-		program.uniform_buffers_last = default_context.uniform_buffers;
-		program.uniform_buffers_changed_last = default_context.uniform_buffers_changed;
+		for (auto& context: contexts) {
+			program.uniform_buffers_last[context.idx] = context.uniform_buffers;
+			program.uniform_buffers_changed_last[context.idx] = context.uniform_buffers_changed;
+		}
 	}
 
-	// unset bound buffers and such
-	for (auto& ubo: default_context.uniform_buffers) ubo.clear();
+	// clear ubos
+	for (auto& context: contexts) {
+		for (auto& ubo: context.uniform_buffers) ubo.clear();
+	}
 
 	//
 	pipeline = VK_NULL_HANDLE;
@@ -2070,7 +2078,7 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		assert(!err);
 
 		//
-		default_context.uniform_buffers_changed.fill(true);
+		for (auto& context: contexts) context.uniform_buffers_changed.fill(true);
 
 		//
 		program.created = true;
@@ -2406,7 +2414,7 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		assert(!err);
 
 		//
-		default_context.uniform_buffers_changed.fill(true);
+		for (auto& context: contexts) context.uniform_buffers_changed.fill(true);
 
 		//
 		program.created = true;
@@ -2720,7 +2728,7 @@ inline void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 		program.created = true;
 
 		//
-		default_context.uniform_buffers_changed.fill(true);
+		for (auto& context: contexts) context.uniform_buffers_changed.fill(true);
 	}
 }
 
@@ -2819,8 +2827,8 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 		// do we need a uniform buffer object for this shader stage?
 		if (shader.ubo_size > 0) {
+			for (auto& context: contexts) shader.ubo[context.idx] = createBufferObjects(1, false)[0];
 			// yep, inject UBO index
-			shader.ubo = createBufferObjects(1, false)[0];
 			shader.ubo_binding_idx = bindingIdx;
 			shader.source = StringUtils::replace(shader.source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
 			bindingIdx++;
@@ -4331,9 +4339,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(shader.ubo, contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
-		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
+		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx]);
 		shaderIdx++;
 	}
 
@@ -4385,7 +4393,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::flushCommandsAllContexts() {
-	flushCommands(getDefaultContext());
+	for (auto& context: contexts) flushCommands(&context);
 }
 
 inline void VKRenderer::flushCommands(void* context) {
@@ -4775,9 +4783,9 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(shader.ubo, contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
-		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo);
+		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx]);
 		shaderIdx++;
 	}
 
@@ -4903,9 +4911,9 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(shader.ubo, contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
-		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternal(shader.ubo); // TODO: do not use static 0 ubo buffer
+		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternal(shader.ubo[contextTyped.idx]); // TODO: do not use static 0 ubo buffer
 		shaderIdx++;
 	}
 
