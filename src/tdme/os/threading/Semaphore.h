@@ -17,27 +17,30 @@ public:
 	/**
 	 * @brief Public constructor
 	 * @param name name
-	 * @param value
+	 * @param value initial value
 	 */
 	Semaphore(const string& name, int value);
 
 	/**
-	 * @brief Destroys the mutex
+	 * @brief Destroys the semaphore
 	 */
 	~Semaphore();
 
 	/**
 	 * @brief Waits on this semaphore
+	 * @param count count of wait calls
 	 */
-	bool wait();
+	bool wait(int count = 1);
 
 	/**
 	 * @brief Increments on this semaphore
+	 * @param count count to increment semaphore to
 	 */
-	void increment();
+	void increment(int count = 1);
 
 	/**
-	 * @brief Unlocks this mutex
+	 * @brief Returns current value of semaphore
+	 * @return current value of semaphore
 	 */
 	int getValue();
 

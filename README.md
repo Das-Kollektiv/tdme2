@@ -154,6 +154,7 @@
             - consumer/producer queue
             - mutex
             - read write lock
+            - semaphore
             - thread
 
 - What does it (maybe still) lack

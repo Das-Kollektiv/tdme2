@@ -887,8 +887,8 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// multiple threads
 				if (threadCount > 1) {
 					for (auto i = 0; i < threadCount; i++) threads[i]->setParameters(parameters);
-					for (auto i = 0; i < threadCount; i++) renderThreadWaitSemaphore.increment();
-					for (auto i = 0; i < threadCount; i++) mainThreadWaitSemaphore.wait();
+					renderThreadWaitSemaphore.increment(threadCount);
+					mainThreadWaitSemaphore.wait(threadCount);
 					for (auto i = 0; i < threadCount; i++) objectsNotRendered.insert(objectsNotRendered.end(), threads[i]->getObjectsNotRendered().begin(), threads[i]->getObjectsNotRendered().end());
 				} else {
 					// nope, single one

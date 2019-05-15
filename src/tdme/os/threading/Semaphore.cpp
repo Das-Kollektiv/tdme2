@@ -17,14 +17,18 @@ Semaphore::~Semaphore() {
 	PTHREAD_CHECK_ERROR(name, "Could not destroy semaphore", "sem_destroy");
 }
 
-bool Semaphore::wait() {
-	int result = sem_wait(&semaphore);
-	PTHREAD_CHECK_ERROR(name, "Could not wait on semaphore", "sem_wait");
+bool Semaphore::wait(int count) {
+	for (auto i = 0; i < count; i++) {
+		int result = sem_wait(&semaphore);
+		PTHREAD_CHECK_ERROR(name, "Could not wait on semaphore", "sem_wait");
+	}
 }
 
-void Semaphore::increment() {
-	int result = sem_post(&semaphore);
-	PTHREAD_CHECK_ERROR(name, "Could not increment semaphore", "sem_post");
+void Semaphore::increment(int count) {
+	for (auto i = 0; i < count; i++) {
+		int result = sem_post(&semaphore);
+		PTHREAD_CHECK_ERROR(name, "Could not increment semaphore", "sem_post");
+	}
 }
 
 int Semaphore::getValue() {
