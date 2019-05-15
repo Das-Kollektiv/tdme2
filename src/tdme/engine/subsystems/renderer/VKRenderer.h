@@ -14,11 +14,13 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/math/fwd-tdme.h>
+#include <tdme/os/threading/ReadWriteLock.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/utils/fwd-tdme.h>
 
 using std::array;
 using std::list;
@@ -28,13 +30,15 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::math::Matrix4x4;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
-using tdme::engine::fileio::textures::Texture;
-using tdme::math::Matrix4x4;
+using tdme::os::threading::Mutex;
+using tdme::os::threading::ReadWriteLock;
 
 /** 
  * Vulkan renderer
@@ -255,6 +259,11 @@ private:
 	struct map<int32_t, texture_object> textures;
 	struct map<int32_t, framebuffer_object> framebuffers;
 
+	ReadWriteLock buffers_rwlock;
+	ReadWriteLock textures_rwlock;
+	Mutex draw_cmd_mutex;
+	Mutex setup_cmd_mutex;
+
 	uint32_t width { 0 };
 	uint32_t height { 0 };
 	VkFormat format { VK_FORMAT_UNDEFINED };
@@ -314,8 +323,7 @@ private:
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	void prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout);
-	VkBuffer getBufferObjectInternal(int32_t bufferObjectId);
-	uint32_t getBufferSizeInternal(int32_t bufferObjectId);
+	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
 	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);

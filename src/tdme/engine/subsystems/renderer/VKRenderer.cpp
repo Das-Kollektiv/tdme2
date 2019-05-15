@@ -30,18 +30,20 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/utils/Buffer.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/IntBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/ReadWriteLock.h>
+#include <tdme/utils/Buffer.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/Integer.h>
+#include <tdme/utils/IntBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -89,22 +91,28 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 
-using tdme::utils::Buffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::ReadWriteLock;
+using tdme::os::threading::Mutex;
+using tdme::utils::ByteBuffer;
+using tdme::utils::Buffer;
 using tdme::utils::Console;
+using tdme::utils::FloatBuffer;
 using tdme::utils::Integer;
+using tdme::utils::IntBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
-VKRenderer::VKRenderer()
+VKRenderer::VKRenderer():
+	buffers_rwlock("buffers_rwlock"),
+	textures_rwlock("textures_rwlock"),
+	draw_cmd_mutex("draw_cmd_mutex"),
+	setup_cmd_mutex("setup_cmd_mutex")
 {
 	// setup consts
 	ID_NONE = 0;
@@ -3226,9 +3234,10 @@ void VKRenderer::setFrontFace(int32_t frontFace)
 
 int32_t VKRenderer::createTexture()
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	textures_rwlock.writeLock();
 	auto& texture_object = textures[texture_idx];
 	texture_object.id = texture_idx++;
+	textures_rwlock.unlock();
 	return texture_object.id;
 }
 
@@ -3503,12 +3512,17 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	//
+	textures_rwlock.readLock();
 	auto textureObjectIt = textures.find(contextTyped.bound_textures[activeTextureUnit]);
 	if (textureObjectIt == textures.end()) {
+		textures_rwlock.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[activeTextureUnit]));
 		return;
 	}
 	auto& texture_object = textureObjectIt->second;
+	textures_rwlock.unlock();
+
+	//
 	texture_object.width = texture->getTextureWidth();
 	texture_object.height = texture->getTextureHeight();
 
@@ -3721,13 +3735,18 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 	contextTyped.bound_textures[contextTyped.texture_unit_active] = 0;
 
 	//
+	textures_rwlock.readLock();
 	auto textureObjectIt = textures.find(textureId);
 	if (textureId != 0) {
 		if (textureObjectIt == textures.end()) {
+			textures_rwlock.unlock();
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
 			return;
 		}
 	}
+	//
+	auto& textureObject = textureObjectIt->second;
+	textures_rwlock.unlock();
 
 	// bin
 	contextTyped.bound_textures[contextTyped.texture_unit_active] = textureId;
@@ -3737,7 +3756,6 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 	}
 
 	//
-	auto& textureObject = textureObjectIt->second;
 	if (textureObject.type == texture_object::TYPE_FRAMEBUFFER_DEPTHBUFFER) {
 		if (textureObject.image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
 			prepareSetupCommandBuffer();
@@ -3775,20 +3793,23 @@ void VKRenderer::disposeTexture(int32_t textureId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
+	textures_rwlock.writeLock();
 	auto textureObjectIt = textures.find(textureId);
 	if (textureObjectIt == textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
+		textures_rwlock.unlock();
 		return;
 	}
 
 	auto& texture = textureObjectIt->second;
 
+	textures.erase(textureObjectIt);
+	textures_rwlock.unlock();
+
 	vkDestroyImageView(device, texture.view, NULL);
 	vkDestroyImage(device, texture.image, NULL);
 	vkFreeMemory(device, texture.mem, NULL);
 	vkDestroySampler(device, texture.sampler, NULL);
-
-	textures.erase(textureObjectIt);
 }
 
 void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
@@ -4006,42 +4027,36 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
+	buffers_rwlock.writeLock();
 	for (auto i = 0; i < bufferCount; i++) {
 		buffer_object& buffer = buffers[buffer_idx];
 		buffer.id = buffer_idx++;
 		buffer.useGPUMemory = useGPUMemory;
 		bufferIds.push_back(buffer.id);
 	}
+	buffers_rwlock.unlock();
 	return bufferIds;
 }
 
-VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
+VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size) {
 	if (VERBOSE == true) Console::println("getBufferObjectInternal::" + string(__FUNCTION__) + "()");
+	buffers_rwlock.readLock();
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+		buffers_rwlock.unlock();
 		return VK_NULL_HANDLE;
 	}
 	if (bufferIt->second.current_buffer == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " has no current data attached");
+		buffers_rwlock.unlock();
 		return VK_NULL_HANDLE;
 	}
-	bufferIt->second.current_buffer->frame_used_last = frame;
-	return bufferIt->second.current_buffer->buf;
-}
-
-uint32_t VKRenderer::getBufferSizeInternal(int32_t bufferObjectId) {
-	if (VERBOSE == true) Console::println("getBufferObjectInternal::" + string(__FUNCTION__) + "()");
-	auto bufferIt = buffers.find(bufferObjectId);
-	if (bufferIt == buffers.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
-		return 0;
-	}
-	if (bufferIt->second.current_buffer == nullptr) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " has no current data attached");
-		return 0;
-	}
-	return bufferIt->second.current_buffer->size;
+	auto buffer = bufferIt->second.current_buffer;
+	buffers_rwlock.unlock();
+	size = buffer->size;
+	buffer->frame_used_last = frame;
+	return buffer->buf;
 }
 
 void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
@@ -4086,13 +4101,15 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (size == 0) return;
 
-	// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(bufferObjectId) + " / " + to_string(size) + " / " + to_string((int)usage));
+	buffers_rwlock.readLock();
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+		buffers_rwlock.unlock();
 		return;
 	}
 	auto& buffer = bufferIt->second;
+	buffers_rwlock.unlock();
 
 	//
 	VkResult err;
@@ -4308,7 +4325,8 @@ void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferOb
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, getBufferObjectInternal((*static_cast<context_type*>(context)).bound_indices_buffer), instances);
+	uint32_t indicesBufferSize;
+	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, getBufferObjectInternal((*static_cast<context_type*>(context)).bound_indices_buffer, indicesBufferSize), instances);
 }
 
 inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
@@ -4341,19 +4359,23 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
 			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
-		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx]);
+		uint32_t uboBufferSize;
+		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx], uboBufferSize);
 		shaderIdx++;
 	}
 
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		if (textureId == 0) continue;
+		textures_rwlock.readLock();
 		auto textureObjectIt = textures.find(textureId);
 		if (textureObjectIt == textures.end()) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
+			textures_rwlock.unlock();
 			continue;
 		}
 		auto& texture_object = textureObjectIt->second;
+		textures_rwlock.unlock();
 		contextTyped.objects_render_command.textures[i] = {
 			.sampler = texture_object.sampler,
 			.view = texture_object.view,
@@ -4362,16 +4384,17 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	}
 
 	//
+	uint32_t bufferSize;
 	contextTyped.objects_render_command.indices_buffer = indicesBuffer;
-	contextTyped.objects_render_command.vertex_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0]);
-	contextTyped.objects_render_command.vertex_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1]);
-	contextTyped.objects_render_command.vertex_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2]);
-	contextTyped.objects_render_command.vertex_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3]);
-	contextTyped.objects_render_command.vertex_buffers[4] = getBufferObjectInternal(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4]);
-	contextTyped.objects_render_command.vertex_buffers[5] = getBufferObjectInternal(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5]);
-	contextTyped.objects_render_command.vertex_buffers[6] = getBufferObjectInternal(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6]);
-	contextTyped.objects_render_command.vertex_buffers[7] = getBufferObjectInternal(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7]);
-	contextTyped.objects_render_command.vertex_buffers[8] = getBufferObjectInternal(contextTyped.bound_buffers[8] == 0?empty_vertex_buffer:contextTyped.bound_buffers[8]);
+	contextTyped.objects_render_command.vertex_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[4] = getBufferObjectInternal(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[5] = getBufferObjectInternal(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[6] = getBufferObjectInternal(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[7] = getBufferObjectInternal(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[8] = getBufferObjectInternal(contextTyped.bound_buffers[8] == 0?empty_vertex_buffer:contextTyped.bound_buffers[8], bufferSize);
 	contextTyped.objects_render_command.count = triangles;
 	contextTyped.objects_render_command.offset = trianglesOffset;
 	contextTyped.objects_render_command.instances = instances;
@@ -4508,8 +4531,10 @@ inline void VKRenderer::flushCommands(void* context) {
 				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
 				auto commandTextureIt = contextTyped.objects_render_command.textures.find(uniform.texture_unit);
 				if (commandTextureIt == contextTyped.objects_render_command.textures.end()) {
+					textures_rwlock.readLock();
 					auto contextTextureIt = textures.find(white_texture_default);
 					auto texture = contextTextureIt->second;
+					textures_rwlock.unlock();
 					texDescs[samplerIdx] = {
 						.sampler = texture.sampler,
 						.imageView = texture.view,
@@ -4607,8 +4632,10 @@ inline void VKRenderer::flushCommands(void* context) {
 				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
 				auto commandTextureIt = contextTyped.points_render_command.textures.find(uniform.texture_unit);
 				if (commandTextureIt == contextTyped.points_render_command.textures.end()) {
+					textures_rwlock.readLock();
 					auto contextTextureIt = textures.find(white_texture_default);
 					auto texture = contextTextureIt->second;
+					textures_rwlock.unlock();
 					texDescs[samplerIdx] = {
 						.sampler = texture.sampler,
 						.imageView = texture.view,
@@ -4785,19 +4812,23 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
 			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
-		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx]);
+		uint32_t uboBufferSize;
+		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx], uboBufferSize);
 		shaderIdx++;
 	}
 
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		if (textureId == 0) continue;
+		textures_rwlock.readLock();
 		auto textureObjectIt = textures.find(textureId);
 		if (textureObjectIt == textures.end()) {
+			textures_rwlock.unlock();
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
 			continue;
 		}
 		auto& texture_object = textureObjectIt->second;
+		textures_rwlock.unlock();
 		contextTyped.points_render_command.textures[i] = {
 			.sampler = texture_object.sampler,
 			.view = texture_object.view,
@@ -4806,10 +4837,11 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	}
 
 	//
-	contextTyped.points_render_command.vertex_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0]);
-	contextTyped.points_render_command.vertex_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1]);
-	contextTyped.points_render_command.vertex_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2]);
-	contextTyped.points_render_command.vertex_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3]);
+	uint32_t bufferSize;
+	contextTyped.points_render_command.vertex_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], bufferSize);
+	contextTyped.points_render_command.vertex_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], bufferSize);
+	contextTyped.points_render_command.vertex_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], bufferSize);
+	contextTyped.points_render_command.vertex_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], bufferSize);
 	contextTyped.points_render_command.count = points;
 	contextTyped.points_render_command.offset = pointsOffset;
 
@@ -4913,27 +4945,20 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
 			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
-		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternal(shader.ubo[contextTyped.idx]); // TODO: do not use static 0 ubo buffer
+		uint32_t uboBufferSize;
+		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternal(shader.ubo[contextTyped.idx], uboBufferSize); // TODO: do not use static 0 ubo buffer
 		shaderIdx++;
 	}
 
 	// TODO: improve me to only use one buffer map lookup
-	contextTyped.compute_command.storage_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0]);
-	contextTyped.compute_command.storage_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1]);
-	contextTyped.compute_command.storage_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2]);
-	contextTyped.compute_command.storage_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3]);
-	contextTyped.compute_command.storage_buffers[4] = getBufferObjectInternal(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4]);
-	contextTyped.compute_command.storage_buffers[5] = getBufferObjectInternal(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5]);
-	contextTyped.compute_command.storage_buffers[6] = getBufferObjectInternal(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6]);
-	contextTyped.compute_command.storage_buffers[7] = getBufferObjectInternal(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7]);
-	contextTyped.compute_command.storage_buffer_sizes[0] = getBufferSizeInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0]);
-	contextTyped.compute_command.storage_buffer_sizes[1] = getBufferSizeInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1]);
-	contextTyped.compute_command.storage_buffer_sizes[2] = getBufferSizeInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2]);
-	contextTyped.compute_command.storage_buffer_sizes[3] = getBufferSizeInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3]);
-	contextTyped.compute_command.storage_buffer_sizes[4] = getBufferSizeInternal(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4]);
-	contextTyped.compute_command.storage_buffer_sizes[5] = getBufferSizeInternal(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5]);
-	contextTyped.compute_command.storage_buffer_sizes[6] = getBufferSizeInternal(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6]);
-	contextTyped.compute_command.storage_buffer_sizes[7] = getBufferSizeInternal(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7]);
+	contextTyped.compute_command.storage_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], contextTyped.compute_command.storage_buffer_sizes[0]);
+	contextTyped.compute_command.storage_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], contextTyped.compute_command.storage_buffer_sizes[1]);
+	contextTyped.compute_command.storage_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], contextTyped.compute_command.storage_buffer_sizes[2]);
+	contextTyped.compute_command.storage_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], contextTyped.compute_command.storage_buffer_sizes[3]);
+	contextTyped.compute_command.storage_buffers[4] = getBufferObjectInternal(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4], contextTyped.compute_command.storage_buffer_sizes[4]);
+	contextTyped.compute_command.storage_buffers[5] = getBufferObjectInternal(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5], contextTyped.compute_command.storage_buffer_sizes[5]);
+	contextTyped.compute_command.storage_buffers[6] = getBufferObjectInternal(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6], contextTyped.compute_command.storage_buffer_sizes[6]);
+	contextTyped.compute_command.storage_buffers[7] = getBufferObjectInternal(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7], contextTyped.compute_command.storage_buffer_sizes[7]);
 	contextTyped.compute_command.num_groups_x = numGroupsX;
 	contextTyped.compute_command.num_groups_y = numGroupsY;
 	contextTyped.compute_command.num_groups_z = numGroupsZ;

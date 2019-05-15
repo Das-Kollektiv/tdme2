@@ -7,7 +7,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/os/threading/Mutex.h>
 
 using std::map;
 using std::string;
@@ -15,6 +15,7 @@ using std::string;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::os::threading::Mutex;
 
 /** 
  * Texture manager
@@ -28,6 +29,7 @@ class tdme::engine::subsystems::manager::TextureManager final
 private:
 	Renderer* renderer {  };
 	map<string, TextureManager_TextureManaged*> textures {  };
+	Mutex mutex;
 
 public:
 
