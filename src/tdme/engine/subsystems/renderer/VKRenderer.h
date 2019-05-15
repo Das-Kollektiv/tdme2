@@ -138,13 +138,11 @@ private:
 	};
 
 	struct context_type {
-		VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
-		VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
-
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 9> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
 		array<bool, 4> uniform_buffers_changed;
+		int32_t texture_unit_active { 0 };
 		array<int32_t, 16> bound_textures { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		struct objects_render_command {
@@ -241,6 +239,9 @@ private:
 
 	VkCommandPool cmd_pool { VK_NULL_HANDLE };
 
+	VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
+	VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
+
 	int32_t shader_idx { 1 };
 	int32_t program_idx { 1 };
 	int32_t buffer_idx { 1 };
@@ -318,7 +319,8 @@ private:
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
-	void flushCommands();
+	void flushCommandsAllContexts();
+	void flushCommands(void* context);
 	void initializeRenderPass();
 	void startRenderPass();
 	void endRenderPass();
@@ -350,11 +352,12 @@ private:
 	const string createPipelineId();
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
-	void drawInstancedTrianglesFromBufferObjects(int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
+	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 
 public:
 	const string getShaderVersion() override;
+	void* getDefaultContext() override;
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
