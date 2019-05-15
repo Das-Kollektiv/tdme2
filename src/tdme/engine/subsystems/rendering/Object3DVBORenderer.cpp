@@ -84,7 +84,6 @@ using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer_1;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer_TransparentRenderFacesGroupPool;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
@@ -252,7 +251,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 		// but having a fixed value is not a bad idea except that it is a renderer call
 		// TODO: confirm this
 		renderer->setFrontFace(renderer->FRONTFACE_CCW);
-		for (auto transparentRenderFace: *transparentRenderFacesPool->getTransparentRenderFaces()) {
+		for (auto transparentRenderFace: *transparentRenderFaces) {
 			// do we have any faces yet?
 			if (groupTransparentRenderFaces.size() == 0) {
 				// nope, so add this one
@@ -583,7 +582,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-inline void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, InstancedRenderFunctionStruct& parameters, vector<Object3D*>& objectsNotRendered) {
+inline void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, InstancedRenderFunctionStruct& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool) {
 	Matrix4x4Negative matrix4x4Negative;
 
 	Vector3 objectCamFromAxis;
@@ -616,20 +615,18 @@ inline void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* co
 		//	check transparency via effect
 		if (object->effectColorMul.getAlpha() < 1.0f - Math::EPSILON ||
 			object->effectColorAdd.getAlpha() < -Math::EPSILON) {
-			/*
 			// add to transparent render faces, if requested
-			if (collectTransparentFaces == true) {
+			if (parameters.collectTransparentFaces == true) {
 				transparentRenderFacesPool->createTransparentRenderFaces(
 					(_object3DGroup->mesh->skinning == true ?
 						modelViewMatrixTemp.identity() :
 						modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
-					).multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
+					).multiply(object->getTransformationsMatrix()).multiply(parameters.cameraMatrix),
 					_object3DGroup,
-					faceEntityIdx,
-					faceIdx
+					parameters.faceEntityIdx,
+					parameters.faceIdx
 				);
 			}
-			*/
 			// skip to next object
 			continue;
 		}
@@ -879,6 +876,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				parameters.material = material;
 				parameters.frontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 				parameters.textureMatrix = object3DGroupToRender->textureMatricesByEntities[parameters.faceEntityIdx];
+				parameters.collectTransparentFaces = collectTransparentFaces;
 
 				// shader
 				renderer->setFrontFace(parameters.frontFace);
@@ -890,9 +888,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					renderThreadWaitSemaphore.increment(threadCount);
 					mainThreadWaitSemaphore.wait(threadCount);
 					for (auto i = 0; i < threadCount; i++) objectsNotRendered.insert(objectsNotRendered.end(), threads[i]->getObjectsNotRendered().begin(), threads[i]->getObjectsNotRendered().end());
+					for (auto i = 0; i < threadCount; i++) transparentRenderFacesPool->merge(threads[i]->getTransparentRenderFacesPool());
 				} else {
 					// nope, single one
-					instancedRenderFunction(0, context, parameters, objectsNotRendered);
+					instancedRenderFunction(0, context, parameters, objectsNotRendered, transparentRenderFacesPool);
 				}
 
 				// clear list of objects we did not render

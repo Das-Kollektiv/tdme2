@@ -15,6 +15,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
+#include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -76,6 +77,7 @@ private:
 		Material* material;
 		int32_t frontFace;
 		Matrix2D3x3 textureMatrix;
+		bool collectTransparentFaces;
 	};
 
 	class RenderThread: public Thread {
@@ -87,6 +89,7 @@ private:
 		void* context;
 		InstancedRenderFunctionStruct parameters;
 		vector<Object3D*> objectsNotRendered;
+		TransparentRenderFacesPool* transparentRenderFacesPool;
 	public:
 		RenderThread(
 			Object3DVBORenderer* object3DVBORenderer,
@@ -99,12 +102,16 @@ private:
 			idx(idx),
 			renderThreadWaitSemaphore(renderThreadWaitSemaphore),
 			mainThreadWaitSemaphore(mainThreadWaitSemaphore),
-			context(context) {
+			context(context),
+			transparentRenderFacesPool(new TransparentRenderFacesPool()){
 			//
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]");
 		}
 		inline vector<Object3D*>& getObjectsNotRendered() {
 			return objectsNotRendered;
+		}
+		inline TransparentRenderFacesPool* getTransparentRenderFacesPool() {
+			return transparentRenderFacesPool;
 		}
 		inline void setParameters(InstancedRenderFunctionStruct& parameters) {
 			this->parameters = parameters;
@@ -114,8 +121,9 @@ private:
 			while (isStopRequested() == false) {
 				renderThreadWaitSemaphore->wait();
 				objectsNotRendered.clear();
+				transparentRenderFacesPool->reset();
 				// Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
-				object3DVBORenderer->instancedRenderFunction(idx, context, parameters, objectsNotRendered);
+				object3DVBORenderer->instancedRenderFunction(idx, context, parameters, objectsNotRendered, transparentRenderFacesPool);
 				mainThreadWaitSemaphore->increment();
 			}
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
@@ -184,8 +192,10 @@ private:
 	 * @param threadIdx thread idx
 	 * @param context context
 	 * @param parameters parameters
+	 * @param objectsNotRendered objects not rendered
+	 * @param transparentRenderFacesPool transparent render faces pool
 	 */
-	void instancedRenderFunction(int threadIdx, void* context, InstancedRenderFunctionStruct& parameters, vector<Object3D*>& objectsNotRendered);
+	void instancedRenderFunction(int threadIdx, void* context, InstancedRenderFunctionStruct& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool);
 
 	/**
 	 * Renders multiple objects of same type(with same model) using instancing

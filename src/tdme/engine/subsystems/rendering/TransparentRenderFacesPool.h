@@ -93,6 +93,18 @@ private:
 	}
 
 	/** 
+	 * Merges given transparent render faces pool into this pool
+	 * @param srcTransparentRenderFacesPool transparent render faces pool
+	 */
+	inline void merge(TransparentRenderFacesPool* srcTransparentRenderFacesPool) {
+		for (auto srcTransparentRenderFace: srcTransparentRenderFacesPool->transparentRenderFaces) {
+			auto transparentRenderFace = transparentRenderFacesPool.allocate();
+			*transparentRenderFace = *srcTransparentRenderFace;
+			transparentRenderFaces.push_back(transparentRenderFace);
+		}
+	}
+
+	/**
 	 * Reset
 	 */
 	void reset();
