@@ -4384,10 +4384,13 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
-		if (textureId == 0) continue;
+		if (textureId == 0) {
+			contextTyped.objects_render_command.textures.erase(i);
+			continue;
+		}
 		textures_rwlock.readLock();
 		auto textureObjectIt = textures.find(textureId);
-		if (textureObjectIt == textures.end()) {
+		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
 			textures_rwlock.unlock();
 			continue;
@@ -4434,15 +4437,12 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 }
 
 inline void VKRenderer::flushCommandsAllContexts() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	for (auto& context: contexts) flushCommands(&context);
 }
 
 inline void VKRenderer::flushCommands(void* context) {
-	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
-
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(static_cast<context_type*>(context)->idx));
 
 	finishSetupCommandBuffer();
 
@@ -4483,6 +4483,8 @@ inline void VKRenderer::flushCommands(void* context) {
 	}
 	draw_cmd_mutex.unlock();
 
+	// have our context typed
+	auto& contextTyped = *static_cast<context_type*>(context);
 	if (contextTyped.command_type == context_type::COMMAND_NONE) return;
 
 	//
@@ -4867,7 +4869,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 		if (textureId == 0) continue;
 		textures_rwlock.readLock();
 		auto textureObjectIt = textures.find(textureId);
-		if (textureObjectIt == textures.end()) {
+		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE) {
 			textures_rwlock.unlock();
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
 			continue;
