@@ -176,9 +176,11 @@
     - A demonstration video
 
 - Technology
-    - designed for simple multi threading
-        - 3d engine uses one thread for now
-        - physics or game mechanics can run in a separate thread(s)
+    - designed for simple multi threading, but
+        - 3D rendering engine uses 4 threads if using Vulkan renderer, or one thread only if using a GL renderer
+        - UDP client has its own thread
+        - UDP server can have multiple IO threads, multiple worker threads and always has its own server thread
+        - physics or game mechanics can also run in a separate thread(s)
     - uses 3rd party libraries
     	- need to be installed 
             - GLUT
