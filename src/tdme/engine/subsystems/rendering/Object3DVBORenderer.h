@@ -19,8 +19,7 @@
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Matrix4x4Negative.h>
-#include <tdme/os/threading/Condition.h>
-#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Semaphore.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/ByteBuffer.h>
@@ -45,8 +44,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
-using tdme::os::threading::Condition;
-using tdme::os::threading::Mutex;
+using tdme::os::threading::Semaphore;
 using tdme::os::threading::Thread;
 using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
@@ -84,41 +82,41 @@ private:
 	private:
 		Object3DVBORenderer* object3DVBORenderer;
 		int idx;
-		Mutex* m;
-		Condition* c;
+		Semaphore* renderThreadWaitSemaphore;
+		Semaphore* mainThreadWaitSemaphore;
 		void* context;
-		InstancedRenderFunctionStruct p;
-		volatile unsigned int* finishedCount;
+		InstancedRenderFunctionStruct parameters;
 		vector<Object3D*> objectsNotRendered;
 	public:
-		RenderThread(Object3DVBORenderer* object3DVBORenderer, int idx, Mutex* m, Condition* c, void* context, volatile unsigned int* finishedCount): Thread("object3dvborenderer-renderthread"), object3DVBORenderer(object3DVBORenderer), idx(idx), m(m), c(c), context(context), finishedCount(finishedCount) {
+		RenderThread(
+			Object3DVBORenderer* object3DVBORenderer,
+			int idx,
+			Semaphore* renderThreadWaitSemaphore,
+			Semaphore* mainThreadWaitSemaphore,
+			void* context):
+			Thread("object3dvborenderer-renderthread"),
+			object3DVBORenderer(object3DVBORenderer),
+			idx(idx),
+			renderThreadWaitSemaphore(renderThreadWaitSemaphore),
+			mainThreadWaitSemaphore(mainThreadWaitSemaphore),
+			context(context) {
+			//
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]");
 		}
 		inline vector<Object3D*>& getObjectsNotRendered() {
 			return objectsNotRendered;
 		}
-		inline void setParameters(InstancedRenderFunctionStruct& p) {
-			this->p = p;
+		inline void setParameters(InstancedRenderFunctionStruct& parameters) {
+			this->parameters = parameters;
 		}
 		virtual void run() {
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
 			while (isStopRequested() == false) {
-				m->lock();
-				c->wait(*m);
-				m->unlock();
-				if (isStopRequested() == true) break;
+				renderThreadWaitSemaphore->wait();
 				objectsNotRendered.clear();
-				object3DVBORenderer->instancedRenderFunction(idx, context, p, objectsNotRendered);
-				#if defined(_WIN32) && defined(_MSC_VER)
-					InterlockedIncrement(finishedCount);
-				#else
-					__sync_add_and_fetch(finishedCount, 1);
-				#endif
-				if (*finishedCount == object3DVBORenderer->threadCount) {
-					m->lock();
-					c->signal();
-					m->unlock();
-				}
+				// Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
+				object3DVBORenderer->instancedRenderFunction(idx, context, parameters, objectsNotRendered);
+				mainThreadWaitSemaphore->increment();
 			}
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 		}
@@ -143,9 +141,8 @@ private:
 	vector<ByteBuffer*> bbEffectColorAdds;
 	vector<ByteBuffer*> bbMvMatrices;
 	vector<RenderThread*> threads;
-	volatile unsigned int threadsFinishedCount;
-	Condition condition;
-	Mutex mutex;
+	Semaphore renderThreadWaitSemaphore;
+	Semaphore mainThreadWaitSemaphore;
 
 	/** 
 	 * Renders transparent faces

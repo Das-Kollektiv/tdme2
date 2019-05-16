@@ -46,8 +46,7 @@
 #include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/os/threading/Condition.h>
-#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Semaphore.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
@@ -102,8 +101,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
-using tdme::os::threading::Condition;
-using tdme::os::threading::Mutex;
+using tdme::os::threading::Semaphore;
 using tdme::os::threading::Thread;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
@@ -113,7 +111,9 @@ using tdme::utils::Console;
 constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
 constexpr int32_t Object3DVBORenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 
-Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer): condition("object3dvborenderer-condition"), mutex("object3dvborenderer-mutex")
+Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer):
+	renderThreadWaitSemaphore("object3dvborenderer-renderthread-waitsemaphore", 0),
+	mainThreadWaitSemaphore("object3dvborenderer-mainthread-waitsemaphore", 0)
 {
 	this->engine = engine;
 	this->renderer = renderer;
@@ -155,7 +155,13 @@ void Object3DVBORenderer::initialize()
 	if (threadCount > 1) {
 		threads.resize(threadCount);
 		for (auto i = 0; i < threadCount; i++) {
-			threads[i] = new RenderThread(this, i, &mutex, &condition, renderer->getContext(i), &threadsFinishedCount);
+			threads[i] = new RenderThread(
+				this,
+				i,
+				&renderThreadWaitSemaphore,
+				&mainThreadWaitSemaphore,
+				renderer->getContext(i)
+			);
 			threads[i]->start();
 		}
 	}
@@ -881,11 +887,8 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// multiple threads
 				if (threadCount > 1) {
 					for (auto i = 0; i < threadCount; i++) threads[i]->setParameters(parameters);
-					threadsFinishedCount = 0;
-					mutex.lock();
-					condition.broadcast();
-					condition.wait(mutex);
-					mutex.unlock();
+					for (auto i = 0; i < threadCount; i++) renderThreadWaitSemaphore.increment();
+					for (auto i = 0; i < threadCount; i++) mainThreadWaitSemaphore.wait();
 					for (auto i = 0; i < threadCount; i++) objectsNotRendered.insert(objectsNotRendered.end(), threads[i]->getObjectsNotRendered().begin(), threads[i]->getObjectsNotRendered().end());
 				} else {
 					// nope, single one

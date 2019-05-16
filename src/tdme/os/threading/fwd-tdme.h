@@ -8,6 +8,7 @@ namespace threading {
 		class Condition;
 		class Mutex;
 		class ReadWriteLock;
+		class Semaphore;
 		class Thread;
 }  // namespace filesystem
 }  // namespace os
