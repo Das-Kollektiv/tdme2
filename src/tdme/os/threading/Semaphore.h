@@ -1,9 +1,15 @@
 #pragma once
 
+#if defined(__APPLE__)
+	#include "Condition.h"
+	#include "Mutex.h"
+	using tdme::os::threading::Condition;
+	using tdme::os::threading::Mutex;
+#else
+	#include <semaphore.h>
+#endif
+
 #include "fwd-tdme.h"
-
-#include <semaphore.h>
-
 #include <string>
 
 using std::string;
@@ -30,7 +36,7 @@ public:
 	 * @brief Waits on this semaphore
 	 * @param count count of wait calls
 	 */
-	bool wait(int count = 1);
+	void wait(int count = 1);
 
 	/**
 	 * @brief Increments on this semaphore
@@ -46,6 +52,12 @@ public:
 
 private:
 	string name;
-	sem_t semaphore;
+	#if defined(__APPLE__)
+		Condition c;
+		Mutex m;
+		volatile int value;
+	#else
+		sem_t semaphore;
+	#endif
 
 };
