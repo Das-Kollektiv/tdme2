@@ -12,7 +12,11 @@
 
 using tdme::os::threading::Semaphore;
 
-Semaphore::Semaphore(const string& name, int value): name(name), c(name + "-condition"), m(name + "-mutex"), value(value) {
+Semaphore::Semaphore(const string& name, int value): name(name)
+#if defined(__APPLE__)
+	, c(name + "-condition"), m(name + "-mutex"), value(value)
+#endif
+{
 	#if defined(__APPLE__)
 	#else
 		int result = sem_init(&semaphore, 0, value);
