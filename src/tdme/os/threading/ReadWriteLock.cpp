@@ -13,26 +13,44 @@ using tdme::os::threading::ReadWriteLock;
 
 ReadWriteLock::ReadWriteLock(const string& name) {
 	this->name = name;
-	int result = pthread_rwlock_init(&pReadWriteLock, NULL);
-	PTHREAD_CHECK_ERROR(name, "Could not init read write lock", "pthread_rwlock_init");
+	#if defined(CPPTHREADS)
+	#else
+		int result = pthread_rwlock_init(&pReadWriteLock, NULL);
+		PTHREAD_CHECK_ERROR(name, "Could not init read write lock", "pthread_rwlock_init");
+	#endif
 }
 
 ReadWriteLock::~ReadWriteLock() {
-	int result = pthread_rwlock_destroy(&pReadWriteLock);
-	PTHREAD_CHECK_ERROR(name, "Could not destroy read write lock", "pthread_rwlock_destroy");
+	#if defined(CPPTHREADS)
+	#else
+		int result = pthread_rwlock_destroy(&pReadWriteLock);
+		PTHREAD_CHECK_ERROR(name, "Could not destroy read write lock", "pthread_rwlock_destroy");
+	#endif
 }
 
 void ReadWriteLock::readLock() {
-	int result = pthread_rwlock_rdlock(&pReadWriteLock);
-	PTHREAD_CHECK_ERROR(name, "Could not issue read lock", "pthread_rwlock_rdlock");
+	#if defined(CPPTHREADS)
+		sharedMutex.lock_shared();
+	#else
+		int result = pthread_rwlock_rdlock(&pReadWriteLock);
+		PTHREAD_CHECK_ERROR(name, "Could not issue read lock", "pthread_rwlock_rdlock");
+	#endif
 }
 
 void ReadWriteLock::writeLock() {
-	int result = pthread_rwlock_wrlock(&pReadWriteLock);
-	PTHREAD_CHECK_ERROR(name, "Could not issue write lock", "pthread_rwlock_wrlock");
+	#if defined(CPPTHREADS)
+		sharedMutex.lock();
+	#else
+		int result = pthread_rwlock_wrlock(&pReadWriteLock);
+		PTHREAD_CHECK_ERROR(name, "Could not issue write lock", "pthread_rwlock_wrlock");
+	#endif
 }
 
 void ReadWriteLock::unlock() {
-	int result = pthread_rwlock_unlock(&pReadWriteLock);
-	PTHREAD_CHECK_ERROR(name, "Could not unlock read write lock", "pthread_rwlock_unlock");
+	#if defined(CPPTHREADS)
+		sharedMutex.unlock();
+	#else
+		int result = pthread_rwlock_unlock(&pReadWriteLock);
+		PTHREAD_CHECK_ERROR(name, "Could not unlock read write lock", "pthread_rwlock_unlock");
+	#endif
 }

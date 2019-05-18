@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 
+#include <tdme/tdme.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/ReferenceCounter.h>
 

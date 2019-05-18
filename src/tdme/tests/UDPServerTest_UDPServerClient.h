@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpserver/NIOUDPServer.h>
 #include <tdme/network/udpserver/NIOUDPServerClient.h>
 #include <tdme/utils/Exception.h>

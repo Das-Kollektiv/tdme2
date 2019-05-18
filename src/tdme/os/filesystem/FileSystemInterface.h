@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 

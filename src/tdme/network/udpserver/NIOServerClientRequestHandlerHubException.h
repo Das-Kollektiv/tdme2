@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/utils/ExceptionBase.h>
 
 using tdme::utils::ExceptionBase;

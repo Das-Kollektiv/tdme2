@@ -11,26 +11,46 @@ using tdme::os::threading::Mutex;
 
 Condition::Condition(const string& name) {
 	this->name = name;
-	int result = pthread_cond_init (&pThreadCond, NULL);
-	PTHREAD_CHECK_ERROR(name, "Could not init condition", "pthread_cond_init");
+	#if defined(CPPTHREADS)
+
+	#else
+		int result = pthread_cond_init (&pThreadCond, NULL);
+		PTHREAD_CHECK_ERROR(name, "Could not init condition", "pthread_cond_init");
+	#endif
 }
 
 Condition::~Condition() {
-	int result = pthread_cond_destroy(&pThreadCond);
-	PTHREAD_CHECK_ERROR(name, "Could not destroy condition", "pthread_cond_destroy");
+	#if defined(CPPTHREADS)
+
+	#else
+		int result = pthread_cond_destroy(&pThreadCond);
+		PTHREAD_CHECK_ERROR(name, "Could not destroy condition", "pthread_cond_destroy");
+	#endif
 }
 
 void Condition::signal() {
-	int result = pthread_cond_signal(&pThreadCond);
-	PTHREAD_CHECK_ERROR(name, "Could not signal condition", "pthread_cond_signal");
+	#if defined(CPPTHREADS)
+		condition.notify_one();
+	#else
+		int result = pthread_cond_signal(&pThreadCond);
+		PTHREAD_CHECK_ERROR(name, "Could not signal condition", "pthread_cond_signal");
+	#endif
 }
 
 void Condition::broadcast() {
-	int result = pthread_cond_broadcast(&pThreadCond);
-	PTHREAD_CHECK_ERROR(name, "Could not broadcast condition", "pthread_cond_broadcast");
+	#if defined(CPPTHREADS)
+		condition.notify_all();
+	#else
+		int result = pthread_cond_broadcast(&pThreadCond);
+		PTHREAD_CHECK_ERROR(name, "Could not broadcast condition", "pthread_cond_broadcast");
+	#endif
 }
 
 void Condition::wait(Mutex &mutex) {
-	int result = pthread_cond_wait(&pThreadCond, &(mutex.pThreadMutex));
-	PTHREAD_CHECK_ERROR(name, "Could not wait on condition", "pthread_cond_wait");
+	#if defined(CPPTHREADS)
+		condition.wait(mutex.mutex);
+	#else
+		int result = pthread_cond_wait(&pThreadCond, &(mutex.pThreadMutex));
+		PTHREAD_CHECK_ERROR(name, "Could not wait on condition", "pthread_cond_wait");
+	#endif
 }

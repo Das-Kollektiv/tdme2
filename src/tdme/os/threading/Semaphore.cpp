@@ -1,6 +1,6 @@
 #include <errno.h>
 
-#if defined(__APPLE__)
+#if defined(CPPTHREADS)
 	#include "Condition.h"
 	#include "Mutex.h"
 	using tdme::os::threading::Condition;
@@ -13,11 +13,11 @@
 using tdme::os::threading::Semaphore;
 
 Semaphore::Semaphore(const string& name, int value): name(name)
-#if defined(__APPLE__)
+#if defined(CPPTHREADS)
 	, c(name + "-condition"), m(name + "-mutex"), value(value)
 #endif
 {
-	#if defined(__APPLE__)
+	#if defined(CPPTHREADS)
 	#else
 		int result = sem_init(&semaphore, 0, value);
 		PTHREAD_CHECK_ERROR(name, "Could not init semaphore", "sem_init");
@@ -25,7 +25,7 @@ Semaphore::Semaphore(const string& name, int value): name(name)
 }
 
 Semaphore::~Semaphore() {
-	#if defined(__APPLE__)
+	#if defined(CPPTHREADS)
 		// no op
 	#else
 		int result = sem_destroy(&semaphore);
@@ -35,7 +35,7 @@ Semaphore::~Semaphore() {
 
 void Semaphore::wait(int count) {
 	for (auto i = 0; i < count; i++) {
-		#if defined(__APPLE__)
+		#if defined(CPPTHREADS)
 			m.lock();
 			while(value == 0) c.wait(m);
 			value--;
@@ -49,7 +49,7 @@ void Semaphore::wait(int count) {
 
 void Semaphore::increment(int count) {
 	for (auto i = 0; i < count; i++) {
-		#if defined(__APPLE__)
+		#if defined(CPPTHREADS)
 			m.lock();
 			value++;
 			c.signal();
@@ -63,7 +63,7 @@ void Semaphore::increment(int count) {
 
 int Semaphore::getValue() {
 	int value;
-	#if defined(__APPLE__)
+	#if defined(CPPTHREADS)
 		// no op
 	#else
 		int result = sem_getvalue(&semaphore, &value);

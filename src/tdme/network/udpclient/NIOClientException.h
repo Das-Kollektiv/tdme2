@@ -4,6 +4,7 @@
 
 #include <tdme/network/udpclient/fwd-tdme.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NIOException.h>
 

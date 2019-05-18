@@ -1,9 +1,9 @@
-
 #pragma once
 
 #include <map>
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>

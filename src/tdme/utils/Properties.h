@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;

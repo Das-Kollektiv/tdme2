@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>

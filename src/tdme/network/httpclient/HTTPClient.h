@@ -4,11 +4,10 @@
 #include <unordered_map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/network/httpclient/fwd-tdme.h>
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/NIOException.h>
-
-#include <tdme/tdme.h>
 
 using std::string;
 using std::stringstream;

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/NIOException.h>
 
 using std::string;

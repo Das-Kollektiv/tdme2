@@ -2,7 +2,12 @@
 
 #include "fwd-tdme.h"
 
-#include <pthread.h>
+#if defined(CPPTHREADS)
+	#include <shared_mutex>
+	using std::shared_mutex;
+#else
+	#include <pthread.h>
+#endif
 
 #include <string>
 
@@ -41,5 +46,9 @@ public:
 	void unlock();
 private:
 	string name;
-	pthread_rwlock_t pReadWriteLock;
+	#if defined(CPPTHREADS)
+		shared_mutex sharedMutex;
+	#else
+		pthread_rwlock_t pReadWriteLock;
+	#endif
 };

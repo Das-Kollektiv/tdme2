@@ -9,6 +9,7 @@
 #include <queue>
 #include <map>
 
+#include <tdme/tdme.h>
 #include <tdme/network/udpclient/fwd-tdme.h>
 #include <tdme/network/udpclient/NIOClientException.h>
 #include <tdme/network/udpclient/NIOUDPClientMessage.h>

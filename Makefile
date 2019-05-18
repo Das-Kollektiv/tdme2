@@ -3,6 +3,7 @@ NAME = tdme
 LIB := lib$(NAME).a
 EXT_LIB := lib$(NAME)-ext.a
 
+CPPVERSION = -std=gnu++11
 STACKFLAGS =
 SRCS_PLATFORM =
 EXT_GLSLANG_PLATFORM_SRCS =
@@ -19,7 +20,8 @@ ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := -DVULKAN
+		CPPVERSION := -std=c++17
+		EXTRAFLAGS := -DVULKAN -DCPPTHREADS
 		INCLUDES := $(INCLUDES) -Iext/moltenvk/include -Iext/glfw3/include
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
@@ -29,15 +31,17 @@ ifeq ($(OS), Darwin)
 				src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3.3 -Lext/moltenvk/MacOs/dynamic -l MoltenVK -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3.3 -Lext/moltenvk/MacOs/dynamic -l MoltenVK -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	else
+		CPPVERSION := -std=c++17
+		EXTRAFLAGS := -DCPPTHREADS
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL -pthread
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	endif
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
@@ -166,9 +170,9 @@ CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
 CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP
 #CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS_DEBUG := -g -pipe -MMD -MP
-CXXFLAGS := $(CFLAGS) -std=gnu++11
-CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) -std=gnu++11
-CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) -std=gnu++11
+CXXFLAGS := $(CFLAGS) $(CPPVERSION)
+CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
+CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
 
 BIN = bin
 OBJ = obj

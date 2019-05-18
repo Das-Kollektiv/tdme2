@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/elements/fwd-tdme.h>

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/audio/decoder/fwd-tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/model/fwd-tdme.h>

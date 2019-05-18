@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/math/Matrix4x4.h>

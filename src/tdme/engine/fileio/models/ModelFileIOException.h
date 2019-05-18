@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/ExceptionBase.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(__APPLE__)
+#if defined(CPPTHREADS)
 	#include "Condition.h"
 	#include "Mutex.h"
 	using tdme::os::threading::Condition;
@@ -52,7 +52,7 @@ public:
 
 private:
 	string name;
-	#if defined(__APPLE__)
+	#if defined(CPPTHREADS)
 		Condition c;
 		Mutex m;
 		volatile int value;

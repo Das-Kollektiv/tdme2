@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/network/httpclient/fwd-tdme.h>
 #include <tdme/utils/ExceptionBase.h>
 

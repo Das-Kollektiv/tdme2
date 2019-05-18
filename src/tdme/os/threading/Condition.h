@@ -2,7 +2,14 @@
 
 #include "fwd-tdme.h"
 
-#include <pthread.h>
+#if defined(CPPTHREADS)
+	#include <condition_variable>
+	#include <mutex>
+	using std::condition_variable_any;
+	using std::mutex;
+#else
+	#include <pthread.h>
+#endif
 
 #include <string>
 
@@ -47,5 +54,9 @@ public:
 
 private:
 	string name;
-	pthread_cond_t pThreadCond;
+	#if defined(CPPTHREADS)
+		condition_variable_any condition;
+	#else
+		pthread_cond_t pThreadCond;
+	#endif
 };

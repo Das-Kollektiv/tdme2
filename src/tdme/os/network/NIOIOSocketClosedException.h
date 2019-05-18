@@ -2,6 +2,8 @@
 
 #include <tdme/os/network/NIOIOException.h>
 
+#include <tdme/tdme.h>
+
 /**
  * Socket closes exception
  * @author Andreas Drewke

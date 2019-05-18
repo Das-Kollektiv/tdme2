@@ -9,6 +9,7 @@
 
 #include <tdme/network/udpserver/fwd-tdme.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>

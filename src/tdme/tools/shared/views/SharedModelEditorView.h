@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>

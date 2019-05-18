@@ -6,6 +6,8 @@
 #include <string>
 #include <sstream>
 
+#include <tdme/tdme.h>
+
 #include <tdme/network/udpserver/NIOServer.h>
 #include <tdme/network/udpserver/NIOServerGroupBase.h>
 

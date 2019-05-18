@@ -2,7 +2,12 @@
 
 #include "fwd-tdme.h"
 
-#include <pthread.h>
+#if defined(CPPTHREADS)
+	#include <mutex>
+	using std::mutex;
+#else
+	#include <pthread.h>
+#endif
 
 #include <string>
 
@@ -50,6 +55,10 @@ public:
 
 private:
 	string name;
-	pthread_mutex_t pThreadMutex;
+	#if defined(CPPTHREADS)
+		mutex mutex;
+	#else
+		pthread_mutex_t pThreadMutex;
+	#endif
 
 };

@@ -4,7 +4,12 @@
 
 #include <tdme/tdme.h>
 
-#include <pthread.h>
+#if defined(CPPTHREADS)
+	#include <thread>
+	using std::thread;
+#else
+	#include <pthread.h>
+#endif
 
 #include <string>
 
@@ -61,10 +66,13 @@ public:
 	bool isStopRequested();
 private:
 	static void *pThreadRun(void *thread);
-
+	#if defined(CPPTHREADS)
+		thread* thread;
+	#else
+		pthread_t pThread;
+	#endif
 	string name;
 	bool pThreadCreated;
-	pthread_t pThread;
 	volatile bool stopRequested;
 	size_t stackSize;
 };

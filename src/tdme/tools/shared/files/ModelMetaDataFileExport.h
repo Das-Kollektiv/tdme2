@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 

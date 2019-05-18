@@ -7,6 +7,7 @@
 #include <sstream>
 #include <map>
 
+#include <tdme/tdme.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/ReferenceCounter.h>
 #include <tdme/os/threading/Mutex.h>
