@@ -66,9 +66,10 @@ private:
 
 	/**
 	 * Compute skinning
+	 * @param contextIdx context index
 	 */
-	inline void computeSkinning() {
-		if (hasSkinning == true) computeTransformations();
+	inline void computeSkinning(int contextIdx) {
+		if (hasSkinning == true) computeTransformations(contextIdx);
 	}
 
 	/**
@@ -239,8 +240,12 @@ public:
 		return *this;
 	}
 
-	inline void computeTransformations() {
-		Object3DInternal::computeTransformations(engine->getTiming());
+	/**
+	 * Compute transformations
+	 * @param contextIdx context index
+	 */
+	inline void computeTransformations(int contextIdx) {
+		Object3DInternal::computeTransformations(engine->getTiming(), contextIdx);
 	}
 
 	/**

@@ -15,8 +15,7 @@ using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::Console;
 
-VBOManager::VBOManager(Renderer* renderer) 
-{
+VBOManager::VBOManager(Renderer* renderer): mutex("vbomanager-mutex") {
 	this->renderer = renderer;
 }
 
@@ -26,13 +25,14 @@ VBOManager::~VBOManager() {
 	}
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory)
-{
+VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory) {
+	mutex.lock();
 	// check if we already manage this vbo
 	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
 		vboManaged->incrementReferenceCounter();
+		mutex.unlock();
 		// yep, return vbo managed
 		return vboManaged;
 	}
@@ -43,12 +43,13 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool
 	// add it to our textures
 	vboManaged->incrementReferenceCounter();
 	vbos[vboManaged->getId()] = vboManaged;
+	mutex.unlock();
 	// return vbo managed
 	return vboManaged;
 }
 
-void VBOManager::removeVBO(const string& vboId)
-{
+void VBOManager::removeVBO(const string& vboId) {
+	mutex.lock();
 	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
@@ -60,7 +61,9 @@ void VBOManager::removeVBO(const string& vboId)
 			vbos.erase(vboManagedIt);
 			delete vboManaged;
 		}
+		mutex.unlock();
 		return;
 	}
+	mutex.unlock();
 	Console::println(string("Warning: vbo not managed by vbo manager: ") + vboId);
 }

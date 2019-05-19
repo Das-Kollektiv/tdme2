@@ -185,7 +185,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* objec
 	return mesh;
 }
 
-void Object3DGroupMesh::computeTransformations()
+void Object3DGroupMesh::computeTransformations(int contextIdx)
 {
 	Vector3 tmpVector3;
 	auto groupVertices = group->getVertices();
@@ -197,7 +197,7 @@ void Object3DGroupMesh::computeTransformations()
 	if (skinning != nullptr) {
 		// compute skinning on CPU if required
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
-			Engine::getSkinningShader()->computeSkinning(this);
+			Engine::getSkinningShader()->computeSkinning(this, contextIdx);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			auto jointsWeights = skinning->getVerticesJointsWeights();

@@ -6,6 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -13,6 +14,7 @@ using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::os::threading::Mutex;
 
 /** 
  * VBO manager
@@ -26,6 +28,7 @@ class tdme::engine::subsystems::manager::VBOManager final
 private:
 	Renderer* renderer {  };
 	map<string, VBOManager_VBOManaged*> vbos {  };
+	Mutex mutex;
 
 public:
 

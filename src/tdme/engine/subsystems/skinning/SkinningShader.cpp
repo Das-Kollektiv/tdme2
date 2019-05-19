@@ -45,7 +45,7 @@ using tdme::utils::Console;
 using tdme::utils::IntBuffer;
 using tdme::utils::FloatBuffer;
 
-SkinningShader::SkinningShader(Renderer* renderer)
+SkinningShader::SkinningShader(Renderer* renderer): mutex("skinningshader-mutex")
 {
 	this->renderer = renderer;
 	isRunning = false;
@@ -90,12 +90,10 @@ void SkinningShader::useProgram()
 	renderer->useProgram(programId);
 }
 
-void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
+void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh, int contextIdx)
 {
-	if (isRunning == false) useProgram();
-
 	// use default context
-	auto context = renderer->getDefaultContext();
+	auto context = renderer->getContext(contextIdx);
 
 	// vbo base ids
 	auto vboBaseIds = object3DGroupMesh->object3DGroupVBORenderer->vboBaseIds;
@@ -105,6 +103,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	auto group = object3DGroupMesh->group;
 	auto& vertices = *group->getVertices();
 	auto id = group->getModel()->getId() + "." + group->getId();
+	mutex.lock();
 	auto cacheIt = cache.find(id);
 	if (cacheIt == cache.end()) {
 		ModelSkinningCache modelSkinningCache;
@@ -177,6 +176,7 @@ void SkinningShader::computeSkinning(Object3DGroupMesh* object3DGroupMesh)
 	} else {
 		modelSkinningCacheCached = &cacheIt->second;
 	}
+	mutex.unlock();
 
 	// upload matrices
 	{

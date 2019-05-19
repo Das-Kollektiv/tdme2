@@ -88,8 +88,9 @@ private:
 
 	/** 
 	 * Computes mesh transformations
+	 * @param contextIdx context index
 	 */
-	void computeTransformations();
+	void computeTransformations(int contextIdx);
 
 	/** 
 	 * Recreates group float buffers

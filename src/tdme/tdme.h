@@ -3,4 +3,6 @@
 #include <stdint.h>
 #include <limits>
 
-#define throw(...)
+#if defined(CPPTHREADS)
+	#define throw(...)
+#endif

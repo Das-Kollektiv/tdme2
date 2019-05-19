@@ -26,12 +26,15 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/os/threading/Thread.h>
+#include <tdme/os/threading/Semaphore.h>
+#include <tdme/utils/Console.h>
 
 using std::array;
 using std::map;
 using std::vector;
 using std::string;
+using std::to_string;
 
 using tdme::engine::Camera;
 using tdme::engine::Entity;
@@ -63,6 +66,9 @@ using tdme::gui::renderer::GUIShader;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::os::threading::Thread;
+using tdme::os::threading::Semaphore;
+using tdme::utils::Console;
 
 /** 
  * Engine main class
@@ -174,6 +180,45 @@ private:
 
 	bool isUsingPostProcessingTemporaryFrameBuffer {  };
 
+	class TransformationsThread: public Thread {
+	private:
+		Engine* engine;
+		int idx;
+		Semaphore* transformationsThreadWaitSemaphore;
+		Semaphore* mainThreadWaitSemaphore;
+		void* context;
+	public:
+		TransformationsThread(
+			Engine* engine,
+			int idx,
+			Semaphore* transformationsThreadWaitSemaphore,
+			Semaphore* mainThreadWaitSemaphore,
+			void* context):
+			Thread("engine-transformationsthread"),
+			engine(engine),
+			idx(idx),
+			transformationsThreadWaitSemaphore(transformationsThreadWaitSemaphore),
+			mainThreadWaitSemaphore(mainThreadWaitSemaphore),
+			context(context) {
+			//
+			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]");
+		}
+		virtual void run() {
+			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
+			while (isStopRequested() == false) {
+				transformationsThreadWaitSemaphore->wait();
+				// Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
+				engine->computeTransformationsFunction(RENDERING_THREADS_MAX, idx);
+				mainThreadWaitSemaphore->increment();
+			}
+			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
+		}
+	};
+
+	Semaphore transformationsThreadWaitSemaphore;
+	Semaphore mainThreadWaitSemaphore;
+	vector<TransformationsThread*> transformationsThreads;
+
 	/**
 	 * @return mesh manager
 	 */
@@ -226,6 +271,13 @@ private:
 
 	/**
 	 * Computes visibility and transformations
+	 * @param threadCount thread count
+	 * @param threadIdx thread idx
+	 */
+	void computeTransformationsFunction(int threadCount, int threadIdx);
+
+	/**
+	 * Computes visibility and transformations
 	 */
 	void computeTransformations();
 
@@ -246,10 +298,14 @@ private:
 	void initRendering();
 
 	/**
+	 * Create transformations threads
+	 */
+	void createTransformationsThreads();
+
+	/**
 	 * Private constructor
 	 */
 	Engine();
-
 public:
 
 	/**

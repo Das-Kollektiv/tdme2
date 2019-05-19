@@ -86,7 +86,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	// object 3d groups
 	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, object3dGroups);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
-	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(object3dGroups);
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(object3dGroups, 0);
 	// reset animation
 	if (baseAnimations.size() == 0) baseAnimations.push_back(AnimationState());
 	baseAnimations[baseAnimationIdx].endAtTime = -1LL;
@@ -371,7 +371,7 @@ void Object3DBase::updateSkinningTransformationsMatrices(map<string, Matrix4x4*>
 	}
 }
 
-void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices, Timing* timing)
+void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices, Timing* timing, int contextIdx)
 {
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
@@ -399,7 +399,7 @@ void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<str
 		// calculate transformations matrices
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, transformationsMatrices, 0);
 		// do transformations in group render data
-		Object3DGroup::computeTransformations(object3dGroups);
+		Object3DGroup::computeTransformations(object3dGroups, contextIdx);
 		//
 		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
 	} else
@@ -413,22 +413,22 @@ void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<str
 		// calculate transformations matrices
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, transformationsMatrices, 0);
 		// do transformations in group render data
-		Object3DGroup::computeTransformations(object3dGroups);
+		Object3DGroup::computeTransformations(object3dGroups, contextIdx);
 	}
 }
 
-void Object3DBase::computeTransformations(Timing* timing) {
+void Object3DBase::computeTransformations(Timing* timing, int contextIdx) {
 	// compute last animation matrices if required
 	auto baseAnimationIdxLast = transformationsMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
 	if (baseAnimationIdxLast != -1 &&
 		baseAnimations[baseAnimationIdxLast].lastAtTime != -1LL) {
-		computeTransformations(baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], timing);
+		computeTransformations(baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], timing, contextIdx);
 	} else {
 		baseAnimationIdxLast = -1;
 	}
 
 	// compute current animation matrices
-	computeTransformations(baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], timing);
+	computeTransformations(baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], timing, contextIdx);
 
 	// blend if required
 	if (transformationsMatrices.size() > 1) {

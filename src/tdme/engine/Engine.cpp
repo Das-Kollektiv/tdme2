@@ -151,7 +151,10 @@ bool Engine::skinningShaderEnabled = false;
 bool Engine::have4K = false;
 float Engine::animationBlendingTime = 250.0f;
 
-Engine::Engine() 
+Engine::Engine():
+	transformationsThreadWaitSemaphore("object3dvborenderer-renderthread-waitsemaphore", 0),
+	mainThreadWaitSemaphore("object3dvborenderer-mainthread-waitsemaphore", 0)
+
 {
 	timing = new Timing();
 	camera = nullptr;
@@ -225,6 +228,23 @@ Engine* Engine::getInstance()
 	return instance;
 }
 
+void Engine::createTransformationsThreads() {
+	//
+	if (renderer->isSupportingMultithreadedRendering() == true) {
+		transformationsThreads.resize(RENDERING_THREADS_MAX);
+		for (auto i = 0; i < RENDERING_THREADS_MAX; i++) {
+			transformationsThreads[i] = new TransformationsThread(
+				this,
+				i,
+				&transformationsThreadWaitSemaphore,
+				&mainThreadWaitSemaphore,
+				renderer->getContext(i)
+			);
+			transformationsThreads[i]->start();
+		}
+	}
+}
+
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 {
 	if (instance == nullptr || instance->initialized == false) {
@@ -252,6 +272,9 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	if (instance->shadowMappingEnabled == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DVBORenderer);
 	}
+	//
+	offScreenEngine->createTransformationsThreads();
+	//
 	offScreenEngine->reshape(0, 0, width, height);
 	return offScreenEngine;
 }
@@ -646,6 +669,9 @@ void Engine::initialize(bool debug)
 	initialized &= postProcessingShader->isInitialized();
 
 	//
+	createTransformationsThreads();
+
+	//
 	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
 }
 
@@ -691,6 +717,15 @@ void Engine::initRendering()
 	renderingInitiated = true;
 }
 
+void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
+	auto objectIdx = 0;
+	for (auto object: visibleObjects) {
+		if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
+		object->preRender();
+		object->computeSkinning(threadIdx);
+	}
+}
+
 void Engine::computeTransformations()
 {
 	// init rendering if not yet done
@@ -707,8 +742,6 @@ void Engine::computeTransformations()
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
 	{ \
 		if ((object = dynamic_cast<Object3D*>(_entity)) != nullptr) { \
-			object->preRender(); \
-			object->computeSkinning(); \
 			if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
 				visibleObjectsPostPostProcessing.push_back(object); \
 			} else { \
@@ -719,8 +752,6 @@ void Engine::computeTransformations()
 			auto object = lodObject->determineLODObject(camera); \
 			if (object != nullptr) { \
 				visibleLODObjects.push_back(lodObject); \
-				object->preRender(); \
-				object->computeSkinning(); \
 				if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
 					visibleObjectsPostPostProcessing.push_back(object); \
 				} else { \
@@ -730,8 +761,6 @@ void Engine::computeTransformations()
 		} else \
 		if ((opse = dynamic_cast<ObjectParticleSystem*>(_entity)) != nullptr) { \
 			for (auto object: opse->getEnabledObjects()) { \
-				object->preRender(); \
-				object->computeSkinning(); \
 				if (object->getRenderPass() == Object3D::RENDERPASS_POST_POSTPROCESSING) { \
 					visibleObjectsPostPostProcessing.push_back(object); \
 				} else { \
@@ -789,10 +818,15 @@ void Engine::computeTransformations()
 		}
 	}
 
-	// TODO: improve met
-	if (skinningShaderEnabled == true) {
-		skinningShader->unUseProgram();
+	//
+	if (skinningShaderEnabled == true) skinningShader->useProgram();
+	if (renderer->isSupportingMultithreadedRendering() == false) {
+		computeTransformationsFunction(1, 0);
+	} else {
+		transformationsThreadWaitSemaphore.increment(RENDERING_THREADS_MAX);
+		mainThreadWaitSemaphore.wait(RENDERING_THREADS_MAX);
 	}
+	if (skinningShaderEnabled == true) skinningShader->unUseProgram();
 
 	//
 	renderingComputedTransformations = true;
@@ -820,8 +854,7 @@ void Engine::display()
 	camera->update(context, width, height);
 
 	// create shadow maps
-	if (shadowMapping != nullptr)
-		shadowMapping->createShadowMaps();
+	if (shadowMapping != nullptr) shadowMapping->createShadowMaps();
 
 	// create post processing frame buffers if having post processing
 	if (postProcessingPrograms.size() > 0) {
@@ -863,9 +896,7 @@ void Engine::display()
 	camera->update(context, width, height);
 
 	// use lighting shader
-	if (lightingShader != nullptr) {
-		lightingShader->useProgram(this);
-	}
+	if (lightingShader != nullptr) lightingShader->useProgram(this);
 
 	// render objects
 	object3DVBORenderer->render(
@@ -888,8 +919,7 @@ void Engine::display()
 	}
 
 	// render shadows if required
-	if (shadowMapping != nullptr)
-		shadowMapping->renderShadowMaps(visibleObjects);
+	if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
 
 	// store matrices
 	modelViewMatrix.set(renderer->getModelViewMatrix());
@@ -903,17 +933,13 @@ void Engine::display()
 	}
 
 	// use particle shader
-	if (particlesShader != nullptr) {
-		particlesShader->useProgram(context);
-	}
+	if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 	// render points based particle systems
 	object3DVBORenderer->render(visiblePpses);
 
 	// unuse particle shader
-	if (particlesShader != nullptr) {
-		particlesShader->unUseProgram(context);
-	}
+	if (particlesShader != nullptr) particlesShader->unUseProgram(context);
 
 	// render objects and particles together
 	if (postProcessingPrograms.size() > 0) {
@@ -921,9 +947,7 @@ void Engine::display()
 	}
 
 	// render objects to target frame buffer or screen
-	if (frameBuffer != nullptr) {
-		frameBuffer->disableFrameBuffer();
-	}
+	if (frameBuffer != nullptr) frameBuffer->disableFrameBuffer();
 
 	// render objects that are have post post processing render pass
 	if (visibleObjectsPostPostProcessing.size() > 0) {
@@ -948,13 +972,10 @@ void Engine::display()
 		);
 
 		// unuse lighting shader
-		if (lightingShader != nullptr) {
-			lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
-		}
+		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
 
 		// render shadows if required
-		if (shadowMapping != nullptr)
-			shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
 	}
 
 	// delete post processing termporary buffer if not required anymore

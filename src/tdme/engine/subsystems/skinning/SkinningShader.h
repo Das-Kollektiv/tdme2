@@ -9,6 +9,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/os/threading/Mutex.h>
 
 using std::map;
 using std::string;
@@ -17,6 +18,7 @@ using std::vector;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
+using tdme::os::threading::Mutex;
 
 /** 
  * Interface to compute shader skinning shader program
@@ -39,6 +41,7 @@ private:
 	bool initialized {  };
 	Renderer* renderer {  };
 	map<string, ModelSkinningCache> cache;
+	Mutex mutex;
 
 public:
 
@@ -65,8 +68,9 @@ public:
 	/**
 	 * Compute skinning
 	 * @param object3DGroupMesh object 3d group mesh
+	 * @param contextIdx context index
 	 */
-	void computeSkinning(Object3DGroupMesh* object3DGroupMesh);
+	void computeSkinning(Object3DGroupMesh* object3DGroupMesh, int contextIdx);
 
 	/**
 	 * Reset
