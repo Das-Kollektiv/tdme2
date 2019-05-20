@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -45,8 +46,9 @@ public:
 	 * @param stepSize step size
 	 * @param stepSizeLast step size last
 	 * @param actorStepUpMax actor step up max
+	 * @param skipOnCollisionTypeIds skip cells with given collision type ids
 	 */
-	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f);
+	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f, uint16_t skipOnCollisionTypeIds = 0);
 
 	/**
 	 * Destructor
@@ -187,6 +189,7 @@ private:
 	float stepSize;
 	float stepSizeLast;
 	float actorStepUpMax;
+	uint16_t skipOnCollisionTypeIds;
 	uint16_t collisionTypeIds;
 	PathFindingNode* end;
 	stack<PathFindingNode*> successorNodes;
@@ -196,6 +199,7 @@ private:
 	Vector3 forwardVector { 0.0f, 0.0f, 1.0f };
 	Transformations actorTransformations;
 	BoundingVolume* actorBoundingVolume;
+	BoundingVolume* actorBoundingVolumeSlopeTest;
 	float actorXHalfExtension;
 	float actorZHalfExtension;
 };
