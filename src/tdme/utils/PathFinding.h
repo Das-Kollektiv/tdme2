@@ -74,10 +74,11 @@ public:
 	 * @param endPosition end position
 	 * @param collisionTypeIds collision type ids
 	 * @param path path from actor to target
+	 * @param alternativeEndSteps alternative end steps
 	 * @param customTest custom test
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, PathFindingCustomTest* customTest = nullptr);
+	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr);
 
 	/**
 	 * Checks if a cell is walkable
