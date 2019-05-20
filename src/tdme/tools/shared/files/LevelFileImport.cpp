@@ -322,7 +322,9 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	}
 }
 
-void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException) {
+void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback) throw (FileSystemException, JsonException, ModelFileIOException) {
+	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+
 	level->clearProperties();
 	level->getEntityLibrary()->clear();
 	level->clearObjects();
@@ -334,6 +336,8 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	FileSystem::getInstance()->createPath(modelPathName);
 
 	auto levelModel = ModelReader::read(pathName, fileName);
+
+	if (progressCallback != nullptr) progressCallback->progress(0.1f);
 
 	auto upVector = levelModel->getUpVector();
 	RotationOrder* rotationOrder = levelModel->getRotationOrder();
@@ -348,7 +352,11 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	modelImportRotationMatrix.set(levelModel->getImportTransformationsMatrix());
 	modelImportRotationMatrix.getScale(levelModelScale);
 	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
+	Console::println(to_string(levelModel->getSubGroups()->size()));
+	auto progressTotal = levelModel->getSubGroups()->size();
+	auto progressIdx = 0;
 	for (auto groupIt: *levelModel->getSubGroups()) {
+		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<LevelEditorEntityMeshGroup> meshGroups;
 		determineMeshGroups(level, groupIt.second, "", (Matrix4x4()).identity(), meshGroups);
 		for (auto& meshGroup: meshGroups) {
@@ -474,8 +482,13 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				levelEditorEntity
 			);
 			level->addObject(object);
+
 		}
+		//
+		progressIdx++;
 	}
+
+	if (progressCallback != nullptr) progressCallback->progress(0.9f);
 
 	// export to tl
 	LevelFileExport::export_(
@@ -486,4 +499,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 
 	//
 	delete levelModel;
+
+	//
+	if (progressCallback != nullptr) progressCallback->progress(1.0f);
 }

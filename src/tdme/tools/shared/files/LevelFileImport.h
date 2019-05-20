@@ -66,7 +66,7 @@ public:
 	 * @throws json exception
 	 * @throws model file io exception
 	 */
-	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr) throw (FileSystemException, JsonException, ModelFileIOException);
 
 private:
 	struct LevelEditorEntityMeshGroup {
