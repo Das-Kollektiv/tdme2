@@ -37,7 +37,7 @@ using tdme::utils::Time;
 
 using tdme::utils::PathFinding;
 
-PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax, uint16_t skipOnCollisionTypeIds) {
+PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax, uint16_t skipOnCollisionTypeIds, int maxTries) {
 	this->world = world;
 	this->customTest = nullptr;
 	this->sloping = sloping;
@@ -49,6 +49,7 @@ PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float stepSiz
 	this->stepSizeLast = stepSizeLast;
 	this->actorStepUpMax = actorStepUpMax;
 	this->skipOnCollisionTypeIds = skipOnCollisionTypeIds;
+	this->maxTries = maxTries;
 	this->collisionTypeIds = 0;
 	this->actorXHalfExtension = 0.0f;
 	this->actorZHalfExtension = 0.0f;
@@ -442,7 +443,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 		tries++;
 
 		//
-		if (success == true) break;
+		if (success == true || tries == maxTries) break;
 	}
 
 	//

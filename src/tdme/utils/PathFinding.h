@@ -47,8 +47,9 @@ public:
 	 * @param stepSizeLast step size last
 	 * @param actorStepUpMax actor step up max
 	 * @param skipOnCollisionTypeIds skip cells with given collision type ids
+	 * @param maxTries max tries
 	 */
-	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f, uint16_t skipOnCollisionTypeIds = 0);
+	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f, uint16_t skipOnCollisionTypeIds = 0, int maxTries = 5);
 
 	/**
 	 * Destructor
@@ -191,6 +192,7 @@ private:
 	float actorStepUpMax;
 	uint16_t skipOnCollisionTypeIds;
 	uint16_t collisionTypeIds;
+	int maxTries;
 	PathFindingNode* end;
 	stack<PathFindingNode*> successorNodes;
 	map<string, PathFindingNode*> openNodes;
