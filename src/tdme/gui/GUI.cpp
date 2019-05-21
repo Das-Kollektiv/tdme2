@@ -736,9 +736,15 @@ void GUI::onMouseDragged(int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#if defined(__APPLE__) && !defined(VULKAN)
+		guiMouseEvent.setControlDown(false);
+		guiMouseEvent.setAltDown(false);
+		guiMouseEvent.setShiftDown(false);
+	#else
+		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
@@ -759,9 +765,15 @@ void GUI::onMouseMoved(int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#if defined(__APPLE__) && !defined(VULKAN)
+		guiMouseEvent.setControlDown(false);
+		guiMouseEvent.setAltDown(false);
+		guiMouseEvent.setShiftDown(false);
+	#else
+		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
@@ -783,9 +795,15 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#if defined(__APPLE__) && !defined(VULKAN)
+		guiMouseEvent.setControlDown(false);
+		guiMouseEvent.setAltDown(false);
+		guiMouseEvent.setShiftDown(false);
+	#else
+		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();
@@ -807,9 +825,15 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(direction * 1.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#if defined(__APPLE__) && !defined(VULKAN)
+		guiMouseEvent.setControlDown(false);
+		guiMouseEvent.setAltDown(false);
+		guiMouseEvent.setShiftDown(false);
+	#else
+		guiMouseEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+		guiMouseEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+		guiMouseEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	#endif
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 	unlockEvents();

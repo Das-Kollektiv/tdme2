@@ -22,7 +22,7 @@ InputEventHandler::~InputEventHandler() {
 
 int InputEventHandler::getKeyboardModifiers() {
 	#if defined(__APPLE__)
-		return 0;
+		return glutGetModifiers();
 	#else
 		#if defined(VULKAN)
 			return Application::application->glfwMods;
