@@ -10,6 +10,7 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/StringUtils.h>
@@ -29,9 +30,11 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::PNGInputStream;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::Mutex;
 using tdme::utils::StringUtils;
 
 vector<string> TextureReader::extensions = {"png"};
+static Mutex TextureReader::textureCacheMutex("texturecache-mutex");
 map<string, Texture*> TextureReader::textureCache;
 
 const vector<string>& TextureReader::getTextureExtensions() {
@@ -49,6 +52,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 
 	// do cache look up
 	if (useCache == true) {
+		textureCacheMutex.lock();
 		auto textureCacheIt = textureCache.find(canonicalPathName + "/" + canonicalFileName);
 		if (textureCacheIt != textureCache.end()) {
 			texture = textureCacheIt->second;
@@ -61,7 +65,9 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 		try {
 			if (StringUtils::endsWith(StringUtils::toLowerCase(canonicalFileName), ".png") == true) {
 				texture = TextureReader::loadPNG(canonicalPathName, canonicalFileName);
-				if (texture != nullptr && useCache == true) textureCache[texture->getId()] = texture;
+				if (texture != nullptr && useCache == true) {
+					textureCache[texture->getId()] = texture;
+				}
 			}
 		} catch (Exception& exception) {
 			Console::println("TextureReader::loadTexture(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
@@ -70,6 +76,11 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 
 	// done
 	if (texture != nullptr) texture->acquireReference();
+
+	//
+	if (useCache == true) textureCacheMutex.unlock();
+
+	// done
 	return texture;
 }
 

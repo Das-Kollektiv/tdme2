@@ -7,6 +7,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/ByteBuffer.h>
 
 #include <ext/libpng/png.h>
@@ -17,6 +18,7 @@ using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::os::filesystem::FileSystemException;
+using tdme::os::threading::Mutex;
 using tdme::utils::ByteBuffer;
 
 namespace tdme {
@@ -141,4 +143,5 @@ private:
 
 	// maybe have a read write lock here for texture cache, but currently I have no multithreaded access to it
 	static map<string, Texture*> textureCache;
+	static Mutex textureCacheMutex;
 };
