@@ -34,7 +34,7 @@ using tdme::os::threading::Mutex;
 using tdme::utils::StringUtils;
 
 vector<string> TextureReader::extensions = {"png"};
-static Mutex TextureReader::textureCacheMutex("texturecache-mutex");
+Mutex TextureReader::textureCacheMutex("texturecache-mutex");
 map<string, Texture*> TextureReader::textureCache;
 
 const vector<string>& TextureReader::getTextureExtensions() {
