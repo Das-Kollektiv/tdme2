@@ -355,6 +355,8 @@ void TextureReader::scaleTextureLine(ByteBuffer* pixelByteBuffer, ByteBuffer* pi
 }
 
 void TextureReader::removeFromCache(Texture* texture) {
+	textureCacheMutex.lock();
 	auto textureCacheIt = textureCache.find(texture->getId());
 	if (textureCacheIt != textureCache.end()) textureCache.erase(textureCacheIt);
+	textureCacheMutex.unlock();
 }
