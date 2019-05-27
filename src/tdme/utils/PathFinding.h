@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -45,8 +46,10 @@ public:
 	 * @param stepSize step size
 	 * @param stepSizeLast step size last
 	 * @param actorStepUpMax actor step up max
+	 * @param skipOnCollisionTypeIds skip cells with given collision type ids
+	 * @param maxTries max tries
 	 */
-	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f);
+	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f, uint16_t skipOnCollisionTypeIds = 0, int maxTries = 5);
 
 	/**
 	 * Destructor
@@ -74,10 +77,11 @@ public:
 	 * @param endPosition end position
 	 * @param collisionTypeIds collision type ids
 	 * @param path path from actor to target
+	 * @param alternativeEndSteps alternative end steps
 	 * @param customTest custom test
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, PathFindingCustomTest* customTest = nullptr);
+	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr);
 
 	/**
 	 * Checks if a cell is walkable
@@ -186,7 +190,9 @@ private:
 	float stepSize;
 	float stepSizeLast;
 	float actorStepUpMax;
+	uint16_t skipOnCollisionTypeIds;
 	uint16_t collisionTypeIds;
+	int maxTries;
 	PathFindingNode* end;
 	stack<PathFindingNode*> successorNodes;
 	map<string, PathFindingNode*> openNodes;
@@ -195,6 +201,7 @@ private:
 	Vector3 forwardVector { 0.0f, 0.0f, 1.0f };
 	Transformations actorTransformations;
 	BoundingVolume* actorBoundingVolume;
+	BoundingVolume* actorBoundingVolumeSlopeTest;
 	float actorXHalfExtension;
 	float actorZHalfExtension;
 };

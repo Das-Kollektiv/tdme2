@@ -1363,23 +1363,25 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 				break;
 			}
 		}
+
+		// progress call back
+		class ImportProgressCallback: public ProgressCallback {
+		private:
+			ProgressBarScreenController* progressBarScreenController;
+		public:
+			ImportProgressCallback(ProgressBarScreenController* progressBarScreenController): progressBarScreenController(progressBarScreenController) {
+			}
+			virtual void progress(float value) {
+				progressBarScreenController->progress(value);
+			}
+		};
+		popUps->getProgressBarScreenController()->show();
 		if (haveModelFile == true) {
-			LevelFileImport::doImportFromModel(path, file, level);
+			LevelFileImport::doImportFromModel(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
 		} else {
-			class ImportProgressCallback: public ProgressCallback {
-			private:
-				ProgressBarScreenController* progressBarScreenController;
-			public:
-				ImportProgressCallback(ProgressBarScreenController* progressBarScreenController): progressBarScreenController(progressBarScreenController) {
-				}
-				virtual void progress(float value) {
-					progressBarScreenController->progress(value);
-				}
-			};
-			popUps->getProgressBarScreenController()->show();
 			LevelFileImport::doImport(path, file, level, new ImportProgressCallback(popUps->getProgressBarScreenController()));
-			popUps->getProgressBarScreenController()->close();
 		}
+		popUps->getProgressBarScreenController()->close();
 		for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 			level->getEntityLibrary()->getEntityAt(i)->setDefaultBoundingVolumes();
 		}
