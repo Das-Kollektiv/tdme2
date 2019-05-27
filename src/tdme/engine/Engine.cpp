@@ -720,9 +720,13 @@ void Engine::initRendering()
 void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
 	auto objectIdx = 0;
 	for (auto object: visibleObjects) {
-		if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
+		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+			objectIdx++;
+			continue;
+		}
 		object->preRender();
 		object->computeSkinning(threadIdx);
+		objectIdx++;
 	}
 }
 

@@ -21,13 +21,9 @@ InputEventHandler::~InputEventHandler() {
 }
 
 int InputEventHandler::getKeyboardModifiers() {
-	#if defined(__APPLE__)
-		return glutGetModifiers();
+	#if defined(VULKAN)
+		return Application::application->glfwMods;
 	#else
-		#if defined(VULKAN)
-			return Application::application->glfwMods;
-		#else
-			return glutGetModifiers();
-		#endif
+		return glutGetModifiers();
 	#endif
 }
