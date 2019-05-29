@@ -91,6 +91,7 @@ private:
 		vector<Object3D*> objectsNotRendered;
 		TransparentRenderFacesPool* transparentRenderFacesPool;
 	public:
+		volatile bool busy { false };
 		RenderThread(
 			Object3DVBORenderer* object3DVBORenderer,
 			int idx,
@@ -119,12 +120,14 @@ private:
 		virtual void run() {
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
 			while (isStopRequested() == false) {
-				renderThreadWaitSemaphore->wait();
+				while (busy == false);
+				//renderThreadWaitSemaphore->wait();
 				objectsNotRendered.clear();
 				transparentRenderFacesPool->reset();
 				// Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
 				object3DVBORenderer->instancedRenderFunction(idx, context, parameters, objectsNotRendered, transparentRenderFacesPool);
-				mainThreadWaitSemaphore->increment();
+				//mainThreadWaitSemaphore->increment();
+				busy = false;
 			}
 			Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 		}

@@ -189,6 +189,7 @@ private:
 		Semaphore* mainThreadWaitSemaphore;
 		void* context;
 	public:
+		volatile bool busy { false };
 		TransformationsThread(
 			Engine* engine,
 			int idx,
@@ -207,10 +208,12 @@ private:
 		virtual void run() {
 			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
 			while (isStopRequested() == false) {
-				transformationsThreadWaitSemaphore->wait();
+				while (busy == false);
+				// transformationsThreadWaitSemaphore->wait();
 				// Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
 				engine->computeTransformationsFunction(RENDERING_THREADS_MAX, idx);
-				mainThreadWaitSemaphore->increment();
+				// mainThreadWaitSemaphore->increment();
+				busy = false;
 			}
 			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
 		}

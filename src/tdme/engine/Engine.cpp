@@ -833,8 +833,10 @@ void Engine::computeTransformations()
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		computeTransformationsFunction(1, 0);
 	} else {
-		transformationsThreadWaitSemaphore.increment(RENDERING_THREADS_MAX);
-		mainThreadWaitSemaphore.wait(RENDERING_THREADS_MAX);
+		for (auto transformationsThread: transformationsThreads) transformationsThread->busy = true;
+		//transformationsThreadWaitSemaphore.increment(RENDERING_THREADS_MAX);
+		//mainThreadWaitSemaphore.wait(RENDERING_THREADS_MAX);
+		for (auto transformationsThread: transformationsThreads) while (transformationsThread->busy == true);
 	}
 	if (skinningShaderEnabled == true) {
 		skinningShader->unUseProgram();

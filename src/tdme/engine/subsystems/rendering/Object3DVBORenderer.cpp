@@ -885,8 +885,10 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				// multiple threads
 				if (threadCount > 1) {
 					for (auto i = 0; i < threadCount; i++) threads[i]->setParameters(parameters);
-					renderThreadWaitSemaphore.increment(threadCount);
-					mainThreadWaitSemaphore.wait(threadCount);
+					for (auto renderThread: threads) renderThread->busy = true;
+					// renderThreadWaitSemaphore.increment(threadCount);
+					// mainThreadWaitSemaphore.wait(threadCount);
+					for (auto renderThread: threads) while(renderThread->busy == true);
 					for (auto i = 0; i < threadCount; i++) objectsNotRendered.insert(objectsNotRendered.end(), threads[i]->getObjectsNotRendered().begin(), threads[i]->getObjectsNotRendered().end());
 					for (auto i = 0; i < threadCount; i++) transparentRenderFacesPool->merge(threads[i]->getTransparentRenderFacesPool());
 				} else {
