@@ -71,6 +71,8 @@ void FrameBufferRenderShader::initialize()
 	uniformDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "depthBufferTextureUnit");
 	if (uniformDepthBufferTextureUnit == -1) return;
 
+	//
+	auto context = renderer->getDefaultContext();
 
 	// create vbos
 	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2, true);
@@ -79,7 +81,7 @@ void FrameBufferRenderShader::initialize()
 
 	// vertices
 	{
-		auto fbVertices = ObjectBuffer::getByteBuffer(6 * 3 * sizeof(float))->asFloatBuffer();
+		auto fbVertices = ObjectBuffer::getByteBuffer(context, 6 * 3 * sizeof(float))->asFloatBuffer();
 
 		fbVertices.put(-1.0f); fbVertices.put(+1.0f); fbVertices.put(0.0f);
 		fbVertices.put(+1.0f); fbVertices.put(+1.0f); fbVertices.put(0.0f);
@@ -89,12 +91,12 @@ void FrameBufferRenderShader::initialize()
 		fbVertices.put(-1.0f); fbVertices.put(-1.0f); fbVertices.put(0.0f);
 		fbVertices.put(-1.0f); fbVertices.put(+1.0f); fbVertices.put(0.0f);
 
-		renderer->uploadBufferObject(vboVertices, fbVertices.getPosition() * sizeof(float), &fbVertices);
+		renderer->uploadBufferObject(context, vboVertices, fbVertices.getPosition() * sizeof(float), &fbVertices);
 	}
 
 	// texture coordinates
 	{
-		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(6 * 2 * sizeof(float))->asFloatBuffer();
+		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, 6 * 2 * sizeof(float))->asFloatBuffer();
 
 		#if defined(VULKAN)
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
@@ -114,7 +116,7 @@ void FrameBufferRenderShader::initialize()
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
 		#endif
 
-		renderer->uploadBufferObject(vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+		renderer->uploadBufferObject(context, vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	}
 
 	//

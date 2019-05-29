@@ -66,19 +66,20 @@ private:
 
 	/**
 	 * Compute skinning
-	 * @param contextIdx context index
+	 * @param context context
 	 */
-	inline void computeSkinning(int contextIdx) {
-		if (hasSkinning == true) computeTransformations(contextIdx);
+	inline void computeSkinning(void* context) {
+		if (hasSkinning == true) computeTransformations(context);
 	}
 
 	/**
 	 * Pre render step like uploading VBOs and such
+	 * @param context context
 	 */
-	inline void preRender() {
+	inline void preRender(void* context) {
 		for (auto object3DGroup: object3dGroups) {
 			if (object3DGroup->renderer->needsPreRender() == true) {
-				object3DGroup->renderer->preRender();
+				object3DGroup->renderer->preRender(context);
 			}
 		}
 	}
@@ -242,10 +243,10 @@ public:
 
 	/**
 	 * Compute transformations
-	 * @param contextIdx context index
+	 * @param context context
 	 */
-	inline void computeTransformations(int contextIdx) {
-		Object3DInternal::computeTransformations(engine->getTiming(), contextIdx);
+	inline void computeTransformations(void* context) {
+		Object3DInternal::computeTransformations(context, engine->getTiming());
 	}
 
 	/**

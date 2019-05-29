@@ -109,10 +109,11 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 VKRenderer::VKRenderer():
+	queue_mutex("queue-mutex"),
 	buffers_rwlock("buffers_rwlock"),
 	textures_rwlock("textures_rwlock"),
 	draw_cmd_mutex("draw_cmd_mutex"),
-	setup_cmd_mutex("setup_cmd_mutex")
+	delete_mutex("delete_mutex")
 {
 	// setup consts
 	ID_NONE = 0;
@@ -169,44 +170,33 @@ inline VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check
 	return 1;
 }
 
-void VKRenderer::prepareSetupCommandBuffer() {
-	setup_cmd_mutex.lock();
-	if (setup_cmd == VK_NULL_HANDLE) {
-		VkResult err;
+inline void VKRenderer::prepareSetupCommandBuffer(int contextIdx) {
+	if (setup_cmds_inuse[contextIdx] == VK_NULL_HANDLE) {
+		setup_cmds_inuse[contextIdx] = setup_cmds[contextIdx];
 
-		const VkCommandBufferAllocateInfo cmd = {
-			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-			.pNext = NULL,
-			.commandPool = cmd_pool,
-			.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-			.commandBufferCount = 1
-		};
-
-		err = vkAllocateCommandBuffers(device, &cmd, &setup_cmd);
-		assert(!err);
-
-		VkCommandBufferBeginInfo cmd_buf_info = {
+		//
+		const VkCommandBufferBeginInfo cmd_buf_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 			.pNext = NULL,
 			.flags = 0,
 			.pInheritanceInfo = NULL
 		};
-		err = vkBeginCommandBuffer(setup_cmd, &cmd_buf_info);
+
+		VkResult err;
+		err = vkBeginCommandBuffer(setup_cmds_inuse[contextIdx], &cmd_buf_info);
 		assert(!err);
 	}
-	setup_cmd_mutex.unlock();
 }
 
-void VKRenderer::finishSetupCommandBuffer() {
-	setup_cmd_mutex.lock();
+inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 	//
-	if (setup_cmd != VK_NULL_HANDLE) {
+	if (setup_cmds_inuse[contextIdx] != VK_NULL_HANDLE) {
 		VkResult err;
 
-		err = vkEndCommandBuffer(setup_cmd);
+		err = vkEndCommandBuffer(setup_cmds_inuse[contextIdx]);
 		assert(!err);
 
-		const VkCommandBuffer cmd_bufs[] = { setup_cmd };
+		const VkCommandBuffer cmd_bufs[] = { setup_cmds_inuse[contextIdx] };
 		VkFence nullFence = { VK_NULL_HANDLE };
 		VkSubmitInfo submit_info = {
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -220,25 +210,30 @@ void VKRenderer::finishSetupCommandBuffer() {
 			.pSignalSemaphores = NULL
 		};
 
+		queue_mutex.lock();
+
 		err = vkQueueSubmit(queue, 1, &submit_info, nullFence);
 		assert(!err);
 
 		err = vkQueueWaitIdle(queue);
 		assert(!err);
 
-		vkFreeCommandBuffers(device, cmd_pool, 1, cmd_bufs);
+		queue_mutex.unlock();
 
 		//
-		setup_cmd = VK_NULL_HANDLE;
+		setup_cmds_inuse[contextIdx] = VK_NULL_HANDLE;
 	}
-	setup_cmd_mutex.unlock();
 }
 
-inline void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
+inline void VKRenderer::finishSetupCommandBuffers() {
+	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) finishSetupCommandBuffer(contextIdx);
+}
+
+inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
 	VkResult err;
 
 	//
-	prepareSetupCommandBuffer();
+	prepareSetupCommandBuffer(contextIdx);
 
 	VkImageMemoryBarrier image_memory_barrier = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -276,10 +271,10 @@ inline void VKRenderer::setImageLayout(VkImage image, VkImageAspectFlags aspectM
 	}
 
 	//
-	vkCmdPipelineBarrier(setup_cmd, VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	vkCmdPipelineBarrier(setup_cmds_inuse[contextIdx], VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
-inline void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
+inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
 	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkResult err;
 	bool pass;
@@ -375,6 +370,7 @@ inline void VKRenderer::prepareTextureImage(struct texture_object *tex_obj, VkIm
 	tex_obj->image_layout = image_layout;
 	tex_obj->type = texture_object::TYPE_TEXTURE;
 	setImageLayout(
+		contextIdx,
 		tex_obj->image,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_LAYOUT_PREINITIALIZED,
@@ -662,6 +658,11 @@ void* VKRenderer::getDefaultContext() {
 
 void* VKRenderer::getContext(int contextIdx) {
 	return &contexts[contextIdx];
+}
+
+int VKRenderer::getContextIndex(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.idx;
 }
 
 bool VKRenderer::isSupportingMultithreadedRendering() {
@@ -1037,14 +1038,14 @@ void VKRenderer::initialize()
 		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 		.queueFamilyIndex = graphics_queue_node_index
 	};
-	err = vkCreateCommandPool(device, &cmd_pool_info, NULL, &cmd_pool);
+	err = vkCreateCommandPool(device, &cmd_pool_info, NULL, &cmd_draw_pool);
 	assert(!err);
 
 	// draw command buffers
 	const VkCommandBufferAllocateInfo cmd = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
 		.pNext = NULL,
-		.commandPool = cmd_pool,
+		.commandPool = cmd_draw_pool,
 		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 		.commandBufferCount = 1
 	};
@@ -1081,6 +1082,31 @@ void VKRenderer::initialize()
 	err = vkCreateDescriptorPool(device, &descriptor_pool, NULL, &desc_pool);
 	assert(!err);
 
+	// create set up command buffers
+	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++)
+	{
+		// command pool
+		const VkCommandPoolCreateInfo cmd_pool_info = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+			.pNext = NULL,
+			.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+			.queueFamilyIndex = graphics_queue_node_index
+		};
+		err = vkCreateCommandPool(device, &cmd_pool_info, NULL, &cmd_setup_pools[contextIdx]);
+		assert(!err);
+
+		// command buffer
+		const VkCommandBufferAllocateInfo cmd = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+			.pNext = NULL,
+			.commandPool = cmd_setup_pools[contextIdx],
+			.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+			.commandBufferCount = 1
+		};
+		err = vkAllocateCommandBuffers(device, &cmd, &setup_cmds[contextIdx]);
+		assert(!err);
+	}
+
 	//
 	initializeRenderPass();
 	initializeFrameBuffers();
@@ -1093,7 +1119,7 @@ void VKRenderer::initialize()
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 	}};
-	uploadBufferObjectInternal(empty_vertex_buffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
+	uploadBufferObjectInternal(0, empty_vertex_buffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
 	//
 	white_texture_default = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"));
@@ -1289,7 +1315,7 @@ void VKRenderer::initializeFrame()
 	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
 		// TODO: a.drewke
 		//
-		finishSetupCommandBuffer();
+		finishSetupCommandBuffers();
 		endRenderPass();
 		vkDestroySemaphore(device, image_acquired_semaphore, NULL);
 		vkDestroySemaphore(device, draw_complete_semaphore, NULL);
@@ -1402,6 +1428,8 @@ void VKRenderer::finishFrame()
 		.pSignalSemaphores = &draw_complete_semaphore
 	};
 
+	queue_mutex.lock();
+
 	err = vkQueueSubmit(queue, 1, &submit_info, nullFence);
 	assert(!err);
 
@@ -1431,6 +1459,8 @@ void VKRenderer::finishFrame()
 	err = vkQueueWaitIdle(queue);
 	assert(err == VK_SUCCESS);
 
+	queue_mutex.unlock();
+
 	vkDestroySemaphore(device, image_acquired_semaphore, NULL);
 	vkDestroySemaphore(device, draw_complete_semaphore, NULL);
 
@@ -1438,12 +1468,14 @@ void VKRenderer::finishFrame()
 	vkDeviceWaitIdle(device);
 
 	// remove marked vulkan resources
+	delete_mutex.lock();
 	for (auto buf: delete_buffers) vkDestroyBuffer(device, buf, NULL);
 	for (auto mem: delete_memory) vkFreeMemory(device, mem, NULL);
 	for (auto image: delete_images) vkDestroyImage(device, image, NULL);
 	delete_buffers.clear();
 	delete_memory.clear();
 	delete_images.clear();
+	delete_mutex.unlock();
 
 	// reset desc index
 	for (auto& programIt: programs) {
@@ -1954,6 +1986,7 @@ inline void VKRenderer::finishPipeline() {
 			program.uniform_buffers_last[context.idx] = context.uniform_buffers;
 			program.uniform_buffers_changed_last[context.idx] = context.uniform_buffers_changed;
 		}
+		pipeline_id.clear();
 	}
 
 	// clear ubos
@@ -2102,10 +2135,9 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		program.created = true;
 	}
 
-	auto pipelineId = createPipelineId();
-	auto pipelinesIt = program.pipelines.find(pipelineId);
+	auto pipelinesIt = program.pipelines.find(pipeline_id);
 	if (pipelinesIt == program.pipelines.end()) {
-		auto& programPipeline = program.pipelines[pipelineId];
+		auto& programPipeline = program.pipelines[pipeline_id];
 
 		VkRenderPass renderPass = render_pass;
 		auto haveDepthBuffer = true;
@@ -2329,28 +2361,30 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
 
 		//
-		pipelinesIt = program.pipelines.find(pipelineId);
+		pipelinesIt = program.pipelines.find(pipeline_id);
 	}
 
 }
 
 inline void VKRenderer::setupObjectsRenderingPipeline(program_type& program) {
-	auto pipelineId = createPipelineId();
-	auto pipelinesIt = program.pipelines.find(pipelineId);
-	if (program.created == false || pipelinesIt == program.pipelines.end()) {
-		createObjectsRenderingPipeline(program);
-	}
-
-	//
-	pipelinesIt = program.pipelines.find(pipelineId);
-	auto newPipeline = pipelinesIt->second.pipeline;
-	if (newPipeline != pipeline) {
-		vkCmdBindPipeline(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
-		pipeline = newPipeline;
+	if (pipeline_id.empty() == true) {
+		pipeline_id = createPipelineId();
+		auto pipelinesIt = program.pipelines.find(pipeline_id);
+		if (program.created == false || pipelinesIt == program.pipelines.end()) {
+			createObjectsRenderingPipeline(program);
+		}
 
 		//
-		vkCmdSetViewport(draw_cmd, 0, 1, &viewport);
-		vkCmdSetScissor(draw_cmd, 0, 1, &scissor);
+		pipelinesIt = program.pipelines.find(pipeline_id);
+		auto newPipeline = pipelinesIt->second.pipeline;
+		if (newPipeline != pipeline) {
+			vkCmdBindPipeline(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
+			pipeline = newPipeline;
+
+			//
+			vkCmdSetViewport(draw_cmd, 0, 1, &viewport);
+			vkCmdSetScissor(draw_cmd, 0, 1, &scissor);
+		}
 	}
 }
 
@@ -2441,10 +2475,9 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		program.created = true;
 	}
 
-	auto pipelineId = createPipelineId();
-	auto pipelinesIt = program.pipelines.find(pipelineId);
+	auto pipelinesIt = program.pipelines.find(pipeline_id);
 	if (pipelinesIt == program.pipelines.end()) {
-		auto& programPipeline = program.pipelines[pipelineId];
+		auto& programPipeline = program.pipelines[pipeline_id];
 
 		VkRenderPass renderPass = render_pass;
 		auto haveDepthBuffer = true;
@@ -2608,27 +2641,30 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
 
 		//
-		pipelinesIt = program.pipelines.find(pipelineId);
+		pipelinesIt = program.pipelines.find(pipeline_id);
 	}
 }
 
 inline void VKRenderer::setupPointsRenderingPipeline(program_type& program) {
-	auto pipelineId = createPipelineId();
-	auto pipelinesIt = program.pipelines.find(pipelineId);
-	if (program.created == false || pipelinesIt == program.pipelines.end()) {
-		createPointsRenderingPipeline(program);
-	}
+	if (pipeline_id.empty() == true) {
+		pipeline_id = createPipelineId();
 
-	//
-	pipelinesIt = program.pipelines.find(pipelineId);
-	auto newPipeline = pipelinesIt->second.pipeline;
-	if (newPipeline != pipeline) {
-		vkCmdBindPipeline(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
-		pipeline = newPipeline;
+		auto pipelinesIt = program.pipelines.find(pipeline_id);
+		if (program.created == false || pipelinesIt == program.pipelines.end()) {
+			createPointsRenderingPipeline(program);
+		}
 
 		//
-		vkCmdSetViewport(draw_cmd, 0, 1, &viewport);
-		vkCmdSetScissor(draw_cmd, 0, 1, &scissor);
+		pipelinesIt = program.pipelines.find(pipeline_id);
+		auto newPipeline = pipelinesIt->second.pipeline;
+		if (newPipeline != pipeline) {
+			vkCmdBindPipeline(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
+			pipeline = newPipeline;
+
+			//
+			vkCmdSetViewport(draw_cmd, 0, 1, &viewport);
+			vkCmdSetScissor(draw_cmd, 0, 1, &scissor);
+		}
 	}
 }
 
@@ -2772,6 +2808,10 @@ inline void VKRenderer::setupSkinningComputingPipeline(program_type& program) {
 void VKRenderer::useProgram(int32_t programId)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
+
+	//
+	pipeline_id.clear();
+
 	// if unsetting program flush command buffers
 	if (program_id != 0) {
 		flushCommandsAllContexts();
@@ -3167,6 +3207,7 @@ void VKRenderer::enableCulling()
 	if (culling_enabled == true) return;
 	flushCommandsAllContexts();
 	culling_enabled = true;
+	pipeline_id.clear();
 }
 
 void VKRenderer::disableCulling()
@@ -3174,6 +3215,7 @@ void VKRenderer::disableCulling()
 	if (culling_enabled == false) return;
 	flushCommandsAllContexts();
 	culling_enabled = false;
+	pipeline_id.clear();
 }
 
 void VKRenderer::enableBlending()
@@ -3181,6 +3223,7 @@ void VKRenderer::enableBlending()
 	if (blending_enabled == true) return;
 	flushCommandsAllContexts();
 	blending_enabled = true;
+	pipeline_id.clear();
 }
 
 void VKRenderer::disableBlending()
@@ -3188,6 +3231,7 @@ void VKRenderer::disableBlending()
 	if (blending_enabled == false) return;
 	flushCommandsAllContexts();
 	blending_enabled = false;
+	pipeline_id.clear();
 }
 
 void VKRenderer::enableDepthBufferWriting()
@@ -3195,6 +3239,7 @@ void VKRenderer::enableDepthBufferWriting()
 	if (depth_buffer_writing == true) return;
 	flushCommandsAllContexts();
 	depth_buffer_writing = true;
+	pipeline_id.clear();
 }
 
 void VKRenderer::disableDepthBufferWriting()
@@ -3202,6 +3247,7 @@ void VKRenderer::disableDepthBufferWriting()
 	if (depth_buffer_writing == false) return;
 	flushCommandsAllContexts();
 	depth_buffer_writing = false;
+	pipeline_id.clear();
 }
 
 void VKRenderer::disableDepthBufferTest()
@@ -3209,6 +3255,7 @@ void VKRenderer::disableDepthBufferTest()
 	if (depth_buffer_testing == false) return;
 	flushCommandsAllContexts();
 	depth_buffer_testing = false;
+	pipeline_id.clear();
 }
 
 void VKRenderer::enableDepthBufferTest()
@@ -3216,6 +3263,7 @@ void VKRenderer::enableDepthBufferTest()
 	if (depth_buffer_testing == true) return;
 	flushCommandsAllContexts();
 	depth_buffer_testing = true;
+	pipeline_id.clear();
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunction)
@@ -3223,6 +3271,7 @@ void VKRenderer::setDepthFunction(int32_t depthFunction)
 	if (depth_function == depthFunction) return;
 	flushCommandsAllContexts();
 	depth_function = depthFunction;
+	pipeline_id.clear();
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
@@ -3241,6 +3290,7 @@ void VKRenderer::setCullFace(int32_t cullFace)
 	if (cull_mode == cullFace) return;
 	flushCommandsAllContexts();
 	cull_mode = (VkCullModeFlagBits)cullFace;
+	pipeline_id.clear();
 }
 
 void VKRenderer::setFrontFace(int32_t frontFace)
@@ -3248,6 +3298,7 @@ void VKRenderer::setFrontFace(int32_t frontFace)
 	if (front_face == frontFace) return;
 	flushCommandsAllContexts();
 	front_face = (VkFrontFace)frontFace;
+	pipeline_id.clear();
 }
 
 int32_t VKRenderer::createTexture()
@@ -3336,6 +3387,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 
 	//
 	setImageLayout(
+		0,
 		depth_buffer_texture.image,
 		VK_IMAGE_ASPECT_DEPTH_BIT,
 		VK_IMAGE_LAYOUT_UNDEFINED,
@@ -3465,6 +3517,7 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 
 	//
 	setImageLayout(
+		0,
 		color_buffer_texture.image,
 		VK_IMAGE_ASPECT_COLOR_BIT,
 		VK_IMAGE_LAYOUT_UNDEFINED,
@@ -3557,7 +3610,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	vkGetPhysicalDeviceFormatProperties(gpu, tex_format, &props);
 	if ((props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// we need a setup command buffer here
-		prepareSetupCommandBuffer();
+		prepareSetupCommandBuffer(contextTyped.idx);
 
 		// Must use staging buffer to copy linear texture to optimized
 		struct texture_object staging_texture;
@@ -3566,6 +3619,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		memset(&staging_texture, 0, sizeof(staging_texture));
 
 		prepareTextureImage(
+			contextTyped.idx,
 			&staging_texture,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
@@ -3574,6 +3628,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
 		);
 		prepareTextureImage(
+			contextTyped.idx,
 			&texture_object,
 			VK_IMAGE_TILING_OPTIMAL,
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -3582,6 +3637,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
 		);
 		setImageLayout(
+			contextTyped.idx,
 			staging_texture.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			staging_texture.image_layout,
@@ -3589,6 +3645,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			(VkAccessFlagBits)0
 		);
 		setImageLayout(
+			contextTyped.idx,
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			texture_object.image_layout,
@@ -3628,7 +3685,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		};
 
 		vkCmdCopyImage(
-			setup_cmd,
+			setup_cmds_inuse[contextTyped.idx],
 			staging_texture.image,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			texture_object.image,
@@ -3638,6 +3695,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		);
 
 		setImageLayout(
+			contextTyped.idx,
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -3646,12 +3704,15 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		);
 
 		// mark for deletion
+		delete_mutex.lock();
 		delete_images.push_back(staging_texture.image);
 		delete_memory.push_back(staging_texture.mem);
+		delete_mutex.unlock();
 	} else
 	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// Device can texture using linear textures
 		prepareTextureImage(
+			contextTyped.idx,
 			&texture_object,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_SAMPLED_BIT,
@@ -3776,8 +3837,9 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 	//
 	if (textureObject.type == texture_object::TYPE_FRAMEBUFFER_DEPTHBUFFER) {
 		if (textureObject.image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-			prepareSetupCommandBuffer();
+			prepareSetupCommandBuffer(contextTyped.idx);
 			setImageLayout(
+				contextTyped.idx,
 				textureObject.image,
 				VK_IMAGE_ASPECT_DEPTH_BIT,
 				VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
@@ -3785,13 +3847,14 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 				(VkAccessFlagBits)0
 			);
 			textureObject.image_layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-			finishSetupCommandBuffer();
+			finishSetupCommandBuffer(contextTyped.idx);
 		}
 	} else
 	if (textureObject.type == texture_object::TYPE_FRAMEBUFFER_COLORBUFFER) {
 		if (textureObject.image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
-			prepareSetupCommandBuffer();
+			prepareSetupCommandBuffer(contextTyped.idx);
 			setImageLayout(
+				contextTyped.idx,
 				textureObject.image,
 				VK_IMAGE_ASPECT_COLOR_BIT,
 				VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -3799,7 +3862,7 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 				(VkAccessFlagBits)0
 			);
 			textureObject.image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			finishSetupCommandBuffer();
+			finishSetupCommandBuffer(contextTyped.idx);
 		}
 	}
 
@@ -3996,11 +4059,12 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 		} else {
 			auto depthBufferTextureId = frameBufferIt->second.depth_texture_id;
 			auto colorBufferTextureId = frameBufferIt->second.color_texture_id;
-			prepareSetupCommandBuffer();
+			prepareSetupCommandBuffer(0);
 			if (depthBufferTextureId != 0) {
 				auto& depth_buffer_texture = textures[depthBufferTextureId];
 				if (depth_buffer_texture.image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) {
 					setImageLayout(
+						0,
 						depth_buffer_texture.image,
 						VK_IMAGE_ASPECT_DEPTH_BIT,
 						VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
@@ -4014,6 +4078,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 				auto& color_buffer_texture = textures[colorBufferTextureId];
 				if (color_buffer_texture.image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
 					setImageLayout(
+						0,
 						color_buffer_texture.image,
 						VK_IMAGE_ASPECT_COLOR_BIT,
 						VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
@@ -4023,7 +4088,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 					color_buffer_texture.image_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 				}
 			}
-			finishSetupCommandBuffer();
+			finishSetupCommandBuffer(0);
 		}
 	}
 
@@ -4056,22 +4121,17 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 	return bufferIds;
 }
 
-VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size) {
-	if (VERBOSE == true) Console::println("getBufferObjectInternal::" + string(__FUNCTION__) + "()");
-	buffers_rwlock.readLock();
+inline VkBuffer VKRenderer::getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size) {
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
-		buffers_rwlock.unlock();
 		return VK_NULL_HANDLE;
 	}
 	if (bufferIt->second.current_buffer == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " has no current data attached");
-		buffers_rwlock.unlock();
 		return VK_NULL_HANDLE;
 	}
 	auto buffer = bufferIt->second.current_buffer;
-	buffers_rwlock.unlock();
 	size = buffer->size;
 	buffer->frame_used_last = frame;
 	return buffer->buf;
@@ -4116,7 +4176,7 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 	vkBindBufferMemory(device, buffer, bufferMemory, 0);
 }
 
-inline void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
+inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (size == 0) return;
 
 	buffers_rwlock.readLock();
@@ -4169,7 +4229,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32
 
 	// create buffer
 	if (buffer.useGPUMemory == true) {
-		prepareSetupCommandBuffer();
+		prepareSetupCommandBuffer(contextIdx);
 
 		void* stagingData;
 		VkBuffer stagingBuffer;
@@ -4178,8 +4238,10 @@ inline void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32
 		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
 		// mark staging buffer for deletion when finishing frame
+		delete_mutex.lock();
 		delete_buffers.push_back(stagingBuffer);
 		delete_memory.push_back(stagingBufferMemory);
+		delete_mutex.unlock();
 
 		// create GPU buffer if not yet done
 		if (reusableBuffer->size == 0) {
@@ -4210,7 +4272,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32
 			.dstOffset = 0,
 			.size = static_cast<VkDeviceSize>(size)
 		};
-		vkCmdCopyBuffer(setup_cmd, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
+		vkCmdCopyBuffer(setup_cmds_inuse[contextIdx], stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
 	} else {
 		if (reusableBuffer->size == 0) {
 			createBuffer(size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, reusableBuffer->buf, reusableBuffer->mem);
@@ -4277,19 +4339,22 @@ inline void VKRenderer::uploadBufferObjectInternal(int32_t bufferObjectId, int32
 	}
 }
 
-void VKRenderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	auto& contextTyped = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
-void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void VKRenderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
+	auto& contextTyped = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
-void VKRenderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void VKRenderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
+	auto& contextTyped = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
 void VKRenderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
@@ -4343,11 +4408,10 @@ void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferOb
 }
 
 void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
-	uint32_t indicesBufferSize;
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, getBufferObjectInternal((*static_cast<context_type*>(context)).bound_indices_buffer, indicesBufferSize), instances);
+	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, (*static_cast<context_type*>(context)).bound_indices_buffer, instances);
 }
 
-inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
+inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances)
 {
 	//
 	auto programIt = programs.find(program_id);
@@ -4360,28 +4424,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	//
-	auto shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-
-		if (shader.ubo_binding_idx == -1) {
-			shaderIdx++;
-			continue;
-		}
-		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
-		}
-		uint32_t uboBufferSize;
-		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx], uboBufferSize);
-		shaderIdx++;
-	}
-
+	// textures
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
 		if (textureId == 0) {
@@ -4405,27 +4448,55 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	}
 
 	//
+	buffers_rwlock.readLock();
+
+	//
+	auto shaderIdx = 0;
+	for (auto& shaderId: program.shader_ids) {
+		auto shaderIt = shaders.find(shaderId);
+		if (shaderIt == shaders.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+			return;
+		}
+		auto& shader = shaderIt->second;
+
+		if (shader.ubo_binding_idx == -1) {
+			shaderIdx++;
+			continue;
+		}
+		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
+			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+		}
+		uint32_t uboBufferSize;
+		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
+		shaderIdx++;
+	}
+
+	//
 	uint32_t bufferSize;
-	contextTyped.objects_render_command.indices_buffer = indicesBuffer;
-	contextTyped.objects_render_command.vertex_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[4] = getBufferObjectInternal(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[5] = getBufferObjectInternal(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[6] = getBufferObjectInternal(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[7] = getBufferObjectInternal(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7], bufferSize);
-	contextTyped.objects_render_command.vertex_buffers[8] = getBufferObjectInternal(contextTyped.bound_buffers[8] == 0?empty_vertex_buffer:contextTyped.bound_buffers[8], bufferSize);
+	contextTyped.objects_render_command.indices_buffer = indicesBuffer == 0?0:getBufferObjectInternalNoLock(indicesBuffer, bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[0] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[1] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[2] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[3] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[4] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[5] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[6] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[7] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[8] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[8] == 0?empty_vertex_buffer:contextTyped.bound_buffers[8], bufferSize);
 	contextTyped.objects_render_command.count = triangles;
 	contextTyped.objects_render_command.offset = trianglesOffset;
 	contextTyped.objects_render_command.instances = instances;
+
+	//
+	buffers_rwlock.unlock();
 
 	//
 	contextTyped.uniform_buffers_changed.fill(false);
 
 	//
 	contextTyped.command_type = context_type::COMMAND_OBJECTS;
-	flushCommands(context);
+	flushCommands(contextTyped.idx);
 }
 
 void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
@@ -4438,13 +4509,14 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 
 inline void VKRenderer::flushCommandsAllContexts() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	for (auto& context: contexts) flushCommands(&context);
+	for (auto i = 0; i < contexts.size(); i++) flushCommands(i);
 }
 
-inline void VKRenderer::flushCommands(void* context) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(static_cast<context_type*>(context)->idx));
+inline void VKRenderer::flushCommands(int contextIdx) {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx));
 
-	finishSetupCommandBuffer();
+	//
+	finishSetupCommandBuffer(contextIdx);
 
 	//
 	draw_cmd_mutex.lock();
@@ -4483,8 +4555,8 @@ inline void VKRenderer::flushCommands(void* context) {
 	}
 	draw_cmd_mutex.unlock();
 
-	// have our context typed
-	auto& contextTyped = *static_cast<context_type*>(context);
+	//
+	auto& contextTyped = contexts[contextIdx];
 	if (contextTyped.command_type == context_type::COMMAND_NONE) return;
 
 	//
@@ -4843,6 +4915,29 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
+	// textures
+	textures_rwlock.readLock();
+	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
+		auto textureId = contextTyped.bound_textures[i];
+		if (textureId == 0) continue;
+		auto textureObjectIt = textures.find(textureId);
+		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
+			continue;
+		}
+		auto& texture_object = textureObjectIt->second;
+		contextTyped.points_render_command.textures[i] = {
+			.sampler = texture_object.sampler,
+			.view = texture_object.view,
+			.image_layout = texture_object.image_layout
+		};
+	}
+	textures_rwlock.unlock();
+
+	// buffers
+	buffers_rwlock.readLock();
+
+	//
 	auto shaderIdx = 0;
 	for (auto& shaderId: program.shader_ids) {
 		auto shaderIt = shaders.find(shaderId);
@@ -4857,47 +4952,31 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
 		uint32_t uboBufferSize;
-		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternal(shader.ubo[contextTyped.idx], uboBufferSize);
+		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
 		shaderIdx++;
-	}
-
-	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
-		auto textureId = contextTyped.bound_textures[i];
-		if (textureId == 0) continue;
-		textures_rwlock.readLock();
-		auto textureObjectIt = textures.find(textureId);
-		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE) {
-			textures_rwlock.unlock();
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
-			continue;
-		}
-		auto& texture_object = textureObjectIt->second;
-		textures_rwlock.unlock();
-		contextTyped.points_render_command.textures[i] = {
-			.sampler = texture_object.sampler,
-			.view = texture_object.view,
-			.image_layout = texture_object.image_layout
-		};
 	}
 
 	//
 	uint32_t bufferSize;
-	contextTyped.points_render_command.vertex_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], bufferSize);
-	contextTyped.points_render_command.vertex_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], bufferSize);
-	contextTyped.points_render_command.vertex_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], bufferSize);
-	contextTyped.points_render_command.vertex_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], bufferSize);
+	contextTyped.points_render_command.vertex_buffers[0] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], bufferSize);
+	contextTyped.points_render_command.vertex_buffers[1] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], bufferSize);
+	contextTyped.points_render_command.vertex_buffers[2] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], bufferSize);
+	contextTyped.points_render_command.vertex_buffers[3] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], bufferSize);
 	contextTyped.points_render_command.count = points;
 	contextTyped.points_render_command.offset = pointsOffset;
+
+	//
+	buffers_rwlock.unlock();
 
 	//
 	contextTyped.uniform_buffers_changed.fill(false);
 
 	//
 	contextTyped.command_type = context_type::COMMAND_POINTS;
-	flushCommands(context);
+	flushCommands(contextTyped.idx);
 }
 
 void VKRenderer::unbindBufferObjects(void* context)
@@ -4976,6 +5055,9 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	//
+	buffers_rwlock.readLock();
+
+	//
 	auto shaderIdx = 0;
 	for (auto& shaderId: program.shader_ids) {
 		auto shaderIt = shaders.find(shaderId);
@@ -4990,32 +5072,35 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
 		uint32_t uboBufferSize;
-		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternal(shader.ubo[contextTyped.idx], uboBufferSize); // TODO: do not use static 0 ubo buffer
+		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize); // TODO: do not use static 0 ubo buffer
 		shaderIdx++;
 	}
 
 	// TODO: improve me to only use one buffer map lookup
-	contextTyped.compute_command.storage_buffers[0] = getBufferObjectInternal(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], contextTyped.compute_command.storage_buffer_sizes[0]);
-	contextTyped.compute_command.storage_buffers[1] = getBufferObjectInternal(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], contextTyped.compute_command.storage_buffer_sizes[1]);
-	contextTyped.compute_command.storage_buffers[2] = getBufferObjectInternal(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], contextTyped.compute_command.storage_buffer_sizes[2]);
-	contextTyped.compute_command.storage_buffers[3] = getBufferObjectInternal(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], contextTyped.compute_command.storage_buffer_sizes[3]);
-	contextTyped.compute_command.storage_buffers[4] = getBufferObjectInternal(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4], contextTyped.compute_command.storage_buffer_sizes[4]);
-	contextTyped.compute_command.storage_buffers[5] = getBufferObjectInternal(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5], contextTyped.compute_command.storage_buffer_sizes[5]);
-	contextTyped.compute_command.storage_buffers[6] = getBufferObjectInternal(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6], contextTyped.compute_command.storage_buffer_sizes[6]);
-	contextTyped.compute_command.storage_buffers[7] = getBufferObjectInternal(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7], contextTyped.compute_command.storage_buffer_sizes[7]);
+	contextTyped.compute_command.storage_buffers[0] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[0] == 0?empty_vertex_buffer:contextTyped.bound_buffers[0], contextTyped.compute_command.storage_buffer_sizes[0]);
+	contextTyped.compute_command.storage_buffers[1] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[1] == 0?empty_vertex_buffer:contextTyped.bound_buffers[1], contextTyped.compute_command.storage_buffer_sizes[1]);
+	contextTyped.compute_command.storage_buffers[2] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[2] == 0?empty_vertex_buffer:contextTyped.bound_buffers[2], contextTyped.compute_command.storage_buffer_sizes[2]);
+	contextTyped.compute_command.storage_buffers[3] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[3] == 0?empty_vertex_buffer:contextTyped.bound_buffers[3], contextTyped.compute_command.storage_buffer_sizes[3]);
+	contextTyped.compute_command.storage_buffers[4] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[4] == 0?empty_vertex_buffer:contextTyped.bound_buffers[4], contextTyped.compute_command.storage_buffer_sizes[4]);
+	contextTyped.compute_command.storage_buffers[5] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[5] == 0?empty_vertex_buffer:contextTyped.bound_buffers[5], contextTyped.compute_command.storage_buffer_sizes[5]);
+	contextTyped.compute_command.storage_buffers[6] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6], contextTyped.compute_command.storage_buffer_sizes[6]);
+	contextTyped.compute_command.storage_buffers[7] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7], contextTyped.compute_command.storage_buffer_sizes[7]);
 	contextTyped.compute_command.num_groups_x = numGroupsX;
 	contextTyped.compute_command.num_groups_y = numGroupsY;
 	contextTyped.compute_command.num_groups_z = numGroupsZ;
+
+	//
+	buffers_rwlock.unlock();
 
 	//
 	contextTyped.uniform_buffers_changed.fill(false);
 
 	//
 	contextTyped.command_type = context_type::COMMAND_COMPUTE;
-	flushCommands(context);
+	flushCommands(contextTyped.idx);
 }
 
 void VKRenderer::memoryBarrier() {
@@ -5025,9 +5110,20 @@ void VKRenderer::memoryBarrier() {
 	if (inRenderPass == true) endRenderPass();
 
 	//
-	if (setup_cmd != VK_NULL_HANDLE) {
-		assert(!err);
-		err = vkEndCommandBuffer(setup_cmd);
+	VkCommandBuffer cmd_bufs[CONTEXT_COUNT + 1];
+	uint32_t cmdBufCount = 0;
+	if (draw_cmd_started == true) {
+		cmd_bufs[cmdBufCount++] = draw_cmd;
+	}
+	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
+		if (setup_cmds_inuse[contextIdx] != VK_NULL_HANDLE) {
+			cmd_bufs[cmdBufCount++] = setup_cmds_inuse[contextIdx];
+
+			err = vkEndCommandBuffer(setup_cmds_inuse[contextIdx]);
+			assert(!err);
+
+			setup_cmds_inuse[contextIdx] = VK_NULL_HANDLE;
+		}
 	}
 
 	if (draw_cmd_started == true) {
@@ -5036,9 +5132,7 @@ void VKRenderer::memoryBarrier() {
 		assert(!err);
 	}
 
-	const VkCommandBuffer cmd_bufs[] = { draw_cmd, setup_cmd };
-
-	if (draw_cmd_started == true || setup_cmd != VK_NULL_HANDLE) {
+	if (cmdBufCount > 0) {
 		VkFence nullFence = { VK_NULL_HANDLE };
 		VkSubmitInfo submit_info = {
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -5046,17 +5140,21 @@ void VKRenderer::memoryBarrier() {
 			.waitSemaphoreCount = 0,
 			.pWaitSemaphores = NULL,
 			.pWaitDstStageMask = NULL,
-			.commandBufferCount = static_cast<uint32_t>((draw_cmd_started == true?1:0) + (setup_cmd != VK_NULL_HANDLE?1:0)),
-			.pCommandBuffers = draw_cmd_started == true?&cmd_bufs[0]:&cmd_bufs[1],
+			.commandBufferCount = cmdBufCount,
+			.pCommandBuffers = cmd_bufs,
 			.signalSemaphoreCount = 0,
 			.pSignalSemaphores = NULL
 		};
+
+		queue_mutex.lock();
 
 		err = vkQueueSubmit(queue, 1, &submit_info, nullFence);
 		assert(!err);
 
 		err = vkQueueWaitIdle(queue);
 		assert(!err);
+
+		queue_mutex.unlock();
 	}
 
 	if (draw_cmd_started == true) {
@@ -5072,23 +5170,18 @@ void VKRenderer::memoryBarrier() {
 		assert(!err);
 	}
 
-	if (setup_cmd != VK_NULL_HANDLE) {
-		vkFreeCommandBuffers(device, cmd_pool, 1, &cmd_bufs[1]);
-
-		//
-		setup_cmd = VK_NULL_HANDLE;
-	}
-
 	//
 	if (inRenderPass == true) startRenderPass();
 }
 
-void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
-void VKRenderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	uploadBufferObjectInternal(bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {

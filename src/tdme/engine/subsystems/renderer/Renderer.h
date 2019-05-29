@@ -84,6 +84,12 @@ public:
 	 */
 	virtual void* getContext(int contextIdx);
 
+	/**
+	 * Retrieve context index from given context
+	 * @return context index
+	 */
+	virtual int getContextIndex(void* context);
+
 	/** 
 	 * Initialize renderer
 	 */
@@ -519,27 +525,30 @@ public:
 
 	/** 
 	 * Uploads buffer data to buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
+	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
 
 	/** 
 	 * Uploads buffer data to buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
+	virtual void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
 	/** 
 	 * Uploads buffer data to buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+	virtual void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
 
 	/** 
 	 * Bind indices buffer object
@@ -893,19 +902,21 @@ public:
 
 	/**
 	 * Upload skinning buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
+	virtual void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
 
 	/**
 	 * Upload skinning buffer object
+	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+	virtual void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
 
 	/**
 	 * Bind skinning vertices buffer object

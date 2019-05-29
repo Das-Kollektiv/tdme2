@@ -62,9 +62,9 @@ void BatchVBORendererPoints::render(void* context)
 	// determine point count
 	auto points = fbVertices.getPosition() / 3 /* 3 components */;
 	// upload vertices
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject(context, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
 	// upload colors
-	renderer->uploadBufferObject((*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject(context, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
 	// bind vertices
 	renderer->bindVerticesBufferObject(context, (*vboIds)[0]);
 	// bind colors

@@ -93,9 +93,9 @@ public:
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
 	vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory) override;
-	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
-	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
-	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
+	void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
+	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
+	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
@@ -121,8 +121,8 @@ public:
 	void doneGuiMode() override;
 	void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
 	void memoryBarrier() override;
-	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
-	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
+	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
+	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) override;

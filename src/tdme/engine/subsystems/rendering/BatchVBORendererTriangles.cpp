@@ -92,11 +92,11 @@ void BatchVBORendererTriangles::render()
 	// determine triangles count
 	auto triangles = fbVertices.getPosition() / 3 /*vertices*/ / 3 /*vector components*/;
 	// upload vertices
-	renderer->uploadBufferObject((*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject(context, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
 	// upload normals
-	renderer->uploadBufferObject((*vboIds)[1], fbNormals.getPosition() * sizeof(float), &fbNormals);
+	renderer->uploadBufferObject(context, (*vboIds)[1], fbNormals.getPosition() * sizeof(float), &fbNormals);
 	// upload texture coordinates
-	renderer->uploadBufferObject((*vboIds)[2], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	renderer->uploadBufferObject(context, (*vboIds)[2], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	// bind vertices
 	renderer->bindVerticesBufferObject(context, (*vboIds)[0]);
 	// bind normals
@@ -110,11 +110,11 @@ void BatchVBORendererTriangles::render()
 		fbEffectColorMuls.put(renderer->effectColorMul);
 		fbEffectColorAdds.clear();
 		fbEffectColorAdds.put(renderer->effectColorAdd);
-		renderer->uploadBufferObject((*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
+		renderer->uploadBufferObject(context, (*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
 		renderer->bindModelMatricesBufferObject(context, (*vboIds)[3]);
-		renderer->uploadBufferObject((*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+		renderer->uploadBufferObject(context, (*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
 		renderer->bindEffectColorMulsBufferObject(context, (*vboIds)[4]);
-		renderer->uploadBufferObject((*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+		renderer->uploadBufferObject(context, (*vboIds)[5], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
 		renderer->bindEffectColorAddsBufferObject(context, (*vboIds)[5]);
 
 		// draw

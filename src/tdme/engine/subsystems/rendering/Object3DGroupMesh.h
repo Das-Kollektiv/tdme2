@@ -88,9 +88,9 @@ private:
 
 	/** 
 	 * Computes mesh transformations
-	 * @param contextIdx context index
+	 * @param context context
 	 */
-	void computeTransformations(int contextIdx);
+	void computeTransformations(void* context);
 
 	/** 
 	 * Recreates group float buffers
@@ -112,44 +112,50 @@ private:
 	/** 
 	 * Set up vertex indices buffer
 	 * @param renderer renderer
+	 * @param context context
 	 * @param vboId vbo id
 	 */
-	void setupVertexIndicesBuffer(Renderer* renderer, int32_t vboId);
+	void setupVertexIndicesBuffer(Renderer* renderer, void* context, int32_t vboId);
 
 	/** 
 	 * Set up texture coordinates buffer
 	 * @param renderer renderer
+	 * @param context context
 	 * @param vboId vbo id
 	 */
-	void setupTextureCoordinatesBuffer(Renderer* renderer, int32_t vboId);
+	void setupTextureCoordinatesBuffer(Renderer* renderer, void* context, int32_t vboId);
 
 	/** 
 	 * Set up vertices buffer
 	 * @param renderer renderer
+	 * @param context context
 	 * @param vboId vbo id
 	 */
-	void setupVerticesBuffer(Renderer* renderer, int32_t vboId);
+	void setupVerticesBuffer(Renderer* renderer, void* context, int32_t vboId);
 
 	/** 
 	 * Set up normals buffer
 	 * @param renderer renderer
+	 * @param context context
 	 * @param vboId vbo id
 	 */
-	void setupNormalsBuffer(Renderer* renderer, int32_t vboId);
+	void setupNormalsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
 	/** 
 	 * Set up tangents buffer
 	 * @param renderer renderer
+	 * @param context context
 	 * @param vboId vbo id
 	 */
-	void setupTangentsBuffer(Renderer* renderer, int32_t vboId);
+	void setupTangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
 	/** 
 	 * Set up bitangents buffer
 	 * @param renderer renderer
+	 * @param context context
 	 * @param vboId vbo id
 	 */
-	void setupBitangentsBuffer(Renderer* renderer, int32_t vboId);
+	void setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
 	// Generated
 

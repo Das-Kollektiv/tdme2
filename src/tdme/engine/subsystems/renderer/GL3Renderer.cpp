@@ -533,19 +533,19 @@ vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers, bool useGPUMem
 	return bufferObjectIds;
 }
 
-void GL3Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
-void GL3Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	Console::println(string("GL3Renderer::uploadIndicesBufferObject()::not implemented yet"));
 }
 
-void GL3Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
@@ -751,7 +751,7 @@ void GL3Renderer::memoryBarrier() {
 	#endif
 }
 
-void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
 	#else
@@ -761,7 +761,7 @@ void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t siz
 	#endif
 }
 
-void GL3Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	#if defined (__APPLE__)
 		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
 	#else

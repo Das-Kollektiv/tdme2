@@ -100,7 +100,7 @@ void GUIRenderer::initialize()
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 3)));
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
 			}
-			renderer->uploadIndicesBufferObject((*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+			renderer->uploadIndicesBufferObject(renderer->getDefaultContext(), (*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 		} else {
 			auto ibIndices = sbIndicesByteBuffer->asIntBuffer();
 			for (auto i = 0; i < QUAD_COUNT; i++) {
@@ -111,7 +111,7 @@ void GUIRenderer::initialize()
 				ibIndices.put(i * 4 + 3);
 				ibIndices.put(i * 4 + 0);
 			}
-			renderer->uploadIndicesBufferObject((*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+			renderer->uploadIndicesBufferObject(renderer->getDefaultContext(), (*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 		}
 	}
 }
@@ -326,9 +326,9 @@ void GUIRenderer::render()
 	}
 	// use default context
 	auto context = renderer->getDefaultContext();
-	renderer->uploadBufferObject((*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
-	renderer->uploadBufferObject((*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
-	renderer->uploadBufferObject((*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	renderer->uploadBufferObject(context, (*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject(context, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject(context, (*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	renderer->bindIndicesBufferObject(context, (*vboIds)[0]);
 	renderer->bindVerticesBufferObject(context, (*vboIds)[1]);
 	renderer->bindColorsBufferObject(context, (*vboIds)[2]);

@@ -34,7 +34,7 @@ Object3DGroupVBORenderer::Object3DGroupVBORenderer(Object3DGroup* object3DGroup)
 	this->vboTangentBitangentIds = nullptr;
 }
 
-void Object3DGroupVBORenderer::preRender()
+void Object3DGroupVBORenderer::preRender(void* context)
 {
 	auto meshUploaded = true;
 
@@ -61,20 +61,20 @@ void Object3DGroupVBORenderer::preRender()
 	if (object3DGroup->mesh->getRecreatedBuffers() == true || meshUploaded == false) {
 		if (meshUploaded == false) {
 			// upload indices
-			object3DGroup->mesh->setupVertexIndicesBuffer(Engine::renderer, (*vboBaseIds)[0]);
+			object3DGroup->mesh->setupVertexIndicesBuffer(Engine::renderer, context, (*vboBaseIds)[0]);
 			// upload texture coordinates
 			if (object3DGroup->mesh->group->getTextureCoordinates() != nullptr) {
-				object3DGroup->mesh->setupTextureCoordinatesBuffer(Engine::renderer, (*vboBaseIds)[3]);
+				object3DGroup->mesh->setupTextureCoordinatesBuffer(Engine::renderer, context, (*vboBaseIds)[3]);
 			}
 		}
 		// upload vertices
-		object3DGroup->mesh->setupVerticesBuffer(Engine::renderer, (*vboBaseIds)[1]);
+		object3DGroup->mesh->setupVerticesBuffer(Engine::renderer, context, (*vboBaseIds)[1]);
 		// upload normals
-		object3DGroup->mesh->setupNormalsBuffer(Engine::renderer, (*vboBaseIds)[2]);
+		object3DGroup->mesh->setupNormalsBuffer(Engine::renderer, context, (*vboBaseIds)[2]);
 		// tangents, bitangents
 		if (vboTangentBitangentIds != nullptr) {
-			object3DGroup->mesh->setupTangentsBuffer(Engine::renderer, (*vboTangentBitangentIds)[0]);
-			object3DGroup->mesh->setupBitangentsBuffer(Engine::renderer, (*vboTangentBitangentIds)[1]);
+			object3DGroup->mesh->setupTangentsBuffer(Engine::renderer, context, (*vboTangentBitangentIds)[0]);
+			object3DGroup->mesh->setupBitangentsBuffer(Engine::renderer, context, (*vboTangentBitangentIds)[1]);
 		}
 	}
 }

@@ -68,7 +68,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
 		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
-		Object3DGroup::computeTransformations(object3DModelInternal->object3dGroups, 0);
+		Object3DGroup::computeTransformations(nullptr, object3DModelInternal->object3dGroups);
 		// parse through object groups to determine min, max
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
 			for (auto vertex : *object3DGroup->mesh->vertices) {

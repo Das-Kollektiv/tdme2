@@ -31,7 +31,7 @@ private:
 	struct ModelSkinningCache {
 		string id;
 		vector<int32_t>* vboIds;
-		vector<int32_t>* matricesVboIds;
+		vector<vector<int32_t>*> matricesVboIds;
 	};
 
 	int32_t programId {  };
@@ -67,10 +67,10 @@ public:
 
 	/**
 	 * Compute skinning
+	 * @param context context
 	 * @param object3DGroupMesh object 3d group mesh
-	 * @param contextIdx context index
 	 */
-	void computeSkinning(Object3DGroupMesh* object3DGroupMesh, int contextIdx);
+	void computeSkinning(void* context, Object3DGroupMesh* object3DGroupMesh);
 
 	/**
 	 * Reset

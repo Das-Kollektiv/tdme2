@@ -149,10 +149,10 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 	}
 }
 
-void Object3DGroup::computeTransformations(vector<Object3DGroup*>& object3DGroups, int contextIdx)
+void Object3DGroup::computeTransformations(void* context, vector<Object3DGroup*>& object3DGroups)
 {
 	for (auto object3DGroup : object3DGroups) {
-		object3DGroup->mesh->computeTransformations(contextIdx);
+		object3DGroup->mesh->computeTransformations(context);
 	}
 }
 

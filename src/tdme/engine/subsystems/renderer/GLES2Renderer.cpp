@@ -494,21 +494,21 @@ vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers, bool useGPUM
 	return bufferObjectIds;
 }
 
-void GLES2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
-void GLES2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
-void GLES2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	Console::println("GLES2Renderer::uploadIndicesBufferObject()::not implemented");
 }
@@ -654,11 +654,11 @@ void GLES2Renderer::memoryBarrier() {
 	Console::println("GLES2Renderer::memoryBarrier(): Not implemented");
 }
 
-void GLES2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+void GLES2Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
 	Console::println("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
-void GLES2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+void GLES2Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	Console::println("GLES2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 

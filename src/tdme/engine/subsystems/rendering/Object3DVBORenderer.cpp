@@ -749,16 +749,16 @@ inline void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* co
 
 		// upload model view matrices
 		{
-			renderer->uploadBufferObject((*vboInstancedRenderingIds[threadIdx])[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
+			renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
 			renderer->bindModelMatricesBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0]);
 		}
 
 		// upload effects
 		if ((parameters.renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 			// upload effect color mul
-			renderer->uploadBufferObject((*vboInstancedRenderingIds[threadIdx])[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+			renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
 			renderer->bindEffectColorMulsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[1]);
-			renderer->uploadBufferObject((*vboInstancedRenderingIds[threadIdx])[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+			renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
 			renderer->bindEffectColorAddsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[2]);
 		}
 

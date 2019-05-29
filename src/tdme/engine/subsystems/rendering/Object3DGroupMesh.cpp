@@ -185,7 +185,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* objec
 	return mesh;
 }
 
-void Object3DGroupMesh::computeTransformations(int contextIdx)
+void Object3DGroupMesh::computeTransformations(void* context)
 {
 	Vector3 tmpVector3;
 	auto groupVertices = group->getVertices();
@@ -197,7 +197,7 @@ void Object3DGroupMesh::computeTransformations(int contextIdx)
 	if (skinning != nullptr) {
 		// compute skinning on CPU if required
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
-			Engine::getSkinningShader()->computeSkinning(this, contextIdx);
+			Engine::getSkinningShader()->computeSkinning(context, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			auto jointsWeights = skinning->getVerticesJointsWeights();
@@ -296,7 +296,7 @@ bool Object3DGroupMesh::getRecreatedBuffers()
 	}
 }
 
-void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
 	if (renderer->isUsingShortIndices() == true) {
 		if (indices.size() > 65535) {
@@ -307,84 +307,84 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer* renderer, int32_t vbo
 				"more than 2^16-1 indices"
 			);
 		}
-		auto sbIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
+		auto sbIndices = ObjectBuffer::getByteBuffer(context, faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
 		// create face vertex indices, will never be changed in engine
 		for (auto index : indices) {
 			sbIndices.put(index);
 		}
 		// done, upload
-		renderer->uploadIndicesBufferObject(vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+		renderer->uploadIndicesBufferObject(context, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 	} else {
-		auto ibIndices = ObjectBuffer::getByteBuffer(faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
+		auto ibIndices = ObjectBuffer::getByteBuffer(context, faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
 		// create face vertex indices, will never be changed in engine
 		for (auto index : indices) {
 			ibIndices.put(index);
 		}
 		// done, upload
-		renderer->uploadIndicesBufferObject(vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+		renderer->uploadIndicesBufferObject(context, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 	}
 }
 
-void Object3DGroupMesh::setupTextureCoordinatesBuffer(Renderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupTextureCoordinatesBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
 	// check if we have texture coordinates
 	auto groupTextureCoordinates = group->getTextureCoordinates();
 	if (groupTextureCoordinates == nullptr) return;
 	// create texture coordinates buffer, will never be changed in engine
-	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(groupTextureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
+	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, groupTextureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
 	// construct texture coordinates byte buffer as this will not change usually
 	for (auto& textureCoordinate : *groupTextureCoordinates) {
 		fbTextureCoordinates.put(textureCoordinate.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	renderer->uploadBufferObject(context, vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 }
 
-void Object3DGroupMesh::setupVerticesBuffer(Renderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupVerticesBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
-	auto fbVertices = ObjectBuffer::getByteBuffer(vertices->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbVertices = ObjectBuffer::getByteBuffer(context, vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create vertices buffers
 	for (auto& vertex : *vertices) {
 		fbVertices.put(vertex.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject(context, vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
 }
 
-void Object3DGroupMesh::setupNormalsBuffer(Renderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupNormalsBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
-	auto fbNormals = ObjectBuffer::getByteBuffer(normals->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbNormals = ObjectBuffer::getByteBuffer(context, normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create normals buffers
 	for (auto& normal : *normals) {
 		fbNormals.put(normal.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
+	renderer->uploadBufferObject(context, vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
 }
 
-void Object3DGroupMesh::setupTangentsBuffer(Renderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupTangentsBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
 	// check if we have tangents
 	if (tangents == nullptr) return;
-	auto fbTangents = ObjectBuffer::getByteBuffer(tangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbTangents = ObjectBuffer::getByteBuffer(context, tangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create tangents buffers
 	for (auto& tangent : *tangents) {
 		fbTangents.put(tangent.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
+	renderer->uploadBufferObject(context, vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
 }
 
-void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
 	// check if we have bitangents
 	if (bitangents == nullptr) return;
-	auto fbBitangents = ObjectBuffer::getByteBuffer(bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbBitangents = ObjectBuffer::getByteBuffer(context, bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create bitangents buffers
 	for (auto& bitangent : *bitangents) {
 		fbBitangents.put(bitangent.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
+	renderer->uploadBufferObject(context, vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
 }
 

@@ -43,6 +43,7 @@
 #include <tdme/engine/subsystems/manager/MeshManager.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
+#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
@@ -103,6 +104,7 @@ using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
+using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
@@ -568,6 +570,9 @@ void Engine::initialize(bool debug)
 		#endif
 	#endif
 
+	// initialize object buffers
+	ObjectBuffer::initialize();
+
 	// create manager
 	textureManager = new TextureManager(renderer);
 	vboManager = new VBOManager(renderer);
@@ -718,14 +723,15 @@ void Engine::initRendering()
 }
 
 void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
+	auto context = renderer->getContext(threadIdx);
 	auto objectIdx = 0;
 	for (auto object: visibleObjects) {
 		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
 			objectIdx++;
 			continue;
 		}
-		object->preRender();
-		object->computeSkinning(threadIdx);
+		object->preRender(context);
+		object->computeSkinning(context);
 		objectIdx++;
 	}
 }
@@ -830,7 +836,9 @@ void Engine::computeTransformations()
 		transformationsThreadWaitSemaphore.increment(RENDERING_THREADS_MAX);
 		mainThreadWaitSemaphore.wait(RENDERING_THREADS_MAX);
 	}
-	if (skinningShaderEnabled == true) skinningShader->unUseProgram();
+	if (skinningShaderEnabled == true) {
+		skinningShader->unUseProgram();
+	}
 
 	//
 	renderingComputedTransformations = true;

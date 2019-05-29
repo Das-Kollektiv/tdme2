@@ -43,8 +43,9 @@ public:
 
 	/**
 	 * Pre render step like uploading VBOs and such
+	 * @param context context
 	 */
-	void preRender();
+	void preRender(void* context);
 
 	/** 
 	 * Disposes the object 3d group

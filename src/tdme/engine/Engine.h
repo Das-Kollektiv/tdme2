@@ -97,6 +97,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DVBORenderer;
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
+	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
 	friend class tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;

@@ -535,19 +535,19 @@ vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMem
 	return bufferObjectIds;
 }
 
-void GL2Renderer::uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
-void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	Console::println(string("GL2Renderer::uploadIndicesBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
@@ -705,11 +705,11 @@ void GL2Renderer::memoryBarrier() {
 	Console::println("GL2Renderer::memoryBarrier(): Not implemented");
 }
 
-void GL2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+void GL2Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
 	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
-void GL2Renderer::uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+void GL2Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 

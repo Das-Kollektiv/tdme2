@@ -223,6 +223,7 @@ private:
 	VkInstance inst { VK_NULL_HANDLE };
 	VkPhysicalDevice gpu { VK_NULL_HANDLE };
 	VkDevice device { VK_NULL_HANDLE };
+	Mutex queue_mutex;
 	VkQueue queue { VK_NULL_HANDLE };
 	VkPhysicalDeviceProperties gpu_props;
 	VkPhysicalDeviceFeatures gpu_features;
@@ -245,9 +246,21 @@ private:
 	swapchain_buffer_type* swapchain_buffers { nullptr };
 	VkFramebuffer* window_framebuffers;
 
-	VkCommandPool cmd_pool { VK_NULL_HANDLE };
+	VkCommandPool cmd_draw_pool { VK_NULL_HANDLE };
+	array<VkCommandPool, CONTEXT_COUNT> cmd_setup_pools { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
 
-	VkCommandBuffer setup_cmd { VK_NULL_HANDLE }; // Command Buffer for initialization commands
+	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds_inuse {
+		VK_NULL_HANDLE,
+		VK_NULL_HANDLE,
+		VK_NULL_HANDLE,
+		VK_NULL_HANDLE
+	};
+	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds {
+		VK_NULL_HANDLE,
+		VK_NULL_HANDLE,
+		VK_NULL_HANDLE,
+		VK_NULL_HANDLE
+	};
 	VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
 
 	int32_t shader_idx { 1 };
@@ -264,7 +277,6 @@ private:
 	ReadWriteLock buffers_rwlock;
 	ReadWriteLock textures_rwlock;
 	Mutex draw_cmd_mutex;
-	Mutex setup_cmd_mutex;
 
 	uint32_t width { 0 };
 	uint32_t height { 0 };
@@ -313,28 +325,31 @@ private:
 	bool draw_cmd_started { false };
 	int64_t frame { 0 };
 
+	Mutex delete_mutex;
 	vector<VkImage> delete_images;
 	vector<VkBuffer> delete_buffers;
 	vector<VkDeviceMemory> delete_memory;
 
+	string pipeline_id;
 	VkPipeline pipeline { VK_NULL_HANDLE };
 
 	array<context_type, CONTEXT_COUNT> contexts;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
-	void setImageLayout(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
-	void prepareTextureImage(struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout);
+	void setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
+	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
+	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-	void uploadBufferObjectInternal(int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
+	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
 	void flushCommandsAllContexts();
-	void flushCommands(void* context);
+	void flushCommands(int contextIdx);
 	void initializeRenderPass();
 	void startRenderPass();
 	void endRenderPass();
@@ -346,8 +361,9 @@ private:
 	void createSkinningComputingPipeline(program_type& program);
 	void setupSkinningComputingPipeline(program_type& program);
 	void finishPipeline();
-	void prepareSetupCommandBuffer();
-	void finishSetupCommandBuffer();
+	void prepareSetupCommandBuffer(int contextIdx);
+	void finishSetupCommandBuffer(int contextIdx);
+	void finishSetupCommandBuffers();
 	void reshape();
 	int determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms);
 	int align(int alignment, int offset);
@@ -366,13 +382,14 @@ private:
 	const string createPipelineId();
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
-	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
+	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 
 public:
 	const string getShaderVersion() override;
 	void* getDefaultContext() override;
-	void* getContext(int contextIdx);
+	void* getContext(int contextIdx) override;
+	int getContextIndex(void* context) override;
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
@@ -430,9 +447,9 @@ public:
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
 	vector<int32_t> createBufferObjects(int32_t bufferCount, bool useGPUMemory) override;
-	void uploadBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
-	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
-	void uploadIndicesBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
+	void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
+	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
+	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
@@ -460,8 +477,8 @@ public:
 	// overriden methods for skinning on GPU via compute shader
 	void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) override;
 	void memoryBarrier() override;
-	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
-	void uploadSkinningBufferObject(int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
+	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
+	void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) override;
