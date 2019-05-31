@@ -43,6 +43,7 @@ using tdme::utils::Console;
 class tdme::engine::subsystems::rendering::TransparentRenderFacesPool final
 {
 	friend class Object3DVBORenderer;
+	friend class tdme::engine::Engine;
 
 private:
 	static constexpr int32_t FACES_MAX { 16384 };

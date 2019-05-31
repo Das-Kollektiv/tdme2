@@ -19,6 +19,7 @@ namespace rendering {
 	class Object3DInternal;
 	class Object3DModelInternal;
 	class Object3DVBORenderer;
+	class Object3DVBORenderer_InstancedRenderFunctionParameters;
 	class Object3DVBORenderer_TransparentRenderFacesGroupPool;
 	struct TransparentRenderFace;
 	class TransparentRenderFacesGroup;

@@ -15,6 +15,7 @@
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/Object3DVBORenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
@@ -25,10 +26,10 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Semaphore.h>
-#include <tdme/utils/Console.h>
 
 using std::array;
 using std::map;
@@ -44,12 +45,15 @@ using tdme::engine::Light;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
+using tdme::engine::model::Material;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
@@ -63,12 +67,12 @@ using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::gui::GUI;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
 using tdme::os::threading::Semaphore;
-using tdme::utils::Console;
 
 /** 
  * Engine main class
@@ -181,47 +185,43 @@ private:
 
 	bool isUsingPostProcessingTemporaryFrameBuffer {  };
 
-	class TransformationsThread: public Thread {
+	class EngineThread: public Thread {
+		friend class Engine;
 	private:
-		Engine* engine;
 		int idx;
-		Semaphore* transformationsThreadWaitSemaphore;
+		Semaphore* engineThreadWaitSemaphore;
 		Semaphore* mainThreadWaitSemaphore;
 		void* context;
 	public:
-		volatile bool busy { false };
-		TransformationsThread(
-			Engine* engine,
-			int idx,
-			Semaphore* transformationsThreadWaitSemaphore,
-			Semaphore* mainThreadWaitSemaphore,
-			void* context):
-			Thread("engine-transformationsthread"),
-			engine(engine),
-			idx(idx),
-			transformationsThreadWaitSemaphore(transformationsThreadWaitSemaphore),
-			mainThreadWaitSemaphore(mainThreadWaitSemaphore),
-			context(context) {
-			//
-			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]");
-		}
-		virtual void run() {
-			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
-			while (isStopRequested() == false) {
-				while (busy == false);
-				// transformationsThreadWaitSemaphore->wait();
-				// Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
-				engine->computeTransformationsFunction(RENDERING_THREADS_MAX, idx);
-				// mainThreadWaitSemaphore->increment();
-				busy = false;
-			}
-			Console::println("TransformationsThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
-		}
+		enum State { STATE_WAITING, STATE_TRANSFORMATIONS, STATE_RENDERING, STATE_SPINNING };
+
+		Engine* engine;
+
+		struct {
+			Object3DVBORenderer_InstancedRenderFunctionParameters parameters;
+			vector<Object3D*> objectsNotRendered;
+			TransparentRenderFacesPool* transparentRenderFacesPool;
+		} rendering;
+
+		volatile State state { STATE_WAITING };
+
+	private:
+		/**
+		 * Constructor
+		 * @param idx thread index
+		 * @param engineThreadWaitSemaphore engine thread wait semaphore
+		 * @param context context
+		 */
+		EngineThread(int idx, Semaphore* engineThreadWaitSemaphore, void* context);
+
+		/**
+		 * Run
+		 */
+		virtual void run();
 	};
 
-	Semaphore transformationsThreadWaitSemaphore;
-	Semaphore mainThreadWaitSemaphore;
-	vector<TransformationsThread*> transformationsThreads;
+	static Semaphore engineThreadWaitSemaphore;
+	static vector<EngineThread*> engineThreads;
 
 	/**
 	 * @return mesh manager
@@ -300,11 +300,6 @@ private:
 	 * updates timing, updates camera
 	 */
 	void initRendering();
-
-	/**
-	 * Create transformations threads
-	 */
-	void createTransformationsThreads();
 
 	/**
 	 * Private constructor

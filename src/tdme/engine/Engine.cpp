@@ -47,6 +47,8 @@
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DVBORenderer_InstancedRenderFunctionParameters.h>
+#include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
@@ -104,9 +106,11 @@ using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::ObjectBuffer;
+using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
@@ -152,12 +156,46 @@ Engine* Engine::currentEngine = nullptr;
 bool Engine::skinningShaderEnabled = false;
 bool Engine::have4K = false;
 float Engine::animationBlendingTime = 250.0f;
+Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
+vector<Engine::EngineThread*> Engine::engineThreads;
 
-Engine::Engine():
-	transformationsThreadWaitSemaphore("object3dvborenderer-renderthread-waitsemaphore", 0),
-	mainThreadWaitSemaphore("object3dvborenderer-mainthread-waitsemaphore", 0)
+Engine::EngineThread::EngineThread(int idx, Semaphore* engineThreadWaitSemaphore, void* context):
+	Thread("enginethread"),
+	idx(idx),
+	engineThreadWaitSemaphore(engineThreadWaitSemaphore),
+	context(context) {
+	//
+	rendering.transparentRenderFacesPool = new TransparentRenderFacesPool();
+}
 
-{
+
+void Engine::EngineThread::run() {
+	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
+	while (isStopRequested() == false) {
+		switch(state) {
+			case STATE_WAITING:
+				engineThreadWaitSemaphore->wait();
+				break;
+			case STATE_TRANSFORMATIONS:
+				engine->computeTransformationsFunction(RENDERING_THREADS_MAX, idx);
+				state = STATE_SPINNING;
+				break;
+			case STATE_RENDERING:
+				rendering.objectsNotRendered.clear();
+				rendering.transparentRenderFacesPool->reset();
+				// Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
+				engine->object3DVBORenderer->instancedRenderFunction(idx, context, rendering.parameters, rendering.objectsNotRendered, rendering.transparentRenderFacesPool);
+				state = STATE_SPINNING;
+				break;
+			case STATE_SPINNING:
+				while (state == STATE_SPINNING);
+				break;
+		}
+	}
+	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: DONE");
+}
+
+Engine::Engine() {
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -230,23 +268,6 @@ Engine* Engine::getInstance()
 	return instance;
 }
 
-void Engine::createTransformationsThreads() {
-	//
-	if (renderer->isSupportingMultithreadedRendering() == true) {
-		transformationsThreads.resize(RENDERING_THREADS_MAX);
-		for (auto i = 0; i < RENDERING_THREADS_MAX; i++) {
-			transformationsThreads[i] = new TransformationsThread(
-				this,
-				i,
-				&transformationsThreadWaitSemaphore,
-				&mainThreadWaitSemaphore,
-				renderer->getContext(i)
-			);
-			transformationsThreads[i]->start();
-		}
-	}
-}
-
 Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 {
 	if (instance == nullptr || instance->initialized == false) {
@@ -274,8 +295,6 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	if (instance->shadowMappingEnabled == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DVBORenderer);
 	}
-	//
-	offScreenEngine->createTransformationsThreads();
 	//
 	offScreenEngine->reshape(0, 0, width, height);
 	return offScreenEngine;
@@ -674,7 +693,17 @@ void Engine::initialize(bool debug)
 	initialized &= postProcessingShader->isInitialized();
 
 	//
-	createTransformationsThreads();
+	if (renderer->isSupportingMultithreadedRendering() == true) {
+		engineThreads.resize(RENDERING_THREADS_MAX);
+		for (auto i = 0; i < RENDERING_THREADS_MAX; i++) {
+			engineThreads[i] = new EngineThread(
+				i,
+				&engineThreadWaitSemaphore,
+				renderer->getContext(i)
+			);
+			engineThreads[i]->start();
+		}
+	}
 
 	//
 	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
@@ -833,10 +862,12 @@ void Engine::computeTransformations()
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		computeTransformationsFunction(1, 0);
 	} else {
-		for (auto transformationsThread: transformationsThreads) transformationsThread->busy = true;
-		//transformationsThreadWaitSemaphore.increment(RENDERING_THREADS_MAX);
+		for (auto engineThread: engineThreads) engineThread->engine = this;
+		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
+		engineThreadWaitSemaphore.increment(RENDERING_THREADS_MAX);
 		//mainThreadWaitSemaphore.wait(RENDERING_THREADS_MAX);
-		for (auto transformationsThread: transformationsThreads) while (transformationsThread->busy == true);
+		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
+		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
 	}
 	if (skinningShaderEnabled == true) {
 		skinningShader->unUseProgram();
@@ -1002,6 +1033,9 @@ void Engine::display()
 	// clear pre render states
 	renderingInitiated = false;
 	renderingComputedTransformations = false;
+
+	//
+	for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_WAITING;
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)

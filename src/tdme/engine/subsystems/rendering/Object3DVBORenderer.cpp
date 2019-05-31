@@ -29,6 +29,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DVBORenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/Object3DVBORenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
@@ -84,6 +85,7 @@ using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DVBORenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::Object3DVBORenderer_TransparentRenderFacesGroupPool;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
@@ -110,10 +112,7 @@ using tdme::utils::Console;
 constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
 constexpr int32_t Object3DVBORenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 
-Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer):
-	renderThreadWaitSemaphore("object3dvborenderer-renderthread-waitsemaphore", 0),
-	mainThreadWaitSemaphore("object3dvborenderer-mainthread-waitsemaphore", 0)
-{
+Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer) {
 	this->engine = engine;
 	this->renderer = renderer;
 	transparentRenderFacesGroupPool = new Object3DVBORenderer_TransparentRenderFacesGroupPool();
@@ -150,19 +149,6 @@ void Object3DVBORenderer::initialize()
 	for (auto i = 0; i < threadCount; i++) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3dvborenderer.instancedrendering." + to_string(i), 3, false);
 		vboInstancedRenderingIds[i] = vboManaged->getVBOIds();
-	}
-	if (threadCount > 1) {
-		threads.resize(threadCount);
-		for (auto i = 0; i < threadCount; i++) {
-			threads[i] = new RenderThread(
-				this,
-				i,
-				&renderThreadWaitSemaphore,
-				&mainThreadWaitSemaphore,
-				renderer->getContext(i)
-			);
-			threads[i]->start();
-		}
 	}
 }
 
@@ -582,7 +568,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-inline void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, InstancedRenderFunctionStruct& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool) {
+void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, const Object3DVBORenderer_InstancedRenderFunctionParameters& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool) {
 	Matrix4x4Negative matrix4x4Negative;
 
 	Vector3 objectCamFromAxis;
@@ -783,7 +769,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	auto context = renderer->getDefaultContext();
 
 	//
-	InstancedRenderFunctionStruct parameters;
+	Object3DVBORenderer_InstancedRenderFunctionParameters parameters;
 
 	//
 	Vector3 objectCamFromAxis;
@@ -884,13 +870,12 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				for (auto i = 0; i < threadCount; i++) renderer->onUpdateShader(renderer->getContext(i));
 				// multiple threads
 				if (threadCount > 1) {
-					for (auto i = 0; i < threadCount; i++) threads[i]->setParameters(parameters);
-					for (auto renderThread: threads) renderThread->busy = true;
-					// renderThreadWaitSemaphore.increment(threadCount);
-					// mainThreadWaitSemaphore.wait(threadCount);
-					for (auto renderThread: threads) while(renderThread->busy == true);
-					for (auto i = 0; i < threadCount; i++) objectsNotRendered.insert(objectsNotRendered.end(), threads[i]->getObjectsNotRendered().begin(), threads[i]->getObjectsNotRendered().end());
-					for (auto i = 0; i < threadCount; i++) transparentRenderFacesPool->merge(threads[i]->getTransparentRenderFacesPool());
+					for (auto engineThread: Engine::engineThreads) engineThread->engine = engine;
+					for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
+					for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
+					for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
+					for (auto engineThread: Engine::engineThreads) objectsNotRendered.insert(objectsNotRendered.end(), engineThread->rendering.objectsNotRendered.begin(), engineThread->rendering.objectsNotRendered.end());
+					for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
 				} else {
 					// nope, single one
 					instancedRenderFunction(0, context, parameters, objectsNotRendered, transparentRenderFacesPool);
