@@ -20,7 +20,7 @@ vector<ByteBuffer*> ObjectBuffer::byteBuffers;
 
 void ObjectBuffer::initialize() {
 	auto renderer = Engine::renderer;
-	byteBuffers.resize(renderer->isSupportingMultithreadedRendering() == true?Engine::RENDERING_THREADS_MAX:1);
+	byteBuffers.resize(renderer->isSupportingMultithreadedRendering() == true?Engine::THREADS_MAX:1);
 }
 
 ByteBuffer* ObjectBuffer::getByteBuffer(void* context, int32_t bytes)

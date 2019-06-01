@@ -177,13 +177,12 @@ void Engine::EngineThread::run() {
 				engineThreadWaitSemaphore->wait();
 				break;
 			case STATE_TRANSFORMATIONS:
-				engine->computeTransformationsFunction(RENDERING_THREADS_MAX, idx);
+				engine->computeTransformationsFunction(THREADS_MAX, idx);
 				state = STATE_SPINNING;
 				break;
 			case STATE_RENDERING:
 				rendering.objectsNotRendered.clear();
 				rendering.transparentRenderFacesPool->reset();
-				// Console::println("RenderThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: STEP");
 				engine->object3DVBORenderer->instancedRenderFunction(idx, context, rendering.parameters, rendering.objectsNotRendered, rendering.transparentRenderFacesPool);
 				state = STATE_SPINNING;
 				break;
@@ -694,12 +693,12 @@ void Engine::initialize(bool debug)
 
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		engineThreads.resize(RENDERING_THREADS_MAX);
-		for (auto i = 0; i < RENDERING_THREADS_MAX; i++) {
+		engineThreads.resize(THREADS_MAX - 1);
+		for (auto i = 0; i < THREADS_MAX - 1; i++) {
 			engineThreads[i] = new EngineThread(
-				i,
+				i + 1,
 				&engineThreadWaitSemaphore,
-				renderer->getContext(i)
+				renderer->getContext(i + 1)
 			);
 			engineThreads[i]->start();
 		}
@@ -864,8 +863,8 @@ void Engine::computeTransformations()
 	} else {
 		for (auto engineThread: engineThreads) engineThread->engine = this;
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
-		engineThreadWaitSemaphore.increment(RENDERING_THREADS_MAX);
-		//mainThreadWaitSemaphore.wait(RENDERING_THREADS_MAX);
+		engineThreadWaitSemaphore.increment(THREADS_MAX - 1);
+		computeTransformationsFunction(THREADS_MAX, 0);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
 	}

@@ -119,7 +119,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		}
 		{
 			if (renderer->isSupportingMultithreadedRendering() == true) {
-				for (auto i = 0; i < Engine::RENDERING_THREADS_MAX; i++) {
+				for (auto i = 0; i < Engine::THREADS_MAX; i++) {
 					auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices." + to_string(i), 1, false);
 					modelSkinningCache.matricesVboIds.push_back(vboManaged->getVBOIds());
 				}

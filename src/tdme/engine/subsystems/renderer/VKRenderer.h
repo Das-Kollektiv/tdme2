@@ -54,7 +54,7 @@ private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int COMMANDS_MAX { 1 };
 	static constexpr int DESC_MAX { 512 };
-	static constexpr int CONTEXT_COUNT { Engine::RENDERING_THREADS_MAX };
+	static constexpr int CONTEXT_COUNT { Engine::THREADS_MAX };
 
 	struct shader_type {
 		struct uniform_type {

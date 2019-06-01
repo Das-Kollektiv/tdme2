@@ -120,7 +120,7 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer) {
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(65535);
 	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
-		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::RENDERING_THREADS_MAX:1;
+		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::THREADS_MAX:1;
 		bbEffectColorMuls.resize(threadCount);
 		bbEffectColorAdds.resize(threadCount);
 		bbMvMatrices.resize(threadCount);
@@ -873,6 +873,9 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 					for (auto engineThread: Engine::engineThreads) engineThread->engine = engine;
 					for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
 					for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
+
+					instancedRenderFunction(0, context, parameters, objectsNotRendered, transparentRenderFacesPool);
+
 					for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
 					for (auto engineThread: Engine::engineThreads) objectsNotRendered.insert(objectsNotRendered.end(), engineThread->rendering.objectsNotRendered.begin(), engineThread->rendering.objectsNotRendered.end());
 					for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
