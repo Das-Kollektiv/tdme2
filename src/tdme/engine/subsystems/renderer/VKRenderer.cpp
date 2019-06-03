@@ -274,6 +274,48 @@ inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAsp
 	vkCmdPipelineBarrier(setup_cmds_inuse[contextIdx], VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
+inline void VKRenderer::setImageLayoutDrawCmd(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
+	VkResult err;
+
+	VkImageMemoryBarrier image_memory_barrier = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+		.pNext = NULL,
+		.srcAccessMask = srcAccessMask,
+		.dstAccessMask = 0,
+		.oldLayout = old_image_layout,
+		.newLayout = new_image_layout,
+	    .srcQueueFamilyIndex = 0,
+	    .dstQueueFamilyIndex = 0,
+		.image = image,
+		.subresourceRange = {
+			.aspectMask = aspectMask,
+			.baseMipLevel = 0,
+			.levelCount = 1,
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		}
+	};
+
+	if (new_image_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+		image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+	}
+	if (new_image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+		image_memory_barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	}
+	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+		image_memory_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	}
+	if (new_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+	}
+	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) {
+		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+	}
+
+	//
+	vkCmdPipelineBarrier(draw_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+}
+
 inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
 	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkResult err;
@@ -5111,10 +5153,17 @@ void VKRenderer::memoryBarrier() {
 
 	//
 	VkCommandBuffer cmd_bufs[CONTEXT_COUNT + 1];
+
+	//
 	uint32_t cmdBufCount = 0;
 	if (draw_cmd_started == true) {
 		cmd_bufs[cmdBufCount++] = draw_cmd;
+
+		err = vkEndCommandBuffer(draw_cmd);
+		assert(!err);
+		pipeline = VK_NULL_HANDLE;
 	}
+
 	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
 		if (setup_cmds_inuse[contextIdx] != VK_NULL_HANDLE) {
 			cmd_bufs[cmdBufCount++] = setup_cmds_inuse[contextIdx];
@@ -5124,12 +5173,6 @@ void VKRenderer::memoryBarrier() {
 
 			setup_cmds_inuse[contextIdx] = VK_NULL_HANDLE;
 		}
-	}
-
-	if (draw_cmd_started == true) {
-		err = vkEndCommandBuffer(draw_cmd);
-		pipeline = VK_NULL_HANDLE;
-		assert(!err);
 	}
 
 	if (cmdBufCount > 0) {
