@@ -848,7 +848,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 				);
 				parameters.shader = firstObjectToRender->getDistanceShader().length() == 0?
 					firstObjectToRender->getShader():
-					objectCamFromAxis.set(firstObjectToRender->getBoundingBoxTransformed()->getCenter()).sub(parameters.camera->getLookFrom()).computeLengthSquared() < Math::square(firstObjectToRender->getDistanceShaderDistance())?
+					objectCamFromAxis.set(firstObjectToRender->getBoundingBoxTransformed()->getCenter()).sub(engine->getCamera()->getLookFrom()).computeLengthSquared() < Math::square(firstObjectToRender->getDistanceShaderDistance())?
 						firstObjectToRender->getShader():
 						firstObjectToRender->getDistanceShader();
 				parameters.renderTypes = renderTypes;
