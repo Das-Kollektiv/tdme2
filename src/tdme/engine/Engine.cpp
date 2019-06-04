@@ -762,6 +762,15 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
 		object->computeSkinning(context);
 		objectIdx++;
 	}
+	for (auto object: visibleObjectsPostPostProcessing) {
+		if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+			objectIdx++;
+			continue;
+		}
+		object->preRender(context);
+		object->computeSkinning(context);
+		objectIdx++;
+	}
 }
 
 void Engine::computeTransformations()
