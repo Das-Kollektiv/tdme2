@@ -241,4 +241,4 @@
     - I have tasks regarding documentation
     - I even might have system administrator tasks
 
-- I have to pay my bills and beer so if you have any use for this open source project, like educational, productive or fun, consider a donation here https://www.paypal.me/andreasdrewke
+- I have to pay my bills and beer, so if you have any use for this open source project, like educational, productive or fun, consider a donation here https://www.paypal.me/andreasdrewke
