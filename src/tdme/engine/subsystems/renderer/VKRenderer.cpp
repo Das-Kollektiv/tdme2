@@ -141,6 +141,9 @@ VKRenderer::VKRenderer():
 	DEPTHFUNCTION_GREATEREQUAL = VK_COMPARE_OP_GREATER_OR_EQUAL;
 	FRAMEBUFFER_DEFAULT = 0;
 	for (auto i = 0; i < contexts.size(); i++) contexts[i].idx = i;
+	cmd_setup_pools.fill(VK_NULL_HANDLE);
+	setup_cmds_inuse.fill(VK_NULL_HANDLE);
+	setup_cmds.fill(VK_NULL_HANDLE);
 }
 
 inline bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
@@ -186,7 +189,7 @@ inline void VKRenderer::prepareSetupCommandBuffer(int contextIdx) {
 		const VkCommandBufferBeginInfo cmd_buf_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 			.pNext = NULL,
-			.flags = 0,
+			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
 			.pInheritanceInfo = NULL
 		};
 
@@ -1394,7 +1397,7 @@ void VKRenderer::initializeFrame()
 	const VkCommandBufferBeginInfo cmd_buf_info = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 		.pNext = NULL,
-		.flags = 0,
+		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
 		.pInheritanceInfo = NULL
 	};
 
@@ -4704,7 +4707,7 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 		const VkCommandBufferBeginInfo cmd_buf_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 			.pNext = NULL,
-			.flags = 0,
+			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
 			.pInheritanceInfo = NULL
 		};
 		//
@@ -5287,7 +5290,7 @@ void VKRenderer::memoryBarrier() {
 		const VkCommandBufferBeginInfo cmd_buf_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 			.pNext = NULL,
-			.flags = 0,
+			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
 			.pInheritanceInfo = NULL
 		};
 

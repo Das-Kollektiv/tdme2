@@ -247,20 +247,10 @@ private:
 	VkFramebuffer* window_framebuffers;
 
 	VkCommandPool cmd_draw_pool { VK_NULL_HANDLE };
-	array<VkCommandPool, CONTEXT_COUNT> cmd_setup_pools { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
+	array<VkCommandPool, CONTEXT_COUNT> cmd_setup_pools;
+	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds_inuse;
+	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds;
 
-	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds_inuse {
-		VK_NULL_HANDLE,
-		VK_NULL_HANDLE,
-		VK_NULL_HANDLE,
-		VK_NULL_HANDLE
-	};
-	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds {
-		VK_NULL_HANDLE,
-		VK_NULL_HANDLE,
-		VK_NULL_HANDLE,
-		VK_NULL_HANDLE
-	};
 	VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
 
 	int32_t shader_idx { 1 };
