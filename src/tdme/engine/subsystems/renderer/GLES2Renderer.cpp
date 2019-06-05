@@ -68,6 +68,14 @@ const string GLES2Renderer::getShaderVersion()
 	return "gles2";
 }
 
+bool GLES2Renderer::isSupportingMultithreadedRendering() {
+	return false;
+}
+
+bool GLES2Renderer::isSupportingMultipleRenderQueues() {
+	return false;
+}
+
 void GLES2Renderer::initialize()
 {
 	glGetError();

@@ -237,7 +237,7 @@ inline void VKRenderer::finishSetupCommandBuffers() {
 	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) finishSetupCommandBuffer(contextIdx);
 }
 
-inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, int baseLevel, int levelCount) {
+inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, uint32_t baseLevel, uint32_t levelCount) {
 	VkResult err;
 
 	//
@@ -328,7 +328,7 @@ inline uint32_t VKRenderer::getMipLevels(int32_t textureWidth, int32_t textureHe
 	return static_cast<uint32_t>(std::floor(std::log2(std::max(textureWidth, textureHeight)))) + 1;
 }
 
-inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
+inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps) {
 	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkResult err;
 	bool pass;
@@ -347,7 +347,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 			.height = textureHeight,
 			.depth = 1
 		},
-		.mipLevels = texture->isUseMipMap() == true?getMipLevels(textureWidth, textureHeight):1,
+		.mipLevels = disableMipMaps == false && texture->isUseMipMap() == true?getMipLevels(textureWidth, textureHeight):1,
 		.arrayLayers = 1,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = tiling,
@@ -1023,7 +1023,7 @@ void VKRenderer::initialize()
 	graphics_queue_node_index = graphicsQueueNodeIndex;
 
 	// init_device
-	float queue_priorities[1] = { 0.0 };
+	float queue_priorities[1] = { 0.0f };
 	const VkDeviceQueueCreateInfo queueCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		.pNext = NULL,
@@ -3175,15 +3175,15 @@ void VKRenderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformI
 		data[0],
 		data[1],
 		data[2],
-		0.0,
+		0.0f,
 		data[3],
 		data[4],
 		data[5],
-		0.0,
+		0.0f,
 		data[6],
 		data[7],
 		data[8],
-		0.0
+		0.0f
 	};
 	setProgramUniformInternal(context, uniformId, (uint8_t*)_data.data(), _data.size() * sizeof(float));
 }
@@ -3237,7 +3237,7 @@ void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height
 	scissor.offset.y = y;
 
 	//
-	this->pointSize = width > height ? width / 120.0f : height / 120.0f * 16 / 9;
+	this->pointSize = width > height ? width / 120.0f : height / 120.0f * 16.0f / 9.0f;
 }
 
 void VKRenderer::updateViewPort()
@@ -3456,7 +3456,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 		.flags = 0,
 		.magFilter = VK_FILTER_NEAREST,
 		.minFilter = VK_FILTER_NEAREST,
-		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST,
 		.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
 		.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
 		.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
@@ -3586,7 +3586,7 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 		.flags = 0,
 		.magFilter = VK_FILTER_LINEAR,
 		.minFilter = VK_FILTER_LINEAR,
-		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST,
 		.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
 		.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
 		.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
@@ -3648,7 +3648,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	textures_rwlock.unlock();
 
 	//
-	auto mipLevels = 1;
+	uint32_t mipLevels = 1;
 	texture_object.width = texture->getTextureWidth();
 	texture_object.height = texture->getTextureHeight();
 
@@ -3689,7 +3689,8 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			texture,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			false
 		);
 		setImageLayout(
 			contextTyped.idx,
@@ -3754,7 +3755,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			auto textureWidth = texture->getTextureWidth();
 			auto textureHeight = texture->getTextureHeight();
 			mipLevels = getMipLevels(textureWidth, textureHeight);
-			for (auto i = 1; i < mipLevels; i++) {
+			for (uint32_t i = 1; i < mipLevels; i++) {
 				const VkImageBlit imageBlit = {
 					.srcSubresource = {
 						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -3864,7 +3865,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.maxAnisotropy = 1,
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_NEVER,
-		.minLod = 0.0,
+		.minLod = 0.0f,
 		.maxLod = texture->isUseMipMap() == true?static_cast<float>(mipLevels):0.0f,
 		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE,

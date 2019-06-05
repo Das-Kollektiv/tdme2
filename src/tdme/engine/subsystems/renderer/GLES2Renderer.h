@@ -32,6 +32,8 @@ class tdme::engine::subsystems::renderer::GLES2Renderer
 {
 public:
 	const string getShaderVersion() override;
+	bool isSupportingMultithreadedRendering() override;
+	bool isSupportingMultipleRenderQueues() override;
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;

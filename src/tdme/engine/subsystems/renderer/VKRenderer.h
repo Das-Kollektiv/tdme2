@@ -337,10 +337,10 @@ private:
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
-	void setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, int baseLevel = 0, int levelCount = 1);
+	void setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, uint32_t baseLevel = 0, uint32_t levelCount = 1);
 	void setImageLayoutDrawCmd(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	uint32_t getMipLevels(int32_t textureWidth, int32_t textureHeight);
-	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout);
+	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps = true);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
@@ -395,8 +395,8 @@ public:
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
-	bool isSupportingMultithreadedRendering();
-	bool isSupportingMultipleRenderQueues();
+	bool isSupportingMultithreadedRendering() override;
+	bool isSupportingMultipleRenderQueues() override;
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;
 	bool isUsingProgramAttributeLocation() override;

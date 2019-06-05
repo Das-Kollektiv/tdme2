@@ -58,8 +58,8 @@ public:
 	void initializeFrame() override;
 	void finishFrame() override;
 	const string getShaderVersion() override;
-	bool isSupportingMultithreadedRendering();
-	bool isSupportingMultipleRenderQueues();
+	bool isSupportingMultithreadedRendering() override;
+	bool isSupportingMultipleRenderQueues() override;
 	bool isBufferObjectsAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
 	bool isSpecularMappingAvailable() override;
