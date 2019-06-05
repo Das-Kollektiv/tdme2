@@ -1,5 +1,10 @@
 /**
- * based on https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples, https://vulkan-tutorial.com, https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
+ * Vulkan renderer
+ * based on
+ * 	https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
+ * 	https://vulkan-tutorial.com
+ * 	https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
+ * 	https://github.com/SaschaWillems/Vulkan
  */
 
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
@@ -48,6 +53,9 @@
 #include <tdme/utils/StringUtils.h>
 
 using std::to_string;
+using std::floor;
+using std::log2;
+using std::max;
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 #define ERR_EXIT(err_msg, err_class)                                           \
@@ -229,7 +237,7 @@ inline void VKRenderer::finishSetupCommandBuffers() {
 	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) finishSetupCommandBuffer(contextIdx);
 }
 
-inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
+inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, int baseLevel, int levelCount) {
 	VkResult err;
 
 	//
@@ -247,8 +255,8 @@ inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAsp
 		.image = image,
 		.subresourceRange = {
 			.aspectMask = aspectMask,
-			.baseMipLevel = 0,
-			.levelCount = 1,
+			.baseMipLevel = baseLevel,
+			.levelCount = levelCount,
 			.baseArrayLayer = 0,
 			.layerCount = 1
 		}
@@ -316,6 +324,10 @@ inline void VKRenderer::setImageLayoutDrawCmd(VkImage image, VkImageAspectFlags 
 	vkCmdPipelineBarrier(draw_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
+inline uint32_t VKRenderer::getMipLevels(int32_t textureWidth, int32_t textureHeight) {
+	return static_cast<uint32_t>(std::floor(std::log2(std::max(textureWidth, textureHeight)))) + 1;
+}
+
 inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout) {
 	const VkFormat tex_format = texture->getHeight() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkResult err;
@@ -335,7 +347,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 			.height = textureHeight,
 			.depth = 1
 		},
-		.mipLevels =1,
+		.mipLevels = texture->isUseMipMap() == true?getMipLevels(textureWidth, textureHeight):1,
 		.arrayLayers = 1,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = tiling,
@@ -3636,6 +3648,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	textures_rwlock.unlock();
 
 	//
+	auto mipLevels = 1;
 	texture_object.width = texture->getTextureWidth();
 	texture_object.height = texture->getTextureHeight();
 
@@ -3725,7 +3738,6 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 				.depth = 1
 			}
 		};
-
 		vkCmdCopyImage(
 			setup_cmds_inuse[contextTyped.idx],
 			staging_texture.image,
@@ -3736,13 +3748,83 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			&copy_region
 		);
 
+		if (texture->isUseMipMap() == true) {
+
+			//
+			auto textureWidth = texture->getTextureWidth();
+			auto textureHeight = texture->getTextureHeight();
+			mipLevels = getMipLevels(textureWidth, textureHeight);
+			for (auto i = 1; i < mipLevels; i++) {
+				const VkImageBlit imageBlit = {
+					.srcSubresource = {
+						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+						.mipLevel = 0,
+						.baseArrayLayer = 0,
+						.layerCount = 1
+					},
+					.srcOffsets = {
+						[0] = {
+							.x = 0,
+							.y = 0,
+							.z = 0
+						},
+						[1] = {
+							.x = textureWidth,
+							.y = textureHeight,
+							.z = 1
+						}
+					},
+					.dstSubresource = {
+						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+						.mipLevel = i,
+						.baseArrayLayer = 0,
+						.layerCount = 1
+					},
+					.dstOffsets = {
+						[0] = {
+							.x = 0,
+							.y = 0,
+							.z = 0
+						},
+						[1] = {
+							.x = int32_t(textureWidth >> i),
+							.y = int32_t(textureHeight >> i),
+							.z = 1
+						}
+					}
+				};
+				setImageLayout(
+					contextTyped.idx,
+					texture_object.image,
+					VK_IMAGE_ASPECT_COLOR_BIT,
+					VK_IMAGE_LAYOUT_PREINITIALIZED,
+					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					(VkAccessFlagBits)0,
+					i,
+					1
+				);
+				vkCmdBlitImage(
+					setup_cmds_inuse[contextTyped.idx],
+					staging_texture.image,
+					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+					texture_object.image,
+					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					1,
+					&imageBlit,
+					VK_FILTER_LINEAR
+				);
+			}
+		}
+
 		setImageLayout(
 			contextTyped.idx,
 			texture_object.image,
 			VK_IMAGE_ASPECT_COLOR_BIT,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			texture_object.image_layout,
-			(VkAccessFlagBits)0
+			(VkAccessFlagBits)0,
+			0,
+			mipLevels
 		);
 
 		// mark for deletion
@@ -3782,8 +3864,8 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.maxAnisotropy = 1,
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_NEVER,
-		.minLod = 0.0f,
-		.maxLod = 0.0f,
+		.minLod = 0.0,
+		.maxLod = texture->isUseMipMap() == true?static_cast<float>(mipLevels):0.0f,
 		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
@@ -3803,7 +3885,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.subresourceRange = {
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.baseMipLevel = 0,
-			.levelCount = 1,
+			.levelCount = mipLevels,
 			.baseArrayLayer = 0,
 			.layerCount = 1
 		}
