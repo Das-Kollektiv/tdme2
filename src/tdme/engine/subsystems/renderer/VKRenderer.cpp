@@ -209,6 +209,7 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 	if (setup_cmds_inuse[contextIdx] != VK_NULL_HANDLE) {
 		VkResult err;
 
+		//
 		err = vkEndCommandBuffer(setup_cmds_inuse[contextIdx]);
 		assert(!err);
 
@@ -228,13 +229,18 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 
 		queue_mutex.lock();
 
-		err = vkQueueSubmit(queue, 1, &submit_info, nullFence);
+		err = vkQueueSubmit(queue, 1, &submit_info, setup_fences[contextIdx]);
 		assert(!err);
 
-		err = vkQueueWaitIdle(queue);
-		assert(!err);
-
+		//
 		queue_mutex.unlock();
+
+		//
+		VkResult fence_result;
+		do {
+			fence_result = vkWaitForFences(device, 1, &setup_fences[contextIdx], VK_TRUE, 100000000);
+		} while (fence_result == VK_TIMEOUT);
+		vkResetFences(device, 1, &setup_fences[contextIdx]);
 
 		//
 		setup_cmds_inuse[contextIdx] = VK_NULL_HANDLE;
@@ -1082,8 +1088,7 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	// create set up command buffers
-	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++)
-	{
+	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
 		// command pool
 		const VkCommandPoolCreateInfo cmd_pool_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
@@ -1107,8 +1112,7 @@ void VKRenderer::initialize()
 	}
 
 	// create draw command buffers
-	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++)
-	{
+	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
 		// draw command pool
 		const VkCommandPoolCreateInfo cmd_pool_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
@@ -1129,6 +1133,26 @@ void VKRenderer::initialize()
 		};
 		err = vkAllocateCommandBuffers(device, &cmd, &draw_cmds[contextIdx]);
 		assert(!err);
+	}
+
+	// setup fences
+	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
+		VkFenceCreateInfo fence_create_info = {
+			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0
+		};
+		vkCreateFence(device, &fence_create_info, nullptr, &setup_fences[contextIdx]);
+	}
+
+	// draw fences
+	{
+		VkFenceCreateInfo fence_create_info = {
+			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0
+		};
+		vkCreateFence(device, &fence_create_info, nullptr, &memorybarrier_fence);
 	}
 
 	//
@@ -1171,7 +1195,7 @@ void VKRenderer::initializeRenderPass() {
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 			// TODO: a.drewke, was: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, check me later, something with changing image layouts is wrong here sometimes
 			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-			.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+			.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 		},
 		[1] = {
 			.flags = 0,
@@ -1419,22 +1443,6 @@ void VKRenderer::finishFrame()
 	// end render pass
 	for (auto i = 0; i < CONTEXT_COUNT; i++) endRenderPass(i);
 
-	VkImageMemoryBarrier prePresentBarrier = {
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.pNext = NULL,
-		.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-		.dstAccessMask = 0,
-		.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-		.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = swapchain_buffers[current_buffer].image,
-		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
-	};
-	for (auto i = 0; i < CONTEXT_COUNT; i++) {
-		vkCmdPipelineBarrier(draw_cmds[i], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &prePresentBarrier);
-	}
-
 	//
 	for (auto i = 0; i < CONTEXT_COUNT; i++) {
 		if (draw_cmd_started[i] == true) {
@@ -1446,8 +1454,7 @@ void VKRenderer::finishFrame()
 	}
 
 	//
-	VkFence nullFence = VK_NULL_HANDLE;
-	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	VkSubmitInfo submit_info = {
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 		.pNext = NULL,
@@ -1462,9 +1469,17 @@ void VKRenderer::finishFrame()
 
 	queue_mutex.lock();
 
-	err = vkQueueSubmit(queue, 1, &submit_info, nullFence);
+	err = vkQueueSubmit(queue, 1, &submit_info, memorybarrier_fence);
 	assert(!err);
 
+	//
+	VkResult fence_result;
+	do {
+		fence_result = vkWaitForFences(device, 1, &memorybarrier_fence, VK_TRUE, 100000000);
+	} while (fence_result == VK_TIMEOUT);
+	vkResetFences(device, 1, &memorybarrier_fence);
+
+	//
 	VkPresentInfoKHR present = {
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 		.pNext = NULL,
@@ -1488,8 +1503,11 @@ void VKRenderer::finishFrame()
 		assert(!err);
 	}
 
+	/*
+	//
 	err = vkQueueWaitIdle(queue);
 	assert(err == VK_SUCCESS);
+	*/
 
 	queue_mutex.unlock();
 
@@ -1497,7 +1515,9 @@ void VKRenderer::finishFrame()
 	vkDestroySemaphore(device, draw_complete_semaphore, NULL);
 
 	//
+	/*
 	vkDeviceWaitIdle(device);
+	*/
 
 	// remove marked vulkan resources
 	delete_mutex.lock();
@@ -4576,7 +4596,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 		}
 		textures_rwlock.readLock();
 		auto textureObjectIt = textures.find(textureId);
-		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE) {
+		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE || (textureObjectIt->second.type == texture_object::TYPE_TEXTURE && textureObjectIt->second.uploaded == false)) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
 			textures_rwlock.unlock();
 			continue;
@@ -5014,7 +5034,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 		auto textureId = contextTyped.bound_textures[i];
 		if (textureId == 0) continue;
 		auto textureObjectIt = textures.find(textureId);
-		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE) {
+		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE || (textureObjectIt->second.type == texture_object::TYPE_TEXTURE && textureObjectIt->second.uploaded == false)) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
 			continue;
 		}
@@ -5246,13 +5266,18 @@ void VKRenderer::memoryBarrier() {
 
 		queue_mutex.lock();
 
-		err = vkQueueSubmit(queue, 1, &submit_info, nullFence);
+		err = vkQueueSubmit(queue, 1, &submit_info, memorybarrier_fence);
 		assert(!err);
 
-		err = vkQueueWaitIdle(queue);
-		assert(!err);
-
+		//
 		queue_mutex.unlock();
+
+		//
+		VkResult fence_result;
+		do {
+			fence_result = vkWaitForFences(device, 1, &memorybarrier_fence, VK_TRUE, 100000000);
+		} while (fence_result == VK_TIMEOUT);
+		vkResetFences(device, 1, &memorybarrier_fence);
 	}
 
 	//

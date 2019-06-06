@@ -249,9 +249,11 @@ private:
 	array<VkCommandPool, CONTEXT_COUNT> cmd_setup_pools;
 	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds_inuse;
 	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds;
+	array<VkFence, CONTEXT_COUNT> setup_fences;
 
 	array<VkCommandPool, CONTEXT_COUNT> cmd_draw_pools;
 	array<VkCommandBuffer, CONTEXT_COUNT> draw_cmds;
+	VkFence memorybarrier_fence;
 
 	Mutex pipeline_mutex;
 	array<string, CONTEXT_COUNT> pipeline_ids;
