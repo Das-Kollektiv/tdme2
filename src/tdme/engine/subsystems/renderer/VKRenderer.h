@@ -244,40 +244,45 @@ private:
 	uint32_t swapchain_image_count { 0 };
 	VkSwapchainKHR swapchain { VK_NULL_HANDLE };
 	swapchain_buffer_type* swapchain_buffers { nullptr };
-	VkFramebuffer* window_framebuffers;
+	VkFramebuffer* window_framebuffers { nullptr };
 
-	VkCommandPool cmd_draw_pool { VK_NULL_HANDLE };
 	array<VkCommandPool, CONTEXT_COUNT> cmd_setup_pools;
 	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds_inuse;
 	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds;
 
-	VkCommandBuffer draw_cmd { VK_NULL_HANDLE };  // Command Buffer for drawing commands
+	array<VkCommandPool, CONTEXT_COUNT> cmd_draw_pools;
+	array<VkCommandBuffer, CONTEXT_COUNT> draw_cmds;
+
+	Mutex pipeline_mutex;
+	array<string, CONTEXT_COUNT> pipeline_ids;
+	array<VkPipeline, CONTEXT_COUNT> pipelines;
+	array<bool, CONTEXT_COUNT> draw_cmd_started;
+
+	VkRenderPass render_pass { VK_NULL_HANDLE };
+	array<bool, CONTEXT_COUNT> render_pass_started;
 
 	int32_t shader_idx { 1 };
 	int32_t program_idx { 1 };
 	int32_t buffer_idx { 1 };
 	int32_t texture_idx { 1 };
 	int32_t framebuffer_idx { 1 };
-	struct map<int32_t, program_type> programs;
-	struct map<int32_t, shader_type> shaders;
-	struct map<int32_t, buffer_object> buffers;
-	struct map<int32_t, texture_object> textures;
-	struct map<int32_t, framebuffer_object> framebuffers;
+	map<int32_t, program_type> programs;
+	map<int32_t, shader_type> shaders;
+	map<int32_t, buffer_object> buffers;
+	map<int32_t, texture_object> textures;
+	map<int32_t, framebuffer_object> framebuffers;
 
 	ReadWriteLock buffers_rwlock;
 	ReadWriteLock textures_rwlock;
-	Mutex draw_cmd_mutex;
 
 	uint32_t width { 0 };
 	uint32_t height { 0 };
 	VkFormat format { VK_FORMAT_UNDEFINED };
-	VkColorSpaceKHR color_space;
+	VkColorSpaceKHR color_space { VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 
 	int empty_vertex_buffer { 0 };
 	int depth_buffer_default { 0 };
 	int white_texture_default { 0 };
-
-	VkRenderPass render_pass { VK_NULL_HANDLE };
 
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
@@ -290,7 +295,8 @@ private:
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
 
-	VkSemaphore image_acquired_semaphore, draw_complete_semaphore;
+	VkSemaphore image_acquired_semaphore { VK_NULL_HANDLE };
+	VkSemaphore draw_complete_semaphore { VK_NULL_HANDLE };
 
 	float clear_red { 0.0f };
 	float clear_green { 0.0f };
@@ -310,9 +316,6 @@ private:
 	bool depth_buffer_writing { true };
 	bool depth_buffer_testing { true };
 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
-	int clear_mask { 0 };
-	bool render_pass_started { false };
-	bool draw_cmd_started { false };
 	int64_t frame { 0 };
 
 	Mutex delete_mutex;
@@ -320,15 +323,11 @@ private:
 	vector<VkBuffer> delete_buffers;
 	vector<VkDeviceMemory> delete_memory;
 
-	string pipeline_id;
-	VkPipeline pipeline { VK_NULL_HANDLE };
-
 	array<context_type, CONTEXT_COUNT> contexts;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, uint32_t baseLevel = 0, uint32_t levelCount = 1);
-	void setImageLayoutDrawCmd(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask);
 	uint32_t getMipLevels(int32_t textureWidth, int32_t textureHeight);
 	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps = true);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
@@ -343,15 +342,15 @@ private:
 	void flushCommandsAllContexts();
 	void flushCommands(int contextIdx);
 	void initializeRenderPass();
-	void startRenderPass();
-	void endRenderPass();
+	void startRenderPass(int contextIdx);
+	void endRenderPass(int contextIdx);
 	void preparePipeline(program_type& program);
-	void createObjectsRenderingPipeline(program_type& program);
-	void setupObjectsRenderingPipeline(program_type& program);
-	void createPointsRenderingPipeline(program_type& program);
-	void setupPointsRenderingPipeline(program_type& program);
-	void createSkinningComputingPipeline(program_type& program);
-	void setupSkinningComputingPipeline(program_type& program);
+	void createObjectsRenderingPipeline(int contextIdx, program_type& program);
+	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
+	void createPointsRenderingPipeline(int contextIdx, program_type& program);
+	void setupPointsRenderingPipeline(int contextIdx, program_type& program);
+	void createSkinningComputingPipeline(int contextIdx, program_type& program);
+	void setupSkinningComputingPipeline(int contextIdx, program_type& program);
 	void finishPipeline();
 	void prepareSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffer(int contextIdx);

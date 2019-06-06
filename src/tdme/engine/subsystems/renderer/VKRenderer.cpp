@@ -120,8 +120,8 @@ VKRenderer::VKRenderer():
 	queue_mutex("queue-mutex"),
 	buffers_rwlock("buffers_rwlock"),
 	textures_rwlock("textures_rwlock"),
-	draw_cmd_mutex("draw_cmd_mutex"),
-	delete_mutex("delete_mutex")
+	delete_mutex("delete_mutex"),
+	pipeline_mutex("pipeline_mutex")
 {
 	// setup consts
 	ID_NONE = 0;
@@ -140,10 +140,15 @@ VKRenderer::VKRenderer():
 	DEPTHFUNCTION_LESSEQUAL = VK_COMPARE_OP_LESS_OR_EQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = VK_COMPARE_OP_GREATER_OR_EQUAL;
 	FRAMEBUFFER_DEFAULT = 0;
-	for (auto i = 0; i < contexts.size(); i++) contexts[i].idx = i;
+	for (auto i = 0; i < CONTEXT_COUNT; i++) contexts[i].idx = i;
 	cmd_setup_pools.fill(VK_NULL_HANDLE);
 	setup_cmds_inuse.fill(VK_NULL_HANDLE);
 	setup_cmds.fill(VK_NULL_HANDLE);
+	cmd_draw_pools.fill(VK_NULL_HANDLE);
+	draw_cmds.fill(VK_NULL_HANDLE);
+	pipelines.fill(VK_NULL_HANDLE);
+	draw_cmd_started.fill(VK_NULL_HANDLE);
+	render_pass_started.fill(false);
 }
 
 inline bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
@@ -283,48 +288,6 @@ inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAsp
 
 	//
 	vkCmdPipelineBarrier(setup_cmds_inuse[contextIdx], VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
-}
-
-inline void VKRenderer::setImageLayoutDrawCmd(VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask) {
-	VkResult err;
-
-	VkImageMemoryBarrier image_memory_barrier = {
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.pNext = NULL,
-		.srcAccessMask = srcAccessMask,
-		.dstAccessMask = 0,
-		.oldLayout = old_image_layout,
-		.newLayout = new_image_layout,
-	    .srcQueueFamilyIndex = 0,
-	    .dstQueueFamilyIndex = 0,
-		.image = image,
-		.subresourceRange = {
-			.aspectMask = aspectMask,
-			.baseMipLevel = 0,
-			.levelCount = 1,
-			.baseArrayLayer = 0,
-			.layerCount = 1
-		}
-	};
-
-	if (new_image_layout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-		image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-	}
-	if (new_image_layout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
-		image_memory_barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-	}
-	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-		image_memory_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-	}
-	if (new_image_layout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
-	}
-	if (new_image_layout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL) {
-		image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
-	}
-
-	//
-	vkCmdPipelineBarrier(draw_cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 }
 
 inline uint32_t VKRenderer::getMipLevels(int32_t textureWidth, int32_t textureHeight) {
@@ -1088,27 +1051,6 @@ void VKRenderer::initialize()
 	// Get Memory information and properties
 	vkGetPhysicalDeviceMemoryProperties(gpu, &memory_properties);
 
-	// command pool
-	const VkCommandPoolCreateInfo cmd_pool_info = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.pNext = NULL,
-		.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-		.queueFamilyIndex = graphics_queue_node_index
-	};
-	err = vkCreateCommandPool(device, &cmd_pool_info, NULL, &cmd_draw_pool);
-	assert(!err);
-
-	// draw command buffers
-	const VkCommandBufferAllocateInfo cmd = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-		.pNext = NULL,
-		.commandPool = cmd_draw_pool,
-		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandBufferCount = 1
-	};
-	err = vkAllocateCommandBuffers(device, &cmd, &draw_cmd);
-	assert(!err);
-
 	// swap chain
 	initializeSwapChain();
 
@@ -1161,6 +1103,31 @@ void VKRenderer::initialize()
 			.commandBufferCount = 1
 		};
 		err = vkAllocateCommandBuffers(device, &cmd, &setup_cmds[contextIdx]);
+		assert(!err);
+	}
+
+	// create draw command buffers
+	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++)
+	{
+		// draw command pool
+		const VkCommandPoolCreateInfo cmd_pool_info = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+			.pNext = NULL,
+			.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
+			.queueFamilyIndex = graphics_queue_node_index
+		};
+		err = vkCreateCommandPool(device, &cmd_pool_info, NULL, &cmd_draw_pools[contextIdx]);
+		assert(!err);
+
+		// command buffer
+		const VkCommandBufferAllocateInfo cmd = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+			.pNext = NULL,
+			.commandPool = cmd_draw_pools[contextIdx],
+			.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+			.commandBufferCount = 1
+		};
+		err = vkAllocateCommandBuffers(device, &cmd, &draw_cmds[contextIdx]);
 		assert(!err);
 	}
 
@@ -1253,9 +1220,9 @@ void VKRenderer::initializeRenderPass() {
 	assert(!err);
 }
 
-inline void VKRenderer::startRenderPass() {
-	if (render_pass_started == true) return;
-	render_pass_started = true;
+inline void VKRenderer::startRenderPass(int contextIdx) {
+	if (render_pass_started[contextIdx] == true) return;
+	render_pass_started[contextIdx] = true;
 
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(bound_frame_buffer));
 
@@ -1280,13 +1247,13 @@ inline void VKRenderer::startRenderPass() {
 		.clearValueCount = 0,
 		.pClearValues = NULL
 	};
-	vkCmdBeginRenderPass(draw_cmd, &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(draw_cmds[contextIdx], &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-inline void VKRenderer::endRenderPass() {
-	if (render_pass_started == false) return;
-	render_pass_started = false;
-	vkCmdEndRenderPass(draw_cmd);
+inline void VKRenderer::endRenderPass(int contextIdx) {
+	if (render_pass_started[contextIdx] == false) return;
+	render_pass_started[contextIdx] = false;
+	vkCmdEndRenderPass(draw_cmds[contextIdx]);
 }
 
 void VKRenderer::initializeFrameBuffers() {
@@ -1373,7 +1340,7 @@ void VKRenderer::initializeFrame()
 		// TODO: a.drewke
 		//
 		finishSetupCommandBuffers();
-		endRenderPass();
+		for (auto i = 0; i < CONTEXT_COUNT; i++) endRenderPass(i);
 		vkDestroySemaphore(device, image_acquired_semaphore, NULL);
 		vkDestroySemaphore(device, draw_complete_semaphore, NULL);
 
@@ -1394,18 +1361,19 @@ void VKRenderer::initializeFrame()
 		assert(!err);
 	}
 
-	const VkCommandBufferBeginInfo cmd_buf_info = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		.pNext = NULL,
-		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-		.pInheritanceInfo = NULL
-	};
-
 	// start draw command buffer if required
-	if (draw_cmd_started == false) {
-		draw_cmd_started = true;
-		err = vkBeginCommandBuffer(draw_cmd, &cmd_buf_info);
-		assert(!err);
+	for (auto i = 0; i < contexts.size(); i++) {
+		const VkCommandBufferBeginInfo cmd_buf_info = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+			.pNext = NULL,
+			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+			.pInheritanceInfo = NULL
+		};
+		if (draw_cmd_started[i] == false) {
+			err = vkBeginCommandBuffer(draw_cmds[i], &cmd_buf_info);
+			assert(!err);
+			draw_cmd_started[i] = true;
+		}
 	}
 
 	// We can use LAYOUT_UNDEFINED as a wildcard here because we don't care what
@@ -1423,7 +1391,10 @@ void VKRenderer::initializeFrame()
 		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
 	};
 
-	vkCmdPipelineBarrier(draw_cmd, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	//
+	for (auto i = 0; i < contexts.size(); i++) {
+		vkCmdPipelineBarrier(draw_cmds[i], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	}
 }
 
 void VKRenderer::finishFrame()
@@ -1446,7 +1417,7 @@ void VKRenderer::finishFrame()
 	VkResult err;
 
 	// end render pass
-	endRenderPass();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) endRenderPass(i);
 
 	VkImageMemoryBarrier prePresentBarrier = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -1460,14 +1431,18 @@ void VKRenderer::finishFrame()
 		.image = swapchain_buffers[current_buffer].image,
 		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
 	};
-	vkCmdPipelineBarrier(draw_cmd, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &prePresentBarrier);
+	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+		vkCmdPipelineBarrier(draw_cmds[i], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, NULL, 0, NULL, 1, &prePresentBarrier);
+	}
 
 	//
-	if (draw_cmd_started == true) {
-		draw_cmd_started = false;
-		pipeline = VK_NULL_HANDLE;
-		err = vkEndCommandBuffer(draw_cmd);
-		assert(!err);
+	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+		if (draw_cmd_started[i] == true) {
+			draw_cmd_started[i] = false;
+			pipelines[i] = VK_NULL_HANDLE;
+			err = vkEndCommandBuffer(draw_cmds[i]);
+			assert(!err);
+		}
 	}
 
 	//
@@ -1479,8 +1454,8 @@ void VKRenderer::finishFrame()
 		.waitSemaphoreCount = 1,
 		.pWaitSemaphores = &image_acquired_semaphore,
 		.pWaitDstStageMask = &pipe_stage_flags,
-		.commandBufferCount = 1,
-		.pCommandBuffers = &draw_cmd,
+		.commandBufferCount = CONTEXT_COUNT,
+		.pCommandBuffers = draw_cmds.data(),
 		.signalSemaphoreCount = 1,
 		.pSignalSemaphores = &draw_complete_semaphore
 	};
@@ -2043,7 +2018,7 @@ inline void VKRenderer::finishPipeline() {
 			program.uniform_buffers_last[context.idx] = context.uniform_buffers;
 			program.uniform_buffers_changed_last[context.idx] = context.uniform_buffers_changed;
 		}
-		pipeline_id.clear();
+		for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 	}
 
 	// clear ubos
@@ -2052,7 +2027,7 @@ inline void VKRenderer::finishPipeline() {
 	}
 
 	//
-	pipeline = VK_NULL_HANDLE;
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipelines[i] = VK_NULL_HANDLE;
 }
 
 inline void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
@@ -2105,7 +2080,7 @@ inline const string VKRenderer::createPipelineId() {
 		to_string(bound_frame_buffer);
 }
 
-void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
+void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& program) {
 	if (program.created == false) {
 		VkResult err;
 
@@ -2192,9 +2167,9 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		program.created = true;
 	}
 
-	auto pipelinesIt = program.pipelines.find(pipeline_id);
+	auto pipelinesIt = program.pipelines.find(pipeline_ids[contextIdx]);
 	if (pipelinesIt == program.pipelines.end()) {
-		auto& programPipeline = program.pipelines[pipeline_id];
+		auto& programPipeline = program.pipelines[pipeline_ids[contextIdx]];
 
 		VkRenderPass renderPass = render_pass;
 		auto haveDepthBuffer = true;
@@ -2416,36 +2391,33 @@ void VKRenderer::createObjectsRenderingPipeline(program_type& program) {
 		assert(!err);
 
 		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
-
-		//
-		pipelinesIt = program.pipelines.find(pipeline_id);
 	}
 
 }
 
-inline void VKRenderer::setupObjectsRenderingPipeline(program_type& program) {
-	if (pipeline_id.empty() == true) {
-		pipeline_id = createPipelineId();
-		auto pipelinesIt = program.pipelines.find(pipeline_id);
+inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_type& program) {
+	if (pipeline_ids[contextIdx].empty() == true) {
+		pipeline_mutex.lock();
+		pipeline_ids[contextIdx] = createPipelineId();
+		auto pipelinesIt = program.pipelines.find(pipeline_ids[contextIdx]);
 		if (program.created == false || pipelinesIt == program.pipelines.end()) {
-			createObjectsRenderingPipeline(program);
+			createObjectsRenderingPipeline(contextIdx, program);
 		}
 
 		//
-		pipelinesIt = program.pipelines.find(pipeline_id);
+		pipelinesIt = program.pipelines.find(pipeline_ids[contextIdx]);
 		auto newPipeline = pipelinesIt->second.pipeline;
-		if (newPipeline != pipeline) {
-			vkCmdBindPipeline(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
-			pipeline = newPipeline;
-
-			//
-			vkCmdSetViewport(draw_cmd, 0, 1, &viewport);
-			vkCmdSetScissor(draw_cmd, 0, 1, &scissor);
+		if (newPipeline != pipelines[contextIdx]) {
+			vkCmdBindPipeline(draw_cmds[contextIdx], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
+			vkCmdSetViewport(draw_cmds[contextIdx], 0, 1, &viewport);
+			vkCmdSetScissor(draw_cmds[contextIdx], 0, 1, &scissor);
+			pipelines[contextIdx] = newPipeline;
 		}
+		pipeline_mutex.unlock();
 	}
 }
 
-void VKRenderer::createPointsRenderingPipeline(program_type& program) {
+void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& program) {
 	if (program.created == false) {
 		VkResult err;
 
@@ -2532,9 +2504,9 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 		program.created = true;
 	}
 
-	auto pipelinesIt = program.pipelines.find(pipeline_id);
+	auto pipelinesIt = program.pipelines.find(pipeline_ids[contextIdx]);
 	if (pipelinesIt == program.pipelines.end()) {
-		auto& programPipeline = program.pipelines[pipeline_id];
+		auto& programPipeline = program.pipelines[pipeline_ids[contextIdx]];
 
 		VkRenderPass renderPass = render_pass;
 		auto haveDepthBuffer = true;
@@ -2696,36 +2668,33 @@ void VKRenderer::createPointsRenderingPipeline(program_type& program) {
 
 		//
 		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
-
-		//
-		pipelinesIt = program.pipelines.find(pipeline_id);
 	}
 }
 
-inline void VKRenderer::setupPointsRenderingPipeline(program_type& program) {
-	if (pipeline_id.empty() == true) {
-		pipeline_id = createPipelineId();
+inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_type& program) {
+	if (pipeline_ids[contextIdx].empty() == true) {
+		pipeline_mutex.lock();
+		pipeline_ids[contextIdx] = createPipelineId();
 
-		auto pipelinesIt = program.pipelines.find(pipeline_id);
+		auto pipelinesIt = program.pipelines.find(pipeline_ids[contextIdx]);
 		if (program.created == false || pipelinesIt == program.pipelines.end()) {
-			createPointsRenderingPipeline(program);
+			createPointsRenderingPipeline(contextIdx, program);
 		}
 
 		//
-		pipelinesIt = program.pipelines.find(pipeline_id);
+		pipelinesIt = program.pipelines.find(pipeline_ids[contextIdx]);
 		auto newPipeline = pipelinesIt->second.pipeline;
-		if (newPipeline != pipeline) {
-			vkCmdBindPipeline(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
-			pipeline = newPipeline;
-
-			//
-			vkCmdSetViewport(draw_cmd, 0, 1, &viewport);
-			vkCmdSetScissor(draw_cmd, 0, 1, &scissor);
+		if (newPipeline != pipelines[contextIdx]) {
+			vkCmdBindPipeline(draw_cmds[contextIdx], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
+			vkCmdSetViewport(draw_cmds[contextIdx], 0, 1, &viewport);
+			vkCmdSetScissor(draw_cmds[contextIdx], 0, 1, &scissor);
+			pipelines[contextIdx] = newPipeline;
 		}
+		pipeline_mutex.unlock();
 	}
 }
 
-inline void VKRenderer::createSkinningComputingPipeline(program_type& program) {
+inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type& program) {
 	if (program.created == false) {
 		VkResult err;
 
@@ -2849,17 +2818,19 @@ inline void VKRenderer::createSkinningComputingPipeline(program_type& program) {
 	}
 }
 
-inline void VKRenderer::setupSkinningComputingPipeline(program_type& program) {
+inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_type& program) {
+	pipeline_mutex.lock();
 	if (program.created == false || program.pipelines.find("default") == program.pipelines.end()) {
-		createSkinningComputingPipeline(program);
+		createSkinningComputingPipeline(contextIdx, program);
 	}
 
 	//
 	auto newPipeline = program.pipelines.find("default")->second.pipeline;
-	if (newPipeline != pipeline) {
-		vkCmdBindPipeline(draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, newPipeline);
-		pipeline = newPipeline;
+	if (newPipeline != pipelines[contextIdx]) {
+		vkCmdBindPipeline(draw_cmds[contextIdx], VK_PIPELINE_BIND_POINT_COMPUTE, newPipeline);
+		pipelines[contextIdx] = newPipeline;
 	}
+	pipeline_mutex.unlock();
 }
 
 void VKRenderer::useProgram(int32_t programId)
@@ -2867,7 +2838,7 @@ void VKRenderer::useProgram(int32_t programId)
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
 
 	//
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 
 	// if unsetting program flush command buffers
 	if (program_id != 0) {
@@ -3264,7 +3235,7 @@ void VKRenderer::enableCulling()
 	if (culling_enabled == true) return;
 	flushCommandsAllContexts();
 	culling_enabled = true;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableCulling()
@@ -3272,7 +3243,7 @@ void VKRenderer::disableCulling()
 	if (culling_enabled == false) return;
 	flushCommandsAllContexts();
 	culling_enabled = false;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::enableBlending()
@@ -3280,7 +3251,7 @@ void VKRenderer::enableBlending()
 	if (blending_enabled == true) return;
 	flushCommandsAllContexts();
 	blending_enabled = true;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableBlending()
@@ -3288,7 +3259,7 @@ void VKRenderer::disableBlending()
 	if (blending_enabled == false) return;
 	flushCommandsAllContexts();
 	blending_enabled = false;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::enableDepthBufferWriting()
@@ -3296,7 +3267,7 @@ void VKRenderer::enableDepthBufferWriting()
 	if (depth_buffer_writing == true) return;
 	flushCommandsAllContexts();
 	depth_buffer_writing = true;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableDepthBufferWriting()
@@ -3304,7 +3275,7 @@ void VKRenderer::disableDepthBufferWriting()
 	if (depth_buffer_writing == false) return;
 	flushCommandsAllContexts();
 	depth_buffer_writing = false;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableDepthBufferTest()
@@ -3312,7 +3283,7 @@ void VKRenderer::disableDepthBufferTest()
 	if (depth_buffer_testing == false) return;
 	flushCommandsAllContexts();
 	depth_buffer_testing = false;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::enableDepthBufferTest()
@@ -3320,7 +3291,7 @@ void VKRenderer::enableDepthBufferTest()
 	if (depth_buffer_testing == true) return;
 	flushCommandsAllContexts();
 	depth_buffer_testing = true;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunction)
@@ -3328,7 +3299,7 @@ void VKRenderer::setDepthFunction(int32_t depthFunction)
 	if (depth_function == depthFunction) return;
 	flushCommandsAllContexts();
 	depth_function = depthFunction;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
@@ -3338,8 +3309,52 @@ void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 
 void VKRenderer::clear(int32_t mask)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(clear_mask));
-	clear_mask = mask;
+	// start draw command buffer, it not yet done
+	if (draw_cmd_started[0] == false) {
+		const VkCommandBufferBeginInfo cmd_buf_info = {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+			.pNext = NULL,
+			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+			.pInheritanceInfo = NULL
+		};
+		//
+		VkResult err;
+		err = vkBeginCommandBuffer(draw_cmds[0], &cmd_buf_info);
+		assert(!err);
+		draw_cmd_started[0] = true;
+	}
+
+	if (render_pass_started[0] == false) startRenderPass(0);
+
+	auto attachmentIdx = 0;
+	VkClearAttachment attachments[2];
+	if ((mask & CLEAR_COLOR_BUFFER_BIT) == CLEAR_COLOR_BUFFER_BIT) {
+		attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		attachments[attachmentIdx].colorAttachment = attachmentIdx;
+		attachments[attachmentIdx].clearValue.color = { clear_red, clear_green, clear_blue, clear_alpha };
+		attachmentIdx++;
+	}
+	if ((mask & CLEAR_DEPTH_BUFFER_BIT) == CLEAR_DEPTH_BUFFER_BIT) {
+		attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		attachments[attachmentIdx].colorAttachment = attachmentIdx;
+		attachments[attachmentIdx].clearValue.depthStencil = { 1.0f, 0 };
+		attachmentIdx++;
+	}
+	VkClearRect clearRect = {
+		.rect = scissor,
+		.baseArrayLayer = 0,
+		.layerCount = 1
+	};
+	if (draw_cmd_started[0] == false ){
+
+	}
+	vkCmdClearAttachments(
+		draw_cmds[0],
+		attachmentIdx,
+		attachments,
+		1,
+		&clearRect
+	);
 }
 
 void VKRenderer::setCullFace(int32_t cullFace)
@@ -3347,7 +3362,7 @@ void VKRenderer::setCullFace(int32_t cullFace)
 	if (cull_mode == cullFace) return;
 	flushCommandsAllContexts();
 	cull_mode = (VkCullModeFlagBits)cullFace;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::setFrontFace(int32_t frontFace)
@@ -3355,7 +3370,7 @@ void VKRenderer::setFrontFace(int32_t frontFace)
 	if (front_face == frontFace) return;
 	flushCommandsAllContexts();
 	front_face = (VkFrontFace)frontFace;
-	pipeline_id.clear();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
 }
 
 int32_t VKRenderer::createTexture()
@@ -4175,7 +4190,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 		}
 	}
 	flushCommandsAllContexts();
-	endRenderPass();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) endRenderPass(i);
 	memoryBarrier();
 
 	bound_frame_buffer = frameBufferId;
@@ -4637,7 +4652,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 
 inline void VKRenderer::flushCommandsAllContexts() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	for (auto i = 0; i < contexts.size(); i++) flushCommands(i);
+	for (auto i = 0; i < CONTEXT_COUNT; i++) flushCommands(i);
 }
 
 inline void VKRenderer::flushCommands(int contextIdx) {
@@ -4645,43 +4660,6 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 
 	//
 	finishSetupCommandBuffer(contextIdx);
-
-	//
-	draw_cmd_mutex.lock();
-	if (clear_mask != 0) {
-		if (render_pass_started == false) startRenderPass();
-
-		auto attachmentIdx = 0;
-		VkClearAttachment attachments[2];
-		if ((clear_mask & CLEAR_COLOR_BUFFER_BIT) == CLEAR_COLOR_BUFFER_BIT) {
-			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			attachments[attachmentIdx].colorAttachment = attachmentIdx;
-			attachments[attachmentIdx].clearValue.color = { clear_red, clear_green, clear_blue, clear_alpha };
-			attachmentIdx++;
-		}
-		if ((clear_mask & CLEAR_DEPTH_BUFFER_BIT) == CLEAR_DEPTH_BUFFER_BIT) {
-			attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-			attachments[attachmentIdx].colorAttachment = attachmentIdx;
-			attachments[attachmentIdx].clearValue.depthStencil = { 1.0f, 0 };
-			attachmentIdx++;
-		}
-		VkClearRect clearRect = {
-			.rect = scissor,
-			.baseArrayLayer = 0,
-			.layerCount = 1
-		};
-		vkCmdClearAttachments(
-			draw_cmd,
-			attachmentIdx,
-			attachments,
-			1,
-			&clearRect
-		);
-
-		//
-		clear_mask = 0;
-	}
-	draw_cmd_mutex.unlock();
 
 	//
 	auto& contextTyped = contexts[contextIdx];
@@ -4702,8 +4680,7 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 	}
 
 	// start draw command buffer, it not yet done
-	draw_cmd_mutex.lock();
-	if (draw_cmd_started == false) {
+	if (draw_cmd_started[contextTyped.idx] == false) {
 		const VkCommandBufferBeginInfo cmd_buf_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 			.pNext = NULL,
@@ -4712,27 +4689,27 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 		};
 		//
 		VkResult err;
-		err = vkBeginCommandBuffer(draw_cmd, &cmd_buf_info);
+		err = vkBeginCommandBuffer(draw_cmds[contextTyped.idx], &cmd_buf_info);
 		assert(!err);
-		draw_cmd_started = true;
+		draw_cmd_started[contextTyped.idx] = true;
 	}
 
 	// create pipeline
 	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
-		if (render_pass_started == false) startRenderPass();
-		setupObjectsRenderingPipeline(program);
+		if (render_pass_started[contextTyped.idx] == false) startRenderPass(contextTyped.idx);
+		setupObjectsRenderingPipeline(contextTyped.idx, program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
-		if (render_pass_started == false) startRenderPass();
-		setupPointsRenderingPipeline(program);
+		if (render_pass_started[contextTyped.idx] == false) startRenderPass(contextTyped.idx);
+		setupPointsRenderingPipeline(contextTyped.idx, program);
 	} else
 		if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
-		setupSkinningComputingPipeline(program);
+		if (render_pass_started[contextTyped.idx] == true) endRenderPass(contextTyped.idx);
+		setupSkinningComputingPipeline(contextTyped.idx, program);
 	} else {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(program_id));
 		return;
 	}
-	draw_cmd_mutex.unlock();
 
 	VkDescriptorBufferInfo bufferInfos[program.layout_bindings];
 	VkWriteDescriptorSet descriptorSetWrites[program.layout_bindings];
@@ -4740,8 +4717,6 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 
 	// do object render command
 	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
-		if (render_pass_started == false) startRenderPass();
-
 		//
 		auto samplerIdx = 0;
 		for (auto& shaderId: program.shader_ids) {
@@ -4834,23 +4809,19 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 		VkDeviceSize vertexBuffersOffsets[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 		//
-		draw_cmd_mutex.lock();
-		vkCmdBindDescriptorSets(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
-		if (contextTyped.objects_render_command.indices_buffer != VK_NULL_HANDLE) vkCmdBindIndexBuffer(draw_cmd, contextTyped.objects_render_command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
-		vkCmdBindVertexBuffers(draw_cmd, 0, OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
+		vkCmdBindDescriptorSets(draw_cmds[contextTyped.idx], VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
+		if (contextTyped.objects_render_command.indices_buffer != VK_NULL_HANDLE) vkCmdBindIndexBuffer(draw_cmds[contextTyped.idx], contextTyped.objects_render_command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindVertexBuffers(draw_cmds[contextTyped.idx], 0, OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 		if (contextTyped.objects_render_command.indices_buffer != VK_NULL_HANDLE) {
-			vkCmdDrawIndexed(draw_cmd, contextTyped.objects_render_command.count * 3, contextTyped.objects_render_command.instances, contextTyped.objects_render_command.offset * 3, 0, 0);
+			vkCmdDrawIndexed(draw_cmds[contextTyped.idx], contextTyped.objects_render_command.count * 3, contextTyped.objects_render_command.instances, contextTyped.objects_render_command.offset * 3, 0, 0);
 		} else {
-			vkCmdDraw(draw_cmd, contextTyped.objects_render_command.count * 3, contextTyped.objects_render_command.instances, contextTyped.objects_render_command.offset * 3, 0);
+			vkCmdDraw(draw_cmds[contextTyped.idx], contextTyped.objects_render_command.count * 3, contextTyped.objects_render_command.instances, contextTyped.objects_render_command.offset * 3, 0);
 		}
-		draw_cmd_mutex.unlock();
 
 		//
 		program.desc_idxs[contextTyped.idx]++;
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
-		if (render_pass_started == false) startRenderPass();
-
 		// do points render command
 		auto samplerIdx = 0;
 		for (auto& shaderId: program.shader_ids) {
@@ -4937,19 +4908,15 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 		};
 
 		//
-		draw_cmd_mutex.lock();
-		vkCmdBindDescriptorSets(draw_cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
+		vkCmdBindDescriptorSets(draw_cmds[contextTyped.idx], VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
 		VkDeviceSize vertexBuffersOffsets[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
-		vkCmdBindVertexBuffers(draw_cmd, 0, POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
-		vkCmdDraw(draw_cmd, contextTyped.points_render_command.count, 1, contextTyped.points_render_command.offset, 0);
-		draw_cmd_mutex.unlock();
+		vkCmdBindVertexBuffers(draw_cmds[contextTyped.idx], 0, POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
+		vkCmdDraw(draw_cmds[contextTyped.idx], contextTyped.points_render_command.count, 1, contextTyped.points_render_command.offset, 0);
 
 		//
 		program.desc_idxs[contextTyped.idx]++;
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
-		if (render_pass_started == true) endRenderPass();
-
 		// do compute command
 		for (auto& shaderId: program.shader_ids) {
 			auto shaderIt = shaders.find(shaderId);
@@ -5007,10 +4974,8 @@ inline void VKRenderer::flushCommands(int contextIdx) {
 		vkUpdateDescriptorSets(device, program.layout_bindings, descriptorSetWrites, 0, NULL);
 
 		//
-		draw_cmd_mutex.lock();
-		vkCmdBindDescriptorSets(draw_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
-		vkCmdDispatch(draw_cmd, contextTyped.compute_command.num_groups_x, contextTyped.compute_command.num_groups_y, contextTyped.compute_command.num_groups_z);
-		draw_cmd_mutex.unlock();
+		vkCmdBindDescriptorSets(draw_cmds[contextTyped.idx], VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
+		vkCmdDispatch(draw_cmds[contextTyped.idx], contextTyped.compute_command.num_groups_x, contextTyped.compute_command.num_groups_y, contextTyped.compute_command.num_groups_z);
 
 		//
 		program.desc_idxs[contextTyped.idx]++;
@@ -5234,20 +5199,24 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 void VKRenderer::memoryBarrier() {
 	VkResult err;
 
-	auto inRenderPass = render_pass_started;
-	if (inRenderPass == true) endRenderPass();
+	// end render passes
+	auto render_pass_started_copy = render_pass_started;
+	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+		if (render_pass_started_copy[i] == true) endRenderPass(i);
+	}
 
 	//
-	VkCommandBuffer cmd_bufs[CONTEXT_COUNT + 1];
+	VkCommandBuffer cmd_bufs[CONTEXT_COUNT * 2];
 
 	//
 	uint32_t cmdBufCount = 0;
-	if (draw_cmd_started == true) {
-		cmd_bufs[cmdBufCount++] = draw_cmd;
+	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+		if (draw_cmd_started[i] == true) {
+			cmd_bufs[cmdBufCount++] = draw_cmds[i];
 
-		err = vkEndCommandBuffer(draw_cmd);
-		assert(!err);
-		pipeline = VK_NULL_HANDLE;
+			err = vkEndCommandBuffer(draw_cmds[i]);
+			assert(!err);
+		}
 	}
 
 	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
@@ -5286,21 +5255,21 @@ void VKRenderer::memoryBarrier() {
 		queue_mutex.unlock();
 	}
 
-	if (draw_cmd_started == true) {
-		const VkCommandBufferBeginInfo cmd_buf_info = {
-			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-			.pNext = NULL,
-			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-			.pInheritanceInfo = NULL
-		};
-
-		//
-		err = vkBeginCommandBuffer(draw_cmd, &cmd_buf_info);
-		assert(!err);
-	}
-
 	//
-	if (inRenderPass == true) startRenderPass();
+	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+		if (draw_cmd_started[i] == true) {
+			const VkCommandBufferBeginInfo cmd_buf_info = {
+				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+				.pNext = NULL,
+				.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+				.pInheritanceInfo = NULL
+			};
+			//
+			err = vkBeginCommandBuffer(draw_cmds[i], &cmd_buf_info);
+			assert(!err);
+		}
+		if (render_pass_started_copy[i] == true) startRenderPass(i);
+	}
 }
 
 void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
