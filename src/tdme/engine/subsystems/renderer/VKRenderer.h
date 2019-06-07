@@ -52,7 +52,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int COMMANDS_MAX { 1 };
+	static constexpr int COMMANDS_MAX { 16 };
 	static constexpr int DESC_MAX { 512 };
 	static constexpr int CONTEXT_COUNT { Engine::THREADS_MAX };
 
@@ -216,6 +216,7 @@ private:
 		objects_render_command objects_render_command;
 		points_render_command points_render_command;
 		compute_command compute_command;
+		uint32_t command_count { 0 };
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
@@ -253,6 +254,7 @@ private:
 
 	array<VkCommandPool, CONTEXT_COUNT> cmd_draw_pools;
 	array<VkCommandBuffer, CONTEXT_COUNT> draw_cmds;
+	array<VkFence, CONTEXT_COUNT> draw_fences;
 	VkFence memorybarrier_fence;
 
 	Mutex pipeline_mutex;
@@ -377,6 +379,8 @@ private:
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
+	bool beginDrawCommandBuffer(int contextIdx);
+	bool endDrawCommandBuffer(int contextIdx);
 
 public:
 	const string getShaderVersion() override;
