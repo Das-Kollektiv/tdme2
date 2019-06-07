@@ -388,6 +388,7 @@ void Application::setMousePosition(int x, int y) {
 
 void Application::swapBuffers() {
 	#if defined(VULKAN)
+		glfwSwapBuffers(glfwWindow);
 	#else
 		glutSwapBuffers();
 	#endif

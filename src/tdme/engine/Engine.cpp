@@ -888,7 +888,7 @@ void Engine::computeTransformations()
 void Engine::display()
 {
 	// finish frame
-	Engine::renderer->finishFrame();
+	if (this == Engine::instance) Engine::renderer->finishFrame();
 
 	// set current engine
 	currentEngine = this;
@@ -898,7 +898,7 @@ void Engine::display()
 	if (renderingComputedTransformations == false) computeTransformations();
 
 	// init frame
-	Engine::renderer->initializeFrame();
+	if (this == Engine::instance) Engine::renderer->initializeFrame();
 
 	// default context
 	auto context = Engine::renderer->getDefaultContext();

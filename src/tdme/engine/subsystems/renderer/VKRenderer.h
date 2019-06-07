@@ -52,7 +52,8 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int COMMANDS_MAX { 16 };
+	static constexpr int DRAW_COMMANDBUFFER_MAX { 4 };
+	static constexpr int COMMANDS_MAX { 8 };
 	static constexpr int DESC_MAX { 512 };
 	static constexpr int CONTEXT_COUNT { Engine::THREADS_MAX };
 
@@ -140,7 +141,6 @@ private:
 
 	struct swapchain_buffer_type {
 		VkImage image { VK_NULL_HANDLE };
-		VkCommandBuffer cmd { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 	};
 
@@ -253,14 +253,15 @@ private:
 	array<VkFence, CONTEXT_COUNT> setup_fences;
 
 	array<VkCommandPool, CONTEXT_COUNT> cmd_draw_pools;
-	array<VkCommandBuffer, CONTEXT_COUNT> draw_cmds;
-	array<VkFence, CONTEXT_COUNT> draw_fences;
+	array<array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX>, CONTEXT_COUNT> draw_cmds;
+	array<array<VkFence, DRAW_COMMANDBUFFER_MAX>, CONTEXT_COUNT> draw_fences;
+	array<uint32_t, CONTEXT_COUNT> draw_cmd_current;
+	array<array<bool, DRAW_COMMANDBUFFER_MAX>, CONTEXT_COUNT> draw_cmd_started;
 	VkFence memorybarrier_fence;
 
 	Mutex pipeline_mutex;
 	array<string, CONTEXT_COUNT> pipeline_ids;
 	array<VkPipeline, CONTEXT_COUNT> pipelines;
-	array<bool, CONTEXT_COUNT> draw_cmd_started;
 
 	VkRenderPass render_pass { VK_NULL_HANDLE };
 	array<bool, CONTEXT_COUNT> render_pass_started;
@@ -379,8 +380,8 @@ private:
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
-	bool beginDrawCommandBuffer(int contextIdx);
-	bool endDrawCommandBuffer(int contextIdx);
+	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
+	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1);
 
 public:
 	const string getShaderVersion() override;
