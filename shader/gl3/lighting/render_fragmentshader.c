@@ -112,8 +112,8 @@ vec4 fragColor;
 	#define TERRAIN_HEIGHT_BLEND		4.0
 	#define TERRAIN_SLOPE_BLEND			10.0
 
-	in float slope;
 	in float height;
+	in float slope;
 	uniform sampler2D grasTextureUnit;
 	uniform sampler2D dirtTextureUnit;
 	uniform sampler2D stoneTextureUnit;
