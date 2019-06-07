@@ -1404,6 +1404,7 @@ void VKRenderer::initializeFrameBuffers() {
 }
 
 void VKRenderer::reshape() {
+	return;
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
@@ -1633,7 +1634,6 @@ void VKRenderer::finishFrame()
 		needsReshape = currentWidth != width || currentHeight != height;
 	}
 	if (needsReshape == true) {
-		Console::println("aaa");
 		reshape();
 	}
 
