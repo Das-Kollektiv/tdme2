@@ -2,18 +2,26 @@
 
 #include <vector>
 
+#include <ext/reactphysics3d/src/collision/PolyhedronMesh.h>
+#include <ext/reactphysics3d/src/collision/PolygonVertexArray.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/primitives/ConvexMeshBoundingVolume.h>
+#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/fwd-tdme.h>
+
 
 using std::vector;
 
-using tdme::engine::primitives::ConvexMeshBoundingVolume;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::Object3DModel;
 using tdme::math::Vector3;
+using tdme::utils::ByteBuffer;
+using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
 
 /** 
  * Convex mesh physics primitive
@@ -21,12 +29,19 @@ using tdme::math::Vector3;
  * @version $Id$
  */
 class tdme::engine::primitives::ConvexMesh final
-	: public ConvexMeshBoundingVolume
+	: public BoundingVolume
 {
 private:
 	vector<Vector3> vertices;
 	vector<int> facesVerticesCount;
 	vector<int> indices;
+
+	vector<reactphysics3d::PolygonVertexArray::PolygonFace> faces;
+	reactphysics3d::PolygonVertexArray* polygonVertexArray {  };
+	reactphysics3d::PolyhedronMesh* polyhedronMesh {  };
+	ByteBuffer* verticesByteBuffer {  };
+	ByteBuffer* indicesByteBuffer {  };
+
 
 	/**
 	 * Public constructor
@@ -44,6 +59,16 @@ private:
 	 * @return if vertex lives on triangle plane
 	 */
 	bool isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex);
+
+	/**
+	 * Create convex mesh
+	 * 	Note: it also translates center into origin
+	 * @param vertices vertices
+	 * @param facesVerticesCount faces vertices count
+	 * @param indices indices
+	 * @param scale scale
+	 */
+	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
 
 public:
 	// overriden methods
@@ -66,5 +91,10 @@ public:
 	 * @param scale scale
 	 */
 	ConvexMesh(Object3DModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+
+	/**
+	 * Public denstructor
+	 */
+	~ConvexMesh();
 
 };
