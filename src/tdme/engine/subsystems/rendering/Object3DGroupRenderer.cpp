@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/ShortBuffer.h>
@@ -9,11 +9,11 @@
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Vector3.h>
 
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
@@ -23,18 +23,18 @@ using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 
-Object3DGroupVBORenderer::Object3DGroupVBORenderer(Object3DGroup* object3DGroup) 
+Object3DGroupRenderer::Object3DGroupRenderer(Object3DGroup* object3DGroup)
 {
 	this->object3DGroup = object3DGroup;
 	this->vboBaseIds = nullptr;
 	this->vboTangentBitangentIds = nullptr;
 }
 
-void Object3DGroupVBORenderer::preRender(void* context)
+void Object3DGroupRenderer::preRender(void* context)
 {
 	auto meshUploaded = true;
 
@@ -79,7 +79,7 @@ void Object3DGroupVBORenderer::preRender(void* context)
 	}
 }
 
-void Object3DGroupVBORenderer::dispose()
+void Object3DGroupRenderer::dispose()
 {
 	if (vboBaseIds != nullptr) {
 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id);

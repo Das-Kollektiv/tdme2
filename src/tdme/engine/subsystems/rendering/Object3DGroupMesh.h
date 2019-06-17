@@ -25,7 +25,7 @@ using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::model::Group;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -39,13 +39,13 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 	friend class Object3DBase;
 	friend class Object3DBase_TransformedFacesIterator;
 	friend class Object3DGroup;
-	friend class Object3DGroupVBORenderer;
-	friend class Object3DVBORenderer;
+	friend class Object3DGroupRenderer;
+	friend class Object3DRenderer;
 	friend class TransparentRenderFacesPool;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	Object3DGroupVBORenderer* object3DGroupVBORenderer;
+	Object3DGroupRenderer* object3DGroupRenderer;
 	Group* group {  };
 	int32_t faceCount {  };
 	vector<uint32_t> indices {  };
@@ -77,14 +77,14 @@ private:
 
 	/** 
 	 * Creates a object3d group mesh from group
-	 * @param object3DVBOGroupRenderer object 3D group VBO renderer
+	 * @param object3DGroupRenderer object 3D group renderer
 	 * @param animationProcessingTarget animation processing target
 	 * @param group group
 	 * @param transformationMatrices transformationm matrices
 	 * @param skinningMatrices skinning matrices 
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Object3DGroupVBORenderer* object3DVBOGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices,map<string, Matrix4x4*>* skinningMatrices); // TODO: std container: maybe use call by reference
+	static Object3DGroupMesh* createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices,map<string, Matrix4x4*>* skinningMatrices); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Computes mesh transformations

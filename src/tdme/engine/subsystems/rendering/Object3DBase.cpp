@@ -22,7 +22,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
@@ -51,7 +51,7 @@ using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::utils::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

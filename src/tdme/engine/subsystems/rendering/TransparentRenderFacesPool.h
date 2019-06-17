@@ -42,7 +42,7 @@ using tdme::utils::Console;
  */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesPool final
 {
-	friend class Object3DVBORenderer;
+	friend class Object3DRenderer;
 	friend class tdme::engine::Engine;
 
 private:

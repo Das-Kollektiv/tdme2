@@ -5,9 +5,9 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/subsystems/rendering/BatchVBORendererTriangles.h>
+#include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Console.h>
@@ -19,9 +19,9 @@ using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Key;
@@ -29,7 +29,7 @@ using tdme::utils::Console;
 
 TransparentRenderFacesGroup::TransparentRenderFacesGroup() 
 {
-	this->object3DVBORenderer = nullptr;
+	this->object3DRenderer = nullptr;
 	this->model = nullptr;
 	this->object3DGroup = nullptr;
 	this->facesEntityIdx = -1;
@@ -37,10 +37,10 @@ TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 	this->textureCoordinates = false;
 }
 
-void TransparentRenderFacesGroup::set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader)
+void TransparentRenderFacesGroup::set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader)
 {
-	this->object3DVBORenderer = object3DVBORenderer;
-	this->batchVBORenderers.clear();
+	this->object3DRenderer = object3DRenderer;
+	this->batchRenderers.clear();
 	this->model = model;
 	this->object3DGroup = object3DGroup;
 	this->facesEntityIdx = facesEntityIdx;
@@ -104,17 +104,17 @@ void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
 	renderer->onUpdateEffect(context);
 	// material
 	string materialKey;
-	object3DVBORenderer->setupMaterial(context, object3DGroup, facesEntityIdx, Object3DVBORenderer::RENDERTYPE_ALL, false, materialKey);
+	object3DRenderer->setupMaterial(context, object3DGroup, facesEntityIdx, Object3DRenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix(context);
 	// render, reset
-	for (auto batchVBORendererTriangles: batchVBORenderers) {
-		batchVBORendererTriangles->render();
-		batchVBORendererTriangles->clear();
-		batchVBORendererTriangles->release();
+	for (auto batchRendererTriangles: batchRenderers) {
+		batchRendererTriangles->render();
+		batchRendererTriangles->clear();
+		batchRendererTriangles->release();
 	}
-	batchVBORenderers.clear();
+	batchRenderers.clear();
 	// restore GL state, model view matrix
 	renderer->unbindBufferObjects(context);
 	renderer->getModelViewMatrix().set(modelViewMatrix);

@@ -13,7 +13,7 @@ using std::vector;
 
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
 /** 
@@ -21,9 +21,9 @@ using tdme::engine::subsystems::skinning::SkinningShader;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::rendering::Object3DGroupVBORenderer final
+class tdme::engine::subsystems::rendering::Object3DGroupRenderer final
 {
-	friend class Object3DVBORenderer;
+	friend class Object3DRenderer;
 	friend class tdme::engine::Object3D;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
@@ -56,5 +56,5 @@ public:
 	 * Constructor
 	 * @param object3DGroup object 3D group
 	 */
-	Object3DGroupVBORenderer(Object3DGroup* object3DGroup);
+	Object3DGroupRenderer(Object3DGroup* object3DGroup);
 };

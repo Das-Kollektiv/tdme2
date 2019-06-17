@@ -7,20 +7,20 @@ namespace engine {
 namespace subsystems {
 namespace rendering {
 	class AnimationState;
-	class BatchVBORendererPoints;
-	class BatchVBORendererTriangles;
+	class BatchRendererPoints;
+	class BatchRendererTriangles;
 	class ModelUtilitiesInternal;
 	class ModelStatistics;
 	class Object3DBase;
 	class Object3DBase_TransformedFacesIterator;
 	class Object3DGroup;
 	class Object3DGroupMesh;
-	class Object3DGroupVBORenderer;
+	class Object3DGroupRenderer;
 	class Object3DInternal;
 	class Object3DModelInternal;
-	class Object3DVBORenderer;
-	class Object3DVBORenderer_InstancedRenderFunctionParameters;
-	class Object3DVBORenderer_TransparentRenderFacesGroupPool;
+	class Object3DRenderer;
+	class Object3DRenderer_InstancedRenderFunctionParameters;
+	class Object3DRenderer_TransparentRenderFacesGroupPool;
 	struct TransparentRenderFace;
 	class TransparentRenderFacesGroup;
 	class TransparentRenderFacesPool;

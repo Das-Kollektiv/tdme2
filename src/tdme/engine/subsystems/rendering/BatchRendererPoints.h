@@ -16,13 +16,13 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::Renderer;
 
 /** 
- * Batch VBO renderer for points
+ * Batch renderer for points
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::rendering::BatchVBORendererPoints final
+class tdme::engine::subsystems::rendering::BatchRendererPoints final
 {
-	friend class Object3DVBORenderer;
+	friend class Object3DRenderer;
 
 private:
 	static constexpr int32_t POINT_COUNT { 65535 };
@@ -65,12 +65,12 @@ private:
 	/**
 	 * Public constructor
 	 */
-	BatchVBORendererPoints(Renderer* renderer, int32_t id);
+	BatchRendererPoints(Renderer* renderer, int32_t id);
 
 	/**
 	 * Destructor
 	 */
-	~BatchVBORendererPoints();
+	~BatchRendererPoints();
 
 public:
 

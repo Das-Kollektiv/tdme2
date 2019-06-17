@@ -14,7 +14,7 @@
 using std::vector;
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::math::Matrix4x4;
@@ -37,7 +37,7 @@ private:
 	static int32_t shadowMapHeight;
 
 	Renderer* renderer {  };
-	Object3DVBORenderer* object3DVBORenderer {  };
+	Object3DRenderer* object3DRenderer {  };
 	float lightEyeDistanceScale {  };
 
 	Matrix4x4 shadowTransformationsMatrix {  };
@@ -191,9 +191,9 @@ public:
 	 * Constructor
 	 * @param engine engine
 	 * @param renderer renderer
-	 * @param object3DVBORenderer object 3d vbo renderer
+	 * @param object3DRenderer object 3d renderer
 	 */
-	ShadowMapping(Engine* engine, Renderer* renderer, Object3DVBORenderer* object3DVBORenderer);
+	ShadowMapping(Engine* engine, Renderer* renderer, Object3DRenderer* object3DRenderer);
 
 	/**
 	 * Destructor

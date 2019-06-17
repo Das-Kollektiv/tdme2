@@ -16,7 +16,7 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/math/Math.h>
@@ -38,7 +38,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
@@ -58,15 +58,15 @@ Object3DGroupMesh::Object3DGroupMesh()
 	cGroupTransformationsMatrix = nullptr;
 	skinning = false;
 	skinningJoints = -1;
-	object3DGroupVBORenderer = nullptr;
+	object3DGroupRenderer = nullptr;
 	skinningMatrices = nullptr;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* object3DGroupVBORenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
 	//
-	mesh->object3DGroupVBORenderer = object3DGroupVBORenderer;
+	mesh->object3DGroupRenderer = object3DGroupRenderer;
 	mesh->group = group;
 	// group data
 	auto groupVertices = group->getVertices();

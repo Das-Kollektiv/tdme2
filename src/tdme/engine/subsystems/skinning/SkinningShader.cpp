@@ -13,7 +13,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Console.h>
@@ -38,7 +38,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
@@ -96,7 +96,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	auto contextIdx = renderer->getContextIndex(context);
 
 	// vbo base ids
-	auto vboBaseIds = object3DGroupMesh->object3DGroupVBORenderer->vboBaseIds;
+	auto vboBaseIds = object3DGroupMesh->object3DGroupRenderer->vboBaseIds;
 
 	//
 	ModelSkinningCache* modelSkinningCacheCached = nullptr;

@@ -15,7 +15,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer_InstancedRenderFunctionParameters.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -34,12 +34,12 @@ using std::vector;
 using tdme::engine::Engine;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
-using tdme::engine::subsystems::rendering::BatchVBORendererPoints;
-using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
+using tdme::engine::subsystems::rendering::BatchRendererPoints;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -54,26 +54,26 @@ using tdme::utils::Pool;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::rendering::Object3DVBORenderer final {
-	friend class Object3DGroupVBORenderer;
+class tdme::engine::subsystems::rendering::Object3DRenderer final {
+	friend class Object3DGroupRenderer;
 	friend class TransparentRenderFacesGroup;
 	friend class tdme::engine::Engine;
 
 private:
-	static constexpr int32_t BATCHVBORENDERER_MAX { 256 };
+	static constexpr int32_t BATCHRENDERER_MAX { 256 };
 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
 
 	Engine* engine {  };
 	Renderer* renderer {  };
 	vector<vector<int32_t>*> vboInstancedRenderingIds {  };
-	vector<BatchVBORendererTriangles*> trianglesBatchVBORenderers {  };
+	vector<BatchRendererTriangles*> trianglesBatchRenderers {  };
 	unordered_map<string, vector<Object3D*>> visibleObjectsByModels {  };
 	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
-	Object3DVBORenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool {  };
+	Object3DRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool {  };
 	TransparentRenderFacesPool* transparentRenderFacesPool {  };
 	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
 	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
-	BatchVBORendererPoints* psePointBatchVBORenderer {  };
+	BatchRendererPoints* psePointBatchRenderer {  };
 	Matrix4x4Negative matrix4x4Negative {  };
 	vector<Object3D*> objectsToRender;
 	vector<Object3D*> objectsNotRendered;
@@ -125,7 +125,7 @@ private:
 	 * @param objectsNotRendered objects not rendered
 	 * @param transparentRenderFacesPool transparent render faces pool
 	 */
-	void instancedRenderFunction(int threadIdx, void* context, const Object3DVBORenderer_InstancedRenderFunctionParameters& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool);
+	void instancedRenderFunction(int threadIdx, void* context, const Object3DRenderer_InstancedRenderFunctionParameters& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool);
 
 	/**
 	 * Renders multiple objects of same type(with same model) using instancing
@@ -187,12 +187,12 @@ public:
 	void dispose();
 
 	/**
-	 * @return batch vbo renderer for triangles
+	 * @return batch renderer for triangles
 	 */
-	BatchVBORendererTriangles* acquireTrianglesBatchVBORenderer();
+	BatchRendererTriangles* acquireTrianglesBatchRenderer();
 
 	/**
-	 * Resets the object 3d vbo renderer
+	 * Resets the object 3d renderer
 	 */
 	void reset();
 
@@ -205,8 +205,8 @@ public:
 	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/** 
-	 * Render batch VBO renderer points entities
-	 * @param visiblePses points batch VBO renderer points
+	 * Render batch renderer points entities
+	 * @param visiblePses points batch renderer points
 	 */
 	void render(const vector<PointsParticleSystem*>& visiblePses);
 
@@ -215,10 +215,10 @@ public:
 	 * @param engine engine
 	 * @param renderer renderer
 	 */
-	Object3DVBORenderer(Engine* engine, Renderer* renderer);
+	Object3DRenderer(Engine* engine, Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~Object3DVBORenderer();
+	~Object3DRenderer();
 };

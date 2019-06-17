@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/rendering/BatchVBORendererTriangles.h>
+#include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 
 #include <string>
 
@@ -15,7 +15,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::engine::Engine;
@@ -26,9 +26,9 @@ using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 
-constexpr int32_t BatchVBORendererTriangles::VERTEX_COUNT;
+constexpr int32_t BatchRendererTriangles::VERTEX_COUNT;
 
-BatchVBORendererTriangles::BatchVBORendererTriangles(Renderer* renderer, int32_t id) 
+BatchRendererTriangles::BatchRendererTriangles(Renderer* renderer, int32_t id)
 {
 	this->id = id;
 	this->renderer = renderer;
@@ -45,7 +45,7 @@ BatchVBORendererTriangles::BatchVBORendererTriangles(Renderer* renderer, int32_t
 	this->fbEffectColorAdds.put(Color4(0.0f, 0.0f, 0.0f, 0.0f).getArray());
 }
 
-BatchVBORendererTriangles::~BatchVBORendererTriangles()
+BatchRendererTriangles::~BatchRendererTriangles()
 {
 	delete fbVerticesByteBuffer;
 	delete fbNormalsByteBuffer;
@@ -55,12 +55,12 @@ BatchVBORendererTriangles::~BatchVBORendererTriangles()
 	delete fbEffectColorAddsByteBuffer;
 }
 
-bool BatchVBORendererTriangles::isAcquired()
+bool BatchRendererTriangles::isAcquired()
 {
 	return acquired;
 }
 
-bool BatchVBORendererTriangles::acquire()
+bool BatchRendererTriangles::acquire()
 {
 	if (acquired == true)
 		return false;
@@ -69,12 +69,12 @@ bool BatchVBORendererTriangles::acquire()
 	return true;
 }
 
-void BatchVBORendererTriangles::release()
+void BatchRendererTriangles::release()
 {
 	acquired = false;
 }
 
-void BatchVBORendererTriangles::initialize()
+void BatchRendererTriangles::initialize()
 {
 	// initialize if not yet done
 	if (vboIds == nullptr) {
@@ -83,7 +83,7 @@ void BatchVBORendererTriangles::initialize()
 	}
 }
 
-void BatchVBORendererTriangles::render()
+void BatchRendererTriangles::render()
 {
 	// skip if no vertex data exists
 	if (fbVertices.getPosition() == 0 || fbNormals.getPosition() == 0 || fbTextureCoordinates.getPosition() == 0) return;
@@ -125,7 +125,7 @@ void BatchVBORendererTriangles::render()
 	}
 }
 
-void BatchVBORendererTriangles::dispose()
+void BatchRendererTriangles::dispose()
 {
 	if (vboIds != nullptr) {
 		Engine::getInstance()->getVBOManager()->removeVBO("tdme.batchvborenderertriangles." + to_string(id));
@@ -133,7 +133,7 @@ void BatchVBORendererTriangles::dispose()
 	}
 }
 
-void BatchVBORendererTriangles::clear()
+void BatchRendererTriangles::clear()
 {
 	vertices = 0;
 	fbVertices.clear();

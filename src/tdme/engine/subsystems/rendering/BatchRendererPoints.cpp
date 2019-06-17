@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/rendering/BatchVBORendererPoints.h>
+#include <tdme/engine/subsystems/rendering/BatchRendererPoints.h>
 
 #include <string>
 
@@ -15,7 +15,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::rendering::BatchVBORendererPoints;
+using tdme::engine::subsystems::rendering::BatchRendererPoints;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
@@ -27,9 +27,9 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Vector3;
 
-constexpr int32_t BatchVBORendererPoints::POINT_COUNT;
+constexpr int32_t BatchRendererPoints::POINT_COUNT;
 
-BatchVBORendererPoints::BatchVBORendererPoints(Renderer* renderer, int32_t id) 
+BatchRendererPoints::BatchRendererPoints(Renderer* renderer, int32_t id)
 {
 	this->id = id;
 	this->renderer = renderer;
@@ -38,13 +38,13 @@ BatchVBORendererPoints::BatchVBORendererPoints(Renderer* renderer, int32_t id)
 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
 }
 
-BatchVBORendererPoints::~BatchVBORendererPoints()
+BatchRendererPoints::~BatchRendererPoints()
 {
 	delete fbVerticesByteBuffer;
 	delete fbColorsByteBuffer;
 }
 
-void BatchVBORendererPoints::initialize()
+void BatchRendererPoints::initialize()
 {
 	// initialize if not yet done
 	if (vboIds == nullptr) {
@@ -53,7 +53,7 @@ void BatchVBORendererPoints::initialize()
 	}
 }
 
-void BatchVBORendererPoints::render(void* context)
+void BatchRendererPoints::render(void* context)
 {
 	// skip if no vertex data exists
 	if (fbVertices.getPosition() == 0 || fbColors.getPosition() == 0)
@@ -73,7 +73,7 @@ void BatchVBORendererPoints::render(void* context)
 	renderer->drawPointsFromBufferObjects(context, points, 0);
 }
 
-void BatchVBORendererPoints::dispose()
+void BatchRendererPoints::dispose()
 {
 	if (vboIds != nullptr) {
 		Engine::getInstance()->getVBOManager()->removeVBO("tdme.batchvborendererpoints." + to_string(id));
@@ -81,7 +81,7 @@ void BatchVBORendererPoints::dispose()
 	}
 }
 
-void BatchVBORendererPoints::clear()
+void BatchRendererPoints::clear()
 {
 	fbVertices.clear();
 	fbColors.clear();

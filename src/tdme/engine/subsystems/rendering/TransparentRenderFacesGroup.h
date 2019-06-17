@@ -7,8 +7,8 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/engine/subsystems/rendering/BatchVBORendererTriangles.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector2.h>
@@ -24,9 +24,9 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
-using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
@@ -40,12 +40,12 @@ using tdme::utils::Console;
  */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 {
-	friend class Object3DVBORenderer;
-	friend class Object3DVBORenderer_TransparentRenderFacesGroupPool;
+	friend class Object3DRenderer;
+	friend class Object3DRenderer_TransparentRenderFacesGroupPool;
 
 private:
-	Object3DVBORenderer* object3DVBORenderer {  };
-	vector<BatchVBORendererTriangles*> batchVBORenderers {  };
+	Object3DRenderer* object3DRenderer {  };
+	vector<BatchRendererTriangles*> batchRenderers {  };
 	Model* model {  };
 	Object3DGroup* object3DGroup {  };
 	int32_t facesEntityIdx {  };
@@ -60,7 +60,7 @@ private:
 
 	/** 
 	 * Set transparent render faces group
-	 * @param object3DVBORenderer object3D VBO renderer
+	 * @param object3DRenderer object3D renderer
 	 * @param model model
 	 * @param object3DGroup object 3D group
 	 * @param facesEntityIdx faces entity idx
@@ -70,7 +70,7 @@ private:
 	 * @param textureCoordinates texture coordinates
 	 * @param shader shader
 	 */
-	void set(Object3DVBORenderer* object3DVBORenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader);
+	void set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader);
 
 	/** 
 	 * Creates a key for given transparent render faces group attributes
@@ -94,29 +94,29 @@ private:
 	 */
 	inline void addVertex(const Vector3& vertex, const Vector3& normal, const Vector2& textureCoordinate) {
 		// check if we have a batch renderer already?
-		if (batchVBORenderers.size() == 0) {
+		if (batchRenderers.size() == 0) {
 			// nope, add first one
-			auto batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
-			if (batchVBORendererTriangles == nullptr) {
-				Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+			auto batchRendererTriangles = object3DRenderer->acquireTrianglesBatchRenderer();
+			if (batchRendererTriangles == nullptr) {
+				Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
 				return;
 			}
-			batchVBORenderers.push_back(batchVBORendererTriangles);
+			batchRenderers.push_back(batchRendererTriangles);
 		}
 		// try to add vertex
-		auto batchVBORendererTriangles = batchVBORenderers[batchVBORenderers.size() - 1];
-		if (batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
+		auto batchRendererTriangles = batchRenderers[batchRenderers.size() - 1];
+		if (batchRendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
 			return;
 		// failed, acquire additionally one
-		batchVBORendererTriangles = object3DVBORenderer->acquireTrianglesBatchVBORenderer();
-		if (batchVBORendererTriangles == nullptr) {
-			Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch vbo renderer"));
+		batchRendererTriangles = object3DRenderer->acquireTrianglesBatchRenderer();
+		if (batchRendererTriangles == nullptr) {
+			Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
 			return;
 		}
 		// 	add it
-		batchVBORenderers.push_back(batchVBORendererTriangles);
+		batchRenderers.push_back(batchRendererTriangles);
 		// 	add vertex
-		batchVBORendererTriangles->addVertex(vertex, normal, textureCoordinate);
+		batchRendererTriangles->addVertex(vertex, normal, textureCoordinate);
 	}
 
 	/**

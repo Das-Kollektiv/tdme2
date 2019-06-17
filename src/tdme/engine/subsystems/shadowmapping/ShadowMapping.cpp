@@ -5,7 +5,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
@@ -23,7 +23,7 @@ using std::to_string;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;
@@ -37,13 +37,13 @@ using tdme::utils::Console;
 int32_t ShadowMapping::shadowMapWidth = 2048;
 int32_t ShadowMapping::shadowMapHeight = 2048;
 
-ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, Object3DVBORenderer* object3DVBORenderer) 
+ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, Object3DRenderer* object3DRenderer)
 {
 	width = shadowMapWidth;
 	height = shadowMapHeight;
 	this->engine = engine;
 	this->renderer = renderer;
-	this->object3DVBORenderer = object3DVBORenderer;
+	this->object3DRenderer = object3DRenderer;
 	this->lightEyeDistanceScale = 4.0f;
 	shadowMaps.resize(engine->getLightCount());
 	for (auto i = 0; i < shadowMaps.size(); i++) {
@@ -165,14 +165,14 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		//	will be disabled after rendering transparent faces
 		renderer->enableBlending();
 		// 	only opaque face entities as shadows will not be produced on transparent faces
-		object3DVBORenderer->render(
+		object3DRenderer->render(
 			visibleObjects,
 			false,
-			Object3DVBORenderer::RENDERTYPE_NORMALS |
-			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
-			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DVBORenderer::RENDERTYPE_SHADOWMAPPING
+			Object3DRenderer::RENDERTYPE_NORMALS |
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_SHADOWMAPPING
 		);
 		//	disable blending
 		renderer->disableBlending();

@@ -23,7 +23,7 @@ using tdme::engine::Object3D;
 using tdme::engine::model::Group;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -40,9 +40,9 @@ class tdme::engine::subsystems::rendering::Object3DGroup final
 	friend class ModelUtilitiesInternal;
 	friend class Object3DBase;
 	friend class Object3DBase_TransformedFacesIterator;
-	friend class Object3DGroupVBORenderer;
+	friend class Object3DGroupRenderer;
 	friend class Object3DInternal;
-	friend class Object3DVBORenderer;
+	friend class Object3DRenderer;
 	friend class TransparentRenderFacesPool;
 	friend class TransparentRenderFacesGroup;
 
@@ -62,7 +62,7 @@ private:
 	vector<int32_t> materialSpecularTextureIdsByEntities {  };
 	vector<int32_t> materialDisplacementTextureIdsByEntities {  };
 	vector<int32_t> materialNormalTextureIdsByEntities {  };
-	Object3DGroupVBORenderer* renderer {  };
+	Object3DGroupRenderer* renderer {  };
 	Object3DGroupMesh* mesh {  };
 	Matrix4x4* groupTransformationsMatrix {  };
 

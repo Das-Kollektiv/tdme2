@@ -17,7 +17,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -41,7 +41,7 @@ using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -96,7 +96,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* gr
 			object3DGroup->object = object3D;
 			object3DGroup->group = group;
 			object3DGroup->animated = animated;
-			object3DGroup->renderer = new Object3DGroupVBORenderer(object3DGroup);
+			object3DGroup->renderer = new Object3DGroupRenderer(object3DGroup);
 			if (useMeshManager == true) {
 				auto meshManager = Engine::getInstance()->getMeshManager();
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);

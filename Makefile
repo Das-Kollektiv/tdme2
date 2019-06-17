@@ -273,18 +273,18 @@ SRCS = \
 	src/tdme/engine/subsystems/manager/TextureManager_TextureManaged.cpp \
 	src/tdme/engine/subsystems/manager/VBOManager.cpp \
 	src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp \
-	src/tdme/engine/subsystems/rendering/BatchVBORendererPoints.cpp \
-	src/tdme/engine/subsystems/rendering/BatchVBORendererTriangles.cpp \
+	src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp \
+	src/tdme/engine/subsystems/rendering/BatchRendererTriangles.cpp \
 	src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DGroup.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DInternal.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DModelInternal.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DVBORenderer.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DVBORenderer_TransparentRenderFacesGroupPool.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DRenderer_TransparentRenderFacesGroupPool.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectBuffer.cpp \
 	src/tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.cpp \
 	src/tdme/engine/subsystems/rendering/TransparentRenderFacesPool.cpp \

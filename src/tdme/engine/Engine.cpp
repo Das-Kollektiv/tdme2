@@ -46,8 +46,8 @@
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer_InstancedRenderFunctionParameters.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
@@ -107,8 +107,8 @@ using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
@@ -183,7 +183,7 @@ void Engine::EngineThread::run() {
 			case STATE_RENDERING:
 				rendering.objectsNotRendered.clear();
 				rendering.transparentRenderFacesPool->reset();
-				engine->object3DVBORenderer->instancedRenderFunction(idx, context, rendering.parameters, rendering.objectsNotRendered, rendering.transparentRenderFacesPool);
+				engine->object3DRenderer->instancedRenderFunction(idx, context, rendering.parameters, rendering.objectsNotRendered, rendering.transparentRenderFacesPool);
 				state = STATE_SPINNING;
 				break;
 			case STATE_SPINNING:
@@ -227,7 +227,7 @@ Engine::~Engine() {
 	if (shadowMappingEnabled == true) {
 		delete shadowMapping;
 	}
-	delete object3DVBORenderer;
+	delete object3DRenderer;
 	if (instance == this) {
 		delete renderer;
 		delete textureManager;
@@ -279,8 +279,8 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	// create GUI
 	offScreenEngine->gui = new GUI(offScreenEngine, guiRenderer);
 	// create object 3d vbo renderer
-	offScreenEngine->object3DVBORenderer = new Object3DVBORenderer(offScreenEngine, renderer);
-	offScreenEngine->object3DVBORenderer->initialize();
+	offScreenEngine->object3DRenderer = new Object3DRenderer(offScreenEngine, renderer);
+	offScreenEngine->object3DRenderer->initialize();
 	// create framebuffers
 	offScreenEngine->frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
@@ -292,7 +292,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 		offScreenEngine->lights[i] = Light(renderer, i);
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true) {
-		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DVBORenderer);
+		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DRenderer);
 	}
 	//
 	offScreenEngine->reshape(0, 0, width, height);
@@ -411,9 +411,9 @@ PostProcessingShader* Engine::getPostProcessingShader() {
 	return postProcessingShader;
 }
 
-Object3DVBORenderer* Engine::getObject3DVBORenderer()
+Object3DRenderer* Engine::getObject3DRenderer()
 {
-	return object3DVBORenderer;
+	return object3DRenderer;
 }
 
 const Color4& Engine::getSceneColor() const
@@ -508,7 +508,7 @@ void Engine::reset()
 		removeEntity(entityKey);
 	}
 	partition->reset();
-	object3DVBORenderer->reset();
+	object3DRenderer->reset();
 	if (skinningShaderEnabled == true) skinningShader->reset();
 }
 
@@ -601,9 +601,9 @@ void Engine::initialize(bool debug)
 	renderer->initialize();
 	renderer->initializeFrame();
 
-	// create object 3d vbo renderer
-	object3DVBORenderer = new Object3DVBORenderer(this, renderer);
-	object3DVBORenderer->initialize();
+	// create object 3d renderer
+	object3DRenderer = new Object3DRenderer(this, renderer);
+	object3DRenderer->initialize();
 	GUIParser::initialize();
 
 	// create GUI
@@ -667,7 +667,7 @@ void Engine::initialize(bool debug)
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
 		shadowMappingShaderRender->initialize();
-		shadowMapping = new ShadowMapping(this, renderer, object3DVBORenderer);
+		shadowMapping = new ShadowMapping(this, renderer, object3DRenderer);
 	} else {
 		Console::println(string("TDME::Not using shadow mapping"));
 	}
@@ -952,18 +952,18 @@ void Engine::display()
 	if (lightingShader != nullptr) lightingShader->useProgram(this);
 
 	// render objects
-	object3DVBORenderer->render(
+	object3DRenderer->render(
 		visibleObjects,
 		true,
-		Object3DVBORenderer::RENDERTYPE_NORMALS |
-		Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS |
-		Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DVBORenderer::RENDERTYPE_EFFECTCOLORS |
-		Object3DVBORenderer::RENDERTYPE_MATERIALS |
-		Object3DVBORenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DVBORenderer::RENDERTYPE_TEXTURES |
-		Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DVBORenderer::RENDERTYPE_LIGHTS
+		Object3DRenderer::RENDERTYPE_NORMALS |
+		Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
+		Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+		Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
+		Object3DRenderer::RENDERTYPE_MATERIALS |
+		Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+		Object3DRenderer::RENDERTYPE_TEXTURES |
+		Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+		Object3DRenderer::RENDERTYPE_LIGHTS
 	);
 
 	// unuse lighting shader
@@ -989,7 +989,7 @@ void Engine::display()
 	if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 	// render points based particle systems
-	object3DVBORenderer->render(visiblePpses);
+	object3DRenderer->render(visiblePpses);
 
 	// unuse particle shader
 	if (particlesShader != nullptr) particlesShader->unUseProgram(context);
@@ -1010,18 +1010,18 @@ void Engine::display()
 		}
 
 		// render post processing objects
-		object3DVBORenderer->render(
+		object3DRenderer->render(
 			visibleObjectsPostPostProcessing,
 			true,
-			Object3DVBORenderer::RENDERTYPE_NORMALS |
-			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS |
-			Object3DVBORenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DVBORenderer::RENDERTYPE_EFFECTCOLORS |
-			Object3DVBORenderer::RENDERTYPE_MATERIALS |
-			Object3DVBORenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DVBORenderer::RENDERTYPE_TEXTURES |
-			Object3DVBORenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DVBORenderer::RENDERTYPE_LIGHTS
+			Object3DRenderer::RENDERTYPE_NORMALS |
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
+			Object3DRenderer::RENDERTYPE_MATERIALS |
+			Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_TEXTURES |
+			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_LIGHTS
 		);
 
 		// unuse lighting shader
@@ -1271,7 +1271,7 @@ void Engine::dispose()
 	}
 
 	// dispose object 3d VBO renderer
-	object3DVBORenderer->dispose();
+	object3DRenderer->dispose();
 	if (instance == this) {
 		guiRenderer->dispose();
 	}

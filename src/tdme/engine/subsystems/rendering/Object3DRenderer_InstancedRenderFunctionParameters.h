@@ -21,11 +21,11 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
 /** 
- * Object 3D VBO renderer parameters
+ * Object 3D renderer parameters
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::subsystems::rendering::Object3DVBORenderer_InstancedRenderFunctionParameters final {
+struct tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters final {
 	string shader;
 	uint32_t renderTypes;
 	Camera* camera;

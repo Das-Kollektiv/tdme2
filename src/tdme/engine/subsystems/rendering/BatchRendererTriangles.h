@@ -30,11 +30,11 @@ using tdme::math::Vector3;
 using tdme::math::Matrix4x4;
 
 /** 
- * Batch VBO renderer for transparent triangles
+ * Batch renderer for transparent triangles
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::rendering::BatchVBORendererTriangles final
+class tdme::engine::subsystems::rendering::BatchRendererTriangles final
 {
 	friend class TransparentRenderFacesGroup;
 
@@ -121,10 +121,10 @@ public:
 	 * @param renderer renderer
 	 * @param id id
 	 */
-	BatchVBORendererTriangles(Renderer* renderer, int32_t id);
+	BatchRendererTriangles(Renderer* renderer, int32_t id);
 
 	/**
 	 * Destructor
 	 */
-	~BatchVBORendererTriangles();
+	~BatchRendererTriangles();
 };

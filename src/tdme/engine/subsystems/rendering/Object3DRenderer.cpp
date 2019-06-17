@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 
 #include <algorithm>
 #include <map>
@@ -23,14 +23,14 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
-#include <tdme/engine/subsystems/rendering/BatchVBORendererPoints.h>
-#include <tdme/engine/subsystems/rendering/BatchVBORendererTriangles.h>
+#include <tdme/engine/subsystems/rendering/BatchRendererPoints.h>
+#include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DGroupVBORenderer.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer_InstancedRenderFunctionParameters.h>
-#include <tdme/engine/subsystems/rendering/Object3DVBORenderer_TransparentRenderFacesGroupPool.h>
+#include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
+#include <tdme/engine/subsystems/rendering/Object3DRenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
@@ -63,7 +63,7 @@ using std::string;
 using std::to_string;
 using std::unordered_set;
 
-using tdme::engine::subsystems::rendering::Object3DVBORenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::PointsParticleSystem;
@@ -79,14 +79,14 @@ using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
-using tdme::engine::subsystems::rendering::BatchVBORendererPoints;
-using tdme::engine::subsystems::rendering::BatchVBORendererTriangles;
+using tdme::engine::subsystems::rendering::BatchRendererPoints;
+using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DGroupVBORenderer;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer_InstancedRenderFunctionParameters;
-using tdme::engine::subsystems::rendering::Object3DVBORenderer_TransparentRenderFacesGroupPool;
+using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
+using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::Object3DRenderer_TransparentRenderFacesGroupPool;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
@@ -109,16 +109,16 @@ using tdme::utils::FloatBuffer;
 using tdme::utils::Pool;
 using tdme::utils::Console;
 
-constexpr int32_t Object3DVBORenderer::BATCHVBORENDERER_MAX;
-constexpr int32_t Object3DVBORenderer::INSTANCEDRENDERING_OBJECTS_MAX;
+constexpr int32_t Object3DRenderer::BATCHRENDERER_MAX;
+constexpr int32_t Object3DRenderer::INSTANCEDRENDERING_OBJECTS_MAX;
 
-Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer) {
+Object3DRenderer::Object3DRenderer(Engine* engine, Renderer* renderer) {
 	this->engine = engine;
 	this->renderer = renderer;
-	transparentRenderFacesGroupPool = new Object3DVBORenderer_TransparentRenderFacesGroupPool();
+	transparentRenderFacesGroupPool = new Object3DRenderer_TransparentRenderFacesGroupPool();
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(65535);
-	psePointBatchVBORenderer = new BatchVBORendererPoints(renderer, 0);
+	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
 		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::THREADS_MAX:1;
 		bbEffectColorMuls.resize(threadCount);
@@ -133,66 +133,66 @@ Object3DVBORenderer::Object3DVBORenderer(Engine* engine, Renderer* renderer) {
 	}
 }
 
-Object3DVBORenderer::~Object3DVBORenderer() {
-	for (auto batchVBORenderer: trianglesBatchVBORenderers) {
-		delete batchVBORenderer;
+Object3DRenderer::~Object3DRenderer() {
+	for (auto batchRenderer: trianglesBatchRenderers) {
+		delete batchRenderer;
 	}
 	delete transparentRenderFacesGroupPool;
 	delete transparentRenderFacesPool;
 	delete pseTransparentRenderPointsPool;
-	delete psePointBatchVBORenderer;
+	delete psePointBatchRenderer;
 }
 
-void Object3DVBORenderer::initialize()
+void Object3DRenderer::initialize()
 {
-	psePointBatchVBORenderer->initialize();
+	psePointBatchRenderer->initialize();
 	for (auto i = 0; i < threadCount; i++) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3dvborenderer.instancedrendering." + to_string(i), 3, false);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3drenderer.instancedrendering." + to_string(i), 3, false);
 		vboInstancedRenderingIds[i] = vboManaged->getVBOIds();
 	}
 }
 
-void Object3DVBORenderer::dispose()
+void Object3DRenderer::dispose()
 {
 	// dispose VBOs
 	for (auto i = 0; i < threadCount; i++) {
-		Engine::getInstance()->getVBOManager()->removeVBO("tdme.object3dvborenderer.instancedrendering." + to_string(i));
+		Engine::getInstance()->getVBOManager()->removeVBO("tdme.object3drenderer.instancedrendering." + to_string(i));
 	}
 	// dispose batch vbo renderer
-	for (auto batchVBORenderer: trianglesBatchVBORenderers) {
-		batchVBORenderer->dispose();
-		batchVBORenderer->release();
+	for (auto batchRenderer: trianglesBatchRenderers) {
+		batchRenderer->dispose();
+		batchRenderer->release();
 	}
-	psePointBatchVBORenderer->dispose();
+	psePointBatchRenderer->dispose();
 }
 
-BatchVBORendererTriangles* Object3DVBORenderer::acquireTrianglesBatchVBORenderer()
+BatchRendererTriangles* Object3DRenderer::acquireTrianglesBatchRenderer()
 {
 	// check for free batch vbo renderer
 	auto i = 0;
-	for (auto batchVBORenderer: trianglesBatchVBORenderers) {
-		if (batchVBORenderer->acquire()) return batchVBORenderer;
+	for (auto batchRenderer: trianglesBatchRenderers) {
+		if (batchRenderer->acquire()) return batchRenderer;
 		i++;
 	}
 	// try to add one
-	if (i < BATCHVBORENDERER_MAX) {
-		auto batchVBORenderer = new BatchVBORendererTriangles(renderer, i);
-		batchVBORenderer->initialize();
-		trianglesBatchVBORenderers.push_back(batchVBORenderer);
-		if (batchVBORenderer->acquire()) return batchVBORenderer;
+	if (i < BATCHRENDERER_MAX) {
+		auto batchRenderer = new BatchRendererTriangles(renderer, i);
+		batchRenderer->initialize();
+		trianglesBatchRenderers.push_back(batchRenderer);
+		if (batchRenderer->acquire()) return batchRenderer;
 
 	}
-	Console::println(string("Object3DVBORenderer::acquireTrianglesBatchVBORenderer()::failed"));
+	Console::println(string("Object3DRenderer::acquireTrianglesBatchRenderer()::failed"));
 	// nope
 	return nullptr;
 }
 
-void Object3DVBORenderer::reset()
+void Object3DRenderer::reset()
 {
 	visibleObjectsByModels.clear();
 }
 
-void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
+void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
@@ -274,7 +274,7 @@ void Object3DVBORenderer::render(const vector<Object3D*>& objects, bool renderTr
 	}
 }
 
-void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces)
+void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*>& transparentRenderFaces)
 {
 	// all those faces should share the object and object 3d group, ...
 	auto object3DGroup = transparentRenderFaces[0]->object3DGroup;
@@ -343,13 +343,13 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	}
 }
 
-void Object3DVBORenderer::renderTransparentFacesGroups(void* context) {
+void Object3DRenderer::renderTransparentFacesGroups(void* context) {
 	for (auto it: transparentRenderFacesGroups) {
 		it.second->render(renderer, context);
 	}
 }
 
-void Object3DVBORenderer::releaseTransparentFacesGroups()
+void Object3DRenderer::releaseTransparentFacesGroups()
 {
 	for (auto it: transparentRenderFacesGroups) {
 		transparentRenderFacesGroupPool->release(it.second);
@@ -357,7 +357,7 @@ void Object3DVBORenderer::releaseTransparentFacesGroups()
 	transparentRenderFacesGroups.clear();
 }
 
-void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
+void Object3DRenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderObjectsOfSameTypeInstanced(objects, collectTransparentFaces, renderTypes);
 	} else {
@@ -365,7 +365,7 @@ void Object3DVBORenderer::renderObjectsOfSameType(const vector<Object3D*>& objec
 	}
 }
 
-void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
+void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
 	Vector3 objectCamFromAxis;
 	auto camera = engine->getCamera();
@@ -568,7 +568,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, const Object3DVBORenderer_InstancedRenderFunctionParameters& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool) {
+void Object3DRenderer::instancedRenderFunction(int threadIdx, void* context, const Object3DRenderer_InstancedRenderFunctionParameters& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool) {
 	Matrix4x4Negative matrix4x4Negative;
 
 	Vector3 objectCamFromAxis;
@@ -764,12 +764,12 @@ void Object3DVBORenderer::instancedRenderFunction(int threadIdx, void* context, 
 	renderer->unbindBufferObjects(context);
 }
 
-void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
+void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {	// use default context
 	auto context = renderer->getDefaultContext();
 
 	//
-	Object3DVBORenderer_InstancedRenderFunctionParameters parameters;
+	Object3DRenderer_InstancedRenderFunctionParameters parameters;
 
 	//
 	Vector3 objectCamFromAxis;
@@ -907,7 +907,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-void Object3DVBORenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
+void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
 	auto facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
@@ -974,7 +974,7 @@ void Object3DVBORenderer::setupMaterial(void* context, Object3DGroup* object3DGr
 	}
 }
 
-void Object3DVBORenderer::clearMaterial(void* context)
+void Object3DRenderer::clearMaterial(void* context)
 {
 	// TODO: optimize me! We do not need always to clear material
 	// unbind diffuse texture
@@ -999,7 +999,7 @@ void Object3DVBORenderer::clearMaterial(void* context)
 	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 }
 
-void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePses)
+void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 {
 	// TODO: Move me into own class
 	// TODO: check me performance wise again
@@ -1041,15 +1041,15 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 			// TODO: maybe use onBindTexture() or onUpdatePointSize()
 			engine->getParticlesShader()->setParameters(context, currentPpse->getTextureId(), currentPpse->getPointSize());
 			// render, clear
-			psePointBatchVBORenderer->render(context);
-			psePointBatchVBORenderer->clear();
+			psePointBatchRenderer->render(context);
+			psePointBatchRenderer->clear();
 			//
 			currentPpse = (PointsParticleSystem*)point.cookie;
 		}
-		psePointBatchVBORenderer->addPoint(point);
+		psePointBatchRenderer->addPoint(point);
 	}
 
-	if (psePointBatchVBORenderer->hasPoints() == true) {
+	if (psePointBatchRenderer->hasPoints() == true) {
 		// issue rendering
 		renderer->setEffectColorAdd(context, currentPpse->getEffectColorAdd().getArray());
 		renderer->setEffectColorMul(context, currentPpse->getEffectColorMul().getArray());
@@ -1057,8 +1057,8 @@ void Object3DVBORenderer::render(const vector<PointsParticleSystem*>& visiblePse
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()
 		engine->getParticlesShader()->setParameters(context, currentPpse->getTextureId(), currentPpse->getPointSize());
 		// render, clear
-		psePointBatchVBORenderer->render(context);
-		psePointBatchVBORenderer->clear();
+		psePointBatchRenderer->render(context);
+		psePointBatchRenderer->clear();
 	}
 
 	// done
