@@ -9,6 +9,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/audio/Audio.h>
+#include <tdme/audio/Sound.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3DRenderGroup.h>
@@ -39,8 +41,10 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
+#include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
+#include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/model/LevelEditorEntityLODLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
@@ -61,6 +65,7 @@
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/ModelProperties.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
+#include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
@@ -71,6 +76,9 @@ using std::string;
 using std::to_string;
 
 using tdme::tools::leveleditor::logic::Level;
+
+using tdme::audio::Audio;
+using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3DRenderGroup;
@@ -101,8 +109,10 @@ using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::tools::shared::model::LevelEditorEntity_EntityType;
+using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntity_EntityType;
+using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
@@ -122,6 +132,7 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
+using tdme::tools::shared::tools::Tools;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
@@ -580,6 +591,28 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, const Vector3& tr
 		transformations.update();
 		rigidBody->fromTransformations(transformations);
 		rigidBody->setEnabled(true);
+	}
+}
+
+void Level::addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, const string& id) {
+	for (auto soundDefinition: levelEditorEntity->getSounds()) {
+		if (soundDefinition->getFileName().length() > 0) {
+			string pathName = ModelMetaDataFileImport::getResourcePathName(
+				Tools::getPath(levelEditorEntity->getEntityFileName()),
+				soundDefinition->getFileName()
+			);
+			string fileName = Tools::getFileName(soundDefinition->getFileName());
+			auto sound = new Sound(
+				id + "." + soundDefinition->getId(),
+				pathName,
+				fileName
+			);
+			sound->setGain(soundDefinition->getGain());
+			sound->setPitch(soundDefinition->getPitch());
+			sound->setLooping(soundDefinition->isLooping());
+			sound->setFixed(true);
+			audio->addEntity(sound);
+		}
 	}
 }
 

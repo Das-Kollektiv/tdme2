@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
@@ -10,6 +11,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
+using tdme::audio::Audio;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Transformations;
@@ -164,6 +166,14 @@ public:
 	 * @param translation translation
 	 */
 	static void enableLevel(World* world, LevelEditorLevel* level, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+
+	/**
+	 * Add level editor entity sounds into given audio instance associated with given id
+	 * @param audio audio instance to load sounds into
+	 * @param levelEditorEntity level editor entity
+	 * @param id audio entity id
+	 */
+	static void addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, const string& id);
 
 private:
 	static Model* emptyModel;
