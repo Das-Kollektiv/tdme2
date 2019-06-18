@@ -266,6 +266,7 @@ void EntitySoundsSubScreenController::onSoundApply(int soundIdx, LevelEditorEnti
 				throw ExceptionBase("Key could not be renamed");
 			}
 		}
+		sound->setId(soundsSoundKey[soundIdx]->getController()->getValue().getString());
 		sound->setAnimation(soundsSoundAnimationDropDown[soundIdx]->getController()->getValue().getString());
 		sound->setFileName(soundsSoundFile[soundIdx]->getController()->getValue().getString());
 		sound->setGain(Float::parseFloat(soundsSoundGain[soundIdx]->getController()->getValue().getString()));
