@@ -610,7 +610,7 @@ void Level::addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, 
 			sound->setGain(soundDefinition->getGain());
 			sound->setPitch(soundDefinition->getPitch());
 			sound->setLooping(soundDefinition->isLooping());
-			sound->setFixed(true);
+			sound->setFixed(soundDefinition->isFixed());
 			audio->addEntity(sound);
 		}
 	}
