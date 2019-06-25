@@ -1,5 +1,9 @@
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
+#if defined(_WIN32) && defined(_MSC_VER)
+	#include <windows.h>
+#endif
+
 #include <string>
 
 #include <tdme/engine/Object3DModel.h>
@@ -44,7 +48,7 @@ using tdme::utils::Exception;
 using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
-int32_t LevelEditorEntityBoundingVolume::staticIdx = 0;
+volatile uint32_t LevelEditorEntityBoundingVolume::modelIdx = 0;
 
 LevelEditorEntityBoundingVolume::LevelEditorEntityBoundingVolume(int32_t id, LevelEditorEntity* levelEditorEntity) 
 {
@@ -93,6 +97,16 @@ void LevelEditorEntityBoundingVolume::setupNone()
 	updateLevelEditorEntity();
 }
 
+int32_t LevelEditorEntityBoundingVolume::allocateModelIdx() {
+	uint32_t currentModelIdx = 0;
+	#if defined(_WIN32) && defined(_MSC_VER)
+		currentModelIdx = InterlockedIncrement(&modelIdx);
+	#else
+		currentModelIdx = __sync_add_and_fetch(&modelIdx, 1);
+	#endif
+	return currentModelIdx;
+}
+
 void LevelEditorEntityBoundingVolume::setupSphere(const Vector3& center, float radius)
 {
 	if (boundingVolume != nullptr) delete boundingVolume;
@@ -106,7 +120,7 @@ void LevelEditorEntityBoundingVolume::setupSphere(const Vector3& center, float r
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +
-			to_string(staticIdx++)
+			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
 	updateLevelEditorEntity();
@@ -125,7 +139,7 @@ void LevelEditorEntityBoundingVolume::setupCapsule(const Vector3& a, const Vecto
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +
-			to_string(staticIdx++)
+			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
 	updateLevelEditorEntity();
@@ -144,7 +158,7 @@ void LevelEditorEntityBoundingVolume::setupObb(const Vector3& center, const Vect
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +
-			to_string(staticIdx++)
+			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
 	updateLevelEditorEntity();
@@ -164,7 +178,7 @@ void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector
 			string("_model_bv.") +
 			to_string(id) +
 			string(".") +
-			to_string(staticIdx++)
+			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
 	updateLevelEditorEntity();

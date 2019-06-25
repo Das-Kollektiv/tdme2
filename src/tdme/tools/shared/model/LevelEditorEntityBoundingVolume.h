@@ -24,7 +24,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 class tdme::tools::shared::model::LevelEditorEntityBoundingVolume
 {
 private:
-	static int32_t staticIdx;
+	volatile static uint32_t modelIdx;
 	int32_t id {  };
 	LevelEditorEntity* levelEditorEntity {  };
 	string modelMeshFile {  };
@@ -57,6 +57,11 @@ public:
 	 * @return bounding volume
 	 */
 	virtual BoundingVolume* getBoundingVolume();
+
+	/**
+	 * @return bounding volume model index
+	 */
+	virtual int32_t allocateModelIdx();
 
 	/** 
 	 * Setup bounding volume none
