@@ -93,27 +93,40 @@ Texture* TextureReader::read(const string& texturePathName, const string& textur
 
 	// do cache look up
 	if (useCache == true) {
+		textureCacheMutex.lock();
 		auto textureCacheIt = textureCache.find(cacheId);
 		if (textureCacheIt != textureCache.end()) {
-			return textureCacheIt->second;
+			auto texture = textureCacheIt->second;
+			texture->acquireReference();
+			textureCacheMutex.unlock();
+			return texture;
 		}
 	}
 
 	// load diffuse texture
-	auto texture = TextureReader::read(texturePathName, textureFileName);
-	if (texture == nullptr) return nullptr;
+	auto texture = TextureReader::read(texturePathName, textureFileName, false);
+	if (texture == nullptr) {
+		if (useCache == true) textureCacheMutex.unlock();
+		return nullptr;
+	}
 	// additional transparency texture
-	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName);
+	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false);
 	// do we have one?
 	if (transparencyTexture == nullptr) {
 		Console::println("TextureReader::read(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
-		if (useCache == true) textureCache[cacheId] = texture;
+		if (useCache == true) {
+			textureCache[cacheId] = texture;
+			textureCacheMutex.unlock();
+		}
 		return texture;
 	}
 	// same dimensions and supported pixel depth?
 	if (texture->getTextureWidth() != transparencyTexture->getTextureWidth() || texture->getTextureHeight() != transparencyTexture->getTextureHeight()) {
 		Console::println("TextureReader::read(): texture does not match transparency texture dimension: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
-		if (useCache == true) textureCache[cacheId] = texture;
+		if (useCache == true) {
+			textureCache[cacheId] = texture;
+			textureCacheMutex.unlock();
+		}
 		return texture;
 	}
 	// yep, combine diffuse map + diffuse transparency map
@@ -142,9 +155,13 @@ Texture* TextureReader::read(const string& texturePathName, const string& textur
 			textureByteBuffer->put((uint8_t)((transparencyTextureRed + transparencyTextureGreen + transparencyTextureBlue) * 0.3333f));
 		}
 	}
+	textureWithTransparency->acquireReference();
+	if (useCache == true) {
+		textureCache[cacheId] = textureWithTransparency;
+		textureCacheMutex.unlock();
+	}
 	texture->releaseReference();
 	transparencyTexture->releaseReference();
-	if (useCache == true) textureCache[cacheId] = textureWithTransparency;
 	return textureWithTransparency;
 }
 
