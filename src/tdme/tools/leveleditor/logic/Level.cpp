@@ -594,24 +594,26 @@ void Level::enableLevel(World* world, LevelEditorLevel* level, const Vector3& tr
 	}
 }
 
-void Level::addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, const string& id) {
+void Level::addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, const string& id, const int poolSize) {
 	for (auto soundDefinition: levelEditorEntity->getSounds()) {
 		if (soundDefinition->getFileName().length() > 0) {
-			string pathName = ModelMetaDataFileImport::getResourcePathName(
-				Tools::getPath(levelEditorEntity->getEntityFileName()),
-				soundDefinition->getFileName()
-			);
-			string fileName = Tools::getFileName(soundDefinition->getFileName());
-			auto sound = new Sound(
-				id + "." + soundDefinition->getId(),
-				pathName,
-				fileName
-			);
-			sound->setGain(soundDefinition->getGain());
-			sound->setPitch(soundDefinition->getPitch());
-			sound->setLooping(soundDefinition->isLooping());
-			sound->setFixed(soundDefinition->isFixed());
-			audio->addEntity(sound);
+			for (auto poolIdx = 0; poolIdx < poolSize; poolIdx++) {
+				string pathName = ModelMetaDataFileImport::getResourcePathName(
+					Tools::getPath(levelEditorEntity->getEntityFileName()),
+					soundDefinition->getFileName()
+				);
+				string fileName = Tools::getFileName(soundDefinition->getFileName());
+				auto sound = new Sound(
+					id + "." + soundDefinition->getId() + (poolSize > 1?"." + to_string(poolIdx):""),
+					pathName,
+					fileName
+				);
+				sound->setGain(soundDefinition->getGain());
+				sound->setPitch(soundDefinition->getPitch());
+				sound->setLooping(soundDefinition->isLooping());
+				sound->setFixed(soundDefinition->isFixed());
+				audio->addEntity(sound);
+			}
 		}
 	}
 }

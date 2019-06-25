@@ -172,8 +172,9 @@ public:
 	 * @param audio audio instance to load sounds into
 	 * @param levelEditorEntity level editor entity
 	 * @param id audio entity id
+	 * @param poolSize pool size, which is optional if you want to use a pool for each sound
 	 */
-	static void addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, const string& id);
+	static void addEntitySounds(Audio* audio, LevelEditorEntity* levelEditorEntity, const string& id, const int poolSize = 1);
 
 private:
 	static Model* emptyModel;
