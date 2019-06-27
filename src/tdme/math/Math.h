@@ -232,4 +232,22 @@ public:
 		return std::tan(value);
 	}
 
+	/**
+	 * Returns e raised to the given power
+	 * @param value value
+	 * @return e
+	 */
+	inline static float exp(float value) {
+		return std::exp(value);
+	}
+
+	/**
+	 * Returns the natural (base e) logarithm of value
+	 * @param value value
+	 * @return log
+	 */
+	inline static float log(float value) {
+		return std::log(value);
+	}
+
 };
