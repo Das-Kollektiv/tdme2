@@ -191,7 +191,8 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	auto modelViewMatrix = renderer->getModelViewMatrix();
+	// points are stored in world space
+	auto cameraMatrix = engine->cameraMatrix;
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -224,7 +225,7 @@ void PointsParticleSystemInternal::updateParticles()
 		color[2] += colorAdd[2] * static_cast< float >(timeDelta);
 		color[3] += colorAdd[3] * static_cast< float >(timeDelta);
 		// transform particle position to camera space
-		modelViewMatrix.multiply(particle.position, point);
+		cameraMatrix.multiply(particle.position, point);
 		//
 		activeParticles++;
 		// compute distance from camera

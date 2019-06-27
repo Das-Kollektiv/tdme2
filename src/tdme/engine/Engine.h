@@ -103,6 +103,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
+	friend class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
 	friend class tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMapping;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
@@ -178,6 +179,7 @@ private:
 	bool renderingComputedTransformations {  };
 	Matrix4x4 modelViewMatrix {  };
 	Matrix4x4 projectionMatrix {  };
+	Matrix4x4 cameraMatrix {  };
 
 	vector<string> postProcessingPrograms;
 

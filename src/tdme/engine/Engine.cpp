@@ -903,9 +903,6 @@ void Engine::display()
 	// default context
 	auto context = Engine::renderer->getDefaultContext();
 
-	// update camera
-	camera->update(context, width, height);
-
 	// create shadow maps
 	if (shadowMapping != nullptr) shadowMapping->createShadowMaps();
 
@@ -948,6 +945,11 @@ void Engine::display()
 	// restore camera from shadow map rendering
 	camera->update(context, width, height);
 
+	// store matrices
+	modelViewMatrix.set(renderer->getModelViewMatrix());
+	projectionMatrix.set(renderer->getProjectionMatrix());
+	cameraMatrix.set(renderer->getCameraMatrix());
+
 	// use lighting shader
 	if (lightingShader != nullptr) lightingShader->useProgram(this);
 
@@ -974,10 +976,6 @@ void Engine::display()
 	// render shadows if required
 	if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
 
-	// store matrices
-	modelViewMatrix.set(renderer->getModelViewMatrix());
-	projectionMatrix.set(renderer->getProjectionMatrix());
-
 	// do post processing
 	isUsingPostProcessingTemporaryFrameBuffer = false;
 	if (postProcessingPrograms.size() > 0) {
@@ -985,14 +983,17 @@ void Engine::display()
 		postProcessingFrameBuffer1->enableFrameBuffer();
 	}
 
-	// use particle shader
-	if (particlesShader != nullptr) particlesShader->useProgram(context);
+	// render point particle systems
+	if (visiblePpses.size() > 0) {
+		// use particle shader
+		if (particlesShader != nullptr) particlesShader->useProgram(context);
 
-	// render points based particle systems
-	object3DRenderer->render(visiblePpses);
+		// render points based particle systems
+		object3DRenderer->render(visiblePpses);
 
-	// unuse particle shader
-	if (particlesShader != nullptr) particlesShader->unUseProgram(context);
+		// unuse particle shader
+		if (particlesShader != nullptr) particlesShader->unUseProgram(context);
+	}
 
 	// render objects and particles together
 	if (postProcessingPrograms.size() > 0) {
@@ -1044,6 +1045,11 @@ void Engine::display()
 
 	//
 	for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_WAITING;
+
+	// restore matrices
+	renderer->getModelViewMatrix().set(modelViewMatrix);
+	renderer->getProjectionMatrix().set(projectionMatrix);
+	renderer->getCameraMatrix().set(cameraMatrix);
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
