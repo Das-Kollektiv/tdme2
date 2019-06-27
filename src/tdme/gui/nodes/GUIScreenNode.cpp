@@ -529,8 +529,8 @@ bool GUIScreenNode::removeEffect(const string& id)
 	if (effectIt == effects.end()) {
 		return false;
 	}
-	effects.erase(effectIt);
 	delete effectIt->second;
+	effects.erase(effectIt);
 	return true;
 }
 

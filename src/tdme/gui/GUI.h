@@ -62,7 +62,8 @@ private:
 	GUIColor foccussedBorderColor;
 	vector<GUIElementNode*> focusableNodes {  };
 	vector<GUIScreenNode*> focusableScreenNodes {  };
-	GUIElementNode* focussedNode {  };
+	string focussedNodeScreenId {  };
+	string focussedNodeNodeId {  };
 	GUIColor unfocussedNodeBorderLeftColor;
 	GUIColor unfocussedNodeBorderRightColor;
 	GUIColor unfocussedNodeBorderTopColor;

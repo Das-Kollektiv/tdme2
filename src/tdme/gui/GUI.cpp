@@ -251,7 +251,8 @@ void GUI::resetRenderScreens()
 {
 	// focussed node
 	unfocusNode();
-	focussedNode = nullptr;
+	focussedNodeScreenId.clear();
+	focussedNodeNodeId.clear();
 
 	// unset GUI
 	for (auto i = 0; i < renderScreens.size(); i++) {
@@ -273,7 +274,8 @@ void GUI::addRenderScreen(const string& screenId)
 	renderScreens.push_back(screenIt->second);
 
 	// focussed node
-	focussedNode = nullptr;
+	focussedNodeScreenId.clear();
+	focussedNodeNodeId.clear();
 	determineFocussedNodes();
 }
 
@@ -297,7 +299,8 @@ GUIColor& GUI::getFoccussedBorderColor()
 void GUI::invalidateFocussedNode()
 {
 	unfocusNode();
-	focussedNode = nullptr;
+	focussedNodeScreenId.clear();
+	focussedNodeNodeId.clear();
 }
 
 void GUI::determineFocussedNodes()
@@ -322,11 +325,15 @@ void GUI::determineFocussedNodes()
 
 GUIElementNode* GUI::getFocussedNode()
 {
-	return this->focussedNode;
+	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
+	return focussedNode;
 }
 
 void GUI::unfocusNode()
 {
+	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
 	if (focussedNode != nullptr) {
 		focussedNode->getActiveConditions().remove(GUIElementNode::CONDITION_FOCUS);
 		focussedNode->getBorder().topColor = unfocussedNodeBorderTopColor;
@@ -340,6 +347,8 @@ void GUI::unfocusNode()
 
 void GUI::focusNode()
 {
+	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
 	if (focussedNode != nullptr) {
 		focussedNode->getActiveConditions().add(GUIElementNode::CONDITION_FOCUS);
 		unfocussedNodeBorderTopColor = focussedNode->getBorder().topColor;
@@ -357,11 +366,12 @@ void GUI::focusNode()
 
 void GUI::setFoccussedNode(GUIElementNode* newFoccussedNode)
 {
-	if (this->focussedNode == newFoccussedNode) {
-		return;
-	}
+	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
+	if (focussedNode == newFoccussedNode) return;
 	unfocusNode();
-	this->focussedNode = newFoccussedNode;
+	this->focussedNodeScreenId = newFoccussedNode->getScreenNode()->getId();
+	this->focussedNodeNodeId = newFoccussedNode->getId();
 	focusNode();
 	determineFocussedNodes();
 }
@@ -370,6 +380,8 @@ void GUI::focusNextNode()
 {
 	determineFocussedNodes();
 	unfocusNode();
+	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
 	if (focusableNodes.size() > 0) {
 		auto focussedNodeIdx = -1;
 		for (auto i = 0; i < focusableNodes.size(); i++) {
@@ -378,10 +390,10 @@ void GUI::focusNextNode()
 			}
 		}
 		auto focussedNextNodeIdx = (focussedNodeIdx + 1) % focusableNodes.size();
-		focussedNode = focusableNodes[focussedNextNodeIdx];
-		focusNode();
-		focussedNode->scrollToNodeX();
-		focussedNode->scrollToNodeY();
+		auto newFocussedNode = focusableNodes[focussedNextNodeIdx];
+		setFoccussedNode(newFocussedNode);
+		newFocussedNode->scrollToNodeX();
+		newFocussedNode->scrollToNodeY();
 	}
 }
 
@@ -389,6 +401,8 @@ void GUI::focusPreviousNode()
 {
 	determineFocussedNodes();
 	unfocusNode();
+	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
 	if (focusableNodes.size() > 0) {
 		auto focussedNodeIdx = -1;
 		for (auto i = 0; i < focusableNodes.size(); i++) {
@@ -397,13 +411,11 @@ void GUI::focusPreviousNode()
 			}
 		}
 		int32_t focussedPreviousNodeIdx = (focussedNodeIdx - 1) % focusableNodes.size();
-		if (focussedPreviousNodeIdx < 0)
-			focussedPreviousNodeIdx += focusableNodes.size();
-
-		focussedNode = focusableNodes[focussedPreviousNodeIdx];
-		focusNode();
-		focussedNode->scrollToNodeX();
-		focussedNode->scrollToNodeY();
+		if (focussedPreviousNodeIdx < 0) focussedPreviousNodeIdx += focusableNodes.size();
+		auto newFocussedNode = focusableNodes[focussedPreviousNodeIdx];
+		setFoccussedNode(newFocussedNode);
+		newFocussedNode->scrollToNodeX();
+		newFocussedNode->scrollToNodeY();
 	}
 }
 
@@ -412,7 +424,7 @@ void GUI::render()
 	if (renderScreens.empty() == true)
 		return;
 
-	if (focussedNode == nullptr) {
+	if (focussedNodeScreenId.empty() == true || focussedNodeNodeId.empty() == true) {
 		focusNextNode();
 	}
 
@@ -544,8 +556,10 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 	if (event->isProcessed() == true) return;
 
 	// otherwise dispatch event to focussed node
-	if (focussedNode != nullptr) {
-		focussedNode->handleKeyboardEvent(event);
+	if (focussedNodeScreenId.empty() == false && focussedNodeNodeId.empty() == false) {
+		auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+		auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
+		if (focussedNode != nullptr) focussedNode->handleKeyboardEvent(event);
 	}
 }
 

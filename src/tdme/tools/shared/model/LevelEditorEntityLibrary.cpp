@@ -184,9 +184,9 @@ void LevelEditorEntityLibrary::removeEntity(int32_t id)
 {
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
-		entitiesById.erase(entityByIdIt);
 		entities.erase(remove(entities.begin(), entities.end(), entityByIdIt->second), entities.end());
 		delete entityByIdIt->second;
+		entitiesById.erase(entityByIdIt);
 	}
 }
 
