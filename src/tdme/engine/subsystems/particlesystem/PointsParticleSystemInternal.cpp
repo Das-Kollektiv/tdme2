@@ -191,7 +191,7 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	// points are stored in world space
+	// points are stored in camera space in points render pool
 	auto cameraMatrix = engine->cameraMatrix;
 	// process particles
 	pointsRenderPool->reset();
