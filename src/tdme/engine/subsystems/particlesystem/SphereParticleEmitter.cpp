@@ -27,7 +27,7 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->sphere = sphere;
-	this->sphereTransformed = dynamic_cast< Sphere* >(sphere->clone());
+	this->sphereTransformed = static_cast< Sphere* >(sphere->clone());
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);

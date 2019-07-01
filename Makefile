@@ -32,8 +32,6 @@ ifeq ($(OS), Darwin)
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3.3 -Lext/moltenvk/MacOs/dynamic -l MoltenVK -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	else
-		CPPVERSION := -std=c++17
-		EXTRAFLAGS := -DCPPTHREADS
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \

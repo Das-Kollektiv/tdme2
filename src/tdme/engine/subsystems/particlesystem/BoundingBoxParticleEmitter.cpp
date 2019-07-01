@@ -31,7 +31,7 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
-	this->obbTransformed = dynamic_cast< OrientedBoundingBox* >(obb->clone());
+	this->obbTransformed = static_cast< OrientedBoundingBox* >(obb->clone());
 }
 
 BoundingBoxParticleEmitter::~BoundingBoxParticleEmitter() {

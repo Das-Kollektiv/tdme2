@@ -143,6 +143,6 @@ private:
 	static vector<string> extensions;
 
 	// maybe have a read write lock here for texture cache, but currently I have no multithreaded access to it
-	static map<string, Texture*> textureCache;
-	static Mutex textureCacheMutex;
+	static map<string, Texture*>* textureCache;
+	static Mutex* textureCacheMutex;
 };

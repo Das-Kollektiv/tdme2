@@ -278,7 +278,7 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 {
 	// all those faces should share the object and object 3d group, ...
 	auto object3DGroup = transparentRenderFaces[0]->object3DGroup;
-	auto object3D = dynamic_cast<Object3D*>(object3DGroup->object);
+	auto object3D = static_cast<Object3D*>(object3DGroup->object);
 	// model view matrix to be used with given transparent render faces
 	Matrix4x4 modelViewMatrix;
 	if (object3DGroup->mesh->skinning == true) {

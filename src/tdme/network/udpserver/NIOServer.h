@@ -140,10 +140,6 @@ s			 * @param maxCCU max ccu
 		return group;
 	}
 
-	/**
-	 * main event loop
-	 */
-	virtual void run() = 0;
 protected:
 	typedef std::map<const std::string, CLIENT*> ClientKeyMap;
 	typedef std::map<const std::string, CLIENT*> GroupKeyMap;
