@@ -44,11 +44,7 @@ public:
 	 * @param value value
 	 */
 	inline IntBuffer* put(int32_t value) {
-		int8_t* intAsInt8 = ((int8_t*)&value);
-		Buffer::put(intAsInt8[0]);
-		Buffer::put(intAsInt8[1]);
-		Buffer::put(intAsInt8[2]);
-		Buffer::put(intAsInt8[3]);
+		Buffer::put((const uint8_t*)&value, sizeof(int32_t));
 		return this;
 	}
 

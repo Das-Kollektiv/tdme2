@@ -1,10 +1,15 @@
 #pragma once
 
+#include <tdme/math/Math.h>
 #include <tdme/utils/fwd-tdme.h>
 
+#include <cstring>
 #include <vector>
 
+using std::memcpy;
 using std::vector;
+
+using tdme::math::Math;
 
 /**
  * Base class of buffers
@@ -42,7 +47,9 @@ public:
 	}
 
 	/**
-	 * @returns position
+	 * Set position
+	 * @param position position
+	 * @returns pointer to this buffer
 	 */
 	inline virtual Buffer* setPosition(int32_t position) {
 		this->position = position;
@@ -59,9 +66,23 @@ public:
 
 	/**
 	 * Put value into buffer
+	 * @param value value
 	 */
 	inline Buffer* put(uint8_t value) {
 		(*buffer)[position++] = value;
+		return this;
+	}
+
+	/**
+	 * Put data into buffer
+	 * @param data pointer to data
+	 * @param size to put
+	 * @returns pointer to this buffer
+	 */
+	inline Buffer* put(const uint8_t* data, int32_t size) {
+		auto sizeUsed = Math::min(size, buffer->size() - position);
+		memcpy(&(*buffer)[position], data, sizeUsed);
+		position+= sizeUsed;
 		return this;
 	}
 

@@ -49,11 +49,7 @@ public:
 	 * @param value value
 	 */
 	inline FloatBuffer* put(float value) {
-		uint8_t* floatAsInt8 = ((uint8_t*)&value);
-		Buffer::put(floatAsInt8[0]);
-		Buffer::put(floatAsInt8[1]);
-		Buffer::put(floatAsInt8[2]);
-		Buffer::put(floatAsInt8[3]);
+		Buffer::put((const uint8_t*)&value, sizeof(float));
 		return this;
 	}
 
@@ -62,9 +58,7 @@ public:
 	 * @param values values
 	 */
 	inline FloatBuffer* put(const array<float, 2>& values) {
-		for (int i = 0; i < values.size(); i++) {
-			put(values[i]);
-		}
+		Buffer::put((const uint8_t*)values.data(), 2 * sizeof(float));
 		return this;
 	}
 
@@ -73,9 +67,7 @@ public:
 	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 3>& values) {
-		for (int i = 0; i < values.size(); i++) {
-			put(values[i]);
-		}
+		Buffer::put((const uint8_t*)values.data(), 3 * sizeof(float));
 		return this;
 	}
 
@@ -84,9 +76,7 @@ public:
 	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 4>& values) {
-		for (int i = 0; i < values.size(); i++) {
-			put(values[i]);
-		}
+		Buffer::put((const uint8_t*)values.data(), 4 * sizeof(float));
 		return this;
 	}
 
@@ -95,9 +85,7 @@ public:
 	 * @param values values
 	 */
 	inline FloatBuffer* put(array<float, 16>& values) {
-		for (int i = 0; i < values.size(); i++) {
-			put(values[i]);
-		}
+		Buffer::put((const uint8_t*)values.data(), 16 * sizeof(float));
 		return this;
 	}
 
