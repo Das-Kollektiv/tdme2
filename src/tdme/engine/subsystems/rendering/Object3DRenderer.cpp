@@ -965,7 +965,8 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
 				object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
-			materialKey+= "," + to_string(diffuseTextureId);
+			materialKey+= ",";
+			materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
 			if (updateOnly == false || currentMaterialKey.empty() == true) {
 				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 				renderer->bindTexture(context, diffuseTextureId);
