@@ -1,11 +1,7 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logo/tdme_logo_full.png)
 
-<div align="center">
-    <a href="https://scan.coverity.com/projects/andreasdr-tdme2">
-        <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/15611/badge.svg"/>
-    </a>
-    [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
-</div>
+![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
 
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
