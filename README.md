@@ -4,7 +4,7 @@
     <a href="https://scan.coverity.com/projects/andreasdr-tdme2">
         <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/15611/badge.svg" />
     </a>
-<span
+</span>
 
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
