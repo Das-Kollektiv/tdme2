@@ -4,6 +4,7 @@
     <a href="https://scan.coverity.com/projects/andreasdr-tdme2">
         <img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/15611/badge.svg"/>
     </a>
+    [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
 </div>
 
 - What is TDME2?
