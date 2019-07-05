@@ -785,6 +785,7 @@ void Engine::computeTransformations()
 	PointsParticleSystem* ppse = nullptr;
 	ParticleSystemEntity* pse = nullptr;
 	Object3DRenderGroup* org = nullptr;
+	Entity* orgEntity = nullptr;
 
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
 	{ \
@@ -840,7 +841,7 @@ void Engine::computeTransformations()
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);
-			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
+			if ((orgEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(orgEntity);
 		} else
 		if ((psg = dynamic_cast< ParticleSystemGroup* >(entity)) != nullptr) {
 			visiblePsgs.push_back(psg); \
@@ -859,7 +860,7 @@ void Engine::computeTransformations()
 
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
-			if ((object = org->getObject()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(object);
+			if ((orgEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(orgEntity);
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}

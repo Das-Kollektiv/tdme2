@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Partition.h>
@@ -25,6 +26,7 @@ using std::vector;
 
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::Engine;
+using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Partition;
 using tdme::engine::model::Face;
@@ -42,7 +44,12 @@ using tdme::math::Matrix4x4;
 
 Object3DRenderGroup::Object3DRenderGroup(
 	const string& id,
-	Model* model
+	Model* model,
+	int lodLevels,
+	float modelLOD2MinDistance,
+	float modelLOD3MinDistance,
+	int modelLOD2ReduceBy,
+	int modelLOD3ReduceBy
 ):
 	id(id)
 {
@@ -52,43 +59,53 @@ Object3DRenderGroup::Object3DRenderGroup(
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->identityMatrix.identity();
-	this->combinedModel = nullptr;
-	this->combinedObject = nullptr;
+	this->combinedModels.resize(Math::clamp(lodLevels, 1, 3));
+	this->combinedEntity = nullptr;
+	lodReduceBy[0] = 1;
+	lodReduceBy[1] = 4;
+	lodReduceBy[2] = 16;
 	setModel(model);
 }
 
 Object3DRenderGroup::~Object3DRenderGroup() {
-	if (combinedObject != nullptr) delete combinedObject;
-	if (combinedModel != nullptr) delete combinedModel;
+	if (combinedEntity != nullptr) delete combinedEntity;
+	for (auto combinedModel: combinedModels) {
+		if (combinedModel != nullptr) delete combinedModel;
+	}
 }
 
 void Object3DRenderGroup::setModel(Model* model) {
 	// dispose old object and combined model
-	if (combinedObject != nullptr) {
-		combinedObject->dispose();
-		delete combinedObject;
-		combinedObject = nullptr;
+	if (combinedEntity != nullptr) {
+		combinedEntity->dispose();
+		delete combinedEntity;
+		combinedEntity = nullptr;
 	}
-	if (combinedModel != nullptr) {
-		delete combinedModel;
-		combinedModel = nullptr;
+	for (auto combinedModel: combinedModels) {
+		if (combinedModel != nullptr) {
+			delete combinedModel;
+			combinedModel = nullptr;
+		}
 	}
 
 	// set up new model
 	this->model = model;
 	// combine objects to a new model
-	combinedModel = new Model(
-		id,
-		id,
-		model->getUpVector(),
-		model->getRotationOrder(),
-		nullptr
-	);
+	for (auto i = 0; i < combinedModels.size(); i++) {
+		combinedModels[i] = new Model(
+			id + ".lod." + to_string(i),
+			id + ".lod." + to_string(i),
+			model->getUpVector(),
+			model->getRotationOrder(),
+			nullptr
+		);
+	}
+	objectCount = 0;
 }
 
 void Object3DRenderGroup::computeBoundingBox() {
-	if (combinedObject == nullptr) return;
-	boundingBox.fromBoundingVolume(combinedObject->getBoundingBox());
+	if (combinedEntity == nullptr) return;
+	boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 }
 
@@ -229,40 +246,72 @@ void Object3DRenderGroup::combineObject(Model* model, const Transformations& tra
 
 void Object3DRenderGroup::updateRenderGroup() {
 	// dispose old object and combined model
-	if (combinedObject != nullptr) {
-		combinedObject->dispose();
-		delete combinedObject;
-		combinedObject = nullptr;
+	if (combinedEntity != nullptr) {
+		combinedEntity->dispose();
+		delete combinedEntity;
+		combinedEntity = nullptr;
 	}
 
 	// create new combined object
-	if (combinedModel != nullptr) {
-		// post process combined model
-		ModelHelper::shrinkToFit(combinedModel);
-		ModelHelper::createDefaultAnimation(combinedModel, 0);
-		ModelHelper::setupJoints(combinedModel);
-		ModelHelper::fixAnimationLength(combinedModel);
-
-		// create object, initialize and
-		combinedObject = new Object3D(id, combinedModel);
-		combinedObject->setShader(shaderId);
-		combinedObject->setDistanceShader(distanceShaderId);
-		combinedObject->setDynamicShadowingEnabled(dynamicShadowing);
-		combinedObject->setEngine(engine);
-
-		//
-		computeBoundingBox();
+	for (auto combinedModel: combinedModels) {
+		if (combinedModel != nullptr) {
+			// post process combined model
+			ModelHelper::shrinkToFit(combinedModel);
+			ModelHelper::createDefaultAnimation(combinedModel, 0);
+			ModelHelper::setupJoints(combinedModel);
+			ModelHelper::fixAnimationLength(combinedModel);
+		}
 	}
+
+	if (combinedModels.size() == 1) {
+		auto combinedObject3D = new Object3D(id, combinedModels[0]);
+		combinedObject3D->setShader(shaderId);
+		combinedObject3D->setDistanceShader(distanceShaderId);
+		combinedObject3D->setDynamicShadowingEnabled(dynamicShadowing);
+		combinedObject3D->setEngine(engine);
+		combinedObject3D->update();
+		combinedEntity = combinedObject3D;
+	} else
+	if (combinedModels.size() > 1) {
+		// create object, initialize and
+		auto combinedLODObject3D = new LODObject3D(
+			id,
+			combinedModels[0],
+			combinedModels[1] == nullptr?LODObject3D::LODLEVELTYPE_NONE:LODObject3D::LODLEVELTYPE_MODEL,
+			25.0f,
+			combinedModels[1],
+			combinedModels[2] == nullptr?LODObject3D::LODLEVELTYPE_NONE:LODObject3D::LODLEVELTYPE_MODEL,
+			50.0f,
+			combinedModels[2]
+
+		);
+		combinedLODObject3D->setShader(shaderId);
+		combinedLODObject3D->setDistanceShader(distanceShaderId);
+		combinedLODObject3D->setDynamicShadowingEnabled(dynamicShadowing);
+		combinedLODObject3D->setEngine(engine);
+		combinedLODObject3D->update();
+		combinedEntity = combinedLODObject3D;
+	}
+
+	//
+	computeBoundingBox();
 }
 
 void Object3DRenderGroup::addObject(const Transformations& transformations) {
-	combineObject(model, transformations, combinedModel);
+	auto lodLevel = 0;
+	for (auto combinedModel: combinedModels) {
+		auto reduceByFactor = lodReduceBy[lodLevel];
+		lodLevel++;
+		if (objectCount % reduceByFactor != 0) continue;
+		combineObject(model, transformations, combinedModel);
+	}
+	objectCount++;
 }
 
 void Object3DRenderGroup::setEngine(Engine* engine)
 {
 	this->engine = engine;
-	if (combinedObject != nullptr) combinedObject->setEngine(engine);
+	if (combinedEntity != nullptr) combinedEntity->setEngine(engine);
 }
 
 void Object3DRenderGroup::setRenderer(Renderer* renderer)
@@ -328,22 +377,22 @@ void Object3DRenderGroup::setFrustumCulling(bool frustumCulling) {
 void Object3DRenderGroup::dispose()
 {
 	// delegate to combined object
-	if (combinedObject != nullptr) {
-		combinedObject->dispose();
-		delete combinedObject;
-		combinedObject = nullptr;
+	if (combinedEntity != nullptr) {
+		combinedEntity->dispose();
+		delete combinedEntity;
+		combinedEntity = nullptr;
 	}
 	// disose combined model
-	if (combinedModel != nullptr) {
-		delete combinedModel;
-		combinedModel = nullptr;
+	for (auto& combinedModel: combinedModels) {
+		if (combinedModel != nullptr) {
+			delete combinedModel;
+			combinedModel = nullptr;
+		}
 	}
 }
 
 void Object3DRenderGroup::initialize()
 {
-	if (combinedObject != nullptr) {
-		combinedObject->initialize();
-	}
+	if (combinedEntity != nullptr) combinedEntity->initialize();
 }
 

@@ -1,11 +1,14 @@
 #pragma once
 
+#include <array>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Entity.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
@@ -18,11 +21,14 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 
+using std::array;
 using std::string;
 using std::to_string;
 
 using tdme::engine::Entity;
 using tdme::engine::Engine;
+using tdme::engine::Object3D;
+using tdme::engine::LODObject3D;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
@@ -55,12 +61,14 @@ private:
 	BoundingBox boundingBox {  };
 	BoundingBox boundingBoxTransformed {  };
 	Matrix4x4 identityMatrix {  };
-	Object3D* combinedObject {  };
+	Entity* combinedEntity {  };
 	Model* model {  };
-	Model* combinedModel {  };
+	vector<Model*> combinedModels {  };
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
+	int objectCount { 0 };
+	array<int, 3> lodReduceBy;
 
 	/**
 	 * Compute bounding box
@@ -98,8 +106,21 @@ public:
 	 * Public constructor
 	 * @param id id
 	 * @param model model
+	 * @param lodLevels lod levels
+	 * @param modelLOD2MinDistance model LOD 2 min distance
+	 * @param modelLOD3MinDistance model LOD 3 min distance
+	 * @param modelLOD2ReduceBy model LOD 2 reduce by factor
+	 * @param modelLOD3ReduceBy model LOD 3 reduce by factor
 	 */
-	Object3DRenderGroup(const string& id, Model* model);
+	Object3DRenderGroup(
+		const string& id,
+		Model* model,
+		int lodLevels = 1,
+		float modelLOD2MinDistance = 25.0f,
+		float modelLOD3MinDistance = 50.0f,
+		int modelLOD2ReduceBy = 4,
+		int modelLOD3ReduceBy = 16
+	);
 
 	/**
 	 * Destructor
@@ -127,10 +148,10 @@ public:
 	void setModel(Model* model);
 
 	/**
-	 * @return object
+	 * @return entity
 	 */
-	inline Object3D* getObject() {
-		return combinedObject;
+	inline Entity* getEntity() {
+		return combinedEntity;
 	}
 
 	/**
@@ -187,14 +208,14 @@ public:
 	// override methods
 	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		this->dynamicShadowing = dynamicShadowing;
-		if (combinedObject != nullptr) {
-			combinedObject->setDynamicShadowingEnabled(dynamicShadowing);
+		if (combinedEntity != nullptr) {
+			combinedEntity->setDynamicShadowingEnabled(dynamicShadowing);
 		}
 	}
 
 	inline virtual void setPickable(bool pickable) override {
-		if (combinedObject != nullptr) {
-			combinedObject->setPickable(pickable);
+		if (combinedEntity != nullptr) {
+			combinedEntity->setPickable(pickable);
 		}
 	}
 
@@ -279,8 +300,12 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
-		if (combinedObject != nullptr) {
-			combinedObject->setShader(id);
+		// TODO: put me into entity interface
+		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<Object3D*>(combinedEntity)->setShader(id);
+		} else
+		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<LODObject3D*>(combinedEntity)->setShader(id);
 		}
 	}
 
@@ -297,8 +322,12 @@ public:
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
-		if (combinedObject != nullptr) {
-			combinedObject->setDistanceShader(id);
+		// TODO: put me into entity interface
+		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShader(id);
+		} else
+		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShader(id);
 		}
 	}
 
@@ -315,8 +344,12 @@ public:
 	 */
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;
-		if (combinedObject != nullptr) {
-			combinedObject->setDistanceShaderDistance(distanceShaderDistance);
+		// TODO: put me into entity interface
+		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
+		} else
+		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
 		}
 	}
 

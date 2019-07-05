@@ -47,6 +47,22 @@ private:
 
 public:
 
+	/**
+	 * Compute closest point in bounding box of given point
+	 * @param point point
+	 * @return closest point of given point in bounding box
+	 */
+	inline Vector3 computeClosestPointInBoundingBox(const Vector3& point) {
+		const auto& pointXYZ = point.getArray();
+		const auto& minXYZ = min.getArray();
+		const auto& maxXYZ = max.getArray();
+		return Vector3(
+			pointXYZ[0] < minXYZ[0]?minXYZ[0]:pointXYZ[0] > maxXYZ[0]?maxXYZ[0]:pointXYZ[0],
+			pointXYZ[1] < minXYZ[1]?minXYZ[1]:pointXYZ[1] > maxXYZ[1]?maxXYZ[1]:pointXYZ[1],
+			pointXYZ[2] < minXYZ[2]?minXYZ[2]:pointXYZ[2] > maxXYZ[2]?maxXYZ[2]:pointXYZ[2]
+		);
+	}
+
 	/** 
 	 * @return min x,y,z vertex
 	 */

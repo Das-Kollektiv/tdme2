@@ -398,7 +398,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
 			auto object3DRenderGroup = new Object3DRenderGroup(
 				"tdme.rendergroup." + itModel.first + "." + itPartition.first,
-				levelEditorEntity->getModel()
+				levelEditorEntity->getModel(),
+				3
 			);
 			object3DRenderGroup->setShader(levelEditorEntity->getShader());
 			object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
