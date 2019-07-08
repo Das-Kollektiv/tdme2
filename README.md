@@ -67,7 +67,7 @@
             - ...
           - there is also support for particle system groups
         - objects with support for LOD
-        - objects with support for render groups for foliage and such
+        - objects with support for render groups for foliage and such with including LOD
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed

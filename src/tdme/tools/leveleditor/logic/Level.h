@@ -39,19 +39,80 @@ public:
 	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
 	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
 
-	static int32_t reduceFoliageBy;
+	static int renderGroupsReduceBy;
+	static int renderGroupsLODLevels;
+	static float renderGroupsLOD2MinDistance;
+	static float renderGroupsLOD3MinDistance;
+	static int renderGroupsLOD2ReduceBy;
+	static int renderGroupsLOD3ReduceBy;
+
 public:
 
 	/**
-	 * @return reduce foliage by returned factor
-	 */
-	static int32_t getReduceFoliageBy();
+ 	 * Set render groups reduce objects by a given factor
+ 	 * @param reduceBy render groups objects reduce by factor
+ 	 */
+	static void setRenderGroupsReduceBy(int32_t reduceBy);
 
 	/**
- 	 * Set to reduce foliage by a given factor
- 	 * @param reduceFoliageBy reduce foliage by factor
- 	 */
-	static void setReduceFoliageBy(int32_t reduceFoliageBy);
+	 * @return render groups LOD2 reduce by factor
+	 */
+	static int getRenderGroupsLod2ReduceBy();
+
+	/**
+	 * @return render groups objects reduce by factor
+	 */
+	static int getRenderGroupsReduceBy();
+
+	/**
+	 * @return render groups LOD levels
+	 */
+	static int getRenderGroupsLodLevels();
+
+	/**
+	 * Set render groups LOD levels
+	 * @param renderGroupsLodLevels render groups LOD levels
+	 */
+	static void setRenderGroupsLodLevels(int lodLevels);
+
+	/**
+	 * @return render groups LOD2 minumum distance
+	 */
+	static float getRenderGroupsLod2MinDistance();
+
+	/**
+	 * Set render groups LOD2 minumum distance
+	 * @param renderGroupsLod2MinDistance render groups LOD2 minumum distance
+	 */
+	static void setRenderGroupsLod2MinDistance(float minDistance);
+
+	/**
+	 * @return render groups LOD3 minumum distance
+	 */
+	static float getRenderGroupsLod3MinDistance();
+
+	/**
+	 * Set render groups LOD3 minumum distance
+	 * @param renderGroupsLod3MinDistance render groups LOD3 minumum distance
+	 */
+	static void setRenderGroupsLod3MinDistance(float minDistance);
+
+	/**
+	 * Set render groups LOD2 reduce by factor
+	 * @param renderGroupsLod2ReduceBy render groups LOD2 reduce by factor
+	 */
+	static void setRenderGroupsLod2ReduceBy(int reduceBy);
+
+	/**
+	 * @return render groups LOD3 reduce by factor
+	 */
+	static int getRenderGroupsLod3ReduceBy();
+
+	/**
+	 * Set render groups LOD3 reduce by factor
+	 * @param renderGroupsLod3ReduceBy render groups LOD3 reduce by factor
+	 */
+	static void setRenderGroupsLod3ReduceBy(int reduceBy);
 
 	/** 
 	 * Set lights from level

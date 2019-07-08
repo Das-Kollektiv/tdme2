@@ -138,14 +138,59 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 
 Model* Level::emptyModel = nullptr;
-int32_t Level::reduceFoliageBy = 1;
+int Level::renderGroupsReduceBy = 1;
+int Level::renderGroupsLODLevels = 3;
+float Level::renderGroupsLOD2MinDistance = 25.0;
+float Level::renderGroupsLOD3MinDistance = 50.0;
+int Level::renderGroupsLOD2ReduceBy = 4;
+int Level::renderGroupsLOD3ReduceBy = 16;
 
-int32_t Level::getReduceFoliageBy() {
-	return reduceFoliageBy;
+int32_t Level::getRenderGroupsReduceBy() {
+	return renderGroupsReduceBy;
 }
 
-void Level::setReduceFoliageBy(int32_t reduceFoliageBy) {
-	Level::reduceFoliageBy = reduceFoliageBy;
+void Level::setRenderGroupsReduceBy(int32_t reduceBy) {
+	Level::renderGroupsReduceBy = reduceBy;
+}
+
+int Level::getRenderGroupsLodLevels() {
+	return renderGroupsLODLevels;
+}
+
+void Level::setRenderGroupsLodLevels(int lodLevels) {
+	renderGroupsLODLevels = lodLevels;
+}
+
+float Level::getRenderGroupsLod2MinDistance() {
+	return renderGroupsLOD2MinDistance;
+}
+
+void Level::setRenderGroupsLod2MinDistance(float minDistance) {
+	renderGroupsLOD2MinDistance = minDistance;
+}
+
+float Level::getRenderGroupsLod3MinDistance() {
+	return renderGroupsLOD3MinDistance;
+}
+
+void Level::setRenderGroupsLod3MinDistance(float minDistance) {
+	renderGroupsLOD3MinDistance = minDistance;
+}
+
+int Level::getRenderGroupsLod2ReduceBy() {
+	return renderGroupsLOD2ReduceBy;
+}
+
+void Level::setRenderGroupsLod2ReduceBy(int reduceBy) {
+	renderGroupsLOD2ReduceBy = reduceBy;
+}
+
+int Level::getRenderGroupsLod3ReduceBy() {
+	return renderGroupsLOD3ReduceBy;
+}
+
+void Level::setRenderGroupsLod3ReduceBy(int reduceBy) {
+	renderGroupsLOD3ReduceBy = reduceBy;
 }
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
@@ -399,7 +444,11 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			auto object3DRenderGroup = new Object3DRenderGroup(
 				"tdme.rendergroup." + itModel.first + "." + itPartition.first,
 				levelEditorEntity->getModel(),
-				3
+				renderGroupsLODLevels,
+				renderGroupsLOD2MinDistance,
+				renderGroupsLOD3MinDistance,
+				renderGroupsLOD2ReduceBy,
+				renderGroupsLOD3ReduceBy
 			);
 			object3DRenderGroup->setShader(levelEditorEntity->getShader());
 			object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
@@ -407,7 +456,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			auto objectIdx = -1;
 			for (auto transformation: itPartition.second) {
 				objectIdx++;
-				if (objectIdx % reduceFoliageBy != 0) continue;
+				if (objectIdx % renderGroupsReduceBy != 0) continue;
 				object3DRenderGroup->addObject(*transformation);
 			}
 			object3DRenderGroup->updateRenderGroup();
