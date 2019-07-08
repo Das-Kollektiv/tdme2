@@ -205,6 +205,7 @@ bool Body::isEnabled()
 void Body::setEnabled(bool enabled)
 {
 	collisionBody->setIsActive(enabled);
+	if (enabled == true) collisionBody->setIsSleeping(false);
 }
 
 bool Body::isSleeping()
