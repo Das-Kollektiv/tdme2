@@ -66,8 +66,9 @@
             - circle on plane emitter
             - ...
           - there is also support for particle system groups
+        - 3d model based objects
         - objects with support for LOD
-        - objects with support for render groups for foliage and such with including LOD
+        - render group objects for foliage and such including LOD support
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed
