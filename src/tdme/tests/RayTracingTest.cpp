@@ -240,7 +240,8 @@ void RayTracingTest::initialize()
 			Level::RIGIDBODY_TYPEID_STATIC
 		);
 	}
-	auto capsuleBig = new Capsule(Vector3(0.0f, 0.35f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.35f);
+	//auto capsuleBig = new Capsule(Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.11f, 0.0f), 0.1f);
+	auto capsuleBig = new Capsule(Vector3(0.0f, 0.25f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.25f);
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, "capsulebig_model");
 	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
 	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
