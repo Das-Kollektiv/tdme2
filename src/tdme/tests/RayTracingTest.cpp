@@ -218,7 +218,6 @@ void RayTracingTest::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto interactionTable = ModelMetaDataFileImport::doImport(-1, "resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm");
-	auto logProduct = ModelMetaDataFileImport::doImport(-1, "resources/tests/asw", "Mesh_Product_Log.fbx.tmm");
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
