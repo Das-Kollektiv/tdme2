@@ -95,7 +95,7 @@ public:
 	void setAutoEmit(bool autoEmit) override;
 	inline int32_t emitParticles() override {
 		auto emittedParticles = 0;
-		for (auto particleSystem: particleSystems) Math::max(emittedParticles, particleSystem->emitParticles());
+		for (auto particleSystem: particleSystems) emittedParticles+= particleSystem->emitParticles();
 		return emittedParticles;
 	}
 
