@@ -19,8 +19,7 @@ ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
 	ifeq ($(VULKAN), YES)
-		CPPVERSION := -std=c++17
-		EXTRAFLAGS := -DVULKAN -DCPPTHREADS
+		EXTRAFLAGS := -DVULKAN 
 		INCLUDES := $(INCLUDES) -Iext/moltenvk/include -Iext/glfw3/include
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \

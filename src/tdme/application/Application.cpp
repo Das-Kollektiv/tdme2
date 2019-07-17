@@ -485,8 +485,8 @@ void Application::displayInternal() {
 	int64_t timeNow = Time::getCurrentMillis();
 	int64_t timeFrame = 1000/Application::FPS;
 	if (Application::timeLast != -1L) {
-		int64_t timePassed = timeNow - timeLast;
 		#if !defined(VULKAN)
+			int64_t timePassed = timeNow - timeLast;
 			if (timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
 		#endif
 	}
