@@ -501,7 +501,6 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			jBoundingVolumes.push_back(jBoundingVolume);
 		} else
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
-			auto mesh = dynamic_cast< ConvexMesh* >(bv);
 			jBoundingVolume["type"] = "convexmesh";
 			jBoundingVolume["file"] = (entityBoundingVolume->getModelMeshFile());
 			jBoundingVolumes.push_back(jBoundingVolume);

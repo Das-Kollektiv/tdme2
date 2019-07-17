@@ -58,12 +58,13 @@ void PhysicsTest2::main(int argc, char** argv)
 
 void PhysicsTest2::display()
 {
-	auto fps = 60.0f;
 	auto start = Time::getCurrentMillis();
+	auto fps = 60.0f;
 	world->update(1.0f / fps);
 	world->synch(engine);
-	auto end = Time::getCurrentMillis();
 	engine->display();
+	auto end = Time::getCurrentMillis();
+	Console::println(string("PhysicsTest2::display::" + to_string(end - start) + "ms"));
 }
 
 void PhysicsTest2::dispose()

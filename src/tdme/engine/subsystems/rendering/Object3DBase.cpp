@@ -219,9 +219,7 @@ void Object3DBase::removeOverlayAnimations()
 	// remove them
 	vector<string> overlayAnimationsToRemove;
 	for (auto it: overlayAnimationsById) {
-		const string& id = it.first;
-		AnimationState* animationState = it.second;
-		overlayAnimationsToRemove.push_back(id);
+		overlayAnimationsToRemove.push_back(it.first);
 	}
 	for (auto animationState: overlayAnimationsToRemove) {
 		removeOverlayAnimation(animationState);
@@ -297,7 +295,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
 		// TODO: check if its better to not compute animation matrix if finished
-		if (animation != nullptr && groupAnimationState != nullptr) {
+		if (animation != nullptr && groupAnimationState != nullptr && groupAnimationState->setup != nullptr) {
 			auto animationMatrices = animation->getTransformationsMatrices();
 			auto frames = groupAnimationState->setup->getFrames();
 			auto fps = model->getFPS();

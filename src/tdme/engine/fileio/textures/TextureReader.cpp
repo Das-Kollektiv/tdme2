@@ -275,9 +275,6 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
     		}
 	}
 
-	// bytes per row
-	int bytesPerRow = png_get_rowbytes(png, info);
-
 	// ... what ever :DDD
 	png_set_interlace_handling(png);
 	png_read_update_info(png, info);

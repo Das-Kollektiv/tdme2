@@ -366,8 +366,6 @@ void NIOUDPClient::processAckReceived(const uint32_t messageId) throw (NIOClient
 	messageMapAckMutex.lock();
 	iterator = messageMapAck.find(messageId);
 	if (iterator != messageMapAck.end()) {
-		// message exists
-		Message* messageAck = &iterator->second;
 		// message ack valid?
 		messageAckValid = true; //messageAck->ip == client->ip && messageAck->port == client->port;
 		// remove if valid

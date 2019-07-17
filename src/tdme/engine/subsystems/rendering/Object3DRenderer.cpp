@@ -777,9 +777,6 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
-	//
-	auto shadowMapping = engine->getShadowMapping();
-
 	// render faces entities
 	auto firstObject = objects[0];
 

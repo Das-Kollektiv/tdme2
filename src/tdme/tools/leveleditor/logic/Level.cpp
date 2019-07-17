@@ -405,7 +405,6 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
-		auto properties = object->getTotalProperties();
 
 		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
 		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) continue;
@@ -425,8 +424,6 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 			entity->setTranslation(entity->getTranslation().clone().add(translation));
 			entity->setPickable(pickable);
-			auto shadowingProperty = properties->getProperty("shadowing");
-			auto omitShadowing = shadowingProperty != nullptr && StringUtils::equalsIgnoreCase(shadowingProperty->getValue(), "false");
 			entity->setDynamicShadowingEnabled(object->getEntity()->isDynamicShadowing());
 			if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));

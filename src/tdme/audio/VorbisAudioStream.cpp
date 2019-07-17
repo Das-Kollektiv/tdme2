@@ -101,7 +101,6 @@ void VorbisAudioStream::fillBuffer(ByteBuffer* data) {
 		bytesDecoded = decoder.readFromStream(data);
 		if (looping == true && bytesDecoded < data->getCapacity()) {
 			decoder.reset();
-			bytesDecoded += decoder.readFromStream(data);
 		}
 	} catch (FileSystemException& fse) {
 		Console::println(string("Audio stream: '" + (id) + "': " + fse.what()));

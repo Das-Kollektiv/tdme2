@@ -59,13 +59,14 @@ void PivotTest::display()
 {
 	auto fps = 60.0f;
 	auto start = Time::getCurrentMillis();
-	auto end = Time::getCurrentMillis();
 	auto entity = engine->getEntity("box");
 	entity->getRotation(0).setAngle(entity->getRotation(1).getAngle() + 0.1f);
 	entity->getRotation(1).setAngle(entity->getRotation(1).getAngle() + 0.1f);
 	entity->getRotation(2).setAngle(entity->getRotation(1).getAngle() + 0.1f);
 	entity->update();
 	engine->display();
+	auto end = Time::getCurrentMillis();
+	Console::println(string("PivotTest::display::" + to_string(end - start) + "ms"));
 }
 
 void PivotTest::dispose()

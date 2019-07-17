@@ -90,9 +90,9 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 			this->collisionBody = this->world->world.createCollisionBody(reactphysics3d::Transform());
 			break;
 		default:
+			Console::println("Body::Body(): unsupported type: " + to_string(type) + ": using collision body");
 			this->rigidBody = nullptr;
-			this->collisionBody = nullptr;
-			Console::println("Body::Body(): unsupported type: " + to_string(type));
+			this->collisionBody = this->world->world.createCollisionBody(reactphysics3d::Transform());
 			break;
 	}
 	if (rigidBody != nullptr) {

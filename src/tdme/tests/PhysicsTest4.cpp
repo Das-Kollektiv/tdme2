@@ -69,13 +69,12 @@ void PhysicsTest4::main(int argc, char** argv)
 
 void PhysicsTest4::display()
 {
-	auto box = world->getBody("box");
 	auto start = Time::getCurrentMillis();
 	world->update(1.0f / 60.0f);
 	world->synch(engine);
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("PhysicsTest::display::" + to_string(end - start) + "ms"));
+	Console::println(string("PhysicsTest4::display::" + to_string(end - start) + "ms"));
 }
 
 void PhysicsTest4::dispose()

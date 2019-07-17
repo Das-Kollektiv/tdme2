@@ -150,7 +150,6 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 		//
 		auto shadowMap = shadowMaps[i];
-		auto light = engine->getLightAt(i);
 		// set light to render
 		shader->setRenderLightId(i);
 		// set up light shader uniforms

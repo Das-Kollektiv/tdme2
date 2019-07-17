@@ -331,7 +331,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	// init bounding volume, transformations, collision body
 	this->actorBoundingVolume = actorBoundingVolume;
 	this->actorTransformations.fromTransformations(actorTransformations);
-	auto actorCollisionBody = world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
+	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
 	//	TODO: check if it can be generated more dynamically according to actor bounding volume
@@ -340,10 +340,10 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize, 1.0f, stepSize * 2.0f),
+		Vector3(stepSize * 2.0f, 1.0f, stepSize * 2.0f),
 		Vector3(1.0f, 1.0f, 1.0f)
 	);
-	auto actorCollisionBodySlopeTest = world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
+	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 
 	// positions
 	Vector3 startPositionComputed;

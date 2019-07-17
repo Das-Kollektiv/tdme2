@@ -29,8 +29,6 @@ void LineSegment::computeClosestPointsOnLineSegments(const Vector3& p1, const Ve
 	Vector3 d1;
 	Vector3 d2;
 	Vector3 r;
-	float s;
-	float t;
 	d1.set(q1).sub(p1);
 	d2.set(q2).sub(p2);
 	r.set(p1).sub(p2);
@@ -39,13 +37,13 @@ void LineSegment::computeClosestPointsOnLineSegments(const Vector3& p1, const Ve
 	auto f = Vector3::computeDotProduct(d2, r);
 	// both line segments degenerate into points?
 	if (a <= Math::EPSILON && e <= Math::EPSILON) {
-		s = 0.0f;
-		t = 0.0f;
 		c1 = p1;
 		c2 = p2;
 		return;
 	}
 	// first line segment degenerates into point?
+	float s;
+	float t;
 	if (a <= Math::EPSILON) {
 		s = 0.0f;
 		t = f / e;

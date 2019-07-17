@@ -455,7 +455,6 @@ void ModelEditorScreenController::onLODLevelLoadModel() {
 		ModelEditorScreenController *modelEditorScreenController;
 	};
 
-	auto entity = view->getEntity();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
 	auto entityLodLevel = getLODLevel(lodLevelInt);
 	if (entityLodLevel == nullptr) return;
@@ -476,7 +475,6 @@ void ModelEditorScreenController::onLODLevelClearModel() {
 
 void ModelEditorScreenController::onLODLevelApplySettings() {
 	view->resetEntity();
-	auto entity = view->getEntity();
 	auto lodLevelInt = Tools::convertToIntSilent(lodLevel->getController()->getValue().getString());
 	LevelEditorEntityLODLevel* entityLodLevel = getLODLevel(lodLevelInt);
 	try {
