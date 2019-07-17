@@ -81,11 +81,11 @@ void TextureManager::removeTexture(const string& textureId)
 			// remove from renderer
 			renderer->disposeTexture(textureRendererId);
 			delete textureManaged;
-		} else {
-			//
-			mutex.unlock();
 		}
+		//
+		mutex.unlock();
 		return;
 	}
+	mutex.unlock();
 	Console::println(string("Warning: texture not loaded by texture manager"));
 }
