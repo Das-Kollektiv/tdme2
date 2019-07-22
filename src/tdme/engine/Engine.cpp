@@ -575,7 +575,7 @@ void Engine::initialize(bool debug)
 			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 				shadowMappingEnabled = true;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-				ShadowMapping::setShadowMapSize(512, 512);
+				ShadowMapping::setShadowMapSize(1024, 1024);
 			} else {
 				shadowMappingEnabled = false;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;

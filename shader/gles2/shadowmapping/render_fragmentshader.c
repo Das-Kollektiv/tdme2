@@ -4,7 +4,7 @@
 
 precision highp float;
 
-#define SHADOWMAP_LOOKUPS	2.0
+#define SHADOWMAP_LOOKUPS	2
 
 uniform sampler2D textureUnit;
 uniform float texturePixelWidth;
@@ -52,12 +52,12 @@ void main() {
 				textureUnit,
 				vsShadowCoord.xy +
 					vec2(
-						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + x) * texturePixelWidth,
-						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + y) * texturePixelHeight
+						(float(-SHADOWMAP_LOOKUPS) / 2.0 + 0.5 + float(x)) * texturePixelWidth,
+						(float(-SHADOWMAP_LOOKUPS) / 2.0 + 0.5 + float(y)) * texturePixelHeight
 					)
 			).x < vsShadowCoord.z + depthBias?0.50:0.0;
 		}
-		visibility = visibility / (SHADOWMAP_LOOKUPS * SHADOWMAP_LOOKUPS);
+		visibility = visibility / float(SHADOWMAP_LOOKUPS) * float(SHADOWMAP_LOOKUPS);
 
 		// return color to be blended with framebuffer
 		gl_FragColor = vec4(0.0, 0.0, 0.0, visibility * vsShadowIntensity * 0.5);
