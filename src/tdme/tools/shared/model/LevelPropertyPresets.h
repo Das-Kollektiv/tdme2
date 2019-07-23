@@ -63,7 +63,7 @@ public:
 	/** 
 	 * @return light presets
 	 */
-	const map<string, LevelEditorLight*>* getLightPresets() const;
+	const map<string, LevelEditorLight*>& getLightPresets() const;
 
 private:
 

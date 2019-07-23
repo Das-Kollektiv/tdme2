@@ -102,7 +102,7 @@ private:
 	 * @param animationProcessingTarget animation processing target
 	 * @param object3DGroups object 3D groups
 	 */
-	static void createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups); // TODO: std container: maybe use call by reference
+	static void createGroups(Object3DBase* object3D, const map<string, Group*>& groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups);
 
 	/** 
 	 * Dispose

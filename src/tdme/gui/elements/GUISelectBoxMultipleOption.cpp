@@ -33,13 +33,13 @@ const string& GUISelectBoxMultipleOption::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUISelectBoxMultipleOption::createController(GUINode* node)

@@ -124,11 +124,11 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 			sourceGroup->getName()
 		);
 		if (sourceGroup->getParentGroup() == nullptr) {
-			(*combinedModel->getSubGroups())[combinedModelGroup->getId()] = combinedModelGroup;
+			combinedModel->getSubGroups()[combinedModelGroup->getId()] = combinedModelGroup;
 		} else {
-			(*combinedModelGroup->getParentGroup()->getSubGroups())[combinedModelGroup->getId()] = combinedModelGroup;
+			combinedModelGroup->getParentGroup()->getSubGroups()[combinedModelGroup->getId()] = combinedModelGroup;
 		}
-		(*combinedModel->getGroups())[combinedModelGroup->getId()] = combinedModelGroup;
+		combinedModel->getGroups()[combinedModelGroup->getId()] = combinedModelGroup;
 	}
 
 	// add vertices and such
@@ -175,10 +175,10 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 				)
 			);
 			combinedModelGroupFacesEntity = &combinedModelGroup->getFacesEntities()[combinedModelGroup->getFacesEntities().size() - 1];
-			auto combinedModelGroupFacesEntityMaterial = (*combinedModel->getMaterials())[facesEntity.getMaterial()->getId()];
+			auto combinedModelGroupFacesEntityMaterial = combinedModel->getMaterials()[facesEntity.getMaterial()->getId()];
 			if (combinedModelGroupFacesEntityMaterial == nullptr) {
 				combinedModelGroupFacesEntityMaterial = ModelHelper::cloneMaterial(facesEntity.getMaterial());
-				(*combinedModel->getMaterials())[combinedModelGroupFacesEntityMaterial->getId()] = combinedModelGroupFacesEntityMaterial;
+				combinedModel->getMaterials()[combinedModelGroupFacesEntityMaterial->getId()] = combinedModelGroupFacesEntityMaterial;
 			}
 			combinedModelGroupFacesEntity->setMaterial(combinedModelGroupFacesEntityMaterial);
 		}
@@ -230,7 +230,7 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const Matrix4x4& pare
 	combinedModelGroup->determineFeatures();
 
 	// do child groups
-	for (auto groupIt: *sourceGroup->getSubGroups()) {
+	for (auto groupIt: sourceGroup->getSubGroups()) {
 		combineGroup(groupIt.second, transformationsMatrix, combinedModel);
 	}
 }
@@ -239,7 +239,7 @@ void Object3DRenderGroup::combineObject(Model* model, const Transformations& tra
 	Matrix4x4 transformationsMatrix;
 	transformationsMatrix.set(model->getImportTransformationsMatrix());
 	transformationsMatrix.multiply(transformations.getTransformationsMatrix());
-	for (auto groupIt: *model->getSubGroups()) {
+	for (auto groupIt: model->getSubGroups()) {
 		combineGroup(groupIt.second, transformationsMatrix, combinedModel);
 	}
 }

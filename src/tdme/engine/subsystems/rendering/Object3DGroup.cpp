@@ -64,9 +64,9 @@ void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engi
 	createGroups(object, model->getSubGroups(), model->hasAnimations(), useMeshManager, animationProcessingTarget, object3DGroups);
 }
 
-void Object3DGroup::createGroups(Object3DBase* object3D, map<string, Group*>* groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group*>& groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
 {
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		// skip on joints
 		if (group->isJoint() == true) {

@@ -304,9 +304,9 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	transformationsMatrix.multiply(parentTransformationsMatrix);
 
 	// check if no mesh?
-	if (group->getVertices().size() == 0 && group->getSubGroups()->size() > 0) {
+	if (group->getVertices().size() == 0 && group->getSubGroups().size() > 0) {
 		// ok, check sub meshes
-		for (auto subGroupIt: *group->getSubGroups()) {
+		for (auto subGroupIt: group->getSubGroups()) {
 			determineMeshGroups(level, subGroupIt.second, groupId, transformationsMatrix.clone(), meshGroups);
 		}
 	} else {
@@ -353,7 +353,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	Console::println(to_string(levelModel->getSubGroups()->size()));
 	auto progressTotal = levelModel->getSubGroups()->size();
 	auto progressIdx = 0;
-	for (auto groupIt: *levelModel->getSubGroups()) {
+	for (auto groupIt: levelModel->getSubGroups()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<LevelEditorEntityMeshGroup> meshGroups;
 		determineMeshGroups(level, groupIt.second, "", (Matrix4x4()).identity(), meshGroups);
@@ -392,8 +392,8 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			model->getImportTransformationsMatrix().multiply(translation, translation);
 
 			ModelHelper::cloneGroup(meshGroup.group, model);
-			if (model->getSubGroups()->begin() != model->getSubGroups()->end()) {
-				model->getSubGroups()->begin()->second->getTransformationsMatrix().identity();
+			if (model->getSubGroups().begin() != model->getSubGroups().end()) {
+				model->getSubGroups().begin()->second->getTransformationsMatrix().identity();
 			}
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 			ModelHelper::prepareForIndexedRendering(model);

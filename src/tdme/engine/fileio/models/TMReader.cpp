@@ -109,7 +109,7 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
 		auto material = readMaterial(pathName, &is, version);
-		(*model->getMaterials())[material->getId()] = material;
+		model->getMaterials()[material->getId()] = material;
 	}
 	readSubGroups(&is, model, nullptr, model->getSubGroups());
 	auto animationSetupCount = is.readInt();
@@ -285,8 +285,8 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g)
 		facesEntities[i] = FacesEntity(g, is->readString());
 		if (is->readBoolean() == true) {
 			Material* material = nullptr;
-			auto materialIt = g->getModel()->getMaterials()->find(is->readString());
-			if (materialIt != g->getModel()->getMaterials()->end()) {
+			auto materialIt = g->getModel()->getMaterials().find(is->readString());
+			if (materialIt != g->getModel()->getMaterials().end()) {
 				material = materialIt->second;
 			}
 			facesEntities[i].setMaterial(material);
@@ -366,13 +366,13 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g)
 	}
 }
 
-void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups)
+void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups)
 {
 	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {
 		auto subGroup = readGroup(is, model, parentGroup);
-		(*subGroups)[subGroup->getId()] = subGroup;
-		(*model->getGroups())[subGroup->getId()] = subGroup;
+		subGroups[subGroup->getId()] = subGroup;
+		model->getGroups()[subGroup->getId()] = subGroup;
 	}
 }
 

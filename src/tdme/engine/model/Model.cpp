@@ -49,7 +49,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 }
 
 Model::~Model() {
-	deleteSubGroups(&subGroups);
+	deleteSubGroups(subGroups);
 	for (auto it = materials.begin(); it != materials.end(); ++it) {
 		delete it->second;
 	}
@@ -59,8 +59,8 @@ Model::~Model() {
 	if (boundingBox != nullptr) delete boundingBox;
 }
 
-void Model::deleteSubGroups(map<string, Group*>* subGroups) {
-	for (auto it = subGroups->begin(); it != subGroups->end(); ++it) {
+void Model::deleteSubGroups(const map<string, Group*>& subGroups) {
+	for (auto it = subGroups.begin(); it != subGroups.end(); ++it) {
 		deleteSubGroups(it->second->getSubGroups());
 		delete it->second;
 	}
@@ -85,14 +85,14 @@ RotationOrder* Model::getRotationOrder()
 	return rotationOrder;
 }
 
-map<string, Material*>* Model::getMaterials()
+map<string, Material*>& Model::getMaterials()
 {
-	return &materials;
+	return materials;
 }
 
-map<string, Group*>* Model::getGroups()
+map<string, Group*>& Model::getGroups()
 {
-	return &groups;
+	return groups;
 }
 
 Group* Model::getGroupById(const string& id)
@@ -105,9 +105,9 @@ Group* Model::getGroupById(const string& id)
 
 }
 
-map<string, Group*>* Model::getSubGroups()
+map<string, Group*>& Model::getSubGroups()
 {
-	return &subGroups;
+	return subGroups;
 }
 
 Group* Model::getSubGroupById(const string& id)
@@ -162,9 +162,9 @@ AnimationSetup* Model::getAnimationSetup(const string& id)
 	return nullptr;
 }
 
-map<string, AnimationSetup*>* Model::getAnimationSetups()
+map<string, AnimationSetup*>& Model::getAnimationSetups()
 {
-	return &animationSetups;
+	return animationSetups;
 }
 
 bool Model::hasAnimations()
@@ -186,10 +186,10 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
+bool Model::computeTransformationsMatrix(const map<string, Group*>& groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
 {
 	// iterate through groups
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
@@ -209,7 +209,7 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matr
 
 		// calculate sub groups
 		auto subGroups = group->getSubGroups();
-		if (subGroups->size() > 0) {
+		if (subGroups.size() > 0) {
 			auto haveTransformationsMatrix = computeTransformationsMatrix(subGroups, transformationsMatrix.clone(), frame, groupId, transformationsMatrix);
 			if (haveTransformationsMatrix == true) return true;
 		}
@@ -220,9 +220,9 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matr
 }
 
 bool Model::computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame) {
-	return computeTransformationsMatrix(&subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
+	return computeTransformationsMatrix(subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
 }
 
 bool Model::computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame) {
-	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
+	return computeTransformationsMatrix(subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
 }

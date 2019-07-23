@@ -120,7 +120,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
 		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
-		for (auto groupIt: *model->getGroups()) {
+		for (auto groupIt: model->getGroups()) {
 			auto transformedGroupMatrix = object3DModelInternal->getTransformationsMatrix(groupIt.second->getId());
 			if (transformedGroupMatrix == nullptr) continue;
 			transformedGroupMatrix->multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
@@ -155,9 +155,9 @@ void ModelUtilitiesInternal::invertNormals(Model* model)
 	invertNormals(model->getSubGroups());
 }
 
-void ModelUtilitiesInternal::invertNormals(map<string, Group*>* groups)
+void ModelUtilitiesInternal::invertNormals(const map<string, Group*>& groups)
 {
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		for (auto& normal : group->getNormals()) {
 			// invert

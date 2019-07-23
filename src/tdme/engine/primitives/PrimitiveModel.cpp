@@ -81,7 +81,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// triangle vertices indexes
@@ -133,8 +133,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	// determine features
 	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::prepareForIndexedRendering(model);
 	//
@@ -164,7 +164,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// triangle vertices indexes
@@ -217,8 +217,8 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// determine features
 	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::prepareForIndexedRendering(model);
 	//
@@ -251,7 +251,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// vertices
@@ -324,8 +324,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	// determine features
 	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::computeNormals(model);
 	ModelHelper::prepareForIndexedRendering(model);
@@ -376,7 +376,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// vertices
@@ -470,8 +470,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	// determine features
 	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::computeNormals(model);
 	ModelHelper::prepareForIndexedRendering(model);
@@ -507,13 +507,13 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	setupConvexMeshMaterial(model->getSubGroups(), material);
 }
 
-void PrimitiveModel::setupConvexMeshMaterial(map<string, Group*>* groups, Material* material)
+void PrimitiveModel::setupConvexMeshMaterial(const map<string, Group*>& groups, Material* material)
 {
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		for (auto& faceEntity : group->getFacesEntities()) {
 			faceEntity.setMaterial(material);

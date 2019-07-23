@@ -107,7 +107,7 @@ Model* EngineTest::createWallModel()
 	auto wallMaterial = new Material("wall");
 	wallMaterial->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	wallMaterial->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	(*wall->getMaterials())["wall"] = wallMaterial;
+	wall->getMaterials()["wall"] = wallMaterial;
 	auto wallGroup = new Group(wall, nullptr, "wall", "wall");
 	vector<FacesEntity> groupFacesEntities;
 	vector<Vector3> vertices;
@@ -134,8 +134,8 @@ Model* EngineTest::createWallModel()
 	wallGroup->setTextureCoordinates(textureCoordinates);
 	wallGroup->setFacesEntities(groupFacesEntities);
 	wallGroup->determineFeatures();
-	(*wall->getGroups())["wall"] = wallGroup;
-	(*wall->getSubGroups())["wall"] = wallGroup;
+	wall->getGroups()["wall"] = wallGroup;
+	wall->getSubGroups()["wall"] = wallGroup;
 	ModelHelper::prepareForIndexedRendering(wall);
 	return wall;
 }

@@ -30,7 +30,7 @@ const string& GUIScrollArea::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -42,7 +42,7 @@ map<string, string>* GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
 	attributes["background-color"] = "transparent";
 	attributes["show-on"] = "";
 	attributes["hide-on"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIScrollArea::createController(GUINode* node)

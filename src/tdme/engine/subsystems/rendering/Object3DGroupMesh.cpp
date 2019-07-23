@@ -62,7 +62,7 @@ Object3DGroupMesh::Object3DGroupMesh()
 	skinningMatrices = nullptr;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>& skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
 	//
@@ -81,7 +81,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 	// transformations for skinned meshes
 	auto skinning = group->getSkinning();
 	mesh->skinning = skinning != nullptr;
-	mesh->skinningMatrices = skinningMatrices;
+	mesh->skinningMatrices = &skinningMatrices;
 	// set up transformed vertices, normals and friends
 	if ((skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
@@ -173,8 +173,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 				for (auto& jointWeight : (*jointsWeights)[vertexIndex]) {
 					auto& joint = joints[jointWeight.getJointIndex()];
 					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
-					auto skinningMatrixIt = skinningMatrices->find(joint.getGroupId());
-					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices->end()?skinningMatrixIt->second:nullptr;
+					auto skinningMatrixIt = skinningMatrices.find(joint.getGroupId());
+					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices.end()?skinningMatrixIt->second:nullptr;
 					// next
 					jointWeightIdx++;
 				}
