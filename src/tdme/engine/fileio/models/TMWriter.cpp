@@ -68,14 +68,14 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 	os.writeFloatArray(model->getBoundingBox()->getMax().getArray());
 	os.writeFloat(model->getFPS());
 	os.writeFloatArray(model->getImportTransformationsMatrix().getArray());
-	os.writeInt(model->getMaterials()->size());
-	for (auto it: *model->getMaterials()) {
+	os.writeInt(model->getMaterials().size());
+	for (auto it: model->getMaterials()) {
 		Material* material = it.second;
 		writeMaterial(&os, material);
 	}
 	writeSubGroups(&os, model->getSubGroups());
-	os.writeInt(model->getAnimationSetups()->size());
-	for (auto it: *model->getAnimationSetups()) {
+	os.writeInt(model->getAnimationSetups().size());
+	for (auto it: model->getAnimationSetups()) {
 		AnimationSetup* animationSetup = it.second;
 		writeAnimationSetup(&os, animationSetup);
 	}
@@ -219,10 +219,10 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning) throw
 	}
 }
 
-void TMWriter::writeSubGroups(TMWriterOutputStream* os, map<string, Group*>* subGroups) throw (ModelFileIOException)
+void TMWriter::writeSubGroups(TMWriterOutputStream* os, const map<string, Group*>& subGroups) throw (ModelFileIOException)
 {
-	os->writeInt(subGroups->size());
-	for (auto it: *subGroups) {
+	os->writeInt(subGroups.size());
+	for (auto it: subGroups) {
 		Group* subGroup = it.second;
 		writeGroup(os, subGroup);
 	}

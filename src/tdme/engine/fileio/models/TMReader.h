@@ -348,7 +348,7 @@ private:
 	 * @throws model file IO exception
 	 * @return group
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups) throw (ModelFileIOException); // TODO: std container: maybe use call by reference
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream

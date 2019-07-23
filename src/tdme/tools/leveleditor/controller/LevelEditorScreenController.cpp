@@ -751,7 +751,7 @@ void LevelEditorScreenController::onObjectPropertyPresetApply()
 	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue().getString());
 }
 
-void LevelEditorScreenController::setLightPresetsIds(const map<string, LevelEditorLight*>* lightPresetIds)
+void LevelEditorScreenController::setLightPresetsIds(const map<string, LevelEditorLight*>& lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
 		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >((lightsPresets[i]->getScreenNode()->getNodeById(lightsPresets[i]->getId() + "_inner")));
@@ -762,7 +762,7 @@ void LevelEditorScreenController::setLightPresetsIds(const map<string, LevelEdit
 			"<scrollarea-vertical id=\"" +
 			lightsPresets[i]->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
-		for (auto it: *lightPresetIds) {
+		for (auto it: lightPresetIds) {
 			string lightPresetId = it.first;
 			lightPresetsInnerNodeSubNodesXML =
 				lightPresetsInnerNodeSubNodesXML +
@@ -899,8 +899,8 @@ void LevelEditorScreenController::onLightPresetApply(int32_t lightIdx)
 {
 	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
 	LevelEditorLight* lightPreset = nullptr;
-	auto lightPresetIt = lightPresets->find(lightsPresets[lightIdx]->getController()->getValue().getString());
-	if (lightPresetIt != lightPresets->end()) lightPreset = lightPresetIt->second;
+	auto lightPresetIt = lightPresets.find(lightsPresets[lightIdx]->getController()->getValue().getString());
+	if (lightPresetIt != lightPresets.end()) lightPreset = lightPresetIt->second;
 	if (lightPreset == nullptr) return;
 
 	view->applyLight(lightIdx, lightPreset->getAmbient(), lightPreset->getDiffuse(), lightPreset->getSpecular(), lightPreset->getPosition(), lightPreset->getConstantAttenuation(), lightPreset->getLinearAttenuation(), lightPreset->getQuadraticAttenuation(), lightPreset->getSpotTo(), lightPreset->getSpotDirection(), lightPreset->getSpotExponent(), lightPreset->getSpotCutOff(), lightPreset->isEnabled());

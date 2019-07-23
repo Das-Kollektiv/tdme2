@@ -36,7 +36,7 @@ const string& GUIProgressBar::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIProgressBar::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIProgressBar::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -44,7 +44,7 @@ map<string, string>* GUIProgressBar::getAttributes(GUIScreenNode* screenNode)
 	attributes["value"] = "0.0";
 	attributes["width"] = "223";
 	attributes["height"] = "53";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIProgressBar::createController(GUINode* node)

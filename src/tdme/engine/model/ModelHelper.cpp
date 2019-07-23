@@ -157,10 +157,10 @@ void ModelHelper::prepareForIndexedRendering(Model* model)
 	prepareForIndexedRendering(model->getSubGroups());
 }
 
-void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
+void ModelHelper::prepareForIndexedRendering(const map<string, Group*>& groups)
 {
 	// we need to prepare the group for indexed rendering
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		auto groupVertices = group->getVertices();
 		auto groupNormals = group->getNormals();
@@ -253,7 +253,7 @@ void ModelHelper::prepareForIndexedRendering(Skinning* skinning, const vector<in
 
 void ModelHelper::setDiffuseMaskedTransparency(Model* model, bool maskedTransparency) {
 	auto materials = model->getMaterials();
-	for (auto it = materials->begin(); it != materials->end(); ++it) {
+	for (auto it = materials.begin(); it != materials.end(); ++it) {
 		auto material = it->second;
 		if (material->hasDiffuseTextureTransparency() == true) {
 			material->setDiffuseTextureMaskedTransparency(maskedTransparency);
@@ -265,15 +265,15 @@ void ModelHelper::setupJoints(Model* model)
 {
 	// determine joints and mark them as joints
 	auto groups = model->getGroups();
-	for (auto it: *model->getSubGroups()) {
+	for (auto it: model->getSubGroups()) {
 		Group* group = it.second;
 		auto skinning = group->getSkinning();
 		// do we have a skinning
 		if (skinning != nullptr) {
 			// yep
 			for (auto& joint : skinning->getJoints()) {
-				auto jointGroupIt = groups->find(joint.getGroupId());
-				if (jointGroupIt != groups->end()) {
+				auto jointGroupIt = groups.find(joint.getGroupId());
+				if (jointGroupIt != groups.end()) {
 					setJoint(jointGroupIt->second);
 				}
 			}
@@ -284,7 +284,7 @@ void ModelHelper::setupJoints(Model* model)
 void ModelHelper::setJoint(Group* root)
 {
 	root->setJoint(true);
-	for (auto it: *root->getSubGroups()) {
+	for (auto it: root->getSubGroups()) {
 		Group* group = it.second;
 		setJoint(group);
 	}
@@ -295,7 +295,7 @@ void ModelHelper::fixAnimationLength(Model* model)
 	// fix animation length
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
 	if (defaultAnimation != nullptr) {
-		for (auto it: *model->getSubGroups()) {
+		for (auto it: model->getSubGroups()) {
 			Group* group = it.second;
 			fixAnimationLength(group, defaultAnimation->getFrames());
 		}
@@ -313,7 +313,7 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 			animation->getTransformationsMatrices()[i].set((*transformationsMatrices)[i]);
 		}
 	}
-	for (auto it: *root->getSubGroups()) {
+	for (auto it: root->getSubGroups()) {
 		Group* group = it.second;
 		fixAnimationLength(group, frames);
 	}
@@ -392,23 +392,23 @@ void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targ
 	for (auto& facesEntity: clonedGroup->getFacesEntities()) {
 		if (facesEntity.getMaterial() == nullptr) continue;
 		Material* material = nullptr;
-		auto materialIt = (*targetModel->getMaterials()).find(facesEntity.getMaterial()->getId());
-		if (materialIt == (*targetModel->getMaterials()).end()) {
+		auto materialIt = targetModel->getMaterials().find(facesEntity.getMaterial()->getId());
+		if (materialIt == targetModel->getMaterials().end()) {
 			material = cloneMaterial(facesEntity.getMaterial());
-			(*targetModel->getMaterials())[material->getId()] = material;
+			targetModel->getMaterials()[material->getId()] = material;
 		} else {
 			material = materialIt->second;
 		}
 		facesEntity.setMaterial(material);
 	}
 	clonedGroup->determineFeatures();
-	(*targetModel->getGroups())[clonedGroup->getId()] = clonedGroup;
+	targetModel->getGroups()[clonedGroup->getId()] = clonedGroup;
 	if (targetParentGroup == nullptr) {
-		(*targetModel->getSubGroups())[clonedGroup->getId()] = clonedGroup;
+		targetModel->getSubGroups()[clonedGroup->getId()] = clonedGroup;
 	} else {
-		(*targetParentGroup->getSubGroups())[clonedGroup->getId()] = clonedGroup;
+		targetParentGroup->getSubGroups()[clonedGroup->getId()] = clonedGroup;
 	}
-	for (auto sourceSubGroupIt: *sourceGroup->getSubGroups()) {
+	for (auto sourceSubGroupIt: sourceGroup->getSubGroups()) {
 		auto subGroup = sourceSubGroupIt.second;
 		cloneGroup(subGroup, targetModel, clonedGroup);
 	}
@@ -529,11 +529,11 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 				);
 				partitionModelGroup->getTransformationsMatrix().set(sourceGroup->getTransformationsMatrix());
 				if (sourceGroup->getParentGroup() == nullptr) {
-					(*partitionModel->getSubGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+					partitionModel->getSubGroups()[partitionModelGroup->getId()] = partitionModelGroup;
 				} else {
-					(*partitionModelGroup->getParentGroup()->getSubGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+					partitionModelGroup->getParentGroup()->getSubGroups()[partitionModelGroup->getId()] = partitionModelGroup;
 				}
-				(*partitionModel->getGroups())[partitionModelGroup->getId()] = partitionModelGroup;
+				partitionModel->getGroups()[partitionModelGroup->getId()] = partitionModelGroup;
 			}
 
 			// get faces entity
@@ -551,10 +551,10 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 					)
 				);
 				partitionModelGroupFacesEntity = &partitionModelGroup->getFacesEntities()[partitionModelGroup->getFacesEntities().size() - 1];
-				auto partitionModelGroupFacesEntityMaterial = (*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()];
+				auto partitionModelGroupFacesEntityMaterial = partitionModel->getMaterials()[facesEntity.getMaterial()->getId()];
 				if (partitionModelGroupFacesEntityMaterial == nullptr) {
 					partitionModelGroupFacesEntityMaterial = cloneMaterial(facesEntity.getMaterial());
-					(*partitionModel->getMaterials())[facesEntity.getMaterial()->getId()] = partitionModelGroupFacesEntityMaterial;
+					partitionModel->getMaterials()[facesEntity.getMaterial()->getId()] = partitionModelGroupFacesEntityMaterial;
 				}
 				partitionModelGroup->getFacesEntities()[partitionModelGroup->getFacesEntities().size() - 1].setMaterial(partitionModelGroupFacesEntityMaterial);
 			}
@@ -618,7 +618,7 @@ void ModelHelper::partitionGroup(Group* sourceGroup, map<string, Model*>& models
 		if (modelByPartitionGroup != nullptr) modelByPartitionGroup->determineFeatures();
 	}
 
-	for (auto groupIt: *sourceGroup->getSubGroups()) {
+	for (auto groupIt: sourceGroup->getSubGroups()) {
 		partitionGroup(groupIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
 	}
 }
@@ -627,7 +627,7 @@ void ModelHelper::partition(Model* model, const Transformations& transformations
 	Matrix4x4 transformationsMatrix;
 	transformationsMatrix.set(model->getImportTransformationsMatrix());
 	transformationsMatrix.multiply(transformations.getTransformationsMatrix());
-	for (auto groupIt: *model->getSubGroups()) {
+	for (auto groupIt: model->getSubGroups()) {
 		partitionGroup(groupIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
 	}
 	for (auto modelsByPartitionIt: modelsByPartition) {
@@ -654,14 +654,14 @@ void ModelHelper::shrinkToFit(Group* group) {
 	group->getBitangents().shrink_to_fit();
 
 	// do child groups
-	for (auto groupIt: *group->getSubGroups()) {
+	for (auto groupIt: group->getSubGroups()) {
 		shrinkToFit(groupIt.second);
 	}
 
 }
 
 void ModelHelper::shrinkToFit(Model* model) {
-	for (auto groupIt: *model->getSubGroups()) {
+	for (auto groupIt: model->getSubGroups()) {
 		shrinkToFit(groupIt.second);
 	}
 }
@@ -704,7 +704,7 @@ float ModelHelper::computeNormals(Group* group, ProgressCallback* progressCallba
 			}
 		}
 	}
-	for (auto subGroupIt: *group->getSubGroups()) {
+	for (auto subGroupIt: group->getSubGroups()) {
 		progress = computeNormals(subGroupIt.second, progressCallback, incrementPerFace, progress);
 	}
 	return progress;
@@ -712,10 +712,10 @@ float ModelHelper::computeNormals(Group* group, ProgressCallback* progressCallba
 
 void ModelHelper::computeNormals(Model* model, ProgressCallback* progressCallback) {
 	auto faceCount = 0;
-	for (auto groupIt: *model->getSubGroups()) {
+	for (auto groupIt: model->getSubGroups()) {
 		faceCount+= determineFaceCount(groupIt.second);
 	}
-	for (auto groupIt: *model->getSubGroups()) {
+	for (auto groupIt: model->getSubGroups()) {
 		computeNormals(groupIt.second, progressCallback, 1.0f / static_cast<float>(faceCount), 0.0f);
 	}
 	prepareForIndexedRendering(model);
@@ -728,7 +728,7 @@ void ModelHelper::computeNormals(Model* model, ProgressCallback* progressCallbac
 int ModelHelper::determineFaceCount(Group* group) {
 	auto faceCount = 0;
 	faceCount+= group->getFaceCount();
-	for (auto subGroupIt: *group->getSubGroups()) {
+	for (auto subGroupIt: group->getSubGroups()) {
 		faceCount+= determineFaceCount(subGroupIt.second);
 	}
 	return faceCount;

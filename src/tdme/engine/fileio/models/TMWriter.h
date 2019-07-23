@@ -304,7 +304,7 @@ private:
 	 * @param subGroups sub groups
 	 * @throws model file IO exception
 	 */
-	static void writeSubGroups(TMWriterOutputStream* os, map<string, Group*>* subGroups) throw (ModelFileIOException); // TODO: std container: maybe use call by reference
+	static void writeSubGroups(TMWriterOutputStream* os, const map<string, Group*>& subGroups) throw (ModelFileIOException);
 
 	/** 
 	 * Write group to output stream

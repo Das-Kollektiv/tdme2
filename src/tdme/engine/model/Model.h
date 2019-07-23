@@ -55,7 +55,7 @@ private:
 	 * Delete sub groups
 	 * @param subGroups sub groups
 	 */
-	void deleteSubGroups(map<string, Group*>* subGroups); // TODO: std container: maybe use call by reference
+	void deleteSubGroups(const map<string, Group*>& subGroups);
 
 	/**
 	 * Set up if model has skinning
@@ -72,7 +72,7 @@ private:
 	 * @param transformationsMatrix transformations matrix
 	 * @return target group transformations
 	 */
-	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix); // TODO: std container: maybe use call by reference
+	bool computeTransformationsMatrix(const map<string, Group*>& groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix); // TODO: std container: maybe use call by reference
 
 public:
 
@@ -107,13 +107,13 @@ public:
 	 * Returns all object materials
 	 * @return materials
 	 */
-	map<string, Material*>* getMaterials();
+	map<string, Material*>& getMaterials();
 
 	/** 
 	 * Returns all object's groups
 	 * @return all groups
 	 */
-	map<string, Group*>* getGroups();
+	map<string, Group*>& getGroups();
 
 	/** 
 	 * Returns a group by given name or null
@@ -126,7 +126,7 @@ public:
 	 * Returns object's sub groups
 	 * @return sub groups
 	 */
-	map<string, Group*>* getSubGroups();
+	map<string, Group*>& getSubGroups();
 
 	/** 
 	 * Returns a sub group by given name or null
@@ -182,7 +182,7 @@ public:
 	/** 
 	 * @return animation setup for given id or null
 	 */
-	map<string, AnimationSetup*>* getAnimationSetups();
+	map<string, AnimationSetup*>& getAnimationSetups();
 
 	/** 
 	 * @return if model has animations

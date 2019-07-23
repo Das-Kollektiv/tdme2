@@ -30,7 +30,7 @@ const string& GUIScrollAreaVertical::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -45,7 +45,7 @@ map<string, string>* GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenN
 	attributes["padding"] = "0";
 	attributes["show-on"] = "";
 	attributes["hide-on"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIScrollAreaVertical::createController(GUINode* node)

@@ -156,9 +156,9 @@ const map<string, vector<PropertyModelClass*>>* LevelPropertyPresets::getObjectP
 	return &objectPropertiesPresets;
 }
 
-const map<string, LevelEditorLight*>* LevelPropertyPresets::getLightPresets() const
+const map<string, LevelEditorLight*>& LevelPropertyPresets::getLightPresets() const
 {
-	return &lightPresets;
+	return lightPresets;
 }
 
 const vector<TiXmlElement*> LevelPropertyPresets::getChildrenByTagName(TiXmlElement* parent, const char* name)

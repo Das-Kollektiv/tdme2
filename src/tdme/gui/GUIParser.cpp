@@ -881,7 +881,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						"'"
 					);
 				}
-				parseTemplate(guiParentNode, node, guiElementIt->second->getTemplate(), *guiElementIt->second->getAttributes(guiParentNode->screenNode), guiElementIt->second);
+				parseTemplate(guiParentNode, node, guiElementIt->second->getTemplate(), guiElementIt->second->getAttributes(guiParentNode->screenNode), guiElementIt->second);
 			}
 		}
 	}

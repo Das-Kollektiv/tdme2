@@ -180,7 +180,7 @@ public:
 	/** 
 	 * @return sub sub groups of this group
 	 */
-	map<string, Group*>* getSubGroups();
+	map<string, Group*>& getSubGroups();
 
 	/** 
 	 * Returns a sub group by id

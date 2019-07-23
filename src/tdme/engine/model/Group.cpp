@@ -195,9 +195,9 @@ void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
 	}
 }
 
-map<string, Group*>* Group::getSubGroups()
+map<string, Group*>& Group::getSubGroups()
 {
-	return &subGroups;
+	return subGroups;
 }
 
 Group* Group::getSubGroupById(const string& groupId)

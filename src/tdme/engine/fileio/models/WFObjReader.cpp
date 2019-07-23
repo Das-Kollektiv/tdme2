@@ -283,8 +283,8 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 					groupFacesEntities.clear();
 					modelGroupVerticesMapping.clear();
 					modelGroupTextureCoordinatesMapping.clear();
-					(*subGroups)[name] = group;
-					(*groups)[name] = group;
+					subGroups[name] = group;
+					groups[name] = group;
 				} else
 				if (command == "usemtl") {
 					if (group != nullptr) {
@@ -303,7 +303,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 					auto materialIt = materials.find(arguments);
 					if (materialIt != materials.end()) {
 						Material* material = materialIt->second;
-						(*group->getModel()->getMaterials())[material->getId()] = material;
+						group->getModel()->getMaterials()[material->getId()] = material;
 						groupFacesEntity->setMaterial(material);
 					}
 				} else {

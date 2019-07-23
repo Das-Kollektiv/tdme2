@@ -36,13 +36,13 @@ const string& GUITabContent::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUITabContent::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUITabContent::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["horizontal-align"] = "center";
 	attributes["vertical-align"] = "center";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUITabContent::createController(GUINode* node)

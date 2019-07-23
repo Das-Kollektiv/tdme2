@@ -30,7 +30,7 @@ const string& GUIDropDown::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIDropDown::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -40,7 +40,7 @@ map<string, string>* GUIDropDown::getAttributes(GUIScreenNode* screenNode)
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
 	attributes["on-change"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIDropDown::createController(GUINode* node)

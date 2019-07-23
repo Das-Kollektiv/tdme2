@@ -42,6 +42,9 @@ class tdme::engine::subsystems::rendering::Object3DBase
 	friend class Object3DBase_TransformedFacesIterator;
 	friend class ModelUtilitiesInternal;
 
+public:
+	static map<string, Matrix4x4*> defaultEmptyMap;
+
 private:
 	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
 
@@ -49,14 +52,14 @@ private:
 	 * Determine skinned group count
 	 * @param groups groups
 	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>* groups); // TODO: std container: maybe use call by reference
+	int32_t determineSkinnedGroupCount(const map<string, Group*>& groups);
 
 	/**
 	 * Determine skinned group count
 	 * @param map* groups
 	 * @param count current count
 	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count); // TODO: std container: maybe use call by reference
+	int32_t determineSkinnedGroupCount(const map<string, Group*>&, int32_t count);
 
 	/**
 	 * Determine skinned groups
@@ -64,7 +67,7 @@ private:
 	 * @param skinningGroups skinning groups
 	 * @param idx idx
 	 */
-	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>& skinningGroups, int32_t idx); // TODO: std container: maybe use call by reference
+	int32_t determineSkinnedGroups(const map<string, Group*>&, vector<Group*>& skinningGroups, int32_t idx);
 
 
 protected:
@@ -87,7 +90,7 @@ protected:
 	 * @param matrices matrices
 	 * @param groups groups
 	 */
-	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups); // TODO: std container: maybe use call by reference
+	virtual void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, const map<string, Group*>& groups);
 
 	/**
 	 * Calculates all groups transformation matrices
@@ -97,7 +100,7 @@ protected:
 	 * @param transformationsMatrices transformations matrices which need to be set up
 	 * @param depth depth
 	 */
-	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>* transformationsMatrices, int32_t depth); // TODO: std container: maybe use call by reference
+	virtual void computeTransformationsMatrices(const map<string, Group*>& groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>* transformationsMatrices, int32_t depth); // TODO: std container: maybe use call by reference
 
 	/**
 	 * Compute transformations for given animation state into given transformations matrices
@@ -118,7 +121,7 @@ protected:
 	 * @param group group
 	 * @return matrices
 	 */
-	virtual map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
+	virtual map<string, Matrix4x4*>& getSkinningGroupsMatrices(Group* group);
 
 	/**
 	 * Public constructor

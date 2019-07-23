@@ -42,8 +42,8 @@ int main(int argc, char** argv)
 			FileSystem::getInstance()->getFileName(targetFileName)
 		);
 		Console::println("Clearing target animation setups");
-		targetModel->getAnimationSetups()->clear();
-		for (auto& animationSetupIt: *srcModel->getAnimationSetups()) {
+		targetModel->getAnimationSetups().clear();
+		for (auto& animationSetupIt: srcModel->getAnimationSetups()) {
 			auto srcAnimationSetup = animationSetupIt.second;
 			Console::println("Adding target animation setup: " + srcAnimationSetup->getId());
 			if (srcAnimationSetup->getOverlayFromGroupId().length() == 0) {

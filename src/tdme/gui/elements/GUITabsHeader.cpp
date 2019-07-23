@@ -36,11 +36,11 @@ const string& GUITabsHeader::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUITabsHeader::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUITabsHeader::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUITabsHeader::createController(GUINode* node)

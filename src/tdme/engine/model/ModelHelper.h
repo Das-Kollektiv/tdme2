@@ -109,7 +109,7 @@ private:
 	 * Prepares this group for indexed rendering
 	 * @param groups groups
 	 */
-	static void prepareForIndexedRendering(map<string, Group*>* groups); // TODO: std container: maybe use call by reference
+	static void prepareForIndexedRendering(const map<string, Group*>& groups);
 
 	/** 
 	 * Maps original vertices to new vertice mapping

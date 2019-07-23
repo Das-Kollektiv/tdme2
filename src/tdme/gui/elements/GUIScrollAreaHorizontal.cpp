@@ -30,7 +30,7 @@ const string& GUIScrollAreaHorizontal::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -45,7 +45,7 @@ map<string, string>* GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* scree
 	attributes["padding"] = "0";
 	attributes["show-on"] = "";
 	attributes["hide-on"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIScrollAreaHorizontal::createController(GUINode* node)

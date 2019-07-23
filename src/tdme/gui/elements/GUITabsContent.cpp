@@ -34,11 +34,11 @@ const string& GUITabsContent::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUITabsContent::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUITabsContent::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUITabsContent::createController(GUINode* node)

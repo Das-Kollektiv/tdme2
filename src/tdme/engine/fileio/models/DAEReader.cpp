@@ -165,8 +165,8 @@ Model* DAEReader::read(const string& pathName, const string& fileName) throw (Mo
 			for (auto xmlNode: getChildrenByTagName(xmlLibraryVisualScene, "node")) {
 				auto group = readVisualSceneNode(pathName, model, nullptr, xmlRoot, xmlNode, fps);
 				if (group != nullptr) {
-					(*model->getSubGroups())[group->getId()] = group;
-					(*model->getGroups())[group->getId()] = group;
+					model->getSubGroups()[group->getId()] = group;
+					model->getGroups()[group->getId()] = group;
 				}
 			}
 		}
@@ -406,8 +406,8 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 	for (auto _xmlNode: getChildrenByTagName(xmlNode, "node")) {
 		auto _group = readVisualSceneNode(pathName, model, group, xmlRoot, _xmlNode, fps);
 		if (_group != nullptr) {
-			(*group->getSubGroups())[_group->getId()] = _group;
-			(*model->getGroups())[_group->getId()] = _group;
+			group->getSubGroups()[_group->getId()] = _group;
+			model->getGroups()[_group->getId()] = _group;
 		}
 	}
 
@@ -445,8 +445,8 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 			for (auto _xmlNode: getChildrenByTagName(xmlLibraryNode, "node")) {
 				auto _group = readVisualSceneNode(pathName, model, parentGroup, xmlRoot, _xmlNode, fps);
 				if (_group != nullptr) {
-					(*group->getSubGroups())[_group->getId()] = _group;
-					(*model->getGroups())[_group->getId()] = _group;
+					group->getSubGroups()[_group->getId()] = _group;
+					model->getGroups()[_group->getId()] = _group;
 				}
 			}
 			// parse geometry
@@ -744,8 +744,8 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 
 				if (xmlMaterialId.length() > 0) {
 					Material* material = nullptr;
-					auto materialIt = model->getMaterials()->find(xmlMaterialId);
-					if (materialIt != model->getMaterials()->end()) {
+					auto materialIt = model->getMaterials().find(xmlMaterialId);
+					if (materialIt != model->getMaterials().end()) {
 						material = materialIt->second;
 					} else {
 						// parse material as we do not have it yet
@@ -1227,7 +1227,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 	}
 
 	// add material to library
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 
 	//
 	return material;
