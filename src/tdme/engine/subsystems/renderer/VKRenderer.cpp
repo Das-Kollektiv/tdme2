@@ -255,9 +255,6 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	if (draw_cmd_started[contextIdx][bufferId] == true) return false;
 
 	//
-	VkResult err;
-
-	//
 	VkResult fence_result;
 	do {
 		fence_result = vkWaitForFences(device, 1, &draw_fences[contextIdx][bufferId], VK_TRUE, 100000000);
@@ -273,6 +270,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	};
 
 	//
+	VkResult err;
 	err = vkBeginCommandBuffer(draw_cmds[contextIdx][bufferId], &cmd_buf_info);
 	assert(!err);
 
@@ -283,15 +281,15 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	return true;
 }
 
-inline bool VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId) {
+inline bool VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId, bool cycleBuffers) {
 	//
 	if (bufferId == -1) bufferId = draw_cmd_current[contextIdx];
 
 	//
 	if (draw_cmd_started[contextIdx][bufferId] == false) return false;
 
-	VkResult err;
 	//
+	VkResult err;
 	err = vkEndCommandBuffer(draw_cmds[contextIdx][bufferId]);
 	assert(!err);
 
@@ -319,7 +317,7 @@ inline bool VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId) {
 
 	//
 	draw_cmd_started[contextIdx][bufferId] = false;
-	draw_cmd_current[contextIdx] = (draw_cmd_current[contextIdx] + 1) % DRAW_COMMANDBUFFER_MAX;
+	if (cycleBuffers == true) draw_cmd_current[contextIdx] = (draw_cmd_current[contextIdx] + 1) % DRAW_COMMANDBUFFER_MAX;
 
 	//
 	return true;
@@ -1431,6 +1429,8 @@ void VKRenderer::reshape() {
 
 void VKRenderer::initializeFrame()
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	//
 	Renderer::initializeFrame();
 
@@ -1526,9 +1526,9 @@ void VKRenderer::finishFrame()
 
 	// end draw command buffer
 	uint32_t submitted_draw_cmd_count = 0;
-	VkCommandBuffer submitted_draw_cmds[CONTEXT_COUNT];
+	VkCommandBuffer submitted_draw_cmds[CONTEXT_COUNT * DRAW_COMMANDBUFFER_MAX];
 	for (auto i = 0; i < CONTEXT_COUNT; i++) {
-		for (auto j = 0; j < 2; j++) {
+		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
 			if (draw_cmd_started[i][j] == true) {
 				//
 				err = vkEndCommandBuffer(draw_cmds[i][j]);
@@ -5292,6 +5292,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 }
 
 void VKRenderer::memoryBarrier() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	VkResult err;
 
 	// end render passes
@@ -5302,7 +5303,7 @@ void VKRenderer::memoryBarrier() {
 		finishSetupCommandBuffer(i);
 		endRenderPass(i);
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-			if (endDrawCommandBuffer(i, j) == true) {
+			if (endDrawCommandBuffer(i, j, false) == true) {
 				submitted_cmd_buff_contextidx[submitted_cmd_buf_count] = i;
 				submitted_cmd_buff_contextbuffidx[submitted_cmd_buf_count++] = j;
 			}
@@ -5313,9 +5314,8 @@ void VKRenderer::memoryBarrier() {
 		//
 		VkResult fence_result;
 		do {
-			fence_result = vkWaitForFences(device, 1, &draw_fences[i][submitted_cmd_buff_contextbuffidx[i]], VK_TRUE, 100000000);
+			fence_result = vkWaitForFences(device, 1, &draw_fences[submitted_cmd_buff_contextidx[i]][submitted_cmd_buff_contextbuffidx[i]], VK_TRUE, 100000000);
 		} while (fence_result == VK_TIMEOUT);
-		vkResetFences(device, 1, &memorybarrier_fence);
 	}
 }
 

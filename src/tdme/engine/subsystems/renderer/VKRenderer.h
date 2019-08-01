@@ -381,7 +381,7 @@ private:
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
-	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1);
+	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
 
 public:
 	const string getShaderVersion() override;

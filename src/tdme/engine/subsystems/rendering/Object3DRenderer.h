@@ -77,6 +77,8 @@ private:
 	Matrix4x4Negative matrix4x4Negative {  };
 	vector<Object3D*> objectsToRender;
 	vector<Object3D*> objectsNotRendered;
+	vector<Object3D*> singleObjectsToRender;
+	vector<Object3D*> singleObjectsNotRendered;
 	int threadCount;
 	vector<ByteBuffer*> bbEffectColorMuls;
 	vector<ByteBuffer*> bbEffectColorAdds;

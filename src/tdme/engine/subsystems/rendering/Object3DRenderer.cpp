@@ -209,11 +209,23 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 	// render objects
 	for (auto& objectsByModelIt: visibleObjectsByModels) {
 		auto& objectsByModel = objectsByModelIt.second;
+		if (objectsByModel.size() == 0) {
+			continue;
+		} else
+		/*
+		if (objectsByModel.size() == 1) {
+			singleObjectsToRender.push_back(objectsByModel[0]);
+		} else
+		*/
 		if (objectsByModel.size() > 0) {
 			renderObjectsOfSameType(objectsByModel, renderTransparentFaces, renderTypes);
-			objectsByModel.clear();
 		}
+		objectsByModel.clear();
 	}
+
+	//
+	singleObjectsToRender.clear();
+
 	// use default context
 	auto context = renderer->getDefaultContext();
 	// render transparent render faces if any exist
@@ -765,7 +777,8 @@ void Object3DRenderer::instancedRenderFunction(int threadIdx, void* context, con
 }
 
 void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
-{	// use default context
+{
+	// use default context
 	auto context = renderer->getDefaultContext();
 
 	//

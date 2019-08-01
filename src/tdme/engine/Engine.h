@@ -192,7 +192,6 @@ private:
 	private:
 		int idx;
 		Semaphore* engineThreadWaitSemaphore;
-		Semaphore* mainThreadWaitSemaphore;
 		void* context;
 	public:
 		enum State { STATE_WAITING, STATE_TRANSFORMATIONS, STATE_RENDERING, STATE_SPINNING };
