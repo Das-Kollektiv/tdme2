@@ -113,7 +113,7 @@ void PhysicsTest3::display()
 	world->synch(engine);
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("PhysicsTest::display::" + to_string(end - start) + "ms"));
+	Console::println(string("PhysicsTest3::display::" + to_string(end - start) + "ms"));
 }
 
 void PhysicsTest3::dispose()

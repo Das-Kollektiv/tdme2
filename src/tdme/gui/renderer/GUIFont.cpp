@@ -74,6 +74,8 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (F
 		if (StringUtils::startsWith(line, "kernings c")) {
 		} else
 		if (StringUtils::startsWith(line, "kerning")) {
+			/*
+			// TODO: not yet supported in the moment
 			StringTokenizer t;
 			t.tokenize(line, " =");
 			t.nextToken();
@@ -83,6 +85,7 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (F
 			auto second = Integer::parseInt(t.nextToken());
 			t.nextToken();
 			auto offset = Integer::parseInt(t.nextToken());
+			*/
 		}
 	}
 	font->lineHeight = font->getTextHeight(LINEHEIGHT_STRING);

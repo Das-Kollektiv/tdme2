@@ -232,11 +232,11 @@ void Object3DGroupMesh::computeTransformations(void* context)
 					// normals
 					transformedNormal->add(cTransformationsMatrix->multiplyNoTranslation(*normal, tmpVector3).scale(weight));
 					// tangent
-					if (tangent != nullptr) {
+					if (tangent != nullptr && transformedTangent != nullptr) {
 						transformedTangent->add(cTransformationsMatrix->multiplyNoTranslation(*tangent, tmpVector3).scale(weight));
 					}
 					// bitangent
-					if (bitangent != nullptr) {
+					if (bitangent != nullptr && transformedBitangent != nullptr) {
 						transformedBitangent->add(cTransformationsMatrix->multiplyNoTranslation(*bitangent, tmpVector3).scale(weight));
 					}
 					//

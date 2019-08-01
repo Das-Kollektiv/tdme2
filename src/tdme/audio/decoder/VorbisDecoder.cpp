@@ -98,11 +98,12 @@ void VorbisDecoder::openFile(const string& pathName, const string& fileName) thr
 		throw AudioDecoderException("Input does not appear to be an OGG bitstream");
 	}
 
-	// fetch audio stream properties
-	char **ptr = ov_comment(&vf, -1)->user_comments;
+	// vorbis info
 	vorbis_info *vi = ov_info(&vf, -1);
 
 	/*
+	// fetch audio stream properties
+	char **ptr = ov_comment(&vf, -1)->user_comments;
 	// Throw the comments plus a few lines about the bitstream we're decoding
 	while (*ptr) {
 		fprintf(stderr, "%s\n", *ptr);

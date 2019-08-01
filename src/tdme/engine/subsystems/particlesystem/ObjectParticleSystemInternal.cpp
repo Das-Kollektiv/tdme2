@@ -187,30 +187,28 @@ void ObjectParticleSystemInternal::fromTransformations(const Transformations& tr
 
 int32_t ObjectParticleSystemInternal::emitParticles()
 {
-	// determine particles to spawn
-	auto particlesToSpawn = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
 	// particles to spawn
-	auto particlesToSpawnInteger = 0;
-	if (autoEmit == true) {
-		particlesToSpawnInteger = static_cast< int32_t >(particlesToSpawn);
-		particlesToSpawnRemainder += particlesToSpawn - particlesToSpawnInteger;
-		if (particlesToSpawnRemainder > 1.0f) {
-			particlesToSpawn += 1.0f;
-			particlesToSpawnInteger++;
-			particlesToSpawnRemainder -= 1.0f;
+	auto particlesToSpawn = 0;
+	{
+		auto particlesToSpawnWithFraction = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
+		if (autoEmit == true) {
+			particlesToSpawn = static_cast< int32_t >(particlesToSpawnWithFraction);
+			particlesToSpawnRemainder += particlesToSpawnWithFraction - particlesToSpawn;
+			if (particlesToSpawnRemainder > 1.0f) {
+				particlesToSpawn++;
+				particlesToSpawnRemainder -= 1.0f;
+			}
+		} else {
+			particlesToSpawn = emitter->getCount();
 		}
-	} else {
-		particlesToSpawnInteger = emitter->getCount();
 	}
 	// skip if nothing to spawn
-	if (particlesToSpawnInteger == 0)
-		return 0;
+	if (particlesToSpawn == 0) return 0;
 	// spawn
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {
 		auto& particle = particles[i];
-		if (particle.active == true)
-			continue;
+		if (particle.active == true) continue;
 		// emit particle
 		emitter->emit(&particle);
 		// enable object
@@ -223,9 +221,7 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 		enabledObjects.push_back(object);
 		// all particles spawned?
 		particlesSpawned++;
-		if (particlesSpawned == particlesToSpawnInteger)
-			break;
-
+		if (particlesSpawned == particlesToSpawn) break;
 	}
 	// done
 	return particlesSpawned;

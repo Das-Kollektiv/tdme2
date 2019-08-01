@@ -134,6 +134,7 @@ void ShadowMap::render(Light* light)
 	// clear depth buffer
 	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
 	// determine visible objects and objects that should generate a shadow
+	Entity* orgEntity = nullptr;
 	Object3D* object = nullptr;
 	LODObject3D* lodObject = nullptr;
 	Object3DRenderGroup* org = nullptr;
@@ -141,10 +142,20 @@ void ShadowMap::render(Light* light)
 	ParticleSystemGroup* psg = nullptr;
 	for (auto entity: *shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
-			if ((object = org->getObject()) != nullptr) {
-				if (object->isDynamicShadowingEnabled() == false) continue;
-				object->preRender(context);
-				visibleObjects.push_back(object);
+			if ((orgEntity = org->getEntity()) != nullptr) {
+				if (orgEntity->isDynamicShadowingEnabled() == false) continue;
+				if ((object = dynamic_cast<Object3D*>(orgEntity)) != nullptr) {
+					object->preRender(context);
+					visibleObjects.push_back(object);
+				} else
+				if ((lodObject = dynamic_cast<LODObject3D*>(orgEntity)) != nullptr) {
+					if (lodObject->isDynamicShadowingEnabled() == false) continue;
+					auto object = lodObject->getLODObject();
+					if (object != nullptr) {
+						object->preRender(context);
+						visibleObjects.push_back(object);
+					}
+				}
 			}
 		} else
 		if ((object = dynamic_cast<Object3D*>(entity)) != nullptr) {

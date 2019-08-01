@@ -150,7 +150,7 @@ int32_t GLES2Renderer::getTextureUnits()
 	return -1;
 }
 
-int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions = string())
+int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions, const string& functions)
 {
 	// create shader
 	int32_t handle = glCreateShader(type);
@@ -289,7 +289,7 @@ void GLES2Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId,
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GLES2Renderer::setProgramAttributeLocation(void* context, int32_t programId, int32_t location, const string& name)
+void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
 	glBindAttribLocation(programId, location, (name).c_str());
 }

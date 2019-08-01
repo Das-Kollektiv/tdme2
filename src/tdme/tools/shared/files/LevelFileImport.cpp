@@ -91,7 +91,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
-	auto version = Float::parseFloat((jRoot["version"].getString()));
+	// auto version = Float::parseFloat((jRoot["version"].getString()));
 	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf((jRoot["ro"].getString())) : RotationOrder::XYZ);
 	level->clearProperties();
 	auto jMapProperties = jRoot["properties"].getArray();
@@ -153,9 +153,7 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 
 	auto jModels = jRoot["models"].getArray();
 	auto jObjects = jRoot["objects"].getArray();
-	auto progressStepCount =  + jObjects.size();
 	auto progressStepCurrent = 0;
-
 	for (auto i = 0; i < jModels.size(); i++) {
 		auto jModel = jModels[i];
 		LevelEditorEntity* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
@@ -426,9 +424,10 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			if (meshGroup.group->getVertices()->size() == 0) {
 				entityType = LevelEditorEntity_EntityType::EMPTY;
 				delete model;
+				model = nullptr;
 			}
 			LevelEditorEntity* levelEditorEntity = nullptr;
-			if (entityType == LevelEditorEntity_EntityType::MODEL) {
+			if (entityType == LevelEditorEntity_EntityType::MODEL && model != nullptr) {
 				for (auto i = 0; i < level->getEntityLibrary()->getEntityCount(); i++) {
 					auto levelEditorEntityCompare = level->getEntityLibrary()->getEntityAt(i);
 					if (levelEditorEntityCompare->getType() != LevelEditorEntity_EntityType::MODEL)
@@ -437,10 +436,11 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 					if (ModelUtilities::equals(model, levelEditorEntityCompare->getModel()) == true) {
 						levelEditorEntity = levelEditorEntityCompare;
 						delete model;
+						model = nullptr;
 						break;
 					}
 				}
-				if (levelEditorEntity == nullptr) {
+				if (levelEditorEntity == nullptr && model != nullptr) {
 					auto modelFileName = meshGroup.name + ".tm";
 					TMWriter::write(
 						model,
@@ -466,6 +466,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			} else {
 				Console::println(string("DAEReader::readLevel(): unknown entity type. Skipping"));
 				delete model;
+				model = nullptr;
 				continue;
 			}
 			Transformations levelEditorObjectTransformations;

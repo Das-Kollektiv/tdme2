@@ -19,8 +19,7 @@ ifeq ($(OS), Darwin)
 	# Mac OS X
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
 	ifeq ($(VULKAN), YES)
-		CPPVERSION := -std=c++17
-		EXTRAFLAGS := -DVULKAN -DCPPTHREADS
+		EXTRAFLAGS := -DVULKAN 
 		INCLUDES := $(INCLUDES) -Iext/moltenvk/include -Iext/glfw3/include
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
@@ -32,8 +31,6 @@ ifeq ($(OS), Darwin)
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3.3 -Lext/moltenvk/MacOs/dynamic -l MoltenVK -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	else
-		CPPVERSION := -std=c++17
-		EXTRAFLAGS := -DCPPTHREADS
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -109,7 +106,7 @@ else ifeq ($(OS), Linux)
 		# Linux, ARM, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GES2Renderer.cpp
+			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
 		# Linux, Vulkan
@@ -448,6 +445,7 @@ SRCS = \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
 	src/tdme/tests/PhysicsTest4.cpp \
+	src/tdme/tests/RayTracingTest.cpp \
 	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
 	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
 	src/tdme/tests/ThreadingTest_TestThread.cpp \
@@ -766,6 +764,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
 	src/tdme/tests/PhysicsTest4-main.cpp \
+	src/tdme/tests/RayTracingTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \

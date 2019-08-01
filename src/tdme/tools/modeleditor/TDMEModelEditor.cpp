@@ -101,7 +101,7 @@ void TDMEModelEditor::display()
 		view->display();
 	}
 	engine->display();
-	view->display();
+	if (view != nullptr) view->display();
 	if (quitRequested == true) {
 		if (view != nullptr) {
 			view->deactivate();

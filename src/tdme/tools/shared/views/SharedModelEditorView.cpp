@@ -267,7 +267,7 @@ void SharedModelEditorView::updateGUIElements()
 		modelEditorScreenController->setLODLevel(entity, lodLevel);
 		modelEditorScreenController->setMaterials(entity);
 		modelEditorScreenController->setAnimations(entity);
-		modelEditorScreenController->unsetTools();
+		modelEditorScreenController->setTools();
 		entitySoundsView->setSounds(entity);
 	} else {
 		modelEditorScreenController->setScreenCaption("Model Editor - no entity loaded");

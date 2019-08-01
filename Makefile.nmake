@@ -327,6 +327,7 @@ SRCS = \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
 	src/tdme/tests/PhysicsTest4.cpp \
+	src/tdme/tests/RayTracingTest.cpp \
 	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
 	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
 	src/tdme/tests/ThreadingTest_TestThread.cpp \
@@ -590,6 +591,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
 	src/tdme/tests/PhysicsTest4-main.cpp \
+	src/tdme/tests/RayTracingTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \

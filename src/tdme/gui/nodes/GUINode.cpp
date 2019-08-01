@@ -921,8 +921,8 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, array<float,2>& posit
 {
 	auto eventXScreen = event->getX();
 	auto eventYScreen = event->getY();
-	auto parentNode = this->parentNode;
 	/*
+	auto parentNode = this->parentNode;
 	while (parentNode != nullptr) {
 		if (parentNode->flow == GUINode_Flow::FLOATING)
 			break;

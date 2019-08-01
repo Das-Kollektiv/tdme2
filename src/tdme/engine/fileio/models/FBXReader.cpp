@@ -133,7 +133,6 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	int framesTotal = 0;
 	for(auto i = 0; i < fbxAnimStackNameArray.GetCount(); i++) {
 		FbxTime fbxStartTime, fbxEndTime;
-		auto fbxCurrentAnimationStack = fbxScene->FindMember<FbxAnimStack>(fbxAnimStackNameArray[i]->Buffer());
 		auto fbxCurrentTakeInfo = fbxScene->GetTakeInfo(*(fbxAnimStackNameArray[i]));
 		if (fbxCurrentTakeInfo != nullptr) {
 			fbxStartTime = fbxCurrentTakeInfo->mLocalTimeSpan.GetStart();
@@ -170,7 +169,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 		}
 		int startFrame = (int)Math::ceil(fbxStartTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f));
 		int endFrame = (int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)) - 1;
-		auto animationSetup = model->addAnimationSetup(
+		model->addAnimationSetup(
 			string(fbxAnimStackNameArray[i]->Buffer()),
 			frameOffset + startFrame,
 			frameOffset + endFrame,
@@ -378,15 +377,12 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 
 	for (auto i = 0; i < fbxPolygonCount; i++) {
 		FbxSurfaceMaterial* fbxMaterial = nullptr;
-		int fbxMaterialId = -1;
 		for (auto l = 0; l < fbxMesh->GetElementMaterialCount() & l < 1; l++) {
 			FbxGeometryElementMaterial* fbxMaterialElement = fbxMesh->GetElementMaterial(l);
 			if (fbxMaterialElement->GetMappingMode() == FbxGeometryElement::eAllSame) {
 				fbxMaterial = fbxMesh->GetNode()->GetMaterial(fbxMaterialElement->GetIndexArray().GetAt(0));
-				fbxMaterialId = fbxMaterialElement->GetIndexArray().GetAt(0);
 			} else {
 				fbxMaterial = fbxMesh->GetNode()->GetMaterial(fbxMaterialElement->GetIndexArray().GetAt(i));
-				fbxMaterialId = fbxMaterialElement->GetIndexArray().GetAt(i);
 			}
 		}
 		Material* material = nullptr;
@@ -897,9 +893,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 
 Group* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Group* parentGroup, const string& pathName) {
 	auto fbxNodeName = fbxNode->GetName();
-	FbxSkeleton* fbxSkeleton = (FbxSkeleton*)fbxNode->GetNodeAttribute();
-	auto group = new Group(model, parentGroup, fbxNodeName, fbxNodeName);
-	return group;
+	return new Group(model, parentGroup, fbxNodeName, fbxNodeName);
 }
 
 void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model, int frameOffset) {

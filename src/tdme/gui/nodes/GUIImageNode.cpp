@@ -110,7 +110,6 @@ void GUIImageNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 
 	{
-		auto renderOffsetXCurrent = guiRenderer->getRenderOffsetX();
 		auto renderOffsetYCurrent = guiRenderer->getRenderOffsetY();
 		auto screenWidth = screenNode->getScreenWidth();
 		auto screenHeight = screenNode->getScreenHeight();

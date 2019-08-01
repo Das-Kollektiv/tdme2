@@ -290,7 +290,7 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 {
 	// all those faces should share the object and object 3d group, ...
 	auto object3DGroup = transparentRenderFaces[0]->object3DGroup;
-	auto object3D = dynamic_cast<Object3D*>(object3DGroup->object);
+	auto object3D = static_cast<Object3D*>(object3DGroup->object);
 	// model view matrix to be used with given transparent render faces
 	Matrix4x4 modelViewMatrix;
 	if (object3DGroup->mesh->skinning == true) {
@@ -790,9 +790,6 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
-	//
-	auto shadowMapping = engine->getShadowMapping();
-
 	// render faces entities
 	auto firstObject = objects[0];
 
@@ -978,7 +975,8 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
 				object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
-			materialKey+= "," + to_string(diffuseTextureId);
+			materialKey+= ",";
+			materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
 			if (updateOnly == false || currentMaterialKey.empty() == true) {
 				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 				renderer->bindTexture(context, diffuseTextureId);

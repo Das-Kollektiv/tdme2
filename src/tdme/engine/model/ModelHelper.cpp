@@ -167,7 +167,6 @@ void ModelHelper::prepareForIndexedRendering(map<string, Group*>* groups)
 		auto groupTextureCoordinates = group->getTextureCoordinates();
 		auto groupTangents = group->getTangents();
 		auto groupBitangents = group->getBitangents();
-		auto groupFaceCount = group->getFaceCount();
 		vector<int32_t> vertexMapping;
 		vector<Vector3> indexedVertices;
 		vector<Vector3> indexedNormals;

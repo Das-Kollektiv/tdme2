@@ -90,9 +90,9 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 			this->collisionBody = this->world->world.createCollisionBody(reactphysics3d::Transform());
 			break;
 		default:
+			Console::println("Body::Body(): unsupported type: " + to_string(type) + ": using collision body");
 			this->rigidBody = nullptr;
-			this->collisionBody = nullptr;
-			Console::println("Body::Body(): unsupported type: " + to_string(type));
+			this->collisionBody = this->world->world.createCollisionBody(reactphysics3d::Transform());
 			break;
 	}
 	if (rigidBody != nullptr) {
@@ -205,6 +205,7 @@ bool Body::isEnabled()
 void Body::setEnabled(bool enabled)
 {
 	collisionBody->setIsActive(enabled);
+	if (enabled == true) collisionBody->setIsSleeping(false);
 }
 
 bool Body::isSleeping()
@@ -388,6 +389,7 @@ const Vector3 Body::getLinearVelocity()
 {
 	if (rigidBody == nullptr) {
 		Console::println("Body::getLinearVelocity(): no rigid body attached");
+		return Vector3();
 	}
 	return Vector3(
 		rigidBody->getLinearVelocity().x,
@@ -399,6 +401,7 @@ const Vector3 Body::getLinearVelocity()
 void Body::setLinearVelocity(const Vector3& linearVelocity) {
 	if (rigidBody == nullptr) {
 		Console::println("Body::setLinearVelocity(): no rigid body attached");
+		return;
 	}
 	rigidBody->setLinearVelocity(reactphysics3d::Vector3(linearVelocity.getX(), linearVelocity.getY(), linearVelocity.getZ()));
 }
@@ -407,6 +410,7 @@ const Vector3 Body::getAngularVelocity()
 {
 	if (rigidBody == nullptr) {
 		Console::println("Body::getAngularVelocity(): no rigid body attached");
+		return Vector3();
 	}
 	return Vector3(
 		rigidBody->getAngularVelocity().x,
@@ -418,6 +422,7 @@ const Vector3 Body::getAngularVelocity()
 void Body::setAngularVelocity(const Vector3& angularVelocity) {
 	if (rigidBody == nullptr) {
 		Console::println("Body::setAngularVelocity(): no rigid body attached");
+		return;
 	}
 	rigidBody->setAngularVelocity(reactphysics3d::Vector3(angularVelocity.getX(), angularVelocity.getY(), angularVelocity.getZ()));
 }

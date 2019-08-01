@@ -155,10 +155,6 @@ MutableString& MutableString::insert(int32_t idx, float f, int32_t decimals)
 {
 	// see: http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
 	auto integer = static_cast< int32_t >(f);
-	auto integerDecimals = static_cast< int32_t >(((f - integer) * Math::pow(10.0f, decimals)));
-	if (integerDecimals < 0.0f)
-		integerDecimals = -integerDecimals;
-
 	for (auto i = 0; i < decimals; i++) {
 		auto integerDecimal = static_cast< int32_t >(((f - integer) * Math::pow(10.0f, i + 1))) - (10 * static_cast< int32_t >(((f - integer) * Math::pow(10.0f, i))));
 		insert(idx + i, integerDecimal);

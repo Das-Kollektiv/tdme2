@@ -52,7 +52,7 @@ const string Network::getIpByHostName(const string& hostName) {
 		break;
 	case AF_INET6:
 		for (auto i = 0; hostEnt->h_addr_list[i] != nullptr; i++) {
-			char ipv6AddressString[4 * 8 + 8];
+			char ipv6AddressString[46];
 			return string(inet_ntop(AF_INET6, (in6_addr*)hostEnt->h_addr_list[i++], ipv6AddressString, INET6_ADDRSTRLEN) == NULL?"":ipv6AddressString);
 		}
 		break;

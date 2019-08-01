@@ -42,9 +42,7 @@ public:
 	 * @param value value
 	 */
 	inline ShortBuffer* put(int16_t value) {
-		int8_t* shortAsInt8 = ((int8_t*)&value);
-		Buffer::put(shortAsInt8[0]);
-		Buffer::put(shortAsInt8[1]);
+		Buffer::put((const uint8_t*)&value, sizeof(int16_t));
 		return this;
 	}
 

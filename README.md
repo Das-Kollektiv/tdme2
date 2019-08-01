@@ -1,3 +1,7 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/15611/badge.svg)](https://scan.coverity.com/projects/andreasdr-tdme2)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/andreasdrewke)
+
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logo/tdme_logo_full.png)
 
 - What is TDME2?
@@ -62,8 +66,9 @@
             - circle on plane emitter
             - ...
           - there is also support for particle system groups
+        - 3d model based objects
         - objects with support for LOD
-        - objects with support for render groups for foliage and such
+        - render group objects for foliage and such including LOD support
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed

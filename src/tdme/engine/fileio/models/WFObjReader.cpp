@@ -21,6 +21,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/StringUtils.h>
@@ -48,6 +49,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utils::Console;
 using tdme::utils::Integer;
 using tdme::utils::Float;
 using tdme::utils::StringUtils;
@@ -299,12 +301,12 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 							"#" + to_string(groupFacesEntities.size())
 						);
 						groupFacesEntityFaces.clear();
-					}
-					auto materialIt = materials.find(arguments);
-					if (materialIt != materials.end()) {
-						Material* material = materialIt->second;
-						(*group->getModel()->getMaterials())[material->getId()] = material;
-						groupFacesEntity->setMaterial(material);
+						auto materialIt = materials.find(arguments);
+						if (materialIt != materials.end()) {
+							Material* material = materialIt->second;
+							(*group->getModel()->getMaterials())[material->getId()] = material;
+							groupFacesEntity->setMaterial(material);
+						}
 					}
 				} else {
 					// not supported
@@ -341,9 +343,6 @@ void WFObjReader::readMaterials(const string& pathName, const string& fileName, 
 	Material* current = nullptr;
 	auto alpha = 1.0f;
 	{
-		auto finally0 = finally([&] {
-			// finally block
-		});
 		StringTokenizer t;
 		vector<string> lines;
 		FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
@@ -365,6 +364,9 @@ void WFObjReader::readMaterials(const string& pathName, const string& fileName, 
 				auto name = arguments;
 				current = new Material(name);
 				(*materials)[name] = current;
+			} else
+			if (current == nullptr) {
+				Console::println("WFObjReader::readMaterials(): command without material: " + command);
 			} else
 			if (command == "map_ka") {
 				current->setDiffuseTexture(pathName, arguments);

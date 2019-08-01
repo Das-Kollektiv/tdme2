@@ -34,7 +34,7 @@ char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUN
 	"model_bv.7",
 	"model_bv.8",
 	"model_bv.9",
-	"model_bv.10"
+	"model_bv.10",
 	"model_bv.11",
 	"model_bv.12",
 	"model_bv.13",

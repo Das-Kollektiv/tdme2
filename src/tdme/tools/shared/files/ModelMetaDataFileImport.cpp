@@ -94,7 +94,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& p
 LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException)
 {
 	LevelEditorEntity* levelEditorEntity;
-	auto version = Float::parseFloat((jEntityRoot["version"].getString()));
+	// auto version = Float::parseFloat((jEntityRoot["version"].getString()));
 	auto pivot = Vector3(
 		static_cast< float >(jEntityRoot["px"].getDouble()),
 		static_cast< float >(jEntityRoot["py"].getDouble()),

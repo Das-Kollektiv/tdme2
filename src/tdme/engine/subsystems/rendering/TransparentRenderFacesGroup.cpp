@@ -60,31 +60,31 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 		"," +
 		object3DGroup->id +
 		"," +
-		to_string(facesEntityIdx) +
-		"," +
-		to_string(efcmData[0]) +
-		"," +
-		to_string(efcmData[1]) +
-		"," +
-		to_string(efcmData[2]) +
-		"," +
-		to_string(efcmData[3]) +
-		"," +
-		to_string(efcaData[0]) +
-		"," +
-		to_string(efcaData[1]) +
-		"," +
-		to_string(efcaData[2]) +
-		"," +
-		to_string(efcaData[3]) +
-		"," +
-		(material == nullptr ? "tdme.material.none" : material->getId()) + // TODO: material id could contain this "," delimiter
-		"," +
-		to_string(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx]) +
-		"," +
 		(textureCoordinates == true ? "TCT" : "TCF");
 		"," +
-		shader;
+		shader +
+		",";
+		(material == nullptr ? "tdme.material.none" : material->getId()) + // TODO: material id could contain this "," delimiter
+		"," +
+	key.append((const char*)&object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx], sizeof(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx]));
+	key.append(",");
+	key.append((const char*)&facesEntityIdx, sizeof(facesEntityIdx));
+	key.append(",");
+	key.append((const char*)&efcmData[0], sizeof(efcmData[0]));
+	key.append(",");
+	key.append((const char*)&efcmData[1], sizeof(efcmData[1]));
+	key.append(",");
+	key.append((const char*)&efcmData[2], sizeof(efcmData[2]));
+	key.append(",");
+	key.append((const char*)&efcmData[3], sizeof(efcmData[3]));
+	key.append(",");
+	key.append((const char*)&efcaData[0], sizeof(efcaData[0]));
+	key.append(",");
+	key.append((const char*)&efcaData[1], sizeof(efcaData[1]));
+	key.append(",");
+	key.append((const char*)&efcaData[2], sizeof(efcaData[2]));
+	key.append(",");
+	key.append((const char*)&efcaData[3], sizeof(efcaData[3]));
 	return key;
 }
 

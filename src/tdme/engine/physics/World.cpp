@@ -491,6 +491,7 @@ World* World::clone(uint16_t collisionTypeIds)
 				break;
 			default:
 				Console::println("World::clone(): Unsupported type: " + to_string(bodyType));
+				continue;
 		}
 
 		// set cloned

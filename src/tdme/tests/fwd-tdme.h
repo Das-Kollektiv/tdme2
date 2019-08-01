@@ -3,17 +3,18 @@
 
 namespace tdme {
 namespace tests {
-		class AngleTest;
-		class AudioTest;
-		class CrashTest;
-		class EngineTest;
-		class LODTest;
-		class PathFindingTest;
-		class PivotTest;
-		class PhysicsTest1;
-		class PhysicsTest2;
-		class PhysicsTest3;
-		class PhysicsTest4;
-		class SkinningTest;
+	class AngleTest;
+	class AudioTest;
+	class CrashTest;
+	class EngineTest;
+	class LODTest;
+	class PathFindingTest;
+	class PivotTest;
+	class PhysicsTest1;
+	class PhysicsTest2;
+	class PhysicsTest3;
+	class PhysicsTest4;
+	class RayTracingTest;
+	class SkinningTest;
 }  // namespace tests
 }  // namespace tdme

@@ -191,7 +191,7 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	// points are stored in world space
+	// points are stored in camera space in points render pool
 	auto cameraMatrix = engine->cameraMatrix;
 	// process particles
 	pointsRenderPool->reset();
@@ -271,23 +271,23 @@ int32_t PointsParticleSystemInternal::emitParticles()
 	// delta time
 	auto timeDelta = engine->getTiming()->getDeltaTime();
 	// determine particles to spawn
-	auto particlesToSpawnInteger = 0;
-	if (autoEmit == true) {
-		auto particlesToSpawn = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
-		particlesToSpawnInteger = static_cast< int32_t >(particlesToSpawn);
-		particlesToSpawnRemainder += particlesToSpawn - particlesToSpawnInteger;
-		if (particlesToSpawnRemainder > 1.0f) {
-			particlesToSpawn += 1.0f;
-			particlesToSpawnInteger++;
-			particlesToSpawnRemainder -= 1.0f;
+	auto particlesToSpawn = 0;
+	{
+		if (autoEmit == true) {
+			auto particlesToSpawnWithFraction = emitter->getCount() * engine->getTiming()->getDeltaTime() / 1000.0f;
+			particlesToSpawn = static_cast< int32_t >(particlesToSpawnWithFraction);
+			particlesToSpawnRemainder += particlesToSpawnWithFraction - particlesToSpawn;
+			if (particlesToSpawnRemainder > 1.0f) {
+				particlesToSpawn++;
+				particlesToSpawnRemainder -= 1.0f;
+			}
+		} else {
+			particlesToSpawn = emitter->getCount();
 		}
-	} else {
-		particlesToSpawnInteger = emitter->getCount();
 	}
 	// skip if nothing to spawn
-	if (particlesToSpawnInteger == 0)
-		return 0;
-
+	if (particlesToSpawn == 0) return 0;
+	//
 	Vector3 velocityForTime;
 	// spawn
 	auto particlesSpawned = 0;
@@ -305,8 +305,8 @@ int32_t PointsParticleSystemInternal::emitParticles()
 		particle.position.add(velocityForTime.set(particle.velocity).scale(timeDeltaRnd / 1000.0f));
 		//
 		particlesSpawned++;
-		if (particlesSpawned == particlesToSpawnInteger)
-			break;
+		// finished?
+		if (particlesSpawned == particlesToSpawn) break;
 
 	}
 	return particlesSpawned;

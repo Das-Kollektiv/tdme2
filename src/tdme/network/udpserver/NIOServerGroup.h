@@ -147,7 +147,7 @@ protected:
 		// delegate it to thread pool, but make close request not declinable
 		server->workerThreadPool->addElement(request, false);
 		// server call back
-		server->closeGroup(dynamic_cast<GROUP*>(this));
+		server->closeGroup(static_cast<GROUP*>(this));
 	}
 
 	//

@@ -298,20 +298,12 @@ public:
 	inline bool isQuadVisible(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
 		x1 -= renderOffsetX;
 		x2 -= renderOffsetX;
-		x3 -= renderOffsetX;
-		x4 -= renderOffsetX;
 		y1 += renderOffsetY;
-		y2 += renderOffsetY;
 		y3 += renderOffsetY;
-		y4 += renderOffsetY;
 		x1 -= guiEffectOffsetX;
 		x2 -= guiEffectOffsetX;
-		x3 -= guiEffectOffsetX;
-		x4 -= guiEffectOffsetX;
 		y1 += guiEffectOffsetY;
-		y2 += guiEffectOffsetY;
 		y3 += guiEffectOffsetY;
-		y4 += guiEffectOffsetY;
 		auto renderAreaTop = this->renderAreaTop;
 		auto renderAreaBottom = this->renderAreaBottom;
 		auto renderAreaRight = this->renderAreaRight;

@@ -122,7 +122,6 @@ bool PathFindingTest::determinePlayerCompletedStepZ() {
 
 void PathFindingTest::display()
 {
-	auto now = Time::getCurrentMillis();
 	bool hadMovement = false;
 	auto playerTranslation = playerObject->getTranslation();
 	if (determinePlayerCompletedStepX() == false) {
@@ -140,7 +139,6 @@ void PathFindingTest::display()
 		playerTranslation.setZ(path[pathIdx].getZ());
 	}
 	playerObject->setTranslation(playerTranslation);
-	bool completed = false;
 	playerObject->update();
 	if (hadMovement == false) {
 		pathIdx = pathIdx + 1;
@@ -160,9 +158,6 @@ void PathFindingTest::display()
 		}
 		determinePlayerMovementDirection();
 	}
-	auto fps = 60.0f;
-	auto start = now;
-	auto end = Time::getCurrentMillis();
 	engine->display();
 }
 
