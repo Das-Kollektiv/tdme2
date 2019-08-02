@@ -263,6 +263,7 @@ int64_t Application::timeLast = -1L;
 	GLFWwindow* Application::glfwWindow = nullptr;
 	array<uint32_t, 10> Application::glfwButtonDownFrames;
 	int Application::glfwMods = 0;
+	bool Application::capsLockEnabled = false;
 #endif
 
 Application::ApplicationShutdown::~ApplicationShutdown() {
@@ -509,11 +510,13 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 #if defined(VULKAN)
 
 	void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
+		/*
 		if (Application::inputEventHandler == nullptr) return;
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		Application::inputEventHandler->onKeyDown(key, (int)mouseX, (int)mouseY);
 		Application::inputEventHandler->onKeyUp(key, (int)mouseX, (int)mouseY);
+		*/
 	}
 
 	bool Application::glfwIsSpecialKey(int key) {
@@ -541,15 +544,43 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 
 	void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
 		if (Application::inputEventHandler == nullptr) return;
-		if (glfwIsSpecialKey(key) == false) return;
 		glfwMods = mods;
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
-		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-			Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
-		} else
-		if (action == GLFW_RELEASE) {
-			Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
+		// TODO: Use GLFW_MOD_CAPS_LOCK, which does not seem to be available with my version, need to update perhabs
+		if (key == GLFW_KEY_CAPS_LOCK) {
+			if (action == GLFW_PRESS) {
+				capsLockEnabled = capsLockEnabled == false?true:false;
+			}
+		}
+		if (glfwIsSpecialKey(key) == true) {
+			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+				Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
+			} else
+			if (action == GLFW_RELEASE) {
+				Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
+			}
+		} else {
+			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
+				if (keyName != nullptr) {
+					Application::inputEventHandler->onKeyDown(
+						(mods & GLFW_MOD_SHIFT) == 0 && capsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
+						(int)mouseX,
+						(int)mouseY
+					);
+				}
+			} else
+			if (action == GLFW_RELEASE) {
+				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
+				if (keyName != nullptr) {
+					Application::inputEventHandler->onKeyUp(
+						(mods & GLFW_MOD_SHIFT) == 0 && capsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
+						(int)mouseX,
+						(int)mouseY
+					);
+				}
+			}
 		}
 	}
 

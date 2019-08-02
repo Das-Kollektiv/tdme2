@@ -190,6 +190,7 @@ private:
 		static GLFWwindow* glfwWindow;
 		static array<uint32_t, 10> glfwButtonDownFrames;
 		static int glfwMods;
+		static bool capsLockEnabled;
 	#endif
 
 	/**
