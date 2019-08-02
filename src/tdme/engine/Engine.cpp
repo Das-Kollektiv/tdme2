@@ -514,11 +514,6 @@ void Engine::reset()
 
 void Engine::initialize()
 {
-	initialize(false);
-}
-
-void Engine::initialize(bool debug)
-{
 	// set current engine
 	currentEngine = this;
 
@@ -888,7 +883,7 @@ void Engine::computeTransformations()
 
 void Engine::display()
 {
-	// finish frame
+	// finish last frame
 	if (this == Engine::instance) Engine::renderer->finishFrame();
 
 	// set current engine
@@ -933,7 +928,7 @@ void Engine::display()
 		if (frameBuffer != nullptr) {
 			frameBuffer->enableFrameBuffer();
 		} else {
-			frameBuffer->disableFrameBuffer();
+			FrameBuffer::disableFrameBuffer();
 		}
 	}
 
@@ -1002,7 +997,7 @@ void Engine::display()
 	}
 
 	// render objects to target frame buffer or screen
-	if (frameBuffer != nullptr) frameBuffer->disableFrameBuffer();
+	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
 
 	// render objects that are have post post processing render pass
 	if (visibleObjectsPostPostProcessing.size() > 0) {

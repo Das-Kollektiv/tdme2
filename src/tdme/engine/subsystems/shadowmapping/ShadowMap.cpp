@@ -223,3 +223,7 @@ void ShadowMap::updateDepthBiasMVPMatrix(void* context)
 {
 	shadowMapping->updateDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
 }
+
+FrameBuffer* ShadowMap::getFrameBuffer() {
+	return frameBuffer;
+}

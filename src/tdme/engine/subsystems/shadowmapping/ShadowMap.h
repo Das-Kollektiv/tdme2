@@ -112,4 +112,5 @@ public:
 	 * @return frame buffer
 	 */
 	FrameBuffer* getFrameBuffer();
+
 };

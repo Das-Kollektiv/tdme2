@@ -131,9 +131,7 @@ ShadowMap* ShadowMapping::getShadowMap(int idx) {
 
 void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 {
-	// use default context
-	auto context = renderer->getDefaultContext();
-
+	auto contextCount = renderer->isSupportingMultithreadedRendering() == true?Engine::THREADS_MAX:1;
 	runState = ShadowMapping_RunState::RENDER;
 	// render using shadow mapping program
 	auto shader = Engine::getShadowMappingShaderRender();
@@ -152,14 +150,21 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		auto shadowMap = shadowMaps[i];
 		// set light to render
 		shader->setRenderLightId(i);
-		// set up light shader uniforms
-		shadowMap->updateDepthBiasMVPMatrix(context);
-		// bind shadow map texture on shadow map texture unit
-		auto textureUnit = renderer->getTextureUnit(context);
-		renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
-		shadowMap->bindDepthBufferTexture(context);
-		// switch back to texture last unit
-		renderer->setTextureUnit(context, textureUnit);
+
+		// setup depth textures to contexts
+		for (auto j = 0; j < contextCount; j++) {
+			// use default context
+			auto context = renderer->getContext(j);
+			// set up light shader uniforms
+			shadowMap->updateDepthBiasMVPMatrix(context);
+			// bind shadow map texture on shadow map texture unit
+			auto textureUnit = renderer->getTextureUnit(context);
+			renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
+			shadowMap->bindDepthBufferTexture(context);
+			// switch back to texture last unit
+			renderer->setTextureUnit(context, textureUnit);
+		}
+
 		// render objects, enable blending
 		//	will be disabled after rendering transparent faces
 		renderer->enableBlending();
@@ -179,11 +184,16 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	// unuse shader program
 	shader->unUseProgram();
 
-	// restore texture unit
-	auto textureUnit = renderer->getTextureUnit(context);
-	renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
-	renderer->bindTexture(context, renderer->ID_NONE);
-	renderer->setTextureUnit(context, textureUnit);
+	// restore depth textures of contexts
+	for (auto j = 0; j < contextCount; j++) {
+		// use default context
+		auto context = renderer->getContext(j);
+		auto textureUnit = renderer->getTextureUnit(context);
+		renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
+		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(context, textureUnit);
+	}
+
 	// restore render defaults
 	renderer->disableBlending();
 	renderer->enableDepthBufferWriting();

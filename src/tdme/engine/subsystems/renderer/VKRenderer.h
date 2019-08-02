@@ -73,6 +73,7 @@ private:
 		array<int32_t, CONTEXT_COUNT> ubo { 0 };
 		int32_t ubo_binding_idx { -1 };
  		string source;
+ 		string file;
 		vector<unsigned int> spirv;
 		int32_t id { 0 };
 		VkShaderStageFlagBits type;
@@ -344,8 +345,8 @@ private:
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
-	void flushCommandsAllContexts();
-	void flushCommands(int contextIdx);
+	void endDrawCommandsAllContexts();
+	void executeCommand(int contextIdx);
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
@@ -381,7 +382,7 @@ private:
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
-	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
+	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true, bool waitUntilSubmitted = false);
 
 public:
 	const string getShaderVersion() override;

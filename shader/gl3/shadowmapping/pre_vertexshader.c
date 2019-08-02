@@ -21,7 +21,6 @@ uniform mat3 textureMatrix;
 #else
 	// will be passed to fragment shader
 	out vec2 gsFragTextureUV;
-	out mat4 gsModelMatrix;
 
 	#define vsFragTextureUV inTextureUV
 	#define vsModelMatrix inModelMatrix

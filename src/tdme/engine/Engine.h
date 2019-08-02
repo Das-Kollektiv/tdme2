@@ -468,12 +468,6 @@ public:
 	void initialize();
 
 	/** 
-	 * Initialize render engine
-	 * @param debug debug
-	 */
-	void initialize(bool debug);
-
-	/** 
 	 * Reshape
 	 * @param x x
 	 * @param y y
