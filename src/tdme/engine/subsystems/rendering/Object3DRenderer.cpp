@@ -120,7 +120,7 @@ Object3DRenderer::Object3DRenderer(Engine* engine, Renderer* renderer) {
 	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(65535);
 	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
-		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::THREADS_MAX:1;
+		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 		bbEffectColorMuls.resize(threadCount);
 		bbEffectColorAdds.resize(threadCount);
 		bbMvMatrices.resize(threadCount);

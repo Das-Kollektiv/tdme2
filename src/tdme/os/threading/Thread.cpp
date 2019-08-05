@@ -8,6 +8,7 @@
 #endif
 
 #include <string>
+#include <thread>
 #include <iostream>
 
 #include <tdme/utils/Console.h>
@@ -24,6 +25,10 @@ Thread::Thread(const string& name, size_t stackSize): name(name), pThreadCreated
 }
 
 Thread::~Thread() {
+}
+
+int Thread::getHardwareThreadCount() {
+	std::thread::hardware_concurrency();
 }
 
 void Thread::sleep(const uint64_t milliseconds) {

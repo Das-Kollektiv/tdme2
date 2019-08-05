@@ -131,7 +131,7 @@ ShadowMap* ShadowMapping::getShadowMap(int idx) {
 
 void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 {
-	auto contextCount = renderer->isSupportingMultithreadedRendering() == true?Engine::THREADS_MAX:1;
+	auto contextCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	runState = ShadowMapping_RunState::RENDER;
 	// render using shadow mapping program
 	auto shader = Engine::getShadowMappingShaderRender();

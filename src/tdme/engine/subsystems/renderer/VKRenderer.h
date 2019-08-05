@@ -51,11 +51,10 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer
 {
 private:
-	static constexpr bool VERBOSE { false };
+	static constexpr bool VERBOSE { true };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 4 };
 	static constexpr int COMMANDS_MAX { 8 };
 	static constexpr int DESC_MAX { 512 };
-	static constexpr int CONTEXT_COUNT { Engine::THREADS_MAX };
 
 	struct shader_type {
 		struct uniform_type {
@@ -70,7 +69,7 @@ private:
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
-		array<int32_t, CONTEXT_COUNT> ubo { 0 };
+		vector<int32_t> ubo { 0 };
 		int32_t ubo_binding_idx { -1 };
  		string source;
  		string file;
@@ -89,14 +88,14 @@ private:
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
-		array<array<vector<uint8_t>, 4>, CONTEXT_COUNT> uniform_buffers_last;
-		array<array<bool, 4>, CONTEXT_COUNT> uniform_buffers_changed_last;
+		vector<array<vector<uint8_t>, 4>> uniform_buffers_last;
+		vector<array<bool, 4>> uniform_buffers_changed_last;
 		uint32_t layout_bindings { 0 };
 		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
-		array<VkDescriptorSet[DESC_MAX], CONTEXT_COUNT> desc_sets;
+		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets;
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
-		array<uint32_t, CONTEXT_COUNT> desc_idxs;
+		vector<uint32_t> desc_idxs;
 		int32_t id { 0 };
 	};
 
@@ -248,24 +247,24 @@ private:
 	swapchain_buffer_type* swapchain_buffers { nullptr };
 	VkFramebuffer* window_framebuffers { nullptr };
 
-	array<VkCommandPool, CONTEXT_COUNT> cmd_setup_pools;
-	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds_inuse;
-	array<VkCommandBuffer, CONTEXT_COUNT> setup_cmds;
-	array<VkFence, CONTEXT_COUNT> setup_fences;
+	vector<VkCommandPool> cmd_setup_pools;
+	vector<VkCommandBuffer> setup_cmds_inuse;
+	vector<VkCommandBuffer> setup_cmds;
+	vector<VkFence> setup_fences;
 
-	array<VkCommandPool, CONTEXT_COUNT> cmd_draw_pools;
-	array<array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX>, CONTEXT_COUNT> draw_cmds;
-	array<array<VkFence, DRAW_COMMANDBUFFER_MAX>, CONTEXT_COUNT> draw_fences;
-	array<uint32_t, CONTEXT_COUNT> draw_cmd_current;
-	array<array<bool, DRAW_COMMANDBUFFER_MAX>, CONTEXT_COUNT> draw_cmd_started;
+	vector<VkCommandPool> cmd_draw_pools;
+	vector<array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX>> draw_cmds;
+	vector<uint32_t> draw_cmd_current;
+	vector<array<bool, DRAW_COMMANDBUFFER_MAX>> draw_cmd_started;
+	vector<array<VkFence, DRAW_COMMANDBUFFER_MAX>> draw_fences;
 	VkFence memorybarrier_fence;
 
 	Mutex pipeline_mutex;
-	array<string, CONTEXT_COUNT> pipeline_ids;
-	array<VkPipeline, CONTEXT_COUNT> pipelines;
+	vector<string> pipeline_ids;
+	vector<VkPipeline> pipelines;
 
 	VkRenderPass render_pass { VK_NULL_HANDLE };
-	array<bool, CONTEXT_COUNT> render_pass_started;
+	vector<bool> render_pass_started;
 
 	int32_t shader_idx { 1 };
 	int32_t program_idx { 1 };
@@ -329,7 +328,7 @@ private:
 	vector<VkBuffer> delete_buffers;
 	vector<VkDeviceMemory> delete_memory;
 
-	array<context_type, CONTEXT_COUNT> contexts;
+	vector<context_type> contexts;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);

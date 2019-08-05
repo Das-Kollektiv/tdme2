@@ -116,7 +116,6 @@ class tdme::engine::Engine final
 public:
 	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
 	static constexpr int LIGHTS_MAX { 8 };
-	static constexpr int THREADS_MAX { 4 };
 
 protected:
 	static Engine* currentEngine;
@@ -141,6 +140,7 @@ private:
 	static FrameBufferRenderShader* frameBufferRenderShader;
 	static PostProcessing* postProcessing;
 	static PostProcessingShader* postProcessingShader;
+	static int threadCount;
 	static bool have4K;
 	static float animationBlendingTime;
 
@@ -307,6 +307,19 @@ private:
 	 */
 	Engine();
 public:
+
+	/**
+	 * @return engine thread count
+	 */
+	inline static int getThreadCount() {
+		return threadCount;
+	}
+
+	/**
+	 * Set engine thread count
+	 * @param threadCount engine thread count
+	 */
+	static void setThreadCount(int threadCount);
 
 	/**
 	 * @return if having 4k

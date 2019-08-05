@@ -34,6 +34,11 @@ public:
 	virtual ~Thread();
 
 	/**
+	 * @return hardware thread count
+	 */
+	static int getHardwareThreadCount();
+
+	/**
 	 * @brief sleeps current thread for given time in milliseconds
 	 * @param milliseconds uint64_t milliseconds to wait
 	 */

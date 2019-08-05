@@ -140,15 +140,6 @@ VKRenderer::VKRenderer():
 	DEPTHFUNCTION_LESSEQUAL = VK_COMPARE_OP_LESS_OR_EQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = VK_COMPARE_OP_GREATER_OR_EQUAL;
 	FRAMEBUFFER_DEFAULT = 0;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) contexts[i].idx = i;
-	cmd_setup_pools.fill(VK_NULL_HANDLE);
-	setup_cmds_inuse.fill(VK_NULL_HANDLE);
-	setup_cmds.fill(VK_NULL_HANDLE);
-	cmd_draw_pools.fill(VK_NULL_HANDLE);
-	draw_cmd_current.fill(0);
-	pipelines.fill(VK_NULL_HANDLE);
-	for (auto i = 0; i < CONTEXT_COUNT; i++) draw_cmd_started[i].fill(false);
-	render_pass_started.fill(false);
 }
 
 inline bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
@@ -354,7 +345,7 @@ inline bool VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId, bool 
 }
 
 inline void VKRenderer::finishSetupCommandBuffers() {
-	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) finishSetupCommandBuffer(contextIdx);
+	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) finishSetupCommandBuffer(contextIdx);
 }
 
 inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, uint32_t baseLevel, uint32_t levelCount) {
@@ -1170,22 +1161,22 @@ void VKRenderer::initialize()
 	const VkDescriptorPoolSize types_count[3] = {
 		[0] = {
 			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = 32 * 4 * DESC_MAX * CONTEXT_COUNT // 32 shader * 4 image sampler
+			.descriptorCount = 32 * 4 * DESC_MAX * Engine::getThreadCount() // 32 shader * 4 image sampler
 		},
 		[1] = {
 			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 32 * 4 * DESC_MAX * CONTEXT_COUNT // 32 shader * 4 uniform buffer
+			.descriptorCount = 32 * 4 * DESC_MAX * Engine::getThreadCount() // 32 shader * 4 uniform buffer
 		},
 		[2] = {
 			.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.descriptorCount = 32 * 10 * DESC_MAX * CONTEXT_COUNT // 32 shader * 10 storage buffer
+			.descriptorCount = 32 * 10 * DESC_MAX * Engine::getThreadCount() // 32 shader * 10 storage buffer
 		}
 	};
 	const VkDescriptorPoolCreateInfo descriptor_pool = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
-		.maxSets = DESC_MAX * CONTEXT_COUNT * 32, // 32 shader
+		.maxSets = DESC_MAX * Engine::getThreadCount() * 32, // 32 shader
 		.poolSizeCount = 3,
 		.pPoolSizes = types_count,
 	};
@@ -1194,7 +1185,10 @@ void VKRenderer::initialize()
 	assert(!err);
 
 	// create set up command buffers
-	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
+	cmd_setup_pools.resize(Engine::getThreadCount());
+	setup_cmds_inuse.resize(Engine::getThreadCount());
+	setup_cmds.resize(Engine::getThreadCount());
+	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) {
 		// command pool
 		const VkCommandPoolCreateInfo cmd_pool_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
@@ -1218,7 +1212,10 @@ void VKRenderer::initialize()
 	}
 
 	// create draw command buffers
-	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
+	cmd_draw_pools.resize(Engine::getThreadCount());
+	draw_cmds.resize(Engine::getThreadCount());
+	draw_cmd_current.resize(Engine::getThreadCount());
+	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) {
 		// draw command pool
 		const VkCommandPoolCreateInfo cmd_pool_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
@@ -1244,7 +1241,8 @@ void VKRenderer::initialize()
 	}
 
 	// setup fences
-	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
+	setup_fences.resize(Engine::getThreadCount());
+	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) {
 		VkFenceCreateInfo fence_create_info = {
 			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 			.pNext = NULL,
@@ -1254,7 +1252,8 @@ void VKRenderer::initialize()
 	}
 
 	// draw fences
-	for (auto contextIdx = 0; contextIdx < CONTEXT_COUNT; contextIdx++) {
+	draw_fences.resize(Engine::getThreadCount());
+	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) {
 		VkFenceCreateInfo fence_create_info = {
 			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 			.pNext = NULL,
@@ -1274,6 +1273,22 @@ void VKRenderer::initialize()
 		};
 		vkCreateFence(device, &fence_create_info, nullptr, &memorybarrier_fence);
 	}
+
+	//
+	setup_cmds_inuse.resize(Engine::getThreadCount());
+	draw_cmd_started.resize(Engine::getThreadCount());
+	pipeline_ids.resize(Engine::getThreadCount());
+	pipelines.resize(Engine::getThreadCount());
+	render_pass_started.resize(Engine::getThreadCount());
+	contexts.resize(Engine::getThreadCount());
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].idx = i;
+	for (auto i = 0; i < cmd_setup_pools.size(); i++) cmd_setup_pools[i] = VK_NULL_HANDLE;
+	for (auto i = 0; i < setup_cmds_inuse.size(); i++) setup_cmds_inuse[i] = VK_NULL_HANDLE;
+	for (auto i = 0; i < cmd_draw_pools.size(); i++) cmd_draw_pools[i] = VK_NULL_HANDLE;
+	for (auto i = 0; i < draw_cmd_current.size(); i++) draw_cmd_current[i] = 0;
+	for (auto i = 0; i < pipelines.size(); i++) pipelines[i] = VK_NULL_HANDLE;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) draw_cmd_started[i].fill(false);
+	for (auto i = 0; i < render_pass_started.size(); i++) render_pass_started[i] = false;
 
 	//
 	initializeRenderPass();
@@ -1397,10 +1412,14 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 inline void VKRenderer::endRenderPass(int contextIdx) {
 	if (render_pass_started[contextIdx] == false) return;
 	render_pass_started[contextIdx] = false;
+	Console::println("a: " + to_string(contextIdx));
+	Console::println("b: " + to_string(draw_cmd_current[contextIdx]));
 	vkCmdEndRenderPass(draw_cmds[contextIdx][draw_cmd_current[contextIdx]]);
 }
 
 void VKRenderer::initializeFrameBuffers() {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	VkImageView attachments[2];
 	auto depthBufferIt = textures.find(depth_buffer_default);
 	assert(depthBufferIt != textures.end());
@@ -1486,7 +1505,7 @@ void VKRenderer::initializeFrame()
 		// TODO: a.drewke
 		//
 		finishSetupCommandBuffers();
-		for (auto i = 0; i < CONTEXT_COUNT; i++) endRenderPass(i);
+		for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i);
 		vkDestroySemaphore(device, image_acquired_semaphore, NULL);
 		vkDestroySemaphore(device, draw_complete_semaphore, NULL);
 
@@ -1531,12 +1550,12 @@ void VKRenderer::finishFrame()
 	VkResult err;
 
 	// end render pass
-	for (auto i = 0; i < CONTEXT_COUNT; i++) endRenderPass(i);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i);
 
 	// end draw command buffer
 	uint32_t submitted_draw_cmd_count = 0;
-	VkCommandBuffer submitted_draw_cmds[CONTEXT_COUNT * DRAW_COMMANDBUFFER_MAX];
-	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+	VkCommandBuffer submitted_draw_cmds[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX];
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
 			if (draw_cmd_started[i][j] == true) {
 				//
@@ -1631,7 +1650,7 @@ void VKRenderer::finishFrame()
 
 	// reset desc index
 	for (auto& programIt: programs) {
-		programIt.second.desc_idxs.fill(0);
+		for (auto i = 0; i < programIt.second.desc_idxs.size(); i++) programIt.second.desc_idxs[i] = 0;
 	}
 
 	// work around for AMD drivers not telling if window needs to be reshaped
@@ -2141,7 +2160,7 @@ inline void VKRenderer::finishPipeline() {
 			program.uniform_buffers_last[context.idx] = context.uniform_buffers;
 			program.uniform_buffers_changed_last[context.idx] = context.uniform_buffers_changed;
 		}
-		for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+		for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 	}
 
 	// clear ubos
@@ -2150,7 +2169,7 @@ inline void VKRenderer::finishPipeline() {
 	}
 
 	//
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipelines[i] = VK_NULL_HANDLE;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipelines[i] = VK_NULL_HANDLE;
 }
 
 inline void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
@@ -2276,7 +2295,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 			.pSetLayouts = desc_layouts
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx]);
+			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
 			assert(!err);
 		}
 
@@ -2613,7 +2632,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& pro
 			.pSetLayouts = desc_layouts
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx]);
+			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
 			assert(!err);
 		}
 
@@ -2897,7 +2916,7 @@ inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_
 			.pSetLayouts = desc_layouts
 		};
 		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx]);
+			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
 			assert(!err);
 		}
 
@@ -2971,7 +2990,7 @@ void VKRenderer::useProgram(int32_t programId)
 	}
 
 	//
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 
 	program_id = 0;
 	if (programId == 0) return;
@@ -2992,7 +3011,11 @@ int32_t VKRenderer::createProgram()
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto& programStruct = programs[program_idx];
 	programStruct.id = program_idx++;
-	programStruct.desc_idxs.fill(0);
+	programStruct.uniform_buffers_last.resize(Engine::getThreadCount());
+	programStruct.uniform_buffers_changed_last.resize(Engine::getThreadCount());
+	programStruct.desc_sets.resize(Engine::getThreadCount());
+	programStruct.desc_idxs.resize(Engine::getThreadCount());
+	for (auto i = 0; i < programStruct.desc_idxs.size(); i++) programStruct.desc_idxs[i] = 0;
 	return programStruct.id;
 }
 
@@ -3048,6 +3071,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 		// do we need a uniform buffer object for this shader stage?
 		if (shader.ubo_size > 0) {
+			shader.ubo.resize(Engine::getThreadCount());
 			for (auto& context: contexts) shader.ubo[context.idx] = createBufferObjects(1, false)[0];
 			// yep, inject UBO index
 			shader.ubo_binding_idx = bindingIdx;
@@ -3362,7 +3386,7 @@ void VKRenderer::enableCulling()
 	if (culling_enabled == true) return;
 	endDrawCommandsAllContexts();
 	culling_enabled = true;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableCulling()
@@ -3370,7 +3394,7 @@ void VKRenderer::disableCulling()
 	if (culling_enabled == false) return;
 	endDrawCommandsAllContexts();
 	culling_enabled = false;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::enableBlending()
@@ -3378,7 +3402,7 @@ void VKRenderer::enableBlending()
 	if (blending_enabled == true) return;
 	endDrawCommandsAllContexts();
 	blending_enabled = true;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableBlending()
@@ -3386,7 +3410,7 @@ void VKRenderer::disableBlending()
 	if (blending_enabled == false) return;
 	endDrawCommandsAllContexts();
 	blending_enabled = false;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::enableDepthBufferWriting()
@@ -3394,7 +3418,7 @@ void VKRenderer::enableDepthBufferWriting()
 	if (depth_buffer_writing == true) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_writing = true;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableDepthBufferWriting()
@@ -3402,7 +3426,7 @@ void VKRenderer::disableDepthBufferWriting()
 	if (depth_buffer_writing == false) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_writing = false;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::disableDepthBufferTest()
@@ -3410,7 +3434,7 @@ void VKRenderer::disableDepthBufferTest()
 	if (depth_buffer_testing == false) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_testing = false;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::enableDepthBufferTest()
@@ -3418,7 +3442,7 @@ void VKRenderer::enableDepthBufferTest()
 	if (depth_buffer_testing == true) return;
 	endDrawCommandsAllContexts();
 	depth_buffer_testing = true;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::setDepthFunction(int32_t depthFunction)
@@ -3426,7 +3450,7 @@ void VKRenderer::setDepthFunction(int32_t depthFunction)
 	if (depth_function == depthFunction) return;
 	endDrawCommandsAllContexts();
 	depth_function = depthFunction;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
@@ -3474,7 +3498,7 @@ void VKRenderer::setCullFace(int32_t cullFace)
 	if (cull_mode == cullFace) return;
 	endDrawCommandsAllContexts();
 	cull_mode = (VkCullModeFlagBits)cullFace;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 void VKRenderer::setFrontFace(int32_t frontFace)
@@ -3482,11 +3506,12 @@ void VKRenderer::setFrontFace(int32_t frontFace)
 	if (front_face == frontFace) return;
 	endDrawCommandsAllContexts();
 	front_face = (VkFrontFace)frontFace;
-	for (auto i = 0; i < CONTEXT_COUNT; i++) pipeline_ids[i].clear();
+	for (auto i = 0; i < Engine::getThreadCount(); i++) pipeline_ids[i].clear();
 }
 
 int32_t VKRenderer::createTexture()
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	textures_rwlock.writeLock();
 	auto& texture_object = textures[texture_idx];
 	texture_object.id = texture_idx++;
@@ -3495,6 +3520,7 @@ int32_t VKRenderer::createTexture()
 }
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height) {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto& depth_buffer_texture = textures[texture_idx];
 	depth_buffer_texture.id = texture_idx++;
 	createDepthBufferTexture(depth_buffer_texture.id, width, height);
@@ -3503,6 +3529,7 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height) {
 
 void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto& depth_buffer_texture = textures[textureId];
 	depth_buffer_texture.format = VK_FORMAT_D32_SFLOAT;
 	depth_buffer_texture.width = width;
@@ -3625,6 +3652,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 }
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height) {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto& color_buffer_texture = textures[texture_idx];
 	color_buffer_texture.id = texture_idx++;
 	createColorBufferTexture(color_buffer_texture.id, width, height);
@@ -3633,6 +3661,7 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height) {
 
 void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	auto& color_buffer_texture = textures[textureId];
 	color_buffer_texture.format = format;
 	color_buffer_texture.width = width;
@@ -4036,6 +4065,8 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	auto textureIt = textures.find(textureId);
 	if (textureIt == textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
@@ -4048,6 +4079,8 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 
 void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	auto textureIt = textures.find(textureId);
 	if (textureIt == textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
@@ -4079,7 +4112,6 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 		}
 	}
 	//
-	auto& textureObject = textureObjectIt->second;
 	textures_rwlock.unlock();
 
 	// bin
@@ -4088,6 +4120,8 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 		onBindTexture(context, textureId);
 		return;
 	}
+
+	auto& textureObject = textureObjectIt->second;
 
 	//
 	if (textureObject.type == texture_object::TYPE_FRAMEBUFFER_DEPTHBUFFER) {
@@ -4149,6 +4183,8 @@ void VKRenderer::disposeTexture(int32_t textureId)
 }
 
 void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	auto frameBufferIt = framebuffers.find(frameBufferId);
 	if (frameBufferIt == framebuffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): frame buffer not found: " + to_string(frameBufferId));
@@ -4672,6 +4708,8 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, i
 
 inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	//
 	auto programIt = programs.find(program_id);
 	if (programIt == programs.end()) {
@@ -4768,7 +4806,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		endRenderPass(i);
 		endDrawCommandBuffer(i, -1, true, true);
 	}
@@ -5111,7 +5149,8 @@ void VKRenderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles
 
 void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
-	// Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(points) + " / " + to_string(pointsOffset));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	// upload uniforms
 	auto programIt = programs.find(program_id);
 	if (programIt == programs.end()) {
@@ -5317,9 +5356,9 @@ void VKRenderer::memoryBarrier() {
 
 	// end render passes
 	uint32_t submitted_cmd_buf_count = 0;
-	uint32_t submitted_cmd_buff_contextidx[CONTEXT_COUNT * DRAW_COMMANDBUFFER_MAX];
-	uint32_t submitted_cmd_buff_contextbuffidx[CONTEXT_COUNT * DRAW_COMMANDBUFFER_MAX];
-	for (auto i = 0; i < CONTEXT_COUNT; i++) {
+	uint32_t submitted_cmd_buff_contextidx[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX];
+	uint32_t submitted_cmd_buff_contextbuffidx[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX];
+	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		finishSetupCommandBuffer(i);
 		endRenderPass(i);
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {

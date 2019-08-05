@@ -154,6 +154,7 @@ SkinningShader* Engine::skinningShader = nullptr;
 GUIShader* Engine::guiShader = nullptr;
 Engine* Engine::currentEngine = nullptr;
 bool Engine::skinningShaderEnabled = false;
+int Engine::threadCount = Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2;
 bool Engine::have4K = false;
 float Engine::animationBlendingTime = 250.0f;
 Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
@@ -177,7 +178,7 @@ void Engine::EngineThread::run() {
 				engineThreadWaitSemaphore->wait();
 				break;
 			case STATE_TRANSFORMATIONS:
-				engine->computeTransformationsFunction(THREADS_MAX, idx);
+				engine->computeTransformationsFunction(threadCount, idx);
 				state = STATE_SPINNING;
 				break;
 			case STATE_RENDERING:
@@ -245,6 +246,10 @@ Engine::~Engine() {
 	}
 	// set current engine
 	if (currentEngine == this) currentEngine = nullptr;
+}
+
+void Engine::setThreadCount(int threadCount) {
+	Engine::threadCount = threadCount;
 }
 
 bool Engine::is4K() {
@@ -688,8 +693,8 @@ void Engine::initialize()
 
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		engineThreads.resize(THREADS_MAX - 1);
-		for (auto i = 0; i < THREADS_MAX - 1; i++) {
+		engineThreads.resize(threadCount - 1);
+		for (auto i = 0; i < threadCount - 1; i++) {
 			engineThreads[i] = new EngineThread(
 				i + 1,
 				&engineThreadWaitSemaphore,
@@ -868,8 +873,8 @@ void Engine::computeTransformations()
 	} else {
 		for (auto engineThread: engineThreads) engineThread->engine = this;
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
-		engineThreadWaitSemaphore.increment(THREADS_MAX - 1);
-		computeTransformationsFunction(THREADS_MAX, 0);
+		engineThreadWaitSemaphore.increment(threadCount - 1);
+		computeTransformationsFunction(threadCount, 0);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;
 	}
