@@ -51,7 +51,7 @@ class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer
 {
 private:
-	static constexpr bool VERBOSE { true };
+	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 4 };
 	static constexpr int COMMANDS_MAX { 8 };
 	static constexpr int DESC_MAX { 512 };
@@ -294,7 +294,7 @@ private:
 	#if defined(__FreeBSD__)
 		bool validate { false }; // TODO: Why no validation layers here?
 	#else
-		bool validate { false };
+		bool validate { true };
 	#endif
 
 	uint32_t current_buffer { 0 };

@@ -1186,7 +1186,6 @@ void VKRenderer::initialize()
 
 	// create set up command buffers
 	cmd_setup_pools.resize(Engine::getThreadCount());
-	setup_cmds_inuse.resize(Engine::getThreadCount());
 	setup_cmds.resize(Engine::getThreadCount());
 	for (auto contextIdx = 0; contextIdx < Engine::getThreadCount(); contextIdx++) {
 		// command pool
@@ -1412,8 +1411,6 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 inline void VKRenderer::endRenderPass(int contextIdx) {
 	if (render_pass_started[contextIdx] == false) return;
 	render_pass_started[contextIdx] = false;
-	Console::println("a: " + to_string(contextIdx));
-	Console::println("b: " + to_string(draw_cmd_current[contextIdx]));
 	vkCmdEndRenderPass(draw_cmds[contextIdx][draw_cmd_current[contextIdx]]);
 }
 
@@ -3490,7 +3487,7 @@ void VKRenderer::clear(int32_t mask)
 		&clearRect
 	);
 	endRenderPass(0);
-	endDrawCommandBuffer(0, -1, false, true);
+	endDrawCommandBuffer(0, -1, true, true);
 }
 
 void VKRenderer::setCullFace(int32_t cullFace)

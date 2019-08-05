@@ -132,7 +132,8 @@ else ifeq ($(OS), Linux)
 else
 	# Windows, VULKAN
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS = -DVULKAN -D_GLIBCXX_DEBUG
+		EXTRAFLAGS = -DVULKAN 
+		#-D_GLIBCXX_DEBUG
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \

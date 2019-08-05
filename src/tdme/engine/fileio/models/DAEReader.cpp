@@ -1010,7 +1010,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 
 							string surface2Image;
 							auto surface2ImageIt = surfaceImageMapping.find(sample2Surface);
-							if (sample2SurfaceIt != surfaceImageMapping.end()) {
+							if (surface2ImageIt != surfaceImageMapping.end()) {
 								surface2Image = surface2ImageIt->second;
 							}
 							if (surface2Image.length() > 0) {
@@ -1043,7 +1043,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 
 							string surface2Image;
 							auto surface2ImageIt = surfaceImageMapping.find(sample2Surface);
-							if (sample2SurfaceIt != surfaceImageMapping.end()) {
+							if (surface2ImageIt != surfaceImageMapping.end()) {
 								surface2Image = surface2ImageIt->second;
 							}
 							if (surface2Image.length() > 0) {
@@ -1094,7 +1094,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 
 							string surface2Image;
 							auto surface2ImageIt = surfaceImageMapping.find(sample2Surface);
-							if (sample2SurfaceIt != surfaceImageMapping.end()) {
+							if (surface2ImageIt != surfaceImageMapping.end()) {
 								surface2Image = surface2ImageIt->second;
 							}
 
@@ -1140,7 +1140,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 
 					string surface2Image;
 					auto surface2ImageIt = surfaceImageMapping.find(sample2Surface);
-					if (sample2SurfaceIt != surfaceImageMapping.end()) {
+					if (surface2ImageIt != surfaceImageMapping.end()) {
 						surface2Image = surface2ImageIt->second;
 					}
 
