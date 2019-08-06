@@ -154,7 +154,7 @@ SkinningShader* Engine::skinningShader = nullptr;
 GUIShader* Engine::guiShader = nullptr;
 Engine* Engine::currentEngine = nullptr;
 bool Engine::skinningShaderEnabled = false;
-int Engine::threadCount = Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2;
+int Engine::threadCount = 0;
 bool Engine::have4K = false;
 float Engine::animationBlendingTime = 250.0f;
 Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
@@ -587,6 +587,13 @@ void Engine::initialize()
 			return;
 		#endif
 	#endif
+
+	// engine thread count
+	if (renderer->isSupportingMultithreadedRendering() == true) {
+		if (threadCount == 0) threadCount = Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2;
+	} else {
+		threadCount = 1;
+	}
 
 	// initialize object buffers
 	ObjectBuffer::initialize();

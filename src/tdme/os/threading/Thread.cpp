@@ -28,7 +28,7 @@ Thread::~Thread() {
 }
 
 int Thread::getHardwareThreadCount() {
-	std::thread::hardware_concurrency();
+	return std::thread::hardware_concurrency();
 }
 
 void Thread::sleep(const uint64_t milliseconds) {

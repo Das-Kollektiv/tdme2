@@ -294,7 +294,7 @@ private:
 	#if defined(__FreeBSD__)
 		bool validate { false }; // TODO: Why no validation layers here?
 	#else
-		bool validate { true };
+		bool validate { false };
 	#endif
 
 	uint32_t current_buffer { 0 };

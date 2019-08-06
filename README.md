@@ -183,7 +183,7 @@
 
 - Technology
     - designed for simple multi threading, but
-        - 3D rendering engine uses 4 threads if using Vulkan renderer, or one thread only if using a GL renderer
+        - 3D rendering engine uses multiple threads if using Vulkan renderer, or one thread only if using a GL renderer
         - UDP client has its own thread
         - UDP server can have multiple IO threads, multiple worker threads and always has its own server thread
         - physics or game mechanics can also run in a separate thread(s)
