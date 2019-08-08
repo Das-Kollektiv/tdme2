@@ -13,6 +13,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/PathFindingNode.h>
 #include <tdme/utils/PathFindingCustomTest.h>
 #include <tdme/utils/Time.h>
@@ -31,6 +32,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Console;
+using tdme::utils::Float;
 using tdme::utils::PathFindingNode;
 using tdme::utils::PathFindingCustomTest;
 using tdme::utils::Time;
@@ -356,14 +358,20 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 		Vector3 sideVector;
 		forwardVector.set(endPosition).sub(startPositionComputed).normalize();
 		Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f), sideVector).normalize();
-		auto sideDistance = stepSize;
-		auto forwardDistance = 0.0f;
-		auto endYHeight = 0.0;
-		for (auto i = 0; i < alternativeEndSteps + 1; i++) {
-			endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-			endPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-			endPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
-			forwardDistance+= stepSize;
+		if (Float::isNaN(sideVector.getX()) ||
+			Float::isNaN(sideVector.getY()) ||
+			Float::isNaN(sideVector.getZ())) {
+			endPositionCandidates.push_back(endPosition);
+		} else {
+			auto sideDistance = stepSize;
+			auto forwardDistance = 0.0f;
+			auto endYHeight = 0.0;
+			for (auto i = 0; i < alternativeEndSteps + 1; i++) {
+				endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+				endPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+				endPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+				forwardDistance+= stepSize;
+			}
 		}
 	}
 

@@ -159,6 +159,7 @@ else
 	OFLAGS := -O2
 endif
 
+OFLAGS := -O1
 CPPFLAGS := $(INCLUDES)
 #CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
