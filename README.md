@@ -85,6 +85,7 @@
         - have static, dynamic rigid bodies and collision bodies
         - uses discrete collision detection
         - rigid body simulator
+        - ray tracing
         - for RP3D internals and additional features see ReactPhysics3D website
     - path finding
         - uses A*
