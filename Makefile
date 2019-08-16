@@ -159,6 +159,15 @@ else
 	OFLAGS := -O2
 endif
 
+ifeq ($(HASHLINK), YES)
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
+		src/tdme/utils/HashLink.cpp
+
+	INCLUDES := $(INCLUDES) -I ext/hashlink/src
+	EXTRA_LIBS := $(EXTRA_LIBS) -ldl -L. -lhl
+	LDFLAGS := $(LDFLAGS) -lm -Wl,-rpath,. -Wl,--export-dynamic -Wl,--no-undefined
+endif
+
 CPPFLAGS := $(INCLUDES)
 #CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
@@ -189,6 +198,7 @@ REACTPHYSICS3D = reactphysics3d
 SPIRV = vulkan/spirv
 GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
+HL = hashlink
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -535,8 +545,6 @@ SRCS = \
 	src/tdme/utils/Console.cpp \
 	$(SRCS_PLATFORM)
 
-EXT_SRCS = \
-
 EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinystr.cpp \
 	ext/tinyxml/tinyxml.cpp \
@@ -751,11 +759,25 @@ else
 	EXT_GLSLANG_SRCS =
 endif
 
+ifeq ($(HASHLINK), YES)
+	EXT_HL_SRCS = \
+		ext/hashlink/src/code.c \
+		ext/hashlink/src/jit.c \
+		ext/hashlink/src/module.c \
+		ext/hashlink/src/debugger.c \
+
+	HL_CFLAGS = -O2 -std=c11 -I ext/hashlink/src -I include/pcre -I include/mikktspace -g -D LIBHL_EXPORTS
+else
+	EXT_HL_SRCS =
+	HL_CFLAGS =
+endif
+
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
+	src/tdme/tests/HashLinkTest-main.cpp \
 	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
@@ -783,7 +805,6 @@ MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 OBJS_DEBUG = $(SRCS_DEBUG:$(SRC)/%.cpp=$(OBJ_DEBUG)/%.o)
 
-EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
 EXT_ZLIB_OBJS = $(EXT_ZLIB_SRCS:ext/$(ZLIB)/%.c=$(OBJ)/%.o)
@@ -795,27 +816,33 @@ EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
+EXT_HL_OBJS = $(EXT_HL_SRCS:ext/$(HL)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
 
 define cpp-command
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 endef
 
 define cpp-command-debug
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_DEBUG) -c -o $@ $<
 endef
 
 define cpp-command-ext-rp3d
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_EXT_RP3D) -c -o $@ $<
 endef
 
 define c-command
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+endef
+
+define c-command-hl
+@mkdir -p $(dir $@);
+@echo Compile $<; $(CXX) -x c $(HL_CFLAGS) -c -o $@ $<
 endef
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
@@ -823,9 +850,6 @@ $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 
 $(OBJS_DEBUG):$(OBJ_DEBUG)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command-debug)
-
-$(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
-	$(cpp-command)
 
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 	$(cpp-command)
@@ -860,6 +884,9 @@ $(EXT_GLSLANG_OBJS):$(OBJ)/vulkan/%.o: ext/$(GLSLANG)/%.cpp | print-opts
 $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | print-opts
 	$(cpp-command)
 
+$(EXT_HL_OBJS):$(OBJ)/%.o: ext/$(HL)/%.c | print-opts
+	$(c-command-hl)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -868,7 +895,7 @@ $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | pr
 
 $(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_HL_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
