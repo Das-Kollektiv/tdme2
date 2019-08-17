@@ -901,6 +901,9 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
 	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
+hashlink:
+	(cd ext/hashlink && make clean && make && cp libhl.so ../..)
+
 mains: $(MAINS)
 
 clean:
