@@ -56,6 +56,10 @@
         - post processing
           - depth blur
           - SSAO 
+        - 3d model based objects
+        - objects with support for LOD
+        - render group objects for foliage and such including LOD support
+        - lines object
         - particle system which
           - is object based
           - or point based
@@ -66,9 +70,6 @@
             - circle on plane emitter
             - ...
           - there is also support for particle system groups
-        - 3d model based objects
-        - objects with support for LOD
-        - render group objects for foliage and such including LOD support
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed

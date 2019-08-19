@@ -9,6 +9,7 @@
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/model/Color4.h>
@@ -21,6 +22,7 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
+#include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererPoints.h>
@@ -65,6 +67,7 @@ using std::unordered_set;
 
 using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::Engine;
+using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::model::Color4;
@@ -77,6 +80,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -1078,6 +1082,54 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	// unbind texture
 	renderer->bindTexture(context, renderer->ID_NONE);
 	// TODO: before render sort all pps by distance to camera and render them in correct order
+	// unset renderer state
+	renderer->disableBlending();
+	// restore renderer state
+	renderer->unbindBufferObjects(context);
+	renderer->getModelViewMatrix().set(modelViewMatrix);
+}
+
+void Object3DRenderer::render(const vector<LinesObject3D*>& objects) {
+	// TODO: Move me into own class
+	// TODO: check me performance wise again
+	if (objects.size() == 0) return;
+
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	// switch back to texture unit 0, TODO: check where its set to another value but not set back
+	renderer->setTextureUnit(context, 0);
+
+	// store model view matrix
+	Matrix4x4 modelViewMatrix;
+	modelViewMatrix.set(renderer->getModelViewMatrix());
+
+	// set up renderer state
+	renderer->enableBlending();
+
+	//
+	for (auto object: objects) {
+		// 	model view matrix
+		renderer->getModelViewMatrix().set(object->getTransformationsMatrix()).multiply(renderer->getCameraMatrix());
+		renderer->onUpdateModelViewMatrix(context);
+
+		// render
+		// issue rendering
+		renderer->setEffectColorAdd(context, object->getEffectColorAdd().getArray());
+		renderer->setEffectColorMul(context, object->getEffectColorMul().getArray());
+		renderer->onUpdateEffect(context);
+
+		// TODO: maybe use onBindTexture() or onUpdatePointSize()
+		engine->getLinesShader()->setParameters(context, object->getTextureId(), object->getPointSize());
+
+		//
+		renderer->bindVerticesBufferObject(context, (*object->vboIds)[0]);
+		renderer->bindColorsBufferObject(context, (*object->vboIds)[1]);
+		renderer->drawLinesFromBufferObjects(context, object->points.size(), 0);
+	}
+
+	// unbind texture
+	renderer->bindTexture(context, renderer->ID_NONE);
 	// unset renderer state
 	renderer->disableBlending();
 	// restore renderer state

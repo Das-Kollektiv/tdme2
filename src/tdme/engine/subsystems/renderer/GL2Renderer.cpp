@@ -634,6 +634,11 @@ void GL2Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int
 	glDrawArrays(GL_POINTS, pointsOffset, points);
 }
 
+void GL2Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+{
+	glDrawArrays(GL_POINTS, pointsOffset, points);
+}
+
 void GL2Renderer::unbindBufferObjects(void* context)
 {
 	glDisableVertexAttribArray(0);

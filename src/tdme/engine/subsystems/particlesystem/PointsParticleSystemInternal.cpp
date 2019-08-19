@@ -5,8 +5,6 @@
 
 #include <tdme/math/Math.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/Entity.h>
-#include <tdme/engine/Partition.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -29,8 +27,6 @@ using std::vector;
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
 using tdme::math::Math;
 using tdme::engine::Engine;
-using tdme::engine::Entity;
-using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;

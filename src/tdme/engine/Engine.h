@@ -13,6 +13,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
+#include <tdme/engine/subsystems/lines/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
@@ -48,6 +49,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
@@ -88,6 +90,7 @@ class tdme::engine::Engine final
 	friend class FrameBuffer;
 	friend class Object3D;
 	friend class Object3DRenderGroup;
+	friend class LinesObject3D;
 	friend class LODObject3D;
 	friend class ParticleSystemGroup;
 	friend class ObjectParticleSystem;
@@ -135,6 +138,7 @@ private:
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
 	static ParticlesShader* particlesShader;
+	static LinesShader* linesShader;
 	static SkinningShader* skinningShader;
 	static GUIShader* guiShader;
 	static FrameBufferRenderShader* frameBufferRenderShader;
@@ -170,6 +174,7 @@ private:
 	vector<ObjectParticleSystem*> visibleOpses {  };
 	vector<PointsParticleSystem*> visiblePpses {  };
 	vector<ParticleSystemGroup*> visiblePsgs {  };
+	vector<LinesObject3D*> visibleLinesObjects {  };
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };
 	Object3DRenderer* object3DRenderer {  };
 
@@ -248,6 +253,11 @@ private:
 	 * @return particles shader
 	 */
 	static ParticlesShader* getParticlesShader();
+
+	/**
+	 * @return lines shader
+	 */
+	static LinesShader* getLinesShader();
 
 	/**
 	 * @return skinning shader

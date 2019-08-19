@@ -7,6 +7,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
+#include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/model/Color4.h>
@@ -43,6 +44,7 @@ using tdme::tests::RayTracingTest;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
+using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
@@ -293,6 +295,11 @@ void RayTracingTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("player", true, Level::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
+
+	// test line
+	auto linesObject3D = new LinesObject3D("line", 100.0f, {{ 0.0f, 1.0f, -20.0f}, {0.0f, 1.0f, +20.0f}}, { 1.0f, 0.0f, 0.0f, 1.0f});
+	linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	engine->addEntity(linesObject3D);
 
 	//
 	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/screens", "crosshair.xml"));

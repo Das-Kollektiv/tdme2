@@ -662,6 +662,14 @@ public:
 	 */
 	virtual void drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
 
+	/**
+	 * Draw lines from buffer objects
+	 * @param context context
+	 * @param points points
+	 * @param pointsOffset points offset
+	 */
+	virtual void drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
+
 	/** 
 	 * Unbind buffer objects
 	 * @param context context
