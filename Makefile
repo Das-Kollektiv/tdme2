@@ -160,12 +160,10 @@ else
 endif
 
 ifeq ($(HASHLINK), YES)
-	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/utils/HashLink.cpp
-
 	INCLUDES := $(INCLUDES) -I ext/hashlink/src
 	EXTRA_LIBS := $(EXTRA_LIBS) -ldl -L. -lhl
 	LDFLAGS := $(LDFLAGS) -lm -Wl,-rpath,. -Wl,--export-dynamic -Wl,--no-undefined
+	EXTRAFLAGS := $(EXTRAFLAGS) -DHASHLINK
 endif
 
 CPPFLAGS := $(INCLUDES)
@@ -531,6 +529,7 @@ SRCS = \
 	src/tdme/utils/Character.cpp \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
+	src/tdme/utils/HashLink.cpp \
 	src/tdme/utils/HexEncDec.cpp \
 	src/tdme/utils/Integer.cpp \
 	src/tdme/utils/IntEncDec.cpp \
@@ -902,7 +901,7 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 hashlink:
-	(cd ext/hashlink && make clean && make && cp libhl.so ../..)
+	(cd ext/hashlink && $(MAKE) clean && $(MAKE) && cp libhl.so ../..)
 
 mains: $(MAINS)
 
