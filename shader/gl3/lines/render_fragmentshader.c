@@ -17,8 +17,7 @@ out vec4 outColor;
 #endif
 
 void main(void) {
-	texture(diffuseTextureUnit, gl_PointCoord);
-	outColor = clamp(effectColorAdd + fragColor * effectColorMul, 0.0, 1.0);
+	outColor = clamp(effectColorAdd + texture(diffuseTextureUnit, gl_PointCoord) * fragColor * effectColorMul, 0.0, 1.0);
 	#if defined(HAVE_DEPTH_FOG)
 		if (fragDepth > FOG_DISTANCE_NEAR) {
 			float fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
