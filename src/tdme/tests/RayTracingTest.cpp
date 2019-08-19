@@ -30,6 +30,7 @@
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Time.h>
@@ -65,6 +66,7 @@ using tdme::math::Quaternion;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utils::Console;
 using tdme::utils::MutableString;
 using tdme::utils::Time;
@@ -143,7 +145,20 @@ void RayTracingTest::display()
 		engine->getCamera()->setLookFrom(camLookFrom);
 		engine->getCamera()->setLookAt(camLookAt);
 		engine->getCamera()->setUpVector(Camera::computeUpVector(camLookFrom, camLookAt));
+
+		if (keyInfo == true) {
+			Console::println(
+				"Cam: " +
+				to_string(engine->getCamera()->getLookFrom().getX()) + ", " +
+				to_string(engine->getCamera()->getLookFrom().getY()) + ", " +
+				to_string(engine->getCamera()->getLookFrom().getZ()) + " --> " +
+				to_string(engine->getCamera()->getLookAt().getX()) + ", " +
+				to_string(engine->getCamera()->getLookAt().getY()) + ", " +
+				to_string(engine->getCamera()->getLookAt().getZ())
+			);
+		}
 	}
+
 
 	{
 		dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("crosshair")->getNodeById("crosshair_hud"))->getActiveConditions().removeAll();
@@ -167,7 +182,20 @@ void RayTracingTest::display()
 			dynamic_cast<GUITextNode*>(engine->getGUI()->getScreen("crosshair")->getNodeById("crosshair_hud_id"))->setText(MutableString("Interact with " + rayTracedRigidBody->getId()));
 			dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("crosshair")->getNodeById("crosshair_hud"))->getActiveConditions().add("pickup");
 		}
+		if (keyInfo == true) {
+			Console::println(
+				"Ray: " +
+				to_string(engine->getCamera()->getLookFrom().getX()) + ", " +
+				to_string(engine->getCamera()->getLookFrom().getY()) + ", " +
+				to_string(engine->getCamera()->getLookFrom().getZ()) + " --> " +
+				to_string(traceEnd.getX()) + ", " +
+				to_string(traceEnd.getY()) + ", " +
+				to_string(traceEnd.getZ())
+			);
+		}
 	}
+
+	if (keyInfo == true) keyInfo = false;
 
 	// update world, display engine
 	auto start = Time::getCurrentMillis();
@@ -176,7 +204,6 @@ void RayTracingTest::display()
 	engine->display();
 	engine->getGUI()->render();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("RayTracingTest::display::" + to_string(end - start) + "ms"));
 }
 
 void RayTracingTest::dispose()
@@ -218,11 +245,12 @@ void RayTracingTest::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto interactionTable = ModelMetaDataFileImport::doImport(-1, "resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm");
+	auto entityBoundingVolumeModel = PrimitiveModel::createModel(interactionTable->getBoundingVolumeAt(0)->getBoundingVolume(), "interactiontable.bv");
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
 		// engine
-		auto id = "interactionTable." + to_string(interactionTableIdx++);
+		auto id = "interactionTable." + to_string(interactionTableIdx);
 		auto entity = new Object3D(
 			id,
 			interactionTable->getModel()
@@ -239,6 +267,19 @@ void RayTracingTest::initialize()
 			entity->getTransformations(),
 			Level::RIGIDBODY_TYPEID_STATIC
 		);
+
+		// aabb
+		auto bvEntity = new Object3D(
+			id + ".bv",
+			entityBoundingVolumeModel
+		);
+		bvEntity->setTranslation(Vector3(x, 0.0f, z));
+		bvEntity->update();
+		engine->addEntity(bvEntity);
+
+		//
+		interactionTableIdx++;
+
 	}
 	//auto capsuleBig = new Capsule(Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.11f, 0.0f), 0.1f);
 	auto capsuleBig = new Capsule(Vector3(0.0f, 0.25f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.25f);
@@ -268,6 +309,7 @@ void RayTracingTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == 'a') keyLeft = true;
 	if (keyChar == 's') keyDown = true;
 	if (keyChar == 'd') keyRight = true;
+	if (keyChar == 'i') keyInfo = true;
 }
 
 void RayTracingTest::onKeyUp(unsigned char key, int x, int y) {

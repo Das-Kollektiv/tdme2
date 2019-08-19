@@ -30,6 +30,7 @@ private:
 	bool keyRight { false };
 	bool keyUp { false };
 	bool keyDown { false };
+	bool keyInfo { false };
 	int mouseLastXDragged { -1 };
 	int mouseLastYDragged { -1 };
 
