@@ -24,21 +24,36 @@
                 - this is a much more efficient model file format for TDME
                 - can be read and written
             - DAE and WaveFront OBJ files require triangulated meshes for now
-        - animations
-            - supports model object base animation and animation overlays
-            - supports animation blending when switching base animations
-        - skinning via
-            - CPU on GL2, GL3+/CORE, GLES2
-            - GPU via compute shaders with GL4.3+/CORE, Vulkan
-        - object transformations
+        - objects/entity types
+            - 3d model based objects with
+                - animations
+                    - supports model object base animation and animation overlays
+                    - supports animation blending
+                - skinning via
+                    - CPU on GL2, GL3+/CORE, GLES2
+                    - GPU via compute shaders with GL4.3+/CORE, Vulkan
+                - texture transformations/animations
+                    - via texture matrices
+            - objects with support for LOD
+            - render group objects for foliage and such including LOD support
+            - particle systems which
+              - are object based
+              - or point based
+              - and support
+                - basic/point emitter
+                - sphere emitter
+                - bounding box emitter
+                - circle on plane emitter
+                - ...
+              - there is also support for particle system groups
+            - line based objects
+        - object/entity transformations
             - scaling
             - rotations
             - translation
-        - color effects on objects, particles, ...
+        - color effects on objects/entities
             - color addition
             - color multiplication
-        - texture transformations/animations
-            - via texture matrices
         - lighting
             - supports phong lighting
             - supports phong shading on GL2, GL3+/CORE, 
@@ -55,21 +70,7 @@
         - shadow mapping
         - post processing
           - depth blur
-          - SSAO 
-        - 3d model based objects
-        - objects with support for LOD
-        - render group objects for foliage and such including LOD support
-        - lines object
-        - particle system which
-          - is object based
-          - or point based
-          - and supports
-            - basic/point emitter
-            - sphere emitter
-            - bounding box emitter
-            - circle on plane emitter
-            - ...
-          - there is also support for particle system groups
+          - SSAO
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed
