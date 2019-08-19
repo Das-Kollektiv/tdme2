@@ -63,12 +63,6 @@ void LinesShader::initialize()
 	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
 	if (uniformMVPMatrix == -1)
 		return;
-	uniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvMatrix");
-	if (uniformMVMatrix == -1)
-		return;
-	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, "pointSize");
-	if (uniformPointSize == -1)
-		return;
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnit");
 	if (uniformDiffuseTextureUnit == -1)
 		return;
@@ -101,6 +95,7 @@ void LinesShader::updateEffect(Renderer* renderer, void* context)
 void LinesShader::unUseProgram(void* context)
 {
 	isRunning = false;
+	renderer->setLineWidth(1.0f);
 	renderer->bindTexture(context, renderer->ID_NONE);
 }
 
@@ -113,10 +108,9 @@ void LinesShader::updateMatrices(Renderer* renderer, void* context)
 	mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
 	// upload matrices
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
-	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, renderer->getModelViewMatrix().getArray());
 }
 
-void LinesShader::setParameters(void* context, int32_t textureId, float pointSize) {
-	renderer->setProgramUniformFloat(context, uniformPointSize, renderer->pointSize * pointSize);
+void LinesShader::setParameters(void* context, int32_t textureId, float lineWidth) {
+	renderer->setLineWidth(lineWidth);
 	renderer->bindTexture(context, textureId);
 }

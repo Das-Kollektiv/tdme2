@@ -5223,6 +5223,11 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	executeCommand(contextTyped.idx);
 }
 
+void VKRenderer::setLineWidth(float lineWidth)
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
+}
+
 void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
 {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");

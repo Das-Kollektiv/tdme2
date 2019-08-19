@@ -297,7 +297,7 @@ void RayTracingTest::initialize()
 	world->addRigidBody("player", true, Level::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 
 	// test line
-	auto linesObject3D = new LinesObject3D("line", 100.0f, {{ 0.0f, 1.0f, -20.0f}, {0.0f, 1.0f, +20.0f}}, { 1.0f, 0.0f, 0.0f, 1.0f});
+	auto linesObject3D = new LinesObject3D("line", 3.0f, {{ 0.0f, 1.0f, -20.0f}, {0.0f, 1.0f, +20.0f}}, { 1.0f, 0.0f, 0.0f, 1.0f});
 	linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	engine->addEntity(linesObject3D);
 

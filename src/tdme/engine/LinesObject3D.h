@@ -81,13 +81,13 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param pointSize point size
+	 * @param lineWidth line width
 	 * @param points points
 	 * @param color color
 	 * @param colors optional colors
 	 * @param texture optional texture
 	 */
-	LinesObject3D(const string& id, float pointSize, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
+	LinesObject3D(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
 
 	// overriden methods
 	virtual void dispose() override;

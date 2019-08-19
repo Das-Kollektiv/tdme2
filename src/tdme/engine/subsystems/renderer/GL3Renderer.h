@@ -111,6 +111,7 @@ public:
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
 	void drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) override;
+	void setLineWidth(float lineWidth) override;
 	void drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) override;
 	void unbindBufferObjects(void* context) override;
 	void disposeBufferObjects(vector<int32_t>& bufferObjectIds) override;

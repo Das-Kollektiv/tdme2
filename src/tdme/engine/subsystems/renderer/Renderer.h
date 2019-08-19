@@ -663,6 +663,12 @@ public:
 	virtual void drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
 
 	/**
+	 * Set line width
+	 * @param lineWidth line width
+	 */
+	virtual void setLineWidth(float lineWidth) = 0;
+
+	/**
 	 * Draw lines from buffer objects
 	 * @param context context
 	 * @param points points

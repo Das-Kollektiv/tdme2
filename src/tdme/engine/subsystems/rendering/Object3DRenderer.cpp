@@ -1120,7 +1120,7 @@ void Object3DRenderer::render(const vector<LinesObject3D*>& objects) {
 		renderer->onUpdateEffect(context);
 
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()
-		engine->getLinesShader()->setParameters(context, object->getTextureId(), object->getPointSize());
+		engine->getLinesShader()->setParameters(context, object->getTextureId(), object->getLineWidth());
 
 		//
 		renderer->bindVerticesBufferObject(context, (*object->vboIds)[0]);

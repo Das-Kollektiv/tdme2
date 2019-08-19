@@ -45,7 +45,7 @@ protected:
 	Engine* engine {  };
 	Renderer* renderer {  };
 	bool enabled {  };
-	float pointSize {  };
+	float lineWidth {  };
 	Texture* texture { nullptr };
 	int32_t textureId {  };
 
@@ -175,10 +175,10 @@ public:
 	}
 
 	/**
-	 * @return point size
+	 * @return line width
 	 */
-	inline float getPointSize() {
-		return pointSize;
+	inline float getLineWidth() {
+		return lineWidth;
 	}
 
 	/**
@@ -212,13 +212,13 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param pointSize point size
+	 * @param lineWidth line width
 	 * @param points points
 	 * @param color color
 	 * @param colors optional colors
 	 * @param texture optional texture
 	 */
-	LinesObject3DInternal(const string& id, float pointSize, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
+	LinesObject3DInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
 
 	/**
 	 * Destructor

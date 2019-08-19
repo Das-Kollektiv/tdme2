@@ -39,7 +39,7 @@ using tdme::math::Vector3;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 
-LinesObject3DInternal::LinesObject3DInternal(const string& id, float pointSize, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture)
+LinesObject3DInternal::LinesObject3DInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture)
 {
 	this->id = id;
 	this->enabled = true;
@@ -47,7 +47,7 @@ LinesObject3DInternal::LinesObject3DInternal(const string& id, float pointSize, 
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
 	this->dynamicShadowing = false;
-	this->pointSize = pointSize;
+	this->lineWidth = lineWidth;
 	this->points = points;
 	this->color = color;
 	this->colors = colors;

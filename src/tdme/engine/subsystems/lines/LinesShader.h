@@ -23,8 +23,6 @@ private:
 	int32_t renderFragmentShaderId {  };
 	int32_t renderVertexShaderId {  };
 	int32_t uniformMVPMatrix {  };
-	int32_t uniformMVMatrix {  };
-	int32_t uniformPointSize {  };
 	int32_t uniformDiffuseTextureUnit {  };
 	int32_t uniformEffectColorMul {  };
 	int32_t uniformEffectColorAdd {  };
@@ -76,9 +74,9 @@ public:
 	 * Set parameters
 	 * @param context context
 	 * @param textureId texture id
-	 * @param pointSize point size
+	 * @param lineWidth line width
 	 */
-	void setParameters(void* context, int32_t textureId, float pointSize);
+	void setParameters(void* context, int32_t textureId, float lineWidth);
 
 	/**
 	 * Public constructor

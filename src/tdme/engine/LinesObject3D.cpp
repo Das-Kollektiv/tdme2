@@ -21,8 +21,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
 
-LinesObject3D::LinesObject3D(const string& id, float pointSize, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture):
-	LinesObject3DInternal(id, pointSize, points, color, colors, texture)
+LinesObject3D::LinesObject3D(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture):
+	LinesObject3DInternal(id, lineWidth, points, color, colors, texture)
 {
 }
 
