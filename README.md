@@ -46,7 +46,7 @@
                 - circle on plane emitter
                 - ...
               - there is also support for particle system groups
-            - line based objects
+            - lines based objects
         - object/entity transformations
             - scaling
             - rotations
