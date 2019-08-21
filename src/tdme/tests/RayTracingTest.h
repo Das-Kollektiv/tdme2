@@ -1,16 +1,17 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/application/Application.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/application/InputEventHandler.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::physics::World;
+using tdme::math::Vector3;
 
 /** 
  * Ray Tracing Test
@@ -37,6 +38,8 @@ private:
 	float rotationY { 0.0f };
 	float rotationX { 0.0f };
 
+	Vector3 rayStart { -0.773551f, 2.329138f, 12.417824f };
+	Vector3 rayEnd { 0.195356f, -0.057845f, 14.787113f };
 public:
 
 	/** 

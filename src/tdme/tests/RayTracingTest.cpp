@@ -126,9 +126,10 @@ void RayTracingTest::display()
 		world->getBody("player")->setLinearVelocity(movementVector.scale(4.0f));
 	}
 
-	Vector3 camLookAt;
-	Vector3 camLookFrom;
+	Vector3 camLookFrom(-2.578182f, 2.378557f, 12.836764f);
+	Vector3 camLookAt(37.993664f, -56.861095f, 50.328781f);
 	{
+		/*
 		auto headYPosition = 1.65f;
 		float trdMovemventPlayerXAxis = 0.25f;
 		float trdDistanceCamPlayer = 1.0f;
@@ -143,6 +144,7 @@ void RayTracingTest::display()
 		camLookFrom.set(transformations.getTranslation().clone().addY(headYPosition));
 		camLookFrom.sub(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f), vectorRotated).scale(trdDistanceCamPlayer));
 		camLookFrom.sub(transformations.getRotation(0).getQuaternion().multiply(Vector3(trdMovemventPlayerXAxis, 0.0f, 0.0f), vectorRotated));
+		*/
 
 		engine->getCamera()->setLookFrom(camLookFrom);
 		engine->getCamera()->setLookAt(camLookAt);
@@ -173,10 +175,12 @@ void RayTracingTest::display()
 		traceEnd.scale(1.0f / traceEnd.computeLength());
 		traceEnd.scale(trdTraceLength);
 		traceEnd.add(camLookFrom);
+		//rayStart = camLookFrom;
+		//rayEnd = traceEnd;
 		auto rayTracedRigidBody = world->doRayCasting(
 			Level::RIGIDBODY_TYPEID_STATIC | Level::RIGIDBODY_TYPEID_DYNAMIC,
-			camLookFrom,
-			traceEnd,
+			rayStart,
+			rayEnd,
 			hitPoint,
 			"player"
 		);
@@ -297,7 +301,7 @@ void RayTracingTest::initialize()
 	world->addRigidBody("player", true, Level::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 
 	// test line
-	auto linesObject3D = new LinesObject3D("line", 3.0f, {{ 0.0f, 1.0f, -20.0f}, {0.0f, 1.0f, +20.0f}}, { 1.0f, 0.0f, 0.0f, 1.0f});
+	auto linesObject3D = new LinesObject3D("line", 3.0f, { rayStart, rayEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
 	linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	engine->addEntity(linesObject3D);
 
