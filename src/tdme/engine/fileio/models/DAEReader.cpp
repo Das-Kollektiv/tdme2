@@ -373,7 +373,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 							if (frames > 0) {
 								ModelHelper::createDefaultAnimation(model, frames);
 								auto animation = group->createAnimation(frames);
-								auto transformationsMatrices = animation->getTransformationsMatrices();
+								auto& transformationsMatrices = animation->getTransformationsMatrices();
 								auto tansformationsMatrixLast = &keyFrameMatrices[0];
 								keyFrameIdx = 0;
 								auto frameIdx = 0;
@@ -580,7 +580,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	for (auto xmlSkinSource: getChildrenByTagName(xmlSkin, "source")) {
 		if (string(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id"))) == xmlJointsInverseBindMatricesSource) {
 			t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())), " \n\r");
-			auto _joints = skinning->getJoints();
+			auto& _joints = skinning->getJoints();
 			for (auto i = 0; i < _joints.size(); i++) {
 				// The vertices are defined in model space
 				// The transformation to the local space of the joint is called the inverse bind matrix

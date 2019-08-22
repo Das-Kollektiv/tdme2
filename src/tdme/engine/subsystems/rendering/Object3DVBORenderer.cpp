@@ -273,7 +273,7 @@ void Object3DVBORenderer::prepareTransparentFaces(const vector<TransparentRender
 	}
 	//
 	auto model = object3DGroup->object->getModel();
-	auto facesEntities = object3DGroup->group->getFacesEntities();
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
 	FacesEntity* facesEntity = nullptr;
 	// attributes we collect for a transparent render face group
 	auto depthBuffer = false;
@@ -367,7 +367,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeNonInstanced(const vector<Objec
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto faceIdx = 0;
 		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
@@ -556,9 +556,6 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
-	//
-	auto shadowMapping = engine->getShadowMapping();
-
 	// render faces entities
 	auto firstObject = objects[0];
 
@@ -566,7 +563,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto faceIdx = 0;
 		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
@@ -843,7 +840,7 @@ void Object3DVBORenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D
 
 void Object3DVBORenderer::setupMaterial(Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
-	auto facesEntities = object3DGroup->group->getFacesEntities();
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();

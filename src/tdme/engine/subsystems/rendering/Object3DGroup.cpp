@@ -158,7 +158,7 @@ void Object3DGroup::computeTransformations(void* context, vector<Object3DGroup*>
 
 void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx)
 {
-	auto facesEntities = object3DGroup->group->getFacesEntities();
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr)

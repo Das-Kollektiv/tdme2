@@ -67,7 +67,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		// calculate transformations matrices without world transformations
 		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
+		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, *object3DModelInternal->transformationsMatrices[0], 0);
 		Object3DGroup::computeTransformations(nullptr, object3DModelInternal->object3dGroups);
 		// parse through object groups to determine min, max
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
@@ -119,7 +119,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		// calculate transformations matrices without world transformations
 		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
+		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, *object3DModelInternal->transformationsMatrices[0], 0);
 		for (auto groupIt: model->getGroups()) {
 			auto transformedGroupMatrix = object3DModelInternal->getTransformationsMatrix(groupIt.second->getId());
 			if (transformedGroupMatrix == nullptr) continue;
@@ -181,7 +181,7 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 	auto transparentFaceCount = 0;
 	for (auto object3DGroup : object3DModelInternal->object3dGroups) {
 		// check each faces entity
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
 			auto& facesEntity = facesEntities[faceEntityIdx];
@@ -234,8 +234,8 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 		auto object3DGroupModel2 = object3DModel2Internal->object3dGroups[i];
 		auto group1 = object3DModel1Internal->object3dGroups[i]->group;
 		auto group2 = object3DModel2Internal->object3dGroups[i]->group;
-		auto facesEntitiesModel1 = object3DGroupModel1->group->getFacesEntities();
-		auto facesEntitiesModel2 = object3DGroupModel2->group->getFacesEntities();
+		auto& facesEntitiesModel1 = object3DGroupModel1->group->getFacesEntities();
+		auto& facesEntitiesModel2 = object3DGroupModel2->group->getFacesEntities();
 		// check transformation matrix
 		if (object3DGroupModel1->group->getTransformationsMatrix().equals(object3DGroupModel2->group->getTransformationsMatrix()) == false)
 			return false;
@@ -275,8 +275,8 @@ bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Interna
 				return false;
 			}
 			// check faces
-			auto facesModel1 = facesEntityModel1.getFaces();
-			auto facesModel2 = facesEntityModel2.getFaces();
+			auto& facesModel1 = facesEntityModel1.getFaces();
+			auto& facesModel2 = facesEntityModel2.getFaces();
 			// number of faces in faces entity
 			if (facesModel1.size() != facesModel2.size())
 				return false;

@@ -83,8 +83,8 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	transformationsMatrices.push_back(new map<string, Matrix4x4*>());
 	createTransformationsMatrices(*transformationsMatrices[0], model->getSubGroups());
 	// calculate transformations matrices
-	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0], transformationsMatrices[0], 0);
-	if (hasSkinning == true) updateSkinningTransformationsMatrices(transformationsMatrices[0]);
+	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0], *transformationsMatrices[0], 0);
+	if (hasSkinning == true) updateSkinningTransformationsMatrices(*transformationsMatrices[0]);
 	// object 3d groups
 	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, object3dGroups);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
@@ -267,7 +267,7 @@ void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>& matric
 	// iterate through groups
 	for (auto it: groups) {
 		// put and associate transformation matrices with group
-		Group* group = it.second;
+		auto group = it.second;
 		Matrix4x4* matrix = new Matrix4x4();
 		matrix->identity();
 		matrices[group->getId()] = matrix;
@@ -279,7 +279,7 @@ void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>& matric
 	}
 }
 
-void Object3DBase::computeTransformationsMatrices(const map<string, Group*>& groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>* transformationsMatrices, int32_t depth)
+void Object3DBase::computeTransformationsMatrices(const map<string, Group*>& groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth)
 {
 	// iterate through groups
 	for (auto it: groups) {
@@ -342,8 +342,8 @@ void Object3DBase::computeTransformationsMatrices(const map<string, Group*>& gro
 		// apply parent transformation matrix
 		transformationsMatrix.multiply(parentTransformationsMatrix);
 		// put and associate transformation matrices with group
-		auto transformationMatrixIt = transformationsMatrices->find(group->getId());
-		if (transformationMatrixIt != transformationsMatrices->end()) {
+		auto transformationMatrixIt = transformationsMatrices.find(group->getId());
+		if (transformationMatrixIt != transformationsMatrices.end()) {
 			transformationMatrixIt->second->set(transformationsMatrix);
 		}
 		// calculate for sub groups
@@ -356,12 +356,12 @@ void Object3DBase::computeTransformationsMatrices(const map<string, Group*>& gro
 	}
 }
 
-void Object3DBase::updateSkinningTransformationsMatrices(map<string, Matrix4x4*>* transformationsMatrices) {
+void Object3DBase::updateSkinningTransformationsMatrices(map<string, Matrix4x4*>& transformationsMatrices) {
 	// TODO: Maybe optimize regarding map look ups
 	for (auto i = 0; i < skinningGroups.size(); i++) {
 		for (auto& skinningJoint: skinningGroups[i]->getSkinning()->getJoints()) {
-			auto transformationsMatrixIt = transformationsMatrices->find(skinningJoint.getGroupId());
-			auto transformationsMatrix = transformationsMatrixIt != transformationsMatrices->end()?transformationsMatrixIt->second:nullptr;
+			auto transformationsMatrixIt = transformationsMatrices.find(skinningJoint.getGroupId());
+			auto transformationsMatrix = transformationsMatrixIt != transformationsMatrices.end()?transformationsMatrixIt->second:nullptr;
 			if (transformationsMatrix == nullptr) continue;
 			auto skinningGroupMatrixIt = skinningGroupsMatrices[i].find(skinningJoint.getGroupId());
 			if (skinningGroupMatrixIt != skinningGroupsMatrices[i].end()) {
@@ -371,7 +371,7 @@ void Object3DBase::updateSkinningTransformationsMatrices(map<string, Matrix4x4*>
 	}
 }
 
-void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices, void* context, Timing* timing)
+void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, Timing* timing)
 {
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
@@ -422,13 +422,13 @@ void Object3DBase::computeTransformations(void* context, Timing* timing) {
 	auto baseAnimationIdxLast = transformationsMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
 	if (baseAnimationIdxLast != -1 &&
 		baseAnimations[baseAnimationIdxLast].lastAtTime != -1LL) {
-		computeTransformations(baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], context, timing);
+		computeTransformations(baseAnimations[baseAnimationIdxLast], *transformationsMatrices[1 + baseAnimationIdxLast], context, timing);
 	} else {
 		baseAnimationIdxLast = -1;
 	}
 
 	// compute current animation matrices
-	computeTransformations(baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], context, timing);
+	computeTransformations(baseAnimations[baseAnimationIdx], *transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], context, timing);
 
 	// blend if required
 	if (transformationsMatrices.size() > 1) {
@@ -459,7 +459,7 @@ void Object3DBase::computeTransformations(void* context, Timing* timing) {
 			}
 		}
 	}
-	if (hasSkinning == true) updateSkinningTransformationsMatrices(transformationsMatrices[0]);
+	if (hasSkinning == true) updateSkinningTransformationsMatrices(*transformationsMatrices[0]);
 }
 
 int Object3DBase::getGroupCount() const {
@@ -559,17 +559,15 @@ int32_t Object3DBase::determineSkinnedGroups(const map<string, Group*>& groups, 
 	return idx;
 }
 
-map<string, Matrix4x4*>& Object3DBase::getSkinningGroupsMatrices(Group* group)
+map<string, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 {
-	if (hasSkinning == false)
-		return defaultEmptyMap;
-
+	if (hasSkinning == false) return &defaultEmptyMap;
 	for (auto i = 0; i < skinningGroups.size(); i++) {
 		if (skinningGroups[i] == group) {
-			return skinningGroupsMatrices[i];
+			return &skinningGroupsMatrices[i];
 		}
 	}
-	return defaultEmptyMap;
+	return &defaultEmptyMap;
 }
 
 void Object3DBase::initialize()
