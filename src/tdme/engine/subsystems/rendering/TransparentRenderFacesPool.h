@@ -58,9 +58,9 @@ private:
 	 */
 	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t faceIdx) {
 		// retrieve objects we need
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto& facesEntity = facesEntities[facesEntityIdx];
-		auto faces = facesEntity.getFaces();
+		auto& faces = facesEntity.getFaces();
 		auto groupTransformedVertices = object3DGroup->mesh->vertices;
 		// objects we will use for calculations
 		float distanceFromCamera;

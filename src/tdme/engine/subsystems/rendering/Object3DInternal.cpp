@@ -82,7 +82,7 @@ void Object3DInternal::bindDiffuseTexture(int32_t textureId, const string& group
 		if (groupId != "" && groupId != object3DGroup->group->getId())
 			continue;
 
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
 			auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching
@@ -101,7 +101,7 @@ void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const 
 		if (groupId != "" && groupId != object3DGroup->group->getId())
 			continue;
 
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
 			auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching

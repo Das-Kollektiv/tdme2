@@ -62,7 +62,7 @@ Object3DGroupMesh::Object3DGroupMesh()
 	skinningMatrices = nullptr;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* object3DGroupVBORenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>& skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* object3DGroupVBORenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
 	//
@@ -81,7 +81,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* objec
 	// transformations for skinned meshes
 	auto skinning = group->getSkinning();
 	mesh->skinning = skinning != nullptr;
-	mesh->skinningMatrices = &skinningMatrices;
+	mesh->skinningMatrices = skinningMatrices;
 	// set up transformed vertices, normals and friends
 	if ((skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
@@ -173,8 +173,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupVBORenderer* objec
 				for (auto& jointWeight : (*jointsWeights)[vertexIndex]) {
 					auto& joint = joints[jointWeight.getJointIndex()];
 					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
-					auto skinningMatrixIt = skinningMatrices.find(joint.getGroupId());
-					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices.end()?skinningMatrixIt->second:nullptr;
+					auto skinningMatrixIt = skinningMatrices->find(joint.getGroupId());
+					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices->end()?skinningMatrixIt->second:nullptr;
 					// next
 					jointWeightIdx++;
 				}
@@ -217,10 +217,10 @@ void Object3DGroupMesh::computeTransformations()
 				transformedVertex = &(*vertices)[vertexIndex].set(0.0f, 0.0f, 0.0f);
 				normal = &groupNormals[vertexIndex];
 				transformedNormal = &(*normals)[vertexIndex].set(0.0f, 0.0f, 0.0f);
-				tangent = &groupTangent[vertexIndex];
-				transformedTangent = tangents != nullptr ? &(*tangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
-				bitangent = &groupBitangent[vertexIndex];
-				transformedBitangent = bitangents != nullptr ? &(*bitangents)[vertexIndex].set(0.0f, 0.0f, 0.0f) : static_cast< Vector3* >(nullptr);
+				tangent = tangents != nullptr?&groupTangent[vertexIndex]:nullptr;
+				transformedTangent = tangents != nullptr?&(*tangents)[vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
+				bitangent = bitangents != nullptr?&groupBitangent[vertexIndex]:nullptr;
+				transformedBitangent = bitangents != nullptr?&(*bitangents)[vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
 				// compute every influence on vertex and vertex normals
 				totalWeights = 0.0f;
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < (*jointsWeights)[vertexIndex].size(); vertexJointWeightIdx++) {

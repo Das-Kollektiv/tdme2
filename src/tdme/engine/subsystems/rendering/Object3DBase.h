@@ -100,7 +100,7 @@ protected:
 	 * @param transformationsMatrices transformations matrices which need to be set up
 	 * @param depth depth
 	 */
-	virtual void computeTransformationsMatrices(const map<string, Group*>& groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>* transformationsMatrices, int32_t depth); // TODO: std container: maybe use call by reference
+	virtual void computeTransformationsMatrices(const map<string, Group*>& groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth);
 
 	/**
 	 * Compute transformations for given animation state into given transformations matrices
@@ -108,20 +108,20 @@ protected:
 	 * @param transformationsMatrices transformations matrices
 	 * @param timing timing
 	 */
-	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices, Timing* timing);
+	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, Timing* timing);
 
 	/**
 	 * Update skinning transformations matrices
 	 * @param transformationsMatrices transformations matrices
 	 */
-	virtual void updateSkinningTransformationsMatrices(map<string, Matrix4x4*>* transformationsMatrices);
+	virtual void updateSkinningTransformationsMatrices(map<string, Matrix4x4*>& transformationsMatrices);
 
 	/**
 	 * Get skinning groups matrices
 	 * @param group group
 	 * @return matrices
 	 */
-	virtual map<string, Matrix4x4*>& getSkinningGroupsMatrices(Group* group);
+	virtual map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
 
 	/**
 	 * Public constructor

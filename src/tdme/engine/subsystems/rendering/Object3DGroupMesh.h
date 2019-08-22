@@ -84,7 +84,7 @@ private:
 	 * @param skinningMatrices skinning matrices 
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Object3DGroupVBORenderer* object3DVBOGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>& skinningMatrices);
+	static Object3DGroupMesh* createMesh(Object3DGroupVBORenderer* object3DVBOGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices);
 
 	/** 
 	 * Computes mesh transformations
