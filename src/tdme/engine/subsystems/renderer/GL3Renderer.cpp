@@ -107,10 +107,6 @@ void GL3Renderer::initialize()
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	setTextureUnit(nullptr, 0);
-	// generate a "engine" VAO as
-	//	we do not support VAO's in our engine control flow
-	glGenVertexArrays(1, &engineVAO);
-	glBindVertexArray(engineVAO);
 }
 
 void GL3Renderer::initializeFrame()
@@ -862,5 +858,5 @@ void GL3Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
 }
 
 void GL3Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
-	glBindVertexArray(vertexArrayObjectId == ID_NONE?engineVAO:vertexArrayObjectId);
+	glBindVertexArray(vertexArrayObjectId);
 }
