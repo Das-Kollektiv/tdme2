@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -25,6 +26,7 @@
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::to_string;
 using std::string;
@@ -503,20 +505,21 @@ vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers, bool useGPUM
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);
 	glGenBuffers(buffers, (uint32_t*)bufferObjectIds.data());
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_STATIC_DRAW:GL_DYNAMIC_DRAW;
 	return bufferObjectIds;
 }
 
 void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
 void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -627,6 +630,7 @@ void GLES2Renderer::unbindBufferObjects(void* context)
 
 void GLES2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage.erase(bufferObjectId);
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -12,6 +13,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::string;
 
@@ -30,6 +32,8 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::renderer::GLES2Renderer
 	: public Renderer
 {
+private:
+	map<uint32_t, int32_t> vbosUsage;
 public:
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;

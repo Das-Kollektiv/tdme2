@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -27,6 +28,7 @@
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::string;
 using std::to_string;
@@ -530,7 +532,7 @@ vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers, bool useGPUMem
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);
 	glGenBuffers(buffers, (uint32_t*)bufferObjectIds.data());
-	for (auto& bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_DYNAMIC_DRAW:GL_STATIC_DRAW;
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_STATIC_DRAW:GL_DYNAMIC_DRAW;
 	return bufferObjectIds;
 }
 

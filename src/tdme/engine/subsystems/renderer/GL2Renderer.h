@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -12,6 +13,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::string;
 
@@ -37,6 +39,7 @@ private:
 	int32_t viewPortWidth {  };
 	int32_t viewPortHeight {  };
 	int32_t activeTextureUnit {  };
+	map<uint32_t, int32_t> vbosUsage;
 protected:
 
 	/**
