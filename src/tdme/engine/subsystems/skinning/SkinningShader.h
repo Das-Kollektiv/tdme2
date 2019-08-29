@@ -41,6 +41,8 @@ private:
 	bool initialized {  };
 	Renderer* renderer {  };
 	map<string, ModelSkinningCache> cache;
+	map<string, int> vaos;
+	bool vaosSupported { false };
 	Mutex mutex;
 
 public:

@@ -121,6 +121,11 @@ public:
 	virtual bool isSupportingMultipleRenderQueues() = 0;
 
 	/**
+	 * @return if renderer supports vertex arrays
+	 */
+	virtual bool isSupportingVertexArrays() = 0;
+
+	/**
 	 * Checks if buffer objects is available
 	 * @return buffer objects availability
 	 */
@@ -987,6 +992,23 @@ public:
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Create a single vertex array object
+	 */
+	virtual int32_t createVertexArrayObject() = 0;
+
+	/**
+	 * Dispose a single vertex array object
+	 * @param vertexArrayObjectId vertex array object id
+	 */
+	virtual void disposeVertexArrayObject(int32_t vertexArrayObjectId) = 0;
+
+	/**
+	 * Bind a single vertex array object
+	 * @param vertexArrayObjectId vertex array object id
+	 */
+	virtual void bindVertexArrayObject(int32_t vertexArrayObjectId) = 0;
 
 	/** 
 	 * Set up renderer for GUI rendering

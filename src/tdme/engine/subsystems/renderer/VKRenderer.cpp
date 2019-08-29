@@ -796,6 +796,10 @@ bool VKRenderer::isSupportingMultipleRenderQueues() {
 	return false;
 }
 
+bool VKRenderer::isSupportingVertexArrays() {
+	return false;
+}
+
 void VKRenderer::initialize()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
@@ -5425,4 +5429,17 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bu
 
 void VKRenderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	(*static_cast<context_type*>(context)).bound_buffers[7] = bufferObjectId;
+}
+
+int32_t VKRenderer::createVertexArrayObject() {
+	Console::println("VKRenderer::createVertexArrayObject(): Not implemented");
+	return -1;
+}
+
+void VKRenderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("VKRenderer::disposeVertexArrayObject(): Not implemented");
+}
+
+void VKRenderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("VKRenderer::bindVertexArrayObject(): Not implemented");
 }

@@ -50,6 +50,7 @@ SkinningShader::SkinningShader(Renderer* renderer): mutex("skinningshader-mutex"
 	this->renderer = renderer;
 	isRunning = false;
 	initialized = false;
+	vaosSupported = renderer->isSupportingVertexArrays() == true;
 }
 
 bool SkinningShader::isInitialized()
@@ -185,6 +186,34 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	}
 	mutex.unlock();
 
+	auto vaoId = object3DGroupMesh->object3DGroupRenderer->object3DGroup->id;
+	auto vaoIt = vaos.find(vaoId);
+	if (vaosSupported == false || vaoIt == vaos.end()) {
+		auto bindVertexArray = vaosSupported == false;
+		if (vaosSupported == true) {
+			vaos[vaoId] = renderer->createVertexArrayObject();
+			vaoIt = vaos.find(vaoId);
+			renderer->bindVertexArrayObject(vaoIt->second);
+			bindVertexArray = true;
+		}
+		if (bindVertexArray == true) {
+			// bind
+			renderer->bindSkinningVerticesBufferObject(context, (*modelSkinningCacheCached->vboIds)[0]);
+			renderer->bindSkinningNormalsBufferObject(context, (*modelSkinningCacheCached->vboIds)[1]);
+			renderer->bindSkinningVertexJointsBufferObject(context, (*modelSkinningCacheCached->vboIds)[2]);
+			renderer->bindSkinningVertexJointIdxsBufferObject(context, (*modelSkinningCacheCached->vboIds)[3]);
+			renderer->bindSkinningVertexJointWeightsBufferObject(context, (*modelSkinningCacheCached->vboIds)[4]);
+			renderer->bindSkinningMatricesBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0]);
+
+			// bind output / result buffers
+			renderer->bindSkinningVerticesResultBufferObject(context, (*vboBaseIds)[1]);
+			renderer->bindSkinningNormalsResultBufferObject(context, (*vboBaseIds)[2]);
+		}
+	} else
+	if (vaosSupported == true) {
+		renderer->bindVertexArrayObject(vaoIt->second);
+	}
+
 	// upload matrices
 	{
 		auto skinning = group->getSkinning();
@@ -195,18 +224,6 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		}
 		renderer->uploadSkinningBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
 	}
-
-	// bind
-	renderer->bindSkinningVerticesBufferObject(context, (*modelSkinningCacheCached->vboIds)[0]);
-	renderer->bindSkinningNormalsBufferObject(context, (*modelSkinningCacheCached->vboIds)[1]);
-	renderer->bindSkinningVertexJointsBufferObject(context, (*modelSkinningCacheCached->vboIds)[2]);
-	renderer->bindSkinningVertexJointIdxsBufferObject(context, (*modelSkinningCacheCached->vboIds)[3]);
-	renderer->bindSkinningVertexJointWeightsBufferObject(context, (*modelSkinningCacheCached->vboIds)[4]);
-	renderer->bindSkinningMatricesBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0]);
-
-	// bind output / result buffers
-	renderer->bindSkinningVerticesResultBufferObject(context, (*vboBaseIds)[1]);
-	renderer->bindSkinningNormalsResultBufferObject(context, (*vboBaseIds)[2]);
 
 	// skinning count
 	renderer->setProgramUniformInteger(context, uniformSkinningCount, vertices.size());
@@ -220,6 +237,8 @@ void SkinningShader::unUseProgram()
 	isRunning = false;
 	// we are done, do memory barrier
 	renderer->memoryBarrier();
+	//
+	renderer->bindVertexArrayObject(renderer->ID_NONE);
 }
 
 void SkinningShader::reset() {

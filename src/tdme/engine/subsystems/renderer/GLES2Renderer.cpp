@@ -76,6 +76,10 @@ bool GLES2Renderer::isSupportingMultipleRenderQueues() {
 	return false;
 }
 
+bool GLES2Renderer::isSupportingVertexArrays() {
+	return false;
+}
+
 void GLES2Renderer::initialize()
 {
 	glGetError();
@@ -710,6 +714,19 @@ void GLES2Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t
 
 void GLES2Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+}
+
+int32_t GLES2Renderer::createVertexArrayObject() {
+	Console::println("GLES2Renderer::createVertexArrayObject(): Not implemented");
+	return -1;
+}
+
+void GLES2Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GLES2Renderer::disposeVertexArrayObject(): Not implemented");
+}
+
+void GLES2Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GLES2Renderer::bindVertexArrayObject(): Not implemented");
 }
 
 void GLES2Renderer::checkGLError()

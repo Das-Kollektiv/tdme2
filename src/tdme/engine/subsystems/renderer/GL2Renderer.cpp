@@ -80,6 +80,10 @@ bool GL2Renderer::isSupportingMultipleRenderQueues() {
 	return false;
 }
 
+bool GL2Renderer::isSupportingVertexArrays() {
+	return false;
+}
+
 bool GL2Renderer::checkBufferObjectsAvailable()
 {
 	// see: http://www.felixgers.de/teaching/jogl/vertexBufferObject.html
@@ -753,4 +757,17 @@ void GL2Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t b
 
 void GL2Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+}
+
+int32_t GL2Renderer::createVertexArrayObject() {
+	Console::println("GL2Renderer::createVertexArrayObject(): Not implemented");
+	return -1;
+}
+
+void GL2Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GL2Renderer::disposeVertexArrayObject(): Not implemented");
+}
+
+void GL2Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GL2Renderer::bindVertexArrayObject(): Not implemented");
 }
