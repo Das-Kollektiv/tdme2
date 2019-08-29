@@ -186,6 +186,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	}
 	mutex.unlock();
 
+	// bind vertex arrays or use VAO
 	auto vaoId = object3DGroupMesh->object3DGroupRenderer->object3DGroup->id;
 	auto vaoIt = vaos.find(vaoId);
 	if (vaosSupported == false || vaoIt == vaos.end()) {
