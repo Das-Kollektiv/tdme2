@@ -70,6 +70,32 @@ cd tdme2
 make clean && make -j HARDWARE_THREADS mains
 ```
 
+## 1.4. Windows MSYS2/MINGW64
+### 1.4.1 Install 64 Bit MSYS2 from https://www.msys2.org/, e.g. msys2-x86_64-20190524.exe, then update your MSYS2 installation and install packages.
+
+```bash 
+pacman -Syu
+pacman -S git
+pacman -S make
+pacman -S mingw-w64-x86_64-gcc
+pacman -S mingw-w64-x86_64-glew
+pacman -S mingw-w64-x86_64-openal
+pacman -S mingw-w64-x86_64-freeglut
+```
+
+### 1.4.2. Clone repository
+
+```bash
+git clone https://github.com/andreasdr/tdme2
+cd tdme2
+```
+
+### 1.4.3. Build
+
+```bash
+make clean && make -j HARDWARE_THREADS mains
+```
+
 # 2. Running a TDME2 binary
 
 You find binaries in
