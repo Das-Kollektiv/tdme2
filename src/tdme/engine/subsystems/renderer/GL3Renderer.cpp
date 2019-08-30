@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -27,6 +28,7 @@
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::string;
 using std::to_string;
@@ -83,6 +85,10 @@ bool GL3Renderer::isSupportingMultipleRenderQueues() {
 	return false;
 }
 
+bool GL3Renderer::isSupportingVertexArrays() {
+	return true;
+}
+
 void GL3Renderer::initialize()
 {
 	glGetError();
@@ -103,10 +109,6 @@ void GL3Renderer::initialize()
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	setTextureUnit(nullptr, 0);
-	// generate a "engine" VAO as
-	//	we do not support VAO's in our engine control flow
-	glGenVertexArrays(1, &engineVAO);
-	glBindVertexArray(engineVAO);
 }
 
 void GL3Renderer::initializeFrame()
@@ -530,13 +532,14 @@ vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers, bool useGPUMem
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);
 	glGenBuffers(buffers, (uint32_t*)bufferObjectIds.data());
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_STATIC_DRAW:GL_DYNAMIC_DRAW;
 	return bufferObjectIds;
 }
 
 void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -548,7 +551,7 @@ void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectI
 void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -685,6 +688,7 @@ void GL3Renderer::unbindBufferObjects(void* context)
 
 void GL3Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage.erase(bufferObjectId);
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
@@ -766,7 +770,7 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
 	#endif
 }
@@ -776,7 +780,7 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 		Console::println("GL3Renderer::uploadSkinningBufferObject(): Not implemented");
 	#else
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
 	#endif
 }
@@ -843,4 +847,18 @@ void GL3Renderer::bindSkinningMatricesBufferObject(void* context, int32_t buffer
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
 	#endif
+}
+
+int32_t GL3Renderer::createVertexArrayObject() {
+	uint32_t vaoId;
+	glGenVertexArrays(1, &vaoId);
+	return vaoId;
+}
+
+void GL3Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
+	glDeleteVertexArrays(1, (uint32_t*)&vertexArrayObjectId);
+}
+
+void GL3Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
+	glBindVertexArray(vertexArrayObjectId);
 }

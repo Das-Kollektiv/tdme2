@@ -10,6 +10,7 @@
 #include <string.h>
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -27,6 +28,7 @@
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::string;
 using std::to_string;
@@ -77,6 +79,10 @@ bool GL2Renderer::isSupportingMultithreadedRendering() {
 }
 
 bool GL2Renderer::isSupportingMultipleRenderQueues() {
+	return false;
+}
+
+bool GL2Renderer::isSupportingVertexArrays() {
 	return false;
 }
 
@@ -532,13 +538,14 @@ vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMem
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);
 	glGenBuffers(buffers, (uint32_t*)bufferObjectIds.data());
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_STATIC_DRAW:GL_DYNAMIC_DRAW;
 	return bufferObjectIds;
 }
 
 void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -550,7 +557,7 @@ void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectI
 void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -656,6 +663,7 @@ void GL2Renderer::unbindBufferObjects(void* context)
 
 void GL2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage.erase(bufferObjectId);
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
@@ -753,4 +761,17 @@ void GL2Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t b
 
 void GL2Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+}
+
+int32_t GL2Renderer::createVertexArrayObject() {
+	Console::println("GL2Renderer::createVertexArrayObject(): Not implemented");
+	return -1;
+}
+
+void GL2Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GL2Renderer::disposeVertexArrayObject(): Not implemented");
+}
+
+void GL2Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GL2Renderer::bindVertexArrayObject(): Not implemented");
 }

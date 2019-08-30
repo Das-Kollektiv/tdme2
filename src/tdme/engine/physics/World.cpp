@@ -363,7 +363,7 @@ Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const
 			if (actorId.size() == 0 || _body->getId() != actorId) {
 				body = _body;
 				hitPoint.set(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
-				return reactphysics3d::decimal(0.0);
+				return reactphysics3d::decimal(info.hitFraction);
 			} else {
 				return reactphysics3d::decimal(1.0);
 			}

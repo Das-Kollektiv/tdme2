@@ -393,6 +393,7 @@ public:
 	void finishFrame() override;
 	bool isSupportingMultithreadedRendering() override;
 	bool isSupportingMultipleRenderQueues() override;
+	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
@@ -487,6 +488,11 @@ public:
 	void bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) override;
+
+	//
+	int32_t createVertexArrayObject() override;
+	void disposeVertexArrayObject(int32_t vertexArrayObjectId) override;
+	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 
 public:
 	/**
