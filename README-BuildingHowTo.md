@@ -119,5 +119,5 @@ $ ./bin/tdme/tests/AngleTest
     - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 
-- Build instructions will follow for NetBSD, Windows-MINGW, Windows-MSC, ...
+- Build instructions will follow for NetBSD, OpenBSD, Windows-MSC, ...
  
