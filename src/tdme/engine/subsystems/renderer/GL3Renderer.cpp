@@ -109,6 +109,9 @@ void GL3Renderer::initialize()
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	setTextureUnit(nullptr, 0);
+	// port-macosx requires this
+	glGenVertexArrays(1, &engineVAO);
+	glBindVertexArray(engineVAO);
 }
 
 void GL3Renderer::initializeFrame()
@@ -860,5 +863,5 @@ void GL3Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
 }
 
 void GL3Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
-	glBindVertexArray(vertexArrayObjectId);
+	glBindVertexArray(vertexArrayObjectId == 0?engineVAO:vertexArrayObjectId);
 }
