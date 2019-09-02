@@ -337,6 +337,7 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServer.cpp \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
+	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
@@ -598,6 +599,7 @@ MAIN_SRCS = \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
+	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/gui/GUITest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
