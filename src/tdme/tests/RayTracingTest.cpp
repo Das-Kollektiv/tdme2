@@ -126,10 +126,9 @@ void RayTracingTest::display()
 		world->getBody("player")->setLinearVelocity(movementVector.scale(4.0f));
 	}
 
-	Vector3 camLookFrom(-2.578182f, 2.378557f, 12.836764f);
-	Vector3 camLookAt(37.993664f, -56.861095f, 50.328781f);
+	Vector3 camLookFrom;
+	Vector3 camLookAt;
 	{
-		/*
 		auto headYPosition = 1.65f;
 		float trdMovemventPlayerXAxis = 0.25f;
 		float trdDistanceCamPlayer = 1.0f;
@@ -144,23 +143,10 @@ void RayTracingTest::display()
 		camLookFrom.set(transformations.getTranslation().clone().addY(headYPosition));
 		camLookFrom.sub(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f), vectorRotated).scale(trdDistanceCamPlayer));
 		camLookFrom.sub(transformations.getRotation(0).getQuaternion().multiply(Vector3(trdMovemventPlayerXAxis, 0.0f, 0.0f), vectorRotated));
-		*/
 
 		engine->getCamera()->setLookFrom(camLookFrom);
 		engine->getCamera()->setLookAt(camLookAt);
 		engine->getCamera()->setUpVector(Camera::computeUpVector(camLookFrom, camLookAt));
-
-		if (keyInfo == true) {
-			Console::println(
-				"Cam: " +
-				to_string(engine->getCamera()->getLookFrom().getX()) + ", " +
-				to_string(engine->getCamera()->getLookFrom().getY()) + ", " +
-				to_string(engine->getCamera()->getLookFrom().getZ()) + " --> " +
-				to_string(engine->getCamera()->getLookAt().getX()) + ", " +
-				to_string(engine->getCamera()->getLookAt().getY()) + ", " +
-				to_string(engine->getCamera()->getLookAt().getZ())
-			);
-		}
 	}
 
 
@@ -179,8 +165,8 @@ void RayTracingTest::display()
 		//rayEnd = traceEnd;
 		auto rayTracedRigidBody = world->doRayCasting(
 			Level::RIGIDBODY_TYPEID_STATIC | Level::RIGIDBODY_TYPEID_DYNAMIC,
-			rayStart,
-			rayEnd,
+			camLookFrom,
+			traceEnd,
 			hitPoint,
 			"player"
 		);
@@ -189,15 +175,23 @@ void RayTracingTest::display()
 			dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("crosshair")->getNodeById("crosshair_hud"))->getActiveConditions().add("pickup");
 		}
 		if (keyInfo == true) {
-			Console::println(
-				"Ray: " +
-				to_string(engine->getCamera()->getLookFrom().getX()) + ", " +
-				to_string(engine->getCamera()->getLookFrom().getY()) + ", " +
-				to_string(engine->getCamera()->getLookFrom().getZ()) + " --> " +
-				to_string(traceEnd.getX()) + ", " +
-				to_string(traceEnd.getY()) + ", " +
-				to_string(traceEnd.getZ())
-			);
+			// draw ray
+			auto linesObject3D = new LinesObject3D("ray", 3.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
+			linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+			engine->addEntity(linesObject3D);
+
+			// draw aabb
+			if (rayTracedRigidBody != nullptr && rayTracedRigidBody->getId() != "ground") {
+				auto bvEntity = new Object3D(
+					"bv",
+					entityBoundingVolumeModel
+				);
+				bvEntity->setTranslation(engine->getEntity(rayTracedRigidBody->getId())->getTransformations().getTranslation());
+				bvEntity->update();
+				engine->addEntity(bvEntity);
+			} else {
+				engine->removeEntity("bv");
+			}
 		}
 	}
 
@@ -251,7 +245,7 @@ void RayTracingTest::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto interactionTable = ModelMetaDataFileImport::doImport(-1, "resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm");
-	auto entityBoundingVolumeModel = PrimitiveModel::createModel(interactionTable->getBoundingVolumeAt(0)->getBoundingVolume(), "interactiontable.bv");
+	entityBoundingVolumeModel = PrimitiveModel::createModel(interactionTable->getBoundingVolumeAt(0)->getBoundingVolume(), "interactiontable.bv");
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
@@ -274,15 +268,6 @@ void RayTracingTest::initialize()
 			Level::RIGIDBODY_TYPEID_STATIC
 		);
 
-		// aabb
-		auto bvEntity = new Object3D(
-			id + ".bv",
-			entityBoundingVolumeModel
-		);
-		bvEntity->setTranslation(Vector3(x, 0.0f, z));
-		bvEntity->update();
-		engine->addEntity(bvEntity);
-
 		//
 		interactionTableIdx++;
 
@@ -299,11 +284,6 @@ void RayTracingTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("player", true, Level::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
-
-	// test line
-	auto linesObject3D = new LinesObject3D("line", 3.0f, { rayStart, rayEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
-	linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-	engine->addEntity(linesObject3D);
 
 	//
 	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/screens", "crosshair.xml"));
