@@ -67,6 +67,7 @@
           - lighting + terrain + depth fog
           - solid(no lighting + no depth fog)
           - sky(no lighting + no depth fog + fragment depth at maximum)
+          - basic water shader
         - shadow mapping
         - post processing
           - depth blur
@@ -172,6 +173,7 @@
     - documentation
 
 - What is WIP or planned
+	- Water shader
     - Improve on Vulkan
     - PBR lighting shader for GL3/CORE+
     - simple script language for GUI

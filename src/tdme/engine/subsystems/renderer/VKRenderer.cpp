@@ -1,4 +1,4 @@
-/**
+f/**
  * Vulkan renderer
  * based on
  * 	https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
@@ -1748,6 +1748,10 @@ int VKRenderer::determineAlignment(const unordered_map<string, vector<string>>& 
 			uint32_t size = sizeof(float);
 			alignmentMax = Math::max(alignmentMax, size);
 		} else
+		if (uniformType == "vec2") {
+			uint32_t size = sizeof(float) * 2;
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
 		if (uniformType == "vec3") {
 			uint32_t size = sizeof(float) * 3;
 			alignmentMax = Math::max(alignmentMax, size);
@@ -1815,6 +1819,15 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float);
 				auto position = align(size, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				shader.ubo_size = position + size;
+			}
+		} else
+		if (uniformType == "vec2") {
+			for (auto i = 0; i < arraySize; i++) {
+				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+				uint32_t size = sizeof(float) * 2;
+				auto position = align(sizeof(float) * 4, shader.ubo_size);
 				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
 				shader.ubo_size = position + size;
 			}
@@ -1934,6 +1947,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (multiLineComment == true) {
 				if (StringUtils::endsWith(line, "*/") == true) multiLineComment = false;
 			} else
+			// TODO: a.drewke, #elif
 			if (StringUtils::startsWith(line, "#if defined(") == true) {
 				auto definition = StringUtils::trim(StringUtils::substring(line, string("#if defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
@@ -3333,6 +3347,12 @@ void VKRenderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, co
 }
 
 void VKRenderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
+{
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+}
+
+void VKRenderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));

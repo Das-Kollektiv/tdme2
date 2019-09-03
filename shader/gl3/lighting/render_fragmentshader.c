@@ -118,6 +118,8 @@ vec4 fragColor;
 	uniform sampler2D dirtTextureUnit;
 	uniform sampler2D stoneTextureUnit;
 	uniform sampler2D snowTextureUnit;
+#elif defined(HAVE_WATER_SHADER)
+	in float height;
 #else
 	uniform sampler2D diffuseTextureUnit;
 	uniform int diffuseTextureAvailable;
@@ -176,6 +178,7 @@ void main(void) {
 	// retrieve diffuse texture color value
 	#if defined(HAVE_TERRAIN_SHADER)
 		// no op
+	#elif defined(HAVE_WATER_SHADER)
 	#else
 		vec4 diffuseTextureColor;
 		if (diffuseTextureAvailable == 1) {
@@ -307,6 +310,19 @@ void main(void) {
 			}
 		} else {
 			outColor = vec4(
+				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
+				1.0
+			);
+		}
+	#elif defined(HAVE_WATER_SHADER)
+		//
+		outColor = vec4(0.25, 0.25, 0.8, 0.5);
+		outColor+= gsEffectColorAdd;
+		outColor*= fragColor;
+		outColor = clamp(outColor, 0.0, 1.0);
+		if (fogStrength > 0.0) {
+			outColor = vec4(
+				(outColor.rgb * (1.0 - fogStrength)) +
 				vec3(FOG_RED, FOG_GREEN, FOG_BLUE) * fogStrength,
 				1.0
 			);

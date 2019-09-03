@@ -281,6 +281,14 @@ public:
 	virtual void setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data) = 0;
 
 	/** 
+	 * Set up a float vec2 uniform value
+	 * @param context context
+	 * @param uniformId uniform id
+	 * @param data data
+	 */
+	virtual void setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data) = 0;
+
+	/**
 	 * Bind attribute to a input location
 	 * @param programId program id
 	 * @param location location

@@ -322,6 +322,11 @@ void GL3Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, c
 	glUniform3fv(uniformId, 1, data.data());
 }
 
+void GL3Renderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
+{
+	glUniform2fv(uniformId, 1, data.data());
+}
+
 void GL3Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
 	glBindAttribLocation(programId, location, (name).c_str());

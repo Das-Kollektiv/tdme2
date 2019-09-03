@@ -146,6 +146,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \
 	src/tdme/engine/subsystems/lines/LinesShader.cpp \
 	src/tdme/engine/subsystems/lines/LinesObject3DInternal.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \

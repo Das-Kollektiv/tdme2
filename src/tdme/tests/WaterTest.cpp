@@ -59,7 +59,6 @@ void WaterTest::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
-	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
@@ -67,8 +66,8 @@ void WaterTest::initialize()
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
-	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	light0->setDiffuse(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	light0->setAmbient(Color4(0.75f, 0.75f, 0.75f, 1.0f));
+	light0->setDiffuse(Color4(0.40f, 0.40f, 0.40f, 1.0f));
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setPosition(Vector4(0.0f, 20000.0f, 0.0f, 1.0f));
 	light0->setSpotDirection(Vector3(0.0f, 0.0f, 0.0f).sub(Vector3(light0->getPosition().getX(), light0->getPosition().getY(), light0->getPosition().getZ())));
@@ -78,7 +77,8 @@ void WaterTest::initialize()
 	light0->setSpotExponent(0.0f);
 	light0->setSpotCutOff(180.0f);
 	light0->setEnabled(true);
-	entity = new Object3D("ground", ModelReader::read("resources/tests/water", "Water.tm"));
+	auto entity = new Object3D("ground", ModelReader::read("resources/tests/water", "Water.tm"));
+	entity->setShader("water");
 	engine->addEntity(entity);
 }
 
