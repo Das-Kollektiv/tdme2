@@ -124,12 +124,12 @@ protected:
 	 * @param messageId message id
 	 * @param retries retries
 	 */
-	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) throw (Exception) = 0;
+	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) = 0;
 
 	/*
 	 * @brief event method called if client will be closed, will be called from worker
 	 */
-	virtual void onClose() throw (Exception) = 0;
+	virtual void onClose() = 0;
 
 	/**
 	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool

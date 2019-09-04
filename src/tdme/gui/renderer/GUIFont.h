@@ -77,7 +77,7 @@ public:
 	 * @param fileName font file name
 	 * @throws FileSystemException
 	 */
-	static GUIFont* parse(const string& pathName, const string& fileName) throw (FileSystemException);
+	static GUIFont* parse(const string& pathName, const string& fileName);
 
 private:
 

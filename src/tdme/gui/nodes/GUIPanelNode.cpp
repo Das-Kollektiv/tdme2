@@ -30,7 +30,7 @@ GUIPanelNode::GUIPanelNode(
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
 	GUILayoutNode_Alignment* alignment
-) throw (GUIParserException) :
+) :
 	GUILayoutNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, alignment)
 {
 }

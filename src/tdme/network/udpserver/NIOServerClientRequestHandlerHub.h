@@ -47,7 +47,7 @@ public:
 	 * @param handler request handler
 	 * @throws TCPServerClientRequestHandlerHubException
 	 */
-	void addHandler(NIOServerClientRequestHandler<CLIENT,REQUEST>* handler) throw (NIOServerClientRequestHandlerHubException) {
+	void addHandler(NIOServerClientRequestHandler<CLIENT,REQUEST>* handler) {
 		typename RequestHandlerMap::iterator it = requestHandlerMap.find(handler->getCommand());
 		if (it == requestHandlerMap.end()) {
 			requestHandlerMap[handler->getCommand()] = handler;
@@ -71,9 +71,8 @@ public:
 	 * @param request request
 	 * @param messageId message id (udp server only)
 	 * @param retries retries (udp server only)
-	 * @throws exception
 	 */
-	void handleRequest(CLIENT* client, const string& command, REQUEST& request, const uint32_t messageId, const uint8_t retries) throw (Exception) {
+	void handleRequest(CLIENT* client, const string& command, REQUEST& request, const uint32_t messageId, const uint8_t retries) {
 		typename RequestHandlerMap::iterator it = requestHandlerMap.find(command);
 		// handler not identified?
 		if (it == requestHandlerMap.end()) {

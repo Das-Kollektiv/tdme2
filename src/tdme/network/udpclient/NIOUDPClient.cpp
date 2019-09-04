@@ -299,7 +299,7 @@ void NIOUDPClient::run() {
 	Console::println("NIOUDPClient::run(): done");
 }
 
-void NIOUDPClient::sendMessage(NIOUDPClientMessage* clientMessage, bool safe) throw (NIOClientException) {
+void NIOUDPClient::sendMessage(NIOUDPClientMessage* clientMessage, bool safe) {
 	// create message
 	Message message;
 	message.time = clientMessage->getTime();
@@ -358,7 +358,7 @@ void NIOUDPClient::sendMessage(NIOUDPClientMessage* clientMessage, bool safe) th
 	messageQueueMutex.unlock();
 }
 
-void NIOUDPClient::processAckReceived(const uint32_t messageId) throw (NIOClientException) {
+void NIOUDPClient::processAckReceived(const uint32_t messageId) {
 	bool messageAckValid = true;
 	MessageMapAck::iterator iterator;
 

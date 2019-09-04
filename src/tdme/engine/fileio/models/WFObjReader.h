@@ -37,7 +37,7 @@ public:
 	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */
-	static Model* read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
+	static Model* read(const string& pathName, const string& fileName);
 
 private:
 
@@ -49,5 +49,5 @@ private:
 	 * @throws FileSystemException
 	 * @throws ModelIOException
 	 */
-	static void readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials) throw (FileSystemException, ModelFileIOException); // TODO: std container: maybe use call by reference
+	static void readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials); // TODO: std container: maybe use call by reference
 };

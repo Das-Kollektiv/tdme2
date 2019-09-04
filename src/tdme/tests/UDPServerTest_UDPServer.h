@@ -25,7 +25,7 @@ public:
 
 	virtual ~CRHShutdown();
 
-	void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception);
+	void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries);
 };
 
 class CRHDefault : public NIOServerClientRequestHandler<NIOUDPServerClient,string> {
@@ -34,7 +34,7 @@ public:
 
 	virtual ~CRHDefault();
 
-	void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception);
+	void handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries);
 };
 
 class EchoUDPServer : public NIOUDPServer {

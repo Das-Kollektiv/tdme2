@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 string GUIKnob::NAME = "knob";
 
-GUIKnob::GUIKnob() throw (FileSystemException)
+GUIKnob::GUIKnob()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "knob.xml");
 }

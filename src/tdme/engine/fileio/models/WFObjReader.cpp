@@ -72,7 +72,7 @@ private:
 template<typename F> finally_<F> finally(F f) { return finally_<F>(f); }
 }
 
-Model* WFObjReader::read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
+Model* WFObjReader::read(const string& pathName, const string& fileName)
 {
 	// create model
 	auto model = new Model(
@@ -338,7 +338,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName) throw (
 	return model;
 }
 
-void WFObjReader::readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials) throw (FileSystemException, ModelFileIOException)
+void WFObjReader::readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials)
 {
 	Material* current = nullptr;
 	auto alpha = 1.0f;

@@ -207,7 +207,7 @@ Model* FBXReader::read(const string& pathName, const string& fileName) throw (Mo
 	return model;
 }
 
-RotationOrder* FBXReader::getSceneRotationOrder(FbxScene* fbxScene) throw (ModelFileIOException) {
+RotationOrder* FBXReader::getSceneRotationOrder(FbxScene* fbxScene) {
 	auto upVector = getSceneUpVector(fbxScene);
 
 	// take rotation order from root node now
@@ -228,7 +228,7 @@ RotationOrder* FBXReader::getSceneRotationOrder(FbxScene* fbxScene) throw (Model
 	}
 }
 
-UpVector* FBXReader::getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException) {
+UpVector* FBXReader::getSceneUpVector(FbxScene* fbxScene) {
 	int fbxUpVectorSign;
 	auto fbxUpVector = fbxScene->GetGlobalSettings().GetAxisSystem().GetUpVector(fbxUpVectorSign);
 	switch (fbxUpVector) {

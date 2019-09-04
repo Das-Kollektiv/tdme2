@@ -147,7 +147,7 @@ public:
 	 * @throws FileSystemException
 	 * @return font
 	 */
-	static GUIFont* getFont(const string& fileName) throw (FileSystemException);
+	static GUIFont* getFont(const string& fileName);
 
 	/** 
 	 * Get image
@@ -155,7 +155,7 @@ public:
 	 * @throws FileSystemException
 	 * @return texture
 	 */
-	static Texture* getImage(const string& fileName) throw (FileSystemException);
+	static Texture* getImage(const string& fileName);
 
 	/** 
 	 * Get screen

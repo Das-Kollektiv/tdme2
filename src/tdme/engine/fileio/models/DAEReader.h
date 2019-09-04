@@ -51,8 +51,8 @@ public:
 	 * Reads Collada DAE file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws model file IO exception
-	 * @throws file system exception
+	 * @throws ModelFileIOException
+	 * @throws FileSystemException
 	 * @return model instance
 	 */
 	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
@@ -72,7 +72,7 @@ private:
 	 * @return up vector
 	 * @throws ModelFileIOException
 	 */
-	static UpVector* getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException);
+	static UpVector* getUpVector(TiXmlElement* xmlRoot);
 
 	/** 
 	 * Set up model import rotation matrix
@@ -108,10 +108,10 @@ private:
 	 * @param xmlRoot xml node
 	 * @param xmlNode xml root
 	 * @param fps frames per seconds
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return group
 	 */
-	static Group* readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException);
+	static Group* readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
 
 	/** 
 	 * Reads a instance controller
@@ -120,11 +120,11 @@ private:
 	 * @param parentGroup parent group
 	 * @param xmlRoot xml root
 	 * @param xmlNode xml node
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return Group
 	 * @throws Exception
 	 */
-	static Group* readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException);
+	static Group* readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode);
 
 	/** 
 	 * Reads a geometry
@@ -134,9 +134,9 @@ private:
 	 * @param xmlRoot xml root
 	 * @param xmlNodeId xml node id
 	 * @param materialSymbols material symbols
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 */
-	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException); // TODO: std container: maybe use call by reference
+	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Reads a material

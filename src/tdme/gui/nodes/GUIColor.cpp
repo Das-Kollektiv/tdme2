@@ -63,7 +63,7 @@ GUIColor::GUIColor(const array<float, 4>& color): Color4Base(color)
 {
 }
 
-GUIColor::GUIColor(const string& colorString) throw (GUIParserException) : Color4Base()
+GUIColor::GUIColor(const string& colorString) : Color4Base()
 {
 	if (colorString.empty() == true) {
 		throw GUIParserException("No color given");

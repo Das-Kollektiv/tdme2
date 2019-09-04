@@ -25,7 +25,7 @@ class tdme::os::network::NIOTCPSocket : public NIONetworkSocket {
 		 * @throws NIOIOException
 		 * @return bytes read
 		 */
-		size_t read(void* buf, const size_t bytes) throw (NIOIOException);
+		size_t read(void* buf, const size_t bytes);
 
 		/**
 		 * @brief Writes up to "bytes" bytes to socket
@@ -34,7 +34,7 @@ class tdme::os::network::NIOTCPSocket : public NIONetworkSocket {
 		 * @throws NIOIOException
 		 * @return bytes written
 		 */
-		size_t write(void* buf, const size_t bytes) throw (NIOIOException);
+		size_t write(void* buf, const size_t bytes);
 
 		/**
 		 * @brief Creates a TCP socket
@@ -42,7 +42,7 @@ class tdme::os::network::NIOTCPSocket : public NIONetworkSocket {
 		 * @param ipVersion IP version
 		 * @throws NIOSocketException
 		 */
-		static void create(NIOTCPSocket& socket, IpVersion ipVersion) throw (NIOSocketException);
+		static void create(NIOTCPSocket& socket, IpVersion ipVersion);
 
 		/**
 		 * Connects a socket to given IP and port
@@ -50,7 +50,7 @@ class tdme::os::network::NIOTCPSocket : public NIONetworkSocket {
 		 * @param port port
 		 * @throws NIOSocketException
 		 */
-		void connect(const string& ip, const unsigned int port) throw (NIOSocketException);
+		void connect(const string& ip, const unsigned int port);
 
 		/**
 		 * @brief Creates a TCP server socket
@@ -61,13 +61,13 @@ class tdme::os::network::NIOTCPSocket : public NIONetworkSocket {
 		 * @throws NIOSocketException
 		 * @return socket
 		 */
-		static void createServerSocket(NIOTCPSocket& socket, const std::string& ip, const unsigned int port, const int backlog) throw (NIOSocketException);
+		static void createServerSocket(NIOTCPSocket& socket, const std::string& ip, const unsigned int port, const int backlog);
 
 		/**
 		 * @brief Disables nagle's algorithm
 		 * @throws NIOSocketException
 		 */
-		void setTCPNoDelay() throw (NIOSocketException);
+		void setTCPNoDelay();
 
 		/**
 		 * @brief Accepts a socket from a server socket
@@ -75,6 +75,6 @@ class tdme::os::network::NIOTCPSocket : public NIONetworkSocket {
 		 * @throws NIOSocketException
 		 * @return if socket was accepted
 		 */
-		bool accept(NIOTCPSocket& _socket) throw (NIOSocketException);
+		bool accept(NIOTCPSocket& _socket);
 };
 

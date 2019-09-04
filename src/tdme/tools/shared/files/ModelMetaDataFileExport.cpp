@@ -85,7 +85,7 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-void ModelMetaDataFileExport::copyFile(const string& source, const string& dest) throw (FileSystemException)
+void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
 {
 }
 

@@ -20,7 +20,7 @@ public:
 	 * @brief Public constructor
 	 * @throws NIOKEMException
 	 */
-	KernelEventMechanism() throw (NIOKEMException);
+	KernelEventMechanism();
 
 	/**
 	 * @brief destructor
@@ -32,7 +32,7 @@ public:
 	 * @param maxCCU supported max ccu
 	 * @throws NIOKEMException
 	 */
-	void initKernelEventMechanism(const unsigned int maxCCU)  throw (NIOKEMException);
+	void initKernelEventMechanism(const unsigned int maxCCU) ;
 
 	/**
 	 * @brief shutdowns the kernel event mechanism
@@ -44,7 +44,7 @@ public:
 	 * @return number of events
 	 * @throws NIOKEMException
 	 */
-	int doKernelEventMechanism() throw (NIOKEMException);
+	int doKernelEventMechanism();
 
 	/**
 	 * @brief decodes a kernel event
@@ -53,7 +53,7 @@ public:
 	 * @param cookie kernel event cookie
 	 * @throws NIOKEMException
 	 */
-	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie) throw (NIOKEMException);
+	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie);
 
 	/**
 	 * @brief sets a non blocked socket io interest
@@ -63,7 +63,7 @@ public:
 	 * @param cookie cookie
 	 * @throws NIOKEMException
 	 */
-	void setSocketInterest(const NIONetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) throw (NIOKEMException);
+	void setSocketInterest(const NIONetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
 
 private:
 	//

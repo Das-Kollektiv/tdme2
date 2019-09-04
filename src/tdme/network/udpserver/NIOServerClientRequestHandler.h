@@ -48,7 +48,7 @@ public:
 	 * @param messageId message id (udp server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void handleRequest(CLIENT* client, REQUEST& request, const uint32_t messageId, const uint8_t retries) throw (Exception) = 0;
+	virtual void handleRequest(CLIENT* client, REQUEST& request, const uint32_t messageId, const uint8_t retries) = 0;
 private:
 	string command;
 };

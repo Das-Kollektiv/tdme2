@@ -34,7 +34,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @return complete filename with path and file
 	 * @throws FileSystemException
 	 */
-	virtual const string getFileName(const string& pathName, const string& fileName) throw (FileSystemException) = 0;
+	virtual const string getFileName(const string& pathName, const string& fileName) = 0;
 
 	/**
 	 * Get content as string
@@ -43,7 +43,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @return string
 	 * @throws FileSystemException
 	 */
-	virtual const string getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) = 0;
+	virtual const string getContentAsString(const string& pathName, const string& fileName) = 0;
 
 	/**
 	 * Set content from string
@@ -52,7 +52,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param content content string
 	 * @throws FileSystemException
 	 */
-	virtual void setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) = 0;
+	virtual void setContentFromString(const string& pathName, const string& fileName, const string& content) = 0;
 
 	/** 
 	 * Get file content
@@ -61,7 +61,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param content content vector
 	 * @throws FileSystemException
 	 */
-	virtual void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) throw (FileSystemException) = 0;
+	virtual void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) = 0;
 
 	/** 
 	 * Set file content
@@ -70,7 +70,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param content content vector
 	 * @throws FileSystemException
 	 */
-	virtual void setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) throw (FileSystemException) = 0;
+	virtual void setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) = 0;
 
 	/**
 	 * Get file content as string array
@@ -79,7 +79,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param content content vector
 	 * @throws FileSystemException
 	 */
-	virtual void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) throw (FileSystemException) = 0;
+	virtual void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) = 0;
 
 	/**
 	 * Set file content as string array
@@ -89,7 +89,7 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @return byte array
 	 * @throws FileSystemException
 	 */
-	virtual void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) throw (FileSystemException) = 0;
+	virtual void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) = 0;
 
 	/**
 	 * List files for given path and filter by a file name filter if not null 
@@ -99,28 +99,28 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param addDrives add drives to list(applies to Microsoft Windows only)
 	 * @return file names 
 	 */
-	virtual void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) = 0;
+	virtual void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) = 0;
 
 	/**
 	 * Check if file is a path
 	 * @param pathName path name
 	 * @return if file is a path
 	 */
-	virtual bool isPath(const string& pathName) throw (FileSystemException) = 0;
+	virtual bool isPath(const string& pathName) = 0;
 
 	/**
 	 * Check if file is a drive (applies to Microsoft Windows only)
 	 * @param pathName path name
 	 * @return if file is a drive
 	 */
-	virtual bool isDrive(const string& pathName) throw (FileSystemException) = 0;
+	virtual bool isDrive(const string& pathName) = 0;
 
 	/**
 	 * Check if file exists
 	 * @param fileName file name
 	 * @return bool if file exists
 	 */
-	virtual bool fileExists(const string& fileName) throw (FileSystemException) = 0;
+	virtual bool fileExists(const string& fileName) = 0;
 
 	/**
 	 * Get canonical path name
@@ -128,40 +128,40 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param fileName file name
 	 * @return canonical path
 	 */
-	virtual const string getCanonicalPath(const string& pathName, const string& fileName) throw (FileSystemException) = 0;
+	virtual const string getCanonicalPath(const string& pathName, const string& fileName) = 0;
 
 	/**
 	 * Get current working path name
 	 * @return current working path
 	 */
-	virtual const string getCurrentWorkingPathName() throw (FileSystemException) = 0;
+	virtual const string getCurrentWorkingPathName() = 0;
 
 	/**
 	 * Get path name
 	 * @param fileName file name
 	 * @return canonical path
 	 */
-	virtual const string getPathName(const string& fileName) throw (FileSystemException) = 0;
+	virtual const string getPathName(const string& fileName) = 0;
 
 	/**
 	 * Get file name
 	 * @param fileName file name
 	 * @return canonical path
 	 */
-	virtual const string getFileName(const string& fileName) throw (FileSystemException) = 0;
+	virtual const string getFileName(const string& fileName) = 0;
 
 	/**
 	 * Create path
 	 * @param pathName path name
 	 */
-	virtual void createPath(const string& pathName) throw (FileSystemException) = 0;
+	virtual void createPath(const string& pathName) = 0;
 
 	/**
 	 * Remove path
 	 * @param pathName path name
 	 * @return success
 	 */
-	virtual void removePath(const string& pathName) throw (FileSystemException) = 0;
+	virtual void removePath(const string& pathName) = 0;
 
 	/**
 	 * Remove file
@@ -169,5 +169,5 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @param fileName file name
 	 * @return success
 	 */
-	virtual void removeFile(const string& pathName, const string& fileName) throw (FileSystemException) = 0;
+	virtual void removeFile(const string& pathName, const string& fileName) = 0;
 };

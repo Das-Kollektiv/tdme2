@@ -133,7 +133,7 @@ vector<GUIKeyboardEvent>& GUI::getKeyboardEvents()
 	return keyboardEvents;
 }
 
-GUIFont* GUI::getFont(const string& fileName) throw (FileSystemException)
+GUIFont* GUI::getFont(const string& fileName)
 {
 	string canonicalFile;
 	string path;
@@ -167,7 +167,7 @@ GUIFont* GUI::getFont(const string& fileName) throw (FileSystemException)
 	return font;
 }
 
-Texture* GUI::getImage(const string& fileName) throw (FileSystemException)
+Texture* GUI::getImage(const string& fileName)
 {
 	// TODO: fix me, proper get path, filename
 	string canonicalFile;

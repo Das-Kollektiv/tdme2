@@ -309,7 +309,7 @@ int32_t GUINode::getRequestedPixelValue(const string& value, int32_t defaultValu
 	}
 }
 
-GUIColor GUINode::getRequestedColor(const string& color, const GUIColor& defaultColor) throw(GUIParserException)
+GUIColor GUINode::getRequestedColor(const string& color, const GUIColor& defaultColor)
 {
 	if (color.empty() == true || color.length() == 0) {
 		return defaultColor;

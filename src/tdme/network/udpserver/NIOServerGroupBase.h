@@ -30,17 +30,17 @@ protected:
 	/*
 	 * @brief event method called if group will be initiated, will be called from worker
 	 */
-	virtual void onInit() throw (Exception) = 0;
+	virtual void onInit() = 0;
 
 	/*
 	 * @brief event method called if client will be closed, will be called from worker
 	 */
-	virtual void onClose() throw (Exception) = 0;
+	virtual void onClose() = 0;
 
 	/*
 	 * @brief custom event method called if fired, will be called from worker
 	 */
-	virtual void onCustomEvent(const string& type) throw (Exception) = 0;
+	virtual void onCustomEvent(const string& type) = 0;
 };
 
 };

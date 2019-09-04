@@ -58,13 +58,13 @@ public:
 	 * @param port port
 	 * @throws NIOSocketException
 	 */
-	void bind(const string& ip, const unsigned int port) throw (NIOSocketException);
+	void bind(const string& ip, const unsigned int port);
 
 	/**
 	 * @brief sets the socket non blocked
 	 * @throws NIOSocketException
 	 */
-	void setNonBlocked() throw (NIOSocketException);
+	void setNonBlocked();
 
 	/**
 	 * Closes the socket

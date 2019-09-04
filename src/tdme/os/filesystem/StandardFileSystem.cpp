@@ -51,11 +51,11 @@ StandardFileSystem::~StandardFileSystem()
 {
 }
 
-const string StandardFileSystem::getFileName(const string& pathName, const string& fileName) throw (FileSystemException) {
+const string StandardFileSystem::getFileName(const string& pathName, const string& fileName) {
 	return pathName + "/" + fileName;
 }
 
-void StandardFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives) throw (FileSystemException)
+void StandardFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives)
 {
 	auto _pathName = pathName;
 	if (StringUtils::endsWith(pathName, "/") == false) _pathName+= "/";
@@ -96,7 +96,7 @@ void StandardFileSystem::list(const string& pathName, vector<string>& files, Fil
 	closedir(dir);
 }
 
-bool StandardFileSystem::isPath(const string& pathName) throw (FileSystemException) {
+bool StandardFileSystem::isPath(const string& pathName) {
 	struct stat s;
 	if (stat(pathName.c_str(), &s) == 0) {
 		return (s.st_mode & S_IFDIR) == S_IFDIR;
@@ -105,16 +105,16 @@ bool StandardFileSystem::isPath(const string& pathName) throw (FileSystemExcepti
 	}
 }
 
-bool StandardFileSystem::isDrive(const string& pathName) throw (FileSystemException) {
+bool StandardFileSystem::isDrive(const string& pathName) {
 	return StringUtils::matches(pathName, "^[a-zA-Z]\\:[\\/\\\\]?$");
 }
 
-bool StandardFileSystem::fileExists(const string& fileName) throw (FileSystemException) {
+bool StandardFileSystem::fileExists(const string& fileName) {
 	struct stat s;
 	return stat(fileName.c_str(), &s) == 0;
 }
 
-const string StandardFileSystem::getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) {
+const string StandardFileSystem::getContentAsString(const string& pathName, const string& fileName) {
 	ifstream ifs(getFileName(pathName, fileName).c_str());
 	if (ifs.is_open() == false) {
 		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
@@ -125,7 +125,7 @@ const string StandardFileSystem::getContentAsString(const string& pathName, cons
 	return (stringStream.str());
 }
 
-void StandardFileSystem::setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) {
+void StandardFileSystem::setContentFromString(const string& pathName, const string& fileName, const string& content) {
 	ofstream ofs(getFileName(pathName, fileName).c_str());
 	if (ofs.is_open() == false) {
 		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
@@ -135,7 +135,7 @@ void StandardFileSystem::setContentFromString(const string& pathName, const stri
 	return;
 }
 
-void StandardFileSystem::getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) throw (FileSystemException)
+void StandardFileSystem::getContent(const string& pathName, const string& fileName, vector<uint8_t>& content)
 {
 	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {
@@ -149,7 +149,7 @@ void StandardFileSystem::getContent(const string& pathName, const string& fileNa
 	ifs.close();
 }
 
-void StandardFileSystem::setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) throw (FileSystemException) {
+void StandardFileSystem::setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) {
 	ofstream ofs(getFileName(pathName, fileName).c_str(), ofstream::binary);
 	if (ofs.is_open() == false) {
 		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
@@ -158,7 +158,7 @@ void StandardFileSystem::setContent(const string& pathName, const string& fileNa
 	ofs.close();
 }
 
-void StandardFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) throw (FileSystemException)
+void StandardFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content)
 {
 	ifstream ifs(getFileName(pathName, fileName).c_str());
 	if(ifs.is_open() == false) {
@@ -173,7 +173,7 @@ void StandardFileSystem::getContentAsStringArray(const string& pathName, const s
 	ifs.close();
 }
 
-void StandardFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) throw (FileSystemException)
+void StandardFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content)
 {
 	ofstream ofs(getFileName(pathName, fileName).c_str());
 	if(ofs.is_open() == false) {
@@ -188,7 +188,7 @@ void StandardFileSystem::setContentFromStringArray(const string& pathName, const
 	return;
 }
 
-const string StandardFileSystem::getCanonicalPath(const string& pathName, const string& fileName) throw (FileSystemException) {
+const string StandardFileSystem::getCanonicalPath(const string& pathName, const string& fileName) {
 	string unixPathName = StringUtils::replace(pathName, "\\", "/");
 	string unixFileName = StringUtils::replace(fileName, "\\", "/");
 
@@ -246,7 +246,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	return canonicalPathString;
 }
 
-const string StandardFileSystem::getCurrentWorkingPathName() throw (FileSystemException) {
+const string StandardFileSystem::getCurrentWorkingPathName() {
 	// cwd
 	char cwdBuffer[PATH_MAX + 1];
 	char* cwdPtr = getcwd(cwdBuffer, sizeof(cwdBuffer));
@@ -256,21 +256,21 @@ const string StandardFileSystem::getCurrentWorkingPathName() throw (FileSystemEx
 	return (cwdPtr);
 }
 
-const string StandardFileSystem::getPathName(const string& fileName) throw (FileSystemException) {
+const string StandardFileSystem::getPathName(const string& fileName) {
 	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
 	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return ".";
 	return StringUtils::substring(unixFileName, 0, lastPathSeparator);
 }
 
-const string StandardFileSystem::getFileName(const string& fileName) throw (FileSystemException) {
+const string StandardFileSystem::getFileName(const string& fileName) {
 	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
 	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return fileName;
 	return StringUtils::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
 }
 
-void StandardFileSystem::createPath(const string& pathName) throw (FileSystemException) {
+void StandardFileSystem::createPath(const string& pathName) {
 	#if defined(_WIN32)
 		int32_t status = mkdir(pathName.c_str());
 	#else
@@ -281,7 +281,7 @@ void StandardFileSystem::createPath(const string& pathName) throw (FileSystemExc
 	}
 }
 
-void StandardFileSystem::removePath(const string& pathName) throw (FileSystemException) {
+void StandardFileSystem::removePath(const string& pathName) {
 	vector<string> files;
 	list(pathName, files, nullptr);
 	for (int i = 0; i < files.size(); i++) {
@@ -303,7 +303,7 @@ void StandardFileSystem::removePath(const string& pathName) throw (FileSystemExc
 	}
 }
 
-void StandardFileSystem::removeFile(const string& pathName, const string& fileName) throw (FileSystemException) {
+void StandardFileSystem::removeFile(const string& pathName, const string& fileName) {
 	Console::println(string("StandardFileSystem::removeFile(): Removing ") + getFileName(pathName, fileName));
 	int32_t status = unlink(getFileName(pathName, fileName).c_str());
 	if (status == -1) {

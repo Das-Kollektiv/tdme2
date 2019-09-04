@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 string GUIProgressBar::NAME = "progress-bar";
 
-GUIProgressBar::GUIProgressBar() throw (FileSystemException)
+GUIProgressBar::GUIProgressBar()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "progressbar.xml");
 }

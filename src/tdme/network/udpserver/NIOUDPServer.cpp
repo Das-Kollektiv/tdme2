@@ -165,7 +165,7 @@ NIOUDPServerClient* NIOUDPServer::accept(const uint32_t clientId, const std::str
 	return NULL;
 }
 
-void NIOUDPServer::identify(stringstream* frame, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries) throw (NIONetworkServerException) {
+void NIOUDPServer::identify(stringstream* frame, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries) {
 	// format 1char_message_type,6_char_connection_id,6_char_message_id,1_char_retries
 	char inMessageType;
 	char inConnectionId[6];
@@ -224,10 +224,10 @@ void NIOUDPServer::identify(stringstream* frame, MessageType& messageType, uint3
 	retries = _retries;
 }
 
-void NIOUDPServer::validate(stringstream* frame) throw (NIONetworkServerException) {
+void NIOUDPServer::validate(stringstream* frame) {
 }
 
-void NIOUDPServer::initializeHeader(stringstream* frame) throw (NIONetworkServerException) {
+void NIOUDPServer::initializeHeader(stringstream* frame) {
 	// 14(messagetype, clientid, messageid, retries)
 	char emptyHeader[14] =
 		"\0\0\0\0\0\0\0\0\0\0"
@@ -239,7 +239,7 @@ void NIOUDPServer::initializeHeader(stringstream* frame) throw (NIONetworkServer
 	frame->seekp(0, ios_base::end);
 }
 
-void NIOUDPServer::writeHeader(stringstream* frame, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries) throw (NIONetworkServerException) {
+void NIOUDPServer::writeHeader(stringstream* frame, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries) {
 	// seek writing to beginning of header
 	frame->seekp(0, ios_base::beg);
 
@@ -278,7 +278,7 @@ void NIOUDPServer::writeHeader(stringstream* frame, MessageType messageType, con
 	frame->seekp(0, ios_base::end);
 }
 
-void NIOUDPServer::addClient(NIOUDPServerClient* client) throw (NIONetworkServerException) {
+void NIOUDPServer::addClient(NIOUDPServerClient* client) {
 	uint32_t clientId = client->clientId;
 
 	// prepare client struct for map
@@ -339,7 +339,7 @@ void NIOUDPServer::addClient(NIOUDPServerClient* client) throw (NIONetworkServer
 	clientIdMapReadWriteLock.unlock();
 }
 
-void NIOUDPServer::removeClient(NIOUDPServerClient* client) throw (NIONetworkServerException) {
+void NIOUDPServer::removeClient(NIOUDPServerClient* client) {
 	uint32_t clientId = client->clientId;
 
 	//
@@ -386,7 +386,7 @@ void NIOUDPServer::removeClient(NIOUDPServerClient* client) throw (NIONetworkSer
 	clientIdMapReadWriteLock.unlock();
 }
 
-NIOUDPServerClient* NIOUDPServer::lookupClient(const uint32_t clientId) throw (NIONetworkServerException) {
+NIOUDPServerClient* NIOUDPServer::lookupClient(const uint32_t clientId) {
 	NIOUDPServerClient* client = NULL;
 	ClientIdMap::iterator it;
 
@@ -466,7 +466,7 @@ void NIOUDPServer::cleanUpClients() {
 	}
 }
 
-void NIOUDPServer::sendMessage(const NIOUDPServerClient* client, stringstream* frame, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId) throw (NIONetworkServerException) {
+void NIOUDPServer::sendMessage(const NIOUDPServerClient* client, stringstream* frame, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId) {
 	// determine message id by message type
 	uint32_t _messageId;
 	switch(messageType) {
@@ -491,7 +491,7 @@ void NIOUDPServer::sendMessage(const NIOUDPServerClient* client, stringstream* f
 	ioThreads[threadIdx]->sendMessage(client, (uint8_t)messageType, _messageId, frame, safe, deleteFrame);
 }
 
-void NIOUDPServer::processAckReceived(NIOUDPServerClient* client, const uint32_t messageId) throw (NIONetworkServerException) {
+void NIOUDPServer::processAckReceived(NIOUDPServerClient* client, const uint32_t messageId) {
 	unsigned int threadIdx = messageId % ioThreadCount;
 	ioThreads[threadIdx]->processAckReceived(client, messageId);
 }

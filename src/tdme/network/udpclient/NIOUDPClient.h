@@ -91,6 +91,7 @@ public:
 	 * Returns if a message should be processed or already have been processed
 	 * @param clientMessage client message
 	 * @return if message should be processed or not
+	 * @throws NIOClientException
 	 */
 	bool processSafeMessage(NIOUDPClientMessage* clientMessage);
 
@@ -104,8 +105,9 @@ public:
 	 * Pushes a message to be send, takes over ownership of message
 	 * @param clientMessage client message object
 	 * @param safe safe
+	 * @throws NIOClientException
 	 */
-	void sendMessage(NIOUDPClientMessage* clientMessage, bool safe) throw (NIOClientException);
+	void sendMessage(NIOUDPClientMessage* clientMessage, bool safe);
 
 	/**
 	 * Create message
@@ -116,8 +118,9 @@ private:
 	/**
 	 * Processes ack reveived
 	 * @param messageId message id
+	 * @throws NIOClientException
 	 */
-	void processAckReceived(const uint32_t messageId) throw (NIOClientException);
+	void processAckReceived(const uint32_t messageId);
 
 	/**
 	 * Process ack messages

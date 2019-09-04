@@ -19,7 +19,7 @@ CRHShutdown::CRHShutdown() : NIOServerClientRequestHandler<NIOUDPServerClient,st
 CRHShutdown::~CRHShutdown() {
 }
 
-void CRHShutdown::handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception) {
+void CRHShutdown::handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) {
 	// exit here if already processed
 	if (client->processSafeMessage(messageId) == false) {
 		return;
@@ -35,7 +35,7 @@ CRHDefault::CRHDefault() : NIOServerClientRequestHandler<NIOUDPServerClient,stri
 CRHDefault::~CRHDefault() {
 }
 
-void CRHDefault::handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) throw (Exception) {
+void CRHDefault::handleRequest(NIOUDPServerClient *client, string& data, const uint32_t messageId, const uint8_t retries) {
 	// exit here if already processed
 	if (client->processSafeMessage(messageId) == false) {
 		return;

@@ -160,7 +160,7 @@ public:
 	 * @param right right
 	 * @param bottom bottom
 	 */
-	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom) throw (GUIParserException);
+	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom);
 
 private:
 	void init();

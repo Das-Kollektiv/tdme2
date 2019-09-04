@@ -17,7 +17,7 @@ using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIOInterest;
 using tdme::os::network::platform::fallback::KernelEventMechanismPSD;
 
-KernelEventMechanism::KernelEventMechanism() throw (NIOKEMException) : initialized(false), _psd(NULL) {
+KernelEventMechanism::KernelEventMechanism() : initialized(false), _psd(NULL) {
 	// allocate platform specific data
 	_psd = static_cast<void*>(new KernelEventMechanismPSD());
 
@@ -34,7 +34,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) throw (NIOKEMException) {
+void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// skip if not initialized
 	if (initialized == false) return;
 
@@ -80,7 +80,7 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 	psd->fdsMutex.unlock();
 }
 
-void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  throw (NIOKEMException) {
+void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  {
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	//
@@ -95,7 +95,7 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-int KernelEventMechanism::doKernelEventMechanism() throw (NIOKEMException) {
+int KernelEventMechanism::doKernelEventMechanism() {
 	// skip if not initialized
 	if (initialized == false) return -1;
 
@@ -144,7 +144,7 @@ int KernelEventMechanism::doKernelEventMechanism() throw (NIOKEMException) {
 	return psd->events.size();
 }
 
-void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  throw (NIOKEMException) {
+void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
 	// skip if not initialized
 	if (initialized == false) return;
 

@@ -39,5 +39,9 @@ public:
 	map<string, string>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	GUISliderV() throw (FileSystemException);
+	/**
+	 * Public constructor
+	 * @throws FileSystemException
+	 */
+	GUISliderV();
 };

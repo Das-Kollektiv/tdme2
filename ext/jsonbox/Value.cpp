@@ -361,15 +361,15 @@ bool Value::operator>=(const Value &rhs) const {
 	return *this > rhs || *this == rhs;
 }
 
-Value &Value::operator[](const Object::key_type &key) throw (JsonException) {
+Value &Value::operator[](const Object::key_type &key) {
 	return (*data.objectValue)[key];
 }
 
-Value &Value::operator[](const char *key) throw (JsonException) {
+Value &Value::operator[](const char *key) {
 	return operator[](std::string(key));
 }
 
-Value &Value::operator[](tdme::ext::jsonbox::Array::size_type index) throw (JsonException) {
+Value &Value::operator[](tdme::ext::jsonbox::Array::size_type index) {
 	if (type != ARRAY) {
 		throw JsonException("value is not of type array");
 	}
@@ -409,7 +409,7 @@ bool Value::isNull() const {
 	return type == NULL_VALUE;
 }
 
-const std::string &Value::getString() const throw (JsonException) {
+const std::string &Value::getString() const {
 	if (type == STRING) {
 		return  (*data.stringValue);
 	}
@@ -427,7 +427,7 @@ void Value::setString(std::string const &newString) {
 	}
 }
 
-int Value::getInt() const throw (JsonException) {
+int Value::getInt() const {
 	if (type == INTEGER) {
 		return (*data.intValue);
 	}
@@ -445,7 +445,7 @@ void Value::setInt(int newInt) {
 	}
 }
 
-double Value::getDouble() const throw (JsonException) {
+double Value::getDouble() const {
 	if (type == INTEGER) {
 		return (double)(*data.intValue);
 	} else
@@ -466,7 +466,7 @@ void Value::setDouble(double newDouble) {
 	}
 }
 
-const Object &Value::getObject() const throw (JsonException) {
+const Object &Value::getObject() const {
 	if (type == OBJECT) {
 		return (*data.objectValue);
 	}
@@ -484,7 +484,7 @@ void Value::setObject(const Object &newObject) {
 	}
 }
 
-const tdme::ext::jsonbox::Array &Value::getArray() const throw (JsonException) {
+const tdme::ext::jsonbox::Array &Value::getArray() const {
 	if (type == ARRAY) {
 		return (*data.arrayValue);
 	}
@@ -502,7 +502,7 @@ void Value::setArray(const tdme::ext::jsonbox::Array &newArray) {
 	}
 }
 
-bool Value::getBoolean() const throw (JsonException) {
+bool Value::getBoolean() const {
 	if (type == BOOLEAN) {
 		return (*data.boolValue);
 	}
@@ -531,7 +531,7 @@ void Value::loadFromString(std::string const &json) {
 	loadFromStream(jsonStream);
 }
 
-void Value::loadFromStream(std::istream &input) throw (JsonException) {
+void Value::loadFromStream(std::istream &input) {
 	char currentCharacter;
 
 	// We check that the stream is in UTF-8.
@@ -684,7 +684,7 @@ void Value::loadFromStream(std::istream &input) throw (JsonException) {
 	}
 }
 
-void Value::loadFromFile(const std::string &filePath) throw (JsonException) {
+void Value::loadFromFile(const std::string &filePath) {
 	std::ifstream file;
 	file.open(filePath.c_str());
 
@@ -705,7 +705,7 @@ void Value::writeToStream(std::ostream &output, bool indent,
 }
 
 void Value::writeToFile(const std::string &filePath, bool indent,
-						bool escapeAll) const throw (JsonException) {
+						bool escapeAll) const {
 	std::ofstream file;
 	file.open(filePath.c_str());
 
@@ -758,7 +758,7 @@ bool Value::isWhiteSpace(char whiteSpace) {
 		   whiteSpace == Whitespace::CARRIAGE_RETURN;
 }
 
-void Value::readString(std::istream &input, std::string &result) throw (JsonException) {
+void Value::readString(std::istream &input, std::string &result) {
 	bool noErrors = true, noUnicodeError = true;
 	char currentCharacter, tmpCharacter;
 	std::stringstream constructing;
@@ -864,7 +864,7 @@ void Value::readString(std::istream &input, std::string &result) throw (JsonExce
 	}
 }
 
-void Value::readObject(std::istream &input, Object &result) throw (JsonException) {
+void Value::readObject(std::istream &input, Object &result) {
 	bool noErrors = true;
 	char currentCharacter;
 	std::string tmpString;
@@ -952,7 +952,7 @@ void Value::readArray(std::istream &input, tdme::ext::jsonbox::Array &result) {
 	}
 }
 
-void Value::readNumber(std::istream &input, Value &result) throw (JsonException) {
+void Value::readNumber(std::istream &input, Value &result) {
 	bool notDone = true, inFraction = false, inExponent = false;
 	char currentCharacter;
 	std::stringstream constructing;

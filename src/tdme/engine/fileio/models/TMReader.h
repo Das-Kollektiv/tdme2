@@ -60,16 +60,17 @@ public:
 	 * @throws model file IO exception
 	 * @return boolean
 	 */
-	inline bool readBoolean() throw (ModelFileIOException) {
+	inline bool readBoolean() {
 		return readByte() == 1;
 	}
 
 	/**
 	 * Reads a byte from input stream
 	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return byte
 	 */
-	inline int8_t readByte() throw (ModelFileIOException) {
+	inline int8_t readByte() {
 		if (position == data->size()) {
 			throw ModelFileIOException("Unexpected end of stream");
 		}
@@ -78,10 +79,10 @@ public:
 
 	/**
 	 * Reads a integer from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return int
 	 */
-	inline  int32_t readInt() throw (ModelFileIOException) {
+	inline  int32_t readInt() {
 		int32_t value =
 			((static_cast< int32_t >(readByte()) & 0xFF) << 24) +
 			((static_cast< int32_t >(readByte()) & 0xFF) << 16) +
@@ -92,10 +93,10 @@ public:
 
 	/**
 	 * Reads a float from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return float
 	 */
-	inline float readFloat() throw (ModelFileIOException) {
+	inline float readFloat() {
 		int32_t value =
 			((static_cast< int32_t >(readByte()) & 0xFF) << 24) +
 			((static_cast< int32_t >(readByte()) & 0xFF) << 16) +
@@ -107,10 +108,10 @@ public:
 
 	/**
 	 * Reads a string from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return string
 	 */
-	inline const string readString() throw (ModelFileIOException) {
+	inline const string readString() {
 		if (readBoolean() == false) {
 			return "";
 		} else {
@@ -125,10 +126,10 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return float array
 	 */
-	inline void readFloatArray(array<float, 16>& data) throw (ModelFileIOException) {
+	inline void readFloatArray(array<float, 16>& data) {
 		auto length = readInt();
 		if (length != data.size()) {
 			throw ModelFileIOException("Wrong float array size");
@@ -140,10 +141,10 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return float array
 	 */
-	inline void readFloatArray(array<float, 9>& data) throw (ModelFileIOException) {
+	inline void readFloatArray(array<float, 9>& data) {
 		auto length = readInt();
 		if (length != data.size()) {
 			throw ModelFileIOException("Wrong float array size");
@@ -155,10 +156,10 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return float array
 	 */
-	inline void readFloatArray(array<float, 4>& data) throw (ModelFileIOException) {
+	inline void readFloatArray(array<float, 4>& data) {
 		auto length = readInt();
 		if (length != data.size()) {
 			throw ModelFileIOException("Wrong float array size");
@@ -170,10 +171,10 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return float array
 	 */
-	inline void readFloatArray(array<float, 3>& data) throw (ModelFileIOException) {
+	inline void readFloatArray(array<float, 3>& data) {
 		auto length = readInt();
 		if (length != data.size()) {
 			throw ModelFileIOException("Wrong float array size");
@@ -185,10 +186,10 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return float array
 	 */
-	inline void readFloatArray(array<float, 2>& data) throw (ModelFileIOException) {
+	inline void readFloatArray(array<float, 2>& data) {
 		auto length = readInt();
 		if (length != data.size()) {
 			throw ModelFileIOException("Wrong float array size");
@@ -200,10 +201,10 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return float array
 	 */
-	inline const vector<float> readFloatVector() throw (ModelFileIOException) {
+	inline const vector<float> readFloatVector() {
 		vector<float> f;
 		f.resize(readInt());
 		for (auto i = 0; i < f.size(); i++) {
@@ -232,8 +233,8 @@ public:
 	 * TDME model format reader
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws IOException
-	 * @throws model file IO exception
+	 * @throws FileSystemException
+	 * @throws ModelFileIOException
 	 * @return model
 	 */
 	static Model* read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
@@ -252,91 +253,85 @@ private:
 	 * @param pathName path name
 	 * @param is input stream
 	 * @param version version
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version) throw (ModelFileIOException);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read animation setup
 	 * @param is input stream
 	 * @param model model
 	 * @param version version
-	 * @throw model file io exception
+	 * @throws ModelFileIOException
 	 */
-	static void readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version) throw (ModelFileIOException);
+	static void readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version);
 
 	/** 
 	 * Read vertices from input stream
 	 * @param is input stream
-	 * @throws IOException
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return vector3 array
 	 */
-	static const vector<Vector3> readVertices(TMReaderInputStream* is) throw (ModelFileIOException);
+	static const vector<Vector3> readVertices(TMReaderInputStream* is);
 
 	/** 
 	 * Read texture coordinates from input stream
 	 * @param is input stream
-	 * @throws IOException
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return texture coordinates array
 	 */
-	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException);
+	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is);
 
 	/** 
 	 * Read indices from input stream
 	 * @param is input stream
 	 * @param indices indices
-	 * @throws IOException
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return if having indices
 	 */
-	static bool readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices) throw (ModelFileIOException);
+	static bool readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices);
 
 	/** 
 	 * Read animation from input stream into group
 	 * @param is input stream
 	 * @param g group
-	 * @throws IOException 
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return Animation
 	 */
-	static Animation* readAnimation(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
+	static Animation* readAnimation(TMReaderInputStream* is, Group* g);
 
 	/** 
 	 * Read faces entities from input stream
 	 * @param is input stream
 	 * @param g group
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 */
-	static void readFacesEntities(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
+	static void readFacesEntities(TMReaderInputStream* is, Group* g);
 
 	/** 
 	 * Read skinning joint
 	 * @param is input stream
-	 * @throws IOException
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return joint
 	 */
-	static Joint readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException);
+	static Joint readSkinningJoint(TMReaderInputStream* is);
 
 	/** 
 	 * Read skinning joint weight
 	 * @param is input stream
-	 * @throws IOException
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return joint weight
 	 */
-	static JointWeight readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException);
+	static JointWeight readSkinningJointWeight(TMReaderInputStream* is);
 
 	/** 
 	 * Read skinning from input stream
 	 * @param is input stream
 	 * @param g group
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 */
-	static void readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException);
+	static void readSkinning(TMReaderInputStream* is, Group* g);
 
 	/** 
 	 * Read sub groups
@@ -345,18 +340,18 @@ private:
 	 * @param parentGroup parent group
 	 * @param subGroups sub groups
 	 * @throws IOException
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return group
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups) throw (ModelFileIOException); // TODO: std container: maybe use call by reference
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Write group to output stream
 	 * @param is input stream
 	 * @param model model
 	 * @param parentGroup parent group
-	 * @throws model file IO exception
+	 * @throws ModelFileIOException
 	 * @return group
 	 */
-	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException);
+	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup);
 };

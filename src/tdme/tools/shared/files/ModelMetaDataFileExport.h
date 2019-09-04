@@ -34,9 +34,9 @@ private:
 	 * Copy file
 	 * @param source source
 	 * @param dest dest
-	 * @throws file system exception
+	 * @throws FileSystemException
 	 */
-	static void copyFile(const string& source, const string& dest) throw (FileSystemException);
+	static void copyFile(const string& source, const string& dest);
 
 	/**
 	 * Export LOD level to JSON

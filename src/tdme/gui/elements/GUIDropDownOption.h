@@ -38,5 +38,9 @@ public:
 	map<string, string>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	GUIDropDownOption() throw (FileSystemException);
+	/**
+	 * Public constructor
+	 * @throws FileSystemException
+	 */
+	GUIDropDownOption();
 };

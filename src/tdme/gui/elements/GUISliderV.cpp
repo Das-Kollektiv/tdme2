@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 string GUISliderV::NAME = "slider-vertical";
 
-GUISliderV::GUISliderV() throw (FileSystemException)
+GUISliderV::GUISliderV()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "slider-v.xml");
 }

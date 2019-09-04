@@ -47,14 +47,16 @@ private:
 	/**
 	 * Get scene up vector
 	 * @param fbxScene fbx scene
+	 * @throws ModelFileIOException
 	 */
-	static UpVector* getSceneUpVector(FbxScene* fbxScene) throw (ModelFileIOException);
+	static UpVector* getSceneUpVector(FbxScene* fbxScene);
 
 	/**
 	 * Get scene rotation order
 	 * @param fbxScene fbx scene
+	 * @throws ModelFileIOException
 	 */
-	static RotationOrder* getSceneRotationOrder(FbxScene* fbxScene) throw (ModelFileIOException);
+	static RotationOrder* getSceneRotationOrder(FbxScene* fbxScene);
 
 	/**
 	 * Set up model import rotation maxtrix

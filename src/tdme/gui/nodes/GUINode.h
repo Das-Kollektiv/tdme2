@@ -296,9 +296,10 @@ public:
 	 * Get color
 	 * @param color color
 	 * @param defaultColor default color
+	 * @throws GUIParserException
 	 * @return value
 	 */
-	static GUIColor getRequestedColor(const string& color, const GUIColor& defaultColor) throw (GUIParserException);
+	static GUIColor getRequestedColor(const string& color, const GUIColor& defaultColor);
 
 	/** 
 	 * Create flow

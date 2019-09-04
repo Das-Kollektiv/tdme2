@@ -173,7 +173,7 @@ void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) throw (FileSystemException) {
+Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// canonical file name for id

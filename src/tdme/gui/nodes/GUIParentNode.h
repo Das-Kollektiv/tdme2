@@ -133,14 +133,16 @@ public:
 	 * Replace sub nodes with given XML
 	 * @param xml xml
 	 * @param resetScrollOffsets reset scroll offsets
+	 * @throws GUIParserException
 	 */
-	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */;
+	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets);
 
-	/** 
+	/**
 	 * Add sub node
 	 * @param node node
+	 * @throws GUIParserException
 	 */
-	virtual void addSubNode(GUINode* node) throw (GUIParserException);
+	virtual void addSubNode(GUINode* node);
 
 	/** 
 	 * @return overflow x
@@ -156,9 +158,9 @@ public:
 	 * Create over flow
 	 * @param overflow over flow
 	 * @return over flow
-	 * @throws gui parser exception
+	 * @throws GUIParserException
 	 */
-	static GUIParentNode_Overflow* createOverflow(const string& overflow) throw (GUIParserException);
+	static GUIParentNode_Overflow* createOverflow(const string& overflow);
 
 	/** 
 	 * @return children render offset x

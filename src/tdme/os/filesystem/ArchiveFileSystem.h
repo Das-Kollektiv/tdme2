@@ -41,27 +41,27 @@ private:
 	 * @param outContent uncompressed out content
 	 * @throws FileSystemException
 	 */
-	void decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent) throw (FileSystemException);
+	void decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent);
 
 public:
-	const string getFileName(const string& path, const string& fileName) throw (FileSystemException) override;
-	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) throw (FileSystemException) override;
-	bool isPath(const string& pathName) throw (FileSystemException) override;
-	bool isDrive(const string& pathName) throw (FileSystemException) override;
-	bool fileExists(const string& fileName) throw (FileSystemException) override;
-	const string getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) override;
-	void setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) override;
-	void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) throw (FileSystemException) override;
-	void setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) throw (FileSystemException) override;
-	void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) throw (FileSystemException) override;
-	void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) throw (FileSystemException) override;
-	const string getCanonicalPath(const string& pathName, const string& fileName) throw (FileSystemException) override;
-	const string getCurrentWorkingPathName() throw (FileSystemException) override;
-	const string getPathName(const string& fileName) throw (FileSystemException) override;
-	const string getFileName(const string& fileName) throw (FileSystemException) override;
-	void createPath(const string& pathName) throw (FileSystemException) override;
-	void removePath(const string& pathName) throw (FileSystemException) override;
-	void removeFile(const string& pathName, const string& fileName) throw (FileSystemException) override;
+	const string getFileName(const string& path, const string& fileName) override;
+	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) override;
+	bool isPath(const string& pathName) override;
+	bool isDrive(const string& pathName) override;
+	bool fileExists(const string& fileName) override;
+	const string getContentAsString(const string& pathName, const string& fileName) override;
+	void setContentFromString(const string& pathName, const string& fileName, const string& content) override;
+	void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) override;
+	void setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) override;
+	void getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) override;
+	void setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) override;
+	const string getCanonicalPath(const string& pathName, const string& fileName) override;
+	const string getCurrentWorkingPathName() override;
+	const string getPathName(const string& fileName) override;
+	const string getFileName(const string& fileName) override;
+	void createPath(const string& pathName) override;
+	void removePath(const string& pathName) override;
+	void removeFile(const string& pathName, const string& fileName) override;
 	ArchiveFileSystem();
 	virtual ~ArchiveFileSystem();
 };

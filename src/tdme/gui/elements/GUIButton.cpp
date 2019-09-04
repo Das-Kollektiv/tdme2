@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 string GUIButton::NAME = "button";
 
-GUIButton::GUIButton() throw (FileSystemException)
+GUIButton::GUIButton()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "button.xml");
 }

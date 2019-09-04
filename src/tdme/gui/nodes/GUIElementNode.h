@@ -146,7 +146,7 @@ protected:
 		const string& onMouseOver,
 		const string& onMouseOut,
 		const string& onChangeExpression
-	) throw (GUIParserException);
+	);
 
 public:
 	int32_t getContentWidth() override;

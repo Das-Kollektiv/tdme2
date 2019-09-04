@@ -48,7 +48,7 @@ void NIONetworkSocket::shutdown() {
 	if (descriptor != -1) ::shutdown(descriptor, SHUT_RDWR);
 }
 
-void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) throw (NIOSocketException) {
+void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) {
 	// determine IP version
 	ipVersion = determineIpVersion(ip);
 
@@ -96,7 +96,7 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 	this->port = port;
 }
 
-void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
+void NIONetworkSocket::setNonBlocked() {
 	#if defined(_WIN32)
 		long unsigned int mode = 1;
 		if (ioctlsocket(descriptor, FIONBIO, &mode) != 0) {

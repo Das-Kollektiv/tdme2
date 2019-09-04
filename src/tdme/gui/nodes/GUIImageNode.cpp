@@ -506,7 +506,7 @@ GUINode_Clipping& GUIImageNode::getClipping() {
 	return clipping;
 }
 
-GUINode_Clipping GUIImageNode::createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom) throw (GUIParserException)
+GUINode_Clipping GUIImageNode::createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom)
 {
 	GUINode_Clipping clipping;
 	clipping.left = getRequestedPixelValue(allClipping, 0);
