@@ -39,9 +39,9 @@ public:
 	 * @param fileName file name
 	 * @param level level
 	 * @param progressCallback progress callback
-	 * @throws FileSystemException
-	 * @throws JsonException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
 
@@ -52,9 +52,9 @@ public:
 	 * @param level level
 	 * @param objectIdPrefix object id prefix
 	 * @param progressCallback progress callback
-	 * @throws FileSystemException
-	 * @throws JsonException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
 
@@ -64,9 +64,9 @@ public:
 	 * @param fileName file name
 	 * @param level level
 	 * @param progressCallback progress callback
-	 * @throws FileSystemException
-	 * @throws JsonException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
 

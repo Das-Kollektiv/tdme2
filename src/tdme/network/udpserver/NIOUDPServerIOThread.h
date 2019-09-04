@@ -75,7 +75,7 @@ private:
 	 * @param frame frame to be send
 	 * @param safe safe, requires ack and retransmission
 	 * @param deleteFrame delete frame
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 */
 	void sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame);
 
@@ -83,7 +83,7 @@ private:
 	 * @brief Processes an acknowlegdement reception
 	 * @param client client
 	 * @param messageId message id
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 */
 	void processAckReceived(NIOUDPServerClient* client, const uint32_t messageId);
 

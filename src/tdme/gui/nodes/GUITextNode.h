@@ -74,7 +74,7 @@ protected:
 	 * @param font font
 	 * @param color color
 	 * @param text text
-	 * @throws GUIParserException
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUITextNode(
 		GUIScreenNode* screenNode,

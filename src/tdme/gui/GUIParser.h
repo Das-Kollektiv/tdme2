@@ -42,8 +42,8 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @return GUI screen node
-	 * @throws GUIParserException
-	 * @throws FileSystemException
+	 * @throws tdme::gui::GUIParserException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	static GUIScreenNode* parse(const string& pathName, const string& fileName);
 
@@ -51,8 +51,8 @@ public:
 	 * Parses a GUI XML content
 	 * @param xml xml
 	 * @return GUI screen node
-	 * @throws GUIParserException
-	 * @throws FileSystemException
+	 * @throws tdme::gui::GUIParserException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	static GUIScreenNode* parse(const string& xml);
 
@@ -61,8 +61,8 @@ public:
 	 * @param parentNode parent node
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws GUIParserException
-	 * @throws FileSystemException
+	 * @throws tdme::gui::GUIParserException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	static void parse(GUIParentNode* parentNode, const string& pathName, const string& fileName);
 
@@ -70,8 +70,8 @@ public:
 	 * Parses a GUI XML content into parent node
 	 * @param parentNode parent node
 	 * @param xml xml
-	 * @throws GUIParserException
-	 * @throws FileSystemException
+	 * @throws tdme::gui::GUIParserException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	static void parse(GUIParentNode* parentNode, const string& xml);
 
@@ -82,8 +82,8 @@ private:
 	 * @param guiParentNode gui parent node
 	 * @param xmlParentNode xml parent node
 	 * @param guiElement gui element
-	 * @throws GUIParserException
-	 * @throws FileSystemException
+	 * @throws tdme::gui::GUIParserException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	static void parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement);
 
@@ -131,8 +131,8 @@ public:
 	/** 
 	 * Add GUI element
 	 * @param guiElement guiElement
-	 * @throws GUIParserException
-	 * @throws FileSystemException
+	 * @throws tdme::gui::GUIParserException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	static void addElement(GUIElement* guiElement);
 

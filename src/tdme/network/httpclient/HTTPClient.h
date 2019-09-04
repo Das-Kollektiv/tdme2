@@ -170,8 +170,8 @@ public:
 
 	/**
 	 * Execute HTTP request
-	 * @throws HTTPClientException
-	 * @throws NIOException
+	 * @throws tdme::network::httpclient::HTTPClientException
+	 * @throws tdme::os::network::NIOException
 	 */
 	void execute();
 

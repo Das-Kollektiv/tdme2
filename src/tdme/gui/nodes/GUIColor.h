@@ -73,7 +73,7 @@ public:
 	/**
 	 * Public constructor
 	 * @param colorString color as string
-	 * @throws GUIParserException
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIColor(const string& colorString);
 };

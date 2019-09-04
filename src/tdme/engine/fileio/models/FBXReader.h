@@ -47,14 +47,14 @@ private:
 	/**
 	 * Get scene up vector
 	 * @param fbxScene fbx scene
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static UpVector* getSceneUpVector(FbxScene* fbxScene);
 
 	/**
 	 * Get scene rotation order
 	 * @param fbxScene fbx scene
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static RotationOrder* getSceneRotationOrder(FbxScene* fbxScene);
 

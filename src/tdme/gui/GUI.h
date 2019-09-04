@@ -144,7 +144,7 @@ public:
 	/** 
 	 * Get font
 	 * @param fileName file name
-	 * @throws FileSystemException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return font
 	 */
 	static GUIFont* getFont(const string& fileName);
@@ -152,7 +152,7 @@ public:
 	/** 
 	 * Get image
 	 * @param fileName file name
-	 * @throws FileSystemException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return texture
 	 */
 	static Texture* getImage(const string& fileName);

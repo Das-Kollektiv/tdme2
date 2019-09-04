@@ -37,31 +37,31 @@ public:
 	 * Open a local file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws FileSystemException
-	 * @throws AudioDecoderException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
 	virtual void openFile(const string& pathName, const string& fileName);
 
 	/**
 	 * Resets this audio decoder, if a stream was open it will be rewinded
-	 * @throws FileSystemException
-	 * @throws AudioDecoderException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
 	virtual void reset();
 
 	/**
 	 * Read raw PCM data from stream
 	 * @param data byte buffer
-	 * @throws FileSystemException
-	 * @throws AudioDecoderException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 * @return number of bytes read
 	 */
 	virtual int32_t readFromStream(ByteBuffer* data);
 
 	/**
 	 * Closes the audio file
-	 * @throws FileSystemException
-	 * @throws AudioDecoderException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
 	virtual void close();
 

@@ -39,7 +39,7 @@ private:
 	 * Decompress from archive
 	 * @param inContent compressed content
 	 * @param outContent uncompressed out content
-	 * @throws FileSystemException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	void decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent);
 

@@ -91,7 +91,7 @@ public:
 	 * Returns if a message should be processed or already have been processed
 	 * @param clientMessage client message
 	 * @return if message should be processed or not
-	 * @throws NIOClientException
+	 * @throws tdme::network::udpclient::NIOClientException
 	 */
 	bool processSafeMessage(NIOUDPClientMessage* clientMessage);
 
@@ -105,7 +105,7 @@ public:
 	 * Pushes a message to be send, takes over ownership of message
 	 * @param clientMessage client message object
 	 * @param safe safe
-	 * @throws NIOClientException
+	 * @throws tdme::network::udpclient::NIOClientException
 	 */
 	void sendMessage(NIOUDPClientMessage* clientMessage, bool safe);
 
@@ -118,7 +118,7 @@ private:
 	/**
 	 * Processes ack reveived
 	 * @param messageId message id
-	 * @throws NIOClientException
+	 * @throws tdme::network::udpclient::NIOClientException
 	 */
 	void processAckReceived(const uint32_t messageId);
 

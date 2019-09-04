@@ -58,7 +58,7 @@ protected:
 	 * @param showOn show on
 	 * @param hideOn hide on
 	 * @param alignment alignment
-	 * @throws GUIParserException
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUILayoutNode(
 		GUIScreenNode* screenNode,

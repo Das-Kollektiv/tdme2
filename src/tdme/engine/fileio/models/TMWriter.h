@@ -202,8 +202,8 @@ public:
 	 * @param model model
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws FileSystemException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void write(Model* model, const string& pathName, const string& fileName);
 

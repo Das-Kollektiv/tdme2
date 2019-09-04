@@ -51,8 +51,8 @@ public:
 	 * Reads Collada DAE file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws ModelFileIOException
-	 * @throws FileSystemException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return model instance
 	 */
 	static Model* read(const string& pathName, const string& fileName);
@@ -70,7 +70,7 @@ private:
 	 * Get Up vector
 	 * @param xmlRoot xml root
 	 * @return up vector
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static UpVector* getUpVector(TiXmlElement* xmlRoot);
 
@@ -108,7 +108,7 @@ private:
 	 * @param xmlRoot xml node
 	 * @param xmlNode xml root
 	 * @param fps frames per seconds
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return group
 	 */
 	static Group* readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps);
@@ -120,9 +120,9 @@ private:
 	 * @param parentGroup parent group
 	 * @param xmlRoot xml root
 	 * @param xmlNode xml node
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return Group
-	 * @throws Exception
+	 * @throws tdme::utils::Exception
 	 */
 	static Group* readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode);
 
@@ -134,7 +134,7 @@ private:
 	 * @param xmlRoot xml root
 	 * @param xmlNodeId xml node id
 	 * @param materialSymbols material symbols
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols); // TODO: std container: maybe use call by reference
 

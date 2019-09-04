@@ -56,13 +56,13 @@ public:
 	 * Binds a socket to local ip and port
 	 * @param ip ip
 	 * @param port port
-	 * @throws NIOSocketException
+	 * @throws tdme::os::network::NIOSocketException
 	 */
 	void bind(const string& ip, const unsigned int port);
 
 	/**
 	 * @brief sets the socket non blocked
-	 * @throws NIOSocketException
+	 * @throws tdme::os::network::NIOSocketException
 	 */
 	void setNonBlocked();
 

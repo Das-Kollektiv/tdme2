@@ -296,7 +296,7 @@ public:
 	 * Get color
 	 * @param color color
 	 * @param defaultColor default color
-	 * @throws GUIParserException
+	 * @throws tdme::gui::GUIParserException
 	 * @return value
 	 */
 	static GUIColor getRequestedColor(const string& color, const GUIColor& defaultColor);

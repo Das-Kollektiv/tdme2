@@ -86,7 +86,7 @@ private:
 	 * @param fileName file name
 	 * @param pivot pivot
 	 * @return level editor entity
-	 * @throws Exception
+	 * @throws tdme::utils::Exception
 	 */
 	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
 

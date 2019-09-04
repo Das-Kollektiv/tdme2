@@ -34,7 +34,7 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @return model
-	 * @throws FileSystemException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws ModelIOException
 	 */
 	static Model* read(const string& pathName, const string& fileName);
@@ -46,7 +46,7 @@ private:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param materials materials
-	 * @throws FileSystemException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws ModelIOException
 	 */
 	static void readMaterials(const string& pathName, const string& fileName, map<string, Material*>* materials); // TODO: std container: maybe use call by reference

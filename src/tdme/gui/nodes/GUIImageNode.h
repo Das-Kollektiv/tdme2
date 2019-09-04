@@ -77,7 +77,7 @@ protected:
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
 	 * @param clipping clipping
-	 * @throws GUIParserException
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIImageNode(
 		GUIScreenNode* screenNode,

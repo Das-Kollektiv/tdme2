@@ -36,9 +36,9 @@ public:
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws FileSystemException
-	 * @throws JsonException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
 	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName);
@@ -48,9 +48,9 @@ public:
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name or null
 	 * @param jEntityRoot JSON entity root
-	 * @throws FileSystemException
-	 * @throws JsonException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
 	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot);
@@ -71,9 +71,9 @@ private:
 	 * @param levelEditorEntity level editor entity
 	 * @param pathName path name
 	 * @param jBv JSON bounding volume node
-	 * @throws FileSystemException
-	 * @throws JsonException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity bounding volume
 	 */
 	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv);

@@ -126,7 +126,7 @@ public:
 
 	/** 
 	 * Event callback for entity properties selection
-	 * @pafam entity
+	 * @param entity
 	 */
 	virtual void onEntityPropertiesSelectionChanged(LevelEditorEntity* entity);
 

@@ -80,7 +80,7 @@ protected:
 	 * @param connectionId connection id
 	 * @param messageId message id
 	 * @param retries retries
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 * @return client or NULL
 	 */
 	virtual void identify(stringstream* frame, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries);
@@ -88,14 +88,14 @@ protected:
 	/**
 	 * Validates a client message
 	 * @param frame frame
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 */
 	virtual void validate(stringstream* frame);
 
 	/**
 	 * Writes a empty header to message
 	 * @param frame frame
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 */
 	static void initializeHeader(stringstream* frame);
 
@@ -106,7 +106,7 @@ protected:
 	 * @param clientId client id
 	 * @param messageId message id
 	 * @param retries retries
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 */
 	virtual void writeHeader(stringstream* frame, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries);
 private:
@@ -124,21 +124,21 @@ private:
 	/**
 	 * @brief maps a new client to a given client id
 	 * @param client client
-	 * @throws NIONetworkServerException if id is already in use
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn if id is already in use
 	 */
 	void addClient(NIOUDPServerClient* client);
 
 	/**
 	 * @brief removes a client
 	 * @param client client
-	 * @throws NIONetworkServerException if id is not in use
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn if id is not in use
 	 */
 	void removeClient(NIOUDPServerClient* client);
 
 	/**
 	 * @brief Look ups a client by client id
 	 * @param clientId client id
-	 * @throws NIONetworkServerException if client does not exist
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn if client does not exist
 	 * @return client
 	 */
 	NIOUDPServerClient* lookupClient(const uint32_t clientId);
@@ -164,7 +164,7 @@ private:
 	 * @param deleteFrame delete frame
 	 * @param messageType message type
 	 * @param messageId message id (only for MESSAGETYPE_MESSAGE)
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 */
 	void sendMessage(const NIOUDPServerClient* client, stringstream* frame, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId = MESSAGE_ID_NONE);
 
@@ -172,7 +172,7 @@ private:
 	 * @brief Processes an acknowlegdement reception
 	 * @param client client
 	 * @param messageId message id
-	 * @throws NIONetworkServerException
+	 * @throws tdme::network::udpserver::NIONetworkServerExceptionn
 	 */
 	void processAckReceived(NIOUDPServerClient* client, const uint32_t messageId);
 

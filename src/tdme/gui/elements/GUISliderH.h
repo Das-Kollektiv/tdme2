@@ -42,7 +42,7 @@ public:
 
 	/**
 	 * Public constructor
-	 * @throws FileSystemException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	GUISliderH();
 };

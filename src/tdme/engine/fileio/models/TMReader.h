@@ -67,7 +67,7 @@ public:
 	/**
 	 * Reads a byte from input stream
 	 * @throws model file IO exception
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return byte
 	 */
 	inline int8_t readByte() {
@@ -79,7 +79,7 @@ public:
 
 	/**
 	 * Reads a integer from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return int
 	 */
 	inline  int32_t readInt() {
@@ -93,7 +93,7 @@ public:
 
 	/**
 	 * Reads a float from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return float
 	 */
 	inline float readFloat() {
@@ -108,7 +108,7 @@ public:
 
 	/**
 	 * Reads a string from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return string
 	 */
 	inline const string readString() {
@@ -126,7 +126,7 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return float array
 	 */
 	inline void readFloatArray(array<float, 16>& data) {
@@ -141,7 +141,7 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return float array
 	 */
 	inline void readFloatArray(array<float, 9>& data) {
@@ -156,7 +156,7 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return float array
 	 */
 	inline void readFloatArray(array<float, 4>& data) {
@@ -171,7 +171,7 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return float array
 	 */
 	inline void readFloatArray(array<float, 3>& data) {
@@ -186,7 +186,7 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return float array
 	 */
 	inline void readFloatArray(array<float, 2>& data) {
@@ -201,7 +201,7 @@ public:
 
 	/**
 	 * Reads a float array from input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return float array
 	 */
 	inline const vector<float> readFloatVector() {
@@ -233,8 +233,8 @@ public:
 	 * TDME model format reader
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws FileSystemException
-	 * @throws ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return model
 	 */
 	static Model* read(const string& pathName, const string& fileName);
@@ -253,7 +253,7 @@ private:
 	 * @param pathName path name
 	 * @param is input stream
 	 * @param version version
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
 	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version);
@@ -263,14 +263,14 @@ private:
 	 * @param is input stream
 	 * @param model model
 	 * @param version version
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version);
 
 	/** 
 	 * Read vertices from input stream
 	 * @param is input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return vector3 array
 	 */
 	static const vector<Vector3> readVertices(TMReaderInputStream* is);
@@ -278,7 +278,7 @@ private:
 	/** 
 	 * Read texture coordinates from input stream
 	 * @param is input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return texture coordinates array
 	 */
 	static const vector<TextureCoordinate> readTextureCoordinates(TMReaderInputStream* is);
@@ -287,7 +287,7 @@ private:
 	 * Read indices from input stream
 	 * @param is input stream
 	 * @param indices indices
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return if having indices
 	 */
 	static bool readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices);
@@ -296,7 +296,7 @@ private:
 	 * Read animation from input stream into group
 	 * @param is input stream
 	 * @param g group
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return Animation
 	 */
 	static Animation* readAnimation(TMReaderInputStream* is, Group* g);
@@ -305,14 +305,14 @@ private:
 	 * Read faces entities from input stream
 	 * @param is input stream
 	 * @param g group
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void readFacesEntities(TMReaderInputStream* is, Group* g);
 
 	/** 
 	 * Read skinning joint
 	 * @param is input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return joint
 	 */
 	static Joint readSkinningJoint(TMReaderInputStream* is);
@@ -320,7 +320,7 @@ private:
 	/** 
 	 * Read skinning joint weight
 	 * @param is input stream
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return joint weight
 	 */
 	static JointWeight readSkinningJointWeight(TMReaderInputStream* is);
@@ -329,7 +329,7 @@ private:
 	 * Read skinning from input stream
 	 * @param is input stream
 	 * @param g group
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void readSkinning(TMReaderInputStream* is, Group* g);
 
@@ -340,7 +340,7 @@ private:
 	 * @param parentGroup parent group
 	 * @param subGroups sub groups
 	 * @throws IOException
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return group
 	 */
 	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups); // TODO: std container: maybe use call by reference
@@ -350,7 +350,7 @@ private:
 	 * @param is input stream
 	 * @param model model
 	 * @param parentGroup parent group
-	 * @throws ModelFileIOException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return group
 	 */
 	static Group* readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup);

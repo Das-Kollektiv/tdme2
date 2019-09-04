@@ -193,7 +193,7 @@ protected:
 	 * @param hideOn hide on
 	 * @param scrollable scrollable
 	 * @param popUp pop up
-	 * @throws GUIParserException
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
 		const string& id,
