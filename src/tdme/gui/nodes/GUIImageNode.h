@@ -77,6 +77,7 @@ protected:
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
 	 * @param clipping clipping
+	 * @throws GUIParserException
 	 */
 	GUIImageNode(
 		GUIScreenNode* screenNode,
@@ -99,7 +100,7 @@ protected:
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,
 		const GUINode_Clipping& clipping
-	) throw(GUIParserException);
+	);
 
 public:
 	// overriden methods

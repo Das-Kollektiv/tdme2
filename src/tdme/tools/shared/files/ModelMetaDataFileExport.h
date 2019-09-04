@@ -51,19 +51,19 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param entity entity
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 */
-	static void export_(const string& pathName, const string& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void export_(const string& pathName, const string& fileName, LevelEditorEntity* entity);
 
 	/** 
 	 * Export model meta data file to JSON node
 	 * @param entity entity
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 */
-	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
+	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity);
 
 };

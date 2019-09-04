@@ -55,7 +55,7 @@ public:
 	 * @throws FileSystemException
 	 * @return model instance
 	 */
-	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
+	static Model* read(const string& pathName, const string& fileName);
 
 private:
 

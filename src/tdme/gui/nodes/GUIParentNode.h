@@ -101,6 +101,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @throws GUIParserException
 	 */
 	GUIParentNode(
 		GUIScreenNode* screenNode,
@@ -120,7 +121,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn
-	) throw(GUIParserException);
+	);
 
 public:
 

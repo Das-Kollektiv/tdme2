@@ -46,7 +46,7 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::PropertyModelClass;
 
-void LevelFileExport::export_(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileExport::export_(const string& pathName, const string& fileName, LevelEditorLevel* level)
 {
 	level->setFileName(pathName + '/' + fileName);
 	auto entityLibrary = level->getEntityLibrary();

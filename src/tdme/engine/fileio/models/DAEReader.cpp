@@ -90,7 +90,7 @@ using tdme::ext::tinyxml::TiXmlAttribute;
 
 const Color4 DAEReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
-Model* DAEReader::read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException)
+Model* DAEReader::read(const string& pathName, const string& fileName)
 {
 	// load dae xml document
 	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);

@@ -76,8 +76,7 @@ GUIParentNode::GUIParentNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn
-	)
-	throw(GUIParserException) :
+	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->overflowX = overflowX;

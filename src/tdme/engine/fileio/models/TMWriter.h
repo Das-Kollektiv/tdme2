@@ -205,7 +205,7 @@ public:
 	 * @throws FileSystemException
 	 * @throws ModelFileIOException
 	 */
-	static void write(Model* model, const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
+	static void write(Model* model, const string& pathName, const string& fileName);
 
 private:
 

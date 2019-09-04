@@ -173,7 +173,7 @@ public:
 	 * @throws HTTPClientException
 	 * @throws NIOException
 	 */
-	void execute() throw (HTTPClientException, NIOException);
+	void execute();
 
 	/**
 	 * @return complete response stream

@@ -57,7 +57,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-Model* TMReader::read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
+Model* TMReader::read(const string& pathName, const string& fileName)
 {
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(pathName, fileName, content);

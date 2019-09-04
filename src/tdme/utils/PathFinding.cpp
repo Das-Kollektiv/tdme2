@@ -392,7 +392,6 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 				0,
 				true
 			) == false) {
-			/*
 			Console::println(
 				"Not walkable: " +
 				to_string(endPositionComputed.getX()) + ", " +
@@ -402,14 +401,12 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 				to_string(actorXHalfExtension) + ", " +
 				to_string(actorZHalfExtension)
 			);
-			*/
 			//
 			continue;
 		} else {
 			endPositionComputed.setY(endYHeight);
 		}
 
-		/*
 		Console::println(
 			"Finding path: " +
 			to_string(startPositionComputed.getX()) + ", " +
@@ -421,7 +418,6 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 			to_string(actorXHalfExtension) + ", " +
 			to_string(actorZHalfExtension)
 		);
-		*/
 
 		// otherwise start path finding
 		start(startPositionComputed, endPositionComputed);

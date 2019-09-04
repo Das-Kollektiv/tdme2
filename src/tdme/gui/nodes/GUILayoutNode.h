@@ -58,6 +58,7 @@ protected:
 	 * @param showOn show on
 	 * @param hideOn hide on
 	 * @param alignment alignment
+	 * @throws GUIParserException
 	 */
 	GUILayoutNode(
 		GUIScreenNode* screenNode,
@@ -78,7 +79,7 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		GUILayoutNode_Alignment* alignment
-	) throw(GUIParserException);
+	);
 
 public:
 	int32_t getContentWidth() override;

@@ -39,11 +39,11 @@ public:
 	 * @param fileName file name
 	 * @param level level
 	 * @param progressCallback progress callback
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
 
 	/** 
 	 * Imports a level from a TDME level file to Level Editor
@@ -52,11 +52,11 @@ public:
 	 * @param level level
 	 * @param objectIdPrefix object id prefix
 	 * @param progressCallback progress callback
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Imports a level from a model file to Level Editor
@@ -64,11 +64,11 @@ public:
 	 * @param fileName file name
 	 * @param level level
 	 * @param progressCallback progress callback
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 */
-	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
 
 private:
 	struct LevelEditorEntityMeshGroup {

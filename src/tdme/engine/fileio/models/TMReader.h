@@ -237,7 +237,7 @@ public:
 	 * @throws ModelFileIOException
 	 * @return model
 	 */
-	static Model* read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException);
+	static Model* read(const string& pathName, const string& fileName);
 
 private:
 	/**

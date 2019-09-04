@@ -52,8 +52,7 @@ GUIImageNode::GUIImageNode(
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Scale9Grid& scale9Grid,
-	const GUINode_Clipping& clipping)
-	throw(GUIParserException):
+	const GUINode_Clipping& clipping):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	init();

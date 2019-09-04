@@ -54,7 +54,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Exception;
 
-void TMWriter::write(Model* model, const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
+void TMWriter::write(Model* model, const string& pathName, const string& fileName)
 {
 	TMWriterOutputStream os;
 	os.writeString("TDME Model");

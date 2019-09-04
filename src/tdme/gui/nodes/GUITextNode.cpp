@@ -48,7 +48,7 @@ GUITextNode::GUITextNode(
 	const string& font,
 	const string& color,
 	const MutableString& text
-) throw(Exception):
+):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);

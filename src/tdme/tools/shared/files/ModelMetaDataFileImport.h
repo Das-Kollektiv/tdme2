@@ -36,24 +36,24 @@ public:
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName) throw (FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName);
 
 	/** 
 	 * Imports a model meta data file from JSON object
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name or null
 	 * @param jEntityRoot JSON entity root
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot);
 
 	/**
 	 * Get resource path name
@@ -71,12 +71,12 @@ private:
 	 * @param levelEditorEntity level editor entity
 	 * @param pathName path name
 	 * @param jBv JSON bounding volume node
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws FileSystemException
+	 * @throws JsonException
+	 * @throws ModelFileIOException
 	 * @return level editor entity bounding volume
 	 */
-	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)  throw (FileSystemException, JsonException, ModelFileIOException);
+	static LevelEditorEntityBoundingVolume* parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv);
 
 	/**
 	 * Parse LOD level

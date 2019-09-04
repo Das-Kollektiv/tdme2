@@ -36,7 +36,9 @@ public:
 	 * Reads a model
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @throws ModelFileIOException
+	 * @throws FileSystemException
 	 * @return texture data instance or null
 	 */
-	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
+	static Model* read(const string& pathName, const string& fileName);
 };

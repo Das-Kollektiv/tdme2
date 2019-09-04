@@ -89,7 +89,7 @@ void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
 {
 }
 
-void ModelMetaDataFileExport::export_(const string& pathName, const string& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
+void ModelMetaDataFileExport::export_(const string& pathName, const string& fileName, LevelEditorEntity* entity)
 {
 	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	auto jEntityRoot = exportToJSON(entity);
@@ -128,7 +128,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEd
 	return jLodLevelRoot;
 }
 
-tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
+tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity)
 {
 	ext::jsonbox::Object jEntityRoot;
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {

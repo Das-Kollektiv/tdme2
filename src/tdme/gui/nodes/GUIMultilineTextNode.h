@@ -79,6 +79,7 @@ protected:
 	 * @param font font
 	 * @param color color
 	 * @param text text
+	 * @throws GUIParserException
 	 */
 	GUIMultilineTextNode(
 		GUIScreenNode* screenNode,
@@ -99,7 +100,7 @@ protected:
 		const string& font,
 		const string& color,
 		const MutableString& text
-	) throw(Exception);
+	);
 
 public:
 	int32_t getContentWidth() override;

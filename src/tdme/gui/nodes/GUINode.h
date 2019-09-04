@@ -322,7 +322,7 @@ public:
 	 * @param bottomColor bottom color
 	 * @return border
 	 */
-	static GUINode_Border createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) throw(GUIParserException);
+	static GUINode_Border createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor);
 
 	/** 
 	 * Create padding
@@ -333,7 +333,7 @@ public:
 	 * @param bottom bottom
 	 * @return padding
 	 */
-	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
+	static GUINode_Padding createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom);
 
 	/** 
 	 * Create scale 9 grid
@@ -344,7 +344,7 @@ public:
 	 * @param bottom bottom
 	 * @return scale 9 grid
 	 */
-	static GUINode_Scale9Grid createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException);
+	static GUINode_Scale9Grid createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom);
 
 	/**
 	 * Create conditions

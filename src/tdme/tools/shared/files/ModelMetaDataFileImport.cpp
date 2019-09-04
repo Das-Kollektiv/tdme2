@@ -77,7 +77,7 @@ using tdme::utils::Exception;
 
 using tdme::ext::jsonbox::JsonException;
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName) throw (FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
@@ -91,7 +91,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& p
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot) throw (FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot)
 {
 	LevelEditorEntity* levelEditorEntity;
 	// auto version = Float::parseFloat((jEntityRoot["version"].getString()));
@@ -227,7 +227,7 @@ const string ModelMetaDataFileImport::getResourcePathName(const string& pathName
 	return (gameRoot.length() > 0 ? gameRoot + "/" : "") + Tools::getPath(modelRelativeFileName);
 }
 
-LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv) throw (FileSystemException, JsonException, ModelFileIOException)
+LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(int32_t idx, LevelEditorEntity* levelEditorEntity, const string& pathName, Value& jBv)
 {
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;

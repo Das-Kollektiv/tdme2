@@ -150,7 +150,7 @@ void HTTPClient::reset() {
 	httpHeader.clear();
 }
 
-void HTTPClient::execute() throw (HTTPClientException, NIOException) {
+void HTTPClient::execute() {
 	NIOTCPSocket socket;
 	try {
 		if (StringUtils::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
