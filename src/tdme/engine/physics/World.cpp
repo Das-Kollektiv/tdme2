@@ -324,7 +324,7 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 				height = hitPoint.getY();
 				body = (Body*)info.body->getUserData();
 			}
-			return reactphysics3d::decimal(1.0);
+			return reactphysics3d::decimal(info.hitFraction);
 		};
 		Body* getBody() {
 			return body;

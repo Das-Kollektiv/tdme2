@@ -300,12 +300,12 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	return PathFindingStatus::PATH_STEP;
 }
 
-bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
+bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest, float actorXHalfExtensionOverride, float actorZHalfExtensionOverride) {
 	// clear path
 	path.clear();
 
 	// equal start and end position?
-	if (actorTransformations.getTranslation().equals(endPosition) == true) {
+	if (actorTransformations.getTranslation().equals(endPosition, 0.1f) == true) {
 		Console::println("PathFinding::findPath(): start position == end position! Exiting!");
 		path.push_back(endPosition);
 		return true;
@@ -326,8 +326,8 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	// TODO: try to avoid cloning actor bv
 	auto actorBoundingVolumeTransformed = actorBoundingVolume->clone();
 	actorBoundingVolumeTransformed->fromTransformations(actorTransformations);
-	this->actorXHalfExtension = actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getX() / 2.0f;
-	this->actorZHalfExtension = actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f;
+	this->actorXHalfExtension = actorXHalfExtensionOverride != 0.0f?actorXHalfExtensionOverride:actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getX() / 2.0f; // Check me: RP3D seem to report too big AABBs
+	this->actorZHalfExtension = actorZHalfExtensionOverride != 0.0f?actorZHalfExtensionOverride:actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f; // Check me: RP3D seem to report too big AABBs
 	delete actorBoundingVolumeTransformed;
 
 	// init bounding volume, transformations, collision body
@@ -366,10 +366,14 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 			auto sideDistance = stepSize;
 			auto forwardDistance = 0.0f;
 			auto endYHeight = 0.0;
-			for (auto i = 0; i < alternativeEndSteps + 1; i++) {
+			auto i = 0;
+			while (true == true) {
 				endPositionCandidates.push_back(Vector3().set(sideVector).scale(0.0f).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+				i++; if (i >= alternativeEndSteps) break;
 				endPositionCandidates.push_back(Vector3().set(sideVector).scale(-sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+				i++; if (i >= alternativeEndSteps) break;
 				endPositionCandidates.push_back(Vector3().set(sideVector).scale(+sideDistance).add(forwardVector.clone().scale(-forwardDistance)).add(endPosition));
+				i++; if (i >= alternativeEndSteps) break;
 				forwardDistance+= stepSize;
 			}
 		}
@@ -388,11 +392,36 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 				0,
 				true
 			) == false) {
+			/*
+			Console::println(
+				"Not walkable: " +
+				to_string(endPositionComputed.getX()) + ", " +
+				to_string(endPositionComputed.getY()) + ", " +
+				to_string(endPositionComputed.getZ()) + " / " +
+				to_string(endYHeight) + " / " +
+				to_string(actorXHalfExtension) + ", " +
+				to_string(actorZHalfExtension)
+			);
+			*/
 			//
 			continue;
 		} else {
 			endPositionComputed.setY(endYHeight);
 		}
+
+		/*
+		Console::println(
+			"Finding path: " +
+			to_string(startPositionComputed.getX()) + ", " +
+			to_string(startPositionComputed.getY()) + ", " +
+			to_string(startPositionComputed.getZ()) + " --> " +
+			to_string(endPositionComputed.getX()) + ", " +
+			to_string(endPositionComputed.getY()) + ", " +
+			to_string(endPositionComputed.getZ()) + " / " +
+			to_string(actorXHalfExtension) + ", " +
+			to_string(actorZHalfExtension)
+		);
+		*/
 
 		// otherwise start path finding
 		start(startPositionComputed, endPositionComputed);
@@ -436,7 +465,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 						reverse(path.begin(), path.end());
 						if (path.size() > 1) path.erase(path.begin());
 						if (path.size() == 0) {
-							Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
+							// Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
 							path.push_back(endPositionComputed);
 						}
 						done = true;
@@ -452,6 +481,11 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 
 		//
 		if (success == true || tries == maxTries) break;
+	}
+
+	//
+	if (tries == 0) {
+		Console::println("PathFinding::findPath(): end position were not walkable!");
 	}
 
 	//
