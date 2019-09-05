@@ -86,7 +86,7 @@ protected:
 };
 
 // MINGW: Have some missing posix functions
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) and !defined(__MINGW64__)
 	// TODO: move those somewhere else as they are not only socket specific
 	#define inet_pton inet_pton6
 	#define inet_ntop inet_ntop6

@@ -135,7 +135,7 @@ NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& i
 	return ip.find(':') != std::string::npos?IpVersion::IPV6:IpVersion::IPV4;
 }
 
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) && !defined(__MINGW64__)
 	// see: https://stackoverflow.com/questions/15370033/how-to-use-inet-pton-with-the-mingw-compiler
 	#define NS_INADDRSZ  4
 	#define NS_IN6ADDRSZ 16
