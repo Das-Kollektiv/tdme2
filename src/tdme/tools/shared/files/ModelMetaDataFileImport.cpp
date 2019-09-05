@@ -21,6 +21,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
+#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
@@ -61,6 +62,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -403,6 +405,27 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 				}
 			}
 			pointParticleSystem->setAutoEmit(jPointParticleSystem["ae"].getBoolean());
+		} else
+		if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+			auto fogParticleSystem = particleSystem->getFogParticleSystem();
+			auto& jFogParticleSystem = jParticleSystem["fps"];
+			fogParticleSystem->setMaxPoints(jFogParticleSystem["mp"].getInt());
+			if (jFogParticleSystem["ps"].isNull() == false) fogParticleSystem->setPointSize(static_cast<float>(jFogParticleSystem["ps"].getDouble()));
+			if (jFogParticleSystem["t"].isNull() == false) {
+				try {
+					auto particleTextureFileName = jFogParticleSystem["t"].getString();
+					auto particleTexturePathName = getResourcePathName(pathName, particleTextureFileName);
+					auto particleTransparencyTextureFileName = jFogParticleSystem["tt"].isNull() == true?string():jFogParticleSystem["tt"].getString();
+					auto particleTransparencyTexturePathName = particleTransparencyTextureFileName.size() == 0?string():getResourcePathName(pathName, particleTransparencyTextureFileName);
+					fogParticleSystem->setTextureFileName(
+						particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
+						particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + Tools::getFileName(particleTransparencyTextureFileName)
+					);
+				} catch (Exception& exception) {
+					Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
+					Console::println(string(exception.what()));
+				}
+			}
 		} else {
 			Console::println(
 				string(

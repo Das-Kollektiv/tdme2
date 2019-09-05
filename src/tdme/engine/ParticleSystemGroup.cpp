@@ -4,6 +4,7 @@
 #include <string>
 
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/Partition.h>
@@ -16,6 +17,7 @@ using std::string;
 
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Engine;
+using tdme::engine::FogParticleSystem;
 using tdme::engine::Object3D;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
@@ -36,6 +38,8 @@ ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool e
 		if (ops != nullptr) ops->setParentEntity(this);
 		auto pps = dynamic_cast<PointsParticleSystem*>(particleSystem);
 		if (pps != nullptr) pps->setParentEntity(this);
+		auto fps = dynamic_cast<FogParticleSystem*>(particleSystem);
+		if (fps != nullptr) fps->setParentEntity(this);
 	}
 }
 

@@ -47,6 +47,7 @@ private:
 	static string TYPE_NONE;
 	static string TYPE_OBJECTPARTICLESYSTEM;
 	static string TYPE_POINTSPARTICLESYSTEM;
+	static string TYPE_FOGPARTICLESYSTEM;
 	static string EMITTER_NONE;
 	static string EMITTER_POINTPARTICLEEMITTER;
 	static string EMITTER_BOUNDINGBOXPARTICLEEMITTER;
@@ -77,6 +78,10 @@ private:
 	GUIElementNode* ppsPointSize {  };
 	GUIElementNode* ppsTexture {  };
 	GUIElementNode* ppsTransparencyTexture {  };
+	GUIElementNode* fpsMaxPoints {  };
+	GUIElementNode* fpsPointSize {  };
+	GUIElementNode* fpsTexture {  };
+	GUIElementNode* fpsTransparencyTexture {  };
 	GUIElementNode* ppeCount {  };
 	GUIElementNode* ppeLifeTime {  };
 	GUIElementNode* ppeLifeTimeRnd {  };

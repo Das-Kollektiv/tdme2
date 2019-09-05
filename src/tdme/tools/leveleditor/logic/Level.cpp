@@ -13,11 +13,12 @@
 #include <tdme/audio/Sound.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
@@ -52,6 +53,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
+#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
@@ -81,11 +83,12 @@ using tdme::audio::Audio;
 using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::FogParticleSystem;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
@@ -119,6 +122,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -257,8 +261,6 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 	}
 
 	{
-		LevelEditorEntityParticleSystem_ObjectParticleSystem* objectParticleSystem;
-		LevelEditorEntityParticleSystem_PointParticleSystem* pointParticleSystem;
 		{
 			auto v = particleSystem->getType();
 			if (v == LevelEditorEntityParticleSystem_Type::NONE) {
@@ -287,6 +289,16 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 					pointParticleSystem->getPointSize(),
 					pointParticleSystem->isAutoEmit(),
 					pointParticleSystem->getTexture()
+				);
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+				auto fogParticleSystem = particleSystem->getFogParticleSystem();
+				return new FogParticleSystem(
+					id,
+					engineEmitter,
+					fogParticleSystem->getMaxPoints(),
+					fogParticleSystem->getPointSize(),
+					fogParticleSystem->getTexture()
 				);
 			} else {
 				Console::println(

@@ -26,16 +26,6 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
  */
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem
 {
-	friend class LevelEditorEntityParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Type;
-	friend class LevelEditorEntityParticleSystem_ObjectParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Emitter;
-	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
-
 private:
 	int32_t maxPoints {  };
 	float pointSize {  };
@@ -49,7 +39,7 @@ public:
 	/** 
 	 * @return max points
 	 */
-	inline virtual int32_t getMaxPoints() {
+	virtual int32_t getMaxPoints() {
 		return maxPoints;
 	}
 
@@ -57,14 +47,14 @@ public:
 	 * Set max points
 	 * @param maxPoints max points
 	 */
-	inline virtual void setMaxPoints(int32_t maxPoints) {
+	virtual void setMaxPoints(int32_t maxPoints) {
 		this->maxPoints = maxPoints;
 	}
 
 	/** 
 	 * @return point size
 	 */
-	inline virtual float getPointSize() {
+	virtual float getPointSize() {
 		return pointSize;
 	}
 
@@ -72,28 +62,28 @@ public:
 	 * Set point size
 	 * @param pointSize point size
 	 */
-	inline virtual void setPointSize(float pointSize) {
+	virtual void setPointSize(float pointSize) {
 		this->pointSize = pointSize;
 	}
 
 	/**
 	 * @return texture
 	 */
-	inline virtual Texture* getTexture() {
+	virtual Texture* getTexture() {
 		return texture;
 	}
 
 	/**
 	 * @return texture file name
 	 */
-	inline virtual const string& getTextureFileName() {
+	virtual const string& getTextureFileName() {
 		return textureFileName;
 	}
 
 	/**
 	 * @return transparency texture file name
 	 */
-	inline virtual const string& getTransparencyTextureFileName() {
+	virtual const string& getTransparencyTextureFileName() {
 		return transparencyTextureFileName;
 	}
 
@@ -107,7 +97,7 @@ public:
 	/**
 	 * @return is auto emit
 	 */
-	inline virtual bool isAutoEmit() {
+	virtual bool isAutoEmit() {
 		return autoEmit;
 	}
 
@@ -115,7 +105,7 @@ public:
 	 * Set auto emit
 	 * @param autoEmit auto emit
 	 */
-	inline virtual void setAutoEmit(bool autoEmit) {
+	virtual void setAutoEmit(bool autoEmit) {
 		this->autoEmit = autoEmit;
 	}
 

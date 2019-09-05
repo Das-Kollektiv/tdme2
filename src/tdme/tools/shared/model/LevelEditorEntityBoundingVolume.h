@@ -36,44 +36,44 @@ public:
 	/** 
 	 * @return id
 	 */
-	virtual int32_t getId();
+	int32_t getId();
 
 	/** 
 	 * @return level editor entity
 	 */
-	virtual LevelEditorEntity* getLevelEditorEntity();
+	LevelEditorEntity* getLevelEditorEntity();
 
 	/** 
 	 * @return model mesh file
 	 */
-	virtual const string& getModelMeshFile();
+	const string& getModelMeshFile();
 
 	/** 
 	 * @return model
 	 */
-	virtual Model* getModel();
+	Model* getModel();
 
 	/** 
 	 * @return bounding volume
 	 */
-	virtual BoundingVolume* getBoundingVolume();
+	BoundingVolume* getBoundingVolume();
 
 	/**
 	 * @return bounding volume model index
 	 */
-	virtual int32_t allocateModelIdx();
+	int32_t allocateModelIdx();
 
 	/** 
 	 * Setup bounding volume none
 	 */
-	virtual void setupNone();
+	void setupNone();
 
 	/** 
 	 * Setup bounding volume sphere
 	 * @param center center
 	 * @param radius radius
 	 */
-	virtual void setupSphere(const Vector3& center, float radius);
+	void setupSphere(const Vector3& center, float radius);
 
 	/** 
 	 * Setup bounding volume capsule
@@ -81,7 +81,7 @@ public:
 	 * @param b b
 	 * @param radius radius
 	 */
-	virtual void setupCapsule(const Vector3& a, const Vector3& b, float radius);
+	void setupCapsule(const Vector3& a, const Vector3& b, float radius);
 
 	/** 
 	 * Setup bounding volume oriented bounding box
@@ -91,21 +91,21 @@ public:
 	 * @param axis2 axis 2
 	 * @param halfExtension half extension
 	 */
-	virtual void setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
+	void setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
 	/** 
 	 * Setup bounding volume bounding box
 	 * @param min min
 	 * @param max max
 	 */
-	virtual void setupAabb(const Vector3& min, const Vector3& max);
+	void setupAabb(const Vector3& min, const Vector3& max);
 
 	/** 
 	 * Setup bounding volume sphere
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	virtual void setupConvexMesh(const string& pathName, const string& fileName);
+	void setupConvexMesh(const string& pathName, const string& fileName);
 
 private:
 
@@ -125,6 +125,6 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~LevelEditorEntityBoundingVolume();
+	~LevelEditorEntityBoundingVolume();
 
 };

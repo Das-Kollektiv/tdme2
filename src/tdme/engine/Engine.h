@@ -87,6 +87,7 @@ class tdme::engine::Engine final
 	friend class EngineGL2Renderer;
 	friend class EngineGLES2Renderer;
 	friend class EngineVKRenderer;
+	friend class FogParticleSystem;
 	friend class FrameBuffer;
 	friend class Object3D;
 	friend class Object3DRenderGroup;
@@ -105,6 +106,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
+	friend class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
 	friend class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
 	friend class tdme::engine::subsystems::postprocessing::PostProcessingProgram;
@@ -173,6 +175,7 @@ private:
 	vector<LODObject3D*> visibleLODObjects {  };
 	vector<ObjectParticleSystem*> visibleOpses {  };
 	vector<PointsParticleSystem*> visiblePpses {  };
+	vector<FogParticleSystem*> visibleFpses {  };
 	vector<ParticleSystemGroup*> visiblePsgs {  };
 	vector<LinesObject3D*> visibleLinesObjects {  };
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };

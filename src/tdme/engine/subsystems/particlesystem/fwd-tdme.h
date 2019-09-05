@@ -9,6 +9,7 @@ namespace particlesystem {
 	class BoundingBoxParticleEmitter;
 	class CircleParticleEmitter;
 	class CircleParticleEmitterPlaneVelocity;
+	class FogParticleSystemInternal;
 	class ObjectParticleSystemInternal;
 	class Particle;
 	struct ParticleEmitter;

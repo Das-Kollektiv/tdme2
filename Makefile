@@ -205,6 +205,7 @@ SRCS = \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
+	src/tdme/engine/FogParticleSystem.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/Light.cpp \
@@ -294,6 +295,7 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp \
+	src/tdme/engine/subsystems/particlesystem/FogParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
@@ -499,6 +501,7 @@ SRCS = \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.cpp \
+	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.cpp \

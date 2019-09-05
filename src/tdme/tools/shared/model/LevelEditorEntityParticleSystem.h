@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -7,6 +6,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -20,20 +20,11 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
  */
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem
 {
-	friend class LevelEditorEntityParticleSystem_Type;
-	friend class LevelEditorEntityParticleSystem_ObjectParticleSystem;
-	friend class LevelEditorEntityParticleSystem_PointParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Emitter;
-	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
-
 private:
 	LevelEditorEntityParticleSystem_Type* type {  };
 	LevelEditorEntityParticleSystem_ObjectParticleSystem* ops {  };
 	LevelEditorEntityParticleSystem_PointParticleSystem* pps {  };
+	LevelEditorEntityParticleSystem_FogParticleSystem* fps {  };
 	LevelEditorEntityParticleSystem_Emitter* emitter {  };
 	LevelEditorEntityParticleSystem_PointParticleEmitter* ppe {  };
 	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter* bbpe {  };
@@ -44,71 +35,96 @@ private:
 	/**
 	 * Unset particle system type
 	 */
-	virtual void unsetType();
+	void unsetType();
 
 	/**
 	 * Unset emitter
 	 */
-	virtual void unsetEmitter();
+	void unsetEmitter();
 
 public:
 
 	/** 
 	 * @return particle system type
 	 */
-	virtual LevelEditorEntityParticleSystem_Type* getType();
+	inline LevelEditorEntityParticleSystem_Type* getType() {
+		return type;
+	}
 
 	/**
 	 * Set particle system type
 	 * @param type type
 	 */
-	virtual void setType(LevelEditorEntityParticleSystem_Type* type);
+	void setType(LevelEditorEntityParticleSystem_Type* type);
 
 	/** 
 	 * @return object particle system
 	 */
-	virtual LevelEditorEntityParticleSystem_ObjectParticleSystem* getObjectParticleSystem();
+	inline LevelEditorEntityParticleSystem_ObjectParticleSystem* getObjectParticleSystem() {
+		return ops;
+	}
 
 	/** 
 	 * @return point particle system
 	 */
-	virtual LevelEditorEntityParticleSystem_PointParticleSystem* getPointParticleSystem();
+	inline LevelEditorEntityParticleSystem_PointParticleSystem* getPointParticleSystem() {
+		return pps;
+	}
 
 	/** 
+	 * @return fog particle system
+	 */
+	inline LevelEditorEntityParticleSystem_FogParticleSystem* getFogParticleSystem() {
+		return fps;
+	}
+
+	/**
 	 * @return particle system emitter
 	 */
-	virtual LevelEditorEntityParticleSystem_Emitter* getEmitter();
+	inline LevelEditorEntityParticleSystem_Emitter* getEmitter() {
+		return emitter;
+	}
 
 	/**
 	 * Set emitter
 	 * @param emitter emitter
 	 */
-	virtual void setEmitter(LevelEditorEntityParticleSystem_Emitter* emitter);
+	void setEmitter(LevelEditorEntityParticleSystem_Emitter* emitter);
 
 	/** 
 	 * @return point particle emitter
 	 */
-	virtual LevelEditorEntityParticleSystem_PointParticleEmitter* getPointParticleEmitter();
+	inline LevelEditorEntityParticleSystem_PointParticleEmitter* getPointParticleEmitter() {
+		return ppe;
+	}
 
 	/** 
 	 * @return bounding box particle emitter
 	 */
-	virtual LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter* getBoundingBoxParticleEmitters();
+	inline LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter* getBoundingBoxParticleEmitters() {
+		return bbpe;
+	}
 
 	/** 
 	 * @return circle particle emitter
 	 */
-	virtual LevelEditorEntityParticleSystem_CircleParticleEmitter* getCircleParticleEmitter();
+	inline LevelEditorEntityParticleSystem_CircleParticleEmitter* getCircleParticleEmitter() {
+		return cpe;
+	}
 
 	/** 
 	 * @return circle particle emitter plane velocity
 	 */
-	virtual LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* getCircleParticleEmitterPlaneVelocity();
+	inline LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* getCircleParticleEmitterPlaneVelocity() {
+		return cpepv;
+	}
 
 	/** 
 	 * @return sphere particle emitter
 	 */
-	virtual LevelEditorEntityParticleSystem_SphereParticleEmitter* getSphereParticleEmitter();
+	inline LevelEditorEntityParticleSystem_SphereParticleEmitter* getSphereParticleEmitter() {
+		return spe;
+	}
 
 	/**
 	 * Public constructor
@@ -118,5 +134,5 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~LevelEditorEntityParticleSystem();
+	~LevelEditorEntityParticleSystem();
 };

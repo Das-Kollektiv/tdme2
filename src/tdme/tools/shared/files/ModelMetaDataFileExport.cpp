@@ -28,6 +28,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
+#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
@@ -71,6 +72,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -243,6 +245,15 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 					jPointParticleSystem["tt"] = particleSystem->getPointParticleSystem()->getTransparencyTextureFileName();
 					jPointParticleSystem["ae"] = particleSystem->getPointParticleSystem()->isAutoEmit();
 					jParticleSystem["pps"] = jPointParticleSystem;
+				} else
+				if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM)
+				{
+					ext::jsonbox::Object jFogParticleSystem;
+					jFogParticleSystem["mp"] = particleSystem->getFogParticleSystem()->getMaxPoints();
+					jFogParticleSystem["ps"] = particleSystem->getFogParticleSystem()->getPointSize();
+					jFogParticleSystem["t"] = particleSystem->getFogParticleSystem()->getTextureFileName();
+					jFogParticleSystem["tt"] = particleSystem->getFogParticleSystem()->getTransparencyTextureFileName();
+					jParticleSystem["fps"] = jFogParticleSystem;
 				} else {
 					Console::println(
 						string(
