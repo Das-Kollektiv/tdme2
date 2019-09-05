@@ -322,7 +322,7 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 			Vector3 hitPoint(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
 			if (hitPoint.getY() >= height) {
 				height = hitPoint.getY();
-				body = (Body*)info.body->getUserData();
+				body = static_cast<Body*>(info.body->getUserData());
 			}
 			return reactphysics3d::decimal(info.hitFraction);
 		};
@@ -359,7 +359,7 @@ Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const
 		CustomCallbackClass(const string& actorId): actorId(actorId), body(nullptr) {
 		}
 		virtual reactphysics3d::decimal notifyRaycastHit(const reactphysics3d::RaycastInfo& info) {
-			auto _body = (Body*)info.body->getUserData();
+			auto _body = static_cast<Body*>(info.body->getUserData());
 			if (actorId.size() == 0 || _body->getId() != actorId) {
 				body = _body;
 				hitPoint.set(info.worldPoint.x, info.worldPoint.y, info.worldPoint.z);
