@@ -60,7 +60,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const string& colorDisabled,
 	const MutableString& text,
 	int32_t maxLength
-	) throw (Exception):
+	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->font = GUI::getFont(font);

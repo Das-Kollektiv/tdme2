@@ -40,13 +40,17 @@ public:
 	 * Open a local file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
-	virtual void openFile(const string& pathName, const string& fileName) throw (FileSystemException, AudioDecoderException) = 0;
+	virtual void openFile(const string& pathName, const string& fileName) = 0;
 
 	/** 
 	 * Resets this audio decoder, if a stream was open it will be rewinded
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
-	virtual void reset() throw (FileSystemException, AudioDecoderException) = 0;
+	virtual void reset() = 0;
 
 	/** 
 	 * @return number of channels or CHANNELS_NONE
@@ -71,14 +75,18 @@ public:
 	/**
 	 * Read raw PCM data from stream 
 	 * @param data byte buffer
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 * @return number of bytes read
 	 */
-	virtual int32_t readFromStream(ByteBuffer* data) throw (FileSystemException, AudioDecoderException) = 0;
+	virtual int32_t readFromStream(ByteBuffer* data) = 0;
 
 	/** 
 	 * Closes the audio file
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
-	virtual void close() throw (FileSystemException, AudioDecoderException) = 0;
+	virtual void close() = 0;
 
 	/**
 	 * Constructor

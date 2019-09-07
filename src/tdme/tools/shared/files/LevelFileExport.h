@@ -32,10 +32,10 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param level level
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void export_(const string& pathName, const string& fileName, LevelEditorLevel* level) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void export_(const string& pathName, const string& fileName, LevelEditorLevel* level);
 
 };

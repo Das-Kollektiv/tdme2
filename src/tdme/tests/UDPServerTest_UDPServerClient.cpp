@@ -21,7 +21,7 @@ EchoUDPServerClient::~EchoUDPServerClient() {
 	Console::println("EchoUDPServerClient::~EchoUDPServerClient()");
 }
 
-void EchoUDPServerClient::onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) throw (Exception) {
+void EchoUDPServerClient::onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) {
 	string command;
 	char c;
 	while(true) {
@@ -47,14 +47,14 @@ void EchoUDPServerClient::onRequest(stringstream* frame, const uint32_t messageI
 	);
 }
 
-void EchoUDPServerClient::onInit() throw (Exception) {
+void EchoUDPServerClient::onInit() {
 	Console::println("initiated connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }
 
-void EchoUDPServerClient::onClose() throw (Exception) {
+void EchoUDPServerClient::onClose() {
 	Console::println("closed connection with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }
 
-void EchoUDPServerClient::onCustom(const string& type) throw (Exception) {
+void EchoUDPServerClient::onCustom(const string& type) {
 	Console::println("custom event '" + (type) + "' with '" + (getIp()) + ":" + to_string(getPort()) + "'");
 }

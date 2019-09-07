@@ -121,6 +121,11 @@ public:
 	virtual bool isSupportingMultipleRenderQueues() = 0;
 
 	/**
+	 * @return if renderer supports vertex arrays
+	 */
+	virtual bool isSupportingVertexArrays() = 0;
+
+	/**
 	 * Checks if buffer objects is available
 	 * @return buffer objects availability
 	 */
@@ -276,6 +281,14 @@ public:
 	virtual void setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data) = 0;
 
 	/** 
+	 * Set up a float vec2 uniform value
+	 * @param context context
+	 * @param uniformId uniform id
+	 * @param data data
+	 */
+	virtual void setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data) = 0;
+
+	/**
 	 * Bind attribute to a input location
 	 * @param programId program id
 	 * @param location location
@@ -662,6 +675,20 @@ public:
 	 */
 	virtual void drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
 
+	/**
+	 * Set line width
+	 * @param lineWidth line width
+	 */
+	virtual void setLineWidth(float lineWidth) = 0;
+
+	/**
+	 * Draw lines from buffer objects
+	 * @param context context
+	 * @param points points
+	 * @param pointsOffset points offset
+	 */
+	virtual void drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
+
 	/** 
 	 * Unbind buffer objects
 	 * @param context context
@@ -973,6 +1000,23 @@ public:
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Create a single vertex array object
+	 */
+	virtual int32_t createVertexArrayObject() = 0;
+
+	/**
+	 * Dispose a single vertex array object
+	 * @param vertexArrayObjectId vertex array object id
+	 */
+	virtual void disposeVertexArrayObject(int32_t vertexArrayObjectId) = 0;
+
+	/**
+	 * Bind a single vertex array object
+	 * @param vertexArrayObjectId vertex array object id
+	 */
+	virtual void bindVertexArrayObject(int32_t vertexArrayObjectId) = 0;
 
 	/** 
 	 * Set up renderer for GUI rendering

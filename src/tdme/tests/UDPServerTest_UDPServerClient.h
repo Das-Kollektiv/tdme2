@@ -24,9 +24,9 @@ public:
 protected:
 	virtual ~EchoUDPServerClient();
 
-	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) throw (Exception);
+	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries);
 
-	void onInit() throw (Exception);
-	void onClose() throw (Exception);
-	void onCustom(const string& type) throw (Exception);
+	void onInit();
+	void onClose();
+	void onCustom(const string& type);
 };

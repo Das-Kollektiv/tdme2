@@ -14,6 +14,7 @@
       - set up the type
           - object particle system
           - point particle system
+          - fog particle system
       - set up and edit the emitter
           - point particle emitter
           - bounding box particle emitter

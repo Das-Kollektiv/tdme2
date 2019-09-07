@@ -75,9 +75,9 @@ public:
 	 * Parse the font definition file
 	 * @param pathName font path name
 	 * @param fileName font file name
-	 * @throws FileSystemException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIFont* parse(const string& pathName, const string& fileName) throw (FileSystemException);
+	static GUIFont* parse(const string& pathName, const string& fileName);
 
 private:
 

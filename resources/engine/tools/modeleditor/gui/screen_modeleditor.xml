@@ -423,6 +423,7 @@
 										<dropdown-option text="Default" value="default" />										
 										<dropdown-option text="Foliage" value="foliage" />
 										<dropdown-option text="Terrain" value="terrain" />
+										<dropdown-option text="Water" value="water" />
 									</dropdown>
 								</layout>
 								<space height="5" />

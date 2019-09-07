@@ -309,7 +309,7 @@ int32_t GUINode::getRequestedPixelValue(const string& value, int32_t defaultValu
 	}
 }
 
-GUIColor GUINode::getRequestedColor(const string& color, const GUIColor& defaultColor) throw(GUIParserException)
+GUIColor GUINode::getRequestedColor(const string& color, const GUIColor& defaultColor)
 {
 	if (color.empty() == true || color.length() == 0) {
 		return defaultColor;
@@ -323,7 +323,7 @@ GUINode_Flow* GUINode::createFlow(const string& flow)
 	return GUINode_Flow::valueOf(flow.empty() == false && flow.length() > 0 ? StringUtils::toUpperCase(flow) : "INTEGRATED");
 }
 
-GUINode_Border GUINode::createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor) throw(GUIParserException)
+GUINode_Border GUINode::createBorder(const string& allBorder, const string& left, const string& top, const string& right, const string& bottom, const string& allBorderColor, const string& leftColor, const string& topColor, const string& rightColor, const string& bottomColor)
 {
 	GUINode_Border border;
 	border.left = getRequestedPixelValue(allBorder, 0);
@@ -345,7 +345,7 @@ GUINode_Border GUINode::createBorder(const string& allBorder, const string& left
 	return border;
 }
 
-GUINode_Padding GUINode::createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException)
+GUINode_Padding GUINode::createPadding(const string& allPadding, const string& left, const string& top, const string& right, const string& bottom)
 {
 	GUINode_Padding padding;
 	padding.left = getRequestedPixelValue(allPadding, 0);
@@ -359,7 +359,7 @@ GUINode_Padding GUINode::createPadding(const string& allPadding, const string& l
 	return padding;
 }
 
-GUINode_Scale9Grid GUINode::createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom) throw(GUIParserException)
+GUINode_Scale9Grid GUINode::createScale9Grid(const string& all, const string& left, const string& top, const string& right, const string& bottom)
 {
 	GUINode_Scale9Grid scale9Grid;
 	scale9Grid.left = getRequestedPixelValue(all, 0);

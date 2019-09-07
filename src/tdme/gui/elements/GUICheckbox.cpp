@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 string GUICheckbox::NAME = "checkbox";
 
-GUICheckbox::GUICheckbox() throw (FileSystemException)
+GUICheckbox::GUICheckbox()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "checkbox.xml");
 }

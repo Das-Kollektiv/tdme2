@@ -29,16 +29,6 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
  */
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem
 {
-	friend class LevelEditorEntityParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Type;
-	friend class LevelEditorEntityParticleSystem_PointParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Emitter;
-	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
-
 private:
 	Vector3 scale {  };
 	int32_t maxCount {  };

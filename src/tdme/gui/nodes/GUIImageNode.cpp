@@ -52,8 +52,7 @@ GUIImageNode::GUIImageNode(
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Scale9Grid& scale9Grid,
-	const GUINode_Clipping& clipping)
-	throw(GUIParserException):
+	const GUINode_Clipping& clipping):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	init();
@@ -506,7 +505,7 @@ GUINode_Clipping& GUIImageNode::getClipping() {
 	return clipping;
 }
 
-GUINode_Clipping GUIImageNode::createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom) throw (GUIParserException)
+GUINode_Clipping GUIImageNode::createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom)
 {
 	GUINode_Clipping clipping;
 	clipping.left = getRequestedPixelValue(allClipping, 0);

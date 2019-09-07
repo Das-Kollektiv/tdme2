@@ -393,6 +393,7 @@ public:
 	void finishFrame() override;
 	bool isSupportingMultithreadedRendering() override;
 	bool isSupportingMultipleRenderQueues() override;
+	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
@@ -416,6 +417,7 @@ public:
 	void setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data) override;
 	void setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data) override;
 	void setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data) override;
+	void setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data) override;
 	void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) override;
 	void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void updateViewPort() override;
@@ -463,6 +465,8 @@ public:
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
 	void drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) override;
+	void setLineWidth(float lineWidth) override;
+	void drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) override;
 	void unbindBufferObjects(void* context) override;
 	void disposeBufferObjects(vector<int32_t>& bufferObjectIds) override;
 	int32_t getTextureUnit(void* context) override;
@@ -485,6 +489,11 @@ public:
 	void bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) override;
+
+	//
+	int32_t createVertexArrayObject() override;
+	void disposeVertexArrayObject(int32_t vertexArrayObjectId) override;
+	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 
 public:
 	/**

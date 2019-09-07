@@ -56,15 +56,15 @@ public:
 	 * Binds a socket to local ip and port
 	 * @param ip ip
 	 * @param port port
-	 * @throws NIOSocketException
+	 * @throws tdme::os::network::NIOSocketException
 	 */
-	void bind(const string& ip, const unsigned int port) throw (NIOSocketException);
+	void bind(const string& ip, const unsigned int port);
 
 	/**
 	 * @brief sets the socket non blocked
-	 * @throws NIOSocketException
+	 * @throws tdme::os::network::NIOSocketException
 	 */
-	void setNonBlocked() throw (NIOSocketException);
+	void setNonBlocked();
 
 	/**
 	 * Closes the socket
@@ -86,7 +86,7 @@ protected:
 };
 
 // MINGW: Have some missing posix functions
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) and !defined(__MINGW64__)
 	// TODO: move those somewhere else as they are not only socket specific
 	#define inet_pton inet_pton6
 	#define inet_ntop inet_ntop6

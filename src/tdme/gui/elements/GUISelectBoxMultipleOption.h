@@ -38,5 +38,9 @@ public:
 	map<string, string>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	GUISelectBoxMultipleOption() throw (FileSystemException);
+	/**
+	 * Public constructor
+	 * @throws tdme::os::filesystem::FileSystemException
+	 */
+	GUISelectBoxMultipleOption();
 };

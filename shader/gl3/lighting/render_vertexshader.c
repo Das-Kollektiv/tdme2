@@ -60,6 +60,7 @@ uniform sampler2D displacementTextureUnit;
 uniform int displacementTextureAvailable;
 uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
+uniform int frame;
 
 {$DEFINITIONS}
 
@@ -98,6 +99,18 @@ uniform int normalTextureAvailable;
 	#if defined(HAVE_TERRAIN_SHADER)
 		out float height;
 		out float slope;
+	#elif defined(HAVE_WATER_SHADER)
+		#undef vsNormal
+		vec3 vsNormal;
+		// uniforms
+		uniform float waterHeight;
+		uniform float time;
+		uniform int numWaves;
+		uniform float amplitude[4];
+		uniform float wavelength[4];
+		uniform float speed[4];
+		uniform vec2 direction[4];
+		out float height;
 	#endif
 
 	#if defined(HAVE_DEPTH_FOG)
@@ -143,8 +156,25 @@ void main(void) {
 			slope = abs(180.0 / 3.14 * acos(clamp(dot(normalVector3, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
 		#endif
 
-		// compute vertex and pass to fragment shader
-		computeVertex(vec4(inVertex, 1.0), -1, mat4(1.0));
+		#if defined(HAVE_WATER_SHADER)
+			vec3 worldPosition = computeWorldPosition(vec4(inVertex, 1.0), -1, mat4(1.0));
+			worldPosition*= 10.0;
+			height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
+			vsNormal = waveNormal(worldPosition.x, worldPosition.z);
+			computeVertex(
+				vec4(inVertex, 1.0),
+				-1,
+				mat4(
+					1.0, 0.0, 0.0, 0.0,
+					0.0, 1.0, 0.0, 0.0,
+					0.0, 0.0, 1.0, 0.0,
+					0.0, height, 0.0, 1.0
+				)
+			);
+		#else
+			// compute vertex and pass to fragment shader
+			computeVertex(vec4(inVertex, 1.0), -1, mat4(1.0));
+		#endif
 
 		#if defined(HAVE_DEPTH_FOG)
 			fragDepth = gl_Position.z;

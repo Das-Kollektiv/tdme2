@@ -13,6 +13,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
+#include <tdme/engine/subsystems/lines/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
@@ -48,6 +49,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
@@ -85,9 +87,11 @@ class tdme::engine::Engine final
 	friend class EngineGL2Renderer;
 	friend class EngineGLES2Renderer;
 	friend class EngineVKRenderer;
+	friend class FogParticleSystem;
 	friend class FrameBuffer;
 	friend class Object3D;
 	friend class Object3DRenderGroup;
+	friend class LinesObject3D;
 	friend class LODObject3D;
 	friend class ParticleSystemGroup;
 	friend class ObjectParticleSystem;
@@ -102,6 +106,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
+	friend class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
 	friend class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
 	friend class tdme::engine::subsystems::postprocessing::PostProcessingProgram;
@@ -135,6 +140,7 @@ private:
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
 	static ParticlesShader* particlesShader;
+	static LinesShader* linesShader;
 	static SkinningShader* skinningShader;
 	static GUIShader* guiShader;
 	static FrameBufferRenderShader* frameBufferRenderShader;
@@ -169,7 +175,9 @@ private:
 	vector<LODObject3D*> visibleLODObjects {  };
 	vector<ObjectParticleSystem*> visibleOpses {  };
 	vector<PointsParticleSystem*> visiblePpses {  };
+	vector<FogParticleSystem*> visibleFpses {  };
 	vector<ParticleSystemGroup*> visiblePsgs {  };
+	vector<LinesObject3D*> visibleLinesObjects {  };
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };
 	Object3DRenderer* object3DRenderer {  };
 
@@ -248,6 +256,11 @@ private:
 	 * @return particles shader
 	 */
 	static ParticlesShader* getParticlesShader();
+
+	/**
+	 * @return lines shader
+	 */
+	static LinesShader* getLinesShader();
 
 	/**
 	 * @return skinning shader

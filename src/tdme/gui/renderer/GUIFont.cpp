@@ -48,7 +48,7 @@ GUIFont::~GUIFont()
 	if (texture != nullptr) texture->releaseReference();
 }
 
-GUIFont* GUIFont::parse(const string& pathName, const string& fileName) throw (FileSystemException)
+GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 {
 	int lineIdx = 0;
 	auto font = new GUIFont();

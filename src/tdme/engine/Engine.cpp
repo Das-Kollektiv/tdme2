@@ -23,8 +23,10 @@
 #endif
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityPickingFilter.h>
+#include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
+#include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/LODObject3D.h>
@@ -40,6 +42,7 @@
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
+#include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/manager/MeshManager.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
@@ -88,8 +91,10 @@ using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::Object3DRenderGroup;
+using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
+using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystem;
@@ -103,6 +108,7 @@ using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
@@ -150,6 +156,7 @@ ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
 ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
 ParticlesShader* Engine::particlesShader = nullptr;
+LinesShader* Engine::linesShader = nullptr;
 SkinningShader* Engine::skinningShader = nullptr;
 GUIShader* Engine::guiShader = nullptr;
 Engine* Engine::currentEngine = nullptr;
@@ -237,6 +244,7 @@ Engine::~Engine() {
 		delete guiRenderer;
 		delete lightingShader;
 		delete particlesShader;
+		delete linesShader;
 		delete postProcessing;
 		delete postProcessingShader;
 		delete guiShader;
@@ -397,6 +405,11 @@ LightingShader* Engine::getLightingShader()
 ParticlesShader* Engine::getParticlesShader()
 {
 	return particlesShader;
+}
+
+LinesShader* Engine::getLinesShader()
+{
+	return linesShader;
 }
 
 SkinningShader* Engine::getSkinningShader() {
@@ -636,6 +649,10 @@ void Engine::initialize()
 	particlesShader = new ParticlesShader(this, renderer);
 	particlesShader->initialize();
 
+	// create particles shader
+	linesShader = new LinesShader(this, renderer);
+	linesShader->initialize();
+
 	// create gui shader
 	guiShader = new GUIShader(renderer);
 	guiShader->initialize();
@@ -694,6 +711,7 @@ void Engine::initialize()
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
 	initialized &= particlesShader->isInitialized();
+	initialized &= linesShader->isInitialized();
 	initialized &= guiShader->isInitialized();
 	initialized &= frameBufferRenderShader->isInitialized();
 	initialized &= postProcessingShader->isInitialized();
@@ -750,7 +768,9 @@ void Engine::initRendering()
 	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
+	visibleFpses.clear();
 	visiblePsgs.clear();
+	visibleLinesObjects.clear();
 	visibleObjectRenderGroups.clear();
 
 	//
@@ -790,8 +810,10 @@ void Engine::computeTransformations()
 	ParticleSystemGroup* psg = nullptr;
 	ObjectParticleSystem* opse = nullptr;
 	PointsParticleSystem* ppse = nullptr;
+	FogParticleSystem* fpse = nullptr;
 	ParticleSystemEntity* pse = nullptr;
 	Object3DRenderGroup* org = nullptr;
+	LinesObject3D* lo = nullptr;
 	Entity* orgEntity = nullptr;
 
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
@@ -826,6 +848,12 @@ void Engine::computeTransformations()
 		} else \
 		if ((ppse = dynamic_cast<PointsParticleSystem*>(_entity)) != nullptr) { \
 			visiblePpses.push_back(ppse); \
+		} else \
+		if ((fpse = dynamic_cast<FogParticleSystem*>(_entity)) != nullptr) { \
+			visibleFpses.push_back(fpse); \
+		} else \
+		if ((lo = dynamic_cast<LinesObject3D*>(_entity)) != nullptr) { \
+			visibleLinesObjects.push_back(lo); \
 		} \
 	}
 
@@ -958,6 +986,18 @@ void Engine::display()
 	projectionMatrix.set(renderer->getProjectionMatrix());
 	cameraMatrix.set(renderer->getCameraMatrix());
 
+	// render lines objects
+	if (visibleLinesObjects.size() > 0) {
+		// use particle shader
+		if (linesShader != nullptr) linesShader->useProgram(context);
+
+		// render points based particle systems
+		object3DRenderer->render(visibleLinesObjects);
+
+		// unuse particle shader
+		if (linesShader != nullptr) linesShader->unUseProgram(context);
+	}
+
 	// use lighting shader
 	if (lightingShader != nullptr) lightingShader->useProgram(this);
 
@@ -992,12 +1032,13 @@ void Engine::display()
 	}
 
 	// render point particle systems
-	if (visiblePpses.size() > 0) {
+	if (visiblePpses.size() > 0 || visibleFpses.size() > 0) {
 		// use particle shader
 		if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 		// render points based particle systems
-		object3DRenderer->render(visiblePpses);
+		if (visibleFpses.size() > 0) object3DRenderer->render(visibleFpses);
+		if (visiblePpses.size() > 0) object3DRenderer->render(visiblePpses);
 
 		// unuse particle shader
 		if (particlesShader != nullptr) particlesShader->unUseProgram(context);
@@ -1120,6 +1161,83 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	auto selectedEntityDistance = Float::MAX_VALUE;
 	Entity* selectedEntity = nullptr;
 
+	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	for (auto entity: visibleOpses) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			// check if match or better match
+			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+				selectedEntity = entity;
+				selectedEntityDistance = entityDistance;
+			}
+		}
+	}
+	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	for (auto entity: visiblePpses) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			// check if match or better match
+			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+				selectedEntity = entity;
+				selectedEntityDistance = entityDistance;
+			}
+		}
+	}
+	// iterate visible fog partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	for (auto entity: visibleFpses) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			// check if match or better match
+			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+				selectedEntity = entity;
+				selectedEntityDistance = entityDistance;
+			}
+		}
+	}
+	// iterate visible particle system groups, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	for (auto entity: visiblePsgs) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			// check if match or better match
+			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+				selectedEntity = entity;
+				selectedEntityDistance = entityDistance;
+			}
+		}
+	}
+
+	// iterate visible line objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleLinesObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			// check if match or better match
+			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+				selectedEntity = entity;
+				selectedEntityDistance = entityDistance;
+			}
+		}
+	}
+
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
 	for (auto entity: visibleObjects) {
 		// skip if not pickable or ignored by filter
@@ -1188,52 +1306,6 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 						}
 					}
 				}
-			}
-		}
-	}
-
-	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: visibleOpses) {
-		// skip if not pickable or ignored by filter
-		if (entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
-			// check if match or better match
-			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-				selectedEntity = entity;
-				selectedEntityDistance = entityDistance;
-			}
-		}
-	}
-	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: visiblePpses) {
-		// skip if not pickable or ignored by filter
-		if (entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
-			// check if match or better match
-			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-				selectedEntity = entity;
-				selectedEntityDistance = entityDistance;
-			}
-		}
-	}
-	// iterate visible particle system groups, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: visiblePsgs) {
-		// skip if not pickable or ignored by filter
-		if (entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
-			// check if match or better match
-			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-				selectedEntity = entity;
-				selectedEntityDistance = entityDistance;
 			}
 		}
 	}

@@ -18,9 +18,9 @@ class tdme::os::network::KernelEventMechanism {
 public:
 	/**
 	 * @brief Public constructor
-	 * @throws NIOKEMException
+	 * @throws tdme::os::network::NIOKEMException
 	 */
-	KernelEventMechanism() throw (NIOKEMException);
+	KernelEventMechanism();
 
 	/**
 	 * @brief destructor
@@ -30,9 +30,9 @@ public:
 	/**
 	 * @brief initializes the kernel event mechanism
 	 * @param maxCCU supported max ccu
-	 * @throws NIOKEMException
+	 * @throws tdme::os::network::NIOKEMException
 	 */
-	void initKernelEventMechanism(const unsigned int maxCCU)  throw (NIOKEMException);
+	void initKernelEventMechanism(const unsigned int maxCCU) ;
 
 	/**
 	 * @brief shutdowns the kernel event mechanism
@@ -42,18 +42,18 @@ public:
 	/**
 	 * @brief do the kernel event mechanism
 	 * @return number of events
-	 * @throws NIOKEMException
+	 * @throws tdme::os::network::NIOKEMException
 	 */
-	int doKernelEventMechanism() throw (NIOKEMException);
+	int doKernelEventMechanism();
 
 	/**
 	 * @brief decodes a kernel event
 	 * @param index kernel event index
 	 * @param &interest kernel event io interest
 	 * @param cookie kernel event cookie
-	 * @throws NIOKEMException
+	 * @throws tdme::os::network::NIOKEMException
 	 */
-	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie) throw (NIOKEMException);
+	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie);
 
 	/**
 	 * @brief sets a non blocked socket io interest
@@ -61,9 +61,9 @@ public:
 	 * @param lastInterest last nio interest
 	 * @param interest nio interest
 	 * @param cookie cookie
-	 * @throws NIOKEMException
+	 * @throws tdme::os::network::NIOKEMException
 	 */
-	void setSocketInterest(const NIONetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) throw (NIOKEMException);
+	void setSocketInterest(const NIONetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
 
 private:
 	//

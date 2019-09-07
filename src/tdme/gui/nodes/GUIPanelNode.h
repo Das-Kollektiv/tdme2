@@ -81,7 +81,7 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		GUILayoutNode_Alignment* alignment
-	) throw (GUIParserException);
+	);
 
 public:
 	// overriden methods

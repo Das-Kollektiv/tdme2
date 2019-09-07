@@ -2,6 +2,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
+#include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/gui/renderer/GUIShader.h>
@@ -9,6 +10,7 @@
 using tdme::engine::EngineGL3Renderer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::gui::renderer::GUIShader;
@@ -26,6 +28,9 @@ void EngineGL3Renderer::onUpdateProjectionMatrix(void* context)
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this, context);
 
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateMatrices(this, context);
+
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
@@ -39,6 +44,9 @@ void EngineGL3Renderer::onUpdateCameraMatrix(void* context)
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this, context);
 
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateMatrices(this, context);
+
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
@@ -51,6 +59,9 @@ void EngineGL3Renderer::onUpdateModelViewMatrix(void* context)
 
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this, context);
+
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateMatrices(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
@@ -88,6 +99,9 @@ void EngineGL3Renderer::onUpdateEffect(void* context)
 
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateEffect(this, context);
+
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateEffect(this, context);
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateEffect(this);

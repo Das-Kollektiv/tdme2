@@ -57,7 +57,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
-Model* TMReader::read(const string& pathName, const string& fileName) throw (FileSystemException, ModelFileIOException)
+Model* TMReader::read(const string& pathName, const string& fileName)
 {
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(pathName, fileName, content);
@@ -136,7 +136,7 @@ const string TMReader::getTexturePath(const string& modelPathName, const string&
 	}
 }
 
-Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version) throw (ModelFileIOException)
+Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is, const array<uint8_t, 3>& version)
 {
 	auto id = is->readString();
 	auto m = new Material(id);
@@ -201,7 +201,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	return m;
 }
 
-void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version) throw (ModelFileIOException) {
+void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const array<uint8_t, 3>& version) {
 	auto id = is->readString();
 	auto overlayFromGroupId = is->readString();
 	auto startFrame = is->readInt();
@@ -218,7 +218,7 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 	}
 }
 
-const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (ModelFileIOException)
+const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is)
 {
 	vector<Vector3> v;
 	array<float, 3> vXYZ;
@@ -232,7 +232,7 @@ const vector<Vector3> TMReader::readVertices(TMReaderInputStream* is) throw (Mod
 	return v;
 }
 
-const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputStream* is) throw (ModelFileIOException)
+const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputStream* is)
 {
 	array<float, 2> tcUV;
 	vector<TextureCoordinate> tc;
@@ -246,7 +246,7 @@ const vector<TextureCoordinate> TMReader::readTextureCoordinates(TMReaderInputSt
 	return tc;
 }
 
-bool TMReader::readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices) throw (ModelFileIOException)
+bool TMReader::readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices)
 {
 	if (is->readBoolean() == false) {
 		return false;
@@ -262,7 +262,7 @@ bool TMReader::readIndices(TMReaderInputStream* is, array<int32_t, 3>* indices) 
 	}
 }
 
-Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
+Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g)
 {
 	if (is->readBoolean() == false) {
 		return nullptr;
@@ -277,7 +277,7 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g) throw (Mod
 	}
 }
 
-void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
+void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g)
 {
 	vector<FacesEntity> facesEntities;
 	facesEntities.resize(is->readInt());
@@ -326,7 +326,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g) throw (Model
 	g->setFacesEntities(facesEntities);
 }
 
-Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOException)
+Joint TMReader::readSkinningJoint(TMReaderInputStream* is)
 {
 	array<float, 16> matrixArray;
 	Joint joint(is->readString());
@@ -335,7 +335,7 @@ Joint TMReader::readSkinningJoint(TMReaderInputStream* is) throw (ModelFileIOExc
 	return joint;
 }
 
-JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is) throw (ModelFileIOException)
+JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is)
 {
 
 	int32_t jointIndex = is->readInt();
@@ -343,7 +343,7 @@ JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is) throw (Mo
 	return JointWeight(jointIndex, weightIndex);
 }
 
-void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileIOException)
+void TMReader::readSkinning(TMReaderInputStream* is, Group* g)
 {
 	if (is->readBoolean() == true) {
 		auto skinning = g->createSkinning();
@@ -366,7 +366,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g) throw (ModelFileI
 	}
 }
 
-void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups) throw (ModelFileIOException)
+void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups)
 {
 	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {
@@ -376,7 +376,7 @@ void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* paren
 	}
 }
 
-Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup) throw (ModelFileIOException)
+Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentGroup)
 {
 
 	auto groupId = is->readString();

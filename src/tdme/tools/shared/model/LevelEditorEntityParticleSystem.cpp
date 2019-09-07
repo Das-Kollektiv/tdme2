@@ -4,6 +4,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
+#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
@@ -16,6 +17,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -28,6 +30,7 @@ LevelEditorEntityParticleSystem::LevelEditorEntityParticleSystem()
 	type = LevelEditorEntityParticleSystem_Type::NONE;
 	ops = nullptr;
 	pps = nullptr;
+	fps = nullptr;
 	emitter = LevelEditorEntityParticleSystem_Emitter::NONE;
 	ppe = nullptr;
 	bbpe = nullptr;
@@ -41,11 +44,6 @@ LevelEditorEntityParticleSystem::~LevelEditorEntityParticleSystem() {
 	unsetEmitter();
 }
 
-LevelEditorEntityParticleSystem_Type* LevelEditorEntityParticleSystem::getType()
-{
-	return type;
-}
-
 void LevelEditorEntityParticleSystem::unsetType() {
 	auto v = this->type;
 	if (v == LevelEditorEntityParticleSystem_Type::NONE) {
@@ -57,6 +55,10 @@ void LevelEditorEntityParticleSystem::unsetType() {
 	if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 		delete pps;
 		pps = nullptr;
+	} else
+	if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+		delete fps;
+		fps = nullptr;
 	} else {
 		Console::println(string("LevelEditorEntityParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
 	}
@@ -76,26 +78,14 @@ void LevelEditorEntityParticleSystem::setType(LevelEditorEntityParticleSystem_Ty
 		} else
 		if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			pps = new LevelEditorEntityParticleSystem_PointParticleSystem();
+		} else
+		if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+			fps = new LevelEditorEntityParticleSystem_FogParticleSystem();
 		} else {
 			Console::println(string("LevelEditorEntityParticleSystem::setType(): unknown type '" + this->type->getName() + "'"));
 		}
 	}
 
-}
-
-LevelEditorEntityParticleSystem_ObjectParticleSystem* LevelEditorEntityParticleSystem::getObjectParticleSystem()
-{
-	return ops;
-}
-
-LevelEditorEntityParticleSystem_PointParticleSystem* LevelEditorEntityParticleSystem::getPointParticleSystem()
-{
-	return pps;
-}
-
-LevelEditorEntityParticleSystem_Emitter* LevelEditorEntityParticleSystem::getEmitter()
-{
-	return emitter;
 }
 
 void LevelEditorEntityParticleSystem::unsetEmitter() {
@@ -154,30 +144,4 @@ void LevelEditorEntityParticleSystem::setEmitter(LevelEditorEntityParticleSystem
 			Console::println(string("LevelEditorEntityParticleSystem::setEmitter(): unknown emitter '" + this->emitter->getName() + "'"));
 		}
 	}
-
-}
-
-LevelEditorEntityParticleSystem_PointParticleEmitter* LevelEditorEntityParticleSystem::getPointParticleEmitter()
-{
-	return ppe;
-}
-
-LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter* LevelEditorEntityParticleSystem::getBoundingBoxParticleEmitters()
-{
-	return bbpe;
-}
-
-LevelEditorEntityParticleSystem_CircleParticleEmitter* LevelEditorEntityParticleSystem::getCircleParticleEmitter()
-{
-	return cpe;
-}
-
-LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* LevelEditorEntityParticleSystem::getCircleParticleEmitterPlaneVelocity()
-{
-	return cpepv;
-}
-
-LevelEditorEntityParticleSystem_SphereParticleEmitter* LevelEditorEntityParticleSystem::getSphereParticleEmitter()
-{
-	return spe;
 }

@@ -35,7 +35,7 @@ using tdme::os::network::NIOUDPSocket;
 NIOUDPSocket::~NIOUDPSocket() {
 }
 
-ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const size_t bytes) throw (NIOIOException) {
+ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const size_t bytes) {
 	// socket address in setup
 	socklen_t sinLen = 0;
 	void* sin;
@@ -100,7 +100,7 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 	return bytesRead;
 }
 
-ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf, const size_t bytes) throw (NIOIOException) {
+ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf, const size_t bytes) {
 	// receiver address in setup
 	socklen_t sinLen = 0;
 	void* sin;
@@ -163,7 +163,7 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 	return bytesWritten;
 }
 
-void NIOUDPSocket::create(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException) {
+void NIOUDPSocket::create(NIOUDPSocket& socket, IpVersion ipVersion) {
 	socket.ipVersion = ipVersion;
 	socket.descriptor = ::socket(ipVersion == IPV6?AF_INET6:AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socket.descriptor == -1) {
@@ -181,7 +181,7 @@ void NIOUDPSocket::create(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOS
 	#endif
 }
 
-void NIOUDPSocket::createServerSocket(NIOUDPSocket& socket, const string& ip, const unsigned int port) throw (NIOSocketException) {
+void NIOUDPSocket::createServerSocket(NIOUDPSocket& socket, const string& ip, const unsigned int port) {
 	// create socket
 	NIOUDPSocket::create(socket, determineIpVersion(ip));
 
@@ -206,7 +206,7 @@ void NIOUDPSocket::createServerSocket(NIOUDPSocket& socket, const string& ip, co
 	}
 }
 
-void NIOUDPSocket::createClientSocket(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException) {
+void NIOUDPSocket::createClientSocket(NIOUDPSocket& socket, IpVersion ipVersion) {
 	// create socket
 	NIOUDPSocket::create(socket, ipVersion);
 

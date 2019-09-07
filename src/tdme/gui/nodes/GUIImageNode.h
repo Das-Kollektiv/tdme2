@@ -77,6 +77,7 @@ protected:
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
 	 * @param clipping clipping
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIImageNode(
 		GUIScreenNode* screenNode,
@@ -99,7 +100,7 @@ protected:
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,
 		const GUINode_Clipping& clipping
-	) throw(GUIParserException);
+	);
 
 public:
 	// overriden methods
@@ -160,7 +161,7 @@ public:
 	 * @param right right
 	 * @param bottom bottom
 	 */
-	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom) throw (GUIParserException);
+	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom);
 
 private:
 	void init();

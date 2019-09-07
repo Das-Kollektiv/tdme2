@@ -170,10 +170,10 @@ public:
 
 	/**
 	 * Execute HTTP request
-	 * @throws HTTPClientException
-	 * @throws NIOException
+	 * @throws tdme::network::httpclient::HTTPClientException
+	 * @throws tdme::os::network::NIOException
 	 */
-	void execute() throw (HTTPClientException, NIOException);
+	void execute();
 
 	/**
 	 * @return complete response stream

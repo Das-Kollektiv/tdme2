@@ -185,17 +185,6 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	}
 	mutex.unlock();
 
-	// upload matrices
-	{
-		auto skinning = group->getSkinning();
-		auto skinningJoints = skinning->getJoints();
-		auto fbMatrices = ObjectBuffer::getByteBuffer(context, skinningJoints->size() * 16 * sizeof(float))->asFloatBuffer();
-		for (auto& joint: *skinningJoints) {
-			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());
-		}
-		renderer->uploadSkinningBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
-	}
-
 	// bind
 	renderer->bindSkinningVerticesBufferObject(context, (*modelSkinningCacheCached->vboIds)[0]);
 	renderer->bindSkinningNormalsBufferObject(context, (*modelSkinningCacheCached->vboIds)[1]);
@@ -207,6 +196,17 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	// bind output / result buffers
 	renderer->bindSkinningVerticesResultBufferObject(context, (*vboBaseIds)[1]);
 	renderer->bindSkinningNormalsResultBufferObject(context, (*vboBaseIds)[2]);
+
+	// upload matrices
+	{
+		auto skinning = group->getSkinning();
+		auto skinningJoints = skinning->getJoints();
+		auto fbMatrices = ObjectBuffer::getByteBuffer(context, skinningJoints->size() * 16 * sizeof(float))->asFloatBuffer();
+		for (auto& joint: *skinningJoints) {
+			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());
+		}
+		renderer->uploadSkinningBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
+	}
 
 	// skinning count
 	renderer->setProgramUniformInteger(context, uniformSkinningCount, vertices.size());
@@ -226,5 +226,6 @@ void SkinningShader::reset() {
 	for (auto& modelSkinningCacheIt: cache) {
 		Engine::getVBOManager()->removeVBO("skinning_compute_shader." + modelSkinningCacheIt.second.id + ".vbos");
 	}
+	// TODO: Remove vaos
 	cache.clear();
 }

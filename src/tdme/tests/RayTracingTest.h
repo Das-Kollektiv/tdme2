@@ -1,16 +1,17 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
-#include <tdme/application/Application.h>
 #include <tdme/tests/fwd-tdme.h>
-#include <tdme/application/InputEventHandler.h>
 
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::physics::World;
+using tdme::engine::model::Model;
 
 /** 
  * Ray Tracing Test
@@ -30,12 +31,14 @@ private:
 	bool keyRight { false };
 	bool keyUp { false };
 	bool keyDown { false };
+	bool keyInfo { false };
 	int mouseLastXDragged { -1 };
 	int mouseLastYDragged { -1 };
 
 	float rotationY { 0.0f };
 	float rotationX { 0.0f };
 
+	Model* entityBoundingVolumeModel { nullptr };
 public:
 
 	/** 

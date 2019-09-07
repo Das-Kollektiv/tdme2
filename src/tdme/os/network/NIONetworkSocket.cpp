@@ -48,7 +48,7 @@ void NIONetworkSocket::shutdown() {
 	if (descriptor != -1) ::shutdown(descriptor, SHUT_RDWR);
 }
 
-void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) throw (NIOSocketException) {
+void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) {
 	// determine IP version
 	ipVersion = determineIpVersion(ip);
 
@@ -96,7 +96,7 @@ void NIONetworkSocket::bind(const std::string& ip, const unsigned int port) thro
 	this->port = port;
 }
 
-void NIONetworkSocket::setNonBlocked() throw (NIOSocketException) {
+void NIONetworkSocket::setNonBlocked() {
 	#if defined(_WIN32)
 		long unsigned int mode = 1;
 		if (ioctlsocket(descriptor, FIONBIO, &mode) != 0) {
@@ -135,7 +135,7 @@ NIONetworkSocket::IpVersion NIONetworkSocket::determineIpVersion(const string& i
 	return ip.find(':') != std::string::npos?IpVersion::IPV6:IpVersion::IPV4;
 }
 
-#if defined(__MINGW32__)
+#if defined(__MINGW32__) && !defined(__MINGW64__)
 	// see: https://stackoverflow.com/questions/15370033/how-to-use-inet-pton-with-the-mingw-compiler
 	#define NS_INADDRSZ  4
 	#define NS_IN6ADDRSZ 16

@@ -74,12 +74,12 @@ using tdme::utils::StringUtils;
 using tdme::ext::jsonbox::Value;
 using tdme::ext::jsonbox::Array;
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback)
 {
 	doImport(pathName, fileName, level, "", progressCallback);
 }
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback) throw (FileSystemException, JsonException, ModelFileIOException)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
@@ -320,7 +320,7 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	}
 }
 
-void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback) throw (FileSystemException, JsonException, ModelFileIOException) {
+void LevelFileImport::doImportFromModel(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback) {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
 	level->clearProperties();

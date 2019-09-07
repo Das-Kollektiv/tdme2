@@ -17,6 +17,7 @@ namespace model {
 		class LevelEditorEntityParticleSystem_CircleParticleEmitter;
 		class LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 		class LevelEditorEntityParticleSystem_Emitter;
+		class LevelEditorEntityParticleSystem_FogParticleSystem;
 		class LevelEditorEntityParticleSystem_ObjectParticleSystem;
 		class LevelEditorEntityParticleSystem_PointParticleEmitter;
 		class LevelEditorEntityParticleSystem_PointParticleSystem;

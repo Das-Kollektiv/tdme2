@@ -193,6 +193,7 @@ protected:
 	 * @param hideOn hide on
 	 * @param scrollable scrollable
 	 * @param popUp pop up
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
 		const string& id,
@@ -213,7 +214,7 @@ protected:
 		const GUINodeConditions& hideOn,
 		bool scrollable,
 		bool popUp
-	) throw(GUIParserException);
+	);
 
 	/**
 	 * Destructor

@@ -295,7 +295,7 @@ void NIOUDPServerIOThread::run() {
 	Console::println("NIOUDPServerIOThread[" + to_string(id) + "]::run(): done");
 }
 
-void NIOUDPServerIOThread::sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame) throw (NIONetworkServerException) {
+void NIOUDPServerIOThread::sendMessage(const NIOUDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame) {
 	// FIXME:
 	//	We could use lock free queues here
 	//	For now, we will go with plain mutexes
@@ -368,7 +368,7 @@ void NIOUDPServerIOThread::sendMessage(const NIOUDPServerClient* client, const u
 	messageQueueMutex.unlock();
 }
 
-void NIOUDPServerIOThread::processAckReceived(NIOUDPServerClient* client, const uint32_t messageId) throw (NIONetworkServerException) {
+void NIOUDPServerIOThread::processAckReceived(NIOUDPServerClient* client, const uint32_t messageId) {
 	bool messageAckValid = true;
 	MessageMapAck::iterator iterator;
 

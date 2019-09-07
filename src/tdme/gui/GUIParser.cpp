@@ -115,12 +115,12 @@ using tdme::ext::tinyxml::TiXmlAttribute;
 
 map<string, GUIElement*> GUIParser::elements;
 
-GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName) throw (GUIParserException, FileSystemException)
+GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName)
 {
 	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName));
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml) throw (GUIParserException, FileSystemException)
+GUIScreenNode* GUIParser::parse(const string& xml)
 {
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse(xml.c_str());
@@ -195,13 +195,13 @@ GUIScreenNode* GUIParser::parse(const string& xml) throw (GUIParserException, Fi
 	return guiScreenNode;
 }
 
-void GUIParser::parse(GUIParentNode* parentNode, const string& pathName, const string& fileName) throw (GUIParserException, FileSystemException)
+void GUIParser::parse(GUIParentNode* parentNode, const string& pathName, const string& fileName)
 {
 	string xml = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	parse(parentNode, xml);
 }
 
-void GUIParser::parse(GUIParentNode* parentNode, const string& xml) throw (GUIParserException, FileSystemException)
+void GUIParser::parse(GUIParentNode* parentNode, const string& xml)
 {
 	TiXmlDocument xmlDocument;
 	xmlDocument.Parse((string("<gui-element>") + xml + string("</gui-element>")).c_str());
@@ -214,7 +214,7 @@ void GUIParser::parse(GUIParentNode* parentNode, const string& xml) throw (GUIPa
 	parseGUINode(parentNode, xmlNode, nullptr);
 }
 
-void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement) throw (GUIParserException, FileSystemException)
+void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlParentNode, GUIElement* guiElement)
 {
 	GUINodeController* guiElementController = nullptr;
 	auto guiElementControllerInstalled = false;
@@ -944,7 +944,7 @@ const string GUIParser::escapeQuotes(const string& str)
 	return StringUtils::replace(str, "\"", "&quot;");
 }
 
-void GUIParser::addElement(GUIElement* guiElement) throw (GUIParserException, FileSystemException)
+void GUIParser::addElement(GUIElement* guiElement)
 {
 	if (elements.find(guiElement->getName()) != elements.end()) {
 		throw GUIParserException(

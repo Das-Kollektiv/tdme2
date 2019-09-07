@@ -21,7 +21,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 string GUITabContent::NAME = "tab-content";
 
-GUITabContent::GUITabContent() throw (FileSystemException)
+GUITabContent::GUITabContent()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tab-content.xml");
 }

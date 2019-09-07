@@ -24,21 +24,37 @@
                 - this is a much more efficient model file format for TDME
                 - can be read and written
             - DAE and WaveFront OBJ files require triangulated meshes for now
-        - animations
-            - supports model object base animation and animation overlays
-            - supports animation blending when switching base animations
-        - skinning via
-            - CPU on GL2, GL3+/CORE, GLES2
-            - GPU via compute shaders with GL4.3+/CORE, Vulkan
-        - object transformations
+        - objects/entity types
+            - 3d model based objects with
+                - animations
+                    - supports model object base animation and animation overlays
+                    - supports animation blending
+                - skinning via
+                    - CPU on GL2, GL3+/CORE, GLES2
+                    - GPU via compute shaders with GL4.3+/CORE, Vulkan
+                - texture transformations/animations
+                    - via texture matrices
+            - objects with support for LOD
+            - render group objects for foliage and such including LOD support
+            - particle systems which
+              - are object based
+              - or point based
+              - or for fog purposes
+              - and support
+                - basic/point emitter
+                - sphere emitter
+                - bounding box emitter
+                - circle on plane emitter
+                - ...
+              - there is also support for particle system groups
+            - lines based objects
+        - object/entity transformations
             - scaling
             - rotations
             - translation
-        - color effects on objects, particles, ...
+        - color effects on objects/entities
             - color addition
             - color multiplication
-        - texture transformations/animations
-            - via texture matrices
         - lighting
             - supports phong lighting
             - supports phong shading on GL2, GL3+/CORE, 
@@ -52,23 +68,11 @@
           - lighting + terrain + depth fog
           - solid(no lighting + no depth fog)
           - sky(no lighting + no depth fog + fragment depth at maximum)
+          - basic water shader
         - shadow mapping
         - post processing
           - depth blur
-          - SSAO 
-        - particle system which
-          - is object based
-          - or point based
-          - and supports
-            - basic/point emitter
-            - sphere emitter
-            - bounding box emitter
-            - circle on plane emitter
-            - ...
-          - there is also support for particle system groups
-        - 3d model based objects
-        - objects with support for LOD
-        - render group objects for foliage and such including LOD support
+          - SSAO
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed
@@ -171,9 +175,10 @@
 
 - What is WIP or planned
     - Integrate Haxe via HashLink to be able to script TDME2 applications or sub logics
+	- Water shader
+	- Improve renderering of point based particle systems
     - Improve on Vulkan
     - PBR lighting shader for GL3/CORE+
-    - simple script language for GUI
     - Expose shader and post processing programs setup API
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently

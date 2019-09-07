@@ -79,9 +79,11 @@ public:
 	 * @param path path from actor to target
 	 * @param alternativeEndSteps alternative end steps
 	 * @param customTest custom test
+	 * @param actorXHalfExtensionOverride explicitly set actor X half extension
+	 * @param actorZHalfExtensionOverride explicitly set actor Z half extension
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr);
+	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr, float actorXHalfExtensionOverride = 0.0f, float actorZHalfExtensionOverride = 0.0f);
 
 	/**
 	 * Checks if a cell is walkable

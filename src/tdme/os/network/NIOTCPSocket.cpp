@@ -42,7 +42,7 @@ using tdme::os::network::NIOIOSocketClosedException;
 NIOTCPSocket::~NIOTCPSocket() {
 }
 
-size_t NIOTCPSocket::read(void* buf, const size_t bytes) throw (NIOIOException) {
+size_t NIOTCPSocket::read(void* buf, const size_t bytes) {
 	ssize_t bytesRead = ::recv(descriptor, BUF_CAST(buf), bytes, 0);
 	if (bytesRead == -1) {
 		std::string msg = "error while reading from socket: ";
@@ -56,7 +56,7 @@ size_t NIOTCPSocket::read(void* buf, const size_t bytes) throw (NIOIOException) 
 	return (size_t)bytesRead;
 }
 
-size_t NIOTCPSocket::write(void* buf, const size_t bytes) throw (NIOIOException) {
+size_t NIOTCPSocket::write(void* buf, const size_t bytes) {
 	#if defined(__APPLE__) || defined(_WIN32)
 		ssize_t bytesWritten = ::send(descriptor, BUF_CAST(buf), bytes, 0);
 	#else
@@ -77,7 +77,7 @@ size_t NIOTCPSocket::write(void* buf, const size_t bytes) throw (NIOIOException)
 	return (size_t)bytesWritten;
 }
 
-void NIOTCPSocket::create(NIOTCPSocket& socket, IpVersion ipVersion) throw (NIOSocketException) {
+void NIOTCPSocket::create(NIOTCPSocket& socket, IpVersion ipVersion) {
 	socket.ipVersion = ipVersion;
 	socket.descriptor = ::socket(ipVersion == IPV6?PF_INET6:PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (socket.descriptor == -1) {
@@ -95,7 +95,7 @@ void NIOTCPSocket::create(NIOTCPSocket& socket, IpVersion ipVersion) throw (NIOS
 	#endif
 }
 
-void NIOTCPSocket::connect(const std::string& ip, const unsigned int port) throw (NIOSocketException) {
+void NIOTCPSocket::connect(const std::string& ip, const unsigned int port) {
 	// determine IP version
 	ipVersion = determineIpVersion(ip);
 
@@ -142,7 +142,7 @@ void NIOTCPSocket::connect(const std::string& ip, const unsigned int port) throw
 	this->ip = ip;
 	this->port = port;
 }
-void NIOTCPSocket::createServerSocket(NIOTCPSocket& socket, const std::string& ip, const unsigned int port, const int backlog) throw (NIOSocketException) {
+void NIOTCPSocket::createServerSocket(NIOTCPSocket& socket, const std::string& ip, const unsigned int port, const int backlog) {
 	// create socket
 	NIOTCPSocket::create(socket, determineIpVersion(ip));
 
@@ -165,7 +165,7 @@ void NIOTCPSocket::createServerSocket(NIOTCPSocket& socket, const std::string& i
 	}
 }
 
-void NIOTCPSocket::setTCPNoDelay() throw (NIOSocketException) {
+void NIOTCPSocket::setTCPNoDelay() {
 	int flag = 1;
 	#if defined(_WIN32)
 		if (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (const char*)&flag, sizeof(flag)) == -1) {
@@ -178,7 +178,7 @@ void NIOTCPSocket::setTCPNoDelay() throw (NIOSocketException) {
 	}
 }
 
-bool NIOTCPSocket::accept(NIOTCPSocket &_socket) throw (NIOSocketException) {
+bool NIOTCPSocket::accept(NIOTCPSocket &_socket) {
 	struct sockaddr_in _sin;
 	socklen_t _sinSize = sizeof(_sin);
 

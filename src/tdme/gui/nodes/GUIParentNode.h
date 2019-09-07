@@ -101,6 +101,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIParentNode(
 		GUIScreenNode* screenNode,
@@ -120,7 +121,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn
-	) throw(GUIParserException);
+	);
 
 public:
 
@@ -133,14 +134,16 @@ public:
 	 * Replace sub nodes with given XML
 	 * @param xml xml
 	 * @param resetScrollOffsets reset scroll offsets
+	 * @throws tdme::gui::GUIParserException
 	 */
-	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */;
+	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets);
 
-	/** 
+	/**
 	 * Add sub node
 	 * @param node node
+	 * @throws tdme::gui::GUIParserException
 	 */
-	virtual void addSubNode(GUINode* node) throw (GUIParserException);
+	virtual void addSubNode(GUINode* node);
 
 	/** 
 	 * @return overflow x
@@ -156,9 +159,9 @@ public:
 	 * Create over flow
 	 * @param overflow over flow
 	 * @return over flow
-	 * @throws gui parser exception
+	 * @throws tdme::gui::GUIParserException
 	 */
-	static GUIParentNode_Overflow* createOverflow(const string& overflow) throw (GUIParserException);
+	static GUIParentNode_Overflow* createOverflow(const string& overflow);
 
 	/** 
 	 * @return children render offset x

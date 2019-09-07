@@ -27,7 +27,7 @@ using tdme::os::network::platform::bsd::KernelEventMechanismPSD;
 	#define KEVENT_UDATA_DATATYPE void*
 #endif
 
-KernelEventMechanism::KernelEventMechanism() throw (NIOKEMException) : initialized(false),_psd(NULL) {
+KernelEventMechanism::KernelEventMechanism() : initialized(false),_psd(NULL) {
 	// allocate platform specific data
 	_psd = static_cast<void*>(new KernelEventMechanismPSD());
 }
@@ -37,7 +37,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) throw (NIOKEMException) {
+void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// platform specific data
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
@@ -111,7 +111,7 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 	psd->kqMutex.unlock();
 }
 
-void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  throw (NIOKEMException) {
+void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  {
 	// platform specific data
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
@@ -173,7 +173,7 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 	close(psd->kq);
 }
 
-int KernelEventMechanism::doKernelEventMechanism()  throw (NIOKEMException) {
+int KernelEventMechanism::doKernelEventMechanism()  {
 	// platform specific data
 	KernelEventMechanismPSD* psd = (KernelEventMechanismPSD*)_psd;
 
@@ -226,7 +226,7 @@ int KernelEventMechanism::doKernelEventMechanism()  throw (NIOKEMException) {
 	}
 }
 
-void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  throw (NIOKEMException) {
+void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
 	// platform specific data
 	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
 

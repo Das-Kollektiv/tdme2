@@ -34,7 +34,7 @@ void Properties::put(const string& key, const string& value)
 	properties[key] = value;
 }
 
-void Properties::load(const string& pathName, const string& fileName) throw (FileSystemException)
+void Properties::load(const string& pathName, const string& fileName)
 {
 	properties.clear();
 	vector<string> lines;
@@ -50,7 +50,7 @@ void Properties::load(const string& pathName, const string& fileName) throw (Fil
 	}
 }
 
-void Properties::store(const string& pathName, const string& fileName) throw (FileSystemException) {
+void Properties::store(const string& pathName, const string& fileName) {
 	vector<string> result;
 	int32_t idx = 0;
 	for (auto it = properties.begin(); it != properties.end(); ++it) {

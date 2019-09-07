@@ -36,44 +36,46 @@ public:
 	 * @param port from port
 	 * @param buf buf
 	 * @param bytes buf size
+	 * @throws tdme::os::network::NIOIOException
 	 * @return datagram size or -1 if read would block
 	 */
-	ssize_t read(string& from, unsigned int& port, void* buf, const size_t bytes) throw (NIOIOException);
+	ssize_t read(string& from, unsigned int& port, void* buf, const size_t bytes);
 
 	/**
 	 * @brief writes up to "bytes" bytes to socket
-	 * @throws NIOIOException
+	 * @throws tdme::os::network::NIOIOException
 	 * @param to to host
 	 * @param port to port
 	 * @param buf buf
 	 * @param bytes buf size
+	 * @throws tdme::os::network::NIOIOException
 	 * @return datagram bytes written or -1 if write would block
 	 */
-	ssize_t write(const string& to, const unsigned int port, void* buf, const size_t bytes) throw (NIOIOException);
+	ssize_t write(const string& to, const unsigned int port, void* buf, const size_t bytes);
 
 	/**
 	 * @brief creates a udp socket
 	 * @param socket socket
 	 * @param ipVersion IP version
-	 * @throws NIOSocketException
+	 * @throws tdme::os::network::NIOSocketException
 	 */
-	static void create(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException);
+	static void create(NIOUDPSocket& socket, IpVersion ipVersion);
 
 	/**
 	 * @brief creates a udp server socket
 	 * @param socket socket
 	 * @param ip ip
 	 * @param port port
-	 * @throws NIOSocketException
+	 * @throws tdme::os::network::NIOSocketException
 	 */
-	static void createServerSocket(NIOUDPSocket& socket, const std::string& ip, const unsigned int port) throw (NIOSocketException);
+	static void createServerSocket(NIOUDPSocket& socket, const std::string& ip, const unsigned int port);
 
 	/**
 	 * @brief creates a udp client socket
 	 * @param socket socket
 	 * @param ipVersion IP version
-	 * @throws NIOSocketException
+	 * @throws tdme::os::network::NIOSocketException
 	 */
-	static void createClientSocket(NIOUDPSocket& socket, IpVersion ipVersion) throw (NIOSocketException);
+	static void createClientSocket(NIOUDPSocket& socket, IpVersion ipVersion);
 };
 

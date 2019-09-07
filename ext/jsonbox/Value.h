@@ -220,7 +220,7 @@ public:
 	 * @throws JsonException if type is not an object
 	 * @return Reference to the object's member's value.
 	 */
-	Value &operator[](const std::string &key) throw (JsonException);
+	Value &operator[](const std::string &key);
 
 	/**
 	 * Bracket operator overload. If the value doesn't represent an object,
@@ -230,7 +230,7 @@ public:
 	 * @throws JsonException if type is not an object
 	 * @return Reference to the object's member's value.
 	 */
-	Value &operator[](const char *key) throw (JsonException);
+	Value &operator[](const char *key);
 
 	/**
 	 * Bracket operator overload. If the value doesn't represent an array,
@@ -244,7 +244,7 @@ public:
 	 * @throws JsonException if type is not an array
 	 * @return Reference to the value at the received index in the array.
 	 */
-	Value &operator[](size_t index) throw (JsonException);
+	Value &operator[](size_t index);
 
 	/**
 	 * Gets the value's type.
@@ -301,7 +301,7 @@ public:
 	 * @return Value's string value
 	 * contain a string.
 	 */
-	const std::string &getString() const throw (JsonException);
+	const std::string &getString() const;
 
 	/**
 	 * Sets the value as a string.
@@ -316,7 +316,7 @@ public:
 	 * @return Value's integer value
 	 * integer.
 	 */
-	int getInt() const throw (JsonException);
+	int getInt() const;
 
 	/**
 	 * Sets the value as an integer.
@@ -331,7 +331,7 @@ public:
 	 * @return Value's double value
 	 * double.
 	 */
-	double getDouble() const throw (JsonException);
+	double getDouble() const;
 
 	/**
 	 * Sets the value as a double.
@@ -346,7 +346,7 @@ public:
 	 * @return Value's object value
 	 * contain an object.
 	 */
-	const Object &getObject() const throw (JsonException);
+	const Object &getObject() const;
 
 	/**
 	 * Sets the value as a JSON object.
@@ -361,7 +361,7 @@ public:
 	 * @return Value's array value
 	 * contain an array.
 	 */
-	const Array &getArray() const throw (JsonException);
+	const Array &getArray() const;
 
 	/**
 	 * Sets the value as a JSON array.
@@ -376,7 +376,7 @@ public:
 	 * @return Value's boolean value
 	 * a boolean.
 	 */
-	bool getBoolean() const throw (JsonException);
+	bool getBoolean() const;
 
 	/**
 	 * Sets the value as a boolean.
@@ -406,7 +406,7 @@ public:
 	 * @param input Input stream to read from. Can be a file stream.
 	 * @throws JsonException
 	 */
-	void loadFromStream(std::istream &input) throw (JsonException);
+	void loadFromStream(std::istream &input);
 
 	/**
 	 * Loads a value from a file. Loads the file then calls the
@@ -415,7 +415,7 @@ public:
 	 * @throws JsonException
 	 * @see TDMEJson::Value::loadFromStream
 	 */
-	void loadFromFile(const std::string &filePath) throw (JsonException);
+	void loadFromFile(const std::string &filePath);
 
 	/**
 	 * Writes the value to an output stream in valid JSON. Uses the
@@ -442,7 +442,7 @@ public:
 	 * @see TDMEJson::Value::writeToStream
 	 */
 	void writeToFile(const std::string &filePath, bool indent = true,
-					 bool escapeAll = false) const throw (JsonException);
+					 bool escapeAll = false) const;
 private:
 	/**
 	 * Union used to contain the pointer to the value's data.
@@ -559,7 +559,7 @@ private:
 	 * @param result UTF-8 string read from the input stream.
 	 * @throws JsonException
 	 */
-	static void readString(std::istream &input, std::string &result) throw (JsonException);
+	static void readString(std::istream &input, std::string &result);
 
 	/**
 	 * Reads a JSON object from an input stream.
@@ -567,7 +567,7 @@ private:
 	 * @param result Object read from the input stream.
 	 * @throws JsonException
 	 */
-	static void readObject(std::istream &input, Object &result) throw (JsonException);
+	static void readObject(std::istream &input, Object &result);
 
 	/**
 	 * Reads a JSON array from an input stream.
@@ -583,7 +583,7 @@ private:
 	 * the input stream.
 	 * @throws JsonExceptioon
 	 */
-	static void readNumber(std::istream &input, Value &result) throw (JsonException);
+	static void readNumber(std::istream &input, Value &result);
 
 	/**
 	 * Advances through the input stream until it reaches a character that

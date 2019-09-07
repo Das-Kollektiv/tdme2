@@ -11,15 +11,6 @@
 
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 /** 
  * Circle particle emitter plane velocity
@@ -28,16 +19,6 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
  */
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity
 {
-	friend class LevelEditorEntityParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Type;
-	friend class LevelEditorEntityParticleSystem_ObjectParticleSystem;
-	friend class LevelEditorEntityParticleSystem_PointParticleSystem;
-	friend class LevelEditorEntityParticleSystem_Emitter;
-	friend class LevelEditorEntityParticleSystem_PointParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_CircleParticleEmitter;
-	friend class LevelEditorEntityParticleSystem_SphereParticleEmitter;
-
 private:
 	int32_t count {  };
 	int64_t lifeTime {  };
@@ -58,115 +39,115 @@ public:
 	/** 
 	 * @return count
 	 */
-	virtual int32_t getCount();
+	int32_t getCount();
 
 	/** 
 	 * Set count
 	 * @param count count
 	 */
-	virtual void setCount(int32_t count);
+	void setCount(int32_t count);
 
 	/** 
 	 * @return life time
 	 */
-	virtual int64_t getLifeTime();
+	int64_t getLifeTime();
 
 	/** 
 	 * Set life time
 	 * @param lifeTime life time
 	 */
-	virtual void setLifeTime(int64_t lifeTime);
+	void setLifeTime(int64_t lifeTime);
 
 	/** 
 	 * @return life time rnd
 	 */
-	virtual int64_t getLifeTimeRnd();
+	int64_t getLifeTimeRnd();
 
 	/** 
 	 * Set life time rnd
 	 * @param lifeTimeRnd life time rnd
 	 */
-	virtual void setLifeTimeRnd(int64_t lifeTimeRnd);
+	void setLifeTimeRnd(int64_t lifeTimeRnd);
 
 	/** 
 	 * @return mass
 	 */
-	virtual float getMass();
+	float getMass();
 
 	/** 
 	 * Set mass
 	 * @param mass mass
 	 */
-	virtual void setMass(float mass);
+	void setMass(float mass);
 
 	/** 
 	 * @return mass rnd
 	 */
-	virtual float getMassRnd();
+	float getMassRnd();
 
 	/** 
 	 * Set mass rnd
 	 * @param massRnd mass rnd
 	 */
-	virtual void setMassRnd(float massRnd);
+	void setMassRnd(float massRnd);
 
 	/** 
 	 * @return velocity
 	 */
-	virtual float getVelocity();
+	float getVelocity();
 
 	/** 
 	 * Set velocity
 	 * @param velocity velocity
 	 */
-	virtual void setVelocity(float velocity);
+	void setVelocity(float velocity);
 
 	/** 
 	 * @return velocity rnd
 	 */
-	virtual float getVelocityRnd();
+	float getVelocityRnd();
 
 	/** 
 	 * Set velocity rnd
 	 * @param velocityRnd velocity rnd
 	 */
-	virtual void setVelocityRnd(float velocityRnd);
+	void setVelocityRnd(float velocityRnd);
 
 	/** 
 	 * @return color start
 	 */
-	virtual Color4& getColorStart();
+	Color4& getColorStart();
 
 	/** 
 	 * @return color end
 	 */
-	virtual Color4& getColorEnd();
+	Color4& getColorEnd();
 
 	/** 
 	 * @return center
 	 */
-	virtual Vector3& getCenter();
+	Vector3& getCenter();
 
 	/** 
 	 * @return radius
 	 */
-	virtual float getRadius();
+	float getRadius();
 
 	/** 
 	 * Set radius
 	 * @param radius radius
 	 */
-	virtual void setRadius(float radius);
+	void setRadius(float radius);
 
 	/** 
 	 * @return axis 0
 	 */
-	virtual Vector3& getAxis0();
+	Vector3& getAxis0();
 
 	/** 
 	 * @return axis 1
 	 */
-	virtual Vector3& getAxis1();
+	Vector3& getAxis1();
 
 	/**
 	 * Public constructor

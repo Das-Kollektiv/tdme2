@@ -108,7 +108,7 @@ protected:
 		const string& colorDisabled,
 		const MutableString& text,
 		int32_t maxLength
-	) throw(Exception);
+	);
 
 public:
 	int32_t getContentWidth() override;

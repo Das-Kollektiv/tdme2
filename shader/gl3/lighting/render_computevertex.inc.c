@@ -1,3 +1,10 @@
+vec3 computeWorldPosition(vec4 vertex, int inArrayIndex, mat4 shaderTransformMatrix) {
+	// transformations matrices
+	mat4 worldMatrix = GS_IN_ARRAY_AT(vsModelMatrix, inArrayIndex) * shaderTransformMatrix;
+	vec4 worldPosition = worldMatrix * vertex;
+	return (worldPosition.xyz / worldPosition.w).xyz;
+}
+
 void computeVertex(vec4 vertex, int inArrayIndex, mat4 shaderTransformMatrix) {
 	// transformations matrices
 	mat4 mvMatrix = cameraMatrix * GS_IN_ARRAY_AT(vsModelMatrix, inArrayIndex) * shaderTransformMatrix;

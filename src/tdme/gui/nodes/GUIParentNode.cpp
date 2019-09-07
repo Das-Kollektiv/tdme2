@@ -76,8 +76,7 @@ GUIParentNode::GUIParentNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn
-	)
-	throw(GUIParserException) :
+	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->overflowX = overflowX;
@@ -104,7 +103,7 @@ void GUIParentNode::clearSubNodes()
 	invalidateRenderCaches();
 }
 
-void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) /* throws(Exception) */
+void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 {
 	if (resetScrollOffsets == true) {
 		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
@@ -149,7 +148,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets) 
 	}
 }
 
-void GUIParentNode::addSubNode(GUINode* node) throw (GUIParserException)
+void GUIParentNode::addSubNode(GUINode* node)
 {
 	if (screenNode->addNode(node) == false) {
 		throw GUIParserException(
@@ -176,7 +175,7 @@ GUIParentNode_Overflow* GUIParentNode::getOverflowY()
 	return overflowY;
 }
 
-GUIParentNode_Overflow* GUIParentNode::createOverflow(const string& overflow) throw (GUIParserException)
+GUIParentNode_Overflow* GUIParentNode::createOverflow(const string& overflow)
 {
 	if (StringUtils::equalsIgnoreCase(StringUtils::trim(overflow), "hidden") == true) {
 		return GUIParentNode_Overflow::HIDDEN;

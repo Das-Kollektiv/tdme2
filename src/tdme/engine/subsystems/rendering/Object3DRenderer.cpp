@@ -9,6 +9,8 @@
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FogParticleSystem.h>
+#include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/model/Color4.h>
@@ -21,6 +23,7 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
+#include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererPoints.h>
@@ -37,6 +40,7 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
+#include <tdme/engine/subsystems/particlesystem/FogParticleSystemInternal.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.h>
@@ -65,6 +69,8 @@ using std::unordered_set;
 
 using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::Engine;
+using tdme::engine::FogParticleSystem;
+using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::model::Color4;
@@ -77,6 +83,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -93,6 +100,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
+using tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
@@ -1010,6 +1018,7 @@ void Object3DRenderer::clearMaterial(void* context)
 	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 }
 
+
 void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 {
 	// TODO: Move me into own class
@@ -1041,7 +1050,7 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	renderer->onUpdateModelViewMatrix(context);
 
 	// render
-	PointsParticleSystem* currentPpse = (PointsParticleSystem*)pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie;
+	PointsParticleSystem* currentPpse = static_cast<PointsParticleSystem*>(pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie);
 	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
 		if (point.acquired == false) break;
 		if (point.cookie != (void*)currentPpse) {
@@ -1055,7 +1064,7 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 			psePointBatchRenderer->render(context);
 			psePointBatchRenderer->clear();
 			//
-			currentPpse = (PointsParticleSystem*)point.cookie;
+			currentPpse = static_cast<PointsParticleSystem*>(point.cookie);
 		}
 		psePointBatchRenderer->addPoint(point);
 	}
@@ -1078,6 +1087,129 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	// unbind texture
 	renderer->bindTexture(context, renderer->ID_NONE);
 	// TODO: before render sort all pps by distance to camera and render them in correct order
+	// unset renderer state
+	renderer->disableBlending();
+	// restore renderer state
+	renderer->unbindBufferObjects(context);
+	renderer->getModelViewMatrix().set(modelViewMatrix);
+}
+
+void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
+{
+	// TODO: Move me into own class
+	// TODO: check me performance wise again
+	if (visibleFses.size() == 0) return;
+
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	// switch back to texture unit 0, TODO: check where its set to another value but not set back
+	renderer->setTextureUnit(context, 0);
+
+	// merge fpses and sort them
+	for (auto i = 0; i < visibleFses.size(); i++) {
+		FogParticleSystemInternal* fpse = visibleFses[i];
+		pseTransparentRenderPointsPool->merge(fpse->getRenderPointsPool());
+	}
+	if (pseTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
+	pseTransparentRenderPointsPool->sort();
+
+	// store model view matrix
+	Matrix4x4 modelViewMatrix;
+	modelViewMatrix.set(renderer->getModelViewMatrix());
+
+	// set up renderer state
+	renderer->enableBlending();
+	// 	model view matrix
+	renderer->getModelViewMatrix().identity();
+	renderer->onUpdateModelViewMatrix(context);
+
+	// render
+	FogParticleSystem* currentFpse = static_cast<FogParticleSystem*>(pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie);
+	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
+		if (point.acquired == false) break;
+		if (point.cookie != (void*)currentFpse) {
+			// issue rendering
+			renderer->setEffectColorAdd(context, currentFpse->getEffectColorAdd().getArray());
+			renderer->setEffectColorMul(context, currentFpse->getEffectColorMul().getArray());
+			renderer->onUpdateEffect(context);
+			// TODO: maybe use onBindTexture() or onUpdatePointSize()
+			engine->getParticlesShader()->setParameters(context, currentFpse->getTextureId(), currentFpse->getPointSize());
+			// render, clear
+			psePointBatchRenderer->render(context);
+			psePointBatchRenderer->clear();
+			//
+			currentFpse = static_cast<FogParticleSystem*>(point.cookie);
+		}
+		psePointBatchRenderer->addPoint(point);
+	}
+
+	if (psePointBatchRenderer->hasPoints() == true) {
+		// issue rendering
+		renderer->setEffectColorAdd(context, currentFpse->getEffectColorAdd().getArray());
+		renderer->setEffectColorMul(context, currentFpse->getEffectColorMul().getArray());
+		renderer->onUpdateEffect(context);
+		// TODO: maybe use onBindTexture() or onUpdatePointSize()
+		engine->getParticlesShader()->setParameters(context, currentFpse->getTextureId(), currentFpse->getPointSize());
+		// render, clear
+		psePointBatchRenderer->render(context);
+		psePointBatchRenderer->clear();
+	}
+
+	// done
+	pseTransparentRenderPointsPool->reset();
+
+	// unbind texture
+	renderer->bindTexture(context, renderer->ID_NONE);
+	// TODO: before render sort all pps by distance to camera and render them in correct order
+	// unset renderer state
+	renderer->disableBlending();
+	// restore renderer state
+	renderer->unbindBufferObjects(context);
+	renderer->getModelViewMatrix().set(modelViewMatrix);
+}
+
+void Object3DRenderer::render(const vector<LinesObject3D*>& objects) {
+	// TODO: Move me into own class
+	// TODO: check me performance wise again
+	if (objects.size() == 0) return;
+
+	// use default context
+	auto context = renderer->getDefaultContext();
+
+	// switch back to texture unit 0, TODO: check where its set to another value but not set back
+	renderer->setTextureUnit(context, 0);
+
+	// store model view matrix
+	Matrix4x4 modelViewMatrix;
+	modelViewMatrix.set(renderer->getModelViewMatrix());
+
+	// set up renderer state
+	renderer->enableBlending();
+
+	//
+	for (auto object: objects) {
+		// 	model view matrix
+		renderer->getModelViewMatrix().set(object->getTransformationsMatrix()).multiply(renderer->getCameraMatrix());
+		renderer->onUpdateModelViewMatrix(context);
+
+		// render
+		// issue rendering
+		renderer->setEffectColorAdd(context, object->getEffectColorAdd().getArray());
+		renderer->setEffectColorMul(context, object->getEffectColorMul().getArray());
+		renderer->onUpdateEffect(context);
+
+		// TODO: maybe use onBindTexture() or onUpdatePointSize()
+		engine->getLinesShader()->setParameters(context, object->getTextureId(), object->getLineWidth());
+
+		//
+		renderer->bindVerticesBufferObject(context, (*object->vboIds)[0]);
+		renderer->bindColorsBufferObject(context, (*object->vboIds)[1]);
+		renderer->drawLinesFromBufferObjects(context, object->points.size(), 0);
+	}
+
+	// unbind texture
+	renderer->bindTexture(context, renderer->ID_NONE);
 	// unset renderer state
 	renderer->disableBlending();
 	// restore renderer state

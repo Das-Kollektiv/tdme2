@@ -86,9 +86,11 @@ SRCS = \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
+	src/tdme/engine/FogParticleSystem.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/Light.cpp \
+	src/tdme/engine/LinesObject3D.cpp \
 	src/tdme/engine/LODObject3D.cpp \
 	src/tdme/engine/Object3D.cpp \
 	src/tdme/engine/Object3DModel.cpp \
@@ -145,6 +147,9 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \
+	src/tdme/engine/subsystems/lines/LinesShader.cpp \
+	src/tdme/engine/subsystems/lines/LinesObject3DInternal.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp \
 	src/tdme/engine/subsystems/manager/TextureManager.cpp \
@@ -171,6 +176,7 @@ SRCS = \
 	src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
 	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp \
+	src/tdme/engine/subsystems/particlesystem/FogParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.cpp \
 	src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp \
 	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
@@ -334,6 +340,7 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServer.cpp \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
+	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
 	src/tdme/tools/leveleditor/controller/EmptyScreenController.cpp \
@@ -375,6 +382,7 @@ SRCS = \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.cpp \
+	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.cpp \
 	src/tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.cpp \
@@ -595,6 +603,7 @@ MAIN_SRCS = \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
+	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/gui/GUITest-main.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
 	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \

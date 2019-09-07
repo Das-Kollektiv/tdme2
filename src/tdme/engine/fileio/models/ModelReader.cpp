@@ -33,7 +33,7 @@ const vector<string>& ModelReader::getModelExtensions() {
 	return extensions;
 }
 
-Model* ModelReader::read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException)
+Model* ModelReader::read(const string& pathName, const string& fileName)
 {
 	try {
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {

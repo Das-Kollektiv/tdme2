@@ -17,7 +17,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
-GUITabsContent::GUITabsContent() throw (FileSystemException)
+GUITabsContent::GUITabsContent()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs-content.xml");
 }

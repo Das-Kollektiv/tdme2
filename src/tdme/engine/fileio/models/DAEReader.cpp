@@ -90,7 +90,7 @@ using tdme::ext::tinyxml::TiXmlAttribute;
 
 const Color4 DAEReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
-Model* DAEReader::read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException)
+Model* DAEReader::read(const string& pathName, const string& fileName)
 {
 	// load dae xml document
 	auto xmlContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
@@ -196,7 +196,7 @@ Model::AuthoringTool DAEReader::getAuthoringTool(TiXmlElement* xmlRoot)
 	return Model::AUTHORINGTOOL_UNKNOWN;
 }
 
-UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot) throw (ModelFileIOException)
+UpVector* DAEReader::getUpVector(TiXmlElement* xmlRoot)
 {
 	// determine up axis
 	for (auto xmlAsset: getChildrenByTagName(xmlRoot, "asset")) {
@@ -262,7 +262,7 @@ Group* DAEReader::readVisualSceneNode(const string& pathName, Model* model, Grou
 	}
 }
 
-Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps) throw (ModelFileIOException)
+Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode, float fps)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
@@ -468,7 +468,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 	return group;
 }
 
-Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode) throw (ModelFileIOException)
+Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Model* model, Group* parentGroup, TiXmlElement* xmlRoot, TiXmlElement* xmlNode)
 {
 	auto xmlNodeId = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("id")));
 	auto xmlNodeName = string(AVOID_NULLPTR_STRING(xmlNode->Attribute("name")));
@@ -682,7 +682,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	return group;
 }
 
-void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols) throw (ModelFileIOException)
+void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols)
 {
 	vector<FacesEntity> facesEntities = *group->getFacesEntities();
 	auto verticesOffset = group->getVertices()->size();

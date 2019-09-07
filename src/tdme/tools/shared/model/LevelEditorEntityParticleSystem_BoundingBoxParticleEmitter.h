@@ -10,15 +10,6 @@
 
 using tdme::engine::model::Color4;
 using tdme::math::Vector3;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_SphereParticleEmitter;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
-using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 
 /** 
  * Bounding box particle emitter 
@@ -58,102 +49,102 @@ public:
 	/** 
 	 * @return count
 	 */
-	virtual int32_t getCount();
+	int32_t getCount();
 
 	/** 
 	 * Set count
 	 * @param count count
 	 */
-	virtual void setCount(int32_t count);
+	void setCount(int32_t count);
 
 	/** 
 	 * @return life time
 	 */
-	virtual int64_t getLifeTime();
+	int64_t getLifeTime();
 
 	/** 
 	 * Set life time
 	 * @param lifeTime life time
 	 */
-	virtual void setLifeTime(int64_t lifeTime);
+	void setLifeTime(int64_t lifeTime);
 
 	/** 
 	 * @return life time rnd
 	 */
-	virtual int64_t getLifeTimeRnd();
+	int64_t getLifeTimeRnd();
 
 	/** 
 	 * Set life time rnd
 	 * @param lifeTimeRnd life time rnd
 	 */
-	virtual void setLifeTimeRnd(int64_t lifeTimeRnd);
+	void setLifeTimeRnd(int64_t lifeTimeRnd);
 
 	/** 
 	 * @return mass
 	 */
-	virtual float getMass();
+	float getMass();
 
 	/** 
 	 * Set mass
 	 * @param mass mass
 	 */
-	virtual void setMass(float mass);
+	void setMass(float mass);
 
 	/** 
 	 * @return mass rnd
 	 */
-	virtual float getMassRnd();
+	float getMassRnd();
 
 	/** 
 	 * Set mass rnd
 	 * @param massRnd mass rnd
 	 */
-	virtual void setMassRnd(float massRnd);
+	void setMassRnd(float massRnd);
 
 	/** 
 	 * @return velocity
 	 */
-	virtual Vector3& getVelocity();
+	Vector3& getVelocity();
 
 	/** 
 	 * @return velocity rnd
 	 */
-	virtual Vector3& getVelocityRnd();
+	Vector3& getVelocityRnd();
 
 	/** 
 	 * @return color start
 	 */
-	virtual Color4& getColorStart();
+	Color4& getColorStart();
 
 	/** 
 	 * @return color end
 	 */
-	virtual Color4& getColorEnd();
+	Color4& getColorEnd();
 
 	/** 
 	 * @return obb center
 	 */
-	virtual Vector3& getObbCenter();
+	Vector3& getObbCenter();
 
 	/** 
 	 * @return obb half extension
 	 */
-	virtual Vector3& getObbHalfextension();
+	Vector3& getObbHalfextension();
 
 	/** 
 	 * @return obb axis 0
 	 */
-	virtual Vector3& getObbAxis0();
+	Vector3& getObbAxis0();
 
 	/** 
 	 * @return obb axis 1
 	 */
-	virtual Vector3& getObbAxis1();
+	Vector3& getObbAxis1();
 
 	/** 
 	 * @return obb axis 2
 	 */
-	virtual Vector3& getObbAxis2();
+	Vector3& getObbAxis2();
 
 	/**
 	 * Public constructor

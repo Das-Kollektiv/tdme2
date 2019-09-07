@@ -81,22 +81,22 @@ protected:
 	 * @param messageId message id (udp server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) throw (Exception) = 0;
+	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) = 0;
 
 	/*
 	 * @brief event method called if client will be initiated, will be called from worker
 	 */
-	virtual void onInit() throw (Exception) = 0;
+	virtual void onInit() = 0;
 
 	/*
 	 * @brief event method called if client will be closed, will be called from worker
 	 */
-	virtual void onClose() throw (Exception) = 0;
+	virtual void onClose() = 0;
 
 	/*
 	 * @brief custom event method called if fired, will be called from worker
 	 */
-	virtual void onCustom(const string& type) throw (Exception) = 0;
+	virtual void onCustom(const string& type) = 0;
 
 	/**
 	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool

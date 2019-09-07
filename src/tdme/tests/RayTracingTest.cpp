@@ -7,6 +7,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
+#include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/model/Color4.h>
@@ -30,6 +31,7 @@
 #include <tdme/tools/leveleditor/logic/Level.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Time.h>
@@ -42,6 +44,7 @@ using tdme::tests::RayTracingTest;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
+using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
@@ -65,6 +68,7 @@ using tdme::math::Quaternion;
 using tdme::tools::leveleditor::logic::Level;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::utils::Console;
 using tdme::utils::MutableString;
 using tdme::utils::Time;
@@ -122,8 +126,8 @@ void RayTracingTest::display()
 		world->getBody("player")->setLinearVelocity(movementVector.scale(4.0f));
 	}
 
-	Vector3 camLookAt;
 	Vector3 camLookFrom;
+	Vector3 camLookAt;
 	{
 		auto headYPosition = 1.65f;
 		float trdMovemventPlayerXAxis = 0.25f;
@@ -145,6 +149,7 @@ void RayTracingTest::display()
 		engine->getCamera()->setUpVector(Camera::computeUpVector(camLookFrom, camLookAt));
 	}
 
+
 	{
 		dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("crosshair")->getNodeById("crosshair_hud"))->getActiveConditions().removeAll();
 		float trdTraceLength = 3.5f;
@@ -156,6 +161,8 @@ void RayTracingTest::display()
 		traceEnd.scale(1.0f / traceEnd.computeLength());
 		traceEnd.scale(trdTraceLength);
 		traceEnd.add(camLookFrom);
+		//rayStart = camLookFrom;
+		//rayEnd = traceEnd;
 		auto rayTracedRigidBody = world->doRayCasting(
 			Level::RIGIDBODY_TYPEID_STATIC | Level::RIGIDBODY_TYPEID_DYNAMIC,
 			camLookFrom,
@@ -167,7 +174,28 @@ void RayTracingTest::display()
 			dynamic_cast<GUITextNode*>(engine->getGUI()->getScreen("crosshair")->getNodeById("crosshair_hud_id"))->setText(MutableString("Interact with " + rayTracedRigidBody->getId()));
 			dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("crosshair")->getNodeById("crosshair_hud"))->getActiveConditions().add("pickup");
 		}
+		if (keyInfo == true) {
+			// draw ray
+			auto linesObject3D = new LinesObject3D("ray", 3.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
+			linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+			engine->addEntity(linesObject3D);
+
+			// draw aabb
+			if (rayTracedRigidBody != nullptr && rayTracedRigidBody->getId() != "ground") {
+				auto bvEntity = new Object3D(
+					"bv",
+					entityBoundingVolumeModel
+				);
+				bvEntity->setTranslation(engine->getEntity(rayTracedRigidBody->getId())->getTransformations().getTranslation());
+				bvEntity->update();
+				engine->addEntity(bvEntity);
+			} else {
+				engine->removeEntity("bv");
+			}
+		}
 	}
+
+	if (keyInfo == true) keyInfo = false;
 
 	// update world, display engine
 	auto start = Time::getCurrentMillis();
@@ -176,7 +204,6 @@ void RayTracingTest::display()
 	engine->display();
 	engine->getGUI()->render();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("RayTracingTest::display::" + to_string(end - start) + "ms"));
 }
 
 void RayTracingTest::dispose()
@@ -218,11 +245,12 @@ void RayTracingTest::initialize()
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto interactionTable = ModelMetaDataFileImport::doImport(-1, "resources/tests/asw", "Mesh_Interaction_Table.fbx.tmm");
+	entityBoundingVolumeModel = PrimitiveModel::createModel(interactionTable->getBoundingVolumeAt(0)->getBoundingVolume(), "interactiontable.bv");
 	int interactionTableIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
 		// engine
-		auto id = "interactionTable." + to_string(interactionTableIdx++);
+		auto id = "interactionTable." + to_string(interactionTableIdx);
 		auto entity = new Object3D(
 			id,
 			interactionTable->getModel()
@@ -239,6 +267,10 @@ void RayTracingTest::initialize()
 			entity->getTransformations(),
 			Level::RIGIDBODY_TYPEID_STATIC
 		);
+
+		//
+		interactionTableIdx++;
+
 	}
 	//auto capsuleBig = new Capsule(Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.11f, 0.0f), 0.1f);
 	auto capsuleBig = new Capsule(Vector3(0.0f, 0.25f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.25f);
@@ -268,6 +300,7 @@ void RayTracingTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == 'a') keyLeft = true;
 	if (keyChar == 's') keyDown = true;
 	if (keyChar == 'd') keyRight = true;
+	if (keyChar == 'i') keyInfo = true;
 }
 
 void RayTracingTest::onKeyUp(unsigned char key, int x, int y) {

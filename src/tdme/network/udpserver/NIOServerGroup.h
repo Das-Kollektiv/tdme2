@@ -126,12 +126,12 @@ protected:
 	/*
 	 * @brief event method called if group will be created, will be called from worker
 	 */
-	virtual void onCreate() throw (Exception) = 0;
+	virtual void onCreate() = 0;
 
 	/*
 	 * @brief event method called if client will be closed, will be called from worker
 	 */
-	virtual void onClose() throw (Exception) = 0;
+	virtual void onClose() = 0;
 
 	/**
 	 * @brief Shuts down this group

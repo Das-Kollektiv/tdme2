@@ -76,7 +76,7 @@ GUIElementNode::GUIElementNode(
 	const string& onMouseOverExpression,
 	const string& onMouseOutExpression,
 	const string& onChangeExpression
-	) throw (GUIParserException) :
+	) :
 	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
 	activeConditions(this)
 {

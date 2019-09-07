@@ -2,6 +2,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
+#include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/gui/renderer/GUIShader.h>
@@ -9,6 +10,7 @@
 using tdme::engine::EngineVKRenderer;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShader;
+using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::gui::renderer::GUIShader;
@@ -26,9 +28,11 @@ void EngineVKRenderer::onUpdateProjectionMatrix(void* context)
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this, context);
 
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateMatrices(this, context);
+
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
-
 }
 
 void EngineVKRenderer::onUpdateCameraMatrix(void* context)
@@ -39,9 +43,11 @@ void EngineVKRenderer::onUpdateCameraMatrix(void* context)
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this, context);
 
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateMatrices(this, context);
+
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
-
 }
 
 void EngineVKRenderer::onUpdateModelViewMatrix(void* context)
@@ -52,9 +58,11 @@ void EngineVKRenderer::onUpdateModelViewMatrix(void* context)
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateMatrices(this, context);
 
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateMatrices(this, context);
+
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
-
 }
 
 void EngineVKRenderer::onBindTexture(void* context, int32_t textureId)
@@ -88,6 +96,9 @@ void EngineVKRenderer::onUpdateEffect(void* context)
 
 	if (Engine::particlesShader != nullptr)
 		Engine::particlesShader->updateEffect(this, context);
+
+	if (Engine::linesShader != nullptr)
+		Engine::linesShader->updateEffect(this, context);
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateEffect(this);

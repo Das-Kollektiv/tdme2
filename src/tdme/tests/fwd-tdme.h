@@ -16,5 +16,6 @@ namespace tests {
 	class PhysicsTest4;
 	class RayTracingTest;
 	class SkinningTest;
+	class WaterTest;
 }  // namespace tests
 }  // namespace tdme

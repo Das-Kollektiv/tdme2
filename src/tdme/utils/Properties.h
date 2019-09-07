@@ -45,17 +45,17 @@ public:
 	 * Load property file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws file system exception
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	void load(const string& pathName, const string& fileName) throw (FileSystemException);
+	void load(const string& pathName, const string& fileName);
 
 	/**
 	 * Store property file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws file system exception
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	void store(const string& pathName, const string& fileName) throw (FileSystemException);
+	void store(const string& pathName, const string& fileName);
 
 	/**
 	 * Public constructor

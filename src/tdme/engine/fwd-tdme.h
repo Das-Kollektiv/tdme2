@@ -14,7 +14,9 @@ namespace engine {
 		struct EntityPickingFilter;
 		class FrameBuffer;
 		class Frustum;
+		class FogParticleSystem;
 		class Light;
+		class LinesObject3D;
 		class LODObject3D;
 		class ModelUtilities;
 		class Object3D;

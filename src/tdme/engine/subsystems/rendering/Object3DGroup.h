@@ -10,6 +10,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -45,6 +46,7 @@ class tdme::engine::subsystems::rendering::Object3DGroup final
 	friend class Object3DRenderer;
 	friend class TransparentRenderFacesPool;
 	friend class TransparentRenderFacesGroup;
+	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
 	static int64_t counter;

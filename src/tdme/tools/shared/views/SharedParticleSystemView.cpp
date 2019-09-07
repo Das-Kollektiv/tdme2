@@ -294,6 +294,7 @@ void SharedParticleSystemView::initialize()
 	particleSystemTypes.push_back("None");
 	particleSystemTypes.push_back("Object Particle System");
 	particleSystemTypes.push_back("Points Particle System");
+	particleSystemTypes.push_back("Fog Particle System");
 	particleSystemScreenController->setParticleSystemTypes(particleSystemTypes);
 	vector<string> particleSystemEmitters;
 	particleSystemEmitters.push_back("None");

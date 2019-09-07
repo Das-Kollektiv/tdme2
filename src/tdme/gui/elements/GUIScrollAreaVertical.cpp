@@ -15,7 +15,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 string GUIScrollAreaVertical::NAME = "scrollarea-vertical";
 
-GUIScrollAreaVertical::GUIScrollAreaVertical() throw (FileSystemException)
+GUIScrollAreaVertical::GUIScrollAreaVertical()
 {
 	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea-vertical.xml");
 }

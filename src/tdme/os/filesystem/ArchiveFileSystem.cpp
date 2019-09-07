@@ -64,24 +64,24 @@ ArchiveFileSystem::~ArchiveFileSystem()
 	ifs.close();
 }
 
-const string ArchiveFileSystem::getFileName(const string& pathName, const string& fileName) throw (FileSystemException) {
+const string ArchiveFileSystem::getFileName(const string& pathName, const string& fileName) {
 	return pathName + "/" + fileName;
 }
 
-void ArchiveFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives) throw (FileSystemException)
+void ArchiveFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives)
 {
 	throw FileSystemException("ArchiveFileSystem::list(): Not implemented yet");
 }
 
-bool ArchiveFileSystem::isPath(const string& pathName) throw (FileSystemException) {
+bool ArchiveFileSystem::isPath(const string& pathName) {
 	throw FileSystemException("ArchiveFileSystem::isPath(): Not implemented yet");
 }
 
-bool ArchiveFileSystem::isDrive(const string& pathName) throw (FileSystemException) {
+bool ArchiveFileSystem::isDrive(const string& pathName) {
 	throw FileSystemException("ArchiveFileSystem::isDrive(): Not implemented yet");
 }
 
-bool ArchiveFileSystem::fileExists(const string& fileName) throw (FileSystemException) {
+bool ArchiveFileSystem::fileExists(const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = fileName;
 	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
@@ -90,7 +90,7 @@ bool ArchiveFileSystem::fileExists(const string& fileName) throw (FileSystemExce
 	return fileInformations.find(relativeFileName) != fileInformations.end();
 }
 
-void ArchiveFileSystem::decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent) throw (FileSystemException) {
+void ArchiveFileSystem::decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent) {
 	// see: https://www.zlib.net/zpipe.c
 
 	#define CHUNK	16384
@@ -160,7 +160,7 @@ void ArchiveFileSystem::decompress(vector<uint8_t>& inContent, vector<uint8_t>& 
 	}
 }
 
-const string ArchiveFileSystem::getContentAsString(const string& pathName, const string& fileName) throw (FileSystemException) {
+const string ArchiveFileSystem::getContentAsString(const string& pathName, const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;
 	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
@@ -196,11 +196,11 @@ const string ArchiveFileSystem::getContentAsString(const string& pathName, const
 	return result;
 }
 
-void ArchiveFileSystem::setContentFromString(const string& pathName, const string& fileName, const string& content) throw (FileSystemException) {
+void ArchiveFileSystem::setContentFromString(const string& pathName, const string& fileName, const string& content) {
 	throw FileSystemException("ArchiveFileSystem::setContentFromString(): Not implemented yet");
 }
 
-void ArchiveFileSystem::getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) throw (FileSystemException)
+void ArchiveFileSystem::getContent(const string& pathName, const string& fileName, vector<uint8_t>& content)
 {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;
@@ -230,11 +230,11 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 	}
 }
 
-void ArchiveFileSystem::setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) throw (FileSystemException) {
+void ArchiveFileSystem::setContent(const string& pathName, const string& fileName, const vector<uint8_t>& content) {
 	throw FileSystemException("ArchiveFileSystem::setContent(): Not implemented yet");
 }
 
-void ArchiveFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content) throw (FileSystemException)
+void ArchiveFileSystem::getContentAsStringArray(const string& pathName, const string& fileName, vector<string>& content)
 {
 	auto contentAsString = getContentAsString(pathName, fileName);
 	contentAsString = StringUtils::replace(contentAsString, "\r", "");
@@ -245,12 +245,12 @@ void ArchiveFileSystem::getContentAsStringArray(const string& pathName, const st
 	}
 }
 
-void ArchiveFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content) throw (FileSystemException)
+void ArchiveFileSystem::setContentFromStringArray(const string& pathName, const string& fileName, const vector<string>& content)
 {
 	throw FileSystemException("ArchiveFileSystem::setContentFromStringArray(): Not implemented yet");
 }
 
-const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const string& fileName) throw (FileSystemException) {
+const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const string& fileName) {
 	string unixPathName = StringUtils::replace(pathName, "\\", "/");
 	string unixFileName = StringUtils::replace(fileName, "\\", "/");
 
@@ -308,32 +308,32 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	return canonicalPathString;
 }
 
-const string ArchiveFileSystem::getCurrentWorkingPathName() throw (FileSystemException) {
+const string ArchiveFileSystem::getCurrentWorkingPathName() {
 	return ".";
 }
 
-const string ArchiveFileSystem::getPathName(const string& fileName) throw (FileSystemException) {
+const string ArchiveFileSystem::getPathName(const string& fileName) {
 	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
 	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return ".";
 	return StringUtils::substring(unixFileName, 0, lastPathSeparator);
 }
 
-const string ArchiveFileSystem::getFileName(const string& fileName) throw (FileSystemException) {
+const string ArchiveFileSystem::getFileName(const string& fileName) {
 	string unixFileName = StringUtils::replace(fileName, L'\\', L'/');
 	int32_t lastPathSeparator = StringUtils::lastIndexOf(unixFileName, L'/');
 	if (lastPathSeparator == -1) return fileName;
 	return StringUtils::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
 }
 
-void ArchiveFileSystem::createPath(const string& pathName) throw (FileSystemException) {
+void ArchiveFileSystem::createPath(const string& pathName) {
 	throw FileSystemException("ArchiveFileSystem::createPath(): Not implemented yet");
 }
 
-void ArchiveFileSystem::removePath(const string& pathName) throw (FileSystemException) {
+void ArchiveFileSystem::removePath(const string& pathName) {
 	throw FileSystemException("ArchiveFileSystem::removePath(): Not implemented yet");
 }
 
-void ArchiveFileSystem::removeFile(const string& pathName, const string& fileName) throw (FileSystemException) {
+void ArchiveFileSystem::removeFile(const string& pathName, const string& fileName) {
 	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
 }

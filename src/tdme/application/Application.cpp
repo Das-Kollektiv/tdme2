@@ -434,7 +434,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			/*
 			glutInitContextVersion(3, 1);
 			glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
-			 */
+			*/
 		#elif defined(__linux__) && (defined(__arm__) || defined(__aarch64__))
 			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 			glutInitContextVersion(2,0);

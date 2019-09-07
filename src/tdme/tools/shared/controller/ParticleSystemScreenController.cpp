@@ -34,6 +34,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
+#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
@@ -83,6 +84,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -101,6 +103,7 @@ using tdme::utils::MutableString;
 string ParticleSystemScreenController::TYPE_NONE = "None";
 string ParticleSystemScreenController::TYPE_OBJECTPARTICLESYSTEM = "Object Particle System";
 string ParticleSystemScreenController::TYPE_POINTSPARTICLESYSTEM = "Points Particle System";
+string ParticleSystemScreenController::TYPE_FOGPARTICLESYSTEM = "Fog Particle System";
 string ParticleSystemScreenController::EMITTER_NONE = "None";
 string ParticleSystemScreenController::EMITTER_POINTPARTICLEEMITTER = "Point Particle Emitter";
 string ParticleSystemScreenController::EMITTER_BOUNDINGBOXPARTICLEEMITTER = "BoundingBox Particle Emitter";
@@ -206,6 +209,10 @@ void ParticleSystemScreenController::initialize()
 		ppsTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_texture"));
 		ppsTransparencyTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_transparency_texture"));
 		ppsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_auto_emit"));
+		fpsMaxPoints = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_maxpoints"));
+		fpsPointSize = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_pointsize"));
+		fpsTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_texture"));
+		fpsTransparencyTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_transparency_texture"));
 		ppeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_count"));
 		ppeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_lifetime"));
 		ppeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_lifetimernd"));
@@ -420,6 +427,14 @@ void ParticleSystemScreenController::setParticleSystemType()
 			ppsTexture->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureFileName()));
 			ppsTransparencyTexture->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTransparencyTextureFileName()));
 			ppsAutoEmit->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->isAutoEmit() == true ? "1" : ""));
+		} else
+		if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+			particleSystemTypes->getController()->setValue(MutableString(TYPE_FOGPARTICLESYSTEM));
+			particleSystemType->getActiveConditions().add(TYPE_FOGPARTICLESYSTEM);
+			fpsMaxPoints->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getMaxPoints()));
+			fpsPointSize->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getPointSize(), 4));
+			fpsTexture->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getTextureFileName()));
+			fpsTransparencyTexture->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getTransparencyTextureFileName()));
 		} else {
 			Console::println(
 				string(
@@ -455,6 +470,11 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				particleSystem->getPointParticleSystem()->setPointSize(Tools::convertToFloat(ppsPointSize->getController()->getValue().getString()));
 				particleSystem->getPointParticleSystem()->setTextureFileName(ppsTexture->getController()->getValue().getString(), ppsTransparencyTexture->getController()->getValue().getString());
 				particleSystem->getPointParticleSystem()->setAutoEmit(ppsAutoEmit->getController()->getValue().getString() == "1");
+			} else
+			if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
+				particleSystem->getFogParticleSystem()->setMaxPoints(Tools::convertToInt(fpsMaxPoints->getController()->getValue().getString()));
+				particleSystem->getFogParticleSystem()->setPointSize(Tools::convertToFloat(fpsPointSize->getController()->getValue().getString()));
+				particleSystem->getFogParticleSystem()->setTextureFileName(fpsTexture->getController()->getValue().getString(), fpsTransparencyTexture->getController()->getValue().getString());
 			} else {
 				Console::println(
 					string(
@@ -483,6 +503,9 @@ void ParticleSystemScreenController::onParticleSystemTypeApply()
 	} else
 	if (particleSystemTypeString == TYPE_POINTSPARTICLESYSTEM) {
 		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM);
+	} else
+	if (particleSystemTypeString == TYPE_FOGPARTICLESYSTEM) {
+		view->getEntity()->getParticleSystemAt(view->getParticleSystemIndex())->setType(LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM);
 	} else {
 		Console::println(
 			string(
@@ -961,7 +984,9 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 				onParticleSystemTypeApply();
 				view->updateParticleSystemRequest();
 			} else
-			if (node->getId().compare("button_ops_apply") == 0 || node->getId().compare("button_pps_type_apply") == 0) {
+			if (node->getId().compare("button_ops_apply") == 0 ||
+				node->getId().compare("button_pps_type_apply") == 0 ||
+				node->getId().compare("button_fps_type_apply") == 0) {
 				view->reset();
 				onParticleSystemTypeDataApply();
 				view->updateParticleSystemRequest();
@@ -1075,6 +1100,71 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 			} else
 			if (node->getId().compare("button_pps_transparency_texture_clear") == 0) {
 				ppsTransparencyTexture->getController()->setValue(MutableString());
+			} else
+			if (node->getId().compare("button_fps_texture_file") == 0) {
+				class OnLoadTextureFile: public virtual Action
+				{
+				public:
+					void performAction() override {
+						particleSystemScreenController->fpsTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					}
+
+					/**
+					 * Public constructor
+					 * @param particleSystemScreenController particle system screen controller
+					 */
+					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+					}
+
+				private:
+					ParticleSystemScreenController* particleSystemScreenController;
+				};
+
+				vector<string> extensions = TextureReader::getTextureExtensions();
+				view->getPopUpsViews()->getFileDialogScreenController()->show(
+					modelPath->getPath(),
+					"Load from: ",
+					extensions,
+					ppsTexture->getController()->getValue().getString(),
+					true,
+					new OnLoadTextureFile(this)
+				);
+			} else
+			if (node->getId().compare("button_fps_transparency_texture_file") == 0) {
+				class OnLoadTextureFile: public virtual Action
+				{
+				public:
+					void performAction() override {
+						particleSystemScreenController->fpsTransparencyTexture->getController()->setValue(MutableString(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName() + "/" + particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getFileName()));
+						particleSystemScreenController->modelPath->setPath(particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->getPathName());
+						particleSystemScreenController->view->getPopUpsViews()->getFileDialogScreenController()->close();
+					}
+
+					/**
+					 * Public constructor
+					 * @param particleSystemScreenController particle system screen controller
+					 */
+					OnLoadTextureFile(ParticleSystemScreenController* particleSystemScreenController): particleSystemScreenController(particleSystemScreenController) {
+					}
+
+				private:
+					ParticleSystemScreenController* particleSystemScreenController;
+				};
+
+				vector<string> extensions = TextureReader::getTextureExtensions();
+				view->getPopUpsViews()->getFileDialogScreenController()->show(
+					modelPath->getPath(),
+					"Load from: ",
+					extensions,
+					ppsTransparencyTexture->getController()->getValue().getString(),
+					true,
+					new OnLoadTextureFile(this)
+				);
+			} else
+			if (node->getId().compare("button_fps_transparency_texture_clear") == 0) {
+				fpsTransparencyTexture->getController()->setValue(MutableString());
 			} else
 			if (node->getId() == "button_particlesystem_add") {
 				view->getEntity()->addParticleSystem();

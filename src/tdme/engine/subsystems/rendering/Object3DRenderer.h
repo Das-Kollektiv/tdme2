@@ -32,6 +32,10 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::Engine;
+using tdme::engine::FogParticleSystem;
+using tdme::engine::LinesObject3D;
+using tdme::engine::Object3D;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
@@ -211,6 +215,18 @@ public:
 	 * @param visiblePses points batch renderer points
 	 */
 	void render(const vector<PointsParticleSystem*>& visiblePses);
+
+	/**
+	 * Render batch renderer fog points entities
+	 * @param visibleFses points batch renderer points
+	 */
+	void render(const vector<FogParticleSystem*>& visibleFses);
+
+	/**
+	 * Renders all given lines objects
+	 * @param objects lines objects
+	 */
+	void render(const vector<LinesObject3D*>& objects);
 
 	/**
 	 * Public constructor

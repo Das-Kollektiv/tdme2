@@ -1,4 +1,4 @@
-/**
+f/**
  * Vulkan renderer
  * based on
  * 	https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
@@ -793,6 +793,10 @@ bool VKRenderer::isSupportingMultithreadedRendering() {
 }
 
 bool VKRenderer::isSupportingMultipleRenderQueues() {
+	return false;
+}
+
+bool VKRenderer::isSupportingVertexArrays() {
 	return false;
 }
 
@@ -1744,6 +1748,10 @@ int VKRenderer::determineAlignment(const unordered_map<string, vector<string>>& 
 			uint32_t size = sizeof(float);
 			alignmentMax = Math::max(alignmentMax, size);
 		} else
+		if (uniformType == "vec2") {
+			uint32_t size = sizeof(float) * 2;
+			alignmentMax = Math::max(alignmentMax, size);
+		} else
 		if (uniformType == "vec3") {
 			uint32_t size = sizeof(float) * 3;
 			alignmentMax = Math::max(alignmentMax, size);
@@ -1811,6 +1819,15 @@ bool VKRenderer::addToShaderUniformBufferObject(shader_type& shader, const unord
 				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
 				uint32_t size = sizeof(float);
 				auto position = align(size, shader.ubo_size);
+				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
+				shader.ubo_size = position + size;
+			}
+		} else
+		if (uniformType == "vec2") {
+			for (auto i = 0; i < arraySize; i++) {
+				auto suffix = isArray == true?"[" + to_string(i) + "]":"";
+				uint32_t size = sizeof(float) * 2;
+				auto position = align(sizeof(float) * 4, shader.ubo_size);
 				shader.uniforms[prefix + uniformName + suffix] = {.name = prefix + uniformName + suffix, .type = shader_type::uniform_type::UNIFORM, .position = position, .size = size, .texture_unit = -1};
 				shader.ubo_size = position + size;
 			}
@@ -1930,6 +1947,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (multiLineComment == true) {
 				if (StringUtils::endsWith(line, "*/") == true) multiLineComment = false;
 			} else
+			// TODO: a.drewke, #elif
 			if (StringUtils::startsWith(line, "#if defined(") == true) {
 				auto definition = StringUtils::trim(StringUtils::substring(line, string("#if defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
@@ -3329,6 +3347,12 @@ void VKRenderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, co
 }
 
 void VKRenderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
+{
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+}
+
+void VKRenderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
@@ -5223,6 +5247,16 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	executeCommand(contextTyped.idx);
 }
 
+void VKRenderer::setLineWidth(float lineWidth)
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
+}
+
+void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+{
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
+}
+
 void VKRenderer::unbindBufferObjects(void* context)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
@@ -5415,4 +5449,17 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bu
 
 void VKRenderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	(*static_cast<context_type*>(context)).bound_buffers[7] = bufferObjectId;
+}
+
+int32_t VKRenderer::createVertexArrayObject() {
+	Console::println("VKRenderer::createVertexArrayObject(): Not implemented");
+	return -1;
+}
+
+void VKRenderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("VKRenderer::disposeVertexArrayObject(): Not implemented");
+}
+
+void VKRenderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("VKRenderer::bindVertexArrayObject(): Not implemented");
 }

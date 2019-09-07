@@ -126,7 +126,7 @@ private:
 	 * @param path path name
 	 * @param fileName file name
 	 */
-	static Texture* loadPNG(const string& path, const string& fileName) throw (FileSystemException);
+	static Texture* loadPNG(const string& path, const string& fileName);
 
 	/**
 	 * Scales a texture line

@@ -34,9 +34,9 @@ private:
 	 * Copy file
 	 * @param source source
 	 * @param dest dest
-	 * @throws file system exception
+	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static void copyFile(const string& source, const string& dest) throw (FileSystemException);
+	static void copyFile(const string& source, const string& dest);
 
 	/**
 	 * Export LOD level to JSON
@@ -51,19 +51,19 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param entity entity
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void export_(const string& pathName, const string& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
+	static void export_(const string& pathName, const string& fileName, LevelEditorEntity* entity);
 
 	/** 
 	 * Export model meta data file to JSON node
 	 * @param entity entity
-	 * @throws file system exception
-	 * @throws json exception
-	 * @throws model file io exception
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::ext::jsonbox::JsonException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException);
+	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity);
 
 };

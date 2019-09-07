@@ -40,5 +40,9 @@ public:
 	map<string, string>* getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
-	GUICheckbox() throw (FileSystemException);
+	/**
+	 * Public constructor
+	 * @throws tdme::os::filesystem::FileSystemException
+	 */
+	GUICheckbox();
 };

@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -25,6 +26,7 @@
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
+using std::map;
 using std::vector;
 using std::to_string;
 using std::string;
@@ -73,6 +75,10 @@ bool GLES2Renderer::isSupportingMultithreadedRendering() {
 }
 
 bool GLES2Renderer::isSupportingMultipleRenderQueues() {
+	return false;
+}
+
+bool GLES2Renderer::isSupportingVertexArrays() {
 	return false;
 }
 
@@ -289,6 +295,11 @@ void GLES2Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId,
 	glUniform3fv(uniformId, 1, data.data());
 }
 
+void GLES2Renderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
+{
+	glUniform2fv(uniformId, 1, data.data());
+}
+
 void GLES2Renderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
 	glBindAttribLocation(programId, location, (name).c_str());
@@ -499,20 +510,21 @@ vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers, bool useGPUM
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);
 	glGenBuffers(buffers, (uint32_t*)bufferObjectIds.data());
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_STATIC_DRAW:GL_DYNAMIC_DRAW;
 	return bufferObjectIds;
 }
 
 void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
 void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
 
@@ -601,6 +613,16 @@ void GLES2Renderer::drawPointsFromBufferObjects(void* context, int32_t points, i
 	glDrawArrays(GL_POINTS, pointsOffset, points);
 }
 
+void GLES2Renderer::setLineWidth(float lineWidth)
+{
+	glLineWidth(lineWidth);
+}
+
+void GLES2Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+{
+	glDrawArrays(GL_LINES, pointsOffset, points);
+}
+
 void GLES2Renderer::unbindBufferObjects(void* context)
 {
 	glDisableVertexAttribArray(0);
@@ -613,6 +635,7 @@ void GLES2Renderer::unbindBufferObjects(void* context)
 
 void GLES2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 {
+	for (auto& bufferObjectId: bufferObjectIds) vbosUsage.erase(bufferObjectId);
 	glDeleteBuffers(bufferObjectIds.size(), (const uint32_t*)bufferObjectIds.data());
 }
 
@@ -700,6 +723,19 @@ void GLES2Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t
 
 void GLES2Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	Console::println("GLES2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
+}
+
+int32_t GLES2Renderer::createVertexArrayObject() {
+	Console::println("GLES2Renderer::createVertexArrayObject(): Not implemented");
+	return -1;
+}
+
+void GLES2Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GLES2Renderer::disposeVertexArrayObject(): Not implemented");
+}
+
+void GLES2Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
+	Console::println("GLES2Renderer::bindVertexArrayObject(): Not implemented");
 }
 
 void GLES2Renderer::checkGLError()

@@ -28,6 +28,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_Emitter.h>
+#include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_FogParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_ObjectParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleEmitter.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem_PointParticleSystem.h>
@@ -71,6 +72,7 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_BoundingBoxPar
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Emitter;
+using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleEmitter;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem;
@@ -85,11 +87,11 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-void ModelMetaDataFileExport::copyFile(const string& source, const string& dest) throw (FileSystemException)
+void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
 {
 }
 
-void ModelMetaDataFileExport::export_(const string& pathName, const string& fileName, LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
+void ModelMetaDataFileExport::export_(const string& pathName, const string& fileName, LevelEditorEntity* entity)
 {
 	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	auto jEntityRoot = exportToJSON(entity);
@@ -128,7 +130,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEd
 	return jLodLevelRoot;
 }
 
-tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity) throw (FileSystemException, JsonException, ModelFileIOException)
+tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity)
 {
 	ext::jsonbox::Object jEntityRoot;
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {
@@ -243,6 +245,15 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 					jPointParticleSystem["tt"] = particleSystem->getPointParticleSystem()->getTransparencyTextureFileName();
 					jPointParticleSystem["ae"] = particleSystem->getPointParticleSystem()->isAutoEmit();
 					jParticleSystem["pps"] = jPointParticleSystem;
+				} else
+				if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM)
+				{
+					ext::jsonbox::Object jFogParticleSystem;
+					jFogParticleSystem["mp"] = particleSystem->getFogParticleSystem()->getMaxPoints();
+					jFogParticleSystem["ps"] = particleSystem->getFogParticleSystem()->getPointSize();
+					jFogParticleSystem["t"] = particleSystem->getFogParticleSystem()->getTextureFileName();
+					jFogParticleSystem["tt"] = particleSystem->getFogParticleSystem()->getTransparencyTextureFileName();
+					jParticleSystem["fps"] = jFogParticleSystem;
 				} else {
 					Console::println(
 						string(
