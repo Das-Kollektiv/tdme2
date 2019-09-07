@@ -1,6 +1,11 @@
-NAME = tdme
+NAME = tdme2
 LIB := lib$(NAME).a
 EXT_LIB := lib$(NAME)-ext.a
+
+BIN = bin
+LIB_DIR = lib
+OBJ = obj
+OBJ_DEBUG = obj-debug
 
 CPPVERSION = -std=gnu++11
 STACKFLAGS =
@@ -153,17 +158,9 @@ else
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
-		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	endif
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
-endif
-
-ifeq ($(HASHLINK), YES)
-	INCLUDES := $(INCLUDES) -I ext/hashlink/src
-	EXTRA_LIBS := $(EXTRA_LIBS) -ldl -L. -lhl
-	LDFLAGS := $(LDFLAGS) -lm -Wl,-rpath,. -Wl,--export-dynamic -Wl,--no-undefined
-	EXTRAFLAGS := $(EXTRAFLAGS) -DHASHLINK
 endif
 
 CPPFLAGS := $(INCLUDES)
@@ -178,11 +175,26 @@ CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
 
-BIN = bin
-OBJ = obj
-OBJ_DEBUG = obj-debug
+ifeq ($(HASHLINK), YES)
+	INCLUDES := $(INCLUDES) -I ext/hashlink/src
+	EXTRA_LIBS := $(EXTRA_LIBS) -ldl -L. -lhl
+	LDFLAGS := $(LDFLAGS) -lm -Wl,-rpath,. -Wl,--export-dynamic -Wl,--no-undefined
+	EXTRAFLAGS := $(EXTRAFLAGS) -DHASHLINK
+endif
 
-LIBS := $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
+#TODO
+ifeq ($(LIBS-SHARED), YES)
+	OBJ := obj/shared
+	OBJ_DEBUG := obj-debug/shared
+	CXX := $(CXX) -fPIC
+	LIB := lib$(NAME).so
+	EXT_LIB := lib$(NAME)-ext.so
+else
+	OBJ := obj/static
+	OBJ_DEBUG := obj-debug/static
+endif
+
+LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB)
 
 SRC = src
 TINYXML = tinyxml
@@ -597,7 +609,6 @@ EXT_LIBPNG_SRCS = \
 
 EXT_VORBIS_SRCS = \
 	ext/vorbis/analysis.c \
-	ext/vorbis/barkmel.c \
 	ext/vorbis/bitrate.c \
 	ext/vorbis/block.c \
 	ext/vorbis/codebook.c \
@@ -617,7 +628,6 @@ EXT_VORBIS_SRCS = \
 	ext/vorbis/sharedbook.c \
 	ext/vorbis/smallft.c \
 	ext/vorbis/synthesis.c \
-	ext/vorbis/tone.c \
 	ext/vorbis/vorbisenc.c \
 	ext/vorbis/vorbisfile.c \
 	ext/vorbis/window.c \
@@ -887,26 +897,33 @@ $(EXT_HL_OBJS):$(OBJ)/%.o: ext/$(HL)/%.c | print-opts
 	$(c-command-hl)
 
 %.a:
-	@echo Archive $@
+	@echo Archive $@ created
 	@mkdir -p $(dir $@)
 	@rm -f $@
 	@ar rcs $@ $^
 
-$(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
+%.so:
+	@echo Shared library $@ created
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	g++ -shared  $^ -o $@
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_HL_OBJS)
+$(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
+
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_HL_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
-	@mkdir -p $(dir $@); 
-	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	@mkdir -p $(dir $@);
+	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 hashlink:
-	(cd ext/hashlink && $(MAKE) clean && $(MAKE) && cp libhl.so ../..)
+	(cd ext/hashlink && $(MAKE) clean && $(MAKE) && mkdir -p ../../$(LIB_DIR) && cp libhl.so ../../$(LIB_DIR))
 
 mains: $(MAINS)
 
+# TODO make sure that always directory obj and obj-debug are removed
 clean:
-	rm -rf $(OBJ) $(OBJ_DEBUG) $(BIN)
+	rm -rf obj obj-debug $(LIB_DIR) $(BIN)
 
 print-opts:
 	@echo Building with \"$(CXX) $(CPPFLAGS) $(CXXFLAGS)\"
