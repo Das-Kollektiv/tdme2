@@ -163,6 +163,23 @@ else
 	OFLAGS := -O2
 endif
 
+ifeq ($(HASHLINK), YES)
+	EXT_HL_SRCS = \
+		ext/hashlink/src/code.c \
+		ext/hashlink/src/jit.c \
+		ext/hashlink/src/module.c \
+		ext/hashlink/src/debugger.c \
+
+	HL_CFLAGS = -O2 -std=c11 -I ext/hashlink/src -I include/pcre -I include/mikktspace -g -D LIBHL_EXPORTS
+	EXTRAFLAGS := $(EXTRAFLAGS) -DHASHLINK
+	INCLUDES := $(INCLUDES) -I ext/hashlink/src
+	EXTRA_LIBS := $(EXTRA_LIBS) -ldl -L. -lhl
+	LDFLAGS := $(LDFLAGS) -lm -Wl,-rpath,. -Wl,--export-dynamic -Wl,--no-undefined
+else
+	EXT_HL_SRCS =
+	HL_CFLAGS =
+endif
+
 CPPFLAGS := $(INCLUDES)
 #CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
 CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
@@ -174,13 +191,6 @@ CFLAGS_DEBUG := -g -pipe -MMD -MP
 CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
-
-ifeq ($(HASHLINK), YES)
-	INCLUDES := $(INCLUDES) -I ext/hashlink/src
-	EXTRA_LIBS := $(EXTRA_LIBS) -ldl -L. -lhl
-	LDFLAGS := $(LDFLAGS) -lm -Wl,-rpath,. -Wl,--export-dynamic -Wl,--no-undefined
-	EXTRAFLAGS := $(EXTRAFLAGS) -DHASHLINK
-endif
 
 #TODO
 ifeq ($(LIBS-SHARED), YES)
@@ -774,19 +784,6 @@ else
 	EXT_SPIRV_SRCS =
 	EXT_GLSLANG_SRCS =
 	EXT_GLSLANG_SRCS =
-endif
-
-ifeq ($(HASHLINK), YES)
-	EXT_HL_SRCS = \
-		ext/hashlink/src/code.c \
-		ext/hashlink/src/jit.c \
-		ext/hashlink/src/module.c \
-		ext/hashlink/src/debugger.c \
-
-	HL_CFLAGS = -O2 -std=c11 -I ext/hashlink/src -I include/pcre -I include/mikktspace -g -D LIBHL_EXPORTS
-else
-	EXT_HL_SRCS =
-	HL_CFLAGS =
 endif
 
 MAIN_SRCS = \
