@@ -76,7 +76,7 @@ private:
 	Object3DRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
 	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups;
-	RenderTransparentRenderPointsPool* pseRenderTransparentRenderPointsPool { nullptr };
+	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
 	BatchRendererPoints* psePointBatchRenderer { nullptr };
 	Matrix4x4Negative matrix4x4Negative;
 	vector<Object3D*> objectsToRender;

@@ -42,6 +42,13 @@ public:
 	 */
 	void reset();
 
+	/**
+	 * @return transparent render points count
+	 */
+	inline const int32_t getTransparentRenderPointsCount() {
+		return poolIdx;
+	}
+
 	/** 
 	 * @return transparent render points vector
 	 */
