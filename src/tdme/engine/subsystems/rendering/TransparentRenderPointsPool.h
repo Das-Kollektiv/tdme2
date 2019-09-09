@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -26,9 +25,11 @@ using tdme::utils::Console;
  */
 class tdme::engine::subsystems::rendering::TransparentRenderPointsPool final
 {
+	friend class RenderTransparentRenderPointsPool;
+
 private:
-	vector<TransparentRenderPoint> transparentRenderPoints {  };
-	int32_t poolIdx {  };
+	vector<TransparentRenderPoint*> transparentRenderPoints;
+	int32_t poolIdx;
 
 public:
 
@@ -45,19 +46,13 @@ public:
 			return;
 		}
 		// create point in pool
-		auto& transparentRenderPoint = transparentRenderPoints[poolIdx++];
-		transparentRenderPoint.acquired = true;
-		transparentRenderPoint.point.set(point);
-		transparentRenderPoint.color.set(color);
-		transparentRenderPoint.distanceFromCamera = distanceFromCamera;
-		transparentRenderPoint.cookie = cookie;
+		auto transparentRenderPoint = transparentRenderPoints[poolIdx++];
+		transparentRenderPoint->acquired = true;
+		transparentRenderPoint->point = point;
+		transparentRenderPoint->color = color;
+		transparentRenderPoint->distanceFromCamera = distanceFromCamera;
+		transparentRenderPoint->cookie = cookie;
 	}
-
-	/** 
-	 * Merge another pool into this pool
-	 * @param pool2 pool
-	 */
-	void merge(TransparentRenderPointsPool* pool2);
 
 	/** 
 	 * Reset
@@ -67,7 +62,7 @@ public:
 	/** 
 	 * @return transparent render points vector
 	 */
-	inline const vector<TransparentRenderPoint>& getTransparentRenderPoints() {
+	inline const vector<TransparentRenderPoint*>& getTransparentRenderPoints() {
 		return transparentRenderPoints;
 	}
 
@@ -81,4 +76,9 @@ public:
 	 * @param pointsMax points max
 	 */
 	TransparentRenderPointsPool(int32_t pointsMax);
+
+	/**
+	 * Destructor
+	 */
+	~TransparentRenderPointsPool();
 };

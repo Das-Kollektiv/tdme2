@@ -20,6 +20,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
 
 using std::string;
 using std::vector;
@@ -42,6 +43,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
 {
@@ -61,6 +63,7 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
 	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
+	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 }
 
 PointsParticleSystemInternal::~PointsParticleSystemInternal() {
@@ -74,10 +77,12 @@ const string& PointsParticleSystemInternal::getId()
 	return id;
 }
 
+void PointsParticleSystemInternal::initialize() {
+}
+
 void PointsParticleSystemInternal::setRenderer(Renderer* renderer)
 {
 	this->renderer = renderer;
-	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 }
 
 void PointsParticleSystemInternal::setEngine(Engine* engine)

@@ -24,6 +24,7 @@ PointsParticleSystem::PointsParticleSystem(const string& id, ParticleEmitter* em
 
 void PointsParticleSystem::initialize()
 {
+	PointsParticleSystemInternal::initialize();
 }
 
 void PointsParticleSystem::fromTransformations(const Transformations& transformations)

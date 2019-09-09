@@ -50,9 +50,9 @@ private:
 	 * Adds a transparent render point to this transparent render points
 	 * @param point transparent render point
 	 */
-	inline void addPoint(const TransparentRenderPoint& point) {
-		fbVertices.put(point.point.getArray());
-		fbColors.put(point.color.getArray());
+	inline void addPoint(const TransparentRenderPoint* point) {
+		fbVertices.put(point->point.getArray());
+		fbColors.put(point->color.getArray());
 	}
 
 	/**

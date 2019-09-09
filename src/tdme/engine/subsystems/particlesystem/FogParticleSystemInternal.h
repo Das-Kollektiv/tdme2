@@ -43,24 +43,24 @@ class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal
 {
 
 protected:
-	string id {  };
-	Engine* engine {  };
-	Renderer* renderer {  };
-	bool enabled {  };
-	bool active {  };
-	ParticleEmitter* emitter {  };
-	vector<Particle> particles {  };
-	int32_t maxPoints {  };
-	float pointSize {  };
+	string id;
+	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
+	bool enabled;
+	bool active;
+	ParticleEmitter* emitter { nullptr };
+	vector<Particle> particles;
+	int32_t maxPoints;
+	float pointSize;
 	Texture* texture { nullptr };
-	int32_t textureId {  };
-	TransparentRenderPointsPool* pointsRenderPool {  };
+	int32_t textureId;
+	TransparentRenderPointsPool* pointsRenderPool { nullptr };
 
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	bool pickable {  };
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	bool pickable;
 
 public:
 	/**

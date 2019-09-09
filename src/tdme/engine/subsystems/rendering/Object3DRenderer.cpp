@@ -35,6 +35,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
+#include <tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
@@ -95,6 +96,7 @@ using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::Object3DRenderer_TransparentRenderFacesGroupPool;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
+using tdme::engine::subsystems::rendering::RenderTransparentRenderPointsPool;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
@@ -125,7 +127,7 @@ Object3DRenderer::Object3DRenderer(Engine* engine, Renderer* renderer) {
 	this->renderer = renderer;
 	transparentRenderFacesGroupPool = new Object3DRenderer_TransparentRenderFacesGroupPool();
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
-	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(65535);
+	pseRenderTransparentRenderPointsPool = new RenderTransparentRenderPointsPool(65535);
 	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
 		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
@@ -147,7 +149,7 @@ Object3DRenderer::~Object3DRenderer() {
 	}
 	delete transparentRenderFacesGroupPool;
 	delete transparentRenderFacesPool;
-	delete pseTransparentRenderPointsPool;
+	delete pseRenderTransparentRenderPointsPool;
 	delete psePointBatchRenderer;
 }
 
@@ -1032,12 +1034,9 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	renderer->setTextureUnit(context, 0);
 
 	// merge ppses and sort them
-	for (auto i = 0; i < visiblePses.size(); i++) {
-		PointsParticleSystemInternal* ppse = visiblePses[i];
-		pseTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
-	}
-	if (pseTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
-	pseTransparentRenderPointsPool->sort();
+	for (auto ppse: visiblePses) pseRenderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
+	if (pseRenderTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
+	pseRenderTransparentRenderPointsPool->sort();
 
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
@@ -1050,10 +1049,10 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	renderer->onUpdateModelViewMatrix(context);
 
 	// render
-	PointsParticleSystem* currentPpse = static_cast<PointsParticleSystem*>(pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie);
-	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
-		if (point.acquired == false) break;
-		if (point.cookie != (void*)currentPpse) {
+	auto currentPpse = static_cast<PointsParticleSystem*>(pseRenderTransparentRenderPointsPool->getTransparentRenderPoints()[0]->cookie);
+	for (auto point: pseRenderTransparentRenderPointsPool->getTransparentRenderPoints()) {
+		if (point == nullptr || point->acquired == false) break;
+		if (point->cookie != (void*)currentPpse) {
 			// issue rendering
 			renderer->setEffectColorAdd(context, currentPpse->getEffectColorAdd().getArray());
 			renderer->setEffectColorMul(context, currentPpse->getEffectColorMul().getArray());
@@ -1064,7 +1063,7 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 			psePointBatchRenderer->render(context);
 			psePointBatchRenderer->clear();
 			//
-			currentPpse = static_cast<PointsParticleSystem*>(point.cookie);
+			currentPpse = static_cast<PointsParticleSystem*>(point->cookie);
 		}
 		psePointBatchRenderer->addPoint(point);
 	}
@@ -1082,7 +1081,7 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	}
 
 	// done
-	pseTransparentRenderPointsPool->reset();
+	pseRenderTransparentRenderPointsPool->reset();
 
 	// unbind texture
 	renderer->bindTexture(context, renderer->ID_NONE);
@@ -1107,12 +1106,9 @@ void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
 	renderer->setTextureUnit(context, 0);
 
 	// merge fpses and sort them
-	for (auto i = 0; i < visibleFses.size(); i++) {
-		FogParticleSystemInternal* fpse = visibleFses[i];
-		pseTransparentRenderPointsPool->merge(fpse->getRenderPointsPool());
-	}
-	if (pseTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
-	pseTransparentRenderPointsPool->sort();
+	for (auto fpse: visibleFses) pseRenderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool());
+	if (pseRenderTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
+	pseRenderTransparentRenderPointsPool->sort();
 
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
@@ -1125,10 +1121,10 @@ void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
 	renderer->onUpdateModelViewMatrix(context);
 
 	// render
-	FogParticleSystem* currentFpse = static_cast<FogParticleSystem*>(pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie);
-	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
-		if (point.acquired == false) break;
-		if (point.cookie != (void*)currentFpse) {
+	auto currentFpse = static_cast<FogParticleSystem*>(pseRenderTransparentRenderPointsPool->getTransparentRenderPoints()[0]->cookie);
+	for (auto point: pseRenderTransparentRenderPointsPool->getTransparentRenderPoints()) {
+		if (point == nullptr || point->acquired == false) break;
+		if (point->cookie != (void*)currentFpse) {
 			// issue rendering
 			renderer->setEffectColorAdd(context, currentFpse->getEffectColorAdd().getArray());
 			renderer->setEffectColorMul(context, currentFpse->getEffectColorMul().getArray());
@@ -1139,7 +1135,7 @@ void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
 			psePointBatchRenderer->render(context);
 			psePointBatchRenderer->clear();
 			//
-			currentFpse = static_cast<FogParticleSystem*>(point.cookie);
+			currentFpse = static_cast<FogParticleSystem*>(point->cookie);
 		}
 		psePointBatchRenderer->addPoint(point);
 	}
@@ -1157,7 +1153,7 @@ void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
 	}
 
 	// done
-	pseTransparentRenderPointsPool->reset();
+	pseRenderTransparentRenderPointsPool->reset();
 
 	// unbind texture
 	renderer->bindTexture(context, renderer->ID_NONE);

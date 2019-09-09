@@ -43,29 +43,34 @@ class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
 {
 
 protected:
-	string id {  };
-	Engine* engine {  };
-	Renderer* renderer {  };
-	bool autoEmit {  };
-	bool enabled {  };
-	bool active {  };
-	ParticleEmitter* emitter {  };
-	vector<Particle> particles {  };
-	int32_t maxPoints {  };
-	float pointSize {  };
+	string id;
+	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
+	bool autoEmit;
+	bool enabled;
+	bool active;
+	ParticleEmitter* emitter { nullptr };
+	vector<Particle> particles;
+	int32_t maxPoints;
+	float pointSize;
 	Texture* texture { nullptr };
-	int32_t textureId {  };
-	TransparentRenderPointsPool* pointsRenderPool {  };
+	int32_t textureId;
+	TransparentRenderPointsPool* pointsRenderPool { nullptr };
 
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Transformations inverseTransformation {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	bool pickable {  };
-	float particlesToSpawnRemainder {  };
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Transformations inverseTransformation;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	bool pickable;
+	float particlesToSpawnRemainder;
 
 public:
+	/**
+	 * Initialize
+	 */
+	void initialize();
+
 	const string& getId() override;
 	virtual void setRenderer(Renderer* renderer);
 	virtual void setEngine(Engine* engine);
