@@ -17,11 +17,11 @@ using tdme::math::Vector3;
  */
 struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 {
-	bool acquired {  };
-	Vector3 point {  };
-	Color4 color {  };
-	float distanceFromCamera {  };
-	void* cookie { };
+	bool acquired;
+	Vector3 point;
+	Color4 color;
+	int particleSystemType;
+	void* particleSystem;
 
 	/**
 	 * Compare
@@ -38,7 +38,7 @@ struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 		if (point2->acquired == false) {
 			return true;
 		} else {
-			return point1->distanceFromCamera > point2->distanceFromCamera;
+			return -point1->point.getZ() > -point2->point.getZ();
 		}
 	}
 };

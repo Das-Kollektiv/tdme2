@@ -7,7 +7,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/Console.h>
 
@@ -16,7 +16,7 @@ using std::vector;
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
-using tdme::math::Vector3;
+using tdme::math::Matrix4x4;
 using tdme::utils::Console;
 
 /** 
@@ -34,8 +34,9 @@ public:
 	/** 
 	 * Merge another pool into this pool
 	 * @param pool2 pool
+	 * @param cameraMatrix cameraMatrix
 	 */
-	void merge(TransparentRenderPointsPool* pool2);
+	void merge(TransparentRenderPointsPool* pool2, const Matrix4x4& cameraMatrix);
 
 	/** 
 	 * Reset

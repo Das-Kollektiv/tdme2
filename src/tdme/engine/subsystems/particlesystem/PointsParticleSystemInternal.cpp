@@ -184,7 +184,6 @@ void PointsParticleSystemInternal::updateParticles()
 		return;
 
 	Vector3 velocityForTime;
-	Vector3 point;
 	// bounding box transformed min, max xyz
 	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
 	auto& bbMaxXYZ = boundingBoxTransformed.getMax().getArray();
@@ -192,8 +191,6 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	// points are stored in camera space in points render pool
-	auto cameraMatrix = engine->cameraMatrix;
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -225,12 +222,8 @@ void PointsParticleSystemInternal::updateParticles()
 		color[1] += colorAdd[1] * static_cast< float >(timeDelta);
 		color[2] += colorAdd[2] * static_cast< float >(timeDelta);
 		color[3] += colorAdd[3] * static_cast< float >(timeDelta);
-		// transform particle position to camera space
-		cameraMatrix.multiply(particle.position, point);
 		//
 		activeParticles++;
-		// compute distance from camera
-		distanceFromCamera = -point.getZ();
 		// set up bounding box
 		auto& positionXYZ = particle.position.getArray();
 		if (haveBoundingBox == false) {
@@ -246,7 +239,7 @@ void PointsParticleSystemInternal::updateParticles()
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
 		//
-		pointsRenderPool->addPoint(point, particle.color, distanceFromCamera, this);
+		pointsRenderPool->addPoint(particle.position, particle.color, 1, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {

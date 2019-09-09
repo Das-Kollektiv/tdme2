@@ -8,6 +8,7 @@
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 
@@ -19,6 +20,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
@@ -31,7 +33,7 @@ RenderTransparentRenderPointsPool::RenderTransparentRenderPointsPool(int32_t poi
 RenderTransparentRenderPointsPool::~RenderTransparentRenderPointsPool() {
 }
 
-void RenderTransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2)
+void RenderTransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2, const Matrix4x4& cameraMatrix)
 {
 	for (auto point: pool2->transparentRenderPoints) {
 		// skip if point is not in use
@@ -41,6 +43,8 @@ void RenderTransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2
 			Console::println(string("RenderTransparentRenderPointsPool::merge(): Too many transparent render points"));
 			break;
 		}
+		//
+		cameraMatrix.multiply(point->point, point->point);
 		// create point in pool
 		transparentRenderPoints[poolIdx++] = point;
 	}

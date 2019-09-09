@@ -1033,8 +1033,9 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
 	renderer->setTextureUnit(context, 0);
 
-	// merge ppses and sort them
-	for (auto ppse: visiblePses) renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
+	// merge pses, transform them into camera space and sort them
+	auto& cameraMatrix = renderer->getCameraMatrix();
+	for (auto ppse: visiblePses) renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
 	if (renderTransparentRenderPointsPool->getTransparentRenderPointsCount() == 0) return;
 	renderTransparentRenderPointsPool->sort();
 
@@ -1049,10 +1050,10 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	renderer->onUpdateModelViewMatrix(context);
 
 	// render
-	auto currentPpse = static_cast<PointsParticleSystem*>(renderTransparentRenderPointsPool->getTransparentRenderPoints()[0]->cookie);
+	auto currentPpse = static_cast<PointsParticleSystem*>(renderTransparentRenderPointsPool->getTransparentRenderPoints()[0]->particleSystem);
 	for (auto point: renderTransparentRenderPointsPool->getTransparentRenderPoints()) {
 		if (point == nullptr || point->acquired == false) break;
-		if (point->cookie != (void*)currentPpse) {
+		if (point->particleSystem != (void*)currentPpse) {
 			// issue rendering
 			renderer->setEffectColorAdd(context, currentPpse->getEffectColorAdd().getArray());
 			renderer->setEffectColorMul(context, currentPpse->getEffectColorMul().getArray());
@@ -1063,7 +1064,7 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 			psePointBatchRenderer->render(context);
 			psePointBatchRenderer->clear();
 			//
-			currentPpse = static_cast<PointsParticleSystem*>(point->cookie);
+			currentPpse = static_cast<PointsParticleSystem*>(point->particleSystem);
 		}
 		psePointBatchRenderer->addPoint(point);
 	}
@@ -1105,8 +1106,9 @@ void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
 	renderer->setTextureUnit(context, 0);
 
-	// merge fpses and sort them
-	for (auto fpse: visibleFses) renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool());
+	// merge fpses, transform them into camera space and sort them
+	auto& cameraMatrix = renderer->getCameraMatrix();
+	for (auto fpse: visibleFses) renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
 	if (renderTransparentRenderPointsPool->getTransparentRenderPointsCount() == 0) return;
 	renderTransparentRenderPointsPool->sort();
 
@@ -1121,10 +1123,10 @@ void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
 	renderer->onUpdateModelViewMatrix(context);
 
 	// render
-	auto currentFpse = static_cast<FogParticleSystem*>(renderTransparentRenderPointsPool->getTransparentRenderPoints()[0]->cookie);
+	auto currentFpse = static_cast<FogParticleSystem*>(renderTransparentRenderPointsPool->getTransparentRenderPoints()[0]->particleSystem);
 	for (auto point: renderTransparentRenderPointsPool->getTransparentRenderPoints()) {
 		if (point == nullptr || point->acquired == false) break;
-		if (point->cookie != (void*)currentFpse) {
+		if (point->particleSystem != (void*)currentFpse) {
 			// issue rendering
 			renderer->setEffectColorAdd(context, currentFpse->getEffectColorAdd().getArray());
 			renderer->setEffectColorMul(context, currentFpse->getEffectColorMul().getArray());
@@ -1135,7 +1137,7 @@ void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
 			psePointBatchRenderer->render(context);
 			psePointBatchRenderer->clear();
 			//
-			currentFpse = static_cast<FogParticleSystem*>(point->cookie);
+			currentFpse = static_cast<FogParticleSystem*>(point->particleSystem);
 		}
 		psePointBatchRenderer->addPoint(point);
 	}
