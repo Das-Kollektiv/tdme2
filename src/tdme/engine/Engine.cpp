@@ -256,22 +256,6 @@ Engine::~Engine() {
 	if (currentEngine == this) currentEngine = nullptr;
 }
 
-void Engine::setThreadCount(int threadCount) {
-	Engine::threadCount = threadCount;
-}
-
-bool Engine::is4K() {
-	return Engine::have4K;
-}
-
-void Engine::set4K(bool have4K) {
-	Engine::have4K = have4K;
-}
-
-void Engine::setAnimationBlendingTime(float animationBlendingTime) {
-	Engine::animationBlendingTime = animationBlendingTime;
-}
-
 Engine* Engine::getInstance()
 {
 	if (instance == nullptr) {
@@ -312,150 +296,10 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	return offScreenEngine;
 }
 
-bool Engine::isInitialized()
-{
-	return initialized;
-}
-
-int32_t Engine::getWidth()
-{
-	return width;
-}
-
-int32_t Engine::getHeight()
-{
-	return height;
-}
-
-ShadowMapping* Engine::getShadowMapping()
-{
-	return shadowMapping;
-}
-
-GUI* Engine::getGUI()
-{
-	return gui;
-}
-
-Timing* Engine::getTiming()
-{
-	return timing;
-}
-
-Camera* Engine::getCamera()
-{
-	return camera;
-}
-
-Partition* Engine::getPartition()
-{
-	return partition;
-}
-
 void Engine::setPartition(Partition* partition)
 {
 	if (this->partition != nullptr) delete this->partition;
 	this->partition = partition;
-}
-
-FrameBuffer* Engine::getFrameBuffer()
-{
-	return frameBuffer;
-}
-
-int32_t Engine::getLightCount() {
-	return lights.size();
-}
-
-Light* Engine::getLightAt(int32_t idx)
-{
-	return &lights[idx];
-}
-
-TextureManager* Engine::getTextureManager()
-{
-	return textureManager;
-}
-
-VBOManager* Engine::getVBOManager()
-{
-	return vboManager;
-}
-
-MeshManager* Engine::getMeshManager()
-{
-	return meshManager;
-}
-
-ShadowMappingShaderPre* Engine::getShadowMappingShaderPre()
-{
-	return shadowMappingShaderPre;
-}
-
-ShadowMappingShaderRender* Engine::getShadowMappingShaderRender()
-{
-	return shadowMappingShaderRender;
-}
-
-LightingShader* Engine::getLightingShader()
-{
-	return lightingShader;
-}
-
-ParticlesShader* Engine::getParticlesShader()
-{
-	return particlesShader;
-}
-
-LinesShader* Engine::getLinesShader()
-{
-	return linesShader;
-}
-
-SkinningShader* Engine::getSkinningShader() {
-	return skinningShader;
-}
-
-GUIShader* Engine::getGUIShader()
-{
-	return guiShader;
-}
-
-FrameBufferRenderShader* Engine::getFrameBufferRenderShader() {
-	return frameBufferRenderShader;
-}
-
-PostProcessingShader* Engine::getPostProcessingShader() {
-	return postProcessingShader;
-}
-
-Object3DRenderer* Engine::getObject3DRenderer()
-{
-	return object3DRenderer;
-}
-
-const Color4& Engine::getSceneColor() const
-{
-	return sceneColor;
-}
-
-void Engine::setSceneColor(const Color4& sceneColor)
-{
-	this->sceneColor = sceneColor;
-}
-
-int32_t Engine::getEntityCount()
-{
-	return entitiesById.size();
-}
-
-Entity* Engine::getEntity(const string& id)
-{
-	auto entityByIdIt = entitiesById.find(id);
-	if (entityByIdIt != entitiesById.end()) {
-		return entityByIdIt->second;
-	}
-	return nullptr;
 }
 
 void Engine::addEntity(Entity* entity)
@@ -768,7 +612,6 @@ void Engine::initRendering()
 	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
-	visibleFpses.clear();
 	visiblePsgs.clear();
 	visibleLinesObjects.clear();
 	visibleObjectRenderGroups.clear();
@@ -850,7 +693,7 @@ void Engine::computeTransformations()
 			visiblePpses.push_back(ppse); \
 		} else \
 		if ((fpse = dynamic_cast<FogParticleSystem*>(_entity)) != nullptr) { \
-			visibleFpses.push_back(fpse); \
+			visiblePpses.push_back(fpse); \
 		} else \
 		if ((lo = dynamic_cast<LinesObject3D*>(_entity)) != nullptr) { \
 			visibleLinesObjects.push_back(lo); \
@@ -1032,12 +875,11 @@ void Engine::display()
 	}
 
 	// render point particle systems
-	if (visiblePpses.size() > 0 || visibleFpses.size() > 0) {
+	if (visiblePpses.size() > 0) {
 		// use particle shader
 		if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 		// render points based particle systems
-		if (visibleFpses.size() > 0) object3DRenderer->render(visibleFpses);
 		if (visiblePpses.size() > 0) object3DRenderer->render(visiblePpses);
 
 		// unuse particle shader
@@ -1176,6 +1018,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
+
 	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visiblePpses) {
 		// skip if not pickable or ignored by filter
@@ -1191,21 +1034,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
-	// iterate visible fog partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: visibleFpses) {
-		// skip if not pickable or ignored by filter
-		if (entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
-			// check if match or better match
-			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-				selectedEntity = entity;
-				selectedEntityDistance = entityDistance;
-			}
-		}
-	}
+
 	// iterate visible particle system groups, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visiblePsgs) {
 		// skip if not pickable or ignored by filter

@@ -278,7 +278,7 @@ void FogParticleSystemInternal::updateParticles()
 			if (positionXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = positionXYZ[1];
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
-		pointsRenderPool->addPoint(point, particle.color, 0, this);
+		pointsRenderPool->addPoint(point, particle.color, 1, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {

@@ -41,4 +41,5 @@ struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 			return -point1->point.getZ() > -point2->point.getZ();
 		}
 	}
+
 };

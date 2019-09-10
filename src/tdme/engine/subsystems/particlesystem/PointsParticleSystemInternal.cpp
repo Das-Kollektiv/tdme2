@@ -239,7 +239,7 @@ void PointsParticleSystemInternal::updateParticles()
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
 		//
-		pointsRenderPool->addPoint(particle.position, particle.color, 1, this);
+		pointsRenderPool->addPoint(particle.position, particle.color, 0, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {

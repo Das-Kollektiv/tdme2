@@ -211,16 +211,10 @@ public:
 	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/** 
-	 * Render batch renderer points entities
-	 * @param visiblePses points batch renderer points
+	 * Render points particle system entities
+	 * @param pses points particle system entities
 	 */
-	void render(const vector<PointsParticleSystem*>& visiblePses);
-
-	/**
-	 * Render batch renderer fog points entities
-	 * @param visibleFses points batch renderer points
-	 */
-	void render(const vector<FogParticleSystem*>& visibleFses);
+	void render(const vector<Entity*>& pses);
 
 	/**
 	 * Renders all given lines objects
@@ -239,4 +233,12 @@ public:
 	 * Destructor
 	 */
 	~Object3DRenderer();
+
+	/**
+	 * Compare entities by distance from camera
+	 * @param entity1 entity 1
+	 * @param entity2 entity 2
+	 */
+	static bool compareParticleSystemEntities(Entity* entity1, Entity* entity2);
+
 };
