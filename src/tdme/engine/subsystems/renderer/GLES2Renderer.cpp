@@ -510,7 +510,7 @@ vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers, bool useGPUM
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);
 	glGenBuffers(buffers, (uint32_t*)bufferObjectIds.data());
-	for (auto& bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_STATIC_DRAW:GL_DYNAMIC_DRAW;
+	for (auto bufferObjectId: bufferObjectIds) vbosUsage[bufferObjectId] = useGPUMemory == true?GL_STATIC_DRAW:GL_STREAM_DRAW;
 	return bufferObjectIds;
 }
 
