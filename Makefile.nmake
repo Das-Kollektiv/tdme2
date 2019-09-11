@@ -632,10 +632,12 @@ all: \
 	ext-compile ext-link ext-clean\
 	AngleTest AudioTest CrashTest EngineTest GUITest HTTPClientTest LODTest PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
+	RayTracingTest \
 	SkinningTest \
 	ThreadingTest \
 	UDPClientTest \
 	UDPServerTest \
+	WaterTest \
 	archive \
 	converttotm \
 	copyanimationsetups \
@@ -709,6 +711,9 @@ PhysicsTest3:
 PhysicsTest4: 
 	cl /FePhysicsTest4 $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
+RayTracingTest: 
+	cl /FeRayTracingTest $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
 SkinningTest: 
 	cl /FeSkinningTest $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
@@ -720,6 +725,9 @@ UDPClientTest:
 
 UDPServerTest:
 	cl /FeUDPServerTest $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+WaterTest: 
+	cl /FeWaterTest $(FLAGS) $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 archive:
     cl /Fearchive $(FLAGS) $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
