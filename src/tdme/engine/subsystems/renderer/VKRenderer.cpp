@@ -1,4 +1,4 @@
-f/**
+/**
  * Vulkan renderer
  * based on
  * 	https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
