@@ -210,6 +210,10 @@ GUIScreenNode* GUI::getScreen(const string& id)
 
 void GUI::addScreen(const string& id, GUIScreenNode* screen)
 {
+	if (id != screen->getId()) {
+		Console::println("GUI::addScreen(): screen id '" + id + "' must be '" + screen->getId() + "'");
+		return;
+	}
 	screens.emplace(id, screen);
 	screen->reshapeRequested = true;
 }
