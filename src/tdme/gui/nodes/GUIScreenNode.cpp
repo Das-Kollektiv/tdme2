@@ -201,6 +201,7 @@ void GUIScreenNode::layout(GUINode* node)
 		auto parentNode = dynamic_cast< GUIParentNode* >(node);
 		if (parentNode->conditionsMet == true) {
 			parentNode->layoutSubNodes();
+			parentNode->layoutSubNodes();
 			parentNode->getChildControllerNodes(childControllerNodes);
 			for (auto i = 0; i < childControllerNodes.size(); i++) {
 				auto childNode = childControllerNodes[i];

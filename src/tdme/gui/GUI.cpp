@@ -917,7 +917,6 @@ void GUI::fakeKeyboardModifierEvent() {
 
 void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	// TODO: maybe move logic into GUIScreenNode
-
 	auto screenNodeWidthConstrained = width;
 	auto screenNodeHeightConstrained = height;
 
@@ -951,7 +950,7 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	}
 
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
-	screenNode->layout();
+	screenNode->layout(screenNode);
 	screenNode->reshapeRequested = false;
 }
 
