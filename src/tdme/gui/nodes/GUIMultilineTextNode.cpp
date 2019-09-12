@@ -91,7 +91,8 @@ int32_t GUIMultilineTextNode::getContentHeight()
 }
 
 void GUIMultilineTextNode::computeContentAlignment() {
-	// TODO: this is beeing called very often and thus makes layouting slow, please FIXME
+	// If fixed width requested and no computed constraints yet, abort
+	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && computedConstraints.width == -1) return;
 	autoWidth = 0;
 	autoHeight = 0;
 	{
