@@ -226,7 +226,7 @@ void LevelEditorEntityLibraryScreenController::onPlaceEntity()
 	if (entity == nullptr) return;
 	auto view = TDMELevelEditor::getInstance()->getView();
 	if (dynamic_cast< LevelEditorView* >(view) != nullptr) {
-		(dynamic_cast< LevelEditorView* >(view))->placeObject();
+		(dynamic_cast< LevelEditorView* >(view))->setPlaceObjectMode();
 	}
 }
 

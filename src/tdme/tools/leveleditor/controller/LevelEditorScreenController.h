@@ -56,70 +56,70 @@ class tdme::tools::leveleditor::controller::LevelEditorScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-	friend class LevelEditorScreenController_onMapLoad_1;
-	friend class LevelEditorScreenController_onMapSave_2;
-
 private:
 	static MutableString CHECKBOX_CHECKED;
 	static MutableString CHECKBOX_UNCHECKED;
 	static MutableString TEXT_EMPTY;
-	LevelEditorView* view {  };
-	GUIScreenNode* screenNode {  };
-	GUITextNode* screenCaption {  };
-	GUIElementNode* btnObjectTranslationApply {  };
-	GUIElementNode* btnObjectScaleApply {  };
-	GUIElementNode* btnObjectRotationApply {  };
-	GUIElementNode* btnObjectColor {  };
-	GUIElementNode* btnObjectCenter {  };
-	GUIElementNode* btnObjectRemove {  };
-	GUIElementNode* gridYPosition {  };
-	GUIElementNode* gridEnabled {  };
-	GUIElementNode* mapWidth {  };
-	GUIElementNode* mapDepth {  };
-	GUIElementNode* mapHeight {  };
-	GUIElementNode* mapPropertyName {  };
-	GUIElementNode* mapPropertyValue {  };
-	GUIElementNode* mapPropertySave {  };
-	GUIElementNode* mapPropertyRemove {  };
-	GUIElementNode* mapPropertiesListBox {  };
-	GUIElementNode* objectName {  };
-	GUIElementNode* objectDescription {  };
-	GUIElementNode* objectModel {  };
-	GUIElementNode* objectCenter {  };
-	GUIElementNode* btnObjectDataApply {  };
-	GUIElementNode* objectTranslationX {  };
-	GUIElementNode* objectTranslationY {  };
-	GUIElementNode* objectTranslationZ {  };
-	GUIElementNode* objectScaleX {  };
-	GUIElementNode* objectScaleY {  };
-	GUIElementNode* objectScaleZ {  };
-	GUIElementNode* objectRotationX {  };
-	GUIElementNode* objectRotationY {  };
-	GUIElementNode* objectRotationZ {  };
-	GUIElementNode* objectPropertyName {  };
-	GUIElementNode* objectPropertyValue {  };
-	GUIElementNode* btnObjectPropertySave {  };
-	GUIElementNode* btnObjectPropertyAdd {  };
-	GUIElementNode* btnObjectPropertyRemove {  };
-	GUIElementNode* btnObjectPropertyPresetApply {  };
-	GUIElementNode* objectPropertiesListBox {  };
-	GUIElementNode* objectPropertiesPresets {  };
-	GUIElementNode* objectsListBox {  };
-	array<GUIElementNode*, 4> lightsPresets {  };
-	array<GUIElementNode*, 4> lightsAmbient {  };
-	array<GUIElementNode*, 4> lightsDiffuse {  };
-	array<GUIElementNode*, 4> lightsSpecular {  };
-	array<GUIElementNode*, 4> lightsPosition {  };
-	array<GUIElementNode*, 4> lightsLinAttenuation {  };
-	array<GUIElementNode*, 4> lightsConstAttenuation {  };
-	array<GUIElementNode*, 4> lightsQuadAttenuation {  };
-	array<GUIElementNode*, 4> lightsSpotTo {  };
-	array<GUIElementNode*, 4> lightsSpotDirection {  };
-	array<GUIElementNode*, 4> lightsSpotExponent {  };
-	array<GUIElementNode*, 4> lightsSpotCutoff {  };
-	array<GUIElementNode*, 4> ligthsSpotDirectionCompute {  };
-	array<GUIElementNode*, 4> lightsEnabled {  };
-	FileDialogPath* mapPath {  };
+	LevelEditorView* view { nullptr };
+	GUIScreenNode* screenNode { nullptr };
+	GUITextNode* screenCaption { nullptr };
+	GUIElementNode* btnObjectTranslationApply { nullptr };
+	GUIElementNode* btnObjectScaleApply { nullptr };
+	GUIElementNode* btnObjectRotationApply { nullptr };
+	GUIElementNode* btnObjectColor { nullptr };
+	GUIElementNode* btnObjectCenter { nullptr };
+	GUIElementNode* btnObjectRemove { nullptr };
+	GUIElementNode* gridYPosition { nullptr };
+	GUIElementNode* gridEnabled { nullptr };
+	GUIElementNode* snappingX { nullptr };
+	GUIElementNode* snappingZ { nullptr };
+	GUIElementNode* snappingEnabled { nullptr };
+	GUIElementNode* mapWidth { nullptr };
+	GUIElementNode* mapDepth { nullptr };
+	GUIElementNode* mapHeight { nullptr };
+	GUIElementNode* mapPropertyName { nullptr };
+	GUIElementNode* mapPropertyValue { nullptr };
+	GUIElementNode* mapPropertySave { nullptr };
+	GUIElementNode* mapPropertyRemove { nullptr };
+	GUIElementNode* mapPropertiesListBox { nullptr };
+	GUIElementNode* objectName { nullptr };
+	GUIElementNode* objectDescription { nullptr };
+	GUIElementNode* objectModel { nullptr };
+	GUIElementNode* objectCenter { nullptr };
+	GUIElementNode* btnObjectDataApply { nullptr };
+	GUIElementNode* objectTranslationX { nullptr };
+	GUIElementNode* objectTranslationY { nullptr };
+	GUIElementNode* objectTranslationZ { nullptr };
+	GUIElementNode* objectScaleX { nullptr };
+	GUIElementNode* objectScaleY { nullptr };
+	GUIElementNode* objectScaleZ { nullptr };
+	GUIElementNode* objectRotationX { nullptr };
+	GUIElementNode* objectRotationY { nullptr };
+	GUIElementNode* objectRotationZ { nullptr };
+	GUIElementNode* objectPropertyName { nullptr };
+	GUIElementNode* objectPropertyValue { nullptr };
+	GUIElementNode* btnObjectPropertySave { nullptr };
+	GUIElementNode* btnObjectPropertyAdd { nullptr };
+	GUIElementNode* btnObjectPropertyRemove { nullptr };
+	GUIElementNode* btnObjectPropertyPresetApply { nullptr };
+	GUIElementNode* objectPropertiesListBox { nullptr };
+	GUIElementNode* objectPropertiesPresets { nullptr };
+	GUIElementNode* objectsListBox { nullptr };
+	array<GUIElementNode*, 4> lightsPresets;
+	array<GUIElementNode*, 4> lightsAmbient;
+	array<GUIElementNode*, 4> lightsDiffuse;
+	array<GUIElementNode*, 4> lightsSpecular;
+	array<GUIElementNode*, 4> lightsPosition;
+	array<GUIElementNode*, 4> lightsLinAttenuation;
+	array<GUIElementNode*, 4> lightsConstAttenuation;
+	array<GUIElementNode*, 4> lightsQuadAttenuation;
+	array<GUIElementNode*, 4> lightsSpotTo;
+	array<GUIElementNode*, 4> lightsSpotDirection;
+	array<GUIElementNode*, 4> lightsSpotExponent;
+	array<GUIElementNode*, 4> lightsSpotCutoff;
+	array<GUIElementNode*, 4> ligthsSpotDirectionCompute;
+	array<GUIElementNode*, 4> lightsEnabled;
+	FileDialogPath* mapPath { nullptr };
 
 public:
 	GUIScreenNode* getScreenNode() override;
@@ -143,6 +143,14 @@ public:
 	 * @param gridY grid y position
 	 */
 	void setGrid(bool enabled, float gridY);
+
+	/**
+	 * Set snapping
+	 * @param snappingEnabled snapping enabled
+	 * @param snappingX snapping along X axis
+	 * @param snappingZ snapping along Z axis
+	 */
+	void setSnapping(bool snappingEnabled, float snappingX, float snappingZ);
 
 	/** 
 	 * Set up level size
@@ -340,6 +348,11 @@ public:
 	void onGridApply();
 
 	/** 
+	 * On snapping apply button
+	 */
+	void onSnappingApply();
+
+	/**
 	 * On object property preset apply 
 	 */
 	void onObjectPropertyPresetApply();

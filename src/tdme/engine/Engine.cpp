@@ -356,6 +356,17 @@ void Engine::removeEntity(const string& id)
 		entity->setRenderer(nullptr);
 		entity->dispose();
 		delete entity;
+
+		// delete from lists
+		visibleObjects.erase(remove(visibleObjects.begin(), visibleObjects.end(), entity), visibleObjects.end());
+		visibleObjectsPostPostProcessing.erase(remove(visibleObjectsPostPostProcessing.begin(), visibleObjectsPostPostProcessing.end(), entity), visibleObjectsPostPostProcessing.end());
+		visibleLODObjects.erase(remove(visibleLODObjects.begin(), visibleLODObjects.end(), entity), visibleLODObjects.end());
+		visibleOpses.erase(remove(visibleOpses.begin(), visibleOpses.end(), entity), visibleOpses.end());
+		visiblePpses.erase(remove(visiblePpses.begin(), visiblePpses.end(), entity), visiblePpses.end());
+		visiblePsgs.erase(remove(visiblePsgs.begin(), visiblePsgs.end(), entity), visiblePsgs.end());
+		visibleLinesObjects.erase(remove(visibleLinesObjects.begin(), visibleLinesObjects.end(), entity), visibleLinesObjects.end());
+		visibleObjectRenderGroups.erase(remove(visibleObjectRenderGroups.begin(), visibleObjectRenderGroups.end(), entity), visibleObjectRenderGroups.end());
+
 	}
 }
 
@@ -983,11 +994,6 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	computeWorldCoordinateByMousePosition(mouseX, mouseY, z, worldCoordinate);
 }
 
-Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY)
-{
-	return getEntityByMousePosition(mouseX, mouseY, nullptr);
-}
-
 Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter)
 {
 	// get world position of mouse position at near and far plane
@@ -1131,6 +1137,99 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 							if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 								selectedEntity = entity;
 								selectedEntityDistance = entityDistance;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//
+	return selectedEntity;
+}
+
+Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate, EntityPickingFilter* filter) {
+	// get world position of mouse position at near and far plane
+	Vector3 tmpVector3a;
+	Vector3 tmpVector3b;
+	Vector3 tmpVector3c;
+	Vector3 tmpVector3d;
+	Vector3 tmpVector3e;
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, tmpVector3a);
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, tmpVector3b);
+
+	// selected entity
+	auto selectedEntityDistance = Float::MAX_VALUE;
+	Entity* selectedEntity = nullptr;
+
+	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
+				auto vertices = _i->next();
+				{
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.clone().sub(tmpVector3a).computeLength();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+							worldCoordinate = tmpVector3e;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// iterate visible objects that have post post processing renderpass, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleObjectsPostPostProcessing) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
+				auto vertices = _i->next();
+				{
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.clone().sub(tmpVector3a).computeLength();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+							worldCoordinate = tmpVector3e;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// iterate visible LOD objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleLODObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			auto object = entity->getLODObject();
+			if (object != nullptr) {
+				for (auto _i = object->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
+					auto vertices = _i->next();
+					{
+						if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+							auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
+							// check if match or better match
+							if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+								selectedEntity = entity;
+								selectedEntityDistance = entityDistance;
+								worldCoordinate = tmpVector3e;
 							}
 						}
 					}

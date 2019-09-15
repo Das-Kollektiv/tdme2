@@ -1,7 +1,5 @@
 #if defined(VULKAN)
-
 	#include <tdme/application/Application.h>
-
 	using tdme::application::Application;
 #else
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)

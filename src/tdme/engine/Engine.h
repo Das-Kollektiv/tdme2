@@ -97,6 +97,7 @@ class tdme::engine::Engine final
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
 	friend class tdme::engine::subsystems::rendering::BatchRendererTriangles;
 	friend class tdme::engine::subsystems::rendering::Object3DBase;
@@ -239,6 +240,20 @@ private:
 	}
 
 	/**
+	 * @return vertex buffer object manager
+	 */
+	inline static VBOManager* getVBOManager() {
+		return vboManager;
+	}
+
+	/**
+	 * @return shadow mapping or nullptr if disabled
+	 */
+	inline ShadowMapping* getShadowMapping() {
+		return shadowMapping;
+	}
+
+	/**
 	 * @return shadow mapping shader
 	 */
 	inline static ShadowMappingShaderPre* getShadowMappingShaderPre() {
@@ -341,6 +356,12 @@ private:
 	 */
 	Engine();
 public:
+	/**
+	 * @return texture manager
+	 */
+	inline static TextureManager* getTextureManager() {
+		return textureManager;
+	}
 
 	/**
 	 * @return engine thread count
@@ -425,27 +446,6 @@ public:
 		return height;
 	}
 
-	/**
-	 * @return texture manager
-	 */
-	inline static TextureManager* getTextureManager() {
-		return textureManager;
-	}
-
-	/**
-	 * @return vertex buffer object manager
-	 */
-	inline static VBOManager* getVBOManager() {
-		return vboManager;
-	}
-
-	/**
-	 * @return shadow mapping or null if disabled
-	 */
-	inline ShadowMapping* getShadowMapping() {
-		return shadowMapping;
-	}
-
 	/** 
 	 * @return GUI
 	 */
@@ -481,7 +481,7 @@ public:
 	void setPartition(Partition* partition);
 
 	/** 
-	 * @return frame buffer or null
+	 * @return frame buffer or nullptr
 	 */
 	inline FrameBuffer* getFrameBuffer() {
 		return frameBuffer;
@@ -528,7 +528,7 @@ public:
 	/** 
 	 * Returns a entity by given id
 	 * @param id id
-	 * @return entity or null
+	 * @return entity or nullptr
 	 */
 	inline Entity* getEntity(const string& id) {
 		auto entityByIdIt = entitiesById.find(id);
@@ -594,21 +594,32 @@ public:
 	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate);
 
 	/** 
-	 * Retrieves object by mouse position
+	 * Retrieves entity by mouse position
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @return entity or null
+	 * @param filter filter
+	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr);
 
-	/** 
+	/**
+	 * Retrieves entity by mouse position with contact point
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param worldCoordinate world coordinate of contact point
+	 * @param filter filter
+	 * @return entity or nullptr
+	 */
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate, EntityPickingFilter* filter = nullptr);
+
+	/**
 	 * Retrieves object by mouse position
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @return entity or null
+	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
+	Entity* getEntityContactPointByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
 
 	/** 
 	 * Convert screen coordinate by world coordinate
