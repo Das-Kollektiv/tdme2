@@ -178,6 +178,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	keyEscape = false;
 	placeEntityMode = false;
 	placeEntityValid = false;
+	placeEntityYRotation = 0;
 	pasteMode = false;
 	pasteModeValid = false;
 	mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
@@ -348,7 +349,7 @@ void LevelEditorView::handleInputEvents()
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
-		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED;
+		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
 		keyControl = event.isControlDown();
 		keyShift = event.isShiftDown();
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) keyEscape = isKeyDown;
@@ -357,9 +358,9 @@ void LevelEditorView::handleInputEvents()
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_UP) keyUp = isKeyDown;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN) keyDown = isKeyDown;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_BACKSPACE) keyDelete = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 24) keyControlX = !isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 3) keyControlC = !isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 22) keyControlV = !isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 24) keyControlX = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 3) keyControlC = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 22) keyControlV = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 'x' && keyControl == true) keyControlX = !isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 'c' && keyControl == true) keyControlC = !isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 'v' && keyControl == true) keyControlV = !isKeyDown;
@@ -370,11 +371,16 @@ void LevelEditorView::handleInputEvents()
 		if (Character::toLowerCase(event.getKeyChar()) == '+') keyPlus = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == '-') keyMinus = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 'r') keyR = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == '.' && !isKeyDown == false) placeEntityYRotation = (placeEntityYRotation + 1) % 4;
+		if (Character::toLowerCase(event.getKeyChar()) == ',' && !isKeyDown == false) placeEntityYRotation = (placeEntityYRotation + 3) % 4;
 	}
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 
-		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED || event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+		if ((event.getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED ||
+			event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) &&
+			event.getXUnscaled() >= 0 &&
+			event.getYUnscaled() >= 0) {
 			placeEntityMouseX = event.getXUnscaled();
 			placeEntityMouseY = event.getYUnscaled();
 		}
@@ -491,20 +497,20 @@ void LevelEditorView::handleInputEvents()
 		}
 	}
 	if (keyDelete == true) {
-		Console::println("LevelEditorView::handleInputEvents(): remove");
+		Console::println("LevelEditorView::handleInputEvents(): Backspace");
 		removeObjects();
 	}
 	if (keyControlX == true) {
-		Console::println("LevelEditorView::handleInputEvents(): cut");
+		Console::println("LevelEditorView::handleInputEvents(): CTRL-X");
 		copyObjects();
 		removeObjects();
 	}
 	if (keyControlC == true) {
-		Console::println("LevelEditorView::handleInputEvents(): copy");
+		Console::println("LevelEditorView::handleInputEvents(): CTRL-C");
 		copyObjects();
 	}
 	if (keyControlV == true) {
-		Console::println("LevelEditorView::handleInputEvents(): paste");
+		Console::println("LevelEditorView::handleInputEvents(): CTRL-V");
 		setPasteMode();
 	}
 }
@@ -537,6 +543,9 @@ void LevelEditorView::display()
 			if (placeEntityMode == true) {
 				Transformations transformations;
 				transformations.setTranslation(worldCoordinate);
+				transformations.addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
+				transformations.addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
+				transformations.addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
 				transformations.update();
 				if (selectedEngineEntity == nullptr && selectedEntity != nullptr) {
 					selectedEngineEntity = Level::createEntity(selectedEntity, "tdme.leveleditor.placeentity", transformations);
@@ -553,6 +562,7 @@ void LevelEditorView::display()
 					}
 					worldCoordinate.subY(selectedEngineEntity->getBoundingBox()->getMin().getY());
 					transformations.setTranslation(worldCoordinate);
+					transformations.setRotationAngle(level->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
 					transformations.update();
 					selectedEngineEntity->fromTransformations(transformations);
 					placeEntityTranslation = transformations.getTranslation();
@@ -589,8 +599,8 @@ void LevelEditorView::display()
 	if (keyD == true) camLookRotationY->setAngle(camLookRotationY->getAngle() - 1.0f);
 	if (keyW == true) camLookRotationX->setAngle(camLookRotationX->getAngle() + 1.0f);
 	if (keyS == true) camLookRotationX->setAngle(camLookRotationX->getAngle() - 1.0f);
-	if (keyPlus == true) camScale += 0.05f;
-	if (keyMinus == true) camScale -= 0.05f;
+	if (keyMinus == true) camScale += 0.05f;
+	if (keyPlus == true) camScale -= 0.05f;
 	if (camScale < camScaleMin) camScale = camScaleMin;
 	if (camScale > camScaleMax) camScale = camScaleMax;
 
@@ -602,8 +612,7 @@ void LevelEditorView::display()
 		cam->setLookAt(level->getCenter());
 		camScale = 1.0f;
 	}
-	if (keyA == true|| keyD == true)
-		camLookRotationY->update();
+	if (keyA == true|| keyD == true) camLookRotationY->update();
 
 	if (keyW == true || keyS == true) {
 		if (camLookRotationX->getAngle() > 89.99f) camLookRotationX->setAngle(89.99f);
@@ -1004,6 +1013,7 @@ void LevelEditorView::placeObject()
 	levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
 	levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
 	levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
+	levelEditorObjectTransformations.setRotationAngle(level->getRotationOrder()->getAxisYIndex(), placeEntityYRotation * 90.0f);
 	levelEditorObjectTransformations.update();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto levelEditorObject = level->getObjectAt(i);

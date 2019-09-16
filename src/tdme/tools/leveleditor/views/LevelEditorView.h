@@ -108,6 +108,7 @@ private:
 
 	bool placeEntityMode;
 	bool placeEntityValid;
+	int placeEntityYRotation;
 	bool pasteMode;
 	bool pasteModeValid;
 	Vector3 placeEntityTranslation;
