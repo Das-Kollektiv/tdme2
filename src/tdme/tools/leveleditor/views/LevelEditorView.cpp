@@ -151,8 +151,6 @@ vector<string> LevelEditorView::OBJECTCOLOR_NAMES = {
 LevelEditorView::LevelEditorView(PopUps* popUps) 
 {
 	this->popUps = popUps;
-	GRID_DIMENSION_X = 20;
-	GRID_DIMENSION_Y = 20;
 	snappingX = 1.0f;
 	snappingZ = 1.0f;
 	snappingEnabled = false;
@@ -166,8 +164,6 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	mousePanningForward = LevelEditorView::MOUSE_PANNING_NONE;
 	mouseRotationX = LevelEditorView::MOUSE_ROTATION_NONE;
 	mouseRotationY = LevelEditorView::MOUSE_ROTATION_NONE;
-	groundPlateWidth = 1.0f;
-	groundPlateDepth = 1.0f;
 	level = TDMELevelEditor::getInstance()->getLevel();
 	reloadEntityLibrary = false;
 	selectedEntity = nullptr;
@@ -188,7 +184,6 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDragging = false;
 	mouseDraggingLastObject = nullptr;
-	haveGridCenterLast = false;
 	gridEnabled = false;
 	gridY = 0.0f;
 	objectColors["red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
@@ -210,7 +205,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 		{
 		public:
 			bool filterEntity(Entity* entity) override {
-				return StringUtils::startsWith(entity->getId(), "tdme.leveleditor.ground@") == false;
+				return entity->getId() != "tdme.leveleditor.grid";
 			}
 
 			/**
@@ -439,9 +434,6 @@ void LevelEditorView::handleInputEvents()
 					}
 				}
 				auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid);
-				if (selectedEntity == nullptr) {
-					selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
-				}
 				if (selectedEntity != nullptr) {
 					if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
 					} else {
@@ -876,91 +868,44 @@ void LevelEditorView::loadLevel()
 
 void LevelEditorView::updateGrid()
 {
-	if (gridEnabled == false)
-		return;
+	if (gridEnabled == false) return;
 
-	auto centerX = static_cast< int32_t >(gridCenter.getX());
-	auto centerZ = static_cast< int32_t >(gridCenter.getZ());
-	auto centerLastX = haveGridCenterLast == false ? centerX : static_cast< int32_t >(gridCenterLast.getX());
-	auto centerLastZ = haveGridCenterLast == false ? centerZ : static_cast< int32_t >(gridCenterLast.getZ());
-	if (haveGridCenterLast == true && (centerLastX != centerX || centerLastZ != centerZ) == false) {
-		return;
-	}
-	auto gridDimensionLeft = GRID_DIMENSION_X + (centerLastX < centerX ? centerX - centerLastX : 0);
-	auto gridDimensionRight = GRID_DIMENSION_X + (centerLastX > centerX ? centerLastX - centerX : 0);
-	auto gridDimensionNear = GRID_DIMENSION_Y + (centerLastZ < centerZ ? centerZ - centerLastZ : 0);
-	auto gridDimensionFar = GRID_DIMENSION_Y + (centerLastZ > centerZ ? centerLastZ - centerZ : 0);
-	auto addedCells = 0;
-	auto removedCells = 0;
-	for (auto gridZ = -gridDimensionNear; gridZ < gridDimensionFar; gridZ++) 
-	for (auto gridX = -gridDimensionLeft; gridX < gridDimensionRight; gridX++) {
-		string entityId =
-			 "tdme.leveleditor.ground@" +
-			 to_string(centerX + gridX) +
-			 "," +
-			 to_string(centerZ + gridZ);
-		auto entity = engine->getEntity(entityId);
-		if (gridX < -GRID_DIMENSION_X || gridX >= GRID_DIMENSION_X || gridZ < -GRID_DIMENSION_Y || gridZ >= GRID_DIMENSION_Y) {
-			if (entity != nullptr) {
-				engine->removeEntity(entityId);
-				removedCells++;
-			}
-		} else
-		if (entity == nullptr) {
-			entity = new Object3D(entityId, levelEditorGround);
-			entity->addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
-			entity->addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
-			entity->addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
-			entity->setTranslation(
-				Vector3(
-					centerX + static_cast< float >(gridX) * groundPlateWidth,
-					gridY - 0.05f,
-					centerZ + static_cast< float >(gridZ) * groundPlateDepth
-				)
-			);
-			entity->setEnabled(true);
-			entity->setPickable(true);
-			entity->update();
-			auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(entity->getId());
-			if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
-				setHighlightObjectColorEffect(entity);
-			} else {
-				setStandardObjectColorEffect(entity);
-			}
-			engine->addEntity(entity);
-			addedCells++;
+	string entityId = "tdme.leveleditor.grid";
+	auto entity = engine->getEntity(entityId);
+	if (entity == nullptr) {
+		entity = new Object3D(entityId, levelEditorGround);
+		entity->setFrustumCulling(false);
+		entity->addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
+		entity->addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
+		entity->addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
+		entity->setTranslation(
+			Vector3(
+				-5000.0f,
+				gridY - 0.05f,
+				-5000.0f
+			)
+		);
+		entity->setEnabled(true);
+		entity->setPickable(true);
+		entity->update();
+		auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(entity->getId());
+		if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
+			setHighlightObjectColorEffect(entity);
+		} else {
+			setStandardObjectColorEffect(entity);
 		}
+		engine->addEntity(entity);
 	}
-
-	haveGridCenterLast = true;
-	gridCenterLast.set(gridCenter);
 }
 
 void LevelEditorView::removeGrid()
 {
-	if (haveGridCenterLast == false) return;
-	auto removedCells = 0;
-	auto centerX = static_cast< int32_t >(gridCenterLast.getX());
-	auto centerZ = static_cast< int32_t >(gridCenterLast.getZ());
-	for (auto gridZ = -GRID_DIMENSION_Y; gridZ < GRID_DIMENSION_Y; gridZ++) 
-	for (auto gridX = -GRID_DIMENSION_X; gridX < GRID_DIMENSION_X; gridX++) {
-		string objectId =
-			"tdme.leveleditor.ground@" +
-			to_string(centerX + gridX) +
-			"," +
-			to_string(centerZ + gridZ);
-		auto _object = engine->getEntity(objectId);
-		if (_object != nullptr) {
-			removedCells++;
-			engine->removeEntity(objectId);
-		}
-	}
-	haveGridCenterLast = false;
+	engine->removeEntity("tdme.leveleditor.grid");
 }
 
 Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
-	auto groundPlate = new Model("tdme.leveleditor.ground", "tdme.leveleditor.ground", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
+	auto groundPlate = new Model("tdme.leveleditor.grid", "tdme.leveleditor.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
 	auto groundPlateMaterial = new Material("ground");
 	auto groundPlateMaterialDiffuseColor = groundPlateMaterial->getDiffuseColor();
 	groundPlateMaterialDiffuseColor.setAlpha(0.75f);
@@ -971,20 +916,20 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(0.0f, 0.0f, 0.0f));
-	groundVertices.push_back(Vector3(0.0f, 0.0f, +groundPlateDepth));
-	groundVertices.push_back(Vector3(+groundPlateWidth, 0.0f, +groundPlateDepth));
-	groundVertices.push_back(Vector3(+groundPlateWidth, 0.0f, 0.0f));
+	groundVertices.push_back(Vector3(0.0f, 0.0f, 10000.0f));
+	groundVertices.push_back(Vector3(10000.0f, 0.0f, 10000.0f));
+	groundVertices.push_back(Vector3(10000.0f, 0.0f, 0.0f));
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 	vector<TextureCoordinate> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 10000.0f));
 	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 0.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 10000.0f));
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityGround(groundGroup, "tdme.leveleditor.ground.facesentity");
+	FacesEntity groupFacesEntityGround(groundGroup, "tdme.leveleditor.grid.facesentity");
 	groupFacesEntityGround.setMaterial(groundPlateMaterial);
 	groupFacesEntityGround.setFaces(&groundFacesGround);
 	vector<FacesEntity> groupFacesEntities;

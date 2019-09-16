@@ -64,8 +64,6 @@ private:
 	static constexpr int32_t MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 	static constexpr int32_t MOUSE_PANNING_NONE { 0 };
 	static constexpr int32_t MOUSE_ROTATION_NONE { 0 };
-	int32_t GRID_DIMENSION_X;
-	int32_t GRID_DIMENSION_Y;
 	float snappingX;
 	float snappingZ;
 	bool snappingEnabled;
@@ -89,10 +87,8 @@ private:
 	int32_t mousePanningForward;
 	int32_t mouseRotationX;
 	int32_t mouseRotationY;
-	bool haveGridCenterLast;
 	Vector3 camLookAt;
 	Vector3 gridCenter;
-	Vector3 gridCenterLast;
 	bool gridEnabled;
 	float gridY;
 	bool keyLeft;
@@ -115,10 +111,6 @@ private:
 	bool pasteMode;
 	bool pasteModeValid;
 	Vector3 placeEntityTranslation;
-
-public: /* package */
-	float groundPlateWidth;
-	float groundPlateDepth;
 
 private:
 	Model* levelEditorGround { nullptr };

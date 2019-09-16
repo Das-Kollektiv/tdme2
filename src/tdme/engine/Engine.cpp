@@ -1080,16 +1080,14 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-				auto vertices = _i->next();
-				{
-					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
-						// check if match or better match
-						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-							selectedEntity = entity;
-							selectedEntityDistance = entityDistance;
-						}
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
 					}
 				}
 			}
@@ -1103,16 +1101,14 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-				auto vertices = _i->next();
-				{
-					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
-						// check if match or better match
-						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-							selectedEntity = entity;
-							selectedEntityDistance = entityDistance;
-						}
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
 					}
 				}
 			}
@@ -1128,16 +1124,14 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
-				for (auto _i = object->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-					auto vertices = _i->next();
-					{
-						if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-							auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
-							// check if match or better match
-							if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-								selectedEntity = entity;
-								selectedEntityDistance = entityDistance;
-							}
+				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+					auto vertices = it->next();
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
 						}
 					}
 				}
@@ -1176,17 +1170,15 @@ Entity* Engine::doRayCasting(const Vector3& startPoint, const Vector3& endPoint,
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
-			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-				auto vertices = _i->next();
-				{
-					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
-						// check if match or better match
-						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-							selectedEntity = entity;
-							selectedEntityDistance = entityDistance;
-							contactPoint = tmpVector3e;
-						}
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
+						contactPoint = tmpVector3e;
 					}
 				}
 			}
@@ -1200,17 +1192,15 @@ Entity* Engine::doRayCasting(const Vector3& startPoint, const Vector3& endPoint,
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
-			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-				auto vertices = _i->next();
-				{
-					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
-						// check if match or better match
-						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-							selectedEntity = entity;
-							selectedEntityDistance = entityDistance;
-							contactPoint = tmpVector3e;
-						}
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
+						contactPoint = tmpVector3e;
 					}
 				}
 			}
@@ -1226,17 +1216,15 @@ Entity* Engine::doRayCasting(const Vector3& startPoint, const Vector3& endPoint,
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
-				for (auto _i = object->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-					auto vertices = _i->next();
-					{
-						if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
-							auto entityDistance = tmpVector3e.sub(startPoint).computeLengthSquared();
-							// check if match or better match
-							if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-								selectedEntity = entity;
-								selectedEntityDistance = entityDistance;
-								contactPoint = tmpVector3e;
-							}
+				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+					auto vertices = it->next();
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.sub(startPoint).computeLengthSquared();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+							contactPoint = tmpVector3e;
 						}
 					}
 				}
