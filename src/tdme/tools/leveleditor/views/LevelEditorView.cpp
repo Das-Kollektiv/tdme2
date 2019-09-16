@@ -181,7 +181,9 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	keyControl = false;
 	keyEscape = false;
 	placeEntityMode = false;
+	placeEntityValid = false;
 	pasteMode = false;
+	pasteModeValid = false;
 	mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDragging = false;
@@ -343,6 +345,7 @@ void LevelEditorView::loadEntityFromLibrary(int32_t id)
 void LevelEditorView::handleInputEvents()
 {
 	keyControl = false;
+	keyShift = false;
 	auto keyControlX = false;
 	auto keyControlC = false;
 	auto keyControlV = false;
@@ -352,6 +355,7 @@ void LevelEditorView::handleInputEvents()
 		if (event.isProcessed() == true) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_RELEASED;
 		keyControl = event.isControlDown();
+		keyShift = event.isShiftDown();
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) keyEscape = isKeyDown;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT) keyLeft = isKeyDown;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT) keyRight = isKeyDown;
@@ -397,13 +401,17 @@ void LevelEditorView::handleInputEvents()
 			}
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (placeEntityMode == true) {
-				placeObject();
-				unsetPlaceObjectMode();
+			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && placeEntityMode == true && placeEntityValid == true) {
+				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+					placeObject();
+					if (keyShift == false) unsetPlaceObjectMode();
+				}
 			} else
-			if (pasteMode == true) {
-				pasteObjects(false);
-				unsetPasteMode();
+			if (pasteMode == true && pasteModeValid == true) {
+				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+					pasteObjects(false);
+					if (keyShift == false) unsetPasteMode();
+				}
 			} else {
 			if (mouseDragging == false) {
 					if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
@@ -531,6 +539,8 @@ void LevelEditorView::display()
 	{
 		auto selectedEngineEntity = engine->getEntity("tdme.leveleditor.placeentity");
 		Vector3 worldCoordinate;
+		placeEntityValid = false;
+		pasteModeValid = false;
 		if ((placeEntityMode == true || pasteMode == true) && engine->getEntityByMousePosition(placeEntityMouseX, placeEntityMouseY, worldCoordinate, entityPickingFilterPlacing) != nullptr) {
 			if (placeEntityMode == true) {
 				Transformations transformations;
@@ -541,23 +551,33 @@ void LevelEditorView::display()
 					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
 				}
 				if (selectedEngineEntity != nullptr) {
-					worldCoordinate.subY(selectedEngineEntity->getBoundingBox()->getMin().getY());
-					if (snappingEnabled == true) {
+					if (snappingEnabled == true && (snappingX > Math::EPSILON || snappingZ > Math::EPSILON)) {
 						if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
 						if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
+						Vector3 snappedWorldCoordinate;
+						if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+							worldCoordinate = snappedWorldCoordinate;
+						}
 					}
+					worldCoordinate.subY(selectedEngineEntity->getBoundingBox()->getMin().getY());
 					transformations.setTranslation(worldCoordinate);
 					transformations.update();
 					selectedEngineEntity->fromTransformations(transformations);
 					placeEntityTranslation = transformations.getTranslation();
+					placeEntityValid = true;
 				}
 			} else
 			if (pasteMode == true) {
-				if (snappingEnabled == true) {
+				if (snappingEnabled == true && (snappingX > Math::EPSILON || snappingZ > Math::EPSILON)) {
 					if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
 					if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
+					Vector3 snappedWorldCoordinate;
+					if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+						worldCoordinate = snappedWorldCoordinate;
+					}
 				}
 				placeEntityTranslation = worldCoordinate;
+				pasteModeValid = true;
 				pasteObjects(true);
 			}
 		}
@@ -1021,10 +1041,12 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 
 void LevelEditorView::setPlaceObjectMode() {
 	placeEntityMode = true;
+	placeEntityValid = false;
 }
 
 void LevelEditorView::unsetPlaceObjectMode() {
 	placeEntityMode = false;
+	placeEntityValid = false;
 	engine->removeEntity("tdme.leveleditor.placeentity");
 }
 
@@ -1437,6 +1459,7 @@ void LevelEditorView::copyObjects()
 
 void LevelEditorView::setPasteMode() {
 	pasteMode = true;
+	pasteModeValid = false;
 }
 
 void LevelEditorView::unsetPasteMode() {
@@ -1448,6 +1471,7 @@ void LevelEditorView::unsetPasteMode() {
 		pasteObjectIdx++;
 	}
 	pasteMode = false;
+	pasteModeValid = false;
 }
 
 void LevelEditorView::pasteObjects(bool displayOnly)

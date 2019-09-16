@@ -88,7 +88,7 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 	return key;
 }
 
-void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
+void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, void* context)
 {
 	//
 	if (renderer->shaderId != shader) {
@@ -102,6 +102,10 @@ void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
 	renderer->setEffectColorMul(context, effectColorMul.getArray());
 	renderer->setEffectColorAdd(context, effectColorAdd.getArray());
 	renderer->onUpdateEffect(context);
+	// update lights
+	for (auto j = 0; j < engine->lights.size(); j++) {
+		engine->lights[j].update(context);
+	}
 	// material
 	string materialKey;
 	object3DRenderer->setupMaterial(context, object3DGroup, facesEntityIdx, Object3DRenderer::RENDERTYPE_ALL, false, materialKey);

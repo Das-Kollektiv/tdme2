@@ -107,10 +107,13 @@ private:
 	bool keyMinus;
 	bool keyR;
 	bool keyControl;
+	bool keyShift;
 	bool keyEscape;
 
 	bool placeEntityMode;
+	bool placeEntityValid;
 	bool pasteMode;
+	bool pasteModeValid;
 	Vector3 placeEntityTranslation;
 
 public: /* package */

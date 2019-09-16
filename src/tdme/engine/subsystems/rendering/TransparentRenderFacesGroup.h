@@ -121,10 +121,11 @@ private:
 
 	/**
 	 * Render this transparent render faces group
+	 * @param engine engine
 	 * @param renderer renderer
 	 * @param context context
 	 */
-	void render(Renderer* renderer, void* context);
+	void render(Engine* engine, Renderer* renderer, void* context);
 
 	/**
 	 * Public constructor

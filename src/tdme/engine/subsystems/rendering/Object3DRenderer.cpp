@@ -373,7 +373,7 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 
 void Object3DRenderer::renderTransparentFacesGroups(void* context) {
 	for (auto it: transparentRenderFacesGroups) {
-		it.second->render(renderer, context);
+		it.second->render(engine, renderer, context);
 	}
 }
 

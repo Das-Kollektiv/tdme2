@@ -154,8 +154,7 @@ bool LineSegment::doesOrientedBoundingBoxCollideWithLineSegment(OrientedBounding
 
 		}
 	}
-	if (tmin > 1.0)
-		return false;
+	if (tmin > 1.0) return false;
 	// compute contact points
 	contactMin.set(p).add(d1.set(d).scale(tmin));
 	contactMax.set(p).add(d2.set(d).scale(tmax));

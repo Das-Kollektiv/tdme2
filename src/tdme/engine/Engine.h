@@ -107,6 +107,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
+	friend class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 	friend class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
 	friend class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
@@ -606,11 +607,21 @@ public:
 	 * Retrieves entity by mouse position with contact point
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @param worldCoordinate world coordinate of contact point
+	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate, EntityPickingFilter* filter = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
+
+	/**
+	 * Does a ray casting of visible 3d object based entities
+	 * @param startPoint start point
+	 * @param endPoint end point
+	 * @param contactPoint world coordinate of contact point
+	 * @param filter filter
+	 * @return entity or nullptr
+	 */
+	Entity* doRayCasting(const Vector3& startPoint, const Vector3& endPoint, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
 
 	/**
 	 * Retrieves object by mouse position
