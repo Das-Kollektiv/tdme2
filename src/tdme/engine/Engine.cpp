@@ -27,10 +27,11 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LinesObject3D.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
-#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
@@ -52,7 +53,6 @@
 #include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
@@ -90,14 +90,15 @@ using tdme::engine::EngineGLES2Renderer;
 using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
-using tdme::engine::Object3DRenderGroup;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::LODObject3D;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
@@ -117,7 +118,6 @@ using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;

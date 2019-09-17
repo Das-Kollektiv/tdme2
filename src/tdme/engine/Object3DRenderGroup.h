@@ -125,7 +125,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Object3DRenderGroup();
+	~Object3DRenderGroup();
 
 	/**
 	 * Update render group model and bounding box
@@ -161,129 +161,129 @@ public:
 	void addObject(const Transformations& transformations);
 
 	// overriden methods
-	virtual void dispose() override;
+	void dispose() override;
 
-	inline virtual BoundingBox* getBoundingBox() override {
+	inline BoundingBox* getBoundingBox() override {
 		return &boundingBox;
 	}
 
-	inline virtual BoundingBox* getBoundingBoxTransformed() override {
+	inline BoundingBox* getBoundingBoxTransformed() override {
 		return &boundingBoxTransformed;
 	}
 
-	inline virtual const Color4& getEffectColorMul() const override {
+	inline const Color4& getEffectColorMul() const override {
 		return effectColorMul;
 	}
 
-	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+	inline void setEffectColorMul(const Color4& effectColorMul) override {
 		this->effectColorMul = effectColorMul;
 	}
 
-	inline virtual const Color4& getEffectColorAdd() const override {
+	inline const Color4& getEffectColorAdd() const override {
 		return effectColorAdd;
 	}
 
-	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
 		this->effectColorAdd = effectColorAdd;
 	}
 
-	inline virtual const string& getId() override {
+	inline const string& getId() override {
 		return id;
 	}
 
-	virtual void initialize() override;
+	void initialize() override;
 
-	inline virtual bool isDynamicShadowingEnabled() override {
+	inline bool isDynamicShadowingEnabled() override {
 		return dynamicShadowing;
 	}
 
-	inline virtual bool isEnabled() override {
+	inline bool isEnabled() override {
 		return enabled;
 	}
 
-	inline virtual bool isPickable() override {
+	inline bool isPickable() override {
 		return pickable;
 	}
 
 	// override methods
-	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
+	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		this->dynamicShadowing = dynamicShadowing;
 		if (combinedEntity != nullptr) {
 			combinedEntity->setDynamicShadowingEnabled(dynamicShadowing);
 		}
 	}
 
-	inline virtual void setPickable(bool pickable) override {
+	inline void setPickable(bool pickable) override {
 		if (combinedEntity != nullptr) {
 			combinedEntity->setPickable(pickable);
 		}
 	}
 
-	inline virtual const Vector3& getTranslation() const override {
+	inline const Vector3& getTranslation() const override {
 		return Transformations::getTranslation();
 	}
 
-	inline virtual void setTranslation(const Vector3& translation) override {
+	inline void setTranslation(const Vector3& translation) override {
 		Transformations::setTranslation(translation);
 	}
 
-	inline virtual const Vector3& getScale() const override {
+	inline const Vector3& getScale() const override {
 		return Transformations::getScale();
 	}
 
-	inline virtual void setScale(const Vector3& scale) override {
+	inline void setScale(const Vector3& scale) override {
 		Transformations::setScale(scale);
 	}
 
-	inline virtual const Vector3& getPivot() const override {
+	inline const Vector3& getPivot() const override {
 		return Transformations::getPivot();
 	}
 
-	inline virtual void setPivot(const Vector3& pivot) override {
+	inline void setPivot(const Vector3& pivot) override {
 		Transformations::setPivot(pivot);
 	}
 
-	inline virtual const int getRotationCount() const override {
+	inline const int getRotationCount() const override {
 		return Transformations::getRotationCount();
 	}
 
-	inline virtual Rotation& getRotation(const int idx) override {
+	inline Rotation& getRotation(const int idx) override {
 		return Transformations::getRotation(idx);
 	}
 
-	inline virtual void addRotation(const Vector3& axis, const float angle) override {
+	inline void addRotation(const Vector3& axis, const float angle) override {
 		Transformations::addRotation(axis, angle);
 	}
 
-	inline virtual void removeRotation(const int idx) override {
+	inline void removeRotation(const int idx) override {
 		Transformations::removeRotation(idx);
 	}
 
-	inline virtual const Vector3& getRotationAxis(const int idx) const override {
+	inline const Vector3& getRotationAxis(const int idx) const override {
 		return Transformations::getRotationAxis(idx);
 	}
 
-	inline virtual void setRotationAxis(const int idx, const Vector3& axis) override {
+	inline void setRotationAxis(const int idx, const Vector3& axis) override {
 		Transformations::setRotationAxis(idx, axis);
 	}
 
-	inline virtual const float getRotationAngle(const int idx) const override {
+	inline const float getRotationAngle(const int idx) const override {
 		return Transformations::getRotationAngle(idx);
 	}
 
-	inline virtual void setRotationAngle(const int idx, const float angle) override {
+	inline void setRotationAngle(const int idx, const float angle) override {
 		Transformations::setRotationAngle(idx, angle);
 	}
 
-	inline virtual const Quaternion& getRotationsQuaternion() const override {
+	inline const Quaternion& getRotationsQuaternion() const override {
 		return Transformations::getRotationsQuaternion();
 	}
 
-	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
+	inline const Matrix4x4& getTransformationsMatrix() const override {
 		return Transformations::getTransformationsMatrix();
 	}
 
-	inline virtual const Transformations& getTransformations() const override {
+	inline const Transformations& getTransformations() const override {
 		return *this;
 	}
 

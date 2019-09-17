@@ -15,7 +15,7 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -37,7 +37,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;

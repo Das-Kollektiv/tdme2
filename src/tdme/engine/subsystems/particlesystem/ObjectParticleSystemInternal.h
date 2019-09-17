@@ -15,13 +15,13 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 
 using std::vector;
 using std::string;
 
 using tdme::engine::Transformations;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
@@ -41,7 +41,7 @@ using tdme::engine::subsystems::renderer::Renderer;
  */
 class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
 	: public Transformations
-	, public virtual ParticleSystemEntity
+	, public virtual ParticleSystemEntityInternal
 {
 protected:
 	Engine* engine {  };

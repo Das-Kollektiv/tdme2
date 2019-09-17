@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
@@ -43,6 +44,7 @@ using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
@@ -57,7 +59,6 @@ using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;

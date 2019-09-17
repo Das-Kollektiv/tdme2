@@ -6,10 +6,10 @@
 #include <tdme/audio/Sound.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/math/Vector3.h>
@@ -49,10 +49,10 @@ using tdme::audio::Audio;
 using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::PartitionNone;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::gui::GUI;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;

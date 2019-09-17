@@ -15,13 +15,13 @@
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::Transformations;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
@@ -39,7 +39,7 @@ using tdme::math::Matrix4x4;
  */
 class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
 	: public Transformations
-	, public virtual ParticleSystemEntity
+	, public virtual ParticleSystemEntityInternal
 {
 
 protected:

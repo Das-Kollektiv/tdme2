@@ -7,6 +7,7 @@
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
@@ -20,6 +21,7 @@ using tdme::engine::Engine;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Object3D;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;

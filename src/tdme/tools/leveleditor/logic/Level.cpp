@@ -20,6 +20,7 @@
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
@@ -90,6 +91,7 @@ using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
