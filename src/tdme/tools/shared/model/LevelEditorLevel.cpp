@@ -82,12 +82,12 @@ void LevelEditorLevel::computeBoundingBox()
 {
 	dimension.set(0.0f, 0.0f, 0.0f);
 	auto haveDimension = false;
-	auto left = 0.0f;
-	auto right = 0.0f;
-	auto near = 0.0f;
-	auto far = 0.0f;
-	auto top = 0.0f;
-	auto bottom = 0.0f;
+	auto levelLeft = 0.0f;
+	auto levelRight = 0.0f;
+	auto levelNear = 0.0f;
+	auto levelFar = 0.0f;
+	auto levelTop = 0.0f;
+	auto levelBottom = 0.0f;
 	Vector3 sideVector(1.0f, 0.0f, 0.0f);
 	Vector3 upVector(0.0f, 1.0f, 0.0f);
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
@@ -115,28 +115,28 @@ void LevelEditorLevel::computeBoundingBox()
 		auto objectBottom = bbMin.getY();
 		auto objectTop = bbMax.getY();
 		if (haveDimension == false) {
-			left = objectLeft;
-			right = objectRight;
-			near = objectNear;
-			far = objectFar;
-			top = objectTop;
-			bottom = objectBottom;
+			levelLeft = objectLeft;
+			levelRight = objectRight;
+			levelNear = objectNear;
+			levelFar = objectFar;
+			levelTop = objectTop;
+			levelBottom = objectBottom;
 			haveDimension = true;
 		} else {
-			if (objectLeft < left) left = objectLeft;
-			if (objectRight > right) right = objectRight;
-			if (objectNear < near) near = objectNear;
-			if (objectFar > far) far = objectFar;
-			if (objectTop > top) top = objectTop;
-			if (objectBottom < bottom) bottom = objectBottom;
+			if (objectLeft < levelLeft) levelLeft = objectLeft;
+			if (objectRight > levelRight) levelRight = objectRight;
+			if (objectNear < levelNear) levelNear = objectNear;
+			if (objectFar > levelFar) levelFar = objectFar;
+			if (objectTop > levelTop) levelTop = objectTop;
+			if (objectBottom < levelBottom) levelBottom = objectBottom;
 		}
 	}
-	boundingBox.getMin().set(left, bottom, near);
-	boundingBox.getMax().set(right, top, far);
+	boundingBox.getMin().set(levelLeft, levelBottom, levelNear);
+	boundingBox.getMax().set(levelRight, levelTop, levelFar);
 	boundingBox.update();
-	dimension.setX(right - left);
-	dimension.setZ(far - near);
-	dimension.setY(top - bottom);
+	dimension.setX(levelRight - levelLeft);
+	dimension.setZ(levelFar - levelNear);
+	dimension.setY(levelTop - levelBottom);
 }
 
 void LevelEditorLevel::computeCenter()

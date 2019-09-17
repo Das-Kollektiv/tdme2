@@ -9,13 +9,10 @@ SRCS_PLATFORM = \
 	src/tdme/engine/fileio/models/FBXReader.cpp \
 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 
-# For Windows 10 this must be added to INCLUDES
-#	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
+# For Windows 10 this might be added to INCLUDES from Windows 10 Kit /urcrt
 
 INCLUDES = \
-	/I "C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" \
-	/I "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include" \
-	/I "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\include" \
+	/I "C:\Program Files\Microsoft SDKs\Windows\v7.1\Include" \
 	/I src \
 	/I ext \
 	/I . \
@@ -31,25 +28,23 @@ INCLUDES = \
 	/I "ext\win-freeglut\include" \
 	/I "ext\win-dirent\include"
 
-# For Windows 10 this must be added to EXTRA_LIBS
-#	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64\libucrt.lib" \
+# For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
 
 EXTRA_LIBS = \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64\libucrt.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\libcmt.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\oldnames.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\kernel32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\advapi32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\libvcruntime.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\uuid.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\lib\amd64\libcpmt.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\glu32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\opengl32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\gdi32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\winmm.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\user32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\ws2_32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib\x64\dbghelp.lib" \
+	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\lib\x64\libcmt.lib" \
+	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\lib\x64\oldnames.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\kernel32.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\advapi32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\lib\x64\libvcruntime.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\uuid.lib" \
+	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\lib\x64\libcpmt.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\glu32.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\opengl32.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\gdi32.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\winmm.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\user32.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\ws2_32.lib" \
+	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\dbghelp.lib" \
 	/LIBPATH "ext\win-pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\win-openal-soft\libs\OpenAL32.lib" \
 	/LIBPATH "ext\win-glew\libs/glew32.lib" \
@@ -58,7 +53,7 @@ EXTRA_LIBS = \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi
+FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest
 LINK_FLAGS = /LTCG
 
 SRC = src
