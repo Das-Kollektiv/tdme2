@@ -33,9 +33,6 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 private:
 	enum ShadowMapping_RunState {NONE, PRE, RENDER};
 
-	static int32_t shadowMapWidth;
-	static int32_t shadowMapHeight;
-
 	Renderer* renderer {  };
 	Object3DRenderer* object3DRenderer {  };
 	float lightEyeDistanceScale {  };
@@ -54,42 +51,10 @@ private:
 	ShadowMapping_RunState runState {  };
 
 public:
-	/**
-	 * @return shadow map width
-	 */
-	inline static int32_t getShadowMapWidth() {
-		return shadowMapWidth;
-	}
-
-	/**
-	 * @return shadow map width
-	 */
-	inline static int32_t getShadowMapHeight() {
-		return shadowMapHeight;
-	}
-
-	/** 
-	 * Set shadow map size
-	 * @param width width
-	 * @param height height
-	 */
-	static void setShadowMapSize(int32_t width, int32_t height);
-
 	/** 
 	 * @return engine
 	 */
 	Engine* getEngine();
-
-	/** 
-	 * @return light eye distance scale
-	 */
-	float getLightEyeDistanceScale();
-
-	/** 
-	 * Set light eye distance scale
-	 * @param lightEyeDistanceScale light eye distance scale
-	 */
-	void setLightEyeDistanceScale(float lightEyeDistanceScale);
 
 	/** 
 	 * Reshape shadow maps

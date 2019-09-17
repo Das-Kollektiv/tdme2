@@ -152,6 +152,10 @@ private:
 	static int threadCount;
 	static bool have4K;
 	static float animationBlendingTime;
+	static int32_t shadowMapWidth;
+	static int32_t shadowMapHeight;
+	static float shadowMaplightEyeDistanceScale;
+
 
 	int32_t width;
 	int32_t height;
@@ -411,6 +415,45 @@ public:
 	}
 
 	/** 
+	 * @return shadow map light eye distance scale
+	 */
+	inline static float getShadowMapLightEyeDistanceScale() {
+		return Engine::shadowMaplightEyeDistanceScale;
+	}
+
+	/**
+	 * Set shadow map light eye distance scale
+	 * @param shadowMaplightEyeDistanceScale shadow map light eye distance scale
+	 */
+	inline static void setShadowMapLightEyeDistanceScale(float shadowMaplightEyeDistanceScale) {
+		Engine::shadowMaplightEyeDistanceScale = shadowMaplightEyeDistanceScale;
+	}
+
+	/**
+	 * @return shadow map width
+	 */
+	inline static int32_t getShadowMapWidth() {
+		return shadowMapWidth;
+	}
+
+	/**
+	 * @return shadow map width
+	 */
+	inline static int32_t getShadowMapHeight() {
+		return shadowMapHeight;
+	}
+
+	/**
+	 * Set shadow map size
+	 * @param width width
+	 * @param height height
+	 */
+	inline static void setShadowMapSize(int32_t width, int32_t height) {
+		Engine::shadowMapWidth = width;
+		Engine::shadowMapHeight = height;
+	}
+
+	/**
 	 * Returns engine instance
 	 * @return
 	 */

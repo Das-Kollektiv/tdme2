@@ -164,6 +164,10 @@ bool Engine::skinningShaderEnabled = false;
 int Engine::threadCount = 0;
 bool Engine::have4K = false;
 float Engine::animationBlendingTime = 250.0f;
+int32_t Engine::shadowMapWidth = 2048;
+int32_t Engine::shadowMapHeight = 2048;
+float Engine::shadowMaplightEyeDistanceScale = 4.0f;
+
 Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
 vector<Engine::EngineThread*> Engine::engineThreads;
 
@@ -399,7 +403,7 @@ void Engine::initialize()
 		Console::println(string("TDME::Using Vulkan"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
-		ShadowMapping::setShadowMapSize(2048, 2048);
+		setShadowMapSize(2048, 2048);
 		skinningShaderEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
 	#else
@@ -410,7 +414,7 @@ void Engine::initialize()
 			Console::println(string("TDME::Using GL3+/CORE"));
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
-			ShadowMapping::setShadowMapSize(1024, 1024);
+			setShadowMapSize(1024, 1024);
 			skinningShaderEnabled = false;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
@@ -431,7 +435,7 @@ void Engine::initialize()
 			skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
-			ShadowMapping::setShadowMapSize(2048, 2048);
+			setShadowMapSize(2048, 2048);
 			animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 		}
 		// GLES2 on Linux
@@ -443,7 +447,7 @@ void Engine::initialize()
 			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 				shadowMappingEnabled = true;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-				ShadowMapping::setShadowMapSize(1024, 1024);
+				setShadowMapSize(1024, 1024);
 			} else {
 				shadowMappingEnabled = false;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
