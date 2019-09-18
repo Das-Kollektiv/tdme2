@@ -99,12 +99,12 @@ make clean && make -j HARDWARE_THREADS mains
 
 ## 1.5. Windows MSC/X64(tested on Windows 7 Ultimate)
 ### 1.5.1 Install packages
-Install Visual Studio 2019 Community Edition and install Windows 7 SDK.
+Install Visual Studio 2019 Community Edition and install Windows 7 SDK. Be aware that the makefile uses the default installation paths for libraries and headers.
 
 ### 1.5.2. Download or clone repository
 
-Use a GIT client with the following URL: https://github.com/andreasdr/tdme2 and clone to a folder into your home folder like "tdme" OR 
-Send your browser to "https://github.com/andreasdr/tdme2" and click "Clone or download/Download ZIP" and extract ZIP somewhere in your home folder, e.g. "tdme2".
+Use a GIT client with the following URL: https://github.com/andreasdr/tdme2 and clone to a folder into your home folder like "tdme2" OR 
+send your browser to "https://github.com/andreasdr/tdme2" and click "Clone or download/Download ZIP" and extract ZIP somewhere in your home folder, e.g. "tdme2".
 
 ### 1.5.3. Build
 
