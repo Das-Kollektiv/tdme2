@@ -70,8 +70,9 @@ cd tdme2
 make clean && make -j HARDWARE_THREADS mains
 ```
 
-## 1.4. Windows MSYS2/MINGW64
-### 1.4.1 Install 64 Bit MSYS2 from https://www.msys2.org/, e.g. msys2-x86_64-20190524.exe, then update your MSYS2 installation and install packages.
+## 1.4. Windows MSYS2/MINGW64(tested on Windows 10 Home)
+### 1.4.1 Install packages
+Install 64 Bit MSYS2 from https://www.msys2.org/, e.g. msys2-x86_64-20190524.exe, then update your MSYS2 installation and install packages.
 
 ```bash 
 pacman -Syu
@@ -96,6 +97,41 @@ cd tdme2
 make clean && make -j HARDWARE_THREADS mains
 ```
 
+## 1.5. Windows MSC/X64(tested on Windows 7 Ultimate)
+### 1.5.1 Install packages
+Install Visual Studio 2019 Community Edition and install Windows 7 SDK.
+
+### 1.5.2. Download or clone repository
+
+Use a GIT client with the following URL: https://github.com/andreasdr/tdme2 and clone to a folder into your home folder like "tdme" OR 
+Send your browser to "https://github.com/andreasdr/tdme2" and click "Clone or download/Download ZIP" and extract ZIP somewhere in your home folder, e.g. "tdme2".
+
+### 1.5.3. Build
+
+Open your Visual Studio 2019 Community command line interface app for native X64 builds and execute the following commands. 
+You need to adjust "tdme2" if you used a different folder.
+
+```
+cd %HOMEPAGE%/tdme2
+nmake -f Makefile.nmake
+```
+
+This will build TDME2 executables into your "tdme2" folder. You need to copy DLLs still to this folder, just that those dependencies are found.
+You need to adjust "tdme2" if you used a different folder.
+
+```
+cd %HOMEPAGE%/tdme2
+copy ext\fbx\win64\lib\libfbxsdk.dll .
+copy ext\win-freeglut\libs\freeglut.dll .
+copy ext\win-glew\libs\glew32.dll .
+copy ext\win-openal-soft\libs\OpenAL32.dll .
+copy ext\win-pthread\libs\pthreadVC2.dll .
+```
+
+### 1.5.4. Note
+- All *.EXE files are generated in your "tdme2" folder root. You should just be able to launch them from there. So you can ignore 2.
+- The MSC build process is WIP
+
 # 2. Running a TDME2 binary
 
 You find binaries in
@@ -119,5 +155,5 @@ $ ./bin/tdme/tests/AngleTest
     - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 
-- Build instructions will follow for NetBSD, OpenBSD, Windows-MSC, ...
+- Build instructions will follow for NetBSD, OpenBSD, ...
  
