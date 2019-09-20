@@ -210,6 +210,9 @@ void Object3DRenderer::reset()
 
 void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
+	// reset shader
+	renderer->shaderId.clear();
+
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
@@ -256,8 +259,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		renderer->disableCulling();
 		renderer->enableBlending();
 		// disable foliage animation
-		renderer->setShader("default");
-		renderer->onUpdateShader(context);
+		renderer->shaderId.clear();
 		// have identity texture matrix
 		renderer->getTextureMatrix(context).identity();
 		renderer->onUpdateTextureMatrix(context);
@@ -412,7 +414,6 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 	// all objects share the same object 3d group structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
-	string currentShader;
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
@@ -492,9 +493,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
 						object->getShader():
 						object->getDistanceShader();
-				if (currentShader != objectShader) {
-					currentShader = objectShader;
-					renderer->setShader(currentShader);
+				if (renderer->shaderId != objectShader) {
+					renderer->setShader(objectShader);
 					renderer->onUpdateShader(context);
 					// update lights
 					for (auto j = 0; j < engine->lights.size(); j++) {
@@ -615,10 +615,6 @@ void Object3DRenderer::instancedRenderFunction(int threadIdx, void* context, con
 	// issue upload matrices
 	renderer->onUpdateCameraMatrix(context);
 	renderer->onUpdateProjectionMatrix(context);
-	// update lights
-	for (auto j = 0; j < engine->lights.size(); j++) {
-		engine->lights[j].update(context);
-	}
 	// draw objects
 	for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 		if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
@@ -890,10 +886,16 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 				parameters.textureMatrix = object3DGroupToRender->textureMatricesByEntities[parameters.faceEntityIdx];
 				parameters.collectTransparentFaces = collectTransparentFaces;
 
-				// shader
+				// front face
 				renderer->setFrontFace(parameters.frontFace);
-				renderer->setShader(parameters.shader);
-				for (auto i = 0; i < threadCount; i++) renderer->onUpdateShader(renderer->getContext(i));
+				//
+				if (renderer->shaderId != parameters.shader) {
+					renderer->setShader(parameters.shader);
+					for (auto i = 0; i < threadCount; i++) renderer->onUpdateShader(renderer->getContext(i));
+					for (auto j = 0; j < engine->lights.size(); j++) {
+						engine->lights[j].update(context);
+					}
+				}
 				// multiple threads
 				if (threadCount > 1) {
 					for (auto engineThread: Engine::engineThreads) engineThread->engine = engine;

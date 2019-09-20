@@ -94,6 +94,10 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, voi
 	if (renderer->shaderId != shader) {
 		renderer->setShader(shader);
 		renderer->onUpdateShader(context);
+		// update lights
+		for (auto j = 0; j < engine->lights.size(); j++) {
+			engine->lights[j].update(context);
+		}
 	}
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
@@ -102,10 +106,6 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, voi
 	renderer->setEffectColorMul(context, effectColorMul.getArray());
 	renderer->setEffectColorAdd(context, effectColorAdd.getArray());
 	renderer->onUpdateEffect(context);
-	// update lights
-	for (auto j = 0; j < engine->lights.size(); j++) {
-		engine->lights[j].update(context);
-	}
 	// material
 	string materialKey;
 	object3DRenderer->setupMaterial(context, object3DGroup, facesEntityIdx, Object3DRenderer::RENDERTYPE_ALL, false, materialKey);
