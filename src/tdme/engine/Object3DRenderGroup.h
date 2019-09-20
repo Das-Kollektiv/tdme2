@@ -69,6 +69,7 @@ private:
 	float distanceShaderDistance { 50.0f };
 	int objectCount { 0 };
 	array<int, 3> lodReduceBy;
+	bool enableEarlyZRejection { false };
 
 	/**
 	 * Compute bounding box
@@ -351,6 +352,21 @@ public:
 		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
 			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
 		}
+	}
+
+	/**
+	 * @return If early z rejection is enabled
+	 */
+	bool isEnableEarlyZRejection() const {
+		return enableEarlyZRejection;
+	}
+
+	/**
+	 * Enable/disable early z rejection
+	 * @param enableEarlyZRejection enable early z rejection
+	 */
+	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
+		this->enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 };

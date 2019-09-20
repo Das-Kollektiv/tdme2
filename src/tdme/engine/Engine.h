@@ -12,6 +12,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
@@ -49,6 +50,7 @@ using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -139,6 +141,7 @@ private:
 
 	static AnimationProcessingTarget animationProcessingTarget;
 
+	static EZRShaderPre* ezrShaderPre;
 	static ShadowMappingShaderPre* shadowMappingShaderPre;
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
@@ -185,6 +188,9 @@ private:
 	vector<ParticleSystemGroup*> visiblePsgs;
 	vector<LinesObject3D*> visibleLinesObjects;
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups;
+
+	vector<Object3D*> visibleEZRObjects;
+
 	Object3DRenderer* object3DRenderer { nullptr };
 
 	static bool skinningShaderEnabled;

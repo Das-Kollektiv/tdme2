@@ -11,7 +11,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
- * Shadow mapping shader interface to render shadows
+ * Shadow mapping shader interface to render shadow map
  * @author Andreas Drewke
  * @version $Id$
  */

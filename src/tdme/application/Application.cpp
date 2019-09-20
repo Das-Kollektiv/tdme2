@@ -254,11 +254,12 @@ using tdme::utils::Time;
 	}
 #endif
 
-constexpr int32_t Application::FPS;
 Application::ApplicationShutdown Application::applicationShutdown;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
+bool Application::limitFPS = true;
+
 #if defined(VULKAN)
 	GLFWwindow* Application::glfwWindow = nullptr;
 	array<uint32_t, 10> Application::glfwButtonDownFrames;
@@ -488,7 +489,7 @@ void Application::displayInternal() {
 	if (Application::timeLast != -1L) {
 		#if !defined(VULKAN)
 			int64_t timePassed = timeNow - timeLast;
-			if (timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
+			if (limitFPS == true && timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
 		#endif
 	}
 	Application::timeLast = timeNow;

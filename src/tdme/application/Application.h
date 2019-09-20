@@ -46,6 +46,21 @@ public:
 	static constexpr int32_t FPS { 60 };
 
 	/**
+	 * @return if FPS should be limited to 60 frames per seconds
+	 */
+	inline static bool isLimitFPS() {
+		return limitFPS;
+	}
+
+	/**
+	 * Set frames per seconds limit
+	 * @param limitFPS set up if FPS should be limited to 60 frames per seconds
+	 */
+	inline static void setLimitFPS(bool limitFPS) {
+		Application::limitFPS = limitFPS;
+	}
+
+	/**
 	 * Public constructor
 	 */
 	Application();
@@ -185,6 +200,7 @@ private:
 	int32_t windowYPosition { 100 };
 	bool fullScreen { false };
 	static int64_t timeLast;
+	static bool limitFPS;
 
 	#if defined(VULKAN)
 		static GLFWwindow* glfwWindow;

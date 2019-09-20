@@ -30,7 +30,7 @@ using tdme::utils::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::leveleditor::logic::Level
+class tdme::tools::leveleditor::logic::Level final
 {
 
 public:
@@ -39,80 +39,168 @@ public:
 	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
 	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
 
+	static float renderGroupsPartitionWidth;
+	static float renderGroupsPartitionHeight;
+	static float renderGroupsPartitionDepth;
 	static int renderGroupsReduceBy;
 	static int renderGroupsLODLevels;
 	static float renderGroupsLOD2MinDistance;
 	static float renderGroupsLOD3MinDistance;
 	static int renderGroupsLOD2ReduceBy;
 	static int renderGroupsLOD3ReduceBy;
+	static bool enableEarlyZRejection;
 
 public:
+
+	/**
+	 * @return render groups partition size / width
+	 */
+	inline static float getRenderGroupsPartitionWidth() {
+		return renderGroupsPartitionWidth;
+	}
+
+	/**
+	 * Set render groups partition size / width
+	 * @param renderGroupsPartitionDepth render groups partition size / width
+	 */
+	inline static void setRenderGroupsPartitionWidth(float renderGroupsPartitionWidth) {
+		Level::renderGroupsPartitionWidth = renderGroupsPartitionWidth;
+	}
+
+	/**
+	 * @return render groups partition size / height
+	 */
+	inline static float getRenderGroupsPartitionHeight() {
+		return renderGroupsPartitionHeight;
+	}
+
+	/**
+	 * Set render groups partition size / height
+	 * @param renderGroupsPartitionDepth render groups partition size / height
+	 */
+	inline static void setRenderGroupsPartitionHeight(float renderGroupsPartitionHeight) {
+		Level::renderGroupsPartitionHeight = renderGroupsPartitionHeight;
+	}
+
+	/**
+	 * @return render groups partition size / depth
+	 */
+	inline static float getRenderGroupsPartitionDepth() {
+		return renderGroupsPartitionDepth;
+	}
+
+	/**
+	 * Set render groups partition size / depth
+	 * @param renderGroupsPartitionDepth render groups partition size / depth
+	 */
+	inline static void setRenderGroupsPartitionDepth(float renderGroupsPartitionDepth) {
+		Level::renderGroupsPartitionDepth = renderGroupsPartitionDepth;
+	}
 
 	/**
  	 * Set render groups reduce objects by a given factor
  	 * @param reduceBy render groups objects reduce by factor
  	 */
-	static void setRenderGroupsReduceBy(int32_t reduceBy);
-
-	/**
-	 * @return render groups LOD2 reduce by factor
-	 */
-	static int getRenderGroupsLod2ReduceBy();
+	inline static void setRenderGroupsReduceBy(int32_t reduceBy) {
+		Level::renderGroupsReduceBy = reduceBy;
+	}
 
 	/**
 	 * @return render groups objects reduce by factor
 	 */
-	static int getRenderGroupsReduceBy();
+	inline static int getRenderGroupsReduceBy() {
+		return renderGroupsReduceBy;
+	}
 
 	/**
 	 * @return render groups LOD levels
 	 */
-	static int getRenderGroupsLodLevels();
+	inline static int getRenderGroupsLodLevels() {
+		return renderGroupsLODLevels;
+	}
 
 	/**
 	 * Set render groups LOD levels
 	 * @param renderGroupsLodLevels render groups LOD levels
 	 */
-	static void setRenderGroupsLodLevels(int lodLevels);
+	inline static void setRenderGroupsLodLevels(int lodLevels) {
+		renderGroupsLODLevels = lodLevels;
+	}
 
 	/**
 	 * @return render groups LOD2 minumum distance
 	 */
-	static float getRenderGroupsLod2MinDistance();
+	inline static float getRenderGroupsLod2MinDistance() {
+		return renderGroupsLOD2MinDistance;
+	}
 
 	/**
 	 * Set render groups LOD2 minumum distance
 	 * @param renderGroupsLod2MinDistance render groups LOD2 minumum distance
 	 */
-	static void setRenderGroupsLod2MinDistance(float minDistance);
+	inline static void setRenderGroupsLod2MinDistance(float minDistance) {
+		renderGroupsLOD2MinDistance = minDistance;
+	}
 
 	/**
 	 * @return render groups LOD3 minumum distance
 	 */
-	static float getRenderGroupsLod3MinDistance();
+	inline static float getRenderGroupsLod3MinDistance() {
+		return renderGroupsLOD3MinDistance;
+	}
 
 	/**
 	 * Set render groups LOD3 minumum distance
 	 * @param renderGroupsLod3MinDistance render groups LOD3 minumum distance
 	 */
-	static void setRenderGroupsLod3MinDistance(float minDistance);
+	inline static void setRenderGroupsLod3MinDistance(float minDistance) {
+		renderGroupsLOD3MinDistance = minDistance;
+	}
+
+	/**
+	 * @return render groups LOD2 reduce by factor
+	 */
+	inline static int getRenderGroupsLod2ReduceBy() {
+		return renderGroupsLOD2ReduceBy;
+	}
 
 	/**
 	 * Set render groups LOD2 reduce by factor
 	 * @param renderGroupsLod2ReduceBy render groups LOD2 reduce by factor
 	 */
-	static void setRenderGroupsLod2ReduceBy(int reduceBy);
+	inline static void setRenderGroupsLod2ReduceBy(int reduceBy) {
+		renderGroupsLOD2ReduceBy = reduceBy;
+	}
 
 	/**
 	 * @return render groups LOD3 reduce by factor
 	 */
-	static int getRenderGroupsLod3ReduceBy();
+	inline static int getRenderGroupsLod3ReduceBy() {
+		return renderGroupsLOD3ReduceBy;
+	}
 
 	/**
 	 * Set render groups LOD3 reduce by factor
 	 * @param renderGroupsLod3ReduceBy render groups LOD3 reduce by factor
 	 */
-	static void setRenderGroupsLod3ReduceBy(int reduceBy);
+	inline static void setRenderGroupsLod3ReduceBy(int reduceBy) {
+		renderGroupsLOD3ReduceBy = reduceBy;
+	}
+
+	/**
+	 * @return If early z rejection is enabled, in level loading case its used for render groups and terrain
+	 */
+	inline static bool isEnableEarlyZRejection() {
+		return enableEarlyZRejection;
+	}
+
+	/**
+	 * Enable/disable early z rejection, in level loading case its used for render groups and terrain
+	 * @param enableEarlyZRejection enable early z rejection
+	 */
+	inline static void setEnableEarlyZRejection(bool enableEarlyZRejection) {
+		Level::enableEarlyZRejection = enableEarlyZRejection;
+	}
 
 	/** 
 	 * Set lights from level

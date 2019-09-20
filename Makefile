@@ -256,6 +256,10 @@ SRCS = \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPre.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp \

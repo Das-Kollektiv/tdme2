@@ -269,6 +269,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedObject3D->setDistanceShader(distanceShaderId);
 		combinedObject3D->setDynamicShadowingEnabled(dynamicShadowing);
 		combinedObject3D->setEngine(engine);
+		combinedObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
 		combinedObject3D->update();
 		combinedEntity = combinedObject3D;
 	} else
@@ -289,6 +290,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedLODObject3D->setDistanceShader(distanceShaderId);
 		combinedLODObject3D->setDynamicShadowingEnabled(dynamicShadowing);
 		combinedLODObject3D->setEngine(engine);
+		combinedLODObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
 		combinedLODObject3D->update();
 		combinedEntity = combinedLODObject3D;
 	}

@@ -63,6 +63,7 @@ private:
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
 	RenderPass renderPass { RENDERPASS_OBJECTS };
+	bool enableEarlyZRejection { false };
 
 	/**
 	 * Compute skinning
@@ -307,6 +308,21 @@ public:
 	 */
 	inline void setRenderPass(RenderPass renderPass) {
 		this->renderPass = renderPass;
+	}
+
+	/**
+	 * @return If early z rejection is enabled
+	 */
+	inline bool isEnableEarlyZRejection() const {
+		return enableEarlyZRejection;
+	}
+
+	/**
+	 * Enable/disable early z rejection
+	 * @param enableEarlyZRejection enable early z rejection
+	 */
+	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
+		this->enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 };

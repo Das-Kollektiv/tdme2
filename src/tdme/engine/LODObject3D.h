@@ -76,6 +76,7 @@ private:
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
+	bool enableEarlyZRejection { false };
 
 public:
 	void setEngine(Engine* engine) override;
@@ -438,5 +439,18 @@ public:
 		if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderDistance(distanceShaderDistance);
 		if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderDistance(distanceShaderDistance);
 	}
+
+	/**
+	 * @return If early z rejection is enabled
+	 */
+	bool isEnableEarlyZRejection() const {
+		return enableEarlyZRejection;
+	}
+
+	/**
+	 * Enable/disable early z rejection
+	 * @param enableEarlyZRejection enable early z rejection
+	 */
+	void setEnableEarlyZRejection(bool enableEarlyZRejection);
 
 };

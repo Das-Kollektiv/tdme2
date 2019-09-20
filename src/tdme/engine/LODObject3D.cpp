@@ -161,3 +161,10 @@ void LODObject3D::initialize()
 	if (objectLOD2 != nullptr) objectLOD2->initialize();
 	if (objectLOD3 != nullptr) objectLOD3->initialize();
 }
+
+void LODObject3D::setEnableEarlyZRejection(bool enableEarlyZRejection) {
+	// delegate to LOD objects
+	if (objectLOD1 != nullptr) objectLOD1->setEnableEarlyZRejection(enableEarlyZRejection);
+	if (objectLOD2 != nullptr) objectLOD2->setEnableEarlyZRejection(enableEarlyZRejection);
+	if (objectLOD3 != nullptr) objectLOD3->setEnableEarlyZRejection(enableEarlyZRejection);
+}

@@ -1,24 +1,23 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
+#include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreImplementation.h>
 #include <tdme/math/fwd-tdme.h>
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
 /** 
- * Shadow mapping shader base class to create shadow map
+ * Early z rejection shader base class to render shadow map
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation: public ShadowMappingShaderPreImplementation
+class tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation: public EZRShaderPreImplementation
 {
 protected:
 	Renderer* renderer {  };
@@ -53,10 +52,10 @@ public:
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	ShadowMappingShaderPreBaseImplementation(Renderer* renderer);
+	EZRShaderPreBaseImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~ShadowMappingShaderPreBaseImplementation();
+	~EZRShaderPreBaseImplementation();
 };

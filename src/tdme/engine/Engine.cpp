@@ -41,6 +41,7 @@
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -108,6 +109,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -152,6 +154,7 @@ FrameBufferRenderShader* Engine::frameBufferRenderShader = nullptr;
 PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+EZRShaderPre* Engine::ezrShaderPre = nullptr;
 ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
 ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
@@ -253,6 +256,7 @@ Engine::~Engine() {
 		delete postProcessingShader;
 		delete guiShader;
 		delete frameBufferRenderShader;
+		delete ezrShaderPre;
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
 	}
@@ -370,6 +374,7 @@ void Engine::removeEntity(const string& id)
 		visiblePsgs.erase(remove(visiblePsgs.begin(), visiblePsgs.end(), entity), visiblePsgs.end());
 		visibleLinesObjects.erase(remove(visibleLinesObjects.begin(), visibleLinesObjects.end(), entity), visibleLinesObjects.end());
 		visibleObjectRenderGroups.erase(remove(visibleObjectRenderGroups.begin(), visibleObjectRenderGroups.end(), entity), visibleObjectRenderGroups.end());
+		visibleEZRObjects.erase(remove(visibleEZRObjects.begin(), visibleEZRObjects.end(), entity), visibleEZRObjects.end());
 
 	}
 }
@@ -543,6 +548,10 @@ void Engine::initialize()
 		Console::println(string("TDME::Basic FBOs are available."));
 	}
 
+	// TODO: make this configurable
+	ezrShaderPre = new EZRShaderPre(renderer);
+	ezrShaderPre->initialize();
+
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::println(string("TDME::Using shadow mapping"));
@@ -566,6 +575,7 @@ void Engine::initialize()
 
 	// check if initialized
 	// initialized &= objectsFrameBuffer->isInitialized();
+	initialized &= ezrShaderPre == nullptr ? true : ezrShaderPre->isInitialized();
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
@@ -630,6 +640,7 @@ void Engine::initRendering()
 	visiblePsgs.clear();
 	visibleLinesObjects.clear();
 	visibleObjectRenderGroups.clear();
+	visibleEZRObjects.clear();
 
 	//
 	renderingInitiated = true;
@@ -682,6 +693,9 @@ void Engine::computeTransformations()
 			} else { \
 				visibleObjects.push_back(object); \
 			} \
+			if (object->isEnableEarlyZRejection() == true) { \
+				visibleEZRObjects.push_back(object); \
+			}; \
 		} else \
 		if ((lodObject = dynamic_cast<LODObject3D*>(_entity)) != nullptr) { \
 			auto object = lodObject->determineLODObject(camera); \
@@ -692,6 +706,9 @@ void Engine::computeTransformations()
 				} else { \
 					visibleObjects.push_back(object); \
 				} \
+				if (object->isEnableEarlyZRejection() == true) { \
+					visibleEZRObjects.push_back(object); \
+				}; \
 			} \
 		} else \
 		if ((opse = dynamic_cast<ObjectParticleSystem*>(_entity)) != nullptr) { \
@@ -856,31 +873,53 @@ void Engine::display()
 		if (linesShader != nullptr) linesShader->unUseProgram(context);
 	}
 
-	// use lighting shader
-	if (lightingShader != nullptr) lightingShader->useProgram(this);
-
-	// render objects
-	object3DRenderer->render(
-		visibleObjects,
-		true,
-		Object3DRenderer::RENDERTYPE_NORMALS |
-		Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
-		Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
-		Object3DRenderer::RENDERTYPE_MATERIALS |
-		Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DRenderer::RENDERTYPE_TEXTURES |
-		Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DRenderer::RENDERTYPE_LIGHTS
-	);
-
-	// unuse lighting shader
-	if (lightingShader != nullptr) {
-		lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+	// do depth buffer writing aka early z rejection
+	if (ezrShaderPre != nullptr && visibleEZRObjects.size() > 0) {
+		// disable color rendering, we only want to write to the Z-Buffer
+		renderer->setColorMask(false, false, false, false);
+		// render
+		ezrShaderPre->useProgram(this);
+		// only draw opaque face entities of objects marked as EZR objects
+		object3DRenderer->render(
+			visibleEZRObjects,
+			false,
+			Object3DRenderer::RENDERTYPE_NORMALS | // TODO: actually this is not required, but GL2 currently needs this
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+		);
+		// done
+		ezrShaderPre->unUseProgram();
+		// restore disable color rendering
+		renderer->setColorMask(true, true, true, true);
 	}
 
-	// render shadows if required
-	if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
+	// use lighting shader
+	if (visibleObjects.size() > 0) {
+		//
+		if (lightingShader != nullptr) lightingShader->useProgram(this);
+
+		// render objects
+		object3DRenderer->render(
+			visibleObjects,
+			true,
+			Object3DRenderer::RENDERTYPE_NORMALS |
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
+			Object3DRenderer::RENDERTYPE_MATERIALS |
+			Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_TEXTURES |
+			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_LIGHTS
+		);
+
+		// unuse lighting shader
+		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+
+		// render shadows if required
+		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
+	}
 
 	// do post processing
 	isUsingPostProcessingTemporaryFrameBuffer = false;
