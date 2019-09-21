@@ -155,7 +155,7 @@ private:
 	 * @param context context
 	 * @param vboId vbo id
 	 */
-	void setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupBitangentsBuffer(Renderer* renderer, int32_t vboId);
 
 	// Generated
 

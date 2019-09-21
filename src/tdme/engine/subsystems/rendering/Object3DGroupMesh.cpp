@@ -328,8 +328,8 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer* renderer, void* conte
 void Object3DGroupMesh::setupTextureCoordinatesBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
 	// check if we have texture coordinates
-	auto groupTextureCoordinates = group->getTextureCoordinates();
-	if (groupTextureCoordinates == nullptr) return;
+	auto& groupTextureCoordinates = group->getTextureCoordinates();
+	if (groupTextureCoordinates.size() == 0) return;
 	// create texture coordinates buffer, will never be changed in engine
 	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, groupTextureCoordinates.size() * 2 * sizeof(float))->asFloatBuffer();
 	// construct texture coordinates byte buffer as this will not change usually
