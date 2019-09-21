@@ -350,8 +350,8 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	modelImportRotationMatrix.set(levelModel->getImportTransformationsMatrix());
 	modelImportRotationMatrix.getScale(levelModelScale);
 	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
-	Console::println(to_string(levelModel->getSubGroups()->size()));
-	auto progressTotal = levelModel->getSubGroups()->size();
+	Console::println(to_string(levelModel->getSubGroups().size()));
+	auto progressTotal = levelModel->getSubGroups().size();
 	auto progressIdx = 0;
 	for (auto groupIt: levelModel->getSubGroups()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);

@@ -131,7 +131,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 
 		// vertices
 		{
-			object3DGroupMesh->setupVerticesBuffer(renderer, (*modelSkinningCache.vboIds)[0]);
+			object3DGroupMesh->setupVerticesBuffer(renderer, context, (*modelSkinningCache.vboIds)[0]);
 		}
 
 		// normals

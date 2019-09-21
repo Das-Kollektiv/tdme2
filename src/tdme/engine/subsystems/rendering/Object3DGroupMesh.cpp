@@ -62,7 +62,7 @@ Object3DGroupMesh::Object3DGroupMesh()
 	skinningMatrices = nullptr;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>& skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
 	//
@@ -375,16 +375,16 @@ void Object3DGroupMesh::setupTangentsBuffer(Renderer* renderer, void* context, i
 	renderer->uploadBufferObject(context, vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
 }
 
-void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, int32_t vboId)
+void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
 	// check if we have bitangents
 	if (bitangents == nullptr) return;
-	auto fbBitangents = ObjectBuffer::getByteBuffer(bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbBitangents = ObjectBuffer::getByteBuffer(context, bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create bitangents buffers
 	for (auto& bitangent : *bitangents) {
 		fbBitangents.put(bitangent.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
+	renderer->uploadBufferObject(context, vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
 }
 

@@ -64,7 +64,7 @@ void Object3DGroupRenderer::preRender(void* context)
 			object3DGroup->mesh->setupVertexIndicesBuffer(Engine::renderer, context, (*vboBaseIds)[0]);
 			// upload texture coordinates
 			if (object3DGroup->mesh->group->getTextureCoordinates().size() > 0) {
-				object3DGroup->mesh->setupTextureCoordinatesBuffer(Engine::renderer, (*vboBaseIds)[3]);
+				object3DGroup->mesh->setupTextureCoordinatesBuffer(Engine::renderer, context, (*vboBaseIds)[3]);
 			}
 		}
 		// upload vertices

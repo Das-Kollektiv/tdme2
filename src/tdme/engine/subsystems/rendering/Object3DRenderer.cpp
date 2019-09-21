@@ -248,10 +248,10 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 	// use default context
 	auto context = renderer->getDefaultContext();
 	// render transparent render faces if any exist
-	auto transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
-	if (transparentRenderFaces->size() > 0) {
+	auto& transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
+	if (transparentRenderFaces.size() > 0) {
 		// sort transparent render faces from far to near
-		sort(transparentRenderFaces->begin(), transparentRenderFaces->end(), TransparentRenderFace::compare);
+		sort(transparentRenderFaces.begin(), transparentRenderFaces.end(), TransparentRenderFace::compare);
 		// second render pass, draw color buffer for transparent objects
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear
@@ -267,7 +267,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		// but having a fixed value is not a bad idea except that it is a renderer call
 		// TODO: confirm this
 		renderer->setFrontFace(renderer->FRONTFACE_CCW);
-		for (auto transparentRenderFace: *transparentRenderFaces) {
+		for (auto transparentRenderFace: transparentRenderFaces) {
 			// do we have any faces yet?
 			if (groupTransparentRenderFaces.size() == 0) {
 				// nope, so add this one
@@ -322,7 +322,7 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 	}
 	//
 	auto model = object3DGroup->object->getModel();
-	auto facesEntities = object3DGroup->group->getFacesEntities();
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
 	FacesEntity* facesEntity = nullptr;
 	// attributes we collect for a transparent render face group
 	auto depthBuffer = false;
@@ -338,8 +338,8 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 		auto transparentRenderFace = transparentRenderFaces[i];
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
 		// determine if faces entity and so material did switch between last face and current face
-		if (facesEntity != &(*facesEntities)[facesEntityIdx]) {
-			facesEntity = &(*facesEntities)[facesEntityIdx];
+		if (facesEntity != &facesEntities[facesEntityIdx]) {
+			facesEntity = &facesEntities[facesEntityIdx];
 			material = facesEntity->getMaterial();
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
@@ -417,13 +417,13 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto faceIdx = 0;
-		auto facesEntityIdxCount = facesEntities->size();
+		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-			auto facesEntity = &(*facesEntities)[faceEntityIdx];
+			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces()->size();
+			auto faces = facesEntity->getFaces().size();
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -809,13 +809,13 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto faceIdx = 0;
-		auto facesEntityIdxCount = facesEntities->size();
+		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-			auto facesEntity = &(*facesEntities)[faceEntityIdx];
+			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces()->size();
+			auto faces = facesEntity->getFaces().size();
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -937,8 +937,8 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 
 void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
-	auto facesEntities = object3DGroup->group->getFacesEntities();
-	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
+	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
 

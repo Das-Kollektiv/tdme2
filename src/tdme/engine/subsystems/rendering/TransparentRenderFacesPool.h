@@ -113,7 +113,7 @@ private:
 	/** 
 	 * @return transparent render faces vector
 	 */
-	const vector<TransparentRenderFace*>& getTransparentRenderFaces();
+	vector<TransparentRenderFace*>& getTransparentRenderFaces();
 
 	/**
 	 * Public constructor
