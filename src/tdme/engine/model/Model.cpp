@@ -208,7 +208,7 @@ bool Model::computeTransformationsMatrix(const map<string, Group*>& groups, cons
 		if (group->getId() == groupId) return true;
 
 		// calculate sub groups
-		auto subGroups = group->getSubGroups();
+		auto& subGroups = group->getSubGroups();
 		if (subGroups.size() > 0) {
 			auto haveTransformationsMatrix = computeTransformationsMatrix(subGroups, transformationsMatrix.clone(), frame, groupId, transformationsMatrix);
 			if (haveTransformationsMatrix == true) return true;

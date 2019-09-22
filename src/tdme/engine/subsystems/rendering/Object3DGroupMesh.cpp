@@ -159,18 +159,18 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 			mesh->cSkinningJointWeight.resize(groupVertices.size());
 			mesh->cSkinningJointTransformationsMatrices.resize(groupVertices.size());
 			// compute joint weight caches
-			auto joints = skinning->getJoints();
-			auto weights = skinning->getWeights();
-			auto jointsWeights = skinning->getVerticesJointsWeights();
+			auto& joints = skinning->getJoints();
+			auto& weights = skinning->getWeights();
+			auto& jointsWeights = skinning->getVerticesJointsWeights();
 			for (auto vertexIndex = 0; vertexIndex < groupVertices.size(); vertexIndex++) {
-				auto vertexJointWeights = (*jointsWeights)[vertexIndex].size();
+				auto vertexJointWeights = jointsWeights[vertexIndex].size();
 				if (vertexJointWeights > mesh->cSkinningMaxVertexWeights)
 					mesh->cSkinningMaxVertexWeights = vertexJointWeights;
 
 				mesh->cSkinningJointWeight[vertexIndex].resize(vertexJointWeights);
 				mesh->cSkinningJointTransformationsMatrices[vertexIndex].resize(vertexJointWeights);
 				auto jointWeightIdx = 0;
-				for (auto& jointWeight : (*jointsWeights)[vertexIndex]) {
+				for (auto& jointWeight : jointsWeights[vertexIndex]) {
 					auto& joint = joints[jointWeight.getJointIndex()];
 					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
 					auto skinningMatrixIt = skinningMatrices->find(joint.getGroupId());
@@ -187,11 +187,6 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 
 void Object3DGroupMesh::computeTransformations(void* context)
 {
-	Vector3 tmpVector3;
-	auto groupVertices = group->getVertices();
-	auto groupNormals = group->getNormals();
-	auto groupTangent = group->getTangents();
-	auto groupBitangent = group->getBitangents();
 	// transformations for skinned meshes
 	auto skinning = group->getSkinning();
 	if (skinning != nullptr) {
@@ -200,7 +195,12 @@ void Object3DGroupMesh::computeTransformations(void* context)
 			Engine::getSkinningShader()->computeSkinning(context, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			auto jointsWeights = skinning->getVerticesJointsWeights();
+			Vector3 tmpVector3;
+			auto& groupVertices = group->getVertices();
+			auto& groupNormals = group->getNormals();
+			auto& groupTangent = group->getTangents();
+			auto& groupBitangent = group->getBitangents();
+			auto& jointsWeights = skinning->getVerticesJointsWeights();
 			Vector3* vertex;
 			Vector3* transformedVertex;
 			Vector3* normal;
@@ -223,7 +223,7 @@ void Object3DGroupMesh::computeTransformations(void* context)
 				transformedBitangent = bitangents != nullptr?&(*bitangents)[vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
 				// compute every influence on vertex and vertex normals
 				totalWeights = 0.0f;
-				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < (*jointsWeights)[vertexIndex].size(); vertexJointWeightIdx++) {
+				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
 					auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
 					// skinning transformation matrix
 					auto cTransformationsMatrix = cSkinningJointTransformationsMatrices[vertexIndex][vertexJointWeightIdx];
@@ -266,6 +266,9 @@ void Object3DGroupMesh::computeTransformations(void* context)
 		}
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
+		Vector3 tmpVector3;
+		auto& groupVertices = group->getVertices();
+		auto& groupNormals = group->getNormals();
 		// transformations for non skinned rendering
 		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < groupVertices.size(); vertexIndex++) {

@@ -317,7 +317,7 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, 
 	} else {
 		(*parentGroup->getSubGroups())[group->getId()] = group;
 	}
-	(*model->getGroups())[group->getId()] = group;
+	model->getGroups()[group->getId()] = group;
 	parentGroup = group;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
 		processNode(fbxNode->GetChild(i), model, parentGroup, pathName);

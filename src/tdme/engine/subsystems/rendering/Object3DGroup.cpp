@@ -202,7 +202,7 @@ void Object3DGroup::dispose()
 {
 	auto engine = Engine::getInstance();
 	auto textureManager = engine->getTextureManager();
-	auto facesEntities = group->getFacesEntities();
+	auto& facesEntities = group->getFacesEntities();
 	// dispose textures
 	for (auto j = 0; j < facesEntities.size(); j++) {
 		// get entity's material

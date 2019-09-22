@@ -209,11 +209,11 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
 		for (auto i = 0; i < skinning->getJoints().size(); i++) {
 			writeSkinningJoint(os, &skinning->getJoints()[i]);
 		}
-		os->writeInt(skinning->getVerticesJointsWeights()->size());
-		for (auto i = 0; i < skinning->getVerticesJointsWeights()->size(); i++) {
-			os->writeInt((*skinning->getVerticesJointsWeights())[i].size());
-			for (auto j = 0; j < (*skinning->getVerticesJointsWeights())[i].size(); j++) {
-				writeSkinningJointWeight(os, &(*skinning->getVerticesJointsWeights())[i][j]);
+		os->writeInt(skinning->getVerticesJointsWeights().size());
+		for (auto i = 0; i < skinning->getVerticesJointsWeights().size(); i++) {
+			os->writeInt(skinning->getVerticesJointsWeights()[i].size());
+			for (auto j = 0; j < skinning->getVerticesJointsWeights()[i].size(); j++) {
+				writeSkinningJointWeight(os, &skinning->getVerticesJointsWeights()[i][j]);
 			}
 		}
 	}

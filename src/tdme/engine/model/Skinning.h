@@ -58,7 +58,7 @@ public:
 	/** 
 	 * @return all vertex joints
 	 */
-	vector<vector<JointWeight>>* getVerticesJointsWeights();
+	vector<vector<JointWeight>>& getVerticesJointsWeights();
 
 	/** 
 	 * Sets up vertices joints weights 

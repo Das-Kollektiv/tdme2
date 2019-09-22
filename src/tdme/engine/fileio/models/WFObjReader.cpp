@@ -85,8 +85,8 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 	vector<Vector3> vertices;
 	vector<TextureCoordinate> textureCoordinates;
 	map<string, Material*> materials;
-	auto subGroups = model->getSubGroups();
-	auto groups = model->getGroups();
+	auto& subGroups = model->getSubGroups();
+	auto& groups = model->getGroups();
 	// current group
 	Group* group = nullptr;
 	// model vertices -> group vertices mapping

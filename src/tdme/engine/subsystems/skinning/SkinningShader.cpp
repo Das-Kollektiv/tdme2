@@ -109,7 +109,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		ModelSkinningCache modelSkinningCache;
 
 		auto skinning = group->getSkinning();
-		auto& verticesJointsWeights = *skinning->getVerticesJointsWeights();
+		auto& verticesJointsWeights = skinning->getVerticesJointsWeights();
 		auto& weights = skinning->getWeights();
 
 		// vbos
@@ -200,7 +200,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	// upload matrices
 	{
 		auto skinning = group->getSkinning();
-		auto skinningJoints = skinning->getJoints();
+		auto& skinningJoints = skinning->getJoints();
 		auto fbMatrices = ObjectBuffer::getByteBuffer(context, skinningJoints.size() * 16 * sizeof(float))->asFloatBuffer();
 		for (auto& joint: skinningJoints) {
 			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());

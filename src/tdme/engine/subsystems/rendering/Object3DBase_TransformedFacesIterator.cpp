@@ -29,7 +29,7 @@ void Object3DBase_TransformedFacesIterator::reset()
 {
 	faceCount = 0;
 	for (auto object3DGroup : object3DBase->object3dGroups) {
-		for (auto facesEntity : object3DGroup->group->getFacesEntities()) {
+		for (auto& facesEntity : object3DGroup->group->getFacesEntities()) {
 			faceCount += facesEntity.getFaces().size();
 		}
 	}

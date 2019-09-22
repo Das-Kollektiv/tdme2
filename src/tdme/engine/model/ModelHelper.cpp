@@ -85,9 +85,9 @@ void ModelHelper::createNormalTangentsAndBitangents(Group* group)
 	Vector2 deltaUV2;
 	Vector3 tmpVector3;
 	// create it
-	auto vertices = group->getVertices();
-	auto normals = group->getNormals();
-	auto textureCoordinates = group->getTextureCoordinates();
+	auto& vertices = group->getVertices();
+	auto& normals = group->getNormals();
+	auto& textureCoordinates = group->getTextureCoordinates();
 	for (auto& faceEntity : group->getFacesEntities())
 	if (faceEntity.getMaterial() != nullptr && faceEntity.getMaterial()->hasNormalTexture() == true) {
 		for (auto& face : faceEntity.getFaces()) {
@@ -162,11 +162,11 @@ void ModelHelper::prepareForIndexedRendering(const map<string, Group*>& groups)
 	// we need to prepare the group for indexed rendering
 	for (auto it: groups) {
 		Group* group = it.second;
-		auto groupVertices = group->getVertices();
-		auto groupNormals = group->getNormals();
-		auto groupTextureCoordinates = group->getTextureCoordinates();
-		auto groupTangents = group->getTangents();
-		auto groupBitangents = group->getBitangents();
+		auto& groupVertices = group->getVertices();
+		auto& groupNormals = group->getNormals();
+		auto& groupTextureCoordinates = group->getTextureCoordinates();
+		auto& groupTangents = group->getTangents();
+		auto& groupBitangents = group->getBitangents();
 		vector<int32_t> vertexMapping;
 		vector<Vector3> indexedVertices;
 		vector<Vector3> indexedNormals;
@@ -237,14 +237,14 @@ void ModelHelper::prepareForIndexedRendering(const map<string, Group*>& groups)
 
 void ModelHelper::prepareForIndexedRendering(Skinning* skinning, const vector<int32_t>& vertexMapping, int32_t vertices)
 {
-	auto originalVerticesJointsWeights = skinning->getVerticesJointsWeights();
+	auto& originalVerticesJointsWeights = skinning->getVerticesJointsWeights();
 	vector<vector<JointWeight>> verticesJointsWeights;
 	verticesJointsWeights.resize(vertices);
 	for (auto i = 0; i < vertices; i++) {
 		auto vertexOriginalMappedToIdx = vertexMapping[i];
-		verticesJointsWeights[i].resize((*originalVerticesJointsWeights)[vertexOriginalMappedToIdx].size());
+		verticesJointsWeights[i].resize(originalVerticesJointsWeights[vertexOriginalMappedToIdx].size());
 		for (auto j = 0; j < verticesJointsWeights[i].size(); j++) {
-			verticesJointsWeights[i][j] = (*originalVerticesJointsWeights)[vertexOriginalMappedToIdx][j];
+			verticesJointsWeights[i][j] = originalVerticesJointsWeights[vertexOriginalMappedToIdx][j];
 		}
 	}
 	skinning->setVerticesJointsWeights(verticesJointsWeights);

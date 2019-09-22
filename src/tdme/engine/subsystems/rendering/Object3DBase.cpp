@@ -272,7 +272,7 @@ void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>& matric
 		matrix->identity();
 		matrices[group->getId()] = matrix;
 		// do sub groups
-		auto subGroups = group->getSubGroups();
+		auto& subGroups = group->getSubGroups();
 		if (subGroups.size() > 0) {
 			createTransformationsMatrices(matrices, subGroups);
 		}
@@ -347,7 +347,7 @@ void Object3DBase::computeTransformationsMatrices(const map<string, Group*>& gro
 			transformationMatrixIt->second->set(transformationsMatrix);
 		}
 		// calculate for sub groups
-		auto subGroups = group->getSubGroups();
+		auto& subGroups = group->getSubGroups();
 		if (subGroups.size() > 0) {
 			Matrix4x4 parentTransformationsMatrix;
 			parentTransformationsMatrix.set(transformationsMatrix);
@@ -533,7 +533,7 @@ int32_t Object3DBase::determineSkinnedGroupCount(const map<string, Group*>& grou
 		if (group->getSkinning() != nullptr)
 			count++;
 		// calculate sub groups
-		auto subGroups = group->getSubGroups();
+		auto& subGroups = group->getSubGroups();
 		if (subGroups.size() > 0) {
 			count = determineSkinnedGroupCount(subGroups, count);
 		}
@@ -551,7 +551,7 @@ int32_t Object3DBase::determineSkinnedGroups(const map<string, Group*>& groups, 
 			skinningGroups[idx++] = group;
 		}
 		// calculate sub groups
-		auto subGroups = group->getSubGroups();
+		auto& subGroups = group->getSubGroups();
 		if (subGroups.size() > 0) {
 			idx = determineSkinnedGroups(subGroups, skinningGroups, idx);
 		}

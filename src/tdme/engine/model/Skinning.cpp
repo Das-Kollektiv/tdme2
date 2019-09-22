@@ -48,9 +48,9 @@ void Skinning::setJoints(const vector<Joint>& joints)
 	setupJointsByName();
 }
 
-vector<vector<JointWeight>>* Skinning::getVerticesJointsWeights()
+vector<vector<JointWeight>>& Skinning::getVerticesJointsWeights()
 {
-	return &verticesJointsWeights;
+	return verticesJointsWeights;
 }
 
 void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights)
