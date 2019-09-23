@@ -58,12 +58,13 @@ Object3DRenderGroup::Object3DRenderGroup(
 	this->dynamicShadowing = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
-	this->identityMatrix.identity();
 	this->combinedModels.resize(Math::clamp(lodLevels, 1, 3));
 	this->combinedEntity = nullptr;
-	lodReduceBy[0] = 1;
-	lodReduceBy[1] = modelLOD2ReduceBy;
-	lodReduceBy[2] = modelLOD3ReduceBy;
+	this->lodReduceBy[0] = 1;
+	this->lodReduceBy[1] = modelLOD2ReduceBy;
+	this->lodReduceBy[2] = modelLOD3ReduceBy;
+	this->modelLOD2MinDistance = modelLOD2MinDistance;
+	this->modelLOD3MinDistance = modelLOD3MinDistance;
 	setModel(model);
 }
 
@@ -180,7 +181,6 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Matrix4x
 			}
 			// create
 			if (combinedModelGroupFacesEntity == nullptr) {
-				Console::println("xxx: " + facesEntity.getId());
 				auto newFacesEntity = FacesEntity(
 					combinedModelGroup,
 					facesEntity.getId()
@@ -349,12 +349,11 @@ void Object3DRenderGroup::updateRenderGroup() {
 			id,
 			combinedModels[0],
 			combinedModels[1] == nullptr?LODObject3D::LODLEVELTYPE_NONE:LODObject3D::LODLEVELTYPE_MODEL,
-			25.0f,
+			modelLOD2MinDistance,
 			combinedModels[1],
 			combinedModels[2] == nullptr?LODObject3D::LODLEVELTYPE_NONE:LODObject3D::LODLEVELTYPE_MODEL,
-			50.0f,
+			modelLOD3MinDistance,
 			combinedModels[2]
-
 		);
 		combinedLODObject3D->setParentEntity(this);
 		combinedLODObject3D->setShader(shaderId);

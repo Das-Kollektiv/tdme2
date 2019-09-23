@@ -62,7 +62,8 @@ private:
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
 	BoundingBox boundingBoxTransformed;
-	Matrix4x4 identityMatrix;
+	float modelLOD2MinDistance;
+	float modelLOD3MinDistance;
 	Entity* combinedEntity;
 	vector<Transformations> objectsTransformations;
 	Model* model;
