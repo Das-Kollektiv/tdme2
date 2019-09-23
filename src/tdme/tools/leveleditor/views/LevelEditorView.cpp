@@ -940,7 +940,7 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
 	FacesEntity groupFacesEntityGround(groundGroup, "tdme.leveleditor.grid.facesentity");
 	groupFacesEntityGround.setMaterial(groundPlateMaterial);
-	groupFacesEntityGround.setFaces(&groundFacesGround);
+	groupFacesEntityGround.setFaces(groundFacesGround);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntityGround);
 	groundGroup->setVertices(groundVertices);

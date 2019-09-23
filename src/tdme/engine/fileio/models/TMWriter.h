@@ -250,7 +250,7 @@ private:
 	 * @param tc texture coordinates
 	 * @throws model file IO exception
 	 */
-	static void writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc);
+	static void writeTextureCoordinates(TMWriterOutputStream* os, const vector<TextureCoordinate>& tc);
 
 	/** 
 	 * Write indices to output stream
@@ -274,7 +274,7 @@ private:
 	 * @param facesEntities faces entities
 	 * @throws model file IO exception
 	 */
-	static void writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>& facesEntities);
+	static void writeFacesEntities(TMWriterOutputStream* os, const vector<FacesEntity>& facesEntities);
 
 	/** 
 	 * Write skinning joint
@@ -282,7 +282,7 @@ private:
 	 * @param joint joint
 	 * @throws model file IO exception
 	 */
-	static void writeSkinningJoint(TMWriterOutputStream* os, Joint* joint);
+	static void writeSkinningJoint(TMWriterOutputStream* os, const Joint& joint);
 
 	/** 
 	 * Write skinning joint weight
@@ -290,7 +290,7 @@ private:
 	 * @param jointWeight joint
 	 * @throws model file IO exception
 	 */
-	static void writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight);
+	static void writeSkinningJointWeight(TMWriterOutputStream* os, const JointWeight& jointWeight);
 
 	/** 
 	 * Write skinning to output stream

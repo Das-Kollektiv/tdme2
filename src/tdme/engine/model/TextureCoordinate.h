@@ -1,12 +1,14 @@
-
 #pragma once
 
 #include <array>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/math/Math.h>
 
 using std::array;
+
+using tdme::math::Math;
 
 /** 
  * Class representing texture UV coordinates data
@@ -21,12 +23,16 @@ public:
 	/** 
 	 * @return U
 	 */
-	float getU() const;
+	inline float getU() const {
+		return data[0];
+	}
 
 	/** 
 	 * @return V
 	 */
-	float getV() const;
+	inline float getV() const {
+		return data[1];
+	}
 
 	/**
 	 * Set texture coordinate
@@ -50,7 +56,9 @@ public:
 	/** 
 	 * @return texture data as array
 	 */
-	array<float, 2>& getArray() const;
+	inline array<float, 2>& getArray() const {
+		return (array<float, 2>&)data;
+	}
 
 	/** 
 	 * Clones the texture coordinate
@@ -62,7 +70,14 @@ public:
 	 * Compares this texture coordinate with given texture coordinate
 	 * @return equality
 	 */
-	bool equals(const TextureCoordinate& textureCoordinate) const;
+	inline bool equals(const TextureCoordinate& textureCoordinate) const {
+		return
+			this == &textureCoordinate ||
+			(
+				Math::abs(data[0] - textureCoordinate.data[0]) < Math::EPSILON &&
+				Math::abs(data[1] - textureCoordinate.data[1]) < Math::EPSILON
+			);
+	}
 
 	/**
 	 * Public constructor

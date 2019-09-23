@@ -85,13 +85,6 @@ public:
 	}
 
 	/** 
-	 * Create normal tangents and bitangents for groups with normal mapping
-	 * @see http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
-	 * @param group group
-	 */
-	static void createNormalTangentsAndBitangents(Group* group);
-
-	/** 
 	 * Prepare for indexed rendering
 	 * @param model model
 	 */
@@ -173,7 +166,7 @@ public:
 	 * @param material material
 	 * @return material
 	 */
-	static Material* cloneMaterial(Material* material);
+	static Material* cloneMaterial(const Material* material);
 
 	/**
 	 * Create model from source sub groups into target sub groups

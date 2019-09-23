@@ -1,4 +1,4 @@
-#include <tdme/engine/model/Model.h>
+	#include <tdme/engine/model/Model.h>
 
 #include <map>
 #include <string>
@@ -41,7 +41,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	this->name = name;
 	this->upVector = upVector;
 	this->rotationOrder = rotationOrder;
-	hasSkinning_ = false;
+	skinning = false;
 	fps = FPS_DEFAULT;
 	importTransformationsMatrix.identity();
 	this->boundingBox = boundingBox;
@@ -66,35 +66,6 @@ void Model::deleteSubGroups(const map<string, Group*>& subGroups) {
 	}
 }
 
-Model::AuthoringTool Model::getAuthoringTool() {
-	return authoringTool;
-}
-
-const string& Model::getName()
-{
-	return name;
-}
-
-UpVector* Model::getUpVector()
-{
-	return upVector;
-}
-
-RotationOrder* Model::getRotationOrder()
-{
-	return rotationOrder;
-}
-
-map<string, Material*>& Model::getMaterials()
-{
-	return materials;
-}
-
-map<string, Group*>& Model::getGroups()
-{
-	return groups;
-}
-
 Group* Model::getGroupById(const string& id)
 {
 	auto groupIt = groups.find(id);
@@ -105,11 +76,6 @@ Group* Model::getGroupById(const string& id)
 
 }
 
-map<string, Group*>& Model::getSubGroups()
-{
-	return subGroups;
-}
-
 Group* Model::getSubGroupById(const string& id)
 {
 	auto groupIt = subGroups.find(id);
@@ -117,26 +83,6 @@ Group* Model::getSubGroupById(const string& id)
 		return groupIt->second;
 	}
 	return nullptr;
-}
-
-bool Model::hasSkinning()
-{
-	return hasSkinning_;
-}
-
-void Model::setHasSkinning(bool hasSkinning)
-{
-	this->hasSkinning_ = hasSkinning;
-}
-
-float Model::getFPS()
-{
-	return fps;
-}
-
-void Model::setFPS(float fps)
-{
-	this->fps = fps;
 }
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
@@ -160,21 +106,6 @@ AnimationSetup* Model::getAnimationSetup(const string& id)
 		return animationSetupIt->second;
 	}
 	return nullptr;
-}
-
-map<string, AnimationSetup*>& Model::getAnimationSetups()
-{
-	return animationSetups;
-}
-
-bool Model::hasAnimations()
-{
-	return animationSetups.size() > 0;
-}
-
-Matrix4x4& Model::getImportTransformationsMatrix()
-{
-	return importTransformationsMatrix;
 }
 
 BoundingBox* Model::getBoundingBox()
@@ -217,12 +148,4 @@ bool Model::computeTransformationsMatrix(const map<string, Group*>& groups, cons
 
 	//
 	return false;
-}
-
-bool Model::computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame) {
-	return computeTransformationsMatrix(subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
-}
-
-bool Model::computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame) {
-	return computeTransformationsMatrix(subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
 }

@@ -122,7 +122,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	// faces entity
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -130,8 +130,6 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
@@ -206,7 +204,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// faces entity
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -214,8 +212,6 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
@@ -313,7 +309,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	// set up faces entity
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// group faces entities
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -321,8 +317,6 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
@@ -459,7 +453,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	// group faces entities
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -467,8 +461,6 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
@@ -515,9 +507,11 @@ void PrimitiveModel::setupConvexMeshMaterial(const map<string, Group*>& groups, 
 {
 	for (auto it: groups) {
 		Group* group = it.second;
-		for (auto& faceEntity : group->getFacesEntities()) {
+		auto facesEntities = group->getFacesEntities();
+		for (auto& faceEntity : facesEntities) {
 			faceEntity.setMaterial(material);
 		}
+		group->setFacesEntities(group->getFacesEntities());
 		setupConvexMeshMaterial(group->getSubGroups(), material);
 	}
 }

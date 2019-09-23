@@ -46,32 +46,32 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 
 private:
 	Object3DGroupRenderer* object3DGroupRenderer;
-	Group* group {  };
-	int32_t faceCount {  };
-	vector<uint32_t> indices {  };
-	vector<TextureCoordinate>* textureCoordinates;
-	vector<Vector3>* vertices {  };
-	vector<Vector3>* normals {  };
-	vector<Vector3>* tangents {  };
-	vector<Vector3>* bitangents {  };
+	Group* group ;
+	int32_t faceCount;
+	vector<uint32_t> indices;
+	const vector<TextureCoordinate>* textureCoordinates;
+	const vector<Vector3>* vertices;
+	const vector<Vector3>* normals;
+	const vector<Vector3>* tangents;
+	const vector<Vector3>* bitangents;
 	vector<Vector3> transformedVertices;
 	vector<Vector3> transformedNormals;
 	vector<Vector3> transformedTangents;
 	vector<Vector3> transformedBitangents;
-	map<string, Matrix4x4*>* skinningMatrices;
-	Engine::AnimationProcessingTarget animationProcessingTarget {  };
+	map<string, Matrix4x4>* skinningMatrices;
+	Engine::AnimationProcessingTarget animationProcessingTarget;
 
-	int32_t cSkinningMaxVertexWeights {  };
-	vector<vector<float>> cSkinningJointWeight {  };
+	int32_t cSkinningMaxVertexWeights;
+	vector<vector<float>> cSkinningJointWeight;
 
-	Matrix4x4* cGroupTransformationsMatrix {  };
+	Matrix4x4* cGroupTransformationsMatrix;
 
-	vector<vector<Matrix4x4*>> cSkinningJointTransformationsMatrices {  };
+	vector<vector<Matrix4x4*>> cSkinningJointTransformationsMatrices;
 
-	bool skinning {  };
-	int32_t skinningJoints {  };
+	bool skinning;
+	int32_t skinningJoints;
 
-	bool recreatedBuffers {  };
+	bool recreatedBuffers;
 
 private:
 
@@ -84,7 +84,7 @@ private:
 	 * @param skinningMatrices skinning matrices 
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices); // TODO: std container: maybe use call by reference
+	static Object3DGroupMesh* createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4>& transformationMatrices, map<string, Matrix4x4>* skinningMatrices); // TODO: std container: maybe use call by reference
 
 	/** 
 	 * Computes mesh transformations

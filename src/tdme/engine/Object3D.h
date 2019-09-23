@@ -52,6 +52,7 @@ public:
 private:
 	friend class Engine;
 	friend class LODObject3D;
+	friend class Object3DRenderGroup;
 	friend class ObjectParticleSystem;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
 
@@ -170,7 +171,7 @@ public:
 		Object3DInternal::setPickable(pickable);
 	}
 
-	inline Matrix4x4* getTransformationsMatrix(const string& id) override {
+	inline const Matrix4x4 getTransformationsMatrix(const string& id) override {
 		return Object3DInternal::getTransformationsMatrix(id);
 	}
 

@@ -42,9 +42,6 @@ class tdme::engine::subsystems::rendering::Object3DBase
 	friend class Object3DBase_TransformedFacesIterator;
 	friend class ModelUtilitiesInternal;
 
-public:
-	static map<string, Matrix4x4*> defaultEmptyMap;
-
 private:
 	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
 
@@ -72,9 +69,9 @@ private:
 
 protected:
 	Model* model {  };
-	vector<map<string, Matrix4x4*>*> transformationsMatrices {  };
+	vector<map<string, Matrix4x4>> transformationsMatrices {  };
 	bool hasSkinning {  };
-	vector<map<string, Matrix4x4*>> skinningGroupsMatrices {  };
+	vector<map<string, Matrix4x4>> skinningGroupsMatrices {  };
 	vector<Group*> skinningGroups {  };
 	vector<AnimationState> baseAnimations {  };
 	int baseAnimationIdx {  };
@@ -90,7 +87,7 @@ protected:
 	 * @param matrices matrices
 	 * @param groups groups
 	 */
-	virtual void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, const map<string, Group*>& groups);
+	virtual void createTransformationsMatrices(map<string, Matrix4x4>& matrices, const map<string, Group*>& groups);
 
 	/**
 	 * Calculates all groups transformation matrices
@@ -100,7 +97,7 @@ protected:
 	 * @param transformationsMatrices transformations matrices which need to be set up
 	 * @param depth depth
 	 */
-	virtual void computeTransformationsMatrices(const map<string, Group*>& groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth);
+	virtual void computeTransformationsMatrices(const map<string, Group*>& groups, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4>& transformationsMatrices, int32_t depth);
 
 	/**
 	 * Compute transformations for given animation state into given transformations matrices
@@ -109,20 +106,20 @@ protected:
 	 * @param context context
 	 * @param timing timing
 	 */
-	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, Timing* timing);
+	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4>& transformationsMatrices, void* context, Timing* timing);
 
 	/**
 	 * Update skinning transformations matrices
 	 * @param transformationsMatrices transformations matrices
 	 */
-	virtual void updateSkinningTransformationsMatrices(map<string, Matrix4x4*>& transformationsMatrices);
+	virtual void updateSkinningTransformationsMatrices(const map<string, Matrix4x4>& transformationsMatrices);
 
 	/**
 	 * Get skinning groups matrices
 	 * @param group group
 	 * @return matrices
 	 */
-	virtual map<string, Matrix4x4*>* getSkinningGroupsMatrices(Group* group);
+	virtual map<string, Matrix4x4>* getSkinningGroupsMatrices(Group* group);
 
 	/**
 	 * Public constructor
@@ -211,7 +208,7 @@ public:
 	 * @param id group id
 	 * @return transformation matrix or null
 	 */
-	virtual Matrix4x4* getTransformationsMatrix(const string& id);
+	virtual const Matrix4x4 getTransformationsMatrix(const string& id);
 
 	/**
 	 * Pre render step, computes transformations

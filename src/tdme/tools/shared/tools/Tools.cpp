@@ -258,7 +258,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	FacesEntity groupFacesEntityGround(groundGroup, "ground group faces entity ground");
 	groupFacesEntityGround.setMaterial(groundMaterial);
 	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntityGround.setFaces(&groundFacesGround);
+	groupFacesEntityGround.setFaces(groundFacesGround);
 	groupFacesEntities.push_back(groupFacesEntityGround);
 	groundGroup->setVertices(groundVertices);
 	groundGroup->setNormals(groundNormals);

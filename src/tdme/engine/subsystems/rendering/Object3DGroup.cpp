@@ -141,8 +141,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 				object3DGroup->materialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// determine group transformations matrix
-			auto groupTransformationsMatrixIt = object3D->transformationsMatrices[0]->find(group->getId());
-			object3DGroup->groupTransformationsMatrix = groupTransformationsMatrixIt != object3D->transformationsMatrices[0]->end()?groupTransformationsMatrixIt->second:nullptr;
+			object3DGroup->groupTransformationsMatrix = &object3D->transformationsMatrices[0].find(group->getId())->second;
 		}
 		// but still check sub groups
 		createGroups(object3D, group->getSubGroups(), animated, useMeshManager, animationProcessingTarget, object3DGroups);

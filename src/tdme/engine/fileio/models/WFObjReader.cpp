@@ -264,7 +264,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 					if (group != nullptr) {
 						// current faces entity
 						if (groupFacesEntityFaces.empty() == false) {
-							groupFacesEntity->setFaces(&groupFacesEntityFaces);
+							groupFacesEntity->setFaces(groupFacesEntityFaces);
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
 						// group
@@ -272,7 +272,6 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 						group->setNormals(groupNormals);
 						group->setTextureCoordinates(groupTextureCoordinates);
 						group->setFacesEntities(groupFacesEntities);
-						group->determineFeatures();
 					}
 					t.tokenize(arguments, " ");
 					auto name = t.nextToken();
@@ -292,7 +291,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 					if (group != nullptr) {
 						// current faces entity
 						if (groupFacesEntityFaces.empty() == false) {
-							groupFacesEntity->setFaces(&groupFacesEntityFaces);
+							groupFacesEntity->setFaces(groupFacesEntityFaces);
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
 						// set up new one
@@ -316,7 +315,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 			if (group != nullptr) {
 				// current faces entity
 				if (groupFacesEntityFaces.empty() == false) {
-					groupFacesEntity->setFaces(&groupFacesEntityFaces);
+					groupFacesEntity->setFaces(groupFacesEntityFaces);
 					groupFacesEntities.push_back(*groupFacesEntity);
 				}
 				// group
@@ -326,7 +325,6 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 					group->setTextureCoordinates(groupTextureCoordinates);
 				}
 				group->setFacesEntities(groupFacesEntities);
-				group->determineFeatures();
 			}
 		}
 	}

@@ -19,12 +19,12 @@ class tdme::engine::model::Face final
 	friend class ModelHelper;
 
 private:
-	Group* group {  };
-	array<int32_t, 3> vertexIndices {  };
-	array<int32_t, 3> normalIndices {  };
-	array<int32_t, 3> textureCoordinateIndices {  };
-	array<int32_t, 3> tangentIndices {  };
-	array<int32_t, 3> bitangentIndices {  };
+	Group* group { nullptr };
+	array<int32_t, 3> vertexIndices {{ -1, -1, -1 }};
+	array<int32_t, 3> normalIndices {{ -1, -1, -1 }};
+	array<int32_t, 3> textureCoordinateIndices {{ -1, -1, -1 }};
+	array<int32_t, 3> tangentIndices {{ -1, -1, -1 }};
+	array<int32_t, 3> bitangentIndices {{ -1, -1, -1 }};
 
 	/**
 	 * Prepared this face for indexed rendering
@@ -33,25 +33,26 @@ private:
 	void setIndexedRenderingIndices(const array<int32_t, 3>& indices);
 
 public:
-	/**
-	 * Init
-	 */
-	void init();
-
 	/** 
 	 * @return group
 	 */
-	Group* getGroup();
+	inline Group* getGroup() const {
+		return group;
+	}
 
 	/** 
 	 * @return vertex indices
 	 */
-	const array<int32_t, 3>& getVertexIndices();
+	inline const array<int32_t, 3>& getVertexIndices() const {
+		return vertexIndices;
+	}
 
 	/** 
 	 * @return normal indices
 	 */
-	const array<int32_t, 3>& getNormalIndices();
+	inline const array<int32_t, 3>& getNormalIndices() const {
+		return normalIndices;
+	}
 
 	/** 
 	 * Set normal indices
@@ -72,7 +73,9 @@ public:
 	/** 
 	 * @return texture coordinate indices or null (optional)
 	 */
-	const array<int32_t, 3>& getTextureCoordinateIndices();
+	inline const array<int32_t, 3>& getTextureCoordinateIndices() const {
+		return textureCoordinateIndices;
+	}
 
 	/** 
 	 * Set tangent indices
@@ -85,7 +88,9 @@ public:
 	/** 
 	 * @return tangent indices
 	 */
-	const array<int32_t, 3>& getTangentIndices();
+	inline const array<int32_t, 3>& getTangentIndices() const {
+		return tangentIndices;
+	}
 
 	/** 
 	 * Set bitangent indices
@@ -98,7 +103,9 @@ public:
 	/** 
 	 * @return bi tangent indices
 	 */
-	const array<int32_t, 3>& getBitangentIndices();
+	inline const array<int32_t, 3>& getBitangentIndices() const {
+		return bitangentIndices;
+	}
 
 	/**
 	 * Public constructor

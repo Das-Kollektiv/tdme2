@@ -2,6 +2,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -24,6 +25,7 @@
 using std::array;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::Entity;
 using tdme::engine::Engine;
@@ -53,21 +55,21 @@ private:
 	bool frustumCulling { true };
 
 	string id;
-	bool enabled {  };
-	bool pickable {  };
-	bool dynamicShadowing {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Matrix4x4 identityMatrix {  };
-	Entity* combinedEntity {  };
-	Model* model {  };
-	vector<Model*> combinedModels {  };
+	bool enabled;
+	bool pickable;
+	bool dynamicShadowing;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Matrix4x4 identityMatrix;
+	Entity* combinedEntity;
+	vector<Transformations> objectsTransformations;
+	Model* model;
+	vector<Model*> combinedModels;
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
-	int objectCount { 0 };
 	array<int, 3> lodReduceBy;
 	bool enableEarlyZRejection { false };
 
@@ -81,17 +83,19 @@ private:
 	 * @param sourceGroup source group to combine into current model
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param combinedModel combined model
+	 * @param reduceFactorBy reduce factor by
 	 */
-	static void combineGroup(Group* sourceGroup, const Matrix4x4& parentTransformationsMatrix, Model* combinedModel);
+	static void combineGroup(Group* sourceGroup, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
 
 	/**
 	 * Combine model with transformations into current model
 	 * @param model model
 	 * @param transformations transformations
 	 * @param combinedModel combined model
+	 * @param reduceFactorBy reduce factor by
 	 * @return model
 	 */
-	static void combineObject(Model* model, const Transformations& transformations, Model* combinedModel);
+	static void combineObjects(Model* model, const vector<Transformations>& objectsTransformations, Model* combinedModel);
 
 public:
 	// overriden methods

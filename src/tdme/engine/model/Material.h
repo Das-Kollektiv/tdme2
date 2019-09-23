@@ -35,30 +35,30 @@ public:
 	}
 
 private:
-	string id {  };
-	Color4 ambientColor {  };
-	Color4 diffuseColor {  };
-	Color4 specularColor {  };
-	Color4 emissionColor {  };
-	float shininess {  };
-	string diffuseTexturePathName {  };
-	string diffuseTextureFileName {  };
-	string diffuseTransparencyTexturePathName {  };
-	string diffuseTransparencyTextureFileName {  };
-	Texture* diffuseTexture {  };
-	bool diffuseTextureMaskedTransparency { };
-	float diffuseTextureMaskedTransparencyThreshold { };
-	bool diffuseTextureTransparency {  };
-	string specularTexturePathName {  };
-	string specularTextureFileName {  };
-	Texture* specularTexture {  };
-	string normalTexturePathName {  };
-	string normalTextureFileName {  };
-	Texture* normalTexture {  };
-	string displacementTexturePathName {  };
-	string displacementTextureFileName {  };
-	Texture* displacementTexture {  };
-	Matrix2D3x3 textureMatrix { };
+	string id;
+	Color4 ambientColor;
+	Color4 diffuseColor;
+	Color4 specularColor;
+	Color4 emissionColor;
+	float shininess;
+	string diffuseTexturePathName;
+	string diffuseTextureFileName;
+	string diffuseTransparencyTexturePathName;
+	string diffuseTransparencyTextureFileName;
+	Texture* diffuseTexture;
+	bool diffuseTextureMaskedTransparency;
+	float diffuseTextureMaskedTransparencyThreshold;
+	bool diffuseTextureTransparency;
+	string specularTexturePathName;
+	string specularTextureFileName;
+	Texture* specularTexture;
+	string normalTexturePathName;
+	string normalTextureFileName;
+	Texture* normalTexture;
+	string displacementTexturePathName;
+	string displacementTextureFileName;
+	Texture* displacementTexture;
+	Matrix2D3x3 textureMatrix;
 
 	/**
 	 * Checks and set ups diffuse texture transparency
@@ -196,7 +196,7 @@ public:
 	/** 
 	 * @return the material's diffuse texture
 	 */
-	inline Texture* getDiffuseTexture() {
+	inline Texture* getDiffuseTexture() const {
 		return diffuseTexture;
 	}
 
@@ -268,7 +268,7 @@ public:
 	/** 
 	 * @return the material's specular texture
 	 */
-	inline Texture* getSpecularTexture() {
+	inline Texture* getSpecularTexture() const {
 		return specularTexture;
 	}
 
@@ -303,7 +303,7 @@ public:
 	/** 
 	 * @return the material's normal texture
 	 */
-	inline Texture* getNormalTexture() {
+	inline Texture* getNormalTexture() const {
 		return normalTexture;
 	}
 
@@ -338,7 +338,7 @@ public:
 	/** 
 	 * @return the material's displacement texture
 	 */
-	inline Texture* getDisplacementTexture() {
+	inline Texture* getDisplacementTexture() const {
 		return displacementTexture;
 	}
 
@@ -359,7 +359,7 @@ public:
 	/**
 	 * @return texture matrix
 	 */
-	const Matrix2D3x3& getTextureMatrix() {
+	const Matrix2D3x3& getTextureMatrix() const {
 		return textureMatrix;
 	}
 

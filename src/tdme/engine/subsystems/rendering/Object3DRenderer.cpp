@@ -323,12 +323,12 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 	//
 	auto model = object3DGroup->object->getModel();
 	auto& facesEntities = object3DGroup->group->getFacesEntities();
-	FacesEntity* facesEntity = nullptr;
+	const FacesEntity* facesEntity = nullptr;
 	// attributes we collect for a transparent render face group
 	auto depthBuffer = false;
 	auto& effectColorAdd = object3D->getEffectColorAdd();
 	auto& effectColorMul = object3D->getEffectColorMul();
-	Material* material = nullptr;
+	const Material* material = nullptr;
 	auto textureCoordinates = false;
 	Vector3 transformedVector;
 	Vector3 transformedNormal;

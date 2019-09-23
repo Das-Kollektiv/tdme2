@@ -362,13 +362,12 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	}
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	group->determineFeatures();
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);
@@ -418,13 +417,12 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	}
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	group->determineFeatures();
 	model->getGroups()["group"] = group;
 	model->getSubGroups()["group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);

@@ -11,19 +11,23 @@
 class tdme::engine::model::JointWeight final
 {
 private:
-	int32_t jointIndex {  };
-	int32_t weightIndex {  };
+	int32_t jointIndex;
+	int32_t weightIndex;
 public:
 
 	/** 
 	 * @returns joint index
 	 */
-	int32_t getJointIndex();
+	inline int32_t getJointIndex() const {
+		return jointIndex;
+	}
 
 	/** 
 	 * @returns weight index
 	 */
-	int32_t getWeightIndex();
+	inline int32_t getWeightIndex() const {
+		return weightIndex;
+	}
 
 	/**
 	 * Public constructor

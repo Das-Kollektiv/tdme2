@@ -26,16 +26,18 @@ using tdme::engine::model::JointWeight;
 class tdme::engine::model::Skinning final
 {
 private:
-	vector<float> weights {  };
-	vector<Joint> joints {  };
-	vector<vector<JointWeight>> verticesJointsWeights {  };
-	map<string, Joint*> jointsByName {  };
+	vector<float> weights;
+	vector<Joint> joints;
+	vector<vector<JointWeight>> verticesJointsWeights;
+	map<string, Joint*> jointsByName;
 public:
 
 	/** 
 	 * @return weights
 	 */
-	const vector<float>& getWeights();
+	inline const vector<float>& getWeights() {
+		return weights;
+	}
 
 
 	/** 
@@ -47,7 +49,9 @@ public:
 	/** 
 	 * @return all joints
 	 */
-	vector<Joint>& getJoints();
+	inline const vector<Joint>& getJoints() {
+		return joints;
+	}
 
 	/** 
 	 * Set up joints
@@ -58,7 +62,9 @@ public:
 	/** 
 	 * @return all vertex joints
 	 */
-	vector<vector<JointWeight>>& getVerticesJointsWeights();
+	inline const vector<vector<JointWeight>>& getVerticesJointsWeights() {
+		return verticesJointsWeights;
+	}
 
 	/** 
 	 * Sets up vertices joints weights 
@@ -66,7 +72,7 @@ public:
 	 */
 	void setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights);
 
-	/** 
+	/**
 	 * Get joint by name
 	 * @param name name
 	 * @return joint

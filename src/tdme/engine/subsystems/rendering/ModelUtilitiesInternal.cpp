@@ -65,13 +65,13 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	animationState.finished = false;
 	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast< float >(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
 		// calculate transformations matrices without world transformations
-		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
+		auto parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, *object3DModelInternal->transformationsMatrices[0], 0);
+		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
 		Object3DGroup::computeTransformations(nullptr, object3DModelInternal->object3dGroups);
 		// parse through object groups to determine min, max
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
-			for (auto vertex : *object3DGroup->mesh->vertices) {
+			for (auto& vertex : *object3DGroup->mesh->vertices) {
 				auto& vertexXYZ = vertex.getArray();
 				if (firstVertex == true) {
 					minX = vertexXYZ[0];
@@ -119,11 +119,10 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		// calculate transformations matrices without world transformations
 		Matrix4x4& parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, *object3DModelInternal->transformationsMatrices[0], 0);
+		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
 		for (auto groupIt: model->getGroups()) {
-			auto transformedGroupMatrix = object3DModelInternal->getTransformationsMatrix(groupIt.second->getId());
-			if (transformedGroupMatrix == nullptr) continue;
-			transformedGroupMatrix->multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
+			auto& transformedGroupMatrix = object3DModelInternal->getTransformationsMatrix(groupIt.second->getId());
+			transformedGroupMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
 			if (firstVertex == true) {
 				minX = vertex[0];
 				minY = vertex[1];
@@ -159,10 +158,12 @@ void ModelUtilitiesInternal::invertNormals(const map<string, Group*>& groups)
 {
 	for (auto it: groups) {
 		Group* group = it.second;
-		for (auto& normal : group->getNormals()) {
+		auto normals = group->getNormals();
+		for (auto& normal : normals) {
 			// invert
 			normal.scale(-1.0f);
 		}
+		group->setNormals(normals);
 		// process sub groups
 		invertNormals(group->getSubGroups());
 	}

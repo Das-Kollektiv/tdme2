@@ -283,7 +283,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 			transformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
 		}
 		transformationsMatrix.set(transformationsMatrixArray).transpose();
-		group->getTransformationsMatrix().multiply(transformationsMatrix);
+		group->setTransformationsMatrix(transformationsMatrix);
 	}
 
 	// parse animations
@@ -372,8 +372,9 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 							auto frames = static_cast< int32_t >(Math::ceil(keyFrameTimes[keyFrameTimes.size() - 1] * fps));
 							if (frames > 0) {
 								ModelHelper::createDefaultAnimation(model, frames);
-								auto animation = group->createAnimation(frames);
-								auto& transformationsMatrices = animation->getTransformationsMatrices();
+								group->createAnimation();
+								vector<Matrix4x4> transformationsMatrices;
+								transformationsMatrices.resize(frames);
 								auto tansformationsMatrixLast = &keyFrameMatrices[0];
 								keyFrameIdx = 0;
 								auto frameIdx = 0;
@@ -394,6 +395,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 									tansformationsMatrixLast = transformationsMatrixCurrent;
 									keyFrameIdx++;
 								}
+								group->getAnimation()->setTransformationsMatrices(transformationsMatrices);
 							}
 						}
 					}
@@ -565,7 +567,6 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 			}
 		}
 	}
-	skinning->setJoints(joints);
 
 	// check for inverse bind matrices source
 	if (xmlJointsInverseBindMatricesSource.length() == 0) {
@@ -581,18 +582,22 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 		if (string(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id"))) == xmlJointsInverseBindMatricesSource) {
 			t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())), " \n\r");
 			auto& _joints = skinning->getJoints();
-			for (auto i = 0; i < _joints.size(); i++) {
+			for (auto i = 0; i < joints.size(); i++) {
 				// The vertices are defined in model space
 				// The transformation to the local space of the joint is called the inverse bind matrix
 				array<float, 16> bindMatrixArray;
 				for (auto i = 0; i < bindMatrixArray.size(); i++) {
 					bindMatrixArray[i] = Float::parseFloat(t.nextToken());
 				}
-				_joints[i].getBindMatrix().multiply(bindShapeMatrix);
-				_joints[i].getBindMatrix().multiply((Matrix4x4(bindMatrixArray)).transpose());
+				Matrix4x4 bindMatrix;
+				bindMatrix.set(bindShapeMatrix);
+				bindMatrix.multiply((Matrix4x4(bindMatrixArray)).transpose());
+				joints[i].setBindMatrix(bindMatrix);
 			}
 		}
 	}
+
+	skinning->setJoints(joints);
 
 	// read vertex influences
 	vector<float> weights;
@@ -690,7 +695,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 	auto normalsOffset = group->getNormals().size();
 	vector<Vector3> normals = group->getNormals();;
 	auto textureCoordinatesOffset = group->getTextureCoordinates().size();
-	vector<TextureCoordinate> textureCoordinates = group->getTextureCoordinates();
+	auto textureCoordinates = group->getTextureCoordinates();
 	auto xmlLibraryGeometries = getChildrenByTagName(xmlRoot, "library_geometries").at(0);
 	for (auto xmlGeometry: getChildrenByTagName(xmlLibraryGeometries, "geometry")) {
 		if (string(AVOID_NULLPTR_STRING(xmlGeometry->Attribute("id"))) == xmlNodeId) {
@@ -929,7 +934,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 				}
 				// add faces entities if we have any
 				if (faces.empty() == false) {
-					facesEntity.setFaces(&faces);
+					facesEntity.setFaces(faces);
 					facesEntities.push_back(facesEntity);
 				}
 			}
@@ -939,13 +944,8 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 	// set up group
 	group->setVertices(vertices);
 	group->setNormals(normals);
-	if (textureCoordinates.size() > 0)
-		group->setTextureCoordinates(textureCoordinates);
+	group->setTextureCoordinates(textureCoordinates);
 	group->setFacesEntities(facesEntities);
-	// create normal tangents and bitangents
-	ModelHelper::createNormalTangentsAndBitangents(group);
-	// determine features
-	group->determineFeatures();
 }
 
 Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlElement* xmlRoot, const string& xmlNodeId)

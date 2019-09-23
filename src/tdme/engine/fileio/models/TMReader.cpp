@@ -268,11 +268,15 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g)
 		return nullptr;
 	} else {
 		array<float, 16> matrixArray;
-		g->createAnimation(is->readInt());
-		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices().size(); i++) {
+		auto frames = is->readInt();
+		g->createAnimation();
+		vector<Matrix4x4> transformationsMatrices;
+		transformationsMatrices.resize(frames);
+		for (auto i = 0; i < transformationsMatrices.size(); i++) {
 			is->readFloatArray(matrixArray);
-			g->getAnimation()->getTransformationsMatrices()[i].set(matrixArray);
+			transformationsMatrices[i].set(matrixArray);
 		}
+		g->getAnimation()->setTransformationsMatrices(transformationsMatrices);
 		return g->getAnimation();
 	}
 }
@@ -321,7 +325,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g)
 				faces[j].setBitangentIndices(bitangentIndices[0], bitangentIndices[1], bitangentIndices[2]);
 			}
 		}
-		facesEntities[i].setFaces(&faces);
+		facesEntities[i].setFaces(faces);
 	}
 	g->setFacesEntities(facesEntities);
 }
@@ -331,7 +335,7 @@ Joint TMReader::readSkinningJoint(TMReaderInputStream* is)
 	array<float, 16> matrixArray;
 	Joint joint(is->readString());
 	is->readFloatArray(matrixArray);
-	joint.getBindMatrix().set(matrixArray);
+	joint.setBindMatrix(Matrix4x4(matrixArray));
 	return joint;
 }
 
@@ -385,7 +389,7 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	group->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(matrixArray);
-	group->getTransformationsMatrix().set(matrixArray);
+	group->setTransformationsMatrix(Matrix4x4(matrixArray));
 	vector<Vector3> vertices = readVertices(is);
 	group->setVertices(vertices);
 	vector<Vector3> normals = readVertices(is);
@@ -399,7 +403,6 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	readAnimation(is, group);
 	readSkinning(is, group);
 	readFacesEntities(is, group);
-	group->determineFeatures();
 	readSubGroups(is, model, parentGroup, group->getSubGroups());
 	return group;
 }

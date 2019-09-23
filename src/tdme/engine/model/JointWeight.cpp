@@ -13,13 +13,3 @@ JointWeight::JointWeight(int32_t jointIndex, int32_t weightIndex)
 	this->jointIndex = jointIndex;
 	this->weightIndex = weightIndex;
 }
-
-int32_t JointWeight::getJointIndex()
-{
-	return jointIndex;
-}
-
-int32_t JointWeight::getWeightIndex()
-{
-	return weightIndex;
-}

@@ -127,15 +127,15 @@ void TMWriter::writeVertices(TMWriterOutputStream* os, const vector<Vector3>& v)
 	}
 }
 
-void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, vector<TextureCoordinate>* tc) // TODO: change std::vector* argument to std::vector& ?
+void TMWriter::writeTextureCoordinates(TMWriterOutputStream* os, const vector<TextureCoordinate>& tc) // TODO: change std::vector* argument to std::vector& ?
 {
-	if (tc == nullptr) {
+	if (tc.size() == 0) {
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(tc->size());
-		for (auto i = 0; i < tc->size(); i++) {
-			os->writeFloatArray((*tc)[i].getArray());
+		os->writeInt(tc.size());
+		for (auto i = 0; i < tc.size(); i++) {
+			os->writeFloatArray(tc[i].getArray());
 		}
 	}
 }
@@ -162,7 +162,7 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a)
 	}
 }
 
-void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>& facesEntities)
+void TMWriter::writeFacesEntities(TMWriterOutputStream* os, const vector<FacesEntity>& facesEntities)
 {
 	os->writeInt(facesEntities.size());
 	for (auto i = 0; i < facesEntities.size(); i++) {
@@ -186,16 +186,16 @@ void TMWriter::writeFacesEntities(TMWriterOutputStream* os, vector<FacesEntity>&
 	}
 }
 
-void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, Joint* joint)
+void TMWriter::writeSkinningJoint(TMWriterOutputStream* os, const Joint& joint)
 {
-	os->writeString(joint->getGroupId());
-	os->writeFloatArray(joint->getBindMatrix().getArray());
+	os->writeString(joint.getGroupId());
+	os->writeFloatArray(joint.getBindMatrix().getArray());
 }
 
-void TMWriter::writeSkinningJointWeight(TMWriterOutputStream* os, JointWeight* jointWeight)
+void TMWriter::writeSkinningJointWeight(TMWriterOutputStream* os, const JointWeight& jointWeight)
 {
-	os->writeInt(jointWeight->getJointIndex());
-	os->writeInt(jointWeight->getWeightIndex());
+	os->writeInt(jointWeight.getJointIndex());
+	os->writeInt(jointWeight.getWeightIndex());
 }
 
 void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
@@ -207,13 +207,13 @@ void TMWriter::writeSkinning(TMWriterOutputStream* os, Skinning* skinning)
 		os->writeFloatArray(skinning->getWeights());
 		os->writeInt(skinning->getJoints().size());
 		for (auto i = 0; i < skinning->getJoints().size(); i++) {
-			writeSkinningJoint(os, &skinning->getJoints()[i]);
+			writeSkinningJoint(os, skinning->getJoints()[i]);
 		}
 		os->writeInt(skinning->getVerticesJointsWeights().size());
 		for (auto i = 0; i < skinning->getVerticesJointsWeights().size(); i++) {
 			os->writeInt(skinning->getVerticesJointsWeights()[i].size());
 			for (auto j = 0; j < skinning->getVerticesJointsWeights()[i].size(); j++) {
-				writeSkinningJointWeight(os, &skinning->getVerticesJointsWeights()[i][j]);
+				writeSkinningJointWeight(os, skinning->getVerticesJointsWeights()[i][j]);
 			}
 		}
 	}
@@ -236,7 +236,7 @@ void TMWriter::writeGroup(TMWriterOutputStream* os, Group* g)
 	os->writeFloatArray(g->getTransformationsMatrix().getArray());
 	writeVertices(os, g->getVertices());
 	writeVertices(os, g->getNormals());
-	writeTextureCoordinates(os, &g->getTextureCoordinates());
+	writeTextureCoordinates(os, g->getTextureCoordinates());
 	writeVertices(os, g->getTangents());
 	writeVertices(os, g->getBitangents());
 	writeAnimation(os, g->getAnimation());

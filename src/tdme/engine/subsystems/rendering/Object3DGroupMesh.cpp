@@ -62,7 +62,7 @@ Object3DGroupMesh::Object3DGroupMesh()
 	skinningMatrices = nullptr;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>* transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4>& transformationMatrices, map<string, Matrix4x4>* skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
 	//
@@ -89,20 +89,20 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 		mesh->transformedVertices.resize(groupVertices.size());
 		mesh->vertices = &mesh->transformedVertices;
 		for (auto j = 0; j < mesh->vertices->size(); j++) {
-			(*mesh->vertices)[j].set(groupVertices[j]);
+			mesh->transformedVertices[j].set(groupVertices[j]);
 		}
 		// transformed mesh normals
 		mesh->transformedNormals.resize(groupNormals.size());
 		mesh->normals = &mesh->transformedNormals;
 		for (auto j = 0; j < mesh->normals->size(); j++) {
-			(*mesh->normals)[j].set(groupNormals[j]);
+			mesh->transformedNormals[j].set(groupNormals[j]);
 		}
 		// transformed mesh tangents
 		if (groupTangents.size() > 0) {
 			mesh->transformedTangents.resize(groupTangents.size());
 			mesh->tangents = &mesh->transformedTangents;
 			for (auto j = 0; j < mesh->tangents->size(); j++) {
-				(*mesh->tangents)[j].set(groupTangents[j]);
+				mesh->transformedTangents[j].set(groupTangents[j]);
 			}
 		}
 		// transformed mesh bitangents
@@ -110,7 +110,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 			mesh->transformedBitangents.resize(groupBitangents.size());
 			mesh->bitangents = &mesh->transformedBitangents;
 			for (auto j = 0; j < mesh->bitangents->size(); j++) {
-				(*mesh->bitangents)[j].set(groupBitangents[j]);
+				mesh->transformedBitangents[j].set(groupBitangents[j]);
 			}
 		}
 	} else {
@@ -147,9 +147,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 	if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU ||
 		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING ||
 		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
-		auto transformationMatrixIt = transformationMatrices->find(group->getId());
 		// group transformations matrix
-		mesh->cGroupTransformationsMatrix = transformationMatrixIt != transformationMatrices->end()?transformationMatrixIt->second:nullptr;
+		mesh->cGroupTransformationsMatrix = &transformationMatrices.find(group->getId())->second;
 	}
 	// skinning
 	if ((skinning != nullptr &&
@@ -174,7 +173,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 					auto& joint = joints[jointWeight.getJointIndex()];
 					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
 					auto skinningMatrixIt = skinningMatrices->find(joint.getGroupId());
-					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices->end()?skinningMatrixIt->second:nullptr;
+					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = &skinningMatrixIt->second;
 					// next
 					jointWeightIdx++;
 				}
@@ -201,26 +200,26 @@ void Object3DGroupMesh::computeTransformations(void* context)
 			auto& groupTangent = group->getTangents();
 			auto& groupBitangent = group->getBitangents();
 			auto& jointsWeights = skinning->getVerticesJointsWeights();
-			Vector3* vertex;
+			const Vector3* vertex;
 			Vector3* transformedVertex;
-			Vector3* normal;
+			const Vector3* normal;
 			Vector3* transformedNormal;
-			Vector3* tangent;
+			const Vector3* tangent;
 			Vector3* transformedTangent;
-			Vector3* bitangent;
+			const Vector3* bitangent;
 			Vector3* transformedBitangent;
 			float totalWeights;
 			float weightNormalized;
 			for (auto vertexIndex = 0; vertexIndex < groupVertices.size(); vertexIndex++) {
 				// do vertices
 				vertex = &groupVertices[vertexIndex];
-				transformedVertex = &(*vertices)[vertexIndex].set(0.0f, 0.0f, 0.0f);
+				transformedVertex = &transformedVertices[vertexIndex].set(0.0f, 0.0f, 0.0f);
 				normal = &groupNormals[vertexIndex];
-				transformedNormal = &(*normals)[vertexIndex].set(0.0f, 0.0f, 0.0f);
+				transformedNormal = &transformedNormals[vertexIndex].set(0.0f, 0.0f, 0.0f);
 				tangent = tangents != nullptr?&groupTangent[vertexIndex]:nullptr;
-				transformedTangent = tangents != nullptr?&(*tangents)[vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
+				transformedTangent = tangents != nullptr?&transformedTangents[vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
 				bitangent = bitangents != nullptr?&groupBitangent[vertexIndex]:nullptr;
-				transformedBitangent = bitangents != nullptr?&(*bitangents)[vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
+				transformedBitangent = bitangents != nullptr?&transformedBitangents[vertexIndex].set(0.0f, 0.0f, 0.0f):nullptr;
 				// compute every influence on vertex and vertex normals
 				totalWeights = 0.0f;
 				for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
@@ -272,11 +271,11 @@ void Object3DGroupMesh::computeTransformations(void* context)
 		// transformations for non skinned rendering
 		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < groupVertices.size(); vertexIndex++) {
-			(*vertices)[vertexIndex].set(cGroupTransformationsMatrix->multiply(groupVertices[vertexIndex], tmpVector3));
+			transformedVertices[vertexIndex].set(cGroupTransformationsMatrix->multiply(groupVertices[vertexIndex], tmpVector3));
 		}
 		//	normals
 		for (auto normalIndex = 0; normalIndex < groupNormals.size(); normalIndex++) {
-			(*normals)[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation(groupNormals[normalIndex], tmpVector3).normalize());
+			transformedNormals[normalIndex].set(cGroupTransformationsMatrix->multiplyNoTranslation(groupNormals[normalIndex], tmpVector3).normalize());
 		}
 		//	TODO: tangents, bitangents, but actually it is only in use for computing bounding volumes, so I am not in a hurry
 		// recreate buffers

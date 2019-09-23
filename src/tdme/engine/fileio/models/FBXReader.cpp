@@ -797,7 +797,6 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 	}
 	if (textureCoordinates.size() > 0) group->setTextureCoordinates(textureCoordinates);
 	group->setFacesEntities(facesEntities);
-	group->determineFeatures();
 
 	int fbxSkinCount = fbxNode->GetMesh()->GetDeformerCount(FbxDeformer::eSkin);
 	if (fbxSkinCount == 0) {
@@ -821,7 +820,8 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			fbxCluster->GetTransformLinkMatrix(transformLinkMatrix);
 			Matrix4x4 bindShapeMatrixArray;
 			Joint joint(fbxJointName);
-			joint.getBindMatrix().multiply(
+			Matrix4x4 bindMatrix;
+			bindMatrix.set(
 				Matrix4x4(
 					transformMatrix.Get(0,0),
 					transformMatrix.Get(0,1),
@@ -841,7 +841,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					transformMatrix.Get(3,3)
 				)
 			);
-			joint.getBindMatrix().multiply(
+			bindMatrix.multiply(
 				Matrix4x4(
 					transformLinkMatrix.Get(0,0),
 					transformLinkMatrix.Get(0,1),
@@ -861,6 +861,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					transformLinkMatrix.Get(3,3)
 				).invert()
 			);
+			joint.setBindMatrix(bindMatrix);
 			joints.push_back(joint);
 			auto fbxClusterControlPointIndexCount = fbxCluster->GetControlPointIndicesCount();
 			auto fbxClusterControlPointIndices = fbxCluster->GetControlPointIndices();
@@ -899,13 +900,15 @@ Group* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Group* par
 void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model, int frameOffset) {
 	auto fbxNodeName = fbxNode->GetName();
 	auto group = model->getGroupById(fbxNodeName);
-	if (group->getAnimation() == nullptr) group->createAnimation(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
+	if (group->getAnimation() == nullptr) group->createAnimation();
+	vector<Matrix4x4> transformationsMatrices;
+	transformationsMatrices.resize(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
 	FbxTime fbxFrameTime;
 	fbxFrameTime.SetMilliSeconds(1000.0f * 1.0f / 30.0f);
 	for(auto i = fbxStartFrame; i < fbxEndFrame; i+= fbxFrameTime) {
 		FbxAMatrix& fbxTransformationMatrix = fbxNode->EvaluateLocalTransform(i);
 		int frameIdx = frameOffset + (int)Math::ceil((i.GetMilliSeconds() - fbxStartFrame.GetMilliSeconds()) / (1000.0f * 1.0f / 30.0f));
-		(*group->getAnimation()->getTransformationsMatrices())[frameIdx].set(
+		transformationsMatrices[frameIdx].set(
 			fbxTransformationMatrix.Get(0,0),
 			fbxTransformationMatrix.Get(0,1),
 			fbxTransformationMatrix.Get(0,2),
@@ -924,6 +927,7 @@ void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame,
 			fbxTransformationMatrix.Get(3,3)
 		);
 	}
+	group->getAnimation()->setTransformationsMatrices(transformationsMatrices);
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
 		processAnimation(fbxNode->GetChild(i), fbxStartFrame, fbxEndFrame, model, frameOffset);
 	}
