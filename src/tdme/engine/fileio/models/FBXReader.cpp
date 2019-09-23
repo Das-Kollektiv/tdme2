@@ -294,28 +294,30 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Group* parentGroup, 
 		group = new Group(model, parentGroup, fbxNodeName, fbxNodeName);
 	}
 	FbxAMatrix& fbxNodeLocalTransform = fbxNode->EvaluateLocalTransform();
-	group->getTransformationsMatrix().set(
-		fbxNodeLocalTransform.Get(0,0),
-		fbxNodeLocalTransform.Get(0,1),
-		fbxNodeLocalTransform.Get(0,2),
-		fbxNodeLocalTransform.Get(0,3),
-		fbxNodeLocalTransform.Get(1,0),
-		fbxNodeLocalTransform.Get(1,1),
-		fbxNodeLocalTransform.Get(1,2),
-		fbxNodeLocalTransform.Get(1,3),
-		fbxNodeLocalTransform.Get(2,0),
-		fbxNodeLocalTransform.Get(2,1),
-		fbxNodeLocalTransform.Get(2,2),
-		fbxNodeLocalTransform.Get(2,3),
-		fbxNodeLocalTransform.Get(3,0),
-		fbxNodeLocalTransform.Get(3,1),
-		fbxNodeLocalTransform.Get(3,2),
-		fbxNodeLocalTransform.Get(3,3)
+	group->setTransformationsMatrix(
+		Matrix4x4(
+			fbxNodeLocalTransform.Get(0,0),
+			fbxNodeLocalTransform.Get(0,1),
+			fbxNodeLocalTransform.Get(0,2),
+			fbxNodeLocalTransform.Get(0,3),
+			fbxNodeLocalTransform.Get(1,0),
+			fbxNodeLocalTransform.Get(1,1),
+			fbxNodeLocalTransform.Get(1,2),
+			fbxNodeLocalTransform.Get(1,3),
+			fbxNodeLocalTransform.Get(2,0),
+			fbxNodeLocalTransform.Get(2,1),
+			fbxNodeLocalTransform.Get(2,2),
+			fbxNodeLocalTransform.Get(2,3),
+			fbxNodeLocalTransform.Get(3,0),
+			fbxNodeLocalTransform.Get(3,1),
+			fbxNodeLocalTransform.Get(3,2),
+			fbxNodeLocalTransform.Get(3,3)
+		)
 	);
 	if (parentGroup == nullptr) {
-		(*model->getSubGroups())[group->getId()] = group;
+		model->getSubGroups()[group->getId()] = group;
 	} else {
-		(*parentGroup->getSubGroups())[group->getId()] = group;
+		parentGroup->getSubGroups()[group->getId()] = group;
 	}
 	model->getGroups()[group->getId()] = group;
 	parentGroup = group;
@@ -387,14 +389,14 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 		}
 		Material* material = nullptr;
 		if (fbxMaterial == nullptr) {
-			material = (*model->getMaterials())["tdme.nomaterial"];
+			material = model->getMaterials()["tdme.nomaterial"];
 			if (material == nullptr) {
 				material = new Material("tdme.nomaterial");
-				(*model->getMaterials())[material->getId()] = material;
+				model->getMaterials()[material->getId()] = material;
 			}
 		} else {
 			string fbxMaterialName = fbxMaterial->GetName();
-			material = (*model->getMaterials())[fbxMaterialName];
+			material = model->getMaterials()[fbxMaterialName];
 			if (material == nullptr) {
 				material = new Material(fbxMaterialName);
 				if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId)) {
@@ -616,7 +618,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						)
 					);
 				}
-				(*model->getMaterials())[material->getId()] = material;
+				model->getMaterials()[material->getId()] = material;
 			}
 		}
 		auto foundFacesEntity = false;
@@ -625,9 +627,9 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			if (facesEntityLookUp.getId() == facesEntityName) {
 				if (&facesEntityLookUp != facesEntity) {
 					if (facesEntity != nullptr) {
-						facesEntity->setFaces(&faces);
+						facesEntity->setFaces(faces);
 					}
-					faces = *facesEntityLookUp.getFaces();
+					faces = facesEntityLookUp.getFaces();
 					facesEntity = &facesEntityLookUp;
 				}
 				foundFacesEntity = true;
@@ -636,7 +638,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 		}
 		if (foundFacesEntity == false) {
 			if (facesEntity != nullptr) {
-				facesEntity->setFaces(&faces);
+				facesEntity->setFaces(faces);
 				faces.clear();
 			}
 			facesEntities.push_back(FacesEntity(group, facesEntityName));
@@ -786,7 +788,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 		faces.push_back(f);
 	}
 	if (facesEntity != nullptr) {
-		facesEntity->setFaces(&faces);
+		facesEntity->setFaces(faces);
 	}
 
 	group->setVertices(vertices);
@@ -901,7 +903,7 @@ void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame,
 	auto fbxNodeName = fbxNode->GetName();
 	auto group = model->getGroupById(fbxNodeName);
 	if (group->getAnimation() == nullptr) group->createAnimation();
-	vector<Matrix4x4> transformationsMatrices;
+	auto transformationsMatrices = group->getAnimation()->getTransformationsMatrices();
 	transformationsMatrices.resize(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
 	FbxTime fbxFrameTime;
 	fbxFrameTime.SetMilliSeconds(1000.0f * 1.0f / 30.0f);
