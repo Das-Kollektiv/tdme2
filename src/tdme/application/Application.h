@@ -176,6 +176,12 @@ public:
 	 */
 	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr);
 
+	/**
+	 * Set application icon, currently this is Win32 only
+	 * @param icon icon file name
+	 */
+	void setIcon(const string& fileName);
+
 	/** 
 	 * Init
 	 */
@@ -214,6 +220,7 @@ private:
 	bool fullScreen { false };
 	static int64_t timeLast;
 	static bool limitFPS;
+	string title;
 
 	#if defined(VULKAN)
 		static GLFWwindow* glfwWindow;

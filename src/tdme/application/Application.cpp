@@ -403,6 +403,7 @@ void Application::swapBuffers() {
 }
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
+	this->title = title;
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN)
 		if (glfwInit() == false) {
@@ -479,6 +480,15 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			glutMouseWheelFunc(Application::glutOnMouseWheel);
 		#endif
 		glutMainLoop();
+	#endif
+}
+
+void Application::setIcon(const string& fileName) {
+	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
+	#if defined(_WIN32)
+		HWND hwnd = FindWindow(NULL, title.c_str());
+		HANDLE icon = LoadImage(GetModuleHandle(nullptr), fileName.c_str(), IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
+		SendMessage(hwnd, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
 	#endif
 }
 
