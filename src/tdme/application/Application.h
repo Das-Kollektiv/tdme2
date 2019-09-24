@@ -77,6 +77,19 @@ public:
 	void setInputEventHandler(InputEventHandler* inputEventHandler);
 
 	/**
+	 * Execute a command
+	 * @param command command to execute
+	 * @throws std::runtime_error
+	 * @return application output
+	 */
+	static string execute(const string& command);
+
+	/**
+	 * @return If window is active on Win32, on other platforms it currently always return true
+	 */
+	static bool isActive();
+
+	/**
 	 * @return window X position
 	 */
 	int32_t getWindowXPosition() const;

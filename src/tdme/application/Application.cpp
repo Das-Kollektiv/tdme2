@@ -70,20 +70,18 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::Time;
 
-#if defined(_WIN32) && defined(_MSC_VER) == false
-	string exec(const string& cmd) {
-		// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
-		array<char, 128> buffer;
-		string result;
-		shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
-		if (!pipe) throw std::runtime_error("popen() failed!");
-		while (!feof(pipe.get())) {
-			if (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
-				result += buffer.data();
-		}
-		return result;
+string Application::execute(const string& command) {
+	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
+	array<char, 128> buffer;
+	string result;
+	shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+	if (!pipe) throw std::runtime_error("popen() failed!");
+	while (!feof(pipe.get())) {
+		if (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+			result += buffer.data();
 	}
-#endif
+	return result;
+}
 
 #if defined(_WIN32)
 	LONG WINAPI windowsExceptionHandler(struct _EXCEPTION_POINTERS* exceptionInfo) {
@@ -223,7 +221,7 @@ using tdme::utils::Time;
 					string hexAddr;
 					HexEncDec::encodeInt(stackFrame.AddrPC.Offset, hexAddr);
 					string addr2LineCommand = "\"" + addr2lineToolCmd + " -f -p -e " + string(pathToExecutable) + " " + hexAddr + "\"";
-					auto addr2LineOutput = exec(addr2LineCommand);
+					auto addr2LineOutput = Application::execute(addr2LineCommand);
 					StringTokenizer t;
 					t.tokenize(addr2LineOutput, " ");
 					if (t.hasMoreTokens() == true) {
@@ -286,6 +284,14 @@ Application::~Application() {
 
 void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
+}
+
+bool Application::isActive() {
+	#if defined(_WIN32)
+		return GetActiveWindow() == GetForegroundWindow();
+	#else
+		return true;
+	#endif
 }
 
 int32_t Application::getWindowXPosition() const {
