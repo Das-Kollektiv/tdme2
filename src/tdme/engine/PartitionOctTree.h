@@ -51,11 +51,11 @@ private:
 	static constexpr float PARTITION_SIZE_MIN { 64.0f };
 	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
-	VectorIteratorMultiple<Entity*> entityIterator {  };
-	map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
-	vector<Entity*> visibleEntities {  };
-	unordered_set<string> visibleEntitiesById {  };
-	PartitionOctTree_PartitionTreeNode treeRoot {  };
+	VectorIteratorMultiple<Entity*> entityIterator;
+	map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes;
+	vector<Entity*> visibleEntities;
+	unordered_set<string> visibleEntitiesById;
+	PartitionOctTree_PartitionTreeNode treeRoot;
 
 	// overriden methods
 	void reset() override;

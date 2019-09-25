@@ -293,7 +293,7 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	// compute animation matrix if animation setups exist
 	auto animation = group->getAnimation();
 	if (animation != nullptr) {
-		auto animationMatrices = animation->getTransformationsMatrices();
+		auto& animationMatrices = animation->getTransformationsMatrices();
 		transformationsMatrix.set(animationMatrices[0 % animationMatrices.size()]);
 	} else {
 		// no animation matrix, set up local transformation matrix up as group matrix

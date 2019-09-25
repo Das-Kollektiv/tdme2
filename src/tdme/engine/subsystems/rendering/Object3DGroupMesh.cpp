@@ -62,7 +62,7 @@ Object3DGroupMesh::Object3DGroupMesh()
 	skinningMatrices = nullptr;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4>& transformationMatrices, map<string, Matrix4x4>* skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>& transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
 {
 	auto mesh = new Object3DGroupMesh();
 	//
@@ -148,7 +148,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING ||
 		mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
 		// group transformations matrix
-		mesh->cGroupTransformationsMatrix = &transformationMatrices.find(group->getId())->second;
+		mesh->cGroupTransformationsMatrix = transformationMatrices.find(group->getId())->second;
 	}
 	// skinning
 	if ((skinning != nullptr &&
@@ -173,7 +173,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 					auto& joint = joints[jointWeight.getJointIndex()];
 					mesh->cSkinningJointWeight[vertexIndex][jointWeightIdx] = weights[jointWeight.getWeightIndex()];
 					auto skinningMatrixIt = skinningMatrices->find(joint.getGroupId());
-					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = &skinningMatrixIt->second;
+					mesh->cSkinningJointTransformationsMatrices[vertexIndex][jointWeightIdx] = skinningMatrixIt->second;
 					// next
 					jointWeightIdx++;
 				}
