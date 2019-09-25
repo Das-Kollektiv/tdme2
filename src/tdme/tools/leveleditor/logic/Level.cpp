@@ -144,7 +144,7 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 
 Model* Level::emptyModel = nullptr;
-float Level::Level::renderGroupsPartitionWidth = 128.0f;
+float Level::renderGroupsPartitionWidth = 64.0f;
 float Level::renderGroupsPartitionHeight = 64.0f;
 float Level::renderGroupsPartitionDepth = 64.0f;
 int Level::renderGroupsReduceBy = 1;
