@@ -49,14 +49,14 @@ private:
 	 * Determine skinned group count
 	 * @param groups groups
 	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>* groups); // TODO: std container: maybe use call by reference
+	int32_t determineSkinnedGroupCount(const map<string, Group*>& groups);
 
 	/**
 	 * Determine skinned group count
 	 * @param map* groups
 	 * @param count current count
 	 */
-	int32_t determineSkinnedGroupCount(map<string, Group*>*, int32_t count); // TODO: std container: maybe use call by reference
+	int32_t determineSkinnedGroupCount(const map<string, Group*>&, int32_t count);
 
 	/**
 	 * Determine skinned groups
@@ -64,30 +64,30 @@ private:
 	 * @param skinningGroups skinning groups
 	 * @param idx idx
 	 */
-	int32_t determineSkinnedGroups(map<string, Group*>*, vector<Group*>& skinningGroups, int32_t idx); // TODO: std container: maybe use call by reference
+	int32_t determineSkinnedGroups(const map<string, Group*>&, vector<Group*>& skinningGroups, int32_t idx);
 
 
 protected:
-	Model* model {  };
-	vector<map<string, Matrix4x4*>*> transformationsMatrices {  };
-	bool hasSkinning {  };
-	vector<map<string, Matrix4x4*>> skinningGroupsMatrices {  };
-	vector<Group*> skinningGroups {  };
-	vector<AnimationState> baseAnimations {  };
-	int baseAnimationIdx {  };
-	map<string, AnimationState*> overlayAnimationsById {  };
-	map<string, AnimationState*> overlayAnimationsByJointId {  };
-	vector<Object3DGroup*> object3dGroups {  };
-	bool recreateBuffers {  };
-	bool usesMeshManager {  };
-	Engine::AnimationProcessingTarget animationProcessingTarget {  };
+	Model* model;
+	vector<map<string, Matrix4x4*>> transformationsMatrices;
+	bool hasSkinning;
+	vector<map<string, Matrix4x4*>> skinningGroupsMatrices;
+	vector<Group*> skinningGroups;
+	vector<AnimationState> baseAnimations;
+	int baseAnimationIdx;
+	map<string, AnimationState*> overlayAnimationsById;
+	map<string, AnimationState*> overlayAnimationsByJointId;
+	vector<Object3DGroup*> object3dGroups;
+	bool recreateBuffers;
+	bool usesMeshManager;
+	Engine::AnimationProcessingTarget animationProcessingTarget;
 
 	/**
 	 * Creates all groups transformation matrices
 	 * @param matrices matrices
 	 * @param groups groups
 	 */
-	virtual void createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups); // TODO: std container: maybe use call by reference
+	virtual void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, const map<string, Group*>& groups);
 
 	/**
 	 * Calculates all groups transformation matrices
@@ -97,7 +97,7 @@ protected:
 	 * @param transformationsMatrices transformations matrices which need to be set up
 	 * @param depth depth
 	 */
-	virtual void computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>* transformationsMatrices, int32_t depth); // TODO: std container: maybe use call by reference
+	virtual void computeTransformationsMatrices(const map<string, Group*>& groups, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth);
 
 	/**
 	 * Compute transformations for given animation state into given transformations matrices
@@ -106,13 +106,13 @@ protected:
 	 * @param context context
 	 * @param timing timing
 	 */
-	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices, void* context, Timing* timing);
+	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, Timing* timing);
 
 	/**
 	 * Update skinning transformations matrices
 	 * @param transformationsMatrices transformations matrices
 	 */
-	virtual void updateSkinningTransformationsMatrices(map<string, Matrix4x4*>* transformationsMatrices);
+	virtual void updateSkinningTransformationsMatrices(const map<string, Matrix4x4*>& transformationsMatrices);
 
 	/**
 	 * Get skinning groups matrices
@@ -208,7 +208,7 @@ public:
 	 * @param id group id
 	 * @return transformation matrix or null
 	 */
-	virtual Matrix4x4* getTransformationsMatrix(const string& id);
+	virtual const Matrix4x4 getTransformationsMatrix(const string& id);
 
 	/**
 	 * Pre render step, computes transformations

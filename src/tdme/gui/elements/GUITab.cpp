@@ -36,13 +36,13 @@ const string& GUITab::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUITab::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUITab::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUITab::createController(GUINode* node)

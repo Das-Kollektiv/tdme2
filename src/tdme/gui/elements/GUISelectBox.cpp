@@ -30,7 +30,7 @@ const string& GUISelectBox::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUISelectBox::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUISelectBox::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -39,7 +39,7 @@ map<string, string>* GUISelectBox::getAttributes(GUIScreenNode* screenNode)
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
 	attributes["on-change"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUISelectBox::createController(GUINode* node)

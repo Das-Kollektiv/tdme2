@@ -40,15 +40,15 @@ void Object3DGroupRenderer::preRender(void* context)
 
 	// initialize if not yet done
 	if (vboBaseIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, object3DGroup->mesh->group->getTextureCoordinates() != nullptr ? 4 : 3, true);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, 4, true); // TODO: check for texture coorditantes
 		vboBaseIds = vboManaged->getVBOIds();
 		meshUploaded = vboManaged->isUploaded();
 	}
 
 	// initialize tangents, bitangents
 	if (Engine::renderer->isNormalMappingAvailable() &&
-		object3DGroup->mesh->group->getTangents()->size() > 0 &&
-		object3DGroup->mesh->group->getBitangents()->size() > 0 &&
+		object3DGroup->mesh->group->getTangents().size() > 0 &&
+		object3DGroup->mesh->group->getBitangents().size() > 0 &&
 		vboTangentBitangentIds == nullptr) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".tangentbitangent", 2, true);
 		vboTangentBitangentIds = vboManaged->getVBOIds();
@@ -63,7 +63,7 @@ void Object3DGroupRenderer::preRender(void* context)
 			// upload indices
 			object3DGroup->mesh->setupVertexIndicesBuffer(Engine::renderer, context, (*vboBaseIds)[0]);
 			// upload texture coordinates
-			if (object3DGroup->mesh->group->getTextureCoordinates() != nullptr) {
+			if (object3DGroup->mesh->group->getTextureCoordinates().size() > 0) {
 				object3DGroup->mesh->setupTextureCoordinatesBuffer(Engine::renderer, context, (*vboBaseIds)[3]);
 			}
 		}

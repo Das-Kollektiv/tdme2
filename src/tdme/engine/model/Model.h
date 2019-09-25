@@ -38,30 +38,32 @@ public:
 
 private:
 	AuthoringTool authoringTool;
-	string id {  };
-	string name {  };
-	UpVector* upVector {  };
-	RotationOrder* rotationOrder {  };
-	map<string, Material*> materials {  };
-	map<string, Group*> groups {  };
-	map<string, Group*> subGroups {  };
-	bool hasSkinning_ {  };
+	string id;
+	string name;
+	UpVector* upVector;
+	RotationOrder* rotationOrder;
+	map<string, Material*> materials;
+	map<string, Group*> groups;
+	map<string, Group*> subGroups;
+	bool skinning;
 	float fps {  };
-	map<string, AnimationSetup*> animationSetups {  };
-	Matrix4x4 importTransformationsMatrix {  };
-	BoundingBox* boundingBox {  };
+	map<string, AnimationSetup*> animationSetups;
+	Matrix4x4 importTransformationsMatrix;
+	BoundingBox* boundingBox;
 
 	/**
 	 * Delete sub groups
 	 * @param subGroups sub groups
 	 */
-	void deleteSubGroups(map<string, Group*>* subGroups); // TODO: std container: maybe use call by reference
+	void deleteSubGroups(const map<string, Group*>& subGroups);
 
 	/**
 	 * Set up if model has skinning
 	 * @param hasSkinning has skinning
 	 */
-	void setHasSkinning(bool hasSkinning);
+	inline void setHasSkinning(bool hasSkinning) {
+		skinning = hasSkinning;
+	}
 
 	/**
 	 * Computes a transformations matrix at a given frame for a given group id recursivly
@@ -72,14 +74,16 @@ private:
 	 * @param transformationsMatrix transformations matrix
 	 * @return target group transformations
 	 */
-	bool computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix); // TODO: std container: maybe use call by reference
+	bool computeTransformationsMatrix(const map<string, Group*>& groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix); // TODO: std container: maybe use call by reference
 
 public:
 
 	/**
 	 * @return authoring tool
 	 */
-	AuthoringTool getAuthoringTool();
+	inline AuthoringTool getAuthoringTool() {
+		return authoringTool;
+	}
 
 	/** 
 	 * @return model id
@@ -91,29 +95,39 @@ public:
 	/** 
 	 * @return model name
 	 */
-	const string& getName();
+	inline const string& getName() {
+		return name;
+	}
 
 	/** 
 	 * @return up vector
 	 */
-	UpVector* getUpVector();
+	inline UpVector* getUpVector() {
+		return upVector;
+	}
 
 	/** 
 	 * @return rotation order
 	 */
-	RotationOrder* getRotationOrder();
+	inline RotationOrder* getRotationOrder() {
+		return rotationOrder;
+	}
 
 	/** 
 	 * Returns all object materials
 	 * @return materials
 	 */
-	map<string, Material*>* getMaterials();
+	inline map<string, Material*>& getMaterials() {
+		return materials;
+	}
 
 	/** 
 	 * Returns all object's groups
 	 * @return all groups
 	 */
-	map<string, Group*>* getGroups();
+	inline map<string, Group*>& getGroups() {
+		return groups;
+	}
 
 	/** 
 	 * Returns a group by given name or null
@@ -126,7 +140,9 @@ public:
 	 * Returns object's sub groups
 	 * @return sub groups
 	 */
-	map<string, Group*>* getSubGroups();
+	inline map<string, Group*>& getSubGroups() {
+		return subGroups;
+	}
 
 	/** 
 	 * Returns a sub group by given name or null
@@ -138,18 +154,24 @@ public:
 	/** 
 	 * @return has skinning
 	 */
-	bool hasSkinning();
+	inline bool hasSkinning() {
+		return skinning;
+	}
 
 	/** 
 	 * @return frames per seconds
 	 */
-	float getFPS();
+	inline float getFPS() {
+		return fps;
+	}
 
 	/** 
 	 * Set model animation frames per seconds
 	 * @param fps fps
 	 */
-	void setFPS(float fps);
+	inline void setFPS(float fps) {
+		this->fps = fps;
+	}
 
 	/** 
 	 * Adds an base animation setup
@@ -182,19 +204,25 @@ public:
 	/** 
 	 * @return animation setup for given id or null
 	 */
-	map<string, AnimationSetup*>* getAnimationSetups();
+	inline map<string, AnimationSetup*>& getAnimationSetups() {
+		return animationSetups;
+	}
 
 	/** 
 	 * @return if model has animations
 	 */
-	bool hasAnimations();
+	inline bool hasAnimations() {
+		return animationSetups.size() > 0;
+	}
 
 	/** 
 	 * @return import transformations matrix like converting Z-UP to Y-UP
 	 */
-	Matrix4x4& getImportTransformationsMatrix();
+	inline Matrix4x4& getImportTransformationsMatrix() {
+		return importTransformationsMatrix;
+	}
 
-	/** 
+	/**
 	 * @return bounding box
 	 */
 	BoundingBox* getBoundingBox();
@@ -206,7 +234,9 @@ public:
 	 * @param transformationsMatrix target group transformations matrix
 	 * @param frame frame
 	 */
-	bool computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame = 0);
+	inline bool computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
+		return computeTransformationsMatrix(subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
+	}
 
 	/**
 	 * Computes a transformations matrix at a given frame for a given group id recursivly
@@ -214,7 +244,9 @@ public:
 	 * @param transformationsMatrix target group transformations matrix
 	 * @param frame frame
 	 */
-	bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0);
+	inline bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
+		return computeTransformationsMatrix(subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
+	}
 
 	/**
 	 * Public constructor

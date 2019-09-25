@@ -238,7 +238,7 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	auto ground = new Model("ground", "ground", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*ground->getMaterials())["ground"] = groundMaterial;
+	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundGroup = new Group(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(-width, y, -depth));
@@ -258,14 +258,14 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	FacesEntity groupFacesEntityGround(groundGroup, "ground group faces entity ground");
 	groupFacesEntityGround.setMaterial(groundMaterial);
 	vector<FacesEntity> groupFacesEntities;
-	groupFacesEntityGround.setFaces(&groundFacesGround);
+	groupFacesEntityGround.setFaces(groundFacesGround);
 	groupFacesEntities.push_back(groupFacesEntityGround);
 	groundGroup->setVertices(groundVertices);
 	groundGroup->setNormals(groundNormals);
 	groundGroup->setTextureCoordinates(groundTextureCoordinates);
 	groundGroup->setFacesEntities(groupFacesEntities);
-	(*ground->getGroups())["ground"] = groundGroup;
-	(*ground->getSubGroups())["ground"] = groundGroup;
+	ground->getGroups()["ground"] = groundGroup;
+	ground->getSubGroups()["ground"] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(ground);
 	return ground;
 }

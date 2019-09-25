@@ -51,11 +51,11 @@ private:
 	static constexpr float PARTITION_SIZE_MIN { 64.0f };
 	static constexpr float PARTITION_SIZE_MAX { 512.0f };
 
-	VectorIteratorMultiple<Entity*> entityIterator {  };
-	map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes {  };
-	vector<Entity*> visibleEntities {  };
-	unordered_set<string> visibleEntitiesById {  };
-	PartitionOctTree_PartitionTreeNode treeRoot {  };
+	VectorIteratorMultiple<Entity*> entityIterator;
+	map<string, vector<PartitionOctTree_PartitionTreeNode*>> entityPartitionNodes;
+	vector<Entity*> visibleEntities;
+	unordered_set<string> visibleEntitiesById;
+	PartitionOctTree_PartitionTreeNode treeRoot;
 
 	// overriden methods
 	void reset() override;
@@ -248,7 +248,7 @@ private:
 	}
 
 public:
-	vector<Entity*>* getVisibleEntities(Frustum* frustum) override;
+	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
 	VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
 	VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center, const Vector3& halfExtension = Vector3(0.1f, 0.1f, 0.1f)) override;
 

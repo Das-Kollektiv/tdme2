@@ -30,63 +30,86 @@ using tdme::math::Vector3;
 class tdme::engine::model::Group final
 {
 private:
-	Model* model {  };
-	Group* parentGroup {  };
-	string id {  };
-	string name {  };
-	bool isJoint_ {  };
-	Matrix4x4 transformationsMatrix {  };
+	Model* model;
+	Group* parentGroup;
+	string id;
+	string name;
+	bool isJoint_;
+	Matrix4x4 transformationsMatrix;
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<TextureCoordinate> textureCoordinates;
 	vector<Vector3> tangents;
 	vector<Vector3> bitangents;
-	Animation* animation {  };
-	Skinning* skinning {  };
+	Animation* animation;
+	Skinning* skinning;
 	vector<FacesEntity> facesEntities;
-	map<string, Group*> subGroups {  };
+	map<string, Group*> subGroups;
 public:
 	/** 
 	 * @return model
 	 */
-	Model* getModel();
+	inline Model* getModel() {
+		return model;
+	}
 
 	/** 
 	 * @return parent group
 	 */
-	Group* getParentGroup();
+	inline Group* getParentGroup() {
+		return parentGroup;
+	}
 
 	/** 
 	 * Returns id
 	 * @return id
 	 */
-	const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/** 
 	 * @return group's name
 	 */
-	const string& getName();
+	inline const string& getName() {
+		return name;
+	}
 
 	/** 
 	 * @return if this group is a joint/bone
 	 */
-	bool isJoint();
+	inline bool isJoint() const {
+		return isJoint_;
+	}
 
 	/** 
 	 * Sets up if this group is a joint or not 
 	 * @param isJoint isbone
 	 */
-	void setJoint(bool isJoint);
+	inline void setJoint(bool isJoint) {
+		isJoint_ = isJoint;
+	}
 
 	/** 
 	 * @return transformations matrix related to parent group
 	 */
-	Matrix4x4& getTransformationsMatrix();
+	inline const Matrix4x4& getTransformationsMatrix() const {
+		return transformationsMatrix;
+	}
 
 	/** 
+	 * @return transformations matrix related to parent group
+	 */
+	inline void setTransformationsMatrix(const Matrix4x4& transformationsMatrix) {
+		this->transformationsMatrix = transformationsMatrix;
+	}
+
+	/**
 	 * @return vertices
 	 */
-	vector<Vector3>* getVertices();
+	inline const vector<Vector3>& getVertices() const {
+		return vertices;
+	}
 
 	/** 
 	 * Set vertices
@@ -97,7 +120,9 @@ public:
 	/** 
 	 * @return normals
 	 */
-	vector<Vector3>* getNormals();
+	inline const vector<Vector3>& getNormals() const {
+		return normals;
+	}
 
 	/** 
 	 * Set normals
@@ -108,7 +133,9 @@ public:
 	/** 
 	 * @return texture coordinates or null (optional)
 	 */
-	vector<TextureCoordinate>* getTextureCoordinates();
+	inline const vector<TextureCoordinate>& getTextureCoordinates() const {
+		return textureCoordinates;
+	}
 
 	/** 
 	 * Set texture coordinates
@@ -119,7 +146,9 @@ public:
 	/** 
 	 * @return tangents
 	 */
-	vector<Vector3>* getTangents();
+	inline const vector<Vector3>& getTangents() const {
+		return tangents;
+	}
 
 	/** 
 	 * Set tangents
@@ -130,7 +159,9 @@ public:
 	/** 
 	 * @return bitangents
 	 */
-	vector<Vector3>* getBitangents();
+	inline const vector<Vector3>& getBitangents() const {
+		return bitangents;
+	}
 
 	/** 
 	 * Set bitangents
@@ -141,19 +172,22 @@ public:
 	/** 
 	 * @return animation
 	 */
-	Animation* getAnimation();
+	inline Animation* getAnimation() {
+		return animation;
+	}
 
 	/** 
 	 * Creates an empty animation object
 	 * @param frames frames
-	 * @return animation
 	 */
-	Animation* createAnimation(int32_t frames);
+	Animation* createAnimation();
 
 	/** 
 	 * @return skinning or null
 	 */
-	Skinning* getSkinning();
+	inline Skinning* getSkinning() {
+		return skinning;
+	}
 
 	/** 
 	 * Creates an empty skinning object
@@ -164,12 +198,14 @@ public:
 	/** 
 	 * @return number of faces in group
 	 */
-	int32_t getFaceCount();
+	int32_t getFaceCount() const;
 
 	/** 
 	 * @return faces entities
 	 */
-	vector<FacesEntity>* getFacesEntities();
+	inline const vector<FacesEntity>& getFacesEntities() const {
+		return facesEntities;
+	}
 
 	/** 
 	 * Set up faces entities
@@ -180,7 +216,9 @@ public:
 	/** 
 	 * @return sub sub groups of this group
 	 */
-	map<string, Group*>* getSubGroups();
+	inline map<string, Group*>& getSubGroups() {
+		return subGroups;
+	}
 
 	/** 
 	 * Returns a sub group by id
@@ -188,12 +226,6 @@ public:
 	 * @return sub group or null
 	 */
 	Group* getSubGroupById(const string& groupId);
-
-	/** 
-	 * Post set up faces
-	 * TODO: move me into model helper
-	 */
-	void determineFeatures();
 
 	/**
 	 * Public constructor

@@ -37,53 +37,28 @@ FacesEntity::FacesEntity(Group* group, const string& id)
 	this->tangentBitangentAvailable = false;
 }
 
-const string& FacesEntity::getId()
-{
-	return id;
-}
-
-void FacesEntity::setMaterial(Material* material)
-{
-	this->material = material;
-}
-
-Material* FacesEntity::getMaterial()
-{
-	return material;
-}
-
-vector<Face>* FacesEntity::getFaces()
-{
-	return &faces;
-}
-
-void FacesEntity::setFaces(const vector<Face>* faces)
+void FacesEntity::setFaces(const vector<Face>& faces)
 {
 	this->faces.clear();
-	this->faces.resize(faces->size());
+	this->faces.resize(faces.size());
 	int i = 0;
-	for (auto& face: *faces) {
+	for (auto& face: faces) {
 		this->faces[i++] = face;
 	}
-	this->textureCoordinatesAvailable = false;
-	this->tangentBitangentAvailable = false;
+	determineFeatures();
 }
 
 void FacesEntity::determineFeatures()
 {
-	textureCoordinatesAvailable = group->getTextureCoordinates()->size() > 0;
-	tangentBitangentAvailable =
-		group->getTangents()->size() > 0 && group->getBitangents()->size() > 0 &&
-		group->getTangents()->size() == group->getBitangents()->size();
-}
-
-bool FacesEntity::isTextureCoordinatesAvailable()
-{
-	return textureCoordinatesAvailable;
-}
-
-bool FacesEntity::isTangentBitangentAvailable()
-{
-	return tangentBitangentAvailable;
+	textureCoordinatesAvailable = false;
+	tangentBitangentAvailable = false;
+	for (auto& face: faces) {
+		auto& vertexIndices = face.getVertexIndices();
+		if (vertexIndices[0] != -1 && vertexIndices[1] != -1 && vertexIndices[2] != -1) textureCoordinatesAvailable = true;
+		auto& tangentIndices = face.getTangentIndices();
+		auto& biTangentIndices = face.getBitangentIndices();
+		if (tangentIndices[0] != -1 && tangentIndices[1] != -1 && tangentIndices[2] != -1 &&
+			biTangentIndices[0] != -1 && biTangentIndices[1] != -1 && biTangentIndices[2] != -1) tangentBitangentAvailable = true;
+	}
 }
 

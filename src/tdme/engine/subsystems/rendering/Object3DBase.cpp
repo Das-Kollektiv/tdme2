@@ -70,7 +70,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 		determineSkinnedGroups(model->getSubGroups(), skinningGroups, 0);
 		skinningGroupsMatrices.resize(skinningGroups.size());
 		for (auto i = 0; i < skinningGroups.size(); i++) {
-			createTransformationsMatrices(&skinningGroupsMatrices[i], model->getSubGroups());
+			createTransformationsMatrices(skinningGroupsMatrices[i], model->getSubGroups());
 		}
 	}
 	//
@@ -78,7 +78,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	// animation
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
 	// create transformations matrices
-	transformationsMatrices.push_back(new map<string, Matrix4x4*>());
+	transformationsMatrices.push_back(map<string, Matrix4x4*>());
 	createTransformationsMatrices(transformationsMatrices[0], model->getSubGroups());
 	// calculate transformations matrices
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0], transformationsMatrices[0], 0);
@@ -101,10 +101,9 @@ Object3DBase::~Object3DBase() {
 		delete object3dGroups[i];
 	}
 	for (auto baseAnimationTransformationsMatrices: transformationsMatrices) {
-		for (auto it: *baseAnimationTransformationsMatrices) {
+		for (auto it: baseAnimationTransformationsMatrices) {
 			delete it.second;
 		}
-		delete baseAnimationTransformationsMatrices;
 	}
 	for (auto skinningGroupMatricies: skinningGroupsMatrices) {
 		for (auto it: skinningGroupMatricies) {
@@ -135,10 +134,10 @@ void Object3DBase::setAnimation(const string& id, float speed)
 		if (baseAnimations.size() == 1) {
 			baseAnimations.push_back(baseAnimation);
 			baseAnimationIdx = 1;
-			transformationsMatrices.push_back(new map<string, Matrix4x4*>());
-			for (auto transformationMatrixIt: *transformationsMatrices[0]) (*transformationsMatrices[1])[transformationMatrixIt.first] = new Matrix4x4(*transformationMatrixIt.second);
-			transformationsMatrices.push_back(new map<string, Matrix4x4*>());
-			for (auto transformationMatrixIt: *transformationsMatrices[0]) (*transformationsMatrices[2])[transformationMatrixIt.first] = new Matrix4x4(*transformationMatrixIt.second);
+			transformationsMatrices.push_back(map<string, Matrix4x4*>());
+			for (auto transformationMatrixIt: transformationsMatrices[0]) transformationsMatrices[1][transformationMatrixIt.first] = new Matrix4x4(*transformationMatrixIt.second);
+			transformationsMatrices.push_back(map<string, Matrix4x4*>());
+			for (auto transformationMatrixIt: transformationsMatrices[0]) transformationsMatrices[2][transformationMatrixIt.first] = new Matrix4x4(*transformationMatrixIt.second);
 		} else {
 			baseAnimationIdx = (baseAnimationIdx + 1) % 2;
 			baseAnimations[baseAnimationIdx] = baseAnimation;
@@ -163,10 +162,8 @@ void Object3DBase::addOverlayAnimation(const string& id)
 	removeOverlayAnimation(id);
 	// check overlay animation
 	auto animationSetup = model->getAnimationSetup(id);
-	if (animationSetup == nullptr)
-		return;
-	if (animationSetup->getOverlayFromGroupId().size() == 0)
-		return;
+	if (animationSetup == nullptr) return;
+	if (animationSetup->getOverlayFromGroupId().size() == 0) return;
 	// create animation state
 	auto animationState = new AnimationState();
 	animationState->setup = animationSetup;
@@ -251,36 +248,37 @@ float Object3DBase::getOverlayAnimationTime(const string& id)
 	return animationState == nullptr ? 1.0f : animationState->time;
 }
 
-Matrix4x4* Object3DBase::getTransformationsMatrix(const string& id)
+const Matrix4x4 Object3DBase::getTransformationsMatrix(const string& id)
 {
-	auto transformationMatrixIt = transformationsMatrices[0]->find(id);
-	if (transformationMatrixIt != transformationsMatrices[0]->end()) {
-		return transformationMatrixIt->second;
+	auto transformationMatrixIt = transformationsMatrices[0].find(id);
+	if (transformationMatrixIt != transformationsMatrices[0].end()) {
+		return *transformationMatrixIt->second;
 	}
-	return nullptr;
+	Console::println("Object3DBase::getTransformationsMatrix(): " + id + ": group not found");
+	return Matrix4x4().identity();
 }
 
-void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>* matrices, map<string, Group*>* groups)
+void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>& matrices, const map<string, Group*>& groups)
 {
 	// iterate through groups
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		// put and associate transformation matrices with group
-		Group* group = it.second;
-		Matrix4x4* matrix = new Matrix4x4();
+		auto group = it.second;
+		auto matrix = new Matrix4x4();
 		matrix->identity();
-		(*matrices)[group->getId()] = matrix;
+		matrices[group->getId()] = matrix;
 		// do sub groups
-		auto subGroups = group->getSubGroups();
-		if (subGroups->size() > 0) {
+		auto& subGroups = group->getSubGroups();
+		if (subGroups.size() > 0) {
 			createTransformationsMatrices(matrices, subGroups);
 		}
 	}
 }
 
-void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, Matrix4x4& parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>* transformationsMatrices, int32_t depth)
+inline void Object3DBase::computeTransformationsMatrices(const map<string, Group*>& groups, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth)
 {
 	// iterate through groups
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		auto groupAnimationState = animationState;
 		// check for overlay animation
@@ -296,7 +294,7 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 		auto animation = group->getAnimation();
 		// TODO: check if its better to not compute animation matrix if finished
 		if (animation != nullptr && groupAnimationState != nullptr && groupAnimationState->setup != nullptr) {
-			auto animationMatrices = animation->getTransformationsMatrices();
+			auto& animationMatrices = animation->getTransformationsMatrices();
 			auto frames = groupAnimationState->setup->getFrames();
 			auto fps = model->getFPS();
 			// determine current and last matrix
@@ -325,13 +323,13 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 					}
 				}
 				Matrix4x4::interpolateLinear(
-					(*animationMatrices)[matrixAtLast + groupAnimationState->setup->getStartFrame()],
-					(*animationMatrices)[matrixAtCurrent + groupAnimationState->setup->getStartFrame()],
+					animationMatrices[matrixAtLast + groupAnimationState->setup->getStartFrame()],
+					animationMatrices[matrixAtCurrent + groupAnimationState->setup->getStartFrame()],
 					t,
 					transformationsMatrix
 				);
 			} else {
-				transformationsMatrix.set((*animationMatrices)[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
+				transformationsMatrix.set(animationMatrices[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
 			}
 		} else {
 			// no animation matrix, set up local transformation matrix up as group matrix
@@ -340,36 +338,31 @@ void Object3DBase::computeTransformationsMatrices(map<string, Group*>* groups, M
 		// apply parent transformation matrix
 		transformationsMatrix.multiply(parentTransformationsMatrix);
 		// put and associate transformation matrices with group
-		auto transformationMatrixIt = transformationsMatrices->find(group->getId());
-		if (transformationMatrixIt != transformationsMatrices->end()) {
+		auto transformationMatrixIt = transformationsMatrices.find(group->getId());
+		if (transformationMatrixIt != transformationsMatrices.end()) {
 			transformationMatrixIt->second->set(transformationsMatrix);
 		}
 		// calculate for sub groups
-		auto subGroups = group->getSubGroups();
-		if (subGroups->size() > 0) {
-			Matrix4x4 parentTransformationsMatrix;
-			parentTransformationsMatrix.set(transformationsMatrix);
-			computeTransformationsMatrices(subGroups, parentTransformationsMatrix, groupAnimationState, transformationsMatrices, depth + 1);
+		if (group->getSubGroups().size() > 0) {
+			computeTransformationsMatrices(group->getSubGroups(), transformationsMatrix, groupAnimationState, transformationsMatrices, depth + 1);
 		}
 	}
 }
 
-void Object3DBase::updateSkinningTransformationsMatrices(map<string, Matrix4x4*>* transformationsMatrices) {
+inline void Object3DBase::updateSkinningTransformationsMatrices(const map<string, Matrix4x4*>& transformationsMatrices) {
 	// TODO: Maybe optimize regarding map look ups
 	for (auto i = 0; i < skinningGroups.size(); i++) {
-		for (auto& skinningJoint: *skinningGroups[i]->getSkinning()->getJoints()) {
-			auto transformationsMatrixIt = transformationsMatrices->find(skinningJoint.getGroupId());
-			auto transformationsMatrix = transformationsMatrixIt != transformationsMatrices->end()?transformationsMatrixIt->second:nullptr;
-			if (transformationsMatrix == nullptr) continue;
+		for (auto& skinningJoint: skinningGroups[i]->getSkinning()->getJoints()) {
+			auto transformationsMatrixIt = transformationsMatrices.find(skinningJoint.getGroupId());
+			if (transformationsMatrixIt == transformationsMatrices.end()) continue;
 			auto skinningGroupMatrixIt = skinningGroupsMatrices[i].find(skinningJoint.getGroupId());
-			if (skinningGroupMatrixIt != skinningGroupsMatrices[i].end()) {
-				skinningGroupMatrixIt->second->set(skinningJoint.getBindMatrix()).multiply(*transformationsMatrix);
-			}
+			if (skinningGroupMatrixIt == skinningGroupsMatrices[i].end()) continue;
+			skinningGroupMatrixIt->second->set(skinningJoint.getBindMatrix()).multiply(*transformationsMatrixIt->second);
 		}
 	}
 }
 
-void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>* transformationsMatrices, void* context, Timing* timing)
+void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, Timing* timing)
 {
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
@@ -430,13 +423,13 @@ void Object3DBase::computeTransformations(void* context, Timing* timing) {
 
 	// blend if required
 	if (transformationsMatrices.size() > 1) {
-		for (auto transformationsMatrixIt: *transformationsMatrices[0]) {
+		for (auto& transformationsMatrixIt: transformationsMatrices[0]) {
 			if (baseAnimationIdxLast != -1 &&
 				baseAnimations[baseAnimationIdxLast].endAtTime != -1LL) {
 				auto blendingAnimationDuration = static_cast<float>(baseAnimations[baseAnimationIdxLast].currentAtTime - baseAnimations[baseAnimationIdxLast].endAtTime) / Engine::getAnimationBlendingTime();
 				Matrix4x4::interpolateLinear(
-					*transformationsMatrices[1 + baseAnimationIdxLast]->find(transformationsMatrixIt.first)->second,
-					*transformationsMatrices[1 + baseAnimationIdx]->find(transformationsMatrixIt.first)->second,
+					*transformationsMatrices[1 + baseAnimationIdxLast].find(transformationsMatrixIt.first)->second,
+					*transformationsMatrices[1 + baseAnimationIdx].find(transformationsMatrixIt.first)->second,
 					Math::min(
 						blendingAnimationDuration,
 						1.0f
@@ -453,7 +446,7 @@ void Object3DBase::computeTransformations(void* context, Timing* timing) {
 					animationStateLast.time = -1LL;
 				}
 			} else {
-				transformationsMatrixIt.second->set(*transformationsMatrices[1 + baseAnimationIdx]->find(transformationsMatrixIt.first)->second);
+				transformationsMatrixIt.second->set(*transformationsMatrices[1 + baseAnimationIdx].find(transformationsMatrixIt.first)->second);
 			}
 		}
 	}
@@ -469,14 +462,14 @@ void Object3DBase::getTriangles(vector<Triangle>& triangles, int groupIdx)
 	if (groupIdx == -1) {
 		for (auto object3DGroup : object3dGroups) {
 			auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
-			for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
-			for (auto& face : *facesEntity.getFaces()) {
+			for (auto& facesEntity : object3DGroup->group->getFacesEntities())
+			for (auto& face : facesEntity.getFaces()) {
 				auto faceVertexIndices = face.getVertexIndices();
 				triangles.push_back(
 					Triangle(
-						(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
-						(*groupVerticesTransformed)[(*faceVertexIndices)[1]],
-						(*groupVerticesTransformed)[(*faceVertexIndices)[2]]
+						(*groupVerticesTransformed)[faceVertexIndices[0]],
+						(*groupVerticesTransformed)[faceVertexIndices[1]],
+						(*groupVerticesTransformed)[faceVertexIndices[2]]
 					)
 				);
 			}
@@ -484,14 +477,14 @@ void Object3DBase::getTriangles(vector<Triangle>& triangles, int groupIdx)
 	} else {
 		auto object3DGroup = object3dGroups[groupIdx];
 		auto groupVerticesTransformed = &object3DGroup->mesh->transformedVertices;
-		for (auto& facesEntity : *object3DGroup->group->getFacesEntities())
-		for (auto& face : *facesEntity.getFaces()) {
+		for (auto& facesEntity : object3DGroup->group->getFacesEntities())
+		for (auto& face : facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
 			triangles.push_back(
 				Triangle(
-					(*groupVerticesTransformed)[(*faceVertexIndices)[0]],
-					(*groupVerticesTransformed)[(*faceVertexIndices)[1]],
-					(*groupVerticesTransformed)[(*faceVertexIndices)[2]]
+					(*groupVerticesTransformed)[faceVertexIndices[0]],
+					(*groupVerticesTransformed)[faceVertexIndices[1]],
+					(*groupVerticesTransformed)[faceVertexIndices[2]]
 				)
 			);
 		}
@@ -517,40 +510,40 @@ Object3DGroupMesh* Object3DBase::getMesh(const string& groupId)
 	return nullptr;
 }
 
-int32_t Object3DBase::determineSkinnedGroupCount(map<string, Group*>* groups)
+int32_t Object3DBase::determineSkinnedGroupCount(const map<string, Group*>& groups)
 {
 	return determineSkinnedGroupCount(groups, 0);
 }
 
-int32_t Object3DBase::determineSkinnedGroupCount(map<string, Group*>* groups, int32_t count)
+int32_t Object3DBase::determineSkinnedGroupCount(const map<string, Group*>& groups, int32_t count)
 {
 	// iterate through groups
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		//
 		if (group->getSkinning() != nullptr)
 			count++;
 		// calculate sub groups
-		auto subGroups = group->getSubGroups();
-		if (subGroups->size() > 0) {
+		auto& subGroups = group->getSubGroups();
+		if (subGroups.size() > 0) {
 			count = determineSkinnedGroupCount(subGroups, count);
 		}
 	}
 	return count;
 }
 
-int32_t Object3DBase::determineSkinnedGroups(map<string, Group*>* groups, vector<Group*>& skinningGroups, int32_t idx)
+int32_t Object3DBase::determineSkinnedGroups(const map<string, Group*>& groups, vector<Group*>& skinningGroups, int32_t idx)
 {
 	// iterate through groups
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		// fetch skinning groups
 		if (group->getSkinning() != nullptr) {
 			skinningGroups[idx++] = group;
 		}
 		// calculate sub groups
-		auto subGroups = group->getSubGroups();
-		if (subGroups->size() > 0) {
+		auto& subGroups = group->getSubGroups();
+		if (subGroups.size() > 0) {
 			idx = determineSkinnedGroups(subGroups, skinningGroups, idx);
 		}
 	}
@@ -559,9 +552,7 @@ int32_t Object3DBase::determineSkinnedGroups(map<string, Group*>* groups, vector
 
 map<string, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 {
-	if (hasSkinning == false)
-		return nullptr;
-
+	if (hasSkinning == false) return nullptr;
 	for (auto i = 0; i < skinningGroups.size(); i++) {
 		if (skinningGroups[i] == group) {
 			return &skinningGroupsMatrices[i];

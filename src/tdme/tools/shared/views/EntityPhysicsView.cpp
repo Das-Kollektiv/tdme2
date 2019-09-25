@@ -89,27 +89,27 @@ void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t i
 		auto& halfExtensionXYZ = obb->getHalfExtension().getArray();
 		if (halfExtensionXYZ[0] > halfExtensionXYZ[1] && halfExtensionXYZ[0] > halfExtensionXYZ[2]) {
 			radius = Math::sqrt(halfExtensionXYZ[1] * halfExtensionXYZ[1] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a.set((*obb->getAxes())[0]);
+			a.set(obb->getAxes()[0]);
 			a.scale(-(halfExtensionXYZ[0] - radius));
 			a.add(obb->getCenter());
-			b.set((*obb->getAxes())[0]);
+			b.set(obb->getAxes()[0]);
 			b.scale(+(halfExtensionXYZ[0] - radius));
 			b.add(obb->getCenter());
 		} else
 		if (halfExtensionXYZ[1] > halfExtensionXYZ[0] && halfExtensionXYZ[1] > halfExtensionXYZ[2]) {
 			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a.set((*obb->getAxes())[1]);
+			a.set(obb->getAxes()[1]);
 			a.scale(-(halfExtensionXYZ[1] - radius));
 			a.add(obb->getCenter());
-			b.set((*obb->getAxes())[1]);
+			b.set(obb->getAxes()[1]);
 			b.scale(+(halfExtensionXYZ[1] - radius));
 			b.add(obb->getCenter());
 		} else {
 			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[1] * halfExtensionXYZ[1]);
-			a.set((*obb->getAxes())[2]);
+			a.set(obb->getAxes()[2]);
 			a.scale(-(halfExtensionXYZ[2] - radius));
 			a.add(obb->getCenter());
-			b.set((*obb->getAxes())[2]);
+			b.set(obb->getAxes()[2]);
 			b.scale(+(halfExtensionXYZ[2] - radius));
 			b.add(obb->getCenter());
 		}
@@ -117,7 +117,7 @@ void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t i
 	}
 
 	entityPhysicsSubScreenController->setupBoundingBox(idx, aabb->getMin(), aabb->getMax());
-	entityPhysicsSubScreenController->setupOrientedBoundingBox(idx, obb->getCenter(), (*obb->getAxes())[0], (*obb->getAxes())[1], (*obb->getAxes())[2], obb->getHalfExtension());
+	entityPhysicsSubScreenController->setupOrientedBoundingBox(idx, obb->getCenter(), obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2], obb->getHalfExtension());
 	entityPhysicsSubScreenController->selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 }
 
@@ -149,7 +149,7 @@ void EntityPhysicsView::setBoundingVolumes(LevelEditorEntity* entity)
 		} else
 		if (dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume()) != nullptr) {
 			auto obb = dynamic_cast< OrientedBoundingBox* >(bv->getBoundingVolume());
-			entityPhysicsSubScreenController->setupOrientedBoundingBox(i, obb->getCenter(), (*obb->getAxes())[0], (*obb->getAxes())[1], (*obb->getAxes())[2], obb->getHalfExtension());
+			entityPhysicsSubScreenController->setupOrientedBoundingBox(i, obb->getCenter(), obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2], obb->getHalfExtension());
 			entityPhysicsSubScreenController->selectBoundingVolume(i, EntityPhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX);
 		} else
 		if (dynamic_cast< ConvexMesh* >(bv->getBoundingVolume()) != nullptr) {

@@ -144,13 +144,13 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 
 Model* Level::emptyModel = nullptr;
-float Level::Level::renderGroupsPartitionWidth = 128.0f;
-float Level::renderGroupsPartitionHeight = 128.0f;
-float Level::renderGroupsPartitionDepth = 128.0f;
+float Level::renderGroupsPartitionWidth = 64.0f;
+float Level::renderGroupsPartitionHeight = 64.0f;
+float Level::renderGroupsPartitionDepth = 64.0f;
 int Level::renderGroupsReduceBy = 1;
 int Level::renderGroupsLODLevels = 3;
-float Level::renderGroupsLOD2MinDistance = 128.0;
-float Level::renderGroupsLOD3MinDistance = 256.0;
+float Level::renderGroupsLOD2MinDistance = 25.0;
+float Level::renderGroupsLOD3MinDistance = 50.0;
 int Level::renderGroupsLOD2ReduceBy = 4;
 int Level::renderGroupsLOD3ReduceBy = 16;
 bool Level::enableEarlyZRejection = false;

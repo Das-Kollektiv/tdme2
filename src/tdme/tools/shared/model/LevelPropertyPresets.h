@@ -53,7 +53,7 @@ public:
 	/** 
 	 * @return map properties preset
 	 */
-	const vector<PropertyModelClass*>* getMapPropertiesPreset() const;
+	const vector<PropertyModelClass*>& getMapPropertiesPreset() const;
 
 	/** 
 	 * @return object property presets
@@ -63,7 +63,7 @@ public:
 	/** 
 	 * @return light presets
 	 */
-	const map<string, LevelEditorLight*>* getLightPresets() const;
+	const map<string, LevelEditorLight*>& getLightPresets() const;
 
 private:
 

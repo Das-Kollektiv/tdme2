@@ -110,7 +110,7 @@ void EntitySoundsSubScreenController::setSoundAnimationDropDown(int soundIdx, Mo
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 	animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"None\" value=\"\" selected=\"true\" />";
 	if (model != nullptr) {
-		for (auto it: *model->getAnimationSetups()) {
+		for (auto it: model->getAnimationSetups()) {
 			auto animationSetupId = it.second->getId();
 			animationsDropDownInnerNodeSubNodesXML =
 				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +

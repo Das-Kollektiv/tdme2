@@ -293,8 +293,8 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	// compute animation matrix if animation setups exist
 	auto animation = group->getAnimation();
 	if (animation != nullptr) {
-		auto animationMatrices = animation->getTransformationsMatrices();
-		transformationsMatrix.set((*animationMatrices)[0 % animationMatrices->size()]);
+		auto& animationMatrices = animation->getTransformationsMatrices();
+		transformationsMatrix.set(animationMatrices[0 % animationMatrices.size()]);
 	} else {
 		// no animation matrix, set up local transformation matrix up as group matrix
 		transformationsMatrix.set(group->getTransformationsMatrix());
@@ -304,9 +304,9 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	transformationsMatrix.multiply(parentTransformationsMatrix);
 
 	// check if no mesh?
-	if (group->getVertices()->size() == 0 && group->getSubGroups()->size() > 0) {
+	if (group->getVertices().size() == 0 && group->getSubGroups().size() > 0) {
 		// ok, check sub meshes
-		for (auto subGroupIt: *group->getSubGroups()) {
+		for (auto subGroupIt: group->getSubGroups()) {
 			determineMeshGroups(level, subGroupIt.second, groupId, transformationsMatrix.clone(), meshGroups);
 		}
 	} else {
@@ -350,10 +350,10 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	modelImportRotationMatrix.set(levelModel->getImportTransformationsMatrix());
 	modelImportRotationMatrix.getScale(levelModelScale);
 	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
-	Console::println(to_string(levelModel->getSubGroups()->size()));
-	auto progressTotal = levelModel->getSubGroups()->size();
+	Console::println(to_string(levelModel->getSubGroups().size()));
+	auto progressTotal = levelModel->getSubGroups().size();
 	auto progressIdx = 0;
-	for (auto groupIt: *levelModel->getSubGroups()) {
+	for (auto groupIt: levelModel->getSubGroups()) {
 		if (progressCallback != nullptr) progressCallback->progress(0.1f + static_cast<float>(progressIdx) / static_cast<float>(progressTotal) * 0.8f);
 		vector<LevelEditorEntityMeshGroup> meshGroups;
 		determineMeshGroups(level, groupIt.second, "", (Matrix4x4()).identity(), meshGroups);
@@ -392,8 +392,8 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 			model->getImportTransformationsMatrix().multiply(translation, translation);
 
 			ModelHelper::cloneGroup(meshGroup.group, model);
-			if (model->getSubGroups()->begin() != model->getSubGroups()->end()) {
-				model->getSubGroups()->begin()->second->getTransformationsMatrix().identity();
+			if (model->getSubGroups().begin() != model->getSubGroups().end()) {
+				model->getSubGroups().begin()->second->setTransformationsMatrix(Matrix4x4().identity());
 			}
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 			ModelHelper::prepareForIndexedRendering(model);
@@ -421,7 +421,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				scale.scale(1.0f / importFixScale);
 			}
 			auto entityType = LevelEditorEntity_EntityType::MODEL;
-			if (meshGroup.group->getVertices()->size() == 0) {
+			if (meshGroup.group->getVertices().size() == 0) {
 				entityType = LevelEditorEntity_EntityType::EMPTY;
 				delete model;
 				model = nullptr;

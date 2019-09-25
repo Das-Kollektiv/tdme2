@@ -19,11 +19,6 @@ Skinning::Skinning()
 {
 }
 
-vector<float>* Skinning::getWeights()
-{
-	return &weights;
-}
-
 void Skinning::setWeights(const vector<float>& weights)
 {
 	this->weights.resize(weights.size());
@@ -31,11 +26,6 @@ void Skinning::setWeights(const vector<float>& weights)
 	for (float weight: weights) {
 		this->weights[i++] = weight;
 	}
-}
-
-vector<Joint>* Skinning::getJoints()
-{
-	return &joints;
 }
 
 void Skinning::setJoints(const vector<Joint>& joints)
@@ -46,11 +36,6 @@ void Skinning::setJoints(const vector<Joint>& joints)
 		this->joints[i++] = joint;
 	}
 	setupJointsByName();
-}
-
-vector<vector<JointWeight>>* Skinning::getVerticesJointsWeights()
-{
-	return &verticesJointsWeights;
 }
 
 void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight>>& verticesJointsWeights)

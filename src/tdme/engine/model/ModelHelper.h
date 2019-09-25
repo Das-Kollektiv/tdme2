@@ -85,13 +85,6 @@ public:
 	}
 
 	/** 
-	 * Create normal tangents and bitangents for groups with normal mapping
-	 * @see http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
-	 * @param group group
-	 */
-	static void createNormalTangentsAndBitangents(Group* group);
-
-	/** 
 	 * Prepare for indexed rendering
 	 * @param model model
 	 */
@@ -109,7 +102,7 @@ private:
 	 * Prepares this group for indexed rendering
 	 * @param groups groups
 	 */
-	static void prepareForIndexedRendering(map<string, Group*>* groups); // TODO: std container: maybe use call by reference
+	static void prepareForIndexedRendering(const map<string, Group*>& groups);
 
 	/** 
 	 * Maps original vertices to new vertice mapping
@@ -173,7 +166,7 @@ public:
 	 * @param material material
 	 * @return material
 	 */
-	static Material* cloneMaterial(Material* material);
+	static Material* cloneMaterial(const Material* material);
 
 	/**
 	 * Create model from source sub groups into target sub groups
@@ -211,11 +204,11 @@ private:
 		array<Vector3, 3> vertices;
 		auto normalCount = 0;
 		normal.set(0.0f, 0.0f, 0.0f);
-		for (auto& facesEntity: *group->getFacesEntities()) {
-			for (auto& face: *facesEntity.getFaces()) {
+		for (auto& facesEntity: group->getFacesEntities()) {
+			for (auto& face: facesEntity.getFaces()) {
 				for (auto i = 0; i < vertices.size(); i++) {
-					if (vertex.equals((*group->getVertices())[(*face.getVertexIndices())[i]]) == true) {
-						normal.add(normals[(*face.getNormalIndices())[0]]);
+					if (vertex.equals(group->getVertices()[face.getVertexIndices()[i]]) == true) {
+						normal.add(normals[face.getNormalIndices()[0]]);
 						normalCount++;
 						break;
 					}

@@ -36,7 +36,7 @@ private:
 public:
 	const string& getName() override;
 	const string& getTemplate() override;
-	map<string, string>* getAttributes(GUIScreenNode* screenNode) override;
+	map<string, string>& getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
 	/**

@@ -47,7 +47,10 @@ public:
 	enum LODLevelType { LODLEVELTYPE_NONE, LODLEVELTYPE_MODEL, LODLEVELTYPE_IGNORE };
 
 private:
+	friend class Object3DRenderGroup;
+
 	Engine* engine { nullptr };
+	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
 	Model* modelLOD1;
@@ -77,6 +80,21 @@ private:
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
 	bool enableEarlyZRejection { false };
+
+	/**
+	 * Set parent entity, needs to be called before adding to engine
+	 * @param entity entity
+	 */
+	inline void setParentEntity(Entity* entity) {
+		this->parentEntity = entity;
+	}
+
+	/**
+	 * @return parent entity
+	 */
+	inline Entity* getParentEntity() {
+		return parentEntity;
+	}
 
 public:
 	void setEngine(Engine* engine) override;
@@ -314,7 +332,7 @@ public:
 		this->pickable = pickable;
 	}
 
-	inline Matrix4x4* getTransformationsMatrix(const string& id) {
+	inline const Matrix4x4 getTransformationsMatrix(const string& id) {
 		return objectLOD1->getTransformationsMatrix(id);
 	}
 

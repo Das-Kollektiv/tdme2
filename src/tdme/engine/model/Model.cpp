@@ -1,4 +1,4 @@
-#include <tdme/engine/model/Model.h>
+	#include <tdme/engine/model/Model.h>
 
 #include <map>
 #include <string>
@@ -41,7 +41,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	this->name = name;
 	this->upVector = upVector;
 	this->rotationOrder = rotationOrder;
-	hasSkinning_ = false;
+	skinning = false;
 	fps = FPS_DEFAULT;
 	importTransformationsMatrix.identity();
 	this->boundingBox = boundingBox;
@@ -49,7 +49,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 }
 
 Model::~Model() {
-	deleteSubGroups(&subGroups);
+	deleteSubGroups(subGroups);
 	for (auto it = materials.begin(); it != materials.end(); ++it) {
 		delete it->second;
 	}
@@ -59,40 +59,11 @@ Model::~Model() {
 	if (boundingBox != nullptr) delete boundingBox;
 }
 
-void Model::deleteSubGroups(map<string, Group*>* subGroups) {
-	for (auto it = subGroups->begin(); it != subGroups->end(); ++it) {
+void Model::deleteSubGroups(const map<string, Group*>& subGroups) {
+	for (auto it = subGroups.begin(); it != subGroups.end(); ++it) {
 		deleteSubGroups(it->second->getSubGroups());
 		delete it->second;
 	}
-}
-
-Model::AuthoringTool Model::getAuthoringTool() {
-	return authoringTool;
-}
-
-const string& Model::getName()
-{
-	return name;
-}
-
-UpVector* Model::getUpVector()
-{
-	return upVector;
-}
-
-RotationOrder* Model::getRotationOrder()
-{
-	return rotationOrder;
-}
-
-map<string, Material*>* Model::getMaterials()
-{
-	return &materials;
-}
-
-map<string, Group*>* Model::getGroups()
-{
-	return &groups;
 }
 
 Group* Model::getGroupById(const string& id)
@@ -105,11 +76,6 @@ Group* Model::getGroupById(const string& id)
 
 }
 
-map<string, Group*>* Model::getSubGroups()
-{
-	return &subGroups;
-}
-
 Group* Model::getSubGroupById(const string& id)
 {
 	auto groupIt = subGroups.find(id);
@@ -117,26 +83,6 @@ Group* Model::getSubGroupById(const string& id)
 		return groupIt->second;
 	}
 	return nullptr;
-}
-
-bool Model::hasSkinning()
-{
-	return hasSkinning_;
-}
-
-void Model::setHasSkinning(bool hasSkinning)
-{
-	this->hasSkinning_ = hasSkinning;
-}
-
-float Model::getFPS()
-{
-	return fps;
-}
-
-void Model::setFPS(float fps)
-{
-	this->fps = fps;
 }
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
@@ -162,21 +108,6 @@ AnimationSetup* Model::getAnimationSetup(const string& id)
 	return nullptr;
 }
 
-map<string, AnimationSetup*>* Model::getAnimationSetups()
-{
-	return &animationSetups;
-}
-
-bool Model::hasAnimations()
-{
-	return animationSetups.size() > 0;
-}
-
-Matrix4x4& Model::getImportTransformationsMatrix()
-{
-	return importTransformationsMatrix;
-}
-
 BoundingBox* Model::getBoundingBox()
 {
 	// TODO: return const bb
@@ -186,16 +117,16 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
+bool Model::computeTransformationsMatrix(const map<string, Group*>& groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix)
 {
 	// iterate through groups
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
 		// compute animation matrix if animation setups exist
 		auto animation = group->getAnimation();
 		if (animation != nullptr) {
-			auto animationMatrices = animation->getTransformationsMatrices();
-			transformationsMatrix.set((*animationMatrices)[frame % animationMatrices->size()]);
+			auto& animationMatrices = animation->getTransformationsMatrices();
+			transformationsMatrix.set(animationMatrices[frame % animationMatrices.size()]);
 		} else {
 			// no animation matrix, set up local transformation matrix up as group matrix
 			transformationsMatrix.set(group->getTransformationsMatrix());
@@ -208,8 +139,8 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matr
 		if (group->getId() == groupId) return true;
 
 		// calculate sub groups
-		auto subGroups = group->getSubGroups();
-		if (subGroups->size() > 0) {
+		auto& subGroups = group->getSubGroups();
+		if (subGroups.size() > 0) {
 			auto haveTransformationsMatrix = computeTransformationsMatrix(subGroups, transformationsMatrix.clone(), frame, groupId, transformationsMatrix);
 			if (haveTransformationsMatrix == true) return true;
 		}
@@ -217,12 +148,4 @@ bool Model::computeTransformationsMatrix(map<string, Group*>* groups, const Matr
 
 	//
 	return false;
-}
-
-bool Model::computeTransformationsMatrix(const string& groupId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame) {
-	return computeTransformationsMatrix(&subGroups, parentTransformationsMatrix, frame, groupId, transformationsMatrix);
-}
-
-bool Model::computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame) {
-	return computeTransformationsMatrix(&subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
 }

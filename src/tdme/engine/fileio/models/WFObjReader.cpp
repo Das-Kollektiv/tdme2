@@ -85,8 +85,8 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 	vector<Vector3> vertices;
 	vector<TextureCoordinate> textureCoordinates;
 	map<string, Material*> materials;
-	auto subGroups = model->getSubGroups();
-	auto groups = model->getGroups();
+	auto& subGroups = model->getSubGroups();
+	auto& groups = model->getGroups();
 	// current group
 	Group* group = nullptr;
 	// model vertices -> group vertices mapping
@@ -264,7 +264,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 					if (group != nullptr) {
 						// current faces entity
 						if (groupFacesEntityFaces.empty() == false) {
-							groupFacesEntity->setFaces(&groupFacesEntityFaces);
+							groupFacesEntity->setFaces(groupFacesEntityFaces);
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
 						// group
@@ -272,7 +272,6 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 						group->setNormals(groupNormals);
 						group->setTextureCoordinates(groupTextureCoordinates);
 						group->setFacesEntities(groupFacesEntities);
-						group->determineFeatures();
 					}
 					t.tokenize(arguments, " ");
 					auto name = t.nextToken();
@@ -285,14 +284,14 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 					groupFacesEntities.clear();
 					modelGroupVerticesMapping.clear();
 					modelGroupTextureCoordinatesMapping.clear();
-					(*subGroups)[name] = group;
-					(*groups)[name] = group;
+					subGroups[name] = group;
+					groups[name] = group;
 				} else
 				if (command == "usemtl") {
 					if (group != nullptr) {
 						// current faces entity
 						if (groupFacesEntityFaces.empty() == false) {
-							groupFacesEntity->setFaces(&groupFacesEntityFaces);
+							groupFacesEntity->setFaces(groupFacesEntityFaces);
 							groupFacesEntities.push_back(*groupFacesEntity);
 						}
 						// set up new one
@@ -304,7 +303,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 						auto materialIt = materials.find(arguments);
 						if (materialIt != materials.end()) {
 							Material* material = materialIt->second;
-							(*group->getModel()->getMaterials())[material->getId()] = material;
+							group->getModel()->getMaterials()[material->getId()] = material;
 							groupFacesEntity->setMaterial(material);
 						}
 					}
@@ -316,7 +315,7 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 			if (group != nullptr) {
 				// current faces entity
 				if (groupFacesEntityFaces.empty() == false) {
-					groupFacesEntity->setFaces(&groupFacesEntityFaces);
+					groupFacesEntity->setFaces(groupFacesEntityFaces);
 					groupFacesEntities.push_back(*groupFacesEntity);
 				}
 				// group
@@ -326,7 +325,6 @@ Model* WFObjReader::read(const string& pathName, const string& fileName)
 					group->setTextureCoordinates(groupTextureCoordinates);
 				}
 				group->setFacesEntities(groupFacesEntities);
-				group->determineFeatures();
 			}
 		}
 	}

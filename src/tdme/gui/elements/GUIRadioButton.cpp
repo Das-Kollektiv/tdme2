@@ -36,7 +36,7 @@ const string& GUIRadioButton::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -44,7 +44,7 @@ map<string, string>* GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
 	attributes["on-change"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIRadioButton::createController(GUINode* node)

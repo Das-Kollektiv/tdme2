@@ -17,20 +17,32 @@ using std::string;
 class tdme::engine::model::Joint final
 {
 private:
-	string groupId {  };
-	Matrix4x4 bindMatrix {  };
+	string groupId;
+	Matrix4x4 bindMatrix;
 public:
 	/** 
 	 * Associated group or bone id
 	 * @return group id
 	 */
-	const string& getGroupId();
+	inline const string& getGroupId() const {
+		return groupId;
+	}
 
 	/** 
 	 * Bind matrix
 	 * @return matrix
 	 */
-	Matrix4x4& getBindMatrix();
+	inline const Matrix4x4& getBindMatrix() const {
+		return bindMatrix;
+	}
+
+	/**
+	 * Bind matrix
+	 * @return matrix
+	 */
+	inline void setBindMatrix(const Matrix4x4& bindMatrix) {
+		this->bindMatrix = bindMatrix;
+	}
 
 	/**
 	 * Public constructor

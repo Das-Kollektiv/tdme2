@@ -29,8 +29,8 @@ void Object3DBase_TransformedFacesIterator::reset()
 {
 	faceCount = 0;
 	for (auto object3DGroup : object3DBase->object3dGroups) {
-		for (auto facesEntity : *object3DGroup->group->getFacesEntities()) {
-			faceCount += facesEntity.getFaces()->size();
+		for (auto& facesEntity : object3DGroup->group->getFacesEntities()) {
+			faceCount += facesEntity.getFaces().size();
 		}
 	}
 	faceIdx = 0;
@@ -59,25 +59,25 @@ bool Object3DBase_TransformedFacesIterator::hasNext()
 array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 {
 	auto object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
-	auto facesEntities = object3DGroup->group->getFacesEntities();
-	auto& facesEntity = (*facesEntities)[facesEntityIdx];
-	auto faces = facesEntity.getFaces();
-	auto& face = (*faces)[faceIdx];
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
+	auto& facesEntity = facesEntities[facesEntityIdx];
+	auto& faces = facesEntity.getFaces();
+	auto& face = faces[faceIdx];
 	// compute vertices
-	auto faceVertexIndices = face.getVertexIndices();
+	auto& faceVertexIndices = face.getVertexIndices();
 	auto groupVerticesTransformed = object3DGroup->mesh->vertices;
-	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[0]], vertices[0]);
-	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[1]], vertices[1]);
-	matrix.multiply((*groupVerticesTransformed)[(*faceVertexIndices)[2]], vertices[2]);
+	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[0]], vertices[0]);
+	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[1]], vertices[1]);
+	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[2]], vertices[2]);
 	// increment to next face
 	faceIdxTotal++;
 	faceIdx++;
 	// check if idxes over flow, if not yet finished
 	if (faceIdxTotal < faceCount) {
-		if (faceIdx == faces->size()) {
+		if (faceIdx == faces.size()) {
 			faceIdx = 0;
 			facesEntityIdx++;
-			if (facesEntityIdx == facesEntities->size()) {
+			if (facesEntityIdx == facesEntities.size()) {
 				facesEntityIdx = 0;
 				object3DGroupIdx++;
 				object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];

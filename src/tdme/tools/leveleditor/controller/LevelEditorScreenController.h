@@ -361,7 +361,7 @@ public:
 	 * Set up light presets
 	 * @param lightPresetIds light presets
 	 */
-	void setLightPresetsIds(const map<string, LevelEditorLight*>* lightPresetIds); // TODO: std container: maybe use call by reference
+	void setLightPresetsIds(const map<string, LevelEditorLight*>& lightPresetIds);
 
 	/** 
 	 * Unselect light presets

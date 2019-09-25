@@ -35,7 +35,7 @@ struct tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunc
 	int faces;
 	int faceIdx;
 	bool isTextureCoordinatesAvailable;
-	Material* material;
+	const Material* material;
 	int32_t frontFace;
 	Matrix2D3x3 textureMatrix;
 	bool collectTransparentFaces;
