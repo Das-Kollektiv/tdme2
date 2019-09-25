@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -28,6 +29,7 @@ using std::to_string;
 
 using tdme::tests::SkinningTest;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
@@ -48,6 +50,7 @@ using tdme::utils::Time;
 
 SkinningTest::SkinningTest()
 {
+	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 }
 

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -32,6 +33,7 @@ using std::to_string;
 
 using tdme::tests::PhysicsTest3;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -69,6 +71,7 @@ constexpr int32_t PhysicsTest3::SPHERE_COUNT;
 
 PhysicsTest3::PhysicsTest3()
 {
+	Application::setLimitFPS(true);
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;

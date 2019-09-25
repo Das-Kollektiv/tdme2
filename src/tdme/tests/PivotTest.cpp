@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -27,6 +28,7 @@ using tdme::tests::PivotTest;
 
 using tdme::utils::Time;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -45,6 +47,7 @@ using tdme::utils::Console;
 
 PivotTest::PivotTest()
 {
+	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 }
 

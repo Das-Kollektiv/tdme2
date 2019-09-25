@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -28,6 +29,7 @@ using std::to_string;
 
 using tdme::tests::LODTest;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -52,6 +54,7 @@ constexpr int32_t LODTest::BOX_COUNT;
 
 LODTest::LODTest()
 {
+	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 }
 

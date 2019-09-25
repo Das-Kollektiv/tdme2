@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
@@ -45,6 +46,7 @@ using std::to_string;
 using std::vector;
 
 using tdme::tests::EngineTest;
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -83,6 +85,7 @@ using tdme::utils::Exception;
 
 EngineTest::EngineTest()
 {
+	Application::setLimitFPS(true);
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;

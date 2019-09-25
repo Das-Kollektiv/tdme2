@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -32,6 +33,7 @@ using tdme::tests::PhysicsTest1;
 
 using tdme::utils::Time;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -66,6 +68,7 @@ constexpr int32_t PhysicsTest1::SPHERE_COUNT;
 
 PhysicsTest1::PhysicsTest1() 
 {
+	Application::setLimitFPS(true);
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;

@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -25,6 +26,7 @@ using tdme::tests::PhysicsTest2;
 
 using tdme::utils::Time;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -45,6 +47,7 @@ constexpr int32_t PhysicsTest2::BOX_COUNT;
 
 PhysicsTest2::PhysicsTest2() 
 {
+	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 	world = new World();
 }
