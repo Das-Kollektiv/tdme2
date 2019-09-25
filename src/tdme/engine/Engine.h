@@ -7,10 +7,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
@@ -43,10 +45,12 @@ using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -57,7 +61,6 @@ using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
@@ -97,6 +100,7 @@ class tdme::engine::Engine final
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
 	friend class tdme::engine::subsystems::rendering::BatchRendererTriangles;
 	friend class tdme::engine::subsystems::rendering::Object3DBase;
@@ -106,6 +110,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
+	friend class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 	friend class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
 	friend class tdme::engine::subsystems::particlesystem::ParticlesShader;
 	friend class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal;
@@ -136,6 +141,7 @@ private:
 
 	static AnimationProcessingTarget animationProcessingTarget;
 
+	static EZRShaderPre* ezrShaderPre;
 	static ShadowMappingShaderPre* shadowMappingShaderPre;
 	static ShadowMappingShaderRender* shadowMappingShaderRender;
 	static LightingShader* lightingShader;
@@ -149,51 +155,57 @@ private:
 	static int threadCount;
 	static bool have4K;
 	static float animationBlendingTime;
+	static int32_t shadowMapWidth;
+	static int32_t shadowMapHeight;
+	static float shadowMaplightEyeDistanceScale;
 
-	int32_t width {  };
-	int32_t height {  };
-	GUI* gui {  };
-	Timing* timing {  };
-	Camera* camera {  };
 
-	Partition* partition {  };
+	int32_t width;
+	int32_t height;
+	GUI* gui { nullptr };
+	Timing* timing { nullptr };
+	Camera* camera { nullptr };
 
-	array<Light, LIGHTS_MAX> lights {  };
-	Color4 sceneColor {  };
-	FrameBuffer* frameBuffer {  };
-	FrameBuffer* postProcessingFrameBuffer1 {  };
-	FrameBuffer* postProcessingFrameBuffer2{  };
-	FrameBuffer* postProcessingTemporaryFrameBuffer {  };
-	ShadowMapping* shadowMapping {  };
+	Partition* partition { nullptr };
 
-	map<string, Entity*> entitiesById {  };
-	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities {  };
-	map<string, Entity*> noFrustumCullingEntities {  };
+	array<Light, LIGHTS_MAX> lights;
+	Color4 sceneColor;
+	FrameBuffer* frameBuffer { nullptr };
+	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
+	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
+	FrameBuffer* postProcessingTemporaryFrameBuffer { nullptr };
+	ShadowMapping* shadowMapping { nullptr };
 
-	vector<Object3D*> visibleObjects {  };
-	vector<Object3D*> visibleObjectsPostPostProcessing {  };
-	vector<LODObject3D*> visibleLODObjects {  };
-	vector<ObjectParticleSystem*> visibleOpses {  };
-	vector<PointsParticleSystem*> visiblePpses {  };
-	vector<FogParticleSystem*> visibleFpses {  };
-	vector<ParticleSystemGroup*> visiblePsgs {  };
-	vector<LinesObject3D*> visibleLinesObjects {  };
-	vector<Object3DRenderGroup*> visibleObjectRenderGroups {  };
-	Object3DRenderer* object3DRenderer {  };
+	map<string, Entity*> entitiesById;
+	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
+	map<string, Entity*> noFrustumCullingEntities;
+
+	vector<Object3D*> visibleObjects;
+	vector<Object3D*> visibleObjectsPostPostProcessing;
+	vector<LODObject3D*> visibleLODObjects;
+	vector<ObjectParticleSystem*> visibleOpses;
+	vector<Entity*> visiblePpses;
+	vector<ParticleSystemGroup*> visiblePsgs;
+	vector<LinesObject3D*> visibleLinesObjects;
+	vector<Object3DRenderGroup*> visibleObjectRenderGroups;
+
+	vector<Object3D*> visibleEZRObjects;
+
+	Object3DRenderer* object3DRenderer { nullptr };
 
 	static bool skinningShaderEnabled;
-	bool shadowMappingEnabled {  };
-	bool renderingInitiated {  };
-	bool renderingComputedTransformations {  };
-	Matrix4x4 modelViewMatrix {  };
-	Matrix4x4 projectionMatrix {  };
-	Matrix4x4 cameraMatrix {  };
+	bool shadowMappingEnabled;
+	bool renderingInitiated;
+	bool renderingComputedTransformations;
+	Matrix4x4 modelViewMatrix;
+	Matrix4x4 projectionMatrix;
+	Matrix4x4 cameraMatrix;
 
 	vector<string> postProcessingPrograms;
 
-	bool initialized {  };
+	bool initialized;
 
-	bool isUsingPostProcessingTemporaryFrameBuffer {  };
+	bool isUsingPostProcessingTemporaryFrameBuffer;
 
 	class EngineThread: public Thread {
 		friend class Engine;
@@ -235,57 +247,93 @@ private:
 	/**
 	 * @return mesh manager
 	 */
-	static MeshManager* getMeshManager();
+	inline static MeshManager* getMeshManager() {
+		return meshManager;
+	}
+
+	/**
+	 * @return vertex buffer object manager
+	 */
+	inline static VBOManager* getVBOManager() {
+		return vboManager;
+	}
+
+	/**
+	 * @return shadow mapping or nullptr if disabled
+	 */
+	inline ShadowMapping* getShadowMapping() {
+		return shadowMapping;
+	}
 
 	/**
 	 * @return shadow mapping shader
 	 */
-	static ShadowMappingShaderPre* getShadowMappingShaderPre();
+	inline static ShadowMappingShaderPre* getShadowMappingShaderPre() {
+		return shadowMappingShaderPre;
+	}
 
 	/**
 	 * @return shadow mapping shader
 	 */
-	static ShadowMappingShaderRender* getShadowMappingShaderRender();
+	inline static ShadowMappingShaderRender* getShadowMappingShaderRender() {
+		return shadowMappingShaderRender;
+	}
 
 	/**
 	 * @return lighting shader
 	 */
-	static LightingShader* getLightingShader();
+	inline static LightingShader* getLightingShader() {
+		return lightingShader;
+	}
 
 	/**
 	 * @return particles shader
 	 */
-	static ParticlesShader* getParticlesShader();
+	inline static ParticlesShader* getParticlesShader() {
+		return particlesShader;
+	}
 
 	/**
 	 * @return lines shader
 	 */
-	static LinesShader* getLinesShader();
+	inline static LinesShader* getLinesShader() {
+		return linesShader;
+	}
 
 	/**
 	 * @return skinning shader
 	 */
-	static SkinningShader* getSkinningShader();
+	inline static SkinningShader* getSkinningShader() {
+		return skinningShader;
+	}
 
 	/**
 	 * @return GUI shader
 	 */
-	static GUIShader* getGUIShader();
+	inline static GUIShader* getGUIShader() {
+		return guiShader;
+	}
 
 	/**
 	 * @return frame buffer render shader
 	 */
-	static FrameBufferRenderShader* getFrameBufferRenderShader();
+	inline static FrameBufferRenderShader* getFrameBufferRenderShader() {
+		return frameBufferRenderShader;
+	}
 
 	/**
 	 * @return post processing shader
 	 */
-	static PostProcessingShader* getPostProcessingShader();
+	inline static PostProcessingShader* getPostProcessingShader() {
+		return postProcessingShader;
+	}
 
 	/**
 	 * @return object 3d renderer
 	 */
-	Object3DRenderer* getObject3DRenderer();
+	inline Object3DRenderer* getObject3DRenderer() {
+		return object3DRenderer;
+	}
 
 	/**
 	 * Computes visibility and transformations
@@ -320,6 +368,12 @@ private:
 	 */
 	Engine();
 public:
+	/**
+	 * @return texture manager
+	 */
+	inline static TextureManager* getTextureManager() {
+		return textureManager;
+	}
 
 	/**
 	 * @return engine thread count
@@ -332,18 +386,24 @@ public:
 	 * Set engine thread count
 	 * @param threadCount engine thread count
 	 */
-	static void setThreadCount(int threadCount);
+	inline static void setThreadCount(int threadCount) {
+		Engine::threadCount = threadCount;
+	}
 
 	/**
 	 * @return if having 4k
 	 */
-	static bool is4K();
+	inline static bool is4K() {
+		return have4K;
+	}
 
 	/**
 	 * Set if having 4k
 	 * @param have4K have 4k
 	 */
-	static void set4K(bool have4K);
+	inline static void set4K(bool have4K) {
+		Engine::have4K = have4K;
+	}
 
 	/**
 	 * @return animation blending time
@@ -356,9 +416,50 @@ public:
 	 * Set animation blending time
 	 * @param animationBlendingTime animation blending time
 	 */
-	static void setAnimationBlendingTime(float animationBlendingTime);
+	inline static void setAnimationBlendingTime(float animationBlendingTime) {
+		Engine::animationBlendingTime = animationBlendingTime;
+	}
 
 	/** 
+	 * @return shadow map light eye distance scale
+	 */
+	inline static float getShadowMapLightEyeDistanceScale() {
+		return Engine::shadowMaplightEyeDistanceScale;
+	}
+
+	/**
+	 * Set shadow map light eye distance scale
+	 * @param shadowMaplightEyeDistanceScale shadow map light eye distance scale
+	 */
+	inline static void setShadowMapLightEyeDistanceScale(float shadowMaplightEyeDistanceScale) {
+		Engine::shadowMaplightEyeDistanceScale = shadowMaplightEyeDistanceScale;
+	}
+
+	/**
+	 * @return shadow map width
+	 */
+	inline static int32_t getShadowMapWidth() {
+		return shadowMapWidth;
+	}
+
+	/**
+	 * @return shadow map width
+	 */
+	inline static int32_t getShadowMapHeight() {
+		return shadowMapHeight;
+	}
+
+	/**
+	 * Set shadow map size
+	 * @param width width
+	 * @param height height
+	 */
+	inline static void setShadowMapSize(int32_t width, int32_t height) {
+		Engine::shadowMapWidth = width;
+		Engine::shadowMapHeight = height;
+	}
+
+	/**
 	 * Returns engine instance
 	 * @return
 	 */
@@ -378,52 +479,51 @@ public:
 	/** 
 	 * @return if initialized and ready to be used
 	 */
-	bool isInitialized();
+	inline bool isInitialized() {
+		return initialized;
+	}
 
 	/** 
 	 * @return width
 	 */
-	int32_t getWidth();
+	inline int32_t getWidth() {
+		return width;
+	}
 
 	/** 
 	 * @return height
 	 */
-	int32_t getHeight();
-
-	/**
-	 * @return texture manager
-	 */
-	static TextureManager* getTextureManager();
-
-	/**
-	 * @return vertex buffer object manager
-	 */
-	static VBOManager* getVBOManager();
-
-	/**
-	 * @return shadow mapping or null if disabled
-	 */
-	ShadowMapping* getShadowMapping();
+	inline int32_t getHeight() {
+		return height;
+	}
 
 	/** 
 	 * @return GUI
 	 */
-	GUI* getGUI();
+	inline GUI* getGUI() {
+		return gui;
+	}
 
 	/** 
 	 * @return Timing
 	 */
-	Timing* getTiming();
+	inline Timing* getTiming() {
+		return timing;
+	}
 
 	/** 
 	 * @return Camera
 	 */
-	Camera* getCamera();
+	inline Camera* getCamera() {
+		return camera;
+	}
 
 	/** 
 	 * @return partition
 	 */
-	Partition* getPartition();
+	inline Partition* getPartition() {
+		return partition;
+	}
 
 	/** 
 	 * Set partition
@@ -432,44 +532,62 @@ public:
 	void setPartition(Partition* partition);
 
 	/** 
-	 * @return frame buffer or null
+	 * @return frame buffer or nullptr
 	 */
-	FrameBuffer* getFrameBuffer();
+	inline FrameBuffer* getFrameBuffer() {
+		return frameBuffer;
+	}
 
 	/**
 	 * @return count of lights
 	 */
-	int32_t getLightCount();
+	inline int32_t getLightCount() {
+		return lights.size();
+	}
 
 	/** 
 	 * Returns light at idx (0 <= idx < 8)
 	 * @param idx idx
 	 * @return Light
 	 */
-	Light* getLightAt(int32_t idx);
+	inline Light* getLightAt(int32_t idx) {
+		return &lights[idx];
+	}
 
 	/** 
 	 * @return scene / background color
 	 */
-	const Color4& getSceneColor() const;
+	inline const Color4& getSceneColor() const {
+		return sceneColor;
+	}
 
 	/**
 	 * Set scene color
 	 * @param sceneColor scene color
 	 */
-	void setSceneColor(const Color4& sceneColor);
+	inline void setSceneColor(const Color4& sceneColor) {
+		this->sceneColor = sceneColor;
+	}
 
 	/** 
 	 * @return entity count
 	 */
-	int32_t getEntityCount();
+	inline int32_t getEntityCount() {
+		return entitiesById.size();
+	}
 
 	/** 
 	 * Returns a entity by given id
 	 * @param id id
-	 * @return entity or null
+	 * @return entity or nullptr
 	 */
-	Entity* getEntity(const string& id);
+	inline Entity* getEntity(const string& id) {
+		auto entityByIdIt = entitiesById.find(id);
+		if (entityByIdIt != entitiesById.end()) {
+			return entityByIdIt->second;
+		}
+		return nullptr;
+	}
 
 	/** 
 	 * Adds an entity by id
@@ -527,21 +645,42 @@ public:
 	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate);
 
 	/** 
-	 * Retrieves object by mouse position
+	 * Retrieves entity by mouse position
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @return entity or null
+	 * @param filter filter
+	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr);
 
-	/** 
+	/**
+	 * Retrieves entity by mouse position with contact point
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param contactPoint world coordinate of contact point
+	 * @param filter filter
+	 * @return entity or nullptr
+	 */
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
+
+	/**
+	 * Does a ray casting of visible 3d object based entities
+	 * @param startPoint start point
+	 * @param endPoint end point
+	 * @param contactPoint world coordinate of contact point
+	 * @param filter filter
+	 * @return entity or nullptr
+	 */
+	Entity* doRayCasting(const Vector3& startPoint, const Vector3& endPoint, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
+
+	/**
 	 * Retrieves object by mouse position
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @return entity or null
+	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
+	Entity* getEntityContactPointByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter);
 
 	/** 
 	 * Convert screen coordinate by world coordinate

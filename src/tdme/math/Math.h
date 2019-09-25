@@ -6,6 +6,12 @@
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
 
+#if defined(_WIN32) && defined(_MSC_VER)
+	#define NOMINMAX
+	#undef max
+	#undef min
+#endif
+
 /** 
  * Standard math functions
  * @author Andreas Drewke

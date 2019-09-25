@@ -109,7 +109,7 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
 		auto material = readMaterial(pathName, &is, version);
-		(*model->getMaterials())[material->getId()] = material;
+		model->getMaterials()[material->getId()] = material;
 	}
 	readSubGroups(&is, model, nullptr, model->getSubGroups());
 	auto animationSetupCount = is.readInt();
@@ -268,11 +268,15 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g)
 		return nullptr;
 	} else {
 		array<float, 16> matrixArray;
-		g->createAnimation(is->readInt());
-		for (auto i = 0; i < g->getAnimation()->getTransformationsMatrices()->size(); i++) {
+		auto frames = is->readInt();
+		g->createAnimation();
+		vector<Matrix4x4> transformationsMatrices;
+		transformationsMatrices.resize(frames);
+		for (auto i = 0; i < transformationsMatrices.size(); i++) {
 			is->readFloatArray(matrixArray);
-			(*g->getAnimation()->getTransformationsMatrices())[i].set(matrixArray);
+			transformationsMatrices[i].set(matrixArray);
 		}
+		g->getAnimation()->setTransformationsMatrices(transformationsMatrices);
 		return g->getAnimation();
 	}
 }
@@ -285,8 +289,8 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g)
 		facesEntities[i] = FacesEntity(g, is->readString());
 		if (is->readBoolean() == true) {
 			Material* material = nullptr;
-			auto materialIt = g->getModel()->getMaterials()->find(is->readString());
-			if (materialIt != g->getModel()->getMaterials()->end()) {
+			auto materialIt = g->getModel()->getMaterials().find(is->readString());
+			if (materialIt != g->getModel()->getMaterials().end()) {
 				material = materialIt->second;
 			}
 			facesEntities[i].setMaterial(material);
@@ -321,7 +325,7 @@ void TMReader::readFacesEntities(TMReaderInputStream* is, Group* g)
 				faces[j].setBitangentIndices(bitangentIndices[0], bitangentIndices[1], bitangentIndices[2]);
 			}
 		}
-		facesEntities[i].setFaces(&faces);
+		facesEntities[i].setFaces(faces);
 	}
 	g->setFacesEntities(facesEntities);
 }
@@ -331,7 +335,7 @@ Joint TMReader::readSkinningJoint(TMReaderInputStream* is)
 	array<float, 16> matrixArray;
 	Joint joint(is->readString());
 	is->readFloatArray(matrixArray);
-	joint.getBindMatrix().set(matrixArray);
+	joint.setBindMatrix(Matrix4x4(matrixArray));
 	return joint;
 }
 
@@ -366,13 +370,13 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g)
 	}
 }
 
-void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups)
+void TMReader::readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups)
 {
 	auto subGroupCount = is->readInt();
 	for (auto i = 0; i < subGroupCount; i++) {
 		auto subGroup = readGroup(is, model, parentGroup);
-		(*subGroups)[subGroup->getId()] = subGroup;
-		(*model->getGroups())[subGroup->getId()] = subGroup;
+		subGroups[subGroup->getId()] = subGroup;
+		model->getGroups()[subGroup->getId()] = subGroup;
 	}
 }
 
@@ -385,7 +389,7 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	group->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(matrixArray);
-	group->getTransformationsMatrix().set(matrixArray);
+	group->setTransformationsMatrix(Matrix4x4(matrixArray));
 	vector<Vector3> vertices = readVertices(is);
 	group->setVertices(vertices);
 	vector<Vector3> normals = readVertices(is);
@@ -399,7 +403,6 @@ Group* TMReader::readGroup(TMReaderInputStream* is, Model* model, Group* parentG
 	readAnimation(is, group);
 	readSkinning(is, group);
 	readFacesEntities(is, group);
-	group->determineFeatures();
 	readSubGroups(is, model, parentGroup, group->getSubGroups());
 	return group;
 }

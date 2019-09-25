@@ -21,11 +21,12 @@ namespace rendering {
 	class Object3DRenderer;
 	class Object3DRenderer_InstancedRenderFunctionParameters;
 	class Object3DRenderer_TransparentRenderFacesGroupPool;
+	class RenderTransparentRenderPointsPool;
 	struct TransparentRenderFace;
 	class TransparentRenderFacesGroup;
 	class TransparentRenderFacesPool;
 	class TransparentRenderFacesPool_TransparentRenderFacesPool;
-	class TransparentRenderPoint;
+	struct TransparentRenderPoint;
 	class TransparentRenderPointsPool;
 	class ObjectBuffer;
 }  // namespace rendering

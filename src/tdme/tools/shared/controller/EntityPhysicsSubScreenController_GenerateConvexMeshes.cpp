@@ -319,7 +319,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	auto group = new Group(model, nullptr, "group", "group");
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
@@ -362,15 +362,14 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	}
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	group->determineFeatures();
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);
 	return model;
 }
@@ -381,7 +380,7 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	auto group = new Group(model, nullptr, "group", "group");
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
@@ -418,15 +417,14 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 	}
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	group->determineFeatures();
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	ModelHelper::prepareForIndexedRendering(model);
 	return model;
 }

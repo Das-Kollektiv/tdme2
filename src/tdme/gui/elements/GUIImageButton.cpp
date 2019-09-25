@@ -36,7 +36,7 @@ const string& GUIImageButton::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIImageButton::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIImageButton::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -44,7 +44,7 @@ map<string, string>* GUIImageButton::getAttributes(GUIScreenNode* screenNode)
 	attributes["height"] = "auto";
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIImageButton::createController(GUINode* node)

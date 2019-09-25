@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -14,6 +15,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/physics/World.h>
+#include <tdme/engine/physics/Body.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Math.h>
@@ -27,15 +29,13 @@
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/PathFinding.h>
-#include "../engine/physics/Body.h"
 
 using std::string;
 using std::to_string;
 
 using tdme::tests::PathFindingTest;
 
-using tdme::utils::Time;
-
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -60,9 +60,11 @@ using tdme::tools::shared::files::LevelFileImport;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
 using tdme::utils::Console;
 using tdme::utils::PathFinding;
+using tdme::utils::Time;
 
 PathFindingTest::PathFindingTest()
 {
+	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 	world = new World();
 	pathFinding = nullptr;

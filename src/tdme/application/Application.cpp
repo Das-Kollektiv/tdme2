@@ -70,20 +70,18 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 using tdme::utils::Time;
 
-#if defined(_WIN32) && defined(_MSC_VER) == false
-	string exec(const string& cmd) {
-		// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
-		array<char, 128> buffer;
-		string result;
-		shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
-		if (!pipe) throw std::runtime_error("popen() failed!");
-		while (!feof(pipe.get())) {
-			if (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
-				result += buffer.data();
-		}
-		return result;
+string Application::execute(const string& command) {
+	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
+	array<char, 128> buffer;
+	string result;
+	shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+	if (!pipe) throw std::runtime_error("popen() failed!");
+	while (!feof(pipe.get())) {
+		if (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+			result += buffer.data();
 	}
-#endif
+	return result;
+}
 
 #if defined(_WIN32)
 	LONG WINAPI windowsExceptionHandler(struct _EXCEPTION_POINTERS* exceptionInfo) {
@@ -223,7 +221,7 @@ using tdme::utils::Time;
 					string hexAddr;
 					HexEncDec::encodeInt(stackFrame.AddrPC.Offset, hexAddr);
 					string addr2LineCommand = "\"" + addr2lineToolCmd + " -f -p -e " + string(pathToExecutable) + " " + hexAddr + "\"";
-					auto addr2LineOutput = exec(addr2LineCommand);
+					auto addr2LineOutput = Application::execute(addr2LineCommand);
 					StringTokenizer t;
 					t.tokenize(addr2LineOutput, " ");
 					if (t.hasMoreTokens() == true) {
@@ -254,11 +252,12 @@ using tdme::utils::Time;
 	}
 #endif
 
-constexpr int32_t Application::FPS;
 Application::ApplicationShutdown Application::applicationShutdown;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
+bool Application::limitFPS = false;
+
 #if defined(VULKAN)
 	GLFWwindow* Application::glfwWindow = nullptr;
 	array<uint32_t, 10> Application::glfwButtonDownFrames;
@@ -285,6 +284,14 @@ Application::~Application() {
 
 void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
+}
+
+bool Application::isActive() {
+	#if defined(_WIN32)
+		return GetActiveWindow() == GetForegroundWindow();
+	#else
+		return true;
+	#endif
 }
 
 int32_t Application::getWindowXPosition() const {
@@ -396,6 +403,7 @@ void Application::swapBuffers() {
 }
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
+	this->title = title;
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN)
 		if (glfwInit() == false) {
@@ -475,6 +483,15 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	#endif
 }
 
+void Application::setIcon(const string& fileName) {
+	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
+	#if defined(_WIN32)
+		HWND hwnd = FindWindow(NULL, title.c_str());
+		HANDLE icon = LoadImage(GetModuleHandle(nullptr), fileName.c_str(), IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
+		SendMessage(hwnd, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
+	#endif
+}
+
 void Application::displayInternal() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
@@ -488,7 +505,7 @@ void Application::displayInternal() {
 	if (Application::timeLast != -1L) {
 		#if !defined(VULKAN)
 			int64_t timePassed = timeNow - timeLast;
-			if (timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
+			if (limitFPS == true && timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
 		#endif
 	}
 	Application::timeLast = timeNow;

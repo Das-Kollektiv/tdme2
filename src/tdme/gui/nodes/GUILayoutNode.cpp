@@ -125,7 +125,6 @@ int32_t GUILayoutNode::getContentHeight()
 void GUILayoutNode::layoutSubNodes()
 {
 	GUIParentNode::layoutSubNodes();
-	GUIParentNode::layoutSubNodes();
 	{
 		auto v = alignment;
 		if (v == GUILayoutNode_Alignment::VERTICAL) {

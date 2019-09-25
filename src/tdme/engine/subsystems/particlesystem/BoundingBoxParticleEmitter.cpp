@@ -50,9 +50,9 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	auto& obbHalfExtensionXYZ = obbTransformed->getHalfExtension().getArray();
 	// emit particle in oriented bounding box
 	particle->position.set(0.0f, 0.0f, 0.0f);
-	particle->position.add(tmpAxis.set((*obbAxes)[0]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
-	particle->position.add(tmpAxis.set((*obbAxes)[1]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[1] * 2.0f) - obbHalfExtensionXYZ[1]));
-	particle->position.add(tmpAxis.set((*obbAxes)[2]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
+	particle->position.add(tmpAxis.set(obbAxes[0]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
+	particle->position.add(tmpAxis.set(obbAxes[1]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[1] * 2.0f) - obbHalfExtensionXYZ[1]));
+	particle->position.add(tmpAxis.set(obbAxes[2]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
 	particle->position.add(obbTransformed->getCenter());
 	// compute velocity
 	particle->velocity.set(
@@ -84,9 +84,9 @@ void BoundingBoxParticleEmitter::fromTransformations(const Transformations& tran
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(obb->getCenter(), center);
 	// apply transformations rotation + scale to axis
-	transformationsMatrix.multiplyNoTranslation((*obb->getAxes())[0], axesTransformed[0]);
-	transformationsMatrix.multiplyNoTranslation((*obb->getAxes())[1], axesTransformed[1]);
-	transformationsMatrix.multiplyNoTranslation((*obb->getAxes())[2], axesTransformed[2]);
+	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[0], axesTransformed[0]);
+	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[1], axesTransformed[1]);
+	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[2], axesTransformed[2]);
 	// set up axes
 	axes[0].set(axesTransformed[0]).normalize();
 	axes[1].set(axesTransformed[1]).normalize();

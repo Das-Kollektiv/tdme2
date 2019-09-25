@@ -90,7 +90,7 @@ void LODObject3D::fromTransformations(const Transformations& transformations)
 	if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
 	if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
 	// update entity
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
 	objectLOD = nullptr;
 }
@@ -103,7 +103,7 @@ void LODObject3D::update()
 	if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
 	if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
 	// update entity
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
 	objectLOD = nullptr;
 }
@@ -112,13 +112,16 @@ void LODObject3D::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
-	// frustum culling enabled?
-	if (frustumCulling == true) {
-		// yeo, add or remove from partition
-		if (enabled == true) {
-			if (engine != nullptr) engine->partition->addEntity(this);
-		} else {
-			if (engine != nullptr) engine->partition->removeEntity(this);
+	// frustum if root entity
+	if (parentEntity == nullptr) {
+		// frustum culling enabled?
+		if (frustumCulling == true) {
+			// yeo, add or remove from partition
+			if (enabled == true) {
+				if (engine != nullptr) engine->partition->addEntity(this);
+			} else {
+				if (engine != nullptr) engine->partition->removeEntity(this);
+			}
 		}
 	}
 	// reset current LOD object
@@ -160,4 +163,11 @@ void LODObject3D::initialize()
 	if (objectLOD1 != nullptr) objectLOD1->initialize();
 	if (objectLOD2 != nullptr) objectLOD2->initialize();
 	if (objectLOD3 != nullptr) objectLOD3->initialize();
+}
+
+void LODObject3D::setEnableEarlyZRejection(bool enableEarlyZRejection) {
+	// delegate to LOD objects
+	if (objectLOD1 != nullptr) objectLOD1->setEnableEarlyZRejection(enableEarlyZRejection);
+	if (objectLOD2 != nullptr) objectLOD2->setEnableEarlyZRejection(enableEarlyZRejection);
+	if (objectLOD3 != nullptr) objectLOD3->setEnableEarlyZRejection(enableEarlyZRejection);
 }

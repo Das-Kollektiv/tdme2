@@ -16,6 +16,7 @@
         - trigger
     - level editor
         - setting up a grid where to place objects on
+        - setting up snapping where to align objects at
         - load, save maps, showing level dimension
         - import maps from model files like FBX, DAE or TM
         - setting up map properties

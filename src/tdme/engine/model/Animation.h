@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 
 using std::vector;
 
@@ -18,22 +18,36 @@ using tdme::math::Matrix4x4;
 class tdme::engine::model::Animation final
 {
 private:
-	int32_t frames {  };
-	vector<tdme::math::Matrix4x4> transformationsMatrices {  };
+	vector<Matrix4x4> transformationsMatrices;
 
 public:
 
 	/** 
 	 * @return number of frames
 	 */
-	int32_t getFrames();
+	inline int getFrames() const {
+		return transformationsMatrices.size();
+	}
 
 	/** 
 	 * Returns transformation matrices
 	 * @return transformation matrices
 	 */
-	vector<Matrix4x4>* getTransformationsMatrices();
+	inline const vector<Matrix4x4>& getTransformationsMatrices() const {
+		return transformationsMatrices;
+	}
 
-	// Generated
-	Animation(int32_t frames);
+	/**
+	 * Set transformation matrices
+	 * @return transformationMatrices transformation matrices
+	 */
+	inline void setTransformationsMatrices(const vector<Matrix4x4>& transformationsMatrices) {
+		this->transformationsMatrices = transformationsMatrices;
+	}
+
+	/**
+	 * Public constructor
+	 * @param frames frames
+	 */
+	Animation();
 };

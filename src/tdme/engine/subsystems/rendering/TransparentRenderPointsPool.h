@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -26,9 +25,11 @@ using tdme::utils::Console;
  */
 class tdme::engine::subsystems::rendering::TransparentRenderPointsPool final
 {
+	friend class RenderTransparentRenderPointsPool;
+
 private:
-	vector<TransparentRenderPoint> transparentRenderPoints {  };
-	int32_t poolIdx {  };
+	vector<TransparentRenderPoint*> transparentRenderPoints;
+	int32_t poolIdx;
 
 public:
 
@@ -36,28 +37,23 @@ public:
 	 * Creates an transparent render point entity in pool
 	 * @param point point
 	 * @param color color
-	 * @param distanceFromCamera distance from camera
+	 * @param particleSystemType particle system type
+	 * @param particleSystem particle system
 	 */
-	inline void addPoint(const Vector3& point, const Color4& color, float distanceFromCamera, void* cookie) {
+	inline void addPoint(const Vector3& point, const Color4& color, int particleSystemType, void* particleSystem) {
 		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
 			Console::println(string("TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
 			return;
 		}
 		// create point in pool
-		auto& transparentRenderPoint = transparentRenderPoints[poolIdx++];
-		transparentRenderPoint.acquired = true;
-		transparentRenderPoint.point.set(point);
-		transparentRenderPoint.color.set(color);
-		transparentRenderPoint.distanceFromCamera = distanceFromCamera;
-		transparentRenderPoint.cookie = cookie;
+		auto transparentRenderPoint = transparentRenderPoints[poolIdx++];
+		transparentRenderPoint->acquired = true;
+		transparentRenderPoint->point = point;
+		transparentRenderPoint->color = color;
+		transparentRenderPoint->particleSystemType = particleSystemType;
+		transparentRenderPoint->particleSystem = particleSystem;
 	}
-
-	/** 
-	 * Merge another pool into this pool
-	 * @param pool2 pool
-	 */
-	void merge(TransparentRenderPointsPool* pool2);
 
 	/** 
 	 * Reset
@@ -67,7 +63,7 @@ public:
 	/** 
 	 * @return transparent render points vector
 	 */
-	inline const vector<TransparentRenderPoint>& getTransparentRenderPoints() {
+	inline const vector<TransparentRenderPoint*>& getTransparentRenderPoints() {
 		return transparentRenderPoints;
 	}
 
@@ -81,4 +77,9 @@ public:
 	 * @param pointsMax points max
 	 */
 	TransparentRenderPointsPool(int32_t pointsMax);
+
+	/**
+	 * Destructor
+	 */
+	~TransparentRenderPointsPool();
 };

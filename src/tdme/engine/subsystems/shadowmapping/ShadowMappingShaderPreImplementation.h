@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -12,7 +11,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
- * Pre shadow mapping shader for render shadow map pass 
+ * Pre shadow mapping shader for create shadow map
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -44,9 +44,9 @@ void PartitionNone::removeEntity(Entity* entity)
 	}
 }
 
-const vector<Entity*>* PartitionNone::getVisibleEntities(Frustum* frustum)
+const vector<Entity*>& PartitionNone::getVisibleEntities(Frustum* frustum)
 {
-	return &entities;
+	return entities;
 }
 
 VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(BoundingVolume* cbv)

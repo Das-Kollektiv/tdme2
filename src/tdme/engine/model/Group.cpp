@@ -44,46 +44,6 @@ Group::~Group() {
 	if (skinning != nullptr) delete skinning;
 }
 
-Model* Group::getModel()
-{
-	return model;
-}
-
-Group* Group::getParentGroup()
-{
-	return parentGroup;
-}
-
-const string& Group::getId()
-{
-	return id;
-}
-
-const string& Group::getName()
-{
-	return name;
-}
-
-bool Group::isJoint()
-{
-	return isJoint_;
-}
-
-void Group::setJoint(bool isJoint)
-{
-	this->isJoint_ = isJoint;
-}
-
-Matrix4x4& Group::getTransformationsMatrix()
-{
-	return transformationsMatrix;
-}
-
-vector<Vector3>* Group::getVertices()
-{
-	return &vertices;
-}
-
 void Group::setVertices(const vector<Vector3>& vertices)
 {
 	this->vertices.resize(vertices.size());
@@ -91,11 +51,6 @@ void Group::setVertices(const vector<Vector3>& vertices)
 	for (auto& vertex: vertices) {
 		this->vertices[i++] = vertex;
 	}
-}
-
-vector<Vector3>* Group::getNormals()
-{
-	return &normals;
 }
 
 void Group::setNormals(const vector<Vector3>& normals)
@@ -107,11 +62,6 @@ void Group::setNormals(const vector<Vector3>& normals)
 	}
 }
 
-vector<TextureCoordinate>* Group::getTextureCoordinates()
-{
-	return &textureCoordinates;
-}
-
 void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
 {
 	this->textureCoordinates.resize(textureCoordinates.size());
@@ -119,11 +69,6 @@ void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordi
 	for (auto& textureCoordinate: textureCoordinates) {
 		this->textureCoordinates[i++] = textureCoordinate;
 	}
-}
-
-vector<Vector3>* Group::getTangents()
-{
-	return &tangents;
 }
 
 void Group::setTangents(const vector<Vector3>& tangents)
@@ -135,11 +80,6 @@ void Group::setTangents(const vector<Vector3>& tangents)
 	}
 }
 
-vector<Vector3>* Group::getBitangents()
-{
-	return &bitangents;
-}
-
 void Group::setBitangents(const vector<Vector3>& bitangents)
 {
 	this->bitangents.resize(bitangents.size());
@@ -149,20 +89,10 @@ void Group::setBitangents(const vector<Vector3>& bitangents)
 	}
 }
 
-Animation* Group::getAnimation()
+Animation* Group::createAnimation()
 {
+	animation = new Animation();
 	return animation;
-}
-
-Animation* Group::createAnimation(int32_t frames)
-{
-	animation = new Animation(frames);
-	return animation;
-}
-
-Skinning* Group::getSkinning()
-{
-	return skinning;
 }
 
 Skinning* Group::createSkinning()
@@ -172,18 +102,13 @@ Skinning* Group::createSkinning()
 	return skinning;
 }
 
-int32_t Group::getFaceCount()
+int32_t Group::getFaceCount() const
 {
 	auto faceCount = 0;
 	for (auto& facesEntity : facesEntities) {
-		faceCount += facesEntity.getFaces()->size();
+		faceCount += facesEntity.getFaces().size();
 	}
 	return faceCount;
-}
-
-vector<FacesEntity>* Group::getFacesEntities()
-{
-	return &facesEntities;
 }
 
 void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
@@ -195,11 +120,6 @@ void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
 	}
 }
 
-map<string, Group*>* Group::getSubGroups()
-{
-	return &subGroups;
-}
-
 Group* Group::getSubGroupById(const string& groupId)
 {
 	auto groupIt = subGroups.find(groupId);
@@ -207,11 +127,4 @@ Group* Group::getSubGroupById(const string& groupId)
 		return groupIt->second;
 	}
 	return nullptr;
-}
-
-void Group::determineFeatures()
-{
-	for (auto& facesEntity : facesEntities) {
-		facesEntity.determineFeatures();
-	}
 }

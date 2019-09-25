@@ -64,62 +64,64 @@ private:
 	static constexpr int32_t MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 	static constexpr int32_t MOUSE_PANNING_NONE { 0 };
 	static constexpr int32_t MOUSE_ROTATION_NONE { 0 };
-	int32_t GRID_DIMENSION_X {  };
-	int32_t GRID_DIMENSION_Y {  };
-	LevelEditorScreenController* levelEditorScreenController {  };
-	Engine* engine {  };
-	LevelEditorEntity* selectedEntity {  };
-	bool reloadEntityLibrary {  };
-	map<string, LevelEditorView_ObjectColor*> objectColors {  };
-	Rotation* camLookRotationX {  };
-	Rotation* camLookRotationY {  };
-	float camScale {  };
-	float camScaleMax {  };
-	float camScaleMin {  };
-	int32_t mouseDownLastX {  };
-	int32_t mouseDownLastY {  };
-	bool mouseDragging {  };
-	Entity* mouseDraggingLastObject {  };
-	int32_t mousePanningSide {  };
-	int32_t mousePanningForward {  };
-	int32_t mouseRotationX {  };
-	int32_t mouseRotationY {  };
-	bool haveGridCenterLast { false };
-	Vector3 camLookAt {  };
-	Vector3 gridCenter {  };
-	Vector3 gridCenterLast {  };
-	bool gridEnabled {  };
-	float gridY {  };
-	bool keyLeft {  };
-	bool keyRight {  };
-	bool keyUp {  };
-	bool keyDown {  };
-	bool keyA {  };
-	bool keyD {  };
-	bool keyW {  };
-	bool keyS {  };
-	bool keyC {  };
-	bool keyV {  };
-	bool keyX {  };
-	bool keyDelete {  };
-	bool keyPlus {  };
-	bool keyMinus {  };
-	bool keyR {  };
-	bool keyControl {  };
-	bool keyEscape {  };
+	float snappingX;
+	float snappingZ;
+	bool snappingEnabled;
+	LevelEditorScreenController* levelEditorScreenController { nullptr };
+	Engine* engine { nullptr };
+	LevelEditorEntity* selectedEntity { nullptr };
+	bool reloadEntityLibrary;
+	map<string, LevelEditorView_ObjectColor*> objectColors;
+	Rotation* camLookRotationX { nullptr };
+	Rotation* camLookRotationY { nullptr };
+	float camScale;
+	float camScaleMax;
+	float camScaleMin;
+	int32_t placeEntityMouseX;
+	int32_t placeEntityMouseY;
+	int32_t mouseDownLastX;
+	int32_t mouseDownLastY;
+	bool mouseDragging;
+	Entity* mouseDraggingLastObject;
+	int32_t mousePanningSide;
+	int32_t mousePanningForward;
+	int32_t mouseRotationX;
+	int32_t mouseRotationY;
+	Vector3 camLookAt;
+	Vector3 gridCenter;
+	bool gridEnabled;
+	float gridY;
+	bool keyLeft;
+	bool keyRight;
+	bool keyUp;
+	bool keyDown;
+	bool keyA;
+	bool keyD;
+	bool keyW;
+	bool keyS;
+	bool keyPlus;
+	bool keyMinus;
+	bool keyR;
+	bool keyControl;
+	bool keyShift;
+	bool keyEscape;
 
-public: /* package */
-	float groundPlateWidth {  };
-	float groundPlateDepth {  };
+	bool placeEntityMode;
+	bool placeEntityValid;
+	int placeEntityYRotation;
+	bool pasteMode;
+	bool pasteModeValid;
+	Vector3 placeEntityTranslation;
 
 private:
-	Model* levelEditorGround {  };
-	LevelEditorLevel* level {  };
-	vector<string> selectedEntityIds {  };
-	set<string> selectedEntityIdsById {  };
-	vector<LevelEditorObject*> pasteObjects_ {  };
-	PopUps* popUps {  };
-	EntityPickingFilter* entityPickingFilterNoGrid {  };
+	Model* levelEditorGround { nullptr };
+	LevelEditorLevel* level { nullptr };
+	vector<string> selectedEntityIds;
+	set<string> selectedEntityIdsById;
+	vector<LevelEditorObject*> pasteObjects_;
+	PopUps* popUps;
+	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
+	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
 
 public:
 
@@ -163,13 +165,29 @@ public:
 	 */
 	float getGridY();
 
-	/** 
+	/**
 	 * Set grid y position 
 	 * @param gridY grid y
 	 */
 	void setGridY(float gridY);
 
 	/** 
+	 * Get snapping
+	 * @param snappingEnabled snapping enabled
+	 * @param snappingX snapping along X axis
+	 * @param snappingZ snapping along Z axis
+	 */
+	void getSnapping(bool& snappingEnabled, float& snappingX, float& snappingZ);
+
+	/**
+	 * Set snapping
+	 * @param snappingEnabled snapping enabled
+	 * @param snappingX snapping along X axis
+	 * @param snappingZ snapping along Z axis
+	 */
+	void setSnapping(bool snappingEnabled, float snappingX, float snappingZ);
+
+	/**
 	 * Load selected entity from library
 	 * @param id id
 	 */
@@ -288,19 +306,24 @@ public:
 	bool objectDataApply(const string& name, const string& description);
 
 	/** 
+	 * Initialize place entity mode
+	 */
+	void setPlaceObjectMode();
+
+	/**
+	 * Finish place entity mode
+	 */
+	void unsetPlaceObjectMode();
+
+	/**
 	 * Places selected model on selected object
 	 */
 	void placeObject();
 
 	/** 
-	 * Places selected model on given object
-	 */
-	void placeObject(Entity* selectedObject);
-
-	/** 
 	 * Removes selected object
 	 */
-	void removeObject();
+	void removeObjects();
 
 	/** 
 	 * Centers selected objects
@@ -403,10 +426,21 @@ private:
 	 */
 	void copyObjects();
 
+	/**
+	 * Set paste mode
+	 */
+	void setPasteMode();
+
+	/**
+	 * cancel paste
+	 */
+	void unsetPasteMode();
+
 	/** 
 	 * Paste objects
+	 * @param displayOnly display only
 	 */
-	void pasteObjects();
+	void pasteObjects(bool displayOnly);
 
 public:
 

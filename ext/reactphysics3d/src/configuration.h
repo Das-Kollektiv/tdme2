@@ -38,6 +38,10 @@
 // Windows platform
 #if defined(WIN32) ||defined(_WIN32) || defined(_WIN64) ||defined(__WIN32__) || defined(__WINDOWS__)
     #define WINDOWS_OS
+	#undef NOMINMAX
+	#undef max
+	#undef min
+    #define NOMINMAX
 #elif defined(__APPLE__)     // Apple platform
     #define APPLE_OS
 #elif defined(__linux__) || defined(linux) || defined(__linux)    // Linux platform

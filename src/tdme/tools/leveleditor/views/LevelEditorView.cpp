@@ -31,7 +31,9 @@
 #include <tdme/gui/events/GUIKeyboardEvent_Type.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -101,7 +103,9 @@ using tdme::gui::GUI;
 using tdme::gui::events::GUIKeyboardEvent_Type;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::math::Math;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -144,25 +148,12 @@ vector<string> LevelEditorView::OBJECTCOLOR_NAMES = {
 	"none"
 };
 
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_NONE;
-
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_LEFT;
-
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_MIDDLE;
-
-constexpr int32_t LevelEditorView::MOUSE_BUTTON_RIGHT;
-
-constexpr int32_t LevelEditorView::MOUSE_DOWN_LAST_POSITION_NONE;
-
-constexpr int32_t LevelEditorView::MOUSE_PANNING_NONE;
-
-constexpr int32_t LevelEditorView::MOUSE_ROTATION_NONE;
-
 LevelEditorView::LevelEditorView(PopUps* popUps) 
 {
 	this->popUps = popUps;
-	GRID_DIMENSION_X = 20;
-	GRID_DIMENSION_Y = 20;
+	snappingX = 1.0f;
+	snappingZ = 1.0f;
+	snappingEnabled = false;
 	camLookRotationX = new Rotation(-45.0f, Vector3(1.0f, 0.0f, 0.0f));
 	camLookRotationY = new Rotation(0.0f, Vector3(0.0f, 1.0f, 0.0f));
 	camScaleMax = 15.0f;
@@ -173,8 +164,6 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	mousePanningForward = LevelEditorView::MOUSE_PANNING_NONE;
 	mouseRotationX = LevelEditorView::MOUSE_ROTATION_NONE;
 	mouseRotationY = LevelEditorView::MOUSE_ROTATION_NONE;
-	groundPlateWidth = 1.0f;
-	groundPlateDepth = 1.0f;
 	level = TDMELevelEditor::getInstance()->getLevel();
 	reloadEntityLibrary = false;
 	selectedEntity = nullptr;
@@ -187,11 +176,15 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	keyR = false;
 	keyControl = false;
 	keyEscape = false;
+	placeEntityMode = false;
+	placeEntityValid = false;
+	placeEntityYRotation = 0;
+	pasteMode = false;
+	pasteModeValid = false;
 	mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	mouseDragging = false;
 	mouseDraggingLastObject = nullptr;
-	haveGridCenterLast = false;
 	gridEnabled = false;
 	gridY = 0.0f;
 	objectColors["red"] = new LevelEditorView_ObjectColor(this, 1.5f, 0.8f, 0.8f, 0.5f, 0.0f, 0.0f);
@@ -207,25 +200,49 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	levelEditorGround = createLevelEditorGroundPlateModel();
 	engine = Engine::getInstance();
 
-	// entity picking filter
-	class LevelEditorEntityPickingFilter: public virtual EntityPickingFilter
 	{
-	public:
-		bool filterEntity(Entity* entity) override {
-			return StringUtils::startsWith(entity->getId(), "leveleditor.ground@") == false;
-		}
+		// entity picking filter for no grid
+		class LevelEditorEntityPickingFilterNoGrid: public virtual EntityPickingFilter
+		{
+		public:
+			bool filterEntity(Entity* entity) override {
+				return entity->getId() != "tdme.leveleditor.grid";
+			}
 
-		/**
-		 * Public constructor
-		 * @param levelEditorView level editor view
-		 */
-		LevelEditorEntityPickingFilter(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
-		}
+			/**
+			 * Public constructor
+			 * @param levelEditorView level editor view
+			 */
+			LevelEditorEntityPickingFilterNoGrid(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
+			}
 
-	private:
-		LevelEditorView* levelEditorView;
-	};
-	entityPickingFilterNoGrid = new LevelEditorEntityPickingFilter(this);
+		private:
+			LevelEditorView* levelEditorView;
+		};
+		entityPickingFilterNoGrid = new LevelEditorEntityPickingFilterNoGrid(this);
+	}
+
+	{
+		// entity picking filter for no placing object
+		class LevelEditorEntityPickingFilterPlacing: public virtual EntityPickingFilter
+		{
+		public:
+			bool filterEntity(Entity* entity) override {
+				return entity->getId() != "tdme.leveleditor.placeentity" && StringUtils::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false;
+			}
+
+			/**
+			 * Public constructor
+			 * @param levelEditorView level editor view
+			 */
+			LevelEditorEntityPickingFilterPlacing(LevelEditorView* levelEditorView): levelEditorView(levelEditorView) {
+			}
+
+		private:
+			LevelEditorView* levelEditorView;
+		};
+		entityPickingFilterPlacing = new LevelEditorEntityPickingFilterPlacing(this);
+	}
 }
 
 LevelEditorView::~LevelEditorView() {
@@ -240,6 +257,7 @@ LevelEditorView::~LevelEditorView() {
 	delete objectColors["none"];
 	delete levelEditorGround;
 	delete entityPickingFilterNoGrid;
+	delete entityPickingFilterPlacing;
 	delete levelEditorScreenController;
 }
 
@@ -269,7 +287,7 @@ LevelEditorObject* LevelEditorView::getSelectedObject()
 		return nullptr;
 
 	auto selectedObject = level->getObjectById(selectedEntityIds[0]);
-	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), "leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
+	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
 }
 
 bool LevelEditorView::isGridEnabled()
@@ -303,6 +321,18 @@ void LevelEditorView::setGridY(float gridY)
 
 }
 
+void LevelEditorView::getSnapping(bool& snappingEnabled, float& snappingX, float& snappingZ) {
+	snappingEnabled = this->snappingEnabled;
+	snappingX = this->snappingX;
+	snappingZ = this->snappingZ;
+}
+
+void LevelEditorView::setSnapping(bool snappingEnabled, float snappingX, float snappingZ) {
+	this->snappingEnabled = snappingEnabled;
+	this->snappingX = snappingX;
+	this->snappingZ = snappingZ;
+}
+
 void LevelEditorView::loadEntityFromLibrary(int32_t id)
 {
 	selectedEntity = TDMELevelEditor::getInstance()->getEntityLibrary()->getEntity(id);
@@ -310,90 +340,52 @@ void LevelEditorView::loadEntityFromLibrary(int32_t id)
 
 void LevelEditorView::handleInputEvents()
 {
-	auto keyDeleteBefore = keyDelete;
-	auto keyControlBefore = keyControl;
-	auto keyCBefore = keyC;
-	auto keyVBefore = keyV;
-	auto keyXBefore = keyX;
 	keyControl = false;
+	keyShift = false;
+	auto keyControlX = false;
+	auto keyControlC = false;
+	auto keyControlV = false;
+	auto keyDelete = false;
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
-		if (event.isProcessed() == true)
-			continue;
-
-		keyControl = event.isControlDown();
-
+		if (event.isProcessed() == true) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
-
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE)
-			keyEscape = isKeyDown;
-
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
-			keyLeft = isKeyDown;
-
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT)
-			keyRight = isKeyDown;
-
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_UP)
-			keyUp = isKeyDown;
-
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN)
-			keyDown = isKeyDown;
-
-		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_BACKSPACE)
-			keyDelete = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'x')
-			keyX = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'c')
-			keyC = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'v')
-			keyV = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'a')
-			keyA = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'd')
-			keyD = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'w')
-			keyW = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u's')
-			keyS = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'+')
-			keyPlus = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'-')
-			keyMinus = isKeyDown;
-
-		if (Character::toLowerCase(event.getKeyChar()) == u'r')
-			keyR = isKeyDown;
-
-	}
-	if (keyEscape == true && selectedEntityIds.size() > 0) {
-		vector<Entity*> entitiesToRemove;
-		for (auto selectedEntityId: selectedEntityIds) {
-			auto selectedEntity = engine->getEntity(selectedEntityId);
-			if (selectedEntity != nullptr) entitiesToRemove.push_back(selectedEntity);
-		}
-		for (auto entityToRemove: entitiesToRemove) {
-			setStandardObjectColorEffect(entityToRemove);
-			selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
-			auto selectedEntityByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
-			if (selectedEntityByIdIt != selectedEntityIdsById.end()) {
-				selectedEntityIdsById.erase(selectedEntityByIdIt);
-			}
-		}
-		levelEditorScreenController->unselectObjectsInObjectListBox();
+		keyControl = event.isControlDown();
+		keyShift = event.isShiftDown();
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) keyEscape = isKeyDown;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT) keyLeft = isKeyDown;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT) keyRight = isKeyDown;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_UP) keyUp = isKeyDown;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN) keyDown = isKeyDown;
+		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_BACKSPACE) keyDelete = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 24) keyControlX = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 3) keyControlC = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 22) keyControlV = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'x' && keyControl == true) keyControlX = !isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'c' && keyControl == true) keyControlC = !isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'v' && keyControl == true) keyControlV = !isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'a') keyA = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'd') keyD = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'w') keyW = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 's') keyS = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == '+') keyPlus = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == '-') keyMinus = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'r') keyR = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == '.' && !isKeyDown == false) placeEntityYRotation = (placeEntityYRotation + 1) % 4;
+		if (Character::toLowerCase(event.getKeyChar()) == ',' && !isKeyDown == false) placeEntityYRotation = (placeEntityYRotation + 3) % 4;
 	}
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
-		if (event.isProcessed() == true)
-			continue;
+
+		if ((event.getType() == GUIMouseEvent_Type::MOUSEEVENT_MOVED ||
+			event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) &&
+			event.getXUnscaled() >= 0 &&
+			event.getYUnscaled() >= 0) {
+			placeEntityMouseX = event.getXUnscaled();
+			placeEntityMouseY = event.getYUnscaled();
+		}
+
+		if (event.isProcessed() == true) continue;
 
 		if (event.getButton() != MOUSE_BUTTON_NONE) {
 			if (mouseDragging == false) {
@@ -410,60 +402,71 @@ void LevelEditorView::handleInputEvents()
 			}
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (mouseDragging == false) {
-				if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
-					mouseDragging = true;
+			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && placeEntityMode == true && placeEntityValid == true) {
+				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+					placeObject();
+					if (keyShift == false) unsetPlaceObjectMode();
 				}
-			}
-			if (keyControl == false) {
-				vector<Entity*> entitiesToRemove;
-				for (auto selectedEntityId: selectedEntityIds) {
-					auto selectedEntity = engine->getEntity(selectedEntityId);
+			} else
+			if (pasteMode == true && pasteModeValid == true) {
+				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+					pasteObjects(false);
+					if (keyShift == false) unsetPasteMode();
+				}
+			} else {
+			if (mouseDragging == false) {
+					if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
+						mouseDragging = true;
+					}
+				}
+				if (keyControl == false) {
+					vector<Entity*> entitiesToRemove;
+					for (auto selectedEntityId: selectedEntityIds) {
+						auto selectedEntity = engine->getEntity(selectedEntityId);
+						if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
+							// no op
+						} else {
+							if (selectedEntity != nullptr) entitiesToRemove.push_back(selectedEntity);
+						}
+					}
+					for (auto entityToRemove: entitiesToRemove) {
+						setStandardObjectColorEffect(entityToRemove);
+						selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
+						auto selectedEntitiyIdByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
+						if (selectedEntitiyIdByIdIt != selectedEntityIdsById.end()) {
+							selectedEntityIdsById.erase(selectedEntitiyIdByIdIt);
+						}
+						levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
+					}
+				}
+				auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid);
+				if (selectedEntity != nullptr) {
 					if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
 					} else {
-						if (selectedEntity != nullptr) entitiesToRemove.push_back(selectedEntity);
-					}
-				}
-				for (auto entityToRemove: entitiesToRemove) {
-					setStandardObjectColorEffect(entityToRemove);
-					selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
-					auto selectedEntitiyIdByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
-					if (selectedEntitiyIdByIdIt != selectedEntityIdsById.end()) {
-						selectedEntityIdsById.erase(selectedEntitiyIdByIdIt);
-					}
-					levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
-				}
-			}
-			auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid);
-			if (selectedEntity == nullptr) {
-				selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
-			}
-			if (selectedEntity != nullptr) {
-				if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
-				} else {
-					if (selectedEntityIdsById.find(selectedEntity->getId()) == selectedEntityIdsById.end()) {
-						setStandardObjectColorEffect(selectedEntity);
-						setHighlightObjectColorEffect(selectedEntity);
-						selectedEntityIds.push_back(selectedEntity->getId());
-						selectedEntityIdsById.insert(selectedEntity->getId());
-						levelEditorScreenController->selectObjectInObjectListbox(selectedEntity->getId());
-						auto levelEditorObject = level->getObjectById(selectedEntity->getId());
-						if (levelEditorObject != nullptr) {
-							TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->selectEntity(levelEditorObject->getEntity()->getId());
+						if (selectedEntityIdsById.find(selectedEntity->getId()) == selectedEntityIdsById.end()) {
+							setStandardObjectColorEffect(selectedEntity);
+							setHighlightObjectColorEffect(selectedEntity);
+							selectedEntityIds.push_back(selectedEntity->getId());
+							selectedEntityIdsById.insert(selectedEntity->getId());
+							levelEditorScreenController->selectObjectInObjectListbox(selectedEntity->getId());
+							auto levelEditorObject = level->getObjectById(selectedEntity->getId());
+							if (levelEditorObject != nullptr) {
+								TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->selectEntity(levelEditorObject->getEntity()->getId());
+							}
+						} else {
+							setStandardObjectColorEffect(selectedEntity);
+							selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), selectedEntity->getId()), selectedEntityIds.end());
+							auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(selectedEntity->getId());
+							if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
+								selectedEntityIdsById.erase(selectedEntityIdsByIdIt);
+							}
+							levelEditorScreenController->unselectObjectInObjectListBox(selectedEntity->getId());
 						}
-					} else {
-						setStandardObjectColorEffect(selectedEntity);
-						selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), selectedEntity->getId()), selectedEntityIds.end());
-						auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(selectedEntity->getId());
-						if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
-							selectedEntityIdsById.erase(selectedEntityIdsByIdIt);
-						}
-						levelEditorScreenController->unselectObjectInObjectListBox(selectedEntity->getId());
 					}
 				}
+				mouseDraggingLastObject = selectedEntity;
+				updateGUIElements();
 			}
-			mouseDraggingLastObject = selectedEntity;
-			updateGUIElements();
 		} else
 		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
 			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
@@ -493,18 +496,22 @@ void LevelEditorView::handleInputEvents()
 
 		}
 	}
-	if (keyDeleteBefore == true && keyDelete == false) {
-		removeObject();
+	if (keyDelete == true) {
+		Console::println("LevelEditorView::handleInputEvents(): Backspace");
+		removeObjects();
 	}
-	if ((keyControlBefore == true || keyControl == true) && keyXBefore == true && keyX == false) {
+	if (keyControlX == true) {
+		Console::println("LevelEditorView::handleInputEvents(): CTRL-X");
 		copyObjects();
-		removeObject();
+		removeObjects();
 	}
-	if ((keyControlBefore == true || keyControl == true) && keyCBefore == true && keyC == false) {
+	if (keyControlC == true) {
+		Console::println("LevelEditorView::handleInputEvents(): CTRL-C");
 		copyObjects();
 	}
-	if ((keyControlBefore == true || keyControl == true) && keyVBefore == true && keyV == false) {
-		pasteObjects();
+	if (keyControlV == true) {
+		Console::println("LevelEditorView::handleInputEvents(): CTRL-V");
+		setPasteMode();
 	}
 }
 
@@ -520,6 +527,64 @@ void LevelEditorView::display()
 		reloadEntityLibrary = false;
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 	}
+
+	if ((placeEntityMode == true || pasteMode == true) && keyEscape == true) {
+		unsetPlaceObjectMode();
+		unsetPasteMode();
+		keyEscape = false;
+	}
+
+	{
+		auto selectedEngineEntity = engine->getEntity("tdme.leveleditor.placeentity");
+		Vector3 worldCoordinate;
+		placeEntityValid = false;
+		pasteModeValid = false;
+		if ((placeEntityMode == true || pasteMode == true) && engine->getEntityByMousePosition(placeEntityMouseX, placeEntityMouseY, worldCoordinate, entityPickingFilterPlacing) != nullptr) {
+			if (placeEntityMode == true) {
+				Transformations transformations;
+				transformations.setTranslation(worldCoordinate);
+				transformations.addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
+				transformations.addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
+				transformations.addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
+				transformations.update();
+				if (selectedEngineEntity == nullptr && selectedEntity != nullptr) {
+					selectedEngineEntity = Level::createEntity(selectedEntity, "tdme.leveleditor.placeentity", transformations);
+					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
+				}
+				if (selectedEngineEntity != nullptr) {
+					if (snappingEnabled == true && (snappingX > Math::EPSILON || snappingZ > Math::EPSILON)) {
+						if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
+						if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
+						Vector3 snappedWorldCoordinate;
+						if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+							worldCoordinate = snappedWorldCoordinate;
+						}
+					}
+					worldCoordinate.subY(selectedEngineEntity->getBoundingBox()->getMin().getY());
+					transformations.setTranslation(worldCoordinate);
+					transformations.setRotationAngle(level->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
+					transformations.update();
+					selectedEngineEntity->fromTransformations(transformations);
+					placeEntityTranslation = transformations.getTranslation();
+					placeEntityValid = true;
+				}
+			} else
+			if (pasteMode == true) {
+				if (snappingEnabled == true && (snappingX > Math::EPSILON || snappingZ > Math::EPSILON)) {
+					if (snappingX > Math::EPSILON) worldCoordinate.setX(static_cast<int>(worldCoordinate.getX() / snappingX) * snappingX);
+					if (snappingZ > Math::EPSILON) worldCoordinate.setZ(static_cast<int>(worldCoordinate.getZ() / snappingZ) * snappingZ);
+					Vector3 snappedWorldCoordinate;
+					if (engine->doRayCasting(worldCoordinate.clone().setY(10000.0f), worldCoordinate.clone().setY(-10000.0f), snappedWorldCoordinate, entityPickingFilterPlacing) != nullptr) {
+						worldCoordinate = snappedWorldCoordinate;
+					}
+				}
+				placeEntityTranslation = worldCoordinate;
+				pasteModeValid = true;
+				pasteObjects(true);
+			}
+		}
+	}
+
 	if (mouseRotationX != MOUSE_ROTATION_NONE) {
 		camLookRotationY->setAngle(camLookRotationY->getAngle() + mouseRotationX);
 		camLookRotationY->update();
@@ -530,31 +595,16 @@ void LevelEditorView::display()
 		camLookRotationX->update();
 		mouseRotationY = 0;
 	}
-	if (keyA)
-		camLookRotationY->setAngle(camLookRotationY->getAngle() + 1.0f);
+	if (keyA == true) camLookRotationY->setAngle(camLookRotationY->getAngle() + 1.0f);
+	if (keyD == true) camLookRotationY->setAngle(camLookRotationY->getAngle() - 1.0f);
+	if (keyW == true) camLookRotationX->setAngle(camLookRotationX->getAngle() + 1.0f);
+	if (keyS == true) camLookRotationX->setAngle(camLookRotationX->getAngle() - 1.0f);
+	if (keyMinus == true) camScale += 0.05f;
+	if (keyPlus == true) camScale -= 0.05f;
+	if (camScale < camScaleMin) camScale = camScaleMin;
+	if (camScale > camScaleMax) camScale = camScaleMax;
 
-	if (keyD)
-		camLookRotationY->setAngle(camLookRotationY->getAngle() - 1.0f);
-
-	if (keyW)
-		camLookRotationX->setAngle(camLookRotationX->getAngle() + 1.0f);
-
-	if (keyS)
-		camLookRotationX->setAngle(camLookRotationX->getAngle() - 1.0f);
-
-	if (keyMinus)
-		camScale += 0.05f;
-
-	if (keyPlus)
-		camScale -= 0.05f;
-
-	if (camScale < camScaleMin)
-		camScale = camScaleMin;
-
-	if (camScale > camScaleMax)
-		camScale = camScaleMax;
-
-	if (keyR) {
+	if (keyR == true) {
 		camLookRotationX->setAngle(-45.0f);
 		camLookRotationX->update();
 		camLookRotationY->setAngle(0.0f);
@@ -562,18 +612,14 @@ void LevelEditorView::display()
 		cam->setLookAt(level->getCenter());
 		camScale = 1.0f;
 	}
-	if (keyA || keyD)
-		camLookRotationY->update();
+	if (keyA == true|| keyD == true) camLookRotationY->update();
 
-	if (keyW || keyS) {
-		if (camLookRotationX->getAngle() > 89.99f)
-			camLookRotationX->setAngle(89.99f);
-
-		if (camLookRotationX->getAngle() < -89.99f)
-			camLookRotationX->setAngle(-89.99f);
-
+	if (keyW == true || keyS == true) {
+		if (camLookRotationX->getAngle() > 89.99f) camLookRotationX->setAngle(89.99f);
+		if (camLookRotationX->getAngle() < -89.99f) camLookRotationX->setAngle(-89.99f);
 		camLookRotationX->update();
 	}
+
 	Vector3 tmpVector3;
 	Vector3 FORWARD_VECTOR(0.0f, 0.0f, 1.0f);
 	Vector3 SIDE_VECTOR(1.0f, 0.0f, 0.0f);
@@ -588,18 +634,10 @@ void LevelEditorView::display()
 	camLookRotationY->getQuaternion().multiply(SIDE_VECTOR, camSideVector).scale(timing->getDeltaTime() / 1000.0f * 60.0f);
 
 	auto camLookAt = cam->getLookAt();
-	if (keyUp)
-		camLookAt.sub(tmpVector3.set(camForwardVector).scale(0.1f));
-
-	if (keyDown)
-		camLookAt.add(tmpVector3.set(camForwardVector).scale(0.1f));
-
-	if (keyLeft)
-		camLookAt.sub(tmpVector3.set(camSideVector).scale(0.1f));
-
-	if (keyRight)
-		camLookAt.add(tmpVector3.set(camSideVector).scale(0.1f));
-
+	if (keyUp == true) camLookAt.sub(tmpVector3.set(camForwardVector).scale(0.1f));
+	if (keyDown == true) camLookAt.add(tmpVector3.set(camForwardVector).scale(0.1f));
+	if (keyLeft == true) camLookAt.sub(tmpVector3.set(camSideVector).scale(0.1f));
+	if (keyRight == true) camLookAt.add(tmpVector3.set(camSideVector).scale(0.1f));
 	if (mousePanningForward != MOUSE_PANNING_NONE) {
 		camLookAt.sub(tmpVector3.set(camForwardVector).scale(mousePanningForward / 30.0f * camScale));
 		mousePanningForward = MOUSE_PANNING_NONE;
@@ -654,7 +692,7 @@ void LevelEditorView::updateGUIElements()
 	levelEditorScreenController->setLevelSize(level->getDimension().getX(), level->getDimension().getZ(), level->getDimension().getY());
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
@@ -712,6 +750,9 @@ void LevelEditorView::loadSettings()
 		settings.load("settings", "leveleditor.properties");
 		gridEnabled = settings.get("grid.enabled", "false") == "true";
 		gridY = Float::parseFloat(settings.get("grid.y", "0.0"));
+		snappingEnabled = settings.get("snapping.enabled", "false") == "true";
+		snappingX = Float::parseFloat(settings.get("snapping.x", "1.0"));
+		snappingZ = Float::parseFloat(settings.get("snapping.z", "1.0"));
 		levelEditorScreenController->getMapPath()->setPath(settings.get("map.path", "."));
 		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setModelPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
@@ -733,6 +774,7 @@ void LevelEditorView::initialize()
 	}
 	loadSettings();
 	levelEditorScreenController->setGrid(gridEnabled, gridY);
+	levelEditorScreenController->setSnapping(snappingEnabled, snappingX, snappingZ);
 	levelEditorScreenController->setMapProperties(level, "");
 	levelEditorScreenController->setObjectPresetIds(LevelPropertyPresets::getInstance()->getObjectPropertiesPresets());
 	levelEditorScreenController->setLightPresetsIds(LevelPropertyPresets::getInstance()->getLightPresets());
@@ -776,6 +818,9 @@ void LevelEditorView::storeSettings()
 		Properties settings;
 		settings.put("grid.enabled", gridEnabled == true ? "true" : "false");
 		settings.put("grid.y", to_string(gridY));
+		settings.put("snapping.enabled", snappingEnabled == true ? "true" : "false");
+		settings.put("snapping.x", to_string(snappingX));
+		settings.put("snapping.z", to_string(snappingZ));
 		settings.put("map.path", levelEditorScreenController->getMapPath()->getPath());
 		settings.put("model.path", TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->getModelPath());
 		settings.store("settings", "leveleditor.properties");
@@ -832,125 +877,78 @@ void LevelEditorView::loadLevel()
 
 void LevelEditorView::updateGrid()
 {
-	if (gridEnabled == false)
-		return;
+	if (gridEnabled == false) return;
 
-	auto centerX = static_cast< int32_t >(gridCenter.getX());
-	auto centerZ = static_cast< int32_t >(gridCenter.getZ());
-	auto centerLastX = haveGridCenterLast == false ? centerX : static_cast< int32_t >(gridCenterLast.getX());
-	auto centerLastZ = haveGridCenterLast == false ? centerZ : static_cast< int32_t >(gridCenterLast.getZ());
-	if (haveGridCenterLast == true && (centerLastX != centerX || centerLastZ != centerZ) == false) {
-		return;
-	}
-	auto gridDimensionLeft = GRID_DIMENSION_X + (centerLastX < centerX ? centerX - centerLastX : 0);
-	auto gridDimensionRight = GRID_DIMENSION_X + (centerLastX > centerX ? centerLastX - centerX : 0);
-	auto gridDimensionNear = GRID_DIMENSION_Y + (centerLastZ < centerZ ? centerZ - centerLastZ : 0);
-	auto gridDimensionFar = GRID_DIMENSION_Y + (centerLastZ > centerZ ? centerLastZ - centerZ : 0);
-	auto addedCells = 0;
-	auto removedCells = 0;
-	for (auto gridZ = -gridDimensionNear; gridZ < gridDimensionFar; gridZ++) 
-	for (auto gridX = -gridDimensionLeft; gridX < gridDimensionRight; gridX++) {
-		string entityId =
-			 "leveleditor.ground@" +
-			 to_string(centerX + gridX) +
-			 "," +
-			 to_string(centerZ + gridZ);
-		auto entity = engine->getEntity(entityId);
-		if (gridX < -GRID_DIMENSION_X || gridX >= GRID_DIMENSION_X || gridZ < -GRID_DIMENSION_Y || gridZ >= GRID_DIMENSION_Y) {
-			if (entity != nullptr) {
-				engine->removeEntity(entityId);
-				removedCells++;
-			}
-		} else
-		if (entity == nullptr) {
-			entity = new Object3D(entityId, levelEditorGround);
-			entity->addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
-			entity->addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
-			entity->addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
-			entity->setTranslation(
-				Vector3(
-					centerX + static_cast< float >(gridX) * groundPlateWidth,
-					gridY - 0.05f,
-					centerZ + static_cast< float >(gridZ) * groundPlateDepth
-				)
-			);
-			entity->setEnabled(true);
-			entity->setPickable(true);
-			entity->update();
-			auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(entity->getId());
-			if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
-				setHighlightObjectColorEffect(entity);
-			} else {
-				setStandardObjectColorEffect(entity);
-			}
-			engine->addEntity(entity);
-			addedCells++;
+	string entityId = "tdme.leveleditor.grid";
+	auto entity = engine->getEntity(entityId);
+	if (entity == nullptr) {
+		entity = new Object3D(entityId, levelEditorGround);
+		entity->setFrustumCulling(false);
+		entity->addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
+		entity->addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
+		entity->addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
+		entity->setTranslation(
+			Vector3(
+				-5000.0f,
+				gridY - 0.05f,
+				-5000.0f
+			)
+		);
+		entity->setEnabled(true);
+		entity->setPickable(true);
+		entity->update();
+		auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(entity->getId());
+		if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
+			setHighlightObjectColorEffect(entity);
+		} else {
+			setStandardObjectColorEffect(entity);
 		}
+		engine->addEntity(entity);
 	}
-
-	haveGridCenterLast = true;
-	gridCenterLast.set(gridCenter);
 }
 
 void LevelEditorView::removeGrid()
 {
-	if (haveGridCenterLast == false) return;
-	auto removedCells = 0;
-	auto centerX = static_cast< int32_t >(gridCenterLast.getX());
-	auto centerZ = static_cast< int32_t >(gridCenterLast.getZ());
-	for (auto gridZ = -GRID_DIMENSION_Y; gridZ < GRID_DIMENSION_Y; gridZ++) 
-	for (auto gridX = -GRID_DIMENSION_X; gridX < GRID_DIMENSION_X; gridX++) {
-		string objectId =
-			"leveleditor.ground@" +
-			to_string(centerX + gridX) +
-			"," +
-			to_string(centerZ + gridZ);
-		auto _object = engine->getEntity(objectId);
-		if (_object != nullptr) {
-			removedCells++;
-			engine->removeEntity(objectId);
-		}
-	}
-	haveGridCenterLast = false;
+	engine->removeEntity("tdme.leveleditor.grid");
 }
 
 Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
-	auto groundPlate = new Model("leveleditor.ground", "leveleditor.ground", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(1.0f, +0.01f, 1.0f)));
+	auto groundPlate = new Model("tdme.leveleditor.grid", "tdme.leveleditor.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
 	auto groundPlateMaterial = new Material("ground");
 	auto groundPlateMaterialDiffuseColor = groundPlateMaterial->getDiffuseColor();
 	groundPlateMaterialDiffuseColor.setAlpha(0.75f);
 	groundPlateMaterial->setDiffuseColor(groundPlateMaterialDiffuseColor);
 	groundPlateMaterial->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
 	groundPlateMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*groundPlate->getMaterials())["ground"] = groundPlateMaterial;
+	groundPlate->getMaterials()["ground"] = groundPlateMaterial;
 	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
 	groundVertices.push_back(Vector3(0.0f, 0.0f, 0.0f));
-	groundVertices.push_back(Vector3(0.0f, 0.0f, +groundPlateDepth));
-	groundVertices.push_back(Vector3(+groundPlateWidth, 0.0f, +groundPlateDepth));
-	groundVertices.push_back(Vector3(+groundPlateWidth, 0.0f, 0.0f));
+	groundVertices.push_back(Vector3(0.0f, 0.0f, 10000.0f));
+	groundVertices.push_back(Vector3(10000.0f, 0.0f, 10000.0f));
+	groundVertices.push_back(Vector3(10000.0f, 0.0f, 0.0f));
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 	vector<TextureCoordinate> groundTextureCoordinates;
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 10000.0f));
 	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 0.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(10000.0f, 10000.0f));
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
-	FacesEntity groupFacesEntityGround(groundGroup, "leveleditor.ground.facesentity");
+	FacesEntity groupFacesEntityGround(groundGroup, "tdme.leveleditor.grid.facesentity");
 	groupFacesEntityGround.setMaterial(groundPlateMaterial);
-	groupFacesEntityGround.setFaces(&groundFacesGround);
+	groupFacesEntityGround.setFaces(groundFacesGround);
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntityGround);
 	groundGroup->setVertices(groundVertices);
 	groundGroup->setNormals(groundNormals);
 	groundGroup->setTextureCoordinates(groundTextureCoordinates);
 	groundGroup->setFacesEntities(groupFacesEntities);
-	(*groundPlate->getGroups())[groundGroup->getId()] = groundGroup;
-	(*groundPlate->getSubGroups())[groundGroup->getId()] = groundGroup;
+	groundPlate->getGroups()[groundGroup->getId()] = groundGroup;
+	groundPlate->getSubGroups()[groundGroup->getId()] = groundGroup;
 	ModelHelper::prepareForIndexedRendering(groundPlate);
 	return groundPlate;
 }
@@ -962,7 +960,7 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
 
-	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "leveleditor."))
+	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor."))
 		return false;
 
 	auto levelEditorObject = level->getObjectById(selectedEntity->getId());
@@ -995,76 +993,58 @@ bool LevelEditorView::objectDataApply(const string& name, const string& descript
 	return true;
 }
 
+void LevelEditorView::setPlaceObjectMode() {
+	placeEntityMode = true;
+	placeEntityValid = false;
+}
+
+void LevelEditorView::unsetPlaceObjectMode() {
+	placeEntityMode = false;
+	placeEntityValid = false;
+	engine->removeEntity("tdme.leveleditor.placeentity");
+}
+
 void LevelEditorView::placeObject()
 {
-	for (auto selectedEntityId: selectedEntityIds) {
-		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity == nullptr) continue;
-		placeObject(selectedEntity);
+	Transformations levelEditorObjectTransformations;
+	levelEditorObjectTransformations.setTranslation(placeEntityTranslation);
+	levelEditorObjectTransformations.setScale(Vector3(1.0f, 1.0f, 1.0f));
+	levelEditorObjectTransformations.setPivot(selectedEntity->getPivot());
+	levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
+	levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
+	levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
+	levelEditorObjectTransformations.setRotationAngle(level->getRotationOrder()->getAxisYIndex(), placeEntityYRotation * 90.0f);
+	levelEditorObjectTransformations.update();
+	for (auto i = 0; i < level->getObjectCount(); i++) {
+		auto levelEditorObject = level->getObjectAt(i);
+		if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
+			return;
+		}
 	}
+	auto levelEditorObject = new LevelEditorObject(
+		selectedEntity->getName() + "_" + to_string(level->allocateObjectId()),
+		"",
+		levelEditorObjectTransformations,
+		selectedEntity
+	);
+	level->addObject(levelEditorObject);
+	auto entity = Level::createEntity(levelEditorObject);
+	if (entity != nullptr) {
+		setStandardObjectColorEffect(entity);
+		entity->setPickable(true);
+		engine->addEntity(entity);
+	}
+	levelEditorScreenController->setObjectListbox(level);
 	level->update();
 	updateGUIElements();
 }
 
-void LevelEditorView::placeObject(Entity* selectedObject)
-{
-	if (selectedEntity != nullptr && selectedObject != nullptr) {
-		auto selectedLevelEditorObject = level->getObjectById(selectedObject->getId());
-		Transformations levelEditorObjectTransformations;
-		levelEditorObjectTransformations.setTranslation(selectedObject->getTranslation());
-		auto centerSelectedObject = selectedObject->getBoundingBox()->getMin().clone().add(selectedObject->getBoundingBox()->getMax()).scale(0.5f);
-		auto centerNewObject = selectedEntity->getModel() != nullptr ? selectedEntity->getModel()->getBoundingBox()->getCenter().clone() : Vector3(0.0f, 0.0f, 0.0f);
-		levelEditorObjectTransformations.setTranslation(levelEditorObjectTransformations.getTranslation().clone().add(centerNewObject.clone().add(centerSelectedObject)));
-		if (selectedLevelEditorObject == nullptr || selectedLevelEditorObject->getEntity()->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM || selectedEntity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-			levelEditorObjectTransformations.setTranslation(
-				levelEditorObjectTransformations.getTranslation().clone().setY(
-					gridY + (selectedEntity->getModel() != nullptr ? -selectedEntity->getModel()->getBoundingBox()->getMin().getY() : 0.0f)
-				)
-			);
-		} else {
-			BoundingBox bv;
-			bv.fromBoundingVolumeWithTransformations(selectedLevelEditorObject->getEntity()->getModel()->getBoundingBox(), selectedLevelEditorObject->getTransformations());
-			levelEditorObjectTransformations.setTranslation(
-				levelEditorObjectTransformations.getTranslation().clone().setY(
-					bv.getDimensions().getY() / 2 + bv.getCenter().getY() + -selectedEntity->getModel()->getBoundingBox()->getMin().getY()
-				)
-			);
-		}
-		levelEditorObjectTransformations.setScale(Vector3(1.0f, 1.0f, 1.0f));
-		levelEditorObjectTransformations.setPivot(selectedEntity->getPivot());
-		levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis0(), 0.0f);
-		levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis1(), 0.0f);
-		levelEditorObjectTransformations.addRotation(level->getRotationOrder()->getAxis2(), 0.0f);
-		levelEditorObjectTransformations.update();
-		for (auto i = 0; i < level->getObjectCount(); i++) {
-			auto levelEditorObject = level->getObjectAt(i);
-			if (levelEditorObject->getEntity() == selectedEntity && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
-				return;
-			}
-		}
-		auto levelEditorObject = new LevelEditorObject(
-			selectedEntity->getName() + "_" + to_string(level->allocateObjectId()),
-			"",
-			levelEditorObjectTransformations,
-			selectedEntity
-		);
-		level->addObject(levelEditorObject);
-		auto entity = Level::createEntity(levelEditorObject);
-		if (entity != nullptr) {
-			setStandardObjectColorEffect(entity);
-			entity->setPickable(true);
-			engine->addEntity(entity);
-		}
-		levelEditorScreenController->setObjectListbox(level);
-	}
-}
-
-void LevelEditorView::removeObject()
+void LevelEditorView::removeObjects()
 {
 	vector<Entity*> entitiesToRemove;
 	for (auto selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			level->removeObject(selectedEntity->getId());
 			engine->removeEntity(selectedEntity->getId());
 			entitiesToRemove.push_back(selectedEntity);
@@ -1115,7 +1095,7 @@ void LevelEditorView::colorObject()
 
 	if (selectedEntityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEditorObject = level->getObjectById(selectedEntity->getId());
 			auto preset = levelEditorObject->getProperty("preset");
 			levelEditorScreenController->setObjectProperties(preset != nullptr ? preset->getValue() : "", levelEditorObject, "");
@@ -1424,7 +1404,7 @@ void LevelEditorView::copyObjects()
 	pasteObjects_.clear();
 	for (auto selectedEntityId: selectedEntityIds) {
 		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "leveleditor.") == false) {
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
 			auto levelEntity = level->getObjectById(selectedEntity->getId());
 			if (levelEntity == nullptr) continue;
 			pasteObjects_.push_back(levelEntity);
@@ -1432,35 +1412,39 @@ void LevelEditorView::copyObjects()
 	}
 }
 
-void LevelEditorView::pasteObjects()
+void LevelEditorView::setPasteMode() {
+	pasteMode = true;
+	pasteModeValid = false;
+}
+
+void LevelEditorView::unsetPasteMode() {
+	auto pasteObjectIdx = 0;
+	for (auto pasteObject: pasteObjects_) {
+		auto pasteModel = pasteObject->getEntity();
+		auto entityId = "tdme.leveleditor.paste." + pasteModel->getName() + "." + to_string(pasteObjectIdx);
+		engine->removeEntity(entityId);
+		pasteObjectIdx++;
+	}
+	pasteMode = false;
+	pasteModeValid = false;
+}
+
+void LevelEditorView::pasteObjects(bool displayOnly)
 {
 	auto pasteObjectsMinX = Float::MAX_VALUE;
 	auto pasteObjectsMinZ = Float::MAX_VALUE;
-	auto pasteObjectsMinY = Float::MIN_VALUE;
+	auto pasteObjectsMinY = Float::MAX_VALUE;
 	for (auto object: pasteObjects_) {
+		auto entity = engine->getEntity(object->getId());
+		if (entity == nullptr) continue;
 		BoundingBox cbv;
-		cbv.fromBoundingVolumeWithTransformations(object->getEntity()->getModel()->getBoundingBox(), object->getTransformations());
+		cbv.fromBoundingVolumeWithTransformations(entity->getBoundingBox(), object->getTransformations());
 		auto& objectBBMinXYZ = cbv.getMin().getArray();
 		if (objectBBMinXYZ[0] < pasteObjectsMinX) pasteObjectsMinX = objectBBMinXYZ[0];
 		if (objectBBMinXYZ[1] < pasteObjectsMinY) pasteObjectsMinY = objectBBMinXYZ[1];
 		if (objectBBMinXYZ[2] < pasteObjectsMinZ) pasteObjectsMinZ = objectBBMinXYZ[2];
 	}
-	auto selectedObjectsMinX = Float::MAX_VALUE;
-	auto selectedObjectsMinZ = Float::MAX_VALUE;
-	auto selectedObjectsMaxY = Float::MIN_VALUE;
-	for (auto selectedEntityId: selectedEntityIds) {
-		auto selectedEntity = engine->getEntity(selectedEntityId);
-		if (selectedEntity == nullptr) continue;
-		auto levelEntity = level->getObjectById(selectedEntity->getId());
-		if (levelEntity == nullptr) continue;
-		BoundingBox cbv;
-		cbv.fromBoundingVolumeWithTransformations(levelEntity->getEntity()->getModel()->getBoundingBox(), levelEntity->getTransformations());
-		auto& objectBBMinXYZ = cbv.getMin().getArray();
-		auto& objectBBMaxXYZ = cbv.getMax().getArray();
-		if (objectBBMinXYZ[0] < selectedObjectsMinX) selectedObjectsMinX = objectBBMinXYZ[0];
-		if (objectBBMaxXYZ[1] > selectedObjectsMaxY) selectedObjectsMaxY = objectBBMaxXYZ[1];
-		if (objectBBMinXYZ[2] < selectedObjectsMinZ) selectedObjectsMinZ = objectBBMinXYZ[2];
-	}
+	auto pasteObjectIdx = 0;
 	for (auto pasteObject: pasteObjects_) {
 		auto pasteModel = pasteObject->getEntity();
 		Transformations levelEditorObjectTransformations;
@@ -1470,38 +1454,58 @@ void LevelEditorView::pasteObjects()
 		auto objectDiffZ = pasteObject->getTransformations().getTranslation().getZ() - pasteObjectsMinZ;
 		levelEditorObjectTransformations.setTranslation(
 			Vector3(
-				selectedObjectsMinX + objectDiffX,
-				selectedObjectsMaxY + objectDiffY,
-				selectedObjectsMinZ + objectDiffZ
+				placeEntityTranslation.getX() + objectDiffX,
+				placeEntityTranslation.getY() + objectDiffY,
+				placeEntityTranslation.getZ() + objectDiffZ
 			)
 		);
 		levelEditorObjectTransformations.update();
-		for (auto i = 0; i < level->getObjectCount(); i++) {
-			auto levelEditorObject = level->getObjectAt(i);
-			if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
-				return;
+		if (displayOnly == false) {
+			for (auto i = 0; i < level->getObjectCount(); i++) {
+				auto levelEditorObject = level->getObjectAt(i);
+				if (levelEditorObject->getEntity() == pasteModel && levelEditorObject->getTransformations().getTranslation().equals(levelEditorObjectTransformations.getTranslation())) {
+					continue;
+				}
 			}
 		}
-		auto levelEditorObject = new LevelEditorObject(
-			pasteModel->getName() + "_" + to_string(level->allocateObjectId()),
-			"",
-			levelEditorObjectTransformations,
-			pasteModel
-		 );
-		ModelProperties* properties = pasteObject;
-		for (int i = 0; i < properties->getPropertyCount(); i++) {
-			PropertyModelClass* property = properties->getPropertyByIndex(i);
-			levelEditorObject->addProperty(property->getName(), property->getValue());
+		if (displayOnly == false) {
+			//
+			auto levelEditorObjectId = pasteModel->getName() + "_" + to_string(level->allocateObjectId());
+			auto levelEditorObject = new LevelEditorObject(
+				levelEditorObjectId,
+				"",
+				levelEditorObjectTransformations,
+				pasteModel
+			 );
+			ModelProperties* properties = pasteObject;
+			for (int i = 0; i < properties->getPropertyCount(); i++) {
+				PropertyModelClass* property = properties->getPropertyByIndex(i);
+				levelEditorObject->addProperty(property->getName(), property->getValue());
+			}
+			level->addObject(levelEditorObject);
+			auto entity = Level::createEntity(pasteModel, levelEditorObjectId, levelEditorObjectTransformations);
+			if (entity != nullptr) {
+				setStandardObjectColorEffect(entity);
+				entity->setPickable(true);
+				engine->addEntity(entity);
+			}
+		} else {
+			auto entityId = "tdme.leveleditor.paste." + pasteModel->getName() + "." + to_string(pasteObjectIdx);
+			auto entity = engine->getEntity(entityId);
+			if (entity != nullptr) {
+				entity->fromTransformations(levelEditorObjectTransformations);
+			} else {
+				entity = Level::createEntity(pasteModel, entityId, levelEditorObjectTransformations);
+				if (entity != nullptr) {
+					setStandardObjectColorEffect(entity);
+					entity->setPickable(true);
+					engine->addEntity(entity);
+				}
+			}
 		}
-		level->addObject(levelEditorObject);
-		auto entity = Level::createEntity(levelEditorObject);
-		if (entity != nullptr) {
-			setStandardObjectColorEffect(entity);
-			entity->setPickable(true);
-			engine->addEntity(entity);
-		}
+		pasteObjectIdx++;
 	}
-	levelEditorScreenController->setObjectListbox(level);
+	if (displayOnly == false) levelEditorScreenController->setObjectListbox(level);
 }
 
 void LevelEditorView::computeSpotDirection(int32_t i, const Vector4& position, const Vector3& spotTo)

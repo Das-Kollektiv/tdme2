@@ -15,11 +15,12 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
 
 using std::string;
 using std::vector;
@@ -37,11 +38,12 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
 {
@@ -61,6 +63,7 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
 	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
+	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 }
 
 PointsParticleSystemInternal::~PointsParticleSystemInternal() {
@@ -74,10 +77,12 @@ const string& PointsParticleSystemInternal::getId()
 	return id;
 }
 
+void PointsParticleSystemInternal::initialize() {
+}
+
 void PointsParticleSystemInternal::setRenderer(Renderer* renderer)
 {
 	this->renderer = renderer;
-	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 }
 
 void PointsParticleSystemInternal::setEngine(Engine* engine)
@@ -179,7 +184,6 @@ void PointsParticleSystemInternal::updateParticles()
 		return;
 
 	Vector3 velocityForTime;
-	Vector3 point;
 	// bounding box transformed min, max xyz
 	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
 	auto& bbMaxXYZ = boundingBoxTransformed.getMax().getArray();
@@ -187,8 +191,6 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	// points are stored in camera space in points render pool
-	auto cameraMatrix = engine->cameraMatrix;
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -220,12 +222,8 @@ void PointsParticleSystemInternal::updateParticles()
 		color[1] += colorAdd[1] * static_cast< float >(timeDelta);
 		color[2] += colorAdd[2] * static_cast< float >(timeDelta);
 		color[3] += colorAdd[3] * static_cast< float >(timeDelta);
-		// transform particle position to camera space
-		cameraMatrix.multiply(particle.position, point);
 		//
 		activeParticles++;
-		// compute distance from camera
-		distanceFromCamera = -point.getZ();
 		// set up bounding box
 		auto& positionXYZ = particle.position.getArray();
 		if (haveBoundingBox == false) {
@@ -241,7 +239,7 @@ void PointsParticleSystemInternal::updateParticles()
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
 		//
-		pointsRenderPool->addPoint(point, particle.color, distanceFromCamera, this);
+		pointsRenderPool->addPoint(particle.position, particle.color, 0, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {

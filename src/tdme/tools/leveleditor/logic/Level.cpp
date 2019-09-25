@@ -20,6 +20,7 @@
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
@@ -90,6 +91,7 @@ using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
@@ -142,60 +144,16 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 
 Model* Level::emptyModel = nullptr;
+float Level::renderGroupsPartitionWidth = 64.0f;
+float Level::renderGroupsPartitionHeight = 64.0f;
+float Level::renderGroupsPartitionDepth = 64.0f;
 int Level::renderGroupsReduceBy = 1;
 int Level::renderGroupsLODLevels = 3;
 float Level::renderGroupsLOD2MinDistance = 25.0;
 float Level::renderGroupsLOD3MinDistance = 50.0;
 int Level::renderGroupsLOD2ReduceBy = 4;
 int Level::renderGroupsLOD3ReduceBy = 16;
-
-int32_t Level::getRenderGroupsReduceBy() {
-	return renderGroupsReduceBy;
-}
-
-void Level::setRenderGroupsReduceBy(int32_t reduceBy) {
-	Level::renderGroupsReduceBy = reduceBy;
-}
-
-int Level::getRenderGroupsLodLevels() {
-	return renderGroupsLODLevels;
-}
-
-void Level::setRenderGroupsLodLevels(int lodLevels) {
-	renderGroupsLODLevels = lodLevels;
-}
-
-float Level::getRenderGroupsLod2MinDistance() {
-	return renderGroupsLOD2MinDistance;
-}
-
-void Level::setRenderGroupsLod2MinDistance(float minDistance) {
-	renderGroupsLOD2MinDistance = minDistance;
-}
-
-float Level::getRenderGroupsLod3MinDistance() {
-	return renderGroupsLOD3MinDistance;
-}
-
-void Level::setRenderGroupsLod3MinDistance(float minDistance) {
-	renderGroupsLOD3MinDistance = minDistance;
-}
-
-int Level::getRenderGroupsLod2ReduceBy() {
-	return renderGroupsLOD2ReduceBy;
-}
-
-void Level::setRenderGroupsLod2ReduceBy(int reduceBy) {
-	renderGroupsLOD2ReduceBy = reduceBy;
-}
-
-int Level::getRenderGroupsLod3ReduceBy() {
-	return renderGroupsLOD3ReduceBy;
-}
-
-void Level::setRenderGroupsLod3ReduceBy(int reduceBy) {
-	renderGroupsLOD3ReduceBy = reduceBy;
-}
+bool Level::enableEarlyZRejection = false;
 
 void Level::setLight(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
@@ -362,9 +320,13 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				id,
 				levelEditorEntity->getModel()
 			);
-			dynamic_cast<Object3D*>(entity)->setShader(levelEditorEntity->getShader());
-			dynamic_cast<Object3D*>(entity)->setDistanceShader(levelEditorEntity->getDistanceShader());
-			dynamic_cast<Object3D*>(entity)->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+			auto object = dynamic_cast<Object3D*>(entity);
+			object->setShader(levelEditorEntity->getShader());
+			object->setDistanceShader(levelEditorEntity->getDistanceShader());
+			object->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+			if (enableEarlyZRejection == true && levelEditorEntity->getModelSettings()->isTerrainMesh() == true) {
+				object->setEnableEarlyZRejection(true);
+			}
 		}
 	} else
 	// particle system
@@ -425,9 +387,9 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			auto minX = object->getTransformations().getTranslation().getX();
 			auto minY = object->getTransformations().getTranslation().getY();
 			auto minZ = object->getTransformations().getTranslation().getZ();
-			int partitionX = (int)(minX / 32.0f);
-			int partitionY = (int)(minY / 32.0f);
-			int partitionZ = (int)(minZ / 32.0f);
+			int partitionX = (int)(minX / renderGroupsPartitionWidth);
+			int partitionY = (int)(minY / renderGroupsPartitionHeight);
+			int partitionZ = (int)(minZ / renderGroupsPartitionDepth);
 			renderGroupLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
 			renderGroupEntitiesByModelAndPartition[object->getEntity()->getModel()->getId()][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)].push_back(&object->getTransformations());
 		} else {
@@ -462,6 +424,7 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			object3DRenderGroup->setShader(levelEditorEntity->getShader());
 			object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
 			object3DRenderGroup->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
+			if (enableEarlyZRejection == true) object3DRenderGroup->setEnableEarlyZRejection(true);
 			auto objectIdx = -1;
 			for (auto transformation: itPartition.second) {
 				objectIdx++;

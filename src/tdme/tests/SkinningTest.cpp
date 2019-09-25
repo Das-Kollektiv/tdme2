@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -28,6 +29,7 @@ using std::to_string;
 
 using tdme::tests::SkinningTest;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
@@ -48,6 +50,7 @@ using tdme::utils::Time;
 
 SkinningTest::SkinningTest()
 {
+	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 }
 
@@ -109,8 +112,8 @@ void SkinningTest::initialize()
 	light0->setEnabled(true);
 	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(16.0f, 1.0f, 15.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
-	(*groundModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	(*groundModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	groundModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();

@@ -15,13 +15,13 @@
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::Transformations;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
@@ -39,33 +39,38 @@ using tdme::math::Matrix4x4;
  */
 class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
 	: public Transformations
-	, public virtual ParticleSystemEntity
+	, public virtual ParticleSystemEntityInternal
 {
 
 protected:
-	string id {  };
-	Engine* engine {  };
-	Renderer* renderer {  };
-	bool autoEmit {  };
-	bool enabled {  };
-	bool active {  };
-	ParticleEmitter* emitter {  };
-	vector<Particle> particles {  };
-	int32_t maxPoints {  };
-	float pointSize {  };
+	string id;
+	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
+	bool autoEmit;
+	bool enabled;
+	bool active;
+	ParticleEmitter* emitter { nullptr };
+	vector<Particle> particles;
+	int32_t maxPoints;
+	float pointSize;
 	Texture* texture { nullptr };
-	int32_t textureId {  };
-	TransparentRenderPointsPool* pointsRenderPool {  };
+	int32_t textureId;
+	TransparentRenderPointsPool* pointsRenderPool { nullptr };
 
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Transformations inverseTransformation {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	bool pickable {  };
-	float particlesToSpawnRemainder {  };
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Transformations inverseTransformation;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	bool pickable;
+	float particlesToSpawnRemainder;
 
 public:
+	/**
+	 * Initialize
+	 */
+	void initialize();
+
 	const string& getId() override;
 	virtual void setRenderer(Renderer* renderer);
 	virtual void setEngine(Engine* engine);

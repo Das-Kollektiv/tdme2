@@ -67,18 +67,18 @@ private:
 	static constexpr int32_t BATCHRENDERER_MAX { 256 };
 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
 
-	Engine* engine {  };
-	Renderer* renderer {  };
-	vector<vector<int32_t>*> vboInstancedRenderingIds {  };
-	vector<BatchRendererTriangles*> trianglesBatchRenderers {  };
-	unordered_map<string, vector<Object3D*>> visibleObjectsByModels {  };
-	vector<TransparentRenderFace*> groupTransparentRenderFaces {  };
-	Object3DRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool {  };
-	TransparentRenderFacesPool* transparentRenderFacesPool {  };
-	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups {  };
-	TransparentRenderPointsPool* pseTransparentRenderPointsPool {  };
-	BatchRendererPoints* psePointBatchRenderer {  };
-	Matrix4x4Negative matrix4x4Negative {  };
+	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
+	vector<vector<int32_t>*> vboInstancedRenderingIds;
+	vector<BatchRendererTriangles*> trianglesBatchRenderers;
+	unordered_map<string, vector<Object3D*>> visibleObjectsByModels;
+	vector<TransparentRenderFace*> groupTransparentRenderFaces;
+	Object3DRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
+	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
+	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups;
+	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
+	BatchRendererPoints* psePointBatchRenderer { nullptr };
+	Matrix4x4Negative matrix4x4Negative;
 	vector<Object3D*> objectsToRender;
 	vector<Object3D*> objectsNotRendered;
 	vector<Object3D*> singleObjectsToRender;
@@ -211,16 +211,10 @@ public:
 	void render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/** 
-	 * Render batch renderer points entities
-	 * @param visiblePses points batch renderer points
+	 * Render points particle system entities
+	 * @param pses points particle system entities
 	 */
-	void render(const vector<PointsParticleSystem*>& visiblePses);
-
-	/**
-	 * Render batch renderer fog points entities
-	 * @param visibleFses points batch renderer points
-	 */
-	void render(const vector<FogParticleSystem*>& visibleFses);
+	void render(const vector<Entity*>& pses);
 
 	/**
 	 * Renders all given lines objects
@@ -239,4 +233,12 @@ public:
 	 * Destructor
 	 */
 	~Object3DRenderer();
+
+	/**
+	 * Compare entities by distance from camera
+	 * @param entity1 entity 1
+	 * @param entity2 entity 2
+	 */
+	static bool compareParticleSystemEntities(Entity* entity1, Entity* entity2);
+
 };

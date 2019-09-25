@@ -10,7 +10,7 @@
       - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE) and the [licenses of used 3rd party libraries](https://github.com/andreasdr/tdme2/blob/master/ext)
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
       - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
-      - you find developer documentation for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha) including collaboration graphs and private API
+      - you find developer documentation including collaboration graphs and private API as well as public API for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha) 
 
 - What is already working
     - 3d engine

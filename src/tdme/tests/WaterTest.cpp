@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -32,6 +33,7 @@ using tdme::utils::Console;
 
 WaterTest::WaterTest()
 {
+	using tdme::application::Application;
 	engine = Engine::getInstance();
 }
 

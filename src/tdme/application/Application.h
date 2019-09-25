@@ -46,6 +46,21 @@ public:
 	static constexpr int32_t FPS { 60 };
 
 	/**
+	 * @return if FPS should be limited to 60 frames per seconds
+	 */
+	inline static bool isLimitFPS() {
+		return limitFPS;
+	}
+
+	/**
+	 * Set frames per seconds limit
+	 * @param limitFPS set up if FPS should be limited to 60 frames per seconds
+	 */
+	inline static void setLimitFPS(bool limitFPS) {
+		Application::limitFPS = limitFPS;
+	}
+
+	/**
 	 * Public constructor
 	 */
 	Application();
@@ -60,6 +75,19 @@ public:
 	 * @param inputEventHandler input event handler
 	 */
 	void setInputEventHandler(InputEventHandler* inputEventHandler);
+
+	/**
+	 * Execute a command
+	 * @param command command to execute
+	 * @throws std::runtime_error
+	 * @return application output
+	 */
+	static string execute(const string& command);
+
+	/**
+	 * @return If window is active on Win32, on other platforms it currently always return true
+	 */
+	static bool isActive();
 
 	/**
 	 * @return window X position
@@ -148,6 +176,12 @@ public:
 	 */
 	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr);
 
+	/**
+	 * Set application icon, currently this is Win32 only
+	 * @param icon icon file name
+	 */
+	void setIcon(const string& fileName);
+
 	/** 
 	 * Init
 	 */
@@ -185,6 +219,8 @@ private:
 	int32_t windowYPosition { 100 };
 	bool fullScreen { false };
 	static int64_t timeLast;
+	static bool limitFPS;
+	string title;
 
 	#if defined(VULKAN)
 		static GLFWwindow* glfwWindow;

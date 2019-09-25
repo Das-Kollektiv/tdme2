@@ -28,7 +28,7 @@ const string& GUIInput::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUIInput::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUIInput::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
@@ -39,7 +39,7 @@ map<string, string>* GUIInput::getAttributes(GUIScreenNode* screenNode)
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
 	attributes["on-change"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUIInput::createController(GUINode* node)

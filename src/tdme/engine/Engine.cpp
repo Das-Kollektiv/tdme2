@@ -27,10 +27,11 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LinesObject3D.h>
+#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
-#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
@@ -40,6 +41,7 @@
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -52,7 +54,6 @@
 #include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
@@ -90,14 +91,15 @@ using tdme::engine::EngineGLES2Renderer;
 using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
-using tdme::engine::Object3DRenderGroup;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::LODObject3D;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
@@ -107,6 +109,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -117,7 +120,6 @@ using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
 using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
@@ -152,6 +154,7 @@ FrameBufferRenderShader* Engine::frameBufferRenderShader = nullptr;
 PostProcessing* Engine::postProcessing = nullptr;
 PostProcessingShader* Engine::postProcessingShader = nullptr;
 Engine::AnimationProcessingTarget Engine::animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+EZRShaderPre* Engine::ezrShaderPre = nullptr;
 ShadowMappingShaderPre* Engine::shadowMappingShaderPre = nullptr;
 ShadowMappingShaderRender* Engine::shadowMappingShaderRender = nullptr;
 LightingShader* Engine::lightingShader = nullptr;
@@ -164,6 +167,10 @@ bool Engine::skinningShaderEnabled = false;
 int Engine::threadCount = 0;
 bool Engine::have4K = false;
 float Engine::animationBlendingTime = 250.0f;
+int32_t Engine::shadowMapWidth = 2048;
+int32_t Engine::shadowMapHeight = 2048;
+float Engine::shadowMaplightEyeDistanceScale = 4.0f;
+
 Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
 vector<Engine::EngineThread*> Engine::engineThreads;
 
@@ -249,27 +256,12 @@ Engine::~Engine() {
 		delete postProcessingShader;
 		delete guiShader;
 		delete frameBufferRenderShader;
+		delete ezrShaderPre;
 		delete shadowMappingShaderPre;
 		delete shadowMappingShaderRender;
 	}
 	// set current engine
 	if (currentEngine == this) currentEngine = nullptr;
-}
-
-void Engine::setThreadCount(int threadCount) {
-	Engine::threadCount = threadCount;
-}
-
-bool Engine::is4K() {
-	return Engine::have4K;
-}
-
-void Engine::set4K(bool have4K) {
-	Engine::have4K = have4K;
-}
-
-void Engine::setAnimationBlendingTime(float animationBlendingTime) {
-	Engine::animationBlendingTime = animationBlendingTime;
 }
 
 Engine* Engine::getInstance()
@@ -312,150 +304,10 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	return offScreenEngine;
 }
 
-bool Engine::isInitialized()
-{
-	return initialized;
-}
-
-int32_t Engine::getWidth()
-{
-	return width;
-}
-
-int32_t Engine::getHeight()
-{
-	return height;
-}
-
-ShadowMapping* Engine::getShadowMapping()
-{
-	return shadowMapping;
-}
-
-GUI* Engine::getGUI()
-{
-	return gui;
-}
-
-Timing* Engine::getTiming()
-{
-	return timing;
-}
-
-Camera* Engine::getCamera()
-{
-	return camera;
-}
-
-Partition* Engine::getPartition()
-{
-	return partition;
-}
-
 void Engine::setPartition(Partition* partition)
 {
 	if (this->partition != nullptr) delete this->partition;
 	this->partition = partition;
-}
-
-FrameBuffer* Engine::getFrameBuffer()
-{
-	return frameBuffer;
-}
-
-int32_t Engine::getLightCount() {
-	return lights.size();
-}
-
-Light* Engine::getLightAt(int32_t idx)
-{
-	return &lights[idx];
-}
-
-TextureManager* Engine::getTextureManager()
-{
-	return textureManager;
-}
-
-VBOManager* Engine::getVBOManager()
-{
-	return vboManager;
-}
-
-MeshManager* Engine::getMeshManager()
-{
-	return meshManager;
-}
-
-ShadowMappingShaderPre* Engine::getShadowMappingShaderPre()
-{
-	return shadowMappingShaderPre;
-}
-
-ShadowMappingShaderRender* Engine::getShadowMappingShaderRender()
-{
-	return shadowMappingShaderRender;
-}
-
-LightingShader* Engine::getLightingShader()
-{
-	return lightingShader;
-}
-
-ParticlesShader* Engine::getParticlesShader()
-{
-	return particlesShader;
-}
-
-LinesShader* Engine::getLinesShader()
-{
-	return linesShader;
-}
-
-SkinningShader* Engine::getSkinningShader() {
-	return skinningShader;
-}
-
-GUIShader* Engine::getGUIShader()
-{
-	return guiShader;
-}
-
-FrameBufferRenderShader* Engine::getFrameBufferRenderShader() {
-	return frameBufferRenderShader;
-}
-
-PostProcessingShader* Engine::getPostProcessingShader() {
-	return postProcessingShader;
-}
-
-Object3DRenderer* Engine::getObject3DRenderer()
-{
-	return object3DRenderer;
-}
-
-const Color4& Engine::getSceneColor() const
-{
-	return sceneColor;
-}
-
-void Engine::setSceneColor(const Color4& sceneColor)
-{
-	this->sceneColor = sceneColor;
-}
-
-int32_t Engine::getEntityCount()
-{
-	return entitiesById.size();
-}
-
-Entity* Engine::getEntity(const string& id)
-{
-	auto entityByIdIt = entitiesById.find(id);
-	if (entityByIdIt != entitiesById.end()) {
-		return entityByIdIt->second;
-	}
-	return nullptr;
 }
 
 void Engine::addEntity(Entity* entity)
@@ -512,6 +364,18 @@ void Engine::removeEntity(const string& id)
 		entity->setRenderer(nullptr);
 		entity->dispose();
 		delete entity;
+
+		// delete from lists
+		visibleObjects.erase(remove(visibleObjects.begin(), visibleObjects.end(), entity), visibleObjects.end());
+		visibleObjectsPostPostProcessing.erase(remove(visibleObjectsPostPostProcessing.begin(), visibleObjectsPostPostProcessing.end(), entity), visibleObjectsPostPostProcessing.end());
+		visibleLODObjects.erase(remove(visibleLODObjects.begin(), visibleLODObjects.end(), entity), visibleLODObjects.end());
+		visibleOpses.erase(remove(visibleOpses.begin(), visibleOpses.end(), entity), visibleOpses.end());
+		visiblePpses.erase(remove(visiblePpses.begin(), visiblePpses.end(), entity), visiblePpses.end());
+		visiblePsgs.erase(remove(visiblePsgs.begin(), visiblePsgs.end(), entity), visiblePsgs.end());
+		visibleLinesObjects.erase(remove(visibleLinesObjects.begin(), visibleLinesObjects.end(), entity), visibleLinesObjects.end());
+		visibleObjectRenderGroups.erase(remove(visibleObjectRenderGroups.begin(), visibleObjectRenderGroups.end(), entity), visibleObjectRenderGroups.end());
+		visibleEZRObjects.erase(remove(visibleEZRObjects.begin(), visibleEZRObjects.end(), entity), visibleEZRObjects.end());
+
 	}
 }
 
@@ -544,7 +408,7 @@ void Engine::initialize()
 		Console::println(string("TDME::Using Vulkan"));
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
-		ShadowMapping::setShadowMapSize(2048, 2048);
+		setShadowMapSize(2048, 2048);
 		skinningShaderEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
 	#else
@@ -555,7 +419,7 @@ void Engine::initialize()
 			Console::println(string("TDME::Using GL3+/CORE"));
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
-			ShadowMapping::setShadowMapSize(1024, 1024);
+			setShadowMapSize(1024, 1024);
 			skinningShaderEnabled = false;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
@@ -576,7 +440,7 @@ void Engine::initialize()
 			skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
-			ShadowMapping::setShadowMapSize(2048, 2048);
+			setShadowMapSize(2048, 2048);
 			animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 		}
 		// GLES2 on Linux
@@ -588,7 +452,7 @@ void Engine::initialize()
 			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
 				shadowMappingEnabled = true;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-				ShadowMapping::setShadowMapSize(1024, 1024);
+				setShadowMapSize(1024, 1024);
 			} else {
 				shadowMappingEnabled = false;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
@@ -684,6 +548,10 @@ void Engine::initialize()
 		Console::println(string("TDME::Basic FBOs are available."));
 	}
 
+	// TODO: make this configurable
+	ezrShaderPre = new EZRShaderPre(renderer);
+	ezrShaderPre->initialize();
+
 	// initialize shadow mapping
 	if (shadowMappingEnabled == true) {
 		Console::println(string("TDME::Using shadow mapping"));
@@ -707,6 +575,7 @@ void Engine::initialize()
 
 	// check if initialized
 	// initialized &= objectsFrameBuffer->isInitialized();
+	initialized &= ezrShaderPre == nullptr ? true : ezrShaderPre->isInitialized();
 	initialized &= shadowMappingShaderPre == nullptr ? true : shadowMappingShaderPre->isInitialized();
 	initialized &= shadowMappingShaderRender == nullptr ? true : shadowMappingShaderRender->isInitialized();
 	initialized &= lightingShader->isInitialized();
@@ -768,10 +637,10 @@ void Engine::initRendering()
 	visibleLODObjects.clear();
 	visibleOpses.clear();
 	visiblePpses.clear();
-	visibleFpses.clear();
 	visiblePsgs.clear();
 	visibleLinesObjects.clear();
 	visibleObjectRenderGroups.clear();
+	visibleEZRObjects.clear();
 
 	//
 	renderingInitiated = true;
@@ -824,6 +693,9 @@ void Engine::computeTransformations()
 			} else { \
 				visibleObjects.push_back(object); \
 			} \
+			if (object->isEnableEarlyZRejection() == true) { \
+				visibleEZRObjects.push_back(object); \
+			}; \
 		} else \
 		if ((lodObject = dynamic_cast<LODObject3D*>(_entity)) != nullptr) { \
 			auto object = lodObject->determineLODObject(camera); \
@@ -834,6 +706,9 @@ void Engine::computeTransformations()
 				} else { \
 					visibleObjects.push_back(object); \
 				} \
+				if (object->isEnableEarlyZRejection() == true) { \
+					visibleEZRObjects.push_back(object); \
+				}; \
 			} \
 		} else \
 		if ((opse = dynamic_cast<ObjectParticleSystem*>(_entity)) != nullptr) { \
@@ -850,7 +725,7 @@ void Engine::computeTransformations()
 			visiblePpses.push_back(ppse); \
 		} else \
 		if ((fpse = dynamic_cast<FogParticleSystem*>(_entity)) != nullptr) { \
-			visibleFpses.push_back(fpse); \
+			visiblePpses.push_back(fpse); \
 		} else \
 		if ((lo = dynamic_cast<LinesObject3D*>(_entity)) != nullptr) { \
 			visibleLinesObjects.push_back(lo); \
@@ -872,7 +747,7 @@ void Engine::computeTransformations()
 	}
 
 	// add visible entities to related lists by querying frustum
-	for (auto entity: *partition->getVisibleEntities(camera->getFrustum())) {
+	for (auto entity: partition->getVisibleEntities(camera->getFrustum())) {
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);
@@ -998,31 +873,53 @@ void Engine::display()
 		if (linesShader != nullptr) linesShader->unUseProgram(context);
 	}
 
-	// use lighting shader
-	if (lightingShader != nullptr) lightingShader->useProgram(this);
-
-	// render objects
-	object3DRenderer->render(
-		visibleObjects,
-		true,
-		Object3DRenderer::RENDERTYPE_NORMALS |
-		Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
-		Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
-		Object3DRenderer::RENDERTYPE_MATERIALS |
-		Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DRenderer::RENDERTYPE_TEXTURES |
-		Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DRenderer::RENDERTYPE_LIGHTS
-	);
-
-	// unuse lighting shader
-	if (lightingShader != nullptr) {
-		lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+	// do depth buffer writing aka early z rejection
+	if (ezrShaderPre != nullptr && visibleEZRObjects.size() > 0) {
+		// disable color rendering, we only want to write to the Z-Buffer
+		renderer->setColorMask(false, false, false, false);
+		// render
+		ezrShaderPre->useProgram(this);
+		// only draw opaque face entities of objects marked as EZR objects
+		object3DRenderer->render(
+			visibleEZRObjects,
+			false,
+			Object3DRenderer::RENDERTYPE_NORMALS | // TODO: actually this is not required, but GL2 currently needs this
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+		);
+		// done
+		ezrShaderPre->unUseProgram();
+		// restore disable color rendering
+		renderer->setColorMask(true, true, true, true);
 	}
 
-	// render shadows if required
-	if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
+	// use lighting shader
+	if (visibleObjects.size() > 0) {
+		//
+		if (lightingShader != nullptr) lightingShader->useProgram(this);
+
+		// render objects
+		object3DRenderer->render(
+			visibleObjects,
+			true,
+			Object3DRenderer::RENDERTYPE_NORMALS |
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
+			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
+			Object3DRenderer::RENDERTYPE_MATERIALS |
+			Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_TEXTURES |
+			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			Object3DRenderer::RENDERTYPE_LIGHTS
+		);
+
+		// unuse lighting shader
+		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+
+		// render shadows if required
+		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
+	}
 
 	// do post processing
 	isUsingPostProcessingTemporaryFrameBuffer = false;
@@ -1032,12 +929,11 @@ void Engine::display()
 	}
 
 	// render point particle systems
-	if (visiblePpses.size() > 0 || visibleFpses.size() > 0) {
+	if (visiblePpses.size() > 0) {
 		// use particle shader
 		if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 		// render points based particle systems
-		if (visibleFpses.size() > 0) object3DRenderer->render(visibleFpses);
 		if (visiblePpses.size() > 0) object3DRenderer->render(visiblePpses);
 
 		// unuse particle shader
@@ -1141,11 +1037,6 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	computeWorldCoordinateByMousePosition(mouseX, mouseY, z, worldCoordinate);
 }
 
-Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY)
-{
-	return getEntityByMousePosition(mouseX, mouseY, nullptr);
-}
-
 Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter)
 {
 	// get world position of mouse position at near and far plane
@@ -1168,7 +1059,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1176,6 +1067,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
+
 	// iterate visible point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visiblePpses) {
 		// skip if not pickable or ignored by filter
@@ -1183,7 +1075,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1191,21 +1083,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 			}
 		}
 	}
-	// iterate visible fog partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: visibleFpses) {
-		// skip if not pickable or ignored by filter
-		if (entity->isPickable() == false) continue;
-		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
-		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
-			// check if match or better match
-			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-				selectedEntity = entity;
-				selectedEntityDistance = entityDistance;
-			}
-		}
-	}
+
 	// iterate visible particle system groups, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: visiblePsgs) {
 		// skip if not pickable or ignored by filter
@@ -1213,7 +1091,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1229,7 +1107,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLength();
+			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1245,16 +1123,14 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-				auto vertices = _i->next();
-				{
-					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
-						// check if match or better match
-						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-							selectedEntity = entity;
-							selectedEntityDistance = entityDistance;
-						}
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
 					}
 				}
 			}
@@ -1268,16 +1144,14 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			for (auto _i = entity->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-				auto vertices = _i->next();
-				{
-					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
-						// check if match or better match
-						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-							selectedEntity = entity;
-							selectedEntityDistance = entityDistance;
-						}
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
 					}
 				}
 			}
@@ -1293,16 +1167,107 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
-				for (auto _i = object->getTransformedFacesIterator()->iterator(); _i->hasNext(); ) {
-					auto vertices = _i->next();
-					{
-						if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-							auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLength();
-							// check if match or better match
-							if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
-								selectedEntity = entity;
-								selectedEntityDistance = entityDistance;
-							}
+				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+					auto vertices = it->next();
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	//
+	return selectedEntity;
+}
+
+Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter) {
+	// get world position of mouse position at near and far plane
+	Vector3 startPoint;
+	Vector3 endPoint;
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, startPoint);
+	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, endPoint);
+
+	//
+	return doRayCasting(startPoint, endPoint, contactPoint, filter);
+}
+
+Entity* Engine::doRayCasting(const Vector3& startPoint, const Vector3& endPoint, Vector3& contactPoint, EntityPickingFilter* filter) {
+	Vector3 tmpVector3c;
+	Vector3 tmpVector3d;
+	Vector3 tmpVector3e;
+
+	// selected entity
+	auto selectedEntityDistance = Float::MAX_VALUE;
+	Entity* selectedEntity = nullptr;
+
+	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
+						contactPoint = tmpVector3e;
+					}
+				}
+			}
+		}
+	}
+
+	// iterate visible objects that have post post processing renderpass, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleObjectsPostPostProcessing) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
+					auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
+						contactPoint = tmpVector3e;
+					}
+				}
+			}
+		}
+	}
+
+	// iterate visible LOD objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: visibleLODObjects) {
+		// skip if not pickable or ignored by filter
+		if (entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+			auto object = entity->getLODObject();
+			if (object != nullptr) {
+				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+					auto vertices = it->next();
+					if (LineSegment::doesLineSegmentCollideWithTriangle((*vertices)[0], (*vertices)[1], (*vertices)[2], startPoint, endPoint, tmpVector3e) == true) {
+						auto entityDistance = tmpVector3e.sub(startPoint).computeLengthSquared();
+						// check if match or better match
+						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+							selectedEntity = entity;
+							selectedEntityDistance = entityDistance;
+							contactPoint = tmpVector3e;
 						}
 					}
 				}

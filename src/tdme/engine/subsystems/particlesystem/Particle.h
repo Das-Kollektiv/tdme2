@@ -18,12 +18,12 @@ using tdme::math::Vector3;
  */
 struct tdme::engine::subsystems::particlesystem::Particle final
 {
-	bool active {  };
-	Vector3 velocity {  };
-	Vector3 position {  };
-	float mass {  };
-	int64_t lifeTimeMax {  };
-	int64_t lifeTimeCurrent {  };
-	Color4 color {  };
-	Color4 colorAdd {  };
+	bool active;
+	Vector3 velocity;
+	Vector3 position;
+	float mass;
+	int64_t lifeTimeMax;
+	int64_t lifeTimeCurrent;
+	Color4 color;
+	Color4 colorAdd;
 };

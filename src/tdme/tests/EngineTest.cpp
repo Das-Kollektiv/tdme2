@@ -4,12 +4,14 @@
 #include <string>
 #include <vector>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
@@ -30,7 +32,6 @@
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Quaternion.h>
@@ -45,12 +46,14 @@ using std::to_string;
 using std::vector;
 
 using tdme::tests::EngineTest;
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
+using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
@@ -71,7 +74,6 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Quaternion;
@@ -83,6 +85,7 @@ using tdme::utils::Exception;
 
 EngineTest::EngineTest()
 {
+	Application::setLimitFPS(true);
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;
@@ -107,7 +110,7 @@ Model* EngineTest::createWallModel()
 	auto wallMaterial = new Material("wall");
 	wallMaterial->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	wallMaterial->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	(*wall->getMaterials())["wall"] = wallMaterial;
+	wall->getMaterials()["wall"] = wallMaterial;
 	auto wallGroup = new Group(wall, nullptr, "wall", "wall");
 	vector<FacesEntity> groupFacesEntities;
 	vector<Vector3> vertices;
@@ -127,15 +130,14 @@ Model* EngineTest::createWallModel()
 	facesFarPlane.push_back(Face(wallGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
 	FacesEntity groupFacesEntityFarPlane(wallGroup, "wall");
 	groupFacesEntityFarPlane.setMaterial(wallMaterial);
-	groupFacesEntityFarPlane.setFaces(&facesFarPlane);
+	groupFacesEntityFarPlane.setFaces(facesFarPlane);
 	groupFacesEntities.push_back(groupFacesEntityFarPlane);
 	wallGroup->setVertices(vertices);
 	wallGroup->setNormals(normals);
 	wallGroup->setTextureCoordinates(textureCoordinates);
 	wallGroup->setFacesEntities(groupFacesEntities);
-	wallGroup->determineFeatures();
-	(*wall->getGroups())["wall"] = wallGroup;
-	(*wall->getSubGroups())["wall"] = wallGroup;
+	wall->getGroups()["wall"] = wallGroup;
+	wall->getSubGroups()["wall"] = wallGroup;
 	ModelHelper::prepareForIndexedRendering(wall);
 	return wall;
 }

@@ -15,7 +15,7 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
-#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntity.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -37,7 +37,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::particlesystem::ParticleSystemEntity;
+using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
@@ -250,10 +250,8 @@ void FogParticleSystemInternal::updateParticles()
 	auto& bbMaxXYZ = boundingBox.getMax().getArray();
 	//
 	auto haveBoundingBox = false;
-	// compute distance from camera
-	float distanceFromCamera;
 	// points are stored in camera space in points render pool
-	auto modelViewMatrix = getTransformationsMatrix().clone().multiply(renderer->getCameraMatrix());
+	auto& modelMatrix = getTransformationsMatrix();
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -263,11 +261,9 @@ void FogParticleSystemInternal::updateParticles()
 		if (particle.active == false) continue;
 
 		// transform particle position to camera space
-		modelViewMatrix.multiply(particle.position, point);
+		modelMatrix.multiply(particle.position, point);
 		//
 		activeParticles++;
-		// compute distance from camera
-		distanceFromCamera = -point.getZ();
 		// set up bounding box
 		auto& positionXYZ = particle.position.getArray();
 		if (haveBoundingBox == false) {
@@ -282,7 +278,7 @@ void FogParticleSystemInternal::updateParticles()
 			if (positionXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = positionXYZ[1];
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
-		pointsRenderPool->addPoint(point, particle.color, distanceFromCamera, this);
+		pointsRenderPool->addPoint(point, particle.color, 1, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {

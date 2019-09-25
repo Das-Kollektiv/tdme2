@@ -36,14 +36,14 @@ const string& GUICheckbox::getTemplate()
 	return template_;
 }
 
-map<string, string>* GUICheckbox::getAttributes(GUIScreenNode* screenNode)
+map<string, string>& GUICheckbox::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["on-mouse-click"] = "";
 	attributes["on-mouse-doubleclick"] = "";
 	attributes["on-change"] = "";
-	return &attributes;
+	return attributes;
 }
 
 GUINodeController* GUICheckbox::createController(GUINode* node)

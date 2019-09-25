@@ -14,17 +14,17 @@ using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 
 /** 
- * Particle system entity interface
+ * Particle system entity internal interface
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::subsystems::particlesystem::ParticleSystemEntity
+struct tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal
 {
 
 	/**
 	 * Public destructor
 	 */
-	virtual ~ParticleSystemEntity() {}
+	virtual ~ParticleSystemEntityInternal() {}
 
 	/** 
 	 * @return object id

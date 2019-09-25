@@ -53,7 +53,7 @@ private:
 	Color4 effectColorAdd {  };
 	Color4 effectColorMul {  };
 
-	Material* material {  };
+	const Material* material {  };
 	bool textureCoordinates {  };
 
 	string shader {  };
@@ -70,7 +70,7 @@ private:
 	 * @param textureCoordinates texture coordinates
 	 * @param shader shader
 	 */
-	void set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader);
+	void set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/** 
 	 * Creates a key for given transparent render faces group attributes
@@ -84,7 +84,7 @@ private:
 	 * @param shader shader
 	 * @return
 	 */
-	static const string createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader);
+	static const string createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/** 
 	 * Adds a vertex to this transparent render faces group
@@ -121,10 +121,11 @@ private:
 
 	/**
 	 * Render this transparent render faces group
+	 * @param engine engine
 	 * @param renderer renderer
 	 * @param context context
 	 */
-	void render(Renderer* renderer, void* context);
+	void render(Engine* engine, Renderer* renderer, void* context);
 
 	/**
 	 * Public constructor

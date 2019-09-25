@@ -343,7 +343,7 @@ private:
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return group
 	 */
-	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>* subGroups); // TODO: std container: maybe use call by reference
+	static void readSubGroups(TMReaderInputStream* is, Model* model, Group* parentGroup, map<string, Group*>& subGroups);
 
 	/** 
 	 * Write group to output stream

@@ -106,6 +106,9 @@ void LevelEditorScreenController::initialize()
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
 		gridEnabled = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("grid_enabled"));
 		gridYPosition = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("grid_y_position"));
+		snappingX = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("snapping_x"));
+		snappingZ = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("snapping_z"));
+		snappingEnabled = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("snapping_enabled"));
 		mapWidth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_width"));
 		mapDepth = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_depth"));
 		mapHeight = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("map_height"));
@@ -184,6 +187,12 @@ void LevelEditorScreenController::setGrid(bool enabled, float gridY)
 {
 	gridEnabled->getController()->setValue(enabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 	gridYPosition->getController()->setValue(MutableString(Tools::formatFloat(gridY)));
+}
+
+void LevelEditorScreenController::setSnapping(bool snappingEnabled, float snappingX, float snappingZ) {
+	this->snappingEnabled->getController()->setValue(snappingEnabled == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
+	this->snappingX->getController()->setValue(MutableString(Tools::formatFloat(snappingX)));
+	this->snappingZ->getController()->setValue(MutableString(Tools::formatFloat(snappingZ)));
 }
 
 void LevelEditorScreenController::setLevelSize(float width, float depth, float height)
@@ -650,7 +659,7 @@ void LevelEditorScreenController::onObjectRotationsApply()
 
 void LevelEditorScreenController::onObjectRemove()
 {
-	view->removeObject();
+	view->removeObjects();
 }
 
 void LevelEditorScreenController::onObjectColor()
@@ -746,12 +755,25 @@ void LevelEditorScreenController::onGridApply()
 	}
 }
 
+void LevelEditorScreenController::onSnappingApply()
+{
+	try {
+		auto snappingXValue = Float::parseFloat(snappingX->getController()->getValue().getString());
+		if (snappingXValue < 0.0f || snappingXValue > 5.0f) throw ExceptionBase("snapping x must be within 0 .. 5");
+		auto snappingZValue = Float::parseFloat(snappingZ->getController()->getValue().getString());
+		if (snappingZValue < 0.0f || snappingZValue > 5.0f) throw ExceptionBase("snapping x must be within 0 .. 5");
+		view->setSnapping(snappingEnabled->getController()->getValue().equals(CHECKBOX_CHECKED), snappingXValue, snappingZValue);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (exception.what()));
+	}
+}
+
 void LevelEditorScreenController::onObjectPropertyPresetApply()
 {
 	view->objectPropertiesPreset(objectPropertiesPresets->getController()->getValue().getString());
 }
 
-void LevelEditorScreenController::setLightPresetsIds(const map<string, LevelEditorLight*>* lightPresetIds)
+void LevelEditorScreenController::setLightPresetsIds(const map<string, LevelEditorLight*>& lightPresetIds)
 {
 	for (auto i = 0; i < 4; i++) {
 		auto lightPresetsInnerNode = dynamic_cast< GUIParentNode* >((lightsPresets[i]->getScreenNode()->getNodeById(lightsPresets[i]->getId() + "_inner")));
@@ -762,7 +784,7 @@ void LevelEditorScreenController::setLightPresetsIds(const map<string, LevelEdit
 			"<scrollarea-vertical id=\"" +
 			lightsPresets[i]->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"50\">\n";
-		for (auto it: *lightPresetIds) {
+		for (auto it: lightPresetIds) {
 			string lightPresetId = it.first;
 			lightPresetsInnerNodeSubNodesXML =
 				lightPresetsInnerNodeSubNodesXML +
@@ -899,8 +921,8 @@ void LevelEditorScreenController::onLightPresetApply(int32_t lightIdx)
 {
 	auto lightPresets = LevelPropertyPresets::getInstance()->getLightPresets();
 	LevelEditorLight* lightPreset = nullptr;
-	auto lightPresetIt = lightPresets->find(lightsPresets[lightIdx]->getController()->getValue().getString());
-	if (lightPresetIt != lightPresets->end()) lightPreset = lightPresetIt->second;
+	auto lightPresetIt = lightPresets.find(lightsPresets[lightIdx]->getController()->getValue().getString());
+	if (lightPresetIt != lightPresets.end()) lightPreset = lightPresetIt->second;
 	if (lightPreset == nullptr) return;
 
 	view->applyLight(lightIdx, lightPreset->getAmbient(), lightPreset->getDiffuse(), lightPreset->getSpecular(), lightPreset->getPosition(), lightPreset->getConstantAttenuation(), lightPreset->getLinearAttenuation(), lightPreset->getQuadraticAttenuation(), lightPreset->getSpotTo(), lightPreset->getSpotDirection(), lightPreset->getSpotExponent(), lightPreset->getSpotCutOff(), lightPreset->isEnabled());
@@ -974,6 +996,9 @@ void LevelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 		} else
 		if (node->getId().compare("button_grid_apply") == 0) {
 			onGridApply();
+		} else
+		if (node->getId().compare("button_snapping_apply") == 0) {
+			onSnappingApply();
 		} else
 		if (node->getId().compare("button_map_load") == 0) {
 			onMapLoad();

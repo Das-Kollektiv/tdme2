@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -28,6 +29,7 @@ using std::to_string;
 
 using tdme::tests::PhysicsTest4;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -53,6 +55,7 @@ constexpr int32_t PhysicsTest4::RIGID_TYPEID_STANDARD;
 
 PhysicsTest4::PhysicsTest4()
 {
+	Application::setLimitFPS(true);
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;
@@ -106,8 +109,8 @@ void PhysicsTest4::initialize()
 	light0->setEnabled(true);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(0.1f, 0.1f, 0.1f));
 	auto boxModel = PrimitiveModel::createModel(box, "box_model");
-	(*boxModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
-	(*boxModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	boxModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
+	boxModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("box", boxModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->setTranslation(Vector3(0.0f, 3.0f, 0.0f));

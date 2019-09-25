@@ -4,6 +4,7 @@
 
 #include <tdme/utils/Time.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
@@ -41,6 +42,7 @@ using std::to_string;
 
 using tdme::tests::RayTracingTest;
 
+using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
@@ -79,6 +81,7 @@ constexpr int32_t RayTracingTest::BOX_COUNT;
 
 RayTracingTest::RayTracingTest()
 {
+	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 	world = new World();
 }
@@ -237,8 +240,8 @@ void RayTracingTest::initialize()
 	light0->setEnabled(true);
 	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
-	(*groundModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(0.25f, 0.25f, 0.25f, 1.0f));
-	(*groundModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	groundModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.25f, 0.25f, 0.25f, 1.0f));
+	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();
@@ -275,8 +278,8 @@ void RayTracingTest::initialize()
 	//auto capsuleBig = new Capsule(Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.11f, 0.0f), 0.1f);
 	auto capsuleBig = new Capsule(Vector3(0.0f, 0.25f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.25f);
 	auto capsuleBigModel = PrimitiveModel::createModel(capsuleBig, "capsulebig_model");
-	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
-	(*capsuleBigModel->getMaterials())["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	capsuleBigModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
+	capsuleBigModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("player", capsuleBigModel);
 	entity->setDynamicShadowingEnabled(true);
 	entity->setTranslation(Vector3(-2.0f, 0.0f, 0.0f));

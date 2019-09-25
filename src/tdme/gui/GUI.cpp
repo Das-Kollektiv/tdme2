@@ -210,6 +210,10 @@ GUIScreenNode* GUI::getScreen(const string& id)
 
 void GUI::addScreen(const string& id, GUIScreenNode* screen)
 {
+	if (id != screen->getId()) {
+		Console::println("GUI::addScreen(): screen id '" + id + "' must be '" + screen->getId() + "'");
+		return;
+	}
 	screens.emplace(id, screen);
 	screen->reshapeRequested = true;
 }
@@ -917,7 +921,6 @@ void GUI::fakeKeyboardModifierEvent() {
 
 void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	// TODO: maybe move logic into GUIScreenNode
-
 	auto screenNodeWidthConstrained = width;
 	auto screenNodeHeightConstrained = height;
 
@@ -951,7 +954,7 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	}
 
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
-	screenNode->layout();
+	screenNode->layout(screenNode);
 	screenNode->reshapeRequested = false;
 }
 

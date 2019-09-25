@@ -1,4 +1,5 @@
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
@@ -8,6 +9,7 @@
 
 using tdme::engine::EngineGL2Renderer;
 using tdme::engine::Engine;
+using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
@@ -32,6 +34,8 @@ void EngineGL2Renderer::onUpdateProjectionMatrix(void* context)
 	if (Engine::Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
+	if (Engine::ezrShaderPre != nullptr)
+		Engine::ezrShaderPre->updateMatrices(context);
 }
 
 void EngineGL2Renderer::onUpdateCameraMatrix(void* context)
@@ -48,6 +52,8 @@ void EngineGL2Renderer::onUpdateCameraMatrix(void* context)
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
+	if (Engine::ezrShaderPre != nullptr)
+		Engine::ezrShaderPre->updateMatrices(context);
 }
 
 void EngineGL2Renderer::onUpdateModelViewMatrix(void* context)
@@ -64,6 +70,8 @@ void EngineGL2Renderer::onUpdateModelViewMatrix(void* context)
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
+	if (Engine::ezrShaderPre != nullptr)
+		Engine::ezrShaderPre->updateMatrices(context);
 }
 
 void EngineGL2Renderer::onBindTexture(void* context, int32_t textureId)
@@ -76,6 +84,9 @@ void EngineGL2Renderer::onBindTexture(void* context, int32_t textureId)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->bindTexture(this, context, textureId);
+
+	if (Engine::ezrShaderPre != nullptr)
+		Engine::ezrShaderPre->bindTexture(this, context, textureId);
 }
 
 void EngineGL2Renderer::onUpdateTextureMatrix(void* context)
@@ -88,6 +99,9 @@ void EngineGL2Renderer::onUpdateTextureMatrix(void* context)
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateTextureMatrix(this);
+
+	if (Engine::ezrShaderPre != nullptr)
+		Engine::ezrShaderPre->updateTextureMatrix(this, context);
 }
 
 void EngineGL2Renderer::onUpdateEffect(void* context)
@@ -121,6 +135,9 @@ void EngineGL2Renderer::onUpdateMaterial(void* context)
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMaterial(this, context);
+
+	if (Engine::ezrShaderPre != nullptr)
+		Engine::ezrShaderPre->updateMaterial(this, context);
 }
 
 void EngineGL2Renderer::onUpdateShader(void* context) {
@@ -129,4 +146,7 @@ void EngineGL2Renderer::onUpdateShader(void* context) {
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->setShader(context, shaderId);
+
+	if (Engine::ezrShaderPre != nullptr)
+		Engine::ezrShaderPre->setShader(context, shaderId);
 }

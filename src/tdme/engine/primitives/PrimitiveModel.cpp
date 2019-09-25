@@ -81,14 +81,14 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// triangle vertices indexes
 	auto fvi = BoundingBox::getFacesVerticesIndexes();
 	// vertices
 	vector<Vector3> vertices;
-	for (auto& vertex : *boundingBox->getVertices()) {
+	for (auto& vertex : boundingBox->getVertices()) {
 		vertices.push_back(vertex);
 	}
 	// normals
@@ -122,7 +122,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	// faces entity
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -130,11 +130,9 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::prepareForIndexedRendering(model);
 	//
@@ -164,7 +162,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// triangle vertices indexes
@@ -177,12 +175,12 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// normals
 	auto axes = orientedBoundingBox->getAxes();
 	vector<Vector3> normals;
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[0].clone().scale(-1.0f))));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[0].clone())));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[1].clone().scale(-1.0f))));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[1].clone())));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[2].clone().scale(-1.0f))));
-	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3((*axes)[2].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[0].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[0].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[1].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[1].clone())));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[2].clone().scale(-1.0f))));
+	normals.push_back(transformVector3Normal(orientedBoundingBox, toRP3DVector3(axes[2].clone())));
 	// faces
 	vector<Face> faces;
 	//	left
@@ -206,7 +204,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	// faces entity
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -214,11 +212,9 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::prepareForIndexedRendering(model);
 	//
@@ -251,7 +247,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// vertices
@@ -313,7 +309,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	// set up faces entity
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// group faces entities
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -321,11 +317,9 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::computeNormals(model);
 	ModelHelper::prepareForIndexedRendering(model);
@@ -376,7 +370,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
 	// vertices
@@ -459,7 +453,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	// group faces entities
 	FacesEntity groupFacesEntity(group, "faces entity");
 	groupFacesEntity.setMaterial(material);
-	groupFacesEntity.setFaces(&faces);
+	groupFacesEntity.setFaces(faces);
 	// set up faces entity
 	vector<FacesEntity> groupFacesEntities;
 	groupFacesEntities.push_back(groupFacesEntity);
@@ -467,11 +461,9 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	group->setVertices(vertices);
 	group->setNormals(normals);
 	group->setFacesEntities(groupFacesEntities);
-	// determine features
-	group->determineFeatures();
 	// register group
-	(*model->getGroups())["group"] = group;
-	(*model->getSubGroups())["group"] = group;
+	model->getGroups()["group"] = group;
+	model->getSubGroups()["group"] = group;
 	// prepare for indexed rendering
 	ModelHelper::computeNormals(model);
 	ModelHelper::prepareForIndexedRendering(model);
@@ -507,17 +499,19 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 		)
 	);
 	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	(*model->getMaterials())[material->getId()] = material;
+	model->getMaterials()[material->getId()] = material;
 	setupConvexMeshMaterial(model->getSubGroups(), material);
 }
 
-void PrimitiveModel::setupConvexMeshMaterial(map<string, Group*>* groups, Material* material)
+void PrimitiveModel::setupConvexMeshMaterial(const map<string, Group*>& groups, Material* material)
 {
-	for (auto it: *groups) {
+	for (auto it: groups) {
 		Group* group = it.second;
-		for (auto& faceEntity : *group->getFacesEntities()) {
+		auto facesEntities = group->getFacesEntities();
+		for (auto& faceEntity : facesEntities) {
 			faceEntity.setMaterial(material);
 		}
+		group->setFacesEntities(group->getFacesEntities());
 		setupConvexMeshMaterial(group->getSubGroups(), material);
 	}
 }

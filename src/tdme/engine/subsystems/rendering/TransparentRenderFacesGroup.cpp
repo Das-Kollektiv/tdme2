@@ -37,7 +37,7 @@ TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 	this->textureCoordinates = false;
 }
 
-void TransparentRenderFacesGroup::set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader)
+void TransparentRenderFacesGroup::set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
 	this->object3DRenderer = object3DRenderer;
 	this->batchRenderers.clear();
@@ -51,7 +51,7 @@ void TransparentRenderFacesGroup::set(Object3DRenderer* object3DRenderer, Model*
 	this->shader = shader;
 }
 
-const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, Material* material, bool textureCoordinates, const string& shader)
+const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
 	auto& efcmData = effectColorMul.getArray();
 	auto& efcaData = effectColorAdd.getArray();
@@ -65,7 +65,7 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 		shader +
 		",";
 		(material == nullptr ? "tdme.material.none" : material->getId()) + // TODO: material id could contain this "," delimiter
-		"," +
+		",";
 	key.append((const char*)&object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx], sizeof(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx]));
 	key.append(",");
 	key.append((const char*)&facesEntityIdx, sizeof(facesEntityIdx));
@@ -88,12 +88,16 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 	return key;
 }
 
-void TransparentRenderFacesGroup::render(Renderer* renderer, void* context)
+void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, void* context)
 {
 	//
 	if (renderer->shaderId != shader) {
 		renderer->setShader(shader);
 		renderer->onUpdateShader(context);
+		// update lights
+		for (auto j = 0; j < engine->lights.size(); j++) {
+			engine->lights[j].update(context);
+		}
 	}
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;

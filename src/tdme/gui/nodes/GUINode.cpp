@@ -1095,6 +1095,7 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 	for (auto i = 0; i < indent; i++) Console::print("  ");
 	Console::println(
 		node->id + ": " +
+		node->getNodeType() + ": " +
 		to_string(node->computedConstraints.left) + ", " +
 		to_string(node->computedConstraints.top) + ", " +
 		to_string(node->computedConstraints.width) + "; " +

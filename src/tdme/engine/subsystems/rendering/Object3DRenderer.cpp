@@ -5,10 +5,12 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Entity.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/Object3D.h>
@@ -21,6 +23,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/lines/LinesShader.h>
@@ -35,6 +38,7 @@
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/Object3DRenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
+#include <tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
@@ -65,10 +69,12 @@ using std::sort;
 using std::vector;
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::unordered_set;
 
 using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::Engine;
+using tdme::engine::Entity;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::LinesObject3D;
 using tdme::engine::Object3D;
@@ -81,6 +87,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::physics::CollisionDetection;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -95,6 +102,7 @@ using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::Object3DRenderer_TransparentRenderFacesGroupPool;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
+using tdme::engine::subsystems::rendering::RenderTransparentRenderPointsPool;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
@@ -125,7 +133,7 @@ Object3DRenderer::Object3DRenderer(Engine* engine, Renderer* renderer) {
 	this->renderer = renderer;
 	transparentRenderFacesGroupPool = new Object3DRenderer_TransparentRenderFacesGroupPool();
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
-	pseTransparentRenderPointsPool = new TransparentRenderPointsPool(65535);
+	renderTransparentRenderPointsPool = new RenderTransparentRenderPointsPool(65535);
 	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
 		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
@@ -147,7 +155,7 @@ Object3DRenderer::~Object3DRenderer() {
 	}
 	delete transparentRenderFacesGroupPool;
 	delete transparentRenderFacesPool;
-	delete pseTransparentRenderPointsPool;
+	delete renderTransparentRenderPointsPool;
 	delete psePointBatchRenderer;
 }
 
@@ -202,6 +210,9 @@ void Object3DRenderer::reset()
 
 void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
+	// reset shader
+	renderer->shaderId.clear();
+
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
@@ -237,10 +248,10 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 	// use default context
 	auto context = renderer->getDefaultContext();
 	// render transparent render faces if any exist
-	auto transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
-	if (transparentRenderFaces->size() > 0) {
+	auto& transparentRenderFaces = transparentRenderFacesPool->getTransparentRenderFaces();
+	if (transparentRenderFaces.size() > 0) {
 		// sort transparent render faces from far to near
-		sort(transparentRenderFaces->begin(), transparentRenderFaces->end(), TransparentRenderFace::compare);
+		sort(transparentRenderFaces.begin(), transparentRenderFaces.end(), TransparentRenderFace::compare);
 		// second render pass, draw color buffer for transparent objects
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear
@@ -248,8 +259,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		renderer->disableCulling();
 		renderer->enableBlending();
 		// disable foliage animation
-		renderer->setShader("default");
-		renderer->onUpdateShader(context);
+		renderer->shaderId.clear();
 		// have identity texture matrix
 		renderer->getTextureMatrix(context).identity();
 		renderer->onUpdateTextureMatrix(context);
@@ -257,7 +267,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		// but having a fixed value is not a bad idea except that it is a renderer call
 		// TODO: confirm this
 		renderer->setFrontFace(renderer->FRONTFACE_CCW);
-		for (auto transparentRenderFace: *transparentRenderFaces) {
+		for (auto transparentRenderFace: transparentRenderFaces) {
 			// do we have any faces yet?
 			if (groupTransparentRenderFaces.size() == 0) {
 				// nope, so add this one
@@ -312,13 +322,13 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 	}
 	//
 	auto model = object3DGroup->object->getModel();
-	auto facesEntities = object3DGroup->group->getFacesEntities();
-	FacesEntity* facesEntity = nullptr;
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
+	const FacesEntity* facesEntity = nullptr;
 	// attributes we collect for a transparent render face group
 	auto depthBuffer = false;
 	auto& effectColorAdd = object3D->getEffectColorAdd();
 	auto& effectColorMul = object3D->getEffectColorMul();
-	Material* material = nullptr;
+	const Material* material = nullptr;
 	auto textureCoordinates = false;
 	Vector3 transformedVector;
 	Vector3 transformedNormal;
@@ -328,8 +338,8 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 		auto transparentRenderFace = transparentRenderFaces[i];
 		auto facesEntityIdx = transparentRenderFace->facesEntityIdx;
 		// determine if faces entity and so material did switch between last face and current face
-		if (facesEntity != &(*facesEntities)[facesEntityIdx]) {
-			facesEntity = &(*facesEntities)[facesEntityIdx];
+		if (facesEntity != &facesEntities[facesEntityIdx]) {
+			facesEntity = &facesEntities[facesEntityIdx];
 			material = facesEntity->getMaterial();
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
@@ -365,7 +375,7 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 
 void Object3DRenderer::renderTransparentFacesGroups(void* context) {
 	for (auto it: transparentRenderFacesGroups) {
-		it.second->render(renderer, context);
+		it.second->render(engine, renderer, context);
 	}
 }
 
@@ -404,17 +414,16 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 	// all objects share the same object 3d group structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
-	string currentShader;
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto faceIdx = 0;
-		auto facesEntityIdxCount = facesEntities->size();
+		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-			auto facesEntity = &(*facesEntities)[faceEntityIdx];
+			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces()->size();
+			auto faces = facesEntity->getFaces().size();
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -484,9 +493,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
 						object->getShader():
 						object->getDistanceShader();
-				if (currentShader != objectShader) {
-					currentShader = objectShader;
-					renderer->setShader(currentShader);
+				if (renderer->shaderId != objectShader) {
+					renderer->setShader(objectShader);
 					renderer->onUpdateShader(context);
 					// update lights
 					for (auto j = 0; j < engine->lights.size(); j++) {
@@ -607,10 +615,6 @@ void Object3DRenderer::instancedRenderFunction(int threadIdx, void* context, con
 	// issue upload matrices
 	renderer->onUpdateCameraMatrix(context);
 	renderer->onUpdateProjectionMatrix(context);
-	// update lights
-	for (auto j = 0; j < engine->lights.size(); j++) {
-		engine->lights[j].update(context);
-	}
 	// draw objects
 	for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 		if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
@@ -805,13 +809,13 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
-		auto facesEntities = object3DGroup->group->getFacesEntities();
+		auto& facesEntities = object3DGroup->group->getFacesEntities();
 		auto faceIdx = 0;
-		auto facesEntityIdxCount = facesEntities->size();
+		auto facesEntityIdxCount = facesEntities.size();
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
-			auto facesEntity = &(*facesEntities)[faceEntityIdx];
+			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces()->size();
+			auto faces = facesEntity->getFaces().size();
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -882,10 +886,16 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 				parameters.textureMatrix = object3DGroupToRender->textureMatricesByEntities[parameters.faceEntityIdx];
 				parameters.collectTransparentFaces = collectTransparentFaces;
 
-				// shader
+				// front face
 				renderer->setFrontFace(parameters.frontFace);
-				renderer->setShader(parameters.shader);
-				for (auto i = 0; i < threadCount; i++) renderer->onUpdateShader(renderer->getContext(i));
+				//
+				if (renderer->shaderId != parameters.shader) {
+					renderer->setShader(parameters.shader);
+					for (auto i = 0; i < threadCount; i++) renderer->onUpdateShader(renderer->getContext(i));
+					for (auto j = 0; j < engine->lights.size(); j++) {
+						engine->lights[j].update(context);
+					}
+				}
 				// multiple threads
 				if (threadCount > 1) {
 					for (auto engineThread: Engine::engineThreads) engineThread->engine = engine;
@@ -927,8 +937,8 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 
 void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
-	auto facesEntities = object3DGroup->group->getFacesEntities();
-	auto material = (*facesEntities)[facesEntityIdx].getMaterial();
+	auto& facesEntities = object3DGroup->group->getFacesEntities();
+	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
 
@@ -1018,26 +1028,29 @@ void Object3DRenderer::clearMaterial(void* context)
 	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 }
 
-
-void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
+void Object3DRenderer::render(const vector<Entity*>& pses)
 {
 	// TODO: Move me into own class
-	// TODO: check me performance wise again
-	if (visiblePses.size() == 0) return;
+	if (pses.size() == 0) return;
+
+	// TODO: I could also transfer texture and point size per particle, lets see, this would speed up things a lot I guess
+
+	// sort visible entities
+	auto sortedVisiblePses = pses;
+	std::sort(sortedVisiblePses.begin(), sortedVisiblePses.end(), compareParticleSystemEntities);
+
+	//
+	struct PseParameters {
+		const Color4* effectColorAdd;
+		const Color4* effectColorMul;
+		int32_t textureId;
+		float pointSize;
+	};
+	unordered_set<Entity*> rendererPses;
+	unordered_map<void*, PseParameters> rendererPseParameters;
 
 	// use default context
 	auto context = renderer->getDefaultContext();
-
-	// switch back to texture unit 0, TODO: check where its set to another value but not set back
-	renderer->setTextureUnit(context, 0);
-
-	// merge ppses and sort them
-	for (auto i = 0; i < visiblePses.size(); i++) {
-		PointsParticleSystemInternal* ppse = visiblePses[i];
-		pseTransparentRenderPointsPool->merge(ppse->getRenderPointsPool());
-	}
-	if (pseTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
-	pseTransparentRenderPointsPool->sort();
 
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
@@ -1049,115 +1062,103 @@ void Object3DRenderer::render(const vector<PointsParticleSystem*>& visiblePses)
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix(context);
 
-	// render
-	PointsParticleSystem* currentPpse = static_cast<PointsParticleSystem*>(pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie);
-	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
-		if (point.acquired == false) break;
-		if (point.cookie != (void*)currentPpse) {
-			// issue rendering
-			renderer->setEffectColorAdd(context, currentPpse->getEffectColorAdd().getArray());
-			renderer->setEffectColorMul(context, currentPpse->getEffectColorMul().getArray());
-			renderer->onUpdateEffect(context);
-			// TODO: maybe use onBindTexture() or onUpdatePointSize()
-			engine->getParticlesShader()->setParameters(context, currentPpse->getTextureId(), currentPpse->getPointSize());
-			// render, clear
-			psePointBatchRenderer->render(context);
-			psePointBatchRenderer->clear();
-			//
-			currentPpse = static_cast<PointsParticleSystem*>(point.cookie);
-		}
-		psePointBatchRenderer->addPoint(point);
-	}
-
-	if (psePointBatchRenderer->hasPoints() == true) {
-		// issue rendering
-		renderer->setEffectColorAdd(context, currentPpse->getEffectColorAdd().getArray());
-		renderer->setEffectColorMul(context, currentPpse->getEffectColorMul().getArray());
-		renderer->onUpdateEffect(context);
-		// TODO: maybe use onBindTexture() or onUpdatePointSize()
-		engine->getParticlesShader()->setParameters(context, currentPpse->getTextureId(), currentPpse->getPointSize());
-		// render, clear
-		psePointBatchRenderer->render(context);
-		psePointBatchRenderer->clear();
-	}
-
-	// done
-	pseTransparentRenderPointsPool->reset();
-
-	// unbind texture
-	renderer->bindTexture(context, renderer->ID_NONE);
-	// TODO: before render sort all pps by distance to camera and render them in correct order
-	// unset renderer state
-	renderer->disableBlending();
-	// restore renderer state
-	renderer->unbindBufferObjects(context);
-	renderer->getModelViewMatrix().set(modelViewMatrix);
-}
-
-void Object3DRenderer::render(const vector<FogParticleSystem*>& visibleFses)
-{
-	// TODO: Move me into own class
-	// TODO: check me performance wise again
-	if (visibleFses.size() == 0) return;
-
-	// use default context
-	auto context = renderer->getDefaultContext();
-
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
 	renderer->setTextureUnit(context, 0);
 
-	// merge fpses and sort them
-	for (auto i = 0; i < visibleFses.size(); i++) {
-		FogParticleSystemInternal* fpse = visibleFses[i];
-		pseTransparentRenderPointsPool->merge(fpse->getRenderPointsPool());
-	}
-	if (pseTransparentRenderPointsPool->getTransparentRenderPoints().size() == 0) return;
-	pseTransparentRenderPointsPool->sort();
-
-	// store model view matrix
-	Matrix4x4 modelViewMatrix;
-	modelViewMatrix.set(renderer->getModelViewMatrix());
-
-	// set up renderer state
-	renderer->enableBlending();
-	// 	model view matrix
-	renderer->getModelViewMatrix().identity();
-	renderer->onUpdateModelViewMatrix(context);
-
-	// render
-	FogParticleSystem* currentFpse = static_cast<FogParticleSystem*>(pseTransparentRenderPointsPool->getTransparentRenderPoints()[0].cookie);
-	for (auto& point: pseTransparentRenderPointsPool->getTransparentRenderPoints()) {
-		if (point.acquired == false) break;
-		if (point.cookie != (void*)currentFpse) {
-			// issue rendering
-			renderer->setEffectColorAdd(context, currentFpse->getEffectColorAdd().getArray());
-			renderer->setEffectColorMul(context, currentFpse->getEffectColorMul().getArray());
-			renderer->onUpdateEffect(context);
-			// TODO: maybe use onBindTexture() or onUpdatePointSize()
-			engine->getParticlesShader()->setParameters(context, currentFpse->getTextureId(), currentFpse->getPointSize());
-			// render, clear
-			psePointBatchRenderer->render(context);
-			psePointBatchRenderer->clear();
-			//
-			currentFpse = static_cast<FogParticleSystem*>(point.cookie);
+	// find particle systems that are combined, merge thos pses, transform them into camera space and sort them
+	auto& cameraMatrix = renderer->getCameraMatrix();
+	for (auto entityOuter: sortedVisiblePses) {
+		auto particleSystemsCount = 0;
+		if (rendererPses.find(entityOuter) != rendererPses.end()) continue;
+		{
+			auto ppse = dynamic_cast<PointsParticleSystem*>(entityOuter);
+			if (ppse != nullptr) {
+				rendererPseParameters[ppse] = {
+					.effectColorAdd = &ppse->getEffectColorAdd(),
+					.effectColorMul = &ppse->getEffectColorMul(),
+					.textureId = ppse->getTextureId(),
+					.pointSize = ppse->getPointSize()
+				};
+				renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
+			} else {
+				auto fpse = dynamic_cast<FogParticleSystem*>(entityOuter);
+				if (fpse != nullptr) {
+					rendererPseParameters[fpse] = {
+						.effectColorAdd = &fpse->getEffectColorAdd(),
+						.effectColorMul = &fpse->getEffectColorMul(),
+						.textureId = fpse->getTextureId(),
+						.pointSize = fpse->getPointSize()
+					};
+					renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
+				}
+			}
+			rendererPses.insert(entityOuter);
+			particleSystemsCount++;
 		}
-		psePointBatchRenderer->addPoint(point);
+		for (auto entityInner: sortedVisiblePses) {
+			if (entityOuter == entityInner || rendererPses.find(entityInner) != rendererPses.end()) continue;
+			if (CollisionDetection::doCollideAABBvsAABBFast(entityOuter->getBoundingBoxTransformed(), entityInner->getBoundingBoxTransformed()) == true) {
+				{
+					auto ppse = dynamic_cast<PointsParticleSystem*>(entityInner);
+					if (ppse != nullptr) {
+						rendererPseParameters[ppse] = {
+							.effectColorAdd = &ppse->getEffectColorAdd(),
+							.effectColorMul = &ppse->getEffectColorMul(),
+							.textureId = ppse->getTextureId(),
+							.pointSize = ppse->getPointSize()
+						};
+						renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
+					} else {
+						auto fpse = dynamic_cast<FogParticleSystem*>(entityInner);
+						if (fpse != nullptr) {
+							renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
+							rendererPseParameters[fpse] = {
+								.effectColorAdd = &fpse->getEffectColorAdd(),
+								.effectColorMul = &fpse->getEffectColorMul(),
+								.textureId = fpse->getTextureId(),
+								.pointSize = fpse->getPointSize()
+							};
+						}
+					}
+					rendererPses.insert(entityInner);
+					particleSystemsCount++;
+				}
+			}
+		}
+		if (renderTransparentRenderPointsPool->getTransparentRenderPointsCount() > 0) {
+			renderTransparentRenderPointsPool->sort();
+			// render
+			auto firstPoint = renderTransparentRenderPointsPool->getTransparentRenderPoints()[0];
+			PseParameters* pseParameters = &rendererPseParameters.find(firstPoint->particleSystem)->second;
+			auto currentPpse = static_cast<void*>(firstPoint->particleSystem);
+			for (auto point: renderTransparentRenderPointsPool->getTransparentRenderPoints()) {
+				if (point == nullptr || point->acquired == false || point->particleSystem != (void*)currentPpse) {
+					// issue rendering
+					renderer->setEffectColorAdd(context, pseParameters->effectColorAdd->getArray());
+					renderer->setEffectColorMul(context, pseParameters->effectColorMul->getArray());
+					renderer->onUpdateEffect(context);
+					// TODO: maybe use onBindTexture() or onUpdatePointSize()
+					engine->getParticlesShader()->setParameters(context, pseParameters->textureId, pseParameters->pointSize);
+					// render, clear
+					psePointBatchRenderer->render(context);
+					psePointBatchRenderer->clear();
+					//
+					if (point != nullptr && point->acquired == true) {
+						pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
+						currentPpse = point->particleSystem;
+						psePointBatchRenderer->addPoint(point);
+					} else {
+						break;
+					}
+				} else {
+					psePointBatchRenderer->addPoint(point);
+				}
+			}
+			// done
+			renderTransparentRenderPointsPool->reset();
+			rendererPseParameters.clear();
+		}
 	}
-
-	if (psePointBatchRenderer->hasPoints() == true) {
-		// issue rendering
-		renderer->setEffectColorAdd(context, currentFpse->getEffectColorAdd().getArray());
-		renderer->setEffectColorMul(context, currentFpse->getEffectColorMul().getArray());
-		renderer->onUpdateEffect(context);
-		// TODO: maybe use onBindTexture() or onUpdatePointSize()
-		engine->getParticlesShader()->setParameters(context, currentFpse->getTextureId(), currentFpse->getPointSize());
-		// render, clear
-		psePointBatchRenderer->render(context);
-		psePointBatchRenderer->clear();
-	}
-
-	// done
-	pseTransparentRenderPointsPool->reset();
 
 	// unbind texture
 	renderer->bindTexture(context, renderer->ID_NONE);
@@ -1215,4 +1216,11 @@ void Object3DRenderer::render(const vector<LinesObject3D*>& objects) {
 	// restore renderer state
 	renderer->unbindBufferObjects(context);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
+}
+
+inline bool Object3DRenderer::compareParticleSystemEntities(Entity* entity1, Entity* entity2) {
+	auto& camLookFrom = Engine::currentEngine->getCamera()->getLookFrom();
+	return
+		entity1->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camLookFrom).sub(camLookFrom).computeLengthSquared() >
+		entity2->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camLookFrom).sub(camLookFrom).computeLengthSquared();
 }

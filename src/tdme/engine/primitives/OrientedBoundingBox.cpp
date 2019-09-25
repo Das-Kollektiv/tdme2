@@ -133,9 +133,9 @@ const array<array<int32_t,3>,12>& OrientedBoundingBox::getFacesVerticesIndexes()
 	return facesVerticesIndexes;
 }
 
-const array<Vector3, 3>* OrientedBoundingBox::getAxes() const
+const array<Vector3, 3>& OrientedBoundingBox::getAxes() const
 {
-	return &axes;
+	return axes;
 }
 
 const Vector3& OrientedBoundingBox::getHalfExtension() const

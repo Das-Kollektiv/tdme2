@@ -2,6 +2,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -24,6 +25,7 @@
 using std::array;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::Entity;
 using tdme::engine::Engine;
@@ -53,22 +55,24 @@ private:
 	bool frustumCulling { true };
 
 	string id;
-	bool enabled {  };
-	bool pickable {  };
-	bool dynamicShadowing {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Matrix4x4 identityMatrix {  };
-	Entity* combinedEntity {  };
-	Model* model {  };
-	vector<Model*> combinedModels {  };
+	bool enabled;
+	bool pickable;
+	bool dynamicShadowing;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	float modelLOD2MinDistance;
+	float modelLOD3MinDistance;
+	Entity* combinedEntity;
+	vector<Transformations> objectsTransformations;
+	Model* model;
+	vector<Model*> combinedModels;
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
-	int objectCount { 0 };
 	array<int, 3> lodReduceBy;
+	bool enableEarlyZRejection { false };
 
 	/**
 	 * Compute bounding box
@@ -80,17 +84,19 @@ private:
 	 * @param sourceGroup source group to combine into current model
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param combinedModel combined model
+	 * @param reduceFactorBy reduce factor by
 	 */
-	static void combineGroup(Group* sourceGroup, const Matrix4x4& parentTransformationsMatrix, Model* combinedModel);
+	static void combineGroup(Group* sourceGroup, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
 
 	/**
 	 * Combine model with transformations into current model
 	 * @param model model
 	 * @param transformations transformations
 	 * @param combinedModel combined model
+	 * @param reduceFactorBy reduce factor by
 	 * @return model
 	 */
-	static void combineObject(Model* model, const Transformations& transformations, Model* combinedModel);
+	static void combineObjects(Model* model, const vector<Transformations>& objectsTransformations, Model* combinedModel);
 
 public:
 	// overriden methods
@@ -125,7 +131,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~Object3DRenderGroup();
+	~Object3DRenderGroup();
 
 	/**
 	 * Update render group model and bounding box
@@ -161,129 +167,129 @@ public:
 	void addObject(const Transformations& transformations);
 
 	// overriden methods
-	virtual void dispose() override;
+	void dispose() override;
 
-	inline virtual BoundingBox* getBoundingBox() override {
+	inline BoundingBox* getBoundingBox() override {
 		return &boundingBox;
 	}
 
-	inline virtual BoundingBox* getBoundingBoxTransformed() override {
+	inline BoundingBox* getBoundingBoxTransformed() override {
 		return &boundingBoxTransformed;
 	}
 
-	inline virtual const Color4& getEffectColorMul() const override {
+	inline const Color4& getEffectColorMul() const override {
 		return effectColorMul;
 	}
 
-	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+	inline void setEffectColorMul(const Color4& effectColorMul) override {
 		this->effectColorMul = effectColorMul;
 	}
 
-	inline virtual const Color4& getEffectColorAdd() const override {
+	inline const Color4& getEffectColorAdd() const override {
 		return effectColorAdd;
 	}
 
-	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
 		this->effectColorAdd = effectColorAdd;
 	}
 
-	inline virtual const string& getId() override {
+	inline const string& getId() override {
 		return id;
 	}
 
-	virtual void initialize() override;
+	void initialize() override;
 
-	inline virtual bool isDynamicShadowingEnabled() override {
+	inline bool isDynamicShadowingEnabled() override {
 		return dynamicShadowing;
 	}
 
-	inline virtual bool isEnabled() override {
+	inline bool isEnabled() override {
 		return enabled;
 	}
 
-	inline virtual bool isPickable() override {
+	inline bool isPickable() override {
 		return pickable;
 	}
 
 	// override methods
-	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
+	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		this->dynamicShadowing = dynamicShadowing;
 		if (combinedEntity != nullptr) {
 			combinedEntity->setDynamicShadowingEnabled(dynamicShadowing);
 		}
 	}
 
-	inline virtual void setPickable(bool pickable) override {
+	inline void setPickable(bool pickable) override {
 		if (combinedEntity != nullptr) {
 			combinedEntity->setPickable(pickable);
 		}
 	}
 
-	inline virtual const Vector3& getTranslation() const override {
+	inline const Vector3& getTranslation() const override {
 		return Transformations::getTranslation();
 	}
 
-	inline virtual void setTranslation(const Vector3& translation) override {
+	inline void setTranslation(const Vector3& translation) override {
 		Transformations::setTranslation(translation);
 	}
 
-	inline virtual const Vector3& getScale() const override {
+	inline const Vector3& getScale() const override {
 		return Transformations::getScale();
 	}
 
-	inline virtual void setScale(const Vector3& scale) override {
+	inline void setScale(const Vector3& scale) override {
 		Transformations::setScale(scale);
 	}
 
-	inline virtual const Vector3& getPivot() const override {
+	inline const Vector3& getPivot() const override {
 		return Transformations::getPivot();
 	}
 
-	inline virtual void setPivot(const Vector3& pivot) override {
+	inline void setPivot(const Vector3& pivot) override {
 		Transformations::setPivot(pivot);
 	}
 
-	inline virtual const int getRotationCount() const override {
+	inline const int getRotationCount() const override {
 		return Transformations::getRotationCount();
 	}
 
-	inline virtual Rotation& getRotation(const int idx) override {
+	inline Rotation& getRotation(const int idx) override {
 		return Transformations::getRotation(idx);
 	}
 
-	inline virtual void addRotation(const Vector3& axis, const float angle) override {
+	inline void addRotation(const Vector3& axis, const float angle) override {
 		Transformations::addRotation(axis, angle);
 	}
 
-	inline virtual void removeRotation(const int idx) override {
+	inline void removeRotation(const int idx) override {
 		Transformations::removeRotation(idx);
 	}
 
-	inline virtual const Vector3& getRotationAxis(const int idx) const override {
+	inline const Vector3& getRotationAxis(const int idx) const override {
 		return Transformations::getRotationAxis(idx);
 	}
 
-	inline virtual void setRotationAxis(const int idx, const Vector3& axis) override {
+	inline void setRotationAxis(const int idx, const Vector3& axis) override {
 		Transformations::setRotationAxis(idx, axis);
 	}
 
-	inline virtual const float getRotationAngle(const int idx) const override {
+	inline const float getRotationAngle(const int idx) const override {
 		return Transformations::getRotationAngle(idx);
 	}
 
-	inline virtual void setRotationAngle(const int idx, const float angle) override {
+	inline void setRotationAngle(const int idx, const float angle) override {
 		Transformations::setRotationAngle(idx, angle);
 	}
 
-	inline virtual const Quaternion& getRotationsQuaternion() const override {
+	inline const Quaternion& getRotationsQuaternion() const override {
 		return Transformations::getRotationsQuaternion();
 	}
 
-	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
+	inline const Matrix4x4& getTransformationsMatrix() const override {
 		return Transformations::getTransformationsMatrix();
 	}
 
-	inline virtual const Transformations& getTransformations() const override {
+	inline const Transformations& getTransformations() const override {
 		return *this;
 	}
 
@@ -351,6 +357,21 @@ public:
 		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
 			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
 		}
+	}
+
+	/**
+	 * @return If early z rejection is enabled
+	 */
+	bool isEnableEarlyZRejection() const {
+		return enableEarlyZRejection;
+	}
+
+	/**
+	 * Enable/disable early z rejection
+	 * @param enableEarlyZRejection enable early z rejection
+	 */
+	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
+		this->enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 };

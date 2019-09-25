@@ -8,7 +8,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
 
 /** 
- * Shadow mapping foliage shader class to render shadow map
+ * Shadow mapping foliage shader class to create shadow map
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -52,6 +52,7 @@ public:
 private:
 	friend class Engine;
 	friend class LODObject3D;
+	friend class Object3DRenderGroup;
 	friend class ObjectParticleSystem;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
 
@@ -63,6 +64,7 @@ private:
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
 	RenderPass renderPass { RENDERPASS_OBJECTS };
+	bool enableEarlyZRejection { false };
 
 	/**
 	 * Compute skinning
@@ -117,127 +119,127 @@ public:
 	Object3D(const string& id, Model* model);
 
 	// overriden methods
-	virtual void dispose() override;
+	void dispose() override;
 
-	inline virtual BoundingBox* getBoundingBox() override {
+	inline BoundingBox* getBoundingBox() override {
 		return Object3DInternal::getBoundingBox();
 	}
 
-	inline virtual BoundingBox* getBoundingBoxTransformed() override {
+	inline BoundingBox* getBoundingBoxTransformed() override {
 		return Object3DInternal::getBoundingBoxTransformed();
 	}
 
-	inline virtual const Color4& getEffectColorAdd() const override {
+	inline const Color4& getEffectColorAdd() const override {
 		return Object3DInternal::getEffectColorAdd();
 	}
 
-	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
 		return Object3DInternal::setEffectColorAdd(effectColorAdd);
 	}
 
-	inline virtual const Color4& getEffectColorMul() const override {
+	inline const Color4& getEffectColorMul() const override {
 		return Object3DInternal::getEffectColorMul();
 	}
 
-	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+	inline void setEffectColorMul(const Color4& effectColorMul) override {
 		return Object3DInternal::setEffectColorMul(effectColorMul);
 	}
 
-	inline virtual const string& getId() override {
+	inline const string& getId() override {
 		return Object3DInternal::getId();
 	}
 
-	virtual void initialize() override;
+	void initialize() override;
 
-	inline virtual bool isDynamicShadowingEnabled() override {
+	inline bool isDynamicShadowingEnabled() override {
 		return Object3DInternal::isDynamicShadowingEnabled();
 	}
 
-	inline virtual bool isEnabled() override {
+	inline bool isEnabled() override {
 		return Object3DInternal::isEnabled();
 	}
 
-	inline virtual bool isPickable() override {
+	inline bool isPickable() override {
 		return Object3DInternal::isPickable();
 	}
 
-	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) override {
+	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		Object3DInternal::setDynamicShadowingEnabled(dynamicShadowing);
 	}
 
-	inline virtual void setPickable(bool pickable) override {
+	inline void setPickable(bool pickable) override {
 		Object3DInternal::setPickable(pickable);
 	}
 
-	inline virtual Matrix4x4* getTransformationsMatrix(const string& id) override {
+	inline const Matrix4x4 getTransformationsMatrix(const string& id) override {
 		return Object3DInternal::getTransformationsMatrix(id);
 	}
 
-	inline virtual const Vector3& getTranslation() const override {
+	inline const Vector3& getTranslation() const override {
 		return Transformations::getTranslation();
 	}
 
-	inline virtual void setTranslation(const Vector3& translation) override {
+	inline void setTranslation(const Vector3& translation) override {
 		Transformations::setTranslation(translation);
 	}
 
-	inline virtual const Vector3& getScale() const override {
+	inline const Vector3& getScale() const override {
 		return Transformations::getScale();
 	}
 
-	inline virtual void setScale(const Vector3& scale) override {
+	inline void setScale(const Vector3& scale) override {
 		Transformations::setScale(scale);
 	}
 
-	inline virtual const Vector3& getPivot() const override {
+	inline const Vector3& getPivot() const override {
 		return Transformations::getPivot();
 	}
 
-	inline virtual void setPivot(const Vector3& pivot) override {
+	inline void setPivot(const Vector3& pivot) override {
 		Transformations::setPivot(pivot);
 	}
 
-	inline virtual const int getRotationCount() const override {
+	inline const int getRotationCount() const override {
 		return Transformations::getRotationCount();
 	}
 
-	inline virtual Rotation& getRotation(const int idx) override {
+	inline Rotation& getRotation(const int idx) override {
 		return Transformations::getRotation(idx);
 	}
 
-	inline virtual void addRotation(const Vector3& axis, const float angle) override {
+	inline void addRotation(const Vector3& axis, const float angle) override {
 		Transformations::addRotation(axis, angle);
 	}
 
-	inline virtual void removeRotation(const int idx) override {
+	inline void removeRotation(const int idx) override {
 		Transformations::removeRotation(idx);
 	}
 
-	inline virtual const Vector3& getRotationAxis(const int idx) const override {
+	inline const Vector3& getRotationAxis(const int idx) const override {
 		return Transformations::getRotationAxis(idx);
 	}
 
-	inline virtual void setRotationAxis(const int idx, const Vector3& axis) override {
+	inline void setRotationAxis(const int idx, const Vector3& axis) override {
 		Transformations::setRotationAxis(idx, axis);
 	}
 
-	inline virtual const float getRotationAngle(const int idx) const override {
+	inline const float getRotationAngle(const int idx) const override {
 		return Transformations::getRotationAngle(idx);
 	}
 
-	inline virtual void setRotationAngle(const int idx, const float angle) override {
+	inline void setRotationAngle(const int idx, const float angle) override {
 		Transformations::setRotationAngle(idx, angle);
 	}
 
-	inline virtual const Quaternion& getRotationsQuaternion() const override {
+	inline const Quaternion& getRotationsQuaternion() const override {
 		return Transformations::getRotationsQuaternion();
 	}
 
-	inline virtual const Matrix4x4& getTransformationsMatrix() const override {
+	inline const Matrix4x4& getTransformationsMatrix() const override {
 		return Transformations::getTransformationsMatrix();
 	}
 
-	inline virtual const Transformations& getTransformations() const override {
+	inline const Transformations& getTransformations() const override {
 		return *this;
 	}
 
@@ -307,6 +309,21 @@ public:
 	 */
 	inline void setRenderPass(RenderPass renderPass) {
 		this->renderPass = renderPass;
+	}
+
+	/**
+	 * @return If early z rejection is enabled
+	 */
+	inline bool isEnableEarlyZRejection() const {
+		return enableEarlyZRejection;
+	}
+
+	/**
+	 * Enable/disable early z rejection
+	 * @param enableEarlyZRejection enable early z rejection
+	 */
+	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
+		this->enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 };

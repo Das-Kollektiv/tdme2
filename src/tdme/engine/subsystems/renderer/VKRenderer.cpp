@@ -1,4 +1,4 @@
-f/**
+/**
  * Vulkan renderer
  * based on
  * 	https://github.com/glfw/glfw/blob/master/tests/vulkan.c and util.c from Vulkan samples
@@ -1036,7 +1036,9 @@ void VKRenderer::initialize()
 	vkGetPhysicalDeviceFeatures(gpu, &gpu_features);
 
 	// Create a WSI surface for the window:
-	glfwCreateWindowSurface(inst, Application::glfwWindow, NULL, &surface);
+	err = glfwCreateWindowSurface(inst, Application::glfwWindow, NULL, &surface);
+	Console::println(to_string(err));
+	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
 	VkBool32 *supportsPresent = (VkBool32 *) malloc(queue_count * sizeof(VkBool32));

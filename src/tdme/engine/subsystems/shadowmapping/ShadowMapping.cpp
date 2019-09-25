@@ -34,13 +34,10 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
 
-int32_t ShadowMapping::shadowMapWidth = 2048;
-int32_t ShadowMapping::shadowMapHeight = 2048;
-
 ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, Object3DRenderer* object3DRenderer)
 {
-	width = shadowMapWidth;
-	height = shadowMapHeight;
+	width = Engine::getShadowMapWidth();
+	height = Engine::getShadowMapHeight();
 	this->engine = engine;
 	this->renderer = renderer;
 	this->object3DRenderer = object3DRenderer;
@@ -62,25 +59,9 @@ ShadowMapping::~ShadowMapping() {
 	}
 }
 
-void ShadowMapping::setShadowMapSize(int32_t width, int32_t height)
-{
-	shadowMapWidth = width;
-	shadowMapHeight = height;
-}
-
 Engine* ShadowMapping::getEngine()
 {
 	return engine;
-}
-
-float ShadowMapping::getLightEyeDistanceScale()
-{
-	return lightEyeDistanceScale;
-}
-
-void ShadowMapping::setLightEyeDistanceScale(float lightEyeDistanceScale)
-{
-	this->lightEyeDistanceScale = lightEyeDistanceScale;
 }
 
 void ShadowMapping::reshape(int32_t width, int32_t height)

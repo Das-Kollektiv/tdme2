@@ -517,7 +517,7 @@ void ModelEditorScreenController::setMaterials(LevelEditorEntity* entity) {
 			materialsDropdown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		// materialsDropDownInnerNodeSubNodesXML = materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
-		for (auto it: *model->getMaterials()) {
+		for (auto it: model->getMaterials()) {
 			auto materialId = it.second->getId();
 			materialsDropDownInnerNodeSubNodesXML =
 					materialsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
@@ -647,8 +647,8 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 Material* ModelEditorScreenController::getSelectedMaterial() {
 	Model* model = view->getLodLevel() == 1?view->getEntity()->getModel():getLODLevel(view->getLodLevel())->getModel();
 	if (model == nullptr) return nullptr;
-	auto materialIt = model->getMaterials()->find(materialsDropdown->getController()->getValue().getString());
-	return materialIt != model->getMaterials()->end()?materialIt->second:nullptr;
+	auto materialIt = model->getMaterials().find(materialsDropdown->getController()->getValue().getString());
+	return materialIt != model->getMaterials().end()?materialIt->second:nullptr;
 }
 
 void ModelEditorScreenController::onMaterialApply() {
@@ -896,7 +896,7 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 			animationsDropDown->getId() +
 			"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
 		animationsDropDownInnerNodeSubNodesXML = animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"<New animation>\" value=\"<New animation>\" />";
-		for (auto it: *model->getAnimationSetups()) {
+		for (auto it: model->getAnimationSetups()) {
 			auto animationSetupId = it.second->getId();
 			animationsDropDownInnerNodeSubNodesXML =
 				animationsDropDownInnerNodeSubNodesXML + "<dropdown-option text=\"" +
@@ -933,7 +933,7 @@ void ModelEditorScreenController::setAnimations(LevelEditorEntity* entity) {
 			"<dropdown-option text=\"\" value=\"\"" +
 			(idx == 0 ? "selected=\"true\" " : "") +
 			" />\n";
-		for (auto it: *model->getGroups()) {
+		for (auto it: model->getGroups()) {
 			auto groupId = it.second->getId();
 			animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML =
 				animationsAnimationOverlayFromGroupIdDropDownInnerNodeSubNodesXML +
@@ -1016,8 +1016,8 @@ void ModelEditorScreenController::onAnimationDropDownDelete() {
 
 	auto animationName = animationsDropDown->getController()->getValue().getString();
 	auto animationSetup = model->getAnimationSetup(animationName);
-	auto it = model->getAnimationSetups()->find(animationSetup->getId());
-	it = model->getAnimationSetups()->erase(it);
+	auto it = model->getAnimationSetups().find(animationSetup->getId());
+	it = model->getAnimationSetups().erase(it);
 	delete animationSetup;
 
 	setAnimations(view->getEntity());
@@ -1047,7 +1047,7 @@ void ModelEditorScreenController::onAnimationApply() {
 			if (model->getAnimationSetup(animationsAnimationName->getController()->getValue().getString()) != nullptr) {
 				throw ExceptionBase("Name '" + animationsAnimationName->getController()->getValue().getString() + "' already in use");
 			}
-			(*model->getAnimationSetups()).erase(animationSetup->getId());
+			model->getAnimationSetups().erase(animationSetup->getId());
 			animationSetup = model->addAnimationSetup(
 				animationsAnimationName->getController()->getValue().getString(),
 				0,

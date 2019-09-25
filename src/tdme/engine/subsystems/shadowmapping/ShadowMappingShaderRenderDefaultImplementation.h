@@ -10,7 +10,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImpl
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderDefaultImplementation;
 
 /** 
- * Shadow mapping default shader to render shadows
+ * Shadow mapping default shader to render shadow map
  * @author Andreas Drewke
  * @version $Id$
  */
