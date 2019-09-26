@@ -174,11 +174,10 @@
     - documentation
 
 - What is WIP or planned
+	- Installer
 	- Water shader
-	- Improve renderering of point based particle systems
     - Improve on Vulkan
     - PBR lighting shader for GL3/CORE+
-    - simple script language for GUI
     - Expose shader and post processing programs setup API
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
