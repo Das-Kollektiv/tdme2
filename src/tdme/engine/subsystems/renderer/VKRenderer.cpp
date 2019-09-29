@@ -4720,6 +4720,10 @@ void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferOb
 	(*static_cast<context_type*>(context)).bound_buffers[7] = bufferObjectId;
 }
 
+void VKRenderer::bindOrigins(void* context, int32_t bufferObjectId) {
+	Console::println(string("VKRenderer::bindOrigins()::not implemented yet"));
+}
+
 void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId)
 {
 	(*static_cast<context_type*>(context)).bound_buffers[8] = bufferObjectId;

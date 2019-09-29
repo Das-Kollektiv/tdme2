@@ -18,6 +18,7 @@
 #include <tdme/engine/model/ModelHelper_VertexOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -46,6 +47,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -583,7 +585,7 @@ void ModelHelper::partition(Model* model, const Transformations& transformations
 	for (auto modelsByPartitionIt: modelsByPartition) {
 		auto partitionKey = modelsByPartitionIt.first;
 		auto partitionModel = modelsByPartitionIt.second;
-		partitionModel->getImportTransformationsMatrix().set(model->getImportTransformationsMatrix());
+		partitionModel->setImportTransformationsMatrix(model->getImportTransformationsMatrix());
 		ModelHelper::createDefaultAnimation(partitionModel, 0);
 		ModelHelper::setupJoints(partitionModel);
 		ModelHelper::fixAnimationLength(partitionModel);
@@ -689,4 +691,76 @@ int ModelHelper::determineFaceCount(Group* group) {
 		faceCount+= determineFaceCount(subGroupIt.second);
 	}
 	return faceCount;
+}
+
+void ModelHelper::prepareForShader(Model* model, const string& shader) {
+	if (shader == "foliage") {
+		for (auto groupIt: model->getSubGroups()) prepareForFoliageShader(groupIt.second);
+		if (model->getUpVector() == UpVector::Z_UP) {
+			Console::println("ModelHelper::prepareForShader(): " + model->getName() + ": fixing Z-Up to Y-Up");
+			Matrix4x4 z2yUpMatrix;
+			z2yUpMatrix.identity().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
+			model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().multiply(z2yUpMatrix));
+			model->setUpVector(UpVector::Y_UP);
+		}
+	} else {
+		for (auto groupIt: model->getSubGroups()) prepareForDefaultShader(groupIt.second);
+	}
+}
+
+void ModelHelper::prepareForDefaultShader(Group* group) {
+	vector<Vector3> objectOrigins;
+	group->setOrigins(objectOrigins);
+	for (auto groupIt: group->getSubGroups()) {
+		prepareForFoliageShader(groupIt.second);
+	}
+}
+
+void ModelHelper::prepareForFoliageShader(Group* group) {
+	vector<Vector3> objectOrigins;
+	objectOrigins.resize(group->getVertices().size());
+	group->setOrigins(objectOrigins);
+	if (group->getModel()->getUpVector() == UpVector::Z_UP) {
+		if (group->getAnimation() != nullptr) Console::println("ModelHelper::prepareForFoliageShader(): animation available, this is not yet supported!");
+		if (group->getSkinning() != nullptr) Console::println("ModelHelper::prepareForFoliageShader(): skinning available, this is not yet supported!");
+		{
+			auto vertices = group->getVertices();
+			for (auto& vertex: vertices) {
+				auto tmp = vertex.getY();
+				vertex.setY(-vertex.getZ());
+				vertex.setZ(tmp);
+			}
+			group->setVertices(vertices);
+		}
+		{
+			auto normals = group->getNormals();
+			for (auto& normal: normals) {
+				auto tmp = normal.getY();
+				normal.setY(-normal.getZ());
+				normal.setZ(tmp);
+			}
+			group->setNormals(normals);
+		}
+		{
+			auto tangents = group->getTangents();
+			for (auto& tangent: tangents) {
+				auto tmp = tangent.getY();
+				tangent.setY(-tangent.getZ());
+				tangent.setZ(tmp);
+			}
+			group->setTangents(tangents);
+		}
+		{
+			auto bitangents = group->getBitangents();
+			for (auto& bitangent: bitangents) {
+				auto tmp = bitangent.getY();
+				bitangent.setY(-bitangent.getZ());
+				bitangent.setZ(tmp);
+			}
+			group->setBitangents(bitangents);
+		}
+	}
+	for (auto groupIt: group->getSubGroups()) {
+		prepareForFoliageShader(groupIt.second);
+	}
 }

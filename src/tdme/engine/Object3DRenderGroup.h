@@ -82,11 +82,12 @@ private:
 	/**
 	 * Combine group into given combined model
 	 * @param sourceGroup source group to combine into current model
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param origins origins
+	 * @param objectParentTransformationsMatrices object parent transformations matrix
 	 * @param combinedModel combined model
 	 * @param reduceFactorBy reduce factor by
 	 */
-	static void combineGroup(Group* sourceGroup, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
+	static void combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
 
 	/**
 	 * Combine model with transformations into current model

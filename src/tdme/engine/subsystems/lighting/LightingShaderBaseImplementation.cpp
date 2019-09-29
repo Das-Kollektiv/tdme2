@@ -162,7 +162,7 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		updateLight(renderer, context, i);
 	}
 	// frame
-	if (renderer->isGeometryShaderAvailable() == true) {
+	if (uniformFrame != 1) {
 		renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 	}
 }

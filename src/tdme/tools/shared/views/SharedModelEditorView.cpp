@@ -396,7 +396,6 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 {
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
-			LevelEditorEntity::ID_NONE,
 			pathName,
 			fileName
 		);
@@ -467,9 +466,12 @@ void SharedModelEditorView::playSound(const string& soundId) {
 void SharedModelEditorView::updateRendering() {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (object == nullptr || entity == nullptr) return;
+	engine->removeEntity("model");
 	object->setShader(entity->getShader());
 	object->setDistanceShader(entity->getDistanceShader());
 	object->setDistanceShaderDistance(entity->getDistanceShaderDistance());
+	ModelHelper::prepareForShader(entity->getModel(), entity->getShader());
+	resetEntity();
 }
 
 void SharedModelEditorView::onSetEntityData() {

@@ -350,7 +350,6 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	modelImportRotationMatrix.set(levelModel->getImportTransformationsMatrix());
 	modelImportRotationMatrix.getScale(levelModelScale);
 	modelImportRotationMatrix.scale(Vector3(1.0f / levelModelScale.getX(), 1.0f / levelModelScale.getY(), 1.0f / levelModelScale.getZ()));
-	Console::println(to_string(levelModel->getSubGroups().size()));
 	auto progressTotal = levelModel->getSubGroups().size();
 	auto progressIdx = 0;
 	for (auto groupIt: levelModel->getSubGroups()) {
@@ -365,7 +364,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 				rotationOrder,
 				nullptr
 			);
-			model->getImportTransformationsMatrix().set(levelModel->getImportTransformationsMatrix());
+			model->setImportTransformationsMatrix(levelModel->getImportTransformationsMatrix());
 			float importFixScale = 1.0f;
 			Vector3 translation, scale, rotation;
 			Vector3 xAxis, yAxis, zAxis, tmpAxis;
@@ -414,7 +413,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 						importFixScale = 1.0f / depth / 5.0f;
 					}
 				}
-				model->getImportTransformationsMatrix().scale(importFixScale);
+				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(importFixScale));
 				model->getBoundingBox()->getMin().scale(importFixScale);
 				model->getBoundingBox()->getMax().scale(importFixScale);
 				model->getBoundingBox()->update();

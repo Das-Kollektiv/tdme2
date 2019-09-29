@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 		for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 			auto entity = entityLibrary->getEntityAt(i);
 			if (entity->getType() != LevelEditorEntity_EntityType::MODEL) continue;
-			entity->getModel()->getImportTransformationsMatrix().multiply(z2yUpMatrix);
+			entity->getModel()->setImportTransformationsMatrix(entity->getModel()->getImportTransformationsMatrix().clone().multiply(z2yUpMatrix));
 			z2yUpMatrix.multiply(
 				entity->getModel()->getBoundingBox()->getMin(),
 				entity->getModel()->getBoundingBox()->getMin()

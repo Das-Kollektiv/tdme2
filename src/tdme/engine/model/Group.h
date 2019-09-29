@@ -44,6 +44,7 @@ private:
 	Animation* animation;
 	Skinning* skinning;
 	vector<FacesEntity> facesEntities;
+	vector<Vector3> origins;
 	map<string, Group*> subGroups;
 public:
 	/** 
@@ -212,6 +213,19 @@ public:
 	 * @param facesEntities faces entity
 	 */
 	void setFacesEntities(const vector<FacesEntity>& facesEntities);
+
+	/**
+	 * @return origins
+	 */
+	const vector<Vector3>& getOrigins() const {
+		return origins;
+	}
+
+	/**
+	 * Set origins
+	 * @param origins render group object origins
+	 */
+	void setOrigins(const vector<Vector3>& origins);
 
 	/** 
 	 * @return sub sub groups of this group

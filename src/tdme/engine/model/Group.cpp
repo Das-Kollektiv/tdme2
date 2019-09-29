@@ -120,6 +120,14 @@ void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
 	}
 }
 
+void Group::setOrigins(const vector<Vector3>& origins) {
+	this->origins.resize(origins.size());
+	auto i = 0;
+	for (auto& origin: origins) {
+		this->origins[i++] = origin;
+	}
+}
+
 Group* Group::getSubGroupById(const string& groupId)
 {
 	auto groupIt = subGroups.find(groupId);

@@ -357,14 +357,15 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 			trfGroup->set(this, model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object3D->getShader());
 			transparentRenderFacesGroups[transparentRenderFacesGroupKey] = trfGroup;
 		}
+		auto& textureCoordinates = transparentRenderFace->object3DGroup->mesh->group->getTextureCoordinates();
 		for (auto vertexIdx = 0; vertexIdx < 3; vertexIdx++) {
 			auto arrayIdx = transparentRenderFace->object3DGroup->mesh->indices[transparentRenderFace->faceIdx * 3 + vertexIdx];
 			trfGroup->addVertex(
 				modelViewMatrix.multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVector),
 				modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
 				transparentRenderFace->object3DGroup->textureMatricesByEntities[facesEntityIdx].multiply(
-					transparentRenderFace->object3DGroup->mesh->textureCoordinates->size() >0 ?
-						Vector2((*transparentRenderFace->object3DGroup->mesh->textureCoordinates)[arrayIdx].getArray()):
+						textureCoordinates.size() >0 ?
+						Vector2(textureCoordinates[arrayIdx].getArray()):
 						Vector2(0.0f, 0.0f),
 						transformedTextureCoordinate
 				)
@@ -611,10 +612,12 @@ void Object3DRenderer::instancedRenderFunction(int threadIdx, void* context, con
 	bool materialUpdateOnly = false;
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
+	vector<int32_t>* boundVBOOrigins = nullptr;
 	auto objectCount = objectsToRender.size();
 	// issue upload matrices
 	renderer->onUpdateCameraMatrix(context);
 	renderer->onUpdateProjectionMatrix(context);
+
 	// draw objects
 	for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
 		if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
@@ -726,6 +729,22 @@ void Object3DRenderer::instancedRenderFunction(int threadIdx, void* context, con
 			}
 		}
 
+		// bind render group object origins
+		auto currentVBOOrigins = _object3DGroup->renderer->vboOrigins;
+		if (currentVBOOrigins != nullptr) {
+			// bind render group object origins if not yet done
+			if (boundVBOOrigins == nullptr) {
+				renderer->bindOrigins(context, (*currentVBOOrigins)[0]);
+				//
+				boundVBOOrigins = currentVBOOrigins;
+			} else
+			// check if buffers did change, then skip and render in next step
+			if (currentVBOOrigins != boundVBOOrigins) {
+				objectsNotRendered.push_back(object);
+				continue;
+			}
+		}
+
 		// set up local -> world transformations matrix
 		modelViewMatrix.set(
 			(_object3DGroup->mesh->skinning == true ?
@@ -756,7 +775,6 @@ void Object3DRenderer::instancedRenderFunction(int threadIdx, void* context, con
 	// it can happen that all faces to be rendered were transparent ones, check this and skip if feasible
 	auto objectsToRenderIssue = fbMvMatrices.getPosition() / 16;
 	if (objectsToRenderIssue > 0) {
-
 		// upload model view matrices
 		{
 			renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);

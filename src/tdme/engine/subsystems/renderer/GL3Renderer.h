@@ -34,7 +34,7 @@ class tdme::engine::subsystems::renderer::GL3Renderer
 	: public Renderer
 {
 private:
-	uint32_t engineVAO {  };
+	uint32_t engineVAO;
 	map<uint32_t, int32_t> vbosUsage;
 
 
@@ -112,6 +112,7 @@ public:
 	void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindOrigins(void* context, int32_t bufferObjectId) override;
 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
 	void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;

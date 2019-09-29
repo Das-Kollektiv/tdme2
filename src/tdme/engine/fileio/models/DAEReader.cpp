@@ -227,10 +227,10 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringUtils::equalsIgnoreCase(upAxis, "Y_UP") == true) {
 			} else
 			if (StringUtils::equalsIgnoreCase(upAxis, "Z_UP") == true) {
-				model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
+				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 			} else
 			if (StringUtils::equalsIgnoreCase(upAxis, "X_UP") == true) {
-				model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(0.0f, 1.0f, 0.0f));
+				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(0.0f, 1.0f, 0.0f)));
 			} else {
 				Console::println(string("Warning: Unknown up axis: " + upAxis));
 			}
@@ -246,7 +246,7 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 			string tmp;
 			if ((tmp = string(AVOID_NULLPTR_STRING(xmlAssetUnit->Attribute("meter")))).length() > 0) {
 				float scaleFactor = Float::parseFloat(tmp);
-				model->getImportTransformationsMatrix().scale(scaleFactor);
+				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(scaleFactor));
 			}
 		}
 	}

@@ -171,6 +171,10 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	keyRight = false;
 	keyUp = false;
 	keyDown = false;
+	keyA = false;
+	keyD = false;
+	keyW = false;
+	keyS = false;
 	keyPlus = false;
 	keyMinus = false;
 	keyR = false;

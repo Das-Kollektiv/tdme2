@@ -100,6 +100,14 @@ public:
 	}
 
 	/** 
+	 * Set up vector
+	 * @param up vector
+	 */
+	inline void setUpVector(UpVector* upVector) {
+		this->upVector = upVector;
+	}
+
+	/**
 	 * @return up vector
 	 */
 	inline UpVector* getUpVector() {
@@ -218,8 +226,16 @@ public:
 	/** 
 	 * @return import transformations matrix like converting Z-UP to Y-UP
 	 */
-	inline Matrix4x4& getImportTransformationsMatrix() {
+	inline const Matrix4x4& getImportTransformationsMatrix() {
 		return importTransformationsMatrix;
+	}
+
+	/**
+	 * Set import transformations matrix
+	 * @param importTransformationsMatrix import transformations matrix like converting Z-UP to Y-UP
+	 */
+	void setImportTransformationsMatrix(const Matrix4x4& importTransformationsMatrix) {
+		this->importTransformationsMatrix = importTransformationsMatrix;
 	}
 
 	/**
@@ -263,4 +279,5 @@ public:
 	 * Deconstructor
 	 */
 	~Model();
+
 };

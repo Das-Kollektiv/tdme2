@@ -49,9 +49,9 @@ using tdme::utils::Console;
 
 Object3DGroupMesh::Object3DGroupMesh()
 {
+	group = nullptr;
 	vertices = nullptr;
 	normals = nullptr;
-	textureCoordinates = nullptr;
 	tangents = nullptr;
 	bitangents = nullptr;
 	cSkinningMaxVertexWeights = -1;
@@ -60,6 +60,9 @@ Object3DGroupMesh::Object3DGroupMesh()
 	skinningJoints = -1;
 	object3DGroupRenderer = nullptr;
 	skinningMatrices = nullptr;
+	faceCount = 0;
+	recreatedBuffers = false;
+	animationProcessingTarget = Engine::AnimationProcessingTarget::NONE;
 }
 
 Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, map<string, Matrix4x4*>& transformationMatrices, map<string, Matrix4x4*>* skinningMatrices)
@@ -129,7 +132,6 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 	for (auto& facesEntity : group->getFacesEntities()) {
 		indicesCount += 3 * facesEntity.getFaces().size();
 	}
-	// create face vertex indices
 	mesh->indices.resize(indicesCount);
 	{
 		auto j = 0;
@@ -139,8 +141,6 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 			mesh->indices[j++] = vertexIndex;
 		}
 	}
-	// texture coordinates
-	mesh->textureCoordinates = &groupTextureCoordinates;
 	//
 	mesh->recreatedBuffers = false;
 	// group transformations matrix
@@ -298,8 +298,8 @@ bool Object3DGroupMesh::getRecreatedBuffers()
 	}
 }
 
-void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer* renderer, void* context, int32_t vboId)
-{
+void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *context, int32_t vboId) {
+	// upload
 	if (renderer->isUsingShortIndices() == true) {
 		if (indices.size() > 65535) {
 			Console::println(
@@ -326,6 +326,7 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer* renderer, void* conte
 		renderer->uploadIndicesBufferObject(context, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 	}
 }
+
 
 void Object3DGroupMesh::setupTextureCoordinatesBuffer(Renderer* renderer, void* context, int32_t vboId)
 {
@@ -390,3 +391,16 @@ void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, void* context,
 	renderer->uploadBufferObject(context, vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
 }
 
+void Object3DGroupMesh::setupOriginsBuffer(Renderer* renderer, void* context, int32_t vboId) {
+	// check if we have texture coordinates
+	auto& origins = group->getOrigins();
+	if (origins.size() == 0) return;
+	// create texture coordinates buffer, will never be changed in engine
+	auto fbOrigins = ObjectBuffer::getByteBuffer(context, origins.size() * 3 * sizeof(float))->asFloatBuffer();
+	// construct float buffer as this will not change usually
+	for (auto& origin : origins) {
+		fbOrigins.put(origin.getArray());
+	}
+	// done, upload
+	renderer->uploadBufferObject(context, vboId, fbOrigins.getPosition() * sizeof(float), &fbOrigins);
+}

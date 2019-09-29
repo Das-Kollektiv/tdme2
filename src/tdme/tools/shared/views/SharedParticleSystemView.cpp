@@ -375,7 +375,7 @@ void SharedParticleSystemView::loadParticleSystem()
 LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(LevelEditorEntity::ID_NONE, pathName, fileName);
+		auto levelEditorEntity = ModelMetaDataFileImport::doImport(pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	}

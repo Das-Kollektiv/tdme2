@@ -33,10 +33,17 @@ private:
 
 public:
 
+	/**
+	 * Adds a texture to manager
+	 * @param id id
+	 * @returns texture manager entity
+	 */
+	TextureManager_TextureManaged* addTexture(const string& id);
+
 	/** 
-	 * Adds a texture to manager / open gl stack
+	 * Adds a texture to manager
 	 * @param texture texture
-	 * @returns gl texture id
+	 * @returns texture id
 	 */
 	int32_t addTexture(Texture* texture);
 

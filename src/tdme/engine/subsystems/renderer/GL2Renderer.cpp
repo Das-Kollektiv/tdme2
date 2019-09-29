@@ -621,6 +621,10 @@ void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
 	Console::println(string("GL2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
 }
 
+void GL2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindOrigins()::not implemented yet"));
+}
+
 void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	Console::println(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));

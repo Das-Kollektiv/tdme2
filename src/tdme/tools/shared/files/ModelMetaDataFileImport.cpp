@@ -212,6 +212,7 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 	levelEditorEntity->setShader(jEntityRoot["s"].isNull() == false?jEntityRoot["s"].getString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot["sds"].isNull() == false?jEntityRoot["sds"].getString():"default");
 	levelEditorEntity->setDistanceShaderDistance(jEntityRoot["sdsd"].isNull() == false?static_cast<float>(jEntityRoot["sdsd"].getDouble()):10000.0f);
+	if (levelEditorEntity->getModel() != nullptr) ModelHelper::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());
 	return levelEditorEntity;
 }
 

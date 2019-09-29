@@ -588,6 +588,10 @@ void GLES2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t buffe
 	Console::println(string("GLES2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
 }
 
+void GLES2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+	Console::println(string("GLES2Renderer::bindOrigins()::not implemented yet"));
+}
+
 void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	Console::println(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));

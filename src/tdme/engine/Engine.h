@@ -124,7 +124,7 @@ class tdme::engine::Engine final
 	friend class tdme::gui::renderer::GUIFont;
 
 public:
-	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
+	enum AnimationProcessingTarget {NONE, CPU, CPU_NORENDERING, GPU};
 	static constexpr int LIGHTS_MAX { 8 };
 
 protected:
@@ -160,8 +160,8 @@ private:
 	static float shadowMaplightEyeDistanceScale;
 
 
-	int32_t width;
-	int32_t height;
+	int32_t width { -1 };
+	int32_t height { -1 };
 	GUI* gui { nullptr };
 	Timing* timing { nullptr };
 	Camera* camera { nullptr };

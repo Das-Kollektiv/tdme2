@@ -56,11 +56,11 @@ using tdme::utils::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget)
+Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget)
 {
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
-	this->usesMeshManager = useMeshManager;
+	this->usesManagers = useManagers;
 	transformedFacesIterator = nullptr;
 	// skinning
 	hasSkinning = false;
@@ -84,7 +84,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0], transformationsMatrices[0], 0);
 	if (hasSkinning == true) updateSkinningTransformationsMatrices(transformationsMatrices[0]);
 	// object 3d groups
-	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, object3dGroups);
+	Object3DGroup::createGroups(this, useManagers, animationProcessingTarget, object3dGroups);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(nullptr, object3dGroups);
 	// reset animation
@@ -564,12 +564,13 @@ map<string, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 void Object3DBase::initialize()
 {
 	auto meshManager = Engine::getInstance()->getMeshManager();
+	//
 	// init mesh
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
 		if (object3DGroup->mesh == nullptr) {
-			if (usesMeshManager == true) {
+			if (usesManagers == true) {
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
 					object3DGroup->mesh = Object3DGroupMesh::createMesh(
@@ -604,13 +605,14 @@ void Object3DBase::dispose()
 		// dispose object3d group
 		object3DGroup->dispose();
 		// dispose mesh
-		if (usesMeshManager == true) {
+		if (usesManagers == true) {
 			meshManager->removeMesh(object3DGroup->id);
 		} else {
 			delete object3DGroup->mesh;
 		}
 		object3DGroup->mesh = nullptr;
 	}
+	//
 }
 
 const Matrix4x4& Object3DBase::getTransformationsMatrix() const

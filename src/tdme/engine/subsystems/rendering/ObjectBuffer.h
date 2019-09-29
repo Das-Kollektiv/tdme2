@@ -28,6 +28,7 @@ class tdme::engine::subsystems::rendering::ObjectBuffer
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
+	friend class tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:

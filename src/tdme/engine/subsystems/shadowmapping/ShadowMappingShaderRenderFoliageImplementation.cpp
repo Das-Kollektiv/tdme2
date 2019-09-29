@@ -34,15 +34,7 @@ void ShadowMappingShaderRenderFoliageImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_vertexshader.c",
-		"#define HAVE_GEOMETRY_SHADER\n\n"
-	);
-	if (renderVertexShaderId == 0) return;
-
-	renderGeometryShaderId = renderer->loadShader(
-		renderer->SHADER_GEOMETRY_SHADER,
-		"shader/" + shaderVersion + "/shadowmapping",
-		"render_geometryshader_foliage.c",
-		"",
+		"#define HAVE_FOLIAGE\n\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/shadowmapping",
 			"render_computevertex.inc.c"
@@ -56,9 +48,14 @@ void ShadowMappingShaderRenderFoliageImplementation::initialize()
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_translation_matrix.inc.c"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions",
+			"create_foliage_transform_matrix.inc.c"
 		)
 	);
-	if (renderGeometryShaderId == 0) return;
+	if (renderVertexShaderId == 0) return;
 
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
@@ -70,7 +67,6 @@ void ShadowMappingShaderRenderFoliageImplementation::initialize()
 	// create shadow mapping render program
 	renderProgramId = renderer->createProgram();
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
-	renderer->attachShaderToProgram(renderProgramId, renderGeometryShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 
 	ShadowMappingShaderRenderBaseImplementation::initialize();

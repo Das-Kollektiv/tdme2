@@ -480,7 +480,7 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 {
 	// TODO: take bounding volume scale into account
 	//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
-	model->getImportTransformationsMatrix().scale(1.01f);
+	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(1.01f));
 	auto material = new Material("tdme.primitive.material");
 	material->setAmbientColor(
 		Color4(

@@ -78,8 +78,7 @@ protected:
 	map<string, AnimationState*> overlayAnimationsById;
 	map<string, AnimationState*> overlayAnimationsByJointId;
 	vector<Object3DGroup*> object3dGroups;
-	bool recreateBuffers;
-	bool usesMeshManager;
+	bool usesManagers;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
 
 	/**
@@ -124,10 +123,10 @@ protected:
 	/**
 	 * Public constructor
 	 * @param model model
-	 * @param useMeshManager use mesh manager
+	 * @param useManagers use mesh and object 3d group renderer model manager
 	 * @param animationProcessingTarget animation processing target
 	 */
-	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
+	Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget);
 
 	/**
 	 * Destructor

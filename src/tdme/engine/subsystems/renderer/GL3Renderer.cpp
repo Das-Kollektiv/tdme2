@@ -70,6 +70,7 @@ GL3Renderer::GL3Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
+	engineVAO = 0;
 }
 
 const string GL3Renderer::getShaderVersion()
@@ -640,6 +641,12 @@ void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
 	glVertexAttribDivisor(11, 1);
 }
 
+void GL3Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(12);
+	glVertexAttribPointer(12, 3, GL_FLOAT, false, 0, 0LL);
+}
+
 void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
@@ -690,6 +697,7 @@ void GL3Renderer::unbindBufferObjects(void* context)
 	glDisableVertexAttribArray(9);
 	glDisableVertexAttribArray(10);
 	glDisableVertexAttribArray(11);
+	glDisableVertexAttribArray(12);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }

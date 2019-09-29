@@ -48,12 +48,11 @@ private:
 	Object3DGroupRenderer* object3DGroupRenderer;
 	Group* group ;
 	int32_t faceCount;
-	vector<uint32_t> indices;
-	const vector<TextureCoordinate>* textureCoordinates;
 	const vector<Vector3>* vertices;
 	const vector<Vector3>* normals;
 	const vector<Vector3>* tangents;
 	const vector<Vector3>* bitangents;
+	vector<int32_t> indices;
 	vector<Vector3> transformedVertices;
 	vector<Vector3> transformedNormals;
 	vector<Vector3> transformedTangents;
@@ -73,7 +72,10 @@ private:
 
 	bool recreatedBuffers;
 
-private:
+	/**
+	 * Public constructor
+	 */
+	Object3DGroupMesh();
 
 	/** 
 	 * Creates a object3d group mesh from group
@@ -157,11 +159,12 @@ private:
 	 */
 	void setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
 
-	// Generated
-
-public:
 	/**
-	 * Public constructor
+	 * Set up render group object origins data buffer
+	 * @param renderer renderer
+	 * @param context context
+	 * @param vboId vbo id
 	 */
-	Object3DGroupMesh();
+	void setupOriginsBuffer(Renderer* renderer, void* context, int32_t vboId);
+
 };

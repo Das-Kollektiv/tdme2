@@ -38,12 +38,12 @@ void LightingShaderFoliageImplementation::initialize()
 	);
 	if (renderLightingFragmentShaderId == 0) return;
 
-	// geometry shader
-	renderLightingGeometryShaderId = renderer->loadShader(
-		renderer->SHADER_GEOMETRY_SHADER,
+	//	vertex shader
+	renderLightingVertexShaderId = renderer->loadShader(
+		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting",
-		"render_geometryshader_foliage.c",
-		"#define HAVE_DEPTH_FOG\n\n",
+		"render_vertexshader.c",
+		"#define HAVE_FOLIAGE\n#define HAVE_DEPTH_FOG\n\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/lighting",
 			"render_computevertex.inc.c"
@@ -57,25 +57,18 @@ void LightingShaderFoliageImplementation::initialize()
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_translation_matrix.inc.c"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions",
+			"create_foliage_transform_matrix.inc.c"
 		)
-	);
-	if (renderLightingGeometryShaderId == 0) return;
-
-	//	vertex shader
-	renderLightingVertexShaderId = renderer->loadShader(
-		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + shaderVersion + "/lighting",
-		"render_vertexshader.c",
-		"#define HAVE_GEOMETRY_SHADER\n#define HAVE_DEPTH_FOG\n\n"
 	);
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
 	renderLightingProgramId = renderer->createProgram();
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->attachShaderToProgram(renderLightingProgramId, renderLightingGeometryShaderId);
-	}
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
 
 	//

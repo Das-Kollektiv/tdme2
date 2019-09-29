@@ -105,7 +105,7 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 	model->setFPS(is.readFloat());
 	array<float, 16> importTransformationsMatrixArray;
 	is.readFloatArray(importTransformationsMatrixArray);
-	model->getImportTransformationsMatrix().set(importTransformationsMatrixArray);
+	model->setImportTransformationsMatrix(importTransformationsMatrixArray);
 	auto materialCount = is.readInt();
 	for (auto i = 0; i < materialCount; i++) {
 		auto material = readMaterial(pathName, &is, version);
