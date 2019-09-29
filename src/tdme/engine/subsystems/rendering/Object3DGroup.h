@@ -57,7 +57,7 @@ private:
 	string id;
 	Object3DBase* object { nullptr };
 	Group* group { nullptr };
-	bool animated { nullptr };
+	bool animated { false };
 	vector<Matrix2D3x3> textureMatricesByEntities;
 	vector<int32_t> materialDiffuseTextureIdsByEntities;
 	vector<int32_t> dynamicDiffuseTextureIdsByEntities;

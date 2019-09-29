@@ -17,7 +17,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
 bool LightingShaderFoliageImplementation::isSupported(Renderer* renderer) {
-	return renderer->isGeometryShaderAvailable() == true;
+	return true;
 }
 
 LightingShaderFoliageImplementation::LightingShaderFoliageImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)

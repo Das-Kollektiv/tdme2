@@ -10,7 +10,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
 bool EZRShaderPreFoliageImplementation::isSupported(Renderer* renderer) {
-	return renderer->isGeometryShaderAvailable();
+	return true;
 }
 
 EZRShaderPreFoliageImplementation::EZRShaderPreFoliageImplementation(Renderer* renderer): EZRShaderPreBaseImplementation(renderer)
