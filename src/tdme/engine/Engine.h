@@ -472,8 +472,8 @@ public:
 	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every second frame
 	 * @param skinningComputingReduction1Distance distance
 	 */
-	inline static void setTransformationsComputingReduction1Distance(float skinningComputingReduction1Distance) {
-		Engine::transformationsComputingReduction1Distance = skinningComputingReduction1Distance;
+	inline static void setTransformationsComputingReduction1Distance(float transformationsComputingReduction1Distance) {
+		Engine::transformationsComputingReduction1Distance = transformationsComputingReduction1Distance;
 	}
 
 	/**
@@ -487,8 +487,8 @@ public:
 	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every forth frame
 	 * @param skinningComputingReduction2Distance distance
 	 */
-	inline static void setTransformationsComputingReduction2Distance(float skinningComputingReduction2Distance) {
-		Engine::transformationsComputingReduction2Distance = skinningComputingReduction2Distance;
+	inline static void setTransformationsComputingReduction2Distance(float transformationsComputingReduction2Distance) {
+		Engine::transformationsComputingReduction2Distance = transformationsComputingReduction2Distance;
 	}
 
 	/**
