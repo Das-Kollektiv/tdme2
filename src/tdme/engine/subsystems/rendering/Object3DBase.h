@@ -103,9 +103,10 @@ protected:
 	 * @param baseAnimation base animation
 	 * @param transformationsMatrices transformations matrices
 	 * @param context context
-	 * @param timing timing
+	 * @param lastFrameAtTime time of last animation computation
+	 * @param currentFrameAtTime time of current animation computation
 	 */
-	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, Timing* timing);
+	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
 	 * Update skinning transformations matrices
@@ -212,9 +213,10 @@ public:
 	/**
 	 * Pre render step, computes transformations
 	 * @param context context
-	 * @param timing timing
+	 * @param lastFrameAtTime time of last animation computation
+	 * @param currentFrameAtTime time of current animation computation
 	 */
-	virtual void computeTransformations(void* context, Timing* timing);
+	virtual void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
 	 * @return group count

@@ -30,7 +30,7 @@ void Timing::updateTiming()
 	frame++;
 }
 
-int32_t Timing::getFrame()
+int64_t Timing::getFrame()
 {
 	return frame;
 }

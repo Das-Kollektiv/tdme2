@@ -4,6 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -21,8 +23,10 @@
 
 using std::string;
 
+using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -65,13 +69,39 @@ private:
 	float distanceShaderDistance { 50.0f };
 	RenderPass renderPass { RENDERPASS_OBJECTS };
 	bool enableEarlyZRejection { false };
+	int64_t frameTransformationsLast { -1LL };
+	int64_t timeTransformationsLast { -1LL };
 
 	/**
 	 * Compute skinning
 	 * @param context context
 	 */
 	inline void computeSkinning(void* context) {
-		if (hasSkinning == true) computeTransformations(context);
+		if (hasSkinning == true) {
+			auto timing = engine->getTiming();
+			auto currentFrameAtTime = timing->getCurrentFrameAtTime();
+			auto currentFrame = timing->getFrame();
+			auto distanceFromCamera = getTranslation().clone().sub(engine->getCamera()->getLookFrom()).computeLengthSquared();
+			if (distanceFromCamera > Math::square(Engine::getSkinningComputingReduction2Distance())) {
+				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
+			} else
+			if (distanceFromCamera > Math::square(Math::square(Engine::getSkinningComputingReduction1Distance()))) {
+				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
+			}
+			computeTransformations(context, timeTransformationsLast, currentFrameAtTime);
+			frameTransformationsLast = timing->getFrame();
+			timeTransformationsLast = currentFrameAtTime;
+		}
+	}
+
+	/**
+	 * Compute transformations
+	 * @param context context
+	 * @param lastFrameAtTime time of last animation computation
+	 * @param currentFrameAtTime time of current animation computation
+	 */
+	inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
+		Object3DInternal::computeTransformations(context, lastFrameAtTime, currentFrameAtTime);
 	}
 
 	/**
@@ -241,14 +271,6 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
-	}
-
-	/**
-	 * Compute transformations
-	 * @param context context
-	 */
-	inline void computeTransformations(void* context) {
-		Object3DInternal::computeTransformations(context, engine->getTiming());
 	}
 
 	/**

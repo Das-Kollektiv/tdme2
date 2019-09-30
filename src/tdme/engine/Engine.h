@@ -158,6 +158,8 @@ private:
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 	static float shadowMaplightEyeDistanceScale;
+	static float skinningComputingReduction1Distance;
+	static float skinningComputingReduction2Distance;
 
 
 	int32_t width { -1 };
@@ -372,14 +374,14 @@ public:
 	 * @return texture manager
 	 */
 	inline static TextureManager* getTextureManager() {
-		return textureManager;
+		return Engine::textureManager;
 	}
 
 	/**
 	 * @return engine thread count
 	 */
 	inline static int getThreadCount() {
-		return threadCount;
+		return Engine::threadCount;
 	}
 
 	/**
@@ -394,7 +396,7 @@ public:
 	 * @return if having 4k
 	 */
 	inline static bool is4K() {
-		return have4K;
+		return Engine::have4K;
 	}
 
 	/**
@@ -439,14 +441,14 @@ public:
 	 * @return shadow map width
 	 */
 	inline static int32_t getShadowMapWidth() {
-		return shadowMapWidth;
+		return Engine::shadowMapWidth;
 	}
 
 	/**
 	 * @return shadow map width
 	 */
 	inline static int32_t getShadowMapHeight() {
-		return shadowMapHeight;
+		return Engine::shadowMapHeight;
 	}
 
 	/**
@@ -457,6 +459,36 @@ public:
 	inline static void setShadowMapSize(int32_t width, int32_t height) {
 		Engine::shadowMapWidth = width;
 		Engine::shadowMapHeight = height;
+	}
+
+	/**
+	 * @return distance of skinned object from which skinning computation will be computed only every second frame
+	 */
+	inline static float getSkinningComputingReduction1Distance() {
+		return Engine::skinningComputingReduction1Distance;
+	}
+
+	/**
+	 * Set distance of skinned object from camera which skinning computation will be computed only every second frame
+	 * @param skinningComputingReduction1Distance distance
+	 */
+	inline static void setSkinningComputingReduction1Distance(float skinningComputingReduction1Distance) {
+		Engine::skinningComputingReduction1Distance = skinningComputingReduction1Distance;
+	}
+
+	/**
+	 * @return distance of skinned object from which skinning computation will be computed only every forth frame
+	 */
+	inline static float getSkinningComputingReduction2Distance() {
+		return Engine::skinningComputingReduction2Distance;
+	}
+
+	/**
+	 * Set distance of skinned object from camera which skinning computation will be computed only every forth frame
+	 * @param skinningComputingReduction2Distance distance
+	 */
+	inline static void setSkinningComputingReduction2Distance(float skinningComputingReduction2Distance) {
+		Engine::skinningComputingReduction2Distance = skinningComputingReduction2Distance;
 	}
 
 	/**
