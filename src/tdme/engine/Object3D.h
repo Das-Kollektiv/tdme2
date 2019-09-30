@@ -100,7 +100,7 @@ private:
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
+	inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime) override {
 		Object3DInternal::computeTransformations(context, lastFrameAtTime, currentFrameAtTime);
 	}
 
