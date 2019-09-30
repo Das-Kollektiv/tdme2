@@ -71,6 +71,7 @@ protected:
 	Model* model;
 	vector<map<string, Matrix4x4*>> transformationsMatrices;
 	bool hasSkinning;
+	bool hasAnimations;
 	vector<map<string, Matrix4x4*>> skinningGroupsMatrices;
 	vector<Group*> skinningGroups;
 	vector<AnimationState> baseAnimations;

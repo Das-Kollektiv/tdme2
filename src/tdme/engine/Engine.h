@@ -158,8 +158,8 @@ private:
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 	static float shadowMaplightEyeDistanceScale;
-	static float skinningComputingReduction1Distance;
-	static float skinningComputingReduction2Distance;
+	static float transformationsComputingReduction1Distance;
+	static float transformationsComputingReduction2Distance;
 
 
 	int32_t width { -1 };
@@ -462,33 +462,33 @@ public:
 	}
 
 	/**
-	 * @return distance of skinned object from which skinning computation will be computed only every second frame
+	 * @return distance of animated object including skinned objects from which animation computation will be computed only every second frame
 	 */
-	inline static float getSkinningComputingReduction1Distance() {
-		return Engine::skinningComputingReduction1Distance;
+	inline static float getTransformationsComputingReduction1Distance() {
+		return Engine::transformationsComputingReduction1Distance;
 	}
 
 	/**
-	 * Set distance of skinned object from camera which skinning computation will be computed only every second frame
+	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every second frame
 	 * @param skinningComputingReduction1Distance distance
 	 */
-	inline static void setSkinningComputingReduction1Distance(float skinningComputingReduction1Distance) {
-		Engine::skinningComputingReduction1Distance = skinningComputingReduction1Distance;
+	inline static void setTransformationsComputingReduction1Distance(float skinningComputingReduction1Distance) {
+		Engine::transformationsComputingReduction1Distance = skinningComputingReduction1Distance;
 	}
 
 	/**
-	 * @return distance of skinned object from which skinning computation will be computed only every forth frame
+	 * @return distance of animated object including skinned objects from which animation computation will be computed only every forth frame
 	 */
-	inline static float getSkinningComputingReduction2Distance() {
-		return Engine::skinningComputingReduction2Distance;
+	inline static float getTransformationsComputingReduction2Distance() {
+		return Engine::transformationsComputingReduction2Distance;
 	}
 
 	/**
-	 * Set distance of skinned object from camera which skinning computation will be computed only every forth frame
+	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every forth frame
 	 * @param skinningComputingReduction2Distance distance
 	 */
-	inline static void setSkinningComputingReduction2Distance(float skinningComputingReduction2Distance) {
-		Engine::skinningComputingReduction2Distance = skinningComputingReduction2Distance;
+	inline static void setTransformationsComputingReduction2Distance(float skinningComputingReduction2Distance) {
+		Engine::transformationsComputingReduction2Distance = skinningComputingReduction2Distance;
 	}
 
 	/**

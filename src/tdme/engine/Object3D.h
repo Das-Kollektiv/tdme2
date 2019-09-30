@@ -73,19 +73,19 @@ private:
 	int64_t timeTransformationsLast { -1LL };
 
 	/**
-	 * Compute skinning
+	 * Compute animations
 	 * @param context context
 	 */
-	inline void computeSkinning(void* context) {
-		if (hasSkinning == true) {
+	inline void computeTransformations(void* context) {
+		if (hasSkinning == true || hasAnimations == true) {
 			auto timing = engine->getTiming();
 			auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 			auto currentFrame = timing->getFrame();
 			auto distanceFromCamera = getTranslation().clone().sub(engine->getCamera()->getLookFrom()).computeLengthSquared();
-			if (distanceFromCamera > Math::square(Engine::getSkinningComputingReduction2Distance())) {
+			if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
 				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
 			} else
-			if (distanceFromCamera > Math::square(Math::square(Engine::getSkinningComputingReduction1Distance()))) {
+			if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
 				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
 			}
 			computeTransformations(context, timeTransformationsLast, currentFrameAtTime);

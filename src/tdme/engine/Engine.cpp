@@ -170,8 +170,8 @@ float Engine::animationBlendingTime = 250.0f;
 int32_t Engine::shadowMapWidth = 2048;
 int32_t Engine::shadowMapHeight = 2048;
 float Engine::shadowMaplightEyeDistanceScale = 4.0f;
-float Engine::skinningComputingReduction1Distance = 10.0f;
-float Engine::skinningComputingReduction2Distance = 20.0f;
+float Engine::transformationsComputingReduction1Distance = 10.0f;
+float Engine::transformationsComputingReduction2Distance = 20.0f;
 
 Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
 vector<Engine::EngineThread*> Engine::engineThreads;
@@ -657,7 +657,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
 			continue;
 		}
 		object->preRender(context);
-		object->computeSkinning(context);
+		object->computeTransformations(context);
 		objectIdx++;
 	}
 	for (auto object: visibleObjectsPostPostProcessing) {
@@ -666,7 +666,7 @@ void Engine::computeTransformationsFunction(int threadCount, int threadIdx) {
 			continue;
 		}
 		object->preRender(context);
-		object->computeSkinning(context);
+		object->computeTransformations(context);
 		objectIdx++;
 	}
 }

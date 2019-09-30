@@ -73,6 +73,7 @@ Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProc
 			createTransformationsMatrices(skinningGroupsMatrices[i], model->getSubGroups());
 		}
 	}
+	hasAnimations = model->hasAnimations();
 	//
 	baseAnimationIdx = 0;
 	// animation

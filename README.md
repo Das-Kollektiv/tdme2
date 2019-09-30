@@ -32,6 +32,7 @@
                 - skinning via
                     - CPU on GL2, GL3+/CORE, GLES2
                     - GPU via compute shaders with GL4.3+/CORE, Vulkan
+                - both animations and skinning have some sort of configurable LOD functionality
                 - texture transformations/animations
                     - via texture matrices
             - objects with support for LOD
