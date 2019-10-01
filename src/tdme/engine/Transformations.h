@@ -25,12 +25,12 @@ using tdme::math::Quaternion;
  */
 class tdme::engine::Transformations {
 private:
-	Vector3 translation {  };
-	Vector3 scale {  };
-	Vector3 pivot {  };
-	Quaternion rotationsQuaternion { };
-	vector<Rotation> rotations {  };
-	Matrix4x4 transformationsMatrix {  };
+	Vector3 translation;
+	Vector3 scale;
+	Vector3 pivot;
+	Quaternion rotationsQuaternion;
+	vector<Rotation> rotations;
+	Matrix4x4 transformationsMatrix;
 
 public:
 
