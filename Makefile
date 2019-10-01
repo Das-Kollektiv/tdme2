@@ -120,6 +120,7 @@ else ifeq ($(OS), Linux)
 			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 		else
 			# Linux, GL
+			#EXTRAFLAGS = -D_GLIBCXX_DEBUG
 			SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/engine/EngineGL2Renderer.cpp \
 				src/tdme/engine/EngineGL3Renderer.cpp \
