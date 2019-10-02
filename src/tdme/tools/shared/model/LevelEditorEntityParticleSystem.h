@@ -18,19 +18,19 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_Type;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityParticleSystem
+class tdme::tools::shared::model::LevelEditorEntityParticleSystem final
 {
 private:
-	LevelEditorEntityParticleSystem_Type* type {  };
-	LevelEditorEntityParticleSystem_ObjectParticleSystem* ops {  };
-	LevelEditorEntityParticleSystem_PointParticleSystem* pps {  };
-	LevelEditorEntityParticleSystem_FogParticleSystem* fps {  };
-	LevelEditorEntityParticleSystem_Emitter* emitter {  };
-	LevelEditorEntityParticleSystem_PointParticleEmitter* ppe {  };
-	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter* bbpe {  };
-	LevelEditorEntityParticleSystem_CircleParticleEmitter* cpe {  };
-	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* cpepv {  };
-	LevelEditorEntityParticleSystem_SphereParticleEmitter* spe {  };
+	LevelEditorEntityParticleSystem_Type* type { nullptr };
+	LevelEditorEntityParticleSystem_ObjectParticleSystem* ops { nullptr };
+	LevelEditorEntityParticleSystem_PointParticleSystem* pps { nullptr };
+	LevelEditorEntityParticleSystem_FogParticleSystem* fps { nullptr };
+	LevelEditorEntityParticleSystem_Emitter* emitter { nullptr };
+	LevelEditorEntityParticleSystem_PointParticleEmitter* ppe { nullptr };
+	LevelEditorEntityParticleSystem_BoundingBoxParticleEmitter* bbpe { nullptr };
+	LevelEditorEntityParticleSystem_CircleParticleEmitter* cpe { nullptr };
+	LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity* cpepv { nullptr };
+	LevelEditorEntityParticleSystem_SphereParticleEmitter* spe { nullptr };
 
 	/**
 	 * Unset particle system type

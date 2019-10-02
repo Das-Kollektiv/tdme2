@@ -267,7 +267,7 @@ public:
 	 * Set up object property preset ids
 	 * @param objectPresetIds object property preset ids
 	 */
-	void setObjectPresetIds(const map<string, vector<PropertyModelClass*>>* objectPresetIds); // TODO: std container: maybe use call by reference
+	void setObjectPresetIds(const map<string, vector<PropertyModelClass*>>& objectPresetIds);
 
 	/** 
 	 * Event callback for object properties selection

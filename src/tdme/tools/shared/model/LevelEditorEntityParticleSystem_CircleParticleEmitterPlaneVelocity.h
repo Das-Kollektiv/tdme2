@@ -1,6 +1,4 @@
-
 #pragma once
-
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -17,137 +15,179 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity
+class tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity final
 {
 private:
-	int32_t count {  };
-	int64_t lifeTime {  };
-	int64_t lifeTimeRnd {  };
-	float mass {  };
-	float massRnd {  };
-	float velocity {  };
-	float velocityRnd {  };
-	Color4 colorStart {  };
-	Color4 colorEnd {  };
-	Vector3 center {  };
-	float radius {  };
-	Vector3 axis0 {  };
-	Vector3 axis1 {  };
+	int32_t count;
+	int64_t lifeTime;
+	int64_t lifeTimeRnd;
+	float mass;
+	float massRnd;
+	float velocity;
+	float velocityRnd;
+	Color4 colorStart;
+	Color4 colorEnd;
+	Vector3 center;
+	float radius;
+	Vector3 axis0;
+	Vector3 axis1;
 
 public:
 
 	/** 
 	 * @return count
 	 */
-	int32_t getCount();
+	inline int32_t getCount() {
+		return count;
+	}
 
 	/** 
 	 * Set count
 	 * @param count count
 	 */
-	void setCount(int32_t count);
+	inline void setCount(int32_t count) {
+		this->count = count;
+	}
 
 	/** 
 	 * @return life time
 	 */
-	int64_t getLifeTime();
+	inline int64_t getLifeTime() {
+		return lifeTime;
+	}
 
 	/** 
 	 * Set life time
 	 * @param lifeTime life time
 	 */
-	void setLifeTime(int64_t lifeTime);
+	inline void setLifeTime(int64_t lifeTime) {
+		this->lifeTime = lifeTime;
+	}
 
 	/** 
 	 * @return life time rnd
 	 */
-	int64_t getLifeTimeRnd();
+	inline int64_t getLifeTimeRnd() {
+		return lifeTimeRnd;
+	}
 
 	/** 
 	 * Set life time rnd
 	 * @param lifeTimeRnd life time rnd
 	 */
-	void setLifeTimeRnd(int64_t lifeTimeRnd);
+	inline void setLifeTimeRnd(int64_t lifeTimeRnd) {
+		this->lifeTimeRnd = lifeTimeRnd;
+	}
 
 	/** 
 	 * @return mass
 	 */
-	float getMass();
+	inline float getMass() {
+		return mass;
+	}
 
 	/** 
 	 * Set mass
 	 * @param mass mass
 	 */
-	void setMass(float mass);
+	inline void setMass(float mass) {
+		this->mass = mass;
+	}
 
 	/** 
 	 * @return mass rnd
 	 */
-	float getMassRnd();
+	inline float getMassRnd() {
+		return massRnd;
+	}
 
 	/** 
 	 * Set mass rnd
 	 * @param massRnd mass rnd
 	 */
-	void setMassRnd(float massRnd);
+	inline void setMassRnd(float massRnd) {
+		this->massRnd = massRnd;
+	}
 
 	/** 
 	 * @return velocity
 	 */
-	float getVelocity();
+	inline float getVelocity() {
+		return velocity;
+	}
 
 	/** 
 	 * Set velocity
 	 * @param velocity velocity
 	 */
-	void setVelocity(float velocity);
+	inline void setVelocity(float velocity) {
+		this->velocity = velocity;
+	}
 
 	/** 
 	 * @return velocity rnd
 	 */
-	float getVelocityRnd();
+	inline float getVelocityRnd() {
+		return velocityRnd;
+	}
 
 	/** 
 	 * Set velocity rnd
 	 * @param velocityRnd velocity rnd
 	 */
-	void setVelocityRnd(float velocityRnd);
+	inline void setVelocityRnd(float velocityRnd) {
+		this->velocityRnd = velocityRnd;
+	}
 
 	/** 
 	 * @return color start
 	 */
-	Color4& getColorStart();
+	inline Color4& getColorStart() {
+		return colorStart;
+	}
 
 	/** 
 	 * @return color end
 	 */
-	Color4& getColorEnd();
+	inline Color4& getColorEnd() {
+		return colorEnd;
+	}
 
 	/** 
 	 * @return center
 	 */
-	Vector3& getCenter();
+	inline Vector3& getCenter() {
+		return center;
+	}
 
 	/** 
 	 * @return radius
 	 */
-	float getRadius();
+	inline float getRadius() {
+		return radius;
+	}
 
 	/** 
 	 * Set radius
 	 * @param radius radius
 	 */
-	void setRadius(float radius);
+	inline void setRadius(float radius) {
+		this->radius = radius;
+	}
 
 	/** 
 	 * @return axis 0
 	 */
-	Vector3& getAxis0();
+	inline Vector3& getAxis0() {
+		return axis0;
+	}
 
 	/** 
 	 * @return axis 1
 	 */
-	Vector3& getAxis1();
+	inline Vector3& getAxis1() {
+		return axis1;
+	}
 
 	/**
 	 * Public constructor

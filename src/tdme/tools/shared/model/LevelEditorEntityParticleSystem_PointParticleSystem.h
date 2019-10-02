@@ -24,22 +24,22 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem
+class tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem final
 {
 private:
-	int32_t maxPoints {  };
-	float pointSize {  };
-	string textureFileName {  };
-	string transparencyTextureFileName {  };
-	Texture* texture {  };
-	bool autoEmit {  };
+	int32_t maxPoints;
+	float pointSize;
+	string textureFileName;
+	string transparencyTextureFileName;
+	Texture* texture { nullptr };
+	bool autoEmit;
 
 public:
 
 	/** 
 	 * @return max points
 	 */
-	virtual int32_t getMaxPoints() {
+	int32_t getMaxPoints() {
 		return maxPoints;
 	}
 
@@ -47,14 +47,14 @@ public:
 	 * Set max points
 	 * @param maxPoints max points
 	 */
-	virtual void setMaxPoints(int32_t maxPoints) {
+	void setMaxPoints(int32_t maxPoints) {
 		this->maxPoints = maxPoints;
 	}
 
 	/** 
 	 * @return point size
 	 */
-	virtual float getPointSize() {
+	float getPointSize() {
 		return pointSize;
 	}
 
@@ -62,28 +62,28 @@ public:
 	 * Set point size
 	 * @param pointSize point size
 	 */
-	virtual void setPointSize(float pointSize) {
+	void setPointSize(float pointSize) {
 		this->pointSize = pointSize;
 	}
 
 	/**
 	 * @return texture
 	 */
-	virtual Texture* getTexture() {
+	Texture* getTexture() {
 		return texture;
 	}
 
 	/**
 	 * @return texture file name
 	 */
-	virtual const string& getTextureFileName() {
+	const string& getTextureFileName() {
 		return textureFileName;
 	}
 
 	/**
 	 * @return transparency texture file name
 	 */
-	virtual const string& getTransparencyTextureFileName() {
+	const string& getTransparencyTextureFileName() {
 		return transparencyTextureFileName;
 	}
 
@@ -92,12 +92,12 @@ public:
 	 * @param textureFileName texture file name
 	 * @param transparencyTextureFileName transparency texture file name
 	 */
-	virtual void setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName = string());
+	void setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName = string());
 
 	/**
 	 * @return is auto emit
 	 */
-	virtual bool isAutoEmit() {
+	bool isAutoEmit() {
 		return autoEmit;
 	}
 
@@ -105,7 +105,7 @@ public:
 	 * Set auto emit
 	 * @param autoEmit auto emit
 	 */
-	virtual void setAutoEmit(bool autoEmit) {
+	void setAutoEmit(bool autoEmit) {
 		this->autoEmit = autoEmit;
 	}
 
@@ -117,6 +117,6 @@ public:
 	/**
 	 * Public destructor
 	 */
-	virtual ~LevelEditorEntityParticleSystem_PointParticleSystem();
+	~LevelEditorEntityParticleSystem_PointParticleSystem();
 
 };

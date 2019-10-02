@@ -21,42 +21,52 @@ using tdme::tools::shared::model::LevelEditorEntity;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityBoundingVolume
+class tdme::tools::shared::model::LevelEditorEntityBoundingVolume final
 {
 private:
 	volatile static uint32_t modelIdx;
-	int32_t id {  };
-	LevelEditorEntity* levelEditorEntity {  };
-	string modelMeshFile {  };
-	Model* model {  };
-	BoundingVolume* boundingVolume {  };
+	int32_t id;
+	LevelEditorEntity* levelEditorEntity { nullptr };
+	string modelMeshFile;
+	Model* model { nullptr };
+	BoundingVolume* boundingVolume { nullptr };
 
 public:
 
 	/** 
 	 * @return id
 	 */
-	int32_t getId();
+	inline int32_t getId() {
+		return id;
+	}
 
 	/** 
 	 * @return level editor entity
 	 */
-	LevelEditorEntity* getLevelEditorEntity();
+	inline LevelEditorEntity* getLevelEditorEntity() {
+		return levelEditorEntity;
+	}
 
 	/** 
 	 * @return model mesh file
 	 */
-	const string& getModelMeshFile();
+	inline const string& getModelMeshFile() {
+		return modelMeshFile;
+	}
 
 	/** 
 	 * @return model
 	 */
-	Model* getModel();
+	inline Model* getModel() {
+		return model;
+	}
 
 	/** 
 	 * @return bounding volume
 	 */
-	BoundingVolume* getBoundingVolume();
+	inline BoundingVolume* getBoundingVolume() {
+		return boundingVolume;
+	}
 
 	/**
 	 * @return bounding volume model index

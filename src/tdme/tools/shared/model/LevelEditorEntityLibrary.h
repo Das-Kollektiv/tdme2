@@ -28,10 +28,10 @@ public:
 	static constexpr int32_t ID_ALLOCATE { -1 };
 
 private:
-	LevelEditorLevel* level {  };
-	map<int32_t, LevelEditorEntity*> entitiesById {  };
-	vector<LevelEditorEntity*> entities {  };
-	int32_t entityIdx {  };
+	LevelEditorLevel* level { nullptr };
+	map<int32_t, LevelEditorEntity*> entitiesById;
+	vector<LevelEditorEntity*> entities;
+	int32_t entityIdx;
 
 public:
 

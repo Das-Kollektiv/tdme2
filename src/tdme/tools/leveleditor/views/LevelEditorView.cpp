@@ -1289,10 +1289,10 @@ void LevelEditorView::objectPropertiesPreset(const string& presetId)
 	if (levelEntity == nullptr) return;
 
 	levelEntity->clearProperties();
-	auto objectPropertiesPresets = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
+	auto& objectPropertiesPresets = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
 	const vector<PropertyModelClass*>* objectPropertyPresetVector = nullptr;
-	auto objectPropertyPresetVectorIt = objectPropertiesPresets->find(presetId);
-	if (objectPropertyPresetVectorIt != objectPropertiesPresets->end()) {
+	auto objectPropertyPresetVectorIt = objectPropertiesPresets.find(presetId);
+	if (objectPropertyPresetVectorIt != objectPropertiesPresets.end()) {
 		objectPropertyPresetVector = &objectPropertyPresetVectorIt->second;
 	}
 	if (objectPropertyPresetVector != nullptr) {

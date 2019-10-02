@@ -146,21 +146,6 @@ void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
 	}
 }
 
-const vector<PropertyModelClass*>& LevelPropertyPresets::getMapPropertiesPreset() const
-{
-	return mapPropertiesPreset;
-}
-
-const map<string, vector<PropertyModelClass*>>* LevelPropertyPresets::getObjectPropertiesPresets() const
-{
-	return &objectPropertiesPresets;
-}
-
-const map<string, LevelEditorLight*>& LevelPropertyPresets::getLightPresets() const
-{
-	return lightPresets;
-}
-
 const vector<TiXmlElement*> LevelPropertyPresets::getChildrenByTagName(TiXmlElement* parent, const char* name)
 {
 	vector<TiXmlElement*> elementList;

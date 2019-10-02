@@ -31,10 +31,10 @@ void EntityBaseView::entityPropertiesPreset(LevelEditorEntity* entity, const str
 		return;
 
 	entity->clearProperties();
-	auto objectPropertiesPreset = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
+	auto& objectPropertiesPreset = LevelPropertyPresets::getInstance()->getObjectPropertiesPresets();
 	const vector<PropertyModelClass*>* entityPropertyPresetArrayList = nullptr;
-	auto entityPropertyPresetArrayListIt = objectPropertiesPreset->find(presetId);
-	if (entityPropertyPresetArrayListIt != objectPropertiesPreset->end()) {
+	auto entityPropertyPresetArrayListIt = objectPropertiesPreset.find(presetId);
+	if (entityPropertyPresetArrayListIt != objectPropertiesPreset.end()) {
 		entityPropertyPresetArrayList = &entityPropertyPresetArrayListIt->second;
 	}
 	if (entityPropertyPresetArrayList != nullptr) {

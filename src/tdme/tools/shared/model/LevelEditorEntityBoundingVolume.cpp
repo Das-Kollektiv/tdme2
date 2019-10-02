@@ -64,31 +64,6 @@ LevelEditorEntityBoundingVolume::~LevelEditorEntityBoundingVolume() {
 	if (boundingVolume != nullptr) delete boundingVolume;
 }
 
-int32_t LevelEditorEntityBoundingVolume::getId()
-{
-	return id;
-}
-
-LevelEditorEntity* LevelEditorEntityBoundingVolume::getLevelEditorEntity()
-{
-	return levelEditorEntity;
-}
-
-const string& LevelEditorEntityBoundingVolume::getModelMeshFile()
-{
-	return modelMeshFile;
-}
-
-Model* LevelEditorEntityBoundingVolume::getModel()
-{
-	return model;
-}
-
-BoundingVolume* LevelEditorEntityBoundingVolume::getBoundingVolume()
-{
-	return boundingVolume;
-}
-
 void LevelEditorEntityBoundingVolume::setupNone()
 {
 	boundingVolume = nullptr;
@@ -211,7 +186,5 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 
 void LevelEditorEntityBoundingVolume::updateLevelEditorEntity()
 {
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER)
-		levelEditorEntity->setModel(model);
-
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) levelEditorEntity->setModel(model);
 }

@@ -18,10 +18,10 @@ using tdme::tools::shared::model::LevelEditorEntity;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityModel
+class tdme::tools::shared::model::LevelEditorEntityModel final
 {
 private:
-	LevelEditorEntity* entity;
+	LevelEditorEntity* entity { nullptr };
 	bool terrainMesh { false };
 
 public:
@@ -53,7 +53,7 @@ public:
 	 * Public constructor
 	 * @param levelEditorEntity level editor entity
 	 */
-	LevelEditorEntityModel(LevelEditorEntity* entity): entity(entity) {
+	inline LevelEditorEntityModel(LevelEditorEntity* entity): entity(entity) {
 	}
 
 	/**

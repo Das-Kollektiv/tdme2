@@ -15,14 +15,14 @@ using tdme::engine::fileio::textures::Texture;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem
+class tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSystem final
 {
 private:
-	int32_t maxPoints {  };
-	float pointSize {  };
-	string textureFileName {  };
-	string transparencyTextureFileName {  };
-	Texture* texture {  };
+	int32_t maxPoints;
+	float pointSize;
+	string textureFileName;
+	string transparencyTextureFileName;
+	Texture* texture { nullptr };
 
 public:
 

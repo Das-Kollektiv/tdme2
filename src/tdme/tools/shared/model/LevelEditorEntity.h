@@ -49,26 +49,26 @@ public:
 	static char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT];
 
 private:
-	int32_t id {  };
-	LevelEditorEntity_EntityType* type {  };
-	string name {  };
-	string description {  };
-	string entityFileName {  };
-	string fileName {  };
-	string thumbnail {  };
-	Model* model {  };
-	Vector3 pivot {  };
-	LevelEditorEntityLODLevel* lodLevel2;
-	LevelEditorEntityLODLevel* lodLevel3;
-	vector<LevelEditorEntityBoundingVolume*> boundingVolumes {  };
-	LevelEditorEntityPhysics* physics {  };
-	vector<LevelEditorEntityParticleSystem*> particleSystems {  };
-	LevelEditorEntityModel* modelSettings;
-	bool renderGroups {  };
-	string shaderId {  };
-	string distanceShaderId {  };
-	float distanceShaderDistance {  };
-	bool dynamicShadowing {  };
+	int32_t id;
+	LevelEditorEntity_EntityType* type { nullptr };
+	string name;
+	string description;
+	string entityFileName;
+	string fileName;
+	string thumbnail;
+	Model* model { nullptr };
+	Vector3 pivot;
+	LevelEditorEntityLODLevel* lodLevel2 { nullptr };
+	LevelEditorEntityLODLevel* lodLevel3 { nullptr };
+	vector<LevelEditorEntityBoundingVolume*> boundingVolumes;
+	LevelEditorEntityPhysics* physics { nullptr };
+	vector<LevelEditorEntityParticleSystem*> particleSystems;
+	LevelEditorEntityModel* modelSettings { nullptr };
+	bool renderGroups;
+	string shaderId;
+	string distanceShaderId;
+	float distanceShaderDistance;
+	bool dynamicShadowing;
 	map<string, LevelEditorEntityAudio*> soundsById;
 	vector<LevelEditorEntityAudio*> sounds;
 
@@ -424,5 +424,5 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~LevelEditorEntity();
+	~LevelEditorEntity();
 };

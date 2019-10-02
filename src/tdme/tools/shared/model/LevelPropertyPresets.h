@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -30,9 +29,9 @@ class tdme::tools::shared::model::LevelPropertyPresets final
 {
 
 private:
-	vector<PropertyModelClass*> mapPropertiesPreset {  };
-	map<string, vector<PropertyModelClass*>> objectPropertiesPresets {  };
-	map<string, LevelEditorLight*> lightPresets {  };
+	vector<PropertyModelClass*> mapPropertiesPreset;
+	map<string, vector<PropertyModelClass*>> objectPropertiesPresets;
+	map<string, LevelEditorLight*> lightPresets;
 	static LevelPropertyPresets* instance;
 
 public:
@@ -53,17 +52,23 @@ public:
 	/** 
 	 * @return map properties preset
 	 */
-	const vector<PropertyModelClass*>& getMapPropertiesPreset() const;
+	inline const vector<PropertyModelClass*>& getMapPropertiesPreset() const {
+		return mapPropertiesPreset;
+	}
 
 	/** 
 	 * @return object property presets
 	 */
-	const map<string, vector<PropertyModelClass*>>* getObjectPropertiesPresets() const;
+	inline const map<string, vector<PropertyModelClass*>>& getObjectPropertiesPresets() const {
+		return objectPropertiesPresets;
+	}
 
 	/** 
 	 * @return light presets
 	 */
-	const map<string, LevelEditorLight*>& getLightPresets() const;
+	inline const map<string, LevelEditorLight*>& getLightPresets() const {
+		return lightPresets;
+	}
 
 private:
 

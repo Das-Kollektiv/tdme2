@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <map>
@@ -23,48 +22,52 @@ using tdme::tools::shared::model::PropertyModelClass;
 class tdme::tools::shared::model::ModelProperties
 {
 private:
-	map<string, PropertyModelClass*> propertiesByName {  };
-	vector<PropertyModelClass*> properties {  };
+	map<string, PropertyModelClass*> propertiesByName;
+	vector<PropertyModelClass*> properties;
 
 public:
 
 	/** 
 	 * Clears properties
 	 */
-	virtual void clearProperties();
+	void clearProperties();
 
 	/** 
 	 * Retrieve property by name
 	 * @param name name
 	 * @return property or null
 	 */
-	virtual PropertyModelClass* getProperty(const string& name);
+	PropertyModelClass* getProperty(const string& name);
 
 	/** 
 	 * @return property count
 	 */
-	virtual int32_t getPropertyCount();
+	inline int32_t getPropertyCount() {
+		return properties.size();
+	}
 
 	/** 
 	 * Get property index
 	 * @param name name
 	 * @return index or -1 if not found
 	 */
-	virtual int32_t getPropertyIndex(const string& name);
+	int32_t getPropertyIndex(const string& name);
 
 	/** 
 	 * Get property by index
 	 * @param idx idx
 	 * @return property or null
 	 */
-	virtual PropertyModelClass* getPropertyByIndex(int32_t idx);
+	inline PropertyModelClass* getPropertyByIndex(int32_t idx) {
+		return idx >= 0 && idx < properties.size()?properties[idx]:nullptr;
+	}
 
 	/** 
 	 * Add a property
 	 * @param name name
 	 * @param value value
 	 */
-	virtual bool addProperty(const string& name, const string& value);
+	bool addProperty(const string& name, const string& value);
 
 	/** 
 	 * Update a property
@@ -73,13 +76,13 @@ public:
 	 * @param value value
 	 * @return success
 	 */
-	virtual bool updateProperty(const string& oldName, const string& name, const string& value);
+	bool updateProperty(const string& oldName, const string& name, const string& value);
 
 	/** 
 	 * Removes a property
 	 * @param name property name
 	 */
-	virtual bool removeProperty(const string& name);
+	bool removeProperty(const string& name);
 
 	/**
 	 * Public constructor

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -18,14 +17,14 @@ using tdme::tools::shared::model::LevelEditorEntity;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityPhysics
+class tdme::tools::shared::model::LevelEditorEntityPhysics final
 {
 private:
 	LevelEditorEntityPhysics_BodyType* type { LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY };
 	float mass { 0.0f };
 	float restitution { 0.5f };
 	float friction { 0.5f };
-	Vector3 inertiaTensor { };
+	Vector3 inertiaTensor;
 
 public:
 

@@ -472,7 +472,7 @@ void LevelEditorScreenController::onMapPropertyRemove()
 	}
 }
 
-void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<PropertyModelClass*>>* objectPresetIds)
+void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<PropertyModelClass*>>& objectPresetIds)
 {
 	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(objectPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -482,7 +482,7 @@ void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<Pr
 		"<scrollarea-vertical id=\"" +
 		objectPropertiesPresets->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	for (auto it: *objectPresetIds) {
+	for (auto it: objectPresetIds) {
 		auto modelPresetId = it.first;
 		objectPropertiesPresetsInnerNodeSubNodesXML =
 			objectPropertiesPresetsInnerNodeSubNodesXML +

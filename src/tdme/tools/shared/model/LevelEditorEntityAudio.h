@@ -14,7 +14,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityAudio
+class tdme::tools::shared::model::LevelEditorEntityAudio final
 {
 private:
 	LevelEditorEntity* entity;
