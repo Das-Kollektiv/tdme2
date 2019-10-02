@@ -491,7 +491,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	if (progressCallback != nullptr) progressCallback->progress(0.9f);
 
 	// export to tl
-	LevelFileExport::export_(
+	LevelFileExport::doExport(
 		pathName,
 		fileName + ".tl",
 		level

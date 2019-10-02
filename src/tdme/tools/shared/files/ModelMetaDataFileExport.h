@@ -55,7 +55,7 @@ public:
 	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void export_(const string& pathName, const string& fileName, LevelEditorEntity* entity);
+	static void doExport(const string& pathName, const string& fileName, LevelEditorEntity* entity);
 
 	/** 
 	 * Export model meta data file to JSON node

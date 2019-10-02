@@ -181,7 +181,7 @@ void SharedParticleSystemView::loadFile(const string& pathName, const string& fi
 
 void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::export_(pathName, fileName, entity);
+	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
 }
 
 void SharedParticleSystemView::reloadFile()

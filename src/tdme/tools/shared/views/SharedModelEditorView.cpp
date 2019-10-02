@@ -187,7 +187,7 @@ void SharedModelEditorView::loadFile(const string& pathName, const string& fileN
 
 void SharedModelEditorView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::export_(pathName, fileName, entity);
+	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
 }
 
 void SharedModelEditorView::reloadFile()

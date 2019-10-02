@@ -91,7 +91,7 @@ void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
 {
 }
 
-void ModelMetaDataFileExport::export_(const string& pathName, const string& fileName, LevelEditorEntity* entity)
+void ModelMetaDataFileExport::doExport(const string& pathName, const string& fileName, LevelEditorEntity* entity)
 {
 	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
 	auto jEntityRoot = exportToJSON(entity);

@@ -1393,7 +1393,7 @@ void LevelEditorView::loadMap(const string& path, const string& file)
 void LevelEditorView::saveMap(const string& pathName, const string& fileName)
 {
 	try {
-		LevelFileExport::export_(pathName, fileName, level);
+		LevelFileExport::doExport(pathName, fileName, level);
 	} catch (Exception& exception) {
 		levelEditorScreenController->showErrorPopUp(
 			"Warning: Could not save level file",

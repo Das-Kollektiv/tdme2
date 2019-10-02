@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 		}
 		// TODO: bvs
 		Console::println("Saving level: " + levelFileName);
-		LevelFileExport::export_(
+		LevelFileExport::doExport(
 			FileSystem::getInstance()->getPathName(levelFileName),
 			FileSystem::getInstance()->getFileName(levelFileName),
 			&level
