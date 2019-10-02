@@ -113,64 +113,136 @@ public:
 	/** 
 	 * @return velocity
 	 */
-	inline Vector3& getVelocity() {
+	inline const Vector3& getVelocity() {
 		return velocity;
+	}
+
+	/**
+	 * Set velocity
+	 * @param velocity velocity
+	 */
+	inline void setVelocity(const Vector3& velocity) {
+		this->velocity = velocity;
 	}
 
 	/** 
 	 * @return velocity rnd
 	 */
-	inline Vector3& getVelocityRnd() {
+	inline const Vector3& getVelocityRnd() {
 		return velocityRnd;
+	}
+
+	/**
+	 * Set random velocity
+	 * @param velocityRnd random velocity
+	 */
+	inline void setVelocityRnd(const Vector3& velocityRnd) {
+		this->velocityRnd = velocityRnd;
 	}
 
 	/** 
 	 * @return color start
 	 */
-	inline Color4& getColorStart() {
+	inline const Color4& getColorStart() {
 		return colorStart;
 	}
 
 	/** 
+	 * Set start color
+	 * @param colorStart start color
+	 */
+	inline void setColorStart(const Color4& colorStart) {
+		this->colorStart = colorStart;
+	}
+
+	/**
 	 * @return color end
 	 */
-	inline Color4& getColorEnd() {
+	inline const Color4& getColorEnd() {
 		return colorEnd;
+	}
+
+	/**
+	 * Set end color
+	 * @param colorEnd color end
+	 */
+	inline void setColorEnd(const Color4& colorEnd) {
+		this->colorEnd = colorEnd;
 	}
 
 	/** 
 	 * @return obb center
 	 */
-	inline Vector3& getObbCenter() {
+	inline const Vector3& getObbCenter() {
 		return obbCenter;
 	}
 
 	/** 
+	 * Set obb center
+	 * @param obbCenter obb center
+	 */
+	inline void setObbCenter(const Vector3& obbCenter) {
+		this->obbCenter = obbCenter;
+	}
+
+	/**
 	 * @return obb half extension
 	 */
-	inline Vector3& getObbHalfextension() {
+	inline const Vector3& getObbHalfextension() {
 		return obbHalfextension;
+	}
+
+	/**
+	 * Set obb half extension
+	 * @param obbHalfExtension obb half extension
+	 */
+	inline void setObbHalfextension(const Vector3& obbHalfExtension) {
+		this->obbHalfextension = obbHalfExtension;
 	}
 
 	/** 
 	 * @return obb axis 0
 	 */
-	inline Vector3& getObbAxis0() {
+	inline const Vector3& getObbAxis0() {
 		return obbAxis0;
 	}
 
 	/** 
+	 * Set obb axis 0
+	 * @param obbAxis0 obb axis 0
+	 */
+	inline void setObbAxis0(const Vector3& obbAxis0) {
+		this->obbAxis0 = obbAxis0;
+	}
+
+	/**
 	 * @return obb axis 1
 	 */
-	inline Vector3& getObbAxis1() {
+	inline const Vector3& getObbAxis1() {
 		return obbAxis1;
 	}
 
 	/** 
+	 * Set obb axis 1
+	 * @param obbAxis1 obb axis 1
+	 */
+	inline void setObbAxis1(const Vector3& obbAxis1) {
+		this->obbAxis1 = obbAxis1;
+	}
+
+	/**
 	 * @return obb axis 2
 	 */
-	inline Vector3& getObbAxis2() {
+	inline const Vector3& getObbAxis2() {
 		return obbAxis2;
+	}
+
+	/**
+	 * Set obb axis 2
+	 * @param obbAxis2 obb axis 2
+	 */
+	inline void setObbAxis2(const Vector3& obbAxis2) {
+		this->obbAxis2 = obbAxis2;
 	}
 
 	/**

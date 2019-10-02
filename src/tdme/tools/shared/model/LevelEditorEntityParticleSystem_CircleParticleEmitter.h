@@ -111,39 +111,79 @@ public:
 	/** 
 	 * @return velocity
 	 */
-	inline Vector3& getVelocity() {
+	inline const Vector3& getVelocity() {
 		return velocity;
+	}
+
+	/**
+	 * Set velocity
+	 * @param velocity velocity
+	 */
+	inline void setVelocity(const Vector3& velocity) {
+		this->velocity = velocity;
 	}
 
 	/** 
 	 * @return velocity rnd
 	 */
-	inline Vector3& getVelocityRnd() {
+	inline const Vector3& getVelocityRnd() {
 		return velocityRnd;
+	}
+
+	/**
+	 * Set random velocity
+	 * @param velocityRnd random velocity
+	 */
+	inline void setVelocityRnd(const Vector3& velocityRnd) {
+		this->velocityRnd = velocityRnd;
 	}
 
 	/** 
 	 * @return color start
 	 */
-	inline Color4& getColorStart() {
+	inline const Color4& getColorStart() {
 		return colorStart;
 	}
 
 	/** 
+	 * Set start color
+	 * @param colorStart start color
+	 */
+	inline void setColorStart(const Color4& colorStart) {
+		this->colorStart = colorStart;
+	}
+
+	/**
 	 * @return color end
 	 */
-	inline Color4& getColorEnd() {
+	inline const Color4& getColorEnd() {
 		return colorEnd;
+	}
+
+	/**
+	 * Set end color
+	 * @param colorEnd color end
+	 */
+	inline void setColorEnd(const Color4& colorEnd) {
+		this->colorEnd = colorEnd;
 	}
 
 	/** 
 	 * @return center
 	 */
-	inline Vector3& getCenter() {
+	inline const Vector3& getCenter() {
 		return center;
 	}
 
 	/** 
+	 * Set center
+	 * @param center center
+	 */
+	inline void setCenter(const Vector3& center) {
+		this->center = center;
+	}
+
+	/**
 	 * @return radius
 	 */
 	inline float getRadius() {
@@ -161,15 +201,31 @@ public:
 	/** 
 	 * @return axis 0
 	 */
-	inline Vector3& getAxis0() {
+	inline const Vector3& getAxis0() {
 		return axis0;
 	}
 
 	/** 
+	 * Set axis 0
+	 * @param axis0 axis 0
+	 */
+	inline void setAxis0(const Vector3& axis0) {
+		this->axis0 = axis0;
+	}
+
+	/**
 	 * @return axis 1
 	 */
-	inline Vector3& getAxis1() {
+	inline const Vector3& getAxis1() {
 		return axis1;
+	}
+
+	/**
+	 * Set axis 1
+	 * @param axis0 axis 1
+	 */
+	inline void setAxis1(const Vector3& axis1) {
+		this->axis1 = axis1;
 	}
 
 	/**
