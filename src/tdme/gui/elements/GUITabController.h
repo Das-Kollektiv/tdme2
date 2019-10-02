@@ -35,15 +35,15 @@ private:
 	static string CONDITION_ENABLED;
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
-	GUINode* tabsNode {  };
-	GUINode* tabsHeaderNode {  };
-	bool selected {  };
+	GUINode* tabsNode { nullptr };
+	GUINode* tabsHeaderNode { nullptr };
+	bool selected;
 	GUIColor unfocussedNodeBorderLeftColor;
 	GUIColor unfocussedNodeBorderRightColor;
 	GUIColor unfocussedNodeBorderTopColor;
 	GUIColor unfocussedNodeBorderBottomColor;
-	bool disabled {  };
-	MutableString value {  };
+	bool disabled;
+	MutableString value;
 
 	/** 
 	 * @return is checked

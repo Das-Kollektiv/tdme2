@@ -23,7 +23,7 @@ string GUIKnob::NAME = "knob";
 
 GUIKnob::GUIKnob()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "knob.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "knob.xml");
 }
 
 const string& GUIKnob::getName()
@@ -33,7 +33,7 @@ const string& GUIKnob::getName()
 
 const string& GUIKnob::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIKnob::getAttributes(GUIScreenNode* screenNode)

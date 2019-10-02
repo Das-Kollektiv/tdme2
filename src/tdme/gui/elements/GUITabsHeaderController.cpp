@@ -30,7 +30,7 @@ using tdme::gui::nodes::GUIScreenNode;
 GUITabsHeaderController::GUITabsHeaderController(GUINode* node) 
 	: GUINodeController(node)
 {
-	this->hasFocus_ = false;
+	this->focus = false;
 }
 
 bool GUITabsHeaderController::isDisabled()
@@ -57,7 +57,7 @@ void GUITabsHeaderController::postLayout()
 
 bool GUITabsHeaderController::hasFocus()
 {
-	return hasFocus_;
+	return focus;
 }
 
 void GUITabsHeaderController::unselect()
@@ -186,13 +186,13 @@ void GUITabsHeaderController::tick()
 
 void GUITabsHeaderController::onFocusGained()
 {
-	hasFocus_ = true;
+	focus = true;
 	selectCurrent();
 }
 
 void GUITabsHeaderController::onFocusLost()
 {
-	hasFocus_ = false;
+	focus = false;
 	selectCurrent();
 }
 

@@ -23,7 +23,7 @@ string GUITabs::NAME = "tabs";
 
 GUITabs::GUITabs()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs.xml");
 }
 
 const string& GUITabs::getName()
@@ -33,7 +33,7 @@ const string& GUITabs::getName()
 
 const string& GUITabs::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUITabs::getAttributes(GUIScreenNode* screenNode)

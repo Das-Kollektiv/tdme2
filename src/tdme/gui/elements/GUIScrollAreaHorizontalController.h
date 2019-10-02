@@ -19,7 +19,7 @@ using tdme::utils::MutableString;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::elements::GUIScrollAreaHorizontalController
+class tdme::gui::elements::GUIScrollAreaHorizontalController final
 	: public GUINodeController
 {
 	friend class GUIScrollAreaHorizontal;
@@ -42,7 +42,7 @@ public:
 
 private:
 	MutableString value;
-	GUIActionListener* actionListener;
+	GUIActionListener* actionListener { nullptr };
 
 	/**
 	 * Private constructor

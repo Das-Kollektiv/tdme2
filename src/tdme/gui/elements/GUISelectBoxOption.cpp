@@ -17,7 +17,7 @@ string GUISelectBoxOption::NAME = "selectbox-option";
 
 GUISelectBoxOption::GUISelectBoxOption()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-option.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-option.xml");
 }
 
 const string& GUISelectBoxOption::getName()
@@ -27,7 +27,7 @@ const string& GUISelectBoxOption::getName()
 
 const string& GUISelectBoxOption::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUISelectBoxOption::getAttributes(GUIScreenNode* screenNode)

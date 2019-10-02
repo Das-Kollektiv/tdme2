@@ -23,7 +23,7 @@ string GUIButton::NAME = "button";
 
 GUIButton::GUIButton()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "button.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "button.xml");
 }
 
 const string& GUIButton::getName()
@@ -33,7 +33,7 @@ const string& GUIButton::getName()
 
 const string& GUIButton::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIButton::getAttributes(GUIScreenNode* screenNode)

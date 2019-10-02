@@ -33,9 +33,9 @@ private:
 	static string CONDITION_UNCHECKED;
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	bool checked {  };
-	bool disabled {  };
-	MutableString value {  };
+	bool checked;
+	bool disabled;
+	MutableString value;
 
 	/** 
 	 * @return is checked

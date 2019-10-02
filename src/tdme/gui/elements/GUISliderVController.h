@@ -37,6 +37,10 @@ public:
 	void setValue(const MutableString& value) override;
 
 private:
+	/**
+	 * Public constructor
+	 * @param node node
+	 */
 	GUISliderVController(GUINode* node);
 
 	/**

@@ -23,7 +23,7 @@ string GUIRadioButton::NAME = "radiobutton";
 
 GUIRadioButton::GUIRadioButton()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "radiobutton.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "radiobutton.xml");
 }
 
 const string& GUIRadioButton::getName()
@@ -33,7 +33,7 @@ const string& GUIRadioButton::getName()
 
 const string& GUIRadioButton::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIRadioButton::getAttributes(GUIScreenNode* screenNode)

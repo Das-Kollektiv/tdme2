@@ -38,14 +38,14 @@ private:
 	static string CONDITION_ENABLED;
 	static string CONDITION_OPENED;
 	static string CONDITION_CLOSED;
-	vector<GUINode*> childControllerNodes {  };
-	vector<GUIDropDownOptionController*> dropDownOptionControllers {  };
-	bool isOpen_ {  };
-	bool disabled {  };
-	GUIParentNode* dropDownNode {  };
-	GUIElementNode* arrowNode {  };
-	GUIElementNode* textElementNode {  };
-	MutableString value {  };
+	vector<GUINode*> childControllerNodes;
+	vector<GUIDropDownOptionController*> dropDownOptionControllers;
+	bool isOpen_;
+	bool disabled;
+	GUIParentNode* dropDownNode { nullptr };
+	GUIElementNode* arrowNode { nullptr };
+	GUIElementNode* textElementNode { nullptr };
+	MutableString value;
 
 public:
 	bool isDisabled() override;

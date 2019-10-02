@@ -29,10 +29,10 @@ class tdme::gui::elements::GUITabsHeaderController final
 	friend class GUITabController;
 
 private:
-	GUINode* tabsNode {  };
-	vector<GUINode*> childControllerNodes {  };
-	vector<GUITabController*> tabControllers {  };
-	bool hasFocus_ {  };
+	GUINode* tabsNode { nullptr };
+	vector<GUINode*> childControllerNodes;
+	vector<GUITabController*> tabControllers;
+	bool focus;
 	MutableString value;
 
 public:

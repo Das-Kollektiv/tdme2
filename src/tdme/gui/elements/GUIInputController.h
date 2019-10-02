@@ -31,8 +31,8 @@ class tdme::gui::elements::GUIInputController final
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	GUIInputInternalNode* textInputNode {  };
-	bool disabled {  };
+	GUIInputInternalNode* textInputNode { nullptr };
+	bool disabled;
 
 	/**
 	 * Private constructor

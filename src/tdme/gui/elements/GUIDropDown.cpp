@@ -17,7 +17,7 @@ string GUIDropDown::NAME = "dropdown";
 
 GUIDropDown::GUIDropDown()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "dropdown.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "dropdown.xml");
 }
 
 const string& GUIDropDown::getName()
@@ -27,7 +27,7 @@ const string& GUIDropDown::getName()
 
 const string& GUIDropDown::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIDropDown::getAttributes(GUIScreenNode* screenNode)

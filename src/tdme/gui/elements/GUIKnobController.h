@@ -47,6 +47,6 @@ private:
 	GUINode* knobNode { nullptr };
 	bool disabled { false };
 	float valueFloat { 0.0f };
-	MutableString value { };
-	int mouseLastX {  };
+	MutableString value;
+	int mouseLastX;
 };
