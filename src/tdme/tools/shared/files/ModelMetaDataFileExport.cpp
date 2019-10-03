@@ -43,9 +43,9 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-#include <ext/jsonbox/Array.h>
-#include <ext/jsonbox/JsonException.h>
-#include <ext/jsonbox/Object.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 using std::ostringstream;
 using std::string;
@@ -87,6 +87,11 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
+using rapidjson::Document;
+using rapidjson::StringBuffer;
+using rapidjson::Writer;
+using rapidjson::Value;
+
 void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
 {
 }
@@ -94,17 +99,21 @@ void ModelMetaDataFileExport::copyFile(const string& source, const string& dest)
 void ModelMetaDataFileExport::doExport(const string& pathName, const string& fileName, LevelEditorEntity* entity)
 {
 	entity->setEntityFileName(FileSystem::getInstance()->getCanonicalPath(pathName, fileName));
-	auto jEntityRoot = exportToJSON(entity);
+	Document jRoot;
+	jRoot.SetObject();
+	exportToJSON(jRoot, jRoot, entity);
 
-	ostringstream json;
-	json << jEntityRoot;
+	StringBuffer strbuf;
+	Writer<StringBuffer> writer(strbuf);
+	jRoot.Accept(writer);
 
-	FileSystem::getInstance()->setContentFromString(pathName, fileName, (json.str()));
+	FileSystem::getInstance()->setContentFromString(pathName, fileName, strbuf.GetString());
 }
 
-tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEditorEntityLODLevel* lodLevel) {
-	ext::jsonbox::Object jLodLevelRoot;
-	jLodLevelRoot["t"] = static_cast<int>(lodLevel->getType());
+void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, LevelEditorEntityLODLevel* lodLevel) {
+	rapidjson::Document::AllocatorType& jAllocator = jDocument.GetAllocator();
+	jLodLevelRoot.SetObject();
+	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
 	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) {
 		//
 		auto modelPathName = Tools::getPath(lodLevel->getFileName());
@@ -116,23 +125,22 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportLODLevelToJSON(LevelEd
 			modelPathName,
 			modelFileName
 		);
-		jLodLevelRoot["f"] = (modelPathName + "/" + modelFileName);
+		jLodLevelRoot.AddMember("f", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
 	}
-	jLodLevelRoot["d"] = lodLevel->getMinDistance();
-	jLodLevelRoot["cmr"] = lodLevel->getColorMul().getRed();
-	jLodLevelRoot["cmg"] = lodLevel->getColorMul().getGreen();
-	jLodLevelRoot["cmb"] = lodLevel->getColorMul().getBlue();
-	jLodLevelRoot["cma"] = lodLevel->getColorMul().getAlpha();
-	jLodLevelRoot["car"] = lodLevel->getColorAdd().getRed();
-	jLodLevelRoot["cag"] = lodLevel->getColorAdd().getGreen();
-	jLodLevelRoot["cab"] = lodLevel->getColorAdd().getBlue();
-	jLodLevelRoot["caa"] = lodLevel->getColorAdd().getAlpha();
-	return jLodLevelRoot;
+	jLodLevelRoot.AddMember("d", Value(lodLevel->getMinDistance()), jAllocator);
+	jLodLevelRoot.AddMember("cmr", Value(lodLevel->getColorMul().getRed()), jAllocator);
+	jLodLevelRoot.AddMember("cmg", Value(lodLevel->getColorMul().getGreen()), jAllocator);
+	jLodLevelRoot.AddMember("cmb", Value(lodLevel->getColorMul().getBlue()), jAllocator);
+	jLodLevelRoot.AddMember("cma", Value(lodLevel->getColorMul().getAlpha()), jAllocator);
+	jLodLevelRoot.AddMember("car", Value(lodLevel->getColorAdd().getRed()), jAllocator);
+	jLodLevelRoot.AddMember("cag", Value(lodLevel->getColorAdd().getGreen()), jAllocator);
+	jLodLevelRoot.AddMember("cab", Value(lodLevel->getColorAdd().getBlue()), jAllocator);
+	jLodLevelRoot.AddMember("caa", Value(lodLevel->getColorAdd().getAlpha()), jAllocator);
 }
 
-tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEntity* entity)
+void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRoot, LevelEditorEntity* entity)
 {
-	ext::jsonbox::Object jEntityRoot;
+	rapidjson::Document::AllocatorType& jAllocator = jDocument.GetAllocator();
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {
 		auto modelPathName = Tools::getPath(entity->getFileName());
 		auto modelFileName =
@@ -143,11 +151,11 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			modelPathName,
 			modelFileName
 		);
-		jEntityRoot["file"] = (modelPathName + "/" + modelFileName);
+		jEntityRoot.AddMember("file", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
 		/*
 		try {
 			auto thumbnail = modelFileName + ".png";
-			jEntityRoot["thumbnail] = (thumbnail));
+			jEntityRoot.AddMember("thumbnail] = (thumbnail));
 			copyFile("./tmp/ + entity->getThumbnail(), Tools::getPath(entity->getFileName()) + thumbnail));
 		} catch (Exception& exception) {
 			Console::print(string("ModelMetaDataFileExport::export(): An error occurred: '));
@@ -156,7 +164,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 			Console::println(exception.what());
 		}
 		*/
-		jEntityRoot["tm"] = entity->getModelSettings()->isTerrainMesh();
+		jEntityRoot.AddMember("tm", Value(entity->getModelSettings()->isTerrainMesh()), jAllocator);
 		int lodLevelIdx = 2;
 		{
 			auto lodLevel = entity->getLODLevel2();
@@ -165,7 +173,10 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
-				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);
+				Value jLodLevel;
+				jLodLevel.SetObject();
+				exportLODLevelToJSON(jDocument, jLodLevel, lodLevel);
+				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
 			}
 		}
 		{
@@ -175,41 +186,49 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
-				jEntityRoot["ll" + to_string(lodLevelIdx++)] = exportLODLevelToJSON(lodLevel);
+				//
+				Value jLodLevel;
+				jLodLevel.SetObject();
+				exportLODLevelToJSON(jDocument, jLodLevel, lodLevel);
+				jEntityRoot.AddMember(rapidjson::GenericStringRef<char>((string("ll") + to_string(lodLevelIdx++)).c_str()), jLodLevel, jAllocator);
 			}
 		}
 	}
-	jEntityRoot["version"] = "1.99";
-	jEntityRoot["type"] = (entity->getType()->getName());
-	jEntityRoot["name"] = (entity->getName());
-	jEntityRoot["descr"] = (entity->getDescription());
-	jEntityRoot["px"] = static_cast< double >(entity->getPivot().getX());
-	jEntityRoot["py"] = static_cast< double >(entity->getPivot().getY());
-	jEntityRoot["pz"] = static_cast< double >(entity->getPivot().getZ());
+	jEntityRoot.AddMember("version", Value("1.99", jAllocator), jAllocator);
+	jEntityRoot.AddMember("type", Value(entity->getType()->getName(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("name", Value(entity->getName(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("descr", Value(entity->getDescription(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("px", Value(entity->getPivot().getX()), jAllocator);
+	jEntityRoot.AddMember("py", Value(entity->getPivot().getY()), jAllocator);
+	jEntityRoot.AddMember("pz", Value(entity->getPivot().getZ()), jAllocator);
 	if (entity->getSounds().size() > 0) {
-		ext::jsonbox::Array jSounds;
+		Value jSounds;
+		jSounds.SetArray();
 		for (auto sound: entity->getSounds()) {
 			if (sound->getFileName().length() == 0) continue;
-			ext::jsonbox::Object jSound;
-			jSound["i"] = sound->getId();
-			jSound["a"] = sound->getAnimation();
-			jSound["file"] = sound->getFileName();
-			jSound["g"] = sound->getGain();
-			jSound["p"] = sound->getPitch();
-			jSound["o"] = sound->getOffset();
-			jSound["l"] = sound->isLooping();
-			jSound["f"] = sound->isFixed();
-			jSounds.push_back(jSound);
+			Value jSound;
+			jSound.SetObject();
+			jSound.AddMember("i", Value(sound->getId(), jAllocator), jAllocator);
+			jSound.AddMember("a", Value(sound->getAnimation(), jAllocator), jAllocator);
+			jSound.AddMember("file", Value(sound->getFileName(), jAllocator), jAllocator);
+			jSound.AddMember("g", Value(sound->getGain()), jAllocator);
+			jSound.AddMember("p", Value(sound->getPitch()), jAllocator);
+			jSound.AddMember("o", Value(sound->getOffset()), jAllocator);
+			jSound.AddMember("l", Value(sound->isLooping()), jAllocator);
+			jSound.AddMember("f", Value(sound->isFixed()), jAllocator);
+			jSounds.PushBack(jSound, jAllocator);
 		}
-		jEntityRoot["sd"] = jSounds;
+		jEntityRoot.AddMember("sd", jSounds, jAllocator);
 	}
 
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		ext::jsonbox::Array jParticleSystems;
+		Value jParticleSystems;
+		jParticleSystems.SetArray();
 		for (auto i = 0; i < entity->getParticleSystemsCount(); i++) {
 			auto particleSystem = entity->getParticleSystemAt(i);
-			ext::jsonbox::Object jParticleSystem;
-			jParticleSystem["t"] = (particleSystem->getType()->getName());
+			Value jParticleSystem;
+			jParticleSystem.SetObject();
+			jParticleSystem.AddMember("t", Value(particleSystem->getType()->getName(), jAllocator), jAllocator);
 			{
 				auto v = particleSystem->getType();
 				if (v == LevelEditorEntityParticleSystem_Type::NONE) {
@@ -217,7 +236,8 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				} else
 				if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM)
 				{
-					ext::jsonbox::Object jObjectParticleSystem;
+					Value jObjectParticleSystem;
+					jObjectParticleSystem.SetObject();
 					if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
 						auto modelPathName = Tools::getPath(particleSystem->getObjectParticleSystem()->getModelFile());
 						auto modelFileName = Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile() + (StringUtils::endsWith(particleSystem->getObjectParticleSystem()->getModelFile(), ".tm") == false ? ".tm" : ""));
@@ -228,32 +248,34 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 						);
 						particleSystem->getObjectParticleSystem()->setModelFile(modelPathName + "/" + modelFileName);
 					}
-					jObjectParticleSystem["mc"] = particleSystem->getObjectParticleSystem()->getMaxCount();
-					jObjectParticleSystem["sx"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getX());
-					jObjectParticleSystem["sy"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getY());
-					jObjectParticleSystem["sz"] = static_cast< double >(particleSystem->getObjectParticleSystem()->getScale().getZ());
-					jObjectParticleSystem["mf"] = (particleSystem->getObjectParticleSystem()->getModelFile());
-					jObjectParticleSystem["ae"] = particleSystem->getObjectParticleSystem()->isAutoEmit();
-					jParticleSystem["ops"] = jObjectParticleSystem;
+					jObjectParticleSystem.AddMember("mc", Value(particleSystem->getObjectParticleSystem()->getMaxCount()), jAllocator);
+					jObjectParticleSystem.AddMember("sx", Value(particleSystem->getObjectParticleSystem()->getScale().getX()), jAllocator);
+					jObjectParticleSystem.AddMember("sy", Value(particleSystem->getObjectParticleSystem()->getScale().getY()), jAllocator);
+					jObjectParticleSystem.AddMember("sz", Value(particleSystem->getObjectParticleSystem()->getScale().getZ()), jAllocator);
+					jObjectParticleSystem.AddMember("mf", Value(particleSystem->getObjectParticleSystem()->getModelFile(), jAllocator), jAllocator);
+					jObjectParticleSystem.AddMember("ae", Value(particleSystem->getObjectParticleSystem()->isAutoEmit()), jAllocator);
+					jParticleSystem.AddMember("ops", jObjectParticleSystem, jAllocator);
 				} else
 				if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM)
 				{
-					ext::jsonbox::Object jPointParticleSystem;
-					jPointParticleSystem["mp"] = particleSystem->getPointParticleSystem()->getMaxPoints();
-					jPointParticleSystem["ps"] = particleSystem->getPointParticleSystem()->getPointSize();
-					jPointParticleSystem["t"] = particleSystem->getPointParticleSystem()->getTextureFileName();
-					jPointParticleSystem["tt"] = particleSystem->getPointParticleSystem()->getTransparencyTextureFileName();
-					jPointParticleSystem["ae"] = particleSystem->getPointParticleSystem()->isAutoEmit();
-					jParticleSystem["pps"] = jPointParticleSystem;
+					Value jPointParticleSystem;
+					jPointParticleSystem.SetObject();
+					jPointParticleSystem.AddMember("mp", Value(particleSystem->getPointParticleSystem()->getMaxPoints()), jAllocator);
+					jPointParticleSystem.AddMember("ps", Value(particleSystem->getPointParticleSystem()->getPointSize()), jAllocator);
+					jPointParticleSystem.AddMember("t", Value(particleSystem->getPointParticleSystem()->getTextureFileName(), jAllocator), jAllocator);
+					jPointParticleSystem.AddMember("tt", Value(particleSystem->getPointParticleSystem()->getTransparencyTextureFileName(), jAllocator), jAllocator);
+					jPointParticleSystem.AddMember("ae", Value(particleSystem->getPointParticleSystem()->isAutoEmit()), jAllocator);
+					jParticleSystem.AddMember("pps", jPointParticleSystem, jAllocator);
 				} else
 				if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM)
 				{
-					ext::jsonbox::Object jFogParticleSystem;
-					jFogParticleSystem["mp"] = particleSystem->getFogParticleSystem()->getMaxPoints();
-					jFogParticleSystem["ps"] = particleSystem->getFogParticleSystem()->getPointSize();
-					jFogParticleSystem["t"] = particleSystem->getFogParticleSystem()->getTextureFileName();
-					jFogParticleSystem["tt"] = particleSystem->getFogParticleSystem()->getTransparencyTextureFileName();
-					jParticleSystem["fps"] = jFogParticleSystem;
+					Value jFogParticleSystem;
+					jFogParticleSystem.SetObject();
+					jFogParticleSystem.AddMember("mp", Value(particleSystem->getFogParticleSystem()->getMaxPoints()), jAllocator);
+					jFogParticleSystem.AddMember("ps", Value(particleSystem->getFogParticleSystem()->getPointSize()), jAllocator);
+					jFogParticleSystem.AddMember("t", Value(particleSystem->getFogParticleSystem()->getTextureFileName(), jAllocator), jAllocator);
+					jFogParticleSystem.AddMember("tt", Value(particleSystem->getFogParticleSystem()->getTransparencyTextureFileName(), jAllocator), jAllocator);
+					jParticleSystem.AddMember("fps", jFogParticleSystem, jAllocator);
 				} else {
 					Console::println(
 						string(
@@ -265,7 +287,7 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				}
 			}
 
-			jParticleSystem["e"] = (particleSystem->getEmitter()->getName());
+			jParticleSystem.AddMember("e", Value(particleSystem->getEmitter()->getName(), jAllocator), jAllocator);
 			{
 				auto v = particleSystem->getEmitter();
 				if (v == LevelEditorEntityParticleSystem_Emitter::NONE)
@@ -273,165 +295,169 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 				} else
 				if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER)
 				{
-					ext::jsonbox::Object jPointParticleEmitter;
+					Value jPointParticleEmitter;
+					jPointParticleEmitter.SetObject();
 					auto emitter = particleSystem->getPointParticleEmitter();
-					jPointParticleEmitter["c"] = emitter->getCount();
-					jPointParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jPointParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jPointParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jPointParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jPointParticleEmitter["px"] = static_cast< double >(emitter->getPosition().getX());
-					jPointParticleEmitter["py"] = static_cast< double >(emitter->getPosition().getY());
-					jPointParticleEmitter["pz"] = static_cast< double >(emitter->getPosition().getZ());
-					jPointParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jPointParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jPointParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jPointParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jPointParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jPointParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jPointParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jPointParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jPointParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jPointParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jPointParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jPointParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jPointParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jPointParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jParticleSystem["ppe"] = jPointParticleEmitter;
+					jPointParticleEmitter.AddMember("c", Value(emitter->getCount()), jAllocator);
+					jPointParticleEmitter.AddMember("lt", Value(emitter->getLifeTime()), jAllocator);
+					jPointParticleEmitter.AddMember("ltrnd", Value(emitter->getLifeTimeRnd()), jAllocator);
+					jPointParticleEmitter.AddMember("m", Value(emitter->getMass()), jAllocator);
+					jPointParticleEmitter.AddMember("mrnd", Value(emitter->getMassRnd()), jAllocator);
+					jPointParticleEmitter.AddMember("px", Value(emitter->getPosition().getX()), jAllocator);
+					jPointParticleEmitter.AddMember("py", Value(emitter->getPosition().getY()), jAllocator);
+					jPointParticleEmitter.AddMember("pz", Value(emitter->getPosition().getZ()), jAllocator);
+					jPointParticleEmitter.AddMember("vx", Value(emitter->getVelocity().getX()), jAllocator);
+					jPointParticleEmitter.AddMember("vy", Value(emitter->getVelocity().getY()), jAllocator);
+					jPointParticleEmitter.AddMember("vz", Value(emitter->getVelocity().getZ()), jAllocator);
+					jPointParticleEmitter.AddMember("vrndx", Value(emitter->getVelocityRnd().getX()), jAllocator);
+					jPointParticleEmitter.AddMember("vrndy", Value(emitter->getVelocityRnd().getY()), jAllocator);
+					jPointParticleEmitter.AddMember("vrndz", Value(emitter->getVelocityRnd().getZ()), jAllocator);
+					jPointParticleEmitter.AddMember("csr", Value(emitter->getColorStart().getRed()), jAllocator);
+					jPointParticleEmitter.AddMember("csg", Value(emitter->getColorStart().getGreen()), jAllocator);
+					jPointParticleEmitter.AddMember("csb", Value(emitter->getColorStart().getBlue()), jAllocator);
+					jPointParticleEmitter.AddMember("csa", Value(emitter->getColorStart().getAlpha()), jAllocator);
+					jPointParticleEmitter.AddMember("cer", Value(emitter->getColorEnd().getRed()), jAllocator);
+					jPointParticleEmitter.AddMember("ceg", Value(emitter->getColorEnd().getGreen()), jAllocator);
+					jPointParticleEmitter.AddMember("ceb", Value(emitter->getColorEnd().getBlue()), jAllocator);
+					jPointParticleEmitter.AddMember("cea", Value(emitter->getColorEnd().getAlpha()), jAllocator);
+					jParticleSystem.AddMember("ppe", jPointParticleEmitter, jAllocator);
 				} else
 				if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER)
 				{
-					ext::jsonbox::Object jBoundingBoxParticleEmitter;
+					Value jBoundingBoxParticleEmitter;
+					jBoundingBoxParticleEmitter.SetObject();
 					auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-					jBoundingBoxParticleEmitter["c"] = emitter->getCount();
-					jBoundingBoxParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jBoundingBoxParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jBoundingBoxParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jBoundingBoxParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jBoundingBoxParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jBoundingBoxParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jBoundingBoxParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jBoundingBoxParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jBoundingBoxParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jBoundingBoxParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jBoundingBoxParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jBoundingBoxParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jBoundingBoxParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jBoundingBoxParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jBoundingBoxParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jBoundingBoxParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jBoundingBoxParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jBoundingBoxParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jBoundingBoxParticleEmitter["ocx"] = static_cast< double >(emitter->getObbCenter().getX());
-					jBoundingBoxParticleEmitter["ocy"] = static_cast< double >(emitter->getObbCenter().getY());
-					jBoundingBoxParticleEmitter["ocz"] = static_cast< double >(emitter->getObbCenter().getZ());
-					jBoundingBoxParticleEmitter["ohex"] = static_cast< double >(emitter->getObbHalfextension().getX());
-					jBoundingBoxParticleEmitter["ohey"] = static_cast< double >(emitter->getObbHalfextension().getY());
-					jBoundingBoxParticleEmitter["ohez"] = static_cast< double >(emitter->getObbHalfextension().getZ());
-					jBoundingBoxParticleEmitter["oa0x"] = static_cast< double >(emitter->getObbAxis0().getX());
-					jBoundingBoxParticleEmitter["oa0y"] = static_cast< double >(emitter->getObbAxis0().getY());
-					jBoundingBoxParticleEmitter["oa0z"] = static_cast< double >(emitter->getObbAxis0().getZ());
-					jBoundingBoxParticleEmitter["oa1x"] = static_cast< double >(emitter->getObbAxis1().getX());
-					jBoundingBoxParticleEmitter["oa1y"] = static_cast< double >(emitter->getObbAxis1().getY());
-					jBoundingBoxParticleEmitter["oa1z"] = static_cast< double >(emitter->getObbAxis1().getZ());
-					jBoundingBoxParticleEmitter["oa2x"] = static_cast< double >(emitter->getObbAxis2().getX());
-					jBoundingBoxParticleEmitter["oa2y"] = static_cast< double >(emitter->getObbAxis2().getY());
-					jBoundingBoxParticleEmitter["oa2z"] = static_cast< double >(emitter->getObbAxis2().getZ());
-					jParticleSystem["bbpe"] = jBoundingBoxParticleEmitter;
+					jBoundingBoxParticleEmitter.AddMember("c", Value(emitter->getCount()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("lt", Value(emitter->getLifeTime()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ltrnd", Value(emitter->getLifeTimeRnd()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("m", Value(emitter->getMass()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("mrnd", Value(emitter->getMassRnd()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("vx", Value(emitter->getVelocity().getX()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("vy", Value(emitter->getVelocity().getY()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("vz", Value(emitter->getVelocity().getZ()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("vrndx", Value(emitter->getVelocityRnd().getX()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("vrndy", Value(emitter->getVelocityRnd().getY()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("vrndz", Value(emitter->getVelocityRnd().getZ()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("csr", Value(emitter->getColorStart().getRed()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("csg", Value(emitter->getColorStart().getGreen()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("csb", Value(emitter->getColorStart().getBlue()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("csa", Value(emitter->getColorStart().getAlpha()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("cer", Value(emitter->getColorEnd().getRed()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ceg", Value(emitter->getColorEnd().getGreen()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ceb", Value(emitter->getColorEnd().getBlue()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("cea", Value(emitter->getColorEnd().getAlpha()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ocx", Value(emitter->getObbCenter().getX()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ocy", Value(emitter->getObbCenter().getY()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ocz", Value(emitter->getObbCenter().getZ()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ohex", Value(emitter->getObbHalfextension().getX()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ohey", Value(emitter->getObbHalfextension().getY()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("ohez", Value(emitter->getObbHalfextension().getZ()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa0x", Value(emitter->getObbAxis0().getX()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa0y", Value(emitter->getObbAxis0().getY()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa0z", Value(emitter->getObbAxis0().getZ()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa1x", Value(emitter->getObbAxis1().getX()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa1y", Value(emitter->getObbAxis1().getY()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa1z", Value(emitter->getObbAxis1().getZ()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa2x", Value(emitter->getObbAxis2().getX()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa2y", Value(emitter->getObbAxis2().getY()), jAllocator);
+					jBoundingBoxParticleEmitter.AddMember("oa2z", Value(emitter->getObbAxis2().getZ()), jAllocator);
+					jParticleSystem.AddMember("bbpe", jBoundingBoxParticleEmitter, jAllocator);
 				} else
 				if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER)
 				{
-					ext::jsonbox::Object jCircleParticleEmitter;
+					Value jCircleParticleEmitter;
+					jCircleParticleEmitter.SetObject();
 					auto emitter = particleSystem->getCircleParticleEmitter();
-					jCircleParticleEmitter["c"] = emitter->getCount();
-					jCircleParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jCircleParticleEmitter["ltrnd"] = static_cast< int32_t>(emitter->getLifeTimeRnd());
-					jCircleParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jCircleParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jCircleParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jCircleParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jCircleParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jCircleParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jCircleParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jCircleParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jCircleParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jCircleParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jCircleParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jCircleParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jCircleParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jCircleParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jCircleParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jCircleParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jCircleParticleEmitter["cx"] = static_cast< double >(emitter->getCenter().getX());
-					jCircleParticleEmitter["cy"] = static_cast< double >(emitter->getCenter().getY());
-					jCircleParticleEmitter["cz"] = static_cast< double >(emitter->getCenter().getZ());
-					jCircleParticleEmitter["r"] = static_cast< double >(emitter->getRadius());
-					jCircleParticleEmitter["a0x"] = static_cast< double >(emitter->getAxis0().getX());
-					jCircleParticleEmitter["a0y"] = static_cast< double >(emitter->getAxis0().getY());
-					jCircleParticleEmitter["a0z"] = static_cast< double >(emitter->getAxis0().getZ());
-					jCircleParticleEmitter["a1x"] = static_cast< double >(emitter->getAxis1().getX());
-					jCircleParticleEmitter["a1y"] = static_cast< double >(emitter->getAxis1().getY());
-					jCircleParticleEmitter["a1z"] = static_cast< double >(emitter->getAxis1().getZ());
-					jParticleSystem["cpe"] = jCircleParticleEmitter;
+					jCircleParticleEmitter.AddMember("c", Value(emitter->getCount()), jAllocator);
+					jCircleParticleEmitter.AddMember("lt", Value(emitter->getLifeTime()), jAllocator);
+					jCircleParticleEmitter.AddMember("ltrnd", Value(emitter->getLifeTimeRnd()), jAllocator);
+					jCircleParticleEmitter.AddMember("m", Value(emitter->getMass()), jAllocator);
+					jCircleParticleEmitter.AddMember("mrnd", Value(emitter->getMassRnd()), jAllocator);
+					jCircleParticleEmitter.AddMember("vx", Value(emitter->getVelocity().getX()), jAllocator);
+					jCircleParticleEmitter.AddMember("vy", Value(emitter->getVelocity().getY()), jAllocator);
+					jCircleParticleEmitter.AddMember("vz", Value(emitter->getVelocity().getZ()), jAllocator);
+					jCircleParticleEmitter.AddMember("vrndx", Value(emitter->getVelocityRnd().getX()), jAllocator);
+					jCircleParticleEmitter.AddMember("vrndy", Value(emitter->getVelocityRnd().getY()), jAllocator);
+					jCircleParticleEmitter.AddMember("vrndz", Value(emitter->getVelocityRnd().getZ()), jAllocator);
+					jCircleParticleEmitter.AddMember("csr", Value(emitter->getColorStart().getRed()), jAllocator);
+					jCircleParticleEmitter.AddMember("csg", Value(emitter->getColorStart().getGreen()), jAllocator);
+					jCircleParticleEmitter.AddMember("csb", Value(emitter->getColorStart().getBlue()), jAllocator);
+					jCircleParticleEmitter.AddMember("csa", Value(emitter->getColorStart().getAlpha()), jAllocator);
+					jCircleParticleEmitter.AddMember("cer", Value(emitter->getColorEnd().getRed()), jAllocator);
+					jCircleParticleEmitter.AddMember("ceg", Value(emitter->getColorEnd().getGreen()), jAllocator);
+					jCircleParticleEmitter.AddMember("ceb", Value(emitter->getColorEnd().getBlue()), jAllocator);
+					jCircleParticleEmitter.AddMember("cea", Value(emitter->getColorEnd().getAlpha()), jAllocator);
+					jCircleParticleEmitter.AddMember("cx", Value(emitter->getCenter().getX()), jAllocator);
+					jCircleParticleEmitter.AddMember("cy", Value(emitter->getCenter().getY()), jAllocator);
+					jCircleParticleEmitter.AddMember("cz", Value(emitter->getCenter().getZ()), jAllocator);
+					jCircleParticleEmitter.AddMember("r", Value(emitter->getRadius()), jAllocator);
+					jCircleParticleEmitter.AddMember("a0x", Value(emitter->getAxis0().getX()), jAllocator);
+					jCircleParticleEmitter.AddMember("a0y", Value(emitter->getAxis0().getY()), jAllocator);
+					jCircleParticleEmitter.AddMember("a0z", Value(emitter->getAxis0().getZ()), jAllocator);
+					jCircleParticleEmitter.AddMember("a1x", Value(emitter->getAxis1().getX()), jAllocator);
+					jCircleParticleEmitter.AddMember("a1y", Value(emitter->getAxis1().getY()), jAllocator);
+					jCircleParticleEmitter.AddMember("a1z", Value(emitter->getAxis1().getZ()), jAllocator);
+					jParticleSystem.AddMember("cpe", jCircleParticleEmitter, jAllocator);
 				} else
 				if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
-					ext::jsonbox::Object jCircleParticleEmitterPlaneVelocity;
+					Value jCircleParticleEmitterPlaneVelocity;
 					auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-					jCircleParticleEmitterPlaneVelocity["c"] = emitter->getCount();
-					jCircleParticleEmitterPlaneVelocity["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jCircleParticleEmitterPlaneVelocity["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jCircleParticleEmitterPlaneVelocity["m"] = static_cast< double >(emitter->getMass());
-					jCircleParticleEmitterPlaneVelocity["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jCircleParticleEmitterPlaneVelocity["v"] = static_cast< double >(emitter->getVelocity());
-					jCircleParticleEmitterPlaneVelocity["vrnd"] = static_cast< double >(emitter->getVelocityRnd());
-					jCircleParticleEmitterPlaneVelocity["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jCircleParticleEmitterPlaneVelocity["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jCircleParticleEmitterPlaneVelocity["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jCircleParticleEmitterPlaneVelocity["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jCircleParticleEmitterPlaneVelocity["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jCircleParticleEmitterPlaneVelocity["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jCircleParticleEmitterPlaneVelocity["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jCircleParticleEmitterPlaneVelocity["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jCircleParticleEmitterPlaneVelocity["cx"] = static_cast< double >(emitter->getCenter().getX());
-					jCircleParticleEmitterPlaneVelocity["cy"] = static_cast< double >(emitter->getCenter().getY());
-					jCircleParticleEmitterPlaneVelocity["cz"] = static_cast< double >(emitter->getCenter().getZ());
-					jCircleParticleEmitterPlaneVelocity["r"] = static_cast< double >(emitter->getRadius());
-					jCircleParticleEmitterPlaneVelocity["a0x"] = static_cast< double >(emitter->getAxis0().getX());
-					jCircleParticleEmitterPlaneVelocity["a0y"] = static_cast< double >(emitter->getAxis0().getY());
-					jCircleParticleEmitterPlaneVelocity["a0z"] = static_cast< double >(emitter->getAxis0().getZ());
-					jCircleParticleEmitterPlaneVelocity["a1x"] = static_cast< double >(emitter->getAxis1().getX());
-					jCircleParticleEmitterPlaneVelocity["a1y"] = static_cast< double >(emitter->getAxis1().getY());
-					jCircleParticleEmitterPlaneVelocity["a1z"] = static_cast< double >(emitter->getAxis1().getZ());
-					jParticleSystem["cpeev"] = jCircleParticleEmitterPlaneVelocity;
+					jCircleParticleEmitterPlaneVelocity.AddMember("c", Value(emitter->getCount()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("lt", Value(emitter->getLifeTime()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("ltrnd", Value(emitter->getLifeTimeRnd()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("m", Value(emitter->getMass()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("mrnd", Value(emitter->getMassRnd()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("v", Value(emitter->getVelocity()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("vrnd", Value(emitter->getVelocityRnd()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("csr", Value(emitter->getColorStart().getRed()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("csg", Value(emitter->getColorStart().getGreen()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("csb", Value(emitter->getColorStart().getBlue()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("csa", Value(emitter->getColorStart().getAlpha()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("cer", Value(emitter->getColorEnd().getRed()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("ceg", Value(emitter->getColorEnd().getGreen()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("ceb", Value(emitter->getColorEnd().getBlue()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("cea", Value(emitter->getColorEnd().getAlpha()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("cx", Value(emitter->getCenter().getX()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("cy", Value(emitter->getCenter().getY()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("cz", Value(emitter->getCenter().getZ()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("r", Value(emitter->getRadius()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("a0x", Value(emitter->getAxis0().getX()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("a0y", Value(emitter->getAxis0().getY()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("a0z", Value(emitter->getAxis0().getZ()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("a1x", Value(emitter->getAxis1().getX()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("a1y", Value(emitter->getAxis1().getY()), jAllocator);
+					jCircleParticleEmitterPlaneVelocity.AddMember("a1z", Value(emitter->getAxis1().getZ()), jAllocator);
+					jParticleSystem.AddMember("cpeev", jCircleParticleEmitterPlaneVelocity, jAllocator);
 				} else
 				if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER)
 				{
-					ext::jsonbox::Object jSphereParticleEmitter;
+					Value jSphereParticleEmitter;
+					jSphereParticleEmitter.SetObject();
 					auto emitter = particleSystem->getSphereParticleEmitter();
-					jSphereParticleEmitter["c"] = emitter->getCount();
-					jSphereParticleEmitter["lt"] = static_cast< int32_t >(emitter->getLifeTime());
-					jSphereParticleEmitter["ltrnd"] = static_cast< int32_t >(emitter->getLifeTimeRnd());
-					jSphereParticleEmitter["m"] = static_cast< double >(emitter->getMass());
-					jSphereParticleEmitter["mrnd"] = static_cast< double >(emitter->getMassRnd());
-					jSphereParticleEmitter["vx"] = static_cast< double >(emitter->getVelocity().getX());
-					jSphereParticleEmitter["vy"] = static_cast< double >(emitter->getVelocity().getY());
-					jSphereParticleEmitter["vz"] = static_cast< double >(emitter->getVelocity().getZ());
-					jSphereParticleEmitter["vrndx"] = static_cast< double >(emitter->getVelocityRnd().getX());
-					jSphereParticleEmitter["vrndy"] = static_cast< double >(emitter->getVelocityRnd().getY());
-					jSphereParticleEmitter["vrndz"] = static_cast< double >(emitter->getVelocityRnd().getZ());
-					jSphereParticleEmitter["csr"] = static_cast< double >(emitter->getColorStart().getRed());
-					jSphereParticleEmitter["csg"] = static_cast< double >(emitter->getColorStart().getGreen());
-					jSphereParticleEmitter["csb"] = static_cast< double >(emitter->getColorStart().getBlue());
-					jSphereParticleEmitter["csa"] = static_cast< double >(emitter->getColorStart().getAlpha());
-					jSphereParticleEmitter["cer"] = static_cast< double >(emitter->getColorEnd().getRed());
-					jSphereParticleEmitter["ceg"] = static_cast< double >(emitter->getColorEnd().getGreen());
-					jSphereParticleEmitter["ceb"] = static_cast< double >(emitter->getColorEnd().getBlue());
-					jSphereParticleEmitter["cea"] = static_cast< double >(emitter->getColorEnd().getAlpha());
-					jSphereParticleEmitter["cx"] = static_cast< double >(emitter->getCenter().getX());
-					jSphereParticleEmitter["cy"] = static_cast< double >(emitter->getCenter().getY());
-					jSphereParticleEmitter["cz"] = static_cast< double >(emitter->getCenter().getZ());
-					jSphereParticleEmitter["r"] = static_cast< double >(emitter->getRadius());
-					jParticleSystem["spe"] = jSphereParticleEmitter;
+					jSphereParticleEmitter.AddMember("c", Value(emitter->getCount()), jAllocator);
+					jSphereParticleEmitter.AddMember("lt", Value(emitter->getLifeTime()), jAllocator);
+					jSphereParticleEmitter.AddMember("ltrnd", Value(emitter->getLifeTimeRnd()), jAllocator);
+					jSphereParticleEmitter.AddMember("m", Value(emitter->getMass()), jAllocator);
+					jSphereParticleEmitter.AddMember("mrnd", Value(emitter->getMassRnd()), jAllocator);
+					jSphereParticleEmitter.AddMember("vx", Value(emitter->getVelocity().getX()), jAllocator);
+					jSphereParticleEmitter.AddMember("vy", Value(emitter->getVelocity().getY()), jAllocator);
+					jSphereParticleEmitter.AddMember("vz", Value(emitter->getVelocity().getZ()), jAllocator);
+					jSphereParticleEmitter.AddMember("vrndx", Value(emitter->getVelocityRnd().getX()), jAllocator);
+					jSphereParticleEmitter.AddMember("vrndy", Value(emitter->getVelocityRnd().getY()), jAllocator);
+					jSphereParticleEmitter.AddMember("vrndz", Value(emitter->getVelocityRnd().getZ()), jAllocator);
+					jSphereParticleEmitter.AddMember("csr", Value(emitter->getColorStart().getRed()), jAllocator);
+					jSphereParticleEmitter.AddMember("csg", Value(emitter->getColorStart().getGreen()), jAllocator);
+					jSphereParticleEmitter.AddMember("csb", Value(emitter->getColorStart().getBlue()), jAllocator);
+					jSphereParticleEmitter.AddMember("csa", Value(emitter->getColorStart().getAlpha()), jAllocator);
+					jSphereParticleEmitter.AddMember("cer", Value(emitter->getColorEnd().getRed()), jAllocator);
+					jSphereParticleEmitter.AddMember("ceg", Value(emitter->getColorEnd().getGreen()), jAllocator);
+					jSphereParticleEmitter.AddMember("ceb", Value(emitter->getColorEnd().getBlue()), jAllocator);
+					jSphereParticleEmitter.AddMember("cea", Value(emitter->getColorEnd().getAlpha()), jAllocator);
+					jSphereParticleEmitter.AddMember("cx", Value(emitter->getCenter().getX()), jAllocator);
+					jSphereParticleEmitter.AddMember("cy", Value(emitter->getCenter().getY()), jAllocator);
+					jSphereParticleEmitter.AddMember("cz", Value(emitter->getCenter().getZ()), jAllocator);
+					jSphereParticleEmitter.AddMember("r", Value(emitter->getRadius()), jAllocator);
+					jParticleSystem.AddMember("spe", jSphereParticleEmitter, jAllocator);
 				} else
 				{
 					Console::println(
@@ -443,106 +469,103 @@ tdme::ext::jsonbox::Object ModelMetaDataFileExport::exportToJSON(LevelEditorEnti
 					 );
 				}
 			}
-
-			jParticleSystems.push_back(jParticleSystem);
+			jParticleSystems.PushBack(jParticleSystem, jAllocator);
 		}
-		jEntityRoot["pss"] = jParticleSystems;
+		jEntityRoot.AddMember("pss", jParticleSystems, jAllocator);
 	}
-	ext::jsonbox::Array jBoundingVolumes;
+	Value jBoundingVolumes;
+	jBoundingVolumes.SetArray();
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
 		auto entityBoundingVolume = entity->getBoundingVolumeAt(i);
 		auto bv = entityBoundingVolume->getBoundingVolume();
 		if (bv == nullptr) continue;
-
-		ext::jsonbox::Object jBoundingVolume;
+		Value jBoundingVolume;
+		jBoundingVolume.SetObject();
 		if (bv == nullptr) {
-			jBoundingVolume["type"] = "none";
-			jBoundingVolumes.push_back(jBoundingVolume);
+			jBoundingVolume.AddMember("type", Value("none", jAllocator), jAllocator);
 		} else
 		if (dynamic_cast< Sphere* >(bv) != nullptr) {
 			auto sphere = dynamic_cast< Sphere* >(bv);
-			jBoundingVolume["type"] = "sphere";
-			jBoundingVolume["cx"] = static_cast< double >(sphere->getCenter().getX());
-			jBoundingVolume["cy"] = static_cast< double >(sphere->getCenter().getY());
-			jBoundingVolume["cz"] = static_cast< double >(sphere->getCenter().getZ());
-			jBoundingVolume["r"] = static_cast< double >(sphere->getRadius());
-			jBoundingVolumes.push_back(jBoundingVolume);
+			jBoundingVolume.AddMember("type", Value("sphere", jAllocator), jAllocator);
+			jBoundingVolume.AddMember("cx", Value(sphere->getCenter().getX()), jAllocator);
+			jBoundingVolume.AddMember("cy", Value(sphere->getCenter().getY()), jAllocator);
+			jBoundingVolume.AddMember("cz", Value(sphere->getCenter().getZ()), jAllocator);
+			jBoundingVolume.AddMember("r", Value(sphere->getRadius()), jAllocator);
 		} else
 		if (dynamic_cast< Capsule* >(bv) != nullptr) {
 			auto capsule = dynamic_cast< Capsule* >(bv);
-			jBoundingVolume["type"] = "capsule";
-			jBoundingVolume["ax"] = static_cast< double >(capsule->getA().getX());
-			jBoundingVolume["ay"] = static_cast< double >(capsule->getA().getY());
-			jBoundingVolume["az"] = static_cast< double >(capsule->getA().getZ());
-			jBoundingVolume["bx"] = static_cast< double >(capsule->getB().getX());
-			jBoundingVolume["by"] = static_cast< double >(capsule->getB().getY());
-			jBoundingVolume["bz"] = static_cast< double >(capsule->getB().getZ());
-			jBoundingVolume["r"] = static_cast< double >(capsule->getRadius());
-			jBoundingVolumes.push_back(jBoundingVolume);
+			jBoundingVolume.AddMember("type", Value("capsule", jAllocator), jAllocator);
+			jBoundingVolume.AddMember("ax", Value(capsule->getA().getX()), jAllocator);
+			jBoundingVolume.AddMember("ay", Value(capsule->getA().getY()), jAllocator);
+			jBoundingVolume.AddMember("az", Value(capsule->getA().getZ()), jAllocator);
+			jBoundingVolume.AddMember("bx", Value(capsule->getB().getX()), jAllocator);
+			jBoundingVolume.AddMember("by", Value(capsule->getB().getY()), jAllocator);
+			jBoundingVolume.AddMember("bz", Value(capsule->getB().getZ()), jAllocator);
+			jBoundingVolume.AddMember("r", Value(capsule->getRadius()), jAllocator);
 		} else
 		if (dynamic_cast< BoundingBox* >(bv) != nullptr) {
 			auto aabb = dynamic_cast< BoundingBox* >(bv);
-			jBoundingVolume["type"] = "aabb";
-			jBoundingVolume["mix"] = static_cast< double >(aabb->getMin().getX());
-			jBoundingVolume["miy"] = static_cast< double >(aabb->getMin().getY());
-			jBoundingVolume["miz"] = static_cast< double >(aabb->getMin().getZ());
-			jBoundingVolume["max"] = static_cast< double >(aabb->getMax().getX());
-			jBoundingVolume["may"] = static_cast< double >(aabb->getMax().getY());
-			jBoundingVolume["maz"] = static_cast< double >(aabb->getMax().getZ());
-			jBoundingVolumes.push_back(jBoundingVolume);
+			jBoundingVolume.AddMember("type", Value("aabb", jAllocator), jAllocator);
+			jBoundingVolume.AddMember("mix", Value(aabb->getMin().getX()), jAllocator);
+			jBoundingVolume.AddMember("miy", Value(aabb->getMin().getY()), jAllocator);
+			jBoundingVolume.AddMember("miz", Value(aabb->getMin().getZ()), jAllocator);
+			jBoundingVolume.AddMember("max", Value(aabb->getMax().getX()), jAllocator);
+			jBoundingVolume.AddMember("may", Value(aabb->getMax().getY()), jAllocator);
+			jBoundingVolume.AddMember("maz", Value(aabb->getMax().getZ()), jAllocator);
 		} else
 		if (dynamic_cast< OrientedBoundingBox* >(bv) != nullptr) {
 			auto obb = dynamic_cast< OrientedBoundingBox* >(bv);
-			jBoundingVolume["type"] = "obb";
-			jBoundingVolume["cx"] = static_cast< double >(obb->getCenter().getX());
-			jBoundingVolume["cy"] = static_cast< double >(obb->getCenter().getY());
-			jBoundingVolume["cz"] = static_cast< double >(obb->getCenter().getZ());
-			jBoundingVolume["a0x"] = static_cast< double >(obb->getAxes()[0].getX());
-			jBoundingVolume["a0y"] = static_cast< double >(obb->getAxes()[0].getY());
-			jBoundingVolume["a0z"] = static_cast< double >(obb->getAxes()[0].getZ());
-			jBoundingVolume["a1x"] = static_cast< double >(obb->getAxes()[1].getX());
-			jBoundingVolume["a1y"] = static_cast< double >(obb->getAxes()[1].getY());
-			jBoundingVolume["a1z"] = static_cast< double >(obb->getAxes()[1].getZ());
-			jBoundingVolume["a2x"] = static_cast< double >(obb->getAxes()[2].getX());
-			jBoundingVolume["a2y"] = static_cast< double >(obb->getAxes()[2].getY());
-			jBoundingVolume["a2z"] = static_cast< double >(obb->getAxes()[2].getZ());
-			jBoundingVolume["hex"] = static_cast< double >(obb->getHalfExtension().getX());
-			jBoundingVolume["hey"] = static_cast< double >(obb->getHalfExtension().getY());
-			jBoundingVolume["hez"] = static_cast< double >(obb->getHalfExtension().getZ());
-			jBoundingVolumes.push_back(jBoundingVolume);
+			jBoundingVolume.AddMember("type", Value("obb", jAllocator), jAllocator);
+			jBoundingVolume.AddMember("cx", Value(obb->getCenter().getX()), jAllocator);
+			jBoundingVolume.AddMember("cy", Value(obb->getCenter().getY()), jAllocator);
+			jBoundingVolume.AddMember("cz", Value(obb->getCenter().getZ()), jAllocator);
+			jBoundingVolume.AddMember("a0x", Value(obb->getAxes()[0].getX()), jAllocator);
+			jBoundingVolume.AddMember("a0y", Value(obb->getAxes()[0].getY()), jAllocator);
+			jBoundingVolume.AddMember("a0z", Value(obb->getAxes()[0].getZ()), jAllocator);
+			jBoundingVolume.AddMember("a1x", Value(obb->getAxes()[1].getX()), jAllocator);
+			jBoundingVolume.AddMember("a1y", Value(obb->getAxes()[1].getY()), jAllocator);
+			jBoundingVolume.AddMember("a1z", Value(obb->getAxes()[1].getZ()), jAllocator);
+			jBoundingVolume.AddMember("a2x", Value(obb->getAxes()[2].getX()), jAllocator);
+			jBoundingVolume.AddMember("a2y", Value(obb->getAxes()[2].getY()), jAllocator);
+			jBoundingVolume.AddMember("a2z", Value(obb->getAxes()[2].getZ()), jAllocator);
+			jBoundingVolume.AddMember("hex", Value(obb->getHalfExtension().getX()), jAllocator);
+			jBoundingVolume.AddMember("hey", Value(obb->getHalfExtension().getY()), jAllocator);
+			jBoundingVolume.AddMember("hez", Value(obb->getHalfExtension().getZ()), jAllocator);
 		} else
 		if (dynamic_cast< ConvexMesh* >(bv) != nullptr) {
-			jBoundingVolume["type"] = "convexmesh";
-			jBoundingVolume["file"] = (entityBoundingVolume->getModelMeshFile());
-			jBoundingVolumes.push_back(jBoundingVolume);
+			jBoundingVolume.AddMember("type", Value("convexmesh", jAllocator), jAllocator);
+			jBoundingVolume.AddMember("file", Value(entityBoundingVolume->getModelMeshFile(), jAllocator), jAllocator);
 		}
+		jBoundingVolumes.PushBack(jBoundingVolume, jAllocator);
 	}
-	jEntityRoot["bvs"] = jBoundingVolumes;
+	jEntityRoot.AddMember("bvs", jBoundingVolumes, jAllocator);
 	auto physics = entity->getPhysics();
 	if (physics != nullptr) {
-		ext::jsonbox::Object jPhysics;
-		jPhysics["type"] = physics->getType()->getName();
-		jPhysics["mass"] = static_cast< double >(physics->getMass());
-		jPhysics["restitution"] = static_cast< double >(physics->getRestitution());
-		jPhysics["friction"] = static_cast< double >(physics->getFriction());
-		jPhysics["itx"] = static_cast< double >(physics->getInertiaTensor().getX());
-		jPhysics["ity"] = static_cast< double >(physics->getInertiaTensor().getY());
-		jPhysics["itz"] = static_cast< double >(physics->getInertiaTensor().getZ());
-		jEntityRoot["p"] = jPhysics;
+		Value jPhysics;
+		jPhysics.SetObject();
+		jPhysics.AddMember("type", Value(physics->getType()->getName(), jAllocator), jAllocator);
+		jPhysics.AddMember("mass", Value(physics->getMass()), jAllocator);
+		jPhysics.AddMember("restitution", Value(physics->getRestitution()), jAllocator);
+		jPhysics.AddMember("friction", Value(physics->getFriction()), jAllocator);
+		jPhysics.AddMember("itx", Value(physics->getInertiaTensor().getX()), jAllocator);
+		jPhysics.AddMember("ity", Value(physics->getInertiaTensor().getY()), jAllocator);
+		jPhysics.AddMember("itz", Value(physics->getInertiaTensor().getZ()), jAllocator);
+		jEntityRoot.AddMember("p", jPhysics, jAllocator);
 	}
-	ext::jsonbox::Array jModelProperties;
+	Value jModelProperties;
+	jModelProperties.SetArray();
 	for (auto i = 0; i < entity->getPropertyCount(); i++) {
 		PropertyModelClass* modelProperty = entity->getPropertyByIndex(i);
-		ext::jsonbox::Object jObjectProperty;
-		jObjectProperty["name"] = (modelProperty->getName());
-		jObjectProperty["value"] = (modelProperty->getValue());
-		jModelProperties.push_back(jObjectProperty);
+		Value jObjectProperty;
+		jObjectProperty.SetObject();
+		jObjectProperty.AddMember("name", Value(modelProperty->getName(), jAllocator), jAllocator);
+		jObjectProperty.AddMember("value", Value(modelProperty->getValue(), jAllocator), jAllocator);
+		jModelProperties.PushBack(jObjectProperty, jAllocator);
 	}
-	jEntityRoot["properties"] = jModelProperties;
-	jEntityRoot["ds"] = entity->isDynamicShadowing();
-	jEntityRoot["rg"] = entity->isRenderGroups();
-	jEntityRoot["s"] = entity->getShader();
-	jEntityRoot["sds"] = entity->getDistanceShader();
-	jEntityRoot["sdsd"] = static_cast< double >(entity->getDistanceShaderDistance());
-	return jEntityRoot;
+	jEntityRoot.AddMember("properties", jModelProperties, jAllocator);
+	jEntityRoot.AddMember("ds", Value(entity->isDynamicShadowing()), jAllocator);
+	jEntityRoot.AddMember("rg", Value(entity->isRenderGroups()), jAllocator);
+	jEntityRoot.AddMember("s", Value(entity->getShader(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("sds", Value(entity->getDistanceShader(), jAllocator), jAllocator);
+	jEntityRoot.AddMember("sdsd", Value(entity->getDistanceShaderDistance()), jAllocator);
 }

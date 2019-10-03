@@ -9,8 +9,7 @@
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
-#include <ext/jsonbox/Object.h>
-#include <ext/jsonbox/JsonException.h>
+#include <rapidjson/document.h>
 
 using std::string;
 
@@ -19,7 +18,8 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 
-using tdme::ext::jsonbox::JsonException;
+using rapidjson::Document;
+using rapidjson::Value;
 
 /** 
  * TDME Model meta data file export
@@ -40,10 +40,12 @@ private:
 
 	/**
 	 * Export LOD level to JSON
+	 * @param jDocument JSON document
+	 * @param jLodLevelRoot JSON LOD level root value
 	 * @param lodLevel lod level
 	 * @return json root
 	 */
-	static tdme::ext::jsonbox::Object exportLODLevelToJSON(LevelEditorEntityLODLevel* lodLevel);
+	static void exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, LevelEditorEntityLODLevel* lodLevel);
 public:
 
 	/** 
@@ -52,18 +54,18 @@ public:
 	 * @param fileName file name
 	 * @param entity entity
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
 	static void doExport(const string& pathName, const string& fileName, LevelEditorEntity* entity);
 
 	/** 
 	 * Export model meta data file to JSON node
+	 * @param document JSON document
+	 * @param jEntityRoot JSON value to store data in
 	 * @param entity entity
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static tdme::ext::jsonbox::Object exportToJSON(LevelEditorEntity* entity);
+	static void exportToJSON(Document& jDocument, Value& jEntityRoot, LevelEditorEntity* entity);
 
 };

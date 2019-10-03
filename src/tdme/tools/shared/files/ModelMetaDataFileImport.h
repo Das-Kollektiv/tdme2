@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -11,8 +10,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 
-#include <ext/jsonbox/Value.h>
-#include <ext/jsonbox/JsonException.h>
+#include <rapidjson/document.h>
 
 using std::string;
 
@@ -22,8 +20,8 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 using tdme::os::filesystem::FileSystemException;
-using tdme::ext::jsonbox::Value;
-using tdme::ext::jsonbox::JsonException;
+
+using rapidjson::Value;
 
 /** 
  * TDME Model meta data file import
@@ -38,7 +36,6 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
@@ -52,7 +49,6 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
@@ -64,7 +60,6 @@ public:
 	 * @param pathName path name or null
 	 * @param jEntityRoot JSON entity root
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
@@ -87,7 +82,6 @@ private:
 	 * @param pathName path name
 	 * @param jBv JSON bounding volume node
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity bounding volume
 	 */

@@ -205,7 +205,6 @@
             - GLFW3(optional, required for Vulkan)
         - included in TDME2 repository
             - Vorbis/OGG
-            - JsonBox
             - zlib
             - libpng
             - tinyxml
@@ -216,6 +215,7 @@
             - OGLCompilersDLL
             - spirv
             - MoltenVK
+            - RapidJSON
     - targeted platforms and its current state
         - Windows/MINGW(port completed)
         - Windows/MSC(port completed)

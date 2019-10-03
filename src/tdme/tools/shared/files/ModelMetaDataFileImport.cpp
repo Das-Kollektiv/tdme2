@@ -37,9 +37,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-#include <ext/jsonbox/Value.h>
-#include <ext/jsonbox/Array.h>
-#include <ext/jsonbox/JsonException.h>
+#include <rapidjson/document.h>
 
 using std::string;
 
@@ -77,16 +75,15 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-using tdme::ext::jsonbox::JsonException;
+using rapidjson::Document;
+using rapidjson::Value;
 
 LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
-	Value jEntityRoot;
-	jEntityRoot.loadFromString(
-		(jsonContent)
-	);
+	Document jEntityRoot;
+	jEntityRoot.Parse(jsonContent.c_str());
 
 	auto levelEditorEntity = doImportFromJSON(id, pathName, jEntityRoot);
 	levelEditorEntity->setEntityFileName(pathName + "/" + fileName);
@@ -96,20 +93,20 @@ LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& p
 LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot)
 {
 	LevelEditorEntity* levelEditorEntity;
-	// auto version = Float::parseFloat((jEntityRoot["version"].getString()));
+	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
 	auto pivot = Vector3(
-		static_cast< float >(jEntityRoot["px"].getDouble()),
-		static_cast< float >(jEntityRoot["py"].getDouble()),
-		static_cast< float >(jEntityRoot["pz"].getDouble())
+		static_cast< float >(jEntityRoot["px"].GetFloat()),
+		static_cast< float >(jEntityRoot["py"].GetFloat()),
+		static_cast< float >(jEntityRoot["pz"].GetFloat())
 	);
-	auto modelType = LevelEditorEntity_EntityType::valueOf((jEntityRoot["type"].getString()));
-	auto modelThumbnail = jEntityRoot["thumbnail"].isNull() == false? (jEntityRoot["thumbnail"].getString()) : "";
-	auto name = (jEntityRoot["name"].getString());
-	auto description = (jEntityRoot["descr"].getString());
+	auto modelType = LevelEditorEntity_EntityType::valueOf((jEntityRoot["type"].GetString()));
+	auto modelThumbnail = jEntityRoot.FindMember("thumbnail") != jEntityRoot.MemberEnd()? (jEntityRoot["thumbnail"].GetString()) : "";
+	auto name = (jEntityRoot["name"].GetString());
+	auto description = (jEntityRoot["descr"].GetString());
 	string modelFileName = "";
 	string modelPathName = "";
-	if (jEntityRoot["file"].isNull() == false) {
-		modelFileName = (jEntityRoot["file"].getString());
+	if (jEntityRoot.FindMember("file") != jEntityRoot.MemberEnd()) {
+		modelFileName = (jEntityRoot["file"].GetString());
 	}
 	Model* model = nullptr;
 	if (modelFileName.length() > 0) {
@@ -134,16 +131,16 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		model,
 		pivot
 	);
-	auto jProperties = jEntityRoot["properties"].getArray();
-	for (auto i = 0; i < jProperties.size(); i++) {
+	auto jProperties = jEntityRoot["properties"].GetArray();
+	for (auto i = 0; i < jProperties.Size(); i++) {
 		auto& jProperty = jProperties[i];
 		levelEditorEntity->addProperty(
-			(jProperty["name"].getString()),
-			(jProperty["value"].getString())
+			(jProperty["name"].GetString()),
+			(jProperty["value"].GetString())
 		);
 	}
 
-	if (jEntityRoot["bv"].isNull() == false) {
+	if (jEntityRoot.FindMember("bv") != jEntityRoot.MemberEnd()) {
 		levelEditorEntity->addBoundingVolume(
 			0,
 			parseBoundingVolume(
@@ -154,64 +151,64 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 			)
 		);
 	} else
-	if (jEntityRoot["bvs"].isNull() == false) {
-		auto jBoundingVolumes = jEntityRoot["bvs"].getArray();
-		for (auto i = 0; i < jBoundingVolumes.size(); i++) {
+	if (jEntityRoot.FindMember("bvs") != jEntityRoot.MemberEnd()) {
+		auto jBoundingVolumes = jEntityRoot["bvs"].GetArray();
+		for (auto i = 0; i < jBoundingVolumes.Size(); i++) {
 			levelEditorEntity->addBoundingVolume(i, parseBoundingVolume(i, levelEditorEntity, pathName, jBoundingVolumes[i]));
 		}
 	}
-	if (jEntityRoot["p"].isNull() == false && levelEditorEntity->getPhysics() != nullptr) {
+	if (jEntityRoot.FindMember("p") != jEntityRoot.MemberEnd() && levelEditorEntity->getPhysics() != nullptr) {
 		auto physics = levelEditorEntity->getPhysics();
 		auto& jPhysics = jEntityRoot["p"];
-		physics->setType(LevelEditorEntityPhysics_BodyType::valueOf(jPhysics["type"].getString()));
-		physics->setMass(static_cast<float>(jPhysics["mass"].getDouble()));
-		physics->setRestitution(static_cast<float>(jPhysics["restitution"].getDouble()));
-		physics->setFriction(static_cast<float>(jPhysics["friction"].getDouble()));
+		physics->setType(LevelEditorEntityPhysics_BodyType::valueOf(jPhysics["type"].GetString()));
+		physics->setMass(static_cast<float>(jPhysics["mass"].GetFloat()));
+		physics->setRestitution(static_cast<float>(jPhysics["restitution"].GetFloat()));
+		physics->setFriction(static_cast<float>(jPhysics["friction"].GetFloat()));
 		physics->setInertiaTensor(
 			Vector3(
-				static_cast<float>(jPhysics["itx"].getDouble()),
-				static_cast<float>(jPhysics["ity"].getDouble()),
-				static_cast<float>(jPhysics["itz"].getDouble())
+				static_cast<float>(jPhysics["itx"].GetFloat()),
+				static_cast<float>(jPhysics["ity"].GetFloat()),
+				static_cast<float>(jPhysics["itz"].GetFloat())
 			)
 		);
 	}
-	if (jEntityRoot["sd"].isNull() == false) {
-		for (auto jSound: jEntityRoot["sd"].getArray()) {
-			auto id = jSound["i"].getString();
+	if (jEntityRoot.FindMember("sd") != jEntityRoot.MemberEnd()) {
+		for (auto& jSound: jEntityRoot["sd"].GetArray()) {
+			auto id = jSound["i"].GetString();
 			auto sound = levelEditorEntity->addSound(id);
 			if (sound == nullptr) continue;
-			sound->setAnimation(jSound["a"].getString());
-			sound->setFileName(jSound["file"].getString());
-			sound->setGain(static_cast<float>(jSound["g"].getDouble()));
-			sound->setPitch(static_cast<float>(jSound["p"].getDouble()));
-			sound->setOffset(static_cast<float>(jSound["o"].getInt()));
-			sound->setLooping(jSound["l"].getBoolean());
-			sound->setFixed(jSound["f"].getBoolean());
+			sound->setAnimation(jSound["a"].GetString());
+			sound->setFileName(jSound["file"].GetString());
+			sound->setGain(static_cast<float>(jSound["g"].GetFloat()));
+			sound->setPitch(static_cast<float>(jSound["p"].GetFloat()));
+			sound->setOffset(static_cast<float>(jSound["o"].GetInt()));
+			sound->setLooping(jSound["l"].GetBool());
+			sound->setFixed(jSound["f"].GetBool());
 		}
 	}
 	if (modelType == LevelEditorEntity_EntityType::MODEL) {
-		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].getBoolean());
-		if (jEntityRoot["ll2"].isNull() == false) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
-		if (jEntityRoot["ll3"].isNull() == false) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
+		levelEditorEntity->getModelSettings()->setTerrainMesh(jEntityRoot["tm"].GetBool());
+		if (jEntityRoot.FindMember("ll2") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel2(parseLODLevel(pathName, jEntityRoot["ll2"]));
+		if (jEntityRoot.FindMember("ll3") != jEntityRoot.MemberEnd()) levelEditorEntity->setLODLevel3(parseLODLevel(pathName, jEntityRoot["ll3"]));
 	} else
 	if (modelType == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		if (jEntityRoot["ps"].isNull() == false) {
+		if (jEntityRoot.FindMember("ps") != jEntityRoot.MemberEnd()) {
 			levelEditorEntity->addParticleSystem();
 			parseParticleSystem(levelEditorEntity->getParticleSystemAt(0), pathName, jEntityRoot["ps"]);
 		} else
-		if (jEntityRoot["pss"].isNull() == false) {
-			auto jParticleSystems = jEntityRoot["pss"].getArray();
-			for (auto i = 0; i < jParticleSystems.size(); i++) {
+		if (jEntityRoot.FindMember("pss") != jEntityRoot.MemberEnd()) {
+			auto jParticleSystems = jEntityRoot["pss"].GetArray();
+			for (auto i = 0; i < jParticleSystems.Size(); i++) {
 				levelEditorEntity->addParticleSystem();
 				parseParticleSystem(levelEditorEntity->getParticleSystemAt(levelEditorEntity->getParticleSystemsCount() - 1), pathName, jParticleSystems[i]);
 			}
 		}
 	}
-	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].getBoolean());
-	levelEditorEntity->setRenderGroups(jEntityRoot["rg"].isNull() == false?jEntityRoot["rg"].getBoolean():false);
-	levelEditorEntity->setShader(jEntityRoot["s"].isNull() == false?jEntityRoot["s"].getString():"default");
-	levelEditorEntity->setDistanceShader(jEntityRoot["sds"].isNull() == false?jEntityRoot["sds"].getString():"default");
-	levelEditorEntity->setDistanceShaderDistance(jEntityRoot["sdsd"].isNull() == false?static_cast<float>(jEntityRoot["sdsd"].getDouble()):10000.0f);
+	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].GetBool());
+	levelEditorEntity->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
+	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
+	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");
+	levelEditorEntity->setDistanceShaderDistance(jEntityRoot.FindMember("sdsd") != jEntityRoot.MemberEnd()?static_cast<float>(jEntityRoot["sdsd"].GetFloat()):10000.0f);
 	if (levelEditorEntity->getModel() != nullptr) ModelHelper::prepareForShader(levelEditorEntity->getModel(), levelEditorEntity->getShader());
 	return levelEditorEntity;
 }
@@ -234,81 +231,81 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 {
 	auto entityBoundingVolume = new LevelEditorEntityBoundingVolume(idx, levelEditorEntity);
 	BoundingVolume* bv;
-	auto bvTypeString = (jBv["type"].getString());
+	auto bvTypeString = (jBv["type"].GetString());
 	if (StringUtils::equalsIgnoreCase(bvTypeString, "none") == true) {
 		entityBoundingVolume->setupNone();
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, "sphere") == true) {
 		entityBoundingVolume->setupSphere(
 			Vector3(
-				static_cast< float >(jBv["cx"].getDouble()),
-				static_cast< float >(jBv["cy"].getDouble()),
-				static_cast< float >(jBv["cz"].getDouble())
+				static_cast< float >(jBv["cx"].GetFloat()),
+				static_cast< float >(jBv["cy"].GetFloat()),
+				static_cast< float >(jBv["cz"].GetFloat())
 			),
-			static_cast< float >(jBv["r"].getDouble())
+			static_cast< float >(jBv["r"].GetFloat())
 		);
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, "capsule") == true) {
 		entityBoundingVolume->setupCapsule(
 			Vector3(
-				static_cast< float >(jBv["ax"].getDouble()),
-				static_cast< float >(jBv["ay"].getDouble()),
-				static_cast< float >(jBv["az"].getDouble())
+				static_cast< float >(jBv["ax"].GetFloat()),
+				static_cast< float >(jBv["ay"].GetFloat()),
+				static_cast< float >(jBv["az"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["bx"].getDouble()),
-				static_cast< float >(jBv["by"].getDouble()),
-				static_cast< float >(jBv["bz"].getDouble())
+				static_cast< float >(jBv["bx"].GetFloat()),
+				static_cast< float >(jBv["by"].GetFloat()),
+				static_cast< float >(jBv["bz"].GetFloat())
 			),
-			static_cast< float >(jBv["r"].getDouble())
+			static_cast< float >(jBv["r"].GetFloat())
 		);
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, "aabb") == true) {
 		entityBoundingVolume->setupAabb(
 			Vector3(
-				static_cast< float >(jBv["mix"].getDouble()),
-				static_cast< float >(jBv["miy"].getDouble()),
-				static_cast< float >(jBv["miz"].getDouble())
+				static_cast< float >(jBv["mix"].GetFloat()),
+				static_cast< float >(jBv["miy"].GetFloat()),
+				static_cast< float >(jBv["miz"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["max"].getDouble()),
-				static_cast< float >(jBv["may"].getDouble()),
-				static_cast< float >(jBv["maz"].getDouble())
+				static_cast< float >(jBv["max"].GetFloat()),
+				static_cast< float >(jBv["may"].GetFloat()),
+				static_cast< float >(jBv["maz"].GetFloat())
 			)
 		);
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, "obb") == true) {
 		entityBoundingVolume->setupObb(
 			Vector3(
-				static_cast< float >(jBv["cx"].getDouble()),
-				static_cast< float >(jBv["cy"].getDouble()),
-				static_cast< float >(jBv["cz"].getDouble())
+				static_cast< float >(jBv["cx"].GetFloat()),
+				static_cast< float >(jBv["cy"].GetFloat()),
+				static_cast< float >(jBv["cz"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["a0x"].getDouble()),
-				static_cast< float >(jBv["a0y"].getDouble()),
-				static_cast< float >(jBv["a0z"].getDouble())
+				static_cast< float >(jBv["a0x"].GetFloat()),
+				static_cast< float >(jBv["a0y"].GetFloat()),
+				static_cast< float >(jBv["a0z"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["a1x"].getDouble()),
-				static_cast< float >(jBv["a1y"].getDouble()),
-				static_cast< float >(jBv["a1z"].getDouble())
+				static_cast< float >(jBv["a1x"].GetFloat()),
+				static_cast< float >(jBv["a1y"].GetFloat()),
+				static_cast< float >(jBv["a1z"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["a2x"].getDouble()),
-				static_cast< float >(jBv["a2y"].getDouble()),
-				static_cast< float >(jBv["a2z"].getDouble())
+				static_cast< float >(jBv["a2x"].GetFloat()),
+				static_cast< float >(jBv["a2y"].GetFloat()),
+				static_cast< float >(jBv["a2z"].GetFloat())
 			),
 			Vector3(
-				static_cast< float >(jBv["hex"].getDouble()),
-				static_cast< float >(jBv["hey"].getDouble()),
-				static_cast< float >(jBv["hez"].getDouble())
+				static_cast< float >(jBv["hex"].GetFloat()),
+				static_cast< float >(jBv["hey"].GetFloat()),
+				static_cast< float >(jBv["hez"].GetFloat())
 			)
 		);
 	} else
 	if (StringUtils::equalsIgnoreCase(bvTypeString, "convexmesh") == true) {
 		try {
-			string fileName = jBv["file"].getString();
+			string fileName = jBv["file"].GetString();
 			entityBoundingVolume->setupConvexMesh(
 				getResourcePathName(pathName, fileName),
 				Tools::getFileName(fileName)
@@ -322,12 +319,12 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 }
 
 LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName, Value& jLodLevel) {
-	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].getInt());
+	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].GetInt());
 	LevelEditorEntityLODLevel* lodLevel = new LevelEditorEntityLODLevel(
 		lodType,
-		lodType == LODObject3D::LODLEVELTYPE_MODEL?jLodLevel["f"].getString():"",
+		lodType == LODObject3D::LODLEVELTYPE_MODEL?jLodLevel["f"].GetString():"",
 		nullptr,
-		static_cast<float>(jLodLevel["d"].getDouble())
+		static_cast<float>(jLodLevel["d"].GetFloat())
 	);
 	if (lodType == LODObject3D::LODLEVELTYPE_MODEL) {
 		auto modelFileName = lodLevel->getFileName();
@@ -342,25 +339,25 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 	}
 	lodLevel->setColorAdd(
 		Color4(
-			static_cast<float>(jLodLevel["car"].getDouble()),
-			static_cast<float>(jLodLevel["cag"].getDouble()),
-			static_cast<float>(jLodLevel["cab"].getDouble()),
-			static_cast<float>(jLodLevel["caa"].getDouble())
+			static_cast<float>(jLodLevel["car"].GetFloat()),
+			static_cast<float>(jLodLevel["cag"].GetFloat()),
+			static_cast<float>(jLodLevel["cab"].GetFloat()),
+			static_cast<float>(jLodLevel["caa"].GetFloat())
 		)
 	);
 	lodLevel->setColorMul(
 		Color4(
-			static_cast<float>(jLodLevel["cmr"].getDouble()),
-			static_cast<float>(jLodLevel["cmg"].getDouble()),
-			static_cast<float>(jLodLevel["cmb"].getDouble()),
-			static_cast<float>(jLodLevel["cma"].getDouble())
+			static_cast<float>(jLodLevel["cmr"].GetFloat()),
+			static_cast<float>(jLodLevel["cmg"].GetFloat()),
+			static_cast<float>(jLodLevel["cmb"].GetFloat()),
+			static_cast<float>(jLodLevel["cma"].GetFloat())
 		)
 	);
 	return lodLevel;
 }
 
 void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {
-	particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf((jParticleSystem["t"].getString())));
+	particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
 	{
 		auto v = particleSystem->getType();
 		if (v == LevelEditorEntityParticleSystem_Type::NONE) {
@@ -369,13 +366,13 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 		if (v == LevelEditorEntityParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 			auto& jObjectParticleSystem = jParticleSystem["ops"];
 			auto objectParticleSystem = particleSystem->getObjectParticleSystem();
-			objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].getInt());
-			objectParticleSystem->getScale().setX(static_cast< float >(jObjectParticleSystem["sx"].getDouble()));
-			objectParticleSystem->getScale().setY(static_cast< float >(jObjectParticleSystem["sy"].getDouble()));
-			objectParticleSystem->getScale().setZ(static_cast< float >(jObjectParticleSystem["sz"].getDouble()));
-			objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].getBoolean());
+			objectParticleSystem->setMaxCount(jObjectParticleSystem["mc"].GetInt());
+			objectParticleSystem->getScale().setX(static_cast< float >(jObjectParticleSystem["sx"].GetFloat()));
+			objectParticleSystem->getScale().setY(static_cast< float >(jObjectParticleSystem["sy"].GetFloat()));
+			objectParticleSystem->getScale().setZ(static_cast< float >(jObjectParticleSystem["sz"].GetFloat()));
+			objectParticleSystem->setAutoEmit(jObjectParticleSystem["ae"].GetBool());
 			try {
-				auto particleModelFile = (jObjectParticleSystem["mf"].getString());
+				auto particleModelFile = (jObjectParticleSystem["mf"].GetString());
 				auto particleModelPath = getResourcePathName(pathName, particleModelFile);
 				objectParticleSystem->setModelFile(
 					particleModelPath + "/" + Tools::getFileName(particleModelFile)
@@ -388,13 +385,13 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 		if (v == LevelEditorEntityParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			auto pointParticleSystem = particleSystem->getPointParticleSystem();
 			auto& jPointParticleSystem = jParticleSystem["pps"];
-			pointParticleSystem->setMaxPoints(jPointParticleSystem["mp"].getInt());
-			if (jPointParticleSystem["ps"].isNull() == false) pointParticleSystem->setPointSize(static_cast<float>(jPointParticleSystem["ps"].getDouble()));
-			if (jPointParticleSystem["t"].isNull() == false) {
+			pointParticleSystem->setMaxPoints(jPointParticleSystem["mp"].GetInt());
+			if (jPointParticleSystem.FindMember("ps") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setPointSize(static_cast<float>(jPointParticleSystem["ps"].GetFloat()));
+			if (jPointParticleSystem.FindMember("t") != jPointParticleSystem.MemberEnd()) {
 				try {
-					auto particleTextureFileName = jPointParticleSystem["t"].getString();
+					auto particleTextureFileName = jPointParticleSystem["t"].GetString();
 					auto particleTexturePathName = getResourcePathName(pathName, particleTextureFileName);
-					auto particleTransparencyTextureFileName = jPointParticleSystem["tt"].isNull() == true?string():jPointParticleSystem["tt"].getString();
+					auto particleTransparencyTextureFileName = string(jPointParticleSystem.FindMember("tt") != jPointParticleSystem.MemberEnd()?jPointParticleSystem["tt"].GetString():"");
 					auto particleTransparencyTexturePathName = particleTransparencyTextureFileName.size() == 0?string():getResourcePathName(pathName, particleTransparencyTextureFileName);
 					pointParticleSystem->setTextureFileName(
 						particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
@@ -405,18 +402,18 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 					Console::println(string(exception.what()));
 				}
 			}
-			pointParticleSystem->setAutoEmit(jPointParticleSystem["ae"].getBoolean());
+			pointParticleSystem->setAutoEmit(jPointParticleSystem["ae"].GetBool());
 		} else
 		if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			auto fogParticleSystem = particleSystem->getFogParticleSystem();
 			auto& jFogParticleSystem = jParticleSystem["fps"];
-			fogParticleSystem->setMaxPoints(jFogParticleSystem["mp"].getInt());
-			if (jFogParticleSystem["ps"].isNull() == false) fogParticleSystem->setPointSize(static_cast<float>(jFogParticleSystem["ps"].getDouble()));
-			if (jFogParticleSystem["t"].isNull() == false) {
+			fogParticleSystem->setMaxPoints(jFogParticleSystem["mp"].GetInt());
+			if (jFogParticleSystem.FindMember("ps") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setPointSize(static_cast<float>(jFogParticleSystem["ps"].GetFloat()));
+			if (jFogParticleSystem.FindMember("t") != jFogParticleSystem.MemberEnd()) {
 				try {
-					auto particleTextureFileName = jFogParticleSystem["t"].getString();
+					auto particleTextureFileName = jFogParticleSystem["t"].GetString();
 					auto particleTexturePathName = getResourcePathName(pathName, particleTextureFileName);
-					auto particleTransparencyTextureFileName = jFogParticleSystem["tt"].isNull() == true?string():jFogParticleSystem["tt"].getString();
+					auto particleTransparencyTextureFileName = jFogParticleSystem.FindMember("tt") != jFogParticleSystem.MemberEnd()?string():jFogParticleSystem["tt"].GetString();
 					auto particleTransparencyTexturePathName = particleTransparencyTextureFileName.size() == 0?string():getResourcePathName(pathName, particleTransparencyTextureFileName);
 					fogParticleSystem->setTextureFileName(
 						particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
@@ -438,7 +435,7 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 		}
 	}
 
-	particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf((jParticleSystem["e"].getString())));
+	particleSystem->setEmitter(LevelEditorEntityParticleSystem_Emitter::valueOf((jParticleSystem["e"].GetString())));
 	{
 		auto v = particleSystem->getEmitter();
 		if (v == LevelEditorEntityParticleSystem_Emitter::NONE) {
@@ -447,279 +444,279 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 		if (v == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto& jPointParticleEmitter = jParticleSystem["ppe"];
 			auto emitter = particleSystem->getPointParticleEmitter();
-			emitter->setCount(jPointParticleEmitter["c"].getInt());
-			emitter->setLifeTime(jPointParticleEmitter["lt"].getInt());
-			emitter->setLifeTimeRnd(jPointParticleEmitter["ltrnd"].getInt());
-			emitter->setMass(static_cast< float >(jPointParticleEmitter["m"].getDouble()));
-			emitter->setMassRnd(static_cast< float >(jPointParticleEmitter["mrnd"].getDouble()));
+			emitter->setCount(jPointParticleEmitter["c"].GetInt());
+			emitter->setLifeTime(jPointParticleEmitter["lt"].GetInt());
+			emitter->setLifeTimeRnd(jPointParticleEmitter["ltrnd"].GetInt());
+			emitter->setMass(static_cast< float >(jPointParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast< float >(jPointParticleEmitter["mrnd"].GetFloat()));
 			emitter->setPosition(
 				Vector3(
-					static_cast< float >(jPointParticleEmitter["px"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["py"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["pz"].getDouble())
+					static_cast< float >(jPointParticleEmitter["px"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["py"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["pz"].GetFloat())
 				)
 			);
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jPointParticleEmitter["vx"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["vy"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["vz"].getDouble())
+					static_cast< float >(jPointParticleEmitter["vx"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["vy"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jPointParticleEmitter["vrndx"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["vrndy"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["vrndz"].getDouble())
+					static_cast< float >(jPointParticleEmitter["vrndx"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["vrndy"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jPointParticleEmitter["csr"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["csg"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["csb"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["csa"].getDouble())
+					static_cast< float >(jPointParticleEmitter["csr"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["csg"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["csb"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jPointParticleEmitter["cer"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["ceg"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["ceb"].getDouble()),
-					static_cast< float >(jPointParticleEmitter["cea"].getDouble())
+					static_cast< float >(jPointParticleEmitter["cer"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["ceg"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["ceb"].GetFloat()),
+					static_cast< float >(jPointParticleEmitter["cea"].GetFloat())
 				)
 			);
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto& jBoundingBoxParticleEmitter = jParticleSystem["bbpe"];
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-			emitter->setCount(jBoundingBoxParticleEmitter["c"].getInt());
-			emitter->setLifeTime(jBoundingBoxParticleEmitter["lt"].getInt());
-			emitter->setLifeTimeRnd(jBoundingBoxParticleEmitter["ltrnd"].getInt());
-			emitter->setMass(static_cast< float >(jBoundingBoxParticleEmitter["m"].getDouble()));
-			emitter->setMassRnd(static_cast< float >(jBoundingBoxParticleEmitter["mrnd"].getDouble()));
+			emitter->setCount(jBoundingBoxParticleEmitter["c"].GetInt());
+			emitter->setLifeTime(jBoundingBoxParticleEmitter["lt"].GetInt());
+			emitter->setLifeTimeRnd(jBoundingBoxParticleEmitter["ltrnd"].GetInt());
+			emitter->setMass(static_cast< float >(jBoundingBoxParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast< float >(jBoundingBoxParticleEmitter["mrnd"].GetFloat()));
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["vx"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vy"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vz"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["vx"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["vy"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["vrndx"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vrndy"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["vrndz"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["vrndx"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["vrndy"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jBoundingBoxParticleEmitter["csr"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["csg"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["csb"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["csa"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["csr"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["csg"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["csb"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jBoundingBoxParticleEmitter["cer"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ceg"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ceb"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["cea"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["cer"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["ceg"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["ceb"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["cea"].GetFloat())
 				)
 			);
 			emitter->setObbCenter(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["ocx"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ocy"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ocz"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["ocx"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["ocy"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["ocz"].GetFloat())
 				)
 			);
 			emitter->setObbHalfextension(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["ohex"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ohey"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["ohez"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["ohex"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["ohey"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["ohez"].GetFloat())
 				)
 			);
 			emitter->setObbAxis0(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["oa0x"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa0y"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa0z"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["oa0x"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["oa0y"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["oa0z"].GetFloat())
 				)
 			);
 			emitter->setObbAxis1(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["oa1x"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa1y"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa1z"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["oa1x"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["oa1y"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["oa1z"].GetFloat())
 				)
 			);
 			emitter->setObbAxis2(
 				Vector3(
-					static_cast< float >(jBoundingBoxParticleEmitter["oa2x"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa2y"].getDouble()),
-					static_cast< float >(jBoundingBoxParticleEmitter["oa2z"].getDouble())
+					static_cast< float >(jBoundingBoxParticleEmitter["oa2x"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["oa2y"].GetFloat()),
+					static_cast< float >(jBoundingBoxParticleEmitter["oa2z"].GetFloat())
 				)
 			);
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			auto& jCircleParticleEmitter = jParticleSystem["cpe"];
 			auto emitter = particleSystem->getCircleParticleEmitter();
-			emitter->setCount(jCircleParticleEmitter["c"].getInt());
-			emitter->setLifeTime(jCircleParticleEmitter["lt"].getInt());
-			emitter->setLifeTimeRnd(jCircleParticleEmitter["ltrnd"].getInt());
-			emitter->setMass(static_cast< float >(jCircleParticleEmitter["m"].getDouble()));
-			emitter->setMassRnd(static_cast< float >(jCircleParticleEmitter["mrnd"].getDouble()));
+			emitter->setCount(jCircleParticleEmitter["c"].GetInt());
+			emitter->setLifeTime(jCircleParticleEmitter["lt"].GetInt());
+			emitter->setLifeTimeRnd(jCircleParticleEmitter["ltrnd"].GetInt());
+			emitter->setMass(static_cast< float >(jCircleParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast< float >(jCircleParticleEmitter["mrnd"].GetFloat()));
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["vx"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["vy"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["vz"].getDouble())
+					static_cast< float >(jCircleParticleEmitter["vx"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["vy"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["vrndx"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["vrndy"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["vrndz"].getDouble())
+					static_cast< float >(jCircleParticleEmitter["vrndx"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["vrndy"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jCircleParticleEmitter["csr"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["csg"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["csb"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["csa"].getDouble())
+					static_cast< float >(jCircleParticleEmitter["csr"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["csg"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["csb"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jCircleParticleEmitter["cer"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["ceg"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["ceb"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["cea"].getDouble())
+					static_cast< float >(jCircleParticleEmitter["cer"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["ceg"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["ceb"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["cea"].GetFloat())
 				)
 			);
 			emitter->setCenter(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["cx"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["cy"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["cz"].getDouble())
+					static_cast< float >(jCircleParticleEmitter["cx"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["cy"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["cz"].GetFloat())
 				)
 			);
-			emitter->setRadius(static_cast< float >(jCircleParticleEmitter["r"].getDouble()));
+			emitter->setRadius(static_cast< float >(jCircleParticleEmitter["r"].GetFloat()));
 			emitter->setAxis0(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["a0x"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["a0y"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["a0z"].getDouble())
+					static_cast< float >(jCircleParticleEmitter["a0x"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["a0y"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["a0z"].GetFloat())
 				)
 			);
 			emitter->setAxis1(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitter["a1x"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["a1y"].getDouble()),
-					static_cast< float >(jCircleParticleEmitter["a1z"].getDouble())
+					static_cast< float >(jCircleParticleEmitter["a1x"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["a1y"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitter["a1z"].GetFloat())
 				)
 			);
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto& jCircleParticleEmitterPlaneVelocity = jParticleSystem["cpeev"];
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-			emitter->setCount(jCircleParticleEmitterPlaneVelocity["c"].getInt());
-			emitter->setLifeTime(jCircleParticleEmitterPlaneVelocity["lt"].getInt());
-			emitter->setLifeTimeRnd(jCircleParticleEmitterPlaneVelocity["ltrnd"].getInt());
-			emitter->setMass(static_cast< float >(jCircleParticleEmitterPlaneVelocity["m"].getDouble()));
-			emitter->setMassRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["mrnd"].getDouble()));
-			emitter->setVelocity(static_cast< float >(jCircleParticleEmitterPlaneVelocity["v"].getDouble()));
-			emitter->setVelocityRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["vrnd"].getDouble()));
+			emitter->setCount(jCircleParticleEmitterPlaneVelocity["c"].GetInt());
+			emitter->setLifeTime(jCircleParticleEmitterPlaneVelocity["lt"].GetInt());
+			emitter->setLifeTimeRnd(jCircleParticleEmitterPlaneVelocity["ltrnd"].GetInt());
+			emitter->setMass(static_cast< float >(jCircleParticleEmitterPlaneVelocity["m"].GetFloat()));
+			emitter->setMassRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["mrnd"].GetFloat()));
+			emitter->setVelocity(static_cast< float >(jCircleParticleEmitterPlaneVelocity["v"].GetFloat()));
+			emitter->setVelocityRnd(static_cast< float >(jCircleParticleEmitterPlaneVelocity["vrnd"].GetFloat()));
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csr"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csg"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csb"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csa"].getDouble())
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csr"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csg"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csb"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cer"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceg"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceb"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cea"].getDouble())
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cer"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceg"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["ceb"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cea"].GetFloat())
 				)
 			);
 			emitter->setCenter(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cx"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cy"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cz"].getDouble())
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cx"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cy"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["cz"].GetFloat())
 				)
 			);
-			emitter->setRadius(static_cast< float >(jCircleParticleEmitterPlaneVelocity["r"].getDouble()));
+			emitter->setRadius(static_cast< float >(jCircleParticleEmitterPlaneVelocity["r"].GetFloat()));
 			emitter->setAxis0(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0x"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0y"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0z"].getDouble())
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0x"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0y"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a0z"].GetFloat())
 				)
 			);
 			emitter->setAxis1(
 				Vector3(
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1x"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1y"].getDouble()),
-					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1z"].getDouble())
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1x"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1y"].GetFloat()),
+					static_cast< float >(jCircleParticleEmitterPlaneVelocity["a1z"].GetFloat())
 				)
 			);
 		} else
 		if (v == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto& jSphereParticleEmitter = jParticleSystem["spe"];
 			auto emitter = particleSystem->getSphereParticleEmitter();
-			emitter->setCount(jSphereParticleEmitter["c"].getInt());
-			emitter->setLifeTime(jSphereParticleEmitter["lt"].getInt());
-			emitter->setLifeTimeRnd(jSphereParticleEmitter["ltrnd"].getInt());
-			emitter->setMass(static_cast< float >(jSphereParticleEmitter["m"].getDouble()));
-			emitter->setMassRnd(static_cast< float >(jSphereParticleEmitter["mrnd"].getDouble()));
+			emitter->setCount(jSphereParticleEmitter["c"].GetInt());
+			emitter->setLifeTime(jSphereParticleEmitter["lt"].GetInt());
+			emitter->setLifeTimeRnd(jSphereParticleEmitter["ltrnd"].GetInt());
+			emitter->setMass(static_cast< float >(jSphereParticleEmitter["m"].GetFloat()));
+			emitter->setMassRnd(static_cast< float >(jSphereParticleEmitter["mrnd"].GetFloat()));
 			emitter->setVelocity(
 				Vector3(
-					static_cast< float >(jSphereParticleEmitter["vx"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["vy"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["vz"].getDouble())
+					static_cast< float >(jSphereParticleEmitter["vx"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["vy"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["vz"].GetFloat())
 				)
 			);
 			emitter->setVelocityRnd(
 				Vector3(
-					static_cast< float >(jSphereParticleEmitter["vrndx"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["vrndy"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["vrndz"].getDouble())
+					static_cast< float >(jSphereParticleEmitter["vrndx"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["vrndy"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["vrndz"].GetFloat())
 				)
 			);
 			emitter->setColorStart(
 				Color4(
-					static_cast< float >(jSphereParticleEmitter["csr"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["csg"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["csb"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["csa"].getDouble())
+					static_cast< float >(jSphereParticleEmitter["csr"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["csg"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["csb"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["csa"].GetFloat())
 				)
 			);
 			emitter->setColorEnd(
 				Color4(
-					static_cast< float >(jSphereParticleEmitter["cer"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["ceg"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["ceb"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["cea"].getDouble())
+					static_cast< float >(jSphereParticleEmitter["cer"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["ceg"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["ceb"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["cea"].GetFloat())
 				)
 			);
 			emitter->setCenter(
 				Vector3(
-					static_cast< float >(jSphereParticleEmitter["cx"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["cy"].getDouble()),
-					static_cast< float >(jSphereParticleEmitter["cz"].getDouble())
+					static_cast< float >(jSphereParticleEmitter["cx"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["cy"].GetFloat()),
+					static_cast< float >(jSphereParticleEmitter["cz"].GetFloat())
 				)
 			);
-			emitter->setRadius(static_cast< float >(jSphereParticleEmitter["r"].getDouble()));
+			emitter->setRadius(static_cast< float >(jSphereParticleEmitter["r"].GetFloat()));
 		} else {
 			Console::println(
 				"ModelMetaDataFileExport::export(): unknown particle system emitter '" +

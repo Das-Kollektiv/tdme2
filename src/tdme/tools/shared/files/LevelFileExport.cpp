@@ -22,8 +22,9 @@
 #include <tdme/tools/shared/model/LevelEditorObject.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 
-#include <ext/jsonbox/Array.h>
-#include <ext/jsonbox/Object.h>
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
 
 using std::ostringstream;
 using std::string;
@@ -46,108 +47,129 @@ using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::PropertyModelClass;
 
+using rapidjson::Document;
+using rapidjson::StringBuffer;
+using rapidjson::Writer;
+using rapidjson::Value;
+
 void LevelFileExport::doExport(const string& pathName, const string& fileName, LevelEditorLevel* level)
 {
 	level->setFileName(pathName + '/' + fileName);
 	auto entityLibrary = level->getEntityLibrary();
-	tdme::ext::jsonbox::Object jRoot;
-	jRoot["version"] = "1.99";
-	jRoot["ro"] = (level->getRotationOrder()->getName());
-	tdme::ext::jsonbox::Array jLights;
+	Document jDocument;
+	jDocument.SetObject();
+	rapidjson::Document::AllocatorType& jAllocator = jDocument.GetAllocator();
+	jDocument.AddMember("version", Value("1.99", jAllocator), jAllocator);
+	jDocument.AddMember("ro", Value(level->getRotationOrder()->getName(), jAllocator), jAllocator);
+	Value jLights;
+	jLights.SetArray();
 	for (auto i = 0; i < level->getLightCount(); i++) {
 		auto light = level->getLightAt(i);
-		ext::jsonbox::Object jLight;
-		jLight["id"] = i;
-		jLight["ar"] = static_cast< double >(light->getAmbient().getRed());
-		jLight["ag"] = static_cast< double >(light->getAmbient().getGreen());
-		jLight["ab"] = static_cast< double >(light->getAmbient().getBlue());
-		jLight["aa"] = static_cast< double >(light->getAmbient().getAlpha());
-		jLight["dr"] = static_cast< double >(light->getDiffuse().getRed());
-		jLight["dg"] = static_cast< double >(light->getDiffuse().getGreen());
-		jLight["db"] = static_cast< double >(light->getDiffuse().getBlue());
-		jLight["da"] = static_cast< double >(light->getDiffuse().getAlpha());
-		jLight["sr"] = static_cast< double >(light->getSpecular().getRed());
-		jLight["sg"] = static_cast< double >(light->getSpecular().getGreen());
-		jLight["sb"] = static_cast< double >(light->getSpecular().getBlue());
-		jLight["sa"] = static_cast< double >(light->getSpecular().getAlpha());
-		jLight["px"] = static_cast< double >(light->getPosition().getX());
-		jLight["py"] = static_cast< double >(light->getPosition().getY());
-		jLight["pz"] = static_cast< double >(light->getPosition().getZ());
-		jLight["pw"] = static_cast< double >(light->getPosition().getW());
-		jLight["stx"] = static_cast< double >(light->getSpotTo().getX());
-		jLight["sty"] = static_cast< double >(light->getSpotTo().getY());
-		jLight["stz"] = static_cast< double >(light->getSpotTo().getZ());
-		jLight["sdx"] = static_cast< double >(light->getSpotDirection().getX());
-		jLight["sdy"] = static_cast< double >(light->getSpotDirection().getY());
-		jLight["sdz"] = static_cast< double >(light->getSpotDirection().getZ());
-		jLight["se"] = static_cast< double >(light->getSpotExponent());
-		jLight["sco"] = static_cast< double >(light->getSpotCutOff());
-		jLight["ca"] = static_cast< double >(light->getConstantAttenuation());
-		jLight["la"] = static_cast< double >(light->getLinearAttenuation());
-		jLight["qa"] = static_cast< double >(light->getQuadraticAttenuation());
-		jLight["e"] = light->isEnabled();
-		jLights.push_back(jLight);
+		Value jLight;
+		jLight.SetObject();
+		jLight.AddMember("id", Value(i), jAllocator);
+		jLight.AddMember("ar", Value(light->getAmbient().getRed()), jAllocator);
+		jLight.AddMember("ag", Value(light->getAmbient().getGreen()), jAllocator);
+		jLight.AddMember("ab", Value(light->getAmbient().getBlue()), jAllocator);
+		jLight.AddMember("aa", Value(light->getAmbient().getAlpha()), jAllocator);
+		jLight.AddMember("dr", Value(light->getDiffuse().getRed()), jAllocator);
+		jLight.AddMember("dg", Value(light->getDiffuse().getGreen()), jAllocator);
+		jLight.AddMember("db", Value(light->getDiffuse().getBlue()), jAllocator);
+		jLight.AddMember("da", Value(light->getDiffuse().getAlpha()), jAllocator);
+		jLight.AddMember("sr", Value(light->getSpecular().getRed()), jAllocator);
+		jLight.AddMember("sg", Value(light->getSpecular().getGreen()), jAllocator);
+		jLight.AddMember("sb", Value(light->getSpecular().getBlue()), jAllocator);
+		jLight.AddMember("sa", Value(light->getSpecular().getAlpha()), jAllocator);
+		jLight.AddMember("px", Value(light->getPosition().getX()), jAllocator);
+		jLight.AddMember("py", Value(light->getPosition().getY()), jAllocator);
+		jLight.AddMember("pz", Value(light->getPosition().getZ()), jAllocator);
+		jLight.AddMember("pw", Value(light->getPosition().getW()), jAllocator);
+		jLight.AddMember("stx", Value(light->getSpotTo().getX()), jAllocator);
+		jLight.AddMember("sty", Value(light->getSpotTo().getY()), jAllocator);
+		jLight.AddMember("stz", Value(light->getSpotTo().getZ()), jAllocator);
+		jLight.AddMember("sdx", Value(light->getSpotDirection().getX()), jAllocator);
+		jLight.AddMember("sdy", Value(light->getSpotDirection().getY()), jAllocator);
+		jLight.AddMember("sdz", Value(light->getSpotDirection().getZ()), jAllocator);
+		jLight.AddMember("se", Value(light->getSpotExponent()), jAllocator);
+		jLight.AddMember("sco", Value(light->getSpotCutOff()), jAllocator);
+		jLight.AddMember("ca", Value(light->getConstantAttenuation()), jAllocator);
+		jLight.AddMember("la", Value(light->getLinearAttenuation()), jAllocator);
+		jLight.AddMember("qa", Value(light->getQuadraticAttenuation()), jAllocator);
+		jLight.AddMember("e", Value(light->isEnabled()), jAllocator);
+		jLights.PushBack(jLight, jAllocator);
 	}
-	jRoot["lights"] = jLights;
-	ext::jsonbox::Array jEntityLibrary;
+	jDocument.AddMember("lights", jLights, jAllocator);
+	Value jEntityLibrary;
+	jEntityLibrary.SetArray();
 	for (auto i = 0; i < entityLibrary->getEntityCount(); i++) {
 		auto entity = entityLibrary->getEntityAt(i);
-		tdme::ext::jsonbox::Object jModel;
-		jModel["id"] = entity->getId();
-		jModel["type"] = (entity->getType()->getName());
-		jModel["name"] = (entity->getName());
-		jModel["descr"] = (entity->getDescription());
-		jModel["entity"] = ModelMetaDataFileExport::exportToJSON(entity);
-		jEntityLibrary.push_back(jModel);
+		Value jEntity;
+		jEntity.SetObject();
+		ModelMetaDataFileExport::exportToJSON(jDocument, jEntity, entity);
+		Value jModel;
+		jModel.SetObject();
+		jModel.AddMember("id", Value().SetInt(entity->getId()), jAllocator);
+		jModel.AddMember("type", Value(entity->getType()->getName(), jAllocator), jAllocator);
+		jModel.AddMember("name", Value(entity->getName(), jAllocator), jAllocator);
+		jModel.AddMember("descr", Value(entity->getDescription(), jAllocator), jAllocator);
+		jModel.AddMember("entity", jEntity, jAllocator);
+		jEntityLibrary.PushBack(jModel, jAllocator);
 	}
-	ext::jsonbox::Array jMapProperties;
+	jDocument.AddMember("models", jEntityLibrary, jAllocator);
+	Value jMapProperties;
+	jMapProperties.SetArray();
 	for (auto i = 0; i < level->getPropertyCount(); i++) {
 		PropertyModelClass* mapProperty = level->getPropertyByIndex(i);
-		tdme::ext::jsonbox::Object jMapProperty;
-		jMapProperty["name"] = (mapProperty->getName());
-		jMapProperty["value"] = (mapProperty->getValue());
-		jMapProperties.push_back(jMapProperty);
+		Value jMapProperty;
+		jMapProperty.SetObject();
+		jMapProperty.AddMember("name", Value(mapProperty->getName(), jAllocator), jAllocator);
+		jMapProperty.AddMember("value", Value(mapProperty->getValue(), jAllocator), jAllocator);
+		jMapProperties.PushBack(jMapProperty, jAllocator);
 	}
-	jRoot["properties"] = jMapProperties;
-	jRoot["models"] = jEntityLibrary;
-	tdme::ext::jsonbox::Array jObjects;
+	jDocument.AddMember("properties", jMapProperties, jAllocator);
+	Value jObjects;
+	jObjects.SetArray();
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto levelEditorObject = level->getObjectAt(i);
-		tdme::ext::jsonbox::Object jObject;
+		Value jObject;
+		jObject.SetObject();
 		auto& transformations = levelEditorObject->getTransformations();
 		auto& translation = transformations.getTranslation();
 		auto& scale = transformations.getScale();
 		auto& rotationAroundXAxis = transformations.getRotation(level->getRotationOrder()->getAxisXIndex());
 		auto& rotationAroundYAxis = transformations.getRotation(level->getRotationOrder()->getAxisYIndex());
 		auto& rotationAroundZAxis = transformations.getRotation(level->getRotationOrder()->getAxisZIndex());
-		jObject["id"] = (levelEditorObject->getId());
-		jObject["descr"] = (levelEditorObject->getDescription());
-		jObject["mid"] = levelEditorObject->getEntity()->getId();
-		jObject["tx"] = static_cast< double >(translation.getX());
-		jObject["ty"] = static_cast< double >(translation.getY());
-		jObject["tz"] = static_cast< double >(translation.getZ());
-		jObject["sx"] = static_cast< double >(scale.getX());
-		jObject["sy"] = static_cast< double >(scale.getY());
-		jObject["sz"] = static_cast< double >(scale.getZ());
-		jObject["rx"] = static_cast< double >(rotationAroundXAxis.getAngle());
-		jObject["ry"] = static_cast< double >(rotationAroundYAxis.getAngle());
-		jObject["rz"] = static_cast< double >(rotationAroundZAxis.getAngle());
-		tdme::ext::jsonbox::Array jObjectProperties;
+		jObject.AddMember("id", Value(levelEditorObject->getId(), jAllocator), jAllocator);
+		jObject.AddMember("descr", Value(levelEditorObject->getDescription(), jAllocator), jAllocator);;
+		jObject.AddMember("mid", Value(levelEditorObject->getEntity()->getId()), jAllocator);
+		jObject.AddMember("tx", Value(translation.getX()), jAllocator);
+		jObject.AddMember("ty", Value(translation.getY()), jAllocator);
+		jObject.AddMember("tz", Value(translation.getZ()), jAllocator);
+		jObject.AddMember("sx", Value(scale.getX()), jAllocator);
+		jObject.AddMember("sy", Value(scale.getY()), jAllocator);
+		jObject.AddMember("sz", Value(scale.getZ()), jAllocator);
+		jObject.AddMember("rx", Value(rotationAroundXAxis.getAngle()), jAllocator);
+		jObject.AddMember("ry", Value(rotationAroundYAxis.getAngle()), jAllocator);
+		jObject.AddMember("rz", Value(rotationAroundZAxis.getAngle()), jAllocator);
+		Value jObjectProperties;
+		jObjectProperties.SetArray();
 		for (auto i = 0; i < levelEditorObject->getPropertyCount(); i++) {
 			PropertyModelClass* objectProperty = levelEditorObject->getPropertyByIndex(i);
-			tdme::ext::jsonbox::Object jObjectProperty;
-			jObjectProperty["name"] = (objectProperty->getName());
-			jObjectProperty["value"] = (objectProperty->getValue());
-			jObjectProperties.push_back(jObjectProperty);
+			Value jObjectProperty;
+			jObjectProperty.SetObject();
+			jObjectProperty.AddMember("name", Value(objectProperty->getName(), jAllocator), jAllocator);
+			jObjectProperty.AddMember("value", Value(objectProperty->getValue(), jAllocator), jAllocator);
+			jObjectProperties.PushBack(jObjectProperty, jAllocator);
 		}
-		jObject["properties"] = jObjectProperties;
-		jObjects.push_back(jObject);
+		jObject.AddMember("properties", jObjectProperties, jAllocator);
+		jObjects.PushBack(jObject, jAllocator);
 	}
-	jRoot["objects"] = jObjects;
-	jRoot["objects_eidx"] = level->getObjectIdx();
+	jDocument.AddMember("objects", jObjects, jAllocator);
+	jDocument.AddMember("objects_eidx", Value(level->getObjectIdx()), jAllocator);
 
-	ostringstream json;
-	json << jRoot;
+	StringBuffer strbuf;
+	Writer<StringBuffer> writer(strbuf);
+	jDocument.Accept(writer);
 
-	FileSystem::getInstance()->setContentFromString(pathName, fileName, (json.str()));
+	FileSystem::getInstance()->setContentFromString(pathName, fileName, strbuf.GetString());
 }

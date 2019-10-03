@@ -33,8 +33,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
 
-#include <ext/jsonbox/Value.h>
-#include <ext/jsonbox/Array.h>
+#include <rapidjson/document.h>
 
 using std::string;
 using std::to_string;
@@ -71,8 +70,8 @@ using tdme::utils::Float;
 using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
-using tdme::ext::jsonbox::Value;
-using tdme::ext::jsonbox::Array;
+using rapidjson::Document;
+using rapidjson::Value;
 
 void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback)
 {
@@ -86,109 +85,104 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 	if (progressCallback != nullptr) progressCallback->progress(0.165f);
 
-	Value jRoot;
-	jRoot.loadFromString(jsonContent);
+	Document jRoot;
+	jRoot.Parse(jsonContent.c_str());
 	if (progressCallback != nullptr) progressCallback->progress(0.33f);
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
-	// auto version = Float::parseFloat((jRoot["version"].getString()));
-	level->setRotationOrder(jRoot["ro"].isNull() == false?RotationOrder::valueOf((jRoot["ro"].getString())) : RotationOrder::XYZ);
+	// auto version = Float::parseFloat((jRoot["version"].GetString()));
+	level->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf((jRoot["ro"].GetString())) : RotationOrder::XYZ);
 	level->clearProperties();
-	auto jMapProperties = jRoot["properties"].getArray();
-	for (auto i = 0; i < jMapProperties.size(); i++) {
-		auto& jMapProperty = jMapProperties[i];
+	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
+		auto& jMapProperty = jRoot["properties"].GetArray()[i];
 		level->addProperty(
-			(jMapProperty["name"].getString()),
-			(jMapProperty["value"].getString())
+			(jMapProperty["name"].GetString()),
+			(jMapProperty["value"].GetString())
 		);
 	}
-	if (jRoot["lights"].isNull() == false) {
-		auto& jLights = jRoot["lights"].getArray();
-		for (auto i = 0; i < jLights.size(); i++) {
-			auto jLight = jLights[i];
-			auto light = level->getLightAt(jLight["id"].isNull() == false? jLight["id"].getInt() : i);
+	if (jRoot.FindMember("lights") != jRoot.MemberEnd()) {
+		for (auto i = 0; i < jRoot["lights"].GetArray().Size(); i++) {
+			auto& jLight = jRoot["lights"].GetArray()[i];
+			auto light = level->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()? jLight["id"].GetInt() : i);
 			light->getAmbient().set(
-				static_cast< float >(jLight["ar"].getDouble()),
-				static_cast< float >(jLight["ag"].getDouble()),
-				static_cast< float >(jLight["ab"].getDouble()),
-				static_cast< float >(jLight["aa"].getDouble())
+				static_cast< float >(jLight["ar"].GetFloat()),
+				static_cast< float >(jLight["ag"].GetFloat()),
+				static_cast< float >(jLight["ab"].GetFloat()),
+				static_cast< float >(jLight["aa"].GetFloat())
 			);
 			light->getDiffuse().set(
-				static_cast< float >(jLight["dr"].getDouble()),
-				static_cast< float >(jLight["dg"].getDouble()),
-				static_cast< float >(jLight["db"].getDouble()),
-				static_cast< float >(jLight["da"].getDouble())
+				static_cast< float >(jLight["dr"].GetFloat()),
+				static_cast< float >(jLight["dg"].GetFloat()),
+				static_cast< float >(jLight["db"].GetFloat()),
+				static_cast< float >(jLight["da"].GetFloat())
 			);
 			light->getSpecular().set(
-				static_cast< float >(jLight["sr"].getDouble()),
-				static_cast< float >(jLight["sg"].getDouble()),
-				static_cast< float >(jLight["sb"].getDouble()),
-				static_cast< float >(jLight["sa"].getDouble())
+				static_cast< float >(jLight["sr"].GetFloat()),
+				static_cast< float >(jLight["sg"].GetFloat()),
+				static_cast< float >(jLight["sb"].GetFloat()),
+				static_cast< float >(jLight["sa"].GetFloat())
 			);
 			light->getPosition().set(
-				static_cast< float >(jLight["px"].getDouble()),
-				static_cast< float >(jLight["py"].getDouble()),
-				static_cast< float >(jLight["pz"].getDouble()),
-				static_cast< float >(jLight["pw"].getDouble())
+				static_cast< float >(jLight["px"].GetFloat()),
+				static_cast< float >(jLight["py"].GetFloat()),
+				static_cast< float >(jLight["pz"].GetFloat()),
+				static_cast< float >(jLight["pw"].GetFloat())
 			);
-			light->setConstantAttenuation(static_cast< float >(jLight["ca"].getDouble()));
-			light->setLinearAttenuation(static_cast< float >(jLight["la"].getDouble()));
-			light->setQuadraticAttenuation(static_cast< float >(jLight["qa"].getDouble()));
+			light->setConstantAttenuation(static_cast< float >(jLight["ca"].GetFloat()));
+			light->setLinearAttenuation(static_cast< float >(jLight["la"].GetFloat()));
+			light->setQuadraticAttenuation(static_cast< float >(jLight["qa"].GetFloat()));
 			light->getSpotTo().set(
-				static_cast< float >(jLight["stx"].getDouble()),
-				static_cast< float >(jLight["sty"].getDouble()),
-				static_cast< float >(jLight["stz"].getDouble())
+				static_cast< float >(jLight["stx"].GetFloat()),
+				static_cast< float >(jLight["sty"].GetFloat()),
+				static_cast< float >(jLight["stz"].GetFloat())
 			);
 			light->getSpotDirection().set(
-				static_cast< float >(jLight["sdx"].getDouble()),
-				static_cast< float >(jLight["sdy"].getDouble()),
-				static_cast< float >(jLight["sdz"].getDouble())
+				static_cast< float >(jLight["sdx"].GetFloat()),
+				static_cast< float >(jLight["sdy"].GetFloat()),
+				static_cast< float >(jLight["sdz"].GetFloat())
 			);
-			light->setSpotExponent(static_cast< float >(jLight["se"].getDouble()));
-			light->setSpotCutOff(static_cast< float >(jLight["sco"].getDouble()));
-			light->setEnabled(jLight["e"].getBoolean());
+			light->setSpotExponent(static_cast< float >(jLight["se"].GetFloat()));
+			light->setSpotCutOff(static_cast< float >(jLight["sco"].GetFloat()));
+			light->setEnabled(jLight["e"].GetBool());
 		}
 	}
 	level->getEntityLibrary()->clear();
 
-	auto jModels = jRoot["models"].getArray();
-	auto jObjects = jRoot["objects"].getArray();
 	auto progressStepCurrent = 0;
-	for (auto i = 0; i < jModels.size(); i++) {
-		auto jModel = jModels[i];
+	for (auto i = 0; i < jRoot["models"].GetArray().Size(); i++) {
+		auto& jModel = jRoot["models"].GetArray()[i];
 		LevelEditorEntity* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
-			jModel["id"].getInt(),
+			jModel["id"].GetInt(),
 			pathName,
 			jModel["entity"]
 		);
 		if (levelEditorEntity == nullptr) {
-			Console::println("LevelFileImport::doImport(): Invalid entity = " + to_string(jModel["id"].getInt()));
+			Console::println("LevelFileImport::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));
 			continue;
 		}
 		level->getEntityLibrary()->addEntity(levelEditorEntity);
-		if (jModel["properties"].isNull() == false) {
-			auto jModelProperties = jModel["properties"].getArray();
-			for (auto j = 0; j < jModelProperties.size(); j++) {
-				auto jModelProperty = jModelProperties[j];
+		if (jModel.FindMember("properties") != jModel.MemberEnd()) {
+			for (auto j = 0; j < jModel["properties"].GetArray().Size(); j++) {
+				auto& jModelProperty = jModel["properties"].GetArray()[j];
 				levelEditorEntity->addProperty(
-					(jModelProperty["name"].getString()),
-					(jModelProperty["value"].getString())
+					(jModelProperty["name"].GetString()),
+					(jModelProperty["value"].GetString())
 				);
 			}
 		}
 
-		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jModels.size()) * 0.33f);
+		if (progressCallback != nullptr) progressCallback->progress(0.33f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["models"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
 	level->clearObjects();
 
-	for (auto i = 0; i < jObjects.size(); i++) {
-		auto& jObject = jObjects[i];
-		auto model = level->getEntityLibrary()->getEntity(jObject["mid"].getInt());
+	for (auto i = 0; i < jRoot["objects"].GetArray().Size(); i++) {
+		auto& jObject = jRoot["objects"].GetArray()[i];
+		auto model = level->getEntityLibrary()->getEntity(jObject["mid"].GetInt());
 		if (model == nullptr) {
-			Console::println("LevelFileImport::doImport(): No entity found with id = " + to_string(jObject["mid"].getInt()));
+			Console::println("LevelFileImport::doImport(): No entity found with id = " + to_string(jObject["mid"].GetInt()));
 
-			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jObjects.size()) * 0.33f);
+			if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 			progressStepCurrent++;
 
 			continue;
@@ -198,22 +192,22 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		transformations.setPivot(model->getPivot());
 		transformations.setTranslation(
 			Vector3(
-				static_cast< float >(jObject["tx"].getDouble()),
-				static_cast< float >(jObject["ty"].getDouble()),
-				static_cast< float >(jObject["tz"].getDouble())
+				static_cast< float >(jObject["tx"].GetFloat()),
+				static_cast< float >(jObject["ty"].GetFloat()),
+				static_cast< float >(jObject["tz"].GetFloat())
 			)
 		);
 		transformations.setScale(
 			Vector3(
-				static_cast< float >(jObject["sx"].getDouble()),
-				static_cast< float >(jObject["sy"].getDouble()),
-				static_cast< float >(jObject["sz"].getDouble())
+				static_cast< float >(jObject["sx"].GetFloat()),
+				static_cast< float >(jObject["sy"].GetFloat()),
+				static_cast< float >(jObject["sz"].GetFloat())
 			)
 		);
 		Vector3 rotation(
-			static_cast< float >(jObject["rx"].getDouble()),
-			static_cast< float >(jObject["ry"].getDouble()),
-			static_cast< float >(jObject["rz"].getDouble())
+			static_cast< float >(jObject["rx"].GetFloat()),
+			static_cast< float >(jObject["ry"].GetFloat()),
+			static_cast< float >(jObject["rz"].GetFloat())
 		);
 		transformations.addRotation(level->getRotationOrder()->getAxis0(), rotation.getArray()[level->getRotationOrder()->getAxis0VectorIndex()]);
 		transformations.addRotation(level->getRotationOrder()->getAxis1(), rotation.getArray()[level->getRotationOrder()->getAxis1VectorIndex()]);
@@ -221,28 +215,27 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		transformations.update();
 		auto levelEditorObject = new LevelEditorObject(
 			objectIdPrefix != "" ?
-				objectIdPrefix + (jObject["id"].getString()) :
-				(jObject["id"].getString()),
-			 jObject["descr"].isNull() == false?(jObject["descr"].getString()) : "",
+				objectIdPrefix + (jObject["id"].GetString()) :
+				(jObject["id"].GetString()),
+			 jObject.FindMember("descr") != jObject.MemberEnd()?(jObject["descr"].GetString()) : "",
 			 transformations,
 			 model
 		);
-		if (jObject["properties"].isNull() == false) {
-			auto jObjectProperties = jObject["properties"].getArray();
-			for (auto j = 0; j < jObjectProperties.size(); j++) {
-				auto jObjectProperty = jObjectProperties[j];
+		if (jObject.FindMember("properties") != jObject.MemberEnd()) {
+			for (auto j = 0; j < jObject["properties"].GetArray().Size(); j++) {
+				auto& jObjectProperty = jObject["properties"].GetArray()[j];
 				levelEditorObject->addProperty(
-					(jObjectProperty["name"].getString()),
-					(jObjectProperty["value"].getString())
+					(jObjectProperty["name"].GetString()),
+					(jObjectProperty["value"].GetString())
 				);
 			}
 		}
 		level->addObject(levelEditorObject);
 
-		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jObjects.size()) * 0.33f);
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.66f + static_cast<float>(progressStepCurrent) / static_cast<float>(jRoot["objects"].GetArray().Size()) * 0.33f);
 		progressStepCurrent++;
 	}
-	level->setObjectIdx(jRoot["objects_eidx"].getInt());
+	level->setObjectIdx(jRoot["objects_eidx"].GetInt());
 	level->setPathName(pathName);
 	level->setFileName(fileName);
 	level->update();
