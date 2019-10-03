@@ -74,7 +74,11 @@ string Application::execute(const string& command) {
 	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
 	array<char, 128> buffer;
 	string result;
-	shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+	#if defined(_MSC_VER)
+		shared_ptr<FILE> pipe(_popen(command.c_str(), "r"), pclose);
+	#else
+		shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+	#endif
 	if (!pipe) throw std::runtime_error("popen() failed!");
 	while (!feof(pipe.get())) {
 		if (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)

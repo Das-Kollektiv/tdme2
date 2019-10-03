@@ -26,7 +26,8 @@ INCLUDES = \
 	/I "ext\win-openal-soft\includes" \
 	/I "ext\win-glew\include" \
 	/I "ext\win-freeglut\include" \
-	/I "ext\win-dirent\include"
+	/I "ext\win-dirent\include" \
+	/I "ext/rapidjson/include"
 
 # For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
 
@@ -58,7 +59,6 @@ LINK_FLAGS = /LTCG
 
 SRC = src
 TINYXML = tinyxml
-JSONBOX = jsonbox
 ZLIB = zlib
 LIBPNG = libpng
 VORBIS = vorbis
@@ -427,17 +427,6 @@ EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinyxmlerror.cpp \
 	ext/tinyxml/tinyxmlparser.cpp \
 
-EXT_JSONBOX_SRCS = \
-	ext/jsonbox/Array.cpp \
-	ext/jsonbox/Convert.cpp \
-	ext/jsonbox/Escaper.cpp \
-	ext/jsonbox/IndentCanceller.cpp \
-	ext/jsonbox/Indenter.cpp \
-	ext/jsonbox/JsonException.cpp \
-	ext/jsonbox/Object.cpp \
-	ext/jsonbox/SolidusEscaper.cpp \
-	ext/jsonbox/Value.cpp \
-
 EXT_ZLIB_SRCS = \
 	ext/zlib/adler32.c \
 	ext/zlib/crc32.c \
@@ -612,7 +601,6 @@ MAIN_SRCS = \
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
-	$(EXT_JSONBOX_SRCS) \
 	$(EXT_ZLIB_SRCS) \
 	$(EXT_LIBPNG_SRCS) \
 	$(EXT_VORBIS_SRCS) \
