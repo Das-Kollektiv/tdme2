@@ -75,7 +75,7 @@ string Application::execute(const string& command) {
 	array<char, 128> buffer;
 	string result;
 	#if defined(_MSC_VER)
-		shared_ptr<FILE> pipe(_popen(command.c_str(), "r"), pclose);
+		shared_ptr<FILE> pipe(_popen(command.c_str(), "r"), _pclose);
 	#else
 		shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
 	#endif
