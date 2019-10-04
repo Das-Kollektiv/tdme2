@@ -232,6 +232,7 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 				<tab-content tab-id="tab7" vertical-align="top">
 					<layout padding="10" horizontal-align="center" vertical-align="center" alignment="horizontal" width="100%" height="100%">
 						<progress-bar width="300" name="progressbar-test" id="progressbar-test" value="0.5" />
+						<space width="50" />
 						<slider-horizontal name="sliderh-test" id="sliderh-test" value="0.5" on-change="progressbar-test.value=sliderh-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value" />
 						<space width="50" />
 						<slider-vertical name="sliderv-test" id="sliderv-test" value="0.5" on-change="progressbar-test.value=sliderv-test.value;sliderh-test.value=progressbar-test.value;sliderv-test.value=progressbar-test.value;knob-test.value=progressbar-test.value" />
