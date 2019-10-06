@@ -600,6 +600,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 
@@ -628,6 +629,7 @@ all: \
 	archive \
 	converttotm \
 	copyanimationsetups \
+	generatelicenses \
 	levelfixmodelszup2yup \
 	fixdoxygen \
 	TDMELevelEditor \
@@ -724,6 +726,9 @@ converttotm:
 
 copyanimationsetups:
 	cl /Fecopyanimationsetups $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+generatelicenses:
+	cl /Fegeneratelicenses $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 levelfixmodelszup2yup:
 	cl /Felevelfixmodelszup2yup $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
