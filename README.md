@@ -205,18 +205,19 @@
             - Vulkan(optional)
             - GLFW3(optional, required for Vulkan)
         - included in TDME2 repository
-            - Vorbis/OGG
-            - zlib
-            - libpng
-            - tinyxml
-            - ReactPhysics3D
             - FBXSDK
-            - V-HACD
-            - glslang
-            - OGLCompilersDLL
-            - spirv
+            - libpng
             - MoltenVK
+            - ReactPhysics3D
             - RapidJSON
+            - tinyxml
+            - V-HACD
+            - Vorbis/OGG
+            - Vulkan
+              - glslang
+              - OGLCompilersDLL
+              - spirv
+            - zlib
     - targeted platforms and its current state
         - Windows/MINGW(port completed)
         - Windows/MSC(port completed)
