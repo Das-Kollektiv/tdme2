@@ -1358,7 +1358,7 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 	// use framebuffer if we have one
 	if (frameBuffer != nullptr) frameBuffer->enableFrameBuffer();
 
-	// fetch pixel, TODO: implement me
+	// fetch pixel
 	auto pixels = renderer->readPixels(0, 0, width, height);
 	if (pixels == nullptr) return false;
 
@@ -1416,6 +1416,9 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 
 		png_destroy_write_struct(&png, &info);
 	}
+
+	//
+	delete pixels;
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
