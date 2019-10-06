@@ -728,13 +728,10 @@ float GL3Renderer::readPixelDepth(int32_t x, int32_t y)
 
 ByteBuffer* GL3Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	/*
-	auto pixelBuffer = ByteBuffer::allocateDirect(width * height * Byte::SIZE* 4);
+	auto pixelBuffer = ByteBuffer::allocate(width * height * 4);
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(pixelBuffer));
+	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->getBuffer());
 	return pixelBuffer;
-	*/
-	return nullptr;
 }
 
 void GL3Renderer::initGuiMode()

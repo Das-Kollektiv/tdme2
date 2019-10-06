@@ -727,9 +727,8 @@ public:
 	void dispose();
 
 	/** 
-	 * Creates a PNG file from current screen
-	 * TODO:
-	 * this does not seem to work with GLES2 and offscreen engines
+	 * Creates a PNG file from current screen(
+	 * 	This does not seem to work with GLES2 and offscreen engines
 	 * @param pathName path name 
 	 * @param fileName file name
 	 * @return success
