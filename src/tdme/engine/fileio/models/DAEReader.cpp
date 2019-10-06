@@ -84,9 +84,9 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-using tdme::ext::tinyxml::TiXmlDocument;
-using tdme::ext::tinyxml::TiXmlElement;
-using tdme::ext::tinyxml::TiXmlAttribute;
+using tinyxml::TiXmlDocument;
+using tinyxml::TiXmlElement;
+using tinyxml::TiXmlAttribute;
 
 const Color4 DAEReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 

@@ -53,8 +53,6 @@ distribution.
 	#endif
 #endif
 
-namespace tdme {
-namespace ext {
 namespace tinyxml {
 
 	class TiXmlDocument;
@@ -1712,6 +1710,4 @@ namespace tinyxml {
 		TIXML_STRING lineBreak;
 	};
 
-};
-};
 };

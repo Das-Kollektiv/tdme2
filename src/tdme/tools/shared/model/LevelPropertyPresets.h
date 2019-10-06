@@ -16,7 +16,7 @@ using std::string;
 using std::vector;
 
 using tdme::tools::shared::model::LevelEditorLevel;
-using tdme::ext::tinyxml::TiXmlElement;
+using tinyxml::TiXmlElement;
 
 using tdme::tools::shared::model::LevelEditorLight;
 

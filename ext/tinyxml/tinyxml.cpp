@@ -29,7 +29,7 @@ distribution.
 #include <sstream>
 
 
-using namespace tdme::ext::tinyxml;
+using namespace tinyxml;
 
 FILE* TiXmlFOpen( const char* filename, const char* mode );
 
@@ -1551,8 +1551,6 @@ TiXmlAttribute* TiXmlAttributeSet::FindOrCreate( const char* _name )
 	return attrib;
 }
 
-namespace tdme {
-namespace ext {
 namespace tinyxml {
 std::istream& operator>> (std::istream& in, TiXmlNode& base)
 {
@@ -1585,8 +1583,6 @@ std::string& operator<< (std::string& out, const TiXmlNode& base )
 
 	return out;
 }
-};
-};
 };
 
 

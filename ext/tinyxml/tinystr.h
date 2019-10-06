@@ -45,8 +45,6 @@ distribution.
 	#define TIXML_EXPLICIT
 #endif
 
-namespace tdme {
-namespace ext {
 namespace tinyxml {
 
 	/*
@@ -305,8 +303,6 @@ namespace tinyxml {
 
 	};
 
-};
-};
 };
 
 #endif	// TIXML_STRING_INCLUDED

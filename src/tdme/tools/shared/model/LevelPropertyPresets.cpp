@@ -39,8 +39,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::Exception;
 using tdme::utils::Console;
-using tdme::ext::tinyxml::TiXmlDocument;
-using tdme::ext::tinyxml::TiXmlElement;
+using tinyxml::TiXmlDocument;
+using tinyxml::TiXmlElement;
 
 LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 

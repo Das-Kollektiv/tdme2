@@ -107,9 +107,9 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-using tdme::ext::tinyxml::TiXmlDocument;
-using tdme::ext::tinyxml::TiXmlElement;
-using tdme::ext::tinyxml::TiXmlAttribute;
+using tinyxml::TiXmlDocument;
+using tinyxml::TiXmlElement;
+using tinyxml::TiXmlAttribute;
 
 #define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 

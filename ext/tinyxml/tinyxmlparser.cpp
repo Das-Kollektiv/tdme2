@@ -32,7 +32,7 @@ distribution.
     #define TIXML_LOG printf
 #endif
 
-using namespace tdme::ext::tinyxml;
+using namespace tinyxml;
 
 // Note tha "PutString" hardcodes the same list. This
 // is less flexible than it appears. Changing the entries
@@ -164,9 +164,6 @@ void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* leng
 //	}
 }
 
-
-namespace tdme {
-namespace ext {
 namespace tinyxml {
 
 	class TiXmlParsingData
@@ -193,8 +190,6 @@ namespace tinyxml {
 		int				tabsize;
 	};
 
-};
-};
 };
 
 
