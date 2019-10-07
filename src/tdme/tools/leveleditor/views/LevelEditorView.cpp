@@ -1050,23 +1050,17 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 
 bool LevelEditorView::objectDataApply(const string& name, const string& description)
 {
-	if (selectedEntityIds.size() != 1)
-		return false;
+	if (selectedEntityIds.size() != 1) return false;
 
 	auto selectedEntity = engine->getEntity(selectedEntityIds[0]);
-
-	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor."))
-		return false;
+	if (selectedEntity == nullptr || StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.")) return false;
 
 	auto levelEditorObject = level->getObjectById(selectedEntity->getId());
-	if (levelEditorObject == nullptr)
-		return false;
+	if (levelEditorObject == nullptr) return false;
 
 	levelEditorObject->setDescription(description);
 	if (levelEditorObject->getId() != name) {
-		if (engine->getEntity(name) != nullptr) {
-			return false;
-		}
+		if (engine->getEntity(name) != nullptr) return false;
 		auto oldId = levelEditorObject->getId();
 		level->removeObject(levelEditorObject->getId());
 		engine->removeEntity(levelEditorObject->getId());
