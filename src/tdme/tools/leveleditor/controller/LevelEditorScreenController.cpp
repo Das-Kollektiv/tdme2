@@ -270,6 +270,13 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	auto objectIdx = 0;
 	for (int i = 0; i < level->getObjectCount(); i++) {
+		if (objectIdx > 25000) {
+			objectsListBoxSubNodesXML =
+				"<scrollarea-vertical id=\"" +
+				objectsListBox->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
+			break;
+		}
 		auto object = level->getObjectAt(i);
 		if (object->getEntity()->isRenderGroups() == true) continue;
 		auto objectId = object->getId();
@@ -282,12 +289,6 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 			"\" " +
 			"/>\n";
 		objectIdx++;
-	}
-	if (objectIdx > 50000) {
-		objectsListBoxSubNodesXML =
-			"<scrollarea-vertical id=\"" +
-			objectsListBox->getId() +
-			"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
 	}
 	objectsListBoxSubNodesXML =
 		objectsListBoxSubNodesXML +

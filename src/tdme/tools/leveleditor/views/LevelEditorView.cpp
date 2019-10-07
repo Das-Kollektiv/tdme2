@@ -353,6 +353,8 @@ void LevelEditorView::handleInputEvents()
 	auto keyControlC = false;
 	auto keyControlV = false;
 	auto keyDelete = false;
+	mousePanningSide = MOUSE_PANNING_NONE;
+	mousePanningForward = MOUSE_PANNING_NONE;
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
@@ -564,7 +566,7 @@ void LevelEditorView::handleInputEvents()
 				updateGUIElements();
 			}
 		} else
-		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
+		if (event.getButton() == MOUSE_BUTTON_RIGHT && mouseDragging == true) {
 			if (mouseDownLastX != MOUSE_DOWN_LAST_POSITION_NONE && mouseDownLastY != MOUSE_DOWN_LAST_POSITION_NONE) {
 				mousePanningSide = event.getXUnscaled() - mouseDownLastX;
 				mousePanningForward = event.getYUnscaled() - mouseDownLastY;
