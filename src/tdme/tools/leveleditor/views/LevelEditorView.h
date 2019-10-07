@@ -52,10 +52,19 @@ class tdme::tools::leveleditor::views::LevelEditorView final
 	: public View
 	, public GUIInputEventHandler
 {
-	friend class LevelEditorView_ObjectColor;
-	friend class LevelEditorView_LevelEditorView_1;
-
 private:
+	enum GizmoMode {
+		GIZMO_NONE,
+		GIZMO_TRANSLATE_X,
+		GIZMO_TRANSLATE_Y,
+		GIZMO_TRANSLATE_Z,
+		GIZMO_SCALE_X,
+		GIZMO_SCALE_Y,
+		GIZMO_SCALE_Z,
+		GIZMO_ROTATE_X,
+		GIZMO_ROTATE_Y,
+		GIZMO_ROTATE_Z,
+	};
 	static vector<string> OBJECTCOLOR_NAMES;
 	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
 	static constexpr int32_t MOUSE_BUTTON_LEFT { 1 };
@@ -112,6 +121,8 @@ private:
 	bool pasteMode;
 	bool pasteModeValid;
 	Vector3 placeEntityTranslation;
+
+	GizmoMode gizmoMode;
 
 private:
 	Model* levelEditorGround { nullptr };
@@ -441,6 +452,16 @@ private:
 	 * @param displayOnly display only
 	 */
 	void pasteObjects(bool displayOnly);
+
+	/**
+	 * Update gizmo
+	 */
+	void updateGizmo();
+
+	/**
+	 * Remove gizmo
+	 */
+	void removeGizmo();
 
 public:
 

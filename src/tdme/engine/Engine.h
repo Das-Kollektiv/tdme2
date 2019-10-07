@@ -49,6 +49,7 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
+using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
@@ -184,6 +185,7 @@ private:
 
 	vector<Object3D*> visibleObjects;
 	vector<Object3D*> visibleObjectsPostPostProcessing;
+	vector<Object3D*> visibleObjectsNoDepthTest;
 	vector<LODObject3D*> visibleLODObjects;
 	vector<ObjectParticleSystem*> visibleOpses;
 	vector<Entity*> visiblePpses;
@@ -681,9 +683,10 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
+	 * @param object3DGroup pointer to store group of Object3D to if appliable
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr);
 
 	/**
 	 * Retrieves entity by mouse position with contact point
@@ -691,9 +694,10 @@ public:
 	 * @param mouseY mouse y
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
+	 * @param object3DGroup pointer to store group of Object3D to if appliable
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr);
 
 	/**
 	 * Does a ray casting of visible 3d object based entities

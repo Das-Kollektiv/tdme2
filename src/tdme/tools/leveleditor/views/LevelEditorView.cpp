@@ -203,6 +203,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 	camLookRotationY->update();
 	levelEditorGround = createLevelEditorGroundPlateModel();
 	engine = Engine::getInstance();
+	gizmoMode = GIZMO_NONE;
 
 	{
 		// entity picking filter for no grid
@@ -232,7 +233,10 @@ LevelEditorView::LevelEditorView(PopUps* popUps)
 		{
 		public:
 			bool filterEntity(Entity* entity) override {
-				return entity->getId() != "tdme.leveleditor.placeentity" && StringUtils::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false;
+				return
+						entity->getId() != "tdme.leveleditor.placeentity" &&
+						StringUtils::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false &&
+						StringUtils::startsWith(entity->getId(), "tdme.leveleditor.gizmo.") == false;
 			}
 
 			/**
@@ -287,8 +291,7 @@ LevelEditorEntity* LevelEditorView::getSelectedEntity()
 
 LevelEditorObject* LevelEditorView::getSelectedObject()
 {
-	if (selectedEntityIds.size() != 1)
-		return nullptr;
+	if (selectedEntityIds.size() != 1) return nullptr;
 
 	auto selectedObject = level->getObjectById(selectedEntityIds[0]);
 	return selectedObject != nullptr && StringUtils::startsWith(selectedObject->getId(), "tdme.leveleditor.") == false ? level->getObjectById(selectedObject->getId()) : static_cast< LevelEditorObject* >(nullptr);
@@ -391,10 +394,13 @@ void LevelEditorView::handleInputEvents()
 
 		if (event.isProcessed() == true) continue;
 
-		if (event.getButton() != MOUSE_BUTTON_NONE) {
+		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 			if (mouseDragging == false) {
 				if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
 					mouseDragging = true;
+					mouseDownLastX = event.getXUnscaled();
+					mouseDownLastY = event.getYUnscaled();
+					mouseDraggingLastObject = nullptr;
 				}
 			}
 		} else {
@@ -406,10 +412,12 @@ void LevelEditorView::handleInputEvents()
 			}
 		}
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && placeEntityMode == true && placeEntityValid == true) {
-				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+				if (placeEntityMode == true && placeEntityValid == true) {
 					placeObject();
 					if (keyShift == false) unsetPlaceObjectMode();
+				} else {
+					gizmoMode = GIZMO_NONE;
 				}
 			} else
 			if (pasteMode == true && pasteModeValid == true) {
@@ -418,35 +426,118 @@ void LevelEditorView::handleInputEvents()
 					if (keyShift == false) unsetPasteMode();
 				}
 			} else {
-			if (mouseDragging == false) {
-					if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
-						mouseDragging = true;
+				Group* selectedEntityGroup = nullptr;
+				Entity* selectedEntity = nullptr;
+				if (gizmoMode == GIZMO_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid, &selectedEntityGroup);
+				if (mouseDragging == true && (selectedEntity == nullptr || mouseDraggingLastObject == selectedEntity)) {
+					if (gizmoMode != GIZMO_NONE) {
+						auto deltaX = event.getXUnscaled() - mouseDownLastX;
+						auto deltaY = event.getYUnscaled() - mouseDownLastY;
+						auto translateX = 0.0f;
+						auto translateY = 0.0f;
+						auto translateZ = 0.0f;
+						auto scaleX = 1.0f;
+						auto scaleY = 1.0f;
+						auto scaleZ = 1.0f;
+						auto rotateX = 0.0f;
+						auto rotateY = 0.0f;
+						auto rotateZ = 0.0f;
+						switch (gizmoMode) {
+							case GIZMO_TRANSLATE_X:
+								translateX = deltaX / 60.0f * camScale;
+								break;
+							case GIZMO_TRANSLATE_Y:
+								translateY = -deltaY / 60.0f * camScale;
+								break;
+							case GIZMO_TRANSLATE_Z:
+								translateZ = (deltaX + -deltaY) / 60.0f * camScale;
+								break;
+							case GIZMO_SCALE_X:
+								scaleX+= deltaX / 60.0f * camScale;
+								break;
+							case GIZMO_SCALE_Y:
+								scaleY+= -deltaY / 60.0f * camScale;
+								break;
+							case GIZMO_SCALE_Z:
+								scaleZ+= (deltaX + -deltaY) / 60.0f * camScale;
+								break;
+							case GIZMO_ROTATE_X:
+								rotateX+= -deltaY * camScale;
+								break;
+							case GIZMO_ROTATE_Y:
+								rotateY+= deltaX * camScale;
+								break;
+							case GIZMO_ROTATE_Z:
+								rotateZ+= (deltaX + -deltaY) * camScale;
+								break;
+						}
+						if (selectedEntityIds.size() == 1) {
+							for (auto selectedEntityId: selectedEntityIds) {
+								auto selectedEntity = engine->getEntity(selectedEntityId);
+								if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+									auto levelEditorObject = level->getObjectById(selectedEntity->getId());
+									levelEditorObject->getTransformations().setTranslation(levelEditorObject->getTransformations().getTranslation().clone().add(Vector3(translateX, translateY, translateZ)));
+									levelEditorObject->getTransformations().setScale(levelEditorObject->getTransformations().getScale().clone().scale(Vector3(scaleX, scaleY, scaleZ)));
+									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisXIndex()) + rotateX);
+									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisYIndex()) + rotateY);
+									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisZIndex()) + rotateZ);
+									levelEditorObject->getTransformations().update();
+									selectedEntity->fromTransformations(levelEditorObject->getTransformations());
+									levelEditorScreenController->setObject(
+										selectedEntity->getTranslation(),
+										selectedEntity->getScale(),
+										selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisXIndex()),
+										selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisYIndex()),
+										selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisZIndex())
+									);
+								}
+							}
+						}
+						updateGizmo();
 					}
-				}
-				if (keyControl == false) {
-					vector<Entity*> entitiesToRemove;
-					for (auto selectedEntityId: selectedEntityIds) {
-						auto selectedEntity = engine->getEntity(selectedEntityId);
-						if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
-							// no op
-						} else {
-							if (selectedEntity != nullptr) entitiesToRemove.push_back(selectedEntity);
+
+				} else
+				if (selectedEntity != nullptr &&
+					StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.gizmo.") == true && selectedEntityGroup != nullptr) {
+					if (selectedEntityGroup->getId() == "translate_x") gizmoMode = GIZMO_TRANSLATE_X; else
+					if (selectedEntityGroup->getId() == "translate_y") gizmoMode = GIZMO_TRANSLATE_Z; else
+					if (selectedEntityGroup->getId() == "translate_z") gizmoMode = GIZMO_TRANSLATE_Y; else
+					if (selectedEntityGroup->getId() == "translate_x_plane") gizmoMode = GIZMO_TRANSLATE_X; else
+					if (selectedEntityGroup->getId() == "translate_y_plane") gizmoMode = GIZMO_TRANSLATE_Z; else
+					if (selectedEntityGroup->getId() == "translate_z_plane") gizmoMode = GIZMO_TRANSLATE_Y; else
+					if (selectedEntityGroup->getId() == "rotate_x") gizmoMode = GIZMO_ROTATE_X; else
+					if (selectedEntityGroup->getId() == "rotate_y") gizmoMode = GIZMO_ROTATE_Z; else
+					if (selectedEntityGroup->getId() == "rotate_z") gizmoMode = GIZMO_ROTATE_Y; else
+					if (selectedEntityGroup->getId() == "rotate_x_plane") gizmoMode = GIZMO_ROTATE_X; else
+					if (selectedEntityGroup->getId() == "rotate_y_plane") gizmoMode = GIZMO_ROTATE_Z; else
+					if (selectedEntityGroup->getId() == "rotate_z_plane") gizmoMode = GIZMO_ROTATE_Y; else
+					if (selectedEntityGroup->getId() == "scale_x") gizmoMode = GIZMO_SCALE_X; else
+					if (selectedEntityGroup->getId() == "scale_y") gizmoMode = GIZMO_SCALE_Z; else
+					if (selectedEntityGroup->getId() == "scale_z") gizmoMode = GIZMO_SCALE_Y; else
+						gizmoMode = GIZMO_NONE;
+				} else {
+					if (keyControl == false) {
+						vector<Entity*> entitiesToRemove;
+						for (auto selectedEntityId: selectedEntityIds) {
+							auto selectedEntity = engine->getEntity(selectedEntityId);
+							if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
+								// no op
+							} else {
+								if (selectedEntity != nullptr) entitiesToRemove.push_back(selectedEntity);
+							}
+						}
+						for (auto entityToRemove: entitiesToRemove) {
+							Console::println("aaa: " + entityToRemove->getId());
+							setStandardObjectColorEffect(entityToRemove);
+							selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
+							auto selectedEntitiyIdByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
+							if (selectedEntitiyIdByIdIt != selectedEntityIdsById.end()) {
+								selectedEntityIdsById.erase(selectedEntitiyIdByIdIt);
+							}
+							levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
 						}
 					}
-					for (auto entityToRemove: entitiesToRemove) {
-						setStandardObjectColorEffect(entityToRemove);
-						selectedEntityIds.erase(remove(selectedEntityIds.begin(), selectedEntityIds.end(), entityToRemove->getId()), selectedEntityIds.end());
-						auto selectedEntitiyIdByIdIt = selectedEntityIdsById.find(entityToRemove->getId());
-						if (selectedEntitiyIdByIdIt != selectedEntityIdsById.end()) {
-							selectedEntityIdsById.erase(selectedEntitiyIdByIdIt);
-						}
-						levelEditorScreenController->unselectObjectInObjectListBox(entityToRemove->getId());
-					}
-				}
-				auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid);
-				if (selectedEntity != nullptr) {
-					if (mouseDragging == true && mouseDraggingLastObject == selectedEntity) {
-					} else {
+					if (selectedEntity != nullptr) {
 						if (selectedEntityIdsById.find(selectedEntity->getId()) == selectedEntityIdsById.end()) {
 							setStandardObjectColorEffect(selectedEntity);
 							setHighlightObjectColorEffect(selectedEntity);
@@ -467,8 +558,9 @@ void LevelEditorView::handleInputEvents()
 							levelEditorScreenController->unselectObjectInObjectListBox(selectedEntity->getId());
 						}
 					}
+					mouseDraggingLastObject = selectedEntity;
+					updateGizmo();
 				}
-				mouseDraggingLastObject = selectedEntity;
 				updateGUIElements();
 			}
 		} else
@@ -492,12 +584,8 @@ void LevelEditorView::handleInputEvents()
 		auto mouseWheel = event.getWheelY();
 		if (mouseWheel != 0) {
 			camScale += -mouseWheel * 0.1f;
-			if (camScale < camScaleMin)
-				camScale = camScaleMin;
-
-			if (camScale > camScaleMax)
-				camScale = camScaleMax;
-
+			if (camScale < camScaleMin) camScale = camScaleMin;
+			if (camScale > camScaleMax) camScale = camScaleMax;
 		}
 	}
 	if (keyDelete == true) {
@@ -661,6 +749,7 @@ void LevelEditorView::display()
 
 void LevelEditorView::selectObjects(const vector<string>& entityIds)
 {
+	removeGizmo();
 	for (auto entityIdToRemove: selectedEntityIds) {
 		auto entityToRemove = engine->getEntity(entityIdToRemove);
 		if (entityToRemove != nullptr) setStandardObjectColorEffect(entityToRemove);
@@ -680,6 +769,7 @@ void LevelEditorView::selectObjects(const vector<string>& entityIds)
 
 void LevelEditorView::unselectObjects()
 {
+	removeGizmo();
 	for (auto entityIdToRemove: selectedEntityIds) {
 		auto entityToRemove = engine->getEntity(entityIdToRemove);
 		if (entityToRemove != nullptr) setStandardObjectColorEffect(entityToRemove);
@@ -868,6 +958,7 @@ void LevelEditorView::setStandardObjectColorEffect(Entity* object)
 
 void LevelEditorView::loadLevel()
 {
+	removeGizmo();
 	removeGrid();
 	engine->reset();
 	selectedEntityIds.clear();
@@ -1045,6 +1136,7 @@ void LevelEditorView::placeObject()
 
 void LevelEditorView::removeObjects()
 {
+	removeGizmo();
 	vector<Entity*> entitiesToRemove;
 	for (auto selectedEntityId: selectedEntityIds) {
 		Entity* selectedEntity = engine->getEntity(selectedEntityId);
@@ -1156,6 +1248,7 @@ void LevelEditorView::objectTranslationApply(float x, float y, float z)
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
 	level->update();
+	updateGizmo();
 	updateGUIElements();
 }
 
@@ -1188,6 +1281,7 @@ void LevelEditorView::objectScaleApply(float x, float y, float z)
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
 	level->update();
+	updateGizmo();
 	updateGUIElements();
 }
 
@@ -1223,6 +1317,7 @@ void LevelEditorView::objectRotationsApply(float x, float y, float z)
 		levelEditorScreenController->setObject(Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), 0.0f, 0.0f, 0.0f);
 	}
 	level->update();
+	updateGizmo();
 	updateGUIElements();
 }
 
@@ -1550,4 +1645,53 @@ void LevelEditorView::applyLight(int32_t i, const Color4& ambient, const Color4&
 	engine->getLightAt(i)->setSpotCutOff(spotCutoff);
 	engine->getLightAt(i)->setEnabled(enabled);
 	levelEditorScreenController->setLight(i, level->getLightAt(i)->getAmbient(), level->getLightAt(i)->getDiffuse(), level->getLightAt(i)->getSpecular(), level->getLightAt(i)->getPosition(), level->getLightAt(i)->getConstantAttenuation(), level->getLightAt(i)->getLinearAttenuation(), level->getLightAt(i)->getQuadraticAttenuation(), level->getLightAt(i)->getSpotTo(), level->getLightAt(i)->getSpotDirection(), level->getLightAt(i)->getSpotExponent(), level->getLightAt(i)->getSpotCutOff(), level->getLightAt(i)->isEnabled());
+}
+
+void LevelEditorView::updateGizmo() {
+	if (selectedEntityIds.size() == 0 || selectedEntityIds.size() > 1) {
+		removeGizmo();
+		return;
+	}
+
+	//
+	LevelEditorObject* levelEditorObject = nullptr;
+	for (auto selectedEntityId: selectedEntityIds) {
+		auto selectedEntity = engine->getEntity(selectedEntityId);
+		if (selectedEntity != nullptr && StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.") == false) {
+			levelEditorObject = level->getObjectById(selectedEntity->getId());
+		}
+	}
+
+	//
+	if (levelEditorObject == nullptr) {
+		removeGizmo();
+		return;
+	}
+
+	//
+	Object3D* gizmoEntity = nullptr;
+	gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity("tdme.leveleditor.gizmo.translation"));
+	if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D("tdme.leveleditor.gizmo.translation", Tools::getGizmoTranslation()));
+	gizmoEntity->setPickable(true);
+	gizmoEntity->setDisableDepthTest(true);
+	gizmoEntity->setTranslation(levelEditorObject->getTransformations().getTranslation());
+	gizmoEntity->update();
+	gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity("tdme.leveleditor.gizmo.scale"));
+	if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D("tdme.leveleditor.gizmo.scale", Tools::getGizmoScale()));
+	gizmoEntity->setPickable(true);
+	gizmoEntity->setDisableDepthTest(true);
+	gizmoEntity->setTranslation(levelEditorObject->getTransformations().getTranslation());
+	gizmoEntity->update();
+	gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity("tdme.leveleditor.gizmo.rotations"));
+	if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D("tdme.leveleditor.gizmo.rotations", Tools::getGizmoRotations()));
+	gizmoEntity->setPickable(true);
+	gizmoEntity->setDisableDepthTest(true);
+	gizmoEntity->setTranslation(levelEditorObject->getTransformations().getTranslation());
+	gizmoEntity->update();
+}
+
+void LevelEditorView::removeGizmo() {
+	engine->removeEntity("tdme.leveleditor.gizmo.translation");
+	engine->removeEntity("tdme.leveleditor.gizmo.scale");
+	engine->removeEntity("tdme.leveleditor.gizmo.rotations");
 }

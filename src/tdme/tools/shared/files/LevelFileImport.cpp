@@ -91,13 +91,13 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 
 	level->setGameRoot(Tools::getGameRootPath(pathName));
 	// auto version = Float::parseFloat((jRoot["version"].GetString()));
-	level->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf((jRoot["ro"].GetString())) : RotationOrder::XYZ);
+	level->setRotationOrder(jRoot.FindMember("ro") != jRoot.MemberEnd()?RotationOrder::valueOf(jRoot["ro"].GetString()) : RotationOrder::XYZ);
 	level->clearProperties();
 	for (auto i = 0; i < jRoot["properties"].GetArray().Size(); i++) {
 		auto& jMapProperty = jRoot["properties"].GetArray()[i];
 		level->addProperty(
-			(jMapProperty["name"].GetString()),
-			(jMapProperty["value"].GetString())
+			jMapProperty["name"].GetString(),
+			jMapProperty["value"].GetString()
 		);
 	}
 	if (jRoot.FindMember("lights") != jRoot.MemberEnd()) {
@@ -105,44 +105,44 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			auto& jLight = jRoot["lights"].GetArray()[i];
 			auto light = level->getLightAt(jLight.FindMember("id") != jLight.MemberEnd()? jLight["id"].GetInt() : i);
 			light->getAmbient().set(
-				static_cast< float >(jLight["ar"].GetFloat()),
-				static_cast< float >(jLight["ag"].GetFloat()),
-				static_cast< float >(jLight["ab"].GetFloat()),
-				static_cast< float >(jLight["aa"].GetFloat())
+				jLight["ar"].GetFloat(),
+				jLight["ag"].GetFloat(),
+				jLight["ab"].GetFloat(),
+				jLight["aa"].GetFloat()
 			);
 			light->getDiffuse().set(
-				static_cast< float >(jLight["dr"].GetFloat()),
-				static_cast< float >(jLight["dg"].GetFloat()),
-				static_cast< float >(jLight["db"].GetFloat()),
-				static_cast< float >(jLight["da"].GetFloat())
+				jLight["dr"].GetFloat(),
+				jLight["dg"].GetFloat(),
+				jLight["db"].GetFloat(),
+				jLight["da"].GetFloat()
 			);
 			light->getSpecular().set(
-				static_cast< float >(jLight["sr"].GetFloat()),
-				static_cast< float >(jLight["sg"].GetFloat()),
-				static_cast< float >(jLight["sb"].GetFloat()),
-				static_cast< float >(jLight["sa"].GetFloat())
+				jLight["sr"].GetFloat(),
+				jLight["sg"].GetFloat(),
+				jLight["sb"].GetFloat(),
+				jLight["sa"].GetFloat()
 			);
 			light->getPosition().set(
-				static_cast< float >(jLight["px"].GetFloat()),
-				static_cast< float >(jLight["py"].GetFloat()),
-				static_cast< float >(jLight["pz"].GetFloat()),
-				static_cast< float >(jLight["pw"].GetFloat())
+				jLight["px"].GetFloat(),
+				jLight["py"].GetFloat(),
+				jLight["pz"].GetFloat(),
+				jLight["pw"].GetFloat()
 			);
-			light->setConstantAttenuation(static_cast< float >(jLight["ca"].GetFloat()));
-			light->setLinearAttenuation(static_cast< float >(jLight["la"].GetFloat()));
-			light->setQuadraticAttenuation(static_cast< float >(jLight["qa"].GetFloat()));
+			light->setConstantAttenuation(jLight["ca"].GetFloat());
+			light->setLinearAttenuation(jLight["la"].GetFloat());
+			light->setQuadraticAttenuation(jLight["qa"].GetFloat());
 			light->getSpotTo().set(
-				static_cast< float >(jLight["stx"].GetFloat()),
-				static_cast< float >(jLight["sty"].GetFloat()),
-				static_cast< float >(jLight["stz"].GetFloat())
+				jLight["stx"].GetFloat(),
+				jLight["sty"].GetFloat(),
+				jLight["stz"].GetFloat()
 			);
 			light->getSpotDirection().set(
-				static_cast< float >(jLight["sdx"].GetFloat()),
-				static_cast< float >(jLight["sdy"].GetFloat()),
-				static_cast< float >(jLight["sdz"].GetFloat())
+				jLight["sdx"].GetFloat(),
+				jLight["sdy"].GetFloat(),
+				jLight["sdz"].GetFloat()
 			);
-			light->setSpotExponent(static_cast< float >(jLight["se"].GetFloat()));
-			light->setSpotCutOff(static_cast< float >(jLight["sco"].GetFloat()));
+			light->setSpotExponent(jLight["se"].GetFloat());
+			light->setSpotCutOff(jLight["sco"].GetFloat());
 			light->setEnabled(jLight["e"].GetBool());
 		}
 	}
@@ -192,22 +192,22 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		transformations.setPivot(model->getPivot());
 		transformations.setTranslation(
 			Vector3(
-				static_cast< float >(jObject["tx"].GetFloat()),
-				static_cast< float >(jObject["ty"].GetFloat()),
-				static_cast< float >(jObject["tz"].GetFloat())
+				jObject["tx"].GetFloat(),
+				jObject["ty"].GetFloat(),
+				jObject["tz"].GetFloat()
 			)
 		);
 		transformations.setScale(
 			Vector3(
-				static_cast< float >(jObject["sx"].GetFloat()),
-				static_cast< float >(jObject["sy"].GetFloat()),
-				static_cast< float >(jObject["sz"].GetFloat())
+				jObject["sx"].GetFloat(),
+				jObject["sy"].GetFloat(),
+				jObject["sz"].GetFloat()
 			)
 		);
 		Vector3 rotation(
-			static_cast< float >(jObject["rx"].GetFloat()),
-			static_cast< float >(jObject["ry"].GetFloat()),
-			static_cast< float >(jObject["rz"].GetFloat())
+			jObject["rx"].GetFloat(),
+			jObject["ry"].GetFloat(),
+			jObject["rz"].GetFloat()
 		);
 		transformations.addRotation(level->getRotationOrder()->getAxis0(), rotation.getArray()[level->getRotationOrder()->getAxis0VectorIndex()]);
 		transformations.addRotation(level->getRotationOrder()->getAxis1(), rotation.getArray()[level->getRotationOrder()->getAxis1VectorIndex()]);
@@ -215,9 +215,9 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		transformations.update();
 		auto levelEditorObject = new LevelEditorObject(
 			objectIdPrefix != "" ?
-				objectIdPrefix + (jObject["id"].GetString()) :
+				objectIdPrefix + jObject["id"].GetString() :
 				(jObject["id"].GetString()),
-			 jObject.FindMember("descr") != jObject.MemberEnd()?(jObject["descr"].GetString()) : "",
+			 jObject.FindMember("descr") != jObject.MemberEnd()?jObject["descr"].GetString() : "",
 			 transformations,
 			 model
 		);
@@ -225,8 +225,8 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 			for (auto j = 0; j < jObject["properties"].GetArray().Size(); j++) {
 				auto& jObjectProperty = jObject["properties"].GetArray()[j];
 				levelEditorObject->addProperty(
-					(jObjectProperty["name"].GetString()),
-					(jObjectProperty["value"].GetString())
+					jObjectProperty["name"].GetString(),
+					jObjectProperty["value"].GetString()
 				);
 			}
 		}

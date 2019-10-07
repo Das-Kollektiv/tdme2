@@ -69,6 +69,7 @@ private:
 	float distanceShaderDistance { 50.0f };
 	RenderPass renderPass { RENDERPASS_OBJECTS };
 	bool enableEarlyZRejection { false };
+	bool disableDepthTest { false };
 	int64_t frameTransformationsLast { -1LL };
 	int64_t timeTransformationsLast { -1LL };
 
@@ -346,6 +347,21 @@ public:
 	 */
 	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
 		this->enableEarlyZRejection = enableEarlyZRejection;
+	}
+
+	/**
+	 * @return if depth test is disabled
+	 */
+	inline bool isDisableDepthTest() const {
+		return disableDepthTest;
+	}
+
+	/**
+	 * Set disable depth test
+	 * @param disableDepthTest disable depth test
+	 */
+	inline void setDisableDepthTest(bool disableDepthTest) {
+		this->disableDepthTest = disableDepthTest;
 	}
 
 };

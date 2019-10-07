@@ -51,12 +51,7 @@ Object3DBase_TransformedFacesIterator* Object3DBase_TransformedFacesIterator::it
 	return this;
 }
 
-bool Object3DBase_TransformedFacesIterator::hasNext()
-{
-	return faceIdxTotal < faceCount;
-}
-
-array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
+const array<Vector3, 3>& Object3DBase_TransformedFacesIterator::next()
 {
 	auto object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
 	auto& facesEntities = object3DGroup->group->getFacesEntities();
@@ -91,6 +86,6 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 		}
 	}
 	//
-	return &vertices;
+	return vertices;
 }
 

@@ -37,6 +37,9 @@ class tdme::tools::shared::tools::Tools final
 private:
 	static Engine* osEngine;
 	static float oseScale;
+	static Model* gizmoTranslation;
+	static Model* gizmoScale;
+	static Model* gizmoRotations;
 
 public:
 
@@ -199,4 +202,20 @@ public:
 	 * @param application application
 	 */
 	static void loadSettings(Application* application);
+
+	/**
+	 * @return GIZMO for translation
+	 */
+	static Model* getGizmoTranslation();
+
+	/**
+	 * @return GIZMO for scale
+	 */
+	static Model* getGizmoScale();
+
+	/**
+	 * @return GIZMO for rotations
+	 */
+	static Model* getGizmoRotations();
+
 };

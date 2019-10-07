@@ -11,6 +11,7 @@
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -56,6 +57,7 @@ using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -88,6 +90,9 @@ using tdme::utils::StringUtils;
 
 Engine* Tools::osEngine = nullptr;
 float Tools::oseScale = 0.75f;
+Model* Tools::gizmoTranslation = nullptr;
+Model* Tools::gizmoScale = nullptr;
+Model* Tools::gizmoRotations = nullptr;
 
 string Tools::formatFloat(float value)
 {
@@ -475,4 +480,25 @@ void Tools::loadSettings(Application* application) {
 	application->setWindowXPosition(Integer::parseInt(settings.get("window_x", "100")));
 	application->setWindowYPosition(Integer::parseInt(settings.get("window_y", "100")));
 	application->setFullScreen(settings.get("fullscreen", "false") == "true");
+}
+
+Model* Tools::getGizmoTranslation() {
+	if (gizmoTranslation == nullptr) {
+		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.fbx.tm");
+	}
+	return gizmoTranslation;
+}
+
+Model* Tools::getGizmoScale() {
+	if (gizmoScale == nullptr) {
+		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.fbx.tm");
+	}
+	return gizmoScale;
+}
+
+Model* Tools::getGizmoRotations() {
+	if (gizmoRotations == nullptr) {
+		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.fbx.tm");
+	}
+	return gizmoRotations;
 }
