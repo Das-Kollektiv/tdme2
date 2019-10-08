@@ -61,6 +61,12 @@ public:
 	}
 
 	/**
+	 * Set vsync enabled
+	 * @param vSync vertical sync
+	 */
+	static void setVSyncEnabled(bool vSync);
+
+	/**
 	 * Public constructor
 	 */
 	Application();
