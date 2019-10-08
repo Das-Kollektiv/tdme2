@@ -79,28 +79,27 @@ void GUITest::initialize()
 		virtual void performAction() {
 			try {
 				guiTest->popUps->getFileDialogScreenController()->close();
-				guiTest->engine->getGUI()->addScreen("test",
-					GUIParser::parse(
-						guiTest->popUps->getFileDialogScreenController()->getPathName(),
-						guiTest->popUps->getFileDialogScreenController()->getFileName()
-					)
+				auto screen = GUIParser::parse(
+					guiTest->popUps->getFileDialogScreenController()->getPathName(),
+					guiTest->popUps->getFileDialogScreenController()->getFileName()
 				);
+				guiTest->engine->getGUI()->addScreen(screen->getId(), screen);
 				guiTest->engine->getGUI()->resetRenderScreens();
-				guiTest->engine->getGUI()->getScreen("test")->addActionListener(guiTest);
-				guiTest->engine->getGUI()->getScreen("test")->addChangeListener(guiTest);
+				guiTest->engine->getGUI()->getScreen(screen->getId())->addActionListener(guiTest);
+				guiTest->engine->getGUI()->getScreen(screen->getId())->addChangeListener(guiTest);
 				auto effectFadeIn = new GUIColorEffect();
 				effectFadeIn->setColorMulStart(GUIColor(0.0f, 0.0f, 0.0f, 1.0f));
 				effectFadeIn->setColorMulEnd(GUIColor(1.0f, 1.0f, 1.0f, 1.0f));
 				effectFadeIn->setTimeTotal(1.0f);
 				effectFadeIn->start();
-				guiTest->engine->getGUI()->getScreen("test")->addEffect("fadein", effectFadeIn);
+				guiTest->engine->getGUI()->getScreen(screen->getId())->addEffect("fadein", effectFadeIn);
 				auto effectScrollIn = new GUIPositionEffect();
 				effectScrollIn->setPositionXStart(-800.0f);
 				effectScrollIn->setPositionXEnd(0.0f);
 				effectScrollIn->setTimeTotal(1.0f);
 				effectScrollIn->start();
-				guiTest->engine->getGUI()->getScreen("test")->addEffect("scrollin", effectScrollIn);
-				guiTest->engine->getGUI()->addRenderScreen("test");
+				guiTest->engine->getGUI()->getScreen(screen->getId())->addEffect("scrollin", effectScrollIn);
+				guiTest->engine->getGUI()->addRenderScreen(screen->getId());
 				guiTest->engine->getGUI()->addRenderScreen(guiTest->popUps->getFileDialogScreenController()->getScreenNode()->getId());
 				guiTest->engine->getGUI()->addRenderScreen(guiTest->popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 			} catch (Exception& exception) {
@@ -118,16 +117,15 @@ void GUITest::initialize()
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
 		if (screenFileName.size() > 0) {
-			engine->getGUI()->addScreen("test",
-				GUIParser::parse(
-					FileSystem::getInstance()->getPathName(screenFileName),
-					FileSystem::getInstance()->getFileName(screenFileName)
-				)
+			auto screen = GUIParser::parse(
+				FileSystem::getInstance()->getPathName(screenFileName),
+				FileSystem::getInstance()->getFileName(screenFileName)
 			);
+			engine->getGUI()->addScreen(screen->getId(), screen);
 			engine->getGUI()->resetRenderScreens();
-			engine->getGUI()->getScreen("test")->addActionListener(this);
-			engine->getGUI()->getScreen("test")->addChangeListener(this);
-			engine->getGUI()->addRenderScreen("test");
+			engine->getGUI()->getScreen(screen->getId())->addActionListener(this);
+			engine->getGUI()->getScreen(screen->getId())->addChangeListener(this);
+			engine->getGUI()->addRenderScreen(screen->getId());
 		} else {
 			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
