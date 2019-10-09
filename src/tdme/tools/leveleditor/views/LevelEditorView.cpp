@@ -512,39 +512,56 @@ void LevelEditorView::handleInputEvents()
 									break;
 								}
 							case GIZMO_ROTATE_X:
-								rotateX = (deltaX + -deltaY) * camScale;
+								rotateX = (deltaX + -deltaY) * 20.0f * engine->getTiming()->getDeltaTime() / 1000.0f;
 								break;
 							case GIZMO_ROTATE_Y:
-								rotateY = (deltaX + -deltaY) * camScale;
+								rotateY = (deltaX + -deltaY) * 20.0f * engine->getTiming()->getDeltaTime() / 1000.0f;
 								break;
 							case GIZMO_ROTATE_Z:
-								rotateZ = (deltaX + -deltaY) * camScale;
+								rotateZ = (deltaX + -deltaY) * 20.0f * engine->getTiming()->getDeltaTime() / 1000.0f;
 								break;
 						}
-						for (auto selectedEntityId: selectedEntityIds) {
-							auto _selectedEntity = engine->getEntity(selectedEntityId);
-							if (_selectedEntity != nullptr && StringUtils::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
-								auto levelEditorObject = level->getObjectById(_selectedEntity->getId());
-								levelEditorObject->getTransformations().setTranslation(levelEditorObject->getTransformations().getTranslation().clone().add(Vector3(translateX, translateY, translateZ)));
-								levelEditorObject->getTransformations().setScale(levelEditorObject->getTransformations().getScale().clone().scale(Vector3(scaleX, scaleY, scaleZ)));
-								levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisXIndex()) + rotateX);
-								levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisYIndex()) + rotateY);
-								levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisZIndex()) + rotateZ);
-								levelEditorObject->getTransformations().update();
-								_selectedEntity->fromTransformations(levelEditorObject->getTransformations());
+						auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity("tdme.leveleditor.gizmo.all"));
+						if (gizmoEntity != nullptr) {
+							Vector3 euler(rotateX, rotateY, rotateZ);
+							Transformations rotations;
+							rotations.addRotation(level->getRotationOrder()->getAxis0(), euler[level->getRotationOrder()->getAxis0VectorIndex()]);
+							rotations.addRotation(level->getRotationOrder()->getAxis1(), euler[level->getRotationOrder()->getAxis1VectorIndex()]);
+							rotations.addRotation(level->getRotationOrder()->getAxis2(), euler[level->getRotationOrder()->getAxis2VectorIndex()]);
+							rotations.update();
+							for (auto selectedEntityId: selectedEntityIds) {
+								auto _selectedEntity = engine->getEntity(selectedEntityId);
+								if (_selectedEntity != nullptr && StringUtils::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
+									auto levelEditorObject = level->getObjectById(_selectedEntity->getId());
+									if (levelEditorObject == nullptr) continue;
+									auto translation = levelEditorObject->getTransformations().getTranslation();
+									auto translationRelative = translation.clone().sub(gizmoEntity->getTranslation());
+									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translationRelative, translationRelative));
+									levelEditorObject->getTransformations().setTranslation(translation.clone().add(Vector3(translateX, translateY, translateZ)));
+									levelEditorObject->getTransformations().setScale(levelEditorObject->getTransformations().getScale().clone().scale(Vector3(scaleX, scaleY, scaleZ)));
+									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisXIndex()) + rotateX);
+									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisYIndex()) + rotateY);
+									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisZIndex()) + rotateZ);
+									levelEditorObject->getTransformations().update();
+									_selectedEntity->fromTransformations(levelEditorObject->getTransformations());
+								}
+							}
+							if (selectedEntityIds.size() == 0) {
+								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
+								levelEditorScreenController->setObject(
+									_selectedEntity->getTranslation(),
+									_selectedEntity->getScale(),
+									_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisXIndex()),
+									_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisYIndex()),
+									_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisZIndex())
+								);
 							}
 						}
-						if (selectedEntityIds.size() == 0) {
-							auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
-							levelEditorScreenController->setObject(
-								_selectedEntity->getTranslation(),
-								_selectedEntity->getScale(),
-								_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisXIndex()),
-								_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisYIndex()),
-								_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisZIndex())
-							);
+						if (Math::abs(translateX) > Math::EPSILON ||
+							Math::abs(translateY) > Math::EPSILON ||
+							Math::abs(translateZ) > Math::EPSILON) {
+							updateGizmo();
 						}
-						updateGizmo();
 					}
 				} else
 				if (selectedEntity != nullptr &&
