@@ -11,7 +11,7 @@
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
       - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
       - you find developer documentation including collaboration graphs and private API as well as public API for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha)
-      - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
+        - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
 
 - What is already working
     - 3d engine
