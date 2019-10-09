@@ -452,6 +452,13 @@ void LevelEditorView::handleInputEvents()
 						auto rotateX = 0.0f;
 						auto rotateY = 0.0f;
 						auto rotateZ = 0.0f;
+						const vector<Vector3> planeXY =
+							{
+								Vector3(-5000.0f, -5000.0f, 0.0f),
+								Vector3(-5000.0f, 5000.0f, 0.0f),
+								Vector3(5000.0f, 5000.0f, 0.0f),
+								Vector3(5000.0f, -5000.0f, 0.0f)
+							};
 						const vector<Vector3> planeXZ =
 							{
 								Vector3(-5000.0f, 0.0f, -5000.0f),
@@ -492,6 +499,33 @@ void LevelEditorView::handleInputEvents()
 									}
 									break;
 								}
+							case GIZMOMODE_TRANSLATEPLANE_X:
+								{
+									vector<Vector3> vertices = planeYZ;
+									if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
+										translateY = gizmoDeltaMovement.getY();
+										translateZ = gizmoDeltaMovement.getZ();
+									}
+									break;
+								}
+							case GIZMOMODE_TRANSLATEPLANE_Y:
+								{
+									vector<Vector3> vertices = planeXZ;
+									if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
+										translateX = gizmoDeltaMovement.getX();
+										translateZ = gizmoDeltaMovement.getZ();
+									}
+									break;
+								}
+							case GIZMOMODE_TRANSLATEPLANE_Z:
+								{
+									vector<Vector3> vertices = planeXY;
+									if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
+										translateX = gizmoDeltaMovement.getX();
+										translateY = gizmoDeltaMovement.getY();
+									}
+									break;
+								}
 							case GIZMOMODE_SCALE_X:
 								{
 									vector<Vector3> vertices = planeXZ;
@@ -513,6 +547,33 @@ void LevelEditorView::handleInputEvents()
 									vector<Vector3> vertices = planeXZ;
 									if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
 										scaleZ+= -gizmoDeltaMovement.getZ();
+									}
+									break;
+								}
+							case GIZMOMODE_SCALEPLANE_X:
+								{
+									vector<Vector3> vertices = planeYZ;
+									if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
+										scaleY+= gizmoDeltaMovement.getY();
+										scaleZ+= gizmoDeltaMovement.getZ();
+									}
+									break;
+								}
+							case GIZMOMODE_SCALEPLANE_Y:
+								{
+									vector<Vector3> vertices = planeXZ;
+									if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
+										scaleX+= gizmoDeltaMovement.getX();
+										scaleZ+= gizmoDeltaMovement.getZ();
+									}
+									break;
+								}
+							case GIZMOMODE_SCALEPLANE_Z:
+								{
+									vector<Vector3> vertices = planeXY;
+									if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
+										scaleX+= gizmoDeltaMovement.getX();
+										scaleY+= gizmoDeltaMovement.getY();
 									}
 									break;
 								}
@@ -573,21 +634,23 @@ void LevelEditorView::handleInputEvents()
 					StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.gizmo.") == true && selectedEntityGroup != nullptr) {
 					auto selectedEntityGroupId = selectedEntityGroup->getId();
 					if (StringUtils::startsWith(selectedEntityGroupId, "all_") == true) selectedEntityGroupId = StringUtils::substring(selectedEntityGroupId, 4);
+					Console::println(selectedEntityGroupId);
 					if (selectedEntityGroupId == "translate_x") gizmoMode = GIZMOMODE_TRANSLATE_X; else
 					if (selectedEntityGroupId == "translate_y") gizmoMode = GIZMOMODE_TRANSLATE_Z; else
 					if (selectedEntityGroupId == "translate_z") gizmoMode = GIZMOMODE_TRANSLATE_Y; else
-					if (selectedEntityGroupId == "translate_x_plane") gizmoMode = GIZMOMODE_TRANSLATE_X; else
-					if (selectedEntityGroupId == "translate_y_plane") gizmoMode = GIZMOMODE_TRANSLATE_Z; else
-					if (selectedEntityGroupId == "translate_z_plane") gizmoMode = GIZMOMODE_TRANSLATE_Y; else
+					if (selectedEntityGroupId == "translate_x_plane") gizmoMode = GIZMOMODE_TRANSLATEPLANE_X; else
+					if (selectedEntityGroupId == "translate_y_plane") gizmoMode = GIZMOMODE_TRANSLATEPLANE_Z; else
+					if (selectedEntityGroupId == "translate_z_plane") gizmoMode = GIZMOMODE_TRANSLATEPLANE_Y; else
 					if (selectedEntityGroupId == "rotate_x") gizmoMode = GIZMOMODE_ROTATE_X; else
 					if (selectedEntityGroupId == "rotate_y") gizmoMode = GIZMOMODE_ROTATE_Z; else
 					if (selectedEntityGroupId == "rotate_z") gizmoMode = GIZMOMODE_ROTATE_Y; else
-					if (selectedEntityGroupId == "rotate_x_plane") gizmoMode = GIZMOMODE_ROTATE_X; else
-					if (selectedEntityGroupId == "rotate_y_plane") gizmoMode = GIZMOMODE_ROTATE_Z; else
-					if (selectedEntityGroupId == "rotate_z_plane") gizmoMode = GIZMOMODE_ROTATE_Y; else
 					if (selectedEntityGroupId == "scale_x") gizmoMode = GIZMOMODE_SCALE_X; else
 					if (selectedEntityGroupId == "scale_y") gizmoMode = GIZMOMODE_SCALE_Z; else
-					if (selectedEntityGroupId == "scale_z") gizmoMode = GIZMOMODE_SCALE_Y;
+					if (selectedEntityGroupId == "scale_z") gizmoMode = GIZMOMODE_SCALE_Y; else
+					if (selectedEntityGroupId == "scale_x_plane") gizmoMode = GIZMOMODE_SCALEPLANE_X; else
+					if (selectedEntityGroupId == "scale_y_plane") gizmoMode = GIZMOMODE_SCALEPLANE_Z; else
+					if (selectedEntityGroupId == "scale_z_plane") gizmoMode = GIZMOMODE_SCALEPLANE_Y;
+
 				} else {
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
