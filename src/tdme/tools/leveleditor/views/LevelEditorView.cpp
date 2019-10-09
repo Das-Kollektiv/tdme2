@@ -436,7 +436,7 @@ void LevelEditorView::handleInputEvents()
 				Group* selectedEntityGroup = nullptr;
 				Entity* selectedEntity = nullptr;
 				if (gizmoMode == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), entityPickingFilterNoGrid, &selectedEntityGroup);
-				if (mouseDragging == true && (selectedEntity == nullptr || mouseDraggingLastObject == selectedEntity)) {
+				if (mouseDragging == true) {
 					if (gizmoMode != GIZMOMODE_NONE) {
 						Vector3 gizmoDeltaMovement;
 						auto mouseX = event.getXUnscaled();
@@ -634,7 +634,6 @@ void LevelEditorView::handleInputEvents()
 					StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.gizmo.") == true && selectedEntityGroup != nullptr) {
 					auto selectedEntityGroupId = selectedEntityGroup->getId();
 					if (StringUtils::startsWith(selectedEntityGroupId, "all_") == true) selectedEntityGroupId = StringUtils::substring(selectedEntityGroupId, 4);
-					Console::println(selectedEntityGroupId);
 					if (selectedEntityGroupId == "translate_x") gizmoMode = GIZMOMODE_TRANSLATE_X; else
 					if (selectedEntityGroupId == "translate_y") gizmoMode = GIZMOMODE_TRANSLATE_Z; else
 					if (selectedEntityGroupId == "translate_z") gizmoMode = GIZMOMODE_TRANSLATE_Y; else
@@ -650,7 +649,6 @@ void LevelEditorView::handleInputEvents()
 					if (selectedEntityGroupId == "scale_x_plane") gizmoMode = GIZMOMODE_SCALEPLANE_X; else
 					if (selectedEntityGroupId == "scale_y_plane") gizmoMode = GIZMOMODE_SCALEPLANE_Z; else
 					if (selectedEntityGroupId == "scale_z_plane") gizmoMode = GIZMOMODE_SCALEPLANE_Y;
-
 				} else {
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
