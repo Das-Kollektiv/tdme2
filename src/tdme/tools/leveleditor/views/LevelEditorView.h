@@ -31,6 +31,7 @@ using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
+using tdme::engine::Object3D;
 using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -53,17 +54,23 @@ class tdme::tools::leveleditor::views::LevelEditorView final
 	, public GUIInputEventHandler
 {
 private:
+	enum GizmoType {
+		GIZMOTYPE_ALL,
+		GIZMOTYPE_TRANSLATE,
+		GIZMOTYPE_ROTATE,
+		GIZMOTYPE_SCALE
+	};
 	enum GizmoMode {
-		GIZMO_NONE,
-		GIZMO_TRANSLATE_X,
-		GIZMO_TRANSLATE_Y,
-		GIZMO_TRANSLATE_Z,
-		GIZMO_SCALE_X,
-		GIZMO_SCALE_Y,
-		GIZMO_SCALE_Z,
-		GIZMO_ROTATE_X,
-		GIZMO_ROTATE_Y,
-		GIZMO_ROTATE_Z,
+		GIZMOMODE_NONE,
+		GIZMOMODE_TRANSLATE_X,
+		GIZMOMODE_TRANSLATE_Y,
+		GIZMOMODE_TRANSLATE_Z,
+		GIZMOMODE_SCALE_X,
+		GIZMOMODE_SCALE_Y,
+		GIZMOMODE_SCALE_Z,
+		GIZMOMODE_ROTATE_X,
+		GIZMOMODE_ROTATE_Y,
+		GIZMOMODE_ROTATE_Z
 	};
 	static vector<string> OBJECTCOLOR_NAMES;
 	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
@@ -122,6 +129,7 @@ private:
 	bool pasteModeValid;
 	Vector3 placeEntityTranslation;
 
+	GizmoType gizmoType;
 	GizmoMode gizmoMode;
 	Vector3 gizmoLastResult;
 	bool gizmoLastResultAvailable;
@@ -459,6 +467,11 @@ private:
 	 * Update gizmo
 	 */
 	void updateGizmo();
+
+	/**
+	 * @return GIZMO object
+	 */
+	Object3D* getGizmoObject3D();
 
 	/**
 	 * Remove gizmo
