@@ -822,6 +822,7 @@ void LevelEditorView::selectObjects(const vector<string>& entityIds)
 		selectedEntityIdsById.insert(entityId);
 	}
 	updateGUIElements();
+	updateGizmo();
 }
 
 void LevelEditorView::unselectObjects()
@@ -835,6 +836,7 @@ void LevelEditorView::unselectObjects()
 	selectedEntityIdsById.clear();
 	levelEditorScreenController->unselectObjectsInObjectListBox();
 	updateGUIElements();
+	removeGizmo();
 }
 
 void LevelEditorView::updateGUIElements()

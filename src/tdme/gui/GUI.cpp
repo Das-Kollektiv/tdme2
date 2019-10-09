@@ -800,6 +800,19 @@ void GUI::onMouseMoved(int x, int y) {
 void GUI::onMouseButton(int button, int state, int x, int y) {
 	fakeKeyboardModifierEvent();
 
+	if (button == 3) {
+		#if !defined(_MSC_VER)
+			onMouseWheel(3, 1, x, y);
+		#endif
+		return;
+	} else
+	if (button == 4) {
+		#if !defined(_MSC_VER)
+			onMouseWheel(4, -1, x, y);
+		#endif
+		return;
+	}
+
 	lockEvents();
 	mouseButtonLast = button + 1;
 	GUIMouseEvent guiMouseEvent;
