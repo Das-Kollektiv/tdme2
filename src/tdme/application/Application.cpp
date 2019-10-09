@@ -681,6 +681,18 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 
 	void Application::glutOnMouseButton(int button, int state, int x, int y) {
 		if (Application::inputEventHandler == nullptr) return;
+		if (button == 3) {
+			#if !defined(_MSC_VER)
+				Application::inputEventHandler->onMouseWheel(3, 1, x, y);
+			#endif
+			return;
+		} else
+		if (button == 4) {
+			#if !defined(_MSC_VER)
+				Application::inputEventHandler->onMouseWheel(4, -1, x, y);
+			#endif
+			return;
+		}
 		Application::inputEventHandler->onMouseButton(button, state, x, y);
 	}
 
