@@ -1320,6 +1320,10 @@ Entity* Engine::doRayCasting(const Vector3& startPoint, const Vector3& endPoint,
 			}
 		}
 	}
+	// they have first priority right now
+	if (selectedEntity != nullptr) {
+		return selectedEntity;
+	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
 	for (auto entity: visibleObjects) {

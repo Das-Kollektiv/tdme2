@@ -123,6 +123,8 @@ private:
 	Vector3 placeEntityTranslation;
 
 	GizmoMode gizmoMode;
+	Vector3 gizmoLastResult;
+	bool gizmoLastResultAvailable;
 
 private:
 	Model* levelEditorGround { nullptr };
@@ -462,6 +464,16 @@ private:
 	 * Remove gizmo
 	 */
 	void removeGizmo();
+
+	/**
+	 * Determine movement on a plane given by 4 vertices
+	 * @param mouseX current mouse X position
+	 * @param mouseY current mouse Y position
+	 * @param vertices 4 vertices that span a plane
+	 * @param deltaMovement delta movement result
+	 * @return success
+	 */
+	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement);
 
 public:
 

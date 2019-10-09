@@ -90,6 +90,7 @@ using tdme::utils::StringUtils;
 
 Engine* Tools::osEngine = nullptr;
 float Tools::oseScale = 0.75f;
+Model* Tools::gizmoAll = nullptr;
 Model* Tools::gizmoTranslation = nullptr;
 Model* Tools::gizmoScale = nullptr;
 Model* Tools::gizmoRotations = nullptr;
@@ -480,6 +481,13 @@ void Tools::loadSettings(Application* application) {
 	application->setWindowXPosition(Integer::parseInt(settings.get("window_x", "100")));
 	application->setWindowYPosition(Integer::parseInt(settings.get("window_y", "100")));
 	application->setFullScreen(settings.get("fullscreen", "false") == "true");
+}
+
+Model* Tools::getGizmoAll() {
+	if (gizmoAll == nullptr) {
+		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.fbx.tm");
+	}
+	return gizmoAll;
 }
 
 Model* Tools::getGizmoTranslation() {
