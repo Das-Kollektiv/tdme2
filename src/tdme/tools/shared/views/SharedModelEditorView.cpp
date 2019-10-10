@@ -107,6 +107,8 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	entity = nullptr;
 	modelFile = "";
 	lodLevel = 1;
+	audioStarted = -1LL;
+	audioOffset = -1LL;
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 }
 

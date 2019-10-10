@@ -143,7 +143,7 @@ ParticleSystemScreenController::ParticleSystemScreenController(SharedParticleSys
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
 	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
-	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), particleSystemPath, false);
+	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), particleSystemPath, false, entityDisplaySubScreenController->getView());
 	this->entitySoundsSubScreenController = new EntitySoundsSubScreenController(view, view->getPopUpsViews(), audioPath);
 }
 

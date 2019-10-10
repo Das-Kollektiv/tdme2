@@ -47,7 +47,16 @@ char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUN
 	"model_bv.20",
 	"model_bv.21",
 	"model_bv.22",
-	"model_bv.23"
+	"model_bv.23",
+	"model_bv.24",
+	"model_bv.25",
+	"model_bv.26",
+	"model_bv.27",
+	"model_bv.28",
+	"model_bv.29",
+	"model_bv.30",
+	"model_bv.31",
+	"model_bv.32"
 };
 
 LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* entityType, const string& name, const string& description, const string& entityFileName, const string& fileName, const string& thumbnail, Model* model, const Vector3& pivot)

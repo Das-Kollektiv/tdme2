@@ -27,6 +27,7 @@ using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
@@ -44,51 +45,54 @@ class tdme::tools::shared::controller::EntityPhysicsSubScreenController
 	friend class EntityPhysicsSubScreenController_onBoundingVolumeConvexMeshFile;
 
 private:
-	GUIScreenNode* screenNode {  };
-	FileDialogPath* modelPath {  };
-	EntityPhysicsView* view {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeNoneApply {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereCenter {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereRadius {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleA {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleB {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleRadius {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMin {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMax {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbCenter {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbHalfextension {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationX {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationY {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationZ {  };
-	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeConvexMeshFile {  };
+	GUIScreenNode* screenNode { nullptr };
+	FileDialogPath* modelPath { nullptr };
+	EntityPhysicsView* view { nullptr };
+	EntityDisplayView* displayView { nullptr };
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeNoneApply;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereCenter;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeSphereRadius;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleA;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleB;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeCapsuleRadius;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMin;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeBoundingBoxMax;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbCenter;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbHalfextension;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationX;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationY;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeObbRotationZ;
+	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingvolumeConvexMeshFile;
 	bool isModelBoundingVolumes;
-	GUIElementNode* terrainMesh {  };
-	GUIElementNode* terrainMeshApply {  };
-	GUIElementNode* convexmeshesModeGenerate {  };
-	GUIElementNode* convexmeshesModeModel {  };
-	GUIElementNode* convexMeshesFile {  };
-	GUIElementNode* convexMeshesLoad {  };
-	GUIElementNode* convexMeshesResolution {  };
-	GUIElementNode* convexMeshesDepth {  };
-	GUIElementNode* convexMeshesConcavity {  };
-	GUIElementNode* convexMeshesPlaneDownSampling {  };
-	GUIElementNode* convexMeshesConvexHullDownSampling {  };
-	GUIElementNode* convexMeshesAlpha {  };
-	GUIElementNode* convexMeshesBeta {  };
-	GUIElementNode* convexMeshesMaxVerticesPerConvexHull {  };
-	GUIElementNode* convexMeshesMinVolumePerConvexHull {  };
-	GUIElementNode* convexMeshesPCA {  };
-	GUIElementNode* convexMeshesRemove {  };
-	GUIElementNode* convexMeshesGenerate {  };
-	GUIElementNode* bodyTypeDropdown {  };
-	GUIElementNode* bodyTypeDropdownApply {  };
-	GUIElementNode* bodyMass {  };
-	GUIElementNode* bodyBounciness {  };
-	GUIElementNode* bodyFriction {  };
-	GUIElementNode* bodyInertiaTensor {  };
-	GUIElementNode* bodyApply {  };
+	GUIElementNode* terrainMesh { nullptr };
+	GUIElementNode* terrainMeshApply { nullptr };
+	GUIElementNode* convexmeshesModeGenerate { nullptr };
+	GUIElementNode* convexmeshesModeModel { nullptr };
+	GUIElementNode* convexMeshesFile { nullptr };
+	GUIElementNode* convexMeshesLoad { nullptr };
+	GUIElementNode* convexMeshesResolution { nullptr };
+	GUIElementNode* convexMeshesDepth { nullptr };
+	GUIElementNode* convexMeshesConcavity { nullptr };
+	GUIElementNode* convexMeshesPlaneDownSampling { nullptr };
+	GUIElementNode* convexMeshesConvexHullDownSampling { nullptr };
+	GUIElementNode* convexMeshesAlpha { nullptr };
+	GUIElementNode* convexMeshesBeta { nullptr };
+	GUIElementNode* convexMeshesMaxVerticesPerConvexHull { nullptr };
+	GUIElementNode* convexMeshesMinVolumePerConvexHull { nullptr };
+	GUIElementNode* convexMeshesPCA { nullptr };
+	GUIElementNode* convexMeshesRemove { nullptr };
+	GUIElementNode* convexMeshesGenerate { nullptr };
+	GUIElementNode* bodyTypeDropdown { nullptr };
+	GUIElementNode* bodyTypeDropdownApply { nullptr };
+	GUIElementNode* bodyMass { nullptr };
+	GUIElementNode* bodyBounciness { nullptr };
+	GUIElementNode* bodyFriction { nullptr };
+	GUIElementNode* bodyInertiaTensor { nullptr };
+	GUIElementNode* bodyApply { nullptr };
+	bool boundingVolumeTabActivated;
+	int boundingVolumeIdxActivated;
 
 public:
 
@@ -339,8 +343,9 @@ public:
 	 * @param popUps pop ups
 	 * @param modelPath model editor screen controller
 	 * @param isModelBoundingVolumes is model bounding volumes
+	 * @param displayView entity display view
 	 */
-	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
+	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, EntityDisplayView* displayView);
 
 	/**
 	 * Destructor

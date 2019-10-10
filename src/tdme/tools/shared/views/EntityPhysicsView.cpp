@@ -51,6 +51,9 @@ EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhy
 	this->entityPhysicsSubScreenController = entityPhysicsSubScreenController;
 }
 
+EntityPhysicsView::~EntityPhysicsView() {
+}
+
 PopUps* EntityPhysicsView::getPopUpsViews()
 {
 	return popUps;

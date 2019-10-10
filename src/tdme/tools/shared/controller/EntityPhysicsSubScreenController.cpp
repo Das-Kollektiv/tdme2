@@ -32,12 +32,14 @@
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/Integer.h>
+#include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::string;
 using std::to_string;
@@ -73,18 +75,23 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
+using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::Integer;
+using tdme::utils::MutableString;
+using tdme::utils::StringUtils;
 
-EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
+EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, EntityDisplayView* displayView)
 {
 	this->modelPath = modelPath;
 	this->view = new EntityPhysicsView(this, popUps);
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
+	this->boundingVolumeTabActivated = false;
+	this->boundingVolumeIdxActivated = 0;
+	this->displayView = displayView;
 }
 
 EntityPhysicsSubScreenController::~EntityPhysicsSubScreenController() {
@@ -763,6 +770,16 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 			} else
 			if (node->getId() == "physics_body_apply") {
 				onPhysicsBodyApply(entity);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_properties_boundingvolume_") == true) {
+				boundingVolumeIdxActivated = Integer::parseInt(StringUtils::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
+				displayView->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+			} else
+			if (node->getId() == "tab_properties_boundingvolume") {
+				displayView->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_") == true) {
+				displayView->setDisplayBoundingVolumeIdx(EntityDisplayView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 			}
 		}
 	}

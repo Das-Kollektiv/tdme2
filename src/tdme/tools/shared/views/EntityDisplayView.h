@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -13,7 +12,6 @@
 using std::vector;
 using std::string;
 
-
 using tdme::engine::Engine;
 using tdme::tools::shared::controller::EntityDisplaySubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -25,46 +23,76 @@ using tdme::tools::shared::model::LevelEditorEntity;
  */
 class tdme::tools::shared::views::EntityDisplayView
 {
+public:
+	static constexpr int DISPLAY_BOUNDINGVOLUMEIDX_ALL { -1 };
 private:
-	Engine* engine {  };
-	EntityDisplaySubScreenController* entityDisplaySubScreenController {  };
-	bool displayGroundPlate {  };
-	bool displayShadowing {  };
-	bool displayBoundingVolume {  };
+	Engine* engine { nullptr };
+	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
+	bool displayGroundPlate;
+	bool displayShadowing;
+	bool displayBoundingVolume;
+	int displayBoundingVolumeIdx;
 
 public:
 	/** 
 	 * @return display ground plate
 	 */
-	virtual bool isDisplayGroundPlate();
+	inline virtual bool isDisplayGroundPlate() {
+		return this->displayGroundPlate;
+	}
 
 	/** 
 	 * Set up ground plate visibility
 	 * @param groundPlate ground plate visible
 	 */
-	virtual void setDisplayGroundPlate(bool groundPlate);
+	inline virtual void setDisplayGroundPlate(bool groundPlate) {
+		this->displayGroundPlate = groundPlate;
+	}
 
 	/** 
 	 * @return display shadowing
 	 */
-	virtual bool isDisplayShadowing();
+	inline virtual bool isDisplayShadowing() {
+		return displayShadowing;
+	}
 
 	/** 
 	 * Set up shadow rendering
 	 * @param shadowing shadow rendering
 	 */
-	virtual void setDisplayShadowing(bool shadowing);
+	inline virtual void setDisplayShadowing(bool shadowing) {
+		this->displayShadowing = shadowing;
+	}
 
 	/** 
 	 * @return display bounding volume
 	 */
-	virtual bool isDisplayBoundingVolume();
+	inline virtual bool isDisplayBoundingVolume() {
+		return displayBoundingVolume;
+	}
 
 	/** 
 	 * Set up bounding volume visibility
 	 * @param displayBoundingVolume bounding volume
 	 */
-	virtual void setDisplayBoundingVolume(bool displayBoundingVolume);
+	inline virtual void setDisplayBoundingVolume(bool displayBoundingVolume) {
+		this->displayBoundingVolume = displayBoundingVolume;
+	}
+
+	/**
+	 * @return bounding volume index to display or DISPLAY_BOUNDINGVOLUMEIDX_ALL
+	 */
+	inline bool isDisplayBoundingVolumeIdx() const {
+		return displayBoundingVolumeIdx;
+	}
+
+	/**
+	 * Set display bounding volume idx
+	 * @param displayBoundingVolumeIdx display bounding volume index or DISPLAY_BOUNDINGVOLUMEIDX_ALL
+	 */
+	inline void setDisplayBoundingVolumeIdx(int displayBoundingVolumeIdx) {
+		this->displayBoundingVolumeIdx = displayBoundingVolumeIdx;
+	}
 
 	/** 
 	 * Display
@@ -77,4 +105,10 @@ public:
 	 * @param entityDisplaySubScreenController entity display sub screen controller
 	 */
 	EntityDisplayView(EntityDisplaySubScreenController* entityDisplaySubScreenController);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityDisplayView();
+
 };

@@ -44,8 +44,8 @@ class tdme::tools::shared::model::LevelEditorEntity final
 
 public:
 	static constexpr int32_t ID_NONE { -1 };
-	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 24 };
-	static constexpr int32_t MODEL_SOUNDS_COUNT { 16 };
+	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 32 };
+	static constexpr int32_t MODEL_SOUNDS_COUNT { 32 };
 	static char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT];
 
 private:

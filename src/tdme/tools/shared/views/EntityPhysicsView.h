@@ -26,9 +26,9 @@ using tdme::tools::shared::views::PopUps;
 class tdme::tools::shared::views::EntityPhysicsView
 {
 private:
-	Engine* engine {  };
-	EntityPhysicsSubScreenController* entityPhysicsSubScreenController {  };
-	PopUps* popUps {  };
+	Engine* engine { nullptr };
+	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
+	PopUps* popUps { nullptr };
 
 public:
 
@@ -178,4 +178,10 @@ public:
 	 * @param popUps model editor screen controller
 	 */
 	EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~EntityPhysicsView();
+
 };

@@ -39,24 +39,24 @@ class tdme::tools::shared::views::SharedModelEditorView
 	, public virtual GUIInputEventHandler
 {
 protected:
-	Engine* engine {  };
-	Audio* audio {  };
+	Engine* engine { nullptr };
+	Audio* audio { nullptr };
 
 private:
-	PopUps* popUps {  };
-	ModelEditorScreenController* modelEditorScreenController {  };
-	EntityDisplayView* entityDisplayView {  };
-	EntityPhysicsView* entityPhysicsView {  };
-	EntitySoundsView* entitySoundsView {  };
-	LevelEditorEntity* entity {  };
-	bool loadModelRequested {  };
-	bool initModelRequested {  };
-	bool initModelRequestedReset {  };
-	string modelFile {  };
-	int lodLevel {  };
-	CameraRotationInputHandler* cameraRotationInputHandler {  };
-	int64_t audioStarted { -1LL };
-	int64_t audioOffset { -1LL };
+	PopUps* popUps { nullptr };
+	ModelEditorScreenController* modelEditorScreenController { nullptr };
+	EntityDisplayView* entityDisplayView { nullptr };
+	EntityPhysicsView* entityPhysicsView { nullptr };
+	EntitySoundsView* entitySoundsView { nullptr };
+	LevelEditorEntity* entity { nullptr };
+	bool loadModelRequested;
+	bool initModelRequested;
+	bool initModelRequestedReset;
+	string modelFile;
+	int lodLevel;
+	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+	int64_t audioStarted;
+	int64_t audioOffset;
 
 	/**
 	 * Init model
