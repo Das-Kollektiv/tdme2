@@ -527,6 +527,7 @@ SRCS = \
 	src/tdme/tools/shared/views/EntityPhysicsView.cpp \
 	src/tdme/tools/shared/views/EntityDisplayView.cpp \
 	src/tdme/tools/shared/views/EntitySoundsView.cpp \
+	src/tdme/tools/shared/views/Gizmo.cpp \
 	src/tdme/tools/shared/views/PopUps.cpp \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \

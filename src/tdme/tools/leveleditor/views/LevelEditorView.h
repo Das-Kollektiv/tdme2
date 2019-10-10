@@ -17,6 +17,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
@@ -42,7 +43,9 @@ using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
+using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::View;
 
 /** 
  * TDME Level Editor View
@@ -52,32 +55,9 @@ using tdme::tools::shared::views::PopUps;
 class tdme::tools::leveleditor::views::LevelEditorView final
 	: public View
 	, public GUIInputEventHandler
+	, protected Gizmo
 {
 private:
-	enum GizmoType {
-		GIZMOTYPE_ALL,
-		GIZMOTYPE_TRANSLATE,
-		GIZMOTYPE_ROTATE,
-		GIZMOTYPE_SCALE
-	};
-	enum GizmoMode {
-		GIZMOMODE_NONE,
-		GIZMOMODE_TRANSLATE_X,
-		GIZMOMODE_TRANSLATE_Y,
-		GIZMOMODE_TRANSLATE_Z,
-		GIZMOMODE_TRANSLATEPLANE_X,
-		GIZMOMODE_TRANSLATEPLANE_Y,
-		GIZMOMODE_TRANSLATEPLANE_Z,
-		GIZMOMODE_SCALE_X,
-		GIZMOMODE_SCALE_Y,
-		GIZMOMODE_SCALE_Z,
-		GIZMOMODE_SCALEPLANE_X,
-		GIZMOMODE_SCALEPLANE_Y,
-		GIZMOMODE_SCALEPLANE_Z,
-		GIZMOMODE_ROTATE_X,
-		GIZMOMODE_ROTATE_Y,
-		GIZMOMODE_ROTATE_Z
-	};
 	static vector<string> OBJECTCOLOR_NAMES;
 	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
 	static constexpr int32_t MOUSE_BUTTON_LEFT { 1 };
@@ -134,11 +114,6 @@ private:
 	bool pasteMode;
 	bool pasteModeValid;
 	Vector3 placeEntityTranslation;
-
-	GizmoType gizmoType;
-	GizmoMode gizmoMode;
-	Vector3 gizmoLastResult;
-	bool gizmoLastResultAvailable;
 
 private:
 	Model* levelEditorGround { nullptr };
@@ -474,26 +449,6 @@ private:
 	 */
 	void updateGizmo();
 
-	/**
-	 * @return GIZMO object
-	 */
-	Object3D* getGizmoObject3D();
-
-	/**
-	 * Remove gizmo
-	 */
-	void removeGizmo();
-
-	/**
-	 * Determine movement on a plane given by 4 vertices
-	 * @param mouseX current mouse X position
-	 * @param mouseY current mouse Y position
-	 * @param vertices 4 vertices that span a plane
-	 * @param deltaMovement delta movement result
-	 * @return success
-	 */
-	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement);
-
 public:
 
 	/** 
@@ -532,4 +487,5 @@ public:
 	 * Destructor
 	 */
 	~LevelEditorView();
+
 };
