@@ -153,7 +153,7 @@ void SharedParticleSystemView::initParticleSystem()
 		return;
 
 	particleSystemFile = entity->getEntityFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
+	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
 	BoundingBox boundingBox;
 	if (entity->getModel() == nullptr) {
@@ -191,6 +191,7 @@ void SharedParticleSystemView::reloadFile()
 
 void SharedParticleSystemView::handleInputEvents()
 {
+	entityPhysicsView->handleInputEvents(entity, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -222,6 +223,7 @@ void SharedParticleSystemView::display()
 		particleSystemEntity->updateParticles();
 	}
 	entityDisplayView->display(entity);
+	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }

@@ -102,6 +102,11 @@ public:
 	virtual EntityPhysicsView* getView();
 
 	/**
+	 * @return entity display view
+	 */
+	virtual EntityDisplayView* getDisplayView();
+
+	/**
 	 * @return screen node
 	 */
 	virtual GUIScreenNode* getScreenNode();
@@ -133,9 +138,8 @@ public:
 	/** 
 	 * Set up bounding volume types
 	 * @param idx idx
-	 * @param boundingVolumeTypes bounding volume types
 	 */
-	virtual void setupBoundingVolumeTypes(int32_t idx, const vector<string>& boundingVolumeTypes);
+	virtual void setupBoundingVolumeTypes(int32_t idx);
 
 	/** 
 	 * Display given bounding volume GUI elements

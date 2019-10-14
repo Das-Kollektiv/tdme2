@@ -44,19 +44,19 @@ class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 	friend class Object3DRenderer_TransparentRenderFacesGroupPool;
 
 private:
-	Object3DRenderer* object3DRenderer {  };
-	vector<BatchRendererTriangles*> batchRenderers {  };
-	Model* model {  };
-	Object3DGroup* object3DGroup {  };
-	int32_t facesEntityIdx {  };
+	Object3DRenderer* object3DRenderer { nullptr };
+	vector<BatchRendererTriangles*> batchRenderers;
+	Model* model { nullptr };
+	Object3DGroup* object3DGroup { nullptr };
+	int32_t facesEntityIdx;
 
-	Color4 effectColorAdd {  };
-	Color4 effectColorMul {  };
+	Color4 effectColorAdd;
+	Color4 effectColorMul;
 
-	const Material* material {  };
-	bool textureCoordinates {  };
+	const Material* material { nullptr };
+	bool textureCoordinates;
 
-	string shader {  };
+	string shader;
 
 	/** 
 	 * Set transparent render faces group

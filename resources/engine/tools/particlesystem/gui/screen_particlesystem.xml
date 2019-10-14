@@ -715,8 +715,6 @@
 								<tab id="tab_properties_boundingvolume_29" text="29" />
 								<tab id="tab_properties_boundingvolume_30" text="30" />
 								<tab id="tab_properties_boundingvolume_31" text="31" />
-								<tab id="tab_properties_terrain" text="Terrain" />
-								<tab id="tab_properties_convexmeshes" text="Generate" />
 							</tabs-header>
 							<tabs-content>
 								<tab-content tab-id="tab_properties_boundingvolume_0">

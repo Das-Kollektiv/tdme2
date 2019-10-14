@@ -24,6 +24,7 @@
           - multiple convex meshes can be automatically generated from any mesh using V-HACD
           - or be imported from a given model with each top level group representing a convex mesh
         - concave terrain mesh
+        - bounding volumes can be transformed by using a gizmo 
     - LOD level editor
         - type, distance, model, adjustment add/mul color, ... 
     - material editor

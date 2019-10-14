@@ -32,14 +32,14 @@ class tdme::engine::subsystems::rendering::Object3DInternal
 	friend class Object3DRenderer;
 
 protected:
-	string id {  };
-	bool enabled {  };
-	bool pickable {  };
-	bool dynamicShadowing {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
+	string id;
+	bool enabled;
+	bool pickable;
+	bool dynamicShadowing;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
 
 public:
 	/** 

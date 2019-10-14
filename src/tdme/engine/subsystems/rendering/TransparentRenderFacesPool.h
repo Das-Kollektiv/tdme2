@@ -47,8 +47,8 @@ class tdme::engine::subsystems::rendering::TransparentRenderFacesPool final
 
 private:
 	static constexpr int32_t FACES_MAX { 16384 };
-	vector<TransparentRenderFace*> transparentRenderFaces {  };
-	TransparentRenderFacesPool_TransparentRenderFacesPool transparentRenderFacesPool {  };
+	vector<TransparentRenderFace*> transparentRenderFaces;
+	TransparentRenderFacesPool_TransparentRenderFacesPool transparentRenderFacesPool;
 
 	/** 
 	 * Creates an array of transparent render faces from

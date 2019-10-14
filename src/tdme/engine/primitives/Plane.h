@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -16,8 +15,9 @@ using tdme::math::Vector3;
 class tdme::engine::primitives::Plane final
 {
 private:
-	Vector3 normal {  };
-	float distance {  };
+	Vector3 normal;
+	float distance;
+
 public:
 	/** 
 	 * @return float distance from origin

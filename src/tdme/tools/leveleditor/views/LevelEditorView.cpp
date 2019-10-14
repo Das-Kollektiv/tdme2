@@ -60,6 +60,7 @@
 #include <tdme/tools/shared/model/LevelPropertyPresets.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Float.h>
@@ -132,6 +133,7 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::LevelPropertyPresets;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
+using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Character;
 using tdme::utils::Float;
@@ -479,7 +481,7 @@ void LevelEditorView::handleInputEvents()
 						}
 					}
 				} else
-				if (selectGizmo(selectedEntity, selectedEntityGroup) == true) {
+				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
 					// no op
 				} else {
 					if (keyControl == false) {

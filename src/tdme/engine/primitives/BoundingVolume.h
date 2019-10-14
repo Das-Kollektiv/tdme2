@@ -33,15 +33,15 @@ class tdme::engine::primitives::BoundingVolume
 	friend class PrimitiveModel;
 
 protected:
-	Vector3 scale {  };
-	Vector3 center {  };
-	Vector3 collisionShapeLocalTranslation {  };
+	Vector3 scale;
+	Vector3 center;
+	Vector3 collisionShapeLocalTranslation;
 	reactphysics3d::CollisionShape* collisionShape { nullptr };
-	reactphysics3d::Transform collisionShapeLocalTransform {  };
-	reactphysics3d::Transform collisionShapeTransform {  };
-	reactphysics3d::AABB collisionShapeAABB {  };
-	BoundingBox boundingBoxTransformed {  };
-	Vector3 centerTransformed {  };
+	reactphysics3d::Transform collisionShapeLocalTransform;
+	reactphysics3d::Transform collisionShapeTransform;
+	reactphysics3d::AABB collisionShapeAABB;
+	BoundingBox boundingBoxTransformed;
+	Vector3 centerTransformed;
 
 	/**
 	 * Compute bounding box

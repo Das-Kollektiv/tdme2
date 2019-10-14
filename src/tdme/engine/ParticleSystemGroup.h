@@ -43,15 +43,15 @@ private:
 	bool frustumCulling { true };
 
 	string id;
-	bool enableDynamicShadows {  };
-	bool enabled {  };
-	bool pickable {  };
-	bool autoEmit {  };
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	vector<ParticleSystemEntity*> particleSystems {  };
+	bool enableDynamicShadows;
+	bool enabled;
+	bool pickable;
+	bool autoEmit;
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	vector<ParticleSystemEntity*> particleSystems;
 
 public:
 	// overriden methods

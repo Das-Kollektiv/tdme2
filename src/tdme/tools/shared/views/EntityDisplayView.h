@@ -82,7 +82,7 @@ public:
 	/**
 	 * @return bounding volume index to display or DISPLAY_BOUNDINGVOLUMEIDX_ALL
 	 */
-	inline bool isDisplayBoundingVolumeIdx() const {
+	inline int getDisplayBoundingVolumeIdx() const {
 		return displayBoundingVolumeIdx;
 	}
 

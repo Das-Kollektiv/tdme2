@@ -214,12 +214,13 @@ void Tools::oseDispose()
 
 void Tools::oseThumbnail(LevelEditorEntity* model)
 {
+	Vector3 objectScale;
 	Transformations oseLookFromRotations;
 	oseLookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	oseLookFromRotations.update();
-	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
+	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
 	osEngine->setSceneColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	osEngine->display();
 	// osEngine->makeScreenshot("tmp", model->getThumbnail());
@@ -276,14 +277,14 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel)
+void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
 {
 	if (entity == nullptr) return;
 
 	// create engine entity
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
-	Vector3 objectScale(1.0f, 1.0f, 1.0f);
+	objectScale.set(1.0f, 1.0f, 1.0f);
 	Color4 colorMul(1.0f, 1.0f, 1.0f, 1.0f);
 	Color4 colorAdd(0.0f, 0.0f, 0.0f, 0.0f);
 

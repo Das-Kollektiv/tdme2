@@ -23,25 +23,25 @@ class tdme::engine::Camera final
 {
 private:
 	static Vector3 defaultUp;
-	Renderer* renderer {  };
-	int32_t width {  };
-	int32_t height {  };
-	float aspect {  };
-	float fovY {  };
-	float zNear {  };
-	float zFar {  };
-	Vector3 upVector {  };
-	Vector3 lookFrom {  };
-	Vector3 lookAt {  };
-	Matrix4x4 projectionMatrix {  };
-	Matrix4x4 modelViewMatrix {  };
-	Frustum* frustum {  };
-	float lastZNear {  };
-	float lastZFar {  };
-	Vector3 lastUpVector {  };
-	Vector3 lastLookFrom {  };
-	Vector3 lastLookAt {  };
-	bool frustumChanged {  };
+	Renderer* renderer { nullptr };
+	int32_t width;
+	int32_t height;
+	float aspect;
+	float fovY;
+	float zNear;
+	float zFar;
+	Vector3 upVector;
+	Vector3 lookFrom;
+	Vector3 lookAt;
+	Matrix4x4 projectionMatrix;
+	Matrix4x4 modelViewMatrix;
+	Frustum* frustum { nullptr };
+	float lastZNear;
+	float lastZFar;
+	Vector3 lastUpVector;
+	Vector3 lastLookFrom;
+	Vector3 lastLookAt;
+	bool frustumChanged;
 public:
 
 	/** 

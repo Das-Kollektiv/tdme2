@@ -5,17 +5,21 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/shared/views/Gizmo.h>
 
 using std::string;
 
 using tdme::engine::Engine;
+using tdme::engine::Transformations;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
 
 /** 
@@ -23,12 +27,23 @@ using tdme::tools::shared::views::PopUps;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::views::EntityPhysicsView
+class tdme::tools::shared::views::EntityPhysicsView: protected Gizmo
 {
 private:
+	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
+	static constexpr int32_t MOUSE_BUTTON_LEFT { 1 };
+	static constexpr int32_t MOUSE_BUTTON_MIDDLE { 2 };
+	static constexpr int32_t MOUSE_BUTTON_RIGHT { 3 };
+	static constexpr int32_t MOUSE_DOWN_LAST_POSITION_NONE { -1 };
+
 	Engine* engine { nullptr };
 	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
 	PopUps* popUps { nullptr };
+
+	int displayBoundingVolumeIdxLast;
+	int32_t mouseDownLastX;
+	int32_t mouseDownLastY;
+	Vector3 totalDeltaScale;
 
 public:
 
@@ -171,6 +186,34 @@ public:
 	 * @param fileName file name
 	 */
 	virtual void applyBoundingVolumeConvexMesh(LevelEditorEntity* entity, int32_t idx, const string& fileName);
+
+	/**
+	 * Apply bounding volume transformations
+	 * @param entity entity
+	 * @param idx bounding volume index
+	 * @param transformations transformations
+	 * @param objectScale object scale
+	 * @param guiOnly only update GUI not the BV it self
+	 */
+	virtual void applyBoundingVolumeTransformations(LevelEditorEntity* entity, int32_t idx, const Transformations& transformations, const Vector3& objectScale, bool guiOnly);
+
+	/**
+	 * Update GIZMO
+	 */
+	virtual void updateGizmo();
+
+	/**
+	 * Handle input events
+	 * @param entity entity
+	 * @param objectScale object scale
+	 */
+	virtual void handleInputEvents(LevelEditorEntity* entity, const Vector3& objectScale);
+
+	/**
+	 * Display
+	 * @param entity entity
+	 */
+	virtual void display(LevelEditorEntity* entity);
 
 	/**
 	 * Public constructor

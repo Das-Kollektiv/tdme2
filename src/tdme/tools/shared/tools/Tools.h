@@ -167,7 +167,7 @@ public:
 	 * @param camScale scale
 	 * @param lodLevel lod level
 	 */
-	static void setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel = 1);
+	static void setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale);
 
 	/** 
 	 * Get relative resources file name

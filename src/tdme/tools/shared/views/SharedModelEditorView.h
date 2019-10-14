@@ -7,6 +7,7 @@
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
@@ -57,6 +58,7 @@ private:
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	int64_t audioStarted;
 	int64_t audioOffset;
+	Vector3 objectScale;
 
 	/**
 	 * Init model

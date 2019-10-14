@@ -301,7 +301,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 	return true;
 }
 
-bool Gizmo::selectGizmo(Entity* selectedEntity, Group* selectedEntityGroup) {
+bool Gizmo::determineGizmoMode(Entity* selectedEntity, Group* selectedEntityGroup) {
 	if (selectedEntity != nullptr &&
 		StringUtils::startsWith(selectedEntity->getId(), "tdme.leveleditor.gizmo.") == true && selectedEntityGroup != nullptr) {
 		auto selectedEntityGroupId = selectedEntityGroup->getId();

@@ -41,23 +41,23 @@ class tdme::engine::subsystems::rendering::BatchRendererTriangles final
 private:
 	static constexpr int32_t TRIANGLE_COUNT { 1024 };
 	static constexpr int32_t VERTEX_COUNT { TRIANGLE_COUNT * 3 };
-	Renderer* renderer {  };
-	vector<int32_t>* vboIds {  };
-	int32_t id {  };
-	bool acquired {  };
-	int32_t vertices {  };
-	ByteBuffer* fbModelMatricesByteBuffer;
-	FloatBuffer fbModelMatrices {  };
-	ByteBuffer* fbEffectColorMulsByteBuffer;
-	FloatBuffer fbEffectColorMuls {  };
-	ByteBuffer* fbEffectColorAddsByteBuffer;
-	FloatBuffer fbEffectColorAdds {  };
-	ByteBuffer* fbVerticesByteBuffer;
-	FloatBuffer fbVertices {  };
-	ByteBuffer* fbNormalsByteBuffer {  };
-	FloatBuffer fbNormals {  };
-	ByteBuffer* fbTextureCoordinatesByteBuffer {  };
-	FloatBuffer fbTextureCoordinates {  };
+	Renderer* renderer { nullptr };
+	vector<int32_t>* vboIds { nullptr };
+	int32_t id;
+	bool acquired;
+	int32_t vertices;
+	ByteBuffer* fbModelMatricesByteBuffer{ nullptr };
+	FloatBuffer fbModelMatrices;
+	ByteBuffer* fbEffectColorMulsByteBuffer{ nullptr };
+	FloatBuffer fbEffectColorMuls;
+	ByteBuffer* fbEffectColorAddsByteBuffer{ nullptr };
+	FloatBuffer fbEffectColorAdds;
+	ByteBuffer* fbVerticesByteBuffer{ nullptr };
+	FloatBuffer fbVertices;
+	ByteBuffer* fbNormalsByteBuffer { nullptr };
+	FloatBuffer fbNormals;
+	ByteBuffer* fbTextureCoordinatesByteBuffer { nullptr };
+	FloatBuffer fbTextureCoordinates;
 
 	/**
 	 * Clears this batch vbo renderer

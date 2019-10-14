@@ -23,9 +23,9 @@ public:
 	static Vector3 Z_AXIS;
 
 private:
-	float angle {  };
-	Vector3 axis {  };
-	Quaternion quaternion {  };
+	float angle;
+	Vector3 axis;
+	Quaternion quaternion;
 
 public:
 

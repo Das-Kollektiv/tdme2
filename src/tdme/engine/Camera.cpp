@@ -26,6 +26,9 @@ Camera::Camera(Renderer* renderer)
 	lookFrom.set(0.0f, 50.0f, 400.0f);
 	lookAt.set(0.0f, 50.0f, 0.0f);
 	frustum = new Frustum(renderer);
+	lastZFar = -1.0f;
+	lastZNear = -1.0f;
+	frustumChanged = true;
 }
 
 Camera::~Camera() {

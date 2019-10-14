@@ -135,10 +135,10 @@ public:
 	bool determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale);
 
 	/**
-	 * Check if to select GIZMO and if so set the mode
+	 * Select GIZMO mode
 	 * @param selectedEntity selected entity
 	 * @param selectedEntityGroup selected entity group
 	 */
-	bool selectGizmo(Entity* selectedEntity, Group* selectedEntityGroup);
+	bool determineGizmoMode(Entity* selectedEntity, Group* selectedEntityGroup);
 
 };

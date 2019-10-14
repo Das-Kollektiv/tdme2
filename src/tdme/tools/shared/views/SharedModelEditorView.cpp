@@ -148,7 +148,7 @@ void SharedModelEditorView::initModel()
 	if (entity == nullptr) return;
 
 	modelFile = entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel);
+	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
@@ -224,6 +224,7 @@ void SharedModelEditorView::computeNormals() {
 
 void SharedModelEditorView::handleInputEvents()
 {
+	entityPhysicsView->handleInputEvents(entity, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -248,6 +249,7 @@ void SharedModelEditorView::display()
 		cameraRotationInputHandler->reset();
 	}
 	entityDisplayView->display(entity);
+	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 	audio->update();

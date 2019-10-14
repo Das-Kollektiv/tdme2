@@ -48,7 +48,7 @@ public:
 
 private:
 	//
-	Vector3 a {  };
-	Vector3 b {  };
-	float radius {  };
+	Vector3 a;
+	Vector3 b;
+	float radius;
 };

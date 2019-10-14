@@ -32,5 +32,5 @@ public:
 	 */
 	EngineGL2Renderer(Engine* engine);
 private:
-	Engine* engine;
+	Engine* engine { nullptr };
 };

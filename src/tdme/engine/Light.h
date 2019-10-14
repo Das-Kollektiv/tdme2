@@ -22,19 +22,19 @@ using tdme::math::Vector4;
 class tdme::engine::Light final
 {
 private:
-	int32_t id {  };
-	bool enabled {  };
-	Color4 ambient {  };
-	Color4 diffuse {  };
-	Color4 specular {  };
-	Vector4 position {  };
-	Vector3 spotDirection {  };
-	float spotExponent {  };
-	float spotCutOff {  };
-	float constantAttenuation {  };
-	float linearAttenuation {  };
-	float quadraticAttenuation {  };
-	Renderer* renderer {  };
+	int32_t id;
+	bool enabled;
+	Color4 ambient;
+	Color4 diffuse;
+	Color4 specular;
+	Vector4 position;
+	Vector3 spotDirection;
+	float spotExponent;
+	float spotCutOff;
+	float constantAttenuation;
+	float linearAttenuation;
+	float quadraticAttenuation;
+	Renderer* renderer { nullptr };
 public:
 
 	/** 
