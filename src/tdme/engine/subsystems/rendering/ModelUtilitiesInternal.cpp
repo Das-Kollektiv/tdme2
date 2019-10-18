@@ -39,13 +39,12 @@ using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model)
+BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overridenGroupTransformationsMatrices)
 {
 	Object3DModelInternal object3dModel(model);
+	object3dModel.overridenTransformationsMatrices = overridenGroupTransformationsMatrices;
 	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&object3dModel);
-	if (boundingBox == nullptr) {
-		boundingBox = ModelUtilitiesInternal::createBoundingBoxNoMesh(&object3dModel);
-	}
+	if (boundingBox == nullptr) boundingBox = ModelUtilitiesInternal::createBoundingBoxNoMesh(&object3dModel);
 	return boundingBox;
 }
 

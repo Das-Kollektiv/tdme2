@@ -29,6 +29,9 @@ using tdme::tools::shared::views::PopUps;
  */
 class tdme::tools::shared::views::EntityPhysicsView: protected Gizmo
 {
+public:
+	static constexpr int DISPLAY_BOUNDINGVOLUMEIDX_ALL { -1 };
+
 private:
 	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
 	static constexpr int32_t MOUSE_BUTTON_LEFT { 1 };
@@ -45,7 +48,39 @@ private:
 	int32_t mouseDownLastY;
 	Vector3 totalDeltaScale;
 
+	int displayBoundingVolumeIdx;
+	bool displayBoundingVolume;
+
 public:
+	/**
+	 * @return display bounding volume
+	 */
+	inline virtual bool isDisplayBoundingVolume() {
+		return displayBoundingVolume;
+	}
+
+	/**
+	 * Set up bounding volume visibility
+	 * @param displayBoundingVolume bounding volume
+	 */
+	inline virtual void setDisplayBoundingVolume(bool displayBoundingVolume) {
+		this->displayBoundingVolume = displayBoundingVolume;
+	}
+
+	/**
+	 * @return bounding volume index to display or DISPLAY_BOUNDINGVOLUMEIDX_ALL
+	 */
+	inline int getDisplayBoundingVolumeIdx() const {
+		return displayBoundingVolumeIdx;
+	}
+
+	/**
+	 * Set display bounding volume idx
+	 * @param displayBoundingVolumeIdx display bounding volume index or DISPLAY_BOUNDINGVOLUMEIDX_ALL
+	 */
+	inline void setDisplayBoundingVolumeIdx(int displayBoundingVolumeIdx) {
+		this->displayBoundingVolumeIdx = displayBoundingVolumeIdx;
+	}
 
 	/** 
 	 * @return pop up views
@@ -198,11 +233,6 @@ public:
 	virtual void applyBoundingVolumeTransformations(LevelEditorEntity* entity, int32_t idx, const Transformations& transformations, const Vector3& objectScale, bool guiOnly);
 
 	/**
-	 * Update GIZMO
-	 */
-	virtual void updateGizmo();
-
-	/**
 	 * Handle input events
 	 * @param entity entity
 	 * @param objectScale object scale
@@ -214,6 +244,31 @@ public:
 	 * @param entity entity
 	 */
 	virtual void display(LevelEditorEntity* entity);
+
+	/**
+	 * Update GIZMO
+	 * @param entity level editor entity
+	 */
+	virtual void updateGizmo(LevelEditorEntity* entity);
+
+	/**
+	 * Set GIZMO rotation
+	 * @param entity level editor entity
+	 * @param transformations transformations
+	 */
+	virtual void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
+
+	/**
+	 * Start editing bounding volume
+	 * @param entity entity
+	 */
+	void startEditingBoundingVolume(LevelEditorEntity* entity);
+
+	/**
+	 * End editing bounding volume
+	 * @param entity entity
+	 */
+	void endEditingBoundingVolume(LevelEditorEntity* entity);
 
 	/**
 	 * Public constructor

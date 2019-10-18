@@ -23,15 +23,11 @@ using tdme::tools::shared::model::LevelEditorEntity;
  */
 class tdme::tools::shared::views::EntityDisplayView
 {
-public:
-	static constexpr int DISPLAY_BOUNDINGVOLUMEIDX_ALL { -1 };
 private:
 	Engine* engine { nullptr };
 	EntityDisplaySubScreenController* entityDisplaySubScreenController { nullptr };
 	bool displayGroundPlate;
 	bool displayShadowing;
-	bool displayBoundingVolume;
-	int displayBoundingVolumeIdx;
 
 public:
 	/** 
@@ -62,36 +58,6 @@ public:
 	 */
 	inline virtual void setDisplayShadowing(bool shadowing) {
 		this->displayShadowing = shadowing;
-	}
-
-	/** 
-	 * @return display bounding volume
-	 */
-	inline virtual bool isDisplayBoundingVolume() {
-		return displayBoundingVolume;
-	}
-
-	/** 
-	 * Set up bounding volume visibility
-	 * @param displayBoundingVolume bounding volume
-	 */
-	inline virtual void setDisplayBoundingVolume(bool displayBoundingVolume) {
-		this->displayBoundingVolume = displayBoundingVolume;
-	}
-
-	/**
-	 * @return bounding volume index to display or DISPLAY_BOUNDINGVOLUMEIDX_ALL
-	 */
-	inline int getDisplayBoundingVolumeIdx() const {
-		return displayBoundingVolumeIdx;
-	}
-
-	/**
-	 * Set display bounding volume idx
-	 * @param displayBoundingVolumeIdx display bounding volume index or DISPLAY_BOUNDINGVOLUMEIDX_ALL
-	 */
-	inline void setDisplayBoundingVolumeIdx(int displayBoundingVolumeIdx) {
-		this->displayBoundingVolumeIdx = displayBoundingVolumeIdx;
 	}
 
 	/** 

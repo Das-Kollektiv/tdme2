@@ -27,7 +27,6 @@ using tdme::math::Vector3;
 using tdme::tools::shared::controller::EntityPhysicsSubScreenController_BoundingVolumeType;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::MutableString;
@@ -48,7 +47,6 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	FileDialogPath* modelPath { nullptr };
 	EntityPhysicsView* view { nullptr };
-	EntityDisplayView* displayView { nullptr };
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeTypeDropDown;
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolumeNoneApply;
 	array<GUIElementNode*, LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT> boundingVolume;
@@ -100,11 +98,6 @@ public:
 	 * @return view
 	 */
 	virtual EntityPhysicsView* getView();
-
-	/**
-	 * @return entity display view
-	 */
-	virtual EntityDisplayView* getDisplayView();
 
 	/**
 	 * @return screen node
@@ -347,9 +340,8 @@ public:
 	 * @param popUps pop ups
 	 * @param modelPath model editor screen controller
 	 * @param isModelBoundingVolumes is model bounding volumes
-	 * @param displayView entity display view
 	 */
-	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, EntityDisplayView* displayView);
+	EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes);
 
 	/**
 	 * Destructor

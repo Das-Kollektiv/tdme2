@@ -32,7 +32,6 @@
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics_BodyType.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/tools/shared/views/EntityDisplayView.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
@@ -75,7 +74,6 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityPhysics;
 using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
-using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Console;
@@ -84,14 +82,13 @@ using tdme::utils::Integer;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 
-EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes, EntityDisplayView* displayView)
+EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
 {
 	this->modelPath = modelPath;
 	this->view = new EntityPhysicsView(this, popUps);
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
 	this->boundingVolumeTabActivated = false;
 	this->boundingVolumeIdxActivated = 0;
-	this->displayView = displayView;
 }
 
 EntityPhysicsSubScreenController::~EntityPhysicsSubScreenController() {
@@ -101,10 +98,6 @@ EntityPhysicsSubScreenController::~EntityPhysicsSubScreenController() {
 EntityPhysicsView* EntityPhysicsSubScreenController::getView()
 {
 	return view;
-}
-
-EntityDisplayView* EntityPhysicsSubScreenController::getDisplayView() {
-	return displayView;
 }
 
 GUIScreenNode* EntityPhysicsSubScreenController::getScreenNode() {
@@ -359,7 +352,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeSphereApply(LevelEditorEn
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-	view->updateGizmo();
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx)
@@ -375,7 +368,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorE
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-	view->updateGizmo();
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx)
@@ -390,7 +383,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(LevelEditorEnti
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-	view->updateGizmo();
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx)
@@ -417,7 +410,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(LevelEditorEntit
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
-	view->updateGizmo();
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx)
@@ -427,7 +420,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEdit
 		idx,
 		boundingvolumeConvexMeshFile[idx]->getController()->getValue().getString()
 	);
-	view->updateGizmo();
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx)
@@ -776,15 +769,17 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_properties_boundingvolume_") == true) {
 				boundingVolumeIdxActivated = Integer::parseInt(StringUtils::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
-				displayView->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->startEditingBoundingVolume(entity);
 			} else
 			if (node->getId() == "tab_properties_boundingvolume") {
-				displayView->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->startEditingBoundingVolume(entity);
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_") == true) {
-				displayView->setDisplayBoundingVolumeIdx(EntityDisplayView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+				view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+				view->endEditingBoundingVolume(entity);
 			}
 		}
 	}
-
 }

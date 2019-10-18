@@ -206,6 +206,14 @@ public:
 		return Object3DInternal::getTransformationsMatrix(id);
 	}
 
+	inline void setTransformationsMatrix(const string& id, const Matrix4x4& matrix) override {
+		return Object3DInternal::setTransformationsMatrix(id, matrix);
+	}
+
+	inline void unsetTransformationsMatrix(const string& id) override {
+		Object3DInternal::unsetTransformationsMatrix(id);
+	}
+
 	inline const Vector3& getTranslation() const override {
 		return Transformations::getTranslation();
 	}

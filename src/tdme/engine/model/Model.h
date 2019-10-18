@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -220,7 +221,10 @@ public:
 	 * @return if model has animations
 	 */
 	inline bool hasAnimations() {
-		return animationSetups.size() > 0;
+		return
+			animationSetups.size() == 0 ||
+			(getAnimationSetup(ANIMATIONSETUP_DEFAULT) != nullptr &&
+			getAnimationSetup(ANIMATIONSETUP_DEFAULT)->getFrames() > 0);
 	}
 
 	/** 

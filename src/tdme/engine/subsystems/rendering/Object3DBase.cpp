@@ -111,6 +111,9 @@ Object3DBase::~Object3DBase() {
 			delete it.second;
 		}
 	}
+	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+		delete overridenTransformationsMatrixIt.second;
+	}
 	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
 }
 
@@ -251,12 +254,36 @@ float Object3DBase::getOverlayAnimationTime(const string& id)
 
 const Matrix4x4 Object3DBase::getTransformationsMatrix(const string& id)
 {
-	auto transformationMatrixIt = transformationsMatrices[0].find(id);
-	if (transformationMatrixIt != transformationsMatrices[0].end()) {
-		return *transformationMatrixIt->second;
+	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
+	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+		return *overridenTransformationsMatrixIt->second;
+	} else {
+		auto transformationMatrixIt = transformationsMatrices[0].find(id);
+		if (transformationMatrixIt != transformationsMatrices[0].end()) {
+			return *transformationMatrixIt->second;
+		}
+		Console::println("Object3DBase::getTransformationsMatrix(): " + id + ": group not found");
 	}
-	Console::println("Object3DBase::getTransformationsMatrix(): " + id + ": group not found");
 	return Matrix4x4().identity();
+}
+
+void Object3DBase::setTransformationsMatrix(const string& id, const Matrix4x4& matrix)
+{
+	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
+	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+		*overridenTransformationsMatrixIt->second = matrix;
+	} else {
+		overridenTransformationsMatrices[id] = new Matrix4x4(matrix);
+	}
+}
+
+void Object3DBase::unsetTransformationsMatrix(const string& id)
+{
+	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
+	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+		delete overridenTransformationsMatrixIt->second;
+		overridenTransformationsMatrices.erase(overridenTransformationsMatrixIt);
+	}
 }
 
 void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>& matrices, const map<string, Group*>& groups)
@@ -333,8 +360,13 @@ inline void Object3DBase::computeTransformationsMatrices(const map<string, Group
 				transformationsMatrix.set(animationMatrices[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
 			}
 		} else {
-			// no animation matrix, set up local transformation matrix up as group matrix
-			transformationsMatrix.set(group->getTransformationsMatrix());
+			auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(group->getId());
+			if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+				transformationsMatrix.set(*overridenTransformationsMatrixIt->second);
+			} else {
+				// no animation matrix, set up local transformation matrix up as group matrix
+				transformationsMatrix.set(group->getTransformationsMatrix());
+			}
 		}
 		// apply parent transformation matrix
 		transformationsMatrix.multiply(parentTransformationsMatrix);

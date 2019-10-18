@@ -11,6 +11,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/math/Vector3.h>
 
@@ -27,6 +28,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 using tdme::math::Vector3;
 
 Object3DInternal::Object3DInternal(const string& id, Model* model) :
@@ -111,6 +113,28 @@ void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const 
 			object3DGroup->textureMatricesByEntities[facesEntityIdx].set(textureMatrix);
 		}
 	}
+}
+
+void Object3DInternal::setTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
+	Object3DBase::setTransformationsMatrix(id, matrix);
+	map<string, Matrix4x4*> _overridenTransformationsMatrices;
+	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+	}
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	boundingBox.fromBoundingVolume(newBoundingBox);
+	delete newBoundingBox;
+}
+
+void Object3DInternal::unsetTransformationsMatrix(const string& id) {
+	Object3DBase::unsetTransformationsMatrix(id);
+	map<string, Matrix4x4*> _overridenTransformationsMatrices;
+	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+	}
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	boundingBox.fromBoundingVolume(newBoundingBox);
+	delete newBoundingBox;
 }
 
 void Object3DInternal::initialize()

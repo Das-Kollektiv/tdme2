@@ -403,12 +403,10 @@ void LevelEditorView::handleInputEvents()
 
 		if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
 			if (mouseDragging == false) {
-				if (mouseDownLastX != event.getXUnscaled() || mouseDownLastY != event.getYUnscaled()) {
-					mouseDragging = true;
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
-					mouseDraggingLastObject = nullptr;
-				}
+				mouseDragging = true;
+				mouseDownLastX = event.getXUnscaled();
+				mouseDownLastY = event.getYUnscaled();
+				mouseDraggingLastObject = nullptr;
 			}
 		} else {
 			if (mouseDragging == true) {
@@ -455,7 +453,11 @@ void LevelEditorView::handleInputEvents()
 									auto translationRelative = translation.clone().sub(gizmoEntity->getTranslation());
 									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translationRelative, translationRelative));
 									levelEditorObject->getTransformations().setTranslation(translation.clone().add(deltaTranslation));
-									levelEditorObject->getTransformations().setScale(levelEditorObject->getTransformations().getScale().clone().scale(deltaScale));
+									auto scale = levelEditorObject->getTransformations().getScale().clone().scale(deltaScale);
+									scale.setX(Math::clamp(scale.getX(), 0.01f, 10.0f));
+									scale.setY(Math::clamp(scale.getY(), 0.01f, 10.0f));
+									scale.setZ(Math::clamp(scale.getZ(), 0.01f, 10.0f));
+									levelEditorObject->getTransformations().setScale(scale);
 									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
 									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
 									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisZIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
@@ -463,7 +465,7 @@ void LevelEditorView::handleInputEvents()
 									_selectedEntity->fromTransformations(levelEditorObject->getTransformations());
 								}
 							}
-							if (selectedEntityIds.size() == 0) {
+							if (selectedEntityIds.size() == 1) {
 								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
 								levelEditorScreenController->setObject(
 									_selectedEntity->getTranslation(),
@@ -472,6 +474,7 @@ void LevelEditorView::handleInputEvents()
 									_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisYIndex()),
 									_selectedEntity->getRotationAngle(level->getRotationOrder()->getAxisZIndex())
 								);
+								setGizmoRotation(_selectedEntity->getTransformations());
 							}
 						}
 						if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
@@ -483,6 +486,17 @@ void LevelEditorView::handleInputEvents()
 				} else
 				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
 					// no op
+					if (selectedEntityIds.size() == 1) {
+						for (auto selectedEntityId: selectedEntityIds) {
+							auto _selectedEntity = engine->getEntity(selectedEntityId);
+							if (_selectedEntity != nullptr && StringUtils::startsWith(_selectedEntity->getId(), "tdme.leveleditor.") == false) {
+								setGizmoRotation(_selectedEntity->getTransformations());
+							}
+						}
+					} else
+					if (selectedEntityIds.size() > 1) {
+						setGizmoRotation(Transformations());
+					}
 				} else {
 					if (keyControl == false) {
 						vector<Entity*> entitiesToRemove;
@@ -524,6 +538,8 @@ void LevelEditorView::handleInputEvents()
 							}
 							levelEditorScreenController->unselectObjectInObjectListBox(selectedEntity->getId());
 						}
+						if (selectedEntityIds.size() == 1) setGizmoRotation(selectedEntity->getTransformations());
+						if (selectedEntityIds.size() > 1) setGizmoRotation(Transformations());
 					}
 					mouseDraggingLastObject = selectedEntity;
 					updateGizmo();

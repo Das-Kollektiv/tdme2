@@ -43,7 +43,7 @@ class tdme::engine::subsystems::rendering::Object3DBase
 	friend class ModelUtilitiesInternal;
 
 private:
-	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
+	Object3DBase_TransformedFacesIterator* transformedFacesIterator { nullptr };
 
 	/**
 	 * Determine skinned group count
@@ -69,6 +69,7 @@ private:
 
 protected:
 	Model* model;
+	map<string, Matrix4x4*> overridenTransformationsMatrices;
 	vector<map<string, Matrix4x4*>> transformationsMatrices;
 	bool hasSkinning;
 	bool hasAnimations;
@@ -207,9 +208,22 @@ public:
 	/** 
 	 * Returns transformation matrix for given group
 	 * @param id group id
-	 * @return transformation matrix or null
+	 * @return transformation matrix or identity matrix if not found
 	 */
 	virtual const Matrix4x4 getTransformationsMatrix(const string& id);
+
+	/**
+	 * Set transformation matrix for given group
+	 * @param id group id
+	 * @param matrix transformation matrix
+	 */
+	virtual void setTransformationsMatrix(const string& id, const Matrix4x4& matrix);
+
+	/**
+	 * Unset transformation matrix for given group
+	 * @param id group id
+	 */
+	virtual void unsetTransformationsMatrix(const string& id);
 
 	/**
 	 * Pre render step, computes transformations

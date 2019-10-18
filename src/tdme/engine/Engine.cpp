@@ -1030,7 +1030,11 @@ void Engine::display()
 	}
 
 	// render shadows if required
-	if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+	if (shadowMapping != nullptr) {
+		if (visibleObjects.size() > 0) shadowMapping->renderShadowMaps(visibleObjects);
+		if (visibleObjectsPostPostProcessing.size() > 0) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+		if (visibleObjectsNoDepthTest.size() > 0) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
+	}
 
 	// delete post processing termporary buffer if not required anymore
 	if (isUsingPostProcessingTemporaryFrameBuffer == false && postProcessingTemporaryFrameBuffer != nullptr) {
@@ -1131,7 +1135,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	}
 	// they have first priority right now
 	if (selectedEntity != nullptr) {
-		if (selectedObject3DGroup != nullptr && object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
+		if (object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
 		return selectedEntity;
 	}
 
@@ -1273,7 +1277,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	}
 
 	// store group
-	if (selectedObject3DGroup != nullptr && object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
+	if (object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
 
 	//
 	return selectedEntity;

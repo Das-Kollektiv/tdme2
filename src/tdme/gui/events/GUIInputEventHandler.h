@@ -2,7 +2,6 @@
 
 #include <tdme/gui/events/fwd-tdme.h>
 
-
 /** 
  * GUI input event handler interface
  * @author Andreas Drewke

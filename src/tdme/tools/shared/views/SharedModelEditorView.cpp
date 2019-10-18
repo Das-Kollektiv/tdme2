@@ -109,7 +109,7 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	lodLevel = 1;
 	audioStarted = -1LL;
 	audioOffset = -1LL;
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
+	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 }
 
 SharedModelEditorView::~SharedModelEditorView() {
@@ -300,7 +300,7 @@ void SharedModelEditorView::loadSettings()
 	try {
 		Properties settings;
 		settings.load("settings", "modeleditor.properties");
-		entityDisplayView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
+		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
 		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
 		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
@@ -347,7 +347,7 @@ void SharedModelEditorView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put("display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? "true" : "false");
+		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
@@ -481,3 +481,10 @@ void SharedModelEditorView::updateRendering() {
 void SharedModelEditorView::onSetEntityData() {
 }
 
+void SharedModelEditorView::onRotation() {
+	entityPhysicsView->updateGizmo(entity);
+}
+
+void SharedModelEditorView::onScale() {
+	entityPhysicsView->updateGizmo(entity);
+}

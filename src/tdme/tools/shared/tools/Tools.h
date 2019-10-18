@@ -41,6 +41,7 @@ private:
 	static Model* gizmoTranslation;
 	static Model* gizmoScale;
 	static Model* gizmoRotations;
+	static Model* defaultOBB;
 
 public:
 
@@ -223,5 +224,10 @@ public:
 	 * @return GIZMO for rotations
 	 */
 	static Model* getGizmoRotations();
+
+	/**
+	 * @return default obb
+	 */
+	static Model* getDefaultObb();
 
 };

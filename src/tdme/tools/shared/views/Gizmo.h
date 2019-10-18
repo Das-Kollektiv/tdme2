@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
@@ -12,6 +13,7 @@ using std::vector;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
+using tdme::engine::Transformations;
 using tdme::engine::model::Group;
 using tdme::math::Vector3;
 
@@ -53,12 +55,15 @@ private:
 	GizmoMode gizmoMode;
 	Vector3 gizmoLastResult;
 	bool gizmoLastResultAvailable;
+	float gizmoBaseScale;
 
 public:
 	/**
 	 * Public constructor
+	 * @param engine engine
+	 * @param gizmoBaseScale gizmo base scale
 	 */
-	Gizmo(Engine* engine);
+	Gizmo(Engine* engine, float gizmoBaseScale = 1.0f);
 
 	/**
 	 * Destructor
@@ -140,5 +145,11 @@ public:
 	 * @param selectedEntityGroup selected entity group
 	 */
 	bool determineGizmoMode(Entity* selectedEntity, Group* selectedEntityGroup);
+
+	/**
+	 * Set gizmo rotation
+	 * @param transformations transformations containing rotations
+	 */
+	void setGizmoRotation(const Transformations& transformations);
 
 };

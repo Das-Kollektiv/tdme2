@@ -5,9 +5,12 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/LineSegment.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/tools/Tools.h>
+#include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
 
 using tdme::tools::shared::views::Gizmo;
@@ -17,14 +20,18 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::model::Group;
+using tdme::engine::model::Model;
 using tdme::engine::primitives::LineSegment;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::tools::shared::tools::Tools;
+using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
-Gizmo::Gizmo(Engine* engine)
+Gizmo::Gizmo(Engine* engine, float gizmoBaseScale)
 {
 	this->engine = engine;
+	this->gizmoBaseScale = gizmoBaseScale;
 	setGizmoType(GIZMOTYPE_ALL);
 	setGizmoMode(GIZMOMODE_NONE);
 	gizmoLastResultAvailable = false;
@@ -35,7 +42,7 @@ Gizmo::~Gizmo() {
 
 void Gizmo::updateGizmo(const Vector3& gizmoCenter) {
 	Object3D* gizmoEntity = nullptr;
-	auto scale = engine->getCamera()->getLookFrom().clone().sub(gizmoCenter).computeLength() / 5.0f;
+	auto scale = (engine->getCamera()->getLookFrom().clone().sub(gizmoCenter).computeLength() * gizmoBaseScale) / 5.0f;
 	switch (getGizmoType()) {
 		case GIZMOTYPE_ALL:
 			{
@@ -88,7 +95,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter) {
 		case GIZMOTYPE_SCALE:
 			{
 				engine->removeEntity("tdme.leveleditor.gizmo.all");
-				engine->removeEntity("getTransformationstdme.leveleditor.gizmo.translation");
+				engine->removeEntity("tdme.leveleditor.gizmo.translation");
 				engine->removeEntity("tdme.leveleditor.gizmo.rotations");
 				gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity("tdme.leveleditor.gizmo.scale"));
 				if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object3D("tdme.leveleditor.gizmo.scale", Tools::getGizmoScale()));
@@ -297,6 +304,9 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 		case GIZMOMODE_ROTATE_Z:
 			deltaRotation.setZ((deltaX + -deltaY) * 20.0f * engine->getTiming()->getDeltaTime() / 1000.0f);
 			break;
+		case GIZMOMODE_NONE:
+			// no op, satisfy the compiler
+			break;
 	}
 	return true;
 }
@@ -320,9 +330,35 @@ bool Gizmo::determineGizmoMode(Entity* selectedEntity, Group* selectedEntityGrou
 		if (selectedEntityGroupId == "scale_z") setGizmoMode(GIZMOMODE_SCALE_Y); else
 		if (selectedEntityGroupId == "scale_x_plane") setGizmoMode(GIZMOMODE_SCALEPLANE_X); else
 		if (selectedEntityGroupId == "scale_y_plane") setGizmoMode(GIZMOMODE_SCALEPLANE_Z); else
-		if (selectedEntityGroupId == "scale_z_plane") setGizmoMode(GIZMOMODE_SCALEPLANE_Y);
+		if (selectedEntityGroupId == "scale_z_plane") setGizmoMode(GIZMOMODE_SCALEPLANE_Y); else
+			setGizmoMode(GIZMOMODE_NONE);
 		return true;
 	}
 	return false;
+}
 
+void Gizmo::setGizmoRotation(const Transformations& transformations) {
+	Matrix4x4 rotationsMatrix;
+	transformations.getRotationsQuaternion().computeMatrix(rotationsMatrix);
+	{
+		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity("tdme.leveleditor.gizmo.scale"));
+		if (gizmoEntity != nullptr) {
+			gizmoEntity->setTransformationsMatrix("scale_x", gizmoEntity->getModel()->getGroupById("scale_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setTransformationsMatrix("scale_y", gizmoEntity->getModel()->getGroupById("scale_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setTransformationsMatrix("scale_z", gizmoEntity->getModel()->getGroupById("scale_z")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setTransformationsMatrix("scale_x_plane", gizmoEntity->getModel()->getGroupById("scale_x_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setTransformationsMatrix("scale_y_plane", gizmoEntity->getModel()->getGroupById("scale_y_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setTransformationsMatrix("scale_z_plane", gizmoEntity->getModel()->getGroupById("scale_x_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->update();
+		}
+	}
+	{
+		auto gizmoEntity = dynamic_cast<Object3D*>(engine->getEntity("tdme.leveleditor.gizmo.all"));
+		if (gizmoEntity != nullptr) {
+			gizmoEntity->setTransformationsMatrix("all_scale_x", gizmoEntity->getModel()->getGroupById("all_scale_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setTransformationsMatrix("all_scale_y", gizmoEntity->getModel()->getGroupById("all_scale_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setTransformationsMatrix("all_scale_z", gizmoEntity->getModel()->getGroupById("all_scale_z")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->update();
+		}
+	}
 }

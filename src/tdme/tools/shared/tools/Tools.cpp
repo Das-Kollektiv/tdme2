@@ -23,6 +23,8 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -69,6 +71,8 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::PrimitiveModel;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -94,6 +98,7 @@ Model* Tools::gizmoAll = nullptr;
 Model* Tools::gizmoTranslation = nullptr;
 Model* Tools::gizmoScale = nullptr;
 Model* Tools::gizmoRotations = nullptr;
+Model* Tools::defaultOBB = nullptr;
 
 string Tools::formatFloat(float value)
 {
@@ -510,4 +515,19 @@ Model* Tools::getGizmoRotations() {
 		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.fbx.tm");
 	}
 	return gizmoRotations;
+}
+
+Model* Tools::getDefaultObb() {
+	if (defaultOBB == nullptr) {
+		OrientedBoundingBox obb(
+			Vector3(),
+			OrientedBoundingBox::AABB_AXIS_X,
+			OrientedBoundingBox::AABB_AXIS_Y,
+			OrientedBoundingBox::AABB_AXIS_Z,
+			Vector3(0.5f, 0.5f, 0.5f)
+		);
+		defaultOBB = PrimitiveModel::createModel(&obb, "tdme.obb.default");
+	}
+	return defaultOBB;
+
 }

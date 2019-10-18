@@ -72,56 +72,59 @@ OrientedBoundingBox::OrientedBoundingBox()
 
 const array<Vector3, 8> OrientedBoundingBox::getVertices() const {
 	array<Vector3, 8> vertices;
+	array<Vector3, 3> xyzAxes;
+	xyzAxes[0] = AABB_AXIS_X;
+	xyzAxes[1] = AABB_AXIS_Y;
+	xyzAxes[2] = AABB_AXIS_Z;
 	Vector3 axis;
-	auto& halfExtensionXYZ = halfExtension.getArray();
 	// just for my imagination
 	//	near left top
 	vertices[0].set(0.0f, 0.0f, 0.0f);
-	vertices[0].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[0].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[0].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[0].add(axis.set(xyzAxes[0]).scale(-halfExtension[0]).scale(scale[0]));
+	vertices[0].add(axis.set(xyzAxes[1]).scale(-halfExtension[1]).scale(scale[1]));
+	vertices[0].add(axis.set(xyzAxes[2]).scale(-halfExtension[2]).scale(scale[2]));
 	// just for my imagination
 	//	near right top
 	vertices[1].set(0.0f, 0.0f, 0.0f);
-	vertices[1].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[1].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[1].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[1].add(axis.set(xyzAxes[0]).scale(+halfExtension[0]).scale(scale[0]));
+	vertices[1].add(axis.set(xyzAxes[1]).scale(-halfExtension[1]).scale(scale[1]));
+	vertices[1].add(axis.set(xyzAxes[2]).scale(-halfExtension[2]).scale(scale[2]));
 	// just for my imagination
 	//	near right bottom
 	vertices[2].set(0.0f, 0.0f, 0.0f);
-	vertices[2].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[2].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[2].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[2].add(axis.set(xyzAxes[0]).scale(+halfExtension[0]).scale(scale[0]));
+	vertices[2].add(axis.set(xyzAxes[1]).scale(+halfExtension[1]).scale(scale[1]));
+	vertices[2].add(axis.set(xyzAxes[2]).scale(-halfExtension[2]).scale(scale[2]));
 	// just for my imagination
 	//	near left bottom
 	vertices[3].set(0.0f, 0.0f, 0.0f);
-	vertices[3].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[3].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[3].add(axis.set(axes[2]).scale(-halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[3].add(axis.set(xyzAxes[0]).scale(-halfExtension[0]).scale(scale[0]));
+	vertices[3].add(axis.set(xyzAxes[1]).scale(+halfExtension[1]).scale(scale[1]));
+	vertices[3].add(axis.set(xyzAxes[2]).scale(-halfExtension[2]).scale(scale[2]));
 	// just for my imagination
 	//	far left top
 	vertices[4].set(0.0f, 0.0f, 0.0f);
-	vertices[4].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[4].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[4].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[4].add(axis.set(xyzAxes[0]).scale(-halfExtension[0]).scale(scale[0]));
+	vertices[4].add(axis.set(xyzAxes[1]).scale(-halfExtension[1]).scale(scale[1]));
+	vertices[4].add(axis.set(xyzAxes[2]).scale(+halfExtension[2]).scale(scale[2]));
 	// just for my imagination
 	//	far right top
 	vertices[5].set(0.0f, 0.0f, 0.0f);
-	vertices[5].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[5].add(axis.set(axes[1]).scale(-halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[5].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[5].add(axis.set(xyzAxes[0]).scale(+halfExtension[0]).scale(scale[0]));
+	vertices[5].add(axis.set(xyzAxes[1]).scale(-halfExtension[1]).scale(scale[1]));
+	vertices[5].add(axis.set(xyzAxes[2]).scale(+halfExtension[2]).scale(scale[2]));
 	// just for my imagination
 	//	far right bottom
 	vertices[6].set(0.0f, 0.0f, 0.0f);
-	vertices[6].add(axis.set(axes[0]).scale(+halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[6].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[6].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[6].add(axis.set(xyzAxes[0]).scale(+halfExtension[0]).scale(scale[0]));
+	vertices[6].add(axis.set(xyzAxes[1]).scale(+halfExtension[1]).scale(scale[1]));
+	vertices[6].add(axis.set(xyzAxes[2]).scale(+halfExtension[2]).scale(scale[2]));
 	// just for my imagination
 	//	far left bottom
 	vertices[7].set(0.0f, 0.0f, 0.0f);
-	vertices[7].add(axis.set(axes[0]).scale(-halfExtensionXYZ[0]).scale(scale[0]));
-	vertices[7].add(axis.set(axes[1]).scale(+halfExtensionXYZ[1]).scale(scale[1]));
-	vertices[7].add(axis.set(axes[2]).scale(+halfExtensionXYZ[2]).scale(scale[2]));
+	vertices[7].add(axis.set(xyzAxes[0]).scale(-halfExtension[0]).scale(scale[0]));
+	vertices[7].add(axis.set(xyzAxes[1]).scale(+halfExtension[1]).scale(scale[1]));
+	vertices[7].add(axis.set(xyzAxes[2]).scale(+halfExtension[2]).scale(scale[2]));
 	//
 	return vertices;
 }
@@ -157,13 +160,13 @@ void OrientedBoundingBox::setScale(const Vector3& scale) {
 		reactphysics3d::Quaternion(
 			reactphysics3d::Matrix3x3(
 				this->axes[0].getX(),
-				this->axes[0].getY(),
-				this->axes[0].getZ(),
 				this->axes[1].getX(),
-				this->axes[1].getY(),
-				this->axes[1].getZ(),
 				this->axes[2].getX(),
+				this->axes[0].getY(),
+				this->axes[1].getY(),
 				this->axes[2].getY(),
+				this->axes[0].getZ(),
+				this->axes[1].getZ(),
 				this->axes[2].getZ()
 			)
 		)

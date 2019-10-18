@@ -3,6 +3,7 @@
 #include <array>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/Group.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/math/fwd-tdme.h>
@@ -11,6 +12,7 @@
 
 using std::array;
 
+using tdme::engine::model::Group;
 using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::math::Matrix4x4;
@@ -25,6 +27,7 @@ class tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator
 {
 private:
 	Object3DBase* object3DBase { nullptr };
+	Group* group { nullptr };
 	array<Vector3, 3> vertices;
 	Matrix4x4 matrix;
 	int32_t faceCount;
@@ -62,7 +65,7 @@ public:
 	 * @return current group
 	 */
 	inline Group* getGroup() {
-		return object3DBase->object3dGroups[object3DGroupIdx]->group;
+		return group;
 	}
 
 	/**

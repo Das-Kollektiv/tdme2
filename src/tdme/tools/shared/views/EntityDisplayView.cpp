@@ -24,8 +24,6 @@ EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDis
 	this->entityDisplaySubScreenController = entityDisplaySubScreenController;
 	displayGroundPlate = false;
 	displayShadowing = false;
-	displayBoundingVolume = false;
-	displayBoundingVolumeIdx = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 }
 
 EntityDisplayView::~EntityDisplayView() {
@@ -38,12 +36,5 @@ void EntityDisplayView::display(LevelEditorEntity* entity)
 		if (model != nullptr) model->setDynamicShadowingEnabled(displayShadowing);
 		auto ground = engine->getEntity("ground");
 		if (ground != nullptr) ground->setEnabled(displayGroundPlate);
-		for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-			auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
-			if (modelBoundingVolume != nullptr) {
-				modelBoundingVolume->setEnabled((displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL && displayBoundingVolume == true) || displayBoundingVolumeIdx == i);
-				modelBoundingVolume->setPickable(displayBoundingVolumeIdx != DISPLAY_BOUNDINGVOLUMEIDX_ALL && displayBoundingVolumeIdx == i);
-			}
-		}
 	}
 }

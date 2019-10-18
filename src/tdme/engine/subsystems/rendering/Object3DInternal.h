@@ -171,6 +171,8 @@ public:
 	void dispose() override;
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
+	void setTransformationsMatrix(const string& id, const Matrix4x4& matrix) override;
+	void unsetTransformationsMatrix(const string& id) override;
 
 	/**
 	 * Public constructor
