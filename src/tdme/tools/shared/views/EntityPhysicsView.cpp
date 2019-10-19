@@ -231,7 +231,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 			engine->addEntity(modelBoundingVolumeEntity);
 		}
 	}
-	{
+	if (displayBoundingVolumeIdx == idx) {
 		auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID;
 		auto modelEntity = engine->getEntity("model");
 		if (entityBoundingVolume->getModel() != nullptr) {

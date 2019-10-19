@@ -29,6 +29,7 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/controller/ProgressBarScreenController.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -70,6 +71,7 @@ using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::controller::ProgressBarScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::tools::Tools;
@@ -112,30 +114,34 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 	vector<string> convexMeshFileNames;
 	if (convexMeshMode == "vhacd") {
 		class VHACDCallback : public IVHACD::IUserCallback {
-		public:
-			VHACDCallback() {}
-		    ~VHACDCallback() {};
-		    void Update(
-		    	const double overallProgress,
-				const double stageProgress,
-				const double operationProgress,
-		        const char* const stage,
-				const char* const operation)
-		    {
-		    	Console::println(to_string((int)(overallProgress + 0.5)));
-		    };
+			private:
+				ProgressBarScreenController* progressBarScreenController;
+			public:
+				VHACDCallback(ProgressBarScreenController* progressBarScreenController): progressBarScreenController(progressBarScreenController) {}
+				~VHACDCallback() {};
+				void Update(
+					const double overallProgress,
+					const double stageProgress,
+					const double operationProgress,
+					const char* const stage,
+					const char* const operation)
+				{
+					progressBarScreenController->progress((int)(overallProgress + 0.5) / 100.0f);
+				};
 		};
 
 		class VHACDLogger : public IVHACD::IUserLogger {
-		public:
-			VHACDLogger() {}
-		    ~VHACDLogger() {};
-		    void Log(const char* const msg)
-		    {
-		    	Console::println(msg);
-		    }
+			public:
+				VHACDLogger() {}
+				~VHACDLogger() {};
+				void Log(const char* const msg)
+				{
+					Console::println(msg);
+				}
 		};
 
+		//
+		entityPhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->show();
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			IVHACD::Parameters vhacdParams;
@@ -175,7 +181,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 			if (vhacdParams.m_pca > 1) {
 				throw ExceptionBase("PCA must be between 0 and 1");
 			}
-			VHACDCallback vhacdCallback;
+			VHACDCallback vhacdCallback(entityPhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController());
 			VHACDLogger vhacdLogger;
 			vhacdParams.m_logger = &vhacdLogger;
 			vhacdParams.m_callback = &vhacdCallback;
@@ -265,6 +271,7 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 		}
 		vhacd->Clean();
 		vhacd->Release();
+		entityPhysicsSubScreenController->getView()->getPopUpsViews()->getProgressBarScreenController()->close();
 	} else
 	if (convexMeshMode == "model") {
 		try {

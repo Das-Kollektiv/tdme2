@@ -997,6 +997,12 @@ void Engine::display()
 		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
 	}
 
+	// render shadows if required
+	if (shadowMapping != nullptr) {
+		if (visibleObjects.size() > 0) shadowMapping->renderShadowMaps(visibleObjects);
+		if (visibleObjectsPostPostProcessing.size() > 0) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+	}
+
 	// render objects that are have post post processing render pass
 	if (visibleObjectsNoDepthTest.size() > 0) {
 		// use lighting shader
@@ -1031,8 +1037,6 @@ void Engine::display()
 
 	// render shadows if required
 	if (shadowMapping != nullptr) {
-		if (visibleObjects.size() > 0) shadowMapping->renderShadowMaps(visibleObjects);
-		if (visibleObjectsPostPostProcessing.size() > 0) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
 		if (visibleObjectsNoDepthTest.size() > 0) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
 	}
 

@@ -774,10 +774,19 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 			} else
 			if (node->getId() == "tab_properties_boundingvolume") {
 				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				view->startEditingBoundingVolume(entity);
+				if (boundingVolumeIdxActivated != EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(entity);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_properties_convexmeshes") == true) {
+				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->endEditingBoundingVolume(entity);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_properties_terrain") == true) {
+				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->endEditingBoundingVolume(entity);
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_") == true) {
-				Console::println("xxx");
 				view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 				view->endEditingBoundingVolume(entity);
 			}
