@@ -777,6 +777,7 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 				view->startEditingBoundingVolume(entity);
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_") == true) {
+				Console::println("xxx");
 				view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 				view->endEditingBoundingVolume(entity);
 			}

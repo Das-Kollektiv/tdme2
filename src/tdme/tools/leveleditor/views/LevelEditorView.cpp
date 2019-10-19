@@ -454,9 +454,12 @@ void LevelEditorView::handleInputEvents()
 									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translationRelative, translationRelative));
 									levelEditorObject->getTransformations().setTranslation(translation.clone().add(deltaTranslation));
 									auto scale = levelEditorObject->getTransformations().getScale().clone().scale(deltaScale);
-									scale.setX(Math::clamp(scale.getX(), 0.01f, 10.0f));
-									scale.setY(Math::clamp(scale.getY(), 0.01f, 10.0f));
-									scale.setZ(Math::clamp(scale.getZ(), 0.01f, 10.0f));
+									if (Math::abs(scale.getX()) < 0.01f) scale.setX(Math::sign(scale.getX()) * 0.01f);
+									if (Math::abs(scale.getY()) < 0.01f) scale.setY(Math::sign(scale.getY()) * 0.01f);
+									if (Math::abs(scale.getZ()) < 0.01f) scale.setZ(Math::sign(scale.getZ()) * 0.01f);
+									if (Math::abs(scale.getX()) > 100.0f) scale.setX(Math::sign(scale.getX()) * 100.0f);
+									if (Math::abs(scale.getY()) > 100.0f) scale.setY(Math::sign(scale.getY()) * 100.0f);
+									if (Math::abs(scale.getZ()) > 100.0f) scale.setZ(Math::sign(scale.getZ()) * 100.0f);
 									levelEditorObject->getTransformations().setScale(scale);
 									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisXIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
 									levelEditorObject->getTransformations().setRotationAngle(level->getRotationOrder()->getAxisYIndex(), levelEditorObject->getTransformations().getRotationAngle(level->getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);

@@ -356,25 +356,19 @@ void EntityPhysicsView::setPhysics(LevelEditorEntity* entity) {
 }
 
 void EntityPhysicsView::display(LevelEditorEntity* entity) {
-	if (entity != nullptr) {
-		if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL) {
-			for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-				auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
-				if (modelBoundingVolume != nullptr) {
-					modelBoundingVolume->setEnabled(displayBoundingVolume == true);
-					modelBoundingVolume->setPickable(displayBoundingVolumeIdx == i);
-				}
-			}
-		} else {
-			auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
-			if (modelBoundingVolume != nullptr) {
-				modelBoundingVolume->setEnabled(true);
-				modelBoundingVolume->setPickable(true);
-			} else
-			if (displayBoundingVolumeIdx != DISPLAY_BOUNDINGVOLUMEIDX_ALL) {
-				startEditingBoundingVolume(entity);
-			}
-		}
+	if (entity == nullptr) return;
+
+	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
+		auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
+		if (modelBoundingVolume != nullptr) modelBoundingVolume->setEnabled(displayBoundingVolume == true && displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+	}
+	auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+	if (modelBoundingVolume != nullptr) {
+		modelBoundingVolume->setEnabled(true);
+		modelBoundingVolume->setPickable(true);
+	} else
+	if (displayBoundingVolumeIdx != DISPLAY_BOUNDINGVOLUMEIDX_ALL) {
+		startEditingBoundingVolume(entity);
 	}
 }
 
