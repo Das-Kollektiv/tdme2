@@ -13,6 +13,7 @@
 #include <tdme/audio/Sound.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
@@ -85,6 +86,7 @@ using tdme::audio::Audio;
 using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
@@ -352,6 +354,25 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				true,
 				particleSystems
 			);
+		}
+	} else
+	// particle system
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+		// bounding volumes
+		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
+		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {
+			auto entityBoundingVolume = levelEditorEntity->getBoundingVolumeAt(i);
+			if (entityBoundingVolume->getModel() != nullptr) {
+				auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+				entityBoundingVolumesHierarchy->addEntity(bvObject);
+			}
+		}
+		entityBoundingVolumesHierarchy->update();
+		if (entityBoundingVolumesHierarchy->getEntities().size() == 0) {
+			entityBoundingVolumesHierarchy->dispose();
+			delete entityBoundingVolumesHierarchy;
+		} else {
+			entity = entityBoundingVolumesHierarchy;
 		}
 	}
 

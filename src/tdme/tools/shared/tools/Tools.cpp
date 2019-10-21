@@ -7,6 +7,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
@@ -55,6 +56,7 @@ using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
@@ -287,18 +289,35 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	if (entity == nullptr) return;
 
 	// create engine entity
+	BoundingBox* entityBoundingBoxFallback = new BoundingBox(Vector3(-25.0f, 0.0f, -25.0f), Vector3(25.0f, 10.0f, 25.0f));
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
 	objectScale.set(1.0f, 1.0f, 1.0f);
 	Color4 colorMul(1.0f, 1.0f, 1.0f, 1.0f);
 	Color4 colorAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// particle system
+	// bounding volumes
+	auto entityBoundingVolumesHierarchy = new EntityHierarchy(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
+	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
+		auto entityBoundingVolume = entity->getBoundingVolumeAt(i);
+		if (entityBoundingVolume->getModel() != nullptr) {
+			auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+			bvObject->setEnabled(false);
+			entityBoundingVolumesHierarchy->addEntity(bvObject);
+		}
+	}
+	entityBoundingVolumesHierarchy->update();
+	engine->addEntity(entityBoundingVolumesHierarchy);
+
+	//
+	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
+	} else
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 		modelEntity = Level::createEntity(entity, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
-	} else {
+	} else
+	if (entity->getModel() != nullptr) {
 		// model
 		Model* model = nullptr;
 		switch (lodLevel) {
@@ -339,10 +358,12 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 		}
 	}
 
+	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback;
+
 	if (entity->getType() != LevelEditorEntity_EntityType::PARTICLESYSTEM) {
 		// do a feasible scale
-		float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
-		objectScale.scale(1.0f / maxAxisDimension);
+		float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
+		objectScale.scale(1.0f / maxAxisDimension * 0.75f);
 		if (modelEntity != nullptr) {
 			modelEntity->setScale(objectScale);
 			modelEntity->update();
@@ -350,24 +371,18 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	}
 
 	// generate ground
-	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - Math::EPSILON);
+	auto ground = createGroundModel(
+		(entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) * 1.0f,
+		(entityBoundingBoxToUse->getMax().getZ() - entityBoundingBoxToUse->getMin().getZ()) * 1.0f,
+		entityBoundingBoxToUse->getMin().getY() - Math::EPSILON
+	);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
 	engine->addEntity(groundObject);
 
-	// add bounding volumes
-	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto boundingVolume = entity->getBoundingVolumeAt(i);
-		if (boundingVolume->getModel() == nullptr) continue;
-		auto modelBoundingVolumeEntity = new Object3D(
-			"model_bv." + to_string(i),
-			boundingVolume->getModel()
-		);
-		modelBoundingVolumeEntity->setEnabled(false);
-		modelBoundingVolumeEntity->setScale(objectScale);
-		modelBoundingVolumeEntity->update();
-		engine->addEntity(modelBoundingVolumeEntity);
-	}
+	//
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->setScale(objectScale);
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->update();
 
 	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
@@ -377,9 +392,9 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setPosition(
 		Vector4(
-			entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f),
-			entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f),
-			-entityBoundingBox->getMin().getZ() * 4.0f,
+			entityBoundingBoxToUse->getMin().getX() + ((entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) / 2.0f),
+			entityBoundingBoxToUse->getMin().getY() + ((entityBoundingBoxToUse->getMax().getY() - entityBoundingBoxToUse->getMin().getY()) / 2.0f),
+			-entityBoundingBoxToUse->getMin().getZ() * 4.0f,
 			1.0f
 		)
 	);
@@ -396,7 +411,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
 	auto lookAt = cam->getLookAt();
-	lookAt.set(entityBoundingBox->getCenter().clone().scale(objectScale));
+	lookAt.set(entityBoundingBoxToUse->getCenter().clone().scale(objectScale));
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
@@ -411,9 +426,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	cam->setUpVector(upVector);
 
 	//
-	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		delete entityBoundingBox;
-	}
+	delete entityBoundingBoxFallback;
 }
 
 const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)

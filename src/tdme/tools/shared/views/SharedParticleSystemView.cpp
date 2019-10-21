@@ -95,6 +95,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 	entitySoundsView = nullptr;
 	loadParticleSystemRequested = false;
 	initParticleSystemRequested = false;
+	updateParticleSystemRequested = false;
 	particleSystemFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 	entity = new LevelEditorEntity(

@@ -42,6 +42,7 @@ using std::to_string;
 
 using tdme::engine::Camera;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
@@ -91,6 +92,7 @@ class tdme::engine::Engine final
 	friend class EngineGL2Renderer;
 	friend class EngineGLES2Renderer;
 	friend class EngineVKRenderer;
+	friend class EntityHierarchy;
 	friend class FogParticleSystem;
 	friend class FrameBuffer;
 	friend class Object3D;
@@ -192,6 +194,7 @@ private:
 	vector<ParticleSystemGroup*> visiblePsgs;
 	vector<LinesObject3D*> visibleLinesObjects;
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups;
+	vector<EntityHierarchy*> visibleObjectEntityHierarchies;
 
 	vector<Object3D*> visibleEZRObjects;
 

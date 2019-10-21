@@ -26,7 +26,7 @@ ObjectParticleSystem::ObjectParticleSystem(const string& id, Model* model, const
 
 void ObjectParticleSystem::initialize()
 {
-	for (auto object: objects) object->setParentEntity(this);
+	for (auto object: objects) object->setRootEntity(this);
 }
 
 void ObjectParticleSystem::fromTransformations(const Transformations& transformations)

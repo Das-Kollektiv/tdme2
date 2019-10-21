@@ -46,15 +46,15 @@ LODObject3D::LODObject3D(
 
 	if (modelLOD1 != nullptr) {
 		objectLOD1 = new Object3D(id + ".lod1", modelLOD1);
-		objectLOD1->setParentEntity(this);
+		objectLOD1->setRootEntity(this);
 	}
 	if (modelLOD2 != nullptr) {
 		objectLOD2 = new Object3D(id + ".lod2", modelLOD2);
-		objectLOD1->setParentEntity(this);
+		objectLOD1->setRootEntity(this);
 	}
 	if (modelLOD3 != nullptr) {
 		objectLOD3 = new Object3D(id + ".lod3", modelLOD3);
-		objectLOD1->setParentEntity(this);
+		objectLOD1->setRootEntity(this);
 	}
 
 	if (objectLOD1 != nullptr) objectLOD1->setShader(shaderId);

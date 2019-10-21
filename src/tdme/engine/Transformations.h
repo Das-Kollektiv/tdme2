@@ -175,8 +175,15 @@ public:
 
 	/**
 	 * Computes transformation matrix
+	 * @param parentTransformations parent transformations
 	 */
 	virtual void update();
+
+	/**
+	 * Apply parent transformations
+	 * @param parentTransformations parent transformations
+	 */
+	virtual void applyParentTransformations(const Transformations& parentTransformations);
 
 	/**
 	 * Invert this transformations

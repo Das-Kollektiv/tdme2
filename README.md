@@ -50,6 +50,7 @@
                 - ...
               - there is also support for particle system groups
             - lines based objects
+            - entity hierarchy objects
         - object/entity transformations
             - scaling
             - rotations

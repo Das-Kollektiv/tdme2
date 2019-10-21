@@ -588,6 +588,7 @@ void EntityPhysicsSubScreenController::unsetPhysics() {
 
 void EntityPhysicsSubScreenController::setPhysics(LevelEditorEntity* entity) {
 	auto physics = entity->getPhysics();
+	if (physics == nullptr) return;
 	if (physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("collisionbody"));
 	} else

@@ -69,7 +69,6 @@ void LevelEditorEntityBoundingVolume::setupNone()
 	boundingVolume = nullptr;
 	model = nullptr;
 	modelMeshFile = "";
-	updateLevelEditorEntity();
 }
 
 int32_t LevelEditorEntityBoundingVolume::allocateModelIdx() {
@@ -98,7 +97,6 @@ void LevelEditorEntityBoundingVolume::setupSphere(const Vector3& center, float r
 			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
-	updateLevelEditorEntity();
 }
 
 void LevelEditorEntityBoundingVolume::setupCapsule(const Vector3& a, const Vector3& b, float radius)
@@ -117,7 +115,6 @@ void LevelEditorEntityBoundingVolume::setupCapsule(const Vector3& a, const Vecto
 			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
-	updateLevelEditorEntity();
 }
 
 void LevelEditorEntityBoundingVolume::setupObb(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension)
@@ -136,7 +133,6 @@ void LevelEditorEntityBoundingVolume::setupObb(const Vector3& center, const Vect
 			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
-	updateLevelEditorEntity();
 }
 
 void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector3& max)
@@ -156,7 +152,6 @@ void LevelEditorEntityBoundingVolume::setupAabb(const Vector3& min, const Vector
 			to_string(allocateModelIdx())
 	);
 	modelMeshFile = "";
-	updateLevelEditorEntity();
 }
 
 void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, const string& fileName)
@@ -181,10 +176,4 @@ void LevelEditorEntityBoundingVolume::setupConvexMesh(const string& pathName, co
 		Console::println(string(exception.what()));
 	}
 	if (boundingVolume == nullptr) boundingVolume = new ConvexMesh();
-	updateLevelEditorEntity();
-}
-
-void LevelEditorEntityBoundingVolume::updateLevelEditorEntity()
-{
-	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) levelEditorEntity->setModel(model);
 }

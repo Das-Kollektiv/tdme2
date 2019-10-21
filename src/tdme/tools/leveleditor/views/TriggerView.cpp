@@ -11,6 +11,7 @@
 #include <tdme/tools/leveleditor/TDMELevelEditor.h>
 #include <tdme/tools/leveleditor/controller/LevelEditorEntityLibraryScreenController.h>
 #include <tdme/tools/leveleditor/controller/TriggerScreenController.h>
+#include <tdme/tools/shared/controller/EntityPhysicsSubScreenController.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
@@ -19,6 +20,8 @@
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandler.h>
+#include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -35,6 +38,7 @@ using tdme::math::Vector3;
 using tdme::tools::leveleditor::TDMELevelEditor;
 using tdme::tools::leveleditor::controller::LevelEditorEntityLibraryScreenController;
 using tdme::tools::leveleditor::controller::TriggerScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -43,6 +47,8 @@ using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::CameraRotationInputHandler;
+using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -51,10 +57,9 @@ TriggerView::TriggerView(PopUps* popUps)
 {
 	this->popUps = popUps;
 	triggerScreenController = nullptr;
-	initModelRequested = false;
 	entity = nullptr;
 	engine = Engine::getInstance();
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
+	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 }
 
 TriggerView::~TriggerView() {
@@ -76,40 +81,22 @@ void TriggerView::setEntity(LevelEditorEntity* entity)
 {
 	engine->reset();
 	this->entity = entity;
-	initModelRequested = true;
-}
-
-void TriggerView::initModel()
-{
-	if (entity == nullptr)
-		return;
-
+	entity->setDefaultBoundingVolumes();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
-	auto model = engine->getEntity("model");
-	auto ground = engine->getEntity("ground");
-	model->setDynamicShadowingEnabled(false);
-	ground->setEnabled(false);
-	auto modelBoundingVolume = engine->getEntity("model_bv");
-	if (modelBoundingVolume != nullptr) {
-		modelBoundingVolume->setEnabled(false);
-	}
+	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID)->getBoundingBox()));
 	updateGUIElements();
 }
 
 void TriggerView::handleInputEvents()
 {
+	entityPhysicsView->handleInputEvents(entity, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
 void TriggerView::display()
 {
-	if (initModelRequested == true) {
-		initModel();
-		cameraRotationInputHandler->reset();
-		initModelRequested = false;
-	}
+	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
@@ -121,40 +108,14 @@ void TriggerView::updateGUIElements()
 		auto preset = entity->getProperty("preset");
 		triggerScreenController->setEntityProperties(preset != nullptr ? preset->getValue() : "", "");
 		triggerScreenController->setEntityData(entity->getName(), entity->getDescription());
-		Vector3 dimension;
-		dimension.set(entity->getModel()->getBoundingBox()->getMax());
-		dimension.sub(entity->getModel()->getBoundingBox()->getMin());
-		triggerScreenController->setTrigger(dimension.getX(), dimension.getY(), dimension.getZ());
+		entityPhysicsView->setBoundingVolumes(entity);
+		entityPhysicsView->setPhysics(entity);
 	} else {
 		triggerScreenController->setScreenCaption("Trigger - no trigger loaded");
 		triggerScreenController->unsetEntityProperties();
 		triggerScreenController->unsetEntityData();
-		triggerScreenController->unsetTrigger();
-	}
-}
-
-void TriggerView::triggerApply(float width, float height, float depth)
-{
-	if (entity == nullptr)
-		return;
-
-	try {
-		auto oldModel = entity;
-		entity = TDMELevelEditor::getInstance()->getEntityLibrary()->addTrigger(LevelEditorEntityLibrary::ID_ALLOCATE, oldModel->getName(), oldModel->getDescription(), width, height, depth);
-		for (auto i = 0; i < oldModel->getPropertyCount(); i++) {
-			auto property = oldModel->getPropertyByIndex(i);
-			entity->addProperty(property->getName(), property->getValue());
-		}
-		TDMELevelEditor::getInstance()->getLevel()->replaceEntity(oldModel->getId(), entity->getId());
-		TDMELevelEditor::getInstance()->getEntityLibrary()->removeEntity(oldModel->getId());
-		TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
-		initModelRequested = true;
-		updateGUIElements();
-	} catch (Exception& exception) {
-		popUps->getInfoDialogScreenController()->show(
-			"Error",
-			"An error occurred: " + (string(exception.what()))
-		);
+		entityPhysicsView->unsetBoundingVolumes();
+		entityPhysicsView->unsetPhysics();
 	}
 }
 
@@ -163,13 +124,15 @@ void TriggerView::initialize()
 	try {
 		triggerScreenController = new TriggerScreenController(this);
 		triggerScreenController->initialize();
+		entityPhysicsView = triggerScreenController->getEntityPhysicsSubScreenController()->getView();
+		entityPhysicsView->initialize();
+		entityPhysicsView->setDisplayBoundingVolume(true);
 		engine->getGUI()->addScreen(triggerScreenController->getScreenNode()->getId(), triggerScreenController->getScreenNode());
 		triggerScreenController->getScreenNode()->setInputEventHandler(this);
 	} catch (Exception& exception) {
 		Console::print(string("TriggerView::initialize(): An error occurred: "));
 		Console::println(exception.what());
 	}
-	updateGUIElements();
 }
 
 void TriggerView::activate()
@@ -190,4 +153,12 @@ void TriggerView::deactivate()
 void TriggerView::dispose()
 {
 	Engine::getInstance()->reset();
+}
+
+void TriggerView::onRotation() {
+	entityPhysicsView->updateGizmo(entity);
+}
+
+void TriggerView::onScale() {
+	entityPhysicsView->updateGizmo(entity);
 }

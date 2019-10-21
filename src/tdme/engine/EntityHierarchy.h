@@ -1,59 +1,68 @@
 #pragma once
 
-#include <array>
+#include <algorithm>
+#include <map>
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 #include <tdme/engine/Camera.h>
-#include <tdme/engine/Entity.h>
-#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/engine/model/Group.h>
-#include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/Object3DInternal.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/utils/Console.h>
 
-using std::array;
+using std::remove;
 using std::string;
 using std::to_string;
+using std::map;
 using std::vector;
 
+using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
-using tdme::engine::LODObject3D;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
-using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
-/** 
- * Object 3D render group
+/**
+ * Entity hierarchy to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::Object3DRenderGroup final:
+class tdme::engine::EntityHierarchy final:
 	public Transformations,
 	public Entity
 {
 private:
+	struct EntityHierarchyLevel {
+		typedef map<string, EntityHierarchyLevel> EntityHierachyLevelMap;
+		string id;
+		EntityHierarchyLevel* parent { nullptr };
+		Entity* entity { nullptr };
+		map<string, EntityHierarchyLevel> children;
+	};
 	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
+	bool initialized { false };
 
 	string id;
 	bool enabled;
@@ -63,42 +72,8 @@ private:
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
 	BoundingBox boundingBoxTransformed;
-	float modelLOD2MinDistance;
-	float modelLOD3MinDistance;
-	Entity* combinedEntity;
-	vector<Transformations> objectsTransformations;
-	Model* model;
-	vector<Model*> combinedModels;
-	string shaderId { "default" };
-	string distanceShaderId { "" };
-	float distanceShaderDistance { 50.0f };
-	array<int, 3> lodReduceBy;
-	bool enableEarlyZRejection { false };
-
-	/**
-	 * Compute bounding box
-	 */
-	void computeBoundingBox();
-
-	/**
-	 * Combine group into given combined model
-	 * @param sourceGroup source group to combine into current model
-	 * @param origins origins
-	 * @param objectParentTransformationsMatrices object parent transformations matrix
-	 * @param combinedModel combined model
-	 * @param reduceFactorBy reduce factor by
-	 */
-	static void combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
-
-	/**
-	 * Combine model with transformations into current model
-	 * @param model model
-	 * @param transformations transformations
-	 * @param combinedModel combined model
-	 * @param reduceFactorBy reduce factor by
-	 * @return model
-	 */
-	static void combineObjects(Model* model, const vector<Transformations>& objectsTransformations, Model* combinedModel);
+	vector<Entity*> entities;
+	EntityHierarchyLevel entityRoot;
 
 	// overridden methods
 	inline void setRootEntity(Entity* entity) override {
@@ -111,8 +86,38 @@ private:
 		Transformations::applyParentTransformations(parentTransformations);
 	}
 
+	/**
+	 * Get entity hierarchy level by given entity id
+	 */
+	inline EntityHierarchyLevel* getEntityHierarchyLevel(const string& id) {
+		if (id.empty()) return &entityRoot;
+		return getEntityHierarchyLevel(&entityRoot, id);
+	}
+
+	/**
+	 * Retrieve entity hierarchy level by given entity id or nullptr if not found
+	 * @param entityHierarchyLevel entity hierarchy level
+	 * @param id entity id
+	 * @return entity hierarchy level by given entity id or nullptr if not found
+	 */
+	inline EntityHierarchyLevel* getEntityHierarchyLevel(EntityHierarchyLevel* entityHierarchyLevel, const string& id) {
+		if (id == entityHierarchyLevel->id) return entityHierarchyLevel;
+		for (auto& it: entityHierarchyLevel->children) {
+			auto childEntityHierarchyLevel = getEntityHierarchyLevel(&it.second, id);
+			if (childEntityHierarchyLevel != nullptr) return childEntityHierarchyLevel;
+		}
+		return nullptr;
+	}
+
+	/**
+	 * Update hierarchy from given entity hierarchy level ongoing
+	 * @param parentTransformations parent transformations
+	 * @param entityHierarchyLevel entity hierarchy level
+	 * @param depth
+	 */
+	void updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth);
+
 public:
-	// overriden methods
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
 	void fromTransformations(const Transformations& transformations) override;
@@ -124,60 +129,44 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param model model
-	 * @param lodLevels lod levels
-	 * @param modelLOD2MinDistance model LOD 2 min distance
-	 * @param modelLOD3MinDistance model LOD 3 min distance
-	 * @param modelLOD2ReduceBy model LOD 2 reduce by factor
-	 * @param modelLOD3ReduceBy model LOD 3 reduce by factor
 	 */
-	Object3DRenderGroup(
-		const string& id,
-		Model* model,
-		int lodLevels = 1,
-		float modelLOD2MinDistance = 25.0f,
-		float modelLOD3MinDistance = 50.0f,
-		int modelLOD2ReduceBy = 4,
-		int modelLOD3ReduceBy = 16
-	);
+	EntityHierarchy(const string& id);
 
 	/**
 	 * Destructor
 	 */
-	~Object3DRenderGroup();
+	virtual ~EntityHierarchy();
 
 	/**
-	 * Update render group model and bounding box
+	 * @return entity from hierarchy by given unique id
 	 */
-	void updateRenderGroup();
-
-public:
+	Entity* getEntity(const string& id);
 
 	/**
-	 * @return associated model
+	 * Adds a entity to the hierarchy
+	 * @param entity entity to add
+	 * @param parentId parent entity id to add entity to
 	 */
-	inline Model* getModel() {
-		return model;
+	void addEntity(Entity* entity, const string& parentId = string());
+
+	/**
+	 * Removes a entity from hierarchy by given unique entity id
+	 */
+	void removeEntity(const string& id);
+
+	/**
+	 * Query direct sub entities for given parent entity id
+	 * @param parentId parent id to entities from
+	 * @return entities
+	 */
+	vector<Entity*> query(const string& parentId = string());
+
+	/**
+	 * @return entities
+	 */
+	inline vector<Entity*>& getEntities() {
+		return entities;
 	}
-
-	/**
-	 * Set model
-	 * @param model model
-	 */
-	void setModel(Model* model);
-
-	/**
-	 * @return entity
-	 */
-	inline Entity* getEntity() {
-		return combinedEntity;
-	}
-
-	/**
-	 * Adds a instance this render group
-	 * @param transformations transformations
-	 */
-	void addObject(const Transformations& transformations);
 
 	// overriden methods
 	void dispose() override;
@@ -196,6 +185,7 @@ public:
 
 	inline void setEffectColorMul(const Color4& effectColorMul) override {
 		this->effectColorMul = effectColorMul;
+		for (auto entity: entities) entity->setEffectColorMul(effectColorMul);
 	}
 
 	inline const Color4& getEffectColorAdd() const override {
@@ -204,6 +194,7 @@ public:
 
 	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
 		this->effectColorAdd = effectColorAdd;
+		for (auto entity: entities) entity->setEffectColorAdd(effectColorAdd);
 	}
 
 	inline const string& getId() override {
@@ -224,18 +215,13 @@ public:
 		return pickable;
 	}
 
-	// override methods
 	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
 		this->dynamicShadowing = dynamicShadowing;
-		if (combinedEntity != nullptr) {
-			combinedEntity->setDynamicShadowingEnabled(dynamicShadowing);
-		}
 	}
 
 	inline void setPickable(bool pickable) override {
-		if (combinedEntity != nullptr) {
-			combinedEntity->setPickable(pickable);
-		}
+		this->pickable = pickable;
+		for (auto entity: entities) entity->setPickable(pickable);
 	}
 
 	inline const Vector3& getTranslation() const override {
@@ -304,87 +290,6 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
-	}
-
-	/**
-	 * @return shader id
-	 */
-	inline const string& getShader() {
-		return shaderId;
-	}
-
-	/**
-	 * Set shader id
-	 * @param id shader
-	 */
-	inline void setShader(const string& id) {
-		this->shaderId = id;
-		// TODO: put me into entity interface
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setShader(id);
-		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setShader(id);
-		}
-	}
-
-	/**
-	 * @return distance shader id
-	 */
-	inline const string& getDistanceShader() {
-		return distanceShaderId;
-	}
-
-	/**
-	 * Set distance shader id
-	 * @param id shader
-	 */
-	inline void setDistanceShader(const string& id) {
-		this->distanceShaderId = id;
-		// TODO: put me into entity interface
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShader(id);
-		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShader(id);
-		}
-	}
-
-	/**
-	 * @return distance shader distance
-	 */
-	inline float getDistanceShaderDistance() {
-		return distanceShaderDistance;
-	}
-
-	/**
-	 * Set distance shader distance
-	 * @param distanceShaderDistance shader
-	 */
-	inline void setDistanceShaderDistance(float distanceShaderDistance) {
-		this->distanceShaderDistance = distanceShaderDistance;
-		// TODO: put me into entity interface
-		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
-		} else
-		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
-			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
-		}
-	}
-
-	/**
-	 * @return If early z rejection is enabled
-	 */
-	bool isEnableEarlyZRejection() const {
-		return enableEarlyZRejection;
-	}
-
-	/**
-	 * Enable/disable early z rejection
-	 * @param enableEarlyZRejection enable early z rejection
-	 */
-	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
-		this->enableEarlyZRejection = enableEarlyZRejection;
 	}
 
 };

@@ -25,6 +25,8 @@ constexpr int32_t LevelEditorEntity::MODEL_SOUNDS_COUNT;
 
 char LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID[] = "model_bv.editing";
 
+char LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID[] = "model_bv";
+
 char LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[][LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT] = {
 	"model_bv.0",
 	"model_bv.1",

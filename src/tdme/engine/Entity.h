@@ -26,8 +26,30 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::Entity
+class tdme::engine::Entity
 {
+	friend class Engine;
+	friend class EntityHierarchy;
+
+private:
+	/**
+	 * @return root entity
+	 */
+	virtual Entity* getRootEntity() = 0;
+
+	/**
+	 * Set root entity, needs to be called before adding to engine
+	 * @param entity entity
+	 */
+	virtual void setRootEntity(Entity* entity) = 0;
+
+	/**
+	 * Apply parent transformations
+	 * @param parentTransformations parent transformations
+	 */
+	virtual void applyParentTransformations(const Transformations& parentTransformations) = 0;
+
+public:
 
 	/** 
 	 * Set up engine

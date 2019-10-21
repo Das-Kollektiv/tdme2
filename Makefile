@@ -205,6 +205,7 @@ SRCS = \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
+	src/tdme/engine/EntityHierarchy.cpp \
 	src/tdme/engine/FogParticleSystem.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
@@ -450,6 +451,7 @@ SRCS = \
 	src/tdme/tests/AudioTest.cpp \
 	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
+	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
@@ -759,6 +761,7 @@ MAIN_SRCS = \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
+	src/tdme/tests/EntityHierarchyTest-main.cpp \
 	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \

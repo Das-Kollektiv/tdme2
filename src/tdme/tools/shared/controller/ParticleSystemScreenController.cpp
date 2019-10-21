@@ -971,6 +971,7 @@ void ParticleSystemScreenController::onValueChanged(GUIElementNode* node)
 		view->setParticleSystemIndex(Integer::parseInt(particleSystemsListbox->getController()->getValue().getString()));
 	} else {
 		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
+		entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
 		entitySoundsSubScreenController->onValueChanged(node, view->getEntity());
 	}
 }

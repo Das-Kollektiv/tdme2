@@ -5,6 +5,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
@@ -25,6 +26,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
@@ -140,6 +142,7 @@ void ShadowMap::render(Light* light)
 	Object3DRenderGroup* org = nullptr;
 	ObjectParticleSystem* opse = nullptr;
 	ParticleSystemGroup* psg = nullptr;
+	EntityHierarchy* eh = nullptr;
 	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
 			if ((orgEntity = org->getEntity()) != nullptr) {
@@ -194,6 +197,15 @@ void ShadowMap::render(Light* light)
 					object->preRender(context);
 					visibleObjects.push_back(object);
 				}
+			}
+		} else
+		if ((eh = dynamic_cast<EntityHierarchy*>(entity)) != nullptr) {
+			if (eh->isDynamicShadowingEnabled() == false) continue;
+			for (auto entity: eh->getEntities()) {
+				auto object = dynamic_cast<Object3D*>(entity);
+				if (object == nullptr || object->isEnabled() == false) continue;
+				object->preRender(context);
+				visibleObjects.push_back(object);
 			}
 		}
 	}

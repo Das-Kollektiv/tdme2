@@ -119,7 +119,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Update level editor entity
 	 */
 	void updateLevelEditorEntity();

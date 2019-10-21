@@ -34,7 +34,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
-/** 
+/**
  * LOD object 3D to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -85,15 +85,20 @@ private:
 	 * Set parent entity, needs to be called before adding to engine
 	 * @param entity entity
 	 */
-	inline void setParentEntity(Entity* entity) {
+	inline void setRootEntity(Entity* entity) {
 		this->parentEntity = entity;
 	}
 
 	/**
 	 * @return parent entity
 	 */
-	inline Entity* getParentEntity() {
+	inline Entity* getRootEntity() {
 		return parentEntity;
+	}
+
+	// overridden methods
+	inline void applyParentTransformations(const Transformations& parentTransformations) override {
+		Transformations::applyParentTransformations(parentTransformations);
 	}
 
 public:

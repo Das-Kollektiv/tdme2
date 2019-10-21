@@ -10,6 +10,7 @@
 	#endif
 #endif
 
+#include <algorithm>
 #include <string>
 
 #include <tdme/application/Application.h>
@@ -22,6 +23,7 @@
 	#include <tdme/engine/EngineGLES2Renderer.h>
 #endif
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/FrameBuffer.h>
@@ -82,6 +84,7 @@
 
 #include <ext/libpng/png.h>
 
+using std::remove;
 using std::string;
 using std::to_string;
 
@@ -93,6 +96,7 @@ using tdme::engine::EngineGL2Renderer;
 using tdme::engine::EngineGLES2Renderer;
 using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
@@ -381,8 +385,8 @@ void Engine::removeEntity(const string& id)
 		visiblePsgs.erase(remove(visiblePsgs.begin(), visiblePsgs.end(), entity), visiblePsgs.end());
 		visibleLinesObjects.erase(remove(visibleLinesObjects.begin(), visibleLinesObjects.end(), entity), visibleLinesObjects.end());
 		visibleObjectRenderGroups.erase(remove(visibleObjectRenderGroups.begin(), visibleObjectRenderGroups.end(), entity), visibleObjectRenderGroups.end());
+		visibleObjectEntityHierarchies.erase(remove(visibleObjectEntityHierarchies.begin(), visibleObjectEntityHierarchies.end(), entity), visibleObjectEntityHierarchies.end());
 		visibleEZRObjects.erase(remove(visibleEZRObjects.begin(), visibleEZRObjects.end(), entity), visibleEZRObjects.end());
-
 	}
 }
 
@@ -648,6 +652,7 @@ void Engine::initRendering()
 	visiblePsgs.clear();
 	visibleLinesObjects.clear();
 	visibleObjectRenderGroups.clear();
+	visibleObjectEntityHierarchies.clear();
 	visibleEZRObjects.clear();
 
 	//
@@ -700,7 +705,8 @@ void Engine::computeTransformations()
 	ParticleSystemEntity* pse = nullptr;
 	Object3DRenderGroup* org = nullptr;
 	LinesObject3D* lo = nullptr;
-	Entity* orgEntity = nullptr;
+	Entity* subEntity = nullptr;
+	EntityHierarchy* eh = nullptr;
 
 	#define COMPUTE_ENTITY_TRANSFORMATIONS(_entity) \
 	{ \
@@ -775,13 +781,20 @@ void Engine::computeTransformations()
 	// add visible entities to related lists by querying frustum
 	for (auto entity: partition->getVisibleEntities(camera->getFrustum())) {
 		// compute transformations and add to lists
-		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
+		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
 			visibleObjectRenderGroups.push_back(org);
-			if ((orgEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(orgEntity);
+			if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
 		} else
-		if ((psg = dynamic_cast< ParticleSystemGroup* >(entity)) != nullptr) {
+		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
 			visiblePsgs.push_back(psg); \
 			for (auto ps: psg->getParticleSystems()) COMPUTE_ENTITY_TRANSFORMATIONS(ps);
+		} else
+		if ((eh = dynamic_cast<EntityHierarchy*>(entity)) != nullptr) {
+			visibleObjectEntityHierarchies.push_back(eh);
+			for (auto subEntity: eh->getEntities()) {
+				if (subEntity->isEnabled() == false) continue;
+				COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
+			}
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
@@ -796,7 +809,14 @@ void Engine::computeTransformations()
 
 		// compute transformations and add to lists
 		if ((org = dynamic_cast< Object3DRenderGroup* >(entity)) != nullptr) {
-			if ((orgEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(orgEntity);
+			if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
+		} else
+		if ((eh = dynamic_cast<EntityHierarchy*>(entity)) != nullptr) {
+			visibleObjectEntityHierarchies.push_back(eh);
+			for (auto subEntity: eh->getEntities()) {
+				if (subEntity->isEnabled() == false) continue;
+				COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
+			}
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
 		}
@@ -1140,7 +1160,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	// they have first priority right now
 	if (selectedEntity != nullptr) {
 		if (object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
-		return selectedEntity;
+		return selectedEntity->getRootEntity() != nullptr?selectedEntity->getRootEntity():selectedEntity;
 	}
 
 	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
@@ -1284,7 +1304,11 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityP
 	if (object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
 
 	//
-	return selectedEntity;
+	if (selectedEntity != nullptr) {
+		return selectedEntity->getRootEntity() != nullptr?selectedEntity->getRootEntity():selectedEntity;
+	} else {
+		return nullptr;
+	}
 }
 
 Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Group** object3DGroup) {

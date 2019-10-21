@@ -347,7 +347,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 
 	if (combinedModels.size() == 1) {
 		auto combinedObject3D = new Object3D(id, combinedModels[0]);
-		combinedObject3D->setParentEntity(this);
+		combinedObject3D->setRootEntity(this);
 		combinedObject3D->setShader(shaderId);
 		combinedObject3D->setDistanceShader(distanceShaderId);
 		combinedObject3D->setDynamicShadowingEnabled(dynamicShadowing);
@@ -368,7 +368,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 			modelLOD3MinDistance,
 			combinedModels[2]
 		);
-		combinedLODObject3D->setParentEntity(this);
+		combinedLODObject3D->setRootEntity(this);
 		combinedLODObject3D->setShader(shaderId);
 		combinedLODObject3D->setDistanceShader(distanceShaderId);
 		combinedLODObject3D->setDistanceShaderDistance(distanceShaderDistance);
@@ -403,7 +403,7 @@ void Object3DRenderGroup::fromTransformations(const Transformations& transformat
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	// update object
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Object3DRenderGroup::update()
@@ -412,22 +412,27 @@ void Object3DRenderGroup::update()
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	// update object
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Object3DRenderGroup::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
-	// frustum culling enabled?
-	if (frustumCulling == true) {
-		// yeo, add or remove from partition
-		if (enabled == true) {
-			if (engine != nullptr) engine->partition->addEntity(this);
-		} else {
-			if (engine != nullptr) engine->partition->removeEntity(this);
+
+	// frustum if root entity
+	if (parentEntity == nullptr) {
+		// frustum culling enabled?
+		if (frustumCulling == true) {
+			// yeo, add or remove from partition
+			if (enabled == true) {
+				if (engine != nullptr) engine->partition->addEntity(this);
+			} else {
+				if (engine != nullptr) engine->partition->removeEntity(this);
+			}
 		}
 	}
+
 	//
 	this->enabled = enabled;
 }

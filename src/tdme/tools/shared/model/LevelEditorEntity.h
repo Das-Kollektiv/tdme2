@@ -47,6 +47,7 @@ public:
 	static constexpr int32_t MODEL_BOUNDINGVOLUME_COUNT { 32 };
 	static constexpr int32_t MODEL_SOUNDS_COUNT { 32 };
 	static char MODEL_BOUNDINGVOLUME_EDITING_ID[];
+	static char MODEL_BOUNDINGVOLUMES_ID[];
 	static char MODEL_BOUNDINGVOLUME_IDS[][MODEL_BOUNDINGVOLUME_COUNT];
 
 private:
@@ -155,15 +156,6 @@ public:
 		return model;
 	}
 
-	/** 
-	 * Set model
-	 * @param model model
-	 */
-	inline void setModel(Model* model) {
-		if (this->model != nullptr) delete this->model;
-		this->model = model;
-	}
-
 	/**
 	 * @return pivot
 	 */
@@ -184,7 +176,7 @@ public:
 	 * @return level editor object bounding volume
 	 */
 	inline LevelEditorEntityBoundingVolume* getBoundingVolumeAt(int32_t idx) {
-		return boundingVolumes[idx];
+		return idx >= 0 && idx < boundingVolumes.size()?boundingVolumes[idx]:nullptr;
 	}
 
 	/** 

@@ -84,6 +84,10 @@ void Transformations::update()
 	transformationsMatrix.multiply(translationMatrix);
 }
 
+void Transformations::applyParentTransformations(const Transformations& parentTransformations) {
+	transformationsMatrix.multiply(parentTransformations.getTransformationsMatrix());
+}
+
 void Transformations::invert() {
 	translation.scale(-1.0f);
 	scale.setX(1.0f / scale.getX());

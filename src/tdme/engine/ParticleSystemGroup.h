@@ -40,6 +40,7 @@ class tdme::engine::ParticleSystemGroup final
 {
 private:
 	Engine* engine { nullptr };
+	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
 	string id;
@@ -52,6 +53,17 @@ private:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	vector<ParticleSystemEntity*> particleSystems;
+
+	// overridden methods
+	inline void setRootEntity(Entity* entity) override {
+		this->parentEntity = entity;
+	}
+	inline Entity* getRootEntity() override {
+		return parentEntity;
+	}
+	inline void applyParentTransformations(const Transformations& parentTransformations) override {
+		Transformations::applyParentTransformations(parentTransformations);
+	}
 
 public:
 	// overriden methods

@@ -4,6 +4,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
@@ -40,6 +41,7 @@ using tdme::math::Math;
 
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
@@ -213,27 +215,28 @@ void EntityPhysicsView::selectBoundingVolumeType(int32_t idx, int32_t bvTypeId)
 }
 
 void EntityPhysicsView::clearModelBoundingVolume(int32_t idx) {
-	if (idx != DISPLAY_BOUNDINGVOLUMEIDX_ALL) engine->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx]);
+	if (idx != DISPLAY_BOUNDINGVOLUMEIDX_ALL) {
+		dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx]);
+	}
 	engine->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
 }
 
 void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int32_t idx)
 {
 	auto entityBoundingVolume = entity->getBoundingVolumeAt(idx);
+	if (entityBoundingVolume == nullptr) return;
+
 	{
 		auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx];
-		auto modelEntity = engine->getEntity("model");
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
 			modelBoundingVolumeEntity->setEnabled(false);
-			if (modelEntity != nullptr) modelBoundingVolumeEntity->setScale(modelEntity->getScale());
-			modelBoundingVolumeEntity->update();
-			engine->addEntity(modelBoundingVolumeEntity);
+			dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->addEntity(modelBoundingVolumeEntity);
 		}
 	}
 	if (displayBoundingVolumeIdx == idx) {
 		auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID;
-		auto modelEntity = engine->getEntity("model");
+		auto boundingVolumesEntity = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto bv = entity->getBoundingVolumeAt(idx);
 			if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
@@ -243,8 +246,10 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 					Matrix4x4().identity().setAxes(obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2]),
 					RotationOrder::ZYX
 				);
-				transformations.setScale(modelEntity->getScale().clone().scale(obb->getHalfExtension().clone().scale(2.0f)));
-				transformations.setTranslation(obb->getCenter().clone().scale(modelEntity->getScale()));
+				transformations.setTranslation(obb->getCenter());
+				transformations.setScale(obb->getHalfExtension().clone().scale(2.0f));
+				transformations.setScale(boundingVolumesEntity->getScale().clone().scale(transformations.getScale()));
+				transformations.setTranslation(transformations.getTranslation().clone().scale(boundingVolumesEntity->getScale()));
 				transformations.update();
 				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, Tools::getDefaultObb());
 				modelBoundingVolumeEntity->fromTransformations(transformations);
@@ -263,9 +268,10 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 					pivot = capsule->getA().clone().add(capsule->getB()).scale(0.5f);
 				}
 				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
-				modelBoundingVolumeEntity->setPivot(pivot.clone().scale(modelEntity->getScale()));
+				modelBoundingVolumeEntity->setPivot(pivot);
+				modelBoundingVolumeEntity->setScale(boundingVolumesEntity->getScale());
+				modelBoundingVolumeEntity->setPivot(modelBoundingVolumeEntity->getPivot().clone().scale(boundingVolumesEntity->getScale()));
 				modelBoundingVolumeEntity->setEnabled(false);
-				if (modelEntity != nullptr) modelBoundingVolumeEntity->setScale(modelEntity->getScale());
 				modelBoundingVolumeEntity->update();
 				engine->addEntity(modelBoundingVolumeEntity);
 			}
@@ -359,7 +365,7 @@ void EntityPhysicsView::display(LevelEditorEntity* entity) {
 	if (entity == nullptr) return;
 
 	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-		auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
+		auto modelBoundingVolume = dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
 		if (modelBoundingVolume != nullptr) modelBoundingVolume->setEnabled(displayBoundingVolume == true && displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL);
 	}
 	auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
@@ -382,6 +388,8 @@ void EntityPhysicsView::handleInputEvents(LevelEditorEntity* entity, const Vecto
 
 	// we only support sphere, capsule and obb
 	auto bv = entity->getBoundingVolumeAt(displayBoundingVolumeIdx);
+	if (bv == nullptr) return;
+
 	if (dynamic_cast<Sphere*>(bv->getBoundingVolume()) == nullptr &&
 		dynamic_cast<Capsule*>(bv->getBoundingVolume()) == nullptr &&
 		dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) == nullptr) {
@@ -489,7 +497,6 @@ void EntityPhysicsView::setGizmoRotation(LevelEditorEntity* entity, const Transf
 
 void EntityPhysicsView::applyBoundingVolumeTransformations(LevelEditorEntity* entity, int32_t i, const Transformations& _transformations, const Vector3& objectScale, bool guiOnly) {
 	auto modelEntity = engine->getEntity("model");
-	if (modelEntity == nullptr) return;
 	auto transformations = _transformations;
 	auto objectScaleInverted = Vector3(
 		1.0f / objectScale.getX(),
