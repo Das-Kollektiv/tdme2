@@ -85,14 +85,14 @@ private:
 	 * Set parent entity, needs to be called before adding to engine
 	 * @param entity entity
 	 */
-	inline void setRootEntity(Entity* entity) {
+	inline void setRootEntity(Entity* entity) override {
 		this->parentEntity = entity;
 	}
 
 	/**
 	 * @return parent entity
 	 */
-	inline Entity* getRootEntity() {
+	inline Entity* getRootEntity() override {
 		return parentEntity;
 	}
 
