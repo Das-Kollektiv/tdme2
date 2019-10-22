@@ -99,6 +99,10 @@ private:
 	// overridden methods
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
+		// delegate to LOD objects
+		if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
+		if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
+		if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
 	}
 
 public:

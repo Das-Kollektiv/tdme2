@@ -97,12 +97,6 @@ void Object3DRenderGroup::setModel(Model* model) {
 	this->model = model;
 }
 
-void Object3DRenderGroup::computeBoundingBox() {
-	if (combinedEntity == nullptr) return;
-	boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-}
-
 void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel) {
 	// create group in combined model
 	auto combinedModelGroup = combinedModel->getGroupById(sourceGroup->getId());
@@ -380,7 +374,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 	}
 
 	//
-	computeBoundingBox();
+	updateBoundingBox();
 }
 
 void Object3DRenderGroup::addObject(const Transformations& transformations) {

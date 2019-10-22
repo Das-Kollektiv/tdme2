@@ -58,6 +58,7 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
+		updateBoundingBox();
 	}
 
 public:

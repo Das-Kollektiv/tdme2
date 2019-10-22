@@ -98,7 +98,7 @@ void EntityHierarchy::removeEntity(const string& id) {
 	delete entity;
 }
 
-vector<Entity*> EntityHierarchy::query(const string& parentId) {
+const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 	vector<Entity*> entities;
 	auto parentEntityHierarchyLevel = getEntityHierarchyLevel(parentId);
 	if (parentEntityHierarchyLevel == nullptr) {

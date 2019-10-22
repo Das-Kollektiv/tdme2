@@ -84,6 +84,7 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
+		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	}
 
 	/**
@@ -159,12 +160,12 @@ public:
 	 * @param parentId parent id to entities from
 	 * @return entities
 	 */
-	vector<Entity*> query(const string& parentId = string());
+	const vector<Entity*> query(const string& parentId = string());
 
 	/**
 	 * @return entities
 	 */
-	inline vector<Entity*>& getEntities() {
+	inline const vector<Entity*>& getEntities() {
 		return entities;
 	}
 

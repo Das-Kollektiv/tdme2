@@ -224,19 +224,13 @@ int32_t FogParticleSystemInternal::getTextureId() {
 void FogParticleSystemInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateBoundingBox();
 }
 
 void FogParticleSystemInternal::update()
 {
 	Transformations::update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateBoundingBox();
 }
 
 void FogParticleSystemInternal::updateParticles()

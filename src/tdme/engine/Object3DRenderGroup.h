@@ -78,7 +78,11 @@ private:
 	/**
 	 * Compute bounding box
 	 */
-	void computeBoundingBox();
+	inline void updateBoundingBox() {
+		if (combinedEntity == nullptr) return;
+		boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
+		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+	}
 
 	/**
 	 * Combine group into given combined model
@@ -109,6 +113,7 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
+		updateBoundingBox();
 	}
 
 public:

@@ -183,7 +183,7 @@ private:
 
 	map<string, Entity*> entitiesById;
 	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
-	map<string, Entity*> noFrustumCullingEntities;
+	map<string, Entity*> noFrustumCullingEntitiesById;
 
 	vector<Object3D*> visibleObjects;
 	vector<Object3D*> visibleObjectsPostPostProcessing;
@@ -195,6 +195,7 @@ private:
 	vector<LinesObject3D*> visibleLinesObjects;
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups;
 	vector<EntityHierarchy*> visibleObjectEntityHierarchies;
+	vector<Entity*> noFrustumCullingEntities;
 
 	vector<Object3D*> visibleEZRObjects;
 
@@ -341,6 +342,34 @@ private:
 	inline Object3DRenderer* getObject3DRenderer() {
 		return object3DRenderer;
 	}
+
+	/**
+	 * Determine entity types
+	 * @param entities given entities to investigate
+	 * @param objects object
+	 * @param objectsPostPostProcessing objects that will be rendered after post processing
+	 * @param objectsNoDepthTest objects that will render without depth test
+	 * @param lodObjects LOD objects
+	 * @param opses object particle systems
+	 * @param ppses point particle systems
+	 * @param psgs particle system groups
+	 * @param linesObjects lines objects
+	 * @param objectRenderGroups object render groups
+	 * @param entityHierarchies entity hierarchies
+	 */
+	void determineEntityTypes(
+		const vector<Entity*>& entities,
+		vector<Object3D*>& objects,
+		vector<Object3D*>& objectsPostPostProcessing,
+		vector<Object3D*>& objectsNoDepthTest,
+		vector<LODObject3D*>& lodObjects,
+		vector<ObjectParticleSystem*>& opses,
+		vector<Entity*>& ppses,
+		vector<ParticleSystemGroup*>& psgs,
+		vector<LinesObject3D*>& linesObjects,
+		vector<Object3DRenderGroup*>& objectRenderGroups,
+		vector<EntityHierarchy*>& entityHierarchies
+	);
 
 	/**
 	 * Computes visibility and transformations
@@ -689,7 +718,25 @@ public:
 	 * @param object3DGroup pointer to store group of Object3D to if appliable
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr);
+	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr) {
+		return
+			getEntityByMousePosition(
+				false,
+				mouseX,
+				mouseY,
+				visibleObjects,
+				visibleObjectsPostPostProcessing,
+				visibleObjectsNoDepthTest,
+				visibleLODObjects,
+				visibleOpses,
+				visiblePpses,
+				visiblePsgs,
+				visibleLinesObjects,
+				visibleObjectEntityHierarchies,
+				filter,
+				object3DGroup
+			);
+	}
 
 	/**
 	 * Retrieves entity by mouse position with contact point
@@ -704,13 +751,36 @@ public:
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
+	 * @param objects objects
+	 * @param objectsPostPostProcessing objects that will be rendered after post processing
+	 * @param objectsNoDepthTest objects that will render without depth test
+	 * @param lodObjects LOD objects
 	 * @param startPoint start point
 	 * @param endPoint end point
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
 	 * @return entity or nullptr
 	 */
-	Entity* doRayCasting(const Vector3& startPoint, const Vector3& endPoint, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
+	inline Entity* doRayCasting(
+		const Vector3& startPoint,
+		const Vector3& endPoint,
+		Vector3& contactPoint,
+		EntityPickingFilter* filter = nullptr
+	) {
+		return
+			doRayCasting(
+				false,
+				visibleObjects,
+				visibleObjectsPostPostProcessing,
+				visibleObjectsNoDepthTest,
+				visibleLODObjects,
+				visibleObjectEntityHierarchies,
+				startPoint,
+				endPoint,
+				contactPoint,
+				filter
+			);
+	}
 
 	/**
 	 * Retrieves object by mouse position
@@ -759,6 +829,65 @@ public:
 	~Engine();
 
 private:
+	/**
+	 * Retrieves entity by mouse position
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param objects objects
+	 * @param objectsPostPostProcessing objects that will be rendered after post processing
+	 * @param objectsNoDepthTest objects that will render without depth test
+	 * @param lodObjects LOD objects
+	 * @param opses object particle systems
+	 * @param ppses point particle systems
+	 * @param psgs particle system groups
+	 * @param linesObjects lines objects
+	 * @param entityHierarchies entity hierarchies
+	 * @param filter filter
+	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @return entity or nullptr
+	 */
+	Entity* getEntityByMousePosition(
+		bool forcePicking,
+		int32_t mouseX,
+		int32_t mouseY,
+		const vector<Object3D*>& objects,
+		const vector<Object3D*>& objectsPostPostProcessing,
+		const vector<Object3D*>& objectsNoDepthTest,
+		const vector<LODObject3D*>& lodObjects,
+		const vector<ObjectParticleSystem*>& opses,
+		const vector<Entity*>& ppses,
+		const vector<ParticleSystemGroup*>& psgs,
+		const vector<LinesObject3D*>& linesObjects,
+		const vector<EntityHierarchy*>& entityHierarchies,
+		EntityPickingFilter* filter = nullptr,
+		Group** object3DGroup = nullptr
+	);
+
+	/**
+	 * Does a ray casting of visible 3d object based entities
+	 * @param objects objects
+	 * @param objectsPostPostProcessing objects that will be rendered after post processing
+	 * @param objectsNoDepthTest objects that will render without depth test
+	 * @param lodObjects LOD objects
+	 * @param entityHierarchies entity hierarchies
+	 * @param startPoint start point
+	 * @param endPoint end point
+	 * @param contactPoint world coordinate of contact point
+	 * @param filter filter
+	 * @return entity or nullptr
+	 */
+	Entity* doRayCasting(
+		bool forcePicking,
+		const vector<Object3D*>& objects,
+		const vector<Object3D*>& objectsPostPostProcessing,
+		const vector<Object3D*>& objectsNoDepthTest,
+		const vector<LODObject3D*>& lodObjects,
+		const vector<EntityHierarchy*>& entityHierarchies,
+		const Vector3& startPoint,
+		const Vector3& endPoint,
+		Vector3& contactPoint,
+		EntityPickingFilter* filter = nullptr
+	);
 
 	/**
 	 * Updates an entity regarding internal lists
