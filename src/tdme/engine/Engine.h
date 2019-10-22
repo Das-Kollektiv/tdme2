@@ -751,10 +751,6 @@ public:
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
-	 * @param objects objects
-	 * @param objectsPostPostProcessing objects that will be rendered after post processing
-	 * @param objectsNoDepthTest objects that will render without depth test
-	 * @param lodObjects LOD objects
 	 * @param startPoint start point
 	 * @param endPoint end point
 	 * @param contactPoint world coordinate of contact point
