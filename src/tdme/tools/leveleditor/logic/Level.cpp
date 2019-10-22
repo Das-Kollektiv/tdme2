@@ -46,6 +46,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/tools/shared/files/ProgressCallback.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
@@ -119,6 +120,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
@@ -396,12 +398,17 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 	return createEntity(levelEditorObject->getEntity(), levelEditorObject->getId(), transformations);
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation)
+void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
+	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, vector<Transformations*>>> renderGroupEntitiesByModelAndPartition;
 	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
+	auto progressStepCurrent = 0;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
+
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level->getObjectCount()) * 0.5f);
+		progressStepCurrent++;
 
 		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
 		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) continue;
@@ -432,7 +439,11 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 
 	// do render groups
+	progressStepCurrent = 0;
 	for (auto itModel: renderGroupEntitiesByModelAndPartition) {
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(renderGroupEntitiesByModelAndPartition.size()) * 1.0f);
+		progressStepCurrent++;
+
 		for (auto itPartition: itModel.second) {
 			auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
 			auto object3DRenderGroup = new Object3DRenderGroup(
@@ -457,6 +468,12 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			object3DRenderGroup->updateRenderGroup();
 			engine->addEntity(object3DRenderGroup);
 		}
+	}
+
+	//
+	if (progressCallback != nullptr) {
+		progressCallback->progress(1.0f);
+		delete progressCallback;
 	}
 }
 
@@ -567,10 +584,20 @@ Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, cons
 	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId);
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation)
+void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
+	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+	auto progressStepCurrent = 0;
+
+	//
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto levelEditorObject = level->getObjectAt(i);
+
+		//
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level->getObjectCount()) * 1.0f);
+		progressStepCurrent++;
+
+		//
 		auto rigidBody = createBody(world, levelEditorObject);
 		if (rigidBody == nullptr) continue;
 		if (translation.equals(Vector3()) == false) {
@@ -580,6 +607,12 @@ void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const V
 			rigidBody->fromTransformations(transformations);
 		}
 		rigidBody->setEnabled(enable);
+	}
+
+	//
+	if (progressCallback != nullptr) {
+		progressCallback->progress(1.0f);
+		delete progressCallback;
 	}
 }
 
@@ -608,6 +641,7 @@ void Level::disableLevel(World* world, LevelEditorLevel* level)
 
 void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
+	// TODO: a.drewke, Object3DRenderGroups
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto entity = engine->getEntity(object->getId());

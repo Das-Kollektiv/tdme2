@@ -8,13 +8,23 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::filesystem::StandardFileSystem;
 
 FileSystemInterface* FileSystem::fileSystem = nullptr;
+FileSystemInterface* FileSystem::standardFileSystem = nullptr;
 
 FileSystemInterface* FileSystem::getInstance()
 {
 	if (fileSystem == nullptr) {
-		fileSystem = new StandardFileSystem();
+		if (standardFileSystem == nullptr) standardFileSystem = new StandardFileSystem();
+		fileSystem = standardFileSystem;
 	}
 	return fileSystem;
+}
+
+FileSystemInterface* FileSystem::getStandardFileSystem()
+{
+	if (standardFileSystem == nullptr) {
+		standardFileSystem = new StandardFileSystem();
+	}
+	return standardFileSystem;
 }
 
 void FileSystem::setupFileSystem(FileSystemInterface* fileSystem)

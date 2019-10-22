@@ -6,12 +6,12 @@
 #include <tdme/tdme.h>
 
 #include <tdme/tdme.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
 using std::map;
 using std::string;
 
-using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 
@@ -45,17 +45,19 @@ public:
 	 * Load property file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param fileSystem file system to use
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	void load(const string& pathName, const string& fileName);
+	void load(const string& pathName, const string& fileName, FileSystemInterface* fileSystem = nullptr);
 
 	/**
 	 * Store property file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param fileSystem file system to use
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	void store(const string& pathName, const string& fileName);
+	void store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem = nullptr);
 
 	/**
 	 * Public constructor
