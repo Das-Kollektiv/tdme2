@@ -44,7 +44,7 @@ protected:
 	/**
 	 * Update bounding volume
 	 */
-	inline void updateBoundingVolume() {
+	inline void updateBoundingBox() {
 		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
 		boundingBoxTransformed.getMax().add(0.05f); // same here

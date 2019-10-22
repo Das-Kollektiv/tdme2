@@ -42,7 +42,7 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	boundingBox.fromBoundingVolume(model->getBoundingBox());
 	boundingBoxTransformed.fromBoundingVolume(model->getBoundingBox());
-	updateBoundingVolume();
+	updateBoundingBox();
 }
 
 Object3DInternal::~Object3DInternal() {
@@ -147,12 +147,12 @@ void Object3DInternal::dispose()
 void Object3DInternal::fromTransformations(const Transformations& transformations)
 {
 	Object3DBase::fromTransformations(transformations);
-	updateBoundingVolume();
+	updateBoundingBox();
 }
 
 void Object3DInternal::update()
 {
 	Object3DBase::update();
-	updateBoundingVolume();
+	updateBoundingBox();
 }
 
