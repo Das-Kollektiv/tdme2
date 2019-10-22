@@ -827,6 +827,7 @@ public:
 private:
 	/**
 	 * Retrieves entity by mouse position
+	 * @param forcePicking override picking to be always enabled
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param objects objects
@@ -861,6 +862,7 @@ private:
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
+	 * @param forcePicking override picking to be always enabled
 	 * @param objects objects
 	 * @param objectsPostPostProcessing objects that will be rendered after post processing
 	 * @param objectsNoDepthTest objects that will render without depth test
