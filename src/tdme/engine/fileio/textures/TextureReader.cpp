@@ -27,7 +27,6 @@ using tdme::utils::Exception;
 
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::PNGInputStream;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;

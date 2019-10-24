@@ -73,6 +73,7 @@
           - sky(no lighting + no depth fog + fragment depth at maximum)
           - basic water shader
         - shadow mapping
+        - early z rejection
         - post processing
           - depth blur
           - SSAO
