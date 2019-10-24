@@ -43,8 +43,6 @@ map<string, string>& GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenN
 	attributes["border"] = "0";
 	attributes["border-color"] = "transparent";
 	attributes["padding"] = "0";
-	attributes["show-on"] = "";
-	attributes["hide-on"] = "";
 	return attributes;
 }
 

@@ -1,6 +1,6 @@
 <layout show-on="{$show-on}" hide-on="{$hide-on}" id="{$id}" width="{$width}" height="{$height}" alignment="vertical" background-color="{$background-color}" border="{$border}" border-color="{$border-color}" padding="{$padding}">
 	<layout id="{$id}_inner" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}" alignment="{$alignment}" overflow-x="scroll" width="100%" height="*">
-		{$innerXml}
+		{__InnerXML__}
 	</layout>
 	<layout id="{$id}_scrollbar_horizontal_layout" alignment="horizontal" width="100%" height="auto" background-color="white">
 		<element id="{$id}_scrollbar_horizontal_layout_left" border="1" border-color="#8080A0" width="24" height="24" horizontal-align="center" vertical-align="center" focusable="true">

@@ -34,8 +34,6 @@ map<string, string>& GUISelectBoxOption::getAttributes(GUIScreenNode* screenNode
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
-	attributes["on-mouse-click"] = "";
-	attributes["on-mouse-doubleclick"] = "";
 	return attributes;
 }
 

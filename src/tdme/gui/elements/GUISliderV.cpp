@@ -42,9 +42,6 @@ map<string, string>& GUISliderV::getAttributes(GUIScreenNode* screenNode)
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";
-	attributes["on-mouse-click"] = "";
-	attributes["on-mouse-doubleclick"] = "";
-	attributes["on-change"] = "";
 	return attributes;
 }
 

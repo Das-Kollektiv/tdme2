@@ -40,8 +40,6 @@ map<string, string>& GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
 	attributes["vertical-align"] = "top";
 	attributes["alignment"] = "vertical";
 	attributes["background-color"] = "transparent";
-	attributes["show-on"] = "";
-	attributes["hide-on"] = "";
 	return attributes;
 }
 

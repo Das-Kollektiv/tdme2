@@ -43,8 +43,6 @@ map<string, string>& GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* scree
 	attributes["border"] = "0";
 	attributes["border-color"] = "transparent";
 	attributes["padding"] = "0";
-	attributes["show-on"] = "";
-	attributes["hide-on"] = "";
 	return attributes;
 }
 

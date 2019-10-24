@@ -890,24 +890,34 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 	}
 }
 
-void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& _template, map<string, string>& attributes, GUIElement* guiElement) {
-	auto newGuiElementTemplate = _template;
+void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& templateXML, map<string, string>& attributes, GUIElement* guiElement) {
+	auto newGuiElementTemplateXML = templateXML;
+
+	// replace attributes given
 	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
 		auto attributeKey = string(attribute->Name());
 		auto attributeValue = string(attribute->Value());
-		newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
+		newGuiElementTemplateXML = StringUtils::replace(newGuiElementTemplateXML, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
 	}
 
+	// replace attributes from element
 	for (auto newGuiElementAttributesIt : attributes) {
 		auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
-		newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+		newGuiElementTemplateXML = StringUtils::replace(newGuiElementTemplateXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
 	}
 
-	newGuiElementTemplate = StringUtils::replace(newGuiElementTemplate, "{$innerXml}", getInnerXml(node));
-	auto newGuiElementDocumentXML =  "<gui-element>\n" + newGuiElementTemplate + "</gui-element>\n";
+	// replace remaining unset parameters with empty spaces
+	newGuiElementTemplateXML = StringUtils::replaceAll(newGuiElementTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
 
+	// replace inner XML
+	newGuiElementTemplateXML = StringUtils::replace(newGuiElementTemplateXML, "{__InnerXML__}", getInnerXml(node));
+
+	// add root tag
+	newGuiElementTemplateXML =  "<gui-element>\n" + newGuiElementTemplateXML + "</gui-element>\n";
+
+	// parse
 	TiXmlDocument newGuiElementDocument;
-	newGuiElementDocument.Parse((newGuiElementDocumentXML).c_str());
+	newGuiElementDocument.Parse(newGuiElementTemplateXML.c_str());
 	if (newGuiElementDocument.Error() == true) {
 		throw GUIParserException(
 			"GUIParser::parse():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc())

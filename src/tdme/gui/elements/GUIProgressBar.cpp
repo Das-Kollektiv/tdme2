@@ -42,7 +42,7 @@ map<string, string>& GUIProgressBar::getAttributes(GUIScreenNode* screenNode)
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";
-	attributes["width"] = "223";
+	attributes["width"] = "223"; // TODO: a.drewke
 	attributes["height"] = "53";
 	return attributes;
 }
