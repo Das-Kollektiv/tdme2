@@ -172,17 +172,13 @@ void ObjectParticleSystemInternal::setDynamicShadowingEnabled(bool dynamicShadow
 void ObjectParticleSystemInternal::update()
 {
 	Transformations::update();
-	emitter->fromTransformations(*this);
-	inverseTransformation.fromTransformations(*this);
-	inverseTransformation.invert();
+	updateInternal();
 }
 
 void ObjectParticleSystemInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
-	emitter->fromTransformations(transformations);
-	inverseTransformation.fromTransformations(transformations);
-	inverseTransformation.invert();
+	updateInternal();
 }
 
 int32_t ObjectParticleSystemInternal::emitParticles()

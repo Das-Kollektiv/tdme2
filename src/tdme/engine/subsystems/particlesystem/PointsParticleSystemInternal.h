@@ -13,6 +13,7 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
@@ -64,6 +65,15 @@ protected:
 	Color4 effectColorAdd;
 	bool pickable;
 	float particlesToSpawnRemainder;
+
+	/**
+	 * Update internal
+	 */
+	inline void updateInternal() {
+		emitter->fromTransformations(*this);
+		inverseTransformation.fromTransformations(*this);
+		inverseTransformation.invert();
+	}
 
 public:
 	/**

@@ -296,7 +296,6 @@ void FogParticleSystemInternal::dispose()
 
 int32_t FogParticleSystemInternal::emitParticles()
 {
-
 	return 0;
 }
 

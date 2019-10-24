@@ -30,6 +30,7 @@ class tdme::engine::Entity
 {
 	friend class Engine;
 	friend class EntityHierarchy;
+	friend class ParticleSystemGroup;
 
 private:
 	/**

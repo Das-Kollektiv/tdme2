@@ -54,7 +54,6 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
-		// TODO: a.drewke, emitter needs to know about new transformations matrix
 		updateBoundingBox();
 	}
 

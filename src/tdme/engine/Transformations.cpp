@@ -96,5 +96,5 @@ void Transformations::invert() {
 	for (auto& rotation: rotations) {
 		rotation.setAngle(rotation.getAngle() - 180.0f);
 	}
-	update();
+	transformationsMatrix.invert();
 }

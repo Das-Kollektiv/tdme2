@@ -63,7 +63,7 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
-		// TODO: a.drewke, bounding box and emitter needs a update here
+		for (auto particleSystem: particleSystems) particleSystem->applyParentTransformations(parentTransformations);
 	}
 
 public:

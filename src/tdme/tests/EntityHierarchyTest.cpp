@@ -10,6 +10,9 @@
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystemGroup.h>
+#include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -18,6 +21,7 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utils/Console.h>
@@ -35,6 +39,9 @@ using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
+using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystemGroup;
+using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -43,6 +50,7 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
+using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
@@ -65,6 +73,11 @@ void EntityHierarchyTest::display()
 	auto fps = 60.0f;
 	auto start = Time::getCurrentMillis();
 	auto entity = engine->getEntity("test");
+	// TODO: a.drewke, auto emit for entity hierarchies
+	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("firebase"))->emitParticles();
+	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("firebase"))->updateParticles();
+	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("fire"))->emitParticles();
+	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("fire"))->updateParticles();
 	entity->getRotation(1).setAngle(entity->getRotation(1).getAngle() + 0.1f);
 	entity->update();
 	engine->display();
@@ -80,7 +93,7 @@ void EntityHierarchyTest::dispose()
 void EntityHierarchyTest::initialize()
 {
 	engine->initialize();
-	Object3D* entity;
+	Entity* entity = nullptr;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
@@ -128,6 +141,23 @@ void EntityHierarchyTest::initialize()
 	entityHierarchy->addEntity(entity = new Object3D("child1.2", boxModel), "child1"); entity->setTranslation(Vector3(+1.5f, 2.0f, -1.5f));
 	entityHierarchy->addEntity(entity = new Object3D("child1.3", boxModel), "child1"); entity->setTranslation(Vector3(-1.5f, 2.0f, +1.5f));
 	entityHierarchy->addEntity(entity = new Object3D("child1.4", boxModel), "child1"); entity->setTranslation(Vector3(+1.5f, 2.0f, +1.5f));
+	entityHierarchy->addEntity(
+		entity = new ParticleSystemGroup(
+			"fire",
+			true,
+			true,
+			{
+				new PointsParticleSystem("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(0.0f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
+				new PointsParticleSystem("firetop", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(0.0f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
+				new PointsParticleSystem("firesmoke", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(0.0f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.4f, 0.0f), Color4(0.8f, 0.8f, 0.8f, 0.1f), Color4(0.8f, 0.8f, 0.8f, 0.1f)), 2048, 10.0f, true)
+			}
+		),
+		"child2"
+	);
+	entity->setTranslation(Vector3(0.0f, 2.0f, 0.0f));
+	entityHierarchy->addEntity(entity = new PointsParticleSystem("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(0.0f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true), "child3");
+	entity->setTranslation(Vector3(0.0f, 2.0f, 0.0f));
+	entityHierarchy->update();
 	for(auto entity: entityHierarchy->query()) Console::println(entity->getId());
 	for(auto entity: entityHierarchy->query("root")) Console::println("root: " + entity->getId());
 	for(auto entity: entityHierarchy->query("child1")) Console::println("child1: " + entity->getId());

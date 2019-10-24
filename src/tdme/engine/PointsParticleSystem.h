@@ -54,7 +54,7 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
-		// TODO: a.drewke, bounding box and emitter needs a update here
+		updateInternal();
 	}
 
 public:

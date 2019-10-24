@@ -165,17 +165,13 @@ int32_t PointsParticleSystemInternal::getTextureId() {
 void PointsParticleSystemInternal::update()
 {
 	Transformations::update();
-	emitter->fromTransformations(*this);
-	inverseTransformation.fromTransformations(*this);
-	inverseTransformation.invert();
+	updateInternal();
 }
 
 void PointsParticleSystemInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
-	emitter->fromTransformations(transformations);
-	inverseTransformation.fromTransformations(transformations);
-	inverseTransformation.invert();
+	updateInternal();
 }
 
 void PointsParticleSystemInternal::updateParticles()

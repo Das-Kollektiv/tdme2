@@ -788,9 +788,19 @@ void Engine::determineEntityTypes(
 		} else
 		if ((eh = dynamic_cast<EntityHierarchy*>(entity)) != nullptr) {
 			entityHierarchies.push_back(eh);
-			for (auto subEntity: eh->getEntities()) {
-				if (subEntity->isEnabled() == false) continue;
-				COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
+			for (auto entityEh: eh->getEntities()) {
+				if (entityEh->isEnabled() == false) continue;
+				// compute transformations and add to lists
+				if ((org = dynamic_cast<Object3DRenderGroup*>(entityEh)) != nullptr) {
+					objectRenderGroups.push_back(org);
+					if ((subEntity = org->getEntity()) != nullptr) COMPUTE_ENTITY_TRANSFORMATIONS(subEntity);
+				} else
+				if ((psg = dynamic_cast<ParticleSystemGroup*>(entityEh)) != nullptr) {
+					psgs.push_back(psg); \
+					for (auto ps: psg->getParticleSystems()) COMPUTE_ENTITY_TRANSFORMATIONS(ps);
+				} else {
+					COMPUTE_ENTITY_TRANSFORMATIONS(entityEh);
+				}
 			}
 		} else {
 			COMPUTE_ENTITY_TRANSFORMATIONS(entity);
