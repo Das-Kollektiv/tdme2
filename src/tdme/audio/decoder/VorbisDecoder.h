@@ -27,11 +27,13 @@ using tdme::utils::ByteBuffer;
  */
 class tdme::audio::decoder::VorbisDecoder: public AudioDecoder
 {
-public:
+private:
 	struct OGGFileData {
 		vector<uint8_t> data;
 		size_t position { 0 };
 	};
+
+public:
 
 	/**
 	 * Open a local file
@@ -70,7 +72,42 @@ public:
 	 */
 	VorbisDecoder();
 
+	/**
+	 * Destructor
+	 */
+	~VorbisDecoder();
+
 private:
+	/**
+	 * Read from OGG file data
+	 * @param buffer buffer to read into
+	 * @param size chunk bytes to read
+	 * @param count chunk count to read
+	 * @param oggFileData pointer to OGG file data
+	 */
+	static size_t oggfiledata_read(void* buffer, size_t size, size_t count, VorbisDecoder::OGGFileData* oggFileData);
+
+	/**
+	 * Seek in OGG file data
+	 * @param oggFileData OGG file data pointer
+	 * @param offset offset (can be relative to position)
+	 * @param whence whence see (SEEK_*)
+	 */
+	static int oggfiledata_seek(VorbisDecoder::OGGFileData* oggFileData, ogg_int64_t offset, int whence);
+
+	/**
+	 * Close OGG file data
+	 * @param oggFileData pointer to OGG file data
+	 */
+	static int oggfiledata_close(VorbisDecoder::OGGFileData* oggFileData);
+
+	/**
+	 * Tell position of OGG file data
+	 * @param oggFileData pointer to OGG file data
+	 * @return current read position
+	 */
+	static long oggfiledata_tell(VorbisDecoder::OGGFileData* oggFileData);
+
 	OGGFileData* oggFileData { nullptr };
 	string pathName;
 	string fileName;
