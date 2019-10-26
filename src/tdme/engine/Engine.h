@@ -888,10 +888,16 @@ private:
 	);
 
 	/**
-	 * Updates an entity regarding internal lists
+	 * Removes a entity from internal lists, those entities can also be sub entities from entity hierarchy or particle system groups and such
 	 * @param entity entity
 	 */
-	void updateEntity(Entity* entity);
+	void deregisterEntity(Entity* entity);
+
+	/**
+	 * Adds a entity to internal lists, those entities can also be sub entities from entity hierarchy or particle system groups and such
+	 * @param entity entity
+	 */
+	void registerEntity(Entity* entity);
 
 	/**
 	 * Do post processing

@@ -28,7 +28,9 @@ Object3D::Object3D(const string& id, Model* model) :
 
 void Object3D::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void Object3D::setRenderer(Renderer* renderer)
@@ -86,7 +88,7 @@ void Object3D::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void Object3D::dispose()

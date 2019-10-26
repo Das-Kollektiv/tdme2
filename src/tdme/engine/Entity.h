@@ -34,15 +34,15 @@ class tdme::engine::Entity
 
 private:
 	/**
-	 * @return root entity
+	 * @return parent entity
 	 */
-	virtual Entity* getRootEntity() = 0;
+	virtual Entity* getParentEntity() = 0;
 
 	/**
-	 * Set root entity, needs to be called before adding to engine
+	 * Set parent entity, needs to be called before adding to engine
 	 * @param entity entity
 	 */
-	virtual void setRootEntity(Entity* entity) = 0;
+	virtual void setParentEntity(Entity* entity) = 0;
 
 	/**
 	 * Apply parent transformations

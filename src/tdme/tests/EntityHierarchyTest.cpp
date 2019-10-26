@@ -73,11 +73,6 @@ void EntityHierarchyTest::display()
 	auto fps = 60.0f;
 	auto start = Time::getCurrentMillis();
 	auto entity = engine->getEntity("test");
-	// TODO: a.drewke, auto emit for entity hierarchies
-	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("firebase"))->emitParticles();
-	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("firebase"))->updateParticles();
-	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("fire"))->emitParticles();
-	dynamic_cast<ParticleSystemEntity*>(dynamic_cast<EntityHierarchy*>(engine->getEntity("test"))->getEntity("fire"))->updateParticles();
 	entity->getRotation(1).setAngle(entity->getRotation(1).getAngle() + 0.1f);
 	entity->update();
 	engine->display();

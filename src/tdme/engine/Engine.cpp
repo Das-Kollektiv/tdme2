@@ -335,25 +335,39 @@ void Engine::addEntity(Entity* entity)
 	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->addEntity(entity);
 
 	// update
-	updateEntity(entity);
+	registerEntity(entity);
 }
 
-void Engine::updateEntity(Entity* entity) {
-	noFrustumCullingEntitiesById.erase(entity->getId());
+void Engine::deregisterEntity(Entity* entity) {
+	auto hierarchicalId = entity->getId();
+	for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
+
+	//
+	noFrustumCullingEntitiesById.erase(hierarchicalId);
 	noFrustumCullingEntities.erase(remove(noFrustumCullingEntities.begin(), noFrustumCullingEntities.end(), entity), noFrustumCullingEntities.end());
-	autoEmitParticleSystemEntities.erase(entity->getId());
+	autoEmitParticleSystemEntities.erase(hierarchicalId);
+}
+
+void Engine::registerEntity(Entity* entity) {
+	auto hierarchicalId = entity->getId();
+	for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
+
+	//
+	noFrustumCullingEntitiesById.erase(hierarchicalId);
+	noFrustumCullingEntities.erase(remove(noFrustumCullingEntities.begin(), noFrustumCullingEntities.end(), entity), noFrustumCullingEntities.end());
+	autoEmitParticleSystemEntities.erase(hierarchicalId);
 
 	// add to no frustum culling
-	if (entity->isFrustumCulling() == false) {
+	if (entity->isFrustumCulling() == false && entity->getParentEntity() == nullptr) {
 		// otherwise add to no frustum culling entities
-		noFrustumCullingEntitiesById[entity->getId()] = entity;
+		noFrustumCullingEntitiesById[hierarchicalId] = entity;
 		noFrustumCullingEntities.push_back(entity);
 	}
 
 	// add to auto emit particle system entities
 	auto particleSystemEntity = dynamic_cast<ParticleSystemEntity*>(entity);
 	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == true) {
-		autoEmitParticleSystemEntities[particleSystemEntity->getId()] = particleSystemEntity;
+		autoEmitParticleSystemEntities[hierarchicalId] = particleSystemEntity;
 	}
 }
 
@@ -363,11 +377,14 @@ void Engine::removeEntity(const string& id)
 	Entity* entity = nullptr;
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
+		auto hierarchicalId = entity->getId();
+		for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
+
 		//
 		entity = entityByIdIt->second;
 		entitiesById.erase(entityByIdIt);
-		autoEmitParticleSystemEntities.erase(entity->getId());
-		noFrustumCullingEntitiesById.erase(entity->getId());
+		autoEmitParticleSystemEntities.erase(hierarchicalId);
+		noFrustumCullingEntitiesById.erase(hierarchicalId);
 
 		// remove from partition if enabled and frustum culling requested
 		if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
@@ -1223,7 +1240,10 @@ Entity* Engine::getEntityByMousePosition(
 	// they have first priority right now
 	if (selectedEntity != nullptr) {
 		if (object3DGroup != nullptr) *object3DGroup = selectedObject3DGroup;
-		return selectedEntity->getRootEntity() != nullptr?selectedEntity->getRootEntity():selectedEntity;
+		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
+			if (_entity->getParentEntity() == nullptr) return _entity;
+		}
+		return nullptr;
 	}
 
 	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
@@ -1427,7 +1447,10 @@ Entity* Engine::getEntityByMousePosition(
 
 	//
 	if (selectedEntity != nullptr) {
-		return selectedEntity->getRootEntity() != nullptr?selectedEntity->getRootEntity():selectedEntity;
+		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
+			if (_entity->getParentEntity() == nullptr) return _entity;
+		}
+		return nullptr;
 	} else {
 		return nullptr;
 	}

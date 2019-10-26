@@ -31,7 +31,9 @@ EntityHierarchy::~EntityHierarchy()
 
 void EntityHierarchy::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	for (auto entity: entities) entity->setEngine(engine);
 }
 
@@ -51,7 +53,7 @@ void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 	removeEntity(entity->getId());
 
 	// base properties
-	entity->setRootEntity(this);
+	entity->setParentEntity(this);
 	entity->setEngine(engine);
 	entity->setRenderer(renderer);
 	entity->setPickable(pickable);
@@ -184,7 +186,7 @@ void EntityHierarchy::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void EntityHierarchy::dispose()

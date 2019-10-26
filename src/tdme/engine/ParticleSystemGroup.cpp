@@ -37,11 +37,11 @@ ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool e
 	// TODO: put parent entity into a interface
 	for (auto particleSystem: particleSystems) {
 		auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
-		if (ops != nullptr) ops->setRootEntity(this);
+		if (ops != nullptr) ops->setParentEntity(this);
 		auto pps = dynamic_cast<PointsParticleSystem*>(particleSystem);
-		if (pps != nullptr) pps->setRootEntity(this);
+		if (pps != nullptr) pps->setParentEntity(this);
 		auto fps = dynamic_cast<FogParticleSystem*>(particleSystem);
-		if (fps != nullptr) fps->setRootEntity(this);
+		if (fps != nullptr) fps->setParentEntity(this);
 	}
 }
 
@@ -138,7 +138,7 @@ void ParticleSystemGroup::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void ParticleSystemGroup::setAutoEmit(bool autoEmit) {
@@ -146,7 +146,7 @@ void ParticleSystemGroup::setAutoEmit(bool autoEmit) {
 	for (auto particleSystem: particleSystems) particleSystem->setAutoEmit(autoEmit);
 	this->autoEmit = autoEmit;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void ParticleSystemGroup::dispose()
@@ -156,7 +156,9 @@ void ParticleSystemGroup::dispose()
 
 void ParticleSystemGroup::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setEngine(engine);
 }
 

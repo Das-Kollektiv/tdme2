@@ -341,7 +341,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 
 	if (combinedModels.size() == 1) {
 		auto combinedObject3D = new Object3D(id, combinedModels[0]);
-		combinedObject3D->setRootEntity(this);
+		combinedObject3D->setParentEntity(this);
 		combinedObject3D->setShader(shaderId);
 		combinedObject3D->setDistanceShader(distanceShaderId);
 		combinedObject3D->setDynamicShadowingEnabled(dynamicShadowing);
@@ -362,7 +362,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 			modelLOD3MinDistance,
 			combinedModels[2]
 		);
-		combinedLODObject3D->setRootEntity(this);
+		combinedLODObject3D->setParentEntity(this);
 		combinedLODObject3D->setShader(shaderId);
 		combinedLODObject3D->setDistanceShader(distanceShaderId);
 		combinedLODObject3D->setDistanceShaderDistance(distanceShaderDistance);
@@ -383,7 +383,9 @@ void Object3DRenderGroup::addObject(const Transformations& transformations) {
 
 void Object3DRenderGroup::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	if (combinedEntity != nullptr) combinedEntity->setEngine(engine);
 }
 
@@ -449,7 +451,7 @@ void Object3DRenderGroup::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void Object3DRenderGroup::dispose()

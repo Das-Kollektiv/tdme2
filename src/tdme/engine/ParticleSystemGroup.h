@@ -55,10 +55,10 @@ private:
 	vector<ParticleSystemEntity*> particleSystems;
 
 	// overridden methods
-	inline void setRootEntity(Entity* entity) override {
+	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
 	}
-	inline Entity* getRootEntity() override {
+	inline Entity* getParentEntity() override {
 		return parentEntity;
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
