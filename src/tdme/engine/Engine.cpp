@@ -1029,6 +1029,9 @@ void Engine::display()
 
 		// unuse lighting shader
 		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+
+		// render shadows if required
+		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
 	}
 
 	// do post processing
@@ -1082,12 +1085,9 @@ void Engine::display()
 
 		// unuse lighting shader
 		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
-	}
 
-	// render shadows if required
-	if (shadowMapping != nullptr) {
-		if (visibleObjects.size() > 0) shadowMapping->renderShadowMaps(visibleObjects);
-		if (visibleObjectsPostPostProcessing.size() > 0) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+		// render shadows if required
+		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
 	}
 
 	// render objects that are have post post processing render pass
@@ -1120,11 +1120,9 @@ void Engine::display()
 
 		// unuse lighting shader
 		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
-	}
 
-	// render shadows if required
-	if (shadowMapping != nullptr) {
-		if (visibleObjectsNoDepthTest.size() > 0) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
+		// render shadows if required
+		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
 	}
 
 	// delete post processing termporary buffer if not required anymore
