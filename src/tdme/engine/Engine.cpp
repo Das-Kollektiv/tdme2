@@ -374,14 +374,16 @@ void Engine::registerEntity(Entity* entity) {
 void Engine::removeEntity(const string& id)
 {
 	// get entity and remove if we have any
-	Entity* entity = nullptr;
 	auto entityByIdIt = entitiesById.find(id);
 	if (entityByIdIt != entitiesById.end()) {
+		//
+		auto entity = entityByIdIt->second;
+
+		//
 		auto hierarchicalId = entity->getId();
 		for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
 
 		//
-		entity = entityByIdIt->second;
 		entitiesById.erase(entityByIdIt);
 		autoEmitParticleSystemEntities.erase(hierarchicalId);
 		noFrustumCullingEntitiesById.erase(hierarchicalId);
