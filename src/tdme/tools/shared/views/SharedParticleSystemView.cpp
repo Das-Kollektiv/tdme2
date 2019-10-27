@@ -156,15 +156,6 @@ void SharedParticleSystemView::initParticleSystem()
 	particleSystemFile = entity->getEntityFileName();
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
-	BoundingBox boundingBox;
-	if (entity->getModel() == nullptr) {
-		boundingBox.getMin().set(Vector3(-0.5f, 0.0f, -0.5f));
-		boundingBox.getMax().set(Vector3(0.5f, 3.0f, 0.5f));
-	} else {
-		boundingBox.fromBoundingVolume(entity->getModel()->getBoundingBox());
-	}
-	boundingBox.update();
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(&boundingBox));
 	updateGUIElements();
 }
 

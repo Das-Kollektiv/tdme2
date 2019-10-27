@@ -26,6 +26,7 @@ PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int6
 	this->massRnd = massRnd;
 	this->position.set(position);
 	this->positionTransformed.set(position);
+	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -34,15 +35,13 @@ PointParticleEmitter::PointParticleEmitter(int32_t count, int64_t lifeTime, int6
 
 void PointParticleEmitter::emit(Particle* particle)
 {
-	auto& velocityXYZ = velocity.getArray();
-	auto& velocityRndXYZ = velocityRnd.getArray();
 	// set up particle
 	particle->active = true;
 	particle->position.set(positionTransformed);
 	particle->velocity.set(
-		velocityXYZ[0] + (Math::random() * velocityRndXYZ[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[1] + (Math::random() * velocityRndXYZ[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[2] + (Math::random() * velocityRndXYZ[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
+		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[0] * velocity[1] + (Math::random() * scale[1] * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[0] * velocity[2] + (Math::random() * scale[2] * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
@@ -62,4 +61,6 @@ void PointParticleEmitter::fromTransformations(const Transformations& transforma
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply translations
 	transformationsMatrix.multiply(position, positionTransformed);
+	// scale
+	transformationsMatrix.getScale(scale);
 }

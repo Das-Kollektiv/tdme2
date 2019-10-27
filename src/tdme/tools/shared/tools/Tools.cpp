@@ -289,7 +289,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	if (entity == nullptr) return;
 
 	// create engine entity
-	BoundingBox* entityBoundingBoxFallback = new BoundingBox(Vector3(-25.0f, 0.0f, -25.0f), Vector3(25.0f, 10.0f, 25.0f));
+	BoundingBox* entityBoundingBoxFallback = new BoundingBox(Vector3(-2.5f, 0.0f, -2.5f), Vector3(2.5f, 2.0f, 2.5f));
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
 	objectScale.set(1.0f, 1.0f, 1.0f);
@@ -360,14 +360,12 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 
 	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback;
 
-	if (entity->getType() != LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		// do a feasible scale
-		float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
-		objectScale.scale(1.0f / maxAxisDimension * 0.75f);
-		if (modelEntity != nullptr) {
-			modelEntity->setScale(objectScale);
-			modelEntity->update();
-		}
+	// do a feasible scale
+	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
+	objectScale.scale(1.0f / maxAxisDimension * 0.75f);
+	if (modelEntity != nullptr) {
+		modelEntity->setScale(objectScale);
+		modelEntity->update();
 	}
 
 	// generate ground

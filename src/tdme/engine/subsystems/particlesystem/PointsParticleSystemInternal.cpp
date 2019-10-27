@@ -58,6 +58,7 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
 	this->pointSize = pointSize;
+	this->pointSizeScale = 1.0f;
 	this->autoEmit = autoEmit;
 	this->particlesToSpawnRemainder = 0.0f;
 	this->pointsRenderPool = nullptr;
@@ -155,7 +156,7 @@ void PointsParticleSystemInternal::setDynamicShadowingEnabled(bool dynamicShadow
 }
 
 float PointsParticleSystemInternal::getPointSize() {
-	return pointSize;
+	return pointSize * pointSizeScale;
 }
 
 int32_t PointsParticleSystemInternal::getTextureId() {

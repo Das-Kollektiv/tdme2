@@ -26,17 +26,18 @@ class tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter final
 	: public ParticleEmitter
 {
 private:
-	int32_t count {  };
-	int64_t lifeTime {  };
-	int64_t lifeTimeRnd {  };
-	float mass {  };
-	float massRnd {  };
-	OrientedBoundingBox* obb {  };
-	OrientedBoundingBox* obbTransformed {  };
-	Vector3 velocity {  };
-	Vector3 velocityRnd {  };
-	Color4 colorStart {  };
-	Color4 colorEnd {  };
+	int32_t count;
+	int64_t lifeTime;
+	int64_t lifeTimeRnd;
+	float mass;
+	float massRnd;
+	OrientedBoundingBox* obb { nullptr };
+	OrientedBoundingBox* obbTransformed { nullptr };
+	Vector3 scale;
+	Vector3 velocity;
+	Vector3 velocityRnd;
+	Color4 colorStart;
+	Color4 colorEnd;
 public:
 	// override methods
 	inline int32_t getCount() const override {

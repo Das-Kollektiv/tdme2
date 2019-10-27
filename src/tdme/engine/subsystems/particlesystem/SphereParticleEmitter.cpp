@@ -28,6 +28,7 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->massRnd = massRnd;
 	this->sphere = sphere;
 	this->sphereTransformed = static_cast< Sphere* >(sphere->clone());
+	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -41,8 +42,6 @@ SphereParticleEmitter::~SphereParticleEmitter() {
 
 void SphereParticleEmitter::emit(Particle* particle)
 {
-	auto& velocityXYZ = velocity.getArray();
-	auto& velocityRndXYZ = velocityRnd.getArray();
 	// set up particle
 	particle->active = true;
 	particle->position.set(
@@ -52,9 +51,9 @@ void SphereParticleEmitter::emit(Particle* particle)
 	).normalize().scale(sphereTransformed->getRadius());
 	particle->position.add(sphereTransformed->getCenter());
 	particle->velocity.set(
-		velocityXYZ[0] + (Math::random() * velocityRndXYZ[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[1] + (Math::random() * velocityRndXYZ[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[2] + (Math::random() * velocityRndXYZ[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
+		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[1] * velocity[1] + (Math::random() * scale[1] * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[2] * velocity[2] + (Math::random() * scale[2] * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	particle->mass = mass + (Math::random() * (massRnd));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
@@ -74,14 +73,9 @@ void SphereParticleEmitter::fromTransformations(const Transformations& transform
 	// apply translations
 	Vector3 center;
 	Vector3 axis;
-	float radius;
 	// 	translate center
 	transformationsMatrix.multiply(sphere->getCenter(), center);
-	// note:
-	//	sphere radius can only be scaled the same on all axes
-	//	thats why its enough to only take x axis to determine scaling
-	axis.set(sphere->getCenter()).addX(sphere->getRadius());
-	transformationsMatrix.multiply(axis, axis);
-	radius = axis.sub(center).computeLength();
-	*sphereTransformed = Sphere(center, radius);
+	// scale and radius transformed
+	transformationsMatrix.getScale(scale);
+	*sphereTransformed = Sphere(center, sphere->getRadius() * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ())));
 }
