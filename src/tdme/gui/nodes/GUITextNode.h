@@ -43,9 +43,9 @@ class tdme::gui::nodes::GUITextNode final
 	friend class tdme::gui::GUIParser;
 
 private:
-	GUIFont* font {  };
+	GUIFont* font { nullptr };
 	GUIColor color;
-	MutableString text {  };
+	MutableString text;
 
 protected:
 	/** 

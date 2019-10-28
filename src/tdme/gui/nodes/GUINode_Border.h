@@ -27,8 +27,8 @@ struct tdme::gui::nodes::GUINode_Border
 	GUIColor topColor;
 	GUIColor rightColor;
 	GUIColor bottomColor;
-	int32_t left {  };
-	int32_t top {  };
-	int32_t right {  };
-	int32_t bottom {  };
+	int32_t left { 0 };
+	int32_t top { 0 };
+	int32_t right { 0 };
+	int32_t bottom { 0 };
 };

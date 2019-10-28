@@ -42,15 +42,15 @@ public:
 	static constexpr int32_t KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
 
 private:
-	int64_t time {  };
-	GUIKeyboardEvent_Type* type {  };
-	int32_t keyCode {  };
-	char keyChar {  };
-	bool metaDown {  };
-	bool controlDown {  };
-	bool altDown {  };
-	bool shiftDown {  };
-	bool processed {  };
+	int64_t time;
+	GUIKeyboardEvent_Type* type { nullptr };
+	int32_t keyCode;
+	char keyChar;
+	bool metaDown;
+	bool controlDown;
+	bool altDown;
+	bool shiftDown;
+	bool processed;
 
 public:
 

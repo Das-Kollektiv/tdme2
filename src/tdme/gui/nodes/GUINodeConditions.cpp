@@ -53,8 +53,9 @@ bool GUINodeConditions::removeAll()
 }
 
 void GUINodeConditions::updateNode(GUINode* node) const {
+	auto _conditionsMet = node->conditionsMet;
 	node->conditionsMet = node->checkConditions(elementNode);
-	if (node->conditionsMet == false) {
+	if (node->conditionsMet != _conditionsMet) {
 		node->parentNode->layouted = false;
 		return;
 	}

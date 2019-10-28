@@ -26,7 +26,7 @@ class tdme::gui::nodes::GUILayoutNode: public GUIParentNode
 	friend class tdme::gui::GUIParser;
 
 private:
-	GUILayoutNode_Alignment* alignment {  };
+	GUILayoutNode_Alignment* alignment { nullptr };
 
 protected:
 	/** 

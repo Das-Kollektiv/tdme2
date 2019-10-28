@@ -50,11 +50,11 @@ public:
 	static int32_t createMaxLength(const string& s);
 
 private:
-	GUIFont* font {  };
+	GUIFont* font { nullptr };
 	GUIColor color;
 	GUIColor colorDisabled;
-	MutableString text {  };
-	int32_t maxLength {  };
+	MutableString text;
+	int32_t maxLength;
 
 protected:
 

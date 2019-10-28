@@ -14,21 +14,21 @@ class tdme::gui::events::GUIMouseEvent
 {
 
 private:
-	int64_t time {  };
-	GUIMouseEvent_Type* type {  };
-	int32_t xUnscaled {  };
-	int32_t yUnscaled {  };
-	int32_t x {  };
-	int32_t y {  };
-	int32_t button {  };
-	float wheelX {  };
-	float wheelY {  };
-	float wheelZ {  };
-	bool metaDown {  };
-	bool controlDown {  };
-	bool altDown {  };
-	bool shiftDown {  };
-	bool processed {  };
+	int64_t time;
+	GUIMouseEvent_Type* type;
+	int32_t xUnscaled;
+	int32_t yUnscaled;
+	int32_t x;
+	int32_t y;
+	int32_t button;
+	float wheelX;
+	float wheelY;
+	float wheelZ;
+	bool metaDown;
+	bool controlDown;
+	bool altDown;
+	bool shiftDown;
+	bool processed;
 
 public:
 	/**

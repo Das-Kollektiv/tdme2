@@ -45,12 +45,12 @@ class tdme::gui::nodes::GUIMultilineTextNode final
 	friend class tdme::gui::GUIParser;
 
 private:
-	GUIFont* font {  };
+	GUIFont* font { nullptr };
 	GUIColor color;
-	MutableString text {  };
+	MutableString text;
 
-	int autoWidth { 0 };
-	int autoHeight { 0 };
+	int autoWidth;
+	int autoHeight;
 
 protected:
 	/** 

@@ -26,14 +26,10 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalController_State;
 GUIVerticalScrollbarInternalController::GUIVerticalScrollbarInternalController(GUINode* node) 
 	: GUINodeController(node)
 {
-	init();
 	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
-}
-
-void GUIVerticalScrollbarInternalController::init()
-{
 	state = STATE_NONE;
 	mouseYOffset = -1;
+	contentHeight = 0;
 }
 
 bool GUIVerticalScrollbarInternalController::isDisabled()

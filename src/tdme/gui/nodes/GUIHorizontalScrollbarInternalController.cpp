@@ -26,14 +26,10 @@ using tdme::gui::nodes::GUIScreenNode;
 GUIHorizontalScrollbarInternalController::GUIHorizontalScrollbarInternalController(GUINode* node) 
 	: GUINodeController(node)
 {
-	init();
-	this->contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
-}
-
-void GUIHorizontalScrollbarInternalController::init()
-{
 	state = STATE_NONE;
 	mouseXOffset = -1;
+	contentNode = dynamic_cast< GUILayoutNode* >(node->getScreenNode()->getNodeById(node->getParentControllerNode()->id + "_inner"));
+	contentWidth = 0;
 }
 
 bool GUIHorizontalScrollbarInternalController::isDisabled()

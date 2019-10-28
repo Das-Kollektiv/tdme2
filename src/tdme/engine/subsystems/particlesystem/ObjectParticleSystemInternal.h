@@ -55,6 +55,7 @@ protected:
 	string id;
 	bool enabled;
 	Model* model { nullptr };
+	Vector3 objectScale;
 	bool autoEmit;
 	bool enableDynamicShadows;
 	vector<Particle> particles;
@@ -75,6 +76,7 @@ protected:
 	inline void updateInternal() {
 		Vector3 scale;
 		getTransformationsMatrix().getScale(scale);
+		scale.scale(objectScale);
 		for (auto object: objects) {
 			object->setScale(scale);
 			object->update();

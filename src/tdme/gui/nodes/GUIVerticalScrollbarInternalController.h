@@ -27,11 +27,11 @@ public:
 	enum State {STATE_NONE, STATE_MOUSEOVER, STATE_DRAGGING};
 
 private:
-	GUILayoutNode* contentNode {  };
-	float contentHeight {  };
-	State state { STATE_NONE };
-	int32_t mouseYOffset {  };
-	MutableString value {  };
+	GUILayoutNode* contentNode { nullptr };
+	float contentHeight;
+	State state;
+	int32_t mouseYOffset;
+	MutableString value;
 
 public:
 	bool isDisabled() override;
@@ -79,10 +79,5 @@ private:
 	 * @param node node
 	 */
 	GUIVerticalScrollbarInternalController(GUINode* node);
-
-	/**
-	 * Init
-	 */
-	void init();
 
 };

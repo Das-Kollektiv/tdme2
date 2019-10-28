@@ -49,6 +49,7 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 	this->id = id;
 	this->enabled = true;
 	this->model = model;
+	this->objectScale = scale;
 	this->autoEmit = autoEmit;
 	this->enableDynamicShadows = enableDynamicShadows;
 	particles.resize(maxCount);
@@ -62,7 +63,7 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 			model
 		);
 		objects[i]->setEnabled(false);
-		objects[i]->setScale(scale);
+		objects[i]->setScale(objectScale);
 		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
 		objects[i]->setPickable(false);
 	}

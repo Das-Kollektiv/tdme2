@@ -28,10 +28,10 @@ public:
 	enum State { STATE_NONE, STATE_MOUSEOVER, STATE_DRAGGING };
 
 private:
-	GUILayoutNode* contentNode {  };
-	float contentWidth { };
+	GUILayoutNode* contentNode { nullptr };
+	float contentWidth;
 	State state { STATE_NONE };
-	int32_t mouseXOffset {  };
+	int32_t mouseXOffset;
 	MutableString value;
 
 protected:
@@ -76,8 +76,5 @@ public:
 	bool hasValue() override;
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
-
-private:
-	void init();
 
 };

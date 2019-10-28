@@ -29,7 +29,7 @@ class tdme::gui::nodes::GUIElementIgnoreEventsController
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	bool disabled {  };
+	bool disabled;
 	MutableString value;
 
 public:
