@@ -76,7 +76,7 @@ bool GUIImageNode::isContentNode()
 int32_t GUIImageNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return (texture != nullptr?texture->getWidth():0) + border.top + border.bottom + padding.top + padding.bottom;
+		return texture != nullptr?texture->getWidth() + border.top + border.bottom + padding.top + padding.bottom:0;
 	} else {
 		return computedConstraints.width;
 	}
@@ -85,7 +85,7 @@ int32_t GUIImageNode::getContentWidth()
 int32_t GUIImageNode::getContentHeight()
 {
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return (texture != nullptr?texture->getHeight():0) + border.top + border.bottom + padding.top + padding.bottom;
+		return texture != nullptr?texture->getHeight() + border.top + border.bottom + padding.top + padding.bottom:0;
 	} else {
 		return computedConstraints.height;
 	}
