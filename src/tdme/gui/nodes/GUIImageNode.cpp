@@ -76,7 +76,7 @@ bool GUIImageNode::isContentNode()
 int32_t GUIImageNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return texture != nullptr?texture->getWidth() + border.top + border.bottom + padding.top + padding.bottom:0;
+		return texture != nullptr?texture->getWidth() + border.left + border.right + padding.left + padding.right:0;
 	} else {
 		return computedConstraints.width;
 	}
