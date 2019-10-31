@@ -22,7 +22,7 @@ Skinning::Skinning()
 void Skinning::setWeights(const vector<float>& weights)
 {
 	this->weights.resize(weights.size());
-	int i = 0;
+	auto i = 0;
 	for (float weight: weights) {
 		this->weights[i++] = weight;
 	}
@@ -31,7 +31,7 @@ void Skinning::setWeights(const vector<float>& weights)
 void Skinning::setJoints(const vector<Joint>& joints)
 {
 	this->joints.resize(joints.size());
-	int i = 0;
+	auto i = 0;
 	for (auto& joint: joints) {
 		this->joints[i++] = joint;
 	}

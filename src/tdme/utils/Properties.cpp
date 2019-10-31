@@ -40,10 +40,10 @@ void Properties::load(const string& pathName, const string& fileName, FileSystem
 	vector<string> lines;
 	if (fileSystem == nullptr) fileSystem = FileSystem::getInstance();
 	fileSystem->getContentAsStringArray(pathName, fileName, lines);
-	for (int i = 0; i < lines.size(); i++) {
+	for (auto i = 0; i < lines.size(); i++) {
 		string line = StringUtils::trim(lines[i]);
 		if (line.length() == 0 || StringUtils::startsWith(line, "#")) continue;
-		int separatorPos = line.find(L'=');
+		auto separatorPos = line.find(L'=');
 		if (separatorPos == -1) continue;
 		string key = StringUtils::substring(line, 0, separatorPos);
 		string value = StringUtils::substring(line, separatorPos + 1);

@@ -417,9 +417,9 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			auto minX = object->getTransformations().getTranslation().getX();
 			auto minY = object->getTransformations().getTranslation().getY();
 			auto minZ = object->getTransformations().getTranslation().getZ();
-			int partitionX = (int)(minX / renderGroupsPartitionWidth);
-			int partitionY = (int)(minY / renderGroupsPartitionHeight);
-			int partitionZ = (int)(minZ / renderGroupsPartitionDepth);
+			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
+			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
+			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
 			renderGroupLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
 			renderGroupEntitiesByModelAndPartition[object->getEntity()->getModel()->getId()][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)].push_back(&object->getTransformations());
 		} else {

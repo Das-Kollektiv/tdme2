@@ -180,7 +180,7 @@ void StandardFileSystem::setContentFromStringArray(const string& pathName, const
 		throw FileSystemException("Unable to open file for writing(" + to_string(errno) + "): " + pathName + "/" + fileName);
 	}
 
-	for (int i = 0; i < content.size(); i++) {
+	for (auto i = 0; i < content.size(); i++) {
 		ofs << (content.at(i)) << "\n";
 	}
 
@@ -203,7 +203,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	}
 
 	// process path components
-	for (int i = 0; i < pathComponents.size(); i++) {
+	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == ".") {
 			pathComponents[i] = "";
@@ -224,7 +224,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	// process path components
 	string canonicalPath = "";
 	bool slash = StringUtils::startsWith(pathString, "/");
-	for (int i = 0; i < pathComponents.size(); i++) {
+	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == "") {
 			// no op
@@ -284,7 +284,7 @@ void StandardFileSystem::createPath(const string& pathName) {
 void StandardFileSystem::removePath(const string& pathName) {
 	vector<string> files;
 	list(pathName, files, nullptr);
-	for (int i = 0; i < files.size(); i++) {
+	for (auto i = 0; i < files.size(); i++) {
 		auto file = files[i];
 		if (file == "." || file == "..") {
 			continue;

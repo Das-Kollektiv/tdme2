@@ -265,7 +265,7 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	}
 
 	// process path components
-	for (int i = 0; i < pathComponents.size(); i++) {
+	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == ".") {
 			pathComponents[i] = "";
@@ -286,7 +286,7 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	// process path components
 	string canonicalPath = "";
 	bool slash = StringUtils::startsWith(pathString, "/");
-	for (int i = 0; i < pathComponents.size(); i++) {
+	for (auto i = 0; i < pathComponents.size(); i++) {
 		auto pathComponent = pathComponents[i];
 		if (pathComponent == "") {
 			// no op

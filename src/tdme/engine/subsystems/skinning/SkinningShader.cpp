@@ -142,8 +142,8 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		{
 			// vertices joints
 			auto ibVerticesJoints = ObjectBuffer::getByteBuffer(context, vertices.size() * 1 * sizeof(int))->asIntBuffer();
-			for (int groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
-				int vertexJoints = verticesJointsWeights[groupVertexIndex].size();
+			for (auto groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
+				auto vertexJoints = verticesJointsWeights[groupVertexIndex].size();
 				// put number of joints
 				ibVerticesJoints.put((int)vertexJoints);
 			}
@@ -153,10 +153,10 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		{
 			// vertices joints indices
 			auto ibVerticesVertexJointsIdxs = ObjectBuffer::getByteBuffer(context, vertices.size() * 4 * sizeof(float))->asIntBuffer();
-			for (int groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
+			for (auto groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
 				auto& vertexJointsWeight = verticesJointsWeights[groupVertexIndex];
 				// vertex joint idx 1..4
-				for (int i = 0; i < 4; i++) {
+				for (auto i = 0; i < 4; i++) {
 					auto jointIndex = i < vertexJointsWeight.size()?vertexJointsWeight[i].getJointIndex():-1;
 					ibVerticesVertexJointsIdxs.put((int)jointIndex);
 				}
@@ -167,10 +167,10 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		{
 			// vertices joints weights
 			auto fbVerticesVertexJointsWeights = ObjectBuffer::getByteBuffer(context, vertices.size() * 4 * sizeof(float))->asFloatBuffer();
-			for (int groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
+			for (auto groupVertexIndex = 0; groupVertexIndex < vertices.size(); groupVertexIndex++) {
 				auto& vertexJointsWeight = verticesJointsWeights[groupVertexIndex];
 				// vertex joint weight 1..4
-				for (int i = 0; i < 4; i++) {
+				for (auto i = 0; i < 4; i++) {
 					fbVerticesVertexJointsWeights.put(static_cast<float>(i < vertexJointsWeight.size()?weights[vertexJointsWeight[i].getWeightIndex()]:0.0f));
 				}
 			}

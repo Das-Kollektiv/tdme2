@@ -22,7 +22,7 @@ KernelEventMechanism::KernelEventMechanism() : initialized(false), _psd(NULL) {
 	_psd = static_cast<void*>(new KernelEventMechanismPSD());
 
 	//
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// clear fd sets
 	FD_ZERO(&psd->rfds);
@@ -39,7 +39,7 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 	if (initialized == false) return;
 
 	//
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// synchronize fd set access
 	psd->fdsMutex.lock();
@@ -92,7 +92,7 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 	if (initialized == false) return;
 
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
 int KernelEventMechanism::doKernelEventMechanism() {
@@ -100,7 +100,7 @@ int KernelEventMechanism::doKernelEventMechanism() {
 	if (initialized == false) return -1;
 
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// have a timeout of 1ms
 	// as we only can delegate interest changes to the kernel by
@@ -114,7 +114,7 @@ int KernelEventMechanism::doKernelEventMechanism() {
 	psd->fdsMutex.unlock();
 
 	// run select
-	int result = select(psd->maxFd + 1, &rfds, &wfds, NULL, &timeout);
+	auto result = select(psd->maxFd + 1, &rfds, &wfds, NULL, &timeout);
 	if (result == -1) {
 		throw NIOKEMException("select failed");
 	}
@@ -149,7 +149,7 @@ void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOIntere
 	if (initialized == false) return;
 
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// read interest and cookie from event
 	KernelEventMechanismPSD::Event& event = psd->events[index];

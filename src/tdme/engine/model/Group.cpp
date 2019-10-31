@@ -47,7 +47,7 @@ Group::~Group() {
 void Group::setVertices(const vector<Vector3>& vertices)
 {
 	this->vertices.resize(vertices.size());
-	int i = 0;
+	auto i = 0;
 	for (auto& vertex: vertices) {
 		this->vertices[i++] = vertex;
 	}
@@ -56,7 +56,7 @@ void Group::setVertices(const vector<Vector3>& vertices)
 void Group::setNormals(const vector<Vector3>& normals)
 {
 	this->normals.resize(normals.size());
-	int i = 0;
+	auto i = 0;
 	for (auto& normal: normals) {
 		this->normals[i++] = normal;
 	}
@@ -65,7 +65,7 @@ void Group::setNormals(const vector<Vector3>& normals)
 void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordinates)
 {
 	this->textureCoordinates.resize(textureCoordinates.size());
-	int i = 0;
+	auto i = 0;
 	for (auto& textureCoordinate: textureCoordinates) {
 		this->textureCoordinates[i++] = textureCoordinate;
 	}
@@ -74,7 +74,7 @@ void Group::setTextureCoordinates(const vector<TextureCoordinate>& textureCoordi
 void Group::setTangents(const vector<Vector3>& tangents)
 {
 	this->tangents.resize(tangents.size());
-	int i = 0;
+	auto i = 0;
 	for (auto& tangent: tangents) {
 		this->tangents[i++] = tangent;
 	}
@@ -83,7 +83,7 @@ void Group::setTangents(const vector<Vector3>& tangents)
 void Group::setBitangents(const vector<Vector3>& bitangents)
 {
 	this->bitangents.resize(bitangents.size());
-	int i = 0;
+	auto i = 0;
 	for (auto& bitangent: bitangents) {
 		this->bitangents[i++] = bitangent;
 	}
@@ -114,7 +114,7 @@ int32_t Group::getFaceCount() const
 void Group::setFacesEntities(const vector<FacesEntity>& facesEntities)
 {
 	this->facesEntities.resize(facesEntities.size());
-	int i = 0;
+	auto i = 0;
 	for (auto& facesEntity: facesEntities) {
 		this->facesEntities[i++] = facesEntity;
 	}

@@ -83,9 +83,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 	float _z = z - actorZHalfExtension;
 	height = -10000.0f;
 	Vector3 actorPosition;
-	for (int i = 0; i < 2; i++) {
+	for (auto i = 0; i < 2; i++) {
 		float _x = x - actorXHalfExtension;
-		for (int j = 0; j < 2; j++) {
+		for (auto j = 0; j < 2; j++) {
 			Vector3 actorPositionCandidate;
 			auto body = world->determineHeight(
 				collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds,
@@ -165,8 +165,8 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		return PathFindingStatus::PATH_FOUND;
 	} else {
 		// Find valid successors
-		for (int z = -1; z <= 1; z++)
-		for (int x = -1; x <= 1; x++)
+		for (auto z = -1; z <= 1; z++)
+		for (auto x = -1; x <= 1; x++)
 		if ((z != 0 || x != 0) &&
 			(sloping == true ||
 			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
@@ -428,8 +428,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 
 		// do the steps
 		bool done = false;
-		int stepIdx;
-		for (stepIdx = 0; done == false && stepIdx < stepsMax; stepIdx++) {
+		for (auto stepIdx = 0; done == false && stepIdx < stepsMax; stepIdx++) {
 			PathFindingStatus status = step();
 			switch(status) {
 				case PATH_STEP:

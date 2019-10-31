@@ -39,15 +39,15 @@ KernelEventMechanism::~KernelEventMechanism() {
 
 void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	psd->kqMutex.lock();
 	// check for change list overrun
 	if (psd->kqChangeListCurrent + 2 > psd->kqChangeListMax) {
 		// try to enlarge buffers
 		bool reallocated = false;
-		struct kevent* kqChangeList0Resized = (struct kevent*)realloc(psd->kqChangeList[0], sizeof(struct kevent) * (psd->kqChangeListMax << 1));
-		struct kevent* kqChangeList1Resized = (struct kevent*)realloc(psd->kqChangeList[1], sizeof(struct kevent) * (psd->kqChangeListMax << 1));
+		auto kqChangeList0Resized = (struct kevent*)realloc(psd->kqChangeList[0], sizeof(struct kevent) * (psd->kqChangeListMax << 1));
+		auto kqChangeList1Resized = (struct kevent*)realloc(psd->kqChangeList[1], sizeof(struct kevent) * (psd->kqChangeListMax << 1));
 
 		// realloc failed?
 		if (kqChangeList0Resized == NULL || kqChangeList1Resized == NULL) {
@@ -163,7 +163,7 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 	if (initialized == false) return;
 
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	//
 	free(psd->kqChangeList[0]);
@@ -188,8 +188,8 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 		psd->kqMutex.lock();
 
 		// current kevent parameter from current change kqueue list
-		unsigned int kqChangeListFilledBuffer = psd->kqChangeListBuffer;
-		unsigned int kqChangeListFilledCurrent = psd->kqChangeListCurrent;
+		auto kqChangeListFilledBuffer = psd->kqChangeListBuffer;
+		auto kqChangeListFilledCurrent = psd->kqChangeListCurrent;
 
 		// cycle change list buffer
 		psd->kqChangeListBuffer = (psd->kqChangeListBuffer + 1) % 2;
@@ -228,7 +228,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 
 void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	struct kevent* ke = &psd->kqEventList[index];
 	cookie = (void*)ke->udata;

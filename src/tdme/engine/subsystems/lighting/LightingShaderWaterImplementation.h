@@ -36,9 +36,9 @@ public:
 	LightingShaderWaterImplementation(Renderer* renderer);
 
 protected:
-	int32_t uniformWaterHeight;
-	int32_t uniformTime;
-	int32_t uniformNumWaves;
+	int32_t uniformWaterHeight { -1 };
+	int32_t uniformTime { -1 };
+	int32_t uniformNumWaves { -1 };
 	array<int32_t, WAVES_MAX> uniformAmplitude;
 	array<int32_t, WAVES_MAX> uniformWavelength;
 	array<int32_t, WAVES_MAX> uniformSpeed;

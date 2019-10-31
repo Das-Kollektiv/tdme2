@@ -34,12 +34,12 @@ private:
 		vector<vector<int32_t>*> matricesVboIds;
 	};
 
-	int32_t programId {  };
-	int32_t shaderId {  };
+	int32_t programId { -1 };
+	int32_t shaderId { -1 };
 	int32_t uniformSkinningCount { -1 };
-	bool isRunning {  };
-	bool initialized {  };
-	Renderer* renderer {  };
+	bool isRunning;
+	bool initialized;
+	Renderer* renderer { nullptr };
 	map<string, ModelSkinningCache> cache;
 	Mutex mutex;
 

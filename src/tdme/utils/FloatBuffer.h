@@ -36,7 +36,7 @@ public:
 	 * @return value at given position
 	 */
 	inline float get(int32_t position) {
-		int floatAsInt = 0;
+		int32_t floatAsInt = 0;
 		floatAsInt+= (int32_t)Buffer::get(position);
 		floatAsInt+= (int32_t)Buffer::get(position + 1) << 8;
 		floatAsInt+= (int32_t)Buffer::get(position + 2) << 16;

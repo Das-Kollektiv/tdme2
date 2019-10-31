@@ -52,13 +52,13 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 void processFile(const string& fileName) {
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
-	int methodCount = 0;
-	int paramCount = 0;
-	bool haveMethod = false;
-	bool hadMethod = false;
-	int docLineStartIdx = -1;
-	int docLineEndIdx = -1;
-	int lineIdx = 0;
+	auto methodCount = 0;
+	auto paramCount = 0;
+	auto haveMethod = false;
+	auto hadMethod = false;
+	auto docLineStartIdx = -1;
+	auto docLineEndIdx = -1;
+	auto lineIdx = 0;
 	vector<string> doc;
 	vector<string> newFileContent;
 	string method = "";
@@ -95,8 +95,8 @@ void processFile(const string& fileName) {
 					// Console::println(fileName + ": " + method + ": " + to_string(paramCount) + " / " + to_string(docLineStartIdx) + " - " + to_string(docLineEndIdx));
 					bool paramBegin = false;
 					bool paramIgnore = false;
-					int smallerCount = 0;
-					int roundBracketCount = 0;
+					auto smallerCount = 0;
+					auto roundBracketCount = 0;
 					string param;
 					vector<string> params;
 					for (auto i = 0; i < method.length() && method[i] != ';' && method[i] != '{' && roundBracketCount >= 0; i++) {
@@ -144,7 +144,7 @@ void processFile(const string& fileName) {
 						if (param.length() == 0) continue;
 						paramsFinal.push_back(param);
 					}
-					int paramIdx = 0;
+					auto paramIdx = 0;
 					vector<string> newDoc;
 					for (auto docLine: doc) {
 						size_t docLineParamIdx = docLine.find("@param ");
