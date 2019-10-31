@@ -32,7 +32,7 @@ GUIKeyboardEvent::GUIKeyboardEvent()
 	this->time = -1LL;
 	this->type = GUIKeyboardEvent_Type::KEYBOARDEVENT_NONE;
 	this->keyCode = -1;
-	this->keyChar = char(0x0000);
+	this->keyChar = 0;
 	this->metaDown = false;
 	this->controlDown = false;
 	this->altDown = false;
@@ -42,94 +42,3 @@ GUIKeyboardEvent::GUIKeyboardEvent()
 
 GUIKeyboardEvent::~GUIKeyboardEvent() {
 }
-
-int64_t GUIKeyboardEvent::getTime()
-{
-	return time;
-}
-
-void GUIKeyboardEvent::setTime(int64_t time)
-{
-	this->time = time;
-}
-
-GUIKeyboardEvent_Type* GUIKeyboardEvent::getType()
-{
-	return type;
-}
-
-void GUIKeyboardEvent::setType(GUIKeyboardEvent_Type* type)
-{
-	this->type = type;
-}
-
-int32_t GUIKeyboardEvent::getKeyCode()
-{
-	return keyCode;
-}
-
-void GUIKeyboardEvent::setKeyCode(int32_t code)
-{
-	this->keyCode = code;
-}
-
-char GUIKeyboardEvent::getKeyChar()
-{
-	return keyChar;
-}
-
-void GUIKeyboardEvent::setKeyChar(char keyChar)
-{
-	this->keyChar = keyChar;
-}
-
-bool GUIKeyboardEvent::isMetaDown()
-{
-	return metaDown;
-}
-
-void GUIKeyboardEvent::setMetaDown(bool metaDown)
-{
-	this->metaDown = metaDown;
-}
-
-bool GUIKeyboardEvent::isControlDown()
-{
-	return controlDown;
-}
-
-void GUIKeyboardEvent::setControlDown(bool controlDown)
-{
-	this->controlDown = controlDown;
-}
-
-bool GUIKeyboardEvent::isAltDown()
-{
-	return altDown;
-}
-
-void GUIKeyboardEvent::setAltDown(bool altDown)
-{
-	this->altDown = altDown;
-}
-
-bool GUIKeyboardEvent::isShiftDown()
-{
-	return shiftDown;
-}
-
-void GUIKeyboardEvent::setShiftDown(bool shiftDown)
-{
-	this->shiftDown = shiftDown;
-}
-
-bool GUIKeyboardEvent::isProcessed()
-{
-	return processed;
-}
-
-void GUIKeyboardEvent::setProcessed(bool processed)
-{
-	this->processed = processed;
-}
-

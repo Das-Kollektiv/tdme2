@@ -10,7 +10,7 @@ using tdme::gui::events::GUIMouseEvent_Type;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::events::GUIMouseEvent
+class tdme::gui::events::GUIMouseEvent final
 {
 
 private:
@@ -34,173 +34,236 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~GUIMouseEvent();
+	~GUIMouseEvent();
 
 	/** 
 	 * @return time in milliseconds
 	 */
-	virtual int64_t getTime();
+	inline int64_t getTime() {
+		return time;
+	}
 
 	/** 
 	 * Set time
 	 * @param time time
 	 */
-	virtual void setTime(int64_t time);
+	inline void setTime(int64_t time) {
+		this->time = time;
+	}
 
 	/** 
 	 * @return type
 	 */
-	virtual GUIMouseEvent_Type* getType();
+	inline GUIMouseEvent_Type* getType() {
+		return type;
+	}
 
 	/** 
 	 * Set type
 	 * @param type type
 	 */
-	virtual void setType(GUIMouseEvent_Type* type);
+	inline void setType(GUIMouseEvent_Type* type) {
+		this->type = type;
+	}
 
 	/** 
 	 * @return x unscaled
 	 */
-	virtual int32_t getXUnscaled();
+	inline int32_t getXUnscaled() {
+		return xUnscaled;
+	}
 
 	/**
 	 * Set x unscaled
 	 * @param x x unscaled
 	 */
-	virtual void setXUnscaled(int32_t xUnscaled);
+	inline void setXUnscaled(int32_t xUnscaled) {
+		this->xUnscaled = xUnscaled;
+	}
 
 	/**
 	 * @return y unscaled
 	 */
-	virtual int32_t getYUnscaled();
+	inline int32_t getYUnscaled() {
+		return yUnscaled;
+	}
 
 	/**
 	 * Set y unscaled
 	 * @param y y  unscaled
 	 */
-	virtual void setYUnscaled(int32_t yUnscaled);
+	inline void setYUnscaled(int32_t yUnscaled) {
+		this->yUnscaled = yUnscaled;
+	}
 
 	/**
 	 * @return x
 	 */
-	virtual int32_t getX();
+	inline int32_t getX() {
+		return x;
+	}
 
 	/** 
 	 * Set x
 	 * @param x x
 	 */
-	virtual void setX(int32_t x);
+	inline void setX(int32_t x) {
+		this->x = x;
+	}
 
 	/** 
 	 * @return y
 	 */
-	virtual int32_t getY();
+	inline int32_t getY() {
+		return y;
+	}
 
 	/** 
 	 * Set y
 	 * @param y y
 	 */
-	virtual void setY(int32_t y);
+	inline void setY(int32_t y) {
+		this->y = y;
+	}
 
 	/** 
 	 * @return button
 	 */
-	virtual int32_t getButton();
+	inline int32_t getButton() {
+		return button;
+	}
 
 	/** 
 	 * Set button
 	 * @param button button
 	 */
-	virtual void setButton(int32_t button);
+	inline void setButton(int32_t button) {
+		this->button = button;
+	}
 
 	/** 
 	 * @return wheel x
 	 */
-	virtual float getWheelX();
+	inline float getWheelX() {
+		return wheelX;
+	}
 
 	/** 
 	 * Set up wheel x
 	 * @param wheelX wheel x
 	 */
-	virtual void setWheelX(float wheelX);
+	inline void setWheelX(float wheelX) {
+		this->wheelX = wheelX;
+	}
 
 	/** 
 	 * @return wheel y
 	 */
-	virtual float getWheelY();
+	inline float getWheelY() {
+		return wheelY;
+	}
 
 	/** 
 	 * Set up wheel y
 	 * @param wheelY wheel y
 	 */
-	virtual void setWheelY(float wheelY);
+	inline void setWheelY(float wheelY) {
+		this->wheelY = wheelY;
+	}
 
 	/** 
 	 * @return wheel z
 	 */
-	virtual float getWheelZ();
+	inline float getWheelZ() {
+		return wheelZ;
+	}
 
 	/** 
 	 * Set up wheel z
 	 * @param wheelZ wheel z
 	 */
-	virtual void setWheelZ(float wheelZ);
+	inline void setWheelZ(float wheelZ) {
+		this->wheelZ = wheelZ;
+	}
 
 	/** 
 	 * @return is meta down
 	 */
-	virtual bool isMetaDown();
+	inline bool isMetaDown() {
+		return metaDown;
+	}
 
 	/**
 	 * Set meta down
 	 * @param metaDown meta down
 	 */
-	virtual void setMetaDown(bool metaDown);
+	inline void setMetaDown(bool metaDown) {
+		this->metaDown = metaDown;
+	}
 
 	/**
 	 * @return control down
 	 */
-	virtual bool isControlDown();
+	inline bool isControlDown() {
+		return controlDown;
+	}
 
 	/**
 	 * Set control down
 	 * @param controlDown control down
 	 */
-	virtual void setControlDown(bool controlDown);
+	inline void setControlDown(bool controlDown) {
+		this->controlDown = controlDown;
+	}
 
 	/**
 	 * @return is alt down
 	 */
-	virtual bool isAltDown();
+	inline bool isAltDown() {
+		return altDown;
+	}
 
 	/**
 	 * Set alt down
 	 * @param altDown alt down
 	 */
-	virtual void setAltDown(bool altDown);
+	inline void setAltDown(bool altDown) {
+		this->altDown = altDown;
+	}
 
 	/**
 	 * @return is shift down
 	 */
-	virtual bool isShiftDown();
+	inline bool isShiftDown() {
+		return shiftDown;
+	}
 
 	/**
 	 * Set shift down
 	 * @param shiftDown shiftDown
 	 */
-	virtual void setShiftDown(bool shiftDown);
+	inline void setShiftDown(bool shiftDown) {
+		this->shiftDown = shiftDown;
+	}
 
 	/**
 	 * @return processed
 	 */
-	virtual bool isProcessed();
+	inline bool isProcessed() {
+		return processed;
+	}
 
 	/** 
 	 * Set processed 
 	 * @param processed processed
 	 */
-	virtual void setProcessed(bool processed);
+	inline void setProcessed(bool processed) {
+		this->processed = processed;
+	}
 
+	/**
+	 * Public constructor
+	 */
 	GUIMouseEvent();
 
 private:
