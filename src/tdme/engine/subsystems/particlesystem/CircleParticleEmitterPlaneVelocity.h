@@ -25,23 +25,24 @@ class tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVeloci
 	: public ParticleEmitter
 {
 private:
-	int32_t count {  };
-	int64_t lifeTime {  };
-	int64_t lifeTimeRnd {  };
-	Vector3 axis0 {  };
-	Vector3 axis1 {  };
-	Vector3 center {  };
-	float radius {  };
-	float mass {  };
-	float massRnd {  };
-	float velocity {  };
-	float velocityRnd {  };
-	Color4 colorStart {  };
-	Color4 colorEnd {  };
-	Vector3 centerTransformed {  };
-	float radiusTransformed {  };
-	Vector3 axis0Transformed {  };
-	Vector3 axis1Transformed {  };
+	int32_t count;
+	int64_t lifeTime;
+	int64_t lifeTimeRnd;
+	Vector3 axis0;
+	Vector3 axis1;
+	Vector3 center;
+	float radius;
+	float mass;
+	float massRnd;
+	Vector3 scale;
+	float velocity;
+	float velocityRnd;
+	Color4 colorStart;
+	Color4 colorEnd;
+	Vector3 centerTransformed;
+	float radiusTransformed;
+	Vector3 axis0Transformed;
+	Vector3 axis1Transformed;
 
 public:
 	// override methods

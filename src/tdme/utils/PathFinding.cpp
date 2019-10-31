@@ -83,9 +83,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 	float _z = z - actorZHalfExtension;
 	height = -10000.0f;
 	Vector3 actorPosition;
-	for (int i = 0; i < 2; i++) {
+	for (auto i = 0; i < 2; i++) {
 		float _x = x - actorXHalfExtension;
-		for (int j = 0; j < 2; j++) {
+		for (auto j = 0; j < 2; j++) {
 			Vector3 actorPositionCandidate;
 			auto body = world->determineHeight(
 				collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds,
@@ -165,8 +165,8 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		return PathFindingStatus::PATH_FOUND;
 	} else {
 		// Find valid successors
-		for (int z = -1; z <= 1; z++)
-		for (int x = -1; x <= 1; x++)
+		for (auto z = -1; z <= 1; z++)
+		for (auto x = -1; x <= 1; x++)
 		if ((z != 0 || x != 0) &&
 			(sloping == true ||
 			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
@@ -306,7 +306,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 
 	// equal start and end position?
 	if (actorTransformations.getTranslation().equals(endPosition, 0.1f) == true) {
-		Console::println("PathFinding::findPath(): start position == end position! Exiting!");
+		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
 		path.push_back(endPosition);
 		return true;
 	}
@@ -392,40 +392,43 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 				0,
 				true
 			) == false) {
-			Console::println(
-				"Not walkable: " +
-				to_string(endPositionComputed.getX()) + ", " +
-				to_string(endPositionComputed.getY()) + ", " +
-				to_string(endPositionComputed.getZ()) + " / " +
-				to_string(endYHeight) + " / " +
-				to_string(actorXHalfExtension) + ", " +
-				to_string(actorZHalfExtension)
-			);
+			if (VERBOSE == true) {
+				Console::println(
+					"Not walkable: " +
+					to_string(endPositionComputed.getX()) + ", " +
+					to_string(endPositionComputed.getY()) + ", " +
+					to_string(endPositionComputed.getZ()) + " / " +
+					to_string(endYHeight) + " / " +
+					to_string(actorXHalfExtension) + ", " +
+					to_string(actorZHalfExtension)
+				);
+			}
 			//
 			continue;
 		} else {
 			endPositionComputed.setY(endYHeight);
 		}
 
-		Console::println(
-			"Finding path: " +
-			to_string(startPositionComputed.getX()) + ", " +
-			to_string(startPositionComputed.getY()) + ", " +
-			to_string(startPositionComputed.getZ()) + " --> " +
-			to_string(endPositionComputed.getX()) + ", " +
-			to_string(endPositionComputed.getY()) + ", " +
-			to_string(endPositionComputed.getZ()) + " / " +
-			to_string(actorXHalfExtension) + ", " +
-			to_string(actorZHalfExtension)
-		);
+		if (VERBOSE == true) {
+			Console::println(
+				"Finding path: " +
+				to_string(startPositionComputed.getX()) + ", " +
+				to_string(startPositionComputed.getY()) + ", " +
+				to_string(startPositionComputed.getZ()) + " --> " +
+				to_string(endPositionComputed.getX()) + ", " +
+				to_string(endPositionComputed.getY()) + ", " +
+				to_string(endPositionComputed.getZ()) + " / " +
+				to_string(actorXHalfExtension) + ", " +
+				to_string(actorZHalfExtension)
+			);
+		}
 
 		// otherwise start path finding
 		start(startPositionComputed, endPositionComputed);
 
 		// do the steps
 		bool done = false;
-		int stepIdx;
-		for (stepIdx = 0; done == false && stepIdx < stepsMax; stepIdx++) {
+		for (auto stepIdx = 0; done == false && stepIdx < stepsMax; stepIdx++) {
 			PathFindingStatus status = step();
 			switch(status) {
 				case PATH_STEP:
@@ -481,7 +484,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 
 	//
 	if (tries == 0) {
-		Console::println("PathFinding::findPath(): end position were not walkable!");
+		if (VERBOSE == true) Console::println("PathFinding::findPath(): end position were not walkable!");
 	}
 
 	//
@@ -498,7 +501,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	world->removeBody("tdme.pathfinding.actor.slopetest");
 
 	//
-	if (tries > 1) Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries");
+	if (VERBOSE == true && tries > 1) Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries");
 
 	// dispose custom test
 	if (this->customTest != nullptr) {

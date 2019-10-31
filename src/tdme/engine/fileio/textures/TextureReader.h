@@ -22,55 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::threading::Mutex;
 using tdme::utils::ByteBuffer;
 
-namespace tdme {
-namespace engine {
-namespace fileio {
-namespace textures {
-
-/**
- * PNG input stream
- */
-class PNGInputStream {
-public:
-
-	/**
-	 * Public constructor
-	 * @author Andreas Drewke
-	 * @version $Id$
-	 */
-	PNGInputStream(vector<uint8_t>* data) {
-		this->offset = 0;
-		this->data = data;
-	}
-
-	/**
-	 * Destructor
-	 */
-	~PNGInputStream() {
-	}
-
-	/**
-	 * Read byte
-	 * @param outBytes out bytes
-	 * @param outBytesToRead out bytes to read
-	 */
-	void readBytes(int8_t* outBytes, int32_t outBytesToRead) {
-		for (int32_t i = 0; i < outBytesToRead && offset < data->size(); i++) {
-			outBytes[i] = (*data)[offset++];
-		}
-	}
-
-private:
-	int32_t offset;
-	vector<uint8_t>* data;
-
-};
-
-};
-};
-};
-};
-
 /** 
  * Texture reader class
  * @author Andreas Drewke
@@ -107,6 +58,45 @@ public:
 	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true);
 
 private:
+	/**
+	 * PNG input stream
+	 */
+	class PNGInputStream {
+	public:
+
+		/**
+		 * Public constructor
+		 * @author Andreas Drewke
+		 * @version $Id$
+		 */
+		PNGInputStream(vector<uint8_t>* data) {
+			this->offset = 0;
+			this->data = data;
+		}
+
+		/**
+		 * Destructor
+		 */
+		~PNGInputStream() {
+		}
+
+		/**
+		 * Read byte
+		 * @param outBytes out bytes
+		 * @param outBytesToRead out bytes to read
+		 */
+		void readBytes(int8_t* outBytes, int32_t outBytesToRead) {
+			for (int32_t i = 0; i < outBytesToRead && offset < data->size(); i++) {
+				outBytes[i] = (*data)[offset++];
+			}
+		}
+
+	private:
+		int32_t offset;
+		vector<uint8_t>* data;
+
+	};
+
 	/**
 	 * Read PNG data from memory
 	 * @param png_ptr png structure

@@ -54,7 +54,7 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	particle->position.scale(radiusTransformed);
 	particle->position.add(centerTransformed);
 	// compute velocity
-	particle->velocity.set(particle->position).sub(centerTransformed).normalize().scale(velocity + (Math::random() * velocityRnd));
+	particle->velocity.set(particle->position).sub(centerTransformed).normalize().scale(velocity + (Math::random() * velocityRnd)).scale(scale);
 	// mass
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	// life time
@@ -78,10 +78,7 @@ void CircleParticleEmitterPlaneVelocity::fromTransformations(const Transformatio
 	// apply transformations rotation + scale to axis
 	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed);
 	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed);
-	// note:
-	//	sphere radius can only be scaled the same on all axes
-	//	thats why its enough to only take x axis to determine scaling
-	side.set(axis0).scale(radius).add(center);
-	transformationsMatrix.multiply(side, side);
-	radius = side.sub(center).computeLength();
+	// scale and radius transformed
+	transformationsMatrix.getScale(scale);
+	radiusTransformed = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 }

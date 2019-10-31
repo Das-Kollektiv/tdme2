@@ -46,6 +46,7 @@ Renderer::Renderer()
 	viewPortHeight = 0;
 	TEXTUREUNITS_MAX = 2;
 	activeTextureUnit = 0;
+	pointSize = 0.0;
 }
 
 Renderer::~Renderer() {

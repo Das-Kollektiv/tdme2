@@ -25,12 +25,12 @@ using tdme::math::Quaternion;
  */
 class tdme::engine::Transformations {
 private:
-	Vector3 translation {  };
-	Vector3 scale {  };
-	Vector3 pivot {  };
-	Quaternion rotationsQuaternion { };
-	vector<Rotation> rotations {  };
-	Matrix4x4 transformationsMatrix {  };
+	Vector3 translation;
+	Vector3 scale;
+	Vector3 pivot;
+	Quaternion rotationsQuaternion;
+	vector<Rotation> rotations;
+	Matrix4x4 transformationsMatrix;
 
 public:
 
@@ -175,8 +175,15 @@ public:
 
 	/**
 	 * Computes transformation matrix
+	 * @param parentTransformations parent transformations
 	 */
 	virtual void update();
+
+	/**
+	 * Apply parent transformations
+	 * @param parentTransformations parent transformations
+	 */
+	virtual void applyParentTransformations(const Transformations& parentTransformations);
 
 	/**
 	 * Invert this transformations

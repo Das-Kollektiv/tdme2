@@ -13,17 +13,16 @@ using tdme::tools::leveleditor::views::LevelEditorView;
 class tdme::tools::leveleditor::views::LevelEditorView_ObjectColor
 {
 	friend class LevelEditorView;
-	friend class LevelEditorView_LevelEditorView_1;
 
 private:
 	LevelEditorView* levelEditorView;
 
-	float colorMulR {  };
-	float colorMulG {  };
-	float colorMulB {  };
-	float colorAddR {  };
-	float colorAddG {  };
-	float colorAddB {  };
+	float colorMulR;
+	float colorMulG;
+	float colorMulB;
+	float colorAddR;
+	float colorAddG;
+	float colorAddB;
 
 public:
 	/**

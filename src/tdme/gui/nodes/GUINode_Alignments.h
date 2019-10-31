@@ -19,6 +19,6 @@ using tdme::gui::nodes::GUINode;
  */
 struct tdme::gui::nodes::GUINode_Alignments
 {
-	GUINode_AlignmentHorizontal* horizontal {  };
-	GUINode_AlignmentVertical* vertical {  };
+	GUINode_AlignmentHorizontal* horizontal { nullptr };
+	GUINode_AlignmentVertical* vertical { nullptr };
 };

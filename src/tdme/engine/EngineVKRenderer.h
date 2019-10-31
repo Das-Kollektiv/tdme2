@@ -32,5 +32,5 @@ public:
 	 */
 	EngineVKRenderer(Engine* engine);
 private:
-	Engine *engine;
+	Engine* engine { nullptr };
 };

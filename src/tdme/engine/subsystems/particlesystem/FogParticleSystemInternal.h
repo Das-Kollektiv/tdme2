@@ -16,6 +16,8 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::string;
 using std::vector;
@@ -31,6 +33,7 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector3;
 
 /** 
  * Fog particle system
@@ -52,6 +55,7 @@ protected:
 	vector<Particle> particles;
 	int32_t maxPoints;
 	float pointSize;
+	float pointSizeScale;
 	Texture* texture { nullptr };
 	int32_t textureId;
 	TransparentRenderPointsPool* pointsRenderPool { nullptr };
@@ -61,6 +65,19 @@ protected:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	bool pickable;
+
+	/**
+	 * Update bounding volume
+	 */
+	inline void updateInternal() {
+		Vector3 scale;
+		getTransformationsMatrix().getScale(scale);
+		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
+		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
+		boundingBoxTransformed.getMax().add(0.05f); // same here
+		boundingBoxTransformed.update();
+	}
 
 public:
 	/**

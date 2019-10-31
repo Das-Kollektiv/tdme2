@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/tools/shared/controller/EntityDisplaySubScreenController.h>
@@ -13,7 +12,6 @@ using tdme::tools::shared::views::EntityDisplayView;
 
 using std::vector;
 using std::string;
-
 
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -26,37 +24,9 @@ EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDis
 	this->entityDisplaySubScreenController = entityDisplaySubScreenController;
 	displayGroundPlate = false;
 	displayShadowing = false;
-	displayBoundingVolume = false;
 }
 
-bool EntityDisplayView::isDisplayGroundPlate()
-{
-	return displayGroundPlate;
-}
-
-void EntityDisplayView::setDisplayGroundPlate(bool groundPlate)
-{
-	this->displayGroundPlate = groundPlate;
-}
-
-bool EntityDisplayView::isDisplayShadowing()
-{
-	return displayShadowing;
-}
-
-void EntityDisplayView::setDisplayShadowing(bool shadowing)
-{
-	this->displayShadowing = shadowing;
-}
-
-bool EntityDisplayView::isDisplayBoundingVolume()
-{
-	return displayBoundingVolume;
-}
-
-void EntityDisplayView::setDisplayBoundingVolume(bool displayBoundingVolume)
-{
-	this->displayBoundingVolume = displayBoundingVolume;
+EntityDisplayView::~EntityDisplayView() {
 }
 
 void EntityDisplayView::display(LevelEditorEntity* entity)
@@ -66,9 +36,5 @@ void EntityDisplayView::display(LevelEditorEntity* entity)
 		if (model != nullptr) model->setDynamicShadowingEnabled(displayShadowing);
 		auto ground = engine->getEntity("ground");
 		if (ground != nullptr) ground->setEnabled(displayGroundPlate);
-		for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-			auto modelBoundingVolume = engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i]);
-			if (modelBoundingVolume != nullptr) modelBoundingVolume->setEnabled(displayBoundingVolume);
-		}
 	}
 }

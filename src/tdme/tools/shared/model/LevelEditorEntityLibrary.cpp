@@ -96,7 +96,7 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string
 	auto cacheId = "leveleditor.trigger." + to_string(width) + "mx" + to_string(height) + "mx" + to_string(depth) + "m";
 	LevelEditorEntity* levelEditorEntity = nullptr;
 	auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-	auto model = PrimitiveModel::createModel(boundingBox, cacheId + "_bv");
+	auto modelId = cacheId + "_bv";
 	levelEditorEntity = new LevelEditorEntity(
 		id == ID_ALLOCATE ? allocateEntityId() : id,
 		LevelEditorEntity_EntityType::TRIGGER,
@@ -104,8 +104,8 @@ LevelEditorEntity* LevelEditorEntityLibrary::addTrigger(int32_t id, const string
 		description,
 		"",
 		cacheId,
-		StringUtils::replace(StringUtils::replace(StringUtils::replace(model->getId(), "\\", "_"), "/", "_"), ":", "_") + ".png",
-		model,
+		StringUtils::replace(StringUtils::replace(StringUtils::replace(modelId, "\\", "_"), "/", "_"), ":", "_") + ".png",
+		nullptr,
 		Vector3()
 	);
 	levelEditorEntity->addBoundingVolume(0, new LevelEditorEntityBoundingVolume(0, levelEditorEntity));

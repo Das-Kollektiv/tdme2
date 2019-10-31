@@ -40,26 +40,20 @@ using tdme::gui::renderer::GUIFont;
 using tdme::utils::MutableString;
 using tdme::utils::Time;
 
+constexpr int64_t GUIInputInternalController::CURSOR_MODE_DURATION;
+constexpr int64_t GUIInputInternalController::DRAGGING_CALMDOWN;
+
 GUIInputInternalController::GUIInputInternalController(GUINode* node) 
 	: GUINodeController(node)
 {
-	init();
+	this->cursorModeStarted = -1LL;
+	this->cursorMode = CURSORMODE_SHOW;
+	this->draggingTickLast = -1LL;
 	this->index = 0;
 	this->offset = 0;
 	this->isDragging = false;
 	this->dragPosition = {{ 0, 0 }};
 }
-
-void GUIInputInternalController::init()
-{
-	cursorModeStarted = -1LL;
-	cursorMode = CURSORMODE_SHOW;
-	draggingTickLast = -1LL;
-}
-
-constexpr int64_t GUIInputInternalController::CURSOR_MODE_DURATION;
-
-constexpr int64_t GUIInputInternalController::DRAGGING_CALMDOWN;
 
 bool GUIInputInternalController::isDisabled()
 {

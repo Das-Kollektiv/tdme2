@@ -27,11 +27,12 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->obb = obb;
+	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
 	this->colorEnd.set(colorEnd);
-	this->obbTransformed = static_cast< OrientedBoundingBox* >(obb->clone());
+	this->obbTransformed = static_cast<OrientedBoundingBox*>(obb->clone());
 }
 
 BoundingBoxParticleEmitter::~BoundingBoxParticleEmitter() {
@@ -42,8 +43,6 @@ BoundingBoxParticleEmitter::~BoundingBoxParticleEmitter() {
 void BoundingBoxParticleEmitter::emit(Particle* particle)
 {
 	Vector3 tmpAxis;
-	auto& velocityXYZ = velocity.getArray();
-	auto& velocityRndXYZ = velocityRnd.getArray();
 	// set up particle
 	particle->active = true;
 	auto obbAxes = obbTransformed->getAxes();
@@ -56,9 +55,9 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	particle->position.add(obbTransformed->getCenter());
 	// compute velocity
 	particle->velocity.set(
-		velocityXYZ[0] + (Math::random() * velocityRndXYZ[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[1] + (Math::random() * velocityRndXYZ[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[2] + (Math::random() * velocityRndXYZ[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
+		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[1] * velocity[1] + (Math::random() * scale[1] * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[2] * velocity[2] + (Math::random() * scale[2] * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	// mass
 	particle->mass = mass + (Math::random() * (massRnd));
@@ -83,22 +82,22 @@ void BoundingBoxParticleEmitter::fromTransformations(const Transformations& tran
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(obb->getCenter(), center);
-	// apply transformations rotation + scale to axis
+	// apply transformations rotation to axis
 	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[0], axesTransformed[0]);
 	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[1], axesTransformed[1]);
 	transformationsMatrix.multiplyNoTranslation(obb->getAxes()[2], axesTransformed[2]);
+	// scale
+	scale.set(
+		axesTransformed[0].computeLength(),
+		axesTransformed[1].computeLength(),
+		axesTransformed[2].computeLength()
+	);
 	// set up axes
 	axes[0].set(axesTransformed[0]).normalize();
 	axes[1].set(axesTransformed[1]).normalize();
 	axes[2].set(axesTransformed[2]).normalize();
 	// apply scale to half extension
 	halfExtension.set(obb->getHalfExtension());
-	halfExtension.scale(
-		Vector3(
-			axesTransformed[0].computeLength(),
-			axesTransformed[1].computeLength(),
-			axesTransformed[2].computeLength()
-		)
-	);
+	halfExtension.scale(scale);
 	*obbTransformed = OrientedBoundingBox(center, axes[0], axes[1], axes[2], halfExtension);
 }

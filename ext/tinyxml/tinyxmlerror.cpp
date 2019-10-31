@@ -24,7 +24,7 @@ distribution.
 
 #include "tinyxml.h"
 
-using namespace tdme::ext::tinyxml;
+using namespace tinyxml;
 
 // The goal of the seperate error file is to make the first
 // step towards localization. tinyxml (currently) only supports

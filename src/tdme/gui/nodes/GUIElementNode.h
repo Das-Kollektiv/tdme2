@@ -49,13 +49,13 @@ public:
 	static string CONDITION_CLICK;
 
 private:
-	string name {  };
-	string value {  };
-	bool selected {  };
-	bool disabled {  };
-	GUINodeConditions activeConditions {  };
-	bool focusable {  };
-	bool ignoreEvents {  };
+	string name;
+	string value;
+	bool selected;
+	bool disabled;
+	GUINodeConditions activeConditions;
+	bool focusable;
+	bool ignoreEvents;
 	string onInitializeExpression;
 	string onMouseClickExpression;
 	string onMouseDoubleClickExpression;

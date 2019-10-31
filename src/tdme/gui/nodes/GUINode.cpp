@@ -183,6 +183,7 @@ void GUINode::setTop(int32_t top)
 void GUINode::layout()
 {
 	if (conditionsMet == false) {
+		computedConstraints = GUINode_ComputedConstraints();
 		layouted = false;
 		return;
 	}

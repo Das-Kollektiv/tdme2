@@ -33,9 +33,9 @@ class tdme::gui::elements::GUIDropDownOptionController final
 private:
 	static string CONDITION_SELECTED;
 	static string CONDITION_UNSELECTED;
-	GUIParentNode* dropDownNode {  };
-	bool initialPostLayout {  };
-	bool selected {  };
+	GUIParentNode* dropDownNode { nullptr };
+	bool initialPostLayout;
+	bool selected;
 	MutableString value;
 
 	/** 

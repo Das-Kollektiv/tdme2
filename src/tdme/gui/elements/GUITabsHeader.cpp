@@ -23,7 +23,7 @@ string GUITabsHeader::NAME = "tabs-header";
 
 GUITabsHeader::GUITabsHeader()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs-header.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs-header.xml");
 }
 
 const string& GUITabsHeader::getName()
@@ -33,7 +33,7 @@ const string& GUITabsHeader::getName()
 
 const string& GUITabsHeader::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUITabsHeader::getAttributes(GUIScreenNode* screenNode)

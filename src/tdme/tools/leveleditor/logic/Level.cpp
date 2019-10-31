@@ -13,6 +13,7 @@
 #include <tdme/audio/Sound.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
@@ -28,6 +29,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
@@ -44,6 +46,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/shared/files/ModelMetaDataFileImport.h>
+#include <tdme/tools/shared/files/ProgressCallback.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntityAudio.h>
@@ -84,6 +87,7 @@ using tdme::audio::Audio;
 using tdme::audio::Sound;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
@@ -99,6 +103,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Model;
+using tdme::engine::model::ModelHelper;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::ConvexMesh;
@@ -115,6 +120,7 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::shared::files::ModelMetaDataFileImport;
+using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntityAudio;
@@ -351,6 +357,25 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				particleSystems
 			);
 		}
+	} else
+	// particle system
+	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+		// bounding volumes
+		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
+		for (auto i = 0; i < levelEditorEntity->getBoundingVolumeCount(); i++) {
+			auto entityBoundingVolume = levelEditorEntity->getBoundingVolumeAt(i);
+			if (entityBoundingVolume->getModel() != nullptr) {
+				auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+				entityBoundingVolumesHierarchy->addEntity(bvObject);
+			}
+		}
+		entityBoundingVolumesHierarchy->update();
+		if (entityBoundingVolumesHierarchy->getEntities().size() == 0) {
+			entityBoundingVolumesHierarchy->dispose();
+			delete entityBoundingVolumesHierarchy;
+		} else {
+			entity = entityBoundingVolumesHierarchy;
+		}
 	}
 
 	//
@@ -373,12 +398,17 @@ Entity* Level::createEntity(LevelEditorObject* levelEditorObject, const Vector3&
 	return createEntity(levelEditorObject->getEntity(), levelEditorObject->getId(), transformations);
 }
 
-void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation)
+void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
+	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	map<string, map<string, vector<Transformations*>>> renderGroupEntitiesByModelAndPartition;
 	map<string, LevelEditorEntity*> renderGroupLevelEditorEntities;
+	auto progressStepCurrent = 0;
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
+
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level->getObjectCount()) * 0.5f);
+		progressStepCurrent++;
 
 		if (addEmpties == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) continue;
 		if (addTrigger == false && object->getEntity()->getType() == LevelEditorEntity_EntityType::TRIGGER) continue;
@@ -387,9 +417,9 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			auto minX = object->getTransformations().getTranslation().getX();
 			auto minY = object->getTransformations().getTranslation().getY();
 			auto minZ = object->getTransformations().getTranslation().getZ();
-			int partitionX = (int)(minX / renderGroupsPartitionWidth);
-			int partitionY = (int)(minY / renderGroupsPartitionHeight);
-			int partitionZ = (int)(minZ / renderGroupsPartitionDepth);
+			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
+			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
+			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
 			renderGroupLevelEditorEntities[object->getEntity()->getModel()->getId()] = object->getEntity();
 			renderGroupEntitiesByModelAndPartition[object->getEntity()->getModel()->getId()][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)].push_back(&object->getTransformations());
 		} else {
@@ -409,7 +439,11 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 
 	// do render groups
+	progressStepCurrent = 0;
 	for (auto itModel: renderGroupEntitiesByModelAndPartition) {
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(renderGroupEntitiesByModelAndPartition.size()) * 1.0f);
+		progressStepCurrent++;
+
 		for (auto itPartition: itModel.second) {
 			auto levelEditorEntity = renderGroupLevelEditorEntities[itModel.first];
 			auto object3DRenderGroup = new Object3DRenderGroup(
@@ -434,6 +468,12 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			object3DRenderGroup->updateRenderGroup();
 			engine->addEntity(object3DRenderGroup);
 		}
+	}
+
+	//
+	if (progressCallback != nullptr) {
+		progressCallback->progress(1.0f);
+		delete progressCallback;
 	}
 }
 
@@ -544,10 +584,20 @@ Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, cons
 	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId);
 }
 
-void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation)
+void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
+	if (progressCallback != nullptr) progressCallback->progress(0.0f);
+	auto progressStepCurrent = 0;
+
+	//
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto levelEditorObject = level->getObjectAt(i);
+
+		//
+		if (progressCallback != nullptr && progressStepCurrent % 1000 == 0) progressCallback->progress(0.0f + static_cast<float>(progressStepCurrent) / static_cast<float>(level->getObjectCount()) * 1.0f);
+		progressStepCurrent++;
+
+		//
 		auto rigidBody = createBody(world, levelEditorObject);
 		if (rigidBody == nullptr) continue;
 		if (translation.equals(Vector3()) == false) {
@@ -557,6 +607,12 @@ void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const V
 			rigidBody->fromTransformations(transformations);
 		}
 		rigidBody->setEnabled(enable);
+	}
+
+	//
+	if (progressCallback != nullptr) {
+		progressCallback->progress(1.0f);
+		delete progressCallback;
 	}
 }
 
@@ -585,6 +641,7 @@ void Level::disableLevel(World* world, LevelEditorLevel* level)
 
 void Level::enableLevel(Engine* engine, LevelEditorLevel* level, const Vector3& translation)
 {
+	// TODO: a.drewke, Object3DRenderGroups
 	for (auto i = 0; i < level->getObjectCount(); i++) {
 		auto object = level->getObjectAt(i);
 		auto entity = engine->getEntity(object->getId());

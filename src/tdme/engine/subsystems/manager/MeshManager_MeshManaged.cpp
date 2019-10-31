@@ -15,31 +15,4 @@ MeshManager_MeshManaged::MeshManager_MeshManaged(const string& id, Object3DGroup
 {
 	this->id = id;
 	this->mesh = mesh;
-	this->referenceCounter = 0;
-}
-
-const string& MeshManager_MeshManaged::getId()
-{
-	return id;
-}
-
-Object3DGroupMesh* MeshManager_MeshManaged::getMesh()
-{
-	return mesh;
-}
-
-int32_t MeshManager_MeshManaged::getReferenceCounter()
-{
-	return referenceCounter;
-}
-
-bool MeshManager_MeshManaged::decrementReferenceCounter()
-{
-	referenceCounter--;
-	return referenceCounter == 0;
-}
-
-void MeshManager_MeshManaged::incrementReferenceCounter()
-{
-	referenceCounter++;
 }

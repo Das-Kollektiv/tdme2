@@ -29,9 +29,9 @@ class tdme::gui::elements::GUITabContentController final
 	friend class GUITabsController;
 
 private:
-	string CONDITION_SELECTED {  };
-	string CONDITION_UNSELECTED {  };
-	bool selected {  };
+	string CONDITION_SELECTED;
+	string CONDITION_UNSELECTED;
+	bool selected;
 	MutableString value;
 
 	/** 

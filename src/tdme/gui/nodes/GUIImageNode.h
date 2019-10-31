@@ -42,8 +42,8 @@ class tdme::gui::nodes::GUIImageNode final
 	friend class tdme::gui::GUIParser;
 
 private:
-	Texture* texture {  };
-	int32_t textureId {  };
+	Texture* texture { nullptr };
+	int32_t textureId { 0 };
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
 	GUINode_Clipping clipping;
@@ -113,7 +113,7 @@ public:
 	 * Set image source
 	 * @param source source
 	 */
-	void setSource(const string source);
+	void setSource(const string& source);
 
 	/**
 	 * @return image source
@@ -164,8 +164,6 @@ public:
 	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom);
 
 private:
-	void init();
-
 	string source;
 	Matrix2D3x3 textureMatrix;
 	GUINode_Scale9Grid scale9Grid;

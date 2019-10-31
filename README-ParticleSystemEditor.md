@@ -28,7 +28,7 @@
         - bounding box
         - oriented bounding box
         - convex mesh
-        - concave terrain mesh
+        - bounding volumes can be transformed by using a gizmo 
     - sound
         - attach sounds to optional animations with optional additional key
         - also set up gain, pitch, looping, fixed and offset for each sound

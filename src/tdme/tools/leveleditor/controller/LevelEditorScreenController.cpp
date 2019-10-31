@@ -23,6 +23,7 @@
 #include <tdme/tools/shared/controller/FileDialogPath.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
+#include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/model/LevelEditorLight.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
@@ -62,6 +63,7 @@ using tdme::tools::leveleditor::views::LevelEditorView;
 using tdme::tools::shared::controller::FileDialogPath;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
+using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorLight;
 using tdme::tools::shared::model::LevelEditorObject;
@@ -266,20 +268,27 @@ void LevelEditorScreenController::setObjectListbox(LevelEditorLevel* level)
 		"<scrollarea-vertical id=\"" +
 		objectsListBox->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
-	if (level->getObjectCount() > 1000) {
-		Console::println("LevelEditorScreenController::setObjectListbox(): too many objects: not creating list");
-	} else {
-		for (int i = 0; i < level->getObjectCount(); i++) {
-			auto objectId = level->getObjectAt(i)->getId();
+	auto objectIdx = 0;
+	for (int i = 0; i < level->getObjectCount(); i++) {
+		if (objectIdx > 25000) {
 			objectsListBoxSubNodesXML =
-				objectsListBoxSubNodesXML +
-				"<selectbox-multiple-option text=\"" +
-				GUIParser::escapeQuotes(objectId) +
-				"\" value=\"" +
-				GUIParser::escapeQuotes(objectId) +
-				"\" " +
-				"/>\n";
+				"<scrollarea-vertical id=\"" +
+				objectsListBox->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"100%\">\n";
+			break;
 		}
+		auto object = level->getObjectAt(i);
+		if (object->getEntity()->isRenderGroups() == true) continue;
+		auto objectId = object->getId();
+		objectsListBoxSubNodesXML =
+			objectsListBoxSubNodesXML +
+			"<selectbox-multiple-option text=\"" +
+			GUIParser::escapeQuotes(objectId) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(objectId) +
+			"\" " +
+			"/>\n";
+		objectIdx++;
 	}
 	objectsListBoxSubNodesXML =
 		objectsListBoxSubNodesXML +
@@ -472,7 +481,7 @@ void LevelEditorScreenController::onMapPropertyRemove()
 	}
 }
 
-void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<PropertyModelClass*>>* objectPresetIds)
+void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<PropertyModelClass*>>& objectPresetIds)
 {
 	auto objectPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((objectPropertiesPresets->getScreenNode()->getNodeById(objectPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -482,7 +491,7 @@ void LevelEditorScreenController::setObjectPresetIds(const map<string, vector<Pr
 		"<scrollarea-vertical id=\"" +
 		objectPropertiesPresets->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	for (auto it: *objectPresetIds) {
+	for (auto it: objectPresetIds) {
 		auto modelPresetId = it.first;
 		objectPropertiesPresetsInnerNodeSubNodesXML =
 			objectPropertiesPresetsInnerNodeSubNodesXML +

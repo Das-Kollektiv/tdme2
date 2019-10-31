@@ -7,10 +7,12 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/PartitionNone.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -22,6 +24,8 @@
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/primitives/BoundingBox.h>
+#include <tdme/engine/primitives/PrimitiveModel.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -52,10 +56,12 @@ using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::PartitionNone;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -67,6 +73,8 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::PrimitiveModel;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -88,6 +96,11 @@ using tdme::utils::StringUtils;
 
 Engine* Tools::osEngine = nullptr;
 float Tools::oseScale = 0.75f;
+Model* Tools::gizmoAll = nullptr;
+Model* Tools::gizmoTranslation = nullptr;
+Model* Tools::gizmoScale = nullptr;
+Model* Tools::gizmoRotations = nullptr;
+Model* Tools::defaultOBB = nullptr;
 
 string Tools::formatFloat(float value)
 {
@@ -208,12 +221,13 @@ void Tools::oseDispose()
 
 void Tools::oseThumbnail(LevelEditorEntity* model)
 {
+	Vector3 objectScale;
 	Transformations oseLookFromRotations;
 	oseLookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	oseLookFromRotations.update();
-	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale);
+	Tools::setupEntity(model, osEngine, oseLookFromRotations, oseScale, 1, objectScale);
 	osEngine->setSceneColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	osEngine->display();
 	// osEngine->makeScreenshot("tmp", model->getThumbnail());
@@ -270,23 +284,40 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	return ground;
 }
 
-void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel)
+void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale)
 {
 	if (entity == nullptr) return;
 
 	// create engine entity
+	BoundingBox* entityBoundingBoxFallback = new BoundingBox(Vector3(-2.5f, 0.0f, -2.5f), Vector3(2.5f, 2.0f, 2.5f));
 	BoundingBox* entityBoundingBox = nullptr;
 	Entity* modelEntity = nullptr;
-	Vector3 objectScale(1.0f, 1.0f, 1.0f);
+	objectScale.set(1.0f, 1.0f, 1.0f);
 	Color4 colorMul(1.0f, 1.0f, 1.0f, 1.0f);
 	Color4 colorAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// particle system
+	// bounding volumes
+	auto entityBoundingVolumesHierarchy = new EntityHierarchy(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID);
+	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
+		auto entityBoundingVolume = entity->getBoundingVolumeAt(i);
+		if (entityBoundingVolume->getModel() != nullptr) {
+			auto bvObject = new Object3D(LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[i], entityBoundingVolume->getModel());
+			bvObject->setEnabled(false);
+			entityBoundingVolumesHierarchy->addEntity(bvObject);
+		}
+	}
+	entityBoundingVolumesHierarchy->update();
+	engine->addEntity(entityBoundingVolumesHierarchy);
+
+	//
+	if (entity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
+		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
+	} else
 	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		entityBoundingBox = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 		modelEntity = Level::createEntity(entity, "model", Transformations());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
-	} else {
+	} else
+	if (entity->getModel() != nullptr) {
 		// model
 		Model* model = nullptr;
 		switch (lodLevel) {
@@ -327,35 +358,29 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 		}
 	}
 
-	if (entity->getType() != LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		// do a feasible scale
-		float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBox);
-		objectScale.scale(1.0f / maxAxisDimension);
-		if (modelEntity != nullptr) {
-			modelEntity->setScale(objectScale);
-			modelEntity->update();
-		}
+	auto entityBoundingBoxToUse = entityBoundingBox != nullptr?entityBoundingBox:entityBoundingBoxFallback;
+
+	// do a feasible scale
+	float maxAxisDimension = Tools::computeMaxAxisDimension(entityBoundingBoxToUse);
+	objectScale.scale(1.0f / maxAxisDimension * 0.75f);
+	if (modelEntity != nullptr) {
+		modelEntity->setScale(objectScale);
+		modelEntity->update();
 	}
 
 	// generate ground
-	auto ground = createGroundModel((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) * 1.0f, (entityBoundingBox->getMax().getZ() - entityBoundingBox->getMin().getZ()) * 1.0f, entityBoundingBox->getMin().getY() - Math::EPSILON);
+	auto ground = createGroundModel(
+		(entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) * 1.0f,
+		(entityBoundingBoxToUse->getMax().getZ() - entityBoundingBoxToUse->getMin().getZ()) * 1.0f,
+		entityBoundingBoxToUse->getMin().getY() - Math::EPSILON
+	);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
 	engine->addEntity(groundObject);
 
-	// add bounding volumes
-	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
-		auto boundingVolume = entity->getBoundingVolumeAt(i);
-		if (boundingVolume->getModel() == nullptr) continue;
-		auto modelBoundingVolumeEntity = new Object3D(
-			"model_bv." + to_string(i),
-			boundingVolume->getModel()
-		);
-		modelBoundingVolumeEntity->setEnabled(false);
-		modelBoundingVolumeEntity->setScale(objectScale);
-		modelBoundingVolumeEntity->update();
-		engine->addEntity(modelBoundingVolumeEntity);
-	}
+	//
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->setScale(objectScale);
+	dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->update();
 
 	// lights
 	for (auto lightIdx = 0; lightIdx < engine->getLightCount(); lightIdx++) engine->getLightAt(lightIdx)->setEnabled(false);
@@ -365,9 +390,9 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	light0->setSpecular(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	light0->setPosition(
 		Vector4(
-			entityBoundingBox->getMin().getX() + ((entityBoundingBox->getMax().getX() - entityBoundingBox->getMin().getX()) / 2.0f),
-			entityBoundingBox->getMin().getY() + ((entityBoundingBox->getMax().getY() - entityBoundingBox->getMin().getY()) / 2.0f),
-			-entityBoundingBox->getMin().getZ() * 4.0f,
+			entityBoundingBoxToUse->getMin().getX() + ((entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) / 2.0f),
+			entityBoundingBoxToUse->getMin().getY() + ((entityBoundingBoxToUse->getMax().getY() - entityBoundingBoxToUse->getMin().getY()) / 2.0f),
+			-entityBoundingBoxToUse->getMin().getZ() * 4.0f,
 			1.0f
 		)
 	);
@@ -384,7 +409,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
 	auto lookAt = cam->getLookAt();
-	lookAt.set(entityBoundingBox->getCenter().clone().scale(objectScale));
+	lookAt.set(entityBoundingBoxToUse->getCenter().clone().scale(objectScale));
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 forwardVectorTransformed;
 	Vector3 upVector;
@@ -399,9 +424,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	cam->setUpVector(upVector);
 
 	//
-	if (entity->getType() == LevelEditorEntity_EntityType::PARTICLESYSTEM) {
-		delete entityBoundingBox;
-	}
+	delete entityBoundingBoxFallback;
 }
 
 const string Tools::getRelativeResourcesFileName(const string& gameRoot, const string& fileName)
@@ -475,4 +498,47 @@ void Tools::loadSettings(Application* application) {
 	application->setWindowXPosition(Integer::parseInt(settings.get("window_x", "100")));
 	application->setWindowYPosition(Integer::parseInt(settings.get("window_y", "100")));
 	application->setFullScreen(settings.get("fullscreen", "false") == "true");
+}
+
+Model* Tools::getGizmoAll() {
+	if (gizmoAll == nullptr) {
+		gizmoAll = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_all.fbx.tm");
+	}
+	return gizmoAll;
+}
+
+Model* Tools::getGizmoTranslation() {
+	if (gizmoTranslation == nullptr) {
+		gizmoTranslation = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_translate.fbx.tm");
+	}
+	return gizmoTranslation;
+}
+
+Model* Tools::getGizmoScale() {
+	if (gizmoScale == nullptr) {
+		gizmoScale = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_scale.fbx.tm");
+	}
+	return gizmoScale;
+}
+
+Model* Tools::getGizmoRotations() {
+	if (gizmoRotations == nullptr) {
+		gizmoRotations = ModelReader::read("resources/engine/tools/shared/models", "tdme_gizmo_rotate.fbx.tm");
+	}
+	return gizmoRotations;
+}
+
+Model* Tools::getDefaultObb() {
+	if (defaultOBB == nullptr) {
+		OrientedBoundingBox obb(
+			Vector3(),
+			OrientedBoundingBox::AABB_AXIS_X,
+			OrientedBoundingBox::AABB_AXIS_Y,
+			OrientedBoundingBox::AABB_AXIS_Z,
+			Vector3(0.5f, 0.5f, 0.5f)
+		);
+		defaultOBB = PrimitiveModel::createModel(&obb, "tdme.obb.default");
+	}
+	return defaultOBB;
+
 }

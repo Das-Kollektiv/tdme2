@@ -4,6 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -21,8 +23,10 @@
 
 using std::string;
 
+using tdme::engine::Camera;
 using tdme::engine::Entity;
 using tdme::engine::Engine;
+using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -65,13 +69,40 @@ private:
 	float distanceShaderDistance { 50.0f };
 	RenderPass renderPass { RENDERPASS_OBJECTS };
 	bool enableEarlyZRejection { false };
+	bool disableDepthTest { false };
+	int64_t frameTransformationsLast { -1LL };
+	int64_t timeTransformationsLast { -1LL };
 
 	/**
-	 * Compute skinning
+	 * Compute animations
 	 * @param context context
 	 */
-	inline void computeSkinning(void* context) {
-		if (hasSkinning == true) computeTransformations(context);
+	inline void computeTransformations(void* context) {
+		if (hasSkinning == true || hasAnimations == true) {
+			auto timing = engine->getTiming();
+			auto currentFrameAtTime = timing->getCurrentFrameAtTime();
+			auto currentFrame = timing->getFrame();
+			auto distanceFromCamera = getTranslation().clone().sub(engine->getCamera()->getLookFrom()).computeLengthSquared();
+			if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
+				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
+			} else
+			if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
+				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
+			}
+			computeTransformations(context, timeTransformationsLast, currentFrameAtTime);
+			frameTransformationsLast = timing->getFrame();
+			timeTransformationsLast = currentFrameAtTime;
+		}
+	}
+
+	/**
+	 * Compute transformations
+	 * @param context context
+	 * @param lastFrameAtTime time of last animation computation
+	 * @param currentFrameAtTime time of current animation computation
+	 */
+	inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime) override {
+		Object3DInternal::computeTransformations(context, lastFrameAtTime, currentFrameAtTime);
 	}
 
 	/**
@@ -86,19 +117,16 @@ private:
 		}
 	}
 
-	/**
-	 * Set parent entity, needs to be called before adding to engine
-	 * @param entity entity
-	 */
-	inline void setParentEntity(Entity* entity) {
+	// overridden methods
+	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
 	}
-
-	/**
-	 * @return parent entity
-	 */
-	inline Entity* getParentEntity() {
+	inline Entity* getParentEntity() override {
 		return parentEntity;
+	}
+	inline void applyParentTransformations(const Transformations& parentTransformations) override {
+		Transformations::applyParentTransformations(parentTransformations);
+		updateBoundingBox();
 	}
 
 public:
@@ -175,6 +203,14 @@ public:
 		return Object3DInternal::getTransformationsMatrix(id);
 	}
 
+	inline void setTransformationsMatrix(const string& id, const Matrix4x4& matrix) override {
+		return Object3DInternal::setTransformationsMatrix(id, matrix);
+	}
+
+	inline void unsetTransformationsMatrix(const string& id) override {
+		Object3DInternal::unsetTransformationsMatrix(id);
+	}
+
 	inline const Vector3& getTranslation() const override {
 		return Transformations::getTranslation();
 	}
@@ -241,14 +277,6 @@ public:
 
 	inline const Transformations& getTransformations() const override {
 		return *this;
-	}
-
-	/**
-	 * Compute transformations
-	 * @param context context
-	 */
-	inline void computeTransformations(void* context) {
-		Object3DInternal::computeTransformations(context, engine->getTiming());
 	}
 
 	/**
@@ -324,6 +352,21 @@ public:
 	 */
 	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
 		this->enableEarlyZRejection = enableEarlyZRejection;
+	}
+
+	/**
+	 * @return if depth test is disabled
+	 */
+	inline bool isDisableDepthTest() const {
+		return disableDepthTest;
+	}
+
+	/**
+	 * Set disable depth test
+	 * @param disableDepthTest disable depth test
+	 */
+	inline void setDisableDepthTest(bool disableDepthTest) {
+		this->disableDepthTest = disableDepthTest;
 	}
 
 };

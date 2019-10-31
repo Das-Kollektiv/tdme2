@@ -21,7 +21,7 @@ using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParserException;
-using tdme::ext::tinyxml::TiXmlElement;
+using tinyxml::TiXmlElement;
 using tdme::os::filesystem::FileSystemException;
 
 /** 

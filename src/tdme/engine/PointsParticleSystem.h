@@ -45,19 +45,16 @@ private:
 	bool frustumCulling { true };
 	Entity* parentEntity { nullptr };
 
-	/**
-	 * Set parent entity, needs to be called before adding to engine
-	 * @param entity entity
-	 */
-	inline void setParentEntity(Entity* entity) {
+	// overridden methods
+	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
 	}
-
-	/**
-	 * @return parent entity
-	 */
-	inline Entity* getParentEntity() {
+	inline Entity* getParentEntity() override {
 		return parentEntity;
+	}
+	inline void applyParentTransformations(const Transformations& parentTransformations) override {
+		Transformations::applyParentTransformations(parentTransformations);
+		updateInternal();
 	}
 
 public:

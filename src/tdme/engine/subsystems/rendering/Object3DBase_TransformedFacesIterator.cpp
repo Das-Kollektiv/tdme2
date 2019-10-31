@@ -44,6 +44,7 @@ void Object3DBase_TransformedFacesIterator::reset()
 		matrix.set(*object3DGroup->groupTransformationsMatrix);
 	}
 	matrix.multiply(object3DBase->getTransformationsMatrix());
+	group = object3DGroup->group;
 }
 
 Object3DBase_TransformedFacesIterator* Object3DBase_TransformedFacesIterator::iterator() {
@@ -51,12 +52,7 @@ Object3DBase_TransformedFacesIterator* Object3DBase_TransformedFacesIterator::it
 	return this;
 }
 
-bool Object3DBase_TransformedFacesIterator::hasNext()
-{
-	return faceIdxTotal < faceCount;
-}
-
-array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
+const array<Vector3, 3>& Object3DBase_TransformedFacesIterator::next()
 {
 	auto object3DGroup = object3DBase->object3dGroups[object3DGroupIdx];
 	auto& facesEntities = object3DGroup->group->getFacesEntities();
@@ -69,6 +65,8 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[0]], vertices[0]);
 	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[1]], vertices[1]);
 	matrix.multiply((*groupVerticesTransformed)[faceVertexIndices[2]], vertices[2]);
+	// set up current group
+	group = object3DGroup->group;
 	// increment to next face
 	faceIdxTotal++;
 	faceIdx++;
@@ -91,6 +89,6 @@ array<Vector3, 3>* Object3DBase_TransformedFacesIterator::next()
 		}
 	}
 	//
-	return &vertices;
+	return vertices;
 }
 

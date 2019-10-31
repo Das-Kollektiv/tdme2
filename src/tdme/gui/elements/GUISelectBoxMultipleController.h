@@ -34,11 +34,11 @@ class tdme::gui::elements::GUISelectBoxMultipleController final
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	static constexpr char VALUE_DELIMITER { L'|' };
-	vector<GUINode*> childControllerNodes {  };
-	vector<GUISelectBoxMultipleOptionController*> selectBoxMultipleOptionControllers {  };
-	bool disabled {  };
-	MutableString value {  };
+	static constexpr char VALUE_DELIMITER { '|' };
+	vector<GUINode*> childControllerNodes;
+	vector<GUISelectBoxMultipleOptionController*> selectBoxMultipleOptionControllers;
+	bool disabled;
+	MutableString value;
 
 public:
 	bool isDisabled() override;

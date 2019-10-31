@@ -74,9 +74,9 @@ private:
 	GUINode_Flow* flow;
 
 protected:
-	GUIScreenNode* screenNode {  };
-	GUIParentNode* parentNode {  };
-	string id {  };
+	GUIScreenNode* screenNode { nullptr };
+	GUIParentNode* parentNode { nullptr };
+	string id;
 	GUINode_Alignments alignments;
 	GUINode_RequestedConstraints requestedConstraints;
 	GUINode_ComputedConstraints computedConstraints;
@@ -90,9 +90,9 @@ protected:
 	GUINode_Border border;
 	GUINodeConditions showOn;
 	GUINodeConditions hideOn;
-	GUINodeController* controller {  };
-	bool conditionsMet {  };
-	bool layouted {  };
+	GUINodeController* controller { nullptr };
+	bool conditionsMet;
+	bool layouted;
 
 	/** 
 	 * @return node type

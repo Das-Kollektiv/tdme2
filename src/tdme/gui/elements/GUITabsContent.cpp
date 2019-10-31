@@ -19,7 +19,7 @@ using tdme::os::filesystem::FileSystemInterface;
 
 GUITabsContent::GUITabsContent()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs-content.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs-content.xml");
 }
 
 string GUITabsContent::NAME = "tabs-content";
@@ -31,7 +31,7 @@ const string& GUITabsContent::getName()
 
 const string& GUITabsContent::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUITabsContent::getAttributes(GUIScreenNode* screenNode)

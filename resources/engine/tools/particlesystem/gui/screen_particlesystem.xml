@@ -707,6 +707,14 @@
 								<tab id="tab_properties_boundingvolume_21" text="21" />
 								<tab id="tab_properties_boundingvolume_22" text="22" />
 								<tab id="tab_properties_boundingvolume_23" text="23" />
+								<tab id="tab_properties_boundingvolume_24" text="24" />
+								<tab id="tab_properties_boundingvolume_25" text="25" />
+								<tab id="tab_properties_boundingvolume_26" text="26" />
+								<tab id="tab_properties_boundingvolume_27" text="27" />
+								<tab id="tab_properties_boundingvolume_28" text="28" />
+								<tab id="tab_properties_boundingvolume_29" text="29" />
+								<tab id="tab_properties_boundingvolume_30" text="30" />
+								<tab id="tab_properties_boundingvolume_31" text="31" />
 							</tabs-header>
 							<tabs-content>
 								<tab-content tab-id="tab_properties_boundingvolume_0">
@@ -780,6 +788,30 @@
 								</tab-content>
 								<tab-content tab-id="tab_properties_boundingvolume_23">
 									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="23" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_24">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="24" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_25">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="25" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_26">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="26" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_27">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="27" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_28">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="28" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_29">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="29" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_30">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="30" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_31">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="31" />
 								</tab-content>
 							</tabs-content>
 						</tabs>	
@@ -857,6 +889,22 @@
 								<tab id="tab_properties_sound_13" text="14" />
 								<tab id="tab_properties_sound_14" text="15" />
 								<tab id="tab_properties_sound_15" text="16" />						
+								<tab id="tab_properties_sound_16" text="17" />
+								<tab id="tab_properties_sound_17" text="18" />
+								<tab id="tab_properties_sound_18" text="19" />
+								<tab id="tab_properties_sound_19" text="20" />
+								<tab id="tab_properties_sound_20" text="21" />
+								<tab id="tab_properties_sound_21" text="22" />
+								<tab id="tab_properties_sound_22" text="23" />
+								<tab id="tab_properties_sound_23" text="24" />
+								<tab id="tab_properties_sound_24" text="25" />
+								<tab id="tab_properties_sound_25" text="26" />
+								<tab id="tab_properties_sound_26" text="27" />
+								<tab id="tab_properties_sound_27" text="28" />
+								<tab id="tab_properties_sound_28" text="29" />
+								<tab id="tab_properties_sound_29" text="30" />
+								<tab id="tab_properties_sound_30" text="31" />
+								<tab id="tab_properties_sound_31" text="32" />
 							</tabs-header>
 							<tabs-content>
 								<tab-content tab-id="tab_properties_sound_0">
@@ -909,6 +957,51 @@
 								</tab-content>
 								<tab-content tab-id="tab_properties_sound_16">
 									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="16" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_17">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="17" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_18">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="18" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_19">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="19" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_20">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="20" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_21">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="21" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_22">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="22" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_23">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="23" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_24">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="24" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_25">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="25" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_26">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="26" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_27">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="27" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_28">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="28" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_29">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="29" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_30">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="30" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_sound_31">
+									<template src="resources/engine/tools/shared/gui/template_sound.xml" sound-id="31" />
 								</tab-content>
 							</tabs-content>
 						</tabs>

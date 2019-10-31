@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -8,10 +7,11 @@
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
-using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
+using tdme::gui::events::GUIInputEventHandler;
+using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 
 /** 
  * Camera Rotation View
@@ -22,24 +22,25 @@ class tdme::tools::shared::views::CameraRotationInputHandler
 	: public virtual GUIInputEventHandler
 {
 private:
-	Engine* engine {  };
-	bool mouseDragging {  };
-	bool keyLeft {  };
-	bool keyRight {  };
-	bool keyUp {  };
-	bool keyDown {  };
-	bool keyPeriod {  };
-	bool keyComma {  };
-	bool keyPlus {  };
-	bool keyMinus {  };
-	bool keyR {  };
-	int32_t mouseLastX {  };
-	int32_t mouseLastY {  };
-	float maxAxisDimension {  };
-	Transformations lookFromRotations {  };
-	float scale {  };
-	bool resetRequested {  };
+	Engine* engine { nullptr };
+	bool mouseDragging;
+	bool keyLeft;
+	bool keyRight;
+	bool keyUp;
+	bool keyDown;
+	bool keyPeriod;
+	bool keyComma;
+	bool keyPlus;
+	bool keyMinus;
+	bool keyR;
+	int32_t mouseLastX;
+	int32_t mouseLastY;
+	float maxAxisDimension;
+	Transformations lookFromRotations;
+	float scale;
+	bool resetRequested;
 	BoundingBox boundingBoxTransformed;
+	CameraRotationInputHandlerEventHandler* eventHandler;
 
 public:
 
@@ -78,8 +79,10 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param engine engine
+	 * @param eventHandler event handler
 	 */
-	CameraRotationInputHandler(Engine* engine);
+	CameraRotationInputHandler(Engine* engine, CameraRotationInputHandlerEventHandler* eventHandler = nullptr);
 
 	/**
 	 * Destructor

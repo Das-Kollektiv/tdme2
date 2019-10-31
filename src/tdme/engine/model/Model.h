@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -100,6 +101,14 @@ public:
 	}
 
 	/** 
+	 * Set up vector
+	 * @param up vector
+	 */
+	inline void setUpVector(UpVector* upVector) {
+		this->upVector = upVector;
+	}
+
+	/**
 	 * @return up vector
 	 */
 	inline UpVector* getUpVector() {
@@ -212,14 +221,25 @@ public:
 	 * @return if model has animations
 	 */
 	inline bool hasAnimations() {
-		return animationSetups.size() > 0;
+		return
+			animationSetups.size() == 0 ||
+			(getAnimationSetup(ANIMATIONSETUP_DEFAULT) != nullptr &&
+			getAnimationSetup(ANIMATIONSETUP_DEFAULT)->getFrames() > 0);
 	}
 
 	/** 
 	 * @return import transformations matrix like converting Z-UP to Y-UP
 	 */
-	inline Matrix4x4& getImportTransformationsMatrix() {
+	inline const Matrix4x4& getImportTransformationsMatrix() {
 		return importTransformationsMatrix;
+	}
+
+	/**
+	 * Set import transformations matrix
+	 * @param importTransformationsMatrix import transformations matrix like converting Z-UP to Y-UP
+	 */
+	void setImportTransformationsMatrix(const Matrix4x4& importTransformationsMatrix) {
+		this->importTransformationsMatrix = importTransformationsMatrix;
 	}
 
 	/**
@@ -263,4 +283,5 @@ public:
 	 * Deconstructor
 	 */
 	~Model();
+
 };

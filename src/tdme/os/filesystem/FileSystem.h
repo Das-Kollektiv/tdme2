@@ -12,6 +12,7 @@ using tdme::os::filesystem::FileSystemInterface;
 class tdme::os::filesystem::FileSystem
 {
 private:
+	static FileSystemInterface* standardFileSystem;
 	static FileSystemInterface* fileSystem;
 
 public:
@@ -19,11 +20,17 @@ public:
 	/** 
 	 * Singleton instance to retrieve file system
 	 * will use standard file system by default if not set up different explicitly
-	 * @return
+	 * @return file system
 	 */
 	static FileSystemInterface* getInstance();
 
-	/** 
+	/**
+	 * Retrieve standard file system
+	 * @return standard file system
+	 */
+	static FileSystemInterface* getStandardFileSystem();
+
+	/**
 	 * Set up file system
 	 * @param fileSystem file system
 	 */

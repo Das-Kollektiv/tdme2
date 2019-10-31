@@ -29,14 +29,11 @@ TextureManager::~TextureManager() {
 	}
 }
 
-int32_t TextureManager::addTexture(Texture* texture)
+TextureManager_TextureManaged* TextureManager::addTexture(const string& id)
 {
-	// use default content here
-	auto context = renderer->getDefaultContext();
-
 	// check if we already manage this texture
 	mutex.lock();
-	auto textureManagedIt = textures.find(texture->getId());
+	auto textureManagedIt = textures.find(id);
 	if (textureManagedIt != textures.end()) {
 		//
 		auto textureManaged = textureManagedIt->second;
@@ -44,25 +41,36 @@ int32_t TextureManager::addTexture(Texture* texture)
 		auto textureId = textureManaged->getRendererId();
 		mutex.unlock();
 		// yep, return renderer texture id
-		return textureId;
+		return textureManaged;
 	}
 	// create texture
 	auto textureId = renderer->createTexture();
 	// create managed texture
-	auto textureManaged = new TextureManager_TextureManaged(texture->getId(), textureId);
+	auto textureManaged = new TextureManager_TextureManaged(id, textureId);
 	// add it to our textures
 	textureManaged->incrementReferenceCounter();
-	textures[texture->getId()] = textureManaged;
+	textures[id] = textureManaged;
 	//
 	mutex.unlock();
+	//
+	return textureManaged;
+}
+
+int32_t TextureManager::addTexture(Texture* texture)
+{
+	auto textureManaged = addTexture(texture->getId());
+	auto rendererId = textureManaged->getRendererId();
+	auto context = renderer->getDefaultContext();
+
 	// bind texture
-	renderer->bindTexture(context, textureId);
+	renderer->bindTexture(context, rendererId);
 	// upload texture
 	renderer->uploadTexture(context, texture);
 	// unbind texture
 	renderer->bindTexture(context, renderer->ID_NONE);
+
 	// return renderer id
-	return textureId;
+	return rendererId;
 }
 
 void TextureManager::removeTexture(const string& textureId)

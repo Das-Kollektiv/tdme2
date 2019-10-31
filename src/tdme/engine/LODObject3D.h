@@ -34,7 +34,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
-/** 
+/**
  * LOD object 3D to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
@@ -62,20 +62,20 @@ private:
 	LODLevelType levelTypeLOD3;
 
 	string id;
-	Object3D* objectLOD1 {  };
-	Object3D* objectLOD2 {  };
-	Object3D* objectLOD3 {  };
-	Object3D* objectLOD {  };
-	int levelLOD {  };
-	bool enabled {  };
-	bool pickable {  };
-	bool dynamicShadowing {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	Color4 effectColorMulLOD2 {  };
-	Color4 effectColorAddLOD2 {  };
-	Color4 effectColorMulLOD3 {  };
-	Color4 effectColorAddLOD3 {  };
+	Object3D* objectLOD1 { nullptr };
+	Object3D* objectLOD2 { nullptr };
+	Object3D* objectLOD3 { nullptr };
+	Object3D* objectLOD { nullptr };
+	int levelLOD;
+	bool enabled;
+	bool pickable;
+	bool dynamicShadowing;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	Color4 effectColorMulLOD2;
+	Color4 effectColorAddLOD2;
+	Color4 effectColorMulLOD3;
+	Color4 effectColorAddLOD3;
 	string shaderId { "default" };
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
@@ -85,15 +85,24 @@ private:
 	 * Set parent entity, needs to be called before adding to engine
 	 * @param entity entity
 	 */
-	inline void setParentEntity(Entity* entity) {
+	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
 	}
 
 	/**
 	 * @return parent entity
 	 */
-	inline Entity* getParentEntity() {
+	inline Entity* getParentEntity() override {
 		return parentEntity;
+	}
+
+	// overridden methods
+	inline void applyParentTransformations(const Transformations& parentTransformations) override {
+		Transformations::applyParentTransformations(parentTransformations);
+		// delegate to LOD objects
+		if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
+		if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
+		if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
 	}
 
 public:

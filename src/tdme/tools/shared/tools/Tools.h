@@ -37,6 +37,11 @@ class tdme::tools::shared::tools::Tools final
 private:
 	static Engine* osEngine;
 	static float oseScale;
+	static Model* gizmoAll;
+	static Model* gizmoTranslation;
+	static Model* gizmoScale;
+	static Model* gizmoRotations;
+	static Model* defaultOBB;
 
 public:
 
@@ -163,7 +168,7 @@ public:
 	 * @param camScale scale
 	 * @param lodLevel lod level
 	 */
-	static void setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel = 1);
+	static void setupEntity(LevelEditorEntity* entity, Engine* engine, const Transformations& lookFromRotations, float camScale, int lodLevel, Vector3& objectScale);
 
 	/** 
 	 * Get relative resources file name
@@ -199,4 +204,30 @@ public:
 	 * @param application application
 	 */
 	static void loadSettings(Application* application);
+
+	/**
+	 * @return GIZMO translation/scale
+	 */
+	static Model* getGizmoAll();
+
+	/**
+	 * @return GIZMO for translation
+	 */
+	static Model* getGizmoTranslation();
+
+	/**
+	 * @return GIZMO for scale
+	 */
+	static Model* getGizmoScale();
+
+	/**
+	 * @return GIZMO for rotations
+	 */
+	static Model* getGizmoRotations();
+
+	/**
+	 * @return default obb
+	 */
+	static Model* getDefaultObb();
+
 };

@@ -26,6 +26,13 @@ LinesObject3D::LinesObject3D(const string& id, float lineWidth, const vector<Vec
 {
 }
 
+void LinesObject3D::setEngine(Engine* engine) {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
+	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
+	LinesObject3DInternal::setEngine(engine);
+}
+
 void LinesObject3D::fromTransformations(const Transformations& transformations)
 {
 	LinesObject3DInternal::fromTransformations(transformations);
@@ -77,7 +84,7 @@ void LinesObject3D::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void LinesObject3D::dispose()

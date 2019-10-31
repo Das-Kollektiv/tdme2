@@ -37,10 +37,10 @@ private:
 	static string CONDITION_UNSELECTED;
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	bool selected {  };
-	bool disabled {  };
+	bool selected;
+	bool disabled;
 	static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
-	MutableString value {  };
+	MutableString value;
 
 	/** 
 	 * @return is checked

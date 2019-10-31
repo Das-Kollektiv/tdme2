@@ -17,12 +17,10 @@ using tdme::gui::nodes::GUILayoutNode_Alignment;
  */
 class tdme::gui::nodes::GUILayoutNode_Alignment final: public Enum
 {
-	friend class GUILayoutNode;
-
-public: /* package */
-	static GUILayoutNode_Alignment *VERTICAL;
-	static GUILayoutNode_Alignment *HORIZONTAL;
-	static GUILayoutNode_Alignment *NONE;
+public:
+	static GUILayoutNode_Alignment* VERTICAL;
+	static GUILayoutNode_Alignment* HORIZONTAL;
+	static GUILayoutNode_Alignment* NONE;
 	GUILayoutNode_Alignment(const string& name, int ordinal);
 	static GUILayoutNode_Alignment* valueOf(const string& a0);
 };

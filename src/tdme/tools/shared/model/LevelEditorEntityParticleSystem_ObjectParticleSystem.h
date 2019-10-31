@@ -27,28 +27,28 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem
+class tdme::tools::shared::model::LevelEditorEntityParticleSystem_ObjectParticleSystem final
 {
 private:
-	Vector3 scale {  };
-	int32_t maxCount {  };
-	bool autoEmit {  };
-	Model* model {  };
-	string modelFileName {  };
+	Vector3 scale;
+	int32_t maxCount;
+	bool autoEmit;
+	Model* model { nullptr };
+	string modelFileName;
 
 public:
 
 	/** 
 	 * @return scale
 	 */
-	inline virtual Vector3& getScale() {
+	inline Vector3& getScale() {
 		return scale;
 	}
 
 	/** 
 	 * @return max count
 	 */
-	inline virtual int32_t getMaxCount() {
+	inline int32_t getMaxCount() {
 		return maxCount;
 	}
 
@@ -56,14 +56,14 @@ public:
 	 * Set max count
 	 * @param maxCount max count
 	 */
-	inline virtual void setMaxCount(int32_t maxCount) {
+	inline void setMaxCount(int32_t maxCount) {
 		this->maxCount = maxCount;
 	}
 
 	/** 
 	 * @return is auto emit
 	 */
-	inline virtual bool isAutoEmit() {
+	inline bool isAutoEmit() {
 		return autoEmit;
 	}
 
@@ -71,21 +71,21 @@ public:
 	 * Set auto emit 
 	 * @param autoEmit autoEmit
 	 */
-	inline virtual void setAutoEmit(bool autoEmit) {
+	inline void setAutoEmit(bool autoEmit) {
 		this->autoEmit = autoEmit;
 	}
 
 	/** 
 	 * @return model
 	 */
-	inline virtual Model* getModel() {
+	inline Model* getModel() {
 		return model;
 	}
 
 	/** 
 	 * @return model file
 	 */
-	inline virtual const string& getModelFile() {
+	inline const string& getModelFile() {
 		return modelFileName;
 	}
 
@@ -93,7 +93,7 @@ public:
 	 * Set model file
 	 * @param modelFileName model file name
 	 */
-	virtual void setModelFile(const string& modelFileName) /* throws(Exception) */;
+	void setModelFile(const string& modelFileName) /* throws(Exception) */;
 
 	/**
 	 * Public constructor
@@ -109,6 +109,6 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~LevelEditorEntityParticleSystem_ObjectParticleSystem();
+	~LevelEditorEntityParticleSystem_ObjectParticleSystem();
 
 };

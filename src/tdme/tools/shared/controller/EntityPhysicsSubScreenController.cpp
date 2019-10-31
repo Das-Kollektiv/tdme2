@@ -34,10 +34,11 @@
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/tools/shared/views/PopUps.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/Integer.h>
+#include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::string;
 using std::to_string;
@@ -75,16 +76,19 @@ using tdme::tools::shared::model::LevelEditorEntityPhysics_BodyType;
 using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::PopUps;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::Integer;
+using tdme::utils::MutableString;
+using tdme::utils::StringUtils;
 
 EntityPhysicsSubScreenController::EntityPhysicsSubScreenController(PopUps* popUps, FileDialogPath* modelPath, bool isModelBoundingVolumes)
 {
 	this->modelPath = modelPath;
 	this->view = new EntityPhysicsView(this, popUps);
 	this->isModelBoundingVolumes = isModelBoundingVolumes;
+	this->boundingVolumeTabActivated = false;
+	this->boundingVolumeIdxActivated = 0;
 }
 
 EntityPhysicsSubScreenController::~EntityPhysicsSubScreenController() {
@@ -203,26 +207,18 @@ void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(LevelEditorE
 	}
 }
 
-void EntityPhysicsSubScreenController::setupBoundingVolumeTypes(int32_t idx, const vector<string>& boundingVolumeTypes)
+void EntityPhysicsSubScreenController::setupBoundingVolumeTypes(int32_t idx)
 {
 	auto boundingVolumeTypeDropDownInnerNode = dynamic_cast< GUIParentNode* >((boundingVolumeTypeDropDown[idx]->getScreenNode()->getNodeById(boundingVolumeTypeDropDown[idx]->getId() + "_inner")));
 	auto bvIdx = 0;
 	string boundingVolumeTypeDropDownSubNodesXML = "";
-	boundingVolumeTypeDropDownSubNodesXML =
-		boundingVolumeTypeDropDownSubNodesXML +
-		"<scrollarea-vertical width=\"100%\" height=\"80\">";
-	for (auto& bvType : boundingVolumeTypes) {
-		boundingVolumeTypeDropDownSubNodesXML =
-			boundingVolumeTypeDropDownSubNodesXML +
-			"<dropdown-option text=\"" +
-			GUIParser::escapeQuotes(bvType) +
-			"\" value=\"" +
-			to_string(bvIdx++) +
-			"\" />\n";
-	}
-	boundingVolumeTypeDropDownSubNodesXML =
-		boundingVolumeTypeDropDownSubNodesXML +
-		"</scrollarea-vertical>";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<scrollarea-vertical width=\"100%\" height=\"80\">";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<dropdown-option text=\"" + GUIParser::escapeQuotes("None") + "\" value=\"" + to_string(0) + "\" />\n";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<dropdown-option text=\"" + GUIParser::escapeQuotes("Sphere") + "\" value=\"" + to_string(1) + "\" />\n";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<dropdown-option text=\"" + GUIParser::escapeQuotes("Capsule") + "\" value=\"" + to_string(2) + "\" />\n";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<dropdown-option text=\"" + GUIParser::escapeQuotes("Oriented Bounding Box") + "\" value=\"" + to_string(4) + "\" />\n";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "<dropdown-option text=\"" + GUIParser::escapeQuotes("Convex Mesh") + "\" value=\"" + to_string(5) + "\" />\n";
+	boundingVolumeTypeDropDownSubNodesXML = boundingVolumeTypeDropDownSubNodesXML + "</scrollarea-vertical>";
 	try {
 		boundingVolumeTypeDropDownInnerNode->replaceSubNodes(boundingVolumeTypeDropDownSubNodesXML, true);
 	} catch (Exception& exception) {
@@ -251,10 +247,12 @@ void EntityPhysicsSubScreenController::selectBoundingVolume(int32_t idx, EntityP
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("2"));
 			boundingVolume[idx]->getActiveConditions().add("capsule");
 		} else
+		/*
 		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::BOUNDINGBOX) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("3"));
 			boundingVolume[idx]->getActiveConditions().add("aabb");
 		} else
+		*/
 		if (v == EntityPhysicsSubScreenController_BoundingVolumeType::ORIENTEDBOUNDINGBOX) {
 			boundingVolumeTypeDropDown[idx]->getController()->setValue(MutableString("4"));
 			boundingVolume[idx]->getActiveConditions().add("obb");
@@ -354,6 +352,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeSphereApply(LevelEditorEn
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorEntity* entity, int32_t idx)
@@ -369,6 +368,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeCapsuleApply(LevelEditorE
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(LevelEditorEntity* entity, int32_t idx)
@@ -383,6 +383,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeAabbApply(LevelEditorEnti
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(LevelEditorEntity* entity, int32_t idx)
@@ -409,6 +410,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeObbApply(LevelEditorEntit
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEditorEntity* entity, int32_t idx)
@@ -418,6 +420,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshApply(LevelEdit
 		idx,
 		boundingvolumeConvexMeshFile[idx]->getController()->getValue().getString()
 	);
+	view->updateGizmo(entity);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeConvexMeshFile(LevelEditorEntity* entity, int32_t idx)
@@ -585,6 +588,7 @@ void EntityPhysicsSubScreenController::unsetPhysics() {
 
 void EntityPhysicsSubScreenController::setPhysics(LevelEditorEntity* entity) {
 	auto physics = entity->getPhysics();
+	if (physics == nullptr) return;
 	if (physics->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
 		bodyTypeDropdown->getController()->setValue(MutableString("collisionbody"));
 	} else
@@ -763,8 +767,30 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 			} else
 			if (node->getId() == "physics_body_apply") {
 				onPhysicsBodyApply(entity);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_properties_boundingvolume_") == true) {
+				boundingVolumeIdxActivated = Integer::parseInt(StringUtils::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->startEditingBoundingVolume(entity);
+			} else
+			if (node->getId() == "tab_properties_boundingvolume") {
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				if (boundingVolumeIdxActivated != EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(entity);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_properties_convexmeshes") == true) {
+				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->endEditingBoundingVolume(entity);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_properties_terrain") == true) {
+				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+				view->endEditingBoundingVolume(entity);
+			} else
+			if (StringUtils::startsWith(node->getId(), "tab_") == true) {
+				view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+				view->endEditingBoundingVolume(entity);
 			}
 		}
 	}
-
 }

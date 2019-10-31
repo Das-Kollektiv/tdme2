@@ -53,9 +53,8 @@ private:
 	 * @return transformed vector
 	 */
 	inline static Vector3 transformVector3(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& vector) {
-		// TODO: take bounding volume scale into account
 		//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
-		auto vectorTransformed = boundingVolume->collisionShapeTransform * vector;
+		auto vectorTransformed = boundingVolume->collisionShapeTransform * boundingVolume->collisionShapeLocalTransform * (vector * toRP3DVector3(boundingVolume->scale));
 		return Vector3(vectorTransformed.x, vectorTransformed.y, vectorTransformed.z);
 	}
 
@@ -66,9 +65,9 @@ private:
 	 * @return transformed vector
 	 */
 	inline static Vector3 transformVector3Normal(BoundingVolume* boundingVolume, const reactphysics3d::Vector3& normal) {
-		// TODO: take bounding volume scale into account
 		//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
-		auto normalTransformed = boundingVolume->collisionShapeTransform.getOrientation() * normal;
+		auto normalTransformed = boundingVolume->collisionShapeTransform.getOrientation() * boundingVolume->collisionShapeLocalTransform.getOrientation() * (normal * toRP3DVector3(boundingVolume->scale));
+		normalTransformed.normalize();
 		return Vector3(normalTransformed.x, normalTransformed.y, normalTransformed.z);
 	}
 

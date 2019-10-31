@@ -10,6 +10,7 @@
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/controller/ScreenController.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -25,6 +26,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::leveleditor::views::TriggerView;
 using tdme::tools::shared::controller::EntityBaseSubScreenController;
+using tdme::tools::shared::controller::EntityPhysicsSubScreenController;
+using tdme::tools::shared::controller::FileDialogPath;
 using tdme::utils::MutableString;
 
 /** 
@@ -37,20 +40,22 @@ class tdme::tools::leveleditor::controller::TriggerScreenController final
 	, public GUIActionListener
 	, public GUIChangeListener
 {
-	friend class TriggerScreenController_TriggerScreenController_1;
-
 private:
 	static MutableString TEXT_EMPTY;
-	EntityBaseSubScreenController* entityBaseSubScreenController {  };
-	TriggerView* view {  };
-	GUIScreenNode* screenNode {  };
-	GUITextNode* screenCaption {  };
-	GUIElementNode* triggerWidth {  };
-	GUIElementNode* triggerHeight {  };
-	GUIElementNode* triggerDepth {  };
-	GUIElementNode* triggerApply {  };
+	EntityBaseSubScreenController* entityBaseSubScreenController { nullptr };
+	EntityPhysicsSubScreenController* entityPhysicsSubScreenController { nullptr };
+	TriggerView* view { nullptr };
+	FileDialogPath* modelPath { nullptr };
+	GUIScreenNode* screenNode { nullptr };
+	GUITextNode* screenCaption { nullptr };
 
 public:
+	/**
+	 * @return entity physics sub screen controller
+	 */
+	EntityPhysicsSubScreenController* getEntityPhysicsSubScreenController();
+
+	// overriden methods
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
@@ -86,27 +91,9 @@ public:
 	void unsetEntityProperties();
 
 	/** 
-	 * Set trigger tab
-	 * @param width width
-	 * @param height height
-	 * @param depth depth
-	 */
-	void setTrigger(float width, float height, float depth);
-
-	/** 
-	 * Unset trigger tab
-	 */
-	void unsetTrigger();
-
-	/** 
 	 * On quit
 	 */
 	void onQuit();
-
-	/** 
-	 * On trigger apply
-	 */
-	void onTriggerApply();
 
 	/** 
 	 * Shows the error pop up

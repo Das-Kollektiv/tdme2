@@ -83,14 +83,14 @@ void FogParticleSystem::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
+	engine->registerEntity(this);
 }
 
 void FogParticleSystem::setAutoEmit(bool autoEmit) {
 	// delegate to base class
 	FogParticleSystemInternal::setAutoEmit(autoEmit);
 	// delegate change to engine
-	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
+	engine->registerEntity(this);
 }
 
 void FogParticleSystem::dispose()
@@ -100,6 +100,9 @@ void FogParticleSystem::dispose()
 
 void FogParticleSystem::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
+	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	FogParticleSystemInternal::setEngine(engine);
 }
 

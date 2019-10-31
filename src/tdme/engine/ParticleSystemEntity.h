@@ -17,7 +17,6 @@ using tdme::engine::Entity;
  */
 struct tdme::engine::ParticleSystemEntity: public Entity
 {
-
 	/**
 	 * Public destructor
 	 */

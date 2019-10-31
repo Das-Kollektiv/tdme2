@@ -8,6 +8,7 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
+#include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
@@ -19,6 +20,7 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
+using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorLevel;
@@ -244,7 +246,7 @@ public:
 	 */
 	static Entity* createEntity(LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
 
-	/** 
+	/**
 	 * Add level to engine
 	 * @param engine engine
 	 * @param level level
@@ -253,8 +255,9 @@ public:
 	 * @param pickable pickable
 	 * @param enable enable
 	 * @param translation translation
+	 * @param progressCallback progress callback
 	 */
-	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, bool addTrigger, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Create rigid body
@@ -277,14 +280,15 @@ public:
 	 */
 	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0);
 
-	/** 
+	/**
 	 * Add level to physics world
 	 * @param world world
 	 * @param level level
 	 * @param enable enable
 	 * @param translation translation
+	 * @param progressCallback progress callback
 	 */
-	static void addLevel(World* world, LevelEditorLevel* level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f));
+	static void addLevel(World* world, LevelEditorLevel* level, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/** 
 	 * Disable level in engine

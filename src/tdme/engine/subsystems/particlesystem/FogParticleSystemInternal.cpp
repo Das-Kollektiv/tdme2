@@ -56,6 +56,7 @@ FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleE
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
 	this->pointSize = pointSize;
+	this->pointSizeScale = 1.0f;
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
 	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
@@ -214,7 +215,7 @@ void FogParticleSystemInternal::setDynamicShadowingEnabled(bool dynamicShadowing
 }
 
 float FogParticleSystemInternal::getPointSize() {
-	return pointSize;
+	return pointSize * pointSizeScale;
 }
 
 int32_t FogParticleSystemInternal::getTextureId() {
@@ -224,19 +225,13 @@ int32_t FogParticleSystemInternal::getTextureId() {
 void FogParticleSystemInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateInternal();
 }
 
 void FogParticleSystemInternal::update()
 {
 	Transformations::update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateInternal();
 }
 
 void FogParticleSystemInternal::updateParticles()
@@ -302,7 +297,6 @@ void FogParticleSystemInternal::dispose()
 
 int32_t FogParticleSystemInternal::emitParticles()
 {
-
 	return 0;
 }
 

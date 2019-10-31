@@ -27,17 +27,18 @@ class tdme::engine::subsystems::particlesystem::SphereParticleEmitter final
 	: public ParticleEmitter
 {
 private:
-	int32_t count {  };
-	int64_t lifeTime {  };
-	int64_t lifeTimeRnd {  };
-	float mass {  };
-	float massRnd {  };
-	Sphere* sphere {  };
-	Sphere* sphereTransformed {  };
-	Vector3 velocity {  };
-	Vector3 velocityRnd {  };
-	Color4 colorStart {  };
-	Color4 colorEnd {  };
+	int32_t count;
+	int64_t lifeTime;
+	int64_t lifeTimeRnd;
+	float mass;
+	float massRnd;
+	Sphere* sphere { nullptr };
+	Sphere* sphereTransformed { nullptr };
+	Vector3 scale;
+	Vector3 velocity;
+	Vector3 velocityRnd;
+	Color4 colorStart;
+	Color4 colorEnd;
 
 public:
 	// override methods

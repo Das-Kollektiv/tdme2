@@ -61,6 +61,17 @@ protected:
 	vector<Color4> colors;
 
 	vector<int32_t>* vboIds;
+
+	/**
+	 * Update bounding volume
+	 */
+	inline void updateBoundingBox() {
+		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
+		boundingBoxTransformed.getMax().add(0.05f); // same here
+		boundingBoxTransformed.update();
+	}
+
 public:
 	/**
 	 * @return id

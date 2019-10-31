@@ -15,7 +15,7 @@ string GUIInput::NAME = "input";
 
 GUIInput::GUIInput()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "input.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "input.xml");
 }
 
 const string& GUIInput::getName()
@@ -25,7 +25,7 @@ const string& GUIInput::getName()
 
 const string& GUIInput::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIInput::getAttributes(GUIScreenNode* screenNode)
@@ -34,11 +34,7 @@ map<string, string>& GUIInput::getAttributes(GUIScreenNode* screenNode)
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "auto";
 	attributes["height"] = "auto";
-	attributes["text"] = "";
 	attributes["maxlength"] = "0";
-	attributes["on-mouse-click"] = "";
-	attributes["on-mouse-doubleclick"] = "";
-	attributes["on-change"] = "";
 	return attributes;
 }
 

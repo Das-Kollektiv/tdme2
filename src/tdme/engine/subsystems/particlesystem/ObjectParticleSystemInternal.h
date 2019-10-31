@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -12,10 +13,13 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
+#include <tdme/utils/fwd-tdme.h>
 
 using std::vector;
 using std::string;
@@ -33,6 +37,8 @@ using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::math::Matrix4x4;
+using tdme::math::Vector3;
 
 /** 
  * Particle system which displays objects as particles
@@ -44,24 +50,41 @@ class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
 	, public virtual ParticleSystemEntityInternal
 {
 protected:
-	Engine* engine {  };
-	Renderer* renderer {  };
-	string id {  };
-	bool enabled {  };
-	Model* model {  };
-	bool autoEmit {  };
-	bool enableDynamicShadows {  };
-	vector<Particle> particles {  };
-	vector<Object3D*> objects {  };
-	vector<Object3D*> enabledObjects {  };
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Transformations inverseTransformation {  };
-	ParticleEmitter* emitter {  };
-	bool pickable {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	float particlesToSpawnRemainder {  };
+	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
+	string id;
+	bool enabled;
+	Model* model { nullptr };
+	Vector3 objectScale;
+	bool autoEmit;
+	bool enableDynamicShadows;
+	vector<Particle> particles;
+	vector<Object3D*> objects;
+	vector<Object3D*> enabledObjects;
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Transformations inverseTransformation;
+	ParticleEmitter* emitter { nullptr };
+	bool pickable;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	float particlesToSpawnRemainder;
+
+	/**
+	 * Update internal
+	 */
+	inline void updateInternal() {
+		Vector3 scale;
+		getTransformationsMatrix().getScale(scale);
+		scale.scale(objectScale);
+		for (auto object: objects) {
+			object->setScale(scale);
+			object->update();
+		}
+		emitter->fromTransformations(*this);
+		inverseTransformation.fromTransformations(*this);
+		inverseTransformation.invert();
+	}
 
 public:
 	const string& getId() override;

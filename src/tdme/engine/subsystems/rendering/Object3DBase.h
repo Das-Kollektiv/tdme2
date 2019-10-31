@@ -43,7 +43,7 @@ class tdme::engine::subsystems::rendering::Object3DBase
 	friend class ModelUtilitiesInternal;
 
 private:
-	Object3DBase_TransformedFacesIterator* transformedFacesIterator {  };
+	Object3DBase_TransformedFacesIterator* transformedFacesIterator { nullptr };
 
 	/**
 	 * Determine skinned group count
@@ -69,8 +69,10 @@ private:
 
 protected:
 	Model* model;
+	map<string, Matrix4x4*> overridenTransformationsMatrices;
 	vector<map<string, Matrix4x4*>> transformationsMatrices;
 	bool hasSkinning;
+	bool hasAnimations;
 	vector<map<string, Matrix4x4*>> skinningGroupsMatrices;
 	vector<Group*> skinningGroups;
 	vector<AnimationState> baseAnimations;
@@ -78,8 +80,7 @@ protected:
 	map<string, AnimationState*> overlayAnimationsById;
 	map<string, AnimationState*> overlayAnimationsByJointId;
 	vector<Object3DGroup*> object3dGroups;
-	bool recreateBuffers;
-	bool usesMeshManager;
+	bool usesManagers;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
 
 	/**
@@ -104,9 +105,10 @@ protected:
 	 * @param baseAnimation base animation
 	 * @param transformationsMatrices transformations matrices
 	 * @param context context
-	 * @param timing timing
+	 * @param lastFrameAtTime time of last animation computation
+	 * @param currentFrameAtTime time of current animation computation
 	 */
-	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, Timing* timing);
+	virtual void computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
 	 * Update skinning transformations matrices
@@ -124,10 +126,10 @@ protected:
 	/**
 	 * Public constructor
 	 * @param model model
-	 * @param useMeshManager use mesh manager
+	 * @param useManagers use mesh and object 3d group renderer model manager
 	 * @param animationProcessingTarget animation processing target
 	 */
-	Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget);
+	Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget);
 
 	/**
 	 * Destructor
@@ -206,16 +208,30 @@ public:
 	/** 
 	 * Returns transformation matrix for given group
 	 * @param id group id
-	 * @return transformation matrix or null
+	 * @return transformation matrix or identity matrix if not found
 	 */
 	virtual const Matrix4x4 getTransformationsMatrix(const string& id);
 
 	/**
+	 * Set transformation matrix for given group
+	 * @param id group id
+	 * @param matrix transformation matrix
+	 */
+	virtual void setTransformationsMatrix(const string& id, const Matrix4x4& matrix);
+
+	/**
+	 * Unset transformation matrix for given group
+	 * @param id group id
+	 */
+	virtual void unsetTransformationsMatrix(const string& id);
+
+	/**
 	 * Pre render step, computes transformations
 	 * @param context context
-	 * @param timing timing
+	 * @param lastFrameAtTime time of last animation computation
+	 * @param currentFrameAtTime time of current animation computation
 	 */
-	virtual void computeTransformations(void* context, Timing* timing);
+	virtual void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
 	 * @return group count

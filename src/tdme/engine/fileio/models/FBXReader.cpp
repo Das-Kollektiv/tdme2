@@ -249,15 +249,13 @@ void FBXReader::setupModelImportRotationMatrix(Model* model) {
 		// no op
 	} else
 	if (model->getUpVector() == UpVector::Z_UP) {
-		model->getImportTransformationsMatrix().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
+		model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 	}
 }
 
 void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) {
 	FbxSystemUnit fbxSceneSystemUnit = fbxScene->GetGlobalSettings().GetSystemUnit();
-	model->getImportTransformationsMatrix().scale(
-		static_cast<float>(fbxSceneSystemUnit.GetConversionFactorTo(FbxSystemUnit::m))
-	);
+	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(static_cast<float>(fbxSceneSystemUnit.GetConversionFactorTo(FbxSystemUnit::m))));
 }
 
 void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pathName) {

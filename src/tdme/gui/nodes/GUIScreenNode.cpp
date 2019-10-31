@@ -78,7 +78,6 @@ GUIScreenNode::GUIScreenNode(
 	GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->sizeConstraints = sizeConstraints;
-	init();
 	this->gui = nullptr;
 	this->nodeCounter = 0;
 	this->screenWidth = 0;
@@ -88,6 +87,10 @@ GUIScreenNode::GUIScreenNode(
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
+	this->guiEffectOffsetX = 0;
+	this->guiEffectOffsetY = 0;
+	this->reshapeRequested = false;
+
 }
 
 GUIScreenNode::~GUIScreenNode() {
@@ -108,12 +111,6 @@ GUIScreenNode::~GUIScreenNode() {
 	for (auto effectToRemoveId: effectsToRemove) {
 		removeEffect(effectToRemoveId);
 	}
-}
-
-void GUIScreenNode::init()
-{
-	guiEffectOffsetX = 0;
-	guiEffectOffsetY = 0;
 }
 
 GUI* GUIScreenNode::getGUI()

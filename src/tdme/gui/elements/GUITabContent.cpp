@@ -23,7 +23,7 @@ string GUITabContent::NAME = "tab-content";
 
 GUITabContent::GUITabContent()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tab-content.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tab-content.xml");
 }
 
 const string& GUITabContent::getName()
@@ -33,7 +33,7 @@ const string& GUITabContent::getName()
 
 const string& GUITabContent::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUITabContent::getAttributes(GUIScreenNode* screenNode)

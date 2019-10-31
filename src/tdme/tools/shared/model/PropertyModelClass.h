@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -15,42 +14,57 @@ using std::string;
 class tdme::tools::shared::model::PropertyModelClass final
 {
 private:
-	string name {  };
-	string value {  };
+	string name;
+	string value;
 
 public:
-
 	/** 
 	 * @return name
 	 */
-	const string& getName();
+	inline const string& getName() {
+		return name;
+	}
 
 	/** 
 	 * Set up name 
 	 * @param name name
 	 */
-	void setName(const string& name);
+	inline void setName(const string& name) {
+		this->name = name;
+	}
 
 	/** 
 	 * @return value
 	 */
-	const string& getValue();
+	inline const string& getValue() {
+		return value;
+	}
 
 	/** 
 	 * Set up value
 	 * @param value value
 	 */
-	void setValue(const string& value);
+	inline void setValue(const string& value) {
+		this->value = value;
+	}
 
 	/** 
 	 * Clones this property model entity
 	 */
-	PropertyModelClass* clone();
+	inline PropertyModelClass* clone() {
+		return new PropertyModelClass(name, value);
+	}
 
 	/**
 	 * Constructor
 	 * @param name name
 	 * @param value value
 	 */
-	PropertyModelClass(const string& name, const string& value);
+	inline PropertyModelClass(const string& name, const string& value): name(name), value(value) {}
+
+	/**
+	 * Destructor
+	 */
+	~PropertyModelClass();
+
 };

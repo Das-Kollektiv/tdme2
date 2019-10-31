@@ -225,7 +225,6 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 {
 	// sphere properties
 	auto radius = sphere->getRadius();
-	auto& center = sphere->getCenter();
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
@@ -259,7 +258,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 					((Math::sin(Math::PI * ySegment / segmentsY) * Math::cos(Math::PI * 2 * xSegment / segmentsX))),
 					((Math::cos(Math::PI * ySegment / segmentsY))),
 					((Math::sin(Math::PI * ySegment / segmentsY) * Math::sin(Math::PI * 2 * xSegment / segmentsX))))
-				).scale(radius).add(center);
+				).scale(radius);
 			vertices.push_back(transformVector3(sphere, toRP3DVector3(vertex)));
 		}
 	// normals
@@ -333,7 +332,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	auto radius = capsule->getRadius();
 	auto& a = capsule->getA();
 	auto& b = capsule->getB();
-	auto center = a.clone().add(b).scale(0.5f);
+	auto& center = capsule->getCenter();
 	// rotation quaternion
 	Quaternion rotationQuaternion;
 	rotationQuaternion.identity();
@@ -349,6 +348,13 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	}
 	auto angle = Vector3::computeAngle(yAxis, abNormalized, yAxis);
 	rotationQuaternion.rotate(angle, rotationAxis);
+	Matrix4x4 rotationQuaternionMatrixInverted;
+	rotationQuaternion.computeMatrix(rotationQuaternionMatrixInverted);
+	rotationQuaternionMatrixInverted.invert();
+	auto aInverted = a.clone().sub(center);
+	auto bInverted = b.clone().sub(center);
+	rotationQuaternionMatrixInverted.multiply(aInverted, aInverted);
+	rotationQuaternionMatrixInverted.multiply(bInverted, bInverted);
 	// model
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
@@ -388,7 +394,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 			vertex
 		);
 		vertex.scale(radius);
-		vertex.add(b);
+		rotationQuaternionMatrixInverted.multiply(vertex, vertex);
+		vertex.add(bInverted);
 		vertices.push_back(transformVector3(capsule, toRP3DVector3(vertex)));
 	}
 	//	top half sphere
@@ -404,7 +411,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 			vertex
 		);
 		vertex.scale(radius);
-		vertex.add(a);
+		rotationQuaternionMatrixInverted.multiply(vertex, vertex);
+		vertex.add(aInverted);
 		vertices.push_back(transformVector3(capsule, toRP3DVector3(vertex)));
 	}
 	// normals
@@ -480,7 +488,7 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 {
 	// TODO: take bounding volume scale into account
 	//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
-	model->getImportTransformationsMatrix().scale(1.01f);
+	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(1.01f));
 	auto material = new Material("tdme.primitive.material");
 	material->setAmbientColor(
 		Color4(
@@ -523,16 +531,16 @@ Model* PrimitiveModel::createModel(BoundingBox* boundingVolume, const string& id
 
 Model* PrimitiveModel::createModel(BoundingVolume* boundingVolume, const string& id)
 {
-	if (dynamic_cast< OrientedBoundingBox* >(boundingVolume) != nullptr) {
+	if (dynamic_cast<OrientedBoundingBox*>(boundingVolume) != nullptr) {
 		return PrimitiveModel::createOrientedBoundingBoxModel(dynamic_cast< OrientedBoundingBox* >(boundingVolume), id);
 	} else
-	if (dynamic_cast< Sphere* >(boundingVolume) != nullptr) {
+	if (dynamic_cast<Sphere*>(boundingVolume) != nullptr) {
 		return PrimitiveModel::createSphereModel(dynamic_cast< Sphere* >(boundingVolume), id, SPHERE_SEGMENTS_X, SPHERE_SEGMENTS_Y);
 	} else
-	if (dynamic_cast< Capsule* >(boundingVolume) != nullptr) {
+	if (dynamic_cast<Capsule*>(boundingVolume) != nullptr) {
 		return PrimitiveModel::createCapsuleModel(dynamic_cast< Capsule* >(boundingVolume), id, CAPSULE_SEGMENTS_X, CAPSULE_SEGMENTS_Y);
 	} else
-	if (dynamic_cast< ConvexMesh* >(boundingVolume) != nullptr) {
+	if (dynamic_cast<ConvexMesh*>(boundingVolume) != nullptr) {
 		return PrimitiveModel::createConvexMeshModel(dynamic_cast< ConvexMesh* >(boundingVolume), id);
 	} else {
 		Console::println(string("PrimitiveModel::createModel(): unsupported bounding volume"));

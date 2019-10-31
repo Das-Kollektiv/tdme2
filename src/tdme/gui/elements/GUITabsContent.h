@@ -30,8 +30,8 @@ class tdme::gui::elements::GUITabsContent final
 
 private:
 	static string NAME;
-	map<string, string> attributes {  };
-	string template_ {  };
+	map<string, string> attributes;
+	string templateXML;
 
 public:
 	const string& getName() override;

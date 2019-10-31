@@ -42,6 +42,7 @@ using std::to_string;
 
 using tdme::engine::Camera;
 using tdme::engine::Entity;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
@@ -49,6 +50,7 @@ using tdme::engine::ParticleSystemEntity;
 using tdme::engine::Partition;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
+using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
@@ -90,6 +92,7 @@ class tdme::engine::Engine final
 	friend class EngineGL2Renderer;
 	friend class EngineGLES2Renderer;
 	friend class EngineVKRenderer;
+	friend class EntityHierarchy;
 	friend class FogParticleSystem;
 	friend class FrameBuffer;
 	friend class Object3D;
@@ -124,7 +127,7 @@ class tdme::engine::Engine final
 	friend class tdme::gui::renderer::GUIFont;
 
 public:
-	enum AnimationProcessingTarget {CPU, CPU_NORENDERING, GPU};
+	enum AnimationProcessingTarget {NONE, CPU, CPU_NORENDERING, GPU};
 	static constexpr int LIGHTS_MAX { 8 };
 
 protected:
@@ -158,10 +161,12 @@ private:
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
 	static float shadowMaplightEyeDistanceScale;
+	static float transformationsComputingReduction1Distance;
+	static float transformationsComputingReduction2Distance;
 
 
-	int32_t width;
-	int32_t height;
+	int32_t width { -1 };
+	int32_t height { -1 };
 	GUI* gui { nullptr };
 	Timing* timing { nullptr };
 	Camera* camera { nullptr };
@@ -178,16 +183,19 @@ private:
 
 	map<string, Entity*> entitiesById;
 	map<string, ParticleSystemEntity*> autoEmitParticleSystemEntities;
-	map<string, Entity*> noFrustumCullingEntities;
+	map<string, Entity*> noFrustumCullingEntitiesById;
 
 	vector<Object3D*> visibleObjects;
 	vector<Object3D*> visibleObjectsPostPostProcessing;
+	vector<Object3D*> visibleObjectsNoDepthTest;
 	vector<LODObject3D*> visibleLODObjects;
 	vector<ObjectParticleSystem*> visibleOpses;
 	vector<Entity*> visiblePpses;
 	vector<ParticleSystemGroup*> visiblePsgs;
 	vector<LinesObject3D*> visibleLinesObjects;
 	vector<Object3DRenderGroup*> visibleObjectRenderGroups;
+	vector<EntityHierarchy*> visibleObjectEntityHierarchies;
+	vector<Entity*> noFrustumCullingEntities;
 
 	vector<Object3D*> visibleEZRObjects;
 
@@ -336,6 +344,34 @@ private:
 	}
 
 	/**
+	 * Determine entity types
+	 * @param entities given entities to investigate
+	 * @param objects object
+	 * @param objectsPostPostProcessing objects that will be rendered after post processing
+	 * @param objectsNoDepthTest objects that will render without depth test
+	 * @param lodObjects LOD objects
+	 * @param opses object particle systems
+	 * @param ppses point particle systems
+	 * @param psgs particle system groups
+	 * @param linesObjects lines objects
+	 * @param objectRenderGroups object render groups
+	 * @param entityHierarchies entity hierarchies
+	 */
+	void determineEntityTypes(
+		const vector<Entity*>& entities,
+		vector<Object3D*>& objects,
+		vector<Object3D*>& objectsPostPostProcessing,
+		vector<Object3D*>& objectsNoDepthTest,
+		vector<LODObject3D*>& lodObjects,
+		vector<ObjectParticleSystem*>& opses,
+		vector<Entity*>& ppses,
+		vector<ParticleSystemGroup*>& psgs,
+		vector<LinesObject3D*>& linesObjects,
+		vector<Object3DRenderGroup*>& objectRenderGroups,
+		vector<EntityHierarchy*>& entityHierarchies
+	);
+
+	/**
 	 * Computes visibility and transformations
 	 * @param threadCount thread count
 	 * @param threadIdx thread idx
@@ -372,14 +408,14 @@ public:
 	 * @return texture manager
 	 */
 	inline static TextureManager* getTextureManager() {
-		return textureManager;
+		return Engine::textureManager;
 	}
 
 	/**
 	 * @return engine thread count
 	 */
 	inline static int getThreadCount() {
-		return threadCount;
+		return Engine::threadCount;
 	}
 
 	/**
@@ -394,7 +430,7 @@ public:
 	 * @return if having 4k
 	 */
 	inline static bool is4K() {
-		return have4K;
+		return Engine::have4K;
 	}
 
 	/**
@@ -439,14 +475,14 @@ public:
 	 * @return shadow map width
 	 */
 	inline static int32_t getShadowMapWidth() {
-		return shadowMapWidth;
+		return Engine::shadowMapWidth;
 	}
 
 	/**
 	 * @return shadow map width
 	 */
 	inline static int32_t getShadowMapHeight() {
-		return shadowMapHeight;
+		return Engine::shadowMapHeight;
 	}
 
 	/**
@@ -457,6 +493,36 @@ public:
 	inline static void setShadowMapSize(int32_t width, int32_t height) {
 		Engine::shadowMapWidth = width;
 		Engine::shadowMapHeight = height;
+	}
+
+	/**
+	 * @return distance of animated object including skinned objects from which animation computation will be computed only every second frame
+	 */
+	inline static float getTransformationsComputingReduction1Distance() {
+		return Engine::transformationsComputingReduction1Distance;
+	}
+
+	/**
+	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every second frame
+	 * @param skinningComputingReduction1Distance distance
+	 */
+	inline static void setTransformationsComputingReduction1Distance(float transformationsComputingReduction1Distance) {
+		Engine::transformationsComputingReduction1Distance = transformationsComputingReduction1Distance;
+	}
+
+	/**
+	 * @return distance of animated object including skinned objects from which animation computation will be computed only every forth frame
+	 */
+	inline static float getTransformationsComputingReduction2Distance() {
+		return Engine::transformationsComputingReduction2Distance;
+	}
+
+	/**
+	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every forth frame
+	 * @param skinningComputingReduction2Distance distance
+	 */
+	inline static void setTransformationsComputingReduction2Distance(float transformationsComputingReduction2Distance) {
+		Engine::transformationsComputingReduction2Distance = transformationsComputingReduction2Distance;
 	}
 
 	/**
@@ -649,9 +715,28 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
+	 * @param object3DGroup pointer to store group of Object3D to if appliable
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr);
+	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr) {
+		return
+			getEntityByMousePosition(
+				false,
+				mouseX,
+				mouseY,
+				visibleObjects,
+				visibleObjectsPostPostProcessing,
+				visibleObjectsNoDepthTest,
+				visibleLODObjects,
+				visibleOpses,
+				visiblePpses,
+				visiblePsgs,
+				visibleLinesObjects,
+				visibleObjectEntityHierarchies,
+				filter,
+				object3DGroup
+			);
+	}
 
 	/**
 	 * Retrieves entity by mouse position with contact point
@@ -659,9 +744,10 @@ public:
 	 * @param mouseY mouse y
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
+	 * @param object3DGroup pointer to store group of Object3D to if appliable
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr);
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
@@ -671,7 +757,26 @@ public:
 	 * @param filter filter
 	 * @return entity or nullptr
 	 */
-	Entity* doRayCasting(const Vector3& startPoint, const Vector3& endPoint, Vector3& contactPoint, EntityPickingFilter* filter = nullptr);
+	inline Entity* doRayCasting(
+		const Vector3& startPoint,
+		const Vector3& endPoint,
+		Vector3& contactPoint,
+		EntityPickingFilter* filter = nullptr
+	) {
+		return
+			doRayCasting(
+				false,
+				visibleObjects,
+				visibleObjectsPostPostProcessing,
+				visibleObjectsNoDepthTest,
+				visibleLODObjects,
+				visibleObjectEntityHierarchies,
+				startPoint,
+				endPoint,
+				contactPoint,
+				filter
+			);
+	}
 
 	/**
 	 * Retrieves object by mouse position
@@ -695,9 +800,8 @@ public:
 	void dispose();
 
 	/** 
-	 * Creates a PNG file from current screen
-	 * TODO:
-	 * this does not seem to work with GLES2 and offscreen engines
+	 * Creates a PNG file from current screen(
+	 * 	This does not seem to work with GLES2 and offscreen engines
 	 * @param pathName path name 
 	 * @param fileName file name
 	 * @return success
@@ -721,12 +825,79 @@ public:
 	~Engine();
 
 private:
+	/**
+	 * Retrieves entity by mouse position
+	 * @param forcePicking override picking to be always enabled
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param objects objects
+	 * @param objectsPostPostProcessing objects that will be rendered after post processing
+	 * @param objectsNoDepthTest objects that will render without depth test
+	 * @param lodObjects LOD objects
+	 * @param opses object particle systems
+	 * @param ppses point particle systems
+	 * @param psgs particle system groups
+	 * @param linesObjects lines objects
+	 * @param entityHierarchies entity hierarchies
+	 * @param filter filter
+	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @return entity or nullptr
+	 */
+	Entity* getEntityByMousePosition(
+		bool forcePicking,
+		int32_t mouseX,
+		int32_t mouseY,
+		const vector<Object3D*>& objects,
+		const vector<Object3D*>& objectsPostPostProcessing,
+		const vector<Object3D*>& objectsNoDepthTest,
+		const vector<LODObject3D*>& lodObjects,
+		const vector<ObjectParticleSystem*>& opses,
+		const vector<Entity*>& ppses,
+		const vector<ParticleSystemGroup*>& psgs,
+		const vector<LinesObject3D*>& linesObjects,
+		const vector<EntityHierarchy*>& entityHierarchies,
+		EntityPickingFilter* filter = nullptr,
+		Group** object3DGroup = nullptr
+	);
 
 	/**
-	 * Updates an entity regarding internal lists
+	 * Does a ray casting of visible 3d object based entities
+	 * @param forcePicking override picking to be always enabled
+	 * @param objects objects
+	 * @param objectsPostPostProcessing objects that will be rendered after post processing
+	 * @param objectsNoDepthTest objects that will render without depth test
+	 * @param lodObjects LOD objects
+	 * @param entityHierarchies entity hierarchies
+	 * @param startPoint start point
+	 * @param endPoint end point
+	 * @param contactPoint world coordinate of contact point
+	 * @param filter filter
+	 * @return entity or nullptr
+	 */
+	Entity* doRayCasting(
+		bool forcePicking,
+		const vector<Object3D*>& objects,
+		const vector<Object3D*>& objectsPostPostProcessing,
+		const vector<Object3D*>& objectsNoDepthTest,
+		const vector<LODObject3D*>& lodObjects,
+		const vector<EntityHierarchy*>& entityHierarchies,
+		const Vector3& startPoint,
+		const Vector3& endPoint,
+		Vector3& contactPoint,
+		EntityPickingFilter* filter = nullptr
+	);
+
+	/**
+	 * Removes a entity from internal lists, those entities can also be sub entities from entity hierarchy or particle system groups and such
 	 * @param entity entity
 	 */
-	void updateEntity(Entity* entity);
+	void deregisterEntity(Entity* entity);
+
+	/**
+	 * Adds a entity to internal lists, those entities can also be sub entities from entity hierarchy or particle system groups and such
+	 * @param entity entity
+	 */
+	void registerEntity(Entity* entity);
 
 	/**
 	 * Do post processing

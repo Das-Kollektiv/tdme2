@@ -23,7 +23,7 @@ string GUITab::NAME = "tab";
 
 GUITab::GUITab()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tab.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tab.xml");
 }
 
 const string& GUITab::getName()
@@ -33,15 +33,13 @@ const string& GUITab::getName()
 
 const string& GUITab::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUITab::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
-	attributes["on-mouse-click"] = "";
-	attributes["on-mouse-doubleclick"] = "";
 	return attributes;
 }
 

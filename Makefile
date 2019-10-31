@@ -10,7 +10,7 @@ SRCS_DEBUG =
 OFLAGS =
 EXTRAFLAGS =
 LDFLAGS =
-INCLUDES = -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/
+INCLUDES = -Isrc -Iext -I. -Iext/v-hacd/src/VHACD_Lib/inc/ -Iext/reactphysics3d/src/ -Iext/rapidjson/include
 
 # set platform specific flags
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -120,6 +120,7 @@ else ifeq ($(OS), Linux)
 			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 		else
 			# Linux, GL
+			#EXTRAFLAGS = -D_GLIBCXX_DEBUG
 			SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/engine/EngineGL2Renderer.cpp \
 				src/tdme/engine/EngineGL3Renderer.cpp \
@@ -132,7 +133,7 @@ else ifeq ($(OS), Linux)
 else
 	# Windows, VULKAN
 	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS = -DVULKAN 
+		EXTRAFLAGS = -DVULKAN
 		#-D_GLIBCXX_DEBUG
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -179,7 +180,6 @@ LIBS := $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
 
 SRC = src
 TINYXML = tinyxml
-JSONBOX = jsonbox
 ZLIB = zlib
 LIBPNG = libpng
 VORBIS = vorbis
@@ -205,6 +205,7 @@ SRCS = \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
 	src/tdme/engine/Engine.cpp \
+	src/tdme/engine/EntityHierarchy.cpp \
 	src/tdme/engine/FogParticleSystem.cpp \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
@@ -450,6 +451,7 @@ SRCS = \
 	src/tdme/tests/AudioTest.cpp \
 	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
+	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
@@ -527,6 +529,7 @@ SRCS = \
 	src/tdme/tools/shared/views/EntityPhysicsView.cpp \
 	src/tdme/tools/shared/views/EntityDisplayView.cpp \
 	src/tdme/tools/shared/views/EntitySoundsView.cpp \
+	src/tdme/tools/shared/views/Gizmo.cpp \
 	src/tdme/tools/shared/views/PopUps.cpp \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
@@ -555,17 +558,6 @@ EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinyxml.cpp \
 	ext/tinyxml/tinyxmlerror.cpp \
 	ext/tinyxml/tinyxmlparser.cpp \
-
-EXT_JSONBOX_SRCS = \
-	ext/jsonbox/Array.cpp \
-	ext/jsonbox/Convert.cpp \
-	ext/jsonbox/Escaper.cpp \
-	ext/jsonbox/IndentCanceller.cpp \
-	ext/jsonbox/Indenter.cpp \
-	ext/jsonbox/JsonException.cpp \
-	ext/jsonbox/Object.cpp \
-	ext/jsonbox/SolidusEscaper.cpp \
-	ext/jsonbox/Value.cpp \
 
 EXT_ZLIB_SRCS = \
 	ext/zlib/adler32.c \
@@ -769,6 +761,7 @@ MAIN_SRCS = \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
+	src/tdme/tests/EntityHierarchyTest-main.cpp \
 	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
@@ -790,6 +783,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 
@@ -799,7 +793,6 @@ OBJS_DEBUG = $(SRCS_DEBUG:$(SRC)/%.cpp=$(OBJ_DEBUG)/%.o)
 
 EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
-EXT_JSONBOX_OBJS = $(EXT_JSONBOX_SRCS:ext/$(JSONBOX)/%.cpp=$(OBJ)/%.o)
 EXT_ZLIB_OBJS = $(EXT_ZLIB_SRCS:ext/$(ZLIB)/%.c=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
 EXT_VORBIS_OBJS = $(EXT_VORBIS_SRCS:ext/$(VORBIS)/%.c=$(OBJ)/%.o)
@@ -844,9 +837,6 @@ $(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 	$(cpp-command)
 
-$(EXT_JSONBOX_OBJS):$(OBJ)/%.o: ext/$(JSONBOX)/%.cpp | print-opts
-	$(cpp-command)
-
 $(EXT_ZLIB_OBJS):$(OBJ)/%.o: ext/$(ZLIB)/%.c | print-opts
 	$(c-command)
 
@@ -882,7 +872,7 @@ $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | pr
 
 $(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_JSONBOX_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 

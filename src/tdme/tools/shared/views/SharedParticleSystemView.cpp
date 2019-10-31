@@ -95,6 +95,7 @@ SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps)
 	entitySoundsView = nullptr;
 	loadParticleSystemRequested = false;
 	initParticleSystemRequested = false;
+	updateParticleSystemRequested = false;
 	particleSystemFile = "";
 	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
 	entity = new LevelEditorEntity(
@@ -153,17 +154,8 @@ void SharedParticleSystemView::initParticleSystem()
 		return;
 
 	particleSystemFile = entity->getEntityFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale());
+	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
-	BoundingBox boundingBox;
-	if (entity->getModel() == nullptr) {
-		boundingBox.getMin().set(Vector3(-0.5f, 0.0f, -0.5f));
-		boundingBox.getMax().set(Vector3(0.5f, 3.0f, 0.5f));
-	} else {
-		boundingBox.fromBoundingVolume(entity->getModel()->getBoundingBox());
-	}
-	boundingBox.update();
-	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(&boundingBox));
 	updateGUIElements();
 }
 
@@ -181,7 +173,7 @@ void SharedParticleSystemView::loadFile(const string& pathName, const string& fi
 
 void SharedParticleSystemView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::export_(pathName, fileName, entity);
+	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
 }
 
 void SharedParticleSystemView::reloadFile()
@@ -191,6 +183,7 @@ void SharedParticleSystemView::reloadFile()
 
 void SharedParticleSystemView::handleInputEvents()
 {
+	entityPhysicsView->handleInputEvents(entity, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -222,6 +215,7 @@ void SharedParticleSystemView::display()
 		particleSystemEntity->updateParticles();
 	}
 	entityDisplayView->display(entity);
+	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }
@@ -262,7 +256,7 @@ void SharedParticleSystemView::loadSettings()
 	try {
 		Properties settings;
 		settings.load("settings", "particlesystem.properties");
-		entityDisplayView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
+		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
 		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
 		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get("particlesystem.path", "."));
@@ -324,7 +318,7 @@ void SharedParticleSystemView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put("display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? "true" : "false");
+		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("particlesystem.path", particleSystemScreenController->getParticleSystemPath()->getPath());
@@ -375,7 +369,7 @@ void SharedParticleSystemView::loadParticleSystem()
 LevelEditorEntity* SharedParticleSystemView::loadParticleSystem(const string& name, const string& description, const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tps") == true) {
-		auto levelEditorEntity = ModelMetaDataFileImport::doImport(LevelEditorEntity::ID_NONE, pathName, fileName);
+		auto levelEditorEntity = ModelMetaDataFileImport::doImport(pathName, fileName);
 		levelEditorEntity->setDefaultBoundingVolumes();
 		return levelEditorEntity;
 	}

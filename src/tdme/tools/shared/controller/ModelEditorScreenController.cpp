@@ -113,9 +113,9 @@ ModelEditorScreenController::ModelEditorScreenController(SharedModelEditorView* 
 	this->view = view;
 	auto const finalView = view;
 	this->entityBaseSubScreenController = new EntityBaseSubScreenController(view->getPopUpsViews(), new OnSetEntityDataAction(this, finalView));
-	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController();
 	this->entityPhysicsSubScreenController = new EntityPhysicsSubScreenController(view->getPopUpsViews(), modelPath, true);
 	this->entitySoundsSubScreenController = new EntitySoundsSubScreenController(view, view->getPopUpsViews(), audioPath);
+	this->entityDisplaySubScreenController = new EntityDisplaySubScreenController(this->entityPhysicsSubScreenController->getView());
 }
 
 ModelEditorScreenController::~ModelEditorScreenController() {

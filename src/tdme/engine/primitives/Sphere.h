@@ -17,7 +17,7 @@ class tdme::engine::primitives::Sphere final
 	: public BoundingVolume
 {
 private:
-	float radius {  };
+	float radius;
 
 public:
 	/** 

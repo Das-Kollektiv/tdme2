@@ -30,7 +30,7 @@ using tdme::engine::model::Model;
 using tdme::os::filesystem::FileSystemException;
 using tdme::tools::shared::model::LevelEditorLevel;
 
-using tdme::ext::tinyxml::TiXmlElement;
+using tinyxml::TiXmlElement;
 
 /** 
  * Collada DAE model reader

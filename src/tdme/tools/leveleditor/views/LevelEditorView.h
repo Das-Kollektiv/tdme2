@@ -17,6 +17,7 @@
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
+#include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 
@@ -31,6 +32,7 @@ using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityPickingFilter;
+using tdme::engine::Object3D;
 using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -41,7 +43,9 @@ using tdme::tools::leveleditor::views::LevelEditorView_ObjectColor;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
+using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::PopUps;
+using tdme::tools::shared::views::View;
 
 /** 
  * TDME Level Editor View
@@ -51,10 +55,8 @@ using tdme::tools::shared::views::PopUps;
 class tdme::tools::leveleditor::views::LevelEditorView final
 	: public View
 	, public GUIInputEventHandler
+	, protected Gizmo
 {
-	friend class LevelEditorView_ObjectColor;
-	friend class LevelEditorView_LevelEditorView_1;
-
 private:
 	static vector<string> OBJECTCOLOR_NAMES;
 	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
@@ -442,6 +444,11 @@ private:
 	 */
 	void pasteObjects(bool displayOnly);
 
+	/**
+	 * Update gizmo
+	 */
+	void updateGizmo();
+
 public:
 
 	/** 
@@ -480,4 +487,5 @@ public:
 	 * Destructor
 	 */
 	~LevelEditorView();
+
 };

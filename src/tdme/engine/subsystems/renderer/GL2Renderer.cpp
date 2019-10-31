@@ -464,6 +464,13 @@ void GL2Renderer::uploadTexture(void* context, Texture* texture)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
+	if (texture->isRepeat() == true) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	} else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
 }
 
 void GL2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -621,6 +628,10 @@ void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
 	Console::println(string("GL2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
 }
 
+void GL2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+	Console::println(string("GL2Renderer::bindOrigins()::not implemented yet"));
+}
+
 void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	Console::println(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
@@ -692,13 +703,10 @@ float GL2Renderer::readPixelDepth(int32_t x, int32_t y)
 
 ByteBuffer* GL2Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	/*
-	auto pixelBuffer = ByteBuffer::allocateDirect(width * height * Byte::SIZE* 4);
+	auto pixelBuffer = ByteBuffer::allocate(width * height * 4);
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(pixelBuffer));
+	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->getBuffer());
 	return pixelBuffer;
-	*/
-	return nullptr;
 }
 
 void GL2Renderer::initGuiMode()

@@ -56,11 +56,11 @@ using tdme::utils::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget)
+Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget)
 {
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
-	this->usesMeshManager = useMeshManager;
+	this->usesManagers = useManagers;
 	transformedFacesIterator = nullptr;
 	// skinning
 	hasSkinning = false;
@@ -73,6 +73,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 			createTransformationsMatrices(skinningGroupsMatrices[i], model->getSubGroups());
 		}
 	}
+	hasAnimations = model->hasAnimations();
 	//
 	baseAnimationIdx = 0;
 	// animation
@@ -84,7 +85,7 @@ Object3DBase::Object3DBase(Model* model, bool useMeshManager, Engine::AnimationP
 	computeTransformationsMatrices(model->getSubGroups(), model->getImportTransformationsMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0], transformationsMatrices[0], 0);
 	if (hasSkinning == true) updateSkinningTransformationsMatrices(transformationsMatrices[0]);
 	// object 3d groups
-	Object3DGroup::createGroups(this, useMeshManager, animationProcessingTarget, object3dGroups);
+	Object3DGroup::createGroups(this, useManagers, animationProcessingTarget, object3dGroups);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DGroup::computeTransformations(nullptr, object3dGroups);
 	// reset animation
@@ -109,6 +110,9 @@ Object3DBase::~Object3DBase() {
 		for (auto it: skinningGroupMatricies) {
 			delete it.second;
 		}
+	}
+	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+		delete overridenTransformationsMatrixIt.second;
 	}
 	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
 }
@@ -250,12 +254,36 @@ float Object3DBase::getOverlayAnimationTime(const string& id)
 
 const Matrix4x4 Object3DBase::getTransformationsMatrix(const string& id)
 {
-	auto transformationMatrixIt = transformationsMatrices[0].find(id);
-	if (transformationMatrixIt != transformationsMatrices[0].end()) {
-		return *transformationMatrixIt->second;
+	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
+	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+		return *overridenTransformationsMatrixIt->second;
+	} else {
+		auto transformationMatrixIt = transformationsMatrices[0].find(id);
+		if (transformationMatrixIt != transformationsMatrices[0].end()) {
+			return *transformationMatrixIt->second;
+		}
+		Console::println("Object3DBase::getTransformationsMatrix(): " + id + ": group not found");
 	}
-	Console::println("Object3DBase::getTransformationsMatrix(): " + id + ": group not found");
 	return Matrix4x4().identity();
+}
+
+void Object3DBase::setTransformationsMatrix(const string& id, const Matrix4x4& matrix)
+{
+	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
+	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+		*overridenTransformationsMatrixIt->second = matrix;
+	} else {
+		overridenTransformationsMatrices[id] = new Matrix4x4(matrix);
+	}
+}
+
+void Object3DBase::unsetTransformationsMatrix(const string& id)
+{
+	auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(id);
+	if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+		delete overridenTransformationsMatrixIt->second;
+		overridenTransformationsMatrices.erase(overridenTransformationsMatrixIt);
+	}
 }
 
 void Object3DBase::createTransformationsMatrices(map<string, Matrix4x4*>& matrices, const map<string, Group*>& groups)
@@ -332,8 +360,13 @@ inline void Object3DBase::computeTransformationsMatrices(const map<string, Group
 				transformationsMatrix.set(animationMatrices[matrixAtCurrent + groupAnimationState->setup->getStartFrame()]);
 			}
 		} else {
-			// no animation matrix, set up local transformation matrix up as group matrix
-			transformationsMatrix.set(group->getTransformationsMatrix());
+			auto overridenTransformationsMatrixIt = overridenTransformationsMatrices.find(group->getId());
+			if (overridenTransformationsMatrixIt != overridenTransformationsMatrices.end()) {
+				transformationsMatrix.set(*overridenTransformationsMatrixIt->second);
+			} else {
+				// no animation matrix, set up local transformation matrix up as group matrix
+				transformationsMatrix.set(group->getTransformationsMatrix());
+			}
 		}
 		// apply parent transformation matrix
 		transformationsMatrix.multiply(parentTransformationsMatrix);
@@ -362,13 +395,11 @@ inline void Object3DBase::updateSkinningTransformationsMatrices(const map<string
 	}
 }
 
-void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, Timing* timing)
+void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime)
 {
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
 		// animation timing
-		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
-		auto lastFrameAtTime = timing->getLastFrameAtTime();
 		// do progress of base animation
 		if (lastFrameAtTime != Timing::UNDEFINED && baseAnimation.lastAtTime != -1LL) {
 			baseAnimation.currentAtTime+= currentFrameAtTime - lastFrameAtTime;
@@ -408,18 +439,18 @@ void Object3DBase::computeTransformations(AnimationState& baseAnimation, map<str
 	}
 }
 
-void Object3DBase::computeTransformations(void* context, Timing* timing) {
+void Object3DBase::computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
 	// compute last animation matrices if required
 	auto baseAnimationIdxLast = transformationsMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
 	if (baseAnimationIdxLast != -1 &&
 		baseAnimations[baseAnimationIdxLast].lastAtTime != -1LL) {
-		computeTransformations(baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], context, timing);
+		computeTransformations(baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], context, lastFrameAtTime, currentFrameAtTime);
 	} else {
 		baseAnimationIdxLast = -1;
 	}
 
 	// compute current animation matrices
-	computeTransformations(baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], context, timing);
+	computeTransformations(baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], context, lastFrameAtTime, currentFrameAtTime);
 
 	// blend if required
 	if (transformationsMatrices.size() > 1) {
@@ -564,12 +595,13 @@ map<string, Matrix4x4*>* Object3DBase::getSkinningGroupsMatrices(Group* group)
 void Object3DBase::initialize()
 {
 	auto meshManager = Engine::getInstance()->getMeshManager();
+	//
 	// init mesh
 	for (auto i = 0; i < object3dGroups.size(); i++) {
 		auto object3DGroup = object3dGroups[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
 		if (object3DGroup->mesh == nullptr) {
-			if (usesMeshManager == true) {
+			if (usesManagers == true) {
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
 					object3DGroup->mesh = Object3DGroupMesh::createMesh(
@@ -604,13 +636,14 @@ void Object3DBase::dispose()
 		// dispose object3d group
 		object3DGroup->dispose();
 		// dispose mesh
-		if (usesMeshManager == true) {
+		if (usesManagers == true) {
 			meshManager->removeMesh(object3DGroup->id);
 		} else {
 			delete object3DGroup->mesh;
 		}
 		object3DGroup->mesh = nullptr;
 	}
+	//
 }
 
 const Matrix4x4& Object3DBase::getTransformationsMatrix() const

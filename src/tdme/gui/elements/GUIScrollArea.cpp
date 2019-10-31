@@ -17,7 +17,7 @@ string GUIScrollArea::NAME = "scrollarea";
 
 GUIScrollArea::GUIScrollArea()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea.xml");
 }
 
 const string& GUIScrollArea::getName()
@@ -27,7 +27,7 @@ const string& GUIScrollArea::getName()
 
 const string& GUIScrollArea::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
@@ -40,8 +40,6 @@ map<string, string>& GUIScrollArea::getAttributes(GUIScreenNode* screenNode)
 	attributes["vertical-align"] = "top";
 	attributes["alignment"] = "vertical";
 	attributes["background-color"] = "transparent";
-	attributes["show-on"] = "";
-	attributes["hide-on"] = "";
 	return attributes;
 }
 

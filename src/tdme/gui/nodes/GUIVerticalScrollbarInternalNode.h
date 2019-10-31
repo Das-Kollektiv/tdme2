@@ -34,9 +34,9 @@ class tdme::gui::nodes::GUIVerticalScrollbarInternalNode
 {
 
 private:
-	GUIColor barColorNone {  };
-	GUIColor barColorMouseOver {  };
-	GUIColor barColorDragging {  };
+	GUIColor barColorNone;
+	GUIColor barColorMouseOver;
+	GUIColor barColorDragging;
 
 protected:
 	const string getNodeType() override;

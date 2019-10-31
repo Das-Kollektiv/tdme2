@@ -22,13 +22,12 @@ class tdme::tools::shared::model::LevelEditorObject final
 	: public ModelProperties
 {
 private:
-	string id {  };
-	string description {  };
-	Transformations transformations {  };
-	LevelEditorEntity* entity {  };
+	string id;
+	string description;
+	Transformations transformations;
+	LevelEditorEntity* entity { nullptr };
 
 public:
-
 	/** 
 	 * @return id
 	 */
@@ -99,6 +98,6 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~LevelEditorObject();
+	~LevelEditorObject();
 
 };

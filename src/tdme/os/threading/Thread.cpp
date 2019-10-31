@@ -57,7 +57,7 @@ void Thread::join() {
 		thread->join();
 	#else
 		void* status;
-		int result = pthread_join(pThread, &status);
+		auto result = pthread_join(pThread, &status);
 		PTHREAD_CHECK_ERROR(name, "Could not join pthread", "pthread_join");
 	#endif
 }
@@ -80,7 +80,7 @@ void Thread::start() {
 		}
 
 		// create thread
-		int result = pthread_create(&pThread, &pThreadAttr, &pThreadRun, (void*)this);
+		auto result = pthread_create(&pThread, &pThreadAttr, &pThreadRun, (void*)this);
 		PTHREAD_CHECK_ERROR(name, "Could not create pthread", "pthread_create");
 	#endif
 }

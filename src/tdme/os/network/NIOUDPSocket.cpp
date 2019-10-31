@@ -59,7 +59,7 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 	ssize_t bytesRead = ::recvfrom(descriptor, BUF_CAST(buf), bytes, 0, (struct sockaddr *)sin, &sinLen);
 	if (bytesRead == -1) {
 		#if defined(_WIN32)
-			int wsaError = WSAGetLastError();
+			auto wsaError = WSAGetLastError();
 			if (wsaError == WSAEWOULDBLOCK ||
 				wsaError == WSAECONNRESET) {
 				return -1;
@@ -139,7 +139,7 @@ ssize_t NIOUDPSocket::write(const string& to, const unsigned int port, void* buf
 	// send successful?
 	if (bytesWritten == -1) {
 		#if defined(_WIN32)
-			int wsaError = WSAGetLastError();
+			auto wsaError = WSAGetLastError();
 			if (wsaError == WSAEWOULDBLOCK) {
 				return -1;
 			} else {

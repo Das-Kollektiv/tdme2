@@ -34,9 +34,9 @@ class tdme::gui::elements::GUISelectBoxController final
 private:
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	vector<GUINode*> childControllerNodes {  };
-	vector<GUISelectBoxOptionController*> selectBoxOptionControllers {  };
-	bool disabled {  };
+	vector<GUINode*> childControllerNodes;
+	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
+	bool disabled;
 	MutableString value;
 
 public:

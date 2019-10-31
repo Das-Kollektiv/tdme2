@@ -7,10 +7,11 @@
 - What is TDME2?
     - ThreeDeeMiniEngine2 is a lightweight C++11 based 3D engine including tools
     - TDME2 is open source
-      - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE) and the [licenses of used 3rd party libraries](https://github.com/andreasdr/tdme2/blob/master/ext)
+      - please check the [license](https://github.com/andreasdr/tdme2/blob/master/LICENSE)
       - you find the source code at [https://github.com/andreasdr/tdme2](https://github.com/andreasdr/tdme2) 
       - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
-      - you find developer documentation including collaboration graphs and private API as well as public API for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha) 
+      - you find developer documentation including collaboration graphs and private API as well as public API for current alpha build at [http://drewke.net/tdme2-documentation/alpha](http://drewke.net/tdme2-documentation/alpha)
+        - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
 
 - What is already working
     - 3d engine
@@ -32,6 +33,7 @@
                 - skinning via
                     - CPU on GL2, GL3+/CORE, GLES2
                     - GPU via compute shaders with GL4.3+/CORE, Vulkan
+                - both animations and skinning have some sort of configurable LOD functionality
                 - texture transformations/animations
                     - via texture matrices
             - objects with support for LOD
@@ -48,6 +50,7 @@
                 - ...
               - there is also support for particle system groups
             - lines based objects
+            - entity hierarchy objects
         - object/entity transformations
             - scaling
             - rotations
@@ -70,6 +73,7 @@
           - sky(no lighting + no depth fog + fragment depth at maximum)
           - basic water shader
         - shadow mapping
+        - early z rejection
         - post processing
           - depth blur
           - SSAO
@@ -174,11 +178,10 @@
     - documentation
 
 - What is WIP or planned
+	- Installer
 	- Water shader
-	- Improve renderering of point based particle systems
     - Improve on Vulkan
     - PBR lighting shader for GL3/CORE+
-    - simple script language for GUI
     - Expose shader and post processing programs setup API
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
@@ -204,18 +207,19 @@
             - Vulkan(optional)
             - GLFW3(optional, required for Vulkan)
         - included in TDME2 repository
-            - Vorbis/OGG
-            - JsonBox
-            - zlib
-            - libpng
-            - tinyxml
-            - ReactPhysics3D
             - FBXSDK
-            - V-HACD
-            - glslang
-            - OGLCompilersDLL
-            - spirv
+            - libpng
             - MoltenVK
+            - ReactPhysics3D
+            - RapidJSON
+            - tinyxml
+            - V-HACD
+            - Vorbis/OGG
+            - Vulkan
+              - glslang
+              - OGLCompilersDLL
+              - spirv
+            - zlib
     - targeted platforms and its current state
         - Windows/MINGW(port completed)
         - Windows/MSC(port completed)

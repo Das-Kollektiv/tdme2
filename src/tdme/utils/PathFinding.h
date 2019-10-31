@@ -38,6 +38,8 @@ class tdme::utils::PathFinding final
 public:
 	enum PathFindingStatus {PATH_STEP, PATH_FOUND, PATH_NOWAY};
 
+	static constexpr bool VERBOSE { false };
+
 	/**
 	 * Public constructor
 	 * @param world world

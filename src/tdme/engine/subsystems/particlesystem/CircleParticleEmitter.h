@@ -24,23 +24,24 @@ class tdme::engine::subsystems::particlesystem::CircleParticleEmitter final
 	: public ParticleEmitter
 {
 private:
-	int32_t count {  };
-	int64_t lifeTime {  };
-	int64_t lifeTimeRnd {  };
-	Vector3 axis0 {  };
-	Vector3 axis1 {  };
-	Vector3 center {  };
-	float radius {  };
+	int32_t count;
+	int64_t lifeTime;
+	int64_t lifeTimeRnd;
+	Vector3 axis0;
+	Vector3 axis1;
+	Vector3 center;
+	float radius;
 	Vector3 axis0Transformed;
 	Vector3 axis1Transformed;
 	Vector3 centerTransformed;
 	float radiusTransformed;
-	float mass {  };
-	float massRnd {  };
-	Vector3 velocity {  };
-	Vector3 velocityRnd {  };
-	Color4 colorStart {  };
-	Color4 colorEnd {  };
+	float mass;
+	float massRnd;
+	Vector3 scale;
+	Vector3 velocity;
+	Vector3 velocityRnd;
+	Color4 colorStart;
+	Color4 colorEnd;
 public:
 	// override methods
 	inline int32_t getCount() const override {

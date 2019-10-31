@@ -189,6 +189,7 @@ Texture* GUI::getImage(const string& fileName)
 		try {
 			image = TextureReader::read(path, file, false);
 			image->setUseMipMap(false);
+			image->setRepeat(false);
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getImage(): An error occurred: "));
 			Console::println(string(exception.what()));

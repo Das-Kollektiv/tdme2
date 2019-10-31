@@ -70,6 +70,7 @@ GL3Renderer::GL3Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
+	engineVAO = 0;
 }
 
 const string GL3Renderer::getShaderVersion()
@@ -383,14 +384,12 @@ void GL3Renderer::disableDepthBufferWriting()
 
 void GL3Renderer::disableDepthBufferTest()
 {
-	// glDisable(GL_DEPTH_TEST);
-	glDepthFunc(GL_ALWAYS); // TODO: something like this
+	glDisable(GL_DEPTH_TEST);
 }
 
 void GL3Renderer::enableDepthBufferTest()
 {
-	// glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL); // TODO: something like this
+	glEnable(GL_DEPTH_TEST);
 }
 
 void GL3Renderer::setDepthFunction(int32_t depthFunction)
@@ -469,6 +468,13 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
+	if (texture->isRepeat() == true) {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	} else {
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
 }
 
 void GL3Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
@@ -640,6 +646,12 @@ void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
 	glVertexAttribDivisor(11, 1);
 }
 
+void GL3Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(12);
+	glVertexAttribPointer(12, 3, GL_FLOAT, false, 0, 0LL);
+}
+
 void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
@@ -690,6 +702,7 @@ void GL3Renderer::unbindBufferObjects(void* context)
 	glDisableVertexAttribArray(9);
 	glDisableVertexAttribArray(10);
 	glDisableVertexAttribArray(11);
+	glDisableVertexAttribArray(12);
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID_NONE);
 }
@@ -720,13 +733,10 @@ float GL3Renderer::readPixelDepth(int32_t x, int32_t y)
 
 ByteBuffer* GL3Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
 {
-	/*
-	auto pixelBuffer = ByteBuffer::allocateDirect(width * height * Byte::SIZE* 4);
+	auto pixelBuffer = ByteBuffer::allocate(width * height * 4);
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, static_cast< Buffer* >(pixelBuffer));
+	glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->getBuffer());
 	return pixelBuffer;
-	*/
-	return nullptr;
 }
 
 void GL3Renderer::initGuiMode()

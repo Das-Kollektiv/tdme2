@@ -23,7 +23,7 @@ string GUICheckbox::NAME = "checkbox";
 
 GUICheckbox::GUICheckbox()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "checkbox.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "checkbox.xml");
 }
 
 const string& GUICheckbox::getName()
@@ -33,16 +33,13 @@ const string& GUICheckbox::getName()
 
 const string& GUICheckbox::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUICheckbox::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
-	attributes["on-mouse-click"] = "";
-	attributes["on-mouse-doubleclick"] = "";
-	attributes["on-change"] = "";
 	return attributes;
 }
 

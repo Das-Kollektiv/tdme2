@@ -58,13 +58,13 @@ Object3DGroup::~Object3DGroup()
 	delete renderer;
 }
 
-void Object3DGroup::createGroups(Object3DBase* object, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
 {
 	auto model = object->getModel();
-	createGroups(object, model->getSubGroups(), model->hasAnimations(), useMeshManager, animationProcessingTarget, object3DGroups);
+	createGroups(object, model->getSubGroups(), model->hasAnimations(), useManagers, animationProcessingTarget, object3DGroups);
 }
 
-void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group*>& groups, bool animated, bool useMeshManager, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
+void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group*>& groups, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<Object3DGroup*>& object3DGroups)
 {
 	for (auto it: groups) {
 		Group* group = it.second;
@@ -97,7 +97,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 			object3DGroup->group = group;
 			object3DGroup->animated = animated;
 			object3DGroup->renderer = new Object3DGroupRenderer(object3DGroup);
-			if (useMeshManager == true) {
+			if (useManagers == true) {
 				auto meshManager = Engine::getInstance()->getMeshManager();
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
@@ -144,7 +144,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 			object3DGroup->groupTransformationsMatrix = object3D->transformationsMatrices[0].find(group->getId())->second;
 		}
 		// but still check sub groups
-		createGroups(object3D, group->getSubGroups(), animated, useMeshManager, animationProcessingTarget, object3DGroups);
+		createGroups(object3D, group->getSubGroups(), animated, useManagers, animationProcessingTarget, object3DGroups);
 	}
 }
 

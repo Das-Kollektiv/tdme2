@@ -22,12 +22,12 @@ using tdme::engine::model::Color4;
 class tdme::tools::shared::model::LevelEditorEntityLODLevel final
 {
 private:
-	LODObject3D::LODLevelType type { LODObject3D::LODLEVELTYPE_NONE };
-	string fileName {  };
-	Model* model {  };
-	float minDistance { 0.0f };
-	Color4 colorMul {  };
-	Color4 colorAdd {  };
+	LODObject3D::LODLevelType type;
+	string fileName;
+	Model* model;
+	float minDistance;
+	Color4 colorMul;
+	Color4 colorAdd;
 public:
 	/**
 	 * Public constructor
@@ -51,67 +51,91 @@ public:
 	/**
 	 * @return type
 	 */
-	LODObject3D::LODLevelType getType() const;
+	inline LODObject3D::LODLevelType getType() const {
+		return type;
+	}
 
 	/**
 	 * Set type
 	 * @param type type
 	 */
-	void setType(LODObject3D::LODLevelType type);
+	inline void setType(LODObject3D::LODLevelType type) {
+		this->type = type;
+	}
 
 	/**
 	 * @return file name
 	 */
-	const string& getFileName();
+	inline const string& getFileName() {
+		return fileName;
+	}
 
 	/**
 	 * Set file name
 	 * @param fileName file name
 	 */
-	void setFileName(const string& fileName);
+	inline void setFileName(const string& fileName) {
+		this->fileName = fileName;
+	}
 
 	/**
 	 * @return model
 	 */
-	Model* getModel();
+	inline Model* getModel() {
+		return model;
+	}
 
 	/**
 	 * Set model
 	 * @param model model
 	 */
-	void setModel(Model* model);
+	inline void setModel(Model* model) {
+		this->model = model;
+	}
 
 	/**
 	 * @return min distance
 	 */
-	float getMinDistance() const;
+	inline float getMinDistance() const {
+		return minDistance;
+	}
 
 	/**
 	 * Set min distance
 	 * @param minDistance min distance
 	 */
-	void setMinDistance(float minDistance);
+	inline void setMinDistance(float minDistance) {
+		this->minDistance = minDistance;
+	}
 
 	/**
 	 * @return color add
 	 */
-	const Color4& getColorAdd() const;
+	inline const Color4& getColorAdd() const {
+		return colorAdd;
+	}
 
 	/**
 	 * Set color add
 	 * @param colorAdd color add
 	 */
-	void setColorAdd(const Color4& colorAdd);
+	inline void setColorAdd(const Color4& colorAdd) {
+		this->colorAdd = colorAdd;
+	}
 
 	/**
 	 * @return color mul
 	 */
-	const Color4& getColorMul() const;
+	inline const Color4& getColorMul() const {
+		return colorMul;
+	}
 
 	/**
 	 * Set color mul
 	 * @param colorMul color mul
 	 */
-	void setColorMul(const Color4& colorMul);
+	inline void setColorMul(const Color4& colorMul) {
+		this->colorMul = colorMul;
+	}
 
 };

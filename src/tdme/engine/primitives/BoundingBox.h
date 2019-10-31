@@ -39,9 +39,9 @@ private:
 	static const array<int32_t, 3> FACE10_INDICES;
 	static const array<int32_t, 3> FACE11_INDICES;
 	static const array<array<int32_t,3>,12> facesVerticesIndexes;
-	Vector3 min {  };
-	Vector3 max {  };
-	vector<Vector3> vertices {  };
+	Vector3 min;
+	Vector3 max;
+	vector<Vector3> vertices;
 	Vector3 center;
 	Vector3 dimensions;
 

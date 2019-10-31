@@ -62,28 +62,28 @@ class tdme::gui::nodes::GUIScreenNode final
 
 private:
 	GUI* gui {  };
-	int32_t nodeCounter {  };
-	int32_t screenWidth {  };
-	int32_t screenHeight {  };
-	map<string, GUINode*> nodesById {  };
-	map<string, GUINode*> tickNodesById {  };
-	vector<GUINode*> floatingNodes {  };
-	vector<GUIActionListener*> actionListener {  };
-	vector<GUIChangeListener*> changeListener {  };
-	vector<GUIMouseOverListener*> mouseOverListener {  };
-	vector<GUIFocusListener*> focusListener {  };
-	GUIInputEventHandler* inputEventHandler {  };
-	vector<GUINode*> childControllerNodes {  };
-	GUIScreenNode_SizeConstraints sizeConstraints {  };
+	int32_t nodeCounter;
+	int32_t screenWidth;
+	int32_t screenHeight;
+	map<string, GUINode*> nodesById;
+	map<string, GUINode*> tickNodesById;
+	vector<GUINode*> floatingNodes;
+	vector<GUIActionListener*> actionListener;
+	vector<GUIChangeListener*> changeListener;
+	vector<GUIMouseOverListener*> mouseOverListener;
+	vector<GUIFocusListener*> focusListener;
+	GUIInputEventHandler* inputEventHandler;
+	vector<GUINode*> childControllerNodes;
+	GUIScreenNode_SizeConstraints sizeConstraints;
 
-	bool visible {  };
-	bool popUp {  };
+	bool visible;
+	bool popUp;
 
-	map<string, GUIEffect*> effects {  };
-	int32_t guiEffectOffsetX {  };
-	int32_t guiEffectOffsetY {  };
+	map<string, GUIEffect*> effects;
+	int32_t guiEffectOffsetX;
+	int32_t guiEffectOffsetY;
 
-	bool reshapeRequested { false };
+	bool reshapeRequested;
 
 public:
 
@@ -442,12 +442,6 @@ public:
 	 * @return success
 	 */
 	bool removeEffect(const string& id);
-
-private:
-	/**
-	 * Initializes this screen
-	 */
-	void init();
 
 public:
 	/**

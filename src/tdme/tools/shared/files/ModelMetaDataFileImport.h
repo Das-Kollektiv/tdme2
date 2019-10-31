@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -9,8 +8,9 @@
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
-#include <ext/jsonbox/Value.h>
-#include <ext/jsonbox/JsonException.h>
+#include <tdme/tools/shared/model/LevelEditorEntity.h>
+
+#include <rapidjson/document.h>
 
 using std::string;
 
@@ -20,8 +20,8 @@ using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorEntityLODLevel;
 using tdme::os::filesystem::FileSystemException;
-using tdme::ext::jsonbox::Value;
-using tdme::ext::jsonbox::JsonException;
+
+using rapidjson::Value;
 
 /** 
  * TDME Model meta data file import
@@ -33,11 +33,22 @@ class tdme::tools::shared::files::ModelMetaDataFileImport final
 public:
 	/** 
 	 * Imports a model meta data file from file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @return level editor entity
+	 */
+	inline static LevelEditorEntity* doImport(const string& pathName, const string& fileName) {
+		return doImport(LevelEditorEntity::ID_NONE, pathName, fileName);
+	}
+
+	/**
+	 * Imports a model meta data file from file
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
@@ -49,7 +60,6 @@ public:
 	 * @param pathName path name or null
 	 * @param jEntityRoot JSON entity root
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
@@ -72,7 +82,6 @@ private:
 	 * @param pathName path name
 	 * @param jBv JSON bounding volume node
 	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::ext::jsonbox::JsonException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity bounding volume
 	 */

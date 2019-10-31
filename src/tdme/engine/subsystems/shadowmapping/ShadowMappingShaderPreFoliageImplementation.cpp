@@ -10,7 +10,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
 bool ShadowMappingShaderPreFoliageImplementation::isSupported(Renderer* renderer) {
-	return renderer->isGeometryShaderAvailable();
+	return true;
 }
 
 ShadowMappingShaderPreFoliageImplementation::ShadowMappingShaderPreFoliageImplementation(Renderer* renderer): ShadowMappingShaderPreBaseImplementation(renderer)
@@ -30,32 +30,28 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"pre_vertexshader.c",
-		"#define HAVE_GEOMETRY_SHADER\n\n"
+		"#define HAVE_FOLIAGE\n\n",
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/shadowmapping",
+			"pre_computevertex.inc.c"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions",
+			"create_rotation_matrix.inc.c"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions",
+			"create_translation_matrix.inc.c"
+		) +
+		"\n\n" +
+		FileSystem::getInstance()->getContentAsString(
+			"shader/" + shaderVersion + "/functions",
+			"create_foliage_transform_matrix.inc.c"
+		)
 	);
 	if (vertexShaderId == 0) return;
-	if (renderer->isGeometryShaderAvailable() == true) {
-		geometryShaderId = renderer->loadShader(
-			renderer->SHADER_GEOMETRY_SHADER,
-			"shader/" + shaderVersion + "/shadowmapping",
-			"pre_geometryshader_foliage.c",
-			"",
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + shaderVersion + "/shadowmapping",
-				"pre_computevertex.inc.c"
-			) +
-			"\n\n" +
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + shaderVersion + "/functions",
-				"create_rotation_matrix.inc.c"
-			) +
-			"\n\n" +
-			FileSystem::getInstance()->getContentAsString(
-				"shader/" + shaderVersion + "/functions",
-				"create_translation_matrix.inc.c"
-			)
-		);
-		if (geometryShaderId == 0) return;
-	}
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
@@ -67,9 +63,6 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 	//	pre
 	programId = renderer->createProgram();
 	renderer->attachShaderToProgram(programId, vertexShaderId);
-	if (renderer->isGeometryShaderAvailable() == true) {
-		renderer->attachShaderToProgram(programId, geometryShaderId);
-	}
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 
 	//

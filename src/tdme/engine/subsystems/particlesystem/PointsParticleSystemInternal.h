@@ -13,9 +13,13 @@
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
+#include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
+#include <tdme/math/Math.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector3.h>
 
 using std::string;
 using std::vector;
@@ -30,7 +34,9 @@ using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector3;
 
 /** 
  * Points particle system
@@ -53,6 +59,7 @@ protected:
 	vector<Particle> particles;
 	int32_t maxPoints;
 	float pointSize;
+	float pointSizeScale;
 	Texture* texture { nullptr };
 	int32_t textureId;
 	TransparentRenderPointsPool* pointsRenderPool { nullptr };
@@ -64,6 +71,18 @@ protected:
 	Color4 effectColorAdd;
 	bool pickable;
 	float particlesToSpawnRemainder;
+
+	/**
+	 * Update internal
+	 */
+	inline void updateInternal() {
+		Vector3 scale;
+		getTransformationsMatrix().getScale(scale);
+		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
+		emitter->fromTransformations(*this);
+		inverseTransformation.fromTransformations(*this);
+		inverseTransformation.invert();
+	}
 
 public:
 	/**

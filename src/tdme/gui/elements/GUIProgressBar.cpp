@@ -23,7 +23,7 @@ string GUIProgressBar::NAME = "progress-bar";
 
 GUIProgressBar::GUIProgressBar()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "progressbar.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "progressbar.xml");
 }
 
 const string& GUIProgressBar::getName()
@@ -33,7 +33,7 @@ const string& GUIProgressBar::getName()
 
 const string& GUIProgressBar::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIProgressBar::getAttributes(GUIScreenNode* screenNode)
@@ -42,7 +42,7 @@ map<string, string>& GUIProgressBar::getAttributes(GUIScreenNode* screenNode)
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";
-	attributes["width"] = "223";
+	attributes["width"] = "223"; // TODO: a.drewke
 	attributes["height"] = "53";
 	return attributes;
 }

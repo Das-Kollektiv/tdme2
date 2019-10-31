@@ -26,14 +26,14 @@ class tdme::engine::subsystems::rendering::BatchRendererPoints final
 
 private:
 	static constexpr int32_t POINT_COUNT { 65535 };
-	Renderer* renderer {  };
-	vector<int32_t>* vboIds {  };
-	int32_t id {  };
-	bool acquired {  };
-	ByteBuffer* fbVerticesByteBuffer;
-	FloatBuffer fbVertices {  };
-	ByteBuffer* fbColorsByteBuffer;
-	FloatBuffer fbColors {  };
+	Renderer* renderer { nullptr };
+	vector<int32_t>* vboIds { nullptr };
+	int32_t id;
+	bool acquired;
+	ByteBuffer* fbVerticesByteBuffer { nullptr };
+	FloatBuffer fbVertices;
+	ByteBuffer* fbColorsByteBuffer { nullptr };
+	FloatBuffer fbColors;
 
 	/**
 	 * Render

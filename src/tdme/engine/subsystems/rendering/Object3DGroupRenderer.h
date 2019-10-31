@@ -28,9 +28,10 @@ class tdme::engine::subsystems::rendering::Object3DGroupRenderer final
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	Object3DGroup* object3DGroup {  };
-	vector<int32_t>* vboBaseIds {  };
-	vector<int32_t>* vboTangentBitangentIds {  };
+	Object3DGroup* object3DGroup { nullptr };
+	vector<int32_t>* vboBaseIds { nullptr };
+	vector<int32_t>* vboTangentBitangentIds { nullptr  };
+	vector<int32_t>* vboOrigins { nullptr };
 	bool haveVBOs { false };
 public:
 

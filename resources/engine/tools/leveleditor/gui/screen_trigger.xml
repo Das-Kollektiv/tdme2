@@ -9,7 +9,7 @@
 				<tabs-header>
 					<tab id="tab_properties_trigger" text="Trigger" />
 					<tab id="tab_properties_model_properties" text="Properties" />
-					<tab id="tab_properties_dimension" text="Dimension" />
+					<tab id="tab_properties_boundingvolume" text="Bounding Volumes" />
 				</tabs-header>
 				<tabs-content>
 					<tab-content tab-id="tab_properties_trigger" vertical-align="center">
@@ -89,6 +89,142 @@
 								<button id="button_trigger_apply" name="button_trigger_apply" text="Apply" />
 							</layout>
 						</layout>
+					</tab-content>
+					<tab-content tab-id="tab_properties_boundingvolume" vertical-align="top">
+						<tabs alignment="vertical" width="100%" height="100%">
+							<tabs-header>
+								<tab id="tab_properties_boundingvolume_0" text="0" />
+								<tab id="tab_properties_boundingvolume_1" text="1" />
+								<tab id="tab_properties_boundingvolume_2" text="2" />
+								<tab id="tab_properties_boundingvolume_3" text="3" />
+								<tab id="tab_properties_boundingvolume_4" text="4" />
+								<tab id="tab_properties_boundingvolume_5" text="5" />
+								<tab id="tab_properties_boundingvolume_6" text="6" />
+								<tab id="tab_properties_boundingvolume_7" text="7" />
+								<tab id="tab_properties_boundingvolume_8" text="8" />
+								<tab id="tab_properties_boundingvolume_9" text="9" />
+								<tab id="tab_properties_boundingvolume_10" text="10" />
+								<tab id="tab_properties_boundingvolume_11" text="11" />
+								<tab id="tab_properties_boundingvolume_12" text="12" />
+								<tab id="tab_properties_boundingvolume_13" text="13" />
+								<tab id="tab_properties_boundingvolume_14" text="14" />
+								<tab id="tab_properties_boundingvolume_15" text="15" />
+								<tab id="tab_properties_boundingvolume_16" text="16" />
+								<tab id="tab_properties_boundingvolume_17" text="17" />
+								<tab id="tab_properties_boundingvolume_18" text="18" />
+								<tab id="tab_properties_boundingvolume_19" text="19" />
+								<tab id="tab_properties_boundingvolume_20" text="20" />
+								<tab id="tab_properties_boundingvolume_21" text="21" />
+								<tab id="tab_properties_boundingvolume_22" text="22" />
+								<tab id="tab_properties_boundingvolume_23" text="23" />
+								<tab id="tab_properties_boundingvolume_24" text="24" />
+								<tab id="tab_properties_boundingvolume_25" text="25" />
+								<tab id="tab_properties_boundingvolume_26" text="26" />
+								<tab id="tab_properties_boundingvolume_27" text="27" />
+								<tab id="tab_properties_boundingvolume_28" text="28" />
+								<tab id="tab_properties_boundingvolume_29" text="29" />
+								<tab id="tab_properties_boundingvolume_30" text="30" />
+								<tab id="tab_properties_boundingvolume_31" text="31" />
+							</tabs-header>
+							<tabs-content>
+								<tab-content tab-id="tab_properties_boundingvolume_0">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="0" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_1">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="1" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_2">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="2" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_3">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="3" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_4">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="4" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_5">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="5" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_6">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="6" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_7">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="7" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_8">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="8" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_9">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="9" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_10">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="10" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_11">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="11" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_12">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="12" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_13">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="13" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_14">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="14" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_15">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="15" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_16">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="16" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_17">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="17" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_18">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="18" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_19">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="19" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_20">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="20" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_21">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="21" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_22">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="22" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_23">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="23" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_24">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="24" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_25">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="25" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_26">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="26" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_27">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="27" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_28">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="28" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_29">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="29" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_30">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="30" />
+								</tab-content>
+								<tab-content tab-id="tab_properties_boundingvolume_31">
+									<template src="resources/engine/tools/shared/gui/template_boundingvolume.xml" boundingvolume-id="31" />
+								</tab-content>
+							</tabs-content>
+						</tabs>	
 					</tab-content>
 				</tabs-content>
 			</tabs>

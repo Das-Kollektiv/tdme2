@@ -60,6 +60,8 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->font = GUI::getFont(font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
 	this->text.set(text);
+	this->autoWidth = 0;
+	this->autoHeight = 0;
 	this->font->initialize();
 }
 

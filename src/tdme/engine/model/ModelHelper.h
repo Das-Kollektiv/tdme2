@@ -259,4 +259,25 @@ public:
 	 */
 	static void computeNormals(Model* model, ProgressCallback* progressCallback = nullptr);
 
+	/**
+	 * Prepare model for foliage shader
+	 * @param model model
+	 * @param shader shader
+	 */
+	static void prepareForShader(Model* model, const string& shader);
+
+private:
+
+	/**
+	 * Prepare group for default shader
+	 * @param group group
+	 */
+	static void prepareForDefaultShader(Group* group);
+
+	/**
+	 * Prepare group for foliage shader
+	 * @param group group
+	 */
+	static void prepareForFoliageShader(Group* group);
+
 };

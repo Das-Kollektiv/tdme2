@@ -25,18 +25,19 @@ class tdme::engine::subsystems::particlesystem::PointParticleEmitter final
 	: public ParticleEmitter
 {
 private:
-	int32_t count {  };
-	int64_t lifeTime {  };
-	int64_t lifeTimeRnd {  };
-	float mass {  };
-	float massRnd {  };
-	Vector3 position {  };
-	Vector3 positionTransformed {  };
-	Vector3 velocity {  };
-	Vector3 velocityRnd {  };
-	Vector3 zeroPosition {  };
-	Color4 colorStart {  };
-	Color4 colorEnd {  };
+	int32_t count;
+	int64_t lifeTime;
+	int64_t lifeTimeRnd;
+	float mass;
+	float massRnd;
+	Vector3 position;
+	Vector3 positionTransformed;
+	Vector3 scale;
+	Vector3 velocity;
+	Vector3 velocityRnd;
+	Vector3 zeroPosition;
+	Color4 colorStart;
+	Color4 colorEnd;
 
 public:
 	// override methods

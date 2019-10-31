@@ -82,13 +82,13 @@ uniform Light lights[MAX_LIGHTS];
 #endif
 
 // passed from geometry shader
-in vec2 gsFragTextureUV;
-in vec3 gsNormal;
-in vec3 gsPosition;
-in vec3 gsTangent;
-in vec3 gsBitangent;
-in vec4 gsEffectColorMul;
-in vec4 gsEffectColorAdd;
+in vec2 vsFragTextureUV;
+in vec3 vsNormal;
+in vec3 vsPosition;
+in vec3 vsTangent;
+in vec3 vsBitangent;
+in vec4 vsEffectColorMul;
+in vec4 vsEffectColorAdd;
 
 // out
 out vec4 outColor;
@@ -183,7 +183,7 @@ void main(void) {
 		vec4 diffuseTextureColor;
 		if (diffuseTextureAvailable == 1) {
 			// fetch from texture
-			diffuseTextureColor = texture(diffuseTextureUnit, gsFragTextureUV);
+			diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
 			// check if to handle diffuse texture masked transparency
 			if (diffuseTextureMaskedTransparency == 1) {
 				// discard if beeing transparent
@@ -197,18 +197,18 @@ void main(void) {
 	//
 	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	fragColor+= clamp(material.emission, 0.0, 1.0);
-	fragColor = fragColor * gsEffectColorMul;
+	fragColor = fragColor * vsEffectColorMul;
 
 	#if defined(HAVE_SOLID_SHADING)
 		fragColor+= material.ambient;
 		// no op
 	#else
-		vec3 normal = gsNormal;
+		vec3 normal = vsNormal;
 
 		// specular
 		materialShininess = material.shininess;
 		if (specularTextureAvailable == 1) {
-			vec3 specularTextureValue = texture(specularTextureUnit, gsFragTextureUV).rgb;
+			vec3 specularTextureValue = texture(specularTextureUnit, vsFragTextureUV).rgb;
 			materialShininess =
 				((0.33 * specularTextureValue.r) +
 				(0.33 * specularTextureValue.g) +
@@ -217,19 +217,19 @@ void main(void) {
 
 		// compute normal
 		if (normalTextureAvailable == 1) {
-			vec3 normalVector = normalize(texture(normalTextureUnit, gsFragTextureUV).rgb * 2.0 - 1.0);
+			vec3 normalVector = normalize(texture(normalTextureUnit, vsFragTextureUV).rgb * 2.0 - 1.0);
 			normal = vec3(0.0, 0.0, 0.0);
-			normal+= gsTangent * normalVector.x;
-			normal+= gsBitangent * normalVector.y;
-			normal+= gsNormal * normalVector.z;
+			normal+= vsTangent * normalVector.x;
+			normal+= vsBitangent * normalVector.y;
+			normal+= vsNormal * normalVector.z;
 		}
 
 		// compute lights
-		computeLights(normal, gsPosition);
+		computeLights(normal, vsPosition);
 	#endif
 
 		// take effect colors into account
-	fragColor.a = material.diffuse.a * gsEffectColorMul.a;
+	fragColor.a = material.diffuse.a * vsEffectColorMul.a;
 
 	#if defined(HAVE_DEPTH_FOG)
 		float fogStrength = 0.0;
@@ -294,11 +294,11 @@ void main(void) {
 			}
 
 			//
-			outColor = gsEffectColorAdd;
-			if (terrainBlending[0] > 0.001) outColor+= texture(grasTextureUnit, gsFragTextureUV) * terrainBlending[0];
-			if (terrainBlending[1] > 0.001) outColor+= texture(dirtTextureUnit, gsFragTextureUV) * terrainBlending[1];
-			if (terrainBlending[2] > 0.001) outColor+= texture(stoneTextureUnit, gsFragTextureUV) * terrainBlending[2];
-			if (terrainBlending[3] > 0.001) outColor+= texture(snowTextureUnit, gsFragTextureUV) * terrainBlending[3];
+			outColor = vsEffectColorAdd;
+			if (terrainBlending[0] > 0.001) outColor+= texture(grasTextureUnit, vsFragTextureUV) * terrainBlending[0];
+			if (terrainBlending[1] > 0.001) outColor+= texture(dirtTextureUnit, vsFragTextureUV) * terrainBlending[1];
+			if (terrainBlending[2] > 0.001) outColor+= texture(stoneTextureUnit, vsFragTextureUV) * terrainBlending[2];
+			if (terrainBlending[3] > 0.001) outColor+= texture(snowTextureUnit, vsFragTextureUV) * terrainBlending[3];
 			outColor*= fragColor;
 			outColor = clamp(outColor, 0.0, 1.0);
 			if (fogStrength > 0.0) {
@@ -317,7 +317,7 @@ void main(void) {
 	#elif defined(HAVE_WATER_SHADER)
 		//
 		outColor = vec4(0.25, 0.25, 0.8, 0.5);
-		outColor+= gsEffectColorAdd;
+		outColor+= vsEffectColorAdd;
 		outColor*= fragColor;
 		outColor = clamp(outColor, 0.0, 1.0);
 		if (fogStrength > 0.0) {
@@ -329,9 +329,9 @@ void main(void) {
 		}
 	#else
 		if (diffuseTextureAvailable == 1) {
-			outColor = clamp((gsEffectColorAdd + diffuseTextureColor) * fragColor, 0.0, 1.0);
+			outColor = clamp((vsEffectColorAdd + diffuseTextureColor) * fragColor, 0.0, 1.0);
 		} else {
-			outColor = clamp(gsEffectColorAdd + fragColor, 0.0, 1.0);
+			outColor = clamp(vsEffectColorAdd + fragColor, 0.0, 1.0);
 		}
 		if (outColor.a < 0.0001) discard;
 		#if defined(HAVE_BACK)

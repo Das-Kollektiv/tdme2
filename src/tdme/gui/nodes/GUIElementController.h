@@ -31,9 +31,9 @@ private:
 
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	bool disabled {  };
-	bool isActionPerforming {  };
-	bool initialized { };
+	bool disabled;
+	bool isActionPerforming;
+	bool initialized;
 	MutableString value;
 	int64_t timeLastClicked { -1LL };
 

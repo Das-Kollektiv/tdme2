@@ -54,6 +54,13 @@ void Object3DGroupRenderer::preRender(void* context)
 		vboTangentBitangentIds = vboManaged->getVBOIds();
 	}
 
+	// initialize tangents, bitangents
+	if (object3DGroup->mesh->group->getOrigins().size() > 0 &&
+		vboOrigins == nullptr) {
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true);
+		vboOrigins = vboManaged->getVBOIds();
+	}
+
 	//
 	haveVBOs = true;
 
@@ -65,6 +72,10 @@ void Object3DGroupRenderer::preRender(void* context)
 			// upload texture coordinates
 			if (object3DGroup->mesh->group->getTextureCoordinates().size() > 0) {
 				object3DGroup->mesh->setupTextureCoordinatesBuffer(Engine::renderer, context, (*vboBaseIds)[3]);
+			}
+			// upload render group object origins
+			if (object3DGroup->mesh->group->getOrigins().size() > 0) {
+				object3DGroup->mesh->setupOriginsBuffer(Engine::renderer, context, (*vboOrigins)[0]);
 			}
 		}
 		// upload vertices
@@ -88,5 +99,9 @@ void Object3DGroupRenderer::dispose()
 	if (vboTangentBitangentIds != nullptr) {
 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".tangentbitangent");
 		vboTangentBitangentIds = nullptr;
+	}
+	if (vboOrigins != nullptr) {
+		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".origins");
+		vboOrigins = nullptr;
 	}
 }

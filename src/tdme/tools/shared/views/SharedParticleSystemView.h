@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
@@ -18,6 +19,7 @@ using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::audio::Audio;
 using tdme::engine::Engine;
+using tdme::math::Vector3;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
@@ -43,20 +45,21 @@ protected:
 	Audio* audio {  };
 
 private:
-	PopUps* popUps {  };
-	ParticleSystemScreenController* particleSystemScreenController {  };
-	EntityDisplayView* entityDisplayView {  };
-	EntityPhysicsView* entityPhysicsView {  };
-	EntitySoundsView* entitySoundsView {  };
-	LevelEditorEntity* entity {  };
-	bool loadParticleSystemRequested {  };
-	bool initParticleSystemRequested {  };
-	bool updateParticleSystemRequested {  };
-	string particleSystemFile {  };
-	CameraRotationInputHandler* cameraRotationInputHandler {  };
+	PopUps* popUps { nullptr };
+	ParticleSystemScreenController* particleSystemScreenController { nullptr };
+	EntityDisplayView* entityDisplayView { nullptr };
+	EntityPhysicsView* entityPhysicsView { nullptr };
+	EntitySoundsView* entitySoundsView { nullptr };
+	LevelEditorEntity* entity { nullptr };
+	bool loadParticleSystemRequested;
+	bool initParticleSystemRequested;
+	bool updateParticleSystemRequested;
+	string particleSystemFile;
+	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 	int64_t audioStarted { -1LL };
 	int64_t audioOffset { -1LL };
 	int particleSystemIdx { 0 };
+	Vector3 objectScale;
 
 	/**
 	 * Load settings

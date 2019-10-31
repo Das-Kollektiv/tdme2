@@ -23,10 +23,10 @@ uniform float lightLinearAttenuation;
 uniform float lightQuadraticAttenuation;
 
 // passed from geometry shader
-in vec2 gsFragTextureUV;
-in vec4 gsShadowCoord;
-in float gsShadowIntensity;
-in vec3 gsPosition;
+in vec2 vsFragTextureUV;
+in vec4 vsShadowCoord;
+in float vsShadowIntensity;
+in vec3 vsPosition;
 
 // fragment color
 out vec4 outColor;
@@ -35,7 +35,7 @@ void main() {
 	// retrieve diffuse texture color value
 	if (diffuseTextureAvailable == 1) {
 		// fetch from texture
-		vec4 diffuseTextureColor = texture(diffuseTextureUnit, gsFragTextureUV);
+		vec4 diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
 		// check if to handle diffuse texture masked transparency
 		if (diffuseTextureMaskedTransparency == 1) {
 			// discard if beeing transparent
@@ -44,13 +44,13 @@ void main() {
 	}
 
 	// do not process samples out of frustum, or out of shadow map
-	if (gsShadowCoord.w == 0.0 ||
-		gsShadowCoord.x < 0.0 || gsShadowCoord.x > 1.0 ||
-		gsShadowCoord.y < 0.0 || gsShadowCoord.y > 1.0) {
+	if (vsShadowCoord.w == 0.0 ||
+		vsShadowCoord.x < 0.0 || vsShadowCoord.x > 1.0 ||
+		vsShadowCoord.y < 0.0 || vsShadowCoord.y > 1.0) {
 		// return color to be blended with framebuffer
 		outColor = vec4(0.0, 0.0, 0.0, 0.0);
 	} else {
-		vec3 L = lightPosition - gsPosition;
+		vec3 L = lightPosition - vsPosition;
 		float d = length(L);
 		L = normalize(L);
 
@@ -82,16 +82,16 @@ void main() {
 		for (int x = 0; x < SHADOWMAP_LOOKUPS; x++) {
 			visibility+= texture(
 				textureUnit,
-				gsShadowCoord.xy +
+				vsShadowCoord.xy +
 					vec2(
 						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + x) * texturePixelWidth,
 						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + y) * texturePixelHeight
 					)
-			).x < gsShadowCoord.z + depthBias?0.50:0.0;
+			).x < vsShadowCoord.z + depthBias?0.50:0.0;
 		}
 		visibility = visibility / (SHADOWMAP_LOOKUPS * SHADOWMAP_LOOKUPS);
 
 		// return color to be blended with framebuffer
-		outColor = vec4(0.0, 0.0, 0.0, visibility * gsShadowIntensity * attenuation * 0.5);
+		outColor = vec4(0.0, 0.0, 0.0, visibility * vsShadowIntensity * attenuation * 0.5);
 	}
 }

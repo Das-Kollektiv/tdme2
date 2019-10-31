@@ -66,7 +66,7 @@ public:
 	 */
 	const array<Vector3, 8> getVertices() const;
 
-	/** 
+	/**
 	 * @return faces vertices indexes
 	 */
 	static const array<array<int32_t,3>,12>& getFacesVerticesIndexes();
@@ -95,6 +95,6 @@ public:
 	OrientedBoundingBox();
 
 private:
-	array<Vector3, 3> axes {  };
-	Vector3 halfExtension {  };
+	array<Vector3, 3> axes;
+	Vector3 halfExtension;
 };

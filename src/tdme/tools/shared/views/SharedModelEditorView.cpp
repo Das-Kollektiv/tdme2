@@ -107,7 +107,9 @@ SharedModelEditorView::SharedModelEditorView(PopUps* popUps)
 	entity = nullptr;
 	modelFile = "";
 	lodLevel = 1;
-	cameraRotationInputHandler = new CameraRotationInputHandler(engine);
+	audioStarted = -1LL;
+	audioOffset = -1LL;
+	cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 }
 
 SharedModelEditorView::~SharedModelEditorView() {
@@ -146,7 +148,7 @@ void SharedModelEditorView::initModel()
 	if (entity == nullptr) return;
 
 	modelFile = entity->getEntityFileName().length() > 0 ? entity->getEntityFileName() : entity->getFileName();
-	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel);
+	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), lodLevel, objectScale);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
@@ -187,7 +189,7 @@ void SharedModelEditorView::loadFile(const string& pathName, const string& fileN
 
 void SharedModelEditorView::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
-	ModelMetaDataFileExport::export_(pathName, fileName, entity);
+	ModelMetaDataFileExport::doExport(pathName, fileName, entity);
 }
 
 void SharedModelEditorView::reloadFile()
@@ -222,6 +224,7 @@ void SharedModelEditorView::computeNormals() {
 
 void SharedModelEditorView::handleInputEvents()
 {
+	entityPhysicsView->handleInputEvents(entity, objectScale);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -246,6 +249,7 @@ void SharedModelEditorView::display()
 		cameraRotationInputHandler->reset();
 	}
 	entityDisplayView->display(entity);
+	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 	audio->update();
@@ -296,7 +300,7 @@ void SharedModelEditorView::loadSettings()
 	try {
 		Properties settings;
 		settings.load("settings", "modeleditor.properties");
-		entityDisplayView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
+		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
 		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
 		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
 		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
@@ -343,7 +347,7 @@ void SharedModelEditorView::storeSettings()
 {
 	try {
 		Properties settings;
-		settings.put("display.boundingvolumes", entityDisplayView->isDisplayBoundingVolume() == true ? "true" : "false");
+		settings.put("display.boundingvolumes", entityPhysicsView->isDisplayBoundingVolume() == true ? "true" : "false");
 		settings.put("display.groundplate", entityDisplayView->isDisplayGroundPlate() == true ? "true" : "false");
 		settings.put("display.shadowing", entityDisplayView->isDisplayShadowing() == true ? "true" : "false");
 		settings.put("model.path", modelEditorScreenController->getModelPath()->getPath());
@@ -396,7 +400,6 @@ LevelEditorEntity* SharedModelEditorView::loadModel(const string& name, const st
 {
 	if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) {
 		auto levelEditorEntity = ModelMetaDataFileImport::doImport(
-			LevelEditorEntity::ID_NONE,
 			pathName,
 			fileName
 		);
@@ -467,11 +470,21 @@ void SharedModelEditorView::playSound(const string& soundId) {
 void SharedModelEditorView::updateRendering() {
 	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (object == nullptr || entity == nullptr) return;
+	engine->removeEntity("model");
 	object->setShader(entity->getShader());
 	object->setDistanceShader(entity->getDistanceShader());
 	object->setDistanceShaderDistance(entity->getDistanceShaderDistance());
+	ModelHelper::prepareForShader(entity->getModel(), entity->getShader());
+	resetEntity();
 }
 
 void SharedModelEditorView::onSetEntityData() {
 }
 
+void SharedModelEditorView::onRotation() {
+	entityPhysicsView->updateGizmo(entity);
+}
+
+void SharedModelEditorView::onScale() {
+	entityPhysicsView->updateGizmo(entity);
+}

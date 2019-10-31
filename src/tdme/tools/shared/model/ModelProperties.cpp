@@ -39,11 +39,6 @@ PropertyModelClass* ModelProperties::getProperty(const string& name)
 	return nullptr;
 }
 
-int32_t ModelProperties::getPropertyCount()
-{
-	return properties.size();
-}
-
 int32_t ModelProperties::getPropertyIndex(const string& name)
 {
 	for (auto i = 0; i < properties.size(); i++) {
@@ -52,11 +47,6 @@ int32_t ModelProperties::getPropertyIndex(const string& name)
 		}
 	}
 	return -1;
-}
-
-PropertyModelClass* ModelProperties::getPropertyByIndex(int32_t idx)
-{
-	return idx >= 0 && idx < properties.size() ? properties[idx] : nullptr;
 }
 
 bool ModelProperties::addProperty(const string& name, const string& value)

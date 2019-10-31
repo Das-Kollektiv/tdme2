@@ -3,6 +3,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/leveleditor/controller/fwd-tdme.h>
 #include <tdme/tools/leveleditor/views/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
@@ -13,6 +14,7 @@
 using tdme::tools::shared::views::View;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::engine::Engine;
+using tdme::math::Vector3;
 using tdme::tools::leveleditor::controller::EmptyScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
@@ -35,6 +37,7 @@ private:
 	LevelEditorEntity* entity {  };
 	bool initModelRequested {  };
 	CameraRotationInputHandler* cameraRotationInputHandler {  };
+	Vector3 objectScale;
 
 	/**
 	 * Init entity

@@ -6,10 +6,12 @@ namespace tools {
 namespace shared {
 namespace views {
 	class CameraRotationInputHandler;
+	struct CameraRotationInputHandlerEventHandler;
 	class EntityBaseView;
 	class EntityPhysicsView;
 	class EntitySoundsView;
 	class EntityDisplayView;
+	class Gizmo;
 	struct PlayableSoundView;
 	class PopUps;
 	class SharedModelEditorView;

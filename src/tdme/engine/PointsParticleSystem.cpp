@@ -83,14 +83,14 @@ void PointsParticleSystem::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
+	engine->registerEntity(this);
 }
 
 void PointsParticleSystem::setAutoEmit(bool autoEmit) {
 	// delegate to base class
 	PointsParticleSystemInternal::setAutoEmit(autoEmit);
 	// delegate change to engine
-	if (parentEntity == nullptr && engine != nullptr) engine->updateEntity(this);
+	engine->registerEntity(this);
 }
 
 void PointsParticleSystem::dispose()
@@ -100,6 +100,9 @@ void PointsParticleSystem::dispose()
 
 void PointsParticleSystem::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
+	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	PointsParticleSystemInternal::setEngine(engine);
 }
 

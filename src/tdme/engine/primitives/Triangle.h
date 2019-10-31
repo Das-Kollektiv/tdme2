@@ -45,5 +45,5 @@ public:
 	void computeClosestPointOnBoundingVolume(const Vector3& point, Vector3& closestPoint) const;
 
 private:
-	vector<Vector3> vertices {  };
+	vector<Vector3> vertices;
 };

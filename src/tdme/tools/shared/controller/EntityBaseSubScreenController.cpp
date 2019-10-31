@@ -108,7 +108,7 @@ void EntityBaseSubScreenController::onEntityDataApply(LevelEditorEntity* model)
 	onSetEntityDataAction->performAction();
 }
 
-void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<PropertyModelClass*>>* entityPresetIds)
+void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<PropertyModelClass*>>& entityPresetIds)
 {
 	auto entityPropertiesPresetsInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesPresets->getScreenNode()->getNodeById(entityPropertiesPresets->getId() + "_inner")));
 	auto idx = 0;
@@ -118,7 +118,7 @@ void EntityBaseSubScreenController::setEntityPresetIds(const map<string, vector<
 		"<scrollarea-vertical id=\"" +
 		entityPropertiesPresets->getId() +
 		"_inner_scrollarea\" width=\"100%\" height=\"100\">\n";
-	for (auto it: *entityPresetIds) {
+	for (auto it: entityPresetIds) {
 		auto entityPresetId = it.first;
 		entityPropertiesPresetsInnerNodeSubNodesXML =
 			entityPropertiesPresetsInnerNodeSubNodesXML + "<dropdown-option text=\"" +

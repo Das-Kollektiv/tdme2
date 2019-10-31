@@ -32,6 +32,7 @@ CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->radiusTransformed = radius;
 	this->mass = mass;
 	this->massRnd = massRnd;
+	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -42,8 +43,6 @@ void CircleParticleEmitter::emit(Particle* particle)
 {
 	Vector3 cosOnAxis0;
 	Vector3 sinOnAxis1;
-	auto& velocityXYZ = velocity.getArray();
-	auto& velocityRndXYZ = velocityRnd.getArray();
 	// set up particle
 	particle->active = true;
 	// emit particle in circle spanned on axis 0 and axis 1
@@ -56,9 +55,9 @@ void CircleParticleEmitter::emit(Particle* particle)
 	particle->position.add(centerTransformed);
 	// compute velocity
 	particle->velocity.set(
-		velocityXYZ[0] + (Math::random() * velocityRndXYZ[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[1] + (Math::random() * velocityRndXYZ[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		velocityXYZ[2] + (Math::random() * velocityRndXYZ[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
+		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[1] * velocity[1] + (Math::random() * scale[1] * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		scale[2] * velocity[2] + (Math::random() * scale[2] * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	// mass
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
@@ -77,17 +76,13 @@ void CircleParticleEmitter::emit(Particle* particle)
 
 void CircleParticleEmitter::fromTransformations(const Transformations& transformations)
 {
-	Vector3 side;
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(center, centerTransformed);
 	// apply transformations rotation + scale to axis
-	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed);
-	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed);
-	// note:
-	//	sphere radius can only be scaled the same on all axes
-	//	thats why its enough to only take x axis to determine scaling
-	side.set(axis0).scale(radius).add(center);
-	transformationsMatrix.multiply(side, side);
-	radius = side.sub(center).computeLength();
+	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed).normalize();
+	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed).normalize();
+	// scale and radius transformed
+	transformationsMatrix.getScale(scale);
+	radiusTransformed = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 }

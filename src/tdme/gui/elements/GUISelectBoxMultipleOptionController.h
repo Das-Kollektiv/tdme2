@@ -36,10 +36,10 @@ private:
 	static string CONDITION_UNFOCUSSED;
 	static string CONDITION_DISABLED;
 	static string CONDITION_ENABLED;
-	GUIParentNode* selectBoxMultipleNode {  };
-	bool initialPostLayout {  };
-	bool selected {  };
-	bool focussed {  };
+	GUIParentNode* selectBoxMultipleNode { nullptr };
+	bool initialPostLayout;
+	bool selected;
+	bool focussed;
 	MutableString value;
 
 	/** 

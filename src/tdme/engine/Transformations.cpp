@@ -31,32 +31,7 @@ Transformations::~Transformations() {
 void Transformations::fromTransformations(const Transformations& transformations)
 {
 	if (this == &transformations) return;
-
-	// translation
-	translation.set(transformations.translation);
-	// scale
-	scale.set(transformations.scale);
-	// pivot
-	pivot.set(transformations.pivot);
-	// rotations
-	auto rotationIdx = 0;
-	for (auto& rotation: transformations.rotations) {
-		// do we have a rotation to reuse?
-		if (rotationIdx == rotations.size()) {
-			// nope, add a rotation
-			rotations.push_back(Rotation(0.0f, Vector3(0.0f, 0.0f, 0.0f)));
-		}		// copy
-		rotations[rotations.size() - 1].fromRotation(rotation);
-		// next
-		rotationIdx++;
-	}
-	// remove unused rotations
-	while (rotationIdx < rotations.size()) {
-		removeRotation(rotations.size() - 1);
-	}
-	// copy matrices and such
-	transformationsMatrix.set(transformations.transformationsMatrix);
-	rotationsQuaternion.set(transformations.rotationsQuaternion);
+	*this = transformations;
 }
 
 void Transformations::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder) {
@@ -109,6 +84,10 @@ void Transformations::update()
 	transformationsMatrix.multiply(translationMatrix);
 }
 
+void Transformations::applyParentTransformations(const Transformations& parentTransformations) {
+	transformationsMatrix.multiply(parentTransformations.getTransformationsMatrix());
+}
+
 void Transformations::invert() {
 	translation.scale(-1.0f);
 	scale.setX(1.0f / scale.getX());
@@ -117,5 +96,5 @@ void Transformations::invert() {
 	for (auto& rotation: rotations) {
 		rotation.setAngle(rotation.getAngle() - 180.0f);
 	}
-	update();
+	transformationsMatrix.invert();
 }

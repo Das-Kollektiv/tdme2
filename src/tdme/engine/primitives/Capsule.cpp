@@ -48,6 +48,7 @@ void Capsule::setScale(const Vector3& scale) {
 	// remove old collision shape
 	if (collisionShape != nullptr) delete collisionShape;
 
+	//
 	Vector3 aScaled;
 	Vector3 bScaled;
 	aScaled.set(a).scale(scale);
@@ -78,7 +79,7 @@ void Capsule::setScale(const Vector3& scale) {
 	);
 
 	// determine local translation
-	collisionShapeLocalTranslation.set(center).scale(scale);
+	collisionShapeLocalTranslation.set(center);
 	collisionShapeLocalTransform.setPosition(
 		reactphysics3d::Vector3(
 			collisionShapeLocalTranslation.getX(),

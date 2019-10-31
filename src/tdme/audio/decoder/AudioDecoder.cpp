@@ -13,6 +13,10 @@ AudioDecoder::AudioDecoder()
 	channels = AudioDecoder::CHANNELS_NONE;
 	sampleRate = AudioDecoder::SAMPLERATE_NONE;
 	bitsPerSample = AudioDecoder::BITSPERSAMPLES_NONE;
+	samples = 0;
+}
+
+AudioDecoder::~AudioDecoder() {
 }
 
 int32_t AudioDecoder::getChannels()

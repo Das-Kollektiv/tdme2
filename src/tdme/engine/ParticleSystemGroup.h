@@ -40,18 +40,31 @@ class tdme::engine::ParticleSystemGroup final
 {
 private:
 	Engine* engine { nullptr };
+	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
 	string id;
-	bool enableDynamicShadows {  };
-	bool enabled {  };
-	bool pickable {  };
-	bool autoEmit {  };
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	vector<ParticleSystemEntity*> particleSystems {  };
+	bool enableDynamicShadows;
+	bool enabled;
+	bool pickable;
+	bool autoEmit;
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	vector<ParticleSystemEntity*> particleSystems;
+
+	// overridden methods
+	inline void setParentEntity(Entity* entity) override {
+		this->parentEntity = entity;
+	}
+	inline Entity* getParentEntity() override {
+		return parentEntity;
+	}
+	inline void applyParentTransformations(const Transformations& parentTransformations) override {
+		Transformations::applyParentTransformations(parentTransformations);
+		for (auto particleSystem: particleSystems) particleSystem->applyParentTransformations(parentTransformations);
+	}
 
 public:
 	// overriden methods

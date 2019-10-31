@@ -30,7 +30,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 
 void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// setup new event
 	struct epoll_event event;
@@ -61,7 +61,7 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 
 void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  {
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	// epoll event list, maxCCU
 	psd->epEventListMax = maxCCU;
@@ -85,7 +85,7 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 	if (initialized == false) return;
 
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	//
 	close(psd->ep);
@@ -94,11 +94,11 @@ void KernelEventMechanism::shutdownKernelEventMechanism() {
 
 int KernelEventMechanism::doKernelEventMechanism()  {
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
 	while (true == true) {
 		//
-		int events = epoll_wait(psd->ep, psd->epEventList, psd->epEventListMax, 5);
+		auto events = epoll_wait(psd->ep, psd->epEventList, psd->epEventListMax, 5);
 
 		// check for error
 		if (events == -1) {
@@ -118,9 +118,10 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 
 void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
 	// platform specific data
-	KernelEventMechanismPSD* psd = static_cast<KernelEventMechanismPSD*>(_psd);
+	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
-	struct epoll_event* event = &psd->epEventList[index];
+	//
+	auto event = &psd->epEventList[index];
 
 	// we only support user data
 	cookie = (void*)event->data.ptr;

@@ -11,6 +11,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/math/Vector3.h>
 
@@ -27,6 +28,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::subsystems::rendering::Object3DGroup;
+using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 using tdme::math::Vector3;
 
 Object3DInternal::Object3DInternal(const string& id, Model* model) :
@@ -40,10 +42,7 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	boundingBox.fromBoundingVolume(model->getBoundingBox());
 	boundingBoxTransformed.fromBoundingVolume(model->getBoundingBox());
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateBoundingBox();
 }
 
 Object3DInternal::~Object3DInternal() {
@@ -113,6 +112,28 @@ void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const 
 	}
 }
 
+void Object3DInternal::setTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
+	Object3DBase::setTransformationsMatrix(id, matrix);
+	map<string, Matrix4x4*> _overridenTransformationsMatrices;
+	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+	}
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	boundingBox.fromBoundingVolume(newBoundingBox);
+	delete newBoundingBox;
+}
+
+void Object3DInternal::unsetTransformationsMatrix(const string& id) {
+	Object3DBase::unsetTransformationsMatrix(id);
+	map<string, Matrix4x4*> _overridenTransformationsMatrices;
+	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
+	}
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
+	boundingBox.fromBoundingVolume(newBoundingBox);
+	delete newBoundingBox;
+}
+
 void Object3DInternal::initialize()
 {
 	Object3DBase::initialize();
@@ -126,18 +147,12 @@ void Object3DInternal::dispose()
 void Object3DInternal::fromTransformations(const Transformations& transformations)
 {
 	Object3DBase::fromTransformations(transformations);
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateBoundingBox();
 }
 
 void Object3DInternal::update()
 {
 	Object3DBase::update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateBoundingBox();
 }
 

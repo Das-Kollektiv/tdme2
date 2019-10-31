@@ -14,6 +14,8 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
+#include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Math.h>
@@ -35,6 +37,8 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
+using tdme::engine::model::RotationOrder;
+using tdme::engine::model::UpVector;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
@@ -93,15 +97,7 @@ void Object3DRenderGroup::setModel(Model* model) {
 	this->model = model;
 }
 
-void Object3DRenderGroup::computeBoundingBox() {
-	if (combinedEntity == nullptr) return;
-	boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-}
-
-void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel) {
-	// TODO: we seem to have a bug here as performance is much lower on GPU
-
+void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel) {
 	// create group in combined model
 	auto combinedModelGroup = combinedModel->getGroupById(sourceGroup->getId());
 	if (combinedModelGroup == nullptr) {
@@ -134,6 +130,7 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Matrix4x
 		auto combinedModelGroupTangents = combinedModelGroup->getTangents();
 		auto combinedModelGroupBitangents = combinedModelGroup->getBitangents();
 		auto combinedModelGroupFacesEntities = combinedModelGroup->getFacesEntities();
+		auto combinedModelGroupOrigins = combinedModelGroup->getOrigins();
 
 		// current indices
 		auto combinedModelGroupVerticesIdxStart = combinedModelGroupVertices.size();
@@ -143,26 +140,33 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Matrix4x
 		auto combinedModelGroupBitangentsIdxStart = combinedModelGroupBitangents.size();
 
 		// add vertices and such from source group to new group
-		for (auto& objectParentTransformationsMatrix: objectParentTransformationsMatrices) {
-			Matrix4x4 transformationsMatrix;
-			transformationsMatrix.set(sourceGroup->getTransformationsMatrix());
-			transformationsMatrix.multiply(objectParentTransformationsMatrix);
+		{
+			auto i = 0;
+			for (auto& objectParentTransformationsMatrix: objectParentTransformationsMatrices) {
+				Matrix4x4 transformationsMatrix;
+				transformationsMatrix.set(sourceGroup->getTransformationsMatrix());
+				transformationsMatrix.multiply(objectParentTransformationsMatrix);
 
-			Vector3 tmpVector3;
-			for (auto& vertex: sourceGroup->getVertices()) {
-				combinedModelGroupVertices.push_back(transformationsMatrix.multiply(vertex, tmpVector3));
-			}
-			for (auto& normal: sourceGroup->getNormals()) {
-				combinedModelGroupNormals.push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
-			}
-			for (auto& textureCoordinate: sourceGroup->getTextureCoordinates()) {
-				combinedModelGroupTextureCoordinates.push_back(textureCoordinate);
-			}
-			for (auto& tangent: sourceGroup->getTangents()) {
-				combinedModelGroupTangents.push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
-			}
-			for (auto& bitangent: sourceGroup->getBitangents()) {
-				combinedModelGroupBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
+				//
+				Vector3 tmpVector3;
+				for (auto& vertex: sourceGroup->getVertices()) {
+					combinedModelGroupOrigins.push_back(origins[i]);
+					combinedModelGroupVertices.push_back(transformationsMatrix.multiply(vertex, tmpVector3));
+				}
+				for (auto& normal: sourceGroup->getNormals()) {
+					combinedModelGroupNormals.push_back(transformationsMatrix.multiplyNoTranslation(normal, tmpVector3));
+				}
+				for (auto& textureCoordinate: sourceGroup->getTextureCoordinates()) {
+					combinedModelGroupTextureCoordinates.push_back(textureCoordinate);
+				}
+				for (auto& tangent: sourceGroup->getTangents()) {
+					combinedModelGroupTangents.push_back(transformationsMatrix.multiplyNoTranslation(tangent, tmpVector3));
+				}
+				for (auto& bitangent: sourceGroup->getBitangents()) {
+					combinedModelGroupBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent, tmpVector3));
+				}
+				//
+				i++;
 			}
 		}
 
@@ -264,24 +268,27 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Matrix4x
 		combinedModelGroup->setTangents(combinedModelGroupTangents);
 		combinedModelGroup->setBitangents(combinedModelGroupBitangents);
 		combinedModelGroup->setFacesEntities(combinedModelGroupFacesEntities);
+		combinedModelGroup->setOrigins(combinedModelGroupOrigins);
 	}
 
 	// do child groups
 	for (auto groupIt: sourceGroup->getSubGroups()) {
-		combineGroup(groupIt.second, objectParentTransformationsMatrices, combinedModel);
+		combineGroup(groupIt.second, origins, objectParentTransformationsMatrices, combinedModel);
 	}
 }
 
 void Object3DRenderGroup::combineObjects(Model* model, const vector<Transformations>& objectsTransformations, Model* combinedModel) {
 	vector<Matrix4x4> objectTransformationMatrices;
+	vector<Vector3> origins;
 	for (auto& objectTransformations: objectsTransformations) {
 		Matrix4x4 transformationsMatrix;
 		transformationsMatrix.set(model->getImportTransformationsMatrix());
 		transformationsMatrix.multiply(objectTransformations.getTransformationsMatrix());
 		objectTransformationMatrices.push_back(transformationsMatrix);
+		origins.push_back(objectTransformations.getTranslation());
 	}
 	for (auto groupIt: model->getSubGroups()) {
-		combineGroup(groupIt.second, objectTransformationMatrices, combinedModel);
+		combineGroup(groupIt.second, origins, objectTransformationMatrices, combinedModel);
 	}
 }
 
@@ -298,8 +305,8 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedModels[i] = new Model(
 			id + ".lod." + to_string(i),
 			id + ".lod." + to_string(i),
-			model->getUpVector(),
-			model->getRotationOrder(),
+			UpVector::Y_UP,
+			RotationOrder::ZYX,
 			nullptr
 		);
 	}
@@ -358,6 +365,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedLODObject3D->setParentEntity(this);
 		combinedLODObject3D->setShader(shaderId);
 		combinedLODObject3D->setDistanceShader(distanceShaderId);
+		combinedLODObject3D->setDistanceShaderDistance(distanceShaderDistance);
 		combinedLODObject3D->setDynamicShadowingEnabled(dynamicShadowing);
 		combinedLODObject3D->setEngine(engine);
 		combinedLODObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
@@ -366,7 +374,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 	}
 
 	//
-	computeBoundingBox();
+	updateBoundingBox();
 }
 
 void Object3DRenderGroup::addObject(const Transformations& transformations) {
@@ -375,7 +383,9 @@ void Object3DRenderGroup::addObject(const Transformations& transformations) {
 
 void Object3DRenderGroup::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	if (combinedEntity != nullptr) combinedEntity->setEngine(engine);
 }
 
@@ -389,7 +399,7 @@ void Object3DRenderGroup::fromTransformations(const Transformations& transformat
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	// update object
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Object3DRenderGroup::update()
@@ -398,22 +408,27 @@ void Object3DRenderGroup::update()
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	// update object
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void Object3DRenderGroup::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
-	// frustum culling enabled?
-	if (frustumCulling == true) {
-		// yeo, add or remove from partition
-		if (enabled == true) {
-			if (engine != nullptr) engine->partition->addEntity(this);
-		} else {
-			if (engine != nullptr) engine->partition->removeEntity(this);
+
+	// frustum if root entity
+	if (parentEntity == nullptr) {
+		// frustum culling enabled?
+		if (frustumCulling == true) {
+			// yeo, add or remove from partition
+			if (enabled == true) {
+				if (engine != nullptr) engine->partition->addEntity(this);
+			} else {
+				if (engine != nullptr) engine->partition->removeEntity(this);
+			}
 		}
 	}
+
 	//
 	this->enabled = enabled;
 }
@@ -436,7 +451,7 @@ void Object3DRenderGroup::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void Object3DRenderGroup::dispose()

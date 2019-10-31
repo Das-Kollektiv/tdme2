@@ -1,6 +1,4 @@
-
 #pragma once
-
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -17,137 +15,219 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity
+class tdme::tools::shared::model::LevelEditorEntityParticleSystem_CircleParticleEmitterPlaneVelocity final
 {
 private:
-	int32_t count {  };
-	int64_t lifeTime {  };
-	int64_t lifeTimeRnd {  };
-	float mass {  };
-	float massRnd {  };
-	float velocity {  };
-	float velocityRnd {  };
-	Color4 colorStart {  };
-	Color4 colorEnd {  };
-	Vector3 center {  };
-	float radius {  };
-	Vector3 axis0 {  };
-	Vector3 axis1 {  };
+	int32_t count;
+	int64_t lifeTime;
+	int64_t lifeTimeRnd;
+	float mass;
+	float massRnd;
+	float velocity;
+	float velocityRnd;
+	Color4 colorStart;
+	Color4 colorEnd;
+	Vector3 center;
+	float radius;
+	Vector3 axis0;
+	Vector3 axis1;
 
 public:
 
 	/** 
 	 * @return count
 	 */
-	int32_t getCount();
+	inline int32_t getCount() {
+		return count;
+	}
 
 	/** 
 	 * Set count
 	 * @param count count
 	 */
-	void setCount(int32_t count);
+	inline void setCount(int32_t count) {
+		this->count = count;
+	}
 
 	/** 
 	 * @return life time
 	 */
-	int64_t getLifeTime();
+	inline int64_t getLifeTime() {
+		return lifeTime;
+	}
 
 	/** 
 	 * Set life time
 	 * @param lifeTime life time
 	 */
-	void setLifeTime(int64_t lifeTime);
+	inline void setLifeTime(int64_t lifeTime) {
+		this->lifeTime = lifeTime;
+	}
 
 	/** 
 	 * @return life time rnd
 	 */
-	int64_t getLifeTimeRnd();
+	inline int64_t getLifeTimeRnd() {
+		return lifeTimeRnd;
+	}
 
 	/** 
 	 * Set life time rnd
 	 * @param lifeTimeRnd life time rnd
 	 */
-	void setLifeTimeRnd(int64_t lifeTimeRnd);
+	inline void setLifeTimeRnd(int64_t lifeTimeRnd) {
+		this->lifeTimeRnd = lifeTimeRnd;
+	}
 
 	/** 
 	 * @return mass
 	 */
-	float getMass();
+	inline float getMass() {
+		return mass;
+	}
 
 	/** 
 	 * Set mass
 	 * @param mass mass
 	 */
-	void setMass(float mass);
+	inline void setMass(float mass) {
+		this->mass = mass;
+	}
 
 	/** 
 	 * @return mass rnd
 	 */
-	float getMassRnd();
+	inline float getMassRnd() {
+		return massRnd;
+	}
 
 	/** 
 	 * Set mass rnd
 	 * @param massRnd mass rnd
 	 */
-	void setMassRnd(float massRnd);
+	inline void setMassRnd(float massRnd) {
+		this->massRnd = massRnd;
+	}
 
 	/** 
 	 * @return velocity
 	 */
-	float getVelocity();
+	inline float getVelocity() {
+		return velocity;
+	}
 
 	/** 
 	 * Set velocity
 	 * @param velocity velocity
 	 */
-	void setVelocity(float velocity);
+	inline void setVelocity(float velocity) {
+		this->velocity = velocity;
+	}
 
 	/** 
 	 * @return velocity rnd
 	 */
-	float getVelocityRnd();
+	inline float getVelocityRnd() {
+		return velocityRnd;
+	}
 
 	/** 
 	 * Set velocity rnd
 	 * @param velocityRnd velocity rnd
 	 */
-	void setVelocityRnd(float velocityRnd);
+	inline void setVelocityRnd(float velocityRnd) {
+		this->velocityRnd = velocityRnd;
+	}
 
 	/** 
 	 * @return color start
 	 */
-	Color4& getColorStart();
+	inline const Color4& getColorStart() {
+		return colorStart;
+	}
 
 	/** 
+	 * Set start color
+	 * @param colorStart start color
+	 */
+	inline void setColorStart(const Color4& colorStart) {
+		this->colorStart = colorStart;
+	}
+
+	/**
 	 * @return color end
 	 */
-	Color4& getColorEnd();
+	inline const Color4& getColorEnd() {
+		return colorEnd;
+	}
+
+	/**
+	 * Set end color
+	 * @param colorEnd color end
+	 */
+	inline void setColorEnd(const Color4& colorEnd) {
+		this->colorEnd = colorEnd;
+	}
 
 	/** 
 	 * @return center
 	 */
-	Vector3& getCenter();
+	inline const Vector3& getCenter() {
+		return center;
+	}
 
 	/** 
+	 * Set center
+	 * @param center center
+	 */
+	inline void setCenter(const Vector3& center) {
+		this->center = center;
+	}
+
+	/**
 	 * @return radius
 	 */
-	float getRadius();
+	inline float getRadius() {
+		return radius;
+	}
 
 	/** 
 	 * Set radius
 	 * @param radius radius
 	 */
-	void setRadius(float radius);
+	inline void setRadius(float radius) {
+		this->radius = radius;
+	}
 
 	/** 
 	 * @return axis 0
 	 */
-	Vector3& getAxis0();
+	inline const Vector3& getAxis0() {
+		return axis0;
+	}
 
 	/** 
+	 * Set axis 0
+	 * @param axis0 axis 0
+	 */
+	inline void setAxis0(const Vector3& axis0) {
+		this->axis0 = axis0;
+	}
+
+	/**
 	 * @return axis 1
 	 */
-	Vector3& getAxis1();
+	inline const Vector3& getAxis1() {
+		return axis1;
+	}
+
+	/**
+	 * Set axis 1
+	 * @param axis0 axis 1
+	 */
+	inline void setAxis1(const Vector3& axis1) {
+		this->axis1 = axis1;
+	}
 
 	/**
 	 * Public constructor

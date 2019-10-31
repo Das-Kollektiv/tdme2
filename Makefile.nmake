@@ -26,7 +26,8 @@ INCLUDES = \
 	/I "ext\win-openal-soft\includes" \
 	/I "ext\win-glew\include" \
 	/I "ext\win-freeglut\include" \
-	/I "ext\win-dirent\include"
+	/I "ext\win-dirent\include" \
+	/I "ext/rapidjson/include"
 
 # For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
 
@@ -58,7 +59,6 @@ LINK_FLAGS = /LTCG
 
 SRC = src
 TINYXML = tinyxml
-JSONBOX = jsonbox
 ZLIB = zlib
 LIBPNG = libpng
 VORBIS = vorbis
@@ -132,6 +132,10 @@ SRCS = \
 	src/tdme/engine/primitives/Sphere.cpp \
 	src/tdme/engine/primitives/TerrainMesh.cpp \
 	src/tdme/engine/primitives/Triangle.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPre.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp \
@@ -322,6 +326,7 @@ SRCS = \
 	src/tdme/tests/AudioTest.cpp \
 	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
+	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
@@ -399,6 +404,7 @@ SRCS = \
 	src/tdme/tools/shared/views/EntityPhysicsView.cpp \
 	src/tdme/tools/shared/views/EntityDisplayView.cpp \
 	src/tdme/tools/shared/views/EntitySoundsView.cpp \
+	src/tdme/tools/shared/views/Gizmo.cpp \
 	src/tdme/tools/shared/views/PopUps.cpp \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
@@ -426,17 +432,6 @@ EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinyxml.cpp \
 	ext/tinyxml/tinyxmlerror.cpp \
 	ext/tinyxml/tinyxmlparser.cpp \
-
-EXT_JSONBOX_SRCS = \
-	ext/jsonbox/Array.cpp \
-	ext/jsonbox/Convert.cpp \
-	ext/jsonbox/Escaper.cpp \
-	ext/jsonbox/IndentCanceller.cpp \
-	ext/jsonbox/Indenter.cpp \
-	ext/jsonbox/JsonException.cpp \
-	ext/jsonbox/Object.cpp \
-	ext/jsonbox/SolidusEscaper.cpp \
-	ext/jsonbox/Value.cpp \
 
 EXT_ZLIB_SRCS = \
 	ext/zlib/adler32.c \
@@ -586,6 +581,7 @@ MAIN_SRCS = \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
+	src/tdme/tests/EntityHierarchyTest-main.cpp \
 	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
@@ -607,12 +603,12 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/archive-main.cpp \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
-	$(EXT_JSONBOX_SRCS) \
 	$(EXT_ZLIB_SRCS) \
 	$(EXT_LIBPNG_SRCS) \
 	$(EXT_VORBIS_SRCS) \
@@ -625,7 +621,15 @@ OBJECTS = *.obj
 all: \
 	compile link clean \
 	ext-compile ext-link ext-clean\
-	AngleTest AudioTest CrashTest EngineTest GUITest HTTPClientTest LODTest PathFindingTest \
+	AngleTest \ 
+	AudioTest \ 
+	CrashTest \
+	EngineTest \
+	EntityHierarchyTest \
+	GUITest \
+	HTTPClientTest \
+	LODTest \
+	PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
 	RayTracingTest \
 	SkinningTest \
@@ -636,6 +640,7 @@ all: \
 	archive \
 	converttotm \
 	copyanimationsetups \
+	generatelicenses \
 	levelfixmodelszup2yup \
 	fixdoxygen \
 	TDMELevelEditor \
@@ -681,6 +686,9 @@ CrashTest:
 
 EngineTest: 
 	cl /FeEngineTest $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+EntityHierarchyTest: 
+	cl /FeEntityHierarchyTest $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 HTTPClientTest:
 	cl /FeHTMLClientTest $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
@@ -732,6 +740,9 @@ converttotm:
 
 copyanimationsetups:
 	cl /Fecopyanimationsetups $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+generatelicenses:
+	cl /Fegeneratelicenses $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 levelfixmodelszup2yup:
 	cl /Felevelfixmodelszup2yup $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

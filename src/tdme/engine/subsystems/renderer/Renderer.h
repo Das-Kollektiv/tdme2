@@ -36,43 +36,43 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::renderer::Renderer
 {
 public:
-	int32_t ID_NONE {  };
-	int32_t CLEAR_DEPTH_BUFFER_BIT {  };
-	int32_t CLEAR_COLOR_BUFFER_BIT {  };
-	int32_t CULLFACE_FRONT {  };
-	int32_t CULLFACE_BACK {  };
-	int32_t TEXTUREUNITS_MAX {  };
-	int32_t SHADER_FRAGMENT_SHADER {  };
-	int32_t SHADER_VERTEX_SHADER {  };
-	int32_t SHADER_GEOMETRY_SHADER {  };
-	int32_t SHADER_COMPUTE_SHADER {  };
-	int32_t DEPTHFUNCTION_ALWAYS {  };
-	int32_t DEPTHFUNCTION_EQUAL {  };
-	int32_t DEPTHFUNCTION_LESSEQUAL {  };
-	int32_t DEPTHFUNCTION_GREATEREQUAL {  };
-	int32_t FRAMEBUFFER_DEFAULT {  };
-	int32_t FRONTFACE_CW {  };
-	int32_t FRONTFACE_CCW {  };
+	int32_t ID_NONE;
+	int32_t CLEAR_DEPTH_BUFFER_BIT;
+	int32_t CLEAR_COLOR_BUFFER_BIT;
+	int32_t CULLFACE_FRONT;
+	int32_t CULLFACE_BACK;
+	int32_t TEXTUREUNITS_MAX;
+	int32_t SHADER_FRAGMENT_SHADER;
+	int32_t SHADER_VERTEX_SHADER;
+	int32_t SHADER_GEOMETRY_SHADER;
+	int32_t SHADER_COMPUTE_SHADER;
+	int32_t DEPTHFUNCTION_ALWAYS;
+	int32_t DEPTHFUNCTION_EQUAL;
+	int32_t DEPTHFUNCTION_LESSEQUAL;
+	int32_t DEPTHFUNCTION_GREATEREQUAL;
+	int32_t FRAMEBUFFER_DEFAULT;
+	int32_t FRONTFACE_CW;
+	int32_t FRONTFACE_CCW;
 	array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	Renderer_Material material;
 	array<Renderer_Light, 8> lights;
-	string shaderId {  };
+	string shaderId;
 
 protected:
-	int32_t viewPortX {  };
-	int32_t viewPortY {  };
-	int32_t viewPortWidth {  };
-	int32_t viewPortHeight {  };
-	int32_t activeTextureUnit {  };
-	Matrix4x4 projectionMatrix {  };
-	Matrix4x4 cameraMatrix {  };
-	Matrix4x4 modelViewMatrix {  };
-	Matrix4x4 viewportMatrix {  };
-	Matrix2D3x3 textureMatrix {  };
+	int32_t viewPortX;
+	int32_t viewPortY;
+	int32_t viewPortWidth;
+	int32_t viewPortHeight;
+	int32_t activeTextureUnit;
+	Matrix4x4 projectionMatrix;
+	Matrix4x4 cameraMatrix;
+	Matrix4x4 modelViewMatrix;
+	Matrix4x4 viewportMatrix;
+	Matrix2D3x3 textureMatrix;
 
 public:
-	float pointSize {  };
+	float pointSize;
 
 	/**
 	 * @return default context
@@ -465,7 +465,7 @@ public:
 	 */
 	virtual int32_t createColorBufferTexture(int32_t width, int32_t height) = 0;
 
-	/** 
+	/**
 	 * Uploads texture data to current bound texture
 	 * @param context context
 	 * @param texture texture
@@ -632,6 +632,13 @@ public:
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind origins buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindOrigins(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Draw instanced indexed triangles from buffer objects

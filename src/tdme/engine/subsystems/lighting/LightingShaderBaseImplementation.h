@@ -28,10 +28,9 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::lighting::LightingShaderBaseImplementation: public LightingShaderImplementation
 {
 protected:
-	int32_t renderLightingProgramId {  };
-	int32_t renderLightingFragmentShaderId {  };
-	int32_t renderLightingGeometryShaderId {  };
-	int32_t renderLightingVertexShaderId {  };
+	int32_t renderLightingProgramId { -1 };
+	int32_t renderLightingFragmentShaderId { -1 };
+	int32_t renderLightingVertexShaderId { -1 };
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformDiffuseTextureAvailable { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
@@ -57,24 +56,24 @@ protected:
 	int32_t uniformMaterialShininess { -1 };
 	int32_t uniformFrame { -1 };
 	int32_t uniformApplyFoliageAnimation { -1 };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpecular {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightPosition {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotDirection {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotExponent {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotCosCutoff {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightConstantAttenuation {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightLinearAttenuation {  };
-	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation {  };
-	Matrix4x4 mvMatrix {  };
-	Matrix4x4 mvpMatrix {  };
-	Matrix4x4 normalMatrix {  };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightDiffuse;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpecular;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightPosition;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotDirection;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotExponent;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightSpotCosCutoff;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightConstantAttenuation;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightLinearAttenuation;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation;
+	Matrix4x4 mvMatrix;
+	Matrix4x4 mvpMatrix;
+	Matrix4x4 normalMatrix;
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
-	bool isRunning {  };
-	bool initialized {  };
-	Renderer* renderer {  };
+	bool isRunning { false };
+	bool initialized { false };
+	Renderer* renderer { nullptr };
 public:
 
 	// overriden methods

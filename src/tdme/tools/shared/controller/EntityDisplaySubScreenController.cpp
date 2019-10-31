@@ -6,6 +6,7 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/tools/shared/views/EntityDisplayView.h>
+#include <tdme/tools/shared/views/EntityPhysicsView.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -17,6 +18,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::utils::MutableString;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -24,9 +26,10 @@ using tdme::utils::Exception;
 MutableString EntityDisplaySubScreenController::CHECKBOX_CHECKED = MutableString("1");
 MutableString EntityDisplaySubScreenController::CHECKBOX_UNCHECKED = MutableString("");
 
-EntityDisplaySubScreenController::EntityDisplaySubScreenController() 
+EntityDisplaySubScreenController::EntityDisplaySubScreenController(EntityPhysicsView* physicsView)
 {
 	view = new EntityDisplayView(this);
+	this->physicsView = physicsView;
 }
 
 EntityDisplaySubScreenController::~EntityDisplaySubScreenController() {
@@ -54,14 +57,14 @@ void EntityDisplaySubScreenController::setupDisplay()
 {
 	displayShadowing->getController()->setValue(view->isDisplayShadowing() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 	displayGround->getController()->setValue(view->isDisplayGroundPlate() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
-	displayBoundingVolume->getController()->setValue(view->isDisplayBoundingVolume() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
+	displayBoundingVolume->getController()->setValue(physicsView->isDisplayBoundingVolume() == true ? CHECKBOX_CHECKED : CHECKBOX_UNCHECKED);
 }
 
 void EntityDisplaySubScreenController::onDisplayApply()
 {
 	view->setDisplayShadowing(displayShadowing->getController()->getValue().equals(CHECKBOX_CHECKED));
 	view->setDisplayGroundPlate(displayGround->getController()->getValue().equals(CHECKBOX_CHECKED));
-	view->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED));
+	physicsView->setDisplayBoundingVolume(displayBoundingVolume->getController()->getValue().equals(CHECKBOX_CHECKED));
 }
 
 bool EntityDisplaySubScreenController::getDisplayShadowing()

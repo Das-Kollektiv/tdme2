@@ -62,7 +62,7 @@ void ParticleSystemGroup::fromTransformations(const Transformations& transformat
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	// update object
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ParticleSystemGroup::update()
@@ -73,22 +73,27 @@ void ParticleSystemGroup::update()
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	// update object
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ParticleSystemGroup::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
-	// frustum culling enabled?
-	if (frustumCulling == true) {
-		// yeo, add or remove from partition
-		if (enabled == true) {
-			if (engine != nullptr) engine->partition->addEntity(this);
-		} else {
-			if (engine != nullptr) engine->partition->removeEntity(this);
+
+	// frustum if root entity
+	if (parentEntity == nullptr) {
+		// frustum culling enabled?
+		if (frustumCulling == true) {
+			// yeo, add or remove from partition
+			if (enabled == true) {
+				if (engine != nullptr) engine->partition->addEntity(this);
+			} else {
+				if (engine != nullptr) engine->partition->removeEntity(this);
+			}
 		}
 	}
+
 	//
 	this->enabled = enabled;
 }
@@ -116,7 +121,7 @@ void ParticleSystemGroup::updateParticles()
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 
 	//
-	if (frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
+	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ParticleSystemGroup::setFrustumCulling(bool frustumCulling) {
@@ -133,7 +138,7 @@ void ParticleSystemGroup::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void ParticleSystemGroup::setAutoEmit(bool autoEmit) {
@@ -141,7 +146,7 @@ void ParticleSystemGroup::setAutoEmit(bool autoEmit) {
 	for (auto particleSystem: particleSystems) particleSystem->setAutoEmit(autoEmit);
 	this->autoEmit = autoEmit;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void ParticleSystemGroup::dispose()
@@ -151,7 +156,9 @@ void ParticleSystemGroup::dispose()
 
 void ParticleSystemGroup::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setEngine(engine);
 }
 

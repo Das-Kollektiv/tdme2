@@ -11,7 +11,7 @@ using tdme::gui::events::GUIKeyboardEvent_Type;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::events::GUIKeyboardEvent
+class tdme::gui::events::GUIKeyboardEvent final
 {
 public:
 
@@ -42,22 +42,22 @@ public:
 	static constexpr int32_t KEYCODE_F12 { KEYBOARD_KEYCODE_F12 };
 
 private:
-	int64_t time {  };
-	GUIKeyboardEvent_Type* type {  };
-	int32_t keyCode {  };
-	char keyChar {  };
-	bool metaDown {  };
-	bool controlDown {  };
-	bool altDown {  };
-	bool shiftDown {  };
-	bool processed {  };
+	int64_t time;
+	GUIKeyboardEvent_Type* type;
+	int32_t keyCode;
+	char keyChar;
+	bool metaDown;
+	bool controlDown;
+	bool altDown;
+	bool shiftDown;
+	bool processed;
 
 public:
 
 	/**
 	 * Destructor
 	 */
-	virtual ~GUIKeyboardEvent();
+	~GUIKeyboardEvent();
 
 	/**
 	 * Get key code from char
@@ -68,102 +68,141 @@ public:
 	/** 
 	 * @return time in milliseconds
 	 */
-	virtual int64_t getTime();
+	inline int64_t getTime() {
+		return time;
+	}
 
 	/** 
 	 * Time in milliseconds
 	 * @param time time
 	 */
-	virtual void setTime(int64_t time);
+	inline void setTime(int64_t time) {
+		this->time = time;
+	}
 
 	/** 
 	 * @return type
 	 */
-	virtual GUIKeyboardEvent_Type* getType();
+	inline GUIKeyboardEvent_Type* getType() {
+		return type;
+	}
 
 	/** 
 	 * Set type
 	 * @param type type
 	 */
-	virtual void setType(GUIKeyboardEvent_Type* type);
+	inline void setType(GUIKeyboardEvent_Type* type) {
+		this->type = type;
+	}
 
 	/** 
 	 * @return key code
 	 */
-	virtual int32_t getKeyCode();
+	inline int32_t getKeyCode() {
+		return keyCode;
+	}
 
 	/** 
 	 * Set key code
 	 * @param code code
 	 */
-	virtual void setKeyCode(int32_t code);
+	inline void setKeyCode(int32_t code) {
+		this->keyCode = code;
+	}
 
 	/** 
 	 * @return key char
 	 */
-	virtual char getKeyChar();
+	inline char getKeyChar() {
+		return keyChar;
+	}
 
 	/** 
 	 * Set key char
 	 * @param keyChar key char
 	 */
-	virtual void setKeyChar(char keyChar);
+	inline void setKeyChar(char keyChar) {
+		this->keyChar = keyChar;
+	}
 
 	/** 
 	 * @return is meta down
 	 */
-	virtual bool isMetaDown();
+	inline bool isMetaDown() {
+		return metaDown;
+	}
 
 	/** 
 	 * Set meta down 
 	 * @param metaDown meta down
 	 */
-	virtual void setMetaDown(bool metaDown);
+	inline void setMetaDown(bool metaDown) {
+		this->metaDown = metaDown;
+	}
 
 	/** 
 	 * @return control down
 	 */
-	virtual bool isControlDown();
+	inline bool isControlDown() {
+		return controlDown;
+	}
 
 	/** 
 	 * Set control down
 	 * @param controlDown control down
 	 */
-	virtual void setControlDown(bool controlDown);
+	inline void setControlDown(bool controlDown) {
+		this->controlDown = controlDown;
+	}
 
 	/** 
 	 * @return is alt down
 	 */
-	virtual bool isAltDown();
+	inline bool isAltDown() {
+		return altDown;
+	}
 
 	/** 
 	 * Set alt down
 	 * @param altDown alt down
 	 */
-	virtual void setAltDown(bool altDown);
+	inline void setAltDown(bool altDown) {
+		this->altDown = altDown;
+	}
 
 	/** 
 	 * @return is shift down
 	 */
-	virtual bool isShiftDown();
+	inline bool isShiftDown() {
+		return shiftDown;
+	}
 
 	/** 
 	 * Set shift down
 	 * @param shiftDown shiftDown
 	 */
-	virtual void setShiftDown(bool shiftDown);
+	inline void setShiftDown(bool shiftDown) {
+		this->shiftDown = shiftDown;
+	}
 
 	/** 
 	 * @return event has been processed already
 	 */
-	virtual bool isProcessed();
+	inline bool isProcessed() {
+		return processed;
+	}
 
 	/** 
 	 * Set event processed
 	 * @param processed processed
 	 */
-	virtual void setProcessed(bool processed);
+	inline void setProcessed(bool processed) {
+		this->processed = processed;
+	}
 
+	/**
+	 * Public constructor
+	 */
 	GUIKeyboardEvent();
 
 private:

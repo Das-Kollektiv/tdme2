@@ -39,8 +39,8 @@ using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::Exception;
 using tdme::utils::Console;
-using tdme::ext::tinyxml::TiXmlDocument;
-using tdme::ext::tinyxml::TiXmlElement;
+using tinyxml::TiXmlDocument;
+using tinyxml::TiXmlElement;
 
 LevelPropertyPresets* LevelPropertyPresets::instance = nullptr;
 
@@ -144,21 +144,6 @@ void LevelPropertyPresets::setDefaultLevelProperties(LevelEditorLevel* level)
 	for (auto mapProperty: mapPropertiesPreset) {
 		level->addProperty(mapProperty->getName(), mapProperty->getValue());
 	}
-}
-
-const vector<PropertyModelClass*>& LevelPropertyPresets::getMapPropertiesPreset() const
-{
-	return mapPropertiesPreset;
-}
-
-const map<string, vector<PropertyModelClass*>>* LevelPropertyPresets::getObjectPropertiesPresets() const
-{
-	return &objectPropertiesPresets;
-}
-
-const map<string, LevelEditorLight*>& LevelPropertyPresets::getLightPresets() const
-{
-	return lightPresets;
 }
 
 const vector<TiXmlElement*> LevelPropertyPresets::getChildrenByTagName(TiXmlElement* parent, const char* name)

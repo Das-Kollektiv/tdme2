@@ -17,11 +17,11 @@ public:
 	static constexpr int64_t UNDEFINED { -1LL };
 
 private:
-	int32_t frame {  };
-	int64_t startTime {  };
-	int64_t lastFrameAtTime {  };
-	int64_t currentFrameAtTime {  };
-	float currentFPS {  };
+	int64_t frame;
+	int64_t startTime;
+	int64_t lastFrameAtTime;
+	int64_t currentFrameAtTime;
+	float currentFPS;
 
 	/** 
 	 * Updates timing
@@ -38,7 +38,7 @@ public:
 	/** 
 	 * @return frames that have been rendered
 	 */
-	int32_t getFrame();
+	int64_t getFrame();
 
 	/** 
 	 * @return start time

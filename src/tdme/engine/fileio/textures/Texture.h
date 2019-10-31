@@ -45,49 +45,50 @@ public:
 		textureWidth(textureWidth),
 		textureHeight(textureHeight),
 		textureData(textureData),
-		useMipMap(true) {
+		useMipMap(true),
+		repeat(true) {
 		//
 	}
 
 	/** 
 	 * @return id
 	 */
-	inline const string& getId()  {
+	inline const string& getId() const  {
 		return id;
 	}
 
 	/** 
 	 * @return depth in bits per pixel
 	 */
-	inline int32_t getDepth() {
+	inline int32_t getDepth() const {
 		return depth;
 	}
 
 	/** 
 	 * @return image width
 	 */
-	inline int32_t getWidth() {
+	inline int32_t getWidth() const {
 		return width;
 	}
 
 	/** 
 	 * @return image height
 	 */
-	inline int32_t getHeight() {
+	inline int32_t getHeight() const {
 		return height;
 	}
 
 	/** 
 	 * @return texture height
 	 */
-	inline int32_t getTextureHeight() {
+	inline int32_t getTextureHeight() const {
 		return textureHeight;
 	}
 
 	/** 
 	 * @return texture width
 	 */
-	inline int32_t getTextureWidth() {
+	inline int32_t getTextureWidth() const {
 		return textureWidth;
 	}
 
@@ -101,7 +102,7 @@ public:
 	/**
 	 * @return use mip map
 	 */
-	inline bool isUseMipMap() {
+	inline bool isUseMipMap() const {
 		return useMipMap;
 	}
 
@@ -111,6 +112,21 @@ public:
 	 */
 	inline void setUseMipMap(bool useMipMap) {
 		this->useMipMap = useMipMap;
+	}
+
+	/**
+	 * @return is repeat
+	 */
+	inline bool isRepeat() const {
+		return repeat;
+	}
+
+	/**
+	 * Set repeat
+	 * @param repeat repeat
+	 */
+	inline void setRepeat(bool repeat) {
+		this->repeat = repeat;
 	}
 
 	// overriden methods
@@ -125,6 +141,7 @@ private:
 	int32_t textureWidth;
 	ByteBuffer* textureData;
 	bool useMipMap;
+	bool repeat;
 
 	/**
 	 * Destructor

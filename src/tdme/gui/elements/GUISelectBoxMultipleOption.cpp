@@ -20,7 +20,7 @@ string GUISelectBoxMultipleOption::NAME = "selectbox-multiple-option";
 
 GUISelectBoxMultipleOption::GUISelectBoxMultipleOption()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-multiple-option.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-multiple-option.xml");
 }
 
 const string& GUISelectBoxMultipleOption::getName()
@@ -30,15 +30,13 @@ const string& GUISelectBoxMultipleOption::getName()
 
 const string& GUISelectBoxMultipleOption::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
 {
 	attributes.clear();
 	attributes["id"] = screenNode->allocateNodeId();
-	attributes["on-mouse-click"] = "";
-	attributes["on-mouse-doubleclick"] = "";
 	return attributes;
 }
 

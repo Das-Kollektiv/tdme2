@@ -27,7 +27,6 @@ using tdme::utils::Exception;
 
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::PNGInputStream;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Mutex;
@@ -130,8 +129,8 @@ Texture* TextureReader::read(const string& texturePathName, const string& textur
 		return texture;
 	}
 	// yep, combine diffuse map + diffuse transparency map
-	int textureWidth = texture->getTextureWidth();
-	int textureHeight = texture->getTextureHeight();
+	auto textureWidth = texture->getTextureWidth();
+	auto textureHeight = texture->getTextureHeight();
 	ByteBuffer* textureByteBuffer = new ByteBuffer(textureWidth * textureHeight * 4);
 	auto textureWithTransparency = new Texture(
 		texture->getId() + "/transparency",
@@ -142,10 +141,10 @@ Texture* TextureReader::read(const string& texturePathName, const string& textur
 		texture->getTextureHeight(),
 		textureByteBuffer
 	);
-	int diffuseTextureBytesPerPixel = texture->getDepth() / 8;
-	int transparencyTextureBytesPerPixel = transparencyTexture->getDepth() / 8;
-	for (int y = 0; y < textureHeight; y++) {
-		for (int x = 0; x < textureWidth; x++) {
+	auto diffuseTextureBytesPerPixel = texture->getDepth() / 8;
+	auto transparencyTextureBytesPerPixel = transparencyTexture->getDepth() / 8;
+	for (auto y = 0; y < textureHeight; y++) {
+		for (auto x = 0; x < textureWidth; x++) {
 			auto transparencyTextureRed = transparencyTexture->getTextureData()->get((y * textureWidth * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 0);
 			auto transparencyTextureGreen = transparencyTexture->getTextureData()->get((y * textureWidth * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 1);
 			auto transparencyTextureBlue = transparencyTexture->getTextureData()->get((y * textureWidth * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 2);
@@ -222,15 +221,15 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 	png_read_info(png, info);
 
 	// dimensions
-	int width = png_get_image_width(png, info);
-	int height = png_get_image_height(png, info);
+	auto width = png_get_image_width(png, info);
+	auto height = png_get_image_height(png, info);
 
 	// set one byte per channel
 	if (png_get_bit_depth(png, info) < 8) png_set_packing(png);
 	if (png_get_bit_depth(png, info) == 16) png_set_strip_16(png);
 
 	// determine bytes per pixel
-	int bytesPerPixel = -1;
+	auto bytesPerPixel = -1;
 	switch(png_get_color_type(png, info)) {
 	    case PNG_COLOR_TYPE_GRAY:
 			{
@@ -285,7 +284,7 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 	// setup array with row pointers into pixel buffer
 	png_bytep* rows = new png_bytep[height];
 	uint8_t* p = (uint8_t*)pixelByteBuffer->getBuffer();
-	for(int i = 0; i < height; i++) {
+	for(auto i = 0; i < height; i++) {
 		rows[i] = p;
 		p += width * bytesPerPixel;
 	}
@@ -304,9 +303,9 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 	delete pngInputStream;
 
 	// make width, height a power of 2
-	int textureWidth = 1;
+	auto textureWidth = 1;
 	while (textureWidth < width) textureWidth*= 2;
-	int textureHeight = 1;
+	auto textureHeight = 1;
 	while (textureHeight < height) textureHeight*= 2;
 	if (textureWidth != width || textureHeight != height) {
 		Console::println("TextureReader::loadPNG(): " + pathName + "/" + fileName + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));

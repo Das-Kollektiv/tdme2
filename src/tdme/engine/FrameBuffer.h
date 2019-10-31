@@ -23,12 +23,12 @@ public:
 	static constexpr int32_t FRAMEBUFFER_COLORBUFFER { 2 };
 
 private:
-	int32_t width {  };
-	int32_t height {  };
-	int32_t frameBufferId {  };
-	int32_t depthBufferTextureId {  };
-	int32_t colorBufferTextureId {  };
-	int32_t buffers {  };
+	int32_t width;
+	int32_t height;
+	int32_t frameBufferId;
+	int32_t depthBufferTextureId;
+	int32_t colorBufferTextureId;
+	int32_t buffers;
 public:
 
 	/** 

@@ -23,7 +23,7 @@ string GUISliderH::NAME = "slider-horizontal";
 
 GUISliderH::GUISliderH()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "slider-h.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "slider-h.xml");
 }
 
 const string& GUISliderH::getName()
@@ -33,7 +33,7 @@ const string& GUISliderH::getName()
 
 const string& GUISliderH::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUISliderH::getAttributes(GUIScreenNode* screenNode)
@@ -42,9 +42,6 @@ map<string, string>& GUISliderH::getAttributes(GUIScreenNode* screenNode)
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";
-	attributes["on-mouse-click"] = "";
-	attributes["on-mouse-doubleclick"] = "";
-	attributes["on-change"] = "";
 	return attributes;
 }
 

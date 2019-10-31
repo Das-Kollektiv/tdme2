@@ -6,13 +6,13 @@ uniform int diffuseTextureMaskedTransparency;
 uniform float diffuseTextureMaskedTransparencyThreshold;
 
 // passed from geometry shader
-in vec2 gsFragTextureUV;
+in vec2 vsFragTextureUV;
 
 void main() {
 	// retrieve diffuse texture color value
 	if (diffuseTextureAvailable == 1) {
 		// fetch from texture
-		vec4 diffuseTextureColor = texture(diffuseTextureUnit, gsFragTextureUV);
+		vec4 diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
 		// check if to handle diffuse texture masked transparency
 		if (diffuseTextureMaskedTransparency == 1) {
 			// discard if beeing transparent

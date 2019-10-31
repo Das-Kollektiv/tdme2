@@ -13,31 +13,14 @@ TextureManager_TextureManaged::TextureManager_TextureManaged(const string& id, i
 {
 	this->id = id;
 	this->rendererId = rendererId;
-	this->referenceCounter = 0;
 }
 
-const string& TextureManager_TextureManaged::getId()
+bool TextureManager_TextureManaged::isUploaded()
 {
-	return id;
-}
-
-int32_t TextureManager_TextureManaged::getRendererId()
-{
-	return rendererId;
-}
-
-int32_t TextureManager_TextureManaged::getReferenceCounter()
-{
-	return referenceCounter;
-}
-
-bool TextureManager_TextureManaged::decrementReferenceCounter()
-{
-	referenceCounter--;
-	return referenceCounter == 0;
-}
-
-void TextureManager_TextureManaged::incrementReferenceCounter()
-{
-	referenceCounter++;
+	if (uploaded == false) {
+		uploaded = true;
+		return false;
+	} else {
+		return true;
+	}
 }

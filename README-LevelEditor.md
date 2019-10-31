@@ -31,6 +31,7 @@
              - color your objects
              - center objects
              - remove objects
+        - objects can be transformed by using a gizmo
         - setting up object properties
              - key, value map for what ever reason
         - set up up to 8 lights (for now)

@@ -34,15 +34,16 @@ void Properties::put(const string& key, const string& value)
 	properties[key] = value;
 }
 
-void Properties::load(const string& pathName, const string& fileName)
+void Properties::load(const string& pathName, const string& fileName, FileSystemInterface* fileSystem)
 {
 	properties.clear();
 	vector<string> lines;
-	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
-	for (int i = 0; i < lines.size(); i++) {
+	if (fileSystem == nullptr) fileSystem = FileSystem::getInstance();
+	fileSystem->getContentAsStringArray(pathName, fileName, lines);
+	for (auto i = 0; i < lines.size(); i++) {
 		string line = StringUtils::trim(lines[i]);
 		if (line.length() == 0 || StringUtils::startsWith(line, "#")) continue;
-		int separatorPos = line.find(L'=');
+		auto separatorPos = line.find(L'=');
 		if (separatorPos == -1) continue;
 		string key = StringUtils::substring(line, 0, separatorPos);
 		string value = StringUtils::substring(line, separatorPos + 1);
@@ -50,7 +51,7 @@ void Properties::load(const string& pathName, const string& fileName)
 	}
 }
 
-void Properties::store(const string& pathName, const string& fileName) {
+void Properties::store(const string& pathName, const string& fileName, FileSystemInterface* fileSystem) {
 	vector<string> result;
 	int32_t idx = 0;
 	for (auto it = properties.begin(); it != properties.end(); ++it) {
@@ -58,5 +59,6 @@ void Properties::store(const string& pathName, const string& fileName) {
 		string value = it->second;
 		result.push_back(key + "=" + value);
 	}
-	FileSystem::getInstance()->setContentFromStringArray(pathName, fileName, result);
+	if (fileSystem == nullptr) fileSystem = FileSystem::getInstance();
+	fileSystem->setContentFromStringArray(pathName, fileName, result);
 }

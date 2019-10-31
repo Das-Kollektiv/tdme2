@@ -20,47 +20,58 @@ class tdme::engine::subsystems::manager::VBOManager_VBOManaged
 	friend class VBOManager;
 
 private:
-	string id {  };
-	vector<int32_t> vboIds {  };
-	int32_t referenceCounter {  };
-	bool uploaded {  };
+	string id;
+	vector<int32_t> vboIds;
+	int32_t referenceCounter { 0 };
+	bool uploaded { false };
 
 public:
 
 	/** 
 	 * @return vbo id
 	 */
-	virtual const string& getId();
+	inline const string& getId() {
+		return id;
+	}
 
 	/** 
 	 * @return vbo gl ids
 	 */
-	virtual vector<int32_t>* getVBOIds();
+	inline vector<int32_t>* getVBOIds() {
+		return &vboIds;
+	}
 
 private:
 
 	/** 
 	 * @return reference counter
 	 */
-	int32_t getReferenceCounter();
+	inline int32_t getReferenceCounter() {
+		return referenceCounter;
+	}
 
 	/** 
 	 * decrement reference counter
 	 * @return if reference counter = 0
 	 */
-	bool decrementReferenceCounter();
+	inline bool decrementReferenceCounter() {
+		referenceCounter--;
+		return referenceCounter == 0;
+	}
 
 	/** 
 	 * increment reference counter
 	 */
-	void incrementReferenceCounter();
+	inline void incrementReferenceCounter() {
+		referenceCounter++;
+	}
 
 public:
 
 	/** 
 	 * @return if vbo's have been uploaded, will change internal flag to uploaded
 	 */
-	virtual bool isUploaded();
+	bool isUploaded();
 
 private:
 	/**

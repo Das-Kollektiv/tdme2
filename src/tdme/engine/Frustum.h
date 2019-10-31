@@ -39,11 +39,11 @@ private:
 	static constexpr int32_t PLANE_FAR { 4 };
 	static constexpr int32_t PLANE_NEAR { 5 };
 
-	Matrix4x4 projectionMatrixTransposed {  };
-	Matrix4x4 modelViewMatrixTransposed {  };
-	Matrix4x4 frustumMatrix {  };
+	Matrix4x4 projectionMatrixTransposed;
+	Matrix4x4 modelViewMatrixTransposed;
+	Matrix4x4 frustumMatrix;
 
-	array<Plane, 6> planes {  };
+	array<Plane, 6> planes;
 
 public:
 	/** 

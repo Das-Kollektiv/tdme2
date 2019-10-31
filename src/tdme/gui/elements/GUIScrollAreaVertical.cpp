@@ -17,7 +17,7 @@ string GUIScrollAreaVertical::NAME = "scrollarea-vertical";
 
 GUIScrollAreaVertical::GUIScrollAreaVertical()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea-vertical.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea-vertical.xml");
 }
 
 const string& GUIScrollAreaVertical::getName()
@@ -27,7 +27,7 @@ const string& GUIScrollAreaVertical::getName()
 
 const string& GUIScrollAreaVertical::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenNode)
@@ -43,8 +43,6 @@ map<string, string>& GUIScrollAreaVertical::getAttributes(GUIScreenNode* screenN
 	attributes["border"] = "0";
 	attributes["border-color"] = "transparent";
 	attributes["padding"] = "0";
-	attributes["show-on"] = "";
-	attributes["hide-on"] = "";
 	return attributes;
 }
 

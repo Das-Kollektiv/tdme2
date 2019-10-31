@@ -49,26 +49,21 @@ private:
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
-	/**
-	 * Set parent entity, needs to be called before adding to engine
-	 * @param entity entity
-	 */
-	inline void setParentEntity(Entity* entity) {
+	// overridden methods
+	inline void setParentEntity(Entity* entity) override {
 		this->parentEntity = entity;
 	}
-
-	/**
-	 * @return parent entity
-	 */
-	inline Entity* getParentEntity() {
+	inline Entity* getParentEntity() override {
 		return parentEntity;
+	}
+	inline void applyParentTransformations(const Transformations& parentTransformations) override {
+		Transformations::applyParentTransformations(parentTransformations);
+		updateBoundingBox();
 	}
 
 public:
 	// overriden methods
-	inline void setEngine(Engine* engine) override {
-		LinesObject3DInternal::setEngine(engine);
-	}
+	void setEngine(Engine* engine) override;
 	inline void setRenderer(Renderer* renderer) override {
 		LinesObject3DInternal::setRenderer(renderer);
 	}

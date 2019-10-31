@@ -37,10 +37,10 @@ private:
 	vector<int> indices;
 
 	vector<reactphysics3d::PolygonVertexArray::PolygonFace> faces;
-	reactphysics3d::PolygonVertexArray* polygonVertexArray {  };
-	reactphysics3d::PolyhedronMesh* polyhedronMesh {  };
-	ByteBuffer* verticesByteBuffer {  };
-	ByteBuffer* indicesByteBuffer {  };
+	reactphysics3d::PolygonVertexArray* polygonVertexArray { nullptr };
+	reactphysics3d::PolyhedronMesh* polyhedronMesh { nullptr };
+	ByteBuffer* verticesByteBuffer { nullptr };
+	ByteBuffer* indicesByteBuffer { nullptr };
 
 
 	/**

@@ -1,7 +1,7 @@
 <layout show-on="{$show-on}" hide-on="{$hide-on}" id="{$id}" width="{$width}" height="{$height}" alignment="vertical" background-color="{$background-color}">
 	<layout id="{$id}_scrollarea_vertical_inner" width="{$width}" height="*" alignment="horizontal" background-color="{$background-color}">
 		<layout id="{$id}_inner" horizontal-align="{$horizontal-align}" vertical-align="{$vertical-align}" alignment="{$alignment}" overflow-x="scroll" overflow-y="scroll" width="*" height="100%">
-			{$innerXml}
+			{__InnerXML__}
 		</layout>
 		<layout id="{$id}_scrollbar_vertical_layout" alignment="vertical" width="auto" height="100%"  background-color="white">
 			<element id="{$id}_scrollbar_vertical_layout_up" width="24" height="24" border="1" border-color="#8080A0"  horizontal-align="center" vertical-align="center" focusable="true">

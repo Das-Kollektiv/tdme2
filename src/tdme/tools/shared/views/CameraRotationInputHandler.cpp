@@ -12,6 +12,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/utils/Character.h>
 
 using tdme::tools::shared::views::CameraRotationInputHandler;
@@ -25,15 +26,19 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
+using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::utils::Character;
 
-CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine) 
+CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRotationInputHandlerEventHandler* eventHandler)
 {
 	this->engine = engine;
+	this->eventHandler = eventHandler;
 	keyLeft = false;
 	keyRight = false;
 	keyUp = false;
 	keyDown = false;
+	keyPeriod = false;
+	keyComma = false;
 	keyPlus = false;
 	keyMinus = false;
 	keyR = false;
@@ -84,11 +89,10 @@ void CameraRotationInputHandler::reset()
 
 void CameraRotationInputHandler::handleInputEvents()
 {
+	auto scaling = false;
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
-		if (event.isProcessed() == true)
-			continue;
-
+		if (event.isProcessed() == true) continue;
 		if (mouseDragging == true) {
 			if (event.getButton() == 1) {
 				auto xMoved = (event.getX() - mouseLastX) / 5.0f;
@@ -115,9 +119,8 @@ void CameraRotationInputHandler::handleInputEvents()
 		auto mouseWheel = event.getWheelY();
 		if (mouseWheel != 0) {
 			scale += mouseWheel * 0.1f;
-			if (scale < 0.05f)
-				scale = 0.05f;
-
+			if (scale < 0.05f) scale = 0.05f;
+			scaling = true;
 		}
 	}
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
@@ -160,36 +163,36 @@ void CameraRotationInputHandler::handleInputEvents()
 	auto& rotationX = lookFromRotations.getRotation(0);
 	auto& rotationY = lookFromRotations.getRotation(1);
 	auto& rotationZ = lookFromRotations.getRotation(2);
-	if (keyLeft)
-		rotationX.setAngle(rotationX.getAngle() - 1.0f);
 
-	if (keyRight)
-		rotationX.setAngle(rotationX.getAngle() + 1.0f);
+	if (keyLeft == true) rotationX.setAngle(rotationX.getAngle() - 1.0f);
+	if (keyRight == true) rotationX.setAngle(rotationX.getAngle() + 1.0f);
+	if (keyUp == true) rotationY.setAngle(rotationY.getAngle() + 1.0f);
+	if (keyDown == true) rotationY.setAngle(rotationY.getAngle() - 1.0f);
+	if (keyComma == true) rotationZ.setAngle(rotationZ.getAngle() - 1.0f);
+	if (keyPeriod == true) rotationZ.setAngle(rotationZ.getAngle() + 1.0f);
 
-	if (keyUp)
-		rotationY.setAngle(rotationY.getAngle() + 1.0f);
-
-	if (keyDown)
-		rotationY.setAngle(rotationY.getAngle() - 1.0f);
-
-	if (keyComma)
-		rotationZ.setAngle(rotationZ.getAngle() - 1.0f);
-
-	if (keyPeriod)
-		rotationZ.setAngle(rotationZ.getAngle() + 1.0f);
-
-	if (keyMinus)
+	if (keyMinus == true) {
+		scaling = true;
 		scale += 0.05f;
-
-	if (keyPlus && scale > 0.05f)
+	}
+	if (keyPlus  == true && scale > 0.05f) {
+		scaling = true;
 		scale -= 0.05f;
+	}
 
 	if (keyR == true || resetRequested == true) {
 		rotationY.setAngle(-45.0f);
 		rotationZ.setAngle(0.0f);
 		scale = 1.0f;
 	}
-	if (keyLeft || keyRight || keyUp|| keyDown|| keyComma|| keyPeriod|| keyR|| resetRequested) {
+	if (keyLeft == true ||
+		keyRight == true ||
+		keyUp == true ||
+		keyDown == true ||
+		keyComma == true ||
+		keyPeriod == true ||
+		keyR == true ||
+		resetRequested) {
 		lookFromRotations.update();
 		if (entity != nullptr) {
 			boundingBoxTransformed = *entity->getBoundingBoxTransformed();
@@ -218,4 +221,17 @@ void CameraRotationInputHandler::handleInputEvents()
 	cam->setLookFrom(lookFrom);
 	cam->setLookAt(lookAt);
 	cam->setUpVector(upVector);
+
+	if (scaling == true && eventHandler != nullptr) eventHandler->onScale();
+	if ((keyLeft == true ||
+		keyRight == true ||
+		keyUp == true ||
+		keyDown == true ||
+		keyComma == true ||
+		keyPeriod == true ||
+		keyR == true ||
+		resetRequested == true) &&
+		eventHandler != nullptr) {
+		if (eventHandler != nullptr) eventHandler->onRotation();
+	}
 }

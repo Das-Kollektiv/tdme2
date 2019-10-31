@@ -8,6 +8,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -18,6 +19,7 @@ using tdme::engine::model::Group;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
+using tdme::math::Matrix4x4;
 
 /** 
  * Model utilities
@@ -30,11 +32,12 @@ public:
 	/** 
 	 * Creates a bounding box from given model
 	 * @param model model
+	 * @param overridenGroupTransformationsMatrices overriden group transformations matrices
 	 * @return axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBox(Model* model);
+	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overridenGroupTransformationsMatrices = map<string, Matrix4x4*>());
 
-	/** 
+	/**
 	 * Invert normals of a model
 	 * @param model model
 	 */
@@ -51,7 +54,7 @@ private:
 	/**
 	 * Creates a bounding box from given object3d model without mesh
 	 * @param object3DModelInternal model
-	 * @return axis aligned bounding box
+	 * @return boundingBox axis aligned bounding box
 	 */
 	static BoundingBox* createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal);
 

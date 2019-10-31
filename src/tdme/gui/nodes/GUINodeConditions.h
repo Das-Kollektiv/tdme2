@@ -21,8 +21,8 @@ class tdme::gui::nodes::GUINodeConditions final
 	friend class GUINode;
 
 private:
-	GUIElementNode* elementNode {  };
-	vector<string> conditions {  };
+	GUIElementNode* elementNode { nullptr };
+	vector<string> conditions;
 
 	/**
 	 * Update node

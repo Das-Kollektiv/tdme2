@@ -180,7 +180,8 @@ public:
 	static constexpr int32_t RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY { 128 };
 	static constexpr int32_t RENDERTYPE_LIGHTS { 256 };
 	static constexpr int32_t RENDERTYPE_SHADOWMAPPING { 512 };
-	static constexpr int32_t RENDERTYPE_ALL { 1023 };
+	static constexpr int32_t RENDERTYPE_RENDERGROUP_OBJECTORIGIN { 1024 };
+	static constexpr int32_t RENDERTYPE_ALL { 2047 };
 
 	/**
 	 * Init

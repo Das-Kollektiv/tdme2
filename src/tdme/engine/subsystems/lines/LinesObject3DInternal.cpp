@@ -68,10 +68,7 @@ LinesObject3DInternal::LinesObject3DInternal(const string& id, float lineWidth, 
 			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
 		boundingBox.update();
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-		boundingBoxTransformed.getMax().add(0.05f); // same here
-		boundingBoxTransformed.update();
+		updateBoundingBox();
 	}
 	vboIds = nullptr;
 }
@@ -82,19 +79,13 @@ LinesObject3DInternal::~LinesObject3DInternal() {
 void LinesObject3DInternal::update()
 {
 	Transformations::update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateBoundingBox();
 }
 
 void LinesObject3DInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-	boundingBoxTransformed.getMax().add(0.05f); // same here
-	boundingBoxTransformed.update();
+	updateBoundingBox();
 }
 
 void LinesObject3DInternal::initialize() {

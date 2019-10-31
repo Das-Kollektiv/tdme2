@@ -35,13 +35,13 @@ public:
 	LightingShaderTerrainImplementation(Renderer* renderer);
 
 private:
-	int uniformGrasTextureUnit { -1 };
-	int uniformDirtTextureUnit { -1 };
-	int uniformSnowTextureUnit { -1 };
-	int uniformStoneTextureUnit { -1 };
-	int grasTextureId { 0 };
-	int dirtTextureId { 0 };
-	int snowTextureId { 0 };
-	int stoneTextureId { 0 };
+	int32_t uniformGrasTextureUnit { -1 };
+	int32_t uniformDirtTextureUnit { -1 };
+	int32_t uniformSnowTextureUnit { -1 };
+	int32_t uniformStoneTextureUnit { -1 };
+	int32_t grasTextureId { 0 };
+	int32_t dirtTextureId { 0 };
+	int32_t snowTextureId { 0 };
+	int32_t stoneTextureId { 0 };
 
 };

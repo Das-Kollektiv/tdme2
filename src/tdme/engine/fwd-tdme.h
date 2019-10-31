@@ -10,7 +10,8 @@ namespace engine {
 		class EngineGL2Renderer;
 		class EngineGLES2Renderer;
 		class EngineVKRenderer;
-		struct Entity;
+		class Entity;
+		class EntityHierarchy;
 		struct EntityPickingFilter;
 		class FrameBuffer;
 		class Frustum;

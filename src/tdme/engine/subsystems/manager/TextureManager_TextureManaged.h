@@ -16,37 +16,13 @@ using std::string;
 class tdme::engine::subsystems::manager::TextureManager_TextureManaged
 {
 	friend class TextureManager;
+
 private:
-	string id {  };
-	int32_t rendererId {  };
-	int32_t referenceCounter {  };
+	string id;
+	int32_t rendererId;
+	int32_t referenceCounter { 0 };
+	bool uploaded { false };
 private:
-
-	/** 
-	 * @return texture id
-	 */
-	const string& getId();
-
-	/** 
-	 * @return texture renderer id
-	 */
-	int32_t getRendererId();
-
-	/** 
-	 * @return reference counter
-	 */
-	int32_t getReferenceCounter();
-
-	/** 
-	 * decrement reference counter
-	 * @return if reference counter = 0
-	 */
-	bool decrementReferenceCounter();
-
-	/** 
-	 * increment reference counter
-	 */
-	void incrementReferenceCounter();
 
 	/**
 	 * Protected constructor
@@ -54,4 +30,48 @@ private:
 	 * @param rendererId renderer id
 	 */
 	TextureManager_TextureManaged(const string& id, int32_t rendererId);
+
+	/** 
+	 * @return texture id
+	 */
+	inline const string& getId() {
+		return id;
+	}
+
+	/** 
+	 * @return reference counter
+	 */
+	inline int32_t getReferenceCounter() {
+		return referenceCounter;
+	}
+
+	/** 
+	 * decrement reference counter
+	 * @return if reference counter = 0
+	 */
+	inline bool decrementReferenceCounter() {
+		referenceCounter--;
+		return referenceCounter == 0;
+	}
+
+	/** 
+	 * increment reference counter
+	 */
+	inline void incrementReferenceCounter() {
+		referenceCounter++;
+	}
+
+public:
+	/**
+	 * @return texture renderer id
+	 */
+	inline int32_t getRendererId() {
+		return rendererId;
+	}
+
+	/**
+	 * @return if vbo's have been uploaded, will change internal flag to uploaded
+	 */
+	bool isUploaded();
+
 };

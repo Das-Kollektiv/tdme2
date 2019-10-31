@@ -17,7 +17,7 @@ string GUIScrollAreaHorizontal::NAME = "scrollarea-horizontal";
 
 GUIScrollAreaHorizontal::GUIScrollAreaHorizontal()
 {
-	template_ = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea-horizontal.xml");
+	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea-horizontal.xml");
 }
 
 const string& GUIScrollAreaHorizontal::getName()
@@ -27,7 +27,7 @@ const string& GUIScrollAreaHorizontal::getName()
 
 const string& GUIScrollAreaHorizontal::getTemplate()
 {
-	return template_;
+	return templateXML;
 }
 
 map<string, string>& GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
@@ -43,8 +43,6 @@ map<string, string>& GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* scree
 	attributes["border"] = "0";
 	attributes["border-color"] = "transparent";
 	attributes["padding"] = "0";
-	attributes["show-on"] = "";
-	attributes["hide-on"] = "";
 	return attributes;
 }
 

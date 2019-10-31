@@ -32,14 +32,24 @@ class tdme::engine::subsystems::rendering::Object3DInternal
 	friend class Object3DRenderer;
 
 protected:
-	string id {  };
-	bool enabled {  };
-	bool pickable {  };
-	bool dynamicShadowing {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
+	string id;
+	bool enabled;
+	bool pickable;
+	bool dynamicShadowing;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+
+	/**
+	 * Update bounding volume
+	 */
+	inline void updateBoundingBox() {
+		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
+		boundingBoxTransformed.getMax().add(0.05f); // same here
+		boundingBoxTransformed.update();
+	}
 
 public:
 	/** 
@@ -171,6 +181,8 @@ public:
 	void dispose() override;
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
+	void setTransformationsMatrix(const string& id, const Matrix4x4& matrix) override;
+	void unsetTransformationsMatrix(const string& id) override;
 
 	/**
 	 * Public constructor

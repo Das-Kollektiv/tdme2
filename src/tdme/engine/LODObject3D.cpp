@@ -72,7 +72,9 @@ LODObject3D::LODObject3D(
 
 void LODObject3D::setEngine(Engine* engine)
 {
+	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
+	if (engine != nullptr) engine->registerEntity(this);
 	if (objectLOD1 != nullptr) objectLOD1->setEngine(engine);
 	if (objectLOD2 != nullptr) objectLOD2->setEngine(engine);
 	if (objectLOD3 != nullptr) objectLOD3->setEngine(engine);
@@ -146,7 +148,7 @@ void LODObject3D::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->updateEntity(this);
+	if (engine != nullptr) engine->registerEntity(this);
 }
 
 void LODObject3D::dispose()

@@ -13,6 +13,7 @@ using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::shared::views::EntityDisplayView;
+using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::utils::MutableString;
 
 /** 
@@ -25,10 +26,11 @@ class tdme::tools::shared::controller::EntityDisplaySubScreenController
 private:
 	static MutableString CHECKBOX_CHECKED;
 	static MutableString CHECKBOX_UNCHECKED;
-	GUIElementNode* displayBoundingVolume {  };
-	GUIElementNode* displayShadowing {  };
-	GUIElementNode* displayGround {  };
-	EntityDisplayView* view {  };
+	GUIElementNode* displayBoundingVolume { nullptr };
+	GUIElementNode* displayShadowing { nullptr };
+	GUIElementNode* displayGround { nullptr };
+	EntityDisplayView* view { nullptr };
+	EntityPhysicsView* physicsView { nullptr };
 
 public:
 
@@ -71,8 +73,9 @@ public:
 
 	/**
 	 * Public constructor
+	 * @param physicsView physics view
 	 */
-	EntityDisplaySubScreenController();
+	EntityDisplaySubScreenController(EntityPhysicsView* physicsView);
 
 	/**
 	 * Destructor

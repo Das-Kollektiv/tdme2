@@ -7,12 +7,14 @@
 		#if !defined(__arm__) && !defined(__aarch64__)
 			#define GLEW_NO_GLU
 			#include <GL/glew.h>
+			#include <GL/glxew.h>
 		#endif
 		#include <GL/freeglut.h>
 	#elif defined(__APPLE__)
 		#include <GLUT/glut.h>
 	#elif defined(_WIN32)
 		#include <GL/glew.h>
+		#include <GL/wglew.h>
 		#include <GL/freeglut.h>
 	#elif defined(__HAIKU__)
 		#include <GL/glew.h>
@@ -75,7 +77,11 @@ string Application::execute(const string& command) {
 	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
 	array<char, 128> buffer;
 	string result;
-	shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+	#if defined(_MSC_VER)
+		shared_ptr<FILE> pipe(_popen(command.c_str(), "r"), _pclose);
+	#else
+		shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+	#endif
 	if (!pipe) throw std::runtime_error("popen() failed!");
 	while (!feof(pipe.get())) {
 		if (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
@@ -281,6 +287,19 @@ Application::Application() {
 }
 
 Application::~Application() {
+}
+
+void Application::setVSyncEnabled(bool vSync) {
+	#if defined(VULKAN)
+		// not yet
+	#else
+		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+			// TODO: a.drewke
+			// glXSwapIntervalEXT(vSync == true?1:0);
+		#elif defined(_WIN32)
+			wglSwapIntervalEXT(vSync == true?1:0);
+		#endif
+	#endif
 }
 
 void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {
@@ -670,6 +689,18 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 
 	void Application::glutOnMouseButton(int button, int state, int x, int y) {
 		if (Application::inputEventHandler == nullptr) return;
+		if (button == 3) {
+			#if !defined(_MSC_VER)
+				Application::inputEventHandler->onMouseWheel(3, 1, x, y);
+			#endif
+			return;
+		} else
+		if (button == 4) {
+			#if !defined(_MSC_VER)
+				Application::inputEventHandler->onMouseWheel(4, -1, x, y);
+			#endif
+			return;
+		}
 		Application::inputEventHandler->onMouseButton(button, state, x, y);
 	}
 

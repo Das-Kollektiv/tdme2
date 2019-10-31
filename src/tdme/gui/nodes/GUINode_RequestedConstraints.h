@@ -20,12 +20,12 @@ using tdme::gui::nodes::GUINode;
  */
 struct tdme::gui::nodes::GUINode_RequestedConstraints
 {
-	GUINode_RequestedConstraints_RequestedConstraintsType* leftType {  };
-	int32_t left {  };
-	GUINode_RequestedConstraints_RequestedConstraintsType* topType {  };
-	int32_t top {  };
-	GUINode_RequestedConstraints_RequestedConstraintsType* widthType {  };
-	int32_t width {  };
-	GUINode_RequestedConstraints_RequestedConstraintsType* heightType {  };
-	int32_t height {  };
+	GUINode_RequestedConstraints_RequestedConstraintsType* leftType { nullptr };
+	int32_t left { 0 };
+	GUINode_RequestedConstraints_RequestedConstraintsType* topType { nullptr };
+	int32_t top { 0 };
+	GUINode_RequestedConstraints_RequestedConstraintsType* widthType { nullptr };
+	int32_t width { 0 };
+	GUINode_RequestedConstraints_RequestedConstraintsType* heightType { nullptr };
+	int32_t height { 0 };
 };

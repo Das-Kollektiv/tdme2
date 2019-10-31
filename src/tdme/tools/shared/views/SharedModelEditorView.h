@@ -7,10 +7,12 @@
 #include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
+#include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 
 using std::string;
 
@@ -21,6 +23,7 @@ using tdme::math::Vector3;
 using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::views::CameraRotationInputHandler;
+using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntitySoundsView;
@@ -37,26 +40,28 @@ class tdme::tools::shared::views::SharedModelEditorView
 	: public virtual View
 	, public virtual PlayableSoundView
 	, public virtual GUIInputEventHandler
+	, protected virtual CameraRotationInputHandlerEventHandler
 {
 protected:
-	Engine* engine {  };
-	Audio* audio {  };
+	Engine* engine { nullptr };
+	Audio* audio { nullptr };
 
 private:
-	PopUps* popUps {  };
-	ModelEditorScreenController* modelEditorScreenController {  };
-	EntityDisplayView* entityDisplayView {  };
-	EntityPhysicsView* entityPhysicsView {  };
-	EntitySoundsView* entitySoundsView {  };
-	LevelEditorEntity* entity {  };
-	bool loadModelRequested {  };
-	bool initModelRequested {  };
-	bool initModelRequestedReset {  };
-	string modelFile {  };
-	int lodLevel {  };
-	CameraRotationInputHandler* cameraRotationInputHandler {  };
-	int64_t audioStarted { -1LL };
-	int64_t audioOffset { -1LL };
+	PopUps* popUps { nullptr };
+	ModelEditorScreenController* modelEditorScreenController { nullptr };
+	EntityDisplayView* entityDisplayView { nullptr };
+	EntityPhysicsView* entityPhysicsView { nullptr };
+	EntitySoundsView* entitySoundsView { nullptr };
+	LevelEditorEntity* entity { nullptr };
+	bool loadModelRequested;
+	bool initModelRequested;
+	bool initModelRequestedReset;
+	string modelFile;
+	int lodLevel;
+	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+	int64_t audioStarted;
+	int64_t audioOffset;
+	Vector3 objectScale;
 
 	/**
 	 * Init model
@@ -89,6 +94,16 @@ private:
 	 * @throws tdme::utils::Exception
 	 */
 	virtual LevelEditorEntity* loadModel(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot) /* throws(Exception) */;
+
+	/**
+	 * On rotation event to be overloaded
+	 */
+	virtual void onRotation() override;
+
+	/**
+	 * On scale event to be overloaded
+	 */
+	virtual void onScale() override;
 
 public:
 
