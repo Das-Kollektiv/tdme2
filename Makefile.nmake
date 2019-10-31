@@ -1,4 +1,4 @@
-MAKEDIR = obj
+OBJ = mscobj
 
 SRCS_PLATFORM = \
 	src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -577,37 +577,6 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
 
-MAIN_SRCS = \
-	src/tdme/tests/AngleTest-main.cpp \
-	src/tdme/tests/AudioTest-main.cpp \
-	src/tdme/tests/CrashTest-main.cpp \
-	src/tdme/tests/EngineTest-main.cpp \
-	src/tdme/tests/EntityHierarchyTest-main.cpp \
-	src/tdme/tests/HTTPClientTest-main.cpp \
-	src/tdme/tests/LODTest-main.cpp \
-	src/tdme/tests/SkinningTest-main.cpp \
-	src/tdme/tests/PathFindingTest-main.cpp \
-	src/tdme/tests/PivotTest-main.cpp \
-	src/tdme/tests/PhysicsTest1-main.cpp \
-	src/tdme/tests/PhysicsTest2-main.cpp \
-	src/tdme/tests/PhysicsTest3-main.cpp \
-	src/tdme/tests/PhysicsTest4-main.cpp \
-	src/tdme/tests/RayTracingTest-main.cpp \
-	src/tdme/tests/ThreadingTest-main.cpp \
-	src/tdme/tests/UDPClientTest-main.cpp \
-	src/tdme/tests/UDPServerTest-main.cpp \
-	src/tdme/tests/WaterTest-main.cpp \
-	src/tdme/tools/gui/GUITest-main.cpp \
-	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
-	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
-	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
-	src/tdme/tools/cli/archive-main.cpp \
-	src/tdme/tools/cli/converttotm-main.cpp \
-	src/tdme/tools/cli/copyanimationsetups-main.cpp \
-	src/tdme/tools/cli/generatelicenses-main.cpp \
-	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
-	src/tdme/tools/cli/fixdoxygen-main.cpp \
-
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
 	$(EXT_ZLIB_SRCS) \
@@ -617,11 +586,10 @@ EXT_SRCS = \
 	$(EXT_VHACD_SRCS) \
 	$(EXT_REACTPHYSICS3D_SRCS)
 
-OBJECTS = *.obj
-
 all: \
-	compile link clean \
-	ext-compile ext-link ext-clean \
+	init compile link clean \
+	ext-init ext-compile ext-link ext-clean \
+	init-mains \
 	AngleTest \
 	AudioTest \
 	CrashTest \
@@ -649,114 +617,117 @@ all: \
 	TDMEParticleSystem \
 	clean-mains
 
-ext-compile: $(EXT_SRCS)
-	cl /c $(FLAGS) $(INCLUDES) $**
+ext-init:
+	mkdir $(OBJ)
 
-ext-link: *.obj
+ext-compile: $(EXT_SRCS)
+	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+
+ext-link: $(OBJ)/*.obj
 	lib $(LINK_FLAGS) /OUT:libtdme-ext.lib $**
 
-ext-clean: *.obj 
-	cmd /c <<clean.bat
-del $**
-<<
+ext-clean: $(OBJ)/*.obj
+	rmdir /s /q $(OBJ) 
+
+init:
+	mkdir $(OBJ) 
+
+init-mains:
+	mkdir $(OBJ)
 
 compile: $(SRCS)
-	cl /c $(FLAGS) $(INCLUDES) $**
+	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-link: *.obj
+link: $(OBJ)/*.obj
 	lib $(LINK_FLAGS) /OUT:libtdme.lib $**
 
-clean: *.obj 
-	cmd /c <<clean.bat
-del $**
-<<
+clean: 
+	rmdir /s /q $(OBJ)
 
-clean-mains: *.obj 
-	cmd /c <<clean.bat
-del $**
-<<
+clean-mains: 
+	rmdir /s /q $(OBJ)
 
 AngleTest: 
-	cl /FeAngleTest $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 	
 AudioTest: 
-	cl /FeAudioTest $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 CrashTest: 
-	cl /FeCrashTest $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeCrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 EngineTest: 
-	cl /FeEngineTest $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeEngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 EntityHierarchyTest: 
-	cl /FeEntityHierarchyTest $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeEntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 HTTPClientTest:
-	cl /FeHTMLClientTest $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeHTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 LODTest: 
-	cl /FeLODTest $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PathFindingTest: 
-	cl /FePathFindingTest $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 GUITest: 
-	cl /FeGUITest $(FLAGS) $(INCLUDES) src/tdme/tools/gui/GUITest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeGUITest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/gui/GUITest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest1: 
-	cl /FePhysicsTest1 $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest2: 
-	cl /FePhysicsTest2 $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest3: 
-	cl /FePhysicsTest3 $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PhysicsTest4: 
-	cl /FePhysicsTest4 $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 RayTracingTest: 
-	cl /FeRayTracingTest $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeRayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 SkinningTest: 
-	cl /FeSkinningTest $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 ThreadingTest:
-	cl /FeThreadingTest $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 UDPClientTest:
-	cl /FeUDPClientTest $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeUDPClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 UDPServerTest:
-	cl /FeUDPServerTest $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeUDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 WaterTest: 
-	cl /FeWaterTest $(FLAGS) $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeWaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 archive:
-    cl /Fearchive $(FLAGS) $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /Fearchive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 converttotm:
-	cl /Feconverttotm $(FLAGS) $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Feconverttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 copyanimationsetups:
-	cl /Fecopyanimationsetups $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Fecopyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 generatelicenses:
-	cl /Fegeneratelicenses $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 levelfixmodelszup2yup:
-	cl /Felevelfixmodelszup2yup $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Felevelfixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 fixdoxygen:
-    cl /Fefixdoxygen $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMELevelEditor:
-	cl /FeTDMELevelEditor $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeTDMELevelEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMEModelEditor:
-	cl /FeTDMEModelEditor $(FLAGS) $(INCLUDES) src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeTDMEModelEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMEParticleSystem:
-	cl /FeTDMEParticleSystem $(FLAGS) $(INCLUDES) src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeTDMEParticleSystem /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 	

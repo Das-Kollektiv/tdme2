@@ -178,6 +178,7 @@
     - documentation
 
 - What is WIP or planned
+	- Makefile generator for TDME2 based projects
 	- Installer
 	- Water shader
     - Improve on Vulkan
