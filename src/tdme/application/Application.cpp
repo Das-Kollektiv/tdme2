@@ -1,3 +1,4 @@
+
 #if defined(VULKAN)
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
@@ -402,10 +403,17 @@ void Application::swapBuffers() {
 	#endif
 }
 
+#if defined(VULKAN)
+	static void glfwErrorCallback(int error, const char* description) {
+		Console::println(string("glfwErrorCallback(): ") + description);
+	}
+#endif
+
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
 	this->title = title;
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN)
+		glfwSetErrorCallback(glfwErrorCallback);
 		if (glfwInit() == false) {
 			Console::println("glflInit(): failed!");
 			return;
