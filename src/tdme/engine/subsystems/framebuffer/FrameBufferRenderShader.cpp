@@ -43,16 +43,14 @@ void FrameBufferRenderShader::initialize()
 		"shader/" + shaderVersion + "/framebuffer",
 		"render_vertexshader.c"
 	);
-	if (vertexShaderId == 0)
-		return;
+	if (vertexShaderId == 0) return;
 
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
 		"render_fragmentshader.c"
 	);
-	if (fragmentShaderId == 0)
-		return;
+	if (fragmentShaderId == 0) return;
 
 	programId = renderer->createProgram();
 	renderer->attachShaderToProgram(programId, vertexShaderId);
@@ -61,15 +59,13 @@ void FrameBufferRenderShader::initialize()
 		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
 	}
-	if (renderer->linkProgram(programId) == false)
-		return;
+	if (renderer->linkProgram(programId) == false) return;
 
 	// uniforms
 	uniformColorBufferTextureUnit = renderer->getProgramUniformLocation(programId, "colorBufferTextureUnit");
 	if (uniformColorBufferTextureUnit == -1) return;
 
 	uniformDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "depthBufferTextureUnit");
-	if (uniformDepthBufferTextureUnit == -1) return;
 
 	//
 	auto context = renderer->getDefaultContext();
@@ -128,7 +124,7 @@ void FrameBufferRenderShader::useProgram()
 	renderer->useProgram(programId);
 	auto context = renderer->getDefaultContext();
 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
-	renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
+	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
 	isRunning = true;
 }
 

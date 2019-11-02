@@ -4,7 +4,7 @@ precision mediump float;
 
 // uniforms
 uniform sampler2D colorBufferTextureUnit;
-uniform sampler2D depthBufferTextureUnit;
+// uniform sampler2D depthBufferTextureUnit;
 
 // passed from vertex shader
 varying vec2 vsFragTextureUV;

@@ -15,16 +15,16 @@ class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader final
 {
 
 private:
-	Renderer* renderer {  };
-	int32_t vertexShaderId {  };
-	int32_t fragmentShaderId {  };
-	int32_t programId {  };
+	Renderer* renderer { nullptr };
+	int32_t vertexShaderId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t programId { -1 };
 	int32_t uniformColorBufferTextureUnit { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };
-	int32_t vboVertices {  };
-	int32_t vboTextureCoordinates {  };
-	bool initialized {  };
-	bool isRunning {  };
+	int32_t vboVertices { -1 };
+	int32_t vboTextureCoordinates {-1  };
+	bool initialized;
+	bool isRunning;
 
 public:
 

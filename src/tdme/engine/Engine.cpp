@@ -606,6 +606,18 @@ void Engine::initialize()
 		Console::println(string("TDME::Not using skinning compute shader"));
 	}
 
+	#define CHECK_INITIALIZED(NAME, SHADER) if (SHADER != nullptr && SHADER->isInitialized() == false) Console::println(string("TDME: ") + NAME + ": Not initialized")
+
+	CHECK_INITIALIZED("EZRShader", ezrShaderPre);
+	CHECK_INITIALIZED("ShadowMappingShaderPre", shadowMappingShaderPre);
+	CHECK_INITIALIZED("ShadowMappingShader", shadowMappingShaderRender);
+	CHECK_INITIALIZED("LightingShader", lightingShader);
+	CHECK_INITIALIZED("ParticlesShader", particlesShader);
+	CHECK_INITIALIZED("LinesShader", linesShader);
+	CHECK_INITIALIZED("GUIShader", guiShader);
+	CHECK_INITIALIZED("FrameBufferRenderShader", frameBufferRenderShader);
+	CHECK_INITIALIZED("PostProcessingShader", postProcessingShader);
+
 	// check if initialized
 	// initialized &= objectsFrameBuffer->isInitialized();
 	initialized &= ezrShaderPre == nullptr ? true : ezrShaderPre->isInitialized();

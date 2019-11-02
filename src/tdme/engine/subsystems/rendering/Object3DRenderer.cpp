@@ -135,18 +135,18 @@ Object3DRenderer::Object3DRenderer(Engine* engine, Renderer* renderer) {
 	transparentRenderFacesPool = new TransparentRenderFacesPool();
 	renderTransparentRenderPointsPool = new RenderTransparentRenderPointsPool(65535);
 	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
+	threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
-		threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 		bbEffectColorMuls.resize(threadCount);
 		bbEffectColorAdds.resize(threadCount);
 		bbMvMatrices.resize(threadCount);
-		vboInstancedRenderingIds.resize(threadCount);
 		for (auto i = 0; i < threadCount; i++) {
 			bbEffectColorMuls[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
 			bbEffectColorAdds[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
 			bbMvMatrices[i] = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
 		}
 	}
+	vboInstancedRenderingIds.resize(threadCount);
 }
 
 Object3DRenderer::~Object3DRenderer() {
