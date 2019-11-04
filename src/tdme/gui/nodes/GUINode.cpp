@@ -376,11 +376,29 @@ GUINode_Scale9Grid GUINode::createScale9Grid(const string& all, const string& le
 
 GUINodeConditions GUINode::createConditions(const string& conditions)
 {
+	auto arguments = 0;
 	GUINodeConditions guiNodeConditions;
-	StringTokenizer strTokenizer;
-	strTokenizer.tokenize(conditions, ",");
-	while (strTokenizer.hasMoreTokens()) {
-		guiNodeConditions.add(StringUtils::trim(strTokenizer.nextToken()));
+	string condition;
+	for (auto i = 0; i < conditions.size(); i++) {
+		auto c = conditions[i];
+		if (c == '(') {
+			condition+= c;
+			arguments++;
+		} else
+		if (c == ')') {
+			condition+= c;
+			arguments--;
+		} else
+		if (arguments == 0 && c == ',') {
+			guiNodeConditions.add(StringUtils::trim(condition));
+			condition.clear();
+		} else {
+			condition+= c;
+		}
+	}
+	if (condition.empty() == false) {
+		guiNodeConditions.add(StringUtils::trim(condition));
+		condition.clear();
 	}
 	return guiNodeConditions;
 }
@@ -407,35 +425,16 @@ bool GUINode::checkConditions(GUIElementNode* elementNode)
 	}
 
 	StringTokenizer t;
+	string function;
+	vector<string> arguments;
 	for (auto i = 0; i < hideOn.size(); i++) {
-		string elementNodeId;
-		auto condition = hideOn[i];
-		if (condition.find('.') != -1) {
-			t.tokenize(condition, ".");
-			elementNodeId = t.nextToken();
-			condition = t.nextToken();
-		}
-		auto elementNodeToCheck = elementNodeId.size() == 0?elementNode:dynamic_cast<GUIElementNode*>(screenNode->getNodeById(elementNodeId));
-		if (elementNodeToCheck == nullptr) {
-			Console::println("GUINode::checkConditions(): element node '" + elementNodeId + "': not found");
-			continue;
-		}
-		if (elementNodeToCheck->activeConditions.has(condition) == true) return false;
+		auto conditionTerm = hideOn[i];
+		cfParse(hideOn[i], function, arguments);
+		if (cfCall(elementNode, function, arguments) == true) return false;
 	}
 	for (auto i = 0; i < showOn.size(); i++) {
-		string elementNodeId;
-		auto condition = showOn[i];
-		if (condition.find('.') != -1) {
-			t.tokenize(condition, ".");
-			elementNodeId = t.nextToken();
-			condition = t.nextToken();
-		}
-		auto elementNodeToCheck = elementNodeId.size() == 0?elementNode:dynamic_cast<GUIElementNode*>(screenNode->getNodeById(elementNodeId));
-		if (elementNodeToCheck == nullptr) {
-			Console::println("GUINode::checkConditions(): element node '" + elementNodeId + "': not found");
-			continue;
-		}
-		if (elementNodeToCheck->activeConditions.has(condition) == true) return true;
+		cfParse(showOn[i], function, arguments);
+		if (cfCall(elementNode, function, arguments) == true) return true;
 	}
 
 	return showOn.size() == 0;
@@ -1116,4 +1115,89 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 	}
 }
 
+void GUINode::cfParse(const string& term, string& function, vector<string>& arguments) {
+	auto leftParenthesis = term.find('(');
+	auto rightParenthesis = term.find_last_of(')');
+	function = "hasCondition";
+	if (leftParenthesis != string::npos && rightParenthesis != string::npos && leftParenthesis < rightParenthesis) {
+		function = StringUtils::trim(StringUtils::substring(term, 0, leftParenthesis));
+	}
+	arguments.clear();
+	auto argumentStartIdx = leftParenthesis != string::npos?leftParenthesis + 1:0;
+	auto argumentEndIdx = rightParenthesis != string::npos?rightParenthesis:term.size();
+	auto quote = false;
+	auto doubleQuote = false;
+	string argument;
+	for (auto i = argumentStartIdx; i < argumentEndIdx; i++) {
+		auto c = term[i];
+		if (c == '\'') {
+			argument+= c;
+			if (quote == true) {
+				quote = false;
+				arguments.push_back(StringUtils::trim(argument));
+				argument.clear();
+			}
+		} else
+		if (c == '\"') {
+			argument+= c;
+			if (doubleQuote == true) {
+				doubleQuote = false;
+				arguments.push_back(argument);
+				argument.clear();
+			}
+		} else
+		if (quote == false && doubleQuote == false && c == ',') {
+			arguments.push_back(StringUtils::trim(argument));
+			argument.clear();
+		} else {
+			argument+= c;
+		}
+	}
+	if (argument.empty() == false) {
+		arguments.push_back(StringUtils::trim(argument));
+		argument.clear();
+	}
+}
 
+bool GUINode::cfCall(GUIElementNode* elementNode, const string& function, const vector<string>& arguments) {
+	if (function == "empty") {
+		return cfEmpty(arguments);
+	} else
+	if (function == "hasCondition") {
+		return cfHasCondition(elementNode, arguments);
+	} else {
+		Console::println("GUINode::cfCall(): Unknown function: " + function + ": returning false");
+		return false;
+	}
+}
+
+bool GUINode::cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments) {
+	StringTokenizer t;
+	for (auto& argument: arguments) {
+		string elementNodeId;
+		auto condition = argument;
+		if (condition.find('.') != -1) {
+			t.tokenize(condition, ".");
+			elementNodeId = t.nextToken();
+			condition = t.nextToken();
+		}
+		auto elementNodeToCheck = elementNodeId.size() == 0?elementNode:dynamic_cast<GUIElementNode*>(screenNode->getNodeById(elementNodeId));
+		if (elementNodeToCheck == nullptr) {
+			Console::println("GUINode::checkConditions(): element node '" + elementNodeId + "': not found");
+			continue;
+		}
+		if (elementNodeToCheck->activeConditions.has(condition) == true) return true;
+	}
+	return false;
+}
+
+bool GUINode::cfEmpty(const vector<string>& arguments) {
+	for (auto& argument: arguments) {
+		if (argument == "false" ||
+			argument == "0" ||
+			argument == "0.0" ||
+			argument == "\"\"" ||
+			argument == "''") return true;
+	}
+	return false;
+}

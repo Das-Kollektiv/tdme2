@@ -293,6 +293,9 @@ Mollis pretium lorem primis senectus habitasse lectus scelerisque donec, ultrici
 							<text show-on="c" font="resources/gui-system/fonts/Roboto_20.fnt" text="C" color="#000000" />
 						</element>
 						<space height="*" />
+						<text show-on="empty('x', 'y', 'z')" font="resources/gui-system/fonts/Roboto_20.fnt" text="show-on,hide-on functions: This should not be visible as empty function should return false on 'x', 'y', 'z'" color="#000000" />
+						<text show-on="empty('x', 'y', 'z', '')" font="resources/gui-system/fonts/Roboto_20.fnt" text="show-on,hide-on functions: This should be visible as empty function should return true on 'x', 'y', 'z', ''" color="#000000" />
+						<space height="*" />
 					</layout>
 				</tab-content>
 			</tabs-content>

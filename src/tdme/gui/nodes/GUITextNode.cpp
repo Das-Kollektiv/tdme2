@@ -51,10 +51,10 @@ GUITextNode::GUITextNode(
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = GUI::getFont(font);
-	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
+	this->font = font.empty() == true?nullptr:GUI::getFont(font);
+	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
 	this->text.set(text);
-	this->font->initialize();
+	if (this->font != nullptr) this->font->initialize();
 }
 
 const string GUITextNode::getNodeType()
@@ -69,12 +69,12 @@ bool GUITextNode::isContentNode()
 
 int32_t GUITextNode::getContentWidth()
 {
-	return font->getTextWidth(text) + border.left + border.right + padding.left + padding.right;
+	return font != nullptr?font->getTextWidth(text) + border.left + border.right + padding.left + padding.right:0;
 }
 
 int32_t GUITextNode::getContentHeight()
 {
-	return font->getTextHeight(text) + border.top + border.bottom + padding.top + padding.bottom;
+	return font != nullptr?font->getTextHeight(text) + border.top + border.bottom + padding.top + padding.bottom:0;
 }
 
 void GUITextNode::setText(const MutableString& text) {
@@ -84,7 +84,7 @@ void GUITextNode::setText(const MutableString& text) {
 
 void GUITextNode::dispose()
 {
-	this->font->dispose();
+	if (font != nullptr) font->dispose();
 	GUINode::dispose();
 }
 
@@ -93,6 +93,16 @@ void GUITextNode::render(GUIRenderer* guiRenderer)
 	if (conditionsMet == false) return;
 
 	GUINode::render(guiRenderer);
-	font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, 0, 0, color);
+	if (font != nullptr) {
+		font->drawString(
+			guiRenderer,
+			computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft,
+			computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop,
+			text,
+			0,
+			0,
+			color
+		);
+	}
 }
 

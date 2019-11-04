@@ -57,12 +57,12 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = GUI::getFont(font);
-	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
+	this->font = font.empty() == true?nullptr:GUI::getFont(font);
+	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
 	this->text.set(text);
 	this->autoWidth = 0;
 	this->autoHeight = 0;
-	this->font->initialize();
+	if (this->font != nullptr) this->font->initialize();
 }
 
 const string GUIMultilineTextNode::getNodeType()
@@ -78,7 +78,7 @@ bool GUIMultilineTextNode::isContentNode()
 int32_t GUIMultilineTextNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return autoWidth + border.left + border.right + padding.left + padding.right;
+		return font != nullptr?autoWidth + border.left + border.right + padding.left + padding.right:0;
 	} else {
 		return computedConstraints.width;
 	}
@@ -86,7 +86,7 @@ int32_t GUIMultilineTextNode::getContentWidth()
 
 int32_t GUIMultilineTextNode::getContentHeight()
 {	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return autoHeight + border.top + border.bottom + padding.top + padding.bottom;
+		return font != nullptr?autoHeight + border.top + border.bottom + padding.top + padding.bottom:0;
 	} else {
 		return computedConstraints.height;
 	}
@@ -95,6 +95,9 @@ int32_t GUIMultilineTextNode::getContentHeight()
 void GUIMultilineTextNode::computeContentAlignment() {
 	// If fixed width requested and no computed constraints yet, abort
 	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && computedConstraints.width == -1) return;
+	if (font == nullptr) return;
+
+	//
 	autoWidth = 0;
 	autoHeight = 0;
 	{
@@ -168,7 +171,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 
 void GUIMultilineTextNode::dispose()
 {
-	this->font->dispose();
+	if (font != nullptr) font->dispose();
 	GUINode::dispose();
 }
 
@@ -176,9 +179,11 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 {
 	if (conditionsMet == false) return;
 
+	//
 	GUINode::render(guiRenderer);
 
-	{
+	//
+	if (font != nullptr) {
 		// indents
 		auto xIndentLeft = computedConstraints.left + border.left + padding.left;
 		auto yIndentTop = computedConstraints.top + border.top + padding.top;

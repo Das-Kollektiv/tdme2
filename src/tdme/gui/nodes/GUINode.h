@@ -32,6 +32,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using tdme::gui::nodes::GUINode_Alignments;
@@ -72,6 +73,42 @@ class tdme::gui::nodes::GUINode
 
 private:
 	GUINode_Flow* flow;
+
+	/**
+	 * Parse condition function term
+	 * @param term term
+	 * @param function function
+	 * @param arguments function arguments
+	 */
+	void cfParse(const string& term, string& function, vector<string>& arguments);
+
+	/**
+	 * Call condition function with arguments
+	 * @param elementNode element node to work with
+	 * @param function function to be called
+	 * @param arguments function arguments
+	 * @return condition met
+	 */
+	bool cfCall(GUIElementNode* elementNode, const string& function, const vector<string>& arguments);
+
+	/**
+	 * Condition function: empty
+	 * @param arguments arguments
+	 * 	Argument should look like 'test', "test", '', "", 123, 0, 123.4, 0.0 for now
+	 *	Arguments or OR connected
+	 * @return if 1 argument has not been empty
+	 */
+	bool cfEmpty(const vector<string>& arguments);
+
+	/**
+	 * Condition function: has condition
+	 * @param elementNode element node to work with
+	 * @param arguments arguments
+	 *	Format of arguments: [elementid.]condition
+	 *	Arguments or OR connected
+	 * @return if 1 condition has been met
+	 */
+	bool cfHasCondition(GUIElementNode* elementNode, const vector<string>& arguments);
 
 protected:
 	GUIScreenNode* screenNode { nullptr };

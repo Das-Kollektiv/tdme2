@@ -524,7 +524,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src")))),
+					StringUtils::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src"))))),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
@@ -599,7 +599,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					string(AVOID_NULLPTR_STRING(node->Attribute("font"))),
+					StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					MutableString(unescapeQuotes(string(StringUtils::trim(AVOID_NULLPTR_STRING(node->Attribute("text"))))))
 				);
@@ -660,7 +660,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					string(AVOID_NULLPTR_STRING(node->Attribute("font"))),
+					StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					MutableString(StringUtils::trim(AVOID_NULLPTR_STRING(node->GetText())))
 				);
@@ -721,7 +721,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
-					string(AVOID_NULLPTR_STRING(node->Attribute("font"))),
+					StringUtils::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color-disabled"))),
 					MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text"))))),
