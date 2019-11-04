@@ -34,7 +34,7 @@ void ShadowMappingShaderRenderFoliageImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
 		"render_vertexshader.c",
-		"#define HAVE_FOLIAGE\n\n",
+		"#define HAVE_FOLIAGE",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/shadowmapping",
 			"render_computevertex.inc.c"

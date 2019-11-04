@@ -33,7 +33,7 @@ void ParticlesShader::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/particles",
 		"render_fragmentshader.c",
-		"#define HAVE_DEPTH_FOG\n\n"
+		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderFragmentShaderId == 0) return;
 	//	vertex shader
@@ -41,7 +41,7 @@ void ParticlesShader::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/particles",
 		"render_vertexshader.c",
-		"#define HAVE_DEPTH_FOG\n\n"
+		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderVertexShaderId == 0) return;
 	// create, attach and link program

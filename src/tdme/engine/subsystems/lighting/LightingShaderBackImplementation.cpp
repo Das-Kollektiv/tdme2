@@ -33,7 +33,7 @@ void LightingShaderBackImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting",
 		"render_fragmentshader.c",
-		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK\n\n"
+		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK"
 	);
 	if (renderLightingFragmentShaderId == 0) return;
 
@@ -42,7 +42,7 @@ void LightingShaderBackImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting",
 		"render_vertexshader.c",
-		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK\n\n",
+		"#define HAVE_SOLID_SHADING\n#define HAVE_BACK",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/lighting",
 			"render_computevertex.inc.c"

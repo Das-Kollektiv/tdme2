@@ -1909,10 +1909,10 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		StringUtils::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
-			definitions
+			definitions + "\n\n"
 		),
 		"{$FUNCTIONS}",
-		functions
+		functions + "\n\n"
 	);
 
 	// do some shader adjustments

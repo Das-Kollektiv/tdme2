@@ -186,10 +186,10 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 		StringUtils::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
-			definitions
+			definitions + "\n\n"
 		),
 		"{$FUNCTIONS}",
-		functions
+		functions + "\n\n"
 	);
 	string sourceString = (shaderSource);
 	char* sourceHeap = new char[sourceString.length() + 1];

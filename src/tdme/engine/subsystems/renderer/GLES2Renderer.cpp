@@ -167,10 +167,10 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 		StringUtils::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
-			definitions
+			definitions + "\n\n"
 		),
 		"{$FUNCTIONS}",
-		functions
+		functions + "\n\n"
 	);
 	string sourceString = (shaderSource);
 	char *sourceHeap = new char[sourceString.length() + 1];
