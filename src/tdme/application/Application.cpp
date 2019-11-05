@@ -6,7 +6,8 @@
 		#if !defined(__arm__) && !defined(__aarch64__)
 			#define GLEW_NO_GLU
 			#include <GL/glew.h>
-			#include <GL/glxew.h>
+			// TODO: a.drewke: vsync
+			// #include <GL/glxew.h>
 		#endif
 		#include <GL/freeglut.h>
 	#elif defined(__APPLE__)
@@ -293,7 +294,7 @@ void Application::setVSyncEnabled(bool vSync) {
 		// not yet
 	#else
 		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-			// TODO: a.drewke
+			// TODO: a.drewke: vsync
 			// glXSwapIntervalEXT(vSync == true?1:0);
 		#elif defined(_WIN32)
 			wglSwapIntervalEXT(vSync == true?1:0);

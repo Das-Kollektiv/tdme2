@@ -43,7 +43,6 @@ ifeq ($(OS), Darwin)
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
-	LDFLAGS = -fuse-ld=bfd
 	INCLUDES := $(INCLUDES) -I/usr/local/include
 	# FreeBSD, Vulkan
 	ifeq ($(VULKAN), YES)
