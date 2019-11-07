@@ -89,6 +89,8 @@ void TextureManager::removeTexture(const string& textureId)
 			// remove from renderer
 			renderer->disposeTexture(textureRendererId);
 			delete textureManaged;
+			//
+			return;
 		}
 		//
 		mutex.unlock();
