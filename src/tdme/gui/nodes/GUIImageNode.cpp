@@ -93,7 +93,7 @@ int32_t GUIImageNode::getContentHeight()
 
 void GUIImageNode::dispose()
 {
-	Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
+	if (texture != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
 	GUINode::dispose();
 }
 
