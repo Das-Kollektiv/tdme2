@@ -24,6 +24,8 @@ cd tdme2
 
 ### 1.1.3. Build
 
+Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
+
 ```bash
 gmake clean && gmake -j HARDWARE_THREADS mains
 ```
@@ -48,6 +50,8 @@ cd tdme2
 ```
 
 ### 1.2.3. Build
+
+Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
 ```bash
 make clean && make -j HARDWARE_THREADS mains
@@ -86,7 +90,8 @@ Before running a TDME2 binary like described below you need to execute the follo
 export LD_LIBRARY_PATH=/usr/local/lib
 ```
 
-Go back into your TDME2 folder and continue to build TDME2 like:
+Go back into your TDME2 folder and continue to build TDME2.
+Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
 ```bash
 make clean && make -j HARDWARE_THREADS mains GLES2=YES
@@ -104,6 +109,8 @@ cd tdme2
 ```
 
 ### 1.3.3. Build
+
+Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
 ```bash
 make clean && make -j HARDWARE_THREADS mains
@@ -131,6 +138,8 @@ cd tdme2
 ```
 
 ### 1.4.3. Build
+
+Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
 ```bash
 make clean && make -j HARDWARE_THREADS mains
@@ -168,7 +177,6 @@ copy ext\win-pthread\libs\pthreadVC2.dll .
 ```
 
 ### 1.5.4. Note
-- HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4
 - All *.EXE files are generated in your "tdme2" folder root. You should just be able to launch them from there. So you can ignore 2.
 - The MSC build process is WIP
 
