@@ -2438,9 +2438,9 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 		ms.pSampleMask = NULL;
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-		VkVertexInputBindingDescription vi_bindings[9];
+		VkVertexInputBindingDescription vi_bindings[10];
 		memset(vi_bindings, 0, sizeof(vi_bindings));
-		VkVertexInputAttributeDescription vi_attrs[12];
+		VkVertexInputAttributeDescription vi_attrs[13];
 		memset(vi_attrs, 0, sizeof(vi_attrs));
 
 		// vertices
@@ -2542,12 +2542,21 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 		vi_attrs[11].format = VK_FORMAT_R32G32B32A32_SFLOAT;
 		vi_attrs[11].offset = 0;
 
+		// vertices
+		vi_bindings[9].binding = 9;
+		vi_bindings[9].stride = sizeof(float) * 3;
+		vi_bindings[9].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		vi_attrs[12].binding = 9;
+		vi_attrs[12].location = 12;
+		vi_attrs[12].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[12].offset = 0;
+
 		memset(&vi, 0, sizeof(vi));
 		vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vi.pNext = NULL;
-		vi.vertexBindingDescriptionCount = 9;
+		vi.vertexBindingDescriptionCount = 10;
 		vi.pVertexBindingDescriptions = vi_bindings;
-		vi.vertexAttributeDescriptionCount = 12;
+		vi.vertexAttributeDescriptionCount = 13;
 		vi.pVertexAttributeDescriptions = vi_attrs;
 
 		pipeline.pVertexInputState = &vi;
@@ -4741,7 +4750,7 @@ void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferOb
 }
 
 void VKRenderer::bindOrigins(void* context, int32_t bufferObjectId) {
-	Console::println(string("VKRenderer::bindOrigins()::not implemented yet"));
+	(*static_cast<context_type*>(context)).bound_buffers[9] = bufferObjectId;
 }
 
 void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId)
@@ -4828,6 +4837,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	contextTyped.objects_render_command.vertex_buffers[6] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[6] == 0?empty_vertex_buffer:contextTyped.bound_buffers[6], bufferSize);
 	contextTyped.objects_render_command.vertex_buffers[7] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[7] == 0?empty_vertex_buffer:contextTyped.bound_buffers[7], bufferSize);
 	contextTyped.objects_render_command.vertex_buffers[8] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[8] == 0?empty_vertex_buffer:contextTyped.bound_buffers[8], bufferSize);
+	contextTyped.objects_render_command.vertex_buffers[9] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[9] == 0?empty_vertex_buffer:contextTyped.bound_buffers[9], bufferSize);
 	contextTyped.objects_render_command.count = triangles;
 	contextTyped.objects_render_command.offset = trianglesOffset;
 	contextTyped.objects_render_command.instances = instances;
@@ -4986,7 +4996,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		vkUpdateDescriptorSets(device, program.layout_bindings, descriptorSetWrites, 0, NULL);
 
 		//
-		#define OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	9
+		#define OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	10
 		VkBuffer vertexBuffersBuffer[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = {
 			contextTyped.objects_render_command.vertex_buffers[0],
 			contextTyped.objects_render_command.vertex_buffers[1],
@@ -4996,9 +5006,10 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			contextTyped.objects_render_command.vertex_buffers[5],
 			contextTyped.objects_render_command.vertex_buffers[6],
 			contextTyped.objects_render_command.vertex_buffers[7],
-			contextTyped.objects_render_command.vertex_buffers[8]
+			contextTyped.objects_render_command.vertex_buffers[8],
+			contextTyped.objects_render_command.vertex_buffers[9]
 		};
-		VkDeviceSize vertexBuffersOffsets[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		VkDeviceSize vertexBuffersOffsets[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		//
 		vkCmdBindDescriptorSets(draw_cmds[contextTyped.idx][draw_cmd_current[contextIdx]], VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);

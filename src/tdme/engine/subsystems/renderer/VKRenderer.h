@@ -147,7 +147,7 @@ private:
 	struct context_type {
 		int32_t idx { 0 };
 		int32_t bound_indices_buffer { 0 };
-		array<int32_t, 9> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		array<int32_t, 10> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
 		array<bool, 4> uniform_buffers_changed;
 		int32_t texture_unit_active { 0 };
@@ -160,10 +160,10 @@ private:
 				VkImageLayout image_layout;
 			};
 			VkBuffer indices_buffer { VK_NULL_HANDLE };
-			array<VkBuffer, 9> vertex_buffers = {
+			array<VkBuffer, 10> vertex_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
-				VK_NULL_HANDLE
+				VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 			array<VkBuffer, 4> ubo_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
