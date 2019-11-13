@@ -1966,11 +1966,13 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				newShaderSourceLines.push_back("// " + line);
 			} else
 			if (StringUtils::startsWith(line, "#elif defined(") == true) {
-				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor elif: " + line);
-				matchedDefinitions[matchedDefinitions.size() - 1] = !matchedDefinitions[matchedDefinitions.size() - 1];
+				// remove old test from stack
+				if (testedDefinitions.size() == 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else end: invalid depth"); else {
+					testedDefinitions.pop();
+					matchedDefinitions.pop_back();
+				}
 				newShaderSourceLines.push_back("// " + line);
-				matchedAllDefinitions = true;
-				for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
+				// do new test
 				auto definition = StringUtils::trim(StringUtils::substring(line, string("#elif defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
 				testedDefinitions.push(definition);
@@ -1981,9 +1983,8 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 						break;
 					}
 				}
-				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition + ": " + to_string(matched));
+				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else test begin: " + definition + ": " + to_string(matched));
 				matchedDefinitions.push_back(matched);
-				newShaderSourceLines.push_back("// " + line);
 			} else
 			if (StringUtils::startsWith(line, "#define ") == true) {
 				auto definition = StringUtils::trim(StringUtils::substring(line, string("#define ").size()));
