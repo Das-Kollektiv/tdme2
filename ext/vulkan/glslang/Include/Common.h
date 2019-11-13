@@ -38,7 +38,7 @@
 #define _COMMON_INCLUDED_
 
 
-#if defined(__ANDROID__) || _MSC_VER < 1700
+#if defined(__ANDROID__) || (defined(_MSC_VER) && _MSC_VER < 1700)
 #include <sstream>
 namespace std {
 template<typename T>
@@ -50,7 +50,7 @@ std::string to_string(const T& val) {
 }
 #endif
 
-#if (defined(_MSC_VER) && _MSC_VER < 1900 /*vs2015*/) || defined MINGW_HAS_SECURE_API
+#if (defined(_MSC_VER) && _MSC_VER < 1900 /*vs2015*/)/* || defined MINGW_HAS_SECURE_API*/ // TODO: a.drewke, MINGW64 was not working with this
     #include <basetsd.h>
     #ifndef snprintf
     #define snprintf sprintf_s
@@ -102,6 +102,7 @@ std::string to_string(const T& val) {
 #include <algorithm>
 #include <string>
 #include <cstdio>
+#include <cstdlib>
 #include <cassert>
 
 #include "PoolAlloc.h"
