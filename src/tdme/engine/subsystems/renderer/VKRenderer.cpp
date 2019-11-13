@@ -1381,11 +1381,11 @@ void VKRenderer::initializeRenderPass() {
 	assert(!err);
 }
 
-inline void VKRenderer::startRenderPass(int contextIdx) {
+inline void VKRenderer::startRenderPass(int contextIdx, int line) {
 	if (render_pass_started[contextIdx] == true) return;
 	render_pass_started[contextIdx] = true;
 
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(bound_frame_buffer));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "; " + to_string(bound_frame_buffer) + ": " + to_string(line));
 
 	auto frameBuffer = window_framebuffers[current_buffer];
 	auto renderPass = render_pass;
@@ -1411,8 +1411,9 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 	vkCmdBeginRenderPass(draw_cmds[contextIdx][draw_cmd_current[contextIdx]], &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
 }
 
-inline void VKRenderer::endRenderPass(int contextIdx) {
+inline void VKRenderer::endRenderPass(int contextIdx, int line) {
 	if (render_pass_started[contextIdx] == false) return;
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "; " + to_string(bound_frame_buffer) + ": " + to_string(line));
 	render_pass_started[contextIdx] = false;
 	vkCmdEndRenderPass(draw_cmds[contextIdx][draw_cmd_current[contextIdx]]);
 }
@@ -1440,7 +1441,7 @@ void VKRenderer::initializeFrameBuffers() {
 	VkResult err;
 	uint32_t i;
 
-	window_framebuffers = (VkFramebuffer *) malloc(swapchain_image_count * sizeof(VkFramebuffer));
+	window_framebuffers = (VkFramebuffer*)malloc(swapchain_image_count * sizeof(VkFramebuffer));
 	assert(window_framebuffers);
 
 	for (i = 0; i < swapchain_image_count; i++) {
@@ -1505,7 +1506,7 @@ void VKRenderer::initializeFrame()
 		// TODO: a.drewke
 		//
 		finishSetupCommandBuffers();
-		for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i);
+		for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i, __LINE__);
 		vkDestroySemaphore(device, image_acquired_semaphore, NULL);
 		vkDestroySemaphore(device, draw_complete_semaphore, NULL);
 
@@ -1550,7 +1551,7 @@ void VKRenderer::finishFrame()
 	VkResult err;
 
 	// end render pass
-	for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i);
+	for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i, __LINE__);
 
 	// end draw command buffer
 	uint32_t submitted_draw_cmd_count = 0;
@@ -3511,7 +3512,7 @@ void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void VKRenderer::clear(int32_t mask)
 {
 	beginDrawCommandBuffer(0);
-	startRenderPass(0);
+	startRenderPass(0, __LINE__);
 
 	auto attachmentIdx = 0;
 	VkClearAttachment attachments[2];
@@ -3539,7 +3540,7 @@ void VKRenderer::clear(int32_t mask)
 		1,
 		&clearRect
 	);
-	endRenderPass(0);
+	endRenderPass(0, __LINE__);
 	endDrawCommandBuffer(0, -1, true, true);
 }
 
@@ -4863,7 +4864,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 inline void VKRenderer::endDrawCommandsAllContexts() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
-		endRenderPass(i);
+		endRenderPass(i, __LINE__);
 		endDrawCommandBuffer(i, -1, true, true);
 	}
 }
@@ -4897,15 +4898,15 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 	// create pipeline
 	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
-		if (render_pass_started[contextTyped.idx] == false) startRenderPass(contextTyped.idx);
+		startRenderPass(contextTyped.idx, __LINE__);
 		setupObjectsRenderingPipeline(contextTyped.idx, program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
-		if (render_pass_started[contextTyped.idx] == false) startRenderPass(contextTyped.idx);
+		startRenderPass(contextTyped.idx, __LINE__);
 		setupPointsRenderingPipeline(contextTyped.idx, program);
 	} else
 		if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
-		if (render_pass_started[contextTyped.idx] == true) endRenderPass(contextTyped.idx);
+		endRenderPass(contextTyped.idx, __LINE__);
 		setupSkinningComputingPipeline(contextTyped.idx, program);
 	} else {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(program_id));
@@ -5188,7 +5189,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 	contextTyped.command_type = context_type::COMMAND_NONE;
 	if (contextTyped.command_count >= COMMANDS_MAX) {
-		endRenderPass(contextTyped.idx);
+		endRenderPass(contextTyped.idx, __LINE__);
 		endDrawCommandBuffer(contextTyped.idx, -1, true, true);
 		contextTyped.command_count = 0;
 	}
@@ -5427,7 +5428,7 @@ void VKRenderer::memoryBarrier() {
 	uint32_t submitted_cmd_buff_contextbuffidx[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX];
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		finishSetupCommandBuffer(i);
-		endRenderPass(i);
+		endRenderPass(i, __LINE__);
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
 			if (endDrawCommandBuffer(i, j, false) == true) {
 				submitted_cmd_buff_contextidx[submitted_cmd_buf_count] = i;

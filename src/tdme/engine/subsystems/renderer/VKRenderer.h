@@ -347,8 +347,8 @@ private:
 	void endDrawCommandsAllContexts();
 	void executeCommand(int contextIdx);
 	void initializeRenderPass();
-	void startRenderPass(int contextIdx);
-	void endRenderPass(int contextIdx);
+	void startRenderPass(int contextIdx, int line);
+	void endRenderPass(int contextIdx, int line);
 	void preparePipeline(program_type& program);
 	void createObjectsRenderingPipeline(int contextIdx, program_type& program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
