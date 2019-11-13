@@ -1286,9 +1286,7 @@ void VKRenderer::initialize()
 	render_pass_started.resize(Engine::getThreadCount());
 	contexts.resize(Engine::getThreadCount());
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].idx = i;
-	for (auto i = 0; i < cmd_setup_pools.size(); i++) cmd_setup_pools[i] = VK_NULL_HANDLE;
 	for (auto i = 0; i < setup_cmds_inuse.size(); i++) setup_cmds_inuse[i] = VK_NULL_HANDLE;
-	for (auto i = 0; i < cmd_draw_pools.size(); i++) cmd_draw_pools[i] = VK_NULL_HANDLE;
 	for (auto i = 0; i < draw_cmd_current.size(); i++) draw_cmd_current[i] = 0;
 	for (auto i = 0; i < pipelines.size(); i++) pipelines[i] = VK_NULL_HANDLE;
 	for (auto i = 0; i < Engine::getThreadCount(); i++) draw_cmd_started[i].fill(false);
@@ -3883,7 +3881,6 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 		//
 		memset(&staging_texture, 0, sizeof(staging_texture));
-
 		prepareTextureImage(
 			contextTyped.idx,
 			&staging_texture,
@@ -3920,7 +3917,6 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			(VkAccessFlagBits)0
 		);
 		texture_object.image_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
 		VkImageCopy copy_region = {
 			.srcSubresource = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -4044,6 +4040,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		delete_images.push_back(staging_texture.image);
 		delete_memory.push_back(staging_texture.mem);
 		delete_mutex.unlock();
+
+		//
+		finishSetupCommandBuffer(contextTyped.idx);
 	} else
 	if ((props.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		// Device can texture using linear textures

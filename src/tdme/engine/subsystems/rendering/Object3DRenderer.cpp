@@ -443,7 +443,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					auto object = objects[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 					// set up textures
-					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
+					Object3DGroup::setupTextures(renderer, context, object3DGroup, faceEntityIdx);
 					// set up transparent render faces
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces(
@@ -852,7 +852,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(const vector<Object3D*>&
 					auto object = objects[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 					// set up textures
-					Object3DGroup::setupTextures(renderer, object3DGroup, faceEntityIdx);
+					Object3DGroup::setupTextures(renderer, context, object3DGroup, faceEntityIdx);
 					// set up transparent render faces
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces(
@@ -963,7 +963,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	materialKey = material->getId();
 
 	// setup textures
-	Object3DGroup::setupTextures(renderer, object3DGroup, facesEntityIdx);
+	Object3DGroup::setupTextures(renderer, context, object3DGroup, facesEntityIdx);
 
 	//
 	if (updateOnly == false) {

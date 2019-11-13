@@ -56,11 +56,11 @@ TextureManager_TextureManaged* TextureManager::addTexture(const string& id)
 	return textureManaged;
 }
 
-int32_t TextureManager::addTexture(Texture* texture)
+int32_t TextureManager::addTexture(Texture* texture, void* context)
 {
 	auto textureManaged = addTexture(texture->getId());
 	auto rendererId = textureManaged->getRendererId();
-	auto context = renderer->getDefaultContext();
+	if (context == nullptr) context = renderer->getDefaultContext();
 
 	// bind texture
 	renderer->bindTexture(context, rendererId);

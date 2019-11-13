@@ -43,9 +43,10 @@ public:
 	/** 
 	 * Adds a texture to manager
 	 * @param texture texture
+	 * @param context context
 	 * @returns texture id
 	 */
-	int32_t addTexture(Texture* texture);
+	int32_t addTexture(Texture* texture, void* context = nullptr);
 
 	/** 
 	 * Removes a texture from manager / open gl stack

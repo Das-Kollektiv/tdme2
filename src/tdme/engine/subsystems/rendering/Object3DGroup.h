@@ -88,10 +88,11 @@ private:
 	/** 
 	 * Set up textures for given object3d group and faces entity
 	 * @param renderer renderer
+	 * @param context context
 	 * @param object3DGroup object 3D group
 	 * @param facesEntityIdx faces entity idx
 	 */
-	static void setupTextures(Renderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx);
+	static void setupTextures(Renderer* renderer, void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx);
 
 	/**
 	 * Creates a object 3d groups recursively for given group and it sub groups

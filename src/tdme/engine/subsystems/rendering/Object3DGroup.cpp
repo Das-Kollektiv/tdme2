@@ -155,7 +155,7 @@ void Object3DGroup::computeTransformations(void* context, vector<Object3DGroup*>
 	}
 }
 
-void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGroup, int32_t facesEntityIdx)
+void Object3DGroup::setupTextures(Renderer* renderer, void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx)
 {
 	auto& facesEntities = object3DGroup->group->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
@@ -166,7 +166,7 @@ void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGro
 	// load diffuse texture
 	if (object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getDiffuseTexture() != nullptr) {
-			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getDiffuseTexture());
+			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getDiffuseTexture(), context);
 		} else {
 			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
@@ -174,7 +174,7 @@ void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGro
 	// load specular texture
 	if (renderer->isSpecularMappingAvailable() == true && object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getSpecularTexture() != nullptr) {
-			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getSpecularTexture());
+			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getSpecularTexture(), context);
 		} else {
 			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
@@ -182,7 +182,7 @@ void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGro
 	// load displacement texture
 	if (renderer->isDisplacementMappingAvailable() == true && object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getDisplacementTexture() != nullptr) {
-			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getDisplacementTexture());
+			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getDisplacementTexture(), context);
 		} else {
 			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
@@ -190,7 +190,7 @@ void Object3DGroup::setupTextures(Renderer* renderer, Object3DGroup* object3DGro
 	// load normal texture
 	if (renderer->isNormalMappingAvailable() == true && object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (material->getNormalTexture() != nullptr) {
-			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getNormalTexture());
+			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(material->getNormalTexture(), context);
 		} else {
 			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
