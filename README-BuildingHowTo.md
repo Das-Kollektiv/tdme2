@@ -91,6 +91,7 @@ export LD_LIBRARY_PATH=/usr/local/lib
 ```
 
 Go back into your TDME2 folder and continue to build TDME2.
+
 Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
 ```bash
