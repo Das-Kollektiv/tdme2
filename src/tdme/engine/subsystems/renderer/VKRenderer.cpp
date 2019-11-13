@@ -1167,22 +1167,22 @@ void VKRenderer::initialize()
 	const VkDescriptorPoolSize types_count[3] = {
 		[0] = {
 			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = 32 * 4 * DESC_MAX * Engine::getThreadCount() // 32 shader * 4 image sampler
+			.descriptorCount = static_cast<uint32_t>(32 * 4 * DESC_MAX * Engine::getThreadCount()) // 32 shader * 4 image sampler
 		},
 		[1] = {
 			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 32 * 4 * DESC_MAX * Engine::getThreadCount() // 32 shader * 4 uniform buffer
+			.descriptorCount = static_cast<uint32_t>(32 * 4 * DESC_MAX * Engine::getThreadCount()) // 32 shader * 4 uniform buffer
 		},
 		[2] = {
 			.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-			.descriptorCount = 32 * 10 * DESC_MAX * Engine::getThreadCount() // 32 shader * 10 storage buffer
+			.descriptorCount = static_cast<uint32_t>(32 * 10 * DESC_MAX * Engine::getThreadCount()) // 32 shader * 10 storage buffer
 		}
 	};
 	const VkDescriptorPoolCreateInfo descriptor_pool = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
-		.maxSets = DESC_MAX * Engine::getThreadCount() * 32, // 32 shader
+		.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32), // 32 shader
 		.poolSizeCount = 3,
 		.pPoolSizes = types_count,
 	};
@@ -1953,6 +1953,26 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			if (StringUtils::startsWith(line, "#if defined(") == true) {
 				auto definition = StringUtils::trim(StringUtils::substring(line, string("#if defined(").size(), (position = line.find(")")) != -1?position:line.size()));
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition);
+				testedDefinitions.push(definition);
+				bool matched = false;
+				for (auto availableDefinition: definitions) {
+					if (definition == availableDefinition) {
+						matched = true;
+						break;
+					}
+				}
+				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition + ": " + to_string(matched));
+				matchedDefinitions.push_back(matched);
+				newShaderSourceLines.push_back("// " + line);
+			} else
+			if (StringUtils::startsWith(line, "#elif defined(") == true) {
+				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor elif: " + line);
+				matchedDefinitions[matchedDefinitions.size() - 1] = !matchedDefinitions[matchedDefinitions.size() - 1];
+				newShaderSourceLines.push_back("// " + line);
+				matchedAllDefinitions = true;
+				for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
+				auto definition = StringUtils::trim(StringUtils::substring(line, string("#elif defined(").size(), (position = line.find(")")) != -1?position:line.size()));
+				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test else if: " + definition);
 				testedDefinitions.push(definition);
 				bool matched = false;
 				for (auto availableDefinition: definitions) {

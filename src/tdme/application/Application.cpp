@@ -416,7 +416,6 @@ void Application::setMousePosition(int x, int y) {
 
 void Application::swapBuffers() {
 	#if defined(VULKAN)
-		glfwSwapBuffers(glfwWindow);
 	#else
 		glutSwapBuffers();
 	#endif
@@ -455,7 +454,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
 		while (glfwWindowShouldClose(glfwWindow) == false) {
 			displayInternal();
-			glfwSwapBuffers(glfwWindow);
+			#if !defined(VULKAN)
+				glfwSwapBuffers(glfwWindow);
+			#endif
 			glfwPollEvents();
 		}
 		glfwTerminate();

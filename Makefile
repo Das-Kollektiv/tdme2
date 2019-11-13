@@ -136,7 +136,7 @@ else
 		EXT_GLSLANG_PLATFORM_SRCS = \
 				ext/vulkan/glslang/OSDependent/Windows/ossource.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include
-		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lvulkan -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext\vulkan\runtime\mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	else
 		# Windows, GL
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
