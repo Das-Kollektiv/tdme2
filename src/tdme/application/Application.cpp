@@ -3,7 +3,7 @@
 	#include <GLFW/glfw3.h>
 #else
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
-		#if !defined(__arm__) && !defined(__aarch64__)
+		#if !defined(GLES2)
 			#define GLEW_NO_GLU
 			#include <GL/glew.h>
 			// TODO: a.drewke: vsync
@@ -463,14 +463,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutInit(&argc, argv);
 		#if defined(__APPLE__)
 			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-		#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(_WIN32)
+		#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(GLES2)) || defined(_WIN32)
 			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 			glutInitContextProfile(GLUT_CORE_PROFILE);
 			/*
 			glutInitContextVersion(3, 1);
 			glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
 			*/
-		#elif defined(__linux__) && (defined(__arm__) || defined(__aarch64__))
+		#elif defined(__linux__) && defined(GLES2)
 			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 			glutInitContextVersion(2,0);
 		#elif defined(__HAIKU__)
@@ -484,7 +484,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				glutFullScreen();
 			#endif
 		}
-		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(__arm__) && !defined(__aarch64__)) || defined(__HAIKU__)
+		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
 			glewExperimental = true;
 			GLenum glewInitStatus = glewInit();
 			if (glewInitStatus != GLEW_OK) {

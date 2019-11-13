@@ -95,38 +95,32 @@ else ifeq ($(OS), Linux)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	ifeq ($(ARCH), aarch64)
-		# Linux, ARM64, GL
+	# Linux, Vulkan
+	ifeq ($(VULKAN), YES)
+		EXTRAFLAGS := -DVULKAN
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/engine/EngineGLES2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
-	else ifeq ($(ARCH), armv7l)
+			src/tdme/engine/EngineVKRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+		EXT_GLSLANG_PLATFORM_SRCS = \
+			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
+	# Linux, GLES2
+	else ifeq ($(GLES2), YES)
+		EXTRAFLAGS := -DGLES2
 		# Linux, ARM, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
-		# Linux, Vulkan
-		ifeq ($(VULKAN), YES)
-			EXTRAFLAGS := -DVULKAN
-			SRCS_PLATFORM := $(SRCS_PLATFORM) \
-				src/tdme/engine/EngineVKRenderer.cpp \
-				src/tdme/engine/subsystems/renderer/VKRenderer.cpp
-			EXT_GLSLANG_PLATFORM_SRCS = \
-				ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
-		else
-			# Linux, GL
-			#EXTRAFLAGS = -D_GLIBCXX_DEBUG
-			SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-				src/tdme/engine/EngineGL2Renderer.cpp \
-				src/tdme/engine/EngineGL3Renderer.cpp \
-				src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-				src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-			EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
-		endif
+		# Linux, GL
+		#EXTRAFLAGS = -D_GLIBCXX_DEBUG
+		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+			src/tdme/engine/EngineGL2Renderer.cpp \
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
 	endif
 	OFLAGS := -O2
 else

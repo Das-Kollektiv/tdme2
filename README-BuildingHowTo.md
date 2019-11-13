@@ -47,9 +47,15 @@ git clone https://github.com/andreasdr/tdme2
 cd tdme2
 ```
 
-### 1.2.3. ARM64/ARM32 only: FreeGLUT build for GLES2
+### 1.2.3. Build
 
-TDME2 ARM builds currently require OpenGL-ES2 to run. As FreeGLUT does not include support for GLES2 by default we need to compile our own version of FreeGLUT.
+```bash
+make clean && make -j HARDWARE_THREADS mains
+```
+
+### 1.2.4. Build with GLES2
+
+TDME2 supports OpenGL-ES2. As FreeGLUT does not include support for GLES2 by default we need to compile our own version of FreeGLUT.
 
 ```bash
 sudo apt-get install cmake
@@ -80,12 +86,10 @@ Before running a TDME2 binary like described below you need to execute the follo
 export LD_LIBRARY_PATH=/usr/local/lib
 ```
 
-Go back into your TDME2 folder and continue to build TDME2.
-
-### 1.2.4. Build
+Go back into your TDME2 folder and continue to build TDME2 like:
 
 ```bash
-make clean && make -j HARDWARE_THREADS mains
+make clean && make -j HARDWARE_THREADS mains GLES2=YES
 ```
 
 ## 1.3. Mac OS X
