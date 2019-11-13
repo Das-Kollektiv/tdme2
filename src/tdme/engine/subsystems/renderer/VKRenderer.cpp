@@ -1037,7 +1037,6 @@ void VKRenderer::initialize()
 
 	// Create a WSI surface for the window:
 	err = glfwCreateWindowSurface(inst, Application::glfwWindow, NULL, &surface);
-	Console::println(to_string(err));
 	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
