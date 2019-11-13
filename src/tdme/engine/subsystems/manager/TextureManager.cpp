@@ -62,12 +62,15 @@ int32_t TextureManager::addTexture(Texture* texture, void* context)
 	auto rendererId = textureManaged->getRendererId();
 	if (context == nullptr) context = renderer->getDefaultContext();
 
-	// bind texture
-	renderer->bindTexture(context, rendererId);
-	// upload texture
-	renderer->uploadTexture(context, texture);
-	// unbind texture
-	renderer->bindTexture(context, renderer->ID_NONE);
+	// upload if it was created
+	if (textureManaged->getReferenceCounter() == 1) {
+		// bind texture
+		renderer->bindTexture(context, rendererId);
+		// upload texture
+		renderer->uploadTexture(context, texture);
+		// unbind texture
+		renderer->bindTexture(context, renderer->ID_NONE);
+	}
 
 	// return renderer id
 	return rendererId;

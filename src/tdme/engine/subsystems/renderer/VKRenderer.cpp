@@ -3566,6 +3566,7 @@ int32_t VKRenderer::createTexture()
 	auto& texture_object = textures[texture_idx];
 	texture_object.id = texture_idx++;
 	textures_rwlock.unlock();
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(texture_object.id));
 	return texture_object.id;
 }
 
