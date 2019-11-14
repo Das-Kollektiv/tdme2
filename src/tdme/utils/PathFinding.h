@@ -66,10 +66,16 @@ public:
 	 * @return string representation
 	 */
 	inline static string toKey(float x, float y, float z) {
-		return
-			floatToStringKey(x) + "," +
-			floatToStringKey(y) + "," +
-			floatToStringKey(z);
+		string result;
+		int32_t value = 0;
+		result.reserve(sizeof(value) * 3);
+		value = static_cast<int>(x * 100);
+		result.append((char*)&value, sizeof(value));
+		value = static_cast<int>(y * 100);
+		result.append((char*)&value, sizeof(value));
+		value = static_cast<int>(z * 100);
+		result.append((char*)&value, sizeof(value));
+		return result;
 	}
 
 	/**
@@ -104,16 +110,6 @@ private:
 	 * Reset path finding
 	 */
 	void reset();
-
-	/**
-	 * Return string representation of float for key usage
-	 * @param value value
-	 * @return string representation
-	 */
-	inline static string floatToStringKey(float value) {
-		string floatString = to_string(value);
-		return floatString.substr(0, floatString.length() - 5);
-	}
 
 	/**
 	 * Computes non square rooted distance between a and b
