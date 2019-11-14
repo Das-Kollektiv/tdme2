@@ -193,6 +193,24 @@ private:
 			int32_t offset { 0 };
 		};
 
+		struct lines_render_command {
+			struct texture {
+				VkSampler sampler;
+				VkImageView view;
+				VkImageLayout image_layout;
+			};
+			array<VkBuffer, 4> vertex_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
+			};
+			array<VkBuffer, 4> ubo_buffers = {
+				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
+			};
+
+			unordered_map<uint8_t, texture> textures;
+			int32_t count { 0 };
+			int32_t offset { 0 };
+		};
+
 		struct compute_command {
 			array<VkBuffer, 8> storage_buffers = {
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE,
@@ -211,10 +229,11 @@ private:
 			int32_t num_groups_z { 0 };
 		};
 
-		enum command_type { COMMAND_NONE, COMMAND_OBJECTS, COMMAND_POINTS, COMMAND_COMPUTE };
+		enum command_type { COMMAND_NONE, COMMAND_OBJECTS, COMMAND_POINTS, COMMAND_LINES, COMMAND_COMPUTE };
 		command_type command_type { COMMAND_NONE };
 		objects_render_command objects_render_command;
 		points_render_command points_render_command;
+		lines_render_command lines_render_command;
 		compute_command compute_command;
 		uint32_t command_count { 0 };
 	};
@@ -291,11 +310,8 @@ private:
 
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
-	#if defined(__FreeBSD__)
-		bool validate { false }; // TODO: Why no validation layers here?
-	#else
-		bool validate { true };
-	#endif
+	// enable validation layers
+	bool validate { true };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -321,6 +337,7 @@ private:
 	bool depth_buffer_writing { true };
 	bool depth_buffer_testing { true };
 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
+	float line_width { 1.0f };
 	int64_t frame { 0 };
 
 	Mutex delete_mutex;
@@ -354,6 +371,8 @@ private:
 	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
 	void createPointsRenderingPipeline(int contextIdx, program_type& program);
 	void setupPointsRenderingPipeline(int contextIdx, program_type& program);
+	void createLinesRenderingPipeline(int contextIdx, program_type& program);
+	void setupLinesRenderingPipeline(int contextIdx, program_type& program);
 	void createSkinningComputingPipeline(int contextIdx, program_type& program);
 	void setupSkinningComputingPipeline(int contextIdx, program_type& program);
 	void finishPipeline();

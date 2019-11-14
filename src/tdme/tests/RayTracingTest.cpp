@@ -179,7 +179,7 @@ void RayTracingTest::display()
 		}
 		if (keyInfo == true) {
 			// draw ray
-			auto linesObject3D = new LinesObject3D("ray", 3.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
+			auto linesObject3D = new LinesObject3D("ray", 5.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
 			linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 			engine->addEntity(linesObject3D);
 
