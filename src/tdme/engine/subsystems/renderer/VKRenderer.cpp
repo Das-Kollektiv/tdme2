@@ -18,7 +18,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h>
 
 #include <array>
 #include <cassert>
@@ -1384,8 +1383,6 @@ inline void VKRenderer::startRenderPass(int contextIdx, int line) {
 	if (context.render_pass_started == true) return;
 	context.render_pass_started = true;
 
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "; " + to_string(bound_frame_buffer) + ": " + to_string(line) + "; " + to_string(GetCurrentThreadId()) + "; start");
-
 	auto frameBuffer = window_framebuffers[current_buffer];
 	auto renderPass = render_pass;
 	if (bound_frame_buffer != 0) {
@@ -1408,18 +1405,13 @@ inline void VKRenderer::startRenderPass(int contextIdx, int line) {
 		.pClearValues = NULL
 	};
 	vkCmdBeginRenderPass(context.draw_cmds[context.draw_cmd_current], &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
-
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "; " + to_string(bound_frame_buffer) + ": " + to_string(line) + "; " + to_string(GetCurrentThreadId()) + "; end");
 }
 
 inline void VKRenderer::endRenderPass(int contextIdx, int line) {
 	auto& context = contexts[contextIdx];
-
 	if (context.render_pass_started == false) return;
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "; " + to_string(bound_frame_buffer) + ": " + to_string(line) + "; " + to_string(GetCurrentThreadId()) + "; start");
 	context.render_pass_started = false;
 	vkCmdEndRenderPass(context.draw_cmds[context.draw_cmd_current]);
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + "; " + to_string(bound_frame_buffer) + ": " + to_string(line) + "; " + to_string(GetCurrentThreadId()) + "; end");
 }
 
 void VKRenderer::initializeFrameBuffers() {
