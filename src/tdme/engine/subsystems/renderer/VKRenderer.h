@@ -146,6 +146,23 @@ private:
 
 	struct context_type {
 		int32_t idx { 0 };
+
+		VkCommandPool cmd_setup_pool;
+		VkCommandBuffer setup_cmd_inuse;
+		VkCommandBuffer setup_cmd;
+		VkFence setup_fence;
+
+		bool render_pass_started;
+
+		VkCommandPool cmd_draw_pool;
+		array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX> draw_cmds;
+		uint32_t draw_cmd_current;
+		array<bool, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
+		array<VkFence, DRAW_COMMANDBUFFER_MAX> draw_fences;
+
+		string pipeline_id;
+		VkPipeline pipeline;
+
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 10> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<vector<uint8_t>, 4> uniform_buffers;
@@ -266,24 +283,11 @@ private:
 	swapchain_buffer_type* swapchain_buffers { nullptr };
 	VkFramebuffer* window_framebuffers { nullptr };
 
-	vector<VkCommandPool> cmd_setup_pools;
-	vector<VkCommandBuffer> setup_cmds_inuse;
-	vector<VkCommandBuffer> setup_cmds;
-	vector<VkFence> setup_fences;
-
-	vector<VkCommandPool> cmd_draw_pools;
-	vector<array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX>> draw_cmds;
-	vector<uint32_t> draw_cmd_current;
-	vector<array<bool, DRAW_COMMANDBUFFER_MAX>> draw_cmd_started;
-	vector<array<VkFence, DRAW_COMMANDBUFFER_MAX>> draw_fences;
 	VkFence memorybarrier_fence;
 
 	Mutex pipeline_mutex;
-	vector<string> pipeline_ids;
-	vector<VkPipeline> pipelines;
 
 	VkRenderPass render_pass { VK_NULL_HANDLE };
-	vector<bool> render_pass_started;
 
 	int32_t shader_idx { 1 };
 	int32_t program_idx { 1 };
