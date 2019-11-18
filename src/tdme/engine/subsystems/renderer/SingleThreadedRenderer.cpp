@@ -21,7 +21,6 @@ SingleThreadedRenderer::SingleThreadedRenderer()
 	cameraMatrix.identity();
 	modelViewMatrix.identity();
 	viewportMatrix.identity();
-	activeTextureUnit = 0;
 }
 
 SingleThreadedRenderer::~SingleThreadedRenderer() {

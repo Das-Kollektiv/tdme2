@@ -35,6 +35,7 @@ class tdme::engine::subsystems::renderer::GL3Renderer: public SingleThreadedRend
 private:
 	uint32_t engineVAO;
 	map<uint32_t, int32_t> vbosUsage;
+	int activeTextureUnit;
 
 public:
 	void initialize() override;

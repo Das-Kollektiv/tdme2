@@ -34,6 +34,7 @@ class tdme::engine::subsystems::renderer::GL2Renderer: public SingleThreadedRend
 private:
 	bool bufferObjectsAvailable;
 	map<uint32_t, int32_t> vbosUsage;
+	int activeTextureUnit;
 
 private:
 

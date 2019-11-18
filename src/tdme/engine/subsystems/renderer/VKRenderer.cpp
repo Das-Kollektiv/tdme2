@@ -1276,7 +1276,18 @@ void VKRenderer::initialize()
 		context.pipeline = VK_NULL_HANDLE;
 		context.draw_cmd_started.fill(false);
 		context.render_pass_started = false;
+
+		// set up lights
+		for (auto i = 0; i < context.lights.size(); i++) {
+			context.lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
+		}
 	}
+
+	//
+	projectionMatrix.identity();
+	cameraMatrix.identity();
+	modelViewMatrix.identity();
+	viewportMatrix.identity();
 
 	// memory barrier fence
 	{
@@ -1720,7 +1731,7 @@ bool VKRenderer::isGeometryShaderAvailable() {
 int32_t VKRenderer::getTextureUnits()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return activeTextureUnit;
+	return -1;
 }
 
 int VKRenderer::determineAlignment(const unordered_map<string, vector<string>>& structs, const vector<string>& uniforms) {
@@ -4131,10 +4142,10 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 	//
 	textures_rwlock.readLock();
-	auto textureObjectIt = textures.find(contextTyped.bound_textures[activeTextureUnit]);
+	auto textureObjectIt = textures.find(contextTyped.bound_textures[contextTyped.texture_unit_active]);
 	if (textureObjectIt == textures.end()) {
 		textures_rwlock.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[activeTextureUnit]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
 		return;
 	}
 	auto& texture_object = textureObjectIt->second;
@@ -4146,7 +4157,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	texture_object.height = texture->getTextureHeight();
 
 	if (texture_object.uploaded == true) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(contextTyped.bound_textures[activeTextureUnit]));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
 		return;
 	}
 
@@ -5939,4 +5950,68 @@ void VKRenderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
 
 void VKRenderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
 	Console::println("VKRenderer::bindVertexArrayObject(): Not implemented");
+}
+
+Matrix4x4& VKRenderer::getProjectionMatrix()
+{
+	return projectionMatrix;
+}
+
+Matrix4x4& VKRenderer::getCameraMatrix()
+{
+	return cameraMatrix;
+}
+
+Matrix4x4& VKRenderer::getModelViewMatrix()
+{
+	return modelViewMatrix;
+}
+
+Matrix4x4& VKRenderer::getViewportMatrix()
+{
+	return viewportMatrix;
+}
+
+Matrix2D3x3& VKRenderer::getTextureMatrix(void* context) {
+	return textureMatrix;
+}
+
+const Renderer_Light& VKRenderer::getLight(void* context, int32_t lightId) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.lights[lightId];
+}
+
+void VKRenderer::setLight(void* context, int32_t lightId, const Renderer_Light& light) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.lights[lightId] = light;
+}
+
+const array<float, 4>& VKRenderer::getEffectColorMul(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.effectColorMul;
+}
+
+void VKRenderer::setEffectColorMul(void* context, const array<float, 4>& effectColorMul) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.effectColorMul = effectColorMul;
+}
+
+const array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.effectColorAdd;
+}
+
+void VKRenderer::setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.effectColorAdd = effectColorAdd;
+}
+
+const Renderer_Material& VKRenderer::getMaterial(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.material;
+}
+
+void VKRenderer::setMaterial(void* context, const Renderer_Material& material) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.material = material;
 }

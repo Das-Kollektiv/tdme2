@@ -66,6 +66,7 @@ GL2Renderer::GL2Renderer()
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
 	// TODO: buffer objects available
+	activeTextureUnit = 0;
 	bufferObjectsAvailable = true;
 }
 

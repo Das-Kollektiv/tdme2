@@ -33,6 +33,8 @@ class tdme::engine::subsystems::renderer::GLES2Renderer: public SingleThreadedRe
 {
 private:
 	map<uint32_t, int32_t> vbosUsage;
+	int activeTextureUnit;
+
 public:
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;

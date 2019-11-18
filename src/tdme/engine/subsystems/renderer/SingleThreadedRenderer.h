@@ -33,7 +33,6 @@ private:
 	array<Renderer_Light, 8> lights;
 
 protected:
-	int activeTextureUnit;
 	Matrix4x4 projectionMatrix;
 	Matrix4x4 cameraMatrix;
 	Matrix4x4 modelViewMatrix;

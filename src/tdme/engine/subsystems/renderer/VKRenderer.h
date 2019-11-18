@@ -253,6 +253,11 @@ private:
 		lines_render_command lines_render_command;
 		compute_command compute_command;
 		uint32_t command_count { 0 };
+
+		array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+		Renderer_Material material;
+		array<Renderer_Light, 8> lights;
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
@@ -350,6 +355,12 @@ private:
 	vector<VkDeviceMemory> delete_memory;
 
 	vector<context_type> contexts;
+
+	Matrix4x4 projectionMatrix;
+	Matrix4x4 cameraMatrix;
+	Matrix4x4 modelViewMatrix;
+	Matrix4x4 viewportMatrix;
+	Matrix2D3x3 textureMatrix;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
@@ -493,8 +504,6 @@ public:
 	void drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) override;
 	void unbindBufferObjects(void* context) override;
 	void disposeBufferObjects(vector<int32_t>& bufferObjectIds) override;
-	int32_t getTextureUnit(void* context) override;
-	void setTextureUnit(void* context, int32_t textureUnit) override;
 	float readPixelDepth(int32_t x, int32_t y) override;
 	ByteBuffer* readPixels(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void initGuiMode() override;
@@ -519,6 +528,22 @@ public:
 	void disposeVertexArrayObject(int32_t vertexArrayObjectId) override;
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 
+	//
+	virtual Matrix4x4& getProjectionMatrix();
+	virtual Matrix4x4& getCameraMatrix();
+	virtual Matrix4x4& getModelViewMatrix();
+	virtual Matrix4x4& getViewportMatrix();
+	int32_t getTextureUnit(void* context);
+	void setTextureUnit(void* context, int32_t textureUnit);
+	virtual Matrix2D3x3& getTextureMatrix(void* context);
+	virtual const Renderer_Light& getLight(void* context, int32_t lightId);
+	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
+	virtual const array<float, 4>& getEffectColorMul(void* context);
+	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
+	virtual const array<float, 4>& getEffectColorAdd(void* context);
+	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
+	virtual const Renderer_Material& getMaterial(void* context);
+	virtual void setMaterial(void* context, const Renderer_Material& material);
 public:
 	/**
 	 * Public constructor

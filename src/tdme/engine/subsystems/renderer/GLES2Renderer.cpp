@@ -63,6 +63,7 @@ GLES2Renderer::GLES2Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
+	activeTextureUnit = 0;
 }
 
 const string GLES2Renderer::getShaderVersion()
