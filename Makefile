@@ -38,7 +38,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -fram`ework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	endif
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
