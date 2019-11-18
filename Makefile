@@ -38,7 +38,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -fram`ework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	endif
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
@@ -114,7 +114,7 @@ else ifeq ($(OS), Linux)
 		# Linux, ARM, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
@@ -124,8 +124,8 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
 	endif
 	OFLAGS := -O2
