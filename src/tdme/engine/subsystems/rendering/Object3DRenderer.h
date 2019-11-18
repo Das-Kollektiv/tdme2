@@ -15,7 +15,6 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -43,7 +42,6 @@ using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
-using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -124,22 +122,13 @@ private:
 	void renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/**
-	 * Render thread function
-	 * @param threadIdx thread idx
-	 * @param context context
-	 * @param parameters parameters
-	 * @param objectsNotRendered objects not rendered
-	 * @param transparentRenderFacesPool transparent render faces pool
-	 */
-	void instancedRenderFunction(int threadIdx, void* context, const Object3DRenderer_InstancedRenderFunctionParameters& parameters, vector<Object3D*>& objectsNotRendered, TransparentRenderFacesPool* transparentRenderFacesPool);
-
-	/**
 	 * Renders multiple objects of same type(with same model) using instancing
+	 * @param threadIdx thread idx
 	 * @param objects objects of same type/ with same models
 	 * @param collectTransparentFaces collect render faces
 	 * @param renderTypes render types
 	 */
-	void renderObjectsOfSameTypeInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+	void renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/**
 	 * Checks if a material could change when having multiple objects but same model

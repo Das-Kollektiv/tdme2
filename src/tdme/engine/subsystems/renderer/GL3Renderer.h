@@ -10,19 +10,19 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
 
 using std::array;
 using std::map;
 using std::vector;
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -30,13 +30,11 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::renderer::GL3Renderer
-	: public Renderer
+class tdme::engine::subsystems::renderer::GL3Renderer: public SingleThreadedRenderer
 {
 private:
 	uint32_t engineVAO;
 	map<uint32_t, int32_t> vbosUsage;
-
 
 public:
 	void initialize() override;

@@ -35,6 +35,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
@@ -63,6 +64,7 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lGLEW -lGL -lglut -lopenal -pthread
 	endif
@@ -76,6 +78,7 @@ else ifeq ($(OS), NetBSD)
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lfreeglut -lopenal -pthread
 	OFLAGS := -O2
@@ -88,6 +91,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lGLEW -lGL -lglut -lopenal -lnetwork
 	OFLAGS := -O2
@@ -111,6 +115,7 @@ else ifeq ($(OS), Linux)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lfreeglut-gles -lopenal -pthread 
 	else
 		# Linux, GL
@@ -120,6 +125,7 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglut -lopenal -pthread
 	endif
 	OFLAGS := -O2
@@ -145,6 +151,7 @@ else
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext

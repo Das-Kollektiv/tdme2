@@ -107,9 +107,9 @@ void BatchRendererTriangles::render()
 	//	TODO: check if to move somewhere else
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		fbEffectColorMuls.clear();
-		fbEffectColorMuls.put(renderer->effectColorMul);
+		fbEffectColorMuls.put(renderer->getEffectColorMul(context));
 		fbEffectColorAdds.clear();
-		fbEffectColorAdds.put(renderer->effectColorAdd);
+		fbEffectColorAdds.put(renderer->getEffectColorAdd(context));
 		renderer->uploadBufferObject(context, (*vboIds)[3], fbModelMatrices.getPosition() * sizeof(float), &fbModelMatrices);
 		renderer->bindModelMatricesBufferObject(context, (*vboIds)[3]);
 		renderer->uploadBufferObject(context, (*vboIds)[4], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);

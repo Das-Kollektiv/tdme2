@@ -53,10 +53,6 @@ public:
 	int32_t FRAMEBUFFER_DEFAULT;
 	int32_t FRONTFACE_CW;
 	int32_t FRONTFACE_CCW;
-	array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
-	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
-	Renderer_Material material;
-	array<Renderer_Light, 8> lights;
 	string shaderId;
 
 protected:
@@ -64,12 +60,6 @@ protected:
 	int32_t viewPortY;
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
-	int32_t activeTextureUnit;
-	Matrix4x4 projectionMatrix;
-	Matrix4x4 cameraMatrix;
-	Matrix4x4 modelViewMatrix;
-	Matrix4x4 viewportMatrix;
-	Matrix2D3x3 textureMatrix;
 
 public:
 	float pointSize;
@@ -313,7 +303,7 @@ public:
 	/** 
 	 * @return projection matrix
 	 */
-	virtual Matrix4x4& getProjectionMatrix();
+	virtual Matrix4x4& getProjectionMatrix() = 0;
 
 	/** 
 	 * Update projection matrix event
@@ -324,7 +314,7 @@ public:
 	/** 
 	 * @return camera matrix
 	 */
-	virtual Matrix4x4& getCameraMatrix();
+	virtual Matrix4x4& getCameraMatrix() = 0;
 
 	/** 
 	 * Update camera matrix event
@@ -335,7 +325,7 @@ public:
 	/** 
 	 * @return model view matrix
 	 */
-	virtual Matrix4x4& getModelViewMatrix();
+	virtual Matrix4x4& getModelViewMatrix() = 0;
 
 	/** 
 	 * Update model view matrix event
@@ -346,14 +336,14 @@ public:
 	/** 
 	 * @return view port matrix
 	 */
-	virtual Matrix4x4& getViewportMatrix();
+	virtual Matrix4x4& getViewportMatrix() = 0;
 
 	/** 
 	 * Get texture matrix
 	 * @param context context
 	 * @return texture matrix
 	 */
-	virtual Matrix2D3x3& getTextureMatrix(void* context);
+	virtual Matrix2D3x3& getTextureMatrix(void* context) = 0;
 
 	/**
 	 * Update texture matrix for active texture unit event
@@ -722,91 +712,21 @@ public:
 	 */
 	virtual void setTextureUnit(void* context, int32_t textureUnit) = 0;
 
-	/** 
-	 * Enable light
+	/**
+	 * Get light
 	 * @param context context
 	 * @param lightId light id
+	 * @return light
 	 */
-	virtual void setLightEnabled(void* context, int32_t lightId);
+	virtual const Renderer_Light& getLight(void* context, int32_t lightId) = 0;
 
-	/** 
-	 * Disable light
+	/**
+	 * Set light
 	 * @param context context
 	 * @param lightId light id
+	 * @param light light
 	 */
-	virtual void setLightDisabled(void* context, int32_t lightId);
-
-	/** 
-	 * Set light ambient color
-	 * @param context context
-	 * @param lightId light id
-	 * @param ambient ambient
-	 */
-	virtual void setLightAmbient(void* context, int32_t lightId, const array<float, 4>& ambient);
-
-	/** 
-	 * Set light diffuse color
-	 * @param context context
-	 * @param lightId light id
-	 * @param diffuse diffuse
-	 */
-	virtual void setLightDiffuse(void* context, int32_t lightId, const array<float, 4>& diffuse);
-
-	/** 
-	 * Set light position
-	 * @param context context
-	 * @param lightId light id
-	 * @param position position
-	 */
-	virtual void setLightPosition(void* context, int32_t lightId, const array<float, 4>& position);
-
-	/** 
-	 * Set light spot direction
-	 * @param context context
-	 * @param lightId light id
-	 * @param spotDirection spot direction
-	 */
-	virtual void setLightSpotDirection(void* context, int32_t lightId, const array<float, 3>& spotDirection);
-
-	/** 
-	 * Set light spot exponent
-	 * @param context context
-	 * @param lightId light id
-	 * @param spotExponent spot exponent
-	 */
-	virtual void setLightSpotExponent(void* context, int32_t lightId, float spotExponent);
-
-	/** 
-	 * Set light spot cut off
-	 * @param context context
-	 * @param lightId light id
-	 * @param spotCutOff spot cut off
-	 */
-	virtual void setLightSpotCutOff(void* context, int32_t lightId, float spotCutOff);
-
-	/** 
-	 * Set light constant attenuation
-	 * @param context context
-	 * @param lightId light id
-	 * @param constantAttenuation constant attenuation
-	 */
-	virtual void setLightConstantAttenuation(void* context, int32_t lightId, float constantAttenuation);
-
-	/** 
-	 * Set light linear attenuation
-	 * @param context context
-	 * @param lightId light id
-	 * @param linearAttenuation linear attenuation
-	 */
-	virtual void setLightLinearAttenuation(void* context, int32_t lightId, float linearAttenuation);
-
-	/** 
-	 * Set light quadratic attenuation
-	 * @param context context
-	 * @param lightId light id
-	 * @param QuadraticAttenuation quadratic attenuation
-	 */
-	virtual void setLightQuadraticAttenuation(void* context, int32_t lightId, float QuadraticAttenuation);
+	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light) = 0;
 
 	/** 
 	 * Update light
@@ -815,19 +735,33 @@ public:
 	 */
 	virtual void onUpdateLight(void* context, int32_t lightId) = 0;
 
+	/**
+	 * Get effect color mul
+	 * @param context
+	 * @return effect color mul
+	 */
+	virtual const array<float, 4>& getEffectColorMul(void* context) = 0;
+
 	/** 
 	 * Set up effect color multiplication
 	 * @param context context
 	 * @param effectColorMul effect color for multiplication
 	 */
-	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
+	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul) = 0;
+
+	/**
+	 * Get effect color add
+	 * @param context
+	 * @return effect color add
+	 */
+	virtual const array<float, 4>& getEffectColorAdd(void* context) = 0;
 
 	/** 
 	 * Set up effect color addition
 	 * @param context context
 	 * @param effectColorAdd effect color for addition
 	 */
-	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
+	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd) = 0;
 
 	/** 
 	 * Update material
@@ -836,53 +770,18 @@ public:
 	virtual void onUpdateEffect(void* context) = 0;
 
 	/** 
-	 * Set material ambient color
+	 * Get material
 	 * @param context context
-	 * @param ambient ambient
+	 * @return material
 	 */
-	virtual void setMaterialAmbient(void* context, const array<float, 4>& ambient);
+	virtual const Renderer_Material& getMaterial(void* context) = 0;
 
 	/** 
-	 * Set material diffuse color
+	 * Set material
 	 * @param context context
-	 * @param diffuse diffuse
+	 * @param material material
 	 */
-	virtual void setMaterialDiffuse(void* context, const array<float, 4>& diffuse);
-
-	/** 
-	 * Set material specular color
-	 * @param context context
-	 * @param specular specular
-	 */
-	virtual void setMaterialSpecular(void* context, const array<float, 4>& specular);
-
-	/** 
-	 * Set material emission color
-	 * @param context context
-	 * @param emission emission
-	 */
-	virtual void setMaterialEmission(void* context, const array<float, 4>& emission);
-
-	/** 
-	 * Set material shininess
-	 * @param context context
-	 * @param shininess shininess
-	 */
-	virtual void setMaterialShininess(void* context, float shininess);
-
-	/**
-	 * Set material diffuse texture masked transparency
-	 * @param context context
-	 * @param diffuseTextureMaskedTransparency  diffuse texture masked transparency
-	 */
-	virtual void setMaterialDiffuseTextureMaskedTransparency(void* context, bool diffuseTextureMaskedTransparency);
-
-	/**
-	 * Set material diffuse texture masked transparency threshold
-	 * @param context context
-	 * @param diffuseTextureMaskedTransparencyThreshold diffuse texture masked transparency threshold
-	 */
-	virtual void setMaterialDiffuseTextureMaskedTransparencyThreshold(void* context, float diffuseTextureMaskedTransparencyThreshold);
+	virtual void setMaterial(void* context, const Renderer_Material& material) = 0;
 
 	/** 
 	 * On update material
@@ -1044,10 +943,4 @@ public:
 	 * Destructor
 	 */
 	virtual ~Renderer();
-
-private:
-
-	//
-	friend class Renderer_Material;
-	friend class Renderer_Light;
 };

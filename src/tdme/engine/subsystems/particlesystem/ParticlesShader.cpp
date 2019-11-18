@@ -84,8 +84,8 @@ void ParticlesShader::updateEffect(Renderer* renderer, void* context)
 	// skip if not running
 	if (isRunning == false) return;
 	// effect color
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->effectColorMul);
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->effectColorAdd);
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->getEffectColorMul(context));
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->getEffectColorAdd(context));
 }
 
 void ParticlesShader::unUseProgram(void* context)

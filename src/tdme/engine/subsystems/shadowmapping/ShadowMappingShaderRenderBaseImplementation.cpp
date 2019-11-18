@@ -160,8 +160,9 @@ void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(Renderer* 
 
 void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
-	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
+	auto& material = renderer->getMaterial(context);
+	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
+	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
 }
 
 void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId) {
@@ -169,7 +170,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer
 		return;
 	}
 
-	auto& light = renderer->lights[lightId];
+	auto& light = renderer->getLight(context, lightId);
 	auto lightPosition = Vector3(light.position[0], light.position[1], light.position[2]);
 	auto lightSpotDirection = Vector3(light.spotDirection[0], light.spotDirection[1], light.spotDirection[2]);
 	if (renderUniformLightPosition != -1) renderer->setProgramUniformFloatVec3(context, renderUniformLightPosition, lightPosition.getArray());

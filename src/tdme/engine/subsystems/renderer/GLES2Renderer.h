@@ -10,18 +10,18 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
 
 using std::array;
 using std::map;
 using std::vector;
 using std::string;
 
-using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
 using tdme::math::Matrix4x4;
 
 /** 
@@ -29,8 +29,7 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::renderer::GLES2Renderer
-	: public Renderer
+class tdme::engine::subsystems::renderer::GLES2Renderer: public SingleThreadedRenderer
 {
 private:
 	map<uint32_t, int32_t> vbosUsage;

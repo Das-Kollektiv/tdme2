@@ -31,21 +31,11 @@ Renderer::Renderer()
 	FRAMEBUFFER_DEFAULT = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
-
-	// set up lights
-	for (auto i = 0; i < lights.size(); i++) {
-		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
-	}
-	projectionMatrix.identity();
-	cameraMatrix.identity();
-	modelViewMatrix.identity();
-	viewportMatrix.identity();
 	viewPortX = 0;
 	viewPortY = 0;
 	viewPortWidth = 0;
 	viewPortHeight = 0;
 	TEXTUREUNITS_MAX = 2;
-	activeTextureUnit = 0;
 	pointSize = 0.0;
 }
 
@@ -64,132 +54,7 @@ int Renderer::getContextIndex(void* context) {
 	return 0;
 }
 
-
 void Renderer::initializeFrame() {
-}
-
-Matrix4x4& Renderer::getProjectionMatrix()
-{
-	return projectionMatrix;
-}
-
-Matrix4x4& Renderer::getCameraMatrix()
-{
-	return cameraMatrix;
-}
-
-Matrix4x4& Renderer::getModelViewMatrix()
-{
-	return modelViewMatrix;
-}
-
-Matrix4x4& Renderer::getViewportMatrix()
-{
-	return viewportMatrix;
-}
-
-Matrix2D3x3& Renderer::getTextureMatrix(void* context) {
-	return textureMatrix;
-}
-
-void Renderer::setLightEnabled(void* context, int32_t lightId)
-{
-	lights[lightId].enabled = 1;
-}
-
-void Renderer::setLightDisabled(void* context, int32_t lightId)
-{
-	lights[lightId].enabled = 0;
-}
-
-void Renderer::setLightAmbient(void* context, int32_t lightId, const array<float, 4>& ambient)
-{
-	lights[lightId].ambient = ambient;
-}
-
-void Renderer::setLightDiffuse(void* context, int32_t lightId, const array<float, 4>& diffuse)
-{
-	lights[lightId].diffuse = diffuse;
-}
-
-void Renderer::setLightPosition(void* context, int32_t lightId, const array<float, 4>& position)
-{
-	lights[lightId].position = position;
-}
-
-void Renderer::setLightSpotDirection(void* context, int32_t lightId, const array<float, 3>& spotDirection)
-{
-	lights[lightId].spotDirection = spotDirection;
-}
-
-void Renderer::setLightSpotExponent(void* context, int32_t lightId, float spotExponent)
-{
-	lights[lightId].spotExponent = spotExponent;
-}
-
-void Renderer::setLightSpotCutOff(void* context, int32_t lightId, float spotCutOff)
-{
-	lights[lightId].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * spotCutOff));
-}
-
-void Renderer::setLightConstantAttenuation(void* context, int32_t lightId, float constantAttenuation)
-{
-	lights[lightId].constantAttenuation = constantAttenuation;
-}
-
-void Renderer::setLightLinearAttenuation(void* context, int32_t lightId, float linearAttenuation)
-{
-	lights[lightId].linearAttenuation = linearAttenuation;
-}
-
-void Renderer::setLightQuadraticAttenuation(void* context, int32_t lightId, float QuadraticAttenuation)
-{
-	lights[lightId].quadraticAttenuation = QuadraticAttenuation;
-}
-
-void Renderer::setEffectColorMul(void* context, const array<float, 4>& effectColorMul)
-{
-	this->effectColorMul = effectColorMul;
-}
-
-void Renderer::setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd)
-{
-	this->effectColorAdd = effectColorAdd;
-}
-
-void Renderer::setMaterialAmbient(void* context, const array<float, 4>& ambient)
-{
-	material.ambient = ambient;
-}
-
-void Renderer::setMaterialDiffuse(void* context, const array<float, 4>& diffuse)
-{
-	material.diffuse = diffuse;
-}
-
-void Renderer::setMaterialSpecular(void* context, const array<float, 4>& specular)
-{
-	material.specular = specular;
-}
-
-void Renderer::setMaterialEmission(void* context, const array<float, 4>& emission)
-{
-	material.emission = emission;
-}
-
-void Renderer::setMaterialShininess(void* context, float shininess)
-{
-	material.shininess = shininess;
-}
-
-void Renderer::setMaterialDiffuseTextureMaskedTransparency(void* context, bool diffuseTextureMaskedTransparency)
-{
-	material.diffuseTextureMaskedTransparency = diffuseTextureMaskedTransparency == true?1:0;
-}
-
-void Renderer::setMaterialDiffuseTextureMaskedTransparencyThreshold(void* context, float diffuseTextureMaskedTransparencyThreshold)
-{
-	material.diffuseTextureMaskedTransparencyThreshold = diffuseTextureMaskedTransparencyThreshold;
 }
 
 void Renderer::setShader(const string& id) {

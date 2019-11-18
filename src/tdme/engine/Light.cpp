@@ -1,7 +1,5 @@
 #include <tdme/engine/Light.h>
 
-#include <string>
-
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
@@ -55,20 +53,24 @@ void Light::update(void* context) {
 		Vector3 tmpVector3;
 		Vector4 spotDirection4;
 		Vector4 spotDirection4Transformed;
-		renderer->setLightEnabled(context, id);
-		renderer->setLightAmbient(context, id, ambient.getArray());
-		renderer->setLightDiffuse(context, id, diffuse.getArray());
-		renderer->setLightPosition(context, id, renderer->getCameraMatrix().multiply(position, lightPositionTransformed).scale(Math::abs(lightPositionTransformed.getW()) < Math::EPSILON?1.0f:1.0f / lightPositionTransformed.getW()).setW(1.0f).getArray());
+		auto light = renderer->getLight(context, id);
+		light.enabled = 1;
+		light.ambient = ambient.getArray();
+		light.diffuse = diffuse.getArray();
+		light.position = renderer->getCameraMatrix().multiply(position, lightPositionTransformed).scale(Math::abs(lightPositionTransformed.getW()) < Math::EPSILON?1.0f:1.0f / lightPositionTransformed.getW()).setW(1.0f).getArray();
 		renderer->getCameraMatrix().multiply(spotDirection4.set(spotDirection, 0.0f), spotDirection4Transformed);
-		renderer->setLightSpotDirection(context, id, tmpVector3.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ()).getArray());
-		renderer->setLightSpotExponent(context, id, spotExponent);
-		renderer->setLightSpotCutOff(context, id, spotCutOff);
-		renderer->setLightConstantAttenuation(context, id, constantAttenuation);
-		renderer->setLightLinearAttenuation(context, id, linearAttenuation);
-		renderer->setLightQuadraticAttenuation(context, id, quadraticAttenuation);
+		light.spotDirection = tmpVector3.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ()).getArray();
+		light.spotExponent = spotExponent;
+		light.spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * spotCutOff));
+		light.constantAttenuation = constantAttenuation;
+		light.linearAttenuation = linearAttenuation;
+		light.quadraticAttenuation = quadraticAttenuation;
+		renderer->setLight(context, id, light);
 		renderer->onUpdateLight(context, id);
 	} else {
-		renderer->setLightDisabled(context, id);
+		auto light = renderer->getLight(context, id);
+		light.enabled = 0;
+		renderer->setLight(context, id, light);
 		renderer->onUpdateLight(context, id);
 	}
 }

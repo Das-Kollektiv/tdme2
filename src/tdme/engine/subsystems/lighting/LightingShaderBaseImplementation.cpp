@@ -180,8 +180,8 @@ void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* co
 	// skip if using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		//
-		renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->effectColorMul);
-		renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->effectColorAdd);
+		renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->getEffectColorMul(context));
+		renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->getEffectColorAdd(context));
 	}
 }
 
@@ -193,29 +193,31 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 	//
 	array<float, 4> tmpColor4 {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 
+	auto& material = renderer->getMaterial(context);
+
 	// ambient without alpha, as we only use alpha from diffuse color
-	tmpColor4 = renderer->material.ambient;
+	tmpColor4 = material.ambient;
 	tmpColor4[3] = 0.0f;
 	if (uniformMaterialAmbient != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialAmbient, tmpColor4);
 	// diffuse
-	renderer->setProgramUniformFloatVec4(context, uniformMaterialDiffuse, renderer->material.diffuse);
+	renderer->setProgramUniformFloatVec4(context, uniformMaterialDiffuse, material.diffuse);
 	// specular without alpha, as we only use alpha from diffuse color
-	tmpColor4 = renderer->material.specular;
+	tmpColor4 = material.specular;
 	tmpColor4[3] = 0.0f;
 	if (uniformMaterialSpecular != -1) renderer->setProgramUniformFloatVec4(context, uniformMaterialSpecular, tmpColor4);
 	// emission without alpha, as we only use alpha from diffuse color
-	tmpColor4 = renderer->material.emission;
+	tmpColor4 = material.emission;
 	tmpColor4[3] = 0.0f;
 	renderer->setProgramUniformFloatVec4(context, uniformMaterialEmission, tmpColor4);
 	// shininess
-	if (uniformMaterialShininess != -1) renderer->setProgramUniformFloat(context, uniformMaterialShininess, renderer->material.shininess);
+	if (uniformMaterialShininess != -1) renderer->setProgramUniformFloat(context, uniformMaterialShininess, material.shininess);
 	// diffuse texture masked transparency
 	if (uniformDiffuseTextureMaskedTransparency != -1) {
-		renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, renderer->material.diffuseTextureMaskedTransparency);
+		renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	}
 	// diffuse texture masked transparency threshold
 	if (uniformDiffuseTextureMaskedTransparencyThreshold != -1) {
-		renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, renderer->material.diffuseTextureMaskedTransparencyThreshold);
+		renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
 	}
 }
 
@@ -225,18 +227,19 @@ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* con
 	if (isRunning == false) return;
 
 	// lights
-	renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], renderer->lights[lightId].enabled);
-	if (renderer->lights[lightId].enabled == 1) {
-		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], renderer->lights[lightId].ambient);
-		if (uniformLightDiffuse[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightDiffuse[lightId], renderer->lights[lightId].diffuse);
-		if (uniformLightSpecular[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightSpecular[lightId], renderer->lights[lightId].specular);
-		if (uniformLightPosition[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightPosition[lightId], renderer->lights[lightId].position);
-		if (uniformLightSpotDirection[lightId] != -1) renderer->setProgramUniformFloatVec3(context, uniformLightSpotDirection[lightId], renderer->lights[lightId].spotDirection);
-		if (uniformLightSpotExponent[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightSpotExponent[lightId], renderer->lights[lightId].spotExponent);
-		if (uniformLightSpotCosCutoff[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightSpotCosCutoff[lightId], renderer->lights[lightId].spotCosCutoff);
-		if (uniformLightConstantAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightConstantAttenuation[lightId], renderer->lights[lightId].constantAttenuation);
-		if (uniformLightLinearAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightLinearAttenuation[lightId], renderer->lights[lightId].linearAttenuation);
-		if (uniformLightQuadraticAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightQuadraticAttenuation[lightId], renderer->lights[lightId].quadraticAttenuation);
+	auto& light = renderer->getLight(context, lightId);
+	renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
+	if (light.enabled == 1) {
+		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], light.ambient);
+		if (uniformLightDiffuse[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightDiffuse[lightId], light.diffuse);
+		if (uniformLightSpecular[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightSpecular[lightId], light.specular);
+		if (uniformLightPosition[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightPosition[lightId], light.position);
+		if (uniformLightSpotDirection[lightId] != -1) renderer->setProgramUniformFloatVec3(context, uniformLightSpotDirection[lightId], light.spotDirection);
+		if (uniformLightSpotExponent[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightSpotExponent[lightId], light.spotExponent);
+		if (uniformLightSpotCosCutoff[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightSpotCosCutoff[lightId], light.spotCosCutoff);
+		if (uniformLightConstantAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightConstantAttenuation[lightId], light.constantAttenuation);
+		if (uniformLightLinearAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightLinearAttenuation[lightId], light.linearAttenuation);
+		if (uniformLightQuadraticAttenuation[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightQuadraticAttenuation[lightId], light.quadraticAttenuation);
 	}
 }
 

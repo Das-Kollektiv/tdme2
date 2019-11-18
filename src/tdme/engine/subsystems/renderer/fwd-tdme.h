@@ -12,6 +12,7 @@ namespace renderer {
 	class Renderer;
 	class Renderer_Light;
 	class Renderer_Material;
+	class SingleThreadedRenderer;
 	class VKRenderer;
 }  // namespace renderer
 }  // namespace subsystems

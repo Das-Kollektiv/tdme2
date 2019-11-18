@@ -66,7 +66,7 @@ public:
 	 * Put float values into float buffer
 	 * @param values values
 	 */
-	inline FloatBuffer* put(array<float, 3>& values) {
+	inline FloatBuffer* put(const array<float, 3>& values) {
 		Buffer::put((const uint8_t*)values.data(), 3 * sizeof(float));
 		return this;
 	}
@@ -75,7 +75,7 @@ public:
 	 * Put float values into float buffer
 	 * @param values values
 	 */
-	inline FloatBuffer* put(array<float, 4>& values) {
+	inline FloatBuffer* put(const array<float, 4>& values) {
 		Buffer::put((const uint8_t*)values.data(), 4 * sizeof(float));
 		return this;
 	}
@@ -84,7 +84,7 @@ public:
 	 * Put float values into float buffer
 	 * @param values values
 	 */
-	inline FloatBuffer* put(array<float, 16>& values) {
+	inline FloatBuffer* put(const array<float, 16>& values) {
 		Buffer::put((const uint8_t*)values.data(), 16 * sizeof(float));
 		return this;
 	}

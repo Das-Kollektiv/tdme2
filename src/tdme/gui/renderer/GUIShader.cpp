@@ -90,8 +90,8 @@ void GUIShader::updateEffect(Renderer* renderer)
 	auto context = renderer->getDefaultContext();
 
 	//
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->effectColorMul);
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->effectColorAdd);
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->getEffectColorMul(context));
+	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->getEffectColorAdd(context));
 }
 
 

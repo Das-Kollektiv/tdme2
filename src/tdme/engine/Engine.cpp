@@ -208,7 +208,7 @@ void Engine::EngineThread::run() {
 			case STATE_RENDERING:
 				rendering.objectsNotRendered.clear();
 				rendering.transparentRenderFacesPool->reset();
-				engine->object3DRenderer->instancedRenderFunction(idx, context, rendering.parameters, rendering.objectsNotRendered, rendering.transparentRenderFacesPool);
+				//engine->object3DRenderer->instancedRenderFunction(idx, context, rendering.parameters, rendering.objectsNotRendered, rendering.transparentRenderFacesPool);
 				state = STATE_SPINNING;
 				break;
 			case STATE_SPINNING:
