@@ -43,7 +43,7 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 
 	psd->kqMutex.lock();
 	// check for change list overrun
-	if (psd->kqChangeListCurrent + 2 > psd->kqChangeListMax) {
+	if (psd->kqChangeListCurrent + 2 >= psd->kqChangeListMax) {
 		// try to enlarge buffers
 		bool reallocated = false;
 		auto kqChangeList0Resized = (struct kevent*)realloc(psd->kqChangeList[0], sizeof(struct kevent) * (psd->kqChangeListMax << 1));
