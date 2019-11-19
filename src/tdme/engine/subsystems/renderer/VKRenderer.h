@@ -35,6 +35,7 @@ using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
+using tdme::math::Matrix2D3x3;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
@@ -254,10 +255,12 @@ private:
 		compute_command compute_command;
 		uint32_t command_count { 0 };
 
-		array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
-		array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+		string shader;
+		array<float, 4> effect_color_mul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		array<float, 4> effect_color_add {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 		Renderer_Material material;
 		array<Renderer_Light, 8> lights;
+		Matrix2D3x3 texture_matrix;
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
@@ -355,12 +358,6 @@ private:
 	vector<VkDeviceMemory> delete_memory;
 
 	vector<context_type> contexts;
-
-	Matrix4x4 projectionMatrix;
-	Matrix4x4 cameraMatrix;
-	Matrix4x4 modelViewMatrix;
-	Matrix4x4 viewportMatrix;
-	Matrix2D3x3 textureMatrix;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
@@ -529,10 +526,6 @@ public:
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 
 	//
-	virtual Matrix4x4& getProjectionMatrix();
-	virtual Matrix4x4& getCameraMatrix();
-	virtual Matrix4x4& getModelViewMatrix();
-	virtual Matrix4x4& getViewportMatrix();
 	int32_t getTextureUnit(void* context);
 	void setTextureUnit(void* context, int32_t textureUnit);
 	virtual Matrix2D3x3& getTextureMatrix(void* context);
@@ -544,6 +537,9 @@ public:
 	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
 	virtual const Renderer_Material& getMaterial(void* context);
 	virtual void setMaterial(void* context, const Renderer_Material& material);
+	virtual const string& getShader(void* context);
+	virtual void setShader(void* context, const string& id);
+
 public:
 	/**
 	 * Public constructor

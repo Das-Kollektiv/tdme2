@@ -142,11 +142,11 @@ void EngineGL2Renderer::onUpdateMaterial(void* context)
 
 void EngineGL2Renderer::onUpdateShader(void* context) {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->setShader(context, shaderId);
+		Engine::lightingShader->setShader(context, shader);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->setShader(context, shaderId);
+		Engine::currentEngine->shadowMapping->setShader(context, shader);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->setShader(context, shaderId);
+		Engine::ezrShaderPre->setShader(context, shader);
 }

@@ -17,33 +17,9 @@ SingleThreadedRenderer::SingleThreadedRenderer()
 	for (auto i = 0; i < lights.size(); i++) {
 		lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
 	}
-	projectionMatrix.identity();
-	cameraMatrix.identity();
-	modelViewMatrix.identity();
-	viewportMatrix.identity();
 }
 
 SingleThreadedRenderer::~SingleThreadedRenderer() {
-}
-
-Matrix4x4& SingleThreadedRenderer::getProjectionMatrix()
-{
-	return projectionMatrix;
-}
-
-Matrix4x4& SingleThreadedRenderer::getCameraMatrix()
-{
-	return cameraMatrix;
-}
-
-Matrix4x4& SingleThreadedRenderer::getModelViewMatrix()
-{
-	return modelViewMatrix;
-}
-
-Matrix4x4& SingleThreadedRenderer::getViewportMatrix()
-{
-	return viewportMatrix;
 }
 
 Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(void* context) {
@@ -80,4 +56,12 @@ const Renderer_Material& SingleThreadedRenderer::getMaterial(void* context) {
 
 void SingleThreadedRenderer::setMaterial(void* context, const Renderer_Material& material) {
 	this->material = material;
+}
+
+const string& SingleThreadedRenderer::getShader(void* context) {
+	return shader;
+}
+
+void SingleThreadedRenderer::setShader(void* context, const string& id) {
+	shader = id;
 }

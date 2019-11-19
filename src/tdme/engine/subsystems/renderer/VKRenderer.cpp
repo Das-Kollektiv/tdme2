@@ -1281,13 +1281,8 @@ void VKRenderer::initialize()
 		for (auto i = 0; i < context.lights.size(); i++) {
 			context.lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
 		}
+		context.texture_matrix.identity();
 	}
-
-	//
-	projectionMatrix.identity();
-	cameraMatrix.identity();
-	modelViewMatrix.identity();
-	viewportMatrix.identity();
 
 	// memory barrier fence
 	{
@@ -5952,28 +5947,9 @@ void VKRenderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
 	Console::println("VKRenderer::bindVertexArrayObject(): Not implemented");
 }
 
-Matrix4x4& VKRenderer::getProjectionMatrix()
-{
-	return projectionMatrix;
-}
-
-Matrix4x4& VKRenderer::getCameraMatrix()
-{
-	return cameraMatrix;
-}
-
-Matrix4x4& VKRenderer::getModelViewMatrix()
-{
-	return modelViewMatrix;
-}
-
-Matrix4x4& VKRenderer::getViewportMatrix()
-{
-	return viewportMatrix;
-}
-
 Matrix2D3x3& VKRenderer::getTextureMatrix(void* context) {
-	return textureMatrix;
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.texture_matrix;
 }
 
 const Renderer_Light& VKRenderer::getLight(void* context, int32_t lightId) {
@@ -5988,22 +5964,22 @@ void VKRenderer::setLight(void* context, int32_t lightId, const Renderer_Light& 
 
 const array<float, 4>& VKRenderer::getEffectColorMul(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.effectColorMul;
+	return contextTyped.effect_color_mul;
 }
 
 void VKRenderer::setEffectColorMul(void* context, const array<float, 4>& effectColorMul) {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.effectColorMul = effectColorMul;
+	contextTyped.effect_color_mul = effectColorMul;
 }
 
 const array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.effectColorAdd;
+	contextTyped.effect_color_add;
 }
 
 void VKRenderer::setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd) {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	contextTyped.effectColorAdd = effectColorAdd;
+	contextTyped.effect_color_add = effectColorAdd;
 }
 
 const Renderer_Material& VKRenderer::getMaterial(void* context) {
@@ -6014,4 +5990,14 @@ const Renderer_Material& VKRenderer::getMaterial(void* context) {
 void VKRenderer::setMaterial(void* context, const Renderer_Material& material) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	contextTyped.material = material;
+}
+
+const string& VKRenderer::getShader(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.shader;
+}
+
+void VKRenderer::setShader(void* context, const string& id) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.shader = id;
 }

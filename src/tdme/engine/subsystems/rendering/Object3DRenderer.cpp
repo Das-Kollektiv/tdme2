@@ -211,7 +211,7 @@ void Object3DRenderer::reset()
 void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	// reset shader
-	renderer->shaderId.clear();
+	renderer->setShader(renderer->getDefaultContext(), string());
 
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
@@ -259,7 +259,8 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		renderer->disableCulling();
 		renderer->enableBlending();
 		// disable foliage animation
-		renderer->shaderId.clear();
+		// reset shader
+		renderer->setShader(renderer->getDefaultContext(), string());
 		// have identity texture matrix
 		renderer->getTextureMatrix(context).identity();
 		renderer->onUpdateTextureMatrix(context);
@@ -493,8 +494,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
 						object->getShader():
 						object->getDistanceShader();
-				if (renderer->shaderId != objectShader) {
-					renderer->setShader(objectShader);
+				if (renderer->getShader(context) != objectShader) {
+					renderer->setShader(context, objectShader);
 					renderer->onUpdateShader(context);
 					// update lights
 					for (auto j = 0; j < engine->lights.size(); j++) {
@@ -603,7 +604,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 	//
 	Vector3 objectCamFromAxis;
-	Matrix4x4 cameraMatrix(renderer->getModelViewMatrix());
+	Matrix4x4 cameraMatrix(renderer->getCameraMatrix());
 	Matrix4x4 modelViewMatrixTemp;
 	Matrix4x4 modelViewMatrix;
 
@@ -732,16 +733,15 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 						objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
 							object->getShader():
 							object->getDistanceShader();
-					if (hadShaderSetup == false && renderer->shaderId != objectShader) {
-						//
-						renderer->setShader(objectShader);
+					if (hadShaderSetup == false && renderer->getShader(context) != objectShader) {
+						renderer->setShader(context, objectShader);
 						renderer->onUpdateShader(context);
 						for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(context);
 						// issue upload matrices
 						renderer->onUpdateCameraMatrix(context);
 						renderer->onUpdateProjectionMatrix(context);
 					} else
-					if (objectShader != renderer->shaderId) {
+					if (objectShader != renderer->getShader(context)) {
 						objectsNotRendered.push_back(object);
 						continue;
 					}
@@ -906,9 +906,6 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 	// reset objects to render
 	objectsToRender.clear();
 	objectsNotRendered.clear();
-
-	// restore model view matrix / view matrix
-	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
 void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)

@@ -37,6 +37,10 @@ Renderer::Renderer()
 	viewPortHeight = 0;
 	TEXTUREUNITS_MAX = 2;
 	pointSize = 0.0;
+	projectionMatrix.identity();
+	cameraMatrix.identity();
+	modelViewMatrix.identity();
+	viewportMatrix.identity();
 }
 
 Renderer::~Renderer() {
@@ -54,9 +58,25 @@ int Renderer::getContextIndex(void* context) {
 	return 0;
 }
 
-void Renderer::initializeFrame() {
+Matrix4x4& Renderer::getProjectionMatrix()
+{
+	return projectionMatrix;
 }
 
-void Renderer::setShader(const string& id) {
-	this->shaderId = id;
+Matrix4x4& Renderer::getCameraMatrix()
+{
+	return cameraMatrix;
+}
+
+Matrix4x4& Renderer::getModelViewMatrix()
+{
+	return modelViewMatrix;
+}
+
+Matrix4x4& Renderer::getViewportMatrix()
+{
+	return viewportMatrix;
+}
+
+void Renderer::initializeFrame() {
 }

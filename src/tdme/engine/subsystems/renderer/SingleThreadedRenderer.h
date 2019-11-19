@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -12,6 +13,7 @@
 #include <tdme/math/Matrix4x4.h>
 
 using std::array;
+using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::renderer::Renderer_Light;
@@ -31,19 +33,12 @@ private:
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	Renderer_Material material;
 	array<Renderer_Light, 8> lights;
-
-protected:
-	Matrix4x4 projectionMatrix;
-	Matrix4x4 cameraMatrix;
-	Matrix4x4 modelViewMatrix;
-	Matrix4x4 viewportMatrix;
 	Matrix2D3x3 textureMatrix;
 
+protected:
+	string shader;
+
 public:
-	virtual Matrix4x4& getProjectionMatrix();
-	virtual Matrix4x4& getCameraMatrix();
-	virtual Matrix4x4& getModelViewMatrix();
-	virtual Matrix4x4& getViewportMatrix();
 	virtual Matrix2D3x3& getTextureMatrix(void* context);
 	virtual const Renderer_Light& getLight(void* context, int32_t lightId);
 	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
@@ -53,6 +48,8 @@ public:
 	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
 	virtual const Renderer_Material& getMaterial(void* context);
 	virtual void setMaterial(void* context, const Renderer_Material& material);
+	virtual const string& getShader(void* context);
+	virtual void setShader(void* context, const string& id);
 
 	/**
 	 * Public constructor

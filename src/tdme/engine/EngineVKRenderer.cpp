@@ -125,8 +125,8 @@ void EngineVKRenderer::onUpdateMaterial(void* context)
 
 void EngineVKRenderer::onUpdateShader(void* context) {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->setShader(context, shaderId);
+		Engine::lightingShader->setShader(context, getShader(context));
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->setShader(context, shaderId);
+		Engine::currentEngine->shadowMapping->setShader(context, getShader(context));
 }

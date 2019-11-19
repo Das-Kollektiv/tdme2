@@ -53,13 +53,18 @@ public:
 	int32_t FRAMEBUFFER_DEFAULT;
 	int32_t FRONTFACE_CW;
 	int32_t FRONTFACE_CCW;
-	string shaderId;
 
 protected:
 	int32_t viewPortX;
 	int32_t viewPortY;
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
+
+private:
+	Matrix4x4 projectionMatrix;
+	Matrix4x4 cameraMatrix;
+	Matrix4x4 modelViewMatrix;
+	Matrix4x4 viewportMatrix;
 
 public:
 	float pointSize;
@@ -303,7 +308,7 @@ public:
 	/** 
 	 * @return projection matrix
 	 */
-	virtual Matrix4x4& getProjectionMatrix() = 0;
+	virtual Matrix4x4& getProjectionMatrix();
 
 	/** 
 	 * Update projection matrix event
@@ -314,7 +319,7 @@ public:
 	/** 
 	 * @return camera matrix
 	 */
-	virtual Matrix4x4& getCameraMatrix() = 0;
+	virtual Matrix4x4& getCameraMatrix();
 
 	/** 
 	 * Update camera matrix event
@@ -325,7 +330,7 @@ public:
 	/** 
 	 * @return model view matrix
 	 */
-	virtual Matrix4x4& getModelViewMatrix() = 0;
+	virtual Matrix4x4& getModelViewMatrix();
 
 	/** 
 	 * Update model view matrix event
@@ -336,7 +341,7 @@ public:
 	/** 
 	 * @return view port matrix
 	 */
-	virtual Matrix4x4& getViewportMatrix() = 0;
+	virtual Matrix4x4& getViewportMatrix();
 
 	/** 
 	 * Get texture matrix
@@ -791,9 +796,16 @@ public:
 
 	/**
 	 * Set shader
+	 * @param context context
+	 */
+	virtual const string& getShader(void* context) = 0;
+
+	/**
+	 * Set shader
+	 * @param context context
 	 * @param id shader id
 	 */
-	virtual void setShader(const string& id);
+	virtual void setShader(void* context, const string& id) = 0;
 
 	/**
 	 * On update shader

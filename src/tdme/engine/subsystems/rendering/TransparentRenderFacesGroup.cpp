@@ -91,8 +91,8 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, void* context)
 {
 	//
-	if (renderer->shaderId != shader) {
-		renderer->setShader(shader);
+	if (renderer->getShader(context) != shader) {
+		renderer->setShader(context, shader);
 		renderer->onUpdateShader(context);
 		// update lights
 		for (auto j = 0; j < engine->lights.size(); j++) {
