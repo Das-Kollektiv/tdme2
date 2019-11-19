@@ -187,7 +187,7 @@ Texture* GUI::getImage(const string& fileName)
 	auto image = imageIt != imageCache->end() ? imageIt->second : nullptr;
 	if (image == nullptr) {
 		try {
-			image = TextureReader::read(path, file, false);
+			image = TextureReader::read(path, file, false, false);
 			image->setUseMipMap(false);
 			image->setRepeat(false);
 		} catch (Exception& exception) {

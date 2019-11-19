@@ -42,9 +42,10 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param useCache use cache
+	 * @param powerOfTwo scale image to fit power of two dimensions
 	 * @return texture data instance or null
 	 */
-	static Texture* read(const string& pathName, const string& fileName, bool useCache = true);
+	static Texture* read(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true);
 
 	/**
 	 * Reads a texture with additional transparency texture
@@ -53,9 +54,10 @@ public:
 	 * @param transparencyTexturePathName transparency texture path name
 	 * @param transparencyTextureFileName transparency texture file name
 	 * @param useCache use cache
+	 * @param powerOfTwo scale image to fit power of two dimensions
 	 * @return texture data instance or null
 	 */
-	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true);
+	static Texture* read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true);
 
 private:
 	/**
@@ -115,8 +117,9 @@ private:
 	 * Load PNG
 	 * @param path path name
 	 * @param fileName file name
+	 * @param powerOfTwo scale image to fit power of two dimensions
 	 */
-	static Texture* loadPNG(const string& path, const string& fileName);
+	static Texture* loadPNG(const string& path, const string& fileName, bool powerOfTwo = true);
 
 	/**
 	 * Scales a texture line

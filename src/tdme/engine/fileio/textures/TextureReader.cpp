@@ -40,7 +40,7 @@ const vector<string>& TextureReader::getTextureExtensions() {
 	return extensions;
 }
 
-Texture* TextureReader::read(const string& pathName, const string& fileName, bool useCache)
+Texture* TextureReader::read(const string& pathName, const string& fileName, bool useCache, bool powerOfTwo)
 {
 	Texture* texture = nullptr;
 
@@ -63,7 +63,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 		// nope try to load
 		try {
 			if (StringUtils::endsWith(StringUtils::toLowerCase(canonicalFileName), ".png") == true) {
-				texture = TextureReader::loadPNG(canonicalPathName, canonicalFileName);
+				texture = TextureReader::loadPNG(canonicalPathName, canonicalFileName, powerOfTwo);
 				if (texture != nullptr && useCache == true) {
 					(*textureCache)[texture->getId()] = texture;
 				}
@@ -83,7 +83,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	return texture;
 }
 
-Texture* TextureReader::read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache) {
+Texture* TextureReader::read(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache, bool powerOfTwo) {
 	// make canonical
 	auto canonicalFile = FileSystem::getInstance()->getCanonicalPath(texturePathName, textureFileName);
 	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFile);
@@ -103,13 +103,13 @@ Texture* TextureReader::read(const string& texturePathName, const string& textur
 	}
 
 	// load diffuse texture
-	auto texture = TextureReader::read(texturePathName, textureFileName, false);
+	auto texture = TextureReader::read(texturePathName, textureFileName, false, powerOfTwo);
 	if (texture == nullptr) {
 		if (useCache == true) textureCacheMutex->unlock();
 		return nullptr;
 	}
 	// additional transparency texture
-	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false);
+	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false, powerOfTwo);
 	// do we have one?
 	if (transparencyTexture == nullptr) {
 		Console::println("TextureReader::read(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
@@ -172,7 +172,7 @@ void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) {
+Texture* TextureReader::loadPNG(const string& pathName, const string& fileName, bool powerOfTwo) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// canonical file name for id
@@ -303,31 +303,35 @@ Texture* TextureReader::loadPNG(const string& pathName, const string& fileName) 
 	delete pngInputStream;
 
 	// make width, height a power of 2
-	auto textureWidth = 1;
-	while (textureWidth < width) textureWidth*= 2;
-	auto textureHeight = 1;
-	while (textureHeight < height) textureHeight*= 2;
-	if (textureWidth != width || textureHeight != height) {
-		Console::println("TextureReader::loadPNG(): " + pathName + "/" + fileName + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
-		ByteBuffer* pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
-		auto textureYIncrement = (float)textureHeight / (float)height;
-		auto textureYPixelRest = 0.0f;
-		auto textureY = 0;
-		for (auto y = 0; y < height; y++) {
-			for (auto i = 0; i < (int)textureYIncrement + (int)textureYPixelRest; i++) {
-				scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, y);
+	auto textureWidth = width;
+	auto textureHeight = height;
+	if (powerOfTwo == true) {
+		textureWidth = 1;
+		while (textureWidth < width) textureWidth*= 2;
+		textureHeight = 1;
+		while (textureHeight < height) textureHeight*= 2;
+		if (textureWidth != width || textureHeight != height) {
+			Console::println("TextureReader::loadPNG(): " + pathName + "/" + fileName + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
+			ByteBuffer* pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
+			auto textureYIncrement = (float)textureHeight / (float)height;
+			auto textureYPixelRest = 0.0f;
+			auto textureY = 0;
+			for (auto y = 0; y < height; y++) {
+				for (auto i = 0; i < (int)textureYIncrement + (int)textureYPixelRest; i++) {
+					scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, y);
+					textureY++;
+				}
+				textureYPixelRest-= (int)textureYPixelRest;
+				textureYPixelRest+= textureYIncrement - (int)textureYIncrement;
+
+			}
+			while (textureY < textureHeight) {
+				scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, height - 1);
 				textureY++;
 			}
-			textureYPixelRest-= (int)textureYPixelRest;
-			textureYPixelRest+= textureYIncrement - (int)textureYIncrement;
-
+			delete pixelByteBuffer;
+			pixelByteBuffer = pixelByteBufferScaled;
 		}
-		while (textureY < textureHeight) {
-			scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, height - 1);
-			textureY++;
-		}
-		delete pixelByteBuffer;
-		pixelByteBuffer = pixelByteBufferScaled;
 	}
 
 	// thats it
