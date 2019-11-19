@@ -1,0 +1,888 @@
+diff --git a/src/tdme/engine/Engine.cpp b/src/tdme/engine/Engine.cpp
+index f4152d07..7f4c95ff 100644
+--- a/src/tdme/engine/Engine.cpp
++++ b/src/tdme/engine/Engine.cpp
+@@ -188,6 +188,7 @@ Engine::EngineThread::EngineThread(int idx, Semaphore* engineThreadWaitSemaphore
+ 	Thread("enginethread"),
+ 	idx(idx),
+ 	engineThreadWaitSemaphore(engineThreadWaitSemaphore),
++	engine(nullptr),
+ 	context(context) {
+ 	//
+ 	rendering.transparentRenderFacesPool = new TransparentRenderFacesPool();
+@@ -440,10 +441,10 @@ void Engine::initialize()
+ 		renderer = new EngineVKRenderer(this);
+ 		Console::println(string("TDME::Using Vulkan"));
+ 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+-		shadowMappingEnabled = true;
+-		setShadowMapSize(2048, 2048);
+-		skinningShaderEnabled = true;
+-		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
++		shadowMappingEnabled = false;
++		//setShadowMapSize(2048, 2048);
++		//skinningShaderEnabled = true;
++		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+ 	#else
+ 		// MacOSX, currently GL3 only
+ 		#if defined(__APPLE__)
+diff --git a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp
+index 485ecd81..764682ca 100644
+--- a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp
+@@ -77,7 +77,7 @@ void EZRShaderPreBaseImplementation::initialize()
+ 
+ void EZRShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+-	renderer->useProgram(programId);
++	renderer->useProgram(context, programId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+ 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+ }
+diff --git a/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp b/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp
+index c6b3f57c..6ad410db 100644
+--- a/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp
++++ b/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp
+@@ -121,8 +121,8 @@ void FrameBufferRenderShader::initialize()
+ 
+ void FrameBufferRenderShader::useProgram()
+ {
+-	renderer->useProgram(programId);
+ 	auto context = renderer->getDefaultContext();
++	renderer->useProgram(context, programId);
+ 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
+ 	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
+ 	isRunning = true;
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShader.cpp b/src/tdme/engine/subsystems/lighting/LightingShader.cpp
+index f781e88c..5277a2ac 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShader.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShader.cpp
+@@ -118,10 +118,10 @@ void LightingShader::setShader(void* context, const string& id) {
+ 	}
+ 	implementation = shaderIt->second;
+ 
+-	if (currentImplementation != implementation) {
+-		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
++	//if (currentImplementation != implementation) {
++	//	if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+ 		implementation->useProgram(engine, context);
+-	}
++	//}
+ }
+ 
+ void LightingShader::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+index 561b4f2b..2d9bbc49 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+@@ -137,7 +137,7 @@ void LightingShaderBaseImplementation::initialize()
+ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+ 	isRunning = true;
+-	renderer->useProgram(renderLightingProgramId);
++	renderer->useProgram(context, renderLightingProgramId);
+ 	// initialize static uniforms
+ 	if (renderer->isInstancedRenderingAvailable() == true) {
+ 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+diff --git a/src/tdme/engine/subsystems/lines/LinesShader.cpp b/src/tdme/engine/subsystems/lines/LinesShader.cpp
+index 69f941d7..958351d4 100644
+--- a/src/tdme/engine/subsystems/lines/LinesShader.cpp
++++ b/src/tdme/engine/subsystems/lines/LinesShader.cpp
+@@ -76,7 +76,7 @@ void LinesShader::initialize()
+ void LinesShader::useProgram(void* context)
+ {
+ 	isRunning = true;
+-	renderer->useProgram(renderProgramId);
++	renderer->useProgram(context, renderProgramId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
+index 397ced1e..ef4c1cd0 100644
+--- a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
++++ b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
+@@ -75,7 +75,7 @@ void ParticlesShader::initialize()
+ void ParticlesShader::useProgram(void* context)
+ {
+ 	isRunning = true;
+-	renderer->useProgram(renderProgramId);
++	renderer->useProgram(context, renderProgramId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp
+index 6ae67ff0..b563dd61 100644
+--- a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp
+@@ -48,7 +48,7 @@ void PostProcessingShaderBaseImplementation::initialize()
+ void PostProcessingShaderBaseImplementation::useProgram(void* context)
+ {
+ 	isRunning = true;
+-	renderer->useProgram(programId);
++	renderer->useProgram(context, programId);
+ 	if (uniformColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
+ 	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
+ 	if (uniformTemporaryColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformTemporaryColorBufferTextureUnit, 2);
+diff --git a/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp b/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+index 40bb22c5..fa1af25c 100644
+--- a/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+@@ -237,7 +237,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
+ 	return handle;
+ }
+ 
+-void GL2Renderer::useProgram(int32_t programId)
++void GL2Renderer::useProgram(void* context, int32_t programId)
+ {
+ 	glUseProgram(programId);
+ }
+diff --git a/src/tdme/engine/subsystems/renderer/GL2Renderer.h b/src/tdme/engine/subsystems/renderer/GL2Renderer.h
+index 87d530d7..17d98d05 100644
+--- a/src/tdme/engine/subsystems/renderer/GL2Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GL2Renderer.h
+@@ -63,7 +63,7 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
++	void useProgram(void* context, int32_t programId) override;
+ 	int32_t createProgram() override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+diff --git a/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp b/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+index a5c213e3..58b36a7e 100644
+--- a/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+@@ -237,7 +237,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
+ 	return handle;
+ }
+ 
+-void GL3Renderer::useProgram(int32_t programId)
++void GL3Renderer::useProgram(void* context, int32_t programId)
+ {
+ 	glUseProgram(programId);
+ }
+@@ -286,6 +286,7 @@ bool GL3Renderer::linkProgram(int32_t programId)
+ int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& name)
+ {
+ 	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
++	if (uniformLocation == -1) Console::println("GL3Renderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
+ 	return uniformLocation;
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/renderer/GL3Renderer.h b/src/tdme/engine/subsystems/renderer/GL3Renderer.h
+index d5591caa..9b6e3bbd 100644
+--- a/src/tdme/engine/subsystems/renderer/GL3Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GL3Renderer.h
+@@ -56,7 +56,7 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
++	void useProgram(void* context, int32_t programId) override;
+ 	int32_t createProgram() override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+diff --git a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+index 3e812f2c..28619ba0 100644
+--- a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+@@ -212,7 +212,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
+ 	return handle;
+ }
+ 
+-void GLES2Renderer::useProgram(int32_t programId)
++void GLES2Renderer::useProgram(void* context, int32_t programId)
+ {
+ 	glUseProgram(programId);
+ }
+diff --git a/src/tdme/engine/subsystems/renderer/GLES2Renderer.h b/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
+index f43448ac..538acbd6 100644
+--- a/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
+@@ -54,7 +54,7 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
++	void useProgram(void* context, int32_t programId) override;
+ 	int32_t createProgram() override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+diff --git a/src/tdme/engine/subsystems/renderer/Renderer.h b/src/tdme/engine/subsystems/renderer/Renderer.h
+index 6ed98199..628d3aba 100644
+--- a/src/tdme/engine/subsystems/renderer/Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/Renderer.h
+@@ -184,11 +184,12 @@ public:
+ 	 */
+ 	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;
+ 
+-	/** 
++	/**
+ 	 * Use shader program
++	 * @param context context
+ 	 * @param programId programId
+ 	 */
+-	virtual void useProgram(int32_t programId) = 0;
++	virtual void useProgram(void* context, int32_t programId) = 0;
+ 
+ 	/** 
+ 	 * Creates a shader program
+diff --git a/src/tdme/engine/subsystems/renderer/VKRenderer.cpp b/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+index 92c1a151..fce8cefe 100644
+--- a/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+@@ -1543,8 +1543,10 @@ void VKRenderer::finishFrame()
+ 	endDrawCommandsAllContexts();
+ 
+ 	// flush command buffers
+-	finishPipeline();
+-	program_id = 0;
++	for (auto& context: contexts) {
++		finishPipeline(context.idx);
++		context.program_id = 0;
++	}
+ 
+ 	//
+ 	memoryBarrier();
+@@ -2160,55 +2162,51 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
+ 	return shaderStruct.id;
+ }
+ 
+-inline void VKRenderer::preparePipeline(program_type& program) {
+-	for (auto& context: contexts) {
+-		auto shaderIdx = 0;
+-		for (auto shaderId: program.shader_ids) {
+-			auto shaderIt = shaders.find(shaderId);
+-			if (shaderIt == shaders.end()) {
+-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+-				return;
+-			}
+-			auto& shader = shaderIt->second;
+-			if (shader.ubo_binding_idx == -1) {
+-				context.uniform_buffers[shaderIdx].resize(0);
+-				context.uniform_buffers_changed[shaderIdx] = false;
+-				shaderIdx++;
+-				continue;
+-			}
+-			context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
+-			context.uniform_buffers_changed[shaderIdx] = true;
+-			shaderIdx++;
++inline void VKRenderer::preparePipeline(int contextIdx, program_type& program) {
++	auto& context = contexts[contextIdx];
++	auto shaderIdx = 0;
++	for (auto shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
+ 		}
+-		if (program.created == true) {
+-			context.uniform_buffers = program.uniform_buffers_last[context.idx];
+-			context.uniform_buffers_changed = program.uniform_buffers_changed_last[context.idx];
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx == -1) {
++			context.uniform_buffers[shaderIdx].resize(0);
++			context.uniform_buffers_changed[shaderIdx] = false;
++			shaderIdx++;
++			continue;
+ 		}
++		context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
++		context.uniform_buffers_changed[shaderIdx] = true;
++		shaderIdx++;
++	}
++	if (program.created == true) {
++		context.uniform_buffers = program.uniform_buffers_last[context.idx];
++		context.uniform_buffers_changed = program.uniform_buffers_changed_last[context.idx];
+ 	}
+ }
+ 
+-inline void VKRenderer::finishPipeline() {
+-	if (program_id != 0) {
+-		auto programIt = programs.find(program_id);
++inline void VKRenderer::finishPipeline(int contextIdx) {
++	auto& context = contexts[contextIdx];
++	if (context.program_id != 0) {
++		auto programIt = programs.find(context.program_id);
+ 		if (programIt == programs.end()) {
+-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextIdx) + ": " + to_string(context.program_id));
+ 			return;
+ 		}
+ 		auto& program = programIt->second;
+-		for (auto& context: contexts) {
+-			program.uniform_buffers_last[context.idx] = context.uniform_buffers;
+-			program.uniform_buffers_changed_last[context.idx] = context.uniform_buffers_changed;
+-		}
+-		for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
++		program.uniform_buffers_last[contextIdx] = context.uniform_buffers;
++		program.uniform_buffers_changed_last[contextIdx] = context.uniform_buffers_changed;
++		context.pipeline_id.clear();
+ 	}
+ 
+ 	// clear ubos
+-	for (auto& context: contexts) {
+-		for (auto& ubo: context.uniform_buffers) ubo.clear();
+-	}
++	for (auto& ubo: context.uniform_buffers) ubo.clear();
+ 
+ 	//
+-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline = VK_NULL_HANDLE;
++	context.pipeline = VK_NULL_HANDLE;
+ }
+ 
+ inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs) {
+@@ -3313,31 +3311,35 @@ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_t
+ 	}
+ }
+ 
+-void VKRenderer::useProgram(int32_t programId)
++void VKRenderer::useProgram(void* context, int32_t programId)
+ {
+-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
++	auto& contextTyped = *static_cast<context_type*>(context);
++
++	//
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": " + to_string(programId));
+ 
+ 	// if unsetting program flush command buffers
+-	if (program_id != 0) {
+-		endDrawCommandsAllContexts();
+-		finishPipeline();
++	if (contextTyped.program_id != 0) {
++		endDrawCommands(contextTyped.idx);
++		finishPipeline(contextTyped.idx);
+ 	}
+ 
+ 	//
+-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+-
+-	program_id = 0;
++	contextTyped.pipeline_id.clear();
++	contextTyped.program_id = 0;
+ 	if (programId == 0) return;
+ 
++	//
+ 	auto programIt = programs.find(programId);
+ 	if (programIt == programs.end()) {
+ 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
+ 		return;
+ 	}
+ 
++	//
+ 	auto& program = programIt->second;
+-	preparePipeline(program);
+-	program_id = programId;
++	preparePipeline(contextTyped.idx, program);
++	contextTyped.program_id = programId;
+ }
+ 
+ int32_t VKRenderer::createProgram()
+@@ -3559,9 +3561,13 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
+ }
+ 
+ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size) {
+-	auto programIt = programs.find(program_id);
++	auto& contextTyped = *static_cast<context_type*>(context);
++
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": " + to_string(uniformId));
++
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program not found: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program not found: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	auto& program = programIt->second;
+@@ -3571,9 +3577,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
+ 		return;
+ 	}
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
++	//
+ 	auto changedUniforms = 0;
+ 	auto shaderIdx = 0;
+ 	for (auto& shaderId: program.shader_ids) {
+@@ -3725,7 +3729,7 @@ void VKRenderer::enableCulling(void* context)
+ {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (contextTyped.culling_enabled == true) return;
+-	endDrawCommand(contextTyped.idx);
++	endDrawCommands(contextTyped.idx);
+ 	contextTyped.culling_enabled = true;
+ 	contexts[contextTyped.idx].pipeline_id.clear();
+ }
+@@ -3734,7 +3738,7 @@ void VKRenderer::disableCulling(void* context)
+ {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (contextTyped.culling_enabled == false) return;
+-	endDrawCommand(contextTyped.idx);
++	endDrawCommands(contextTyped.idx);
+ 	contextTyped.culling_enabled = false;
+ 	contexts[contextTyped.idx].pipeline_id.clear();
+ }
+@@ -3743,7 +3747,7 @@ void VKRenderer::setFrontFace(void* context, int32_t frontFace)
+ {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (contextTyped.front_face == frontFace) return;
+-	endDrawCommand(contextTyped.idx);
++	endDrawCommands(contextTyped.idx);
+ 	contextTyped.front_face = (VkFrontFace)frontFace;
+ 	contexts[contextTyped.idx].pipeline_id.clear();
+ }
+@@ -4674,9 +4678,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+ 
+ 	// if unsetting program flush command buffers
+-	if (program_id != 0) {
+-		endDrawCommandsAllContexts();
+-	}
++	endDrawCommandsAllContexts();
+ 
+ 	//
+ 	if (frameBufferId != 0) {
+@@ -4768,7 +4770,7 @@ inline VkBuffer VKRenderer::getBufferObjectInternalNoLock(int32_t bufferObjectId
+ 	}
+ 	if (bufferIt->second.current_buffer == nullptr) {
+ 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " has no current data attached");
+-		return VK_NULL_HANDLE;
++		return getBufferObjectInternalNoLock(empty_vertex_buffer, size); // TODO: a.drewke, investigate here, this should never happen
+ 	}
+ 	auto buffer = bufferIt->second.current_buffer;
+ 	size = buffer->size;
+@@ -5056,19 +5058,19 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, i
+ 
+ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances)
+ {
+-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
++	auto& contextTyped = *static_cast<context_type*>(context);
++
++	//
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.program_id));
+ 
+ 	//
+-	auto programIt = programs.find(program_id);
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	program_type& program = programIt->second;
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
+ 	// textures
+ 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
+ 		auto textureId = contextTyped.bound_textures[i];
+@@ -5155,15 +5157,15 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
+ 
+ inline void VKRenderer::endDrawCommandsAllContexts() {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+-	for (auto i = 0; i < Engine::getThreadCount(); i++) endDrawCommand(i);
++	for (auto i = 0; i < Engine::getThreadCount(); i++) endDrawCommands(i);
+ 	memoryBarrier();
+ }
+ 
+-inline void VKRenderer::endDrawCommand(int contextIdx) {
++inline void VKRenderer::endDrawCommands(int contextIdx) {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	endRenderPass(contextIdx, __LINE__);
+ 	endDrawCommandBuffer(contextIdx, -1, true, true);
+-	// memoryBarrier(); // TODO: a.drewke
++	submitContext(contextIdx);
+ }
+ 
+ inline void VKRenderer::executeCommand(int contextIdx) {
+@@ -5177,9 +5179,9 @@ inline void VKRenderer::executeCommand(int contextIdx) {
+ 	if (contextTyped.command_type == context_type::COMMAND_NONE) return;
+ 
+ 	//
+-	auto programIt = programs.find(program_id);
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	auto& program = programIt->second;
+@@ -5210,7 +5212,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
+ 		endRenderPass(contextTyped.idx, __LINE__);
+ 		setupSkinningComputingPipeline(contextTyped.idx, program);
+ 	} else {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 
+@@ -5607,17 +5609,17 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
+ {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 
++	// have our context typed
++	auto& contextTyped = *static_cast<context_type*>(context);
++
+ 	// upload uniforms
+-	auto programIt = programs.find(program_id);
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	program_type& program = programIt->second;
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
+ 	// textures
+ 	textures_rwlock.readLock();
+ 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
+@@ -5691,17 +5693,17 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
+ {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 
++	//
++	auto& contextTyped = *static_cast<context_type*>(context);
++
+ 	// upload uniforms
+-	auto programIt = programs.find(program_id);
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	program_type& program = programIt->second;
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
+ 	// buffers
+ 	buffers_rwlock.readLock();
+ 
+@@ -5812,16 +5814,17 @@ void VKRenderer::doneGuiMode()
+ }
+ 
+ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+-	auto programIt = programs.find(program_id);
++	// have our context typed
++	auto& contextTyped = *static_cast<context_type*>(context);
++
++	//
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	program_type& program = programIt->second;
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
+ 	//
+ 	buffers_rwlock.readLock();
+ 
+@@ -5871,6 +5874,34 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
+ 	executeCommand(contextTyped.idx);
+ }
+ 
++inline void VKRenderer::submitContext(int contextIdx) {
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
++	VkResult err;
++
++	// end render passes
++	uint32_t submitted_cmd_buf_count = 0;
++	uint32_t submitted_cmd_buff_contextidx[DRAW_COMMANDBUFFER_MAX];
++	uint32_t submitted_cmd_buff_contextbuffidx[DRAW_COMMANDBUFFER_MAX];
++	finishSetupCommandBuffer(contextIdx);
++	endRenderPass(contextIdx, __LINE__); // TODO: draw cmd cycling
++	for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
++		if (endDrawCommandBuffer(contextIdx, j, false) == true) {
++			submitted_cmd_buff_contextidx[submitted_cmd_buf_count] = contextIdx;
++			submitted_cmd_buff_contextbuffidx[submitted_cmd_buf_count++] = j;
++		}
++	}
++
++	/*
++	for (auto i = 0; i < submitted_cmd_buf_count; i++) {
++		//
++		VkResult fence_result;
++		do {
++			fence_result = vkWaitForFences(device, 1, &contexts[submitted_cmd_buff_contextidx[i]].draw_fences[submitted_cmd_buff_contextbuffidx[i]], VK_TRUE, 100000000);
++		} while (fence_result == VK_TIMEOUT);
++	}
++	*/
++}
++
+ void VKRenderer::memoryBarrier() {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	VkResult err;
+@@ -5981,7 +6012,7 @@ void VKRenderer::setEffectColorMul(void* context, const array<float, 4>& effectC
+ 
+ const array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+-	contextTyped.effect_color_add;
++	return contextTyped.effect_color_add;
+ }
+ 
+ void VKRenderer::setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd) {
+diff --git a/src/tdme/engine/subsystems/renderer/VKRenderer.h b/src/tdme/engine/subsystems/renderer/VKRenderer.h
+index c92803ef..8b7bfa56 100644
+--- a/src/tdme/engine/subsystems/renderer/VKRenderer.h
++++ b/src/tdme/engine/subsystems/renderer/VKRenderer.h
+@@ -264,6 +264,8 @@ private:
+ 
+ 		bool culling_enabled { true };
+ 		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
++
++		int32_t program_id { 0 };
+ 	};
+ 
+ 	VkSurfaceKHR surface { VK_NULL_HANDLE };
+@@ -342,11 +344,10 @@ private:
+ 	VkViewport viewport;
+ 	VkRect2D scissor;
+ 
+-	int32_t program_id { 0 };
+ 	int32_t bound_frame_buffer { 0 };
+ 
+ 	bool blending_enabled { true };
+-	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT };
++	VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
+ 	bool depth_buffer_writing { true };
+ 	bool depth_buffer_testing { true };
+ 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
+@@ -374,13 +375,13 @@ private:
+ 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
+ 	void initializeSwapChain();
+ 	void initializeFrameBuffers();
+-	void endDrawCommand(int contextIdx);
++	void endDrawCommands(int contextIdx);
+ 	void endDrawCommandsAllContexts();
+ 	void executeCommand(int contextIdx);
+ 	void initializeRenderPass();
+ 	void startRenderPass(int contextIdx, int line);
+ 	void endRenderPass(int contextIdx, int line);
+-	void preparePipeline(program_type& program);
++	void preparePipeline(int contextIdx, program_type& program);
+ 	void createObjectsRenderingPipeline(int contextIdx, program_type& program);
+ 	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
+ 	void createPointsRenderingPipeline(int contextIdx, program_type& program);
+@@ -389,7 +390,7 @@ private:
+ 	void setupLinesRenderingPipeline(int contextIdx, program_type& program);
+ 	void createSkinningComputingPipeline(int contextIdx, program_type& program);
+ 	void setupSkinningComputingPipeline(int contextIdx, program_type& program);
+-	void finishPipeline();
++	void finishPipeline(int contextIdx);
+ 	void prepareSetupCommandBuffer(int contextIdx);
+ 	void finishSetupCommandBuffer(int contextIdx);
+ 	void finishSetupCommandBuffers();
+@@ -415,6 +416,7 @@ private:
+ 	void createFramebufferObject(int32_t frameBufferId);
+ 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
+ 	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true, bool waitUntilSubmitted = false);
++	void submitContext(int contextIdx);
+ 
+ public:
+ 	const string getShaderVersion() override;
+@@ -438,7 +440,7 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
++	void useProgram(void* context, int32_t programId) override;
+ 	int32_t createProgram() override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp b/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
+index 00ae4a97..27b96fb0 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
++++ b/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
+@@ -379,9 +379,9 @@ void Object3DRenderer::releaseTransparentFacesGroups()
+ 	transparentRenderFacesGroups.clear();
+ }
+ 
+-void Object3DRenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
++void Object3DRenderer::renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
+ 	if (renderer->isInstancedRenderingAvailable() == true) {
+-		renderObjectsOfSameTypeInstanced(0, objects, collectTransparentFaces, renderTypes);
++		renderObjectsOfSameTypeInstanced(threadIdx, objects, collectTransparentFaces, renderTypes);
+ 	} else {
+ 		renderObjectsOfSameTypeNonInstanced(objects, collectTransparentFaces, renderTypes);
+ 	}
+@@ -601,7 +601,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 
+ 	//
+ 	auto camera = engine->camera;
+-	auto frontFace = 0;
++	auto frontFace = -1;
+ 
+ 	// render faces entities
+ 	auto firstObject = objects[0];
+@@ -724,7 +724,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 						objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+ 							object->getShader():
+ 							object->getDistanceShader();
+-					if (hadShaderSetup == false && renderer->getShader(context) != objectShader) {
++					if (hadShaderSetup == false) {
+ 						renderer->setShader(context, objectShader);
+ 						renderer->onUpdateShader(context);
+ 						for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(context);
+@@ -827,7 +827,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 					// set up front face
+ 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+ 					// if front face changed just render in next step
+-					if (frontFace == 0) {
++					if (frontFace == -1) {
+ 						frontFace = objectFrontFace;
+ 						renderer->setFrontFace(context, frontFace);
+ 					} else
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DRenderer.h b/src/tdme/engine/subsystems/rendering/Object3DRenderer.h
+index f9364b9c..e9b953f3 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DRenderer.h
++++ b/src/tdme/engine/subsystems/rendering/Object3DRenderer.h
+@@ -24,7 +24,6 @@
+ #include <tdme/math/Matrix4x4Negative.h>
+ #include <tdme/utils/fwd-tdme.h>
+ #include <tdme/utils/ByteBuffer.h>
+-#include <tdme/utils/Console.h>
+ #include <tdme/utils/Pool.h>
+ 
+ using std::unordered_map;
+@@ -51,7 +50,6 @@ using tdme::math::Matrix4x4;
+ using tdme::math::Matrix4x4Negative;
+ using tdme::math::Vector3;
+ using tdme::utils::ByteBuffer;
+-using tdme::utils::Console;
+ using tdme::utils::Pool;
+ 
+ /** 
+@@ -109,11 +107,12 @@ private:
+ 
+ 	/** 
+ 	 * Renders multiple objects of same type(with same model)
++	 * @param threadIdx thread idx
+ 	 * @param objects objects of same type/ with same models
+ 	 * @param collectTransparentFaces collect render faces
+ 	 * @param renderTypes render types
+ 	 */
+-	void renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
++	void renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+ 
+ 	/** 
+ 	 * Renders multiple objects of same type(with same model) not using instancing
+@@ -173,29 +172,28 @@ private:
+ 		int threadCount,
+ 		int threadIdx,
+ 		vector<Object3D*> objects,
+-		unordered_map<string, vector<Object3D*>> objectsByModel,
++		unordered_map<string, vector<Object3D*>> objectsByModels,
+ 		bool renderTransparentFaces,
+ 		int renderTypes) {
++		auto objectsToRender = 0;
+ 		// sort objects by model
+ 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
+-			if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+-				objectIdx++;
+-				continue;
+-			}
++			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
+ 			auto object = objects[objectIdx];
+ 			auto modelId = object->getModel()->getId();
+-			auto& visibleObjectsByModel = objectsByModel[modelId];
+-			visibleObjectsByModel.push_back(object);
++			auto& objectsByModel = objectsByModels[modelId];
++			objectsByModel.push_back(object);
++			objectsToRender++;
+ 		}
+ 
+ 		// render objects
+-		for (auto& objectsByModelIt: objectsByModel) {
++		for (auto& objectsByModelIt: objectsByModels) {
+ 			auto& objectsByModel = objectsByModelIt.second;
+ 			if (objectsByModel.size() == 0) {
+ 				continue;
+ 			} else
+ 			if (objectsByModel.size() > 0) {
+-				renderObjectsOfSameType(objectsByModel, renderTransparentFaces, renderTypes);
++				renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes);
+ 			}
+ 			objectsByModel.clear();
+ 		}
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp
+index 94b73066..1f0e2c36 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp
+@@ -77,7 +77,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
+ 
+ void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+-	renderer->useProgram(programId);
++	renderer->useProgram(context, programId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+ 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+ }
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp
+index 7718aa10..6b441dbc 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp
+@@ -120,7 +120,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
+ 
+ void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+-	renderer->useProgram(renderProgramId);
++	renderer->useProgram(context, renderProgramId);
+ 	renderer->setProgramUniformInteger(context, renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
+ 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+ }
+diff --git a/src/tdme/engine/subsystems/skinning/SkinningShader.cpp b/src/tdme/engine/subsystems/skinning/SkinningShader.cpp
+index cd62e18d..b57227c8 100644
+--- a/src/tdme/engine/subsystems/skinning/SkinningShader.cpp
++++ b/src/tdme/engine/subsystems/skinning/SkinningShader.cpp
+@@ -87,7 +87,7 @@ void SkinningShader::initialize()
+ void SkinningShader::useProgram()
+ {
+ 	isRunning = true;
+-	renderer->useProgram(programId);
++	renderer->useProgram(renderer->getDefaultContext(), programId); // TODO: set up shader on all contexts
+ }
+ 
+ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DGroupMesh)
+diff --git a/src/tdme/gui/renderer/GUIShader.cpp b/src/tdme/gui/renderer/GUIShader.cpp
+index 4e7a1afc..82db46ef 100644
+--- a/src/tdme/gui/renderer/GUIShader.cpp
++++ b/src/tdme/gui/renderer/GUIShader.cpp
+@@ -65,14 +65,14 @@ void GUIShader::initialize()
+ 
+ void GUIShader::useProgram()
+ {
+-	renderer->useProgram(programId);
++	renderer->useProgram(renderer->getDefaultContext(), programId);
+ 	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureUnit, 0);
+ 	isRunning = true;
+ }
+ 
+ void GUIShader::unUseProgram()
+ {
+-	renderer->useProgram(renderer->ID_NONE);
++	renderer->useProgram(renderer->getDefaultContext(), renderer->ID_NONE);
+ 	isRunning = false;
+ }
+ 
+diff --git a/src/tdme/tests/PhysicsTest1.cpp b/src/tdme/tests/PhysicsTest1.cpp
+index a56cdb8a..bf7196ec 100644
+--- a/src/tdme/tests/PhysicsTest1.cpp
++++ b/src/tdme/tests/PhysicsTest1.cpp
+@@ -124,7 +124,7 @@ void PhysicsTest1::dispose()
+ void PhysicsTest1::initialize()
+ {
+ 	engine->initialize();
+-	engine->addPostProcessingProgram("ssao");
++	//engine->addPostProcessingProgram("ssao");
+ 	Object3D* entity;
+ 	auto cam = engine->getCamera();
+ 	cam->setZNear(0.1f);
