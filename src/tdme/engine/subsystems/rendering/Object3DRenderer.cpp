@@ -256,7 +256,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		// 	set up blending, but no culling and no depth buffer
 		//	TODO: enabling depth buffer let shadow disappear
 		//renderer->disableDepthBufferWriting();  // TODO: a.drewke, verify that this works ok in all cases?
-		renderer->disableCulling();
+		renderer->disableCulling(context);
 		renderer->enableBlending();
 		// disable foliage animation
 		// reset shader
@@ -267,7 +267,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		// actually this should not make any difference as culling is disabled
 		// but having a fixed value is not a bad idea except that it is a renderer call
 		// TODO: confirm this
-		renderer->setFrontFace(renderer->FRONTFACE_CCW);
+		renderer->setFrontFace(context, renderer->FRONTFACE_CCW);
 		for (auto transparentRenderFace: transparentRenderFaces) {
 			// do we have any faces yet?
 			if (groupTransparentRenderFaces.size() == 0) {
@@ -299,7 +299,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		renderTransparentFacesGroups(context);
 		//	no blending, but culling and depth buffer
 		renderer->disableBlending();
-		renderer->enableCulling();
+		renderer->enableCulling(context);
 		//renderer->enableDepthBufferWriting(); // TODO: a.drewke, verify that this works ok in all cases?
 		// done!
 	}
@@ -433,7 +433,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 			if (material != nullptr) {
 				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
 				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					renderer->disableCulling();
+					renderer->disableCulling(context);
 				}
 			}
 			// skip, if requested
@@ -548,7 +548,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 				// set up front face
 				auto objectFrontFace = matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 				if (objectFrontFace != currentFrontFace) {
-					renderer->setFrontFace(objectFrontFace);
+					renderer->setFrontFace(context, objectFrontFace);
 					currentFrontFace = objectFrontFace;
 				}
 				// set up effect color
@@ -586,7 +586,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 			faceIdx += faces;
 			if (material != nullptr) {
 				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					renderer->enableCulling();
+					renderer->enableCulling(context);
 				}
 			}
 		}
@@ -634,7 +634,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 			if (material != nullptr) {
 				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
 				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					renderer->disableCulling();
+					renderer->disableCulling(context);
 				}
 			}
 			// skip, if requested
@@ -838,7 +838,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 					// if front face changed just render in next step
 					if (frontFace == 0) {
 						frontFace = objectFrontFace;
-						renderer->setFrontFace(frontFace);
+						renderer->setFrontFace(context, frontFace);
 					} else
 					if (objectFrontFace != frontFace) {
 						objectsNotRendered.push_back(object);
@@ -894,7 +894,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 			faceIdx += faces;
 			if (material != nullptr) {
 				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					renderer->enableCulling();
+					renderer->enableCulling(context);
 				}
 			}
 		}

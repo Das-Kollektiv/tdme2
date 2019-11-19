@@ -325,14 +325,24 @@ void GLES2Renderer::setClearColor(float red, float green, float blue, float alph
 	glClearColor(red, green, blue, alpha);
 }
 
-void GLES2Renderer::enableCulling()
+void GLES2Renderer::enableCulling(void* context)
 {
 	glEnable(GL_CULL_FACE);
 }
 
-void GLES2Renderer::disableCulling()
+void GLES2Renderer::disableCulling(void* context)
 {
 	glDisable(GL_CULL_FACE);
+}
+
+void GLES2Renderer::setFrontFace(void* context, int32_t frontFace)
+{
+	glFrontFace(frontFace);
+}
+
+void GLES2Renderer::setCullFace(int32_t cullFace)
+{
+	glCullFace(cullFace);
 }
 
 void GLES2Renderer::enableBlending()
@@ -379,16 +389,6 @@ void GLES2Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void GLES2Renderer::clear(int32_t mask)
 {
 	glClear(mask);
-}
-
-void GLES2Renderer::setCullFace(int32_t cullFace)
-{
-	glCullFace(cullFace);
-}
-
-void GLES2Renderer::setFrontFace(int32_t frontFace)
-{
-	glFrontFace(frontFace);
 }
 
 int32_t GLES2Renderer::createTexture()

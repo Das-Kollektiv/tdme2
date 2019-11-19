@@ -367,13 +367,28 @@ public:
 
 	/** 
 	 * Enable culling
+	 * @param context context
 	 */
-	virtual void enableCulling() = 0;
+	virtual void enableCulling(void* context) = 0;
 
 	/** 
 	 * Disable culling
+	 * @param context context
 	 */
-	virtual void disableCulling() = 0;
+	virtual void disableCulling(void* context) = 0;
+
+	/**
+	 * Set up clock wise or counter clock wise faces as front face
+	 * @param context context
+	 * @param frontFace frontFace
+	 */
+	virtual void setFrontFace(void* context, int32_t frontFace) = 0;
+
+	/**
+	 * Sets up which face will be culled
+	 * @param cullFace cull face
+	 */
+	virtual void setCullFace(int32_t cullFace) = 0;
 
 	/** 
 	 * Enables blending
@@ -425,18 +440,6 @@ public:
 	 * @param mask mask
 	 */
 	virtual void clear(int32_t mask) = 0;
-
-	/**
-	 * Sets up which face will be culled
-	 * @param cullFace cull face
-	 */
-	virtual void setCullFace(int32_t cullFace) = 0;
-
-	/** 
-	 * Set up clock wise or counter clock wise faces as front face 
-	 * @param frontFace frontFace
-	 */
-	virtual void setFrontFace(int32_t frontFace) = 0;
 
 	/** 
 	 * Creates a texture

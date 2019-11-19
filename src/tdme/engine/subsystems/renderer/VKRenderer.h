@@ -453,8 +453,10 @@ public:
 	void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) override;
 	void updateViewPort() override;
 	void setClearColor(float red, float green, float blue, float alpha) override;
-	void enableCulling() override;
-	void disableCulling() override;
+	void enableCulling(void* context) override;
+	void disableCulling(void* context) override;
+	void setFrontFace(void* context, int32_t frontFace) override;
+	void setCullFace(int32_t cullFace) override;
 	void enableBlending() override;
 	void disableBlending() override;
 	void enableDepthBufferWriting() override;
@@ -464,8 +466,6 @@ public:
 	void setDepthFunction(int32_t depthFunction) override;
 	void setColorMask(bool red, bool green, bool blue, bool alpha) override;
 	void clear(int32_t mask) override;
-	void setCullFace(int32_t cullFace) override;
-	void setFrontFace(int32_t frontFace) override;
 	int32_t createTexture() override;
 	int32_t createDepthBufferTexture(int32_t width, int32_t height) override;
 	int32_t createColorBufferTexture(int32_t width, int32_t height) override;

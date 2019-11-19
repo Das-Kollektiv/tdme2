@@ -113,7 +113,7 @@ void FrameBuffer::renderToScreen()
 	auto context = renderer->getDefaultContext();
 
 	//
-	renderer->disableCulling();
+	renderer->disableCulling(context);
 
 	// clear
 	renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
@@ -155,7 +155,7 @@ void FrameBuffer::renderToScreen()
 	frameBufferRenderShader->unUseProgram();
 
 	// unset
-	renderer->enableCulling();
+	renderer->enableCulling(context);
 }
 
 void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, const string& shaderId, FrameBuffer* temporary)
@@ -173,7 +173,7 @@ void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, con
 	auto context = renderer->getDefaultContext();
 
 	//
-	renderer->disableCulling();
+	renderer->disableCulling(context);
 
 	// clear
 	renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
@@ -239,7 +239,7 @@ void FrameBuffer::doPostProcessing(FrameBuffer* target, FrameBuffer* source, con
 	postProcessingShader->unUseProgram();
 
 	// unset
-	renderer->enableCulling();
+	renderer->enableCulling(context);
 
 	//
 	if (target != nullptr) {

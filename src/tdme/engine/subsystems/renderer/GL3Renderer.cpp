@@ -353,14 +353,24 @@ void GL3Renderer::setClearColor(float red, float green, float blue, float alpha)
 	glClearColor(red, green, blue, alpha);
 }
 
-void GL3Renderer::enableCulling()
+void GL3Renderer::enableCulling(void* context)
 {
 	glEnable(GL_CULL_FACE);
 }
 
-void GL3Renderer::disableCulling()
+void GL3Renderer::disableCulling(void* context)
 {
 	glDisable(GL_CULL_FACE);
+}
+
+void GL3Renderer::setFrontFace(void* context, int32_t frontFace)
+{
+	glFrontFace(frontFace);
+}
+
+void GL3Renderer::setCullFace(int32_t cullFace)
+{
+	glCullFace(cullFace);
 }
 
 void GL3Renderer::enableBlending()
@@ -407,16 +417,6 @@ void GL3Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void GL3Renderer::clear(int32_t mask)
 {
 	glClear(mask);
-}
-
-void GL3Renderer::setCullFace(int32_t cullFace)
-{
-	glCullFace(cullFace);
-}
-
-void GL3Renderer::setFrontFace(int32_t frontFace)
-{
-	glFrontFace(frontFace);
 }
 
 int32_t GL3Renderer::createTexture()

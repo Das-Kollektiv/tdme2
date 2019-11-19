@@ -3721,7 +3721,7 @@ void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 	clear_alpha = alpha;
 }
 
-void VKRenderer::enableCulling()
+void VKRenderer::enableCulling(void* context)
 {
 	if (culling_enabled == true) return;
 	endDrawCommandsAllContexts();
@@ -3729,11 +3729,27 @@ void VKRenderer::enableCulling()
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
 }
 
-void VKRenderer::disableCulling()
+void VKRenderer::disableCulling(void* context)
 {
 	if (culling_enabled == false) return;
 	endDrawCommandsAllContexts();
 	culling_enabled = false;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+}
+
+void VKRenderer::setFrontFace(void* context, int32_t frontFace)
+{
+	if (front_face == frontFace) return;
+	endDrawCommandsAllContexts();
+	front_face = (VkFrontFace)frontFace;
+	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+}
+
+void VKRenderer::setCullFace(int32_t cullFace)
+{
+	if (cull_mode == cullFace) return;
+	endDrawCommandsAllContexts();
+	cull_mode = (VkCullModeFlagBits)cullFace;
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
 }
 
@@ -3831,22 +3847,6 @@ void VKRenderer::clear(int32_t mask)
 	);
 	endRenderPass(0, __LINE__);
 	endDrawCommandBuffer(0, -1, true, true);
-}
-
-void VKRenderer::setCullFace(int32_t cullFace)
-{
-	if (cull_mode == cullFace) return;
-	endDrawCommandsAllContexts();
-	cull_mode = (VkCullModeFlagBits)cullFace;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
-}
-
-void VKRenderer::setFrontFace(int32_t frontFace)
-{
-	if (front_face == frontFace) return;
-	endDrawCommandsAllContexts();
-	front_face = (VkFrontFace)frontFace;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
 }
 
 int32_t VKRenderer::createTexture()
@@ -5792,7 +5792,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 
 void VKRenderer::initGuiMode()
 {
-	disableCulling();
+	disableCulling(&contexts[0]);
 	disableDepthBufferTest();
 	disableDepthBufferWriting();
 }
@@ -5801,7 +5801,7 @@ void VKRenderer::doneGuiMode()
 {
 	enableDepthBufferWriting();
 	enableDepthBufferTest();
-	enableCulling();
+	enableCulling(&contexts[0]);
 }
 
 void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {

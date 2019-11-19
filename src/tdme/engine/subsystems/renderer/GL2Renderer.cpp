@@ -351,14 +351,24 @@ void GL2Renderer::setClearColor(float red, float green, float blue, float alpha)
 	glClearColor(red, green, blue, alpha);
 }
 
-void GL2Renderer::enableCulling()
+void GL2Renderer::enableCulling(void* context)
 {
 	glEnable(GL_CULL_FACE);
 }
 
-void GL2Renderer::disableCulling()
+void GL2Renderer::disableCulling(void* context)
 {
 	glDisable(GL_CULL_FACE);
+}
+
+void GL2Renderer::setFrontFace(void* context, int32_t frontFace)
+{
+	glFrontFace(frontFace);
+}
+
+void GL2Renderer::setCullFace(int32_t cullFace)
+{
+	glCullFace(cullFace);
 }
 
 void GL2Renderer::enableBlending()
@@ -404,16 +414,6 @@ void GL2Renderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 void GL2Renderer::clear(int32_t mask)
 {
 	glClear(mask);
-}
-
-void GL2Renderer::setCullFace(int32_t cullFace)
-{
-	glCullFace(cullFace);
-}
-
-void GL2Renderer::setFrontFace(int32_t frontFace)
-{
-	glFrontFace(frontFace);
 }
 
 int32_t GL2Renderer::createTexture()
