@@ -205,7 +205,7 @@ BatchRendererTriangles* Object3DRenderer::acquireTrianglesBatchRenderer()
 
 void Object3DRenderer::reset()
 {
-	visibleObjectsByModels.clear();
+	objectsByModels.clear();
 }
 
 void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
@@ -217,33 +217,24 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
 
-	// sort objects by model
-	for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
-		auto object = objects[objectIdx];
-		auto modelId = object->getModel()->getId();
-		auto& visibleObjectsByModel = visibleObjectsByModels[modelId];
-		visibleObjectsByModel.push_back(object);
-	}
+	if (renderer->isSupportingMultithreadedRendering() == false) {
+		renderFunction(1, 0, objects, objectsByModels, renderTransparentFaces, renderTypes);
+	} else {
 
-	// render objects
-	for (auto& objectsByModelIt: visibleObjectsByModels) {
-		auto& objectsByModel = objectsByModelIt.second;
-		if (objectsByModel.size() == 0) {
-			continue;
-		} else
-		/*
-		if (objectsByModel.size() == 1) {
-			singleObjectsToRender.push_back(objectsByModel[0]);
-		} else
-		*/
-		if (objectsByModel.size() > 0) {
-			renderObjectsOfSameType(objectsByModel, renderTransparentFaces, renderTypes);
-		}
-		objectsByModel.clear();
-	}
+		Object3DRenderer_InstancedRenderFunctionParameters parameters;
+		parameters.objects = objects;
+		parameters.collectTransparentFaces = renderTransparentFaces;
+		parameters.renderTypes = renderTypes;
 
-	//
-	singleObjectsToRender.clear();
+		for (auto engineThread: Engine::engineThreads) engineThread->engine = engine;
+		for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
+		for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
+
+		renderFunction(threadCount, 0, objects, objectsByModels, renderTransparentFaces, renderTypes);
+
+		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
+		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
+	}
 
 	// use default context
 	auto context = renderer->getDefaultContext();

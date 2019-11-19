@@ -261,6 +261,9 @@ private:
 		Renderer_Material material;
 		array<Renderer_Light, 8> lights;
 		Matrix2D3x3 texture_matrix;
+
+		bool culling_enabled { true };
+		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
@@ -342,10 +345,8 @@ private:
 	int32_t program_id { 0 };
 	int32_t bound_frame_buffer { 0 };
 
-	bool culling_enabled { true };
 	bool blending_enabled { true };
 	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT };
-	VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
 	bool depth_buffer_writing { true };
 	bool depth_buffer_testing { true };
 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
@@ -373,6 +374,7 @@ private:
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
+	void endDrawCommand(int contextIdx);
 	void endDrawCommandsAllContexts();
 	void executeCommand(int contextIdx);
 	void initializeRenderPass();
@@ -403,10 +405,10 @@ private:
 		unordered_set<string>& uniformArrays,
 		string& uniformsBlock
 	);
-	void createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs);
+	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs);
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& att_state);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& ds);
-	const string createPipelineId();
+	const string createPipelineId(int contextIdx);
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void createColorBufferTexture(int32_t textureId, int32_t width, int32_t height);
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);

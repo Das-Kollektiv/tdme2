@@ -3,6 +3,7 @@
 #include <array>
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -38,6 +39,7 @@ using std::array;
 using std::map;
 using std::vector;
 using std::string;
+using std::unordered_map;
 using std::to_string;
 
 using tdme::engine::Camera;
@@ -228,7 +230,7 @@ private:
 
 		struct {
 			Object3DRenderer_InstancedRenderFunctionParameters parameters;
-			vector<Object3D*> objectsNotRendered;
+			unordered_map<string, vector<Object3D*>> objectsByModels;
 			TransparentRenderFacesPool* transparentRenderFacesPool;
 		} rendering;
 

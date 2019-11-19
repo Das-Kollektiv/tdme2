@@ -10,8 +10,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
@@ -37,6 +39,7 @@ using tdme::engine::Object3D;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
+using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
@@ -69,7 +72,7 @@ private:
 	Renderer* renderer { nullptr };
 	vector<vector<int32_t>*> vboInstancedRenderingIds;
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
-	unordered_map<string, vector<Object3D*>> visibleObjectsByModels;
+	unordered_map<string, vector<Object3D*>> objectsByModels;
 	vector<TransparentRenderFace*> groupTransparentRenderFaces;
 	Object3DRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
@@ -79,7 +82,6 @@ private:
 	Matrix4x4Negative matrix4x4Negative;
 	vector<Object3D*> objectsToRender;
 	vector<Object3D*> objectsNotRendered;
-	vector<Object3D*> singleObjectsToRender;
 	vector<Object3D*> singleObjectsNotRendered;
 	int threadCount;
 	vector<ByteBuffer*> bbEffectColorMuls;
@@ -157,6 +159,47 @@ private:
 	 * @param context context
 	 */
 	void clearMaterial(void* context);
+
+	/**
+	 * Render function
+	 * @param threadCount thread count
+	 * @param threadIdx thread index
+	 * @param objects objects
+	 * @param visibleObjectsByModels objects by models storage
+	 * @param renderTransparentFaces render transparent faces
+	 * @param renderTypes render types
+	 */
+	inline void renderFunction(
+		int threadCount,
+		int threadIdx,
+		vector<Object3D*> objects,
+		unordered_map<string, vector<Object3D*>> objectsByModel,
+		bool renderTransparentFaces,
+		int renderTypes) {
+		// sort objects by model
+		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
+			if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+				objectIdx++;
+				continue;
+			}
+			auto object = objects[objectIdx];
+			auto modelId = object->getModel()->getId();
+			auto& visibleObjectsByModel = objectsByModel[modelId];
+			visibleObjectsByModel.push_back(object);
+		}
+
+		// render objects
+		for (auto& objectsByModelIt: objectsByModel) {
+			auto& objectsByModel = objectsByModelIt.second;
+			if (objectsByModel.size() == 0) {
+				continue;
+			} else
+			if (objectsByModel.size() > 0) {
+				renderObjectsOfSameType(objectsByModel, renderTransparentFaces, renderTypes);
+			}
+			objectsByModel.clear();
+		}
+	}
 
 public:
 	static constexpr int32_t RENDERTYPE_NORMALS { 1 };

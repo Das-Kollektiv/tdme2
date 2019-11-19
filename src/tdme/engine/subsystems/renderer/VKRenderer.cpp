@@ -2211,12 +2211,12 @@ inline void VKRenderer::finishPipeline() {
 	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline = VK_NULL_HANDLE;
 }
 
-inline void VKRenderer::createRasterizationStateCreateInfo(VkPipelineRasterizationStateCreateInfo& rs) {
+inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs) {
 	memset(&rs, 0, sizeof(rs));
 	rs.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rs.polygonMode = VK_POLYGON_MODE_FILL;
-	rs.cullMode = culling_enabled == true?cull_mode:VK_CULL_MODE_NONE;
-	rs.frontFace = front_face;
+	rs.cullMode = contexts[contextIdx].culling_enabled == true?cull_mode:VK_CULL_MODE_NONE;
+	rs.frontFace = contexts[contextIdx].front_face;
 	rs.depthClampEnable = VK_FALSE;
 	rs.rasterizerDiscardEnable = VK_FALSE;
 	rs.depthBiasEnable = VK_FALSE;
@@ -2249,11 +2249,11 @@ inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencil
 	ds.front = ds.back;
 }
 
-inline const string VKRenderer::createPipelineId() {
+inline const string VKRenderer::createPipelineId(int contextIdx) {
 	string result;
-	result.append((char*)&culling_enabled, sizeof(culling_enabled));
+	result.append((char*)&contexts[contextIdx].culling_enabled, sizeof(contexts[contextIdx].culling_enabled));
+	result.append((char*)&contexts[contextIdx].front_face, sizeof(contexts[contextIdx].front_face));
 	result.append((char*)&cull_mode, sizeof(cull_mode));
-	result.append((char*)&front_face, sizeof(front_face));
 	result.append((char*)&blending_enabled, sizeof(blending_enabled));
 	result.append((char*)&depth_buffer_testing, sizeof(depth_buffer_testing));
 	result.append((char*)&depth_buffer_writing, sizeof(depth_buffer_writing));
@@ -2385,7 +2385,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
-		createRasterizationStateCreateInfo(rs);
+		createRasterizationStateCreateInfo(contextIdx, rs);
 		createDepthStencilStateCreateInfo(ds);
 
 		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
@@ -2591,7 +2591,7 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
 		pipeline_mutex.lock();
-		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId();
+		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
 		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
 		if (program.created == false || pipelinesIt == program.pipelines.end()) {
 			createObjectsRenderingPipeline(contextIdx, program);
@@ -2753,7 +2753,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& pro
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
-		createRasterizationStateCreateInfo(rs);
+		createRasterizationStateCreateInfo(contextIdx, rs);
 		createDepthStencilStateCreateInfo(ds);
 
 		memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
@@ -2869,7 +2869,7 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
 		pipeline_mutex.lock();
-		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId();
+		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
 
 		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
 		if (program.created == false || pipelinesIt == program.pipelines.end()) {
@@ -3032,7 +3032,7 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& prog
 		VkDynamicState dynamicStateEnables[VK_DYNAMIC_STATE_RANGE_SIZE];
 		VkPipelineDynamicStateCreateInfo dynamicState;
 
-		createRasterizationStateCreateInfo(rs);
+		createRasterizationStateCreateInfo(contextIdx, rs);
 		createDepthStencilStateCreateInfo(ds);
 
 		memset(dynamicStateEnables, 0, sizeof dynamicStateEnables);
@@ -3150,7 +3150,7 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
 		pipeline_mutex.lock();
-		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId();
+		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
 
 		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
 		if (program.created == false || pipelinesIt == program.pipelines.end()) {
@@ -3723,26 +3723,29 @@ void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 
 void VKRenderer::enableCulling(void* context)
 {
-	if (culling_enabled == true) return;
-	endDrawCommandsAllContexts();
-	culling_enabled = true;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+	auto& contextTyped = *static_cast<context_type*>(context);
+	if (contextTyped.culling_enabled == true) return;
+	endDrawCommand(contextTyped.idx);
+	contextTyped.culling_enabled = true;
+	contexts[contextTyped.idx].pipeline_id.clear();
 }
 
 void VKRenderer::disableCulling(void* context)
 {
-	if (culling_enabled == false) return;
-	endDrawCommandsAllContexts();
-	culling_enabled = false;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+	auto& contextTyped = *static_cast<context_type*>(context);
+	if (contextTyped.culling_enabled == false) return;
+	endDrawCommand(contextTyped.idx);
+	contextTyped.culling_enabled = false;
+	contexts[contextTyped.idx].pipeline_id.clear();
 }
 
 void VKRenderer::setFrontFace(void* context, int32_t frontFace)
 {
-	if (front_face == frontFace) return;
-	endDrawCommandsAllContexts();
-	front_face = (VkFrontFace)frontFace;
-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+	auto& contextTyped = *static_cast<context_type*>(context);
+	if (contextTyped.front_face == frontFace) return;
+	endDrawCommand(contextTyped.idx);
+	contextTyped.front_face = (VkFrontFace)frontFace;
+	contexts[contextTyped.idx].pipeline_id.clear();
 }
 
 void VKRenderer::setCullFace(int32_t cullFace)
@@ -5152,11 +5155,15 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	for (auto i = 0; i < Engine::getThreadCount(); i++) {
-		endRenderPass(i, __LINE__);
-		endDrawCommandBuffer(i, -1, true, true);
-	}
+	for (auto i = 0; i < Engine::getThreadCount(); i++) endDrawCommand(i);
 	memoryBarrier();
+}
+
+inline void VKRenderer::endDrawCommand(int contextIdx) {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	endRenderPass(contextIdx, __LINE__);
+	endDrawCommandBuffer(contextIdx, -1, true, true);
+	// memoryBarrier(); // TODO: a.drewke
 }
 
 inline void VKRenderer::executeCommand(int contextIdx) {
