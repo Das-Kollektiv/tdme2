@@ -212,12 +212,12 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 	return handle;
 }
 
-void GLES2Renderer::useProgram(int32_t programId)
+void GLES2Renderer::useProgram(void* context, int32_t programId)
 {
 	glUseProgram(programId);
 }
 
-int32_t GLES2Renderer::createProgram()
+int32_t GLES2Renderer::createProgram(int type)
 {
 	auto program = glCreateProgram();
 	return program;

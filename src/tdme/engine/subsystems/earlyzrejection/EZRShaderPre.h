@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -9,6 +10,7 @@
 #include <tdme/engine/subsystems/earlyzrejection/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
+using std::vector;
 using std::map;
 using std::string;
 
@@ -25,13 +27,15 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::earlyzrejection::EZRShaderPre final
 {
 private:
+	struct EZRShaderPreContext {
+		EZRShaderPreImplementation* implementation { nullptr };
+	};
+
 	map<string, EZRShaderPreImplementation*> shader;
-	EZRShaderPreImplementation* implementation { nullptr };
 	bool running { false };
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
-	Matrix4x4 mvMatrix;
-	Matrix4x4 mvpMatrix;
+	vector<EZRShaderPreContext> contexts;
 
 public:
 
@@ -58,10 +62,10 @@ public:
 
 	/** 
 	 * Set up pre program mvp matrix
+	 * @param renderer renderer
 	 * @param context context
-	 * @param mvpMatrix mvp matrix
 	 */
-	void updateMatrices(void* context);
+	void updateMatrices(Renderer* renderer, void* context);
 
 	/**
 	 * Set up pre program texture matrix

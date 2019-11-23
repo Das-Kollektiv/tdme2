@@ -42,6 +42,10 @@ public:
 	int32_t CULLFACE_FRONT;
 	int32_t CULLFACE_BACK;
 	int32_t TEXTUREUNITS_MAX;
+	int32_t PROGRAM_OBJECTS;
+	int32_t PROGRAM_POINTS;
+	int32_t PROGRAM_LINES;
+	int32_t PROGRAM_COMPUTE;
 	int32_t SHADER_FRAGMENT_SHADER;
 	int32_t SHADER_VERTEX_SHADER;
 	int32_t SHADER_GEOMETRY_SHADER;
@@ -184,17 +188,19 @@ public:
 	 */
 	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;
 
-	/** 
+	/**
 	 * Use shader program
+	 * @param context context
 	 * @param programId programId
 	 */
-	virtual void useProgram(int32_t programId) = 0;
+	virtual void useProgram(void* context, int32_t programId) = 0;
 
 	/** 
 	 * Creates a shader program
+	 * @param type type
 	 * @return int
 	 */
-	virtual int32_t createProgram() = 0;
+	virtual int32_t createProgram(int type) = 0;
 
 	/** 
 	 * Attaches a shader to a program
@@ -726,7 +732,7 @@ public:
 	 * @param lightId light id
 	 * @return light
 	 */
-	virtual const Renderer_Light& getLight(void* context, int32_t lightId) = 0;
+	virtual const Renderer_Light getLight(void* context, int32_t lightId) = 0;
 
 	/**
 	 * Set light
@@ -748,7 +754,7 @@ public:
 	 * @param context
 	 * @return effect color mul
 	 */
-	virtual const array<float, 4>& getEffectColorMul(void* context) = 0;
+	virtual const array<float, 4> getEffectColorMul(void* context) = 0;
 
 	/** 
 	 * Set up effect color multiplication
@@ -762,7 +768,7 @@ public:
 	 * @param context
 	 * @return effect color add
 	 */
-	virtual const array<float, 4>& getEffectColorAdd(void* context) = 0;
+	virtual const array<float, 4> getEffectColorAdd(void* context) = 0;
 
 	/** 
 	 * Set up effect color addition
@@ -782,7 +788,7 @@ public:
 	 * @param context context
 	 * @return material
 	 */
-	virtual const Renderer_Material& getMaterial(void* context) = 0;
+	virtual const Renderer_Material getMaterial(void* context) = 0;
 
 	/** 
 	 * Set material
@@ -801,7 +807,7 @@ public:
 	 * Set shader
 	 * @param context context
 	 */
-	virtual const string& getShader(void* context) = 0;
+	virtual const string getShader(void* context) = 0;
 
 	/**
 	 * Set shader

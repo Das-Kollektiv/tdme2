@@ -34,7 +34,7 @@ void GUIShader::initialize()
 	);
 	if (fragmentShaderId == 0) return;
 
-	programId = renderer->createProgram();
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
 	renderer->attachShaderToProgram(programId, vertexShaderId);
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
@@ -65,14 +65,14 @@ void GUIShader::initialize()
 
 void GUIShader::useProgram()
 {
-	renderer->useProgram(programId);
+	renderer->useProgram(renderer->getDefaultContext(), programId);
 	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureUnit, 0);
 	isRunning = true;
 }
 
 void GUIShader::unUseProgram()
 {
-	renderer->useProgram(renderer->ID_NONE);
+	renderer->useProgram(renderer->getDefaultContext(), renderer->ID_NONE);
 	isRunning = false;
 }
 

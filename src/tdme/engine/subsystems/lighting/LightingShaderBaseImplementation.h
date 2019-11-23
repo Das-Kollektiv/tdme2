@@ -67,11 +67,7 @@ protected:
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightConstantAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightLinearAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightQuadraticAttenuation;
-	Matrix4x4 mvMatrix;
-	Matrix4x4 mvpMatrix;
-	Matrix4x4 normalMatrix;
 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
-	bool isRunning { false };
 	bool initialized { false };
 	Renderer* renderer { nullptr };
 public:

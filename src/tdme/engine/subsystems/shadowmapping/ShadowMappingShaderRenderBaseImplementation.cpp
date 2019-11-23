@@ -120,12 +120,12 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 
 void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine, void* context)
 {
-	renderer->useProgram(renderProgramId);
+	renderer->useProgram(context, renderProgramId);
 	renderer->setProgramUniformInteger(context, renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 }
 
-void ShadowMappingShaderRenderBaseImplementation::unUseProgram()
+void ShadowMappingShaderRenderBaseImplementation::unUseProgram(void* context)
 {
 }
 
@@ -160,7 +160,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(Renderer* 
 
 void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
-	auto& material = renderer->getMaterial(context);
+	auto material = renderer->getMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
 }
@@ -170,7 +170,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer
 		return;
 	}
 
-	auto& light = renderer->getLight(context, lightId);
+	auto light = renderer->getLight(context, lightId);
 	auto lightPosition = Vector3(light.position[0], light.position[1], light.position[2]);
 	auto lightSpotDirection = Vector3(light.spotDirection[0], light.spotDirection[1], light.spotDirection[2]);
 	if (renderUniformLightPosition != -1) renderer->setProgramUniformFloatVec3(context, renderUniformLightPosition, lightPosition.getArray());

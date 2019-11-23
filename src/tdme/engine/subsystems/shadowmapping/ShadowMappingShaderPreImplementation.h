@@ -41,8 +41,9 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
 
 	/** 
 	 * Un use pre render shadow mapping program
+	 * @param context context
 	 */
-	virtual void unUseProgram() = 0;
+	virtual void unUseProgram(void* context) = 0;
 
 	/** 
 	 * Set up pre program mvp matrix

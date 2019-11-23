@@ -237,12 +237,12 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 	return handle;
 }
 
-void GL2Renderer::useProgram(int32_t programId)
+void GL2Renderer::useProgram(void* context, int32_t programId)
 {
 	glUseProgram(programId);
 }
 
-int32_t GL2Renderer::createProgram()
+int32_t GL2Renderer::createProgram(int type)
 {
 	auto programId = glCreateProgram();
 	return programId;

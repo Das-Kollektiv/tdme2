@@ -50,6 +50,8 @@ SkinningShader::SkinningShader(Renderer* renderer): mutex("skinningshader-mutex"
 	this->renderer = renderer;
 	isRunning = false;
 	initialized = false;
+	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	contexts.resize(threadCount);
 }
 
 bool SkinningShader::isInitialized()
@@ -70,7 +72,7 @@ void SkinningShader::initialize()
 	if (shaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram();
+	programId = renderer->createProgram(renderer->PROGRAM_COMPUTE);
 	renderer->attachShaderToProgram(programId, shaderId);
 
 	// link program
@@ -87,13 +89,17 @@ void SkinningShader::initialize()
 void SkinningShader::useProgram()
 {
 	isRunning = true;
-	renderer->useProgram(programId);
 }
 
 void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DGroupMesh)
 {
 	//
 	auto contextIdx = renderer->getContextIndex(context);
+	auto& skinningContext = contexts[contextIdx];
+	if (skinningContext.running == false) {
+		skinningContext.running = true;
+		renderer->useProgram(context, programId);
+	}
 
 	// vbo base ids
 	auto vboBaseIds = object3DGroupMesh->object3DGroupRenderer->vboBaseIds;
@@ -218,6 +224,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 void SkinningShader::unUseProgram()
 {
 	isRunning = false;
+	for (auto& skinningContext: contexts) skinningContext.running = false;
 	// we are done, do memory barrier
 	renderer->memoryBarrier();
 }

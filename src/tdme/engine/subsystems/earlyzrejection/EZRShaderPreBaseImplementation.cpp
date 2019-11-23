@@ -77,21 +77,26 @@ void EZRShaderPreBaseImplementation::initialize()
 
 void EZRShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
 {
-	renderer->useProgram(programId);
+	renderer->useProgram(context, programId);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 }
 
-void EZRShaderPreBaseImplementation::unUseProgram()
+void EZRShaderPreBaseImplementation::unUseProgram(void* context)
 {
 }
 
-void EZRShaderPreBaseImplementation::updateMatrices(void* context, const Matrix4x4& mvpMatrix)
+void EZRShaderPreBaseImplementation::updateMatrices(Renderer* renderer, void* context)
 {
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	} else {
+		// matrices
+		Matrix4x4 mvpMatrix;
+		// mvp matrix
+		mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
+		// upload
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
 	}
 }
@@ -102,7 +107,7 @@ void EZRShaderPreBaseImplementation::updateTextureMatrix(Renderer* renderer, voi
 
 void EZRShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
-	auto& material = renderer->getMaterial(context);
+	auto material = renderer->getMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
 }

@@ -70,7 +70,7 @@ private:
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
-		vector<int32_t> ubo { 0 };
+		vector<int32_t> ubo;
 		int32_t ubo_binding_idx { -1 };
  		string source;
  		string file;
@@ -85,14 +85,15 @@ private:
 			VkPipelineCache pipelineCache { VK_NULL_HANDLE };
 			VkPipeline pipeline { VK_NULL_HANDLE };
 		};
+		int type { 0 };
 		unordered_map<string, pipeline_struct> pipelines;
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
+		vector<bool> uniform_buffers_stored;
 		vector<array<vector<uint8_t>, 4>> uniform_buffers_last;
 		vector<array<bool, 4>> uniform_buffers_changed_last;
 		uint32_t layout_bindings { 0 };
-		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets;
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
@@ -264,6 +265,8 @@ private:
 
 		bool culling_enabled { true };
 		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
+
+		int32_t program_id { 0 };
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
@@ -326,7 +329,7 @@ private:
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
 	// enable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -342,11 +345,10 @@ private:
 	VkViewport viewport;
 	VkRect2D scissor;
 
-	int32_t program_id { 0 };
 	int32_t bound_frame_buffer { 0 };
 
 	bool blending_enabled { true };
-	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT };
+	VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
 	bool depth_buffer_writing { true };
 	bool depth_buffer_testing { true };
 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
@@ -374,22 +376,26 @@ private:
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
-	void endDrawCommand(int contextIdx);
+	void endDrawCommands(int contextIdx);
 	void endDrawCommandsAllContexts();
 	void executeCommand(int contextIdx);
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx, int line);
 	void endRenderPass(int contextIdx, int line);
-	void preparePipeline(program_type& program);
+	void preparePipeline(int contextIdx, program_type& program);
+	void createObjectsRenderingProgram(program_type& program);
 	void createObjectsRenderingPipeline(int contextIdx, program_type& program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
+	void createPointsRenderingProgram(program_type& program);
 	void createPointsRenderingPipeline(int contextIdx, program_type& program);
 	void setupPointsRenderingPipeline(int contextIdx, program_type& program);
+	void createLinesRenderingProgram(program_type& program);
 	void createLinesRenderingPipeline(int contextIdx, program_type& program);
 	void setupLinesRenderingPipeline(int contextIdx, program_type& program);
+	void createSkinningComputingProgram(program_type& program);
 	void createSkinningComputingPipeline(int contextIdx, program_type& program);
 	void setupSkinningComputingPipeline(int contextIdx, program_type& program);
-	void finishPipeline();
+	void finishPipeline(int contextIdx);
 	void prepareSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffers();
@@ -415,6 +421,7 @@ private:
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
 	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true, bool waitUntilSubmitted = false);
+	void submitContext(int contextIdx);
 
 public:
 	const string getShaderVersion() override;
@@ -438,8 +445,8 @@ public:
 	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
-	void useProgram(int32_t programId) override;
-	int32_t createProgram() override;
+	void useProgram(void* context, int32_t programId) override;
+	int32_t createProgram(int type) override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
 	bool linkProgram(int32_t programId) override;
 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
@@ -531,15 +538,15 @@ public:
 	int32_t getTextureUnit(void* context);
 	void setTextureUnit(void* context, int32_t textureUnit);
 	virtual Matrix2D3x3& getTextureMatrix(void* context);
-	virtual const Renderer_Light& getLight(void* context, int32_t lightId);
+	virtual const Renderer_Light getLight(void* context, int32_t lightId);
 	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
-	virtual const array<float, 4>& getEffectColorMul(void* context);
+	virtual const array<float, 4> getEffectColorMul(void* context);
 	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
-	virtual const array<float, 4>& getEffectColorAdd(void* context);
+	virtual const array<float, 4> getEffectColorAdd(void* context);
 	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
-	virtual const Renderer_Material& getMaterial(void* context);
+	virtual const Renderer_Material getMaterial(void* context);
 	virtual void setMaterial(void* context, const Renderer_Material& material);
-	virtual const string& getShader(void* context);
+	virtual const string getShader(void* context);
 	virtual void setShader(void* context, const string& id);
 
 public:

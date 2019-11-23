@@ -311,7 +311,7 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *conte
 		}
 		auto sbIndices = ObjectBuffer::getByteBuffer(context, faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
 		// create face vertex indices, will never be changed in engine
-		for (auto index : indices) {
+		for (auto index: indices) {
 			sbIndices.put(index);
 		}
 		// done, upload
@@ -319,7 +319,7 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *conte
 	} else {
 		auto ibIndices = ObjectBuffer::getByteBuffer(context, faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
 		// create face vertex indices, will never be changed in engine
-		for (auto index : indices) {
+		for (auto index: indices) {
 			ibIndices.put(index);
 		}
 		// done, upload
@@ -336,7 +336,7 @@ void Object3DGroupMesh::setupTextureCoordinatesBuffer(Renderer* renderer, void* 
 	// create texture coordinates buffer, will never be changed in engine
 	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, groupTextureCoordinates.size() * 2 * sizeof(float))->asFloatBuffer();
 	// construct texture coordinates byte buffer as this will not change usually
-	for (auto& textureCoordinate : groupTextureCoordinates) {
+	for (auto& textureCoordinate: groupTextureCoordinates) {
 		fbTextureCoordinates.put(textureCoordinate.getArray());
 	}
 	// done, upload
@@ -347,7 +347,7 @@ void Object3DGroupMesh::setupVerticesBuffer(Renderer* renderer, void* context, i
 {
 	auto fbVertices = ObjectBuffer::getByteBuffer(context, vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create vertices buffers
-	for (auto& vertex : *vertices) {
+	for (auto& vertex: *vertices) {
 		fbVertices.put(vertex.getArray());
 	}
 	// done, upload
@@ -358,7 +358,7 @@ void Object3DGroupMesh::setupNormalsBuffer(Renderer* renderer, void* context, in
 {
 	auto fbNormals = ObjectBuffer::getByteBuffer(context, normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create normals buffers
-	for (auto& normal : *normals) {
+	for (auto& normal: *normals) {
 		fbNormals.put(normal.getArray());
 	}
 	// done, upload
@@ -371,7 +371,7 @@ void Object3DGroupMesh::setupTangentsBuffer(Renderer* renderer, void* context, i
 	if (tangents == nullptr) return;
 	auto fbTangents = ObjectBuffer::getByteBuffer(context, tangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create tangents buffers
-	for (auto& tangent : *tangents) {
+	for (auto& tangent: *tangents) {
 		fbTangents.put(tangent.getArray());
 	}
 	// done, upload
@@ -384,7 +384,7 @@ void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, void* context,
 	if (bitangents == nullptr) return;
 	auto fbBitangents = ObjectBuffer::getByteBuffer(context, bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create bitangents buffers
-	for (auto& bitangent : *bitangents) {
+	for (auto& bitangent: *bitangents) {
 		fbBitangents.put(bitangent.getArray());
 	}
 	// done, upload
@@ -398,7 +398,7 @@ void Object3DGroupMesh::setupOriginsBuffer(Renderer* renderer, void* context, in
 	// create texture coordinates buffer, will never be changed in engine
 	auto fbOrigins = ObjectBuffer::getByteBuffer(context, origins.size() * 3 * sizeof(float))->asFloatBuffer();
 	// construct float buffer as this will not change usually
-	for (auto& origin : origins) {
+	for (auto& origin: origins) {
 		fbOrigins.put(origin.getArray());
 	}
 	// done, upload

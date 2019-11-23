@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -10,6 +11,7 @@
 
 using std::map;
 using std::string;
+using std::vector;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
@@ -23,10 +25,14 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::lighting::LightingShader final
 {
 private:
+	struct LightingShaderContext {
+		LightingShaderImplementation* implementation { nullptr };
+	};
 	map<string, LightingShaderImplementation*> shader;
-	LightingShaderImplementation* implementation { nullptr };
-	bool running { false };
+	Renderer* renderer { nullptr };
 	Engine* engine { nullptr };
+	bool running { false };
+	vector<LightingShaderContext> contexts;
 
 public:
 	/** 
@@ -47,9 +53,8 @@ public:
 
 	/** 
 	 * Unuse lighting program
-	 * @param context context
 	 */
-	void unUseProgram(void* context);
+	void unUseProgram();
 
 	/** 
 	 * Update effect to program

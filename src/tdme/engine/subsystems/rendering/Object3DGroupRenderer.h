@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
@@ -11,6 +12,7 @@
 
 using std::vector;
 
+using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DRenderer;
@@ -29,8 +31,11 @@ class tdme::engine::subsystems::rendering::Object3DGroupRenderer final
 
 private:
 	Object3DGroup* object3DGroup { nullptr };
+	VBOManager_VBOManaged* vboManagedBase { nullptr };
+	VBOManager_VBOManaged* vboManagedNormalMapping { nullptr };
+	VBOManager_VBOManaged* vboManagedOrigins { nullptr };
 	vector<int32_t>* vboBaseIds { nullptr };
-	vector<int32_t>* vboTangentBitangentIds { nullptr  };
+	vector<int32_t>* vboNormalMappingIds { nullptr  };
 	vector<int32_t>* vboOrigins { nullptr };
 	bool haveVBOs { false };
 public:

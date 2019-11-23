@@ -41,15 +41,16 @@ struct tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation
 
 	/** 
 	 * Un use pre render shadow mapping program
+	 * @param context context
 	 */
-	virtual void unUseProgram() = 0;
+	virtual void unUseProgram(void* context) = 0;
 
 	/** 
 	 * Set up pre program mvp matrix
+	 * @param renderer renderer
 	 * @param context context
-	 * @param mvpMatrix mvp matrix
 	 */
-	virtual void updateMatrices(void* context, const Matrix4x4& mvpMatrix) = 0;
+	virtual void updateMatrices(Renderer* renderer, void* context) = 0;
 
 	/**
 	 * Set up pre program texture matrix

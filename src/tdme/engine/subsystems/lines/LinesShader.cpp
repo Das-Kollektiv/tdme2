@@ -45,7 +45,7 @@ void LinesShader::initialize()
 	if (renderVertexShaderId == 0)
 		return;
 	// create, attach and link program
-	renderProgramId = renderer->createProgram();
+	renderProgramId = renderer->createProgram(renderer->PROGRAM_LINES);
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 	// map inputs to attributes
@@ -76,7 +76,7 @@ void LinesShader::initialize()
 void LinesShader::useProgram(void* context)
 {
 	isRunning = true;
-	renderer->useProgram(renderProgramId);
+	renderer->useProgram(context, renderProgramId);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
 }
 

@@ -77,12 +77,12 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 
 void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
 {
-	renderer->useProgram(programId);
+	renderer->useProgram(context, programId);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 }
 
-void ShadowMappingShaderPreBaseImplementation::unUseProgram()
+void ShadowMappingShaderPreBaseImplementation::unUseProgram(void* context)
 {
 }
 
@@ -102,7 +102,7 @@ void ShadowMappingShaderPreBaseImplementation::updateTextureMatrix(Renderer* ren
 
 void ShadowMappingShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
-	auto& material = renderer->getMaterial(context);
+	auto material = renderer->getMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
 }

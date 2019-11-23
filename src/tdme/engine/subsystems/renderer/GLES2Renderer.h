@@ -54,8 +54,8 @@ public:
 	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
-	void useProgram(int32_t programId) override;
-	int32_t createProgram() override;
+	void useProgram(void* context, int32_t programId) override;
+	int32_t createProgram(int type) override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
 	bool linkProgram(int32_t programId) override;
 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;

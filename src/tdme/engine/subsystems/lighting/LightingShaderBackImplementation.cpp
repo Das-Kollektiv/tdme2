@@ -51,7 +51,7 @@ void LightingShaderBackImplementation::initialize()
 	if (renderLightingVertexShaderId == 0) return;
 
 	// create, attach and link program
-	renderLightingProgramId = renderer->createProgram();
+	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
 

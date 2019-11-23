@@ -43,7 +43,7 @@ public:
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
-	virtual void unUseProgram() override;
+	virtual void unUseProgram(void* context) override;
 	virtual void updateMatrices(void* context, const Matrix4x4& mvpMatrix) override;
 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
 	virtual void updateMaterial(Renderer* renderer, void* context) override;

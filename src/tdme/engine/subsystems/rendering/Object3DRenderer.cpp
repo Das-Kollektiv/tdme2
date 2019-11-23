@@ -136,17 +136,14 @@ Object3DRenderer::Object3DRenderer(Engine* engine, Renderer* renderer) {
 	renderTransparentRenderPointsPool = new RenderTransparentRenderPointsPool(65535);
 	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
 	threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	contexts.resize(threadCount);
 	if (this->renderer->isInstancedRenderingAvailable() == true) {
-		bbEffectColorMuls.resize(threadCount);
-		bbEffectColorAdds.resize(threadCount);
-		bbMvMatrices.resize(threadCount);
-		for (auto i = 0; i < threadCount; i++) {
-			bbEffectColorMuls[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
-			bbEffectColorAdds[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
-			bbMvMatrices[i] = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+		for (auto& context: contexts) {
+			context.bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+			context.bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+			context.bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
 		}
 	}
-	vboInstancedRenderingIds.resize(threadCount);
 }
 
 Object3DRenderer::~Object3DRenderer() {
@@ -164,7 +161,7 @@ void Object3DRenderer::initialize()
 	psePointBatchRenderer->initialize();
 	for (auto i = 0; i < threadCount; i++) {
 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3drenderer.instancedrendering." + to_string(i), 3, false);
-		vboInstancedRenderingIds[i] = vboManaged->getVBOIds();
+		contexts[i].vboInstancedRenderingIds = vboManaged->getVBOIds();
 	}
 }
 
@@ -210,9 +207,6 @@ void Object3DRenderer::reset()
 
 void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
-	// reset shader
-	renderer->setShader(renderer->getDefaultContext(), string());
-
 	// clear transparent render faces data
 	transparentRenderFacesPool->reset();
 	releaseTransparentFacesGroups();
@@ -220,7 +214,6 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		renderFunction(1, 0, objects, objectsByModels, renderTransparentFaces, renderTypes);
 	} else {
-
 		Object3DRenderer_InstancedRenderFunctionParameters parameters;
 		parameters.objects = objects;
 		parameters.collectTransparentFaces = renderTransparentFaces;
@@ -379,9 +372,9 @@ void Object3DRenderer::releaseTransparentFacesGroups()
 	transparentRenderFacesGroups.clear();
 }
 
-void Object3DRenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
+void Object3DRenderer::renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderObjectsOfSameTypeInstanced(0, objects, collectTransparentFaces, renderTypes);
+		renderObjectsOfSameTypeInstanced(threadIdx, objects, collectTransparentFaces, renderTypes);
 	} else {
 		renderObjectsOfSameTypeNonInstanced(objects, collectTransparentFaces, renderTypes);
 	}
@@ -393,6 +386,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 	auto camera = engine->getCamera();
 
 	// use default context
+	auto& object3DRenderContext = contexts[0];
 	auto context = renderer->getDefaultContext();
 
 	//
@@ -518,13 +512,13 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject(context, (*currentVBOIds)[2]);
 				}
 				// bind tangent, bitangend buffers if not yet bound
-				auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
+				auto currentVBONormalMappingIds = _object3DGroup->renderer->vboNormalMappingIds;
 				if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
-					renderer->isNormalMappingAvailable() && currentVBOTangentBitangentIds != nullptr && currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
+					renderer->isNormalMappingAvailable() && currentVBONormalMappingIds != nullptr && currentVBONormalMappingIds != boundVBOTangentBitangentIds) {
 					// tangent
-					renderer->bindTangentsBufferObject(context, (*currentVBOTangentBitangentIds)[0]);
+					renderer->bindTangentsBufferObject(context, (*currentVBONormalMappingIds)[0]);
 					// bitangent
-					renderer->bindBitangentsBufferObject(context, (*currentVBOTangentBitangentIds)[1]);
+					renderer->bindBitangentsBufferObject(context, (*currentVBONormalMappingIds)[1]);
 				}
 				// set up local -> world transformations matrix
 				renderer->getModelViewMatrix().set(
@@ -537,7 +531,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 				);
 				renderer->onUpdateModelViewMatrix(context);
 				// set up front face
-				auto objectFrontFace = matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+				auto objectFrontFace = object3DRenderContext.matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 				if (objectFrontFace != currentFrontFace) {
 					renderer->setFrontFace(context, objectFrontFace);
 					currentFrontFace = objectFrontFace;
@@ -590,7 +584,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 
 void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
 {
-	// use default context
+	// contexts
+	auto& object3DRenderContext = contexts[threadIdx];
 	auto context = renderer->getContext(threadIdx);
 
 	//
@@ -601,7 +596,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 	//
 	auto camera = engine->camera;
-	auto frontFace = 0;
+	auto frontFace = -1;
 
 	// render faces entities
 	auto firstObject = objects[0];
@@ -658,7 +653,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 			}
 
 			// draw this faces entity for each object
-			objectsToRender = objects;
+			object3DRenderContext.objectsToRender = objects;
 			do {
 				auto hadShaderSetup = false;
 				Matrix4x4Negative matrix4x4Negative;
@@ -667,23 +662,23 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 				Matrix4x4 modelViewMatrixTemp;
 				Matrix4x4 modelViewMatrix;
 
-				FloatBuffer fbEffectColorMuls = bbEffectColorMuls[threadIdx]->asFloatBuffer();
-				FloatBuffer fbEffectColorAdds = bbEffectColorAdds[threadIdx]->asFloatBuffer();
-				FloatBuffer fbMvMatrices = bbMvMatrices[threadIdx]->asFloatBuffer();
+				FloatBuffer fbEffectColorMuls = object3DRenderContext.bbEffectColorMuls->asFloatBuffer();
+				FloatBuffer fbEffectColorAdds = object3DRenderContext.bbEffectColorAdds->asFloatBuffer();
+				FloatBuffer fbMvMatrices = object3DRenderContext.bbMvMatrices->asFloatBuffer();
 
 				string materialKey;
 				bool materialUpdateOnly = false;
 				vector<int32_t>* boundVBOBaseIds = nullptr;
 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
 				vector<int32_t>* boundVBOOrigins = nullptr;
-				auto objectCount = objectsToRender.size();
+				auto objectCount = object3DRenderContext.objectsToRender.size();
 
 				//
-				auto textureMatrix = objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
+				auto textureMatrix = object3DRenderContext.objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
 
 				// draw objects
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objectsToRender[objectIdx];
+					auto object = object3DRenderContext.objectsToRender[objectIdx];
 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
 
 					//	check transparency via effect
@@ -707,13 +702,13 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 					// limit objects to render to INSTANCEDRENDERING_OBJECTS_MAX
 					if (fbMvMatrices.getPosition() / 16 == INSTANCEDRENDERING_OBJECTS_MAX) {
-						objectsNotRendered.push_back(object);
+						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
 
 					// check if texture matrix did change
 					if (_object3DGroup->textureMatricesByEntities[faceEntityIdx].equals(textureMatrix) == false) {
-						objectsNotRendered.push_back(object);
+						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
 
@@ -724,19 +719,20 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 						objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
 							object->getShader():
 							object->getDistanceShader();
-					if (hadShaderSetup == false && renderer->getShader(context) != objectShader) {
+					if (hadShaderSetup == false) {
 						renderer->setShader(context, objectShader);
 						renderer->onUpdateShader(context);
 						for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(context);
 						// issue upload matrices
 						renderer->onUpdateCameraMatrix(context);
 						renderer->onUpdateProjectionMatrix(context);
+						//
+						hadShaderSetup = true;
 					} else
 					if (objectShader != renderer->getShader(context)) {
-						objectsNotRendered.push_back(object);
+						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
-					hadShaderSetup = true;
 
 					// set up material on first object and update on succeeding
 					auto materialKeyCurrent = materialKey;
@@ -751,7 +747,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 					// check if material key has not been set yet
 					if (materialKey != materialKeyCurrent) {
-						objectsNotRendered.push_back(object);
+						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
 
@@ -776,25 +772,25 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 					} else
 					// check if buffers did change, then skip and render in next step
 					if (boundVBOBaseIds != currentVBOBaseIds) {
-						objectsNotRendered.push_back(object);
+						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
 					// bind tangent, bitangend buffers
-					auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
+					auto currentVBONormalMappingIds = _object3DGroup->renderer->vboNormalMappingIds;
 					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
-						renderer->isNormalMappingAvailable() == true && currentVBOTangentBitangentIds != nullptr) {
+						renderer->isNormalMappingAvailable() == true && currentVBONormalMappingIds != nullptr) {
 						// bind tangent, bitangend buffers if not yet done
 						if (boundVBOTangentBitangentIds == nullptr) {
 							// tangent
-							renderer->bindTangentsBufferObject(context, (*currentVBOTangentBitangentIds)[0]);
+							renderer->bindTangentsBufferObject(context, (*currentVBONormalMappingIds)[0]);
 							// bitangent
-							renderer->bindBitangentsBufferObject(context, (*currentVBOTangentBitangentIds)[1]);
+							renderer->bindBitangentsBufferObject(context, (*currentVBONormalMappingIds)[1]);
 							//
-							boundVBOTangentBitangentIds = currentVBOTangentBitangentIds;
+							boundVBOTangentBitangentIds = currentVBONormalMappingIds;
 						} else
 						// check if buffers did change, then skip and render in next step
-						if (currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
-							objectsNotRendered.push_back(object);
+						if (currentVBONormalMappingIds != boundVBOTangentBitangentIds) {
+							object3DRenderContext.objectsNotRendered.push_back(object);
 							continue;
 						}
 					}
@@ -810,7 +806,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 						} else
 						// check if buffers did change, then skip and render in next step
 						if (currentVBOOrigins != boundVBOOrigins) {
-							objectsNotRendered.push_back(object);
+							object3DRenderContext.objectsNotRendered.push_back(object);
 							continue;
 						}
 					}
@@ -827,12 +823,12 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 					// set up front face
 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 					// if front face changed just render in next step
-					if (frontFace == 0) {
+					if (frontFace == -1) {
 						frontFace = objectFrontFace;
 						renderer->setFrontFace(context, frontFace);
 					} else
 					if (objectFrontFace != frontFace) {
-						objectsNotRendered.push_back(object);
+						object3DRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
 
@@ -851,17 +847,17 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 				if (objectsToRenderIssue > 0) {
 					// upload model view matrices
 					{
-						renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
-						renderer->bindModelMatricesBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0]);
+						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
+						renderer->bindModelMatricesBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[0]);
 					}
 
 					// upload effects
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 						// upload effect color mul
-						renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-						renderer->bindEffectColorMulsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[1]);
-						renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-						renderer->bindEffectColorAddsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[2]);
+						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+						renderer->bindEffectColorMulsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[1]);
+						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+						renderer->bindEffectColorAddsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[2]);
 					}
 
 					// set up texture matrix
@@ -877,9 +873,9 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 				}
 
 				// clear list of objects we did not render
-				objectsToRender = objectsNotRendered;
-				objectsNotRendered.clear();
-			} while (objectsToRender.size() > 0);
+				object3DRenderContext.objectsToRender = object3DRenderContext.objectsNotRendered;
+				object3DRenderContext.objectsNotRendered.clear();
+			} while (object3DRenderContext.objectsToRender.size() > 0);
 
 			// keep track of rendered faces
 			faceIdx += faces;
@@ -895,8 +891,8 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 	renderer->unbindBufferObjects(context);
 
 	// reset objects to render
-	objectsToRender.clear();
-	objectsNotRendered.clear();
+	object3DRenderContext.objectsToRender.clear();
+	object3DRenderContext.objectsNotRendered.clear();
 }
 
 void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)

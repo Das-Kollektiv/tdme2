@@ -237,12 +237,12 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 	return handle;
 }
 
-void GL3Renderer::useProgram(int32_t programId)
+void GL3Renderer::useProgram(void* context, int32_t programId)
 {
 	glUseProgram(programId);
 }
 
-int32_t GL3Renderer::createProgram()
+int32_t GL3Renderer::createProgram(int type)
 {
 	auto glProgram = glCreateProgram();
 	return glProgram;

@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::map;
@@ -14,7 +14,7 @@ using std::string;
 
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::os::threading::Mutex;
+using tdme::os::threading::ReadWriteLock;
 
 /** 
  * VBO manager
@@ -28,7 +28,7 @@ class tdme::engine::subsystems::manager::VBOManager final
 private:
 	Renderer* renderer {  };
 	map<string, VBOManager_VBOManaged*> vbos {  };
-	Mutex mutex;
+	ReadWriteLock rwLock;
 
 public:
 
@@ -41,6 +41,12 @@ public:
 	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids, bool useGPUMemory);
 
 	/** 
+	 * Retrieves a VBO managed from manager
+	 * @param vboId VBO id
+	 */
+	VBOManager_VBOManaged* getVBO(const string& vboId);
+
+	/**
 	 * Removes a VBO from manager
 	 * @param vboId VBO id
 	 */

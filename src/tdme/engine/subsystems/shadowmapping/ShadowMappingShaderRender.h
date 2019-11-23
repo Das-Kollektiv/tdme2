@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -11,6 +12,7 @@
 
 using std::map;
 using std::string;
+using std::vector;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -25,12 +27,16 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender final
 {
 private:
+	struct ShadowMappingShaderRenderContext {
+		ShadowMappingShaderRenderImplementation* implementation { nullptr };
+	};
 	map<string, ShadowMappingShaderRenderImplementation*> shader;
-	ShadowMappingShaderRenderImplementation* implementation { nullptr };
 	bool running { false };
 	Matrix4x4 depthBiasMVPMatrix {  };
-	int32_t lightId { -1 };
 	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
+	vector<ShadowMappingShaderRenderContext> contexts;
+	int32_t lightId { -1 };
 
 public:
 

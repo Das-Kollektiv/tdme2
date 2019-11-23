@@ -48,7 +48,7 @@ void PostProcessingShaderBaseImplementation::initialize()
 void PostProcessingShaderBaseImplementation::useProgram(void* context)
 {
 	isRunning = true;
-	renderer->useProgram(programId);
+	renderer->useProgram(context, programId);
 	if (uniformColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
 	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
 	if (uniformTemporaryColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformTemporaryColorBufferTextureUnit, 2);

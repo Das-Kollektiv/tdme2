@@ -59,7 +59,7 @@ public:
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
-	virtual void unUseProgram() override;
+	virtual void unUseProgram(void* context) override;
 	virtual void setProgramViewMatrices(void* context) override;
 	virtual void setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix) override;
 	virtual void setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix) override;

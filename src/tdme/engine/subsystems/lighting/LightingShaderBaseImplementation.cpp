@@ -27,7 +27,6 @@ using tdme::utils::Console;
 LightingShaderBaseImplementation::LightingShaderBaseImplementation(Renderer* renderer)
 {
 	this->renderer = renderer;
-	isRunning = false;
 	initialized = false;
 }
 
@@ -136,8 +135,7 @@ void LightingShaderBaseImplementation::initialize()
 
 void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 {
-	isRunning = true;
-	renderer->useProgram(renderLightingProgramId);
+	renderer->useProgram(context, renderLightingProgramId);
 	// initialize static uniforms
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
@@ -169,14 +167,10 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)
 {
-	isRunning = false;
 }
 
 void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* context)
 {
-	// skip if not running
-	if (isRunning == false) return;
-
 	// skip if using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		//
@@ -187,13 +181,10 @@ void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* co
 
 void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
-	// skip if not running
-	if (isRunning == false) return;
-
 	//
 	array<float, 4> tmpColor4 {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 
-	auto& material = renderer->getMaterial(context);
+	auto material = renderer->getMaterial(context);
 
 	// ambient without alpha, as we only use alpha from diffuse color
 	tmpColor4 = material.ambient;
@@ -223,11 +214,8 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 
 void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)
 {
-	// skip if not running
-	if (isRunning == false) return;
-
 	// lights
-	auto& light = renderer->getLight(context, lightId);
+	auto light = renderer->getLight(context, lightId);
 	renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
 	if (light.enabled == 1) {
 		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], light.ambient);
@@ -245,9 +233,6 @@ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* con
 
 void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* context)
 {
-	// skip if not running
-	if (isRunning == false) return;
-
 	// set up camera and projection matrices if using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
@@ -256,6 +241,11 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* 
 
 	// skip if using instanced rendering
 	if (renderer->isInstancedRenderingAvailable() == false) {
+		// matrices
+		Matrix4x4 mvMatrix;
+		Matrix4x4 mvpMatrix;
+		Matrix4x4 normalMatrix;
+
 		// model view matrix
 		mvMatrix.set(renderer->getModelViewMatrix());
 		// object to screen matrix
@@ -270,19 +260,12 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* 
 }
 
 void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
-	// skip if not running
-	if (isRunning == false) return;
-
 	//
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
 }
 
-
 void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
-	// skip if not running
-	if (isRunning == false) return;
-
 	switch (renderer->getTextureUnit(context)) {
 		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
 			if (uniformDiffuseTextureAvailable != -1) {
