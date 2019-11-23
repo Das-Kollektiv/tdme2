@@ -33,7 +33,7 @@ private:
 public:
 
 	/** 
-	 * Adds a VBO to manager
+	 * Adds a VBO to manager or retrieve VBO if existing
 	 * @param vboId VBO id
 	 * @param ids VBOs to allocate
 	 * @param use GPU memory
@@ -43,6 +43,7 @@ public:
 	/** 
 	 * Retrieves a VBO managed from manager
 	 * @param vboId VBO id
+	 * @return VBO managed or nullptr
 	 */
 	VBOManager_VBOManaged* getVBO(const string& vboId);
 
