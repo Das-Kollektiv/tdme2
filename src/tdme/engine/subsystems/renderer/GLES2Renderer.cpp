@@ -452,7 +452,7 @@ void GLES2Renderer::uploadTexture(void* context, Texture* texture)
 void GLES2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_INT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 

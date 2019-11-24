@@ -380,8 +380,7 @@ void Object3DRenderer::renderObjectsOfSameType(int threadIdx, const vector<Objec
 	}
 }
 
-void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
-{
+void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
 	Vector3 objectCamFromAxis;
 	auto camera = engine->getCamera();
 
@@ -720,13 +719,14 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 							object->getShader():
 							object->getDistanceShader();
 					if (hadShaderSetup == false) {
-						renderer->setShader(context, objectShader);
-						renderer->onUpdateShader(context);
-						for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(context);
-						// issue upload matrices
-						renderer->onUpdateCameraMatrix(context);
-						renderer->onUpdateProjectionMatrix(context);
-						//
+						if (objectShader != renderer->getShader(context)) {
+							renderer->setShader(context, objectShader);
+							renderer->onUpdateShader(context);
+							for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(context);
+							// issue upload matrices
+							renderer->onUpdateCameraMatrix(context);
+							renderer->onUpdateProjectionMatrix(context);
+						}
 						hadShaderSetup = true;
 					} else
 					if (objectShader != renderer->getShader(context)) {

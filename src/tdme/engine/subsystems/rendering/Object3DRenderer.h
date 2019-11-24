@@ -14,7 +14,7 @@
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
@@ -179,7 +179,9 @@ private:
 		unordered_map<string, vector<Object3D*>>& objectsByModels,
 		bool renderTransparentFaces,
 		int renderTypes) {
-		auto objectsToRender = 0;
+		// reset shader
+		renderer->setShader(renderer->getContext(threadIdx), string());
+
 		// sort objects by model
 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
@@ -187,7 +189,6 @@ private:
 			auto modelId = object->getModel()->getId();
 			auto& objectsByModel = objectsByModels[modelId];
 			objectsByModel.push_back(object);
-			objectsToRender++;
 		}
 
 		// render objects
