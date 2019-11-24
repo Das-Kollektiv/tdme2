@@ -4164,7 +4164,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	//
-	textures_rwlock.readLock();
+	textures_rwlock.writeLock(); // TODO: have a more fine grained locking here
 	auto textureObjectIt = textures.find(contextTyped.bound_textures[contextTyped.texture_unit_active]);
 	if (textureObjectIt == textures.end()) {
 		textures_rwlock.unlock();
@@ -4172,7 +4172,6 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		return;
 	}
 	auto& texture_object = textureObjectIt->second;
-	textures_rwlock.unlock();
 
 	//
 	uint32_t mipLevels = 1;
@@ -4181,6 +4180,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 	if (texture_object.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(contextTyped.bound_textures[contextTyped.texture_unit_active]));
+		textures_rwlock.unlock();
 		return;
 	}
 
@@ -4430,6 +4430,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 	//
 	texture_object.uploaded = true;
+
+	//
+	textures_rwlock.unlock();
 }
 
 void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
