@@ -437,8 +437,8 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 		.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED
 	};
 
-    VmaAllocationCreateInfo image_alloc_create_info = {};
-    image_alloc_create_info.usage = (required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT?VMA_MEMORY_USAGE_CPU_ONLY:VMA_MEMORY_USAGE_GPU_ONLY;
+	VmaAllocationCreateInfo image_alloc_create_info = {};
+	image_alloc_create_info.usage = (required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT?VMA_MEMORY_USAGE_CPU_ONLY:VMA_MEMORY_USAGE_GPU_ONLY;
 
 	VmaAllocationInfo allocation_info = {};
 	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &tex_obj->image, &tex_obj->allocation, &allocation_info);
@@ -1142,11 +1142,11 @@ void VKRenderer::initialize()
 	vkGetPhysicalDeviceMemoryProperties(gpu, &memory_properties);
 
 	// initialize allocator
-    VmaAllocatorCreateInfo allocator_info = {};
-    allocator_info.physicalDevice = gpu;
-    allocator_info.device = device;
-    allocator_info.instance = inst;
-    allocator_info.vulkanApiVersion = VK_API_VERSION_1_0;
+	VmaAllocatorCreateInfo allocator_info = {};
+	allocator_info.physicalDevice = gpu;
+	allocator_info.device = device;
+	allocator_info.instance = inst;
+	allocator_info.vulkanApiVersion = VK_API_VERSION_1_0;
 
     //
 	vmaCreateAllocator(&allocator_info, &allocator);
@@ -3918,8 +3918,8 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	//
 	VkResult err;
 
-    VmaAllocationCreateInfo image_alloc_create_info = {};
-    image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	VmaAllocationCreateInfo image_alloc_create_info = {};
+	image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 	VmaAllocationInfo allocation_info = {};
 	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &depth_buffer_texture.image, &depth_buffer_texture.allocation, &allocation_info);
@@ -4030,8 +4030,8 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	//
 	VkResult err;
 
-    VmaAllocationCreateInfo image_alloc_create_info = {};
-    image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+	VmaAllocationCreateInfo image_alloc_create_info = {};
+	image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
 	VmaAllocationInfo allocation_info = {};
 	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &color_buffer_texture.image, &color_buffer_texture.allocation, &allocation_info);
