@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <ext/vulkan/spirv/GlslangToSpv.h>
+#include <ext/vulkan/vma/src/VmaUsage.h>
 
 #include <array>
 #include <list>
@@ -55,7 +56,17 @@ private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 4 };
 	static constexpr int COMMANDS_MAX { 8 };
-	static constexpr int DESC_MAX { 512 };
+	static constexpr int DESC_MAX { 4096 };
+
+	struct delete_buffer_type {
+		VkBuffer buffer;
+		VmaAllocation allocation;
+	};
+
+	struct delete_image_type {
+		VkImage image;
+		VmaAllocation allocation;
+	};
 
 	struct shader_type {
 		struct uniform_type {
@@ -105,7 +116,7 @@ private:
 		struct reusable_buffer {
 			int64_t frame_used_last { -1 };
 			VkBuffer buf { VK_NULL_HANDLE };
-			VkDeviceMemory mem { VK_NULL_HANDLE };
+			VmaAllocation allocation { VK_NULL_HANDLE };
 			uint32_t size { 0 };
 			void* data { nullptr };
 		};
@@ -129,7 +140,7 @@ private:
 		VkSampler sampler { VK_NULL_HANDLE };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
-		VkDeviceMemory mem { VK_NULL_HANDLE };
+		VmaAllocation allocation { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 	};
 
@@ -356,11 +367,11 @@ private:
 	int64_t frame { 0 };
 
 	Mutex delete_mutex;
-	vector<VkImage> delete_images;
-	vector<VkBuffer> delete_buffers;
-	vector<VkDeviceMemory> delete_memory;
+	vector<delete_buffer_type> delete_buffers;
+	vector<delete_image_type> delete_images;
 
 	vector<context_type> contexts;
+	VmaAllocator allocator;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
@@ -369,7 +380,7 @@ private:
 	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps = true);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
-	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	void createBuffer(bool useGPUMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);

@@ -15,6 +15,7 @@
 #include <ext/vulkan/glslang/Public/ShaderLang.h>
 #include <ext/vulkan/OGLCompilersDLL/InitializeDll.h>
 #include <ext/vulkan/spirv/GlslangToSpv.h>
+#include <ext/vulkan/vma/src/VmaUsage.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -435,30 +436,12 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 	    .pQueueFamilyIndices = 0,
 		.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED
 	};
-	VkMemoryAllocateInfo mem_alloc = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = NULL,
-		.allocationSize = 0,
-		.memoryTypeIndex = 0
-	};
 
-	VkMemoryRequirements mem_reqs;
+    VmaAllocationCreateInfo image_alloc_create_info = {};
+    image_alloc_create_info.usage = (required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT?VMA_MEMORY_USAGE_CPU_ONLY:VMA_MEMORY_USAGE_GPU_ONLY;
 
-	err = vkCreateImage(device, &image_create_info, NULL, &tex_obj->image);
-	assert(!err);
-
-	vkGetImageMemoryRequirements(device, tex_obj->image, &mem_reqs);
-
-	mem_alloc.allocationSize = mem_reqs.size;
-	pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, required_props, &mem_alloc.memoryTypeIndex);
-	assert(pass);
-
-	// allocate memory
-	err = vkAllocateMemory(device, &mem_alloc, NULL, &tex_obj->mem);
-	assert(!err);
-
-	// bind memory
-	err = vkBindImageMemory(device, tex_obj->image, tex_obj->mem, 0);
+	VmaAllocationInfo allocation_info = {};
+	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &tex_obj->image, &tex_obj->allocation, &allocation_info);
 	assert(!err);
 
 	if ((required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
@@ -471,7 +454,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 		vkGetImageSubresourceLayout(device, tex_obj->image, &subres, &layout);
 
 		void* data;
-		err = vkMapMemory(device, tex_obj->mem, 0, mem_alloc.allocationSize, 0, &data);
+		err = vmaMapMemory(allocator, tex_obj->allocation, &data);
 		assert(!err);
 
 		auto bytesPerPixel = texture->getDepth() / 8;
@@ -485,17 +468,8 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 				row[x * 4 + 3] = bytesPerPixel == 4?textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
 			}
 		}
-
-		VkMappedMemoryRange mappedMemoryRange = {
-			.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-			.pNext = NULL,
-			.memory = tex_obj->mem,
-			.offset = 0,
-			.size = VK_WHOLE_SIZE
-		};
-		vkFlushMappedMemoryRanges(device, 1, &mappedMemoryRange);
-
-		vkUnmapMemory(device, tex_obj->mem);
+		vmaFlushAllocation(allocator, tex_obj->allocation, 0, VK_WHOLE_SIZE);
+		vmaUnmapMemory(allocator, tex_obj->allocation);
 	}
 
 	//
@@ -1167,6 +1141,16 @@ void VKRenderer::initialize()
 	// Get Memory information and properties
 	vkGetPhysicalDeviceMemoryProperties(gpu, &memory_properties);
 
+	// initialize allocator
+    VmaAllocatorCreateInfo allocator_info = {};
+    allocator_info.physicalDevice = gpu;
+    allocator_info.device = device;
+    allocator_info.instance = inst;
+    allocator_info.vulkanApiVersion = VK_API_VERSION_1_0;
+
+    //
+	vmaCreateAllocator(&allocator_info, &allocator);
+
 	// swap chain
 	initializeSwapChain();
 
@@ -1647,11 +1631,12 @@ void VKRenderer::finishFrame()
 
 	// remove marked vulkan resources
 	delete_mutex.lock();
-	for (auto buf: delete_buffers) vkDestroyBuffer(device, buf, NULL);
-	for (auto mem: delete_memory) vkFreeMemory(device, mem, NULL);
-	for (auto image: delete_images) vkDestroyImage(device, image, NULL);
+	for (auto& delete_buffer: delete_buffers) {
+		vmaUnmapMemory(allocator, delete_buffer.allocation);
+		vmaDestroyBuffer(allocator, delete_buffer.buffer, delete_buffer.allocation);
+	}
+	for (auto& delete_image: delete_images) vmaDestroyImage(allocator, delete_image.image, delete_image.allocation);
 	delete_buffers.clear();
-	delete_memory.clear();
 	delete_images.clear();
 	delete_mutex.unlock();
 
@@ -3904,11 +3889,11 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	depth_buffer_texture.height = height;
 
 	if (depth_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, depth_buffer_texture.view, NULL);
-	if (depth_buffer_texture.image != VK_NULL_HANDLE) vkDestroyImage(device, depth_buffer_texture.image, NULL);
-	if (depth_buffer_texture.mem != VK_NULL_HANDLE) vkFreeMemory(device, depth_buffer_texture.mem, NULL);
 	if (depth_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, depth_buffer_texture.sampler, NULL);
+	if (depth_buffer_texture.image != VK_NULL_HANDLE &&
+		depth_buffer_texture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, depth_buffer_texture.image, depth_buffer_texture.allocation);
 
-	const VkImageCreateInfo image = {
+	const VkImageCreateInfo image_create_info = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
@@ -3929,35 +3914,15 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 		.pQueueFamilyIndices = 0,
 		.initialLayout = (VkImageLayout)0,
 	};
-	VkMemoryAllocateInfo mem_alloc = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = NULL,
-		.allocationSize = 0,
-		.memoryTypeIndex = 0,
-	};
 
-	VkMemoryRequirements mem_reqs;
+	//
 	VkResult err;
-	bool pass;
 
-	// create image
-	err = vkCreateImage(device, &image, NULL, &depth_buffer_texture.image);
-	assert(!err);
+    VmaAllocationCreateInfo image_alloc_create_info = {};
+    image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	// get memory requirements for this object
-	vkGetImageMemoryRequirements(device, depth_buffer_texture.image, &mem_reqs);
-
-	// select memory size and type
-	mem_alloc.allocationSize = mem_reqs.size;
-	pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, 0, &mem_alloc.memoryTypeIndex);
-	assert(pass);
-
-	// allocate memory
-	err = vkAllocateMemory(device, &mem_alloc, NULL, &depth_buffer_texture.mem);
-	assert(!err);
-
-	// bind memory
-	err = vkBindImageMemory(device, depth_buffer_texture.image, depth_buffer_texture.mem, 0);
+	VmaAllocationInfo allocation_info = {};
+	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &depth_buffer_texture.image, &depth_buffer_texture.allocation, &allocation_info);
 	assert(!err);
 
 	//
@@ -4036,11 +4001,11 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	color_buffer_texture.height = height;
 
 	if (color_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, color_buffer_texture.view, NULL);
-	if (color_buffer_texture.image != VK_NULL_HANDLE) vkDestroyImage(device, color_buffer_texture.image, NULL);
-	if (color_buffer_texture.mem != VK_NULL_HANDLE) vkFreeMemory(device, color_buffer_texture.mem, NULL);
 	if (color_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, color_buffer_texture.sampler, NULL);
+	if (color_buffer_texture.image != VK_NULL_HANDLE &&
+		color_buffer_texture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, color_buffer_texture.image, color_buffer_texture.allocation);
 
-	const VkImageCreateInfo image = {
+	const VkImageCreateInfo image_create_info = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
@@ -4061,35 +4026,15 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 		.pQueueFamilyIndices = 0,
 		.initialLayout = (VkImageLayout)0,
 	};
-	VkMemoryAllocateInfo mem_alloc = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = NULL,
-		.allocationSize = 0,
-		.memoryTypeIndex = 0,
-	};
 
-	VkMemoryRequirements mem_reqs;
+	//
 	VkResult err;
-	bool pass;
 
-	// create image
-	err = vkCreateImage(device, &image, NULL, &color_buffer_texture.image);
-	assert(!err);
+    VmaAllocationCreateInfo image_alloc_create_info = {};
+    image_alloc_create_info.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-	// get memory requirements for this object
-	vkGetImageMemoryRequirements(device, color_buffer_texture.image, &mem_reqs);
-
-	// select memory size and type
-	mem_alloc.allocationSize = mem_reqs.size;
-	pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, 0, &mem_alloc.memoryTypeIndex);
-	assert(pass);
-
-	// allocate memory
-	err = vkAllocateMemory(device, &mem_alloc, NULL, &color_buffer_texture.mem);
-	assert(!err);
-
-	// bind memory
-	err = vkBindImageMemory(device, color_buffer_texture.image, color_buffer_texture.mem, 0);
+	VmaAllocationInfo allocation_info = {};
+	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &color_buffer_texture.image, &color_buffer_texture.allocation, &allocation_info);
 	assert(!err);
 
 	//
@@ -4355,8 +4300,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 		// mark for deletion
 		delete_mutex.lock();
-		delete_images.push_back(staging_texture.image);
-		delete_memory.push_back(staging_texture.mem);
+		delete_images.push_back({.image = staging_texture.image, .allocation = staging_texture.allocation});
 		delete_mutex.unlock();
 
 		//
@@ -4385,9 +4329,9 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 		.magFilter = VK_FILTER_LINEAR,
 		.minFilter = VK_FILTER_LINEAR,
 		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-		.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-		.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-		.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeU = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+		.addressModeV = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+		.addressModeW = texture->isRepeat() == true?VK_SAMPLER_ADDRESS_MODE_REPEAT:VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
 		.mipLodBias = 0.0f,
 		.anisotropyEnable = VK_FALSE,
 		.maxAnisotropy = 1,
@@ -4548,10 +4492,10 @@ void VKRenderer::disposeTexture(int32_t textureId)
 	textures.erase(textureObjectIt);
 	textures_rwlock.unlock();
 
-	vkDestroyImageView(device, texture.view, NULL);
-	vkDestroyImage(device, texture.image, NULL);
-	vkFreeMemory(device, texture.mem, NULL);
-	vkDestroySampler(device, texture.sampler, NULL);
+	if (texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, texture.view, NULL);
+	if (texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, texture.sampler, NULL);
+	if (texture.image != VK_NULL_HANDLE &&
+		texture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, texture.image, texture.allocation);
 }
 
 void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
@@ -4802,7 +4746,7 @@ inline VkBuffer VKRenderer::getBufferObjectInternalNoLock(int32_t bufferObjectId
 	return buffer->buf;
 }
 
-void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+void VKRenderer::createBuffer(bool useGPUMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo) {
 	 //
 	VkResult err;
 
@@ -4816,29 +4760,13 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 		.queueFamilyIndexCount = 0,
 		.pQueueFamilyIndices = NULL
 	};
-	VkMemoryAllocateInfo mem_alloc = {
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.pNext = NULL,
-		.allocationSize = 0,
-		.memoryTypeIndex = 0
-	};
 
-	err = vkCreateBuffer(device, &buf_info, NULL, &buffer);
-	assert(err == VK_SUCCESS);
-
-	VkMemoryRequirements mem_reqs;
-	vkGetBufferMemoryRequirements(device, buffer, &mem_reqs);
-
-	auto pass = memoryTypeFromProperties(mem_reqs.memoryTypeBits, properties,
-	&mem_alloc.memoryTypeIndex);
-	assert(pass);
+	VmaAllocationCreateInfo alloc_info = {};
+	alloc_info.usage = useGPUMemory == true?VMA_MEMORY_USAGE_GPU_ONLY:VMA_MEMORY_USAGE_CPU_ONLY;
 
 	//
-	mem_alloc.allocationSize = mem_reqs.size;
-	err = vkAllocateMemory(device, &mem_alloc, NULL, &bufferMemory);
-	assert(err == VK_SUCCESS);
-
-	vkBindBufferMemory(device, buffer, bufferMemory, 0);
+	err = vmaCreateBuffer(allocator, &buf_info, &alloc_info, &buffer, &allocation, &allocationInfo);
+	assert(!err);
 }
 
 inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
@@ -4897,38 +4825,30 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 
 		void* stagingData;
 		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
+		VmaAllocation stagingBufferAllocation;
 		VkDeviceSize stagingBufferAllocationSize;
-		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
+		VmaAllocationInfo stagingBufferAllocationInfo = {};
+		createBuffer(false, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
 		// mark staging buffer for deletion when finishing frame
 		delete_mutex.lock();
-		delete_buffers.push_back(stagingBuffer);
-		delete_memory.push_back(stagingBufferMemory);
+		delete_buffers.push_back({.buffer = stagingBuffer, .allocation = stagingBufferAllocation});
 		delete_mutex.unlock();
 
 		// create GPU buffer if not yet done
 		if (reusableBuffer->size == 0) {
-			createBuffer(size, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, reusableBuffer->buf, reusableBuffer->mem);
+			VmaAllocationInfo allocation_info = {};
+			createBuffer(true, size, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
 			reusableBuffer->size = size;
 		}
 
 		// map memory
-		err = vkMapMemory(device, stagingBufferMemory, 0, size, 0, &stagingData);
-		assert(err == VK_SUCCESS);
+		vmaMapMemory(allocator, stagingBufferAllocation, &stagingData);
 
 		// copy to staging buffer
 		memcpy(stagingData, data, size);
 
-		// flush
-		VkMappedMemoryRange mappedMemoryRange = {
-			.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-			.pNext = NULL,
-			.memory = stagingBufferMemory,
-			.offset = 0,
-			.size = VK_WHOLE_SIZE
-		};
-		vkFlushMappedMemoryRanges(device, 1, &mappedMemoryRange);
+		//
+		vmaFlushAllocation(allocator, stagingBufferAllocation, 0, VK_WHOLE_SIZE);
 
 		// copy to GPU buffer
 		VkBufferCopy copyRegion = {
@@ -4939,28 +4859,22 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 		vkCmdCopyBuffer(contexts[contextIdx].setup_cmd_inuse, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
 	} else {
 		if (reusableBuffer->size == 0) {
-			createBuffer(size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, reusableBuffer->buf, reusableBuffer->mem);
+			VmaAllocationInfo allocation_info = {};
+			createBuffer(false, size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
 
 			//
 			reusableBuffer->size = size;
 
 			// map memory
-			err = vkMapMemory(device, reusableBuffer->mem, 0, reusableBuffer->size, 0, &reusableBuffer->data);
+			err = vmaMapMemory(allocator, reusableBuffer->allocation, &reusableBuffer->data);
 			assert(err == VK_SUCCESS);
 		}
 
 		// copy to buffer
 		memcpy(reusableBuffer->data, data, size);
 
-		// flush
-		VkMappedMemoryRange mappedMemoryRange = {
-			.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-			.pNext = NULL,
-			.memory = reusableBuffer->mem,
-			.offset = 0,
-			.size = VK_WHOLE_SIZE
-		};
-		vkFlushMappedMemoryRanges(device, 1, &mappedMemoryRange);
+		//
+		vmaFlushAllocation(allocator, reusableBuffer->allocation, 0, VK_WHOLE_SIZE);
 	}
 
 	// frame and current buffer
@@ -4977,9 +4891,8 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 			auto& bufferList = reusableBuffersIt.second;
 			for (auto& reusableBufferCandidate: bufferList) {
 				if (frame >= reusableBufferCandidate.frame_used_last + 60) {
-					vkDestroyBuffer(device, reusableBufferCandidate.buf, NULL);
-					vkUnmapMemory(device, reusableBufferCandidate.mem);
-					vkFreeMemory(device, reusableBufferCandidate.mem, NULL);
+					vmaUnmapMemory(allocator, reusableBufferCandidate.allocation);
+					vmaDestroyBuffer(allocator, reusableBufferCandidate.buf, reusableBufferCandidate.allocation);
 					buffersToRemove.push_back(i - buffersToRemove.size());
 				}
 				i++;
@@ -5844,8 +5757,7 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 		for (auto bufferIt: buffer.buffers) {
 			for (auto& reusableBuffer: bufferIt.second) {
 				if (reusableBuffer.size == 0) continue;
-				vkDestroyBuffer(device, reusableBuffer.buf, NULL);
-				vkFreeMemory(device, reusableBuffer.mem, NULL);
+				vmaDestroyBuffer(allocator, reusableBuffer.buf, reusableBuffer.allocation);
 			}
 		}
 		buffers.erase(bufferIt);

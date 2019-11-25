@@ -20,7 +20,7 @@ ifeq ($(OS), Darwin)
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN 
-		INCLUDES := $(INCLUDES) -Iext/moltenvk/include -Iext/glfw3/include
+		INCLUDES := $(INCLUDES) -Iext/moltenvk/include -Iext/glfw3/include -Iext\vulkan\vma\src
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
@@ -48,6 +48,7 @@ else ifeq ($(OS), FreeBSD)
 	# FreeBSD, Vulkan
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN
+		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
@@ -102,6 +103,7 @@ else ifeq ($(OS), Linux)
 	# Linux, Vulkan
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN
+		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineVKRenderer.cpp \
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
@@ -133,6 +135,7 @@ else
 	# Windows, VULKAN
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS = -DVULKAN
+		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
 		#-D_GLIBCXX_DEBUG
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -189,6 +192,7 @@ REACTPHYSICS3D = reactphysics3d
 SPIRV = vulkan/spirv
 GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
+VMA = vulkan/vma
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -557,7 +561,7 @@ EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinystr.cpp \
 	ext/tinyxml/tinyxml.cpp \
 	ext/tinyxml/tinyxmlerror.cpp \
-	ext/tinyxml/tinyxmlparser.cpp \
+	ext/tinyxml/tinyxmlparser.cpp
 
 EXT_ZLIB_SRCS = \
 	ext/zlib/adler32.c \
@@ -574,7 +578,7 @@ EXT_ZLIB_SRCS = \
 	ext/zlib/gzclose.c \
 	ext/zlib/gzlib.c \
 	ext/zlib/gzread.c \
-	ext/zlib/gzwrite.c  \
+	ext/zlib/gzwrite.c
 
 EXT_LIBPNG_SRCS = \
 	ext/libpng/pngrio.c \
@@ -591,7 +595,7 @@ EXT_LIBPNG_SRCS = \
 	ext/libpng/pngread.c \
 	ext/libpng/pngrutil.c \
 	ext/libpng/png.c \
-	ext/libpng/pngrtran.c \
+	ext/libpng/pngrtran.c
 
 EXT_VORBIS_SRCS = \
 	ext/vorbis/analysis.c \
@@ -618,11 +622,11 @@ EXT_VORBIS_SRCS = \
 	ext/vorbis/tone.c \
 	ext/vorbis/vorbisenc.c \
 	ext/vorbis/vorbisfile.c \
-	ext/vorbis/window.c \
+	ext/vorbis/window.c
 
 EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
-	ext/ogg/framing.c \
+	ext/ogg/framing.c
 
 EXT_VHACD_SRCS = \
 	ext/v-hacd/src/VHACD_Lib/src/FloatMath.cpp \
@@ -634,7 +638,7 @@ EXT_VHACD_SRCS = \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdManifoldMesh.cpp \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdMesh.cpp \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdRaycastMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp
 
 EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/body/Body.cpp \
@@ -701,7 +705,7 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/mathematics/Vector3.cpp \
 	ext/reactphysics3d/src/memory/MemoryManager.cpp \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
-	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
+	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
 
 ifeq ($(VULKAN), YES)
 	EXT_SPIRV_SRCS = \
@@ -713,7 +717,7 @@ ifeq ($(VULKAN), YES)
 		ext/vulkan/spirv/SpvPostProcess.cpp \
 		ext/vulkan/spirv/SpvTools.cpp \
 		ext/vulkan/spirv/disassemble.cpp \
-		ext/vulkan/spirv/doc.cpp \
+		ext/vulkan/spirv/doc.cpp
 
 	EXT_GLSLANG_SRCS := \
 		ext/vulkan/glslang/MachineIndependent/glslang_tab.cpp \
@@ -748,7 +752,10 @@ ifeq ($(VULKAN), YES)
 		$(EXT_GLSLANG_PLATFORM_SRCS)
     	
 	EXT_OGLCOMPILERSDLL_SRCS = \
-		ext/vulkan/OGLCompilersDLL/InitializeDll.cpp \
+		ext/vulkan/OGLCompilersDLL/InitializeDll.cpp
+
+	EXT_VMA_SRCS = \
+		ext/vulkan/vma/src/VmaUsage.cpp
 
 else
 	EXT_SPIRV_SRCS =
@@ -785,7 +792,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
-	src/tdme/tools/cli/fixdoxygen-main.cpp \
+	src/tdme/tools/cli/fixdoxygen-main.cpp
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
@@ -802,6 +809,7 @@ EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
+EXT_VMA_OBJS = $(EXT_VMA_SRCS:ext/$(VMA)/%.cpp=$(OBJ)/vulkan/%.o)
 
 all: $(LIBS)
 
@@ -864,6 +872,9 @@ $(EXT_GLSLANG_OBJS):$(OBJ)/vulkan/%.o: ext/$(GLSLANG)/%.cpp | print-opts
 $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | print-opts
 	$(cpp-command)
 
+$(EXT_VMA_OBJS):$(OBJ)/vulkan/%.o: ext/$(VMA)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
 	@echo Archive $@
 	@mkdir -p $(dir $@)
@@ -872,7 +883,7 @@ $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | pr
 
 $(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS)
+$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@); 
