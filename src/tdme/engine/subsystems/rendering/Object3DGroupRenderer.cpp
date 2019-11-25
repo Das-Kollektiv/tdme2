@@ -44,6 +44,7 @@ void Object3DGroupRenderer::preRender(void* context)
 		vboManagedBase = Engine::getInstance()->getVBOManager()->addVBO(
 			object3DGroup->id,
 			3 + (object3DGroup->mesh->group->getTextureCoordinates().size() > 0?1:0),
+			true,
 			true
 		);
 		if (vboManagedBase->getReferenceCounter() > 1) while (vboManagedBase->isUploaded() == false);
@@ -56,7 +57,7 @@ void Object3DGroupRenderer::preRender(void* context)
 		object3DGroup->mesh->group->getTangents().size() > 0 &&
 		object3DGroup->mesh->group->getBitangents().size() > 0 &&
 		vboNormalMappingIds == nullptr) {
-		vboManagedNormalMapping = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".normalmapping", 2, true);
+		vboManagedNormalMapping = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".normalmapping", 2, true, true);
 		if (vboManagedNormalMapping->getReferenceCounter() > 1) while (vboManagedNormalMapping->isUploaded() == false);
 		vboNormalMappingIds = vboManagedNormalMapping->getVBOIds();
 	}
@@ -64,7 +65,7 @@ void Object3DGroupRenderer::preRender(void* context)
 	// initialize tangents, bitangents
 	if (object3DGroup->mesh->group->getOrigins().size() > 0 &&
 		vboOrigins == nullptr) {
-		vboManagedOrigins = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true);
+		vboManagedOrigins = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true, true);
 		if (vboManagedOrigins->getReferenceCounter() > 1) while (vboManagedOrigins->isUploaded() == false);
 		vboOrigins = vboManagedOrigins->getVBOIds();
 	}

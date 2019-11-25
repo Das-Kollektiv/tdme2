@@ -90,7 +90,7 @@ void LinesObject3DInternal::fromTransformations(const Transformations& transform
 
 void LinesObject3DInternal::initialize() {
 	// initialize if not yet done
-	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(id + ".vbos", 2, true);
+	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(id + ".vbos", 2, true, false);
 	vboIds = vboManaged->getVBOIds();
 
 	//

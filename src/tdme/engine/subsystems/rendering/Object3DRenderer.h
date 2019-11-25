@@ -115,8 +115,15 @@ private:
 	 * @param objects objects of same type/ with same models
 	 * @param collectTransparentFaces collect render faces
 	 * @param renderTypes render types
+	 * @param transparentRenderFacesPool transparent render faces pool
 	 */
-	void renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+	inline void renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool) {
+		if (renderer->isInstancedRenderingAvailable() == true) {
+			renderObjectsOfSameTypeInstanced(threadIdx, objects, collectTransparentFaces, renderTypes, transparentRenderFacesPool);
+		} else {
+			renderObjectsOfSameTypeNonInstanced(objects, collectTransparentFaces, renderTypes);
+		}
+	}
 
 	/** 
 	 * Renders multiple objects of same type(with same model) not using instancing
@@ -133,7 +140,7 @@ private:
 	 * @param collectTransparentFaces collect render faces
 	 * @param renderTypes render types
 	 */
-	void renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+	void renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool);
 
 	/**
 	 * Checks if a material could change when having multiple objects but same model
@@ -178,7 +185,8 @@ private:
 		const vector<Object3D*>& objects,
 		unordered_map<string, vector<Object3D*>>& objectsByModels,
 		bool renderTransparentFaces,
-		int renderTypes) {
+		int renderTypes,
+		TransparentRenderFacesPool* transparentRenderFacesPool) {
 		// reset shader
 		renderer->setShader(renderer->getContext(threadIdx), string());
 
@@ -198,7 +206,7 @@ private:
 				continue;
 			} else
 			if (objectsByModel.size() > 0) {
-				renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes);
+				renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 			}
 			objectsByModel.clear();
 		}

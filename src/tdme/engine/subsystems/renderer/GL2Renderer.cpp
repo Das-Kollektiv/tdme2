@@ -546,7 +546,7 @@ void GL2Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (uint32_t*)&frameBufferId);
 }
 
-vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
+vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared)
 {
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);

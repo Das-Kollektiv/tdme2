@@ -120,17 +120,17 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 
 		// vbos
 		{
-			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 5, true);
+			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 5, true, true);
 			modelSkinningCache.vboIds = vboManaged->getVBOIds();
 		}
 		{
 			if (renderer->isSupportingMultithreadedRendering() == true) {
 				for (auto i = 0; i < Engine::getThreadCount(); i++) {
-					auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices." + to_string(i), 1, false);
+					auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices." + to_string(i), 1, false, false);
 					modelSkinningCache.matricesVboIds.push_back(vboManaged->getVBOIds());
 				}
 			} else {
-				auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices", 1, false);
+				auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices", 1, false, false);
 				modelSkinningCache.matricesVboIds.push_back(vboManaged->getVBOIds());
 			}
 		}

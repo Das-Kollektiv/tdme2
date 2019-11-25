@@ -1283,7 +1283,7 @@ void VKRenderer::initialize()
 	initializeFrameBuffers();
 
 	//
-	empty_vertex_buffer = createBufferObjects(1, true)[0];
+	empty_vertex_buffer = createBufferObjects(1, true, true)[0];
 	array<float, 16> bogusVertexBuffer = {{
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
@@ -3377,7 +3377,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 		// do we need a uniform buffer object for this shader stage?
 		if (shader.ubo_size > 0) {
 			shader.ubo.resize(Engine::getThreadCount());
-			for (auto& context: contexts) shader.ubo[context.idx] = createBufferObjects(1, false)[0];
+			for (auto& context: contexts) shader.ubo[context.idx] = createBufferObjects(1, false, false)[0];
 			// yep, inject UBO index
 			shader.ubo_binding_idx = bindingIdx;
 			shader.source = StringUtils::replace(shader.source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
@@ -4715,7 +4715,7 @@ void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 	framebuffers.erase(frameBufferIt);
 }
 
-vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPUMemory)
+vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPUMemory, bool shared)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
@@ -4724,6 +4724,7 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 		buffer_object& buffer = buffers[buffer_idx];
 		buffer.id = buffer_idx++;
 		buffer.useGPUMemory = useGPUMemory;
+		buffer.shared = shared;
 		bufferIds.push_back(buffer.id);
 	}
 	buffers_rwlock.unlock();
@@ -4772,7 +4773,7 @@ void VKRenderer::createBuffer(bool useGPUMemory, VkDeviceSize size, VkBufferUsag
 inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (size == 0) return;
 
-	buffers_rwlock.writeLock(); // TODO: have a more fine grained locking here
+	buffers_rwlock.readLock();
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
@@ -4780,6 +4781,14 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 		return;
 	}
 	auto& buffer = bufferIt->second;
+
+	//
+	if (buffer.shared == true) {
+		buffers_rwlock.unlock();
+		buffers_rwlock.writeLock();
+	} else {
+		buffers_rwlock.unlock();
+	}
 
 	//
 	VkResult err;
@@ -4916,7 +4925,9 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 	}
 
 	//
-	buffers_rwlock.unlock();
+	if (buffer.shared == true) {
+		buffers_rwlock.unlock();
+	}
 }
 
 void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)

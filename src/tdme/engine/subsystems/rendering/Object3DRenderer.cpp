@@ -160,7 +160,7 @@ void Object3DRenderer::initialize()
 {
 	psePointBatchRenderer->initialize();
 	for (auto i = 0; i < threadCount; i++) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3drenderer.instancedrendering." + to_string(i), 3, false);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3drenderer.instancedrendering." + to_string(i), 3, false, false);
 		contexts[i].vboInstancedRenderingIds = vboManaged->getVBOIds();
 	}
 }
@@ -212,7 +212,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 	releaseTransparentFacesGroups();
 
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(1, 0, objects, objectsByModels, renderTransparentFaces, renderTypes);
+		renderFunction(1, 0, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 	} else {
 		Object3DRenderer_InstancedRenderFunctionParameters parameters;
 		parameters.objects = objects;
@@ -223,7 +223,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
 		for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
 
-		renderFunction(threadCount, 0, objects, objectsByModels, renderTransparentFaces, renderTypes);
+		renderFunction(threadCount, 0, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 
 		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
 		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
@@ -370,14 +370,6 @@ void Object3DRenderer::releaseTransparentFacesGroups()
 		transparentRenderFacesGroupPool->release(it.second);
 	}
 	transparentRenderFacesGroups.clear();
-}
-
-void Object3DRenderer::renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
-	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderObjectsOfSameTypeInstanced(threadIdx, objects, collectTransparentFaces, renderTypes);
-	} else {
-		renderObjectsOfSameTypeNonInstanced(objects, collectTransparentFaces, renderTypes);
-	}
 }
 
 void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
@@ -581,7 +573,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
+void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool)
 {
 	// contexts
 	auto& object3DRenderContext = contexts[threadIdx];

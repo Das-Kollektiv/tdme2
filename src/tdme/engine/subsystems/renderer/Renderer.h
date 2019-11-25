@@ -535,10 +535,11 @@ public:
 	/** 
 	 * Generate buffer objects for vertex data and such
 	 * @param buffers buffers
-	 * @param use GPU memory
+	 * @param useGPUMemory use GPU memory
+	 * @param shared shared between different threads
 	 * @return ids
 	 */
-	virtual vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory) = 0;
+	virtual vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared) = 0;
 
 	/** 
 	 * Uploads buffer data to buffer object
