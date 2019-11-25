@@ -35,6 +35,7 @@ public:
 	/**
 	 * Check if float is not a number
 	 * @param value float value
+	 * @return if value is not a number
 	 */
 	inline static bool isNaN(float value) {
 		return isnan(value);
@@ -43,6 +44,7 @@ public:
 	/**
 	 * Check if float is finite
 	 * @param value float value
+	 * @return if value is finite
 	 */
 	inline static bool isFinite(float value) {
 		return isfinite(value);
