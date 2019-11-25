@@ -8,6 +8,7 @@
 #include <string>
 
 using std::isnan;
+using std::isfinite;
 using std::numeric_limits;
 using std::string;
 
@@ -32,11 +33,19 @@ public:
 	static float parseFloat(const string& str);
 
 	/**
-	 * Check if float is nane
+	 * Check if float is not a number
 	 * @param value float value
 	 */
 	inline static bool isNaN(float value) {
 		return isnan(value);
+	}
+
+	/**
+	 * Check if float is finite
+	 * @param value float value
+	 */
+	inline static bool isFinite(float value) {
+		return isfinite(value);
 	}
 
 	/**
