@@ -49,15 +49,20 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
-void processFile(const string& fileName) {
+void processFile(const string& indent, const string& fileName) {
 	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, lines);
-	Console::println(fileName);
+	Console::println(indent + fileName);
+	Console::print(indent);
 	for (auto i = 0; i < fileName.size() + 2; i++) Console::print("-");
 	Console::println();
 	Console::println();
 	for (auto& line: lines) {
-		Console::println("\t" + line);
+		if (StringUtils::trim(line).size() == 0) {
+			Console::println();
+		} else {
+			Console::println(indent + "\t" + line);
+		}
 	}
 	Console::println();
 	Console::println();
@@ -69,12 +74,15 @@ int main(int argc, char** argv)
 	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
 	Console::println();
 
-	if (argc != 2) {
-		Console::println("Usage: generatelicenses path");
+	auto pathToHeaders = string(argv[1]);
+	auto indent = argc == 2?string():string(argv[2]);
+
+	if (argc < 2 || argc > 3 || (argc == 3 && indent.empty() == false && indent != "indent")) {
+		Console::println("Usage: generatelicenses path [indent]");
 		exit(0);
 	}
 
-	auto pathToHeaders = string(argv[1]);
+	if (indent == "indent") indent = "\t";
 
 	Console::println("Scanning files");
 	vector<string> files;
@@ -82,6 +90,6 @@ int main(int argc, char** argv)
 
 	Console::println("Processing files");
 	for (auto fileName: files) {
-		processFile(fileName);
+		processFile(indent, fileName);
 	}
 }

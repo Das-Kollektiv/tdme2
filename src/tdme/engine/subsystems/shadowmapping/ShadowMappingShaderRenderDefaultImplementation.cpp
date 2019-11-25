@@ -50,7 +50,7 @@ void ShadowMappingShaderRenderDefaultImplementation::initialize()
 	if (renderFragmentShaderId == 0) return;
 
 	// create shadow mapping render program
-	renderProgramId = renderer->createProgram();
+	renderProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 

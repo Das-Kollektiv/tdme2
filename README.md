@@ -220,6 +220,7 @@
               - glslang
               - OGLCompilersDLL
               - spirv
+              - VulkanMemoryAllocator
             - zlib
     - targeted platforms and its current state
         - Windows/MINGW(port completed)

@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <ext/vulkan/spirv/GlslangToSpv.h>
+#include <ext/vulkan/vma/src/VmaUsage.h>
 
 #include <array>
 #include <list>
@@ -55,7 +56,17 @@ private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 4 };
 	static constexpr int COMMANDS_MAX { 8 };
-	static constexpr int DESC_MAX { 512 };
+	static constexpr int DESC_MAX { 4096 };
+
+	struct delete_buffer_type {
+		VkBuffer buffer;
+		VmaAllocation allocation;
+	};
+
+	struct delete_image_type {
+		VkImage image;
+		VmaAllocation allocation;
+	};
 
 	struct shader_type {
 		struct uniform_type {
@@ -70,7 +81,7 @@ private:
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
-		vector<int32_t> ubo { 0 };
+		vector<int32_t> ubo;
 		int32_t ubo_binding_idx { -1 };
  		string source;
  		string file;
@@ -85,14 +96,15 @@ private:
 			VkPipelineCache pipelineCache { VK_NULL_HANDLE };
 			VkPipeline pipeline { VK_NULL_HANDLE };
 		};
+		int type { 0 };
 		unordered_map<string, pipeline_struct> pipelines;
 		vector<int32_t> shader_ids;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
+		vector<bool> uniform_buffers_stored;
 		vector<array<vector<uint8_t>, 4>> uniform_buffers_last;
 		vector<array<bool, 4>> uniform_buffers_changed_last;
 		uint32_t layout_bindings { 0 };
-		bool created { false };
 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets;
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
@@ -104,12 +116,13 @@ private:
 		struct reusable_buffer {
 			int64_t frame_used_last { -1 };
 			VkBuffer buf { VK_NULL_HANDLE };
-			VkDeviceMemory mem { VK_NULL_HANDLE };
+			VmaAllocation allocation { VK_NULL_HANDLE };
 			uint32_t size { 0 };
 			void* data { nullptr };
 		};
 		int32_t id { 0 };
 		bool useGPUMemory { false };
+		bool shared { false };
 		unordered_map<uint32_t, list<reusable_buffer>> buffers;
 		uint32_t buffer_count { 0 };
 		int64_t frame_cleaned_last { 0 };
@@ -128,7 +141,7 @@ private:
 		VkSampler sampler { VK_NULL_HANDLE };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageLayout image_layout { VK_IMAGE_LAYOUT_UNDEFINED };
-		VkDeviceMemory mem { VK_NULL_HANDLE };
+		VmaAllocation allocation { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
 	};
 
@@ -264,6 +277,8 @@ private:
 
 		bool culling_enabled { true };
 		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
+
+		int32_t program_id { 0 };
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
@@ -326,7 +341,7 @@ private:
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
 	// enable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t current_buffer { 0 };
 	uint32_t queue_count { 0 };
@@ -342,11 +357,10 @@ private:
 	VkViewport viewport;
 	VkRect2D scissor;
 
-	int32_t program_id { 0 };
 	int32_t bound_frame_buffer { 0 };
 
 	bool blending_enabled { true };
-	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT };
+	VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
 	bool depth_buffer_writing { true };
 	bool depth_buffer_testing { true };
 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
@@ -354,11 +368,11 @@ private:
 	int64_t frame { 0 };
 
 	Mutex delete_mutex;
-	vector<VkImage> delete_images;
-	vector<VkBuffer> delete_buffers;
-	vector<VkDeviceMemory> delete_memory;
+	vector<delete_buffer_type> delete_buffers;
+	vector<delete_image_type> delete_images;
 
 	vector<context_type> contexts;
+	VmaAllocator allocator;
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
@@ -367,29 +381,33 @@ private:
 	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps = true);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
-	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	void createBuffer(bool useGPUMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
-	void endDrawCommand(int contextIdx);
+	void endDrawCommands(int contextIdx);
 	void endDrawCommandsAllContexts();
 	void executeCommand(int contextIdx);
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx, int line);
 	void endRenderPass(int contextIdx, int line);
-	void preparePipeline(program_type& program);
+	void preparePipeline(int contextIdx, program_type& program);
+	void createObjectsRenderingProgram(program_type& program);
 	void createObjectsRenderingPipeline(int contextIdx, program_type& program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
+	void createPointsRenderingProgram(program_type& program);
 	void createPointsRenderingPipeline(int contextIdx, program_type& program);
 	void setupPointsRenderingPipeline(int contextIdx, program_type& program);
+	void createLinesRenderingProgram(program_type& program);
 	void createLinesRenderingPipeline(int contextIdx, program_type& program);
 	void setupLinesRenderingPipeline(int contextIdx, program_type& program);
+	void createSkinningComputingProgram(program_type& program);
 	void createSkinningComputingPipeline(int contextIdx, program_type& program);
 	void setupSkinningComputingPipeline(int contextIdx, program_type& program);
-	void finishPipeline();
+	void finishPipeline(int contextIdx);
 	void prepareSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffers();
@@ -415,6 +433,7 @@ private:
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
 	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true, bool waitUntilSubmitted = false);
+	void submitContext(int contextIdx);
 
 public:
 	const string getShaderVersion() override;
@@ -438,8 +457,8 @@ public:
 	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
-	void useProgram(int32_t programId) override;
-	int32_t createProgram() override;
+	void useProgram(void* context, int32_t programId) override;
+	int32_t createProgram(int type) override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
 	bool linkProgram(int32_t programId) override;
 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
@@ -479,7 +498,7 @@ public:
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
-	vector<int32_t> createBufferObjects(int32_t bufferCount, bool useGPUMemory) override;
+	vector<int32_t> createBufferObjects(int32_t bufferCount, bool useGPUMemory, bool shared) override;
 	void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
@@ -531,15 +550,15 @@ public:
 	int32_t getTextureUnit(void* context);
 	void setTextureUnit(void* context, int32_t textureUnit);
 	virtual Matrix2D3x3& getTextureMatrix(void* context);
-	virtual const Renderer_Light& getLight(void* context, int32_t lightId);
+	virtual const Renderer_Light getLight(void* context, int32_t lightId);
 	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
-	virtual const array<float, 4>& getEffectColorMul(void* context);
+	virtual const array<float, 4> getEffectColorMul(void* context);
 	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
-	virtual const array<float, 4>& getEffectColorAdd(void* context);
+	virtual const array<float, 4> getEffectColorAdd(void* context);
 	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
-	virtual const Renderer_Material& getMaterial(void* context);
+	virtual const Renderer_Material getMaterial(void* context);
 	virtual void setMaterial(void* context, const Renderer_Material& material);
-	virtual const string& getShader(void* context);
+	virtual const string getShader(void* context);
 	virtual void setShader(void* context, const string& id);
 
 public:

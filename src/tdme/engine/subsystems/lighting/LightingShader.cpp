@@ -25,7 +25,7 @@ using tdme::engine::subsystems::lighting::LightingShaderImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::utils::Console;
 
-LightingShader::LightingShader(Renderer* renderer) 
+LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 {
 	if (LightingShaderBackImplementation::isSupported(renderer) == true) shader["back"] = new LightingShaderBackImplementation(renderer);
 	if (LightingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new LightingShaderDefaultImplementation(renderer);
@@ -35,7 +35,8 @@ LightingShader::LightingShader(Renderer* renderer)
 	if (LightingShaderSolidImplementation::isSupported(renderer) == true) shader["solid"] = new LightingShaderSolidImplementation(renderer);
 	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) shader["terrain"] = new LightingShaderTerrainImplementation(renderer);
 	if (LightingShaderWaterImplementation::isSupported(renderer) == true) shader["water"] = new LightingShaderWaterImplementation(renderer);
-	implementation = nullptr;
+	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	contexts.resize(threadCount);
 }
 
 LightingShader::~LightingShader() {
@@ -69,63 +70,75 @@ void LightingShader::useProgram(Engine* engine)
 	this->engine = engine;
 }
 
-void LightingShader::unUseProgram(void* context)
+void LightingShader::unUseProgram()
 {
 	running = false;
-	if (implementation != nullptr) {
-		implementation->unUseProgram(context);
+	auto i = 0;
+	for (auto& lightingShaderContext: contexts) {
+		if (lightingShaderContext.implementation != nullptr) {
+			lightingShaderContext.implementation->unUseProgram(renderer->getContext(i));
+		}
+		lightingShaderContext.implementation = nullptr;
+		i++;
 	}
-	implementation = nullptr;
 	engine = nullptr;
 }
 
 void LightingShader::updateEffect(Renderer* renderer, void* context)
 {
-	if (implementation == nullptr) return;
-	implementation->updateEffect(renderer, context);
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	if (lightingShaderContext.implementation == nullptr) return;
+	lightingShaderContext.implementation->updateEffect(renderer, context);
 }
 
 void LightingShader::updateMaterial(Renderer* renderer, void* context)
 {
-	if (implementation == nullptr) return;
-	implementation->updateMaterial(renderer, context);
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	if (lightingShaderContext.implementation == nullptr) return;
+	lightingShaderContext.implementation->updateMaterial(renderer, context);
 }
 
 void LightingShader::updateLight(Renderer* renderer, void* context, int32_t lightId)
 {
-	if (implementation == nullptr) return;
-	implementation->updateLight(renderer, context, lightId);
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	if (lightingShaderContext.implementation == nullptr) return;
+	lightingShaderContext.implementation->updateLight(renderer, context, lightId);
 }
 
 void LightingShader::updateMatrices(Renderer* renderer, void* context)
 {
-	if (implementation == nullptr) return;
-	implementation->updateMatrices(renderer, context);
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	if (lightingShaderContext.implementation == nullptr) return;
+	lightingShaderContext.implementation->updateMatrices(renderer, context);
 }
 
 void LightingShader::updateTextureMatrix(Renderer* renderer, void* context) {
-	if (implementation == nullptr) return;
-	implementation->updateTextureMatrix(renderer, context);
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	if (lightingShaderContext.implementation == nullptr) return;
+	lightingShaderContext.implementation->updateTextureMatrix(renderer, context);
 }
 
 void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;
 
-	auto currentImplementation = implementation;
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+
+	auto currentImplementation = lightingShaderContext.implementation;
 	auto shaderIt = shader.find(id);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}
-	implementation = shaderIt->second;
+	lightingShaderContext.implementation = shaderIt->second;
 
-	if (currentImplementation != implementation) {
+	if (currentImplementation != lightingShaderContext.implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
-		implementation->useProgram(engine, context);
+		lightingShaderContext.implementation->useProgram(engine, context);
 	}
 }
 
 void LightingShader::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
-	if (implementation == nullptr) return;
-	implementation->bindTexture(renderer, context, textureId);
+	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	if (lightingShaderContext.implementation == nullptr) return;
+	lightingShaderContext.implementation->bindTexture(renderer, context, textureId);
 }

@@ -40,15 +40,15 @@ protected:
 
 public:
 	virtual Matrix2D3x3& getTextureMatrix(void* context);
-	virtual const Renderer_Light& getLight(void* context, int32_t lightId);
+	virtual const Renderer_Light getLight(void* context, int32_t lightId);
 	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
-	virtual const array<float, 4>& getEffectColorMul(void* context);
+	virtual const array<float, 4> getEffectColorMul(void* context);
 	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
-	virtual const array<float, 4>& getEffectColorAdd(void* context);
+	virtual const array<float, 4> getEffectColorAdd(void* context);
 	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
-	virtual const Renderer_Material& getMaterial(void* context);
+	virtual const Renderer_Material getMaterial(void* context);
 	virtual void setMaterial(void* context, const Renderer_Material& material);
-	virtual const string& getShader(void* context);
+	virtual const string getShader(void* context);
 	virtual void setShader(void* context, const string& id);
 
 	/**

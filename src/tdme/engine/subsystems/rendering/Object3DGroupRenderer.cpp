@@ -31,34 +31,43 @@ Object3DGroupRenderer::Object3DGroupRenderer(Object3DGroup* object3DGroup)
 {
 	this->object3DGroup = object3DGroup;
 	this->vboBaseIds = nullptr;
-	this->vboTangentBitangentIds = nullptr;
+	this->vboNormalMappingIds = nullptr;
 }
 
 void Object3DGroupRenderer::preRender(void* context)
 {
+	// TODO: maybe store these in Object3DGroupRenderer too
 	auto meshUploaded = true;
 
 	// initialize if not yet done
 	if (vboBaseIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, 4, true); // TODO: check for texture coorditantes
-		vboBaseIds = vboManaged->getVBOIds();
-		meshUploaded = vboManaged->isUploaded();
+		vboManagedBase = Engine::getInstance()->getVBOManager()->addVBO(
+			object3DGroup->id,
+			3 + (object3DGroup->mesh->group->getTextureCoordinates().size() > 0?1:0),
+			true,
+			true
+		);
+		if (vboManagedBase->getReferenceCounter() > 1) while (vboManagedBase->isUploaded() == false);
+		vboBaseIds = vboManagedBase->getVBOIds();
+		meshUploaded = vboManagedBase->isUploaded();
 	}
 
 	// initialize tangents, bitangents
 	if (Engine::renderer->isNormalMappingAvailable() &&
 		object3DGroup->mesh->group->getTangents().size() > 0 &&
 		object3DGroup->mesh->group->getBitangents().size() > 0 &&
-		vboTangentBitangentIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".tangentbitangent", 2, true);
-		vboTangentBitangentIds = vboManaged->getVBOIds();
+		vboNormalMappingIds == nullptr) {
+		vboManagedNormalMapping = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".normalmapping", 2, true, true);
+		if (vboManagedNormalMapping->getReferenceCounter() > 1) while (vboManagedNormalMapping->isUploaded() == false);
+		vboNormalMappingIds = vboManagedNormalMapping->getVBOIds();
 	}
 
 	// initialize tangents, bitangents
 	if (object3DGroup->mesh->group->getOrigins().size() > 0 &&
 		vboOrigins == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true);
-		vboOrigins = vboManaged->getVBOIds();
+		vboManagedOrigins = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true, true);
+		if (vboManagedOrigins->getReferenceCounter() > 1) while (vboManagedOrigins->isUploaded() == false);
+		vboOrigins = vboManagedOrigins->getVBOIds();
 	}
 
 	//
@@ -76,6 +85,7 @@ void Object3DGroupRenderer::preRender(void* context)
 			// upload render group object origins
 			if (object3DGroup->mesh->group->getOrigins().size() > 0) {
 				object3DGroup->mesh->setupOriginsBuffer(Engine::renderer, context, (*vboOrigins)[0]);
+				vboManagedOrigins->setUploaded(true);
 			}
 		}
 		// upload vertices
@@ -83,10 +93,12 @@ void Object3DGroupRenderer::preRender(void* context)
 		// upload normals
 		object3DGroup->mesh->setupNormalsBuffer(Engine::renderer, context, (*vboBaseIds)[2]);
 		// tangents, bitangents
-		if (vboTangentBitangentIds != nullptr) {
-			object3DGroup->mesh->setupTangentsBuffer(Engine::renderer, context, (*vboTangentBitangentIds)[0]);
-			object3DGroup->mesh->setupBitangentsBuffer(Engine::renderer, context, (*vboTangentBitangentIds)[1]);
+		if (vboNormalMappingIds != nullptr) {
+			object3DGroup->mesh->setupTangentsBuffer(Engine::renderer, context, (*vboNormalMappingIds)[0]);
+			object3DGroup->mesh->setupBitangentsBuffer(Engine::renderer, context, (*vboNormalMappingIds)[1]);
+			vboManagedNormalMapping->setUploaded(true);
 		}
+		vboManagedBase->setUploaded(true);
 	}
 }
 
@@ -96,9 +108,9 @@ void Object3DGroupRenderer::dispose()
 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id);
 		vboBaseIds = nullptr;
 	}
-	if (vboTangentBitangentIds != nullptr) {
-		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".tangentbitangent");
-		vboTangentBitangentIds = nullptr;
+	if (vboNormalMappingIds != nullptr) {
+		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".normalmapping");
+		vboNormalMappingIds = nullptr;
 	}
 	if (vboOrigins != nullptr) {
 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".origins");

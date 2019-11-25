@@ -71,6 +71,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/renderer/GUIShader.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -142,6 +143,7 @@ using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIShader;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -188,11 +190,11 @@ Engine::EngineThread::EngineThread(int idx, Semaphore* engineThreadWaitSemaphore
 	Thread("enginethread"),
 	idx(idx),
 	engineThreadWaitSemaphore(engineThreadWaitSemaphore),
+	engine(nullptr),
 	context(context) {
 	//
 	rendering.transparentRenderFacesPool = new TransparentRenderFacesPool();
 }
-
 
 void Engine::EngineThread::run() {
 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
@@ -207,7 +209,7 @@ void Engine::EngineThread::run() {
 				break;
 			case STATE_RENDERING:
 				rendering.transparentRenderFacesPool->reset();
-				engine->object3DRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes);
+				engine->object3DRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
 				rendering.objectsByModels.clear();
 				state = STATE_SPINNING;
 				break;
@@ -500,10 +502,11 @@ void Engine::initialize()
 
 	// engine thread count
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		if (threadCount == 0) threadCount = Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2;
+		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?2:Thread::getHardwareThreadCount() / 2, 2, 4);
 	} else {
 		threadCount = 1;
 	}
+	Console::println(string("TDME::Thread count: ") + to_string(threadCount));
 
 	// initialize object buffers
 	ObjectBuffer::initialize();
@@ -1040,7 +1043,7 @@ void Engine::display()
 		);
 
 		// unuse lighting shader
-		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
 		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
@@ -1096,7 +1099,7 @@ void Engine::display()
 		);
 
 		// unuse lighting shader
-		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
 		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
@@ -1131,7 +1134,7 @@ void Engine::display()
 		renderer->enableDepthBufferTest();
 
 		// unuse lighting shader
-		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
+		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
 		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
@@ -1729,13 +1732,19 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 
 	// fetch pixel
 	auto pixels = renderer->readPixels(0, 0, width, height);
-	if (pixels == nullptr) return false;
+	if (pixels == nullptr) {
+		Console::println("Engine::makeScreenshot(): Failed to read pixels");
+		return false;
+	}
 
 	//
 	{
 		// see: https://gist.github.com/niw/5963798
 		FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
-		if (!fp) return false;
+		if (!fp) {
+			Console::println("Engine::makeScreenshot(): Failed to create file: " + pathName + "/" + fileName);
+			return false;
+		}
 
 		png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 		if (!png) {
@@ -1785,6 +1794,7 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
 
 		png_destroy_write_struct(&png, &info);
 	}
+
 
 	//
 	delete pixels;

@@ -37,7 +37,7 @@ void EngineGL3Renderer::onUpdateProjectionMatrix(void* context)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+		Engine::ezrShaderPre->updateMatrices(this, context);
 }
 
 void EngineGL3Renderer::onUpdateCameraMatrix(void* context)
@@ -55,7 +55,7 @@ void EngineGL3Renderer::onUpdateCameraMatrix(void* context)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+		Engine::ezrShaderPre->updateMatrices(this, context);
 }
 
 void EngineGL3Renderer::onUpdateModelViewMatrix(void* context)
@@ -73,7 +73,7 @@ void EngineGL3Renderer::onUpdateModelViewMatrix(void* context)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+		Engine::ezrShaderPre->updateMatrices(this, context);
 }
 
 void EngineGL3Renderer::onBindTexture(void* context, int32_t textureId)

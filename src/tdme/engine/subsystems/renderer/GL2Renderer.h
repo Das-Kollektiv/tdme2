@@ -63,8 +63,8 @@ public:
 	bool isGeometryShaderAvailable() override;
 	int32_t getTextureUnits() override;
 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
-	void useProgram(int32_t programId) override;
-	int32_t createProgram() override;
+	void useProgram(void* context, int32_t programId) override;
+	int32_t createProgram(int type) override;
 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
 	bool linkProgram(int32_t programId) override;
 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
@@ -104,7 +104,7 @@ public:
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
-	vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory) override;
+	vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared) override;
 	void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
 	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;

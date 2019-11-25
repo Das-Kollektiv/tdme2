@@ -14,13 +14,3 @@ VBOManager_VBOManaged::VBOManager_VBOManaged(const string& id, vector<int32_t>& 
 	this->id = id;
 	this->vboIds = vboIds;
 }
-
-bool VBOManager_VBOManaged::isUploaded()
-{
-	if (uploaded == false) {
-		uploaded = true;
-		return false;
-	} else {
-		return true;
-	}
-}

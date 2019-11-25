@@ -28,6 +28,10 @@ using tdme::os::threading::Mutex;
 class tdme::engine::subsystems::skinning::SkinningShader final
 {
 private:
+	struct SkinningContext {
+		bool running { false };
+	};
+
 	struct ModelSkinningCache {
 		string id;
 		vector<int32_t>* vboIds;
@@ -40,6 +44,7 @@ private:
 	bool isRunning;
 	bool initialized;
 	Renderer* renderer { nullptr };
+	vector<SkinningContext> contexts;
 	map<string, ModelSkinningCache> cache;
 	Mutex mutex;
 

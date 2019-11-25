@@ -237,12 +237,12 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 	return handle;
 }
 
-void GL3Renderer::useProgram(int32_t programId)
+void GL3Renderer::useProgram(void* context, int32_t programId)
 {
 	glUseProgram(programId);
 }
 
-int32_t GL3Renderer::createProgram()
+int32_t GL3Renderer::createProgram(int type)
 {
 	auto glProgram = glCreateProgram();
 	return glProgram;
@@ -542,7 +542,7 @@ void GL3Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (uint32_t*)&frameBufferId);
 }
 
-vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
+vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared)
 {
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);

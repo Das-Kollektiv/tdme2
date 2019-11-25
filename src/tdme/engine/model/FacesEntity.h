@@ -80,14 +80,14 @@ public:
 	 * @return if texture coordinates are available for the whole entity
 	 */
 	inline bool isTextureCoordinatesAvailable() const {
-		return textureCoordinatesAvailable && group->getTextureCoordinates().size() > 0;
+		return textureCoordinatesAvailable == true && group->getTextureCoordinates().size() > 0;
 	}
 
 	/** 
 	 * @return if tangents and bitangents are available for the whole entity
 	 */
 	inline bool isTangentBitangentAvailable() const {
-		return tangentBitangentAvailable && group->getTangents().size() > 0 && group->getBitangents().size() > 0;
+		return tangentBitangentAvailable == true && group->getTangents().size() > 0 && group->getBitangents().size() > 0;
 	}
 
 	/**

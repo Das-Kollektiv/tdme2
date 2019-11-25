@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderPre.h>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.h>
@@ -7,6 +8,8 @@
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
+
+using tdme::engine::Engine;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementation;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreFoliageImplementation;
@@ -19,8 +22,8 @@ EZRShaderPre::EZRShaderPre(Renderer* renderer): renderer(renderer)
 {
 	if (EZRShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new EZRShaderPreDefaultImplementation(renderer);
 	if (EZRShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new EZRShaderPreFoliageImplementation(renderer);
-	mvMatrix.identity();
-	mvpMatrix.identity();
+	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	contexts.resize(threadCount);
 }
 
 EZRShaderPre::~EZRShaderPre() {
@@ -54,54 +57,58 @@ void EZRShaderPre::useProgram(Engine* engine)
 void EZRShaderPre::unUseProgram()
 {
 	running = false;
-	if (implementation != nullptr) {
-		implementation->unUseProgram();;
+	auto i = 0;
+	for (auto& ezrShaderPreContext: contexts) {
+		if (ezrShaderPreContext.implementation != nullptr) {
+			ezrShaderPreContext.implementation->unUseProgram(renderer->getContext(i));
+		}
+		ezrShaderPreContext.implementation = nullptr;
+		i++;
 	}
-	implementation = nullptr;
 	engine = nullptr;
 }
 
-void EZRShaderPre::updateMatrices(void* context)
+void EZRShaderPre::updateMatrices(Renderer* renderer, void* context)
 {
-	if (implementation == nullptr) return;
-	// model view matrix
-	mvMatrix.set(renderer->getModelViewMatrix());
-	// object to screen matrix
-	mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
-	//
-	implementation->updateMatrices(context, mvpMatrix);
+	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (ezrShaderPreContext.implementation == nullptr) return;
+	ezrShaderPreContext.implementation->updateMatrices(renderer, context);
 }
 
 void EZRShaderPre::updateTextureMatrix(Renderer* renderer, void* context) {
-	if (implementation == nullptr) return;
-	implementation->updateTextureMatrix(renderer, context);
+	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (ezrShaderPreContext.implementation == nullptr) return;
+	ezrShaderPreContext.implementation->updateTextureMatrix(renderer, context);
 }
 
 void EZRShaderPre::updateMaterial(Renderer* renderer, void* context)
 {
-	if (implementation == nullptr) return;
-	implementation->updateMaterial(renderer, context);
+	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (ezrShaderPreContext.implementation == nullptr) return;
+	ezrShaderPreContext.implementation->updateMaterial(renderer, context);
 }
 
 void EZRShaderPre::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
-	if (implementation == nullptr) return;
-	implementation->bindTexture(renderer, context, textureId);
+	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (ezrShaderPreContext.implementation == nullptr) return;
+	ezrShaderPreContext.implementation->bindTexture(renderer, context, textureId);
 }
 
 void EZRShaderPre::setShader(void* context, const string& id) {
 	if (running == false) return;
 
-	auto currentImplementation = implementation;
+	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
+	auto currentImplementation = ezrShaderPreContext.implementation;
 
 	auto shaderIt = shader.find(id);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}
-	implementation = shaderIt->second;
+	ezrShaderPreContext.implementation = shaderIt->second;
 
-	if (currentImplementation != implementation) {
-		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
-		implementation->useProgram(engine, context);
+	if (currentImplementation != ezrShaderPreContext.implementation) {
+		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		ezrShaderPreContext.implementation->useProgram(engine, context);
 	}
 }

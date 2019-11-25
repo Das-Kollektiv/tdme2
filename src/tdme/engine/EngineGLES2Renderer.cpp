@@ -36,7 +36,7 @@ void EngineGLES2Renderer::onUpdateProjectionMatrix(void* context)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+		Engine::ezrShaderPre->updateMatrices(this, context);
 }
 
 void EngineGLES2Renderer::onUpdateCameraMatrix(void* context)
@@ -54,7 +54,7 @@ void EngineGLES2Renderer::onUpdateCameraMatrix(void* context)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+		Engine::ezrShaderPre->updateMatrices(this, context);
 }
 
 void EngineGLES2Renderer::onUpdateModelViewMatrix(void* context)
@@ -72,7 +72,7 @@ void EngineGLES2Renderer::onUpdateModelViewMatrix(void* context)
 		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(context);
+		Engine::ezrShaderPre->updateMatrices(this, context);
 }
 
 void EngineGLES2Renderer::onBindTexture(void* context, int32_t textureId)

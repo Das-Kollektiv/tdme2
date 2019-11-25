@@ -1,0 +1,3887 @@
+diff --git a/Makefile b/Makefile
+index 743058d7..4fac2957 100644
+--- a/Makefile
++++ b/Makefile
+@@ -757,35 +757,38 @@ else
+ endif
+ 
+ MAIN_SRCS = \
+-	src/tdme/tests/AngleTest-main.cpp \
+-	src/tdme/tests/AudioTest-main.cpp \
+-	src/tdme/tests/CrashTest-main.cpp \
+-	src/tdme/tests/EngineTest-main.cpp \
+-	src/tdme/tests/EntityHierarchyTest-main.cpp \
+-	src/tdme/tests/HTTPClientTest-main.cpp \
+-	src/tdme/tests/LODTest-main.cpp \
+-	src/tdme/tests/SkinningTest-main.cpp \
+-	src/tdme/tests/PathFindingTest-main.cpp \
+-	src/tdme/tests/PivotTest-main.cpp \
+ 	src/tdme/tests/PhysicsTest1-main.cpp \
+ 	src/tdme/tests/PhysicsTest2-main.cpp \
+-	src/tdme/tests/PhysicsTest3-main.cpp \
+-	src/tdme/tests/PhysicsTest4-main.cpp \
+-	src/tdme/tests/RayTracingTest-main.cpp \
+-	src/tdme/tests/ThreadingTest-main.cpp \
+-	src/tdme/tests/UDPClientTest-main.cpp \
+-	src/tdme/tests/UDPServerTest-main.cpp \
+-	src/tdme/tests/WaterTest-main.cpp \
+-	src/tdme/tools/gui/GUITest-main.cpp \
+-	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
+-	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
+-	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
+-	src/tdme/tools/cli/archive-main.cpp \
+-	src/tdme/tools/cli/converttotm-main.cpp \
+-	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+-	src/tdme/tools/cli/generatelicenses-main.cpp \
+-	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
+-	src/tdme/tools/cli/fixdoxygen-main.cpp \
++
++#	src/tdme/tests/AngleTest-main.cpp \
++#	src/tdme/tests/AudioTest-main.cpp \
++#	src/tdme/tests/CrashTest-main.cpp \
++#	src/tdme/tests/EngineTest-main.cpp \
++#	src/tdme/tests/EntityHierarchyTest-main.cpp \
++#	src/tdme/tests/HTTPClientTest-main.cpp \
++#	src/tdme/tests/LODTest-main.cpp \
++#	src/tdme/tests/SkinningTest-main.cpp \
++#	src/tdme/tests/PathFindingTest-main.cpp \
++#	src/tdme/tests/PivotTest-main.cpp \
++#	src/tdme/tests/PhysicsTest1-main.cpp \
++#	src/tdme/tests/PhysicsTest2-main.cpp \
++#	src/tdme/tests/PhysicsTest3-main.cpp \
++#	src/tdme/tests/PhysicsTest4-main.cpp \
++#	src/tdme/tests/RayTracingTest-main.cpp \
++#	src/tdme/tests/ThreadingTest-main.cpp \
++#	src/tdme/tests/UDPClientTest-main.cpp \
++#	src/tdme/tests/UDPServerTest-main.cpp \
++#	src/tdme/tests/WaterTest-main.cpp \
++#	src/tdme/tools/gui/GUITest-main.cpp \
++#	src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp \
++#	src/tdme/tools/particlesystem/TDMEParticleSystem-main.cpp \
++#	src/tdme/tools/modeleditor/TDMEModelEditor-main.cpp \
++#	src/tdme/tools/cli/archive-main.cpp \
++#	src/tdme/tools/cli/converttotm-main.cpp \
++#	src/tdme/tools/cli/copyanimationsetups-main.cpp \
++#	src/tdme/tools/cli/generatelicenses-main.cpp \
++#	src/tdme/tools/cli/levelfixmodelszup2yup-main.cpp \
++#	src/tdme/tools/cli/fixdoxygen-main.cpp \
+ 
+ MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
+ OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
+diff --git a/src/tdme/engine/Engine.cpp b/src/tdme/engine/Engine.cpp
+index f4152d07..669f0965 100644
+--- a/src/tdme/engine/Engine.cpp
++++ b/src/tdme/engine/Engine.cpp
+@@ -188,11 +188,17 @@ Engine::EngineThread::EngineThread(int idx, Semaphore* engineThreadWaitSemaphore
+ 	Thread("enginethread"),
+ 	idx(idx),
+ 	engineThreadWaitSemaphore(engineThreadWaitSemaphore),
++	engine(nullptr),
+ 	context(context) {
+ 	//
+ 	rendering.transparentRenderFacesPool = new TransparentRenderFacesPool();
+ }
+ 
++void Engine::EngineThread::test() {
++	rendering.transparentRenderFacesPool->reset();
++	engine->object3DRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes);
++	rendering.objectsByModels.clear();
++}
+ 
+ void Engine::EngineThread::run() {
+ 	Console::println("EngineThread::" + string(__FUNCTION__) + "()[" + to_string(idx) + "]: INIT");
+@@ -442,8 +448,8 @@ void Engine::initialize()
+ 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
+ 		shadowMappingEnabled = true;
+ 		setShadowMapSize(2048, 2048);
+-		skinningShaderEnabled = true;
+-		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
++		// skinningShaderEnabled = true;
++		animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+ 	#else
+ 		// MacOSX, currently GL3 only
+ 		#if defined(__APPLE__)
+@@ -1040,7 +1046,7 @@ void Engine::display()
+ 		);
+ 
+ 		// unuse lighting shader
+-		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
++		if (lightingShader != nullptr) lightingShader->unUseProgram();
+ 
+ 		// render shadows if required
+ 		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjects);
+@@ -1096,7 +1102,7 @@ void Engine::display()
+ 		);
+ 
+ 		// unuse lighting shader
+-		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
++		if (lightingShader != nullptr) lightingShader->unUseProgram();
+ 
+ 		// render shadows if required
+ 		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsPostPostProcessing);
+@@ -1131,7 +1137,7 @@ void Engine::display()
+ 		renderer->enableDepthBufferTest();
+ 
+ 		// unuse lighting shader
+-		if (lightingShader != nullptr) lightingShader->unUseProgram(renderer->getDefaultContext()); // TODO: a.drewke
++		if (lightingShader != nullptr) lightingShader->unUseProgram();
+ 
+ 		// render shadows if required
+ 		if (shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleObjectsNoDepthTest);
+@@ -1729,13 +1735,19 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
+ 
+ 	// fetch pixel
+ 	auto pixels = renderer->readPixels(0, 0, width, height);
+-	if (pixels == nullptr) return false;
++	if (pixels == nullptr) {
++		Console::println("Engine::makeScreenshot(): Failed to read pixels");
++		return false;
++	}
+ 
+ 	//
+ 	{
+ 		// see: https://gist.github.com/niw/5963798
+ 		FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
+-		if (!fp) return false;
++		if (!fp) {
++			Console::println("Engine::makeScreenshot(): Failed to create file: " + pathName + "/" + fileName);
++			return false;
++		}
+ 
+ 		png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+ 		if (!png) {
+@@ -1786,6 +1798,7 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName)
+ 		png_destroy_write_struct(&png, &info);
+ 	}
+ 
++
+ 	//
+ 	delete pixels;
+ 
+diff --git a/src/tdme/engine/Engine.h b/src/tdme/engine/Engine.h
+index 23bff770..26acef97 100644
+--- a/src/tdme/engine/Engine.h
++++ b/src/tdme/engine/Engine.h
+@@ -249,6 +249,10 @@ private:
+ 		 * Run
+ 		 */
+ 		virtual void run();
++
++	public:
++		//
++		void test();
+ 	};
+ 
+ 	static Semaphore engineThreadWaitSemaphore;
+diff --git a/src/tdme/engine/model/FacesEntity.h b/src/tdme/engine/model/FacesEntity.h
+index 7a20499d..f895859a 100644
+--- a/src/tdme/engine/model/FacesEntity.h
++++ b/src/tdme/engine/model/FacesEntity.h
+@@ -80,14 +80,14 @@ public:
+ 	 * @return if texture coordinates are available for the whole entity
+ 	 */
+ 	inline bool isTextureCoordinatesAvailable() const {
+-		return textureCoordinatesAvailable && group->getTextureCoordinates().size() > 0;
++		return textureCoordinatesAvailable == true && group->getTextureCoordinates().size() > 0;
+ 	}
+ 
+ 	/** 
+ 	 * @return if tangents and bitangents are available for the whole entity
+ 	 */
+ 	inline bool isTangentBitangentAvailable() const {
+-		return tangentBitangentAvailable && group->getTangents().size() > 0 && group->getBitangents().size() > 0;
++		return tangentBitangentAvailable == true && group->getTangents().size() > 0 && group->getBitangents().size() > 0;
+ 	}
+ 
+ 	/**
+diff --git a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp
+index 485ecd81..f7c098bf 100644
+--- a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp
+@@ -77,7 +77,7 @@ void EZRShaderPreBaseImplementation::initialize()
+ 
+ void EZRShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+-	renderer->useProgram(programId);
++	renderer->useProgram(context, programId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+ 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+ }
+@@ -102,7 +102,7 @@ void EZRShaderPreBaseImplementation::updateTextureMatrix(Renderer* renderer, voi
+ 
+ void EZRShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+ {
+-	auto& material = renderer->getMaterial(context);
++	auto material = renderer->getMaterial(context);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
+ 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+ }
+diff --git a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp
+index 9505d675..c327bae9 100644
+--- a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp
++++ b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp
+@@ -46,7 +46,7 @@ void EZRShaderPreDefaultImplementation::initialize()
+ 
+ 	// create shadow mapping render program
+ 	//	pre
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp
+index 85c1fff7..9c819807 100644
+--- a/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp
++++ b/src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp
+@@ -61,7 +61,7 @@ void EZRShaderPreFoliageImplementation::initialize()
+ 
+ 	// create shadow mapping render program
+ 	//	pre
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp b/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp
+index c6b3f57c..68164e36 100644
+--- a/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp
++++ b/src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp
+@@ -52,7 +52,7 @@ void FrameBufferRenderShader::initialize()
+ 	);
+ 	if (fragmentShaderId == 0) return;
+ 
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 	if (renderer->isUsingProgramAttributeLocation() == true) {
+@@ -121,8 +121,8 @@ void FrameBufferRenderShader::initialize()
+ 
+ void FrameBufferRenderShader::useProgram()
+ {
+-	renderer->useProgram(programId);
+ 	auto context = renderer->getDefaultContext();
++	renderer->useProgram(context, programId);
+ 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
+ 	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
+ 	isRunning = true;
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShader.cpp b/src/tdme/engine/subsystems/lighting/LightingShader.cpp
+index f781e88c..a8fb4bba 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShader.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShader.cpp
+@@ -25,7 +25,7 @@ using tdme::engine::subsystems::lighting::LightingShaderImplementation;
+ using tdme::engine::subsystems::renderer::Renderer;
+ using tdme::utils::Console;
+ 
+-LightingShader::LightingShader(Renderer* renderer) 
++LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
+ {
+ 	if (LightingShaderBackImplementation::isSupported(renderer) == true) shader["back"] = new LightingShaderBackImplementation(renderer);
+ 	if (LightingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new LightingShaderDefaultImplementation(renderer);
+@@ -35,7 +35,8 @@ LightingShader::LightingShader(Renderer* renderer)
+ 	if (LightingShaderSolidImplementation::isSupported(renderer) == true) shader["solid"] = new LightingShaderSolidImplementation(renderer);
+ 	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) shader["terrain"] = new LightingShaderTerrainImplementation(renderer);
+ 	if (LightingShaderWaterImplementation::isSupported(renderer) == true) shader["water"] = new LightingShaderWaterImplementation(renderer);
+-	implementation = nullptr;
++	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
++	contexts.resize(threadCount);
+ }
+ 
+ LightingShader::~LightingShader() {
+@@ -69,63 +70,75 @@ void LightingShader::useProgram(Engine* engine)
+ 	this->engine = engine;
+ }
+ 
+-void LightingShader::unUseProgram(void* context)
++void LightingShader::unUseProgram()
+ {
+ 	running = false;
+-	if (implementation != nullptr) {
+-		implementation->unUseProgram(context);
++	auto i = 0;
++	for (auto& lightingShaderContext: contexts) {
++		if (lightingShaderContext.implementation != nullptr) {
++			lightingShaderContext.implementation->unUseProgram(renderer->getContext(i));
++		}
++		lightingShaderContext.implementation = nullptr;
++		i++;
+ 	}
+-	implementation = nullptr;
+ 	engine = nullptr;
+ }
+ 
+ void LightingShader::updateEffect(Renderer* renderer, void* context)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->updateEffect(renderer, context);
++	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
++	if (lightingShaderContext.implementation == nullptr) return;
++	lightingShaderContext.implementation->updateEffect(renderer, context);
+ }
+ 
+ void LightingShader::updateMaterial(Renderer* renderer, void* context)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->updateMaterial(renderer, context);
++	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
++	if (lightingShaderContext.implementation == nullptr) return;
++	lightingShaderContext.implementation->updateMaterial(renderer, context);
+ }
+ 
+ void LightingShader::updateLight(Renderer* renderer, void* context, int32_t lightId)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->updateLight(renderer, context, lightId);
++	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
++	if (lightingShaderContext.implementation == nullptr) return;
++	lightingShaderContext.implementation->updateLight(renderer, context, lightId);
+ }
+ 
+ void LightingShader::updateMatrices(Renderer* renderer, void* context)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->updateMatrices(renderer, context);
++	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
++	if (lightingShaderContext.implementation == nullptr) return;
++	lightingShaderContext.implementation->updateMatrices(renderer, context);
+ }
+ 
+ void LightingShader::updateTextureMatrix(Renderer* renderer, void* context) {
+-	if (implementation == nullptr) return;
+-	implementation->updateTextureMatrix(renderer, context);
++	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
++	if (lightingShaderContext.implementation == nullptr) return;
++	lightingShaderContext.implementation->updateTextureMatrix(renderer, context);
+ }
+ 
+ void LightingShader::setShader(void* context, const string& id) {
+ 	if (running == false) return;
+ 
+-	auto currentImplementation = implementation;
++	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
++
++	auto currentImplementation = lightingShaderContext.implementation;
+ 	auto shaderIt = shader.find(id);
+ 	if (shaderIt == shader.end()) {
+ 		shaderIt = shader.find("default");
+ 	}
+-	implementation = shaderIt->second;
++	lightingShaderContext.implementation = shaderIt->second;
+ 
+-	if (currentImplementation != implementation) {
++	if (currentImplementation != lightingShaderContext.implementation) {
+ 		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+-		implementation->useProgram(engine, context);
++		lightingShaderContext.implementation->useProgram(engine, context);
+ 	}
+ }
+ 
+ void LightingShader::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->bindTexture(renderer, context, textureId);
++	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
++	if (lightingShaderContext.implementation == nullptr) return;
++	lightingShaderContext.implementation->bindTexture(renderer, context, textureId);
+ }
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShader.h b/src/tdme/engine/subsystems/lighting/LightingShader.h
+index d640fcea..d45990de 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShader.h
++++ b/src/tdme/engine/subsystems/lighting/LightingShader.h
+@@ -2,6 +2,7 @@
+ 
+ #include <map>
+ #include <string>
++#include <vector>
+ 
+ #include <tdme/tdme.h>
+ #include <tdme/engine/fwd-tdme.h>
+@@ -10,6 +11,7 @@
+ 
+ using std::map;
+ using std::string;
++using std::vector;
+ 
+ using tdme::engine::Engine;
+ using tdme::engine::subsystems::lighting::LightingShaderImplementation;
+@@ -23,10 +25,14 @@ using tdme::engine::subsystems::renderer::Renderer;
+ class tdme::engine::subsystems::lighting::LightingShader final
+ {
+ private:
++	struct LightingShaderContext {
++		LightingShaderImplementation* implementation { nullptr };
++	};
+ 	map<string, LightingShaderImplementation*> shader;
+-	LightingShaderImplementation* implementation { nullptr };
+-	bool running { false };
++	Renderer* renderer { nullptr };
+ 	Engine* engine { nullptr };
++	bool running { false };
++	vector<LightingShaderContext> contexts;
+ 
+ public:
+ 	/** 
+@@ -47,9 +53,8 @@ public:
+ 
+ 	/** 
+ 	 * Unuse lighting program
+-	 * @param context context
+ 	 */
+-	void unUseProgram(void* context);
++	void unUseProgram();
+ 
+ 	/** 
+ 	 * Update effect to program
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp
+index e92db9d2..f2841454 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp
+@@ -51,7 +51,7 @@ void LightingShaderBackImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+index 561b4f2b..d4e1b575 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+@@ -27,7 +27,6 @@ using tdme::utils::Console;
+ LightingShaderBaseImplementation::LightingShaderBaseImplementation(Renderer* renderer)
+ {
+ 	this->renderer = renderer;
+-	isRunning = false;
+ 	initialized = false;
+ }
+ 
+@@ -136,8 +135,7 @@ void LightingShaderBaseImplementation::initialize()
+ 
+ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+-	isRunning = true;
+-	renderer->useProgram(renderLightingProgramId);
++	renderer->useProgram(context, renderLightingProgramId);
+ 	// initialize static uniforms
+ 	if (renderer->isInstancedRenderingAvailable() == true) {
+ 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+@@ -169,14 +167,10 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
+ 
+ void LightingShaderBaseImplementation::unUseProgram(void* context)
+ {
+-	isRunning = false;
+ }
+ 
+ void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* context)
+ {
+-	// skip if not running
+-	if (isRunning == false) return;
+-
+ 	// skip if using instanced rendering
+ 	if (renderer->isInstancedRenderingAvailable() == false) {
+ 		//
+@@ -187,13 +181,10 @@ void LightingShaderBaseImplementation::updateEffect(Renderer* renderer, void* co
+ 
+ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+ {
+-	// skip if not running
+-	if (isRunning == false) return;
+-
+ 	//
+ 	array<float, 4> tmpColor4 {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+ 
+-	auto& material = renderer->getMaterial(context);
++	auto material = renderer->getMaterial(context);
+ 
+ 	// ambient without alpha, as we only use alpha from diffuse color
+ 	tmpColor4 = material.ambient;
+@@ -223,11 +214,8 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void*
+ 
+ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)
+ {
+-	// skip if not running
+-	if (isRunning == false) return;
+-
+ 	// lights
+-	auto& light = renderer->getLight(context, lightId);
++	auto light = renderer->getLight(context, lightId);
+ 	renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
+ 	if (light.enabled == 1) {
+ 		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], light.ambient);
+@@ -245,9 +233,6 @@ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* con
+ 
+ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* context)
+ {
+-	// skip if not running
+-	if (isRunning == false) return;
+-
+ 	// set up camera and projection matrices if using instanced rendering
+ 	if (renderer->isInstancedRenderingAvailable() == true) {
+ 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+@@ -270,19 +255,12 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void*
+ }
+ 
+ void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
+-	// skip if not running
+-	if (isRunning == false) return;
+-
+ 	//
+ 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
+ }
+ 
+-
+ void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+ {
+-	// skip if not running
+-	if (isRunning == false) return;
+-
+ 	switch (renderer->getTextureUnit(context)) {
+ 		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
+ 			if (uniformDiffuseTextureAvailable != -1) {
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h
+index 671a7721..ad0bef1c 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h
+@@ -71,7 +71,6 @@ protected:
+ 	Matrix4x4 mvpMatrix;
+ 	Matrix4x4 normalMatrix;
+ 	array<float, 4> defaultSceneColor {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+-	bool isRunning { false };
+ 	bool initialized { false };
+ 	Renderer* renderer { nullptr };
+ public:
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp
+index b3177195..43ecd2f3 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp
+@@ -51,7 +51,7 @@ void LightingShaderDefaultImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp
+index 1729195c..c30a6da4 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp
+@@ -67,7 +67,7 @@ void LightingShaderFoliageImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.cpp
+index 6d29f63b..ff0b802c 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.cpp
+@@ -51,7 +51,7 @@ void LightingShaderFrontImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp
+index 4a1b28f2..e7f81a1c 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp
+@@ -51,7 +51,7 @@ void LightingShaderSkyImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp
+index e664f53a..5690dcc4 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp
+@@ -51,7 +51,7 @@ void LightingShaderSolidImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp
+index fd593f8f..ccee241f 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp
+@@ -60,7 +60,7 @@ void LightingShaderTerrainImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp
+index d18f451c..28e0a1f1 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp
+@@ -63,7 +63,7 @@ void LightingShaderWaterImplementation::initialize()
+ 	if (renderLightingVertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	renderLightingProgramId = renderer->createProgram();
++	renderLightingProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingVertexShaderId);
+ 	renderer->attachShaderToProgram(renderLightingProgramId, renderLightingFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/lines/LinesShader.cpp b/src/tdme/engine/subsystems/lines/LinesShader.cpp
+index 69f941d7..f2417bd5 100644
+--- a/src/tdme/engine/subsystems/lines/LinesShader.cpp
++++ b/src/tdme/engine/subsystems/lines/LinesShader.cpp
+@@ -45,7 +45,7 @@ void LinesShader::initialize()
+ 	if (renderVertexShaderId == 0)
+ 		return;
+ 	// create, attach and link program
+-	renderProgramId = renderer->createProgram();
++	renderProgramId = renderer->createProgram(renderer->PROGRAM_LINES);
+ 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
+ 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+ 	// map inputs to attributes
+@@ -76,7 +76,7 @@ void LinesShader::initialize()
+ void LinesShader::useProgram(void* context)
+ {
+ 	isRunning = true;
+-	renderer->useProgram(renderProgramId);
++	renderer->useProgram(context, renderProgramId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp b/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp
+index cb957cc4..8e1ee163 100644
+--- a/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp
++++ b/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp
+@@ -14,13 +14,3 @@ VBOManager_VBOManaged::VBOManager_VBOManaged(const string& id, vector<int32_t>&
+ 	this->id = id;
+ 	this->vboIds = vboIds;
+ }
+-
+-bool VBOManager_VBOManaged::isUploaded()
+-{
+-	if (uploaded == false) {
+-		uploaded = true;
+-		return false;
+-	} else {
+-		return true;
+-	}
+-}
+diff --git a/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.h b/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.h
+index 807b3d35..1b732385 100644
+--- a/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.h
++++ b/src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.h
+@@ -23,7 +23,7 @@ private:
+ 	string id;
+ 	vector<int32_t> vboIds;
+ 	int32_t referenceCounter { 0 };
+-	bool uploaded { false };
++	volatile bool uploaded { false };
+ 
+ public:
+ 
+@@ -41,8 +41,6 @@ public:
+ 		return &vboIds;
+ 	}
+ 
+-private:
+-
+ 	/** 
+ 	 * @return reference counter
+ 	 */
+@@ -50,6 +48,7 @@ private:
+ 		return referenceCounter;
+ 	}
+ 
++private:
+ 	/** 
+ 	 * decrement reference counter
+ 	 * @return if reference counter = 0
+@@ -68,10 +67,20 @@ private:
+ 
+ public:
+ 
++	/**
++	 * Set uploaded
++	 * @param uploaded uploaded
++	 */
++	inline void setUploaded(bool uploaded) {
++		this->uploaded = uploaded;
++	}
++
+ 	/** 
+ 	 * @return if vbo's have been uploaded, will change internal flag to uploaded
+ 	 */
+-	bool isUploaded();
++	inline bool isUploaded() {
++		return uploaded;
++	}
+ 
+ private:
+ 	/**
+diff --git a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
+index 397ced1e..0e2227c6 100644
+--- a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
++++ b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
+@@ -45,7 +45,7 @@ void ParticlesShader::initialize()
+ 	);
+ 	if (renderVertexShaderId == 0) return;
+ 	// create, attach and link program
+-	renderProgramId = renderer->createProgram();
++	renderProgramId = renderer->createProgram(renderer->PROGRAM_POINTS);
+ 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
+ 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+ 	// map inputs to attributes
+@@ -75,7 +75,7 @@ void ParticlesShader::initialize()
+ void ParticlesShader::useProgram(void* context)
+ {
+ 	isRunning = true;
+-	renderer->useProgram(renderProgramId);
++	renderer->useProgram(context, renderProgramId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp
+index 6ae67ff0..b563dd61 100644
+--- a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp
+@@ -48,7 +48,7 @@ void PostProcessingShaderBaseImplementation::initialize()
+ void PostProcessingShaderBaseImplementation::useProgram(void* context)
+ {
+ 	isRunning = true;
+-	renderer->useProgram(programId);
++	renderer->useProgram(context, programId);
+ 	if (uniformColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
+ 	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
+ 	if (uniformTemporaryColorBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformTemporaryColorBufferTextureUnit, 2);
+diff --git a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp
+index b9e06789..26cdd6ef 100644
+--- a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp
++++ b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp
+@@ -41,7 +41,7 @@ void PostProcessingShaderBlurImplementation::initialize()
+ 	if (vertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp
+index 0899328a..528de076 100644
+--- a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp
++++ b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp
+@@ -40,7 +40,7 @@ void PostProcessingShaderDefaultImplementation::initialize()
+ 	if (vertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp
+index 9a81d447..cf0be8ea 100644
+--- a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp
++++ b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp
+@@ -41,7 +41,7 @@ void PostProcessingShaderSSAOImplementation::initialize()
+ 	if (vertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp
+index db4e4eba..6ce4e3fa 100644
+--- a/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp
++++ b/src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp
+@@ -52,7 +52,7 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
+ 	if (vertexShaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp b/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+index 40bb22c5..0d3e91bf 100644
+--- a/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+@@ -237,12 +237,12 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
+ 	return handle;
+ }
+ 
+-void GL2Renderer::useProgram(int32_t programId)
++void GL2Renderer::useProgram(void* context, int32_t programId)
+ {
+ 	glUseProgram(programId);
+ }
+ 
+-int32_t GL2Renderer::createProgram()
++int32_t GL2Renderer::createProgram(int type)
+ {
+ 	auto programId = glCreateProgram();
+ 	return programId;
+diff --git a/src/tdme/engine/subsystems/renderer/GL2Renderer.h b/src/tdme/engine/subsystems/renderer/GL2Renderer.h
+index 87d530d7..90a172ac 100644
+--- a/src/tdme/engine/subsystems/renderer/GL2Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GL2Renderer.h
+@@ -63,8 +63,8 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
+-	int32_t createProgram() override;
++	void useProgram(void* context, int32_t programId) override;
++	int32_t createProgram(int type) override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+ 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
+diff --git a/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp b/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+index a5c213e3..f0504dfd 100644
+--- a/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+@@ -237,12 +237,12 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
+ 	return handle;
+ }
+ 
+-void GL3Renderer::useProgram(int32_t programId)
++void GL3Renderer::useProgram(void* context, int32_t programId)
+ {
+ 	glUseProgram(programId);
+ }
+ 
+-int32_t GL3Renderer::createProgram()
++int32_t GL3Renderer::createProgram(int type)
+ {
+ 	auto glProgram = glCreateProgram();
+ 	return glProgram;
+@@ -286,6 +286,7 @@ bool GL3Renderer::linkProgram(int32_t programId)
+ int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& name)
+ {
+ 	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
++	if (uniformLocation == -1) Console::println("GL3Renderer::" + string(__FUNCTION__) + "(): uniform not found: '" + name + "'");
+ 	return uniformLocation;
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/renderer/GL3Renderer.h b/src/tdme/engine/subsystems/renderer/GL3Renderer.h
+index d5591caa..11a801ad 100644
+--- a/src/tdme/engine/subsystems/renderer/GL3Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GL3Renderer.h
+@@ -56,8 +56,8 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
+-	int32_t createProgram() override;
++	void useProgram(void* context, int32_t programId) override;
++	int32_t createProgram(int type) override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+ 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
+diff --git a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+index 3e812f2c..327bdab0 100644
+--- a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+@@ -212,12 +212,12 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
+ 	return handle;
+ }
+ 
+-void GLES2Renderer::useProgram(int32_t programId)
++void GLES2Renderer::useProgram(void* context, int32_t programId)
+ {
+ 	glUseProgram(programId);
+ }
+ 
+-int32_t GLES2Renderer::createProgram()
++int32_t GLES2Renderer::createProgram(int type)
+ {
+ 	auto program = glCreateProgram();
+ 	return program;
+diff --git a/src/tdme/engine/subsystems/renderer/GLES2Renderer.h b/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
+index f43448ac..14b1fc1b 100644
+--- a/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
+@@ -54,8 +54,8 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
+-	int32_t createProgram() override;
++	void useProgram(void* context, int32_t programId) override;
++	int32_t createProgram(int type) override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+ 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
+diff --git a/src/tdme/engine/subsystems/renderer/Renderer.cpp b/src/tdme/engine/subsystems/renderer/Renderer.cpp
+index 2b58d500..83643254 100644
+--- a/src/tdme/engine/subsystems/renderer/Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/Renderer.cpp
+@@ -20,6 +20,10 @@ Renderer::Renderer()
+ 	CULLFACE_FRONT = -1;
+ 	CULLFACE_BACK = -1;
+ 	TEXTUREUNITS_MAX = -1;
++	PROGRAM_OBJECTS = 1;
++	PROGRAM_POINTS = 2;
++	PROGRAM_LINES = 3;
++	PROGRAM_COMPUTE = 4;
+ 	SHADER_FRAGMENT_SHADER = -1;
+ 	SHADER_VERTEX_SHADER = -1;
+ 	SHADER_GEOMETRY_SHADER = -1;
+diff --git a/src/tdme/engine/subsystems/renderer/Renderer.h b/src/tdme/engine/subsystems/renderer/Renderer.h
+index 6ed98199..d9271190 100644
+--- a/src/tdme/engine/subsystems/renderer/Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/Renderer.h
+@@ -42,6 +42,10 @@ public:
+ 	int32_t CULLFACE_FRONT;
+ 	int32_t CULLFACE_BACK;
+ 	int32_t TEXTUREUNITS_MAX;
++	int32_t PROGRAM_OBJECTS;
++	int32_t PROGRAM_POINTS;
++	int32_t PROGRAM_LINES;
++	int32_t PROGRAM_COMPUTE;
+ 	int32_t SHADER_FRAGMENT_SHADER;
+ 	int32_t SHADER_VERTEX_SHADER;
+ 	int32_t SHADER_GEOMETRY_SHADER;
+@@ -184,17 +188,19 @@ public:
+ 	 */
+ 	virtual int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) = 0;
+ 
+-	/** 
++	/**
+ 	 * Use shader program
++	 * @param context context
+ 	 * @param programId programId
+ 	 */
+-	virtual void useProgram(int32_t programId) = 0;
++	virtual void useProgram(void* context, int32_t programId) = 0;
+ 
+ 	/** 
+ 	 * Creates a shader program
++	 * @param type ype
+ 	 * @return int
+ 	 */
+-	virtual int32_t createProgram() = 0;
++	virtual int32_t createProgram(int type) = 0;
+ 
+ 	/** 
+ 	 * Attaches a shader to a program
+@@ -726,7 +732,7 @@ public:
+ 	 * @param lightId light id
+ 	 * @return light
+ 	 */
+-	virtual const Renderer_Light& getLight(void* context, int32_t lightId) = 0;
++	virtual const Renderer_Light getLight(void* context, int32_t lightId) = 0;
+ 
+ 	/**
+ 	 * Set light
+@@ -748,7 +754,7 @@ public:
+ 	 * @param context
+ 	 * @return effect color mul
+ 	 */
+-	virtual const array<float, 4>& getEffectColorMul(void* context) = 0;
++	virtual const array<float, 4> getEffectColorMul(void* context) = 0;
+ 
+ 	/** 
+ 	 * Set up effect color multiplication
+@@ -762,7 +768,7 @@ public:
+ 	 * @param context
+ 	 * @return effect color add
+ 	 */
+-	virtual const array<float, 4>& getEffectColorAdd(void* context) = 0;
++	virtual const array<float, 4> getEffectColorAdd(void* context) = 0;
+ 
+ 	/** 
+ 	 * Set up effect color addition
+@@ -782,7 +788,7 @@ public:
+ 	 * @param context context
+ 	 * @return material
+ 	 */
+-	virtual const Renderer_Material& getMaterial(void* context) = 0;
++	virtual const Renderer_Material getMaterial(void* context) = 0;
+ 
+ 	/** 
+ 	 * Set material
+@@ -801,7 +807,7 @@ public:
+ 	 * Set shader
+ 	 * @param context context
+ 	 */
+-	virtual const string& getShader(void* context) = 0;
++	virtual const string getShader(void* context) = 0;
+ 
+ 	/**
+ 	 * Set shader
+diff --git a/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp b/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
+index a7b5fbc0..c02eb47a 100644
+--- a/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp
+@@ -26,7 +26,7 @@ Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(void* context) {
+ 	return textureMatrix;
+ }
+ 
+-const Renderer_Light& SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
++const Renderer_Light SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
+ 	return lights[lightId];
+ }
+ 
+@@ -34,7 +34,7 @@ void SingleThreadedRenderer::setLight(void* context, int32_t lightId, const Rend
+ 	lights[lightId] = light;
+ }
+ 
+-const array<float, 4>& SingleThreadedRenderer::getEffectColorMul(void* context) {
++const array<float, 4> SingleThreadedRenderer::getEffectColorMul(void* context) {
+ 	return effectColorMul;
+ }
+ 
+@@ -42,7 +42,7 @@ void SingleThreadedRenderer::setEffectColorMul(void* context, const array<float,
+ 	this->effectColorMul = effectColorMul;
+ }
+ 
+-const array<float, 4>& SingleThreadedRenderer::getEffectColorAdd(void* context) {
++const array<float, 4> SingleThreadedRenderer::getEffectColorAdd(void* context) {
+ 	return effectColorAdd;
+ }
+ 
+@@ -50,7 +50,7 @@ void SingleThreadedRenderer::setEffectColorAdd(void* context, const array<float,
+ 	this->effectColorAdd = effectColorAdd;
+ }
+ 
+-const Renderer_Material& SingleThreadedRenderer::getMaterial(void* context) {
++const Renderer_Material SingleThreadedRenderer::getMaterial(void* context) {
+ 	return material;
+ }
+ 
+@@ -58,7 +58,7 @@ void SingleThreadedRenderer::setMaterial(void* context, const Renderer_Material&
+ 	this->material = material;
+ }
+ 
+-const string& SingleThreadedRenderer::getShader(void* context) {
++const string SingleThreadedRenderer::getShader(void* context) {
+ 	return shader;
+ }
+ 
+diff --git a/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.h b/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.h
+index 798e13a9..b0ae1c16 100644
+--- a/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.h
++++ b/src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.h
+@@ -40,15 +40,15 @@ protected:
+ 
+ public:
+ 	virtual Matrix2D3x3& getTextureMatrix(void* context);
+-	virtual const Renderer_Light& getLight(void* context, int32_t lightId);
++	virtual const Renderer_Light getLight(void* context, int32_t lightId);
+ 	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
+-	virtual const array<float, 4>& getEffectColorMul(void* context);
++	virtual const array<float, 4> getEffectColorMul(void* context);
+ 	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
+-	virtual const array<float, 4>& getEffectColorAdd(void* context);
++	virtual const array<float, 4> getEffectColorAdd(void* context);
+ 	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
+-	virtual const Renderer_Material& getMaterial(void* context);
++	virtual const Renderer_Material getMaterial(void* context);
+ 	virtual void setMaterial(void* context, const Renderer_Material& material);
+-	virtual const string& getShader(void* context);
++	virtual const string getShader(void* context);
+ 	virtual void setShader(void* context, const string& id);
+ 
+ 	/**
+diff --git a/src/tdme/engine/subsystems/renderer/VKRenderer.cpp b/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+index 92c1a151..57030ca8 100644
+--- a/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+@@ -1543,8 +1543,11 @@ void VKRenderer::finishFrame()
+ 	endDrawCommandsAllContexts();
+ 
+ 	// flush command buffers
+-	finishPipeline();
+-	program_id = 0;
++	for (auto& context: contexts) {
++		finishPipeline(context.idx);
++		for (auto& ubo: context.uniform_buffers) ubo.clear();
++		context.program_id = 0;
++	}
+ 
+ 	//
+ 	memoryBarrier();
+@@ -2160,8 +2163,13 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
+ 	return shaderStruct.id;
+ }
+ 
+-inline void VKRenderer::preparePipeline(program_type& program) {
+-	for (auto& context: contexts) {
++inline void VKRenderer::preparePipeline(int contextIdx, program_type& program) {
++	auto& context = contexts[contextIdx];
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + ": " + to_string(context.program_id));
++	if (program.uniform_buffers_stored[context.idx] == true) {
++		context.uniform_buffers = program.uniform_buffers_last[context.idx];
++		context.uniform_buffers_changed = program.uniform_buffers_changed_last[context.idx];
++	} else {
+ 		auto shaderIdx = 0;
+ 		for (auto shaderId: program.shader_ids) {
+ 			auto shaderIt = shaders.find(shaderId);
+@@ -2180,35 +2188,29 @@ inline void VKRenderer::preparePipeline(program_type& program) {
+ 			context.uniform_buffers_changed[shaderIdx] = true;
+ 			shaderIdx++;
+ 		}
+-		if (program.created == true) {
+-			context.uniform_buffers = program.uniform_buffers_last[context.idx];
+-			context.uniform_buffers_changed = program.uniform_buffers_changed_last[context.idx];
+-		}
+ 	}
+ }
+ 
+-inline void VKRenderer::finishPipeline() {
+-	if (program_id != 0) {
+-		auto programIt = programs.find(program_id);
++inline void VKRenderer::finishPipeline(int contextIdx) {
++	auto& context = contexts[contextIdx];
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + ": " + to_string(context.program_id));
++	if (context.pipeline_id.empty() == false || context.pipeline != VK_NULL_HANDLE) {
++		auto programIt = programs.find(context.program_id);
+ 		if (programIt == programs.end()) {
+-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextIdx) + ": " + to_string(context.program_id));
+ 			return;
+ 		}
+ 		auto& program = programIt->second;
+-		for (auto& context: contexts) {
+-			program.uniform_buffers_last[context.idx] = context.uniform_buffers;
+-			program.uniform_buffers_changed_last[context.idx] = context.uniform_buffers_changed;
+-		}
+-		for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+-	}
+ 
+-	// clear ubos
+-	for (auto& context: contexts) {
+-		for (auto& ubo: context.uniform_buffers) ubo.clear();
+-	}
++		//
++		program.uniform_buffers_stored[contextIdx] = true;
++		program.uniform_buffers_last[contextIdx] = context.uniform_buffers;
++		program.uniform_buffers_changed_last[contextIdx] = context.uniform_buffers_changed;
+ 
+-	//
+-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline = VK_NULL_HANDLE;
++		//
++		context.pipeline_id.clear();
++		context.pipeline = VK_NULL_HANDLE;
++	}
+ }
+ 
+ inline void VKRenderer::createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rs) {
+@@ -2262,93 +2264,87 @@ inline const string VKRenderer::createPipelineId(int contextIdx) {
+ 	return result;
+ }
+ 
+-void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& program) {
+-	if (program.created == false) {
+-		VkResult err;
++void VKRenderer::createObjectsRenderingProgram(program_type& program) {
++	VkResult err;
+ 
+-		//
+-		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+-		memset(layout_bindings, 0, sizeof(layout_bindings));
++	//
++	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
++	memset(layout_bindings, 0, sizeof(layout_bindings));
+ 
+-		// ubos, samplers
+-		auto shaderIdx = 0;
+-		for (auto shaderId: program.shader_ids) {
+-			auto shaderIt = shaders.find(shaderId);
+-			if (shaderIt == shaders.end()) {
+-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+-				return;
+-			}
+-			auto& shader = shaderIt->second;
+-			if (shader.ubo_binding_idx != -1) {
+-				layout_bindings[shader.ubo_binding_idx] = {
+-					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+-					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
++	// ubos, samplers
++	auto shaderIdx = 0;
++	for (auto shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx != -1) {
++			layout_bindings[shader.ubo_binding_idx] = {
++				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
++				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
++				.descriptorCount = 1,
++				.stageFlags = shader.type,
++				.pImmutableSamplers = NULL
++			};
++		}
++		for (auto uniformIt: shader.uniforms) {
++			auto& uniform = uniformIt.second;
++			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
++				layout_bindings[uniform.position] = {
++					.binding = static_cast<uint32_t>(uniform.position),
++					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+ 					.descriptorCount = 1,
+ 					.stageFlags = shader.type,
+ 					.pImmutableSamplers = NULL
+ 				};
+ 			}
+-			for (auto uniformIt: shader.uniforms) {
+-				auto& uniform = uniformIt.second;
+-				if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
+-					layout_bindings[uniform.position] = {
+-						.binding = static_cast<uint32_t>(uniform.position),
+-						.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+-						.descriptorCount = 1,
+-						.stageFlags = shader.type,
+-						.pImmutableSamplers = NULL
+-					};
+-				}
+-			}
+-			shaderIdx++;
+ 		}
++		shaderIdx++;
++	}
+ 
+-		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.bindingCount = program.layout_bindings,
+-			.pBindings = layout_bindings,
+-		};
+-
+-		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+-		assert(!err);
++	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.bindingCount = program.layout_bindings,
++		.pBindings = layout_bindings,
++	};
+ 
+-		const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+-			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.setLayoutCount = 1,
+-			.pSetLayouts = &program.desc_layout,
+-		};
++	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
++	assert(!err);
+ 
+-		VkDescriptorSetLayout desc_layouts[DESC_MAX];
+-		for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
++	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
++		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.setLayoutCount = 1,
++		.pSetLayouts = &program.desc_layout,
++	};
+ 
+-		//
+-		VkDescriptorSetAllocateInfo alloc_info = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+-			.pNext = NULL,
+-			.descriptorPool = desc_pool,
+-			.descriptorSetCount = DESC_MAX,
+-			.pSetLayouts = desc_layouts
+-		};
+-		for (auto& context: contexts) {
+-			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+-			assert(!err);
+-		}
++	VkDescriptorSetLayout desc_layouts[DESC_MAX];
++	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+ 
+-		//
+-		err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	//
++	VkDescriptorSetAllocateInfo alloc_info = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
++		.pNext = NULL,
++		.descriptorPool = desc_pool,
++		.descriptorSetCount = DESC_MAX,
++		.pSetLayouts = desc_layouts
++	};
++	for (auto& context: contexts) {
++		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+ 		assert(!err);
+-
+-		//
+-		for (auto& context: contexts) context.uniform_buffers_changed.fill(true);
+-
+-		//
+-		program.created = true;
+ 	}
+ 
++	//
++	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	assert(!err);
++}
++
++void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& program) {
+ 	auto& context = contexts[contextIdx];
+ 	auto pipelinesIt = program.pipelines.find(context.pipeline_id);
+ 	if (pipelinesIt == program.pipelines.end()) {
+@@ -2593,7 +2589,7 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
+ 		pipeline_mutex.lock();
+ 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
+ 		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
+-		if (program.created == false || pipelinesIt == program.pipelines.end()) {
++		if (pipelinesIt == program.pipelines.end()) {
+ 			createObjectsRenderingPipeline(contextIdx, program);
+ 		}
+ 
+@@ -2610,93 +2606,87 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
+ 	}
+ }
+ 
+-void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& program) {
+-	if (program.created == false) {
+-		VkResult err;
++void VKRenderer::createPointsRenderingProgram(program_type& program) {
++	VkResult err;
+ 
+-		//
+-		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+-		memset(layout_bindings, 0, sizeof(layout_bindings));
++	//
++	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
++	memset(layout_bindings, 0, sizeof(layout_bindings));
+ 
+-		// ubos, samplers
+-		auto shaderIdx = 0;
+-		for (auto shaderId: program.shader_ids) {
+-			auto shaderIt = shaders.find(shaderId);
+-			if (shaderIt == shaders.end()) {
+-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+-				return;
+-			}
+-			auto& shader = shaderIt->second;
+-			if (shader.ubo_binding_idx != -1) {
+-				layout_bindings[shader.ubo_binding_idx] = {
+-					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+-					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
++	// ubos, samplers
++	auto shaderIdx = 0;
++	for (auto shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx != -1) {
++			layout_bindings[shader.ubo_binding_idx] = {
++				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
++				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
++				.descriptorCount = 1,
++				.stageFlags = shader.type,
++				.pImmutableSamplers = NULL
++			};
++		}
++		for (auto uniformIt: shader.uniforms) {
++			auto& uniform = uniformIt.second;
++			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
++				layout_bindings[uniform.position] = {
++					.binding = static_cast<uint32_t>(uniform.position),
++					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+ 					.descriptorCount = 1,
+ 					.stageFlags = shader.type,
+ 					.pImmutableSamplers = NULL
+ 				};
+ 			}
+-			for (auto uniformIt: shader.uniforms) {
+-				auto& uniform = uniformIt.second;
+-				if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
+-					layout_bindings[uniform.position] = {
+-						.binding = static_cast<uint32_t>(uniform.position),
+-						.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+-						.descriptorCount = 1,
+-						.stageFlags = shader.type,
+-						.pImmutableSamplers = NULL
+-					};
+-				}
+-			}
+-			shaderIdx++;
+ 		}
++		shaderIdx++;
++	}
+ 
+-		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.bindingCount = program.layout_bindings,
+-			.pBindings = layout_bindings,
+-		};
+-
+-		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+-		assert(!err);
++	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.bindingCount = program.layout_bindings,
++		.pBindings = layout_bindings,
++	};
+ 
+-		const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+-			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.setLayoutCount = 1,
+-			.pSetLayouts = &program.desc_layout,
+-		};
++	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
++	assert(!err);
+ 
+-		VkDescriptorSetLayout desc_layouts[DESC_MAX];
+-		for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
++	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
++		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.setLayoutCount = 1,
++		.pSetLayouts = &program.desc_layout,
++	};
+ 
+-		//
+-		VkDescriptorSetAllocateInfo alloc_info = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+-			.pNext = NULL,
+-			.descriptorPool = desc_pool,
+-			.descriptorSetCount = DESC_MAX,
+-			.pSetLayouts = desc_layouts
+-		};
+-		for (auto& context: contexts) {
+-			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+-			assert(!err);
+-		}
++	VkDescriptorSetLayout desc_layouts[DESC_MAX];
++	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+ 
+-		//
+-		err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	//
++	VkDescriptorSetAllocateInfo alloc_info = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
++		.pNext = NULL,
++		.descriptorPool = desc_pool,
++		.descriptorSetCount = DESC_MAX,
++		.pSetLayouts = desc_layouts
++	};
++	for (auto& context: contexts) {
++		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+ 		assert(!err);
+-
+-		//
+-		for (auto& context: contexts) context.uniform_buffers_changed.fill(true);
+-
+-		//
+-		program.created = true;
+ 	}
+ 
++	//
++	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	assert(!err);
++}
++
++void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& program) {
+ 	auto& context = contexts[contextIdx];
+ 	auto pipelinesIt = program.pipelines.find(context.pipeline_id);
+ 	if (pipelinesIt == program.pipelines.end()) {
+@@ -2872,7 +2862,7 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
+ 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
+ 
+ 		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
+-		if (program.created == false || pipelinesIt == program.pipelines.end()) {
++		if (pipelinesIt == program.pipelines.end()) {
+ 			createPointsRenderingPipeline(contextIdx, program);
+ 		}
+ 
+@@ -2889,93 +2879,87 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
+ 	}
+ }
+ 
+-void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& program) {
+-	if (program.created == false) {
+-		VkResult err;
++void VKRenderer::createLinesRenderingProgram(program_type& program) {
++	VkResult err;
+ 
+-		//
+-		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+-		memset(layout_bindings, 0, sizeof(layout_bindings));
++	//
++	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
++	memset(layout_bindings, 0, sizeof(layout_bindings));
+ 
+-		// ubos, samplers
+-		auto shaderIdx = 0;
+-		for (auto shaderId: program.shader_ids) {
+-			auto shaderIt = shaders.find(shaderId);
+-			if (shaderIt == shaders.end()) {
+-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+-				return;
+-			}
+-			auto& shader = shaderIt->second;
+-			if (shader.ubo_binding_idx != -1) {
+-				layout_bindings[shader.ubo_binding_idx] = {
+-					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+-					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
++	// ubos, samplers
++	auto shaderIdx = 0;
++	for (auto shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx != -1) {
++			layout_bindings[shader.ubo_binding_idx] = {
++				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
++				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
++				.descriptorCount = 1,
++				.stageFlags = shader.type,
++				.pImmutableSamplers = NULL
++			};
++		}
++		for (auto uniformIt: shader.uniforms) {
++			auto& uniform = uniformIt.second;
++			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
++				layout_bindings[uniform.position] = {
++					.binding = static_cast<uint32_t>(uniform.position),
++					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+ 					.descriptorCount = 1,
+ 					.stageFlags = shader.type,
+ 					.pImmutableSamplers = NULL
+ 				};
+ 			}
+-			for (auto uniformIt: shader.uniforms) {
+-				auto& uniform = uniformIt.second;
+-				if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
+-					layout_bindings[uniform.position] = {
+-						.binding = static_cast<uint32_t>(uniform.position),
+-						.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+-						.descriptorCount = 1,
+-						.stageFlags = shader.type,
+-						.pImmutableSamplers = NULL
+-					};
+-				}
+-			}
+-			shaderIdx++;
+ 		}
++		shaderIdx++;
++	}
+ 
+-		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.bindingCount = program.layout_bindings,
+-			.pBindings = layout_bindings,
+-		};
+-
+-		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+-		assert(!err);
++	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.bindingCount = program.layout_bindings,
++		.pBindings = layout_bindings,
++	};
+ 
+-		const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+-			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.setLayoutCount = 1,
+-			.pSetLayouts = &program.desc_layout,
+-		};
++	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
++	assert(!err);
+ 
+-		VkDescriptorSetLayout desc_layouts[DESC_MAX];
+-		for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
++	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
++		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.setLayoutCount = 1,
++		.pSetLayouts = &program.desc_layout,
++	};
+ 
+-		//
+-		VkDescriptorSetAllocateInfo alloc_info = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+-			.pNext = NULL,
+-			.descriptorPool = desc_pool,
+-			.descriptorSetCount = DESC_MAX,
+-			.pSetLayouts = desc_layouts
+-		};
+-		for (auto& context: contexts) {
+-			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+-			assert(!err);
+-		}
++	VkDescriptorSetLayout desc_layouts[DESC_MAX];
++	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+ 
+-		//
+-		err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	//
++	VkDescriptorSetAllocateInfo alloc_info = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
++		.pNext = NULL,
++		.descriptorPool = desc_pool,
++		.descriptorSetCount = DESC_MAX,
++		.pSetLayouts = desc_layouts
++	};
++	for (auto& context: contexts) {
++		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+ 		assert(!err);
+-
+-		//
+-		for (auto& context: contexts) context.uniform_buffers_changed.fill(true);
+-
+-		//
+-		program.created = true;
+ 	}
+ 
++	//
++	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	assert(!err);
++}
++
++void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& program) {
+ 	auto& context = contexts[contextIdx];
+ 	auto pipelinesIt = program.pipelines.find(context.pipeline_id);
+ 	if (pipelinesIt == program.pipelines.end()) {
+@@ -3153,7 +3137,7 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
+ 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
+ 
+ 		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
+-		if (program.created == false || pipelinesIt == program.pipelines.end()) {
++		if (pipelinesIt == program.pipelines.end()) {
+ 			createLinesRenderingPipeline(contextIdx, program);
+ 		}
+ 
+@@ -3170,128 +3154,123 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
+ 	}
+ }
+ 
+-inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type& program) {
+-	if (program.created == false) {
+-		VkResult err;
++inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
++	VkResult err;
+ 
+-		auto& programPipeline = program.pipelines["default"];
++	auto& programPipeline = program.pipelines["default"];
+ 
+-		//
+-		VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+-		memset(layout_bindings, 0, sizeof(layout_bindings));
+-
+-		// Stages
+-		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
+-		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
++	//
++	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
++	memset(layout_bindings, 0, sizeof(layout_bindings));
+ 
+-		auto shaderIdx = 0;
+-		for (auto shaderId: program.shader_ids) {
+-			auto shaderIt = shaders.find(shaderId);
+-			if (shaderIt == shaders.end()) {
+-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
+-				return;
+-			}
+-			auto& shader = shaderIt->second;
+-			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+-			shaderStages[shaderIdx].stage = shader.type;
+-			shaderStages[shaderIdx].module = shader.module;
+-			shaderStages[shaderIdx].pName = "main";
++	// Stages
++	VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
++	memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+ 
+-			for (int i = 0; i <= shader.binding_max; i++) {
+-				layout_bindings[i] = {
+-					.binding = static_cast<uint32_t>(i),
+-					.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+-					.descriptorCount = 1,
+-					.stageFlags = shader.type,
+-					.pImmutableSamplers = NULL
+-				};
+-			}
+-
+-			if (shader.ubo_binding_idx != -1) {
+-				layout_bindings[shader.ubo_binding_idx] = {
+-					.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+-					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+-					.descriptorCount = 1,
+-					.stageFlags = shader.type,
+-					.pImmutableSamplers = NULL
+-				};
+-			}
+-			shaderIdx++;
++	auto shaderIdx = 0;
++	for (auto shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
++		shaderStages[shaderIdx].stage = shader.type;
++		shaderStages[shaderIdx].module = shader.module;
++		shaderStages[shaderIdx].pName = "main";
++
++		for (int i = 0; i <= shader.binding_max; i++) {
++			layout_bindings[i] = {
++				.binding = static_cast<uint32_t>(i),
++				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
++				.descriptorCount = 1,
++				.stageFlags = shader.type,
++				.pImmutableSamplers = NULL
++			};
+ 		}
+-		const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.bindingCount = program.layout_bindings,
+-			.pBindings = layout_bindings,
+-		};
+ 
+-		err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+-		assert(!err);
++		if (shader.ubo_binding_idx != -1) {
++			layout_bindings[shader.ubo_binding_idx] = {
++				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
++				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
++				.descriptorCount = 1,
++				.stageFlags = shader.type,
++				.pImmutableSamplers = NULL
++			};
++		}
++		shaderIdx++;
++	}
++	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.bindingCount = program.layout_bindings,
++		.pBindings = layout_bindings,
++	};
+ 
+-		const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
+-			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.setLayoutCount = 1,
+-			.pSetLayouts = &program.desc_layout,
+-		};
++	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
++	assert(!err);
+ 
+-		VkDescriptorSetLayout desc_layouts[DESC_MAX];
+-		for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
++	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
++		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.setLayoutCount = 1,
++		.pSetLayouts = &program.desc_layout,
++	};
+ 
+-		//
+-		VkDescriptorSetAllocateInfo alloc_info = {
+-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+-			.pNext = NULL,
+-			.descriptorPool = desc_pool,
+-			.descriptorSetCount = DESC_MAX,
+-			.pSetLayouts = desc_layouts
+-		};
+-		for (auto& context: contexts) {
+-			err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+-			assert(!err);
+-		}
++	VkDescriptorSetLayout desc_layouts[DESC_MAX];
++	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+ 
+-		//
+-		err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	//
++	VkDescriptorSetAllocateInfo alloc_info = {
++		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
++		.pNext = NULL,
++		.descriptorPool = desc_pool,
++		.descriptorSetCount = DESC_MAX,
++		.pSetLayouts = desc_layouts
++	};
++	for (auto& context: contexts) {
++		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+ 		assert(!err);
++	}
+ 
+-		// create pipepine
+-		VkPipelineCacheCreateInfo pipelineCache = {
+-			.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
+-			.pNext = NULL,
+-			.flags = 0,
+-			.initialDataSize = 0,
+-			.pInitialData = NULL
+-		};
++	//
++	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
++	assert(!err);
+ 
+-		err = vkCreatePipelineCache(device, &pipelineCache, NULL, &programPipeline.pipelineCache);
+-		assert(!err);
++	// create pipepine
++	VkPipelineCacheCreateInfo pipelineCache = {
++		.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.initialDataSize = 0,
++		.pInitialData = NULL
++	};
+ 
+-		// create pipepine
+-		VkComputePipelineCreateInfo pipeline = {
+-		    .sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+-		    .pNext = NULL,
+-		    .flags = 0,
+-			.stage = shaderStages[0],
+-			.layout = program.pipeline_layout,
+-		    .basePipelineHandle = NULL,
+-		    .basePipelineIndex = 0
++	err = vkCreatePipelineCache(device, &pipelineCache, NULL, &programPipeline.pipelineCache);
++	assert(!err);
+ 
+-		};
++	// create pipepine
++	VkComputePipelineCreateInfo pipeline = {
++		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
++		.pNext = NULL,
++		.flags = 0,
++		.stage = shaderStages[0],
++		.layout = program.pipeline_layout,
++		.basePipelineHandle = NULL,
++		.basePipelineIndex = 0
+ 
+-		err = vkCreateComputePipelines(device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
+-		assert(!err);
++	};
+ 
+-		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
++	err = vkCreateComputePipelines(device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
++	assert(!err);
+ 
+-		//
+-		program.created = true;
++	vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
++}
+ 
+-		//
+-		for (auto& context: contexts) context.uniform_buffers_changed.fill(true);
+-	}
++inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type& program) {
+ }
+ 
+ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_type& program) {
+@@ -3299,7 +3278,7 @@ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_t
+ 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
+ 		pipeline_mutex.lock();
+ 		if (context.pipeline_id.empty() == true) context.pipeline_id = "default";
+-		if (program.created == false || program.pipelines.find(context.pipeline_id) == program.pipelines.end()) {
++		if (program.pipelines.find(context.pipeline_id) == program.pipelines.end()) {
+ 			createSkinningComputingPipeline(contextIdx, program);
+ 		}
+ 
+@@ -3313,38 +3292,45 @@ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_t
+ 	}
+ }
+ 
+-void VKRenderer::useProgram(int32_t programId)
++void VKRenderer::useProgram(void* context, int32_t programId)
+ {
+-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(programId));
++	auto& contextTyped = *static_cast<context_type*>(context);
++
++	//
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": " + to_string(programId));
+ 
+ 	// if unsetting program flush command buffers
+-	if (program_id != 0) {
+-		endDrawCommandsAllContexts();
+-		finishPipeline();
++	if (contextTyped.program_id != 0) {
++		endDrawCommands(contextTyped.idx);
++		finishPipeline(contextTyped.idx);
++		for (auto& ubo: contextTyped.uniform_buffers) ubo.clear();
+ 	}
+ 
+ 	//
+-	for (auto i = 0; i < Engine::getThreadCount(); i++) contexts[i].pipeline_id.clear();
+-
+-	program_id = 0;
++	contextTyped.program_id = 0;
+ 	if (programId == 0) return;
+ 
++	//
+ 	auto programIt = programs.find(programId);
+ 	if (programIt == programs.end()) {
+ 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(programId));
+ 		return;
+ 	}
+ 
++	//
+ 	auto& program = programIt->second;
+-	preparePipeline(program);
+-	program_id = programId;
++	preparePipeline(contextTyped.idx, program);
++	contextTyped.program_id = programId;
+ }
+ 
+-int32_t VKRenderer::createProgram()
++int32_t VKRenderer::createProgram(int type)
+ {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	auto& programStruct = programs[program_idx];
++	programStruct.type = type;
+ 	programStruct.id = program_idx++;
++	programStruct.uniform_buffers_stored.resize(Engine::getThreadCount());
++	for (auto i = 0; i < programStruct.uniform_buffers_stored.size(); i++) programStruct.uniform_buffers_stored[i] = false;
+ 	programStruct.uniform_buffers_last.resize(Engine::getThreadCount());
+ 	programStruct.uniform_buffers_changed_last.resize(Engine::getThreadCount());
+ 	programStruct.desc_sets.resize(Engine::getThreadCount());
+@@ -3454,7 +3440,7 @@ bool VKRenderer::linkProgram(int32_t programId)
+ 			// be verbose
+ 			Console::println(
+ 				string(
+-					string("GL3Renderer::") +
++					string("VKRenderer::") +
+ 					string(__FUNCTION__) +
+ 					string("[") +
+ 					to_string(shader.id) +
+@@ -3473,7 +3459,7 @@ bool VKRenderer::linkProgram(int32_t programId)
+ 			// be verbose
+ 			Console::println(
+ 				string(
+-					string("GL3Renderer::") +
++					string("VKRenderer::") +
+ 					string(__FUNCTION__) +
+ 					string("[") +
+ 					to_string(shader.id) +
+@@ -3536,6 +3522,30 @@ bool VKRenderer::linkProgram(int32_t programId)
+ 	// total bindings of program
+ 	programIt->second.layout_bindings = bindingIdx;
+ 
++	// create programs in terms of ubos and so on
++	if (programIt->second.type == PROGRAM_OBJECTS) {
++		createObjectsRenderingProgram(programIt->second);
++	} else
++	if (programIt->second.type == PROGRAM_POINTS) {
++		createPointsRenderingProgram(programIt->second);
++	} else
++	if (programIt->second.type == PROGRAM_LINES) {
++		createLinesRenderingProgram(programIt->second);
++	} else
++	if (programIt->second.type == PROGRAM_COMPUTE) {
++		createSkinningComputingProgram(programIt->second);
++	} else {
++		Console::println(
++			string("VKRenderer::") +
++			string(__FUNCTION__) +
++			string("[") +
++			to_string(programId) +
++			string("]") +
++			string(": unknown program: ") +
++			to_string(programIt->second.type)
++		);
++	}
++
+ 	//
+ 	return true;
+ }
+@@ -3559,9 +3569,11 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
+ }
+ 
+ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size) {
+-	auto programIt = programs.find(program_id);
++	auto& contextTyped = *static_cast<context_type*>(context);
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": " + to_string(contextTyped.program_id) + ": " + to_string(uniformId));
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program not found: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": program not found: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	auto& program = programIt->second;
+@@ -3571,9 +3583,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
+ 		return;
+ 	}
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
++	//
+ 	auto changedUniforms = 0;
+ 	auto shaderIdx = 0;
+ 	for (auto& shaderId: program.shader_ids) {
+@@ -3594,7 +3604,19 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
+ 			shaderUniform.texture_unit = *((int32_t*)data);
+ 		} else {
+ 			if (contextTyped.uniform_buffers[shaderIdx].size() < shaderUniform.position + size) {
+-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: uniform buffer is too small: " + to_string(shaderIdx) + "; " + to_string(contextTyped.uniform_buffers[shaderIdx].size()) + "; " + to_string(shaderUniform.position + size) + ": " + shaderUniform.name);
++				Console::println(
++					"VKRenderer::" +
++					string(__FUNCTION__) +
++					"(): program: uniform buffer is too small: " +
++					to_string(contextTyped.idx) + ": " +
++					to_string(contextTyped.program_id) + ": " +
++					to_string(shaderIdx) + "; " +
++					to_string(contextTyped.uniform_buffers[shaderIdx].size()) + "; " +
++					to_string(shaderUniform.position + size) + ": " +
++					shaderUniform.name + ": " +
++					to_string(shaderUniform.position + size) + " / " +
++					to_string(contextTyped.uniform_buffers[shaderIdx].size())
++				);
+ 				shaderIdx++;
+ 				continue;
+ 			}
+@@ -3629,7 +3651,7 @@ void VKRenderer::setProgramUniformFloat(void* context, int32_t uniformId, float
+ 
+ void VKRenderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& data)
+ {
+-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
++	if (VERBOSE == true) if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	array<float, 12> _data = {
+ 		data[0],
+ 		data[1],
+@@ -3661,12 +3683,14 @@ void VKRenderer::setProgramUniformFloatMatrices4x4(void* context, int32_t unifor
+ 
+ void VKRenderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
+ {
++	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+ }
+ 
+ void VKRenderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
+ {
++	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+ }
+@@ -3725,7 +3749,8 @@ void VKRenderer::enableCulling(void* context)
+ {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (contextTyped.culling_enabled == true) return;
+-	endDrawCommand(contextTyped.idx);
++	endDrawCommands(contextTyped.idx);
++	finishPipeline(contextTyped.idx);
+ 	contextTyped.culling_enabled = true;
+ 	contexts[contextTyped.idx].pipeline_id.clear();
+ }
+@@ -3734,18 +3759,18 @@ void VKRenderer::disableCulling(void* context)
+ {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (contextTyped.culling_enabled == false) return;
+-	endDrawCommand(contextTyped.idx);
++	endDrawCommands(contextTyped.idx);
++	finishPipeline(contextTyped.idx);
+ 	contextTyped.culling_enabled = false;
+-	contexts[contextTyped.idx].pipeline_id.clear();
+ }
+ 
+ void VKRenderer::setFrontFace(void* context, int32_t frontFace)
+ {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	if (contextTyped.front_face == frontFace) return;
+-	endDrawCommand(contextTyped.idx);
++	endDrawCommands(contextTyped.idx);
++	finishPipeline(contextTyped.idx);
+ 	contextTyped.front_face = (VkFrontFace)frontFace;
+-	contexts[contextTyped.idx].pipeline_id.clear();
+ }
+ 
+ void VKRenderer::setCullFace(int32_t cullFace)
+@@ -4674,9 +4699,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(frameBufferId));
+ 
+ 	// if unsetting program flush command buffers
+-	if (program_id != 0) {
+-		endDrawCommandsAllContexts();
+-	}
++	endDrawCommandsAllContexts();
+ 
+ 	//
+ 	if (frameBufferId != 0) {
+@@ -4818,7 +4841,7 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
+ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
+ 	if (size == 0) return;
+ 
+-	buffers_rwlock.readLock();
++	buffers_rwlock.writeLock(); // TODO: have a more fine grained locking here
+ 	auto bufferIt = buffers.find(bufferObjectId);
+ 	if (bufferIt == buffers.end()) {
+ 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+@@ -4826,7 +4849,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
+ 		return;
+ 	}
+ 	auto& buffer = bufferIt->second;
+-	buffers_rwlock.unlock();
+ 
+ 	//
+ 	VkResult err;
+@@ -4976,6 +4998,9 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
+ 		}
+ 		buffer.frame_cleaned_last = frame;
+ 	}
++
++	//
++	buffers_rwlock.unlock();
+ }
+ 
+ void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+@@ -5056,19 +5081,19 @@ void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, i
+ 
+ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances)
+ {
+-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
++	auto& contextTyped = *static_cast<context_type*>(context);
+ 
+ 	//
+-	auto programIt = programs.find(program_id);
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.program_id));
++
++	//
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	program_type& program = programIt->second;
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
+ 	// textures
+ 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
+ 		auto textureId = contextTyped.bound_textures[i];
+@@ -5092,10 +5117,8 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
+ 		};
+ 	}
+ 
+-	//
+-	buffers_rwlock.readLock();
+-
+-	//
++	// TODO: upload and get ubos in a single step
++	// upload ubos
+ 	auto shaderIdx = 0;
+ 	for (auto& shaderId: program.shader_ids) {
+ 		auto shaderIt = shaders.find(shaderId);
+@@ -5104,7 +5127,6 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
+ 			return;
+ 		}
+ 		auto& shader = shaderIt->second;
+-
+ 		if (shader.ubo_binding_idx == -1) {
+ 			shaderIdx++;
+ 			continue;
+@@ -5112,6 +5134,25 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
+ 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
+ 			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+ 		}
++		shaderIdx++;
++	}
++
++	//
++	buffers_rwlock.readLock();
++
++	// get ubos
++	shaderIdx = 0;
++	for (auto& shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx == -1) {
++			shaderIdx++;
++			continue;
++		}
+ 		uint32_t uboBufferSize;
+ 		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
+ 		shaderIdx++;
+@@ -5155,15 +5196,15 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
+ 
+ inline void VKRenderer::endDrawCommandsAllContexts() {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+-	for (auto i = 0; i < Engine::getThreadCount(); i++) endDrawCommand(i);
++	for (auto i = 0; i < Engine::getThreadCount(); i++) endDrawCommands(i);
+ 	memoryBarrier();
+ }
+ 
+-inline void VKRenderer::endDrawCommand(int contextIdx) {
++inline void VKRenderer::endDrawCommands(int contextIdx) {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	endRenderPass(contextIdx, __LINE__);
+ 	endDrawCommandBuffer(contextIdx, -1, true, true);
+-	// memoryBarrier(); // TODO: a.drewke
++	submitContext(contextIdx);
+ }
+ 
+ inline void VKRenderer::executeCommand(int contextIdx) {
+@@ -5177,9 +5218,9 @@ inline void VKRenderer::executeCommand(int contextIdx) {
+ 	if (contextTyped.command_type == context_type::COMMAND_NONE) return;
+ 
+ 	//
+-	auto programIt = programs.find(program_id);
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	auto& program = programIt->second;
+@@ -5210,7 +5251,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
+ 		endRenderPass(contextTyped.idx, __LINE__);
+ 		setupSkinningComputingPipeline(contextTyped.idx, program);
+ 	} else {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 
+@@ -5607,17 +5648,17 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
+ {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 
++	// have our context typed
++	auto& contextTyped = *static_cast<context_type*>(context);
++
+ 	// upload uniforms
+-	auto programIt = programs.find(program_id);
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	program_type& program = programIt->second;
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
+-
+ 	// textures
+ 	textures_rwlock.readLock();
+ 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
+@@ -5637,10 +5678,8 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
+ 	}
+ 	textures_rwlock.unlock();
+ 
+-	// buffers
+-	buffers_rwlock.readLock();
+-
+-	//
++	// TODO: upload and get ubos in a single step
++	// upload ubos
+ 	auto shaderIdx = 0;
+ 	for (auto& shaderId: program.shader_ids) {
+ 		auto shaderIt = shaders.find(shaderId);
+@@ -5649,7 +5688,6 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
+ 			return;
+ 		}
+ 		auto& shader = shaderIt->second;
+-
+ 		if (shader.ubo_binding_idx == -1) {
+ 			shaderIdx++;
+ 			continue;
+@@ -5657,6 +5695,25 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
+ 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
+ 			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+ 		}
++		shaderIdx++;
++	}
++
++	// buffers
++	buffers_rwlock.readLock();
++
++	// get ubos
++	shaderIdx = 0;
++	for (auto& shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx == -1) {
++			shaderIdx++;
++			continue;
++		}
+ 		uint32_t uboBufferSize;
+ 		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
+ 		shaderIdx++;
+@@ -5691,22 +5748,42 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
+ {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 
++	//
++	auto& contextTyped = *static_cast<context_type*>(context);
++
+ 	// upload uniforms
+-	auto programIt = programs.find(program_id);
++	auto programIt = programs.find(contextTyped.program_id);
+ 	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
+ 		return;
+ 	}
+ 	program_type& program = programIt->second;
+ 
+-	// have our context typed
+-	auto& contextTyped = *static_cast<context_type*>(context);
++	// TODO: upload and get ubos in a single step
++	// upload ubos
++	auto shaderIdx = 0;
++	for (auto& shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx == -1) {
++			shaderIdx++;
++			continue;
++		}
++		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
++			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
++		}
++		shaderIdx++;
++	}
+ 
+ 	// buffers
+ 	buffers_rwlock.readLock();
+ 
+-	//
+-	auto shaderIdx = 0;
++	// get ubos
++	shaderIdx = 0;
+ 	for (auto& shaderId: program.shader_ids) {
+ 		auto shaderIt = shaders.find(shaderId);
+ 		if (shaderIt == shaders.end()) {
+@@ -5719,9 +5796,6 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
+ 			shaderIdx++;
+ 			continue;
+ 		}
+-		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
+-			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+-		}
+ 		uint32_t uboBufferSize;
+ 		contextTyped.lines_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
+ 		shaderIdx++;
+@@ -5812,20 +5886,19 @@ void VKRenderer::doneGuiMode()
+ }
+ 
+ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+-	auto programIt = programs.find(program_id);
+-	if (programIt == programs.end()) {
+-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(program_id));
+-		return;
+-	}
+-	program_type& program = programIt->second;
+-
+ 	// have our context typed
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 
+ 	//
+-	buffers_rwlock.readLock();
++	auto programIt = programs.find(contextTyped.program_id);
++	if (programIt == programs.end()) {
++		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
++		return;
++	}
++	program_type& program = programIt->second;
+ 
+-	//
++	// TODO: upload and get ubos in a single step
++	// upload ubos
+ 	auto shaderIdx = 0;
+ 	for (auto& shaderId: program.shader_ids) {
+ 		auto shaderIt = shaders.find(shaderId);
+@@ -5834,7 +5907,6 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
+ 			return;
+ 		}
+ 		auto& shader = shaderIt->second;
+-
+ 		if (shader.ubo_binding_idx == -1) {
+ 			shaderIdx++;
+ 			continue;
+@@ -5842,6 +5914,25 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
+ 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
+ 			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+ 		}
++		shaderIdx++;
++	}
++
++	//
++	buffers_rwlock.readLock();
++
++	// get ubos
++	shaderIdx = 0;
++	for (auto& shaderId: program.shader_ids) {
++		auto shaderIt = shaders.find(shaderId);
++		if (shaderIt == shaders.end()) {
++			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
++			return;
++		}
++		auto& shader = shaderIt->second;
++		if (shader.ubo_binding_idx == -1) {
++			shaderIdx++;
++			continue;
++		}
+ 		uint32_t uboBufferSize;
+ 		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize); // TODO: do not use static 0 ubo buffer
+ 		shaderIdx++;
+@@ -5871,6 +5962,34 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
+ 	executeCommand(contextTyped.idx);
+ }
+ 
++inline void VKRenderer::submitContext(int contextIdx) {
++	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
++	VkResult err;
++
++	// end render passes
++	uint32_t submitted_cmd_buf_count = 0;
++	uint32_t submitted_cmd_buff_contextidx[DRAW_COMMANDBUFFER_MAX];
++	uint32_t submitted_cmd_buff_contextbuffidx[DRAW_COMMANDBUFFER_MAX];
++	finishSetupCommandBuffer(contextIdx);
++	endRenderPass(contextIdx, __LINE__); // TODO: draw cmd cycling
++	for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
++		if (endDrawCommandBuffer(contextIdx, j, false) == true) {
++			submitted_cmd_buff_contextidx[submitted_cmd_buf_count] = contextIdx;
++			submitted_cmd_buff_contextbuffidx[submitted_cmd_buf_count++] = j;
++		}
++	}
++
++	/*
++	for (auto i = 0; i < submitted_cmd_buf_count; i++) {
++		//
++		VkResult fence_result;
++		do {
++			fence_result = vkWaitForFences(device, 1, &contexts[submitted_cmd_buff_contextidx[i]].draw_fences[submitted_cmd_buff_contextbuffidx[i]], VK_TRUE, 100000000);
++		} while (fence_result == VK_TIMEOUT);
++	}
++	*/
++}
++
+ void VKRenderer::memoryBarrier() {
+ 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+ 	VkResult err;
+@@ -5959,7 +6078,7 @@ Matrix2D3x3& VKRenderer::getTextureMatrix(void* context) {
+ 	return contextTyped.texture_matrix;
+ }
+ 
+-const Renderer_Light& VKRenderer::getLight(void* context, int32_t lightId) {
++const Renderer_Light VKRenderer::getLight(void* context, int32_t lightId) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	return contextTyped.lights[lightId];
+ }
+@@ -5969,7 +6088,7 @@ void VKRenderer::setLight(void* context, int32_t lightId, const Renderer_Light&
+ 	contextTyped.lights[lightId] = light;
+ }
+ 
+-const array<float, 4>& VKRenderer::getEffectColorMul(void* context) {
++const array<float, 4> VKRenderer::getEffectColorMul(void* context) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	return contextTyped.effect_color_mul;
+ }
+@@ -5979,9 +6098,9 @@ void VKRenderer::setEffectColorMul(void* context, const array<float, 4>& effectC
+ 	contextTyped.effect_color_mul = effectColorMul;
+ }
+ 
+-const array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
++const array<float, 4> VKRenderer::getEffectColorAdd(void* context) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+-	contextTyped.effect_color_add;
++	return contextTyped.effect_color_add;
+ }
+ 
+ void VKRenderer::setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd) {
+@@ -5989,22 +6108,24 @@ void VKRenderer::setEffectColorAdd(void* context, const array<float, 4>& effectC
+ 	contextTyped.effect_color_add = effectColorAdd;
+ }
+ 
+-const Renderer_Material& VKRenderer::getMaterial(void* context) {
++const Renderer_Material VKRenderer::getMaterial(void* context) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	return contextTyped.material;
+ }
+ 
+ void VKRenderer::setMaterial(void* context, const Renderer_Material& material) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
++	if (VERBOSE == true) Console::println("VKRenderer::setMaterial(): " + to_string(contextTyped.idx) + ": " + contextTyped.shader);
+ 	contextTyped.material = material;
+ }
+ 
+-const string& VKRenderer::getShader(void* context) {
++const string VKRenderer::getShader(void* context) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
+ 	return contextTyped.shader;
+ }
+ 
+ void VKRenderer::setShader(void* context, const string& id) {
+ 	auto& contextTyped = *static_cast<context_type*>(context);
++	if (VERBOSE == true) Console::println("VKRenderer::setShader(): " + to_string(contextTyped.idx) + ": " + contextTyped.shader + " --> " + id);
+ 	contextTyped.shader = id;
+ }
+diff --git a/src/tdme/engine/subsystems/renderer/VKRenderer.h b/src/tdme/engine/subsystems/renderer/VKRenderer.h
+index c92803ef..0f7ea285 100644
+--- a/src/tdme/engine/subsystems/renderer/VKRenderer.h
++++ b/src/tdme/engine/subsystems/renderer/VKRenderer.h
+@@ -70,7 +70,7 @@ private:
+ 		uint32_t ubo_size { 0 };
+ 		uint32_t samplers { 0 };
+ 		int32_t binding_max { -1 };
+-		vector<int32_t> ubo { 0 };
++		vector<int32_t> ubo;
+ 		int32_t ubo_binding_idx { -1 };
+  		string source;
+  		string file;
+@@ -85,14 +85,15 @@ private:
+ 			VkPipelineCache pipelineCache { VK_NULL_HANDLE };
+ 			VkPipeline pipeline { VK_NULL_HANDLE };
+ 		};
++		int type { 0 };
+ 		unordered_map<string, pipeline_struct> pipelines;
+ 		vector<int32_t> shader_ids;
+ 		map<int32_t, string> uniforms;
+ 		vector<int32_t> uniform_buffers;
++		vector<bool> uniform_buffers_stored;
+ 		vector<array<vector<uint8_t>, 4>> uniform_buffers_last;
+ 		vector<array<bool, 4>> uniform_buffers_changed_last;
+ 		uint32_t layout_bindings { 0 };
+-		bool created { false };
+ 		VkPipelineLayout pipeline_layout { VK_NULL_HANDLE };
+ 		vector<array<VkDescriptorSet, DESC_MAX>> desc_sets;
+ 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
+@@ -264,6 +265,8 @@ private:
+ 
+ 		bool culling_enabled { true };
+ 		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
++
++		int32_t program_id { 0 };
+ 	};
+ 
+ 	VkSurfaceKHR surface { VK_NULL_HANDLE };
+@@ -342,11 +345,10 @@ private:
+ 	VkViewport viewport;
+ 	VkRect2D scissor;
+ 
+-	int32_t program_id { 0 };
+ 	int32_t bound_frame_buffer { 0 };
+ 
+ 	bool blending_enabled { true };
+-	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT };
++	VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
+ 	bool depth_buffer_writing { true };
+ 	bool depth_buffer_testing { true };
+ 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };
+@@ -374,22 +376,26 @@ private:
+ 	EShLanguage shaderFindLanguage(const VkShaderStageFlagBits shaderType);
+ 	void initializeSwapChain();
+ 	void initializeFrameBuffers();
+-	void endDrawCommand(int contextIdx);
++	void endDrawCommands(int contextIdx);
+ 	void endDrawCommandsAllContexts();
+ 	void executeCommand(int contextIdx);
+ 	void initializeRenderPass();
+ 	void startRenderPass(int contextIdx, int line);
+ 	void endRenderPass(int contextIdx, int line);
+-	void preparePipeline(program_type& program);
++	void preparePipeline(int contextIdx, program_type& program);
++	void createObjectsRenderingProgram(program_type& program);
+ 	void createObjectsRenderingPipeline(int contextIdx, program_type& program);
+ 	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
++	void createPointsRenderingProgram(program_type& program);
+ 	void createPointsRenderingPipeline(int contextIdx, program_type& program);
+ 	void setupPointsRenderingPipeline(int contextIdx, program_type& program);
++	void createLinesRenderingProgram(program_type& program);
+ 	void createLinesRenderingPipeline(int contextIdx, program_type& program);
+ 	void setupLinesRenderingPipeline(int contextIdx, program_type& program);
++	void createSkinningComputingProgram(program_type& program);
+ 	void createSkinningComputingPipeline(int contextIdx, program_type& program);
+ 	void setupSkinningComputingPipeline(int contextIdx, program_type& program);
+-	void finishPipeline();
++	void finishPipeline(int contextIdx);
+ 	void prepareSetupCommandBuffer(int contextIdx);
+ 	void finishSetupCommandBuffer(int contextIdx);
+ 	void finishSetupCommandBuffers();
+@@ -415,6 +421,7 @@ private:
+ 	void createFramebufferObject(int32_t frameBufferId);
+ 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
+ 	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true, bool waitUntilSubmitted = false);
++	void submitContext(int contextIdx);
+ 
+ public:
+ 	const string getShaderVersion() override;
+@@ -438,8 +445,8 @@ public:
+ 	bool isGeometryShaderAvailable() override;
+ 	int32_t getTextureUnits() override;
+ 	int32_t loadShader(int32_t type, const string& pathName, const string& fileName, const string& definitions = string(), const string& functions = string()) override;
+-	void useProgram(int32_t programId) override;
+-	int32_t createProgram() override;
++	void useProgram(void* context, int32_t programId) override;
++	int32_t createProgram(int type) override;
+ 	void attachShaderToProgram(int32_t programId, int32_t shaderId) override;
+ 	bool linkProgram(int32_t programId) override;
+ 	int32_t getProgramUniformLocation(int32_t programId, const string& name) override;
+@@ -531,15 +538,15 @@ public:
+ 	int32_t getTextureUnit(void* context);
+ 	void setTextureUnit(void* context, int32_t textureUnit);
+ 	virtual Matrix2D3x3& getTextureMatrix(void* context);
+-	virtual const Renderer_Light& getLight(void* context, int32_t lightId);
++	virtual const Renderer_Light getLight(void* context, int32_t lightId);
+ 	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
+-	virtual const array<float, 4>& getEffectColorMul(void* context);
++	virtual const array<float, 4> getEffectColorMul(void* context);
+ 	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
+-	virtual const array<float, 4>& getEffectColorAdd(void* context);
++	virtual const array<float, 4> getEffectColorAdd(void* context);
+ 	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
+-	virtual const Renderer_Material& getMaterial(void* context);
++	virtual const Renderer_Material getMaterial(void* context);
+ 	virtual void setMaterial(void* context, const Renderer_Material& material);
+-	virtual const string& getShader(void* context);
++	virtual const string getShader(void* context);
+ 	virtual void setShader(void* context, const string& id);
+ 
+ public:
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp b/src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp
+index c7d951fe..fdf236ee 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp
++++ b/src/tdme/engine/subsystems/rendering/Object3DGroupMesh.cpp
+@@ -311,7 +311,7 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *conte
+ 		}
+ 		auto sbIndices = ObjectBuffer::getByteBuffer(context, faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
+ 		// create face vertex indices, will never be changed in engine
+-		for (auto index : indices) {
++		for (auto index: indices) {
+ 			sbIndices.put(index);
+ 		}
+ 		// done, upload
+@@ -319,7 +319,7 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *conte
+ 	} else {
+ 		auto ibIndices = ObjectBuffer::getByteBuffer(context, faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
+ 		// create face vertex indices, will never be changed in engine
+-		for (auto index : indices) {
++		for (auto index: indices) {
+ 			ibIndices.put(index);
+ 		}
+ 		// done, upload
+@@ -336,7 +336,7 @@ void Object3DGroupMesh::setupTextureCoordinatesBuffer(Renderer* renderer, void*
+ 	// create texture coordinates buffer, will never be changed in engine
+ 	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, groupTextureCoordinates.size() * 2 * sizeof(float))->asFloatBuffer();
+ 	// construct texture coordinates byte buffer as this will not change usually
+-	for (auto& textureCoordinate : groupTextureCoordinates) {
++	for (auto& textureCoordinate: groupTextureCoordinates) {
+ 		fbTextureCoordinates.put(textureCoordinate.getArray());
+ 	}
+ 	// done, upload
+@@ -347,7 +347,7 @@ void Object3DGroupMesh::setupVerticesBuffer(Renderer* renderer, void* context, i
+ {
+ 	auto fbVertices = ObjectBuffer::getByteBuffer(context, vertices->size() * 3 * sizeof(float))->asFloatBuffer();
+ 	// create vertices buffers
+-	for (auto& vertex : *vertices) {
++	for (auto& vertex: *vertices) {
+ 		fbVertices.put(vertex.getArray());
+ 	}
+ 	// done, upload
+@@ -358,7 +358,7 @@ void Object3DGroupMesh::setupNormalsBuffer(Renderer* renderer, void* context, in
+ {
+ 	auto fbNormals = ObjectBuffer::getByteBuffer(context, normals->size() * 3 * sizeof(float))->asFloatBuffer();
+ 	// create normals buffers
+-	for (auto& normal : *normals) {
++	for (auto& normal: *normals) {
+ 		fbNormals.put(normal.getArray());
+ 	}
+ 	// done, upload
+@@ -371,7 +371,7 @@ void Object3DGroupMesh::setupTangentsBuffer(Renderer* renderer, void* context, i
+ 	if (tangents == nullptr) return;
+ 	auto fbTangents = ObjectBuffer::getByteBuffer(context, tangents->size() * 3 * sizeof(float))->asFloatBuffer();
+ 	// create tangents buffers
+-	for (auto& tangent : *tangents) {
++	for (auto& tangent: *tangents) {
+ 		fbTangents.put(tangent.getArray());
+ 	}
+ 	// done, upload
+@@ -384,7 +384,7 @@ void Object3DGroupMesh::setupBitangentsBuffer(Renderer* renderer, void* context,
+ 	if (bitangents == nullptr) return;
+ 	auto fbBitangents = ObjectBuffer::getByteBuffer(context, bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
+ 	// create bitangents buffers
+-	for (auto& bitangent : *bitangents) {
++	for (auto& bitangent: *bitangents) {
+ 		fbBitangents.put(bitangent.getArray());
+ 	}
+ 	// done, upload
+@@ -398,7 +398,7 @@ void Object3DGroupMesh::setupOriginsBuffer(Renderer* renderer, void* context, in
+ 	// create texture coordinates buffer, will never be changed in engine
+ 	auto fbOrigins = ObjectBuffer::getByteBuffer(context, origins.size() * 3 * sizeof(float))->asFloatBuffer();
+ 	// construct float buffer as this will not change usually
+-	for (auto& origin : origins) {
++	for (auto& origin: origins) {
+ 		fbOrigins.put(origin.getArray());
+ 	}
+ 	// done, upload
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.cpp b/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.cpp
+index 84061bea..9aa5b3ef 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.cpp
++++ b/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.cpp
+@@ -31,34 +31,44 @@ Object3DGroupRenderer::Object3DGroupRenderer(Object3DGroup* object3DGroup)
+ {
+ 	this->object3DGroup = object3DGroup;
+ 	this->vboBaseIds = nullptr;
+-	this->vboTangentBitangentIds = nullptr;
++	this->vboNormalMappingIds = nullptr;
+ }
+ 
+ void Object3DGroupRenderer::preRender(void* context)
+ {
++	VBOManager_VBOManaged* vboManagedBase = nullptr;
++	VBOManager_VBOManaged* vboManagedNormalMapping = nullptr;
++	VBOManager_VBOManaged* vboManagedOrigins = nullptr;
+ 	auto meshUploaded = true;
+ 
+ 	// initialize if not yet done
+ 	if (vboBaseIds == nullptr) {
+-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id, 4, true); // TODO: check for texture coorditantes
+-		vboBaseIds = vboManaged->getVBOIds();
+-		meshUploaded = vboManaged->isUploaded();
++		vboManagedBase = Engine::getInstance()->getVBOManager()->addVBO(
++			object3DGroup->id,
++			3 + (object3DGroup->mesh->group->getTextureCoordinates().size() > 0?1:0),
++			true
++		);
++		if (vboManagedBase->getReferenceCounter() > 1) while (vboManagedBase->isUploaded() == false);
++		vboBaseIds = vboManagedBase->getVBOIds();
++		meshUploaded = vboManagedBase->isUploaded();
+ 	}
+ 
+ 	// initialize tangents, bitangents
+ 	if (Engine::renderer->isNormalMappingAvailable() &&
+ 		object3DGroup->mesh->group->getTangents().size() > 0 &&
+ 		object3DGroup->mesh->group->getBitangents().size() > 0 &&
+-		vboTangentBitangentIds == nullptr) {
+-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".tangentbitangent", 2, true);
+-		vboTangentBitangentIds = vboManaged->getVBOIds();
++		vboNormalMappingIds == nullptr) {
++		vboManagedNormalMapping = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".normalmapping", 2, true);
++		if (vboManagedNormalMapping->getReferenceCounter() > 1) while (vboManagedNormalMapping->isUploaded() == false);
++		vboNormalMappingIds = vboManagedNormalMapping->getVBOIds();
+ 	}
+ 
+ 	// initialize tangents, bitangents
+ 	if (object3DGroup->mesh->group->getOrigins().size() > 0 &&
+ 		vboOrigins == nullptr) {
+-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true);
+-		vboOrigins = vboManaged->getVBOIds();
++		vboManagedOrigins = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true);
++		if (vboManagedOrigins->getReferenceCounter() > 1) while (vboManagedOrigins->isUploaded() == false);
++		vboOrigins = vboManagedOrigins->getVBOIds();
+ 	}
+ 
+ 	//
+@@ -76,6 +86,7 @@ void Object3DGroupRenderer::preRender(void* context)
+ 			// upload render group object origins
+ 			if (object3DGroup->mesh->group->getOrigins().size() > 0) {
+ 				object3DGroup->mesh->setupOriginsBuffer(Engine::renderer, context, (*vboOrigins)[0]);
++				vboManagedOrigins->setUploaded(true);
+ 			}
+ 		}
+ 		// upload vertices
+@@ -83,10 +94,12 @@ void Object3DGroupRenderer::preRender(void* context)
+ 		// upload normals
+ 		object3DGroup->mesh->setupNormalsBuffer(Engine::renderer, context, (*vboBaseIds)[2]);
+ 		// tangents, bitangents
+-		if (vboTangentBitangentIds != nullptr) {
+-			object3DGroup->mesh->setupTangentsBuffer(Engine::renderer, context, (*vboTangentBitangentIds)[0]);
+-			object3DGroup->mesh->setupBitangentsBuffer(Engine::renderer, context, (*vboTangentBitangentIds)[1]);
++		if (vboNormalMappingIds != nullptr) {
++			object3DGroup->mesh->setupTangentsBuffer(Engine::renderer, context, (*vboNormalMappingIds)[0]);
++			object3DGroup->mesh->setupBitangentsBuffer(Engine::renderer, context, (*vboNormalMappingIds)[1]);
++			vboManagedNormalMapping->setUploaded(true);
+ 		}
++		vboManagedBase->setUploaded(true);
+ 	}
+ }
+ 
+@@ -96,9 +109,9 @@ void Object3DGroupRenderer::dispose()
+ 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id);
+ 		vboBaseIds = nullptr;
+ 	}
+-	if (vboTangentBitangentIds != nullptr) {
+-		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".tangentbitangent");
+-		vboTangentBitangentIds = nullptr;
++	if (vboNormalMappingIds != nullptr) {
++		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".normalmapping");
++		vboNormalMappingIds = nullptr;
+ 	}
+ 	if (vboOrigins != nullptr) {
+ 		Engine::getInstance()->getVBOManager()->removeVBO(object3DGroup->id + ".origins");
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.h b/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.h
+index 71e4e68e..67f0f94a 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.h
++++ b/src/tdme/engine/subsystems/rendering/Object3DGroupRenderer.h
+@@ -30,7 +30,7 @@ class tdme::engine::subsystems::rendering::Object3DGroupRenderer final
+ private:
+ 	Object3DGroup* object3DGroup { nullptr };
+ 	vector<int32_t>* vboBaseIds { nullptr };
+-	vector<int32_t>* vboTangentBitangentIds { nullptr  };
++	vector<int32_t>* vboNormalMappingIds { nullptr  };
+ 	vector<int32_t>* vboOrigins { nullptr };
+ 	bool haveVBOs { false };
+ public:
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp b/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
+index 00ae4a97..2e02f6d9 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
++++ b/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
+@@ -136,17 +136,14 @@ Object3DRenderer::Object3DRenderer(Engine* engine, Renderer* renderer) {
+ 	renderTransparentRenderPointsPool = new RenderTransparentRenderPointsPool(65535);
+ 	psePointBatchRenderer = new BatchRendererPoints(renderer, 0);
+ 	threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
++	contexts.resize(threadCount);
+ 	if (this->renderer->isInstancedRenderingAvailable() == true) {
+-		bbEffectColorMuls.resize(threadCount);
+-		bbEffectColorAdds.resize(threadCount);
+-		bbMvMatrices.resize(threadCount);
+-		for (auto i = 0; i < threadCount; i++) {
+-			bbEffectColorMuls[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+-			bbEffectColorAdds[i] = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+-			bbMvMatrices[i] = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
++		for (auto& context: contexts) {
++			context.bbEffectColorMuls = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
++			context.bbEffectColorAdds = ByteBuffer::allocate(4 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
++			context.bbMvMatrices = ByteBuffer::allocate(16 * sizeof(float) * INSTANCEDRENDERING_OBJECTS_MAX);
+ 		}
+ 	}
+-	vboInstancedRenderingIds.resize(threadCount);
+ }
+ 
+ Object3DRenderer::~Object3DRenderer() {
+@@ -164,7 +161,7 @@ void Object3DRenderer::initialize()
+ 	psePointBatchRenderer->initialize();
+ 	for (auto i = 0; i < threadCount; i++) {
+ 		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3drenderer.instancedrendering." + to_string(i), 3, false);
+-		vboInstancedRenderingIds[i] = vboManaged->getVBOIds();
++		contexts[i].vboInstancedRenderingIds = vboManaged->getVBOIds();
+ 	}
+ }
+ 
+@@ -210,9 +207,6 @@ void Object3DRenderer::reset()
+ 
+ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
+ {
+-	// reset shader
+-	renderer->setShader(renderer->getDefaultContext(), string());
+-
+ 	// clear transparent render faces data
+ 	transparentRenderFacesPool->reset();
+ 	releaseTransparentFacesGroups();
+@@ -220,7 +214,6 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
+ 	if (renderer->isSupportingMultithreadedRendering() == false) {
+ 		renderFunction(1, 0, objects, objectsByModels, renderTransparentFaces, renderTypes);
+ 	} else {
+-
+ 		Object3DRenderer_InstancedRenderFunctionParameters parameters;
+ 		parameters.objects = objects;
+ 		parameters.collectTransparentFaces = renderTransparentFaces;
+@@ -231,6 +224,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
+ 		for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
+ 
+ 		renderFunction(threadCount, 0, objects, objectsByModels, renderTransparentFaces, renderTypes);
++		//for (auto engineThread: Engine::engineThreads) engineThread->test();
+ 
+ 		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
+ 		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
+@@ -379,9 +373,9 @@ void Object3DRenderer::releaseTransparentFacesGroups()
+ 	transparentRenderFacesGroups.clear();
+ }
+ 
+-void Object3DRenderer::renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
++void Object3DRenderer::renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
+ 	if (renderer->isInstancedRenderingAvailable() == true) {
+-		renderObjectsOfSameTypeInstanced(0, objects, collectTransparentFaces, renderTypes);
++		renderObjectsOfSameTypeInstanced(threadIdx, objects, collectTransparentFaces, renderTypes);
+ 	} else {
+ 		renderObjectsOfSameTypeNonInstanced(objects, collectTransparentFaces, renderTypes);
+ 	}
+@@ -393,6 +387,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
+ 	auto camera = engine->getCamera();
+ 
+ 	// use default context
++	auto& object3DRenderContext = contexts[0];
+ 	auto context = renderer->getDefaultContext();
+ 
+ 	//
+@@ -518,13 +513,13 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
+ 					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS) renderer->bindNormalsBufferObject(context, (*currentVBOIds)[2]);
+ 				}
+ 				// bind tangent, bitangend buffers if not yet bound
+-				auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
++				auto currentVBONormalMappingIds = _object3DGroup->renderer->vboNormalMappingIds;
+ 				if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
+-					renderer->isNormalMappingAvailable() && currentVBOTangentBitangentIds != nullptr && currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
++					renderer->isNormalMappingAvailable() && currentVBONormalMappingIds != nullptr && currentVBONormalMappingIds != boundVBOTangentBitangentIds) {
+ 					// tangent
+-					renderer->bindTangentsBufferObject(context, (*currentVBOTangentBitangentIds)[0]);
++					renderer->bindTangentsBufferObject(context, (*currentVBONormalMappingIds)[0]);
+ 					// bitangent
+-					renderer->bindBitangentsBufferObject(context, (*currentVBOTangentBitangentIds)[1]);
++					renderer->bindBitangentsBufferObject(context, (*currentVBONormalMappingIds)[1]);
+ 				}
+ 				// set up local -> world transformations matrix
+ 				renderer->getModelViewMatrix().set(
+@@ -537,7 +532,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
+ 				);
+ 				renderer->onUpdateModelViewMatrix(context);
+ 				// set up front face
+-				auto objectFrontFace = matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
++				auto objectFrontFace = object3DRenderContext.matrix4x4Negative.isNegative(renderer->getModelViewMatrix()) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+ 				if (objectFrontFace != currentFrontFace) {
+ 					renderer->setFrontFace(context, objectFrontFace);
+ 					currentFrontFace = objectFrontFace;
+@@ -590,7 +585,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
+ 
+ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes)
+ {
+-	// use default context
++	// contexts
++	auto& object3DRenderContext = contexts[threadIdx];
+ 	auto context = renderer->getContext(threadIdx);
+ 
+ 	//
+@@ -601,7 +597,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 
+ 	//
+ 	auto camera = engine->camera;
+-	auto frontFace = 0;
++	auto frontFace = -1;
+ 
+ 	// render faces entities
+ 	auto firstObject = objects[0];
+@@ -658,7 +654,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 			}
+ 
+ 			// draw this faces entity for each object
+-			objectsToRender = objects;
++			object3DRenderContext.objectsToRender = objects;
+ 			do {
+ 				auto hadShaderSetup = false;
+ 				Matrix4x4Negative matrix4x4Negative;
+@@ -667,23 +663,23 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 				Matrix4x4 modelViewMatrixTemp;
+ 				Matrix4x4 modelViewMatrix;
+ 
+-				FloatBuffer fbEffectColorMuls = bbEffectColorMuls[threadIdx]->asFloatBuffer();
+-				FloatBuffer fbEffectColorAdds = bbEffectColorAdds[threadIdx]->asFloatBuffer();
+-				FloatBuffer fbMvMatrices = bbMvMatrices[threadIdx]->asFloatBuffer();
++				FloatBuffer fbEffectColorMuls = object3DRenderContext.bbEffectColorMuls->asFloatBuffer();
++				FloatBuffer fbEffectColorAdds = object3DRenderContext.bbEffectColorAdds->asFloatBuffer();
++				FloatBuffer fbMvMatrices = object3DRenderContext.bbMvMatrices->asFloatBuffer();
+ 
+ 				string materialKey;
+ 				bool materialUpdateOnly = false;
+ 				vector<int32_t>* boundVBOBaseIds = nullptr;
+ 				vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
+ 				vector<int32_t>* boundVBOOrigins = nullptr;
+-				auto objectCount = objectsToRender.size();
++				auto objectCount = object3DRenderContext.objectsToRender.size();
+ 
+ 				//
+-				auto textureMatrix = objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
++				auto textureMatrix = object3DRenderContext.objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
+ 
+ 				// draw objects
+ 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
+-					auto object = objectsToRender[objectIdx];
++					auto object = object3DRenderContext.objectsToRender[objectIdx];
+ 					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
+ 
+ 					//	check transparency via effect
+@@ -707,13 +703,13 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 
+ 					// limit objects to render to INSTANCEDRENDERING_OBJECTS_MAX
+ 					if (fbMvMatrices.getPosition() / 16 == INSTANCEDRENDERING_OBJECTS_MAX) {
+-						objectsNotRendered.push_back(object);
++						object3DRenderContext.objectsNotRendered.push_back(object);
+ 						continue;
+ 					}
+ 
+ 					// check if texture matrix did change
+ 					if (_object3DGroup->textureMatricesByEntities[faceEntityIdx].equals(textureMatrix) == false) {
+-						objectsNotRendered.push_back(object);
++						object3DRenderContext.objectsNotRendered.push_back(object);
+ 						continue;
+ 					}
+ 
+@@ -724,19 +720,20 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 						objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+ 							object->getShader():
+ 							object->getDistanceShader();
+-					if (hadShaderSetup == false && renderer->getShader(context) != objectShader) {
++					if (hadShaderSetup == false) {
+ 						renderer->setShader(context, objectShader);
+ 						renderer->onUpdateShader(context);
+ 						for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(context);
+ 						// issue upload matrices
+ 						renderer->onUpdateCameraMatrix(context);
+ 						renderer->onUpdateProjectionMatrix(context);
++						//
++						hadShaderSetup = true;
+ 					} else
+ 					if (objectShader != renderer->getShader(context)) {
+-						objectsNotRendered.push_back(object);
++						object3DRenderContext.objectsNotRendered.push_back(object);
+ 						continue;
+ 					}
+-					hadShaderSetup = true;
+ 
+ 					// set up material on first object and update on succeeding
+ 					auto materialKeyCurrent = materialKey;
+@@ -751,7 +748,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 
+ 					// check if material key has not been set yet
+ 					if (materialKey != materialKeyCurrent) {
+-						objectsNotRendered.push_back(object);
++						object3DRenderContext.objectsNotRendered.push_back(object);
+ 						continue;
+ 					}
+ 
+@@ -776,25 +773,25 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 					} else
+ 					// check if buffers did change, then skip and render in next step
+ 					if (boundVBOBaseIds != currentVBOBaseIds) {
+-						objectsNotRendered.push_back(object);
++						object3DRenderContext.objectsNotRendered.push_back(object);
+ 						continue;
+ 					}
+ 					// bind tangent, bitangend buffers
+-					auto currentVBOTangentBitangentIds = _object3DGroup->renderer->vboTangentBitangentIds;
++					auto currentVBONormalMappingIds = _object3DGroup->renderer->vboNormalMappingIds;
+ 					if ((renderTypes & RENDERTYPE_NORMALS) == RENDERTYPE_NORMALS &&
+-						renderer->isNormalMappingAvailable() == true && currentVBOTangentBitangentIds != nullptr) {
++						renderer->isNormalMappingAvailable() == true && currentVBONormalMappingIds != nullptr) {
+ 						// bind tangent, bitangend buffers if not yet done
+ 						if (boundVBOTangentBitangentIds == nullptr) {
+ 							// tangent
+-							renderer->bindTangentsBufferObject(context, (*currentVBOTangentBitangentIds)[0]);
++							renderer->bindTangentsBufferObject(context, (*currentVBONormalMappingIds)[0]);
+ 							// bitangent
+-							renderer->bindBitangentsBufferObject(context, (*currentVBOTangentBitangentIds)[1]);
++							renderer->bindBitangentsBufferObject(context, (*currentVBONormalMappingIds)[1]);
+ 							//
+-							boundVBOTangentBitangentIds = currentVBOTangentBitangentIds;
++							boundVBOTangentBitangentIds = currentVBONormalMappingIds;
+ 						} else
+ 						// check if buffers did change, then skip and render in next step
+-						if (currentVBOTangentBitangentIds != boundVBOTangentBitangentIds) {
+-							objectsNotRendered.push_back(object);
++						if (currentVBONormalMappingIds != boundVBOTangentBitangentIds) {
++							object3DRenderContext.objectsNotRendered.push_back(object);
+ 							continue;
+ 						}
+ 					}
+@@ -810,7 +807,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 						} else
+ 						// check if buffers did change, then skip and render in next step
+ 						if (currentVBOOrigins != boundVBOOrigins) {
+-							objectsNotRendered.push_back(object);
++							object3DRenderContext.objectsNotRendered.push_back(object);
+ 							continue;
+ 						}
+ 					}
+@@ -827,12 +824,12 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 					// set up front face
+ 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
+ 					// if front face changed just render in next step
+-					if (frontFace == 0) {
++					if (frontFace == -1) {
+ 						frontFace = objectFrontFace;
+ 						renderer->setFrontFace(context, frontFace);
+ 					} else
+ 					if (objectFrontFace != frontFace) {
+-						objectsNotRendered.push_back(object);
++						object3DRenderContext.objectsNotRendered.push_back(object);
+ 						continue;
+ 					}
+ 
+@@ -851,17 +848,17 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 				if (objectsToRenderIssue > 0) {
+ 					// upload model view matrices
+ 					{
+-						renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
+-						renderer->bindModelMatricesBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[0]);
++						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[0], fbMvMatrices.getPosition() * sizeof(float), &fbMvMatrices);
++						renderer->bindModelMatricesBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[0]);
+ 					}
+ 
+ 					// upload effects
+ 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
+ 						// upload effect color mul
+-						renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
+-						renderer->bindEffectColorMulsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[1]);
+-						renderer->uploadBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
+-						renderer->bindEffectColorAddsBufferObject(context, (*vboInstancedRenderingIds[threadIdx])[2]);
++						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
++						renderer->bindEffectColorMulsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[1]);
++						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
++						renderer->bindEffectColorAddsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[2]);
+ 					}
+ 
+ 					// set up texture matrix
+@@ -877,9 +874,9 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 				}
+ 
+ 				// clear list of objects we did not render
+-				objectsToRender = objectsNotRendered;
+-				objectsNotRendered.clear();
+-			} while (objectsToRender.size() > 0);
++				object3DRenderContext.objectsToRender = object3DRenderContext.objectsNotRendered;
++				object3DRenderContext.objectsNotRendered.clear();
++			} while (object3DRenderContext.objectsToRender.size() > 0);
+ 
+ 			// keep track of rendered faces
+ 			faceIdx += faces;
+@@ -895,8 +892,8 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
+ 	renderer->unbindBufferObjects(context);
+ 
+ 	// reset objects to render
+-	objectsToRender.clear();
+-	objectsNotRendered.clear();
++	object3DRenderContext.objectsToRender.clear();
++	object3DRenderContext.objectsNotRendered.clear();
+ }
+ 
+ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DRenderer.h b/src/tdme/engine/subsystems/rendering/Object3DRenderer.h
+index f9364b9c..da60ef55 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DRenderer.h
++++ b/src/tdme/engine/subsystems/rendering/Object3DRenderer.h
+@@ -24,7 +24,6 @@
+ #include <tdme/math/Matrix4x4Negative.h>
+ #include <tdme/utils/fwd-tdme.h>
+ #include <tdme/utils/ByteBuffer.h>
+-#include <tdme/utils/Console.h>
+ #include <tdme/utils/Pool.h>
+ 
+ using std::unordered_map;
+@@ -51,7 +50,6 @@ using tdme::math::Matrix4x4;
+ using tdme::math::Matrix4x4Negative;
+ using tdme::math::Vector3;
+ using tdme::utils::ByteBuffer;
+-using tdme::utils::Console;
+ using tdme::utils::Pool;
+ 
+ /** 
+@@ -68,9 +66,19 @@ private:
+ 	static constexpr int32_t BATCHRENDERER_MAX { 256 };
+ 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
+ 
++	struct Object3DRenderContext {
++		vector<int32_t>* vboInstancedRenderingIds { nullptr };
++		ByteBuffer* bbEffectColorMuls { nullptr };
++		ByteBuffer* bbEffectColorAdds { nullptr };
++		ByteBuffer* bbMvMatrices { nullptr };
++		Matrix4x4Negative matrix4x4Negative;
++		vector<Object3D*> objectsToRender;
++		vector<Object3D*> objectsNotRendered;
++	};
++
+ 	Engine* engine { nullptr };
+ 	Renderer* renderer { nullptr };
+-	vector<vector<int32_t>*> vboInstancedRenderingIds;
++
+ 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
+ 	unordered_map<string, vector<Object3D*>> objectsByModels;
+ 	vector<TransparentRenderFace*> groupTransparentRenderFaces;
+@@ -79,14 +87,8 @@ private:
+ 	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups;
+ 	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
+ 	BatchRendererPoints* psePointBatchRenderer { nullptr };
+-	Matrix4x4Negative matrix4x4Negative;
+-	vector<Object3D*> objectsToRender;
+-	vector<Object3D*> objectsNotRendered;
+-	vector<Object3D*> singleObjectsNotRendered;
+ 	int threadCount;
+-	vector<ByteBuffer*> bbEffectColorMuls;
+-	vector<ByteBuffer*> bbEffectColorAdds;
+-	vector<ByteBuffer*> bbMvMatrices;
++	vector<Object3DRenderContext> contexts;
+ 
+ 	/** 
+ 	 * Renders transparent faces
+@@ -109,11 +111,12 @@ private:
+ 
+ 	/** 
+ 	 * Renders multiple objects of same type(with same model)
++	 * @param threadIdx thread idx
+ 	 * @param objects objects of same type/ with same models
+ 	 * @param collectTransparentFaces collect render faces
+ 	 * @param renderTypes render types
+ 	 */
+-	void renderObjectsOfSameType(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
++	void renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+ 
+ 	/** 
+ 	 * Renders multiple objects of same type(with same model) not using instancing
+@@ -172,30 +175,29 @@ private:
+ 	inline void renderFunction(
+ 		int threadCount,
+ 		int threadIdx,
+-		vector<Object3D*> objects,
+-		unordered_map<string, vector<Object3D*>> objectsByModel,
++		const vector<Object3D*>& objects,
++		unordered_map<string, vector<Object3D*>>& objectsByModels,
+ 		bool renderTransparentFaces,
+ 		int renderTypes) {
++		auto objectsToRender = 0;
+ 		// sort objects by model
+ 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
+-			if (threadCount > 1 && objectIdx % threadCount != threadIdx) {
+-				objectIdx++;
+-				continue;
+-			}
++			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
+ 			auto object = objects[objectIdx];
+ 			auto modelId = object->getModel()->getId();
+-			auto& visibleObjectsByModel = objectsByModel[modelId];
+-			visibleObjectsByModel.push_back(object);
++			auto& objectsByModel = objectsByModels[modelId];
++			objectsByModel.push_back(object);
++			objectsToRender++;
+ 		}
+ 
+ 		// render objects
+-		for (auto& objectsByModelIt: objectsByModel) {
++		for (auto& objectsByModelIt: objectsByModels) {
+ 			auto& objectsByModel = objectsByModelIt.second;
+ 			if (objectsByModel.size() == 0) {
+ 				continue;
+ 			} else
+ 			if (objectsByModel.size() > 0) {
+-				renderObjectsOfSameType(objectsByModel, renderTransparentFaces, renderTypes);
++				renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes);
+ 			}
+ 			objectsByModel.clear();
+ 		}
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp
+index cda194ec..a52710ad 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.cpp
+@@ -1,5 +1,6 @@
+ #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
+ 
++#include <tdme/engine/Engine.h>
+ #include <tdme/engine/subsystems/renderer/Renderer.h>
+ #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
+ #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
+@@ -7,6 +8,7 @@
+ #include <tdme/math/Matrix4x4.h>
+ 
+ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
++using tdme::engine::Engine;
+ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
+ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
+ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
+@@ -15,10 +17,12 @@ using tdme::engine::subsystems::renderer::Renderer;
+ using tdme::math::Matrix4x4;
+ using tdme::utils::Console;
+ 
+-ShadowMappingShaderPre::ShadowMappingShaderPre(Renderer* renderer) 
++ShadowMappingShaderPre::ShadowMappingShaderPre(Renderer* renderer): renderer(renderer)
+ {
+ 	if (ShadowMappingShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
+ 	if (ShadowMappingShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
++	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
++	contexts.resize(threadCount);
+ }
+ 
+ ShadowMappingShaderPre::~ShadowMappingShaderPre() {
+@@ -52,47 +56,56 @@ void ShadowMappingShaderPre::useProgram(Engine* engine)
+ void ShadowMappingShaderPre::unUseProgram()
+ {
+ 	running = false;
+-	if (implementation != nullptr) {
+-		implementation->unUseProgram();;
++	auto i = 0;
++	for (auto& shadowMappingShaderPreContext: contexts) {
++		if (shadowMappingShaderPreContext.implementation != nullptr) {
++			shadowMappingShaderPreContext.implementation->unUseProgram(renderer->getContext(i));
++		}
++		shadowMappingShaderPreContext.implementation = nullptr;
++		i++;
+ 	}
+-	implementation = nullptr;
+ 	engine = nullptr;
+ }
+ 
+ void ShadowMappingShaderPre::updateMatrices(void* context, const Matrix4x4& mvpMatrix)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->updateMatrices(context, mvpMatrix);
++	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderPreContext.implementation == nullptr) return;
++	shadowMappingShaderPreContext.implementation->updateMatrices(context, mvpMatrix);
+ }
+ 
+ void ShadowMappingShaderPre::updateTextureMatrix(Renderer* renderer, void* context) {
+-	if (implementation == nullptr) return;
+-	implementation->updateTextureMatrix(renderer, context);
++	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderPreContext.implementation == nullptr) return;
++	shadowMappingShaderPreContext.implementation->updateTextureMatrix(renderer, context);
+ }
+ 
+ void ShadowMappingShaderPre::updateMaterial(Renderer* renderer, void* context)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->updateMaterial(renderer, context);
++	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderPreContext.implementation == nullptr) return;
++	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, context);
+ }
+ 
+ void ShadowMappingShaderPre::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->bindTexture(renderer, context, textureId);
++	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderPreContext.implementation == nullptr) return;
++	shadowMappingShaderPreContext.implementation->bindTexture(renderer, context, textureId);
+ }
+ 
+ void ShadowMappingShaderPre::setShader(void* context, const string& id) {
+-	auto currentImplementation = implementation;
++	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
++	auto currentImplementation = shadowMappingShaderPreContext.implementation;
+ 
+ 	auto shaderIt = shader.find(id);
+ 	if (shaderIt == shader.end()) {
+ 		shaderIt = shader.find("default");
+ 	}
+-	implementation = shaderIt->second;
++	shadowMappingShaderPreContext.implementation = shaderIt->second;
+ 
+-	if (currentImplementation != implementation) {
+-		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
+-		implementation->useProgram(engine, context);
++	if (currentImplementation != shadowMappingShaderPreContext.implementation) {
++		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
++		shadowMappingShaderPreContext.implementation->useProgram(engine, context);
+ 	}
+ }
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h
+index f59bd7a5..9bc3f72f 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h
+@@ -2,6 +2,7 @@
+ 
+ #include <map>
+ #include <string>
++#include <vector>
+ 
+ #include <tdme/tdme.h>
+ #include <tdme/engine/fwd-tdme.h>
+@@ -11,6 +12,7 @@
+ 
+ using std::map;
+ using std::string;
++using std::vector;
+ 
+ using tdme::engine::Engine;
+ using tdme::engine::subsystems::renderer::Renderer;
+@@ -25,10 +27,14 @@ using tdme::math::Matrix4x4;
+ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre final
+ {
+ private:
++	struct ShadowMappingShaderPreContext {
++		ShadowMappingShaderPreImplementation* implementation { nullptr };
++	};
+ 	map<string, ShadowMappingShaderPreImplementation*> shader;
+-	ShadowMappingShaderPreImplementation* implementation { nullptr };
+ 	bool running { false };
+ 	Engine* engine { nullptr };
++	Renderer* renderer { nullptr };
++	vector<ShadowMappingShaderPreContext> contexts;
+ 
+ public:
+ 
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp
+index 94b73066..c4d7401a 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp
+@@ -77,12 +77,12 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
+ 
+ void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+-	renderer->useProgram(programId);
++	renderer->useProgram(context, programId);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+ 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+ }
+ 
+-void ShadowMappingShaderPreBaseImplementation::unUseProgram()
++void ShadowMappingShaderPreBaseImplementation::unUseProgram(void* context)
+ {
+ }
+ 
+@@ -102,7 +102,7 @@ void ShadowMappingShaderPreBaseImplementation::updateTextureMatrix(Renderer* ren
+ 
+ void ShadowMappingShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+ {
+-	auto& material = renderer->getMaterial(context);
++	auto material = renderer->getMaterial(context);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
+ 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+ }
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h
+index f6de80db..1f802331 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h
+@@ -43,7 +43,7 @@ public:
+ 	virtual bool isInitialized() override;
+ 	virtual void initialize() override;
+ 	virtual void useProgram(Engine* engine, void* context) override;
+-	virtual void unUseProgram() override;
++	virtual void unUseProgram(void* context) override;
+ 	virtual void updateMatrices(void* context, const Matrix4x4& mvpMatrix) override;
+ 	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
+ 	virtual void updateMaterial(Renderer* renderer, void* context) override;
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.cpp
+index 77fa704b..e6133f7f 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.cpp
+@@ -46,7 +46,7 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
+ 
+ 	// create shadow mapping render program
+ 	//	pre
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.cpp
+index df158fba..b84417a4 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.cpp
+@@ -61,7 +61,7 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
+ 
+ 	// create shadow mapping render program
+ 	//	pre
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h
+index 4237b837..e7e4506f 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h
+@@ -41,8 +41,9 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
+ 
+ 	/** 
+ 	 * Un use pre render shadow mapping program
++	 * @param context context
+ 	 */
+-	virtual void unUseProgram() = 0;
++	virtual void unUseProgram(void* context) = 0;
+ 
+ 	/** 
+ 	 * Set up pre program mvp matrix
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp
+index 45c404f0..58217744 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp
+@@ -17,10 +17,12 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderFoliageI
+ using tdme::engine::subsystems::renderer::Renderer;
+ using tdme::math::Matrix4x4;
+ 
+-ShadowMappingShaderRender::ShadowMappingShaderRender(Renderer* renderer) 
++ShadowMappingShaderRender::ShadowMappingShaderRender(Renderer* renderer): renderer(renderer)
+ {
+ 	if (ShadowMappingShaderRenderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderRenderDefaultImplementation(renderer);
+ 	if (ShadowMappingShaderRenderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderRenderFoliageImplementation(renderer);
++	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
++	contexts.resize(threadCount);
+ }
+ 
+ ShadowMappingShaderRender::~ShadowMappingShaderRender()
+@@ -55,58 +57,70 @@ void ShadowMappingShaderRender::useProgram(Engine* engine)
+ void ShadowMappingShaderRender::unUseProgram()
+ {
+ 	running = false;
+-	if (implementation != nullptr) {
+-		implementation->unUseProgram();;
++	auto i = 0;
++	for (auto& shadowMappingShaderRenderContext: contexts) {
++		if (shadowMappingShaderRenderContext.implementation != nullptr) {
++			shadowMappingShaderRenderContext.implementation->unUseProgram(renderer->getContext(i));
++		}
++		shadowMappingShaderRenderContext.implementation = nullptr;
++		i++;
+ 	}
+-	implementation = nullptr;
+ 	engine = nullptr;
+ }
+ 
+ void ShadowMappingShaderRender::setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->setProgramMVMatrix(context, mvMatrix);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->setProgramMVMatrix(context, mvMatrix);
+ }
+ 
+ void ShadowMappingShaderRender::setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->setProgramMVPMatrix(context, mvpMatrix);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->setProgramMVPMatrix(context, mvpMatrix);
+ }
+ 
+ void ShadowMappingShaderRender::setProgramNormalMatrix(void* context, const Matrix4x4& normalMatrix)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->setProgramNormalMatrix(context, normalMatrix);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->setProgramNormalMatrix(context, normalMatrix);
+ }
+ 
+ void ShadowMappingShaderRender::updateTextureMatrix(Renderer* renderer, void* context) {
+-	if (implementation == nullptr) return;
+-	implementation->updateTextureMatrix(renderer, context);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->updateTextureMatrix(renderer, context);
+ }
+ 
+ void ShadowMappingShaderRender::updateMaterial(Renderer* renderer, void* context)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->updateMaterial(renderer, context);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->updateMaterial(renderer, context);
+ }
+ 
+ void ShadowMappingShaderRender::updateLight(Renderer* renderer, void* context, int32_t lightId) {
+-	if (implementation == nullptr) return;
+-	implementation->updateLight(renderer, context, lightId);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->updateLight(renderer, context, lightId);
+ }
+ 
+ void ShadowMappingShaderRender::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+ {
+-	if (implementation == nullptr) return;
+-	implementation->bindTexture(renderer, context, textureId);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->bindTexture(renderer, context, textureId);
+ }
+ 
+ void ShadowMappingShaderRender::setProgramDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
+ {
+ 	this->depthBiasMVPMatrix = depthBiasMVPMatrix;
+-	if (implementation == nullptr) return;
+-	implementation->setProgramDepthBiasMVPMatrix(context, this->depthBiasMVPMatrix);
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	if (shadowMappingShaderRenderContext.implementation == nullptr) return;
++	shadowMappingShaderRenderContext.implementation->setProgramDepthBiasMVPMatrix(context, this->depthBiasMVPMatrix);
+ }
+ 
+ void ShadowMappingShaderRender::setRenderLightId(int32_t lightId) {
+@@ -114,19 +128,20 @@ void ShadowMappingShaderRender::setRenderLightId(int32_t lightId) {
+ }
+ 
+ void ShadowMappingShaderRender::setShader(void* context, const string& id) {
+-	auto currentImplementation = implementation;
++	auto& shadowMappingShaderRenderContext = contexts[renderer->getContextIndex(context)];
++	auto currentImplementation = shadowMappingShaderRenderContext.implementation;
+ 
+ 	auto shaderIt = shader.find(id);
+ 	if (shaderIt == shader.end()) {
+ 		shaderIt = shader.find("default");
+ 	}
+-	implementation = shaderIt->second;
++	shadowMappingShaderRenderContext.implementation = shaderIt->second;
+ 
+-	if (currentImplementation != implementation) {
+-		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
+-		implementation->useProgram(engine, context);
++	if (currentImplementation != shadowMappingShaderRenderContext.implementation) {
++		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
++		shadowMappingShaderRenderContext.implementation->useProgram(engine, context);
+ 	}
+ 
+-	implementation->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+-	implementation->setRenderLightId(lightId);
++	shadowMappingShaderRenderContext.implementation->setProgramDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
++	shadowMappingShaderRenderContext.implementation->setRenderLightId(lightId);
+ }
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h
+index a67c63f9..3c983722 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.h
+@@ -2,6 +2,7 @@
+ 
+ #include <map>
+ #include <string>
++#include <vector>
+ 
+ #include <tdme/tdme.h>
+ #include <tdme/engine/fwd-tdme.h>
+@@ -11,6 +12,7 @@
+ 
+ using std::map;
+ using std::string;
++using std::vector;
+ 
+ using tdme::engine::Engine;
+ using tdme::engine::subsystems::renderer::Renderer;
+@@ -25,12 +27,16 @@ using tdme::math::Matrix4x4;
+ class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRender final
+ {
+ private:
++	struct ShadowMappingShaderRenderContext {
++		ShadowMappingShaderRenderImplementation* implementation { nullptr };
++	};
+ 	map<string, ShadowMappingShaderRenderImplementation*> shader;
+-	ShadowMappingShaderRenderImplementation* implementation { nullptr };
+ 	bool running { false };
+ 	Matrix4x4 depthBiasMVPMatrix {  };
+-	int32_t lightId { -1 };
+ 	Engine* engine { nullptr };
++	Renderer* renderer { nullptr };
++	vector<ShadowMappingShaderRenderContext> contexts;
++	int32_t lightId { -1 };
+ 
+ public:
+ 
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp
+index 7718aa10..59944ad7 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp
+@@ -120,12 +120,12 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
+ 
+ void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine, void* context)
+ {
+-	renderer->useProgram(renderProgramId);
++	renderer->useProgram(context, renderProgramId);
+ 	renderer->setProgramUniformInteger(context, renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
+ 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+ }
+ 
+-void ShadowMappingShaderRenderBaseImplementation::unUseProgram()
++void ShadowMappingShaderRenderBaseImplementation::unUseProgram(void* context)
+ {
+ }
+ 
+@@ -160,7 +160,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(Renderer*
+ 
+ void ShadowMappingShaderRenderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+ {
+-	auto& material = renderer->getMaterial(context);
++	auto material = renderer->getMaterial(context);
+ 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
+ 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+ }
+@@ -170,7 +170,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer
+ 		return;
+ 	}
+ 
+-	auto& light = renderer->getLight(context, lightId);
++	auto light = renderer->getLight(context, lightId);
+ 	auto lightPosition = Vector3(light.position[0], light.position[1], light.position[2]);
+ 	auto lightSpotDirection = Vector3(light.spotDirection[0], light.spotDirection[1], light.spotDirection[2]);
+ 	if (renderUniformLightPosition != -1) renderer->setProgramUniformFloatVec3(context, renderUniformLightPosition, lightPosition.getArray());
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h
+index 7aff99da..b7a2dd2c 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h
+@@ -59,7 +59,7 @@ public:
+ 	virtual bool isInitialized() override;
+ 	virtual void initialize() override;
+ 	virtual void useProgram(Engine* engine, void* context) override;
+-	virtual void unUseProgram() override;
++	virtual void unUseProgram(void* context) override;
+ 	virtual void setProgramViewMatrices(void* context) override;
+ 	virtual void setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix) override;
+ 	virtual void setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix) override;
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.cpp
+index 490503ef..0311b1ca 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.cpp
+@@ -50,7 +50,7 @@ void ShadowMappingShaderRenderDefaultImplementation::initialize()
+ 	if (renderFragmentShaderId == 0) return;
+ 
+ 	// create shadow mapping render program
+-	renderProgramId = renderer->createProgram();
++	renderProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
+ 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp
+index cb0cf9c9..52ff415f 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp
+@@ -65,7 +65,7 @@ void ShadowMappingShaderRenderFoliageImplementation::initialize()
+ 	if (renderFragmentShaderId == 0) return;
+ 
+ 	// create shadow mapping render program
+-	renderProgramId = renderer->createProgram();
++	renderProgramId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
+ 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+ 
+diff --git a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h
+index 9f9adbb4..ce4449b4 100644
+--- a/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h
++++ b/src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderImplementation.h
+@@ -41,8 +41,9 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImpleme
+ 
+ 	/** 
+ 	 * Un use render shadow mapping program
++	 * @param context context
+ 	 */
+-	virtual void unUseProgram() = 0;
++	virtual void unUseProgram(void* context) = 0;
+ 
+ 	/** 
+ 	 * Set up program projection and camera matrix
+diff --git a/src/tdme/engine/subsystems/skinning/SkinningShader.cpp b/src/tdme/engine/subsystems/skinning/SkinningShader.cpp
+index cd62e18d..427e03b1 100644
+--- a/src/tdme/engine/subsystems/skinning/SkinningShader.cpp
++++ b/src/tdme/engine/subsystems/skinning/SkinningShader.cpp
+@@ -70,7 +70,7 @@ void SkinningShader::initialize()
+ 	if (shaderId == 0) return;
+ 
+ 	// create, attach and link program
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_COMPUTE);
+ 	renderer->attachShaderToProgram(programId, shaderId);
+ 
+ 	// link program
+@@ -87,7 +87,7 @@ void SkinningShader::initialize()
+ void SkinningShader::useProgram()
+ {
+ 	isRunning = true;
+-	renderer->useProgram(programId);
++	renderer->useProgram(renderer->getDefaultContext(), programId); // TODO: set up shader on all contexts
+ }
+ 
+ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DGroupMesh)
+diff --git a/src/tdme/gui/renderer/GUIShader.cpp b/src/tdme/gui/renderer/GUIShader.cpp
+index 4e7a1afc..2dd7eb90 100644
+--- a/src/tdme/gui/renderer/GUIShader.cpp
++++ b/src/tdme/gui/renderer/GUIShader.cpp
+@@ -34,7 +34,7 @@ void GUIShader::initialize()
+ 	);
+ 	if (fragmentShaderId == 0) return;
+ 
+-	programId = renderer->createProgram();
++	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+ 	renderer->attachShaderToProgram(programId, vertexShaderId);
+ 	renderer->attachShaderToProgram(programId, fragmentShaderId);
+ 	if (renderer->isUsingProgramAttributeLocation() == true) {
+@@ -65,14 +65,14 @@ void GUIShader::initialize()
+ 
+ void GUIShader::useProgram()
+ {
+-	renderer->useProgram(programId);
++	renderer->useProgram(renderer->getDefaultContext(), programId);
+ 	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureUnit, 0);
+ 	isRunning = true;
+ }
+ 
+ void GUIShader::unUseProgram()
+ {
+-	renderer->useProgram(renderer->ID_NONE);
++	renderer->useProgram(renderer->getDefaultContext(), renderer->ID_NONE);
+ 	isRunning = false;
+ }
+ 
+diff --git a/src/tdme/tests/PhysicsTest1.cpp b/src/tdme/tests/PhysicsTest1.cpp
+index a56cdb8a..6bd5fbce 100644
+--- a/src/tdme/tests/PhysicsTest1.cpp
++++ b/src/tdme/tests/PhysicsTest1.cpp
+@@ -194,10 +194,14 @@ void PhysicsTest1::initialize()
+ 		engine->addEntity(entity);
+ 		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
+ 	}
++	auto boxModel2 = PrimitiveModel::createModel(box, "box_model2");
++	boxModel2->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.0f, 0.0f, 0.8f, 1.0f));
++	boxModel2->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(0.0f, 0.0f, 0.2f, 1.0f));
+ 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
+-		entity = new Object3D("box" + to_string(BOX_COUNT + i), boxModel);
++		entity = new Object3D("box" + to_string(BOX_COUNT + i), boxModel2);
+ 		entity->setDynamicShadowingEnabled(true);
+ 		entity->setTranslation(Vector3(+3.0, 1.6f + (i * 1.2f), -5.0f));
++		entity->setShader("foliage");
+ 		entity->update();
+ 		engine->addEntity(entity);
+ 		world->addRigidBody("box" + to_string(BOX_COUNT + i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
+diff --git a/src/tdme/tests/PhysicsTest2.cpp b/src/tdme/tests/PhysicsTest2.cpp
+index d8f94234..272ea0d7 100644
+--- a/src/tdme/tests/PhysicsTest2.cpp
++++ b/src/tdme/tests/PhysicsTest2.cpp
+@@ -115,6 +115,7 @@ void PhysicsTest2::initialize()
+ 		entity = new Object3D("box" + to_string(i), boxModel);
+ 		entity->setDynamicShadowingEnabled(true);
+ 		entity->setTranslation(Vector3(0.0f, i * 2.0f + 1.0f, 0.0f));
++		if (i % 2 == 0) entity->setShader("foliage");
+ 		entity->update();
+ 		engine->addEntity(entity);
+ 		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 0.8f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});

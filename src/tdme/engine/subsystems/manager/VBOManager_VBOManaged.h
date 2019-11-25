@@ -23,7 +23,7 @@ private:
 	string id;
 	vector<int32_t> vboIds;
 	int32_t referenceCounter { 0 };
-	bool uploaded { false };
+	volatile bool uploaded { false };
 
 public:
 
@@ -41,8 +41,6 @@ public:
 		return &vboIds;
 	}
 
-private:
-
 	/** 
 	 * @return reference counter
 	 */
@@ -50,6 +48,7 @@ private:
 		return referenceCounter;
 	}
 
+private:
 	/** 
 	 * decrement reference counter
 	 * @return if reference counter = 0
@@ -68,10 +67,20 @@ private:
 
 public:
 
-	/** 
-	 * @return if vbo's have been uploaded, will change internal flag to uploaded
+	/**
+	 * Set uploaded
+	 * @param uploaded uploaded
 	 */
-	bool isUploaded();
+	inline void setUploaded(bool uploaded) {
+		this->uploaded = uploaded;
+	}
+
+	/** 
+	 * @return if vbo's have been uploaded
+	 */
+	inline bool isUploaded() {
+		return uploaded;
+	}
 
 private:
 	/**

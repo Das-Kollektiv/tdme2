@@ -5,6 +5,7 @@
 
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/utils/Console.h>
 
 using std::map;
@@ -13,9 +14,10 @@ using std::string;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::os::threading::ReadWriteLock;
 using tdme::utils::Console;
 
-VBOManager::VBOManager(Renderer* renderer): mutex("vbomanager-mutex") {
+VBOManager::VBOManager(Renderer* renderer): rwLock("vbomanager-rwlock") {
 	this->renderer = renderer;
 }
 
@@ -25,31 +27,47 @@ VBOManager::~VBOManager() {
 	}
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory) {
-	mutex.lock();
+VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared) {
+	rwLock.writeLock();
 	// check if we already manage this vbo
 	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
 		vboManaged->incrementReferenceCounter();
-		mutex.unlock();
+		rwLock.unlock();
 		// yep, return vbo managed
 		return vboManaged;
 	}
 	// create vertex buffer objects
-	auto vboIds = renderer->createBufferObjects(ids, useGPUMemory);
+	auto vboIds = renderer->createBufferObjects(ids, useGPUMemory, shared);
 	// create managed texture
 	auto vboManaged = new VBOManager_VBOManaged(vboId, vboIds);
 	// add it to our textures
 	vboManaged->incrementReferenceCounter();
 	vbos[vboManaged->getId()] = vboManaged;
-	mutex.unlock();
+	rwLock.unlock();
 	// return vbo managed
 	return vboManaged;
 }
 
+VBOManager_VBOManaged* VBOManager::getVBO(const string& vboId) {
+	rwLock.readLock();
+	// check if we already manage this vbo
+	auto vboManagedIt = vbos.find(vboId);
+	if (vboManagedIt != vbos.end()) {
+		auto vboManaged = vboManagedIt->second;
+		vboManaged->incrementReferenceCounter();
+		rwLock.unlock();
+		// yep, return vbo managed
+		return vboManaged;
+	}
+	// nope
+	rwLock.unlock();
+	return nullptr;
+}
+
 void VBOManager::removeVBO(const string& vboId) {
-	mutex.lock();
+	rwLock.writeLock();
 	auto vboManagedIt = vbos.find(vboId);
 	if (vboManagedIt != vbos.end()) {
 		auto vboManaged = vboManagedIt->second;
@@ -61,9 +79,9 @@ void VBOManager::removeVBO(const string& vboId) {
 			vbos.erase(vboManagedIt);
 			delete vboManaged;
 		}
-		mutex.unlock();
+		rwLock.unlock();
 		return;
 	}
-	mutex.unlock();
+	rwLock.unlock();
 	Console::println(string("Warning: vbo not managed by vbo manager: ") + vboId);
 }

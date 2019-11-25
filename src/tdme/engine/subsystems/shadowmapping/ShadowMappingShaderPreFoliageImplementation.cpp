@@ -61,7 +61,7 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 
 	// create shadow mapping render program
 	//	pre
-	programId = renderer->createProgram();
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
 	renderer->attachShaderToProgram(programId, vertexShaderId);
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 

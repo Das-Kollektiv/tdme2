@@ -52,7 +52,7 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 	if (vertexShaderId == 0) return;
 
 	// create, attach and link program
-	programId = renderer->createProgram();
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
 	renderer->attachShaderToProgram(programId, vertexShaderId);
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 

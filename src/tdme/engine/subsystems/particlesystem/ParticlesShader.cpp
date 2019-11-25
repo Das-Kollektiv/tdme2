@@ -45,7 +45,7 @@ void ParticlesShader::initialize()
 	);
 	if (renderVertexShaderId == 0) return;
 	// create, attach and link program
-	renderProgramId = renderer->createProgram();
+	renderProgramId = renderer->createProgram(renderer->PROGRAM_POINTS);
 	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
 	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
 	// map inputs to attributes
@@ -75,7 +75,7 @@ void ParticlesShader::initialize()
 void ParticlesShader::useProgram(void* context)
 {
 	isRunning = true;
-	renderer->useProgram(renderProgramId);
+	renderer->useProgram(context, renderProgramId);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
 }
 

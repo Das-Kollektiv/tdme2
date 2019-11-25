@@ -52,7 +52,7 @@ void FrameBufferRenderShader::initialize()
 	);
 	if (fragmentShaderId == 0) return;
 
-	programId = renderer->createProgram();
+	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
 	renderer->attachShaderToProgram(programId, vertexShaderId);
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
@@ -71,7 +71,7 @@ void FrameBufferRenderShader::initialize()
 	auto context = renderer->getDefaultContext();
 
 	// create vbos
-	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2, true);
+	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2, true, false);
 	vboVertices = (*vboManaged->getVBOIds())[0];
 	vboTextureCoordinates = (*vboManaged->getVBOIds())[1];
 
@@ -121,8 +121,8 @@ void FrameBufferRenderShader::initialize()
 
 void FrameBufferRenderShader::useProgram()
 {
-	renderer->useProgram(programId);
 	auto context = renderer->getDefaultContext();
+	renderer->useProgram(context, programId);
 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
 	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
 	isRunning = true;

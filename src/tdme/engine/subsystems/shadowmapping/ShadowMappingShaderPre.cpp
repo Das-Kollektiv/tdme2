@@ -1,5 +1,6 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPre.h>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
@@ -7,6 +8,7 @@
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
+using tdme::engine::Engine;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
@@ -15,10 +17,12 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Console;
 
-ShadowMappingShaderPre::ShadowMappingShaderPre(Renderer* renderer) 
+ShadowMappingShaderPre::ShadowMappingShaderPre(Renderer* renderer): renderer(renderer)
 {
 	if (ShadowMappingShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
 	if (ShadowMappingShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
+	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
+	contexts.resize(threadCount);
 }
 
 ShadowMappingShaderPre::~ShadowMappingShaderPre() {
@@ -52,47 +56,56 @@ void ShadowMappingShaderPre::useProgram(Engine* engine)
 void ShadowMappingShaderPre::unUseProgram()
 {
 	running = false;
-	if (implementation != nullptr) {
-		implementation->unUseProgram();;
+	auto i = 0;
+	for (auto& shadowMappingShaderPreContext: contexts) {
+		if (shadowMappingShaderPreContext.implementation != nullptr) {
+			shadowMappingShaderPreContext.implementation->unUseProgram(renderer->getContext(i));
+		}
+		shadowMappingShaderPreContext.implementation = nullptr;
+		i++;
 	}
-	implementation = nullptr;
 	engine = nullptr;
 }
 
 void ShadowMappingShaderPre::updateMatrices(void* context, const Matrix4x4& mvpMatrix)
 {
-	if (implementation == nullptr) return;
-	implementation->updateMatrices(context, mvpMatrix);
+	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (shadowMappingShaderPreContext.implementation == nullptr) return;
+	shadowMappingShaderPreContext.implementation->updateMatrices(context, mvpMatrix);
 }
 
 void ShadowMappingShaderPre::updateTextureMatrix(Renderer* renderer, void* context) {
-	if (implementation == nullptr) return;
-	implementation->updateTextureMatrix(renderer, context);
+	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (shadowMappingShaderPreContext.implementation == nullptr) return;
+	shadowMappingShaderPreContext.implementation->updateTextureMatrix(renderer, context);
 }
 
 void ShadowMappingShaderPre::updateMaterial(Renderer* renderer, void* context)
 {
-	if (implementation == nullptr) return;
-	implementation->updateMaterial(renderer, context);
+	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (shadowMappingShaderPreContext.implementation == nullptr) return;
+	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, context);
 }
 
 void ShadowMappingShaderPre::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
-	if (implementation == nullptr) return;
-	implementation->bindTexture(renderer, context, textureId);
+	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	if (shadowMappingShaderPreContext.implementation == nullptr) return;
+	shadowMappingShaderPreContext.implementation->bindTexture(renderer, context, textureId);
 }
 
 void ShadowMappingShaderPre::setShader(void* context, const string& id) {
-	auto currentImplementation = implementation;
+	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	auto currentImplementation = shadowMappingShaderPreContext.implementation;
 
 	auto shaderIt = shader.find(id);
 	if (shaderIt == shader.end()) {
 		shaderIt = shader.find("default");
 	}
-	implementation = shaderIt->second;
+	shadowMappingShaderPreContext.implementation = shaderIt->second;
 
-	if (currentImplementation != implementation) {
-		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
-		implementation->useProgram(engine, context);
+	if (currentImplementation != shadowMappingShaderPreContext.implementation) {
+		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		shadowMappingShaderPreContext.implementation->useProgram(engine, context);
 	}
 }

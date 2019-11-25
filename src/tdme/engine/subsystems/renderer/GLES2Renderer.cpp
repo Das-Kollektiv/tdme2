@@ -212,12 +212,12 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 	return handle;
 }
 
-void GLES2Renderer::useProgram(int32_t programId)
+void GLES2Renderer::useProgram(void* context, int32_t programId)
 {
 	glUseProgram(programId);
 }
 
-int32_t GLES2Renderer::createProgram()
+int32_t GLES2Renderer::createProgram(int type)
 {
 	auto program = glCreateProgram();
 	return program;
@@ -452,7 +452,7 @@ void GLES2Renderer::uploadTexture(void* context, Texture* texture)
 void GLES2Renderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_INT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -513,7 +513,7 @@ void GLES2Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (const uint32_t*)&frameBufferId);
 }
 
-vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
+vector<int32_t> GLES2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared)
 {
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);

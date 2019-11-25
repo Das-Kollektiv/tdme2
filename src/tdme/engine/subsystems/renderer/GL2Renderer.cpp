@@ -237,12 +237,12 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 	return handle;
 }
 
-void GL2Renderer::useProgram(int32_t programId)
+void GL2Renderer::useProgram(void* context, int32_t programId)
 {
 	glUseProgram(programId);
 }
 
-int32_t GL2Renderer::createProgram()
+int32_t GL2Renderer::createProgram(int type)
 {
 	auto programId = glCreateProgram();
 	return programId;
@@ -546,7 +546,7 @@ void GL2Renderer::disposeFrameBufferObject(int32_t frameBufferId)
 	glDeleteFramebuffers(1, (uint32_t*)&frameBufferId);
 }
 
-vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory)
+vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared)
 {
 	vector<int32_t> bufferObjectIds;
 	bufferObjectIds.resize(buffers);
