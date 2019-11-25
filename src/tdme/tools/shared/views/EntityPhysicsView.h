@@ -33,7 +33,6 @@ public:
 	static constexpr int DISPLAY_BOUNDINGVOLUMEIDX_ALL { -1 };
 
 private:
-	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
 	static constexpr int32_t MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 
 	Engine* engine { nullptr };

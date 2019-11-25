@@ -59,7 +59,6 @@ class tdme::tools::leveleditor::views::LevelEditorView final
 {
 private:
 	static vector<string> OBJECTCOLOR_NAMES;
-	static constexpr int32_t MOUSE_BUTTON_NONE { 0 };
 	static constexpr int32_t MOUSE_DOWN_LAST_POSITION_NONE { -1 };
 	static constexpr int32_t MOUSE_PANNING_NONE { 0 };
 	static constexpr int32_t MOUSE_ROTATION_NONE { 0 };
