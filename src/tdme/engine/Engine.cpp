@@ -178,8 +178,8 @@ float Engine::animationBlendingTime = 250.0f;
 int32_t Engine::shadowMapWidth = 2048;
 int32_t Engine::shadowMapHeight = 2048;
 float Engine::shadowMaplightEyeDistanceScale = 4.0f;
-float Engine::transformationsComputingReduction1Distance = 10.0f;
-float Engine::transformationsComputingReduction2Distance = 20.0f;
+float Engine::transformationsComputingReduction1Distance = 25.0f;
+float Engine::transformationsComputingReduction2Distance = 50.0f;
 
 Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
 vector<Engine::EngineThread*> Engine::engineThreads;
