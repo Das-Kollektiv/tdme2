@@ -79,12 +79,12 @@ void GUIKnobController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
 		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true &&
-		event->getButton() == 1) {
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		mouseLastX = event->getX();
 		event->setProcessed(true);
 	} else
 	if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true &&
-		event->getButton() == 1) {
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		valueFloat = Math::clamp(
 			static_cast<float>(valueFloat + ((event->getX() - mouseLastX) / 75.0f)) ,
 			0.0f,

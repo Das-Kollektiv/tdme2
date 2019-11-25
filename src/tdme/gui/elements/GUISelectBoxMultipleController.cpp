@@ -179,7 +179,7 @@ void GUISelectBoxMultipleController::handleMouseEvent(GUINode* node, GUIMouseEve
 {
 	GUIElementController::handleMouseEvent(node, event);
 	auto disabled = (dynamic_cast< GUISelectBoxMultipleController* >(this->node->getController()))->isDisabled();
-	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
+	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));

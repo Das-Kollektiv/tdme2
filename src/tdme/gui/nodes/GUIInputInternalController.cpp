@@ -121,7 +121,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
 		(event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true ||
 		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true) &&
-		event->getButton() == 1) {
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		auto textInputNode = (dynamic_cast< GUIInputInternalNode* >(node));
 		index = textInputNode->getFont()->getTextIndexByX(
 			textInputNode->getText(),

@@ -69,7 +69,7 @@ void GUIInputController::postLayout()
 void GUIInputController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
-	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
+	if (disabled == false && node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		node->getScreenNode()->getGUI()->setFoccussedNode(dynamic_cast< GUIElementNode* >(node));
 		event->setProcessed(true);
 	}

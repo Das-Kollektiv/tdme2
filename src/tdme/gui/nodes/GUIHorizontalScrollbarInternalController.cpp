@@ -105,7 +105,7 @@ void GUIHorizontalScrollbarInternalController::handleMouseEvent(GUINode* node, G
 		}
 		event->setProcessed(true);
 	} else
-	if (this->node == node && event->getButton() == 1) {
+	if (this->node == node && event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (node->isEventBelongingToNode(event) == true && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			auto barOffsetX = node->computeParentChildrenRenderOffsetXTotal();
 			auto barLeft = getBarLeft();

@@ -112,7 +112,7 @@ void GUIDropDownOptionController::dispose()
 void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	GUIElementController::handleMouseEvent(node, event);
-	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == 1) {
+	if (node == this->node && node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 			(dynamic_cast< GUIDropDownController* >(dropDownNode->getController()))->unselect();

@@ -76,7 +76,7 @@ void GUISliderVController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	if (node == this->node && node->isEventBelongingToNode(event, nodeMousePosition) == true &&
 		(event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED == true ||
 		event->getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED == true) &&
-		event->getButton() == 1) {
+		event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		auto sliderPosition = Math::clamp(
 			static_cast<int>(nodeMousePosition[1]) - sliderNode->getContentHeight() / 2 - this->node->getPadding().top,

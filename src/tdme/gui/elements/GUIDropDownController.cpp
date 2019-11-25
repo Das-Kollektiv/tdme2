@@ -185,7 +185,7 @@ void GUIDropDownController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 	GUIElementController::handleMouseEvent(node, event);
 	if (disabled == true) return;
 	auto elementNode  = dynamic_cast< GUIElementNode* >(this->node);
-	if (event->getButton() == 1) {
+	if (event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (node == this->node && node->isEventBelongingToNode(event) == true) {
 			if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
 				event->setProcessed(true);

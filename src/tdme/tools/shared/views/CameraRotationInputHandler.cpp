@@ -94,7 +94,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 		if (event.isProcessed() == true) continue;
 		if (mouseDragging == true) {
-			if (event.getButton() == 1) {
+			if (event.getButton() == MOUSE_BUTTON_LEFT) {
 				auto xMoved = (event.getX() - mouseLastX) / 5.0f;
 				auto yMoved = (event.getY() - mouseLastY) / 5.0f;
 				mouseLastX = event.getX();
@@ -110,7 +110,7 @@ void CameraRotationInputHandler::handleInputEvents()
 				mouseDragging = false;
 			}
 		} else {
-			if (event.getButton() == 1) {
+			if (event.getButton() == MOUSE_BUTTON_LEFT) {
 				mouseDragging = true;
 				mouseLastX = event.getX();
 				mouseLastY = event.getY();

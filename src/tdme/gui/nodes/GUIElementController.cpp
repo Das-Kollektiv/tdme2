@@ -75,7 +75,7 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
 	if (disabled == true) return;
 	auto elementNode = dynamic_cast< GUIElementNode* >(this->node);
-	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == 1) {
+	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
 		if (event->getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
 			elementNode->getActiveConditions().add(GUIElementNode::CONDITION_CLICK);
@@ -121,7 +121,7 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 			}
 		}
 	} else
-	if (node == elementNode && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && event->getButton() == 1 && elementNode->getActiveConditions().has(GUIElementNode::CONDITION_CLICK)) {
+	if (node == elementNode && event->getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED && event->getButton() == MOUSE_BUTTON_LEFT && elementNode->getActiveConditions().has(GUIElementNode::CONDITION_CLICK)) {
 		elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);
 		event->setProcessed(true);
 	} else

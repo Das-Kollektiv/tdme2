@@ -1,7 +1,7 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/application/InputEventHandler.h>
+#include <tdme/application/InputDefinitions.h>
 #include <tdme/gui/events/fwd-tdme.h>
 
 using tdme::gui::events::GUIKeyboardEvent_Type;
