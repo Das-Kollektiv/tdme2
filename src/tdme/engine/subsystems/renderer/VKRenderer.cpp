@@ -122,7 +122,7 @@ VKRenderer::VKRenderer():
 	buffers_rwlock("buffers_rwlock"),
 	textures_rwlock("textures_rwlock"),
 	delete_mutex("delete_mutex"),
-	pipeline_mutex("pipeline_mutex")
+	pipeline_rwlock("pipeline_rwlock")
 {
 	// setup consts
 	ID_NONE = 0;
@@ -438,7 +438,9 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 	};
 
 	VmaAllocationCreateInfo image_alloc_create_info = {};
-	image_alloc_create_info.usage = (required_props & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT?VMA_MEMORY_USAGE_CPU_ONLY:VMA_MEMORY_USAGE_GPU_ONLY;
+	image_alloc_create_info.usage = VMA_MEMORY_USAGE_UNKNOWN;
+	image_alloc_create_info.memoryTypeBits = required_props;
+
 
 	VmaAllocationInfo allocation_info = {};
 	err = vmaCreateImage(allocator, &image_create_info, &image_alloc_create_info, &tex_obj->image, &tex_obj->allocation, &allocation_info);
@@ -2557,23 +2559,27 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
-		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
+		pipeline_rwlock.readLock();
 		auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+		pipeline_rwlock.unlock();
 		if (pipelinesIt == program->pipelines.end()) {
+			pipeline_rwlock.writeLock();
 			createObjectsRenderingPipeline(contextIdx, program);
+			pipeline_rwlock.unlock();
 		}
 
 		//
+		pipeline_rwlock.readLock();
 		pipelinesIt = program->pipelines.find(context.pipeline_id);
 		auto newPipeline = pipelinesIt->second.pipeline;
+		pipeline_rwlock.unlock();
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
 			vkCmdSetViewport(context.draw_cmds[context.draw_cmd_current], 0, 1, &viewport);
 			vkCmdSetScissor(context.draw_cmds[context.draw_cmd_current], 0, 1, &scissor);
 			context.pipeline = newPipeline;
 		}
-		pipeline_mutex.unlock();
 	}
 }
 
@@ -2817,16 +2823,20 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
-		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
-
+		pipeline_rwlock.readLock();
 		auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+		pipeline_rwlock.unlock();
 		if (pipelinesIt == program->pipelines.end()) {
+			pipeline_rwlock.writeLock();
 			createPointsRenderingPipeline(contextIdx, program);
+			pipeline_rwlock.unlock();
 		}
 
 		//
+		pipeline_rwlock.readLock();
 		pipelinesIt = program->pipelines.find(context.pipeline_id);
+		pipeline_rwlock.unlock();
 		auto newPipeline = pipelinesIt->second.pipeline;
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
@@ -2834,7 +2844,6 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 			vkCmdSetScissor(context.draw_cmds[context.draw_cmd_current], 0, 1, &scissor);
 			context.pipeline = newPipeline;
 		}
-		pipeline_mutex.unlock();
 	}
 }
 
@@ -3080,16 +3089,20 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
-		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
-
+		pipeline_rwlock.readLock();
 		auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+		pipeline_rwlock.unlock();
 		if (pipelinesIt == program->pipelines.end()) {
+			pipeline_rwlock.writeLock();
 			createLinesRenderingPipeline(contextIdx, program);
+			pipeline_rwlock.unlock();
 		}
 
 		//
+		pipeline_rwlock.readLock();
 		pipelinesIt = program->pipelines.find(context.pipeline_id);
+		pipeline_rwlock.unlock();
 		auto newPipeline = pipelinesIt->second.pipeline;
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
@@ -3097,7 +3110,6 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
 			vkCmdSetScissor(context.draw_cmds[context.draw_cmd_current], 0, 1, &scissor);
 			context.pipeline = newPipeline;
 		}
-		pipeline_mutex.unlock();
 	}
 }
 
@@ -3217,19 +3229,24 @@ inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_
 inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
-		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = "default";
-		if (program->pipelines.find(context.pipeline_id) == program->pipelines.end()) {
+		pipeline_rwlock.readLock();
+		auto pipelineIt = program->pipelines.find(context.pipeline_id);
+		pipeline_rwlock.unlock();
+		if (pipelineIt == program->pipelines.end()) {
+			pipeline_rwlock.writeLock();
 			createSkinningComputingPipeline(contextIdx, program);
+			pipeline_rwlock.unlock();
 		}
 
 		//
+		pipeline_rwlock.readLock();
 		auto newPipeline = program->pipelines.find(context.pipeline_id)->second.pipeline;
+		pipeline_rwlock.unlock();
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_COMPUTE, newPipeline);
 			context.pipeline = newPipeline;
 		}
-		pipeline_mutex.unlock();
 	}
 }
 
@@ -4671,7 +4688,7 @@ inline VkBuffer VKRenderer::getBufferObjectInternalNoLock(int32_t bufferObjectId
 	return buffer->buf;
 }
 
-void VKRenderer::createBuffer(bool useGPUMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo) {
+void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo) {
 	 //
 	VkResult err;
 
@@ -4687,7 +4704,8 @@ void VKRenderer::createBuffer(bool useGPUMemory, VkDeviceSize size, VkBufferUsag
 	};
 
 	VmaAllocationCreateInfo alloc_info = {};
-	alloc_info.usage = useGPUMemory == true?VMA_MEMORY_USAGE_GPU_ONLY:VMA_MEMORY_USAGE_CPU_ONLY;
+	alloc_info.usage = VMA_MEMORY_USAGE_UNKNOWN;
+	alloc_info.memoryTypeBits = properties;
 
 	//
 	err = vmaCreateBuffer(allocator, &buf_info, &alloc_info, &buffer, &allocation, &allocationInfo);
@@ -4761,7 +4779,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 		VmaAllocation stagingBufferAllocation;
 		VkDeviceSize stagingBufferAllocationSize;
 		VmaAllocationInfo stagingBufferAllocationInfo = {};
-		createBuffer(false, size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
+		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
 		// mark staging buffer for deletion when finishing frame
 		delete_mutex.lock();
 		delete_buffers.push_back({.buffer = stagingBuffer, .allocation = stagingBufferAllocation});
@@ -4770,7 +4788,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 		// create GPU buffer if not yet done
 		if (reusableBuffer->size == 0) {
 			VmaAllocationInfo allocation_info = {};
-			createBuffer(true, size, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
+			createBuffer(size, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
 			reusableBuffer->size = size;
 		}
 
@@ -4793,7 +4811,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 	} else {
 		if (reusableBuffer->size == 0) {
 			VmaAllocationInfo allocation_info = {};
-			createBuffer(false, size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
+			createBuffer(size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
 
 			//
 			reusableBuffer->size = size;

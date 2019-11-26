@@ -312,9 +312,9 @@ private:
 	swapchain_buffer_type* swapchain_buffers { nullptr };
 	VkFramebuffer* window_framebuffers { nullptr };
 
-	VkFence memorybarrier_fence;
+	VkFence memorybarrier_fence { VK_NULL_HANDLE };
 
-	Mutex pipeline_mutex;
+	ReadWriteLock pipeline_rwlock;
 
 	VkRenderPass render_pass { VK_NULL_HANDLE };
 
@@ -375,7 +375,7 @@ private:
 	vector<delete_image_type> delete_images;
 
 	vector<context_type> contexts;
-	VmaAllocator allocator;
+	VmaAllocator allocator { VK_NULL_HANDLE };
 
 	bool memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex);
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
@@ -384,7 +384,7 @@ private:
 	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps = true);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
-	void createBuffer(bool useGPUMemory, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
+	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
