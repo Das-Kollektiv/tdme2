@@ -84,13 +84,14 @@ ssize_t NIOUDPSocket::read(string& from, unsigned int& port, void* buf, const si
 	switch(ipVersion) {
 		case IPV4:
 			{
-				from = inet_ntoa(sinIPV4.sin_addr);
+				char ipv4AddressString[INET_ADDRSTRLEN];
+				from = inet_ntop(AF_INET, &sinIPV4.sin_addr, ipv4AddressString, INET_ADDRSTRLEN) == NULL?"127.0.0.1":ipv4AddressString;
 				port = ntohs(sinIPV4.sin_port);
 			}
 			break;
 		case IPV6:
 			{
-				char ipv6AddressString[46];
+				char ipv6AddressString[INET6_ADDRSTRLEN];
 				from = inet_ntop(AF_INET6, &sinIPV6.sin6_addr, ipv6AddressString, INET6_ADDRSTRLEN) == NULL?"::1":ipv6AddressString;
 				port = ntohs(sinIPV6.sin6_port);
 			}
