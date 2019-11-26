@@ -99,6 +99,7 @@ private:
 		int type { 0 };
 		unordered_map<string, pipeline_struct> pipelines;
 		vector<int32_t> shader_ids;
+		vector<shader_type*> shaders;
 		map<int32_t, string> uniforms;
 		vector<int32_t> uniform_buffers;
 		vector<bool> uniform_buffers_stored;

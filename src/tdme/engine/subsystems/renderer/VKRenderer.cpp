@@ -2156,20 +2156,14 @@ inline void VKRenderer::preparePipeline(int contextIdx, program_type& program) {
 		context.uniform_buffers_changed = program.uniform_buffers_changed_last[context.idx];
 	} else {
 		auto shaderIdx = 0;
-		for (auto shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
-			if (shader.ubo_binding_idx == -1) {
+		for (auto shader: program.shaders) {
+			if (shader->ubo_binding_idx == -1) {
 				context.uniform_buffers[shaderIdx].resize(0);
 				context.uniform_buffers_changed[shaderIdx] = false;
 				shaderIdx++;
 				continue;
 			}
-			context.uniform_buffers[shaderIdx].resize(shader.ubo_size);
+			context.uniform_buffers[shaderIdx].resize(shader->ubo_size);
 			context.uniform_buffers_changed[shaderIdx] = true;
 			shaderIdx++;
 		}
@@ -2258,30 +2252,24 @@ void VKRenderer::createObjectsRenderingProgram(program_type& program) {
 
 	// ubos, samplers
 	auto shaderIdx = 0;
-	for (auto shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx != -1) {
-			layout_bindings[shader.ubo_binding_idx] = {
-				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx != -1) {
+			layout_bindings[shader->ubo_binding_idx] = {
+				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader.type,
+				.stageFlags = shader->type,
 				.pImmutableSamplers = NULL
 			};
 		}
-		for (auto uniformIt: shader.uniforms) {
+		for (auto uniformIt: shader->uniforms) {
 			auto& uniform = uniformIt.second;
 			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
 				layout_bindings[uniform.position] = {
 					.binding = static_cast<uint32_t>(uniform.position),
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
-					.stageFlags = shader.type,
+					.stageFlags = shader->type,
 					.pImmutableSamplers = NULL
 				};
 			}
@@ -2369,21 +2357,15 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 		createRasterizationStateCreateInfo(contextIdx, rs);
 		createDepthStencilStateCreateInfo(ds);
 
-		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
-		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+		VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
+		memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 		// shader stages
 		auto shaderIdx = 0;
-		for (auto shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
+		for (auto shader: program.shaders) {
 			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			shaderStages[shaderIdx].stage = shader.type;
-			shaderStages[shaderIdx].module = shader.module;
+			shaderStages[shaderIdx].stage = shader->type;
+			shaderStages[shaderIdx].module = shader->module;
 			shaderStages[shaderIdx].pName = "main";
 			shaderIdx++;
 		}
@@ -2394,7 +2376,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 		dynamicState.pDynamicStates = dynamicStateEnables;
 
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipeline.stageCount = program.shader_ids.size();
+		pipeline.stageCount = program.shaders.size();
 		pipeline.layout = program.pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
@@ -2600,30 +2582,24 @@ void VKRenderer::createPointsRenderingProgram(program_type& program) {
 
 	// ubos, samplers
 	auto shaderIdx = 0;
-	for (auto shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx != -1) {
-			layout_bindings[shader.ubo_binding_idx] = {
-				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx != -1) {
+			layout_bindings[shader->ubo_binding_idx] = {
+				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader.type,
+				.stageFlags = shader->type,
 				.pImmutableSamplers = NULL
 			};
 		}
-		for (auto uniformIt: shader.uniforms) {
+		for (auto uniformIt: shader->uniforms) {
 			auto& uniform = uniformIt.second;
 			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
 				layout_bindings[uniform.position] = {
 					.binding = static_cast<uint32_t>(uniform.position),
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
-					.stageFlags = shader.type,
+					.stageFlags = shader->type,
 					.pImmutableSamplers = NULL
 				};
 			}
@@ -2696,21 +2672,15 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& pro
 		memset(&pipeline, 0, sizeof(pipeline));
 
 		// Stages
-		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
-		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+		VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
+		memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 		// shader stages
 		auto shaderIdx = 0;
-		for (auto shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
+		for (auto shader: program.shaders) {
 			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			shaderStages[shaderIdx].stage = shader.type;
-			shaderStages[shaderIdx].module = shader.module;
+			shaderStages[shaderIdx].stage = shader->type;
+			shaderStages[shaderIdx].module = shader->module;
 			shaderStages[shaderIdx].pName = "main";
 			shaderIdx++;
 		}
@@ -2737,7 +2707,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& pro
 		dynamicState.pDynamicStates = dynamicStateEnables;
 
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipeline.stageCount = program.shader_ids.size();
+		pipeline.stageCount = program.shaders.size();
 		pipeline.layout = program.pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
@@ -2873,30 +2843,24 @@ void VKRenderer::createLinesRenderingProgram(program_type& program) {
 
 	// ubos, samplers
 	auto shaderIdx = 0;
-	for (auto shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx != -1) {
-			layout_bindings[shader.ubo_binding_idx] = {
-				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx != -1) {
+			layout_bindings[shader->ubo_binding_idx] = {
+				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader.type,
+				.stageFlags = shader->type,
 				.pImmutableSamplers = NULL
 			};
 		}
-		for (auto uniformIt: shader.uniforms) {
+		for (auto uniformIt: shader->uniforms) {
 			auto& uniform = uniformIt.second;
 			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
 				layout_bindings[uniform.position] = {
 					.binding = static_cast<uint32_t>(uniform.position),
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
-					.stageFlags = shader.type,
+					.stageFlags = shader->type,
 					.pImmutableSamplers = NULL
 				};
 			}
@@ -2969,21 +2933,15 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& prog
 		memset(&pipeline, 0, sizeof(pipeline));
 
 		// Stages
-		VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
-		memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+		VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
+		memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 		// shader stages
 		auto shaderIdx = 0;
-		for (auto shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
+		for (auto shader: program.shaders) {
 			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			shaderStages[shaderIdx].stage = shader.type;
-			shaderStages[shaderIdx].module = shader.module;
+			shaderStages[shaderIdx].stage = shader->type;
+			shaderStages[shaderIdx].module = shader->module;
 			shaderStages[shaderIdx].pName = "main";
 			shaderIdx++;
 		}
@@ -3012,7 +2970,7 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& prog
 
 
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipeline.stageCount = program.shader_ids.size();
+		pipeline.stageCount = program.shaders.size();
 		pipeline.layout = program.pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
@@ -3149,38 +3107,32 @@ inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
 	memset(layout_bindings, 0, sizeof(layout_bindings));
 
 	// Stages
-	VkPipelineShaderStageCreateInfo shaderStages[program.shader_ids.size()];
-	memset(shaderStages, 0, program.shader_ids.size() * sizeof(VkPipelineShaderStageCreateInfo));
+	VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
+	memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 	auto shaderIdx = 0;
-	for (auto shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
+	for (auto shader: program.shaders) {
 		shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		shaderStages[shaderIdx].stage = shader.type;
-		shaderStages[shaderIdx].module = shader.module;
+		shaderStages[shaderIdx].stage = shader->type;
+		shaderStages[shaderIdx].module = shader->module;
 		shaderStages[shaderIdx].pName = "main";
 
-		for (int i = 0; i <= shader.binding_max; i++) {
+		for (int i = 0; i <= shader->binding_max; i++) {
 			layout_bindings[i] = {
 				.binding = static_cast<uint32_t>(i),
 				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader.type,
+				.stageFlags = shader->type,
 				.pImmutableSamplers = NULL
 			};
 		}
 
-		if (shader.ubo_binding_idx != -1) {
-			layout_bindings[shader.ubo_binding_idx] = {
-				.binding = static_cast<uint32_t>(shader.ubo_binding_idx),
+		if (shader->ubo_binding_idx != -1) {
+			layout_bindings[shader->ubo_binding_idx] = {
+				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader.type,
+				.stageFlags = shader->type,
 				.pImmutableSamplers = NULL
 			};
 		}
@@ -3338,6 +3290,7 @@ void VKRenderer::attachShaderToProgram(int32_t programId, int32_t shaderId)
 		return;
 	}
 	programIt->second.shader_ids.push_back(shaderId);
+	programIt->second.shaders.push_back(&shaderIt->second);
 }
 
 bool VKRenderer::linkProgram(int32_t programId)
@@ -3351,64 +3304,42 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 	map<string, int32_t> uniformsByName;
 	auto bindingIdx = 0;
-	for (auto shaderId: programIt->second.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
-			return false;
-		}
-
+	for (auto shader: programIt->second.shaders) {
 		//
-		auto& shader = shaderIt->second;
-		bindingIdx = Math::max(shader.binding_max + 1, bindingIdx);
+		bindingIdx = Math::max(shader->binding_max + 1, bindingIdx);
 	}
 
 	auto uniformIdx = 1;
-	for (auto shaderId: programIt->second.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
-			return false;
-		}
-
-		//
-		auto& shader = shaderIt->second;
-
+	for (auto shader: programIt->second.shaders) {
 		// do we need a uniform buffer object for this shader stage?
-		if (shader.ubo_size > 0) {
-			shader.ubo.resize(Engine::getThreadCount());
-			for (auto& context: contexts) shader.ubo[context.idx] = createBufferObjects(1, false, false)[0];
+		if (shader->ubo_size > 0) {
+			shader->ubo.resize(Engine::getThreadCount());
+			for (auto& context: contexts) shader->ubo[context.idx] = createBufferObjects(1, false, false)[0];
 			// yep, inject UBO index
-			shader.ubo_binding_idx = bindingIdx;
-			shader.source = StringUtils::replace(shader.source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
+			shader->ubo_binding_idx = bindingIdx;
+			shader->source = StringUtils::replace(shader->source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
 			bindingIdx++;
 		}
 
 	}
 
 	// bind samplers, compile shaders
-	for (auto shaderId: programIt->second.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist");
-			return false;
-		}
+	for (auto shader: programIt->second.shaders) {
 		auto shaderSamplerIdx = 0;
-		auto& shader = shaderIt->second;
 
 		//
-		for (auto& uniformIt: shader.uniforms) {
+		for (auto& uniformIt: shader->uniforms) {
 			auto& uniform = uniformIt.second;
 			//
 			if (uniform.type == shader_type::uniform_type::SAMPLER2D) {
-				shader.source = StringUtils::replace(shader.source, "{$SAMPLER2D_BINDING_" + uniform.name + "_IDX}", to_string(bindingIdx));
+				shader->source = StringUtils::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.name + "_IDX}", to_string(bindingIdx));
 				uniform.position = bindingIdx++;
 			}
 			uniformsByName[uniform.name] = uniformIdx++;
 		}
 
 		// compile shader
-		EShLanguage stage = shaderFindLanguage(shader.type);
+		EShLanguage stage = shaderFindLanguage(shader->type);
 		glslang::TShader glslShader(stage);
 		glslang::TProgram glslProgram;
 		const char *shaderStrings[1];
@@ -3418,7 +3349,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 		// Enable SPIR-V and Vulkan rules when parsing GLSL
 		EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
 
-		shaderStrings[0] = shader.source.c_str();
+		shaderStrings[0] = shader->source.c_str();
 		glslShader.setStrings(shaderStrings, 1);
 
 		if (!glslShader.parse(&resources, 100, false, messages)) {
@@ -3428,14 +3359,14 @@ bool VKRenderer::linkProgram(int32_t programId)
 					string("VKRenderer::") +
 					string(__FUNCTION__) +
 					string("[") +
-					to_string(shader.id) +
+					to_string(shader->id) +
 					string("]") +
 					string(": parsing failed: ") +
 					glslShader.getInfoLog() + ": " +
 					glslShader.getInfoDebugLog()
 				 )
 			);
-			Console::println(shader.source);
+			Console::println(shader->source);
 			return false;
 		}
 
@@ -3447,17 +3378,17 @@ bool VKRenderer::linkProgram(int32_t programId)
 					string("VKRenderer::") +
 					string(__FUNCTION__) +
 					string("[") +
-					to_string(shader.id) +
+					to_string(shader->id) +
 					string("]") +
 					string(": linking failed: ") +
 					glslShader.getInfoLog() + ": " +
 					glslShader.getInfoDebugLog()
 				)
 			);
-			Console::println(shader.source);
+			Console::println(shader->source);
 			return false;
 		}
-		glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shader.spirv);
+		glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shader->spirv);
 
 		// create shader module
 		{
@@ -3465,10 +3396,10 @@ bool VKRenderer::linkProgram(int32_t programId)
 			VkShaderModuleCreateInfo moduleCreateInfo;
 			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 			moduleCreateInfo.pNext = NULL;
-			moduleCreateInfo.codeSize = shader.spirv.size() * sizeof(uint32_t);
-			moduleCreateInfo.pCode = shader.spirv.data();
+			moduleCreateInfo.codeSize = shader->spirv.size() * sizeof(uint32_t);
+			moduleCreateInfo.pCode = shader->spirv.data();
 			moduleCreateInfo.flags = 0;
-			err = vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shader.module);
+			err = vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shader->module);
 			if (err == VK_SUCCESS) {
 				if (VERBOSE == true) {
 					Console::println(
@@ -3476,7 +3407,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 							string("GL3Renderer::") +
 							string(__FUNCTION__) +
 							string("[") +
-							to_string(shader.id) +
+							to_string(shader->id) +
 							string("]") +
 							string(": SUCCESS")
 						 )
@@ -3488,12 +3419,12 @@ bool VKRenderer::linkProgram(int32_t programId)
 						string("GL3Renderer::") +
 						string(__FUNCTION__) +
 						string("[") +
-						to_string(shader.id) +
+						to_string(shader->id) +
 						string("]") +
 						string(": FAILED")
 					 )
 				);
-				Console::println(shader.source);
+				Console::println(shader->source);
 				return false;
 			}
 	    }
@@ -3571,16 +3502,9 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 	//
 	auto changedUniforms = 0;
 	auto shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: shader does not exist");
-			return;
-		}
-
-		auto& shader = shaderIt->second;
-		auto shaderUniformIt = shader.uniforms.find(uniformIt->second);
-		if (shaderUniformIt == shader.uniforms.end()) {
+	for (auto shader: program.shaders) {
+		auto shaderUniformIt = shader->uniforms.find(uniformIt->second);
+		if (shaderUniformIt == shader->uniforms.end()) {
 			shaderIdx++;
 			continue;
 		}
@@ -5047,19 +4971,13 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(contextTyped.idx, shader->ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
 		shaderIdx++;
 	}
@@ -5069,19 +4987,13 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		uint32_t uboBufferSize;
-		contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
+		contextTyped.objects_render_command.ubo_buffers[shader->ubo_binding_idx] = getBufferObjectInternalNoLock(shader->ubo[contextTyped.idx], uboBufferSize);
 		shaderIdx++;
 	}
 
@@ -5190,16 +5102,9 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
 		//
 		auto samplerIdx = 0;
-		for (auto& shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
-
+		for (auto shader: program.shaders) {
 			// sampler2D
-			for (auto uniformIt: shader.uniforms) {
+			for (auto uniformIt: shader->uniforms) {
 				auto& uniform = uniformIt.second;
 				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
 				auto commandTextureIt = contextTyped.objects_render_command.textures.find(uniform.texture_unit);
@@ -5237,26 +5142,26 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			}
 
 			// uniform buffer
-			if (shader.ubo_binding_idx == -1) {
+			if (shader->ubo_binding_idx == -1) {
 				continue;
 			}
 
-			bufferInfos[shader.ubo_binding_idx] = {
-				.buffer = contextTyped.objects_render_command.ubo_buffers[shader.ubo_binding_idx],
+			bufferInfos[shader->ubo_binding_idx] = {
+				.buffer = contextTyped.objects_render_command.ubo_buffers[shader->ubo_binding_idx],
 				.offset = 0,
-				.range = shader.ubo_size
+				.range = shader->ubo_size
 			};
 
-			descriptorSetWrites[shader.ubo_binding_idx] = {
+			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
 				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
+				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.pImageInfo = NULL,
-				.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
+				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
 				.pTexelBufferView = NULL
 			};
 		}
@@ -5297,16 +5202,9 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
 		// do points render command
 		auto samplerIdx = 0;
-		for (auto& shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
-
+		for (auto shader: program.shaders) {
 			// sampler2D
-			for (auto uniformIt: shader.uniforms) {
+			for (auto uniformIt: shader->uniforms) {
 				auto& uniform = uniformIt.second;
 				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
 				auto commandTextureIt = contextTyped.points_render_command.textures.find(uniform.texture_unit);
@@ -5344,26 +5242,26 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			}
 
 			// uniform buffer
-			if (shader.ubo_binding_idx == -1) {
+			if (shader->ubo_binding_idx == -1) {
 				continue;
 			}
 
-			bufferInfos[shader.ubo_binding_idx] = {
-				.buffer = contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx],
+			bufferInfos[shader->ubo_binding_idx] = {
+				.buffer = contextTyped.points_render_command.ubo_buffers[shader->ubo_binding_idx],
 				.offset = 0,
-				.range = shader.ubo_size
+				.range = shader->ubo_size
 			};
 
-			descriptorSetWrites[shader.ubo_binding_idx] = {
+			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
 				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
+				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.pImageInfo = NULL,
-				.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
+				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
 				.pTexelBufferView = NULL
 			};
 		}
@@ -5393,16 +5291,9 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	if (contextTyped.command_type == context_type::COMMAND_LINES) {
 		// do points render command
 		auto samplerIdx = 0;
-		for (auto& shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
-
+		for (auto shader: program.shaders) {
 			// sampler2D
-			for (auto uniformIt: shader.uniforms) {
+			for (auto uniformIt: shader->uniforms) {
 				auto& uniform = uniformIt.second;
 				if (uniform.type != shader_type::uniform_type::SAMPLER2D) continue;
 				auto commandTextureIt = contextTyped.lines_render_command.textures.find(uniform.texture_unit);
@@ -5440,26 +5331,26 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			}
 
 			// uniform buffer
-			if (shader.ubo_binding_idx == -1) {
+			if (shader->ubo_binding_idx == -1) {
 				continue;
 			}
 
-			bufferInfos[shader.ubo_binding_idx] = {
-				.buffer = contextTyped.lines_render_command.ubo_buffers[shader.ubo_binding_idx],
+			bufferInfos[shader->ubo_binding_idx] = {
+				.buffer = contextTyped.lines_render_command.ubo_buffers[shader->ubo_binding_idx],
 				.offset = 0,
-				.range = shader.ubo_size
+				.range = shader->ubo_size
 			};
 
-			descriptorSetWrites[shader.ubo_binding_idx] = {
+			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
 				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
+				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.pImageInfo = NULL,
-				.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
+				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
 				.pTexelBufferView = NULL
 			};
 		}
@@ -5489,14 +5380,8 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
 		// do compute command
-		for (auto& shaderId: program.shader_ids) {
-			auto shaderIt = shaders.find(shaderId);
-			if (shaderIt == shaders.end()) {
-				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-				return;
-			}
-			auto& shader = shaderIt->second;
-			for (int i = 0; i <= shader.binding_max; i++) {
+		for (auto shader: program.shaders) {
+			for (int i = 0; i <= shader->binding_max; i++) {
 				bufferInfos[i] = {
 					.buffer = contextTyped.compute_command.storage_buffers[i],
 					.offset = 0,
@@ -5517,26 +5402,26 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			}
 
 			// uniform buffer
-			if (shader.ubo_binding_idx == -1) {
+			if (shader->ubo_binding_idx == -1) {
 				continue;
 			}
 
-			bufferInfos[shader.ubo_binding_idx] = {
+			bufferInfos[shader->ubo_binding_idx] = {
 				.buffer = contextTyped.compute_command.ubo_buffers[0],
 				.offset = 0,
-				.range = shader.ubo_size
+				.range = shader->ubo_size
 			};
 
-			descriptorSetWrites[shader.ubo_binding_idx] = {
+			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
 				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
-				.dstBinding = static_cast<uint32_t>(shader.ubo_binding_idx),
+				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.pImageInfo = NULL,
-				.pBufferInfo = &bufferInfos[shader.ubo_binding_idx],
+				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
 				.pTexelBufferView = NULL,
 			};
 		}
@@ -5608,19 +5493,13 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(contextTyped.idx, shader->ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
 		shaderIdx++;
 	}
@@ -5630,19 +5509,13 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		uint32_t uboBufferSize;
-		contextTyped.points_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
+		contextTyped.points_render_command.ubo_buffers[shader->ubo_binding_idx] = getBufferObjectInternalNoLock(shader->ubo[contextTyped.idx], uboBufferSize);
 		shaderIdx++;
 	}
 
@@ -5689,19 +5562,13 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(contextTyped.idx, shader->ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
 		shaderIdx++;
 	}
@@ -5711,20 +5578,13 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		uint32_t uboBufferSize;
-		contextTyped.lines_render_command.ubo_buffers[shader.ubo_binding_idx] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize);
+		contextTyped.lines_render_command.ubo_buffers[shader->ubo_binding_idx] = getBufferObjectInternalNoLock(shader->ubo[contextTyped.idx], uboBufferSize);
 		shaderIdx++;
 	}
 
@@ -5826,19 +5686,13 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		if (contextTyped.uniform_buffers_changed[shaderIdx] == true) {
-			uploadBufferObjectInternal(contextTyped.idx, shader.ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+			uploadBufferObjectInternal(contextTyped.idx, shader->ubo[contextTyped.idx], contextTyped.uniform_buffers[shaderIdx].size(), contextTyped.uniform_buffers[shaderIdx].data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
 		}
 		shaderIdx++;
 	}
@@ -5848,19 +5702,13 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto& shaderId: program.shader_ids) {
-		auto shaderIt = shaders.find(shaderId);
-		if (shaderIt == shaders.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): shader does not exist: " + to_string(shaderId));
-			return;
-		}
-		auto& shader = shaderIt->second;
-		if (shader.ubo_binding_idx == -1) {
+	for (auto shader: program.shaders) {
+		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
 		}
 		uint32_t uboBufferSize;
-		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternalNoLock(shader.ubo[contextTyped.idx], uboBufferSize); // TODO: do not use static 0 ubo buffer
+		contextTyped.compute_command.ubo_buffers[0] = getBufferObjectInternalNoLock(shader->ubo[contextTyped.idx], uboBufferSize); // TODO: do not use static 0 ubo buffer
 		shaderIdx++;
 	}
 

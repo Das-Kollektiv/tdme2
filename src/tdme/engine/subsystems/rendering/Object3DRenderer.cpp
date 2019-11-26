@@ -588,6 +588,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 	//
 	auto camera = engine->camera;
 	auto frontFace = -1;
+	auto cullingMode = -1;
 
 	// render faces entities
 	auto firstObject = objects[0];
@@ -610,37 +611,47 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 			//	via material
 			if (material != nullptr) {
 				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
-				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					renderer->disableCulling(context);
+
+				// skip, if requested
+				if (transparentFacesEntity == true) {
+					// add to transparent render faces, if requested
+					auto objectCount = objects.size();
+					for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
+						auto object = objects[objectIdx];
+						auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
+						// set up textures
+						Object3DGroup::setupTextures(renderer, context, object3DGroup, faceEntityIdx);
+						// set up transparent render faces
+						if (collectTransparentFaces == true) {
+							transparentRenderFacesPool->createTransparentRenderFaces(
+								(_object3DGroup->mesh->skinning == true ?
+									modelViewMatrixTemp.identity() :
+									modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
+								).
+									multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
+									object->object3dGroups[object3DGroupIdx],
+									faceEntityIdx,
+									faceIdx
+								);
+						}
+					}
+					// keep track of rendered faces
+					faceIdx += faces;
+					// skip to next entity
+					continue;
 				}
-			}
-			// skip, if requested
-			if (transparentFacesEntity == true) {
-				// add to transparent render faces, if requested
-				auto objectCount = objects.size();
-				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
-					auto object = objects[objectIdx];
-					auto _object3DGroup = object->object3dGroups[object3DGroupIdx];
-					// set up textures
-					Object3DGroup::setupTextures(renderer, context, object3DGroup, faceEntityIdx);
-					// set up transparent render faces
-					if (collectTransparentFaces == true) {
-						transparentRenderFacesPool->createTransparentRenderFaces(
-							(_object3DGroup->mesh->skinning == true ?
-								modelViewMatrixTemp.identity() :
-								modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
-							).
-								multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
-								object->object3dGroups[object3DGroupIdx],
-								faceEntityIdx,
-								faceIdx
-							);
+
+				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+					if (cullingMode != 0) {
+						renderer->disableCulling(context);
+						cullingMode = 0;
+					}
+				} else {
+					if (cullingMode != 1) {
+						renderer->enableCulling(context);
+						cullingMode = 1;
 					}
 				}
-				// keep track of rendered faces
-				faceIdx += faces;
-				// skip to next entity
-				continue;
 			}
 
 			// draw this faces entity for each object
@@ -666,6 +677,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 				//
 				auto textureMatrix = object3DRenderContext.objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
+				cullingMode = -1;
 
 				// draw objects
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
@@ -814,14 +826,16 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 					// set up front face
 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
-					// if front face changed just render in next step
-					if (frontFace == -1) {
-						frontFace = objectFrontFace;
-						renderer->setFrontFace(context, frontFace);
-					} else
-					if (objectFrontFace != frontFace) {
-						object3DRenderContext.objectsNotRendered.push_back(object);
-						continue;
+					// if front face changed just render in next step, this all makes only sense if culling is enabled
+					if (cullingMode == 1) {
+						if (frontFace == -1) {
+							frontFace = objectFrontFace;
+							renderer->setFrontFace(context, frontFace);
+						} else
+						if (objectFrontFace != frontFace) {
+							object3DRenderContext.objectsNotRendered.push_back(object);
+							continue;
+						}
 					}
 
 					// set up effect color
@@ -871,12 +885,13 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 			// keep track of rendered faces
 			faceIdx += faces;
-			if (material != nullptr) {
-				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
-					renderer->enableCulling(context);
-				}
-			}
 		}
+	}
+
+	//
+	if (cullingMode != 1) {
+		renderer->enableCulling(context);
+		cullingMode = 1;
 	}
 
 	// unbind buffers
