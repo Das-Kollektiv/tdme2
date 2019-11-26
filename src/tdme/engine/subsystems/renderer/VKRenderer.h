@@ -175,8 +175,10 @@ private:
 		array<bool, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
 		array<VkFence, DRAW_COMMANDBUFFER_MAX> draw_fences;
 
+		program_type* program { nullptr };
+
 		string pipeline_id;
-		VkPipeline pipeline;
+		VkPipeline pipeline { VK_NULL_HANDLE };
 
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 10> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -395,19 +397,19 @@ private:
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx, int line);
 	void endRenderPass(int contextIdx, int line);
-	void preparePipeline(int contextIdx, program_type& program);
-	void createObjectsRenderingProgram(program_type& program);
-	void createObjectsRenderingPipeline(int contextIdx, program_type& program);
-	void setupObjectsRenderingPipeline(int contextIdx, program_type& program);
-	void createPointsRenderingProgram(program_type& program);
-	void createPointsRenderingPipeline(int contextIdx, program_type& program);
-	void setupPointsRenderingPipeline(int contextIdx, program_type& program);
-	void createLinesRenderingProgram(program_type& program);
-	void createLinesRenderingPipeline(int contextIdx, program_type& program);
-	void setupLinesRenderingPipeline(int contextIdx, program_type& program);
-	void createSkinningComputingProgram(program_type& program);
-	void createSkinningComputingPipeline(int contextIdx, program_type& program);
-	void setupSkinningComputingPipeline(int contextIdx, program_type& program);
+	void preparePipeline(int contextIdx, program_type* program);
+	void createObjectsRenderingProgram(program_type* program);
+	void createObjectsRenderingPipeline(int contextIdx, program_type* program);
+	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);
+	void createPointsRenderingProgram(program_type* program);
+	void createPointsRenderingPipeline(int contextIdx, program_type* program);
+	void setupPointsRenderingPipeline(int contextIdx, program_type* program);
+	void createLinesRenderingProgram(program_type* program);
+	void createLinesRenderingPipeline(int contextIdx, program_type* program);
+	void setupLinesRenderingPipeline(int contextIdx, program_type* program);
+	void createSkinningComputingProgram(program_type* program);
+	void createSkinningComputingPipeline(int contextIdx, program_type* program);
+	void setupSkinningComputingPipeline(int contextIdx, program_type* program);
 	void finishPipeline(int contextIdx);
 	void prepareSetupCommandBuffer(int contextIdx);
 	void finishSetupCommandBuffer(int contextIdx);

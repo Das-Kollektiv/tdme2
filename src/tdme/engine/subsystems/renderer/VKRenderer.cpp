@@ -1530,6 +1530,7 @@ void VKRenderer::finishFrame()
 	for (auto& context: contexts) {
 		finishPipeline(context.idx);
 		for (auto& ubo: context.uniform_buffers) ubo.clear();
+		context.program = nullptr;
 		context.program_id = 0;
 	}
 
@@ -2148,15 +2149,15 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 	return shaderStruct.id;
 }
 
-inline void VKRenderer::preparePipeline(int contextIdx, program_type& program) {
+inline void VKRenderer::preparePipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + ": " + to_string(context.program_id));
-	if (program.uniform_buffers_stored[context.idx] == true) {
-		context.uniform_buffers = program.uniform_buffers_last[context.idx];
-		context.uniform_buffers_changed = program.uniform_buffers_changed_last[context.idx];
+	if (program->uniform_buffers_stored[context.idx] == true) {
+		context.uniform_buffers = program->uniform_buffers_last[context.idx];
+		context.uniform_buffers_changed = program->uniform_buffers_changed_last[context.idx];
 	} else {
 		auto shaderIdx = 0;
-		for (auto shader: program.shaders) {
+		for (auto shader: program->shaders) {
 			if (shader->ubo_binding_idx == -1) {
 				context.uniform_buffers[shaderIdx].resize(0);
 				context.uniform_buffers_changed[shaderIdx] = false;
@@ -2174,17 +2175,10 @@ inline void VKRenderer::finishPipeline(int contextIdx) {
 	auto& context = contexts[contextIdx];
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextIdx) + ": " + to_string(context.program_id));
 	if (context.pipeline_id.empty() == false || context.pipeline != VK_NULL_HANDLE) {
-		auto programIt = programs.find(context.program_id);
-		if (programIt == programs.end()) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextIdx) + ": " + to_string(context.program_id));
-			return;
-		}
-		auto& program = programIt->second;
-
 		//
-		program.uniform_buffers_stored[contextIdx] = true;
-		program.uniform_buffers_last[contextIdx] = context.uniform_buffers;
-		program.uniform_buffers_changed_last[contextIdx] = context.uniform_buffers_changed;
+		context.program->uniform_buffers_stored[contextIdx] = true;
+		context.program->uniform_buffers_last[contextIdx] = context.uniform_buffers;
+		context.program->uniform_buffers_changed_last[contextIdx] = context.uniform_buffers_changed;
 
 		//
 		context.pipeline_id.clear();
@@ -2232,6 +2226,16 @@ inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencil
 
 inline const string VKRenderer::createPipelineId(int contextIdx) {
 	string result;
+	result.reserve(
+		sizeof(contexts[contextIdx].culling_enabled) +
+		sizeof(contexts[contextIdx].front_face) +
+		sizeof(cull_mode) +
+		sizeof(blending_enabled) +
+		sizeof(depth_buffer_testing) +
+		sizeof(depth_buffer_writing) +
+		sizeof(depth_function) +
+		sizeof(bound_frame_buffer)
+	);
 	result.append((char*)&contexts[contextIdx].culling_enabled, sizeof(contexts[contextIdx].culling_enabled));
 	result.append((char*)&contexts[contextIdx].front_face, sizeof(contexts[contextIdx].front_face));
 	result.append((char*)&cull_mode, sizeof(cull_mode));
@@ -2243,16 +2247,16 @@ inline const string VKRenderer::createPipelineId(int contextIdx) {
 	return result;
 }
 
-void VKRenderer::createObjectsRenderingProgram(program_type& program) {
+void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 	VkResult err;
 
 	//
-	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
 	memset(layout_bindings, 0, sizeof(layout_bindings));
 
 	// ubos, samplers
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: program->shaders) {
 		if (shader->ubo_binding_idx != -1) {
 			layout_bindings[shader->ubo_binding_idx] = {
 				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
@@ -2281,11 +2285,11 @@ void VKRenderer::createObjectsRenderingProgram(program_type& program) {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
-		.bindingCount = program.layout_bindings,
+		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
@@ -2293,11 +2297,11 @@ void VKRenderer::createObjectsRenderingProgram(program_type& program) {
 		.pNext = NULL,
 		.flags = 0,
 		.setLayoutCount = 1,
-		.pSetLayouts = &program.desc_layout,
+		.pSetLayouts = &program->desc_layout,
 	};
 
 	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
 
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
@@ -2308,20 +2312,20 @@ void VKRenderer::createObjectsRenderingProgram(program_type& program) {
 		.pSetLayouts = desc_layouts
 	};
 	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
 		assert(!err);
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
 	assert(!err);
 }
 
-void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& program) {
+void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
-	auto pipelinesIt = program.pipelines.find(context.pipeline_id);
-	if (pipelinesIt == program.pipelines.end()) {
-		auto& programPipeline = program.pipelines[context.pipeline_id];
+	auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+	if (pipelinesIt == program->pipelines.end()) {
+		auto& programPipeline = program->pipelines[context.pipeline_id];
 
 		VkRenderPass renderPass = render_pass;
 		auto haveDepthBuffer = true;
@@ -2357,12 +2361,12 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 		createRasterizationStateCreateInfo(contextIdx, rs);
 		createDepthStencilStateCreateInfo(ds);
 
-		VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
-		memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+		VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
+		memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 		// shader stages
 		auto shaderIdx = 0;
-		for (auto shader: program.shaders) {
+		for (auto shader: program->shaders) {
 			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			shaderStages[shaderIdx].stage = shader->type;
 			shaderStages[shaderIdx].module = shader->module;
@@ -2376,8 +2380,8 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 		dynamicState.pDynamicStates = dynamicStateEnables;
 
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipeline.stageCount = program.shaders.size();
-		pipeline.layout = program.pipeline_layout;
+		pipeline.stageCount = program->shaders.size();
+		pipeline.layout = program->pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
 		ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -2550,18 +2554,18 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type& pr
 
 }
 
-inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_type& program) {
+inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
 		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
-		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
-		if (pipelinesIt == program.pipelines.end()) {
+		auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+		if (pipelinesIt == program->pipelines.end()) {
 			createObjectsRenderingPipeline(contextIdx, program);
 		}
 
 		//
-		pipelinesIt = program.pipelines.find(context.pipeline_id);
+		pipelinesIt = program->pipelines.find(context.pipeline_id);
 		auto newPipeline = pipelinesIt->second.pipeline;
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
@@ -2573,16 +2577,16 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
 	}
 }
 
-void VKRenderer::createPointsRenderingProgram(program_type& program) {
+void VKRenderer::createPointsRenderingProgram(program_type* program) {
 	VkResult err;
 
 	//
-	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
 	memset(layout_bindings, 0, sizeof(layout_bindings));
 
 	// ubos, samplers
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: program->shaders) {
 		if (shader->ubo_binding_idx != -1) {
 			layout_bindings[shader->ubo_binding_idx] = {
 				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
@@ -2611,11 +2615,11 @@ void VKRenderer::createPointsRenderingProgram(program_type& program) {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
-		.bindingCount = program.layout_bindings,
+		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
@@ -2623,11 +2627,11 @@ void VKRenderer::createPointsRenderingProgram(program_type& program) {
 		.pNext = NULL,
 		.flags = 0,
 		.setLayoutCount = 1,
-		.pSetLayouts = &program.desc_layout,
+		.pSetLayouts = &program->desc_layout,
 	};
 
 	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
 
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
@@ -2638,20 +2642,20 @@ void VKRenderer::createPointsRenderingProgram(program_type& program) {
 		.pSetLayouts = desc_layouts
 	};
 	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
 		assert(!err);
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
 	assert(!err);
 }
 
-void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& program) {
+void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
-	auto pipelinesIt = program.pipelines.find(context.pipeline_id);
-	if (pipelinesIt == program.pipelines.end()) {
-		auto& programPipeline = program.pipelines[context.pipeline_id];
+	auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+	if (pipelinesIt == program->pipelines.end()) {
+		auto& programPipeline = program->pipelines[context.pipeline_id];
 
 		VkRenderPass renderPass = render_pass;
 		auto haveDepthBuffer = true;
@@ -2672,12 +2676,12 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& pro
 		memset(&pipeline, 0, sizeof(pipeline));
 
 		// Stages
-		VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
-		memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+		VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
+		memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 		// shader stages
 		auto shaderIdx = 0;
-		for (auto shader: program.shaders) {
+		for (auto shader: program->shaders) {
 			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			shaderStages[shaderIdx].stage = shader->type;
 			shaderStages[shaderIdx].module = shader->module;
@@ -2707,8 +2711,8 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& pro
 		dynamicState.pDynamicStates = dynamicStateEnables;
 
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipeline.stageCount = program.shaders.size();
-		pipeline.layout = program.pipeline_layout;
+		pipeline.stageCount = program->shaders.size();
+		pipeline.layout = program->pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
 		ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -2810,19 +2814,19 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type& pro
 	}
 }
 
-inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_type& program) {
+inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
 		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
 
-		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
-		if (pipelinesIt == program.pipelines.end()) {
+		auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+		if (pipelinesIt == program->pipelines.end()) {
 			createPointsRenderingPipeline(contextIdx, program);
 		}
 
 		//
-		pipelinesIt = program.pipelines.find(context.pipeline_id);
+		pipelinesIt = program->pipelines.find(context.pipeline_id);
 		auto newPipeline = pipelinesIt->second.pipeline;
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
@@ -2834,16 +2838,16 @@ inline void VKRenderer::setupPointsRenderingPipeline(int contextIdx, program_typ
 	}
 }
 
-void VKRenderer::createLinesRenderingProgram(program_type& program) {
+void VKRenderer::createLinesRenderingProgram(program_type* program) {
 	VkResult err;
 
 	//
-	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
 	memset(layout_bindings, 0, sizeof(layout_bindings));
 
 	// ubos, samplers
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: program->shaders) {
 		if (shader->ubo_binding_idx != -1) {
 			layout_bindings[shader->ubo_binding_idx] = {
 				.binding = static_cast<uint32_t>(shader->ubo_binding_idx),
@@ -2872,11 +2876,11 @@ void VKRenderer::createLinesRenderingProgram(program_type& program) {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
-		.bindingCount = program.layout_bindings,
+		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
@@ -2884,11 +2888,11 @@ void VKRenderer::createLinesRenderingProgram(program_type& program) {
 		.pNext = NULL,
 		.flags = 0,
 		.setLayoutCount = 1,
-		.pSetLayouts = &program.desc_layout,
+		.pSetLayouts = &program->desc_layout,
 	};
 
 	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
 
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
@@ -2899,20 +2903,20 @@ void VKRenderer::createLinesRenderingProgram(program_type& program) {
 		.pSetLayouts = desc_layouts
 	};
 	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
 		assert(!err);
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
 	assert(!err);
 }
 
-void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& program) {
+void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
-	auto pipelinesIt = program.pipelines.find(context.pipeline_id);
-	if (pipelinesIt == program.pipelines.end()) {
-		auto& programPipeline = program.pipelines[context.pipeline_id];
+	auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+	if (pipelinesIt == program->pipelines.end()) {
+		auto& programPipeline = program->pipelines[context.pipeline_id];
 
 		VkRenderPass renderPass = render_pass;
 		auto haveDepthBuffer = true;
@@ -2933,12 +2937,12 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& prog
 		memset(&pipeline, 0, sizeof(pipeline));
 
 		// Stages
-		VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
-		memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+		VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
+		memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 		// shader stages
 		auto shaderIdx = 0;
-		for (auto shader: program.shaders) {
+		for (auto shader: program->shaders) {
 			shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 			shaderStages[shaderIdx].stage = shader->type;
 			shaderStages[shaderIdx].module = shader->module;
@@ -2970,8 +2974,8 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& prog
 
 
 		pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipeline.stageCount = program.shaders.size();
-		pipeline.layout = program.pipeline_layout;
+		pipeline.stageCount = program->shaders.size();
+		pipeline.layout = program->pipeline_layout;
 
 		memset(&ia, 0, sizeof(ia));
 		ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -3073,19 +3077,19 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type& prog
 	}
 }
 
-inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type& program) {
+inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
 		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = createPipelineId(contextIdx);
 
-		auto pipelinesIt = program.pipelines.find(context.pipeline_id);
-		if (pipelinesIt == program.pipelines.end()) {
+		auto pipelinesIt = program->pipelines.find(context.pipeline_id);
+		if (pipelinesIt == program->pipelines.end()) {
 			createLinesRenderingPipeline(contextIdx, program);
 		}
 
 		//
-		pipelinesIt = program.pipelines.find(context.pipeline_id);
+		pipelinesIt = program->pipelines.find(context.pipeline_id);
 		auto newPipeline = pipelinesIt->second.pipeline;
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, newPipeline);
@@ -3097,21 +3101,21 @@ inline void VKRenderer::setupLinesRenderingPipeline(int contextIdx, program_type
 	}
 }
 
-inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
+inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	VkResult err;
 
-	auto& programPipeline = program.pipelines["default"];
+	auto& programPipeline = program->pipelines["default"];
 
 	//
-	VkDescriptorSetLayoutBinding layout_bindings[program.layout_bindings];
+	VkDescriptorSetLayoutBinding layout_bindings[program->layout_bindings];
 	memset(layout_bindings, 0, sizeof(layout_bindings));
 
 	// Stages
-	VkPipelineShaderStageCreateInfo shaderStages[program.shaders.size()];
-	memset(shaderStages, 0, program.shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
+	VkPipelineShaderStageCreateInfo shaderStages[program->shaders.size()];
+	memset(shaderStages, 0, program->shaders.size() * sizeof(VkPipelineShaderStageCreateInfo));
 
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: program->shaders) {
 		shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStages[shaderIdx].stage = shader->type;
 		shaderStages[shaderIdx].module = shader->module;
@@ -3142,11 +3146,11 @@ inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 		.pNext = NULL,
 		.flags = 0,
-		.bindingCount = program.layout_bindings,
+		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program.desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
@@ -3154,11 +3158,11 @@ inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
 		.pNext = NULL,
 		.flags = 0,
 		.setLayoutCount = 1,
-		.pSetLayouts = &program.desc_layout,
+		.pSetLayouts = &program->desc_layout,
 	};
 
 	VkDescriptorSetLayout desc_layouts[DESC_MAX];
-	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program.desc_layout;
+	for (auto i = 0; i < DESC_MAX; i++) desc_layouts[i] = program->desc_layout;
 
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
@@ -3169,12 +3173,12 @@ inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
 		.pSetLayouts = desc_layouts
 	};
 	for (auto& context: contexts) {
-		err = vkAllocateDescriptorSets(device, &alloc_info, program.desc_sets[context.idx].data());
+		err = vkAllocateDescriptorSets(device, &alloc_info, program->desc_sets[context.idx].data());
 		assert(!err);
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program.pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
 	assert(!err);
 
 	// create pipepine
@@ -3195,7 +3199,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
 		.pNext = NULL,
 		.flags = 0,
 		.stage = shaderStages[0],
-		.layout = program.pipeline_layout,
+		.layout = program->pipeline_layout,
 		.basePipelineHandle = NULL,
 		.basePipelineIndex = 0
 
@@ -3207,20 +3211,20 @@ inline void VKRenderer::createSkinningComputingProgram(program_type& program) {
 	vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
 }
 
-inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type& program) {
+inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type* program) {
 }
 
-inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_type& program) {
+inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_type* program) {
 	auto& context = contexts[contextIdx];
 	if (context.pipeline_id.empty() == true || context.pipeline == VK_NULL_HANDLE) {
 		pipeline_mutex.lock();
 		if (context.pipeline_id.empty() == true) context.pipeline_id = "default";
-		if (program.pipelines.find(context.pipeline_id) == program.pipelines.end()) {
+		if (program->pipelines.find(context.pipeline_id) == program->pipelines.end()) {
 			createSkinningComputingPipeline(contextIdx, program);
 		}
 
 		//
-		auto newPipeline = program.pipelines.find(context.pipeline_id)->second.pipeline;
+		auto newPipeline = program->pipelines.find(context.pipeline_id)->second.pipeline;
 		if (newPipeline != context.pipeline) {
 			vkCmdBindPipeline(context.draw_cmds[context.draw_cmd_current], VK_PIPELINE_BIND_POINT_COMPUTE, newPipeline);
 			context.pipeline = newPipeline;
@@ -3245,6 +3249,7 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 
 	//
 	contextTyped.program_id = 0;
+	contextTyped.program = nullptr;
 	if (programId == 0) return;
 
 	//
@@ -3255,9 +3260,10 @@ void VKRenderer::useProgram(void* context, int32_t programId)
 	}
 
 	//
-	auto& program = programIt->second;
+	auto program = &programIt->second;
 	preparePipeline(contextTyped.idx, program);
 	contextTyped.program_id = programId;
+	contextTyped.program = program;
 }
 
 int32_t VKRenderer::createProgram(int type)
@@ -3440,16 +3446,16 @@ bool VKRenderer::linkProgram(int32_t programId)
 
 	// create programs in terms of ubos and so on
 	if (programIt->second.type == PROGRAM_OBJECTS) {
-		createObjectsRenderingProgram(programIt->second);
+		createObjectsRenderingProgram(&programIt->second);
 	} else
 	if (programIt->second.type == PROGRAM_POINTS) {
-		createPointsRenderingProgram(programIt->second);
+		createPointsRenderingProgram(&programIt->second);
 	} else
 	if (programIt->second.type == PROGRAM_LINES) {
-		createLinesRenderingProgram(programIt->second);
+		createLinesRenderingProgram(&programIt->second);
 	} else
 	if (programIt->second.type == PROGRAM_COMPUTE) {
-		createSkinningComputingProgram(programIt->second);
+		createSkinningComputingProgram(&programIt->second);
 	} else {
 		Console::println(
 			string("VKRenderer::") +
@@ -3487,14 +3493,8 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
 inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": " + to_string(contextTyped.program_id) + ": " + to_string(uniformId));
-	auto programIt = programs.find(contextTyped.program_id);
-	if (programIt == programs.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.idx) + ": program not found: " + to_string(contextTyped.program_id));
-		return;
-	}
-	auto& program = programIt->second;
-	auto uniformIt = program.uniforms.find(uniformId);
-	if (uniformIt == program.uniforms.end()) {
+	auto uniformIt = contextTyped.program->uniforms.find(uniformId);
+	if (uniformIt == contextTyped.program->uniforms.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): uniform does not exist: " + to_string(uniformId));
 		return;
 	}
@@ -3502,7 +3502,7 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 	//
 	auto changedUniforms = 0;
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		auto shaderUniformIt = shader->uniforms.find(uniformIt->second);
 		if (shaderUniformIt == shader->uniforms.end()) {
 			shaderIdx++;
@@ -4937,14 +4937,6 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	//
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.program_id));
 
-	//
-	auto programIt = programs.find(contextTyped.program_id);
-	if (programIt == programs.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
-		return;
-	}
-	program_type& program = programIt->second;
-
 	// textures
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
 		auto textureId = contextTyped.bound_textures[i];
@@ -4971,7 +4963,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
@@ -4987,7 +4979,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
@@ -5056,17 +5048,9 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	auto& contextTyped = contexts[contextIdx];
 	if (contextTyped.command_type == context_type::COMMAND_NONE) return;
 
-	//
-	auto programIt = programs.find(contextTyped.program_id);
-	if (programIt == programs.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
-		return;
-	}
-	auto& program = programIt->second;
-
 	// check if desc left
-	if (program.desc_idxs[contextTyped.idx] == DESC_MAX) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(program.desc_idxs[contextTyped.idx]));
+	if (contextTyped.program->desc_idxs[contextTyped.idx] == DESC_MAX) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs[" + to_string(contextTyped.idx) + "] == DESC_MAX: " + to_string(contextTyped.program->desc_idxs[contextTyped.idx]));
 		return;
 	}
 
@@ -5076,33 +5060,33 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	// create pipeline
 	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
 		startRenderPass(contextTyped.idx, __LINE__);
-		setupObjectsRenderingPipeline(contextTyped.idx, program);
+		setupObjectsRenderingPipeline(contextTyped.idx, contextTyped.program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
 		startRenderPass(contextTyped.idx, __LINE__);
-		setupPointsRenderingPipeline(contextTyped.idx, program);
+		setupPointsRenderingPipeline(contextTyped.idx, contextTyped.program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_LINES) {
 		startRenderPass(contextTyped.idx, __LINE__);
-		setupLinesRenderingPipeline(contextTyped.idx, program);
+		setupLinesRenderingPipeline(contextTyped.idx, contextTyped.program);
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
 		endRenderPass(contextTyped.idx, __LINE__);
-		setupSkinningComputingPipeline(contextTyped.idx, program);
+		setupSkinningComputingPipeline(contextTyped.idx, contextTyped.program);
 	} else {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): unknown pipeline: " + to_string(contextTyped.program_id));
 		return;
 	}
 
-	VkDescriptorBufferInfo bufferInfos[program.layout_bindings];
-	VkWriteDescriptorSet descriptorSetWrites[program.layout_bindings];
-	VkDescriptorImageInfo texDescs[program.layout_bindings];
+	VkDescriptorBufferInfo bufferInfos[contextTyped.program->layout_bindings];
+	VkWriteDescriptorSet descriptorSetWrites[contextTyped.program->layout_bindings];
+	VkDescriptorImageInfo texDescs[contextTyped.program->layout_bindings];
 
 	// do object render command
 	if (contextTyped.command_type == context_type::COMMAND_OBJECTS) {
 		//
 		auto samplerIdx = 0;
-		for (auto shader: program.shaders) {
+		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
 			for (auto uniformIt: shader->uniforms) {
 				auto& uniform = uniformIt.second;
@@ -5129,7 +5113,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				descriptorSetWrites[uniform.position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = NULL,
-					.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(uniform.position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
@@ -5155,7 +5139,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
-				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -5167,7 +5151,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		}
 
 		//
-		vkUpdateDescriptorSets(device, program.layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
 
 		//
 		#define OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	10
@@ -5186,7 +5170,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		VkDeviceSize vertexBuffersOffsets[OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
+		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
 		if (contextTyped.objects_render_command.indices_buffer != VK_NULL_HANDLE) vkCmdBindIndexBuffer(contextTyped.draw_cmds[contextTyped.draw_cmd_current], contextTyped.objects_render_command.indices_buffer, 0, VK_INDEX_TYPE_UINT32);
 		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 		if (contextTyped.objects_render_command.indices_buffer != VK_NULL_HANDLE) {
@@ -5196,13 +5180,13 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		}
 
 		//
-		program.desc_idxs[contextTyped.idx]++;
+		contextTyped.program->desc_idxs[contextTyped.idx]++;
 		contextTyped.command_count++;
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_POINTS) {
 		// do points render command
 		auto samplerIdx = 0;
-		for (auto shader: program.shaders) {
+		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
 			for (auto uniformIt: shader->uniforms) {
 				auto& uniform = uniformIt.second;
@@ -5229,7 +5213,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				descriptorSetWrites[uniform.position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = NULL,
-					.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(uniform.position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
@@ -5255,7 +5239,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
-				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -5267,7 +5251,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		}
 
 		//
-		vkUpdateDescriptorSets(device, program.layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
 
 		//
 		#define POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	4
@@ -5279,19 +5263,19 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		};
 
 		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
+		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
 		VkDeviceSize vertexBuffersOffsets[POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
 		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 		vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current], contextTyped.points_render_command.count, 1, contextTyped.points_render_command.offset, 0);
 
 		//
-		program.desc_idxs[contextTyped.idx]++;
+		contextTyped.program->desc_idxs[contextTyped.idx]++;
 		contextTyped.command_count++;
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_LINES) {
 		// do points render command
 		auto samplerIdx = 0;
-		for (auto shader: program.shaders) {
+		for (auto shader: contextTyped.program->shaders) {
 			// sampler2D
 			for (auto uniformIt: shader->uniforms) {
 				auto& uniform = uniformIt.second;
@@ -5318,7 +5302,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				descriptorSetWrites[uniform.position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = NULL,
-					.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(uniform.position),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
@@ -5344,7 +5328,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
-				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -5356,7 +5340,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		}
 
 		//
-		vkUpdateDescriptorSets(device, program.layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
 
 		//
 		#define LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT	4
@@ -5368,19 +5352,19 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		};
 
 		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
+		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_GRAPHICS, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
 		VkDeviceSize vertexBuffersOffsets[LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT] = { 0, 0, 0, 0 };
 		vkCmdBindVertexBuffers(contextTyped.draw_cmds[contextTyped.draw_cmd_current], 0, LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT, vertexBuffersBuffer, vertexBuffersOffsets);
 		vkCmdSetLineWidth(contextTyped.draw_cmds[contextTyped.draw_cmd_current], line_width);
 		vkCmdDraw(contextTyped.draw_cmds[contextTyped.draw_cmd_current], contextTyped.lines_render_command.count, 1, contextTyped.lines_render_command.offset, 0);
 
 		//
-		program.desc_idxs[contextTyped.idx]++;
+		contextTyped.program->desc_idxs[contextTyped.idx]++;
 		contextTyped.command_count++;
 	} else
 	if (contextTyped.command_type == context_type::COMMAND_COMPUTE) {
 		// do compute command
-		for (auto shader: program.shaders) {
+		for (auto shader: contextTyped.program->shaders) {
 			for (int i = 0; i <= shader->binding_max; i++) {
 				bufferInfos[i] = {
 					.buffer = contextTyped.compute_command.storage_buffers[i],
@@ -5390,7 +5374,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				descriptorSetWrites[i] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 					.pNext = NULL,
-					.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(i),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
@@ -5415,7 +5399,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = NULL,
-				.dstSet = program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]],
+				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -5427,14 +5411,14 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 		}
 
 		//
-		vkUpdateDescriptorSets(device, program.layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
 
 		//
-		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_COMPUTE, program.pipeline_layout, 0, 1, &program.desc_sets[contextTyped.idx][program.desc_idxs[contextTyped.idx]], 0, nullptr);
+		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
 		vkCmdDispatch(contextTyped.draw_cmds[contextTyped.draw_cmd_current], contextTyped.compute_command.num_groups_x, contextTyped.compute_command.num_groups_y, contextTyped.compute_command.num_groups_z);
 
 		//
-		program.desc_idxs[contextTyped.idx]++;
+		contextTyped.program->desc_idxs[contextTyped.idx]++;
 		contextTyped.command_count++;
 	}
 
@@ -5463,14 +5447,6 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	// upload uniforms
-	auto programIt = programs.find(contextTyped.program_id);
-	if (programIt == programs.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
-		return;
-	}
-	program_type& program = programIt->second;
-
 	// textures
 	textures_rwlock.readLock();
 	for (auto i = 0; i < contextTyped.bound_textures.size(); i++) {
@@ -5493,7 +5469,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
@@ -5509,7 +5485,7 @@ void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int3
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
@@ -5551,18 +5527,10 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	//
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	// upload uniforms
-	auto programIt = programs.find(contextTyped.program_id);
-	if (programIt == programs.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
-		return;
-	}
-	program_type& program = programIt->second;
-
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
@@ -5578,7 +5546,7 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
@@ -5675,18 +5643,10 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
 
-	//
-	auto programIt = programs.find(contextTyped.program_id);
-	if (programIt == programs.end()) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program does not exist: " + to_string(contextTyped.program_id));
-		return;
-	}
-	program_type& program = programIt->second;
-
 	// TODO: upload and get ubos in a single step
 	// upload ubos
 	auto shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
@@ -5702,7 +5662,7 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 
 	// get ubos
 	shaderIdx = 0;
-	for (auto shader: program.shaders) {
+	for (auto shader: contextTyped.program->shaders) {
 		if (shader->ubo_binding_idx == -1) {
 			shaderIdx++;
 			continue;
