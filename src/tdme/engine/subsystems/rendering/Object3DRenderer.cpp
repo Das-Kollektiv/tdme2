@@ -529,8 +529,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 				}
 				// set up effect color
 				if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
-					renderer->setEffectColorMul(context, object->effectColorMul.getArray());
-					renderer->setEffectColorAdd(context, object->effectColorAdd.getArray());
+					renderer->getEffectColorMul(context) = object->effectColorMul.getArray();
+					renderer->getEffectColorAdd(context) = object->effectColorAdd.getArray();
 					renderer->onUpdateEffect(context);
 				}
 				// do transformation start to shadow mapping
@@ -919,7 +919,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	if (updateOnly == false) {
 		// apply materials
 		if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-			auto rendererMaterial = renderer->getMaterial(context);
+			auto& rendererMaterial = renderer->getMaterial(context);
 			rendererMaterial.ambient = material->getAmbientColor().getArray();
 			rendererMaterial.diffuse = material->getDiffuseColor().getArray();
 			rendererMaterial.specular = material->getSpecularColor().getArray();
@@ -927,7 +927,6 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 			rendererMaterial.shininess = material->getShininess();
 			rendererMaterial.diffuseTextureMaskedTransparency = material->hasDiffuseTextureMaskedTransparency();
 			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = material->getDiffuseTextureMaskedTransparencyThreshold();
-			renderer->setMaterial(context, rendererMaterial);
 			renderer->onUpdateMaterial(context);
 		}
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
@@ -954,10 +953,9 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	// bind diffuse texture
 	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
-		auto rendererMaterial = renderer->getMaterial(context);
+		auto& rendererMaterial = renderer->getMaterial(context);
 		rendererMaterial.diffuseTextureMaskedTransparency = material->hasDiffuseTextureMaskedTransparency();
 		rendererMaterial.diffuseTextureMaskedTransparencyThreshold = material->getDiffuseTextureMaskedTransparencyThreshold();
-		renderer->setMaterial(context, rendererMaterial);
 		renderer->onUpdateMaterial(context);
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 			material->hasDiffuseTextureMaskedTransparency() == true) {
@@ -1106,8 +1104,8 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 			for (auto point: renderTransparentRenderPointsPool->getTransparentRenderPoints()) {
 				if (point == nullptr || point->acquired == false || point->particleSystem != (void*)currentPpse) {
 					// issue rendering
-					renderer->setEffectColorAdd(context, pseParameters->effectColorAdd->getArray());
-					renderer->setEffectColorMul(context, pseParameters->effectColorMul->getArray());
+					renderer->getEffectColorAdd(context) = pseParameters->effectColorAdd->getArray();
+					renderer->getEffectColorMul(context) = pseParameters->effectColorMul->getArray();
 					renderer->onUpdateEffect(context);
 					// TODO: maybe use onBindTexture() or onUpdatePointSize()
 					engine->getParticlesShader()->setParameters(context, pseParameters->textureId, pseParameters->pointSize);
@@ -1168,8 +1166,8 @@ void Object3DRenderer::render(const vector<LinesObject3D*>& objects) {
 
 		// render
 		// issue rendering
-		renderer->setEffectColorAdd(context, object->getEffectColorAdd().getArray());
-		renderer->setEffectColorMul(context, object->getEffectColorMul().getArray());
+		renderer->getEffectColorAdd(context) = object->getEffectColorAdd().getArray();
+		renderer->getEffectColorMul(context) = object->getEffectColorMul().getArray();
 		renderer->onUpdateEffect(context);
 
 		// TODO: maybe use onBindTexture() or onUpdatePointSize()

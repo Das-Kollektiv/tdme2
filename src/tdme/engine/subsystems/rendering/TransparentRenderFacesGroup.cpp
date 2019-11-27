@@ -103,8 +103,8 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, voi
 	Matrix4x4 modelViewMatrix;
 	modelViewMatrix.set(renderer->getModelViewMatrix());
 	// effect
-	renderer->setEffectColorMul(context, effectColorMul.getArray());
-	renderer->setEffectColorAdd(context, effectColorAdd.getArray());
+	renderer->getEffectColorMul(context) = effectColorMul.getArray();
+	renderer->getEffectColorAdd(context) = effectColorAdd.getArray();
 	renderer->onUpdateEffect(context);
 	// material
 	string materialKey;

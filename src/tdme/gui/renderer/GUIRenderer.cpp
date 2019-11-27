@@ -341,8 +341,8 @@ void GUIRenderer::render()
 	effectColorAddFinal[1] = guiEffectColorAdd[1] + effectColorAdd[1];
 	effectColorAddFinal[2] = guiEffectColorAdd[2] + effectColorAdd[2];
 	effectColorAddFinal[3] = 0.0f;
-	renderer->setEffectColorMul(context, effectColorMulFinal);
-	renderer->setEffectColorAdd(context, effectColorAddFinal);
+	renderer->getEffectColorMul(context) = effectColorMulFinal;
+	renderer->getEffectColorAdd(context) = effectColorAddFinal;
 	renderer->onUpdateEffect(context);
 	renderer->onUpdateTextureMatrix(context);
 	renderer->drawIndexedTrianglesFromBufferObjects(context, quadCount * 2, 0);

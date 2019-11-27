@@ -68,6 +68,23 @@ private:
 		VmaAllocation allocation;
 	};
 
+	struct buffer_object {
+		struct reusable_buffer {
+			int64_t frame_used_last { -1 };
+			VkBuffer buf { VK_NULL_HANDLE };
+			VmaAllocation allocation { VK_NULL_HANDLE };
+			uint32_t size { 0 };
+			void* data { nullptr };
+		};
+		int32_t id { 0 };
+		bool useGPUMemory { false };
+		bool shared { false };
+		unordered_map<uint32_t, list<reusable_buffer>> buffers;
+		uint32_t buffer_count { 0 };
+		int64_t frame_cleaned_last { 0 };
+		reusable_buffer* current_buffer { nullptr };
+	};
+
 	struct shader_type {
 		struct uniform_type {
 			enum uniform_type_enum { NONE, UNIFORM, SAMPLER2D };
@@ -81,7 +98,8 @@ private:
 		uint32_t ubo_size { 0 };
 		uint32_t samplers { 0 };
 		int32_t binding_max { -1 };
-		vector<int32_t> ubo;
+		vector<int32_t> ubo_ids;
+		vector<buffer_object*> ubo;
 		int32_t ubo_binding_idx { -1 };
  		string source;
  		string file;
@@ -111,23 +129,6 @@ private:
 		VkDescriptorSetLayout desc_layout { VK_NULL_HANDLE };
 		vector<uint32_t> desc_idxs;
 		int32_t id { 0 };
-	};
-
-	struct buffer_object {
-		struct reusable_buffer {
-			int64_t frame_used_last { -1 };
-			VkBuffer buf { VK_NULL_HANDLE };
-			VmaAllocation allocation { VK_NULL_HANDLE };
-			uint32_t size { 0 };
-			void* data { nullptr };
-		};
-		int32_t id { 0 };
-		bool useGPUMemory { false };
-		bool shared { false };
-		unordered_map<uint32_t, list<reusable_buffer>> buffers;
-		uint32_t buffer_count { 0 };
-		int64_t frame_cleaned_last { 0 };
-		reusable_buffer* current_buffer { nullptr };
 	};
 
 	struct texture_object {
@@ -337,9 +338,11 @@ private:
 	VkFormat format { VK_FORMAT_UNDEFINED };
 	VkColorSpaceKHR color_space { VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 
-	int empty_vertex_buffer { 0 };
+	buffer_object* empty_vertex_buffer { nullptr };
+	int empty_vertex_buffer_id { 0 };
 	int depth_buffer_default { 0 };
-	int white_texture_default { 0 };
+	int white_texture_default_id { 0 };
+	texture_object* white_texture_default { nullptr };
 
 	VkDescriptorPool desc_pool { VK_NULL_HANDLE };
 
@@ -384,7 +387,10 @@ private:
 	void prepareTextureImage(int contextIdx, struct texture_object *tex_obj, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags required_props, Texture* texture, VkImageLayout image_layout, bool disableMipMaps = true);
 	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	VkBuffer getBufferObjectInternalNoLock(int32_t bufferObjectId, uint32_t& size);
+	VkBuffer getBufferObjectInternalNoLock(buffer_object* bufferObject, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
+	buffer_object* getBufferObjectInternal(int32_t bufferObjectId);
+	void uploadBufferObjectInternal(int contextIdx,  buffer_object* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size);
 	void shaderInitResources(TBuiltInResource &resources);
@@ -550,19 +556,15 @@ public:
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 
 	//
-	int32_t getTextureUnit(void* context);
-	void setTextureUnit(void* context, int32_t textureUnit);
-	virtual Matrix2D3x3& getTextureMatrix(void* context);
-	virtual const Renderer_Light getLight(void* context, int32_t lightId);
-	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light);
-	virtual const array<float, 4> getEffectColorMul(void* context);
-	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul);
-	virtual const array<float, 4> getEffectColorAdd(void* context);
-	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd);
-	virtual const Renderer_Material getMaterial(void* context);
-	virtual void setMaterial(void* context, const Renderer_Material& material);
-	virtual const string getShader(void* context);
-	virtual void setShader(void* context, const string& id);
+	int32_t getTextureUnit(void* context) override;
+	void setTextureUnit(void* context, int32_t textureUnit) override;
+	virtual Matrix2D3x3& getTextureMatrix(void* context) override;
+	virtual Renderer_Light& getLight(void* context, int32_t lightId) override;
+	virtual array<float, 4>& getEffectColorMul(void* context) override;
+	virtual array<float, 4>& getEffectColorAdd(void* context) override;
+	virtual Renderer_Material& getMaterial(void* context) override;
+	virtual const string getShader(void* context) override;
+	virtual void setShader(void* context, const string& id) override;
 
 public:
 	/**

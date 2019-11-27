@@ -53,7 +53,7 @@ void Light::update(void* context) {
 		Vector3 tmpVector3;
 		Vector4 spotDirection4;
 		Vector4 spotDirection4Transformed;
-		auto light = renderer->getLight(context, id);
+		auto& light = renderer->getLight(context, id);
 		light.enabled = 1;
 		light.ambient = ambient.getArray();
 		light.diffuse = diffuse.getArray();
@@ -65,12 +65,10 @@ void Light::update(void* context) {
 		light.constantAttenuation = constantAttenuation;
 		light.linearAttenuation = linearAttenuation;
 		light.quadraticAttenuation = quadraticAttenuation;
-		renderer->setLight(context, id, light);
 		renderer->onUpdateLight(context, id);
 	} else {
-		auto light = renderer->getLight(context, id);
+		auto& light = renderer->getLight(context, id);
 		light.enabled = 0;
-		renderer->setLight(context, id, light);
 		renderer->onUpdateLight(context, id);
 	}
 }

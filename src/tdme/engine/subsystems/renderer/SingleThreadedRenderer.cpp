@@ -26,36 +26,20 @@ Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(void* context) {
 	return textureMatrix;
 }
 
-const Renderer_Light SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
+Renderer_Light& SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
 	return lights[lightId];
 }
 
-void SingleThreadedRenderer::setLight(void* context, int32_t lightId, const Renderer_Light& light) {
-	lights[lightId] = light;
-}
-
-const array<float, 4> SingleThreadedRenderer::getEffectColorMul(void* context) {
+array<float, 4>& SingleThreadedRenderer::getEffectColorMul(void* context) {
 	return effectColorMul;
 }
 
-void SingleThreadedRenderer::setEffectColorMul(void* context, const array<float, 4>& effectColorMul) {
-	this->effectColorMul = effectColorMul;
-}
-
-const array<float, 4> SingleThreadedRenderer::getEffectColorAdd(void* context) {
+array<float, 4>& SingleThreadedRenderer::getEffectColorAdd(void* context) {
 	return effectColorAdd;
 }
 
-void SingleThreadedRenderer::setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd) {
-	this->effectColorAdd = effectColorAdd;
-}
-
-const Renderer_Material SingleThreadedRenderer::getMaterial(void* context) {
+Renderer_Material& SingleThreadedRenderer::getMaterial(void* context) {
 	return material;
-}
-
-void SingleThreadedRenderer::setMaterial(void* context, const Renderer_Material& material) {
-	this->material = material;
 }
 
 const string SingleThreadedRenderer::getShader(void* context) {

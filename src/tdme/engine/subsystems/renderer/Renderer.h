@@ -733,15 +733,7 @@ public:
 	 * @param lightId light id
 	 * @return light
 	 */
-	virtual const Renderer_Light getLight(void* context, int32_t lightId) = 0;
-
-	/**
-	 * Set light
-	 * @param context context
-	 * @param lightId light id
-	 * @param light light
-	 */
-	virtual void setLight(void* context, int32_t lightId, const Renderer_Light& light) = 0;
+	virtual Renderer_Light& getLight(void* context, int32_t lightId) = 0;
 
 	/** 
 	 * Update light
@@ -755,28 +747,14 @@ public:
 	 * @param context
 	 * @return effect color mul
 	 */
-	virtual const array<float, 4> getEffectColorMul(void* context) = 0;
-
-	/** 
-	 * Set up effect color multiplication
-	 * @param context context
-	 * @param effectColorMul effect color for multiplication
-	 */
-	virtual void setEffectColorMul(void* context, const array<float, 4>& effectColorMul) = 0;
+	virtual array<float, 4>& getEffectColorMul(void* context) = 0;
 
 	/**
 	 * Get effect color add
 	 * @param context
 	 * @return effect color add
 	 */
-	virtual const array<float, 4> getEffectColorAdd(void* context) = 0;
-
-	/** 
-	 * Set up effect color addition
-	 * @param context context
-	 * @param effectColorAdd effect color for addition
-	 */
-	virtual void setEffectColorAdd(void* context, const array<float, 4>& effectColorAdd) = 0;
+	virtual array<float, 4>& getEffectColorAdd(void* context) = 0;
 
 	/** 
 	 * Update material
@@ -789,14 +767,7 @@ public:
 	 * @param context context
 	 * @return material
 	 */
-	virtual const Renderer_Material getMaterial(void* context) = 0;
-
-	/** 
-	 * Set material
-	 * @param context context
-	 * @param material material
-	 */
-	virtual void setMaterial(void* context, const Renderer_Material& material) = 0;
+	virtual Renderer_Material& getMaterial(void* context) = 0;
 
 	/** 
 	 * On update material
