@@ -201,7 +201,8 @@ void Engine::EngineThread::run() {
 	while (isStopRequested() == false) {
 		switch(state) {
 			case STATE_WAITING:
-				engineThreadWaitSemaphore->wait();
+				while (state == STATE_WAITING) Thread::nanoSleep(1000LL);
+				//engineThreadWaitSemaphore->wait();
 				break;
 			case STATE_TRANSFORMATIONS:
 				engine->computeTransformationsFunction(threadCount, idx);
@@ -214,7 +215,7 @@ void Engine::EngineThread::run() {
 				state = STATE_SPINNING;
 				break;
 			case STATE_SPINNING:
-				while (state == STATE_SPINNING);
+				while (state == STATE_SPINNING) Thread::nanoSleep(1000LL);
 				break;
 		}
 	}
@@ -911,7 +912,7 @@ void Engine::computeTransformations()
 	} else {
 		for (auto engineThread: engineThreads) engineThread->engine = this;
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
-		engineThreadWaitSemaphore.increment(threadCount - 1);
+		//engineThreadWaitSemaphore.increment(threadCount - 1);
 		computeTransformationsFunction(threadCount, 0);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;

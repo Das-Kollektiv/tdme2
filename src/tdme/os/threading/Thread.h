@@ -45,6 +45,12 @@ public:
 	static void sleep(const uint64_t milliseconds);
 
 	/**
+	 * @brief sleeps current thread for given time in nanoseconds
+	 * @param nanoseconds uint64_t nanoseconds to wait
+	 */
+	static void nanoSleep(const uint64_t nanoseconds);
+
+	/**
 	 * @brief Blocks caller thread until this thread has been terminated
 	 */
 	void join();
