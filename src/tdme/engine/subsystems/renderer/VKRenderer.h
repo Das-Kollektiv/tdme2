@@ -175,6 +175,7 @@ private:
 		array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX> draw_cmds;
 		uint32_t draw_cmd_current;
 		array<bool, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
+		VkFence draw_fence { VK_NULL_HANDLE };
 		array<VkFence, DRAW_COMMANDBUFFER_MAX> draw_fences;
 
 		program_type* program { nullptr };
@@ -442,8 +443,10 @@ private:
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
-	bool endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true, bool waitUntilSubmitted = false);
+	VkCommandBuffer endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
+	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
 	void submitContext(int contextIdx);
+	void recreateContextFences(int contextIdx);
 
 public:
 	const string getShaderVersion() override;

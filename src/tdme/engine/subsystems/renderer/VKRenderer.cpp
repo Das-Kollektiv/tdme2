@@ -295,51 +295,21 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	return true;
 }
 
-inline bool VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId, bool cycleBuffers, bool waitUntilSubmitted) {
+inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId, bool cycleBuffers) {
 	auto& context = contexts[contextIdx];
 
 	//
 	if (bufferId == -1) bufferId = context.draw_cmd_current;
 
 	//
-	if (context.draw_cmd_started[bufferId] == false) return false;
+	if (context.draw_cmd_started[bufferId] == false) return VK_NULL_HANDLE;
 
 	//
 	VkResult err;
 	err = vkEndCommandBuffer(context.draw_cmds[bufferId]);
 	assert(!err);
 
-	//
-	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-	VkSubmitInfo submit_info = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = NULL,
-		.waitSemaphoreCount = 0,
-		.pWaitSemaphores = NULL,
-		.pWaitDstStageMask = &pipe_stage_flags,
-		.commandBufferCount = 1,
-		.pCommandBuffers = &context.draw_cmds[bufferId],
-		.signalSemaphoreCount = 0,
-		.pSignalSemaphores = NULL
-	};
-
-	//
-	queue_mutex.lock();
-
-	err = vkQueueSubmit(queue, 1, &submit_info, context.draw_fences[bufferId]);
-	assert(!err);
-
-	queue_mutex.unlock();
-
-	//
-	if (waitUntilSubmitted == true) {
-		//
-		VkResult fence_result;
-		do {
-			fence_result = vkWaitForFences(device, 1, &context.draw_fences[bufferId], VK_TRUE, 100000000);
-		} while (fence_result == VK_TIMEOUT);
-		// vkResetFences(device, 1, &draw_fences[contextIdx][bufferId]);
-	}
+	auto commandBuffer = context.draw_cmds[bufferId];
 
 	//
 	context.draw_cmd_started[bufferId] = false;
@@ -349,7 +319,64 @@ inline bool VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId, bool 
 	context.pipeline = VK_NULL_HANDLE;
 
 	//
-	return true;
+	return commandBuffer;
+}
+
+inline void VKRenderer::recreateContextFences(int contextIdx) {
+	auto& context = contexts[contextIdx];
+	if (context.draw_fence == VK_NULL_HANDLE) {
+		VkFenceCreateInfo fence_create_info_unsignaled = {
+			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+			.pNext = NULL,
+			.flags = 0
+		};
+		vkCreateFence(device, &fence_create_info_unsignaled, nullptr, &context.draw_fence);
+	}
+	VkFenceCreateInfo fence_create_info_signaled = {
+		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+		.pNext = NULL,
+		.flags = VK_FENCE_CREATE_SIGNALED_BIT
+	};
+	for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
+		if (context.draw_fences[j] != VK_NULL_HANDLE) vkDestroyFence(device, context.draw_fences[j], nullptr);
+		vkCreateFence(device, &fence_create_info_signaled, nullptr, &context.draw_fences[j]);
+	}
+
+}
+
+inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted, bool resetFence) {
+	//
+	VkResult err;
+	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+	VkSubmitInfo submit_info = {
+		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+		.pNext = NULL,
+		.waitSemaphoreCount = 0,
+		.pWaitSemaphores = NULL,
+		.pWaitDstStageMask = &pipe_stage_flags,
+		.commandBufferCount = static_cast<uint32_t>(commandBufferCount),
+		.pCommandBuffers = commandBuffers,
+		.signalSemaphoreCount = 0,
+		.pSignalSemaphores = NULL
+	};
+
+	//
+	queue_mutex.lock();
+
+	err = vkQueueSubmit(queue, 1, &submit_info, fence);
+	assert(!err);
+
+	queue_mutex.unlock();
+
+	//
+	if (waitUntilSubmitted == true) {
+		//
+		VkResult fence_result;
+		do {
+			fence_result = vkWaitForFences(device, 1, &fence, VK_TRUE, 100000000);
+		} while (fence_result == VK_TIMEOUT);
+		if (resetFence == true) vkResetFences(device, 1, &fence);
+	}
 }
 
 inline void VKRenderer::finishSetupCommandBuffers() {
@@ -1244,17 +1271,6 @@ void VKRenderer::initialize()
 			vkCreateFence(device, &fence_create_info, nullptr, &context.setup_fence);
 		}
 
-		{
-			VkFenceCreateInfo fence_create_info = {
-				.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-				.pNext = NULL,
-				.flags = VK_FENCE_CREATE_SIGNALED_BIT
-			};
-			for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-				vkCreateFence(device, &fence_create_info, nullptr, &context.draw_fences[j]);
-			}
-		}
-
 		//
 		context.idx = contextIdx;
 		context.setup_cmd_inuse = VK_NULL_HANDLE;
@@ -1268,6 +1284,10 @@ void VKRenderer::initialize()
 			context.lights[i].spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * 180.0f));
 		}
 		context.texture_matrix.identity();
+
+		//
+		context.draw_fences.fill(VK_NULL_HANDLE);
+		recreateContextFences(context.idx);
 	}
 
 	// memory barrier fence
@@ -1598,6 +1618,17 @@ void VKRenderer::finishFrame()
 		fence_result = vkWaitForFences(device, 1, &memorybarrier_fence, VK_TRUE, 100000000);
 	} while (fence_result == VK_TIMEOUT);
 	vkResetFences(device, 1, &memorybarrier_fence);
+
+	// also wait for draw buffer fences
+	for (auto context: contexts) {
+		//
+		VkResult fence_result;
+		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
+			do {
+				fence_result = vkWaitForFences(device, 1, &context.draw_fences[i], VK_TRUE, 100000000);
+			} while (fence_result == VK_TIMEOUT);
+		}
+	}
 
 	//
 	VkPresentInfoKHR present = {
@@ -3813,7 +3844,11 @@ void VKRenderer::clear(int32_t mask)
 		&clearRect
 	);
 	endRenderPass(0, __LINE__);
-	endDrawCommandBuffer(0, -1, true, true);
+	auto currentBufferIdx = contexts[0].draw_cmd_current;
+	auto commandBuffer = endDrawCommandBuffer(0, currentBufferIdx, true);
+	if (commandBuffer != VK_NULL_HANDLE) {
+		submitDrawCommandBuffers(1, &commandBuffer, contexts[0].draw_fences[currentBufferIdx], true, false);
+	}
 }
 
 int32_t VKRenderer::createTexture()
@@ -5061,8 +5096,6 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 
 inline void VKRenderer::endDrawCommands(int contextIdx) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	endRenderPass(contextIdx, __LINE__);
-	endDrawCommandBuffer(contextIdx, -1, true, true);
 	submitContext(contextIdx);
 }
 
@@ -5441,7 +5474,11 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 	contextTyped.command_type = context_type::COMMAND_NONE;
 	if (contextTyped.command_count >= COMMANDS_MAX) {
 		endRenderPass(contextTyped.idx, __LINE__);
-		endDrawCommandBuffer(contextTyped.idx, -1, true, true);
+		auto currentBufferIdx = contextTyped.draw_cmd_current;
+		auto commandBuffer = endDrawCommandBuffer(contextTyped.idx, -1, true);
+		if (commandBuffer != VK_NULL_HANDLE) {
+			submitDrawCommandBuffers(1, &commandBuffer, contextTyped.draw_fences[currentBufferIdx], false, false);
+		}
 		contextTyped.command_count = 0;
 	}
 }
@@ -5690,16 +5727,21 @@ inline void VKRenderer::submitContext(int contextIdx) {
 	VkResult err;
 
 	// end render passes
-	uint32_t submitted_cmd_buf_count = 0;
-	uint32_t submitted_cmd_buff_contextidx[DRAW_COMMANDBUFFER_MAX];
-	uint32_t submitted_cmd_buff_contextbuffidx[DRAW_COMMANDBUFFER_MAX];
 	finishSetupCommandBuffer(contextIdx);
-	endRenderPass(contextIdx, __LINE__); // TODO: draw cmd cycling
+	endRenderPass(contextIdx, __LINE__);
+
+	//
+	auto submitted_command_buffers_count = 0;
+	VkCommandBuffer submitted_command_buffers[DRAW_COMMANDBUFFER_MAX];
 	for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-		if (endDrawCommandBuffer(contextIdx, j, false) == true) {
-			submitted_cmd_buff_contextidx[submitted_cmd_buf_count] = contextIdx;
-			submitted_cmd_buff_contextbuffidx[submitted_cmd_buf_count++] = j;
+		auto command_buffer = endDrawCommandBuffer(contextIdx, j, false);
+		if (command_buffer != VK_NULL_HANDLE) {
+			submitted_command_buffers[submitted_command_buffers_count++] = command_buffer;
 		}
+	}
+	if (submitted_command_buffers_count > 0) {
+		submitDrawCommandBuffers(submitted_command_buffers_count, submitted_command_buffers, contexts[contextIdx].draw_fence, true, true);
+		recreateContextFences(contextIdx);
 	}
 }
 
@@ -5708,26 +5750,25 @@ void VKRenderer::memoryBarrier() {
 	VkResult err;
 
 	// end render passes
-	uint32_t submitted_cmd_buf_count = 0;
-	uint32_t submitted_cmd_buff_contextidx[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX];
-	uint32_t submitted_cmd_buff_contextbuffidx[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX];
+	auto submitted_command_buffers_count = 0;
+	VkCommandBuffer submitted_command_buffers[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX];
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		finishSetupCommandBuffer(i);
 		endRenderPass(i, __LINE__); // TODO: draw cmd cycling
 		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-			if (endDrawCommandBuffer(i, j, false) == true) {
-				submitted_cmd_buff_contextidx[submitted_cmd_buf_count] = i;
-				submitted_cmd_buff_contextbuffidx[submitted_cmd_buf_count++] = j;
+			auto command_buffer = endDrawCommandBuffer(i, j, false);
+			if (command_buffer != VK_NULL_HANDLE) {
+				submitted_command_buffers[submitted_command_buffers_count++] = command_buffer;
 			}
 		}
 	}
 
-	for (auto i = 0; i < submitted_cmd_buf_count; i++) {
-		//
-		VkResult fence_result;
-		do {
-			fence_result = vkWaitForFences(device, 1, &contexts[submitted_cmd_buff_contextidx[i]].draw_fences[submitted_cmd_buff_contextbuffidx[i]], VK_TRUE, 100000000);
-		} while (fence_result == VK_TIMEOUT);
+	//
+	if (submitted_command_buffers_count > 0) {
+		submitDrawCommandBuffers(submitted_command_buffers_count, submitted_command_buffers, memorybarrier_fence, true, true);
+		for (auto i = 0; i < Engine::getThreadCount(); i++) {
+			recreateContextFences(i);
+		}
 	}
 }
 
