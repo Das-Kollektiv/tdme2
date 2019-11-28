@@ -190,7 +190,6 @@ private:
 		// reset shader
 		renderer->setShader(renderer->getContext(threadIdx), string());
 
-		auto objectCount = 0;
 		// sort objects by model
 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
@@ -198,11 +197,9 @@ private:
 			auto modelId = object->getModel()->getId();
 			auto& objectsByModel = objectsByModels[modelId];
 			objectsByModel.push_back(object);
-			objectCount++;
 		}
 
 		// render objects
-		Console::println(to_string(threadIdx) + ": " + to_string(objectCount));
 		for (auto& objectsByModelIt: objectsByModels) {
 			auto& objectsByModel = objectsByModelIt.second;
 			if (objectsByModel.size() == 0) {

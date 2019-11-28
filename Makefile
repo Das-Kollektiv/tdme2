@@ -20,7 +20,7 @@ ifeq ($(OS), Darwin)
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN 
-		INCLUDES := $(INCLUDES) -Iext/moltenvk/include -Iext/glfw3/include -Iext\vulkan\vma\src
+		INCLUDES := $(INCLUDES) -Iext/glfw3/include -Iext\vulkan\vma\src
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
@@ -29,7 +29,7 @@ ifeq ($(OS), Darwin)
 				src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3.3 -Lext/moltenvk/MacOs/dynamic -l MoltenVK -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3 -l vulkan.1 -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	else
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \

@@ -1442,6 +1442,11 @@ void VKRenderer::initializeFrameBuffers() {
 }
 
 void VKRenderer::reshape() {
+	// TODO: this crashes MoltenVK currently, need to fix
+	#if defined(__APPLE__)
+		return;
+	#endif
+
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
@@ -4098,7 +4103,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			&staging_texture,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
 			texture,
 			VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL
 		);
@@ -4262,7 +4267,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 			&texture_object,
 			VK_IMAGE_TILING_LINEAR,
 			VK_IMAGE_USAGE_SAMPLED_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
 			texture,
 			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 		);
@@ -4672,7 +4677,12 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 	for (auto i = 0; i < bufferCount; i++) {
 		buffer_object& buffer = buffers[buffer_idx];
 		buffer.id = buffer_idx++;
-		buffer.useGPUMemory = useGPUMemory;
+		#if defined(__APPLE__)
+			// TODO: fix me, with my Intel Iris 655 GPU memory uploading is not working, however these cards have no GPU memory I guess
+			buffer.useGPUMemory = false;
+		#else
+			buffer.useGPUMemory = useGPUMemory;
+		#endif
 		buffer.shared = shared;
 		bufferIds.push_back(buffer.id);
 	}
@@ -4691,6 +4701,7 @@ inline VkBuffer VKRenderer::getBufferObjectInternalNoLock(int32_t bufferObjectId
 	auto bufferIt = buffers.find(bufferObjectId);
 	if (bufferIt == buffers.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
+		size = 0;
 		return VK_NULL_HANDLE;
 	}
 	return getBufferObjectInternalNoLock(&bufferIt->second, size);
@@ -4787,8 +4798,29 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		buffer->buffer_count++;
 	}
 
+	// create buffer if not yet done
+	if (reusableBuffer->size == 0) {
+		VmaAllocationInfo allocation_info = {};
+		createBuffer(size, usage, buffer->useGPUMemory == true?VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
+		reusableBuffer->size = size;
+
+		VkMemoryPropertyFlags mem_flags;
+		vmaGetMemoryTypeProperties(allocator, allocation_info.memoryType, &mem_flags);
+		reusableBuffer->memoryMappable = (mem_flags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		if (reusableBuffer->memoryMappable == true) {
+			err = vmaMapMemory(allocator, reusableBuffer->allocation, &reusableBuffer->data);
+			assert(!err);
+		}
+	}
+
 	// create buffer
-	if (buffer->useGPUMemory == true) {
+	if (reusableBuffer->memoryMappable == true) {
+		// copy to buffer
+		memcpy(reusableBuffer->data, data, size);
+
+		//
+		vmaFlushAllocation(allocator, reusableBuffer->allocation, 0, VK_WHOLE_SIZE);
+	} else {
 		prepareSetupCommandBuffer(contextIdx);
 
 		void* stagingData;
@@ -4796,24 +4828,21 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 		VmaAllocation stagingBufferAllocation;
 		VkDeviceSize stagingBufferAllocationSize;
 		VmaAllocationInfo stagingBufferAllocationInfo = {};
-		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
+		createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, stagingBuffer, stagingBufferAllocation, stagingBufferAllocationInfo);
 		// mark staging buffer for deletion when finishing frame
 		delete_mutex.lock();
 		delete_buffers.push_back({.buffer = stagingBuffer, .allocation = stagingBufferAllocation});
 		delete_mutex.unlock();
 
-		// create GPU buffer if not yet done
-		if (reusableBuffer->size == 0) {
-			VmaAllocationInfo allocation_info = {};
-			createBuffer(size, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
-			reusableBuffer->size = size;
-		}
 
 		// map memory
 		vmaMapMemory(allocator, stagingBufferAllocation, &stagingData);
 
 		// copy to staging buffer
 		memcpy(stagingData, data, size);
+
+		// unmap
+		vmaUnmapMemory(allocator, stagingBufferAllocation);
 
 		//
 		vmaFlushAllocation(allocator, stagingBufferAllocation, 0, VK_WHOLE_SIZE);
@@ -4825,24 +4854,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 			.size = static_cast<VkDeviceSize>(size)
 		};
 		vkCmdCopyBuffer(contexts[contextIdx].setup_cmd_inuse, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
-	} else {
-		if (reusableBuffer->size == 0) {
-			VmaAllocationInfo allocation_info = {};
-			createBuffer(size, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocation_info);
-
-			//
-			reusableBuffer->size = size;
-
-			// map memory
-			err = vmaMapMemory(allocator, reusableBuffer->allocation, &reusableBuffer->data);
-			assert(err == VK_SUCCESS);
-		}
-
-		// copy to buffer
-		memcpy(reusableBuffer->data, data, size);
-
-		//
-		vmaFlushAllocation(allocator, reusableBuffer->allocation, 0, VK_WHOLE_SIZE);
 	}
 
 	// frame and current buffer
@@ -5017,6 +5028,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	for (auto i = 0; i < contextTyped.objects_render_command.vertex_buffers.size(); i++) {
 		if (contextTyped.bound_buffers[i] != 0) contextTyped.objects_render_command.vertex_buffers[i] = getBufferObjectInternalNoLock(contextTyped.bound_buffers[i], bufferSize);
 		if (contextTyped.objects_render_command.vertex_buffers[i] == VK_NULL_HANDLE) contextTyped.objects_render_command.vertex_buffers[i] = getBufferObjectInternalNoLock(empty_vertex_buffer, bufferSize);
+
 	}
 	contextTyped.objects_render_command.count = triangles;
 	contextTyped.objects_render_command.offset = trianglesOffset;

@@ -70,6 +70,7 @@ private:
 
 	struct buffer_object {
 		struct reusable_buffer {
+			bool memoryMappable { false };
 			int64_t frame_used_last { -1 };
 			VkBuffer buf { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
@@ -366,7 +367,7 @@ private:
 	int32_t bound_frame_buffer { 0 };
 
 	bool blending_enabled { true };
-	VkCullModeFlagBits cull_mode { VK_CULL_MODE_BACK_BIT };
+	VkCullModeFlagBits cull_mode { VK_CULL_MODE_FRONT_BIT};
 	bool depth_buffer_writing { true };
 	bool depth_buffer_testing { true };
 	int depth_function { VK_COMPARE_OP_LESS_OR_EQUAL };

@@ -210,7 +210,6 @@
         - included in TDME2 repository
             - FBXSDK
             - libpng
-            - MoltenVK
             - ReactPhysics3D
             - RapidJSON
             - tinyxml
