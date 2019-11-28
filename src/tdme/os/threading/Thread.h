@@ -11,6 +11,11 @@
 	#include <pthread.h>
 #endif
 
+#if !defined(_WIN32) && !defined(_MSC_VER)
+	#include <time.h>
+#endif
+
+
 #include <string>
 
 using std::string;
@@ -48,7 +53,20 @@ public:
 	 * @brief sleeps current thread for given time in nanoseconds
 	 * @param nanoseconds uint64_t nanoseconds to wait
 	 */
-	static void nanoSleep(const uint64_t nanoseconds);
+	inline static void nanoSleep(const uint64_t nanoseconds) {
+		#if defined(CPPTHREADS)
+		#else
+			#if defined(_WIN32) && defined(_MSC_VER)
+				// TODO
+			#else
+				struct timespec sleepTime;
+				struct timespec returnTime;
+				sleepTime.tv_sec = 0;
+				sleepTime.tv_nsec = nanoseconds;
+				nanosleep(&sleepTime, &returnTime);
+			#endif
+		#endif
+	}
 
 	/**
 	 * @brief Blocks caller thread until this thread has been terminated

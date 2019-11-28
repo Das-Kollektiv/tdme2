@@ -5,7 +5,6 @@
 	#include <windows.h>
 #else
 	#include <unistd.h>
-	#include <time.h>
 #endif
 
 #include <string>
@@ -49,21 +48,6 @@ void Thread::sleep(const uint64_t milliseconds) {
 				secondsWaited++;
 			}
 			usleep((milliseconds - (secondsWaited * 1000L)) * 1000L);
-		#endif
-	#endif
-}
-
-void Thread::nanoSleep(const uint64_t nanoseconds) {
-	#if defined(CPPTHREADS)
-	#else
-		#if defined(_WIN32) && defined(_MSC_VER)
-			// TODO
-		#else
-			struct timespec sleepTime;
-			struct timespec returnTime;
-			sleepTime.tv_sec = 0;
-			sleepTime.tv_nsec = nanoseconds;
-			nanosleep(&sleepTime, &returnTime);
 		#endif
 	#endif
 }

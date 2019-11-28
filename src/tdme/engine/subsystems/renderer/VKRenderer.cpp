@@ -5701,16 +5701,6 @@ inline void VKRenderer::submitContext(int contextIdx) {
 			submitted_cmd_buff_contextbuffidx[submitted_cmd_buf_count++] = j;
 		}
 	}
-
-	/*
-	for (auto i = 0; i < submitted_cmd_buf_count; i++) {
-		//
-		VkResult fence_result;
-		do {
-			fence_result = vkWaitForFences(device, 1, &contexts[submitted_cmd_buff_contextidx[i]].draw_fences[submitted_cmd_buff_contextbuffidx[i]], VK_TRUE, 100000000);
-		} while (fence_result == VK_TIMEOUT);
-	}
-	*/
 }
 
 void VKRenderer::memoryBarrier() {

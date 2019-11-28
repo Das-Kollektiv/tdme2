@@ -201,7 +201,7 @@ void Engine::EngineThread::run() {
 	while (isStopRequested() == false) {
 		switch(state) {
 			case STATE_WAITING:
-				while (state == STATE_WAITING) Thread::nanoSleep(1000LL);
+				while (state == STATE_WAITING) Thread::nanoSleep(10000LL);
 				//engineThreadWaitSemaphore->wait();
 				break;
 			case STATE_TRANSFORMATIONS:
@@ -215,7 +215,7 @@ void Engine::EngineThread::run() {
 				state = STATE_SPINNING;
 				break;
 			case STATE_SPINNING:
-				while (state == STATE_SPINNING) Thread::nanoSleep(1000LL);
+				while (state == STATE_SPINNING) Thread::nanoSleep(10000LL);
 				break;
 		}
 	}
