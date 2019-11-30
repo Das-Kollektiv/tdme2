@@ -202,7 +202,7 @@ BatchRendererTriangles* Object3DRenderer::acquireTrianglesBatchRenderer()
 
 void Object3DRenderer::reset()
 {
-	objectsByModels.clear();
+	objectsByShadersAndModels.clear();
 }
 
 void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
@@ -212,7 +212,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 	releaseTransparentFacesGroups();
 
 	if (renderer->isSupportingMultithreadedRendering() == false) {
-		renderFunction(1, 0, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(1, 0, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 	} else {
 		Object3DRenderer_InstancedRenderFunctionParameters parameters;
 		parameters.objects = objects;
@@ -223,7 +223,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		for (auto engineThread: Engine::engineThreads) engineThread->rendering.parameters = parameters;
 		for (auto engineThread: Engine::engineThreads) engineThread->state = Engine::EngineThread::STATE_RENDERING;
 
-		renderFunction(threadCount, 0, objects, objectsByModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		renderFunction(threadCount, 0, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
 
 		for (auto engineThread: Engine::engineThreads) while(engineThread->state == Engine::EngineThread::STATE_RENDERING);
 		for (auto engineThread: Engine::engineThreads) transparentRenderFacesPool->merge(engineThread->rendering.transparentRenderFacesPool);
@@ -830,7 +830,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 					if (cullingMode == 1) {
 						if (frontFace == -1) {
 							frontFace = objectFrontFace;
-							renderer->setFrontFace(context, frontFace);
+							// renderer->setFrontFace(context, frontFace);
 						} else
 						if (objectFrontFace != frontFace) {
 							object3DRenderContext.objectsNotRendered.push_back(object);

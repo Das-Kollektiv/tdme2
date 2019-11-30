@@ -54,8 +54,9 @@ class tdme::engine::subsystems::renderer::VKRenderer
 {
 private:
 	static constexpr bool VERBOSE { false };
-	static constexpr int DRAW_COMMANDBUFFER_MAX { 4 };
-	static constexpr int COMMANDS_MAX { 8 };
+	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
+	static constexpr int COMMANDS_MAX_GRAPHICS { 16 }; // TODO: make this variable
+	static constexpr int COMMANDS_MAX_COMPUTE { 5 }; // TODO: make this variable
 	static constexpr int DESC_MAX { 4096 };
 
 	struct delete_buffer_type {
@@ -169,19 +170,19 @@ private:
 		VkCommandBuffer setup_cmd;
 		VkFence setup_fence;
 
-		bool render_pass_started;
+		array<bool, 3> render_pass_started;
 
 		VkCommandPool cmd_draw_pool;
-		array<VkCommandBuffer, DRAW_COMMANDBUFFER_MAX> draw_cmds;
 		uint32_t draw_cmd_current;
-		array<bool, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
+		array<array<VkCommandBuffer, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmds;
+		array<array<VkFence, 3>, DRAW_COMMANDBUFFER_MAX> draw_fences;
 		VkFence draw_fence { VK_NULL_HANDLE };
-		array<VkFence, DRAW_COMMANDBUFFER_MAX> draw_fences;
+		array<array<bool, 3>, DRAW_COMMANDBUFFER_MAX> draw_cmd_started;
 
 		program_type* program { nullptr };
 
-		string pipeline_id;
-		VkPipeline pipeline { VK_NULL_HANDLE };
+		array<string, 3> pipeline_id;
+		array<VkPipeline, 3> pipeline;
 
 		int32_t bound_indices_buffer { 0 };
 		array<int32_t, 10> bound_buffers { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -272,7 +273,7 @@ private:
 		points_render_command points_render_command;
 		lines_render_command lines_render_command;
 		compute_command compute_command;
-		uint32_t command_count { 0 };
+		array<uint32_t, 3> command_count { 0 };
 
 		string shader;
 		array<float, 4> effect_color_mul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
@@ -282,7 +283,8 @@ private:
 		Matrix2D3x3 texture_matrix;
 
 		bool culling_enabled { true };
-		VkFrontFace front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE};
+		int front_face { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
+		int front_face_index { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
 
 		int32_t program_id { 0 };
 	};
@@ -443,7 +445,7 @@ private:
 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, uint32_t indicesBuffer, int32_t instances);
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
-	VkCommandBuffer endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
+	array<VkCommandBuffer, 3> endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
 	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
 	void submitContext(int contextIdx);
 	void recreateContextFences(int contextIdx);

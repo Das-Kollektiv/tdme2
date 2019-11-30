@@ -183,13 +183,11 @@ float Engine::shadowMaplightEyeDistanceScale = 4.0f;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
 
-Semaphore Engine::engineThreadWaitSemaphore("enginethread-waitsemaphore", 0);
 vector<Engine::EngineThread*> Engine::engineThreads;
 
-Engine::EngineThread::EngineThread(int idx, Semaphore* engineThreadWaitSemaphore, void* context):
+Engine::EngineThread::EngineThread(int idx, void* context):
 	Thread("enginethread"),
 	idx(idx),
-	engineThreadWaitSemaphore(engineThreadWaitSemaphore),
 	engine(nullptr),
 	context(context) {
 	//
@@ -202,7 +200,6 @@ void Engine::EngineThread::run() {
 		switch(state) {
 			case STATE_WAITING:
 				while (state == STATE_WAITING) Thread::nanoSleep(10000LL);
-				//engineThreadWaitSemaphore->wait();
 				break;
 			case STATE_TRANSFORMATIONS:
 				engine->computeTransformationsFunction(threadCount, idx);
@@ -210,12 +207,12 @@ void Engine::EngineThread::run() {
 				break;
 			case STATE_RENDERING:
 				rendering.transparentRenderFacesPool->reset();
-				engine->object3DRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
-				rendering.objectsByModels.clear();
+				engine->object3DRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByShadersAndModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
+				rendering.objectsByShadersAndModels.clear();
 				state = STATE_SPINNING;
 				break;
 			case STATE_SPINNING:
-				while (state == STATE_SPINNING) Thread::nanoSleep(10000LL);
+				while (state == STATE_SPINNING) Thread::nanoSleep(100LL);
 				break;
 		}
 	}
@@ -640,7 +637,6 @@ void Engine::initialize()
 		for (auto i = 0; i < threadCount - 1; i++) {
 			engineThreads[i] = new EngineThread(
 				i + 1,
-				&engineThreadWaitSemaphore,
 				renderer->getContext(i + 1)
 			);
 			engineThreads[i]->start();
@@ -912,7 +908,6 @@ void Engine::computeTransformations()
 	} else {
 		for (auto engineThread: engineThreads) engineThread->engine = this;
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_TRANSFORMATIONS;
-		//engineThreadWaitSemaphore.increment(threadCount - 1);
 		computeTransformationsFunction(threadCount, 0);
 		for (auto engineThread: engineThreads) while (engineThread->state == EngineThread::STATE_TRANSFORMATIONS);
 		for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_SPINNING;

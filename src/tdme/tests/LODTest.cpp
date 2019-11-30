@@ -142,7 +142,13 @@ void LODTest::initialize()
 		entity->setEffectColorMulLOD2(Color4(3.7f, 3.7f, 3.7f, 1.0f));
 		entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), Math::random() * 360.0f);
 		float scale = 1.0f + Math::random() / 3.0f;
-		entity->setScale(Vector3(scale, scale, scale));
+		entity->setScale(
+			Vector3(
+				Math::random() < 0.5f?scale:-scale,
+				scale,
+				Math::random() < 0.5f?scale:-scale
+			)
+		);
 		entity->setTranslation(Vector3(x, 0.0f, z));
 		entity->update();
 		engine->addEntity(entity);

@@ -33,7 +33,6 @@
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/Thread.h>
-#include <tdme/os/threading/Semaphore.h>
 
 using std::array;
 using std::map;
@@ -81,7 +80,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::os::threading::Thread;
-using tdme::os::threading::Semaphore;
 
 /** 
  * Engine main class
@@ -221,7 +219,6 @@ private:
 		friend class Engine;
 	private:
 		int idx;
-		Semaphore* engineThreadWaitSemaphore;
 		void* context;
 	public:
 		enum State { STATE_WAITING, STATE_TRANSFORMATIONS, STATE_RENDERING, STATE_SPINNING };
@@ -230,7 +227,7 @@ private:
 
 		struct {
 			Object3DRenderer_InstancedRenderFunctionParameters parameters;
-			unordered_map<string, vector<Object3D*>> objectsByModels;
+			unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
 			TransparentRenderFacesPool* transparentRenderFacesPool;
 		} rendering;
 
@@ -240,10 +237,9 @@ private:
 		/**
 		 * Constructor
 		 * @param idx thread index
-		 * @param engineThreadWaitSemaphore engine thread wait semaphore
 		 * @param context context
 		 */
-		EngineThread(int idx, Semaphore* engineThreadWaitSemaphore, void* context);
+		EngineThread(int idx, void* context);
 
 		/**
 		 * Run
@@ -251,7 +247,6 @@ private:
 		virtual void run();
 	};
 
-	static Semaphore engineThreadWaitSemaphore;
 	static vector<EngineThread*> engineThreads;
 
 	/**

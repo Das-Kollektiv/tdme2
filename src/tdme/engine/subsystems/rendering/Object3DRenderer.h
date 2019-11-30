@@ -80,7 +80,7 @@ private:
 	Renderer* renderer { nullptr };
 
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
-	unordered_map<string, vector<Object3D*>> objectsByModels;
+	unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
 	vector<TransparentRenderFace*> groupTransparentRenderFaces;
 	Object3DRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
@@ -183,7 +183,7 @@ private:
 		int threadCount,
 		int threadIdx,
 		const vector<Object3D*>& objects,
-		unordered_map<string, vector<Object3D*>>& objectsByModels,
+		unordered_map<string, unordered_map<string, vector<Object3D*>>>& objectsByShadersAndModels,
 		bool renderTransparentFaces,
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
@@ -194,21 +194,24 @@ private:
 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
 			auto object = objects[objectIdx];
-			auto modelId = object->getModel()->getId();
-			auto& objectsByModel = objectsByModels[modelId];
+			auto& objectsByShaders = objectsByShadersAndModels[object->getShader()];
+			auto& objectsByModel = objectsByShaders[object->getModel()->getId()];
 			objectsByModel.push_back(object);
 		}
 
 		// render objects
-		for (auto& objectsByModelIt: objectsByModels) {
-			auto& objectsByModel = objectsByModelIt.second;
-			if (objectsByModel.size() == 0) {
-				continue;
-			} else
-			if (objectsByModel.size() > 0) {
-				renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+		for (auto& objectsByShaderAndModelIt: objectsByShadersAndModels) {
+			auto& objectsByModels = objectsByShaderAndModelIt.second;
+			for (auto& objectsByModelIt: objectsByModels) {
+				auto& objectsByModel = objectsByModelIt.second;
+				if (objectsByModel.size() == 0) {
+					continue;
+				} else
+				if (objectsByModel.size() > 0) {
+					renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+				}
+				objectsByModel.clear();
 			}
-			objectsByModel.clear();
 		}
 	}
 
