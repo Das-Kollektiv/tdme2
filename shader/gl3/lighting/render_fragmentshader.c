@@ -98,17 +98,57 @@ vec4 fragColor;
 {$DEFINITIONS}
 
 #if defined(HAVE_TERRAIN_SHADER)
+	#define TERRAIN_UV_SCALE			0.2
 	#define TERRAIN_LEVEL_0				-4.0
 	#define TERRAIN_LEVEL_1				10.0
-	#define TERRAIN_HEIGHT_BLEND		4.0
-	#define TERRAIN_SLOPE_BLEND			10.0
+	#define TERRAIN_HEIGHT_BLEND			4.0
+	#define TERRAIN_SLOPE_BLEND			5.0
 
+	in vec3 vertex;
+	in vec3 normal;
 	in float height;
 	in float slope;
 	uniform sampler2D grasTextureUnit;
 	uniform sampler2D dirtTextureUnit;
 	uniform sampler2D stoneTextureUnit;
 	uniform sampler2D snowTextureUnit;
+
+	vec4 readTerrainTextureGras(vec3 coords, vec3 blending, float scale) {
+		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+		vec4 xAxis = texture(grasTextureUnit, coords.yz * scale);
+		vec4 yAxis = texture(grasTextureUnit, coords.xz * scale);
+		vec4 zAxis = texture(grasTextureUnit, coords.xy * scale);
+		vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+		return result;
+	}
+
+	vec4 readTerrainTextureDirt(vec3 coords, vec3 blending, float scale) {
+		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+		vec4 xAxis = texture(dirtTextureUnit, coords.yz * scale);
+		vec4 yAxis = texture(dirtTextureUnit, coords.xz * scale);
+		vec4 zAxis = texture(dirtTextureUnit, coords.xy * scale);
+		vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+		return result;
+	}
+
+	vec4 readTerrainTextureStone(vec3 coords, vec3 blending, float scale) {
+		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+		vec4 xAxis = texture(stoneTextureUnit, coords.yz * scale);
+		vec4 yAxis = texture(stoneTextureUnit, coords.xz * scale);
+		vec4 zAxis = texture(stoneTextureUnit, coords.xy * scale);
+		vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+		return result;
+	}
+
+	vec4 readTerrainTextureSnow(vec3 coords, vec3 blending, float scale) {
+		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+		vec4 xAxis = texture(snowTextureUnit, coords.yz * scale);
+		vec4 yAxis = texture(snowTextureUnit, coords.xz * scale);
+		vec4 zAxis = texture(snowTextureUnit, coords.xy * scale);
+		vec4 result = xAxis * blending.x + yAxis * blending.y + zAxis * blending.z;
+		return result;
+	}
+
 #elif defined(HAVE_WATER_SHADER)
 	in float height;
 #else
@@ -175,9 +215,12 @@ vec4 fragColor;
 #endif
 
 void main(void) {
-	// retrieve diffuse texture color value
 	#if defined(HAVE_TERRAIN_SHADER)
-		// no op
+		// see: https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
+		vec3 uvMappingBlending = abs(normal);
+		uvMappingBlending = normalize(max(uvMappingBlending, 0.00001)); // Force weights to sum to 1.0
+		float b = (uvMappingBlending.x + uvMappingBlending.y + uvMappingBlending.z);
+		uvMappingBlending /= vec3(b, b, b);
 	#elif defined(HAVE_WATER_SHADER)
 	#else
 		vec4 diffuseTextureColor;
@@ -246,7 +289,6 @@ void main(void) {
 			// height
 			if (height > TERRAIN_LEVEL_1) {
 				float blendFactorHeight = clamp((height - TERRAIN_LEVEL_1) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
-				// 10+ meter
 				if (slope >= 45.0) {
 					terrainBlending[2]+= blendFactorHeight; // stone
 				} else
@@ -266,7 +308,6 @@ void main(void) {
 					blendFactorHeight = clamp((height - TERRAIN_LEVEL_0) / TERRAIN_HEIGHT_BLEND, 0.0, 1.0);
 				}
 
-				// 0..10 meter
 				if (slope >= 45.0) {
 					terrainBlending[2]+= blendFactorHeight; // stone
 				} else
@@ -295,10 +336,10 @@ void main(void) {
 
 			//
 			outColor = vsEffectColorAdd;
-			if (terrainBlending[0] > 0.001) outColor+= texture(grasTextureUnit, vsFragTextureUV) * terrainBlending[0];
-			if (terrainBlending[1] > 0.001) outColor+= texture(dirtTextureUnit, vsFragTextureUV) * terrainBlending[1];
-			if (terrainBlending[2] > 0.001) outColor+= texture(stoneTextureUnit, vsFragTextureUV) * terrainBlending[2];
-			if (terrainBlending[3] > 0.001) outColor+= texture(snowTextureUnit, vsFragTextureUV) * terrainBlending[3];
+			if (terrainBlending[0] > 0.001) outColor+= readTerrainTextureGras(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[0];
+			if (terrainBlending[1] > 0.001) outColor+= readTerrainTextureDirt(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[1];
+			if (terrainBlending[2] > 0.001) outColor+= readTerrainTextureStone(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[2];
+			if (terrainBlending[3] > 0.001) outColor+= readTerrainTextureSnow(vertex, uvMappingBlending, TERRAIN_UV_SCALE) * terrainBlending[3];
 			outColor*= fragColor;
 			outColor = clamp(outColor, 0.0, 1.0);
 			if (fogStrength > 0.0) {

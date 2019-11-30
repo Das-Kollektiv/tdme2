@@ -103,6 +103,7 @@ private:
 		vector<int32_t> ubo_ids;
 		vector<buffer_object*> ubo;
 		int32_t ubo_binding_idx { -1 };
+		string definitions;
  		string source;
  		string file;
 		vector<unsigned int> spirv;
@@ -207,7 +208,7 @@ private:
 				VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE
 			};
 
-			unordered_map<uint8_t, texture> textures;
+			unordered_map<int, texture> textures;
 			int32_t count { 0 };
 			int32_t offset { 0 };
 			int32_t instances { 0 };

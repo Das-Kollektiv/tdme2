@@ -39,6 +39,8 @@ out vec4 vsEffectColorMul;
 out vec4 vsEffectColorAdd;
 
 #if defined(HAVE_TERRAIN_SHADER)
+	out vec3 vertex;
+	out vec3 normal;
 	out float height;
 	out float slope;
 #elif defined(HAVE_WATER_SHADER)
@@ -70,12 +72,12 @@ void main(void) {
 	#if defined(HAVE_TERRAIN_SHADER)
 		vec4 heightVector4 = inModelMatrix * vec4(inVertex, 1.0);
 		vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
+		vertex = heightVector3;
 		height = heightVector3.y;
-
 		mat4 normalMatrix = mat4(transpose(inverse(mat3(inModelMatrix))));
 		vec4 normalVector4 = normalMatrix * vec4(inNormal, 0.0);
-		vec3 normalVector3 = normalize(normalVector4.xyz);
-		slope = abs(180.0 / 3.14 * acos(clamp(dot(normalVector3, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
+		normal = normalize(normalVector4.xyz);
+		slope = abs(180.0 / 3.14 * acos(clamp(dot(normal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
 	#endif
 
 	#if defined(HAVE_WATER_SHADER)

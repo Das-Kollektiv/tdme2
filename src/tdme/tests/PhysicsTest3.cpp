@@ -243,6 +243,7 @@ void PhysicsTest3::initialize()
 		entity->setTranslation(Vector3(0.0f, -4.0f, 0.0f));
 		entity->setScale(Vector3(2.0f, 2.0f, 1.0f));
 		entity->update();
+		entity->setShader("terrain");
 		engine->addEntity(entity);
 		Object3DModel terrainModel(_terrainModel);
 		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransformations());

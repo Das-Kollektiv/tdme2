@@ -1983,6 +1983,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		string currentStruct;
 		stack<string> testedDefinitions;
 		vector<bool> matchedDefinitions;
+		vector<bool> hadMatchedDefinitions;
 		auto inLocationCount = 0;
 		auto outLocationCount = 0;
 		auto uboUniformCount = 0;
@@ -2013,6 +2014,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				}
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test begin: " + definition + ": " + to_string(matched));
 				matchedDefinitions.push_back(matched);
+				hadMatchedDefinitions.push_back(matched);
 				newShaderSourceLines.push_back("// " + line);
 			} else
 			if (StringUtils::startsWith(line, "#elif defined(") == true) {
@@ -2035,6 +2037,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				}
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else test begin: " + definition + ": " + to_string(matched));
 				matchedDefinitions.push_back(matched);
+				if (matched == true) hadMatchedDefinitions[hadMatchedDefinitions.size() - 1] = matched;
 			} else
 			if (StringUtils::startsWith(line, "#define ") == true) {
 				auto definition = StringUtils::trim(StringUtils::substring(line, string("#define ").size()));
@@ -2054,7 +2057,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 			} else
 			if (StringUtils::startsWith(line, "#else") == true) {
 				if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor else: " + line);
-				matchedDefinitions[matchedDefinitions.size() - 1] = !matchedDefinitions[matchedDefinitions.size() - 1];
+				matchedDefinitions[matchedDefinitions.size() - 1] = !matchedDefinitions[matchedDefinitions.size() - 1] && hadMatchedDefinitions[matchedDefinitions.size() - 1] == false;
 				newShaderSourceLines.push_back("// " + line);
 				matchedAllDefinitions = true;
 				for (auto matchedDefinition: matchedDefinitions) matchedAllDefinitions&= matchedDefinition;
@@ -2064,6 +2067,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				if (testedDefinitions.size() == 0) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have preprocessor test end: invalid depth"); else {
 					testedDefinitions.pop();
 					matchedDefinitions.pop_back();
+					hadMatchedDefinitions.pop_back();
 				}
 				newShaderSourceLines.push_back("// " + line);
 			} else
@@ -2203,6 +2207,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 		}
 	}
 
+	shaderStruct.definitions = definitions;
 	shaderStruct.source = shaderSource;
 
     //
@@ -3481,6 +3486,12 @@ bool VKRenderer::linkProgram(int32_t programId)
 			Console::println(shader->source);
 			return false;
 		}
+
+		/*
+		Console::println("definitions: " + shader->definitions);
+		Console::println("source:\n" + shader->source);
+		*/
+
 		glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shader->spirv);
 
 		// create shader module
