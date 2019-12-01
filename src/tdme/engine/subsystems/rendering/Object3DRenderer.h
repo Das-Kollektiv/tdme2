@@ -191,10 +191,17 @@ private:
 		renderer->setShader(renderer->getContext(threadIdx), string());
 
 		// sort objects by model
+		Vector3 objectCamFromAxis;
+		auto camera = engine->getCamera();
 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
 			auto object = objects[objectIdx];
-			auto& objectsByShaders = objectsByShadersAndModels[object->getShader()];
+			auto objectShader = object->getDistanceShader().length() == 0?
+				object->getShader():
+				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
+					object->getShader():
+					object->getDistanceShader();
+			auto& objectsByShaders = objectsByShadersAndModels[objectShader];
 			auto& objectsByModel = objectsByShaders[object->getModel()->getId()];
 			objectsByModel.push_back(object);
 		}
