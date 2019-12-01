@@ -160,7 +160,8 @@ void Object3DRenderer::initialize()
 {
 	psePointBatchRenderer->initialize();
 	for (auto i = 0; i < threadCount; i++) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3drenderer.instancedrendering." + to_string(i), 3, false, false);
+		auto created = false;
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.object3drenderer.instancedrendering." + to_string(i), 3, false, false, created);
 		contexts[i].vboInstancedRenderingIds = vboManaged->getVBOIds();
 	}
 }

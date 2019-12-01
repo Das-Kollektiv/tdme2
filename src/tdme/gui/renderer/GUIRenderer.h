@@ -46,33 +46,33 @@ public:
 private:
 	static constexpr int32_t QUAD_COUNT { 1024 };
 
-	GUI* gui {  };
-	Renderer* renderer {  };
-	vector<int32_t>* vboIds {  };
-	int32_t quadCount {  };
-	ByteBuffer* sbIndicesByteBuffer {  };
-	ByteBuffer* fbVerticesByteBuffer {  };
-	FloatBuffer fbVertices {  };
-	ByteBuffer* fbColorsByteBuffer {  };
-	FloatBuffer fbColors {  };
-	ByteBuffer* fbTextureCoordinatesByteBuffer {  };
-	FloatBuffer fbTextureCoordinates {  };
-	float renderAreaLeft {  };
-	float renderAreaTop {  };
-	float renderAreaRight {  };
-	float renderAreaBottom {  };
-	float renderOffsetX {  };
-	float renderOffsetY {  };
-	GUIScreenNode* screenNode {  };
-	array<float, 4> fontColor {  };
-	array<float, 4> effectColorMul {  };
-	array<float, 4> effectColorAdd {  };
-	array<float, 4> guiEffectColorMul {  };
-	array<float, 4> guiEffectColorAdd {  };
-	array<float, 4> effectColorMulFinal {  };
-	array<float, 4> effectColorAddFinal {  };
-	float guiEffectOffsetX {  };
-	float guiEffectOffsetY {  };
+	GUI* gui { nullptr };
+	Renderer* renderer { nullptr };
+	vector<int32_t>* vboIds { nullptr };
+	int32_t quadCount { 0 };
+	ByteBuffer* sbIndicesByteBuffer { nullptr };
+	ByteBuffer* fbVerticesByteBuffer { nullptr };
+	FloatBuffer fbVertices;
+	ByteBuffer* fbColorsByteBuffer { nullptr };
+	FloatBuffer fbColors;
+	ByteBuffer* fbTextureCoordinatesByteBuffer;
+	FloatBuffer fbTextureCoordinates;
+	float renderAreaLeft;
+	float renderAreaTop;
+	float renderAreaRight;
+	float renderAreaBottom;
+	float renderOffsetX;
+	float renderOffsetY;
+	GUIScreenNode* screenNode { nullptr };
+	array<float, 4> fontColor;
+	array<float, 4> effectColorMul;
+	array<float, 4> effectColorAdd;
+	array<float, 4> guiEffectColorMul;
+	array<float, 4> guiEffectColorAdd;
+	array<float, 4> effectColorMulFinal;
+	array<float, 4> effectColorAddFinal;
+	float guiEffectOffsetX;
+	float guiEffectOffsetY;
 
 public:
 

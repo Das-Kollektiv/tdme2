@@ -71,7 +71,8 @@ void FrameBufferRenderShader::initialize()
 	auto context = renderer->getDefaultContext();
 
 	// create vbos
-	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2, true, false);
+	auto created = false;
+	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("framebuffer_render_shader.vbos", 2, true, false, created);
 	vboVertices = (*vboManaged->getVBOIds())[0];
 	vboTextureCoordinates = (*vboManaged->getVBOIds())[1];
 

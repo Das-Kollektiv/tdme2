@@ -38,6 +38,7 @@ void Object3DGroupRenderer::preRender(void* context)
 {
 	// TODO: maybe store these in Object3DGroupRenderer too
 	auto meshUploaded = true;
+	auto created = false;
 
 	// initialize if not yet done
 	if (vboBaseIds == nullptr) {
@@ -45,11 +46,12 @@ void Object3DGroupRenderer::preRender(void* context)
 			object3DGroup->id,
 			3 + (object3DGroup->mesh->group->getTextureCoordinates().size() > 0?1:0),
 			true,
-			true
+			true,
+			created
 		);
-		if (vboManagedBase->getReferenceCounter() > 1) while (vboManagedBase->isUploaded() == false);
+		if (created == false) while (vboManagedBase->isUploaded() == false);
 		vboBaseIds = vboManagedBase->getVBOIds();
-		meshUploaded = vboManagedBase->isUploaded();
+		meshUploaded = created == false;
 	}
 
 	// initialize tangents, bitangents
@@ -57,16 +59,16 @@ void Object3DGroupRenderer::preRender(void* context)
 		object3DGroup->mesh->group->getTangents().size() > 0 &&
 		object3DGroup->mesh->group->getBitangents().size() > 0 &&
 		vboNormalMappingIds == nullptr) {
-		vboManagedNormalMapping = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".normalmapping", 2, true, true);
-		if (vboManagedNormalMapping->getReferenceCounter() > 1) while (vboManagedNormalMapping->isUploaded() == false);
+		vboManagedNormalMapping = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".normalmapping", 2, true, true, created);
+		if (created == false) while (vboManagedNormalMapping->isUploaded() == false);
 		vboNormalMappingIds = vboManagedNormalMapping->getVBOIds();
 	}
 
 	// initialize tangents, bitangents
 	if (object3DGroup->mesh->group->getOrigins().size() > 0 &&
 		vboOrigins == nullptr) {
-		vboManagedOrigins = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true, true);
-		if (vboManagedOrigins->getReferenceCounter() > 1) while (vboManagedOrigins->isUploaded() == false);
+		vboManagedOrigins = Engine::getInstance()->getVBOManager()->addVBO(object3DGroup->id + ".origins", 1, true, true, created);
+		if (created == false) while (vboManagedOrigins->isUploaded() == false);
 		vboOrigins = vboManagedOrigins->getVBOIds();
 	}
 

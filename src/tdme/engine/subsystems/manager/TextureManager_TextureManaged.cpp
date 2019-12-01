@@ -14,13 +14,3 @@ TextureManager_TextureManaged::TextureManager_TextureManaged(const string& id, i
 	this->id = id;
 	this->rendererId = rendererId;
 }
-
-bool TextureManager_TextureManaged::isUploaded()
-{
-	if (uploaded == false) {
-		uploaded = true;
-		return false;
-	} else {
-		return true;
-	}
-}

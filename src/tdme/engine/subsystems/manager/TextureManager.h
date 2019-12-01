@@ -27,8 +27,8 @@ class tdme::engine::subsystems::manager::TextureManager final
 	friend class TextureManager_TextureManaged;
 
 private:
-	Renderer* renderer {  };
-	map<string, TextureManager_TextureManaged*> textures {  };
+	Renderer* renderer { nullptr };
+	map<string, TextureManager_TextureManaged*> textures;
 	Mutex mutex;
 
 public:
@@ -36,17 +36,18 @@ public:
 	/**
 	 * Adds a texture to manager
 	 * @param id id
+	 * @param created if managed texture has just been created
 	 * @returns texture manager entity
 	 */
-	TextureManager_TextureManaged* addTexture(const string& id);
+	TextureManager_TextureManaged* addTexture(const string& id, bool& created);
 
 	/** 
 	 * Adds a texture to manager
 	 * @param texture texture
-	 * @param context context
+	 * @param context context or nullptr if using default context
 	 * @returns texture id
 	 */
-	int32_t addTexture(Texture* texture, void* context = nullptr);
+	int32_t addTexture(Texture* texture, void* context);
 
 	/** 
 	 * Removes a texture from manager / open gl stack

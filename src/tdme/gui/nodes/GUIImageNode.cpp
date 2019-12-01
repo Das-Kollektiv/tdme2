@@ -473,7 +473,7 @@ void GUIImageNode::setSource(const string& source) {
 	}
 	this->source = source;
 	this->texture = source.empty() == true?nullptr:GUI::getImage(source);
-	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture);
+	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
 }
 
 const string& GUIImageNode::getSource() {

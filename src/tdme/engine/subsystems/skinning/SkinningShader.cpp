@@ -114,23 +114,24 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	if (cacheIt == cache.end()) {
 		ModelSkinningCache modelSkinningCache;
 
+		auto created = false;
 		auto skinning = group->getSkinning();
 		auto& verticesJointsWeights = skinning->getVerticesJointsWeights();
 		auto& weights = skinning->getWeights();
 
 		// vbos
 		{
-			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 5, true, true);
+			auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos", 5, true, true, created);
 			modelSkinningCache.vboIds = vboManaged->getVBOIds();
 		}
 		{
 			if (renderer->isSupportingMultithreadedRendering() == true) {
 				for (auto i = 0; i < Engine::getThreadCount(); i++) {
-					auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices." + to_string(i), 1, false, false);
+					auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices." + to_string(i), 1, false, false, created);
 					modelSkinningCache.matricesVboIds.push_back(vboManaged->getVBOIds());
 				}
 			} else {
-				auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices", 1, false, false);
+				auto vboManaged = Engine::getVBOManager()->addVBO("skinning_compute_shader." + id + ".vbos.matrices", 1, false, false, created);
 				modelSkinningCache.matricesVboIds.push_back(vboManaged->getVBOIds());
 			}
 		}

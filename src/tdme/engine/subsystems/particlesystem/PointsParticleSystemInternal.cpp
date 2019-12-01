@@ -63,7 +63,7 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->particlesToSpawnRemainder = 0.0f;
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
+	this->textureId = 0;
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 }
 
@@ -79,6 +79,7 @@ const string& PointsParticleSystemInternal::getId()
 }
 
 void PointsParticleSystemInternal::initialize() {
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, renderer->getDefaultContext());
 }
 
 void PointsParticleSystemInternal::setRenderer(Renderer* renderer)

@@ -17,10 +17,10 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderBaseImplementation: public PostProcessingShaderImplementation
 {
 protected:
-	int32_t programId {  };
+	int32_t programId { -1 };
 
-	int32_t vertexShaderId {  };
-	int32_t fragmentShaderId {  };
+	int32_t vertexShaderId { -1 };
+	int32_t fragmentShaderId { -1 };
 
 	int32_t uniformColorBufferTextureUnit { -1 };
 	int32_t uniformDepthBufferTextureUnit { -1 };
@@ -29,9 +29,9 @@ protected:
 	int32_t uniformBufferTexturePixelWidth { -1 };
 	int32_t uniformBufferTexturePixelHeight { -1 };
 
-	bool isRunning {  };
-	bool initialized {  };
-	Renderer* renderer {  };
+	bool isRunning { false };
+	bool initialized { false };
+	Renderer* renderer { nullptr };
 
 public:
 

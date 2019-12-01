@@ -27,7 +27,7 @@ VBOManager::~VBOManager() {
 	}
 }
 
-VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared) {
+VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared, bool& created) {
 	rwLock.writeLock();
 	// check if we already manage this vbo
 	auto vboManagedIt = vbos.find(vboId);
@@ -36,6 +36,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool
 		vboManaged->incrementReferenceCounter();
 		rwLock.unlock();
 		// yep, return vbo managed
+		created = false;
 		return vboManaged;
 	}
 	// create vertex buffer objects
@@ -46,6 +47,7 @@ VBOManager_VBOManaged* VBOManager::addVBO(const string& vboId, int32_t ids, bool
 	vboManaged->incrementReferenceCounter();
 	vbos[vboManaged->getId()] = vboManaged;
 	rwLock.unlock();
+	created = true;
 	// return vbo managed
 	return vboManaged;
 }

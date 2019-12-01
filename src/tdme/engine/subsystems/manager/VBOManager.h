@@ -26,8 +26,8 @@ class tdme::engine::subsystems::manager::VBOManager final
 	friend class VBOManager_VBOManaged;
 
 private:
-	Renderer* renderer {  };
-	map<string, VBOManager_VBOManaged*> vbos {  };
+	Renderer* renderer { nullptr };
+	map<string, VBOManager_VBOManaged*> vbos;
 	ReadWriteLock rwLock;
 
 public:
@@ -38,8 +38,9 @@ public:
 	 * @param ids VBOs to allocate
 	 * @param useGPUMemory use GPU memory
 	 * @param shared shared between different threads
+	 * @param created returns if VBO was just created
 	 */
-	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared);
+	VBOManager_VBOManaged* addVBO(const string& vboId, int32_t ids, bool useGPUMemory, bool shared, bool& created);
 
 	/** 
 	 * Retrieves a VBO managed from manager

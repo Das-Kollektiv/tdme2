@@ -515,7 +515,6 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 
 	//
 	tex_obj->image_layout = image_layout;
-	tex_obj->type = texture_object::TYPE_TEXTURE;
 	setImageLayout(
 		contextIdx,
 		tex_obj->image,
@@ -1330,7 +1329,7 @@ void VKRenderer::initialize()
 	uploadBufferObjectInternal(0, empty_vertex_buffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
 	//
-	white_texture_default_id = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"));
+	white_texture_default_id = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), getDefaultContext());
 	white_texture_default = &textures.find(white_texture_default_id)->second;
 }
 
@@ -4400,6 +4399,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	assert(!err);
 
 	//
+	texture_object.type = texture_object::TYPE_TEXTURE;
 	texture_object.uploaded = true;
 
 	//
@@ -5060,7 +5060,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 			continue;
 		}
 		auto textureObjectIt = textures.find(textureId);
-		if (textureObjectIt == textures.end() || textureObjectIt->second.type == texture_object::TYPE_NONE || (textureObjectIt->second.type == texture_object::TYPE_TEXTURE && textureObjectIt->second.uploaded == false)) {
+		if (textureObjectIt == textures.end() ||
+			textureObjectIt->second.type == texture_object::TYPE_NONE ||
+			(textureObjectIt->second.type == texture_object::TYPE_TEXTURE && textureObjectIt->second.uploaded == false)) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture does not exist: " + to_string(contextTyped.bound_textures[i]));
 			continue;
 		}

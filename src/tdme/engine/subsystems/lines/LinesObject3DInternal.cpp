@@ -52,7 +52,7 @@ LinesObject3DInternal::LinesObject3DInternal(const string& id, float lineWidth, 
 	this->color = color;
 	this->colors = colors;
 	this->texture = texture;
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png")):engine->getTextureManager()->addTexture(this->texture);
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, renderer->getDefaultContext());
 	if (points.size() > 1) {
 		boundingBox.getMin().set(points[0]);
 		boundingBox.getMax().set(points[0]);
@@ -90,7 +90,8 @@ void LinesObject3DInternal::fromTransformations(const Transformations& transform
 
 void LinesObject3DInternal::initialize() {
 	// initialize if not yet done
-	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(id + ".vbos", 2, true, false);
+	auto created = false;
+	auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO(id + ".vbos", 2, true, false, created);
 	vboIds = vboManaged->getVBOIds();
 
 	//

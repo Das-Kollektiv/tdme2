@@ -136,7 +136,7 @@ private:
 
 	struct texture_object {
 		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_FRAMEBUFFER_COLORBUFFER, TYPE_FRAMEBUFFER_DEPTHBUFFER };
-		bool uploaded { false };
+		volatile bool uploaded { false };
 		type type { TYPE_NONE };
 		int32_t id { 0 };
 		int32_t frame_buffer_object_id { 0 };

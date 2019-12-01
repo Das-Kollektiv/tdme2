@@ -48,7 +48,8 @@ void BatchRendererPoints::initialize()
 {
 	// initialize if not yet done
 	if (vboIds == nullptr) {
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 2, false, false);
+		auto created = false;
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 2, false, false, created);
 		vboIds = vboManaged->getVBOIds();
 	}
 }
