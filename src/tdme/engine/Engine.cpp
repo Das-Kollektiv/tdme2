@@ -1475,7 +1475,7 @@ Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3
 	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, endPoint);
 
 	//
-	return doRayCasting(startPoint, endPoint, contactPoint, filter);
+	return doRayCasting(startPoint, endPoint, contactPoint, filter);// TODO: object 3d group
 }
 
 Entity* Engine::doRayCasting(
