@@ -1668,6 +1668,9 @@ void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordi
 
 void Engine::dispose()
 {
+	// finish last frame
+	if (this == Engine::instance) Engine::renderer->finishFrame();
+
 	// remove entities
 	vector<string> entitiesToRemove;
 	for (auto it: entitiesById) {

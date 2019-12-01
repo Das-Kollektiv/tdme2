@@ -47,7 +47,7 @@ public:
 	 * @param context context or nullptr if using default context
 	 * @returns texture id
 	 */
-	int32_t addTexture(Texture* texture, void* context);
+	int32_t addTexture(Texture* texture, void* context = nullptr);
 
 	/** 
 	 * Removes a texture from manager / open gl stack

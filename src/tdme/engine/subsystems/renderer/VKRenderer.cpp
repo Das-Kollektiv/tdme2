@@ -1511,6 +1511,15 @@ void VKRenderer::initializeFrame()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
+	// work around for AMD drivers not telling if window needs to be reshaped
+	{
+		int32_t currentWidth;
+		int32_t currentHeight;
+		glfwGetWindowSize(Application::glfwWindow, &currentWidth, &currentHeight);
+		auto needsReshape = currentWidth > 0 && currentHeight > 0 && (currentWidth != width || currentHeight != height);
+		if (needsReshape == true) reshape();
+	}
+
 	//
 	Renderer::initializeFrame();
 
@@ -1703,17 +1712,6 @@ void VKRenderer::finishFrame()
 	// reset desc index
 	for (auto& programIt: programs) {
 		for (auto i = 0; i < programIt.second.desc_idxs.size(); i++) programIt.second.desc_idxs[i] = 0;
-	}
-
-	// work around for AMD drivers not telling if window needs to be reshaped
-	if (needsReshape == false) {
-		int32_t currentWidth;
-		int32_t currentHeight;
-		glfwGetWindowSize(Application::glfwWindow, &currentWidth, &currentHeight);
-		needsReshape = currentWidth != width || currentHeight != height;
-	}
-	if (needsReshape == true) {
-		reshape();
 	}
 
 	//
