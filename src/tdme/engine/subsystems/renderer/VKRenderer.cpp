@@ -5082,7 +5082,6 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t tr
 
 inline void VKRenderer::endDrawCommandsAllContexts() {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	for (auto i = 0; i < Engine::getThreadCount(); i++) endDrawCommands(i);
 	memoryBarrier();
 }
 

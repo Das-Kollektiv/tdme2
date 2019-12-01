@@ -92,12 +92,16 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, voi
 {
 	//
 	if (renderer->getShader(context) != shader) {
+		// update sahder
 		renderer->setShader(context, shader);
 		renderer->onUpdateShader(context);
 		// update lights
 		for (auto j = 0; j < engine->lights.size(); j++) {
 			engine->lights[j].update(context);
 		}
+		// have identity texture matrix
+		renderer->getTextureMatrix(context).identity();
+		renderer->onUpdateTextureMatrix(context);
 	}
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;

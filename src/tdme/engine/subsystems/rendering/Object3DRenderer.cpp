@@ -246,6 +246,7 @@ void Object3DRenderer::render(const vector<Object3D*>& objects, bool renderTrans
 		// disable foliage animation
 		// reset shader
 		renderer->setShader(renderer->getDefaultContext(), string());
+		renderer->onUpdateShader(renderer->getDefaultContext());
 		// have identity texture matrix
 		renderer->getTextureMatrix(context).identity();
 		renderer->onUpdateTextureMatrix(context);
@@ -349,10 +350,10 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 				modelViewMatrix.multiply((*transparentRenderFace->object3DGroup->mesh->vertices)[arrayIdx], transformedVector),
 				modelViewMatrix.multiplyNoTranslation((*transparentRenderFace->object3DGroup->mesh->normals)[arrayIdx], transformedNormal),
 				transparentRenderFace->object3DGroup->textureMatricesByEntities[facesEntityIdx].multiply(
-						textureCoordinates.size() >0 ?
+					textureCoordinates.size() > 0?
 						Vector2(textureCoordinates[arrayIdx].getArray()):
 						Vector2(0.0f, 0.0f),
-						transformedTextureCoordinate
+					transformedTextureCoordinate
 				)
 			);
 		}
@@ -731,6 +732,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 							// issue upload matrices
 							renderer->onUpdateCameraMatrix(context);
 							renderer->onUpdateProjectionMatrix(context);
+							renderer->onUpdateTextureMatrix(context);
 						}
 						hadShaderSetup = true;
 					} else
