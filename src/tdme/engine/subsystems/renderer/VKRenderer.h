@@ -448,7 +448,6 @@ private:
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
 	array<VkCommandBuffer, 3> endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
 	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
-	void submitContext(int contextIdx);
 	void recreateContextFences(int contextIdx);
 
 public:

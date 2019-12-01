@@ -69,7 +69,7 @@ using std::max;
 #define GET_INSTANCE_PROC_ADDR(inst, entrypoint)														\
     {																											\
         fp##entrypoint = (PFN_vk##entrypoint)vkGetInstanceProcAddr(inst, "vk" #entrypoint);				\
-        if (fp##entrypoint == NULL) {																	\
+        if (fp##entrypoint == nullptr) {																	\
             ERR_EXIT("vkGetInstanceProcAddr failed to find vk" #entrypoint, "vkGetInstanceProcAddr Failure");	\
         }                                                                      									\
     }
@@ -77,7 +77,7 @@ using std::max;
 #define GET_DEVICE_PROC_ADDR(dev, entrypoint)																	\
     {																											\
         fp##entrypoint = (PFN_vk##entrypoint)vkGetDeviceProcAddr(dev, "vk" #entrypoint);				\
-        if (fp##entrypoint == NULL) {																	\
+        if (fp##entrypoint == nullptr) {																	\
             ERR_EXIT("vkGetDeviceProcAddr failed to find vk" #entrypoint, "vkGetDeviceProcAddr Failure");		\
         }																										\
     }
@@ -186,9 +186,9 @@ inline void VKRenderer::prepareSetupCommandBuffer(int contextIdx) {
 		//
 		const VkCommandBufferBeginInfo cmd_buf_info = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-			.pInheritanceInfo = NULL
+			.pInheritanceInfo = nullptr
 		};
 
 		VkResult err;
@@ -212,14 +212,14 @@ inline void VKRenderer::finishSetupCommandBuffer(int contextIdx) {
 		VkFence nullFence = { VK_NULL_HANDLE };
 		VkSubmitInfo submit_info = {
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.waitSemaphoreCount = 0,
-			.pWaitSemaphores = NULL,
-			.pWaitDstStageMask = NULL,
+			.pWaitSemaphores = nullptr,
+			.pWaitDstStageMask = nullptr,
 			.commandBufferCount = 1,
 			.pCommandBuffers = cmd_bufs,
 			.signalSemaphoreCount = 0,
-			.pSignalSemaphores = NULL
+			.pSignalSemaphores = nullptr
 		};
 
 		queue_mutex.lock();
@@ -261,9 +261,9 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	//
 	const VkCommandBufferBeginInfo cmd_buf_info = {
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-		.pInheritanceInfo = NULL
+		.pInheritanceInfo = nullptr
 	};
 
 	//
@@ -276,7 +276,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	// happens to the previous contents of the image
 	VkImageMemoryBarrier image_memory_barrier = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.srcAccessMask = 0,
 		.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
 		.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
@@ -286,7 +286,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 		.image = swapchain_buffers[current_buffer].image,
 		.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 }
 	};
-	vkCmdPipelineBarrier(context.draw_cmds[bufferId][context.front_face_index], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	vkCmdPipelineBarrier(context.draw_cmds[bufferId][context.front_face_index], VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0, nullptr, 0, nullptr, 1, &image_memory_barrier);
 
 	//
 	context.draw_cmd_started[bufferId][context.front_face_index] = true;
@@ -335,14 +335,14 @@ inline void VKRenderer::recreateContextFences(int contextIdx) {
 	if (context.draw_fence == VK_NULL_HANDLE) {
 		VkFenceCreateInfo fence_create_info_unsignaled = {
 			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.flags = 0
 		};
 		vkCreateFence(device, &fence_create_info_unsignaled, nullptr, &context.draw_fence);
 	}
 	VkFenceCreateInfo fence_create_info_signaled = {
 		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = VK_FENCE_CREATE_SIGNALED_BIT
 	};
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
@@ -362,14 +362,14 @@ inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkComma
 	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 	VkSubmitInfo submit_info = {
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.waitSemaphoreCount = 0,
-		.pWaitSemaphores = NULL,
+		.pWaitSemaphores = nullptr,
 		.pWaitDstStageMask = &pipe_stage_flags,
 		.commandBufferCount = static_cast<uint32_t>(commandBufferCount),
 		.pCommandBuffers = commandBuffers,
 		.signalSemaphoreCount = 0,
-		.pSignalSemaphores = NULL
+		.pSignalSemaphores = nullptr
 	};
 
 	//
@@ -405,7 +405,7 @@ inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAsp
 	VkResult err;
 	VkImageMemoryBarrier image_memory_barrier = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.srcAccessMask = srcAccessMask,
 		.dstAccessMask = 0,
 		.oldLayout = old_image_layout,
@@ -439,7 +439,7 @@ inline void VKRenderer::setImageLayout(int contextIdx, VkImage image, VkImageAsp
 	}
 
 	//
-	vkCmdPipelineBarrier(context.setup_cmd_inuse, VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	vkCmdPipelineBarrier(context.setup_cmd_inuse, VK_PIPELINE_STAGE_HOST_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 0, 0, nullptr, 0, nullptr, 1, &image_memory_barrier);
 }
 
 inline uint32_t VKRenderer::getMipLevels(int32_t textureWidth, int32_t textureHeight) {
@@ -456,7 +456,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 
 	const VkImageCreateInfo image_create_info = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
 		.format = tex_format,
@@ -659,7 +659,7 @@ void VKRenderer::initializeSwapChain() {
 	assert(err == VK_SUCCESS);
 
 	uint32_t presentModeCount;
-	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, NULL);
+	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, nullptr);
 	assert(err == VK_SUCCESS);
 	VkPresentModeKHR *presentModes = (VkPresentModeKHR *) malloc(presentModeCount * sizeof(VkPresentModeKHR));
 	assert(presentModes);
@@ -715,7 +715,7 @@ void VKRenderer::initializeSwapChain() {
 
 	const VkSwapchainCreateInfoKHR swapchainCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.surface = surface,
 		.minImageCount = desiredNumOfSwapchainImages,
@@ -738,7 +738,7 @@ void VKRenderer::initializeSwapChain() {
 	};
 	uint32_t i;
 
-	err = fpCreateSwapchainKHR(device, &swapchainCreateInfo, NULL, &swapchain);
+	err = fpCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain);
 	assert(!err);
 
 	// If we just re-created an existing swapchain, we should destroy the old
@@ -746,24 +746,24 @@ void VKRenderer::initializeSwapChain() {
 	// Note: destroying the swapchain also cleans up all its associated
 	// presentable images once the platform is done with them.
 	if (oldSwapchain != VK_NULL_HANDLE) {
-		fpDestroySwapchainKHR(device, oldSwapchain, NULL);
+		fpDestroySwapchainKHR(device, oldSwapchain, nullptr);
 	}
 
-	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, NULL);
+	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, nullptr);
 	assert(err == VK_SUCCESS);
 
 	VkImage* swapchainImages = (VkImage*)malloc(swapchain_image_count * sizeof(VkImage));
-	assert(swapchainImages != NULL);
+	assert(swapchainImages != nullptr);
 	err = fpGetSwapchainImagesKHR(device, swapchain, &swapchain_image_count, swapchainImages);
 	assert(err == VK_SUCCESS);
 
 	swapchain_buffers = (swapchain_buffer_type*)malloc(sizeof(swapchain_buffer_type) * swapchain_image_count);
-	assert(swapchain_buffers != NULL);
+	assert(swapchain_buffers != nullptr);
 
 	for (i = 0; i < swapchain_image_count; i++) {
 		VkImageViewCreateInfo color_attachment_view = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.flags = 0,
 			.image = swapchainImages[i],
 			.viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -783,13 +783,13 @@ void VKRenderer::initializeSwapChain() {
 			}
 		};
 		swapchain_buffers[i].image = swapchainImages[i];
-		err = vkCreateImageView(device, &color_attachment_view, NULL, &swapchain_buffers[i].view);
+		err = vkCreateImageView(device, &color_attachment_view, nullptr, &swapchain_buffers[i].view);
 		assert(err == VK_SUCCESS);
 	}
 
 	current_buffer = 0;
 
-	if (NULL != presentModes) free(presentModes);
+	if (nullptr != presentModes) free(presentModes);
 }
 
 const string VKRenderer::getShaderVersion()
@@ -841,8 +841,8 @@ void VKRenderer::initialize()
 	uint32_t instance_extension_count = 0;
 	uint32_t instance_layer_count = 0;
 	uint32_t validation_layer_count = 0;
-	const char **required_extensions = NULL;
-	const char **instance_validation_layers = NULL;
+	const char **required_extensions = nullptr;
+	const char **instance_validation_layers = nullptr;
 
 	uint32_t enabled_extension_count = 0;
 	uint32_t enabled_layer_count = 0;
@@ -865,7 +865,7 @@ void VKRenderer::initialize()
 	// Look for validation layers
 	if (validate == true) {
 		VkBool32 validation_found = 0;
-		err = vkEnumerateInstanceLayerProperties(&instance_layer_count, NULL);
+		err = vkEnumerateInstanceLayerProperties(&instance_layer_count, nullptr);
 		assert(!err);
 
 		instance_validation_layers = (const char**) instance_validation_layers_alt1;
@@ -927,12 +927,12 @@ void VKRenderer::initialize()
 	}
 
 	err = vkEnumerateInstanceExtensionProperties(
-	NULL, &instance_extension_count, NULL);
+	nullptr, &instance_extension_count, nullptr);
 	assert(!err);
 
 	if (instance_extension_count > 0) {
 		VkExtensionProperties* instance_extensions = (VkExtensionProperties*)malloc(sizeof(VkExtensionProperties) * instance_extension_count);
-		err = vkEnumerateInstanceExtensionProperties(NULL, &instance_extension_count, instance_extensions);
+		err = vkEnumerateInstanceExtensionProperties(nullptr, &instance_extension_count, instance_extensions);
 		assert(!err);
 		for (i = 0; i < instance_extension_count; i++) {
 			if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instance_extensions[i].extensionName)) {
@@ -947,7 +947,7 @@ void VKRenderer::initialize()
 
 	const VkApplicationInfo app = {
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.pApplicationName = "TDME2 based application",
 		.applicationVersion = 0,
 		.pEngineName = "TDME2",
@@ -956,7 +956,7 @@ void VKRenderer::initialize()
 	};
 	VkInstanceCreateInfo inst_info = {
 		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.pApplicationInfo = &app,
 		.enabledLayerCount = enabled_layer_count,
@@ -966,7 +966,7 @@ void VKRenderer::initialize()
 	};
 	uint32_t gpu_count;
 
-	err = vkCreateInstance(&inst_info, NULL, &inst);
+	err = vkCreateInstance(&inst_info, nullptr, &inst);
 	if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
 		ERR_EXIT("Cannot find a compatible Vulkan installable client driver "
 				"(ICD).\n\nPlease look at the Getting Started guide for "
@@ -985,7 +985,7 @@ void VKRenderer::initialize()
 	}
 
 	// Make initial call to query gpu_count, then second call for gpu info
-	err = vkEnumeratePhysicalDevices(inst, &gpu_count, NULL);
+	err = vkEnumeratePhysicalDevices(inst, &gpu_count, nullptr);
 	assert(!err && gpu_count > 0);
 
 	if (gpu_count > 0) {
@@ -1010,12 +1010,12 @@ void VKRenderer::initialize()
 	VkBool32 swapchainExtFound = 0;
 	enabled_extension_count = 0;
 
-	err = vkEnumerateDeviceExtensionProperties(gpu, NULL, &device_extension_count, NULL);
+	err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &device_extension_count, nullptr);
 	assert(!err);
 
 	if (device_extension_count > 0) {
 		VkExtensionProperties* device_extensions = (VkExtensionProperties*)malloc(sizeof(VkExtensionProperties) * device_extension_count);
-		err = vkEnumerateDeviceExtensionProperties(gpu, NULL, &device_extension_count, device_extensions);
+		err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &device_extension_count, device_extensions);
 		assert(!err);
 
 		for (i = 0; i < device_extension_count; i++) {
@@ -1049,8 +1049,8 @@ void VKRenderer::initialize()
 
 	vkGetPhysicalDeviceProperties(gpu, &gpu_props);
 
-	// Query with NULL data to get count
-	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, NULL);
+	// Query with nullptr data to get count
+	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, nullptr);
 
 	queue_props = (VkQueueFamilyProperties *) malloc(queue_count * sizeof(VkQueueFamilyProperties));
 	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queue_count, queue_props);
@@ -1059,7 +1059,7 @@ void VKRenderer::initialize()
 	vkGetPhysicalDeviceFeatures(gpu, &gpu_features);
 
 	// Create a WSI surface for the window:
-	err = glfwCreateWindowSurface(inst, Application::glfwWindow, NULL, &surface);
+	err = glfwCreateWindowSurface(inst, Application::glfwWindow, nullptr, &surface);
 	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
@@ -1123,7 +1123,7 @@ void VKRenderer::initialize()
 	float queue_priorities[1] = { 0.0f };
 	const VkDeviceQueueCreateInfo queueCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.queueFamilyIndex = graphics_queue_node_index,
 		.queueCount = 1,
@@ -1137,18 +1137,18 @@ void VKRenderer::initialize()
 
 	VkDeviceCreateInfo deviceCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.queueCreateInfoCount = 1,
 		.pQueueCreateInfos = &queueCreateInfo,
 		.enabledLayerCount = 0,
-		.ppEnabledLayerNames = NULL,
+		.ppEnabledLayerNames = nullptr,
 		.enabledExtensionCount = enabled_extension_count,
 		.ppEnabledExtensionNames = (const char * const *) extension_names,
 		.pEnabledFeatures = &features
 	};
 
-	err = vkCreateDevice(gpu, &deviceCreateInfo, NULL, &device);
+	err = vkCreateDevice(gpu, &deviceCreateInfo, nullptr, &device);
 	assert(!err);
 
 	GET_DEVICE_PROC_ADDR(device, CreateSwapchainKHR);
@@ -1161,7 +1161,7 @@ void VKRenderer::initialize()
 
 	// Get the list of VkFormat's that are supported:
 	uint32_t formatCount;
-	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, NULL);
+	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, nullptr);
 	assert(!err);
 	VkSurfaceFormatKHR *surfFormats = (VkSurfaceFormatKHR *) malloc(formatCount * sizeof(VkSurfaceFormatKHR));
 	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &formatCount, surfFormats);
@@ -1211,14 +1211,14 @@ void VKRenderer::initialize()
 	};
 	const VkDescriptorPoolCreateInfo descriptor_pool = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.maxSets = static_cast<uint32_t>(DESC_MAX * Engine::getThreadCount() * 32), // 32 shader
 		.poolSizeCount = 3,
 		.pPoolSizes = types_count,
 	};
 
-	err = vkCreateDescriptorPool(device, &descriptor_pool, NULL, &desc_pool);
+	err = vkCreateDescriptorPool(device, &descriptor_pool, nullptr, &desc_pool);
 	assert(!err);
 
 	contexts.resize(Engine::getThreadCount());
@@ -1229,17 +1229,17 @@ void VKRenderer::initialize()
 			// command pool
 			const VkCommandPoolCreateInfo cmd_pool_info = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 				.queueFamilyIndex = graphics_queue_node_index
 			};
-			err = vkCreateCommandPool(device, &cmd_pool_info, NULL, &context.cmd_setup_pool);
+			err = vkCreateCommandPool(device, &cmd_pool_info, nullptr, &context.cmd_setup_pool);
 			assert(!err);
 
 			// command buffer
 			const VkCommandBufferAllocateInfo cmd = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.commandPool = context.cmd_setup_pool,
 				.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 				.commandBufferCount = 1
@@ -1252,17 +1252,17 @@ void VKRenderer::initialize()
 			// draw command pool
 			const VkCommandPoolCreateInfo cmd_pool_info = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 				.queueFamilyIndex = graphics_queue_node_index
 			};
-			err = vkCreateCommandPool(device, &cmd_pool_info, NULL, &context.cmd_draw_pool);
+			err = vkCreateCommandPool(device, &cmd_pool_info, nullptr, &context.cmd_draw_pool);
 			assert(!err);
 
 			// command buffer
 			const VkCommandBufferAllocateInfo cmd = {
 				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.commandPool = context.cmd_draw_pool,
 				.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 				.commandBufferCount = 1
@@ -1278,7 +1278,7 @@ void VKRenderer::initialize()
 		{
 			VkFenceCreateInfo fence_create_info = {
 				.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.flags = 0
 			};
 			vkCreateFence(device, &fence_create_info, nullptr, &context.setup_fence);
@@ -1307,7 +1307,7 @@ void VKRenderer::initialize()
 	{
 		VkFenceCreateInfo fence_create_info = {
 			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.flags = 0
 		};
 		vkCreateFence(device, &fence_create_info, nullptr, &memorybarrier_fence);
@@ -1337,7 +1337,7 @@ void VKRenderer::initializeRenderPass() {
 	VkResult err;
 
 	//
-	if (render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, render_pass, NULL);
+	if (render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, render_pass, nullptr);
 
 	// depth buffer
 	if (depth_buffer_default != 0) disposeTexture(depth_buffer_default);
@@ -1355,7 +1355,7 @@ void VKRenderer::initializeRenderPass() {
 			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 			// TODO: a.drewke, was: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, check me later, something with changing image layouts is wrong here sometimes
 			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-			.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+			.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		},
 		[1] = {
 			.flags = 0,
@@ -1381,26 +1381,26 @@ void VKRenderer::initializeRenderPass() {
 		.flags = 0,
 		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 		.inputAttachmentCount = 0,
-		.pInputAttachments = NULL,
+		.pInputAttachments = nullptr,
 		.colorAttachmentCount = 1,
 		.pColorAttachments = &color_reference,
-		.pResolveAttachments = NULL,
+		.pResolveAttachments = nullptr,
 		.pDepthStencilAttachment = &depth_reference,
 		.preserveAttachmentCount = 0,
-		.pPreserveAttachments = NULL
+		.pPreserveAttachments = nullptr
 	};
 	const VkRenderPassCreateInfo rp_info = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.attachmentCount = 2,
 		.pAttachments = attachments,
 		.subpassCount = 1,
 		.pSubpasses = &subpass,
 		.dependencyCount = 0,
-		.pDependencies = NULL
+		.pDependencies = nullptr
 	};
-	err = vkCreateRenderPass(device, &rp_info, NULL, &render_pass);
+	err = vkCreateRenderPass(device, &rp_info, nullptr, &render_pass);
 	assert(!err);
 }
 
@@ -1424,12 +1424,12 @@ inline void VKRenderer::startRenderPass(int contextIdx, int line) {
 
 	const VkRenderPassBeginInfo rp_begin = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.renderPass = renderPass,
 		.framebuffer = frameBuffer,
 		.renderArea = scissor,
 		.clearValueCount = 0,
-		.pClearValues = NULL
+		.pClearValues = nullptr
 	};
 	vkCmdBeginRenderPass(context.draw_cmds[context.draw_cmd_current][context.front_face_index], &rp_begin, VK_SUBPASS_CONTENTS_INLINE);
 }
@@ -1453,7 +1453,7 @@ void VKRenderer::initializeFrameBuffers() {
 
 	const VkFramebufferCreateInfo fb_info = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.renderPass = render_pass,
 		.attachmentCount = 2,
@@ -1471,7 +1471,7 @@ void VKRenderer::initializeFrameBuffers() {
 
 	for (i = 0; i < swapchain_image_count; i++) {
 		attachments[0] = swapchain_buffers[i].view;
-		err = vkCreateFramebuffer(device, &fb_info, NULL, &window_framebuffers[i]);
+		err = vkCreateFramebuffer(device, &fb_info, nullptr, &window_framebuffers[i]);
 		assert(!err);
 	}
 }
@@ -1500,7 +1500,7 @@ void VKRenderer::reshape() {
 	current_buffer = 0;
 
 	// dispose old frame buffers
-	for (auto i = 0; i < swapchain_image_count; i++) vkDestroyFramebuffer(device, frame_buffers_last[i], NULL);
+	for (auto i = 0; i < swapchain_image_count; i++) vkDestroyFramebuffer(device, frame_buffers_last[i], nullptr);
 	delete [] frame_buffers_last;
 
 	//
@@ -1527,14 +1527,14 @@ void VKRenderer::initializeFrame()
 	VkResult err;
 	VkSemaphoreCreateInfo semaphoreCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0
 	};
 
-	err = vkCreateSemaphore(device, &semaphoreCreateInfo, NULL, &image_acquired_semaphore);
+	err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &image_acquired_semaphore);
 	assert(!err);
 
-	err = vkCreateSemaphore(device, &semaphoreCreateInfo, NULL, &draw_complete_semaphore);
+	err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &draw_complete_semaphore);
 	assert(!err);
 
 	// get the index of the next available swapchain image:
@@ -1546,17 +1546,17 @@ void VKRenderer::initializeFrame()
 		//
 		finishSetupCommandBuffers();
 		for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i, __LINE__);
-		vkDestroySemaphore(device, image_acquired_semaphore, NULL);
-		vkDestroySemaphore(device, draw_complete_semaphore, NULL);
+		vkDestroySemaphore(device, image_acquired_semaphore, nullptr);
+		vkDestroySemaphore(device, draw_complete_semaphore, nullptr);
 
 		//
 		reshape();
 
 		// recreate semaphores
-		err = vkCreateSemaphore(device, &semaphoreCreateInfo, NULL, &image_acquired_semaphore);
+		err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &image_acquired_semaphore);
 		assert(!err);
 
-		err = vkCreateSemaphore(device, &semaphoreCreateInfo, NULL, &draw_complete_semaphore);
+		err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &draw_complete_semaphore);
 		assert(!err);
 	} else
 	if (err == VK_SUBOPTIMAL_KHR) {
@@ -1587,88 +1587,54 @@ void VKRenderer::finishFrame()
 		context.program_id = 0;
 	}
 
-	//
-	memoryBarrier();
-
-	//
-	VkResult err;
-
-	// end render pass
-	for (auto i = 0; i < Engine::getThreadCount(); i++) endRenderPass(i, __LINE__);
-
-	// end draw command buffer
-	uint32_t submitted_draw_cmd_count = 0;
-	VkCommandBuffer submitted_draw_cmds[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3];
-	for (auto i = 0; i < Engine::getThreadCount(); i++) {
-		auto& context = contexts[i];
-		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-			for (auto k = 0; k < 3; k++) {
-				if (context.draw_cmd_started[j][k] == true) {
-					//
-					err = vkEndCommandBuffer(context.draw_cmds[j][k]);
-					assert(!err);
-
-					//
-					submitted_draw_cmds[submitted_draw_cmd_count++] = context.draw_cmds[j][k];
-
-					//
-					context.draw_cmd_started[j][k] = false;
-				}
+	// transitition to present
+	{
+		prepareSetupCommandBuffer(0);
+		VkImageMemoryBarrier image_memory_barrier = {
+			.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+			.pNext = nullptr,
+			.srcAccessMask = 0,
+			.dstAccessMask = 0,
+			.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+			.srcQueueFamilyIndex = 0,
+			.dstQueueFamilyIndex = 0,
+			.image = swapchain_buffers[current_buffer].image,
+			.subresourceRange = {
+				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+				.baseMipLevel = 0,
+				.levelCount = 1,
+				.baseArrayLayer = 0,
+				.layerCount = 1
 			}
-		}
-		context.pipeline.fill(VK_NULL_HANDLE);
-	}
-
-	//
-	VkPipelineStageFlags pipe_stage_flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	VkSubmitInfo submit_info = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = NULL,
-		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &image_acquired_semaphore,
-		.pWaitDstStageMask = &pipe_stage_flags,
-		.commandBufferCount = submitted_draw_cmd_count,
-		.pCommandBuffers = submitted_draw_cmds,
-		.signalSemaphoreCount = 1,
-		.pSignalSemaphores = &draw_complete_semaphore
-	};
-
-	queue_mutex.lock();
-
-	err = vkQueueSubmit(queue, 1, &submit_info, memorybarrier_fence);
-	assert(!err);
-
-	//
-	VkResult fence_result;
-	do {
-		fence_result = vkWaitForFences(device, 1, &memorybarrier_fence, VK_TRUE, 100000000);
-	} while (fence_result == VK_TIMEOUT);
-	vkResetFences(device, 1, &memorybarrier_fence);
-
-	// also wait for draw buffer fences
-	for (auto context: contexts) {
-		//
-		VkResult fence_result;
-		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-			for (auto j = 0; j < 3; j++) {
-				do {
-					fence_result = vkWaitForFences(device, 1, &context.draw_fences[i][j], VK_TRUE, 100000000);
-				} while (fence_result == VK_TIMEOUT);
-			}
-		}
+		};
+		vkCmdPipelineBarrier(
+			contexts[0].setup_cmd_inuse,
+			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
+			VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
+			0,
+			0,
+			nullptr,
+			0,
+			nullptr,
+			1,
+			&image_memory_barrier
+		);
+		finishSetupCommandBuffer(0);
 	}
 
 	//
 	VkPresentInfoKHR present = {
 		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		.pNext = NULL,
-		.waitSemaphoreCount = 1,
-		.pWaitSemaphores = &draw_complete_semaphore,
+		.pNext = nullptr,
+		.waitSemaphoreCount = 0,
+		.pWaitSemaphores = nullptr,
 		.swapchainCount = 1,
 		.pSwapchains = &swapchain,
 		.pImageIndices = &current_buffer
 	};
 
+	VkResult err;
 	err = fpQueuePresentKHR(queue, &present);
 	auto needsReshape = false;
 	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -1682,21 +1648,9 @@ void VKRenderer::finishFrame()
 		assert(!err);
 	}
 
-	/*
 	//
-	err = vkQueueWaitIdle(queue);
-	assert(err == VK_SUCCESS);
-	*/
-
-	queue_mutex.unlock();
-
-	vkDestroySemaphore(device, image_acquired_semaphore, NULL);
-	vkDestroySemaphore(device, draw_complete_semaphore, NULL);
-
-	/*
-	//
-	vkDeviceWaitIdle(device);
-	*/
+	vkDestroySemaphore(device, image_acquired_semaphore, nullptr);
+	vkDestroySemaphore(device, draw_complete_semaphore, nullptr);
 
 	// remove marked vulkan resources
 	delete_mutex.lock();
@@ -2326,7 +2280,7 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
 				.stageFlags = shader->type,
-				.pImmutableSamplers = NULL
+				.pImmutableSamplers = nullptr
 			};
 		}
 		for (auto uniformIt: shader->uniforms) {
@@ -2337,7 +2291,7 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
 					.stageFlags = shader->type,
-					.pImmutableSamplers = NULL
+					.pImmutableSamplers = nullptr
 				};
 			}
 		}
@@ -2346,18 +2300,18 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 
 	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.setLayoutCount = 1,
 		.pSetLayouts = &program->desc_layout,
@@ -2369,7 +2323,7 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.descriptorPool = desc_pool,
 		.descriptorSetCount = DESC_MAX,
 		.pSetLayouts = desc_layouts
@@ -2380,7 +2334,7 @@ void VKRenderer::createObjectsRenderingProgram(program_type* program) {
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
 	assert(!err);
 }
 
@@ -2457,7 +2411,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.logicOpEnable = VK_FALSE;
 		cb.attachmentCount = haveColorBuffer == true?1:0;
-		cb.pAttachments = haveColorBuffer == true?&att_state:NULL;
+		cb.pAttachments = haveColorBuffer == true?&att_state:nullptr;
 
 		memset(&vp, 0, sizeof(vp));
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -2468,7 +2422,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 
 		memset(&ms, 0, sizeof(ms));
 		ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		ms.pSampleMask = NULL;
+		ms.pSampleMask = nullptr;
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
 		VkVertexInputBindingDescription vi_bindings[10];
@@ -2586,7 +2540,7 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 
 		memset(&vi, 0, sizeof(vi));
 		vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vi.pNext = NULL;
+		vi.pNext = nullptr;
 		vi.vertexBindingDescriptionCount = 10;
 		vi.pVertexBindingDescriptions = vi_bindings;
 		vi.vertexAttributeDescriptionCount = 13;
@@ -2595,10 +2549,10 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 		pipeline.pVertexInputState = &vi;
 		pipeline.pInputAssemblyState = &ia;
 		pipeline.pRasterizationState = &rs;
-		pipeline.pColorBlendState = haveColorBuffer == true?&cb:NULL;
+		pipeline.pColorBlendState = haveColorBuffer == true?&cb:nullptr;
 		pipeline.pMultisampleState = &ms;
 		pipeline.pViewportState = &vp;
-		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:NULL;
+		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 		pipeline.pStages = shaderStages;
 		pipeline.renderPass = renderPass;
 		pipeline.pDynamicState = &dynamicState;
@@ -2606,13 +2560,13 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 		memset(&pipelineCache, 0, sizeof(pipelineCache));
 		pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-		err = vkCreatePipelineCache(device, &pipelineCache, NULL, &programPipeline.pipelineCache);
+		err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
 		assert(!err);
 
-		err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
+		err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 		assert(!err);
 
-		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
+		vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
 	}
 
 }
@@ -2660,7 +2614,7 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
 				.stageFlags = shader->type,
-				.pImmutableSamplers = NULL
+				.pImmutableSamplers = nullptr
 			};
 		}
 		for (auto uniformIt: shader->uniforms) {
@@ -2671,7 +2625,7 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
 					.stageFlags = shader->type,
-					.pImmutableSamplers = NULL
+					.pImmutableSamplers = nullptr
 				};
 			}
 		}
@@ -2680,18 +2634,18 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 
 	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.setLayoutCount = 1,
 		.pSetLayouts = &program->desc_layout,
@@ -2703,7 +2657,7 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.descriptorPool = desc_pool,
 		.descriptorSetCount = DESC_MAX,
 		.pSetLayouts = desc_layouts
@@ -2714,7 +2668,7 @@ void VKRenderer::createPointsRenderingProgram(program_type* program) {
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
 	assert(!err);
 }
 
@@ -2792,7 +2746,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.logicOpEnable = VK_FALSE;
 		cb.attachmentCount = haveColorBuffer == true?1:0;
-		cb.pAttachments = haveColorBuffer == true?&att_state:NULL;
+		cb.pAttachments = haveColorBuffer == true?&att_state:nullptr;
 
 		memset(&vp, 0, sizeof(vp));
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -2803,7 +2757,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 
 		memset(&ms, 0, sizeof(ms));
 		ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		ms.pSampleMask = NULL;
+		ms.pSampleMask = nullptr;
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
 		VkVertexInputBindingDescription vi_bindings[4];
@@ -2850,7 +2804,7 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 
 		memset(&vi, 0, sizeof(vi));
 		vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vi.pNext = NULL;
+		vi.pNext = nullptr;
 		vi.vertexBindingDescriptionCount = 4;
 		vi.pVertexBindingDescriptions = vi_bindings;
 		vi.vertexAttributeDescriptionCount = 4;
@@ -2859,10 +2813,10 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		pipeline.pVertexInputState = &vi;
 		pipeline.pInputAssemblyState = &ia;
 		pipeline.pRasterizationState = &rs;
-		pipeline.pColorBlendState = haveColorBuffer == true?&cb:NULL;
+		pipeline.pColorBlendState = haveColorBuffer == true?&cb:nullptr;
 		pipeline.pMultisampleState = &ms;
 		pipeline.pViewportState = &vp;
-		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:NULL;
+		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 		pipeline.pStages = shaderStages;
 		pipeline.renderPass = renderPass;
 		pipeline.pDynamicState = &dynamicState;
@@ -2870,14 +2824,14 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		memset(&pipelineCache, 0, sizeof(pipelineCache));
 		pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-		err = vkCreatePipelineCache(device, &pipelineCache, NULL, &programPipeline.pipelineCache);
+		err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
 		assert(!err);
 
-		err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
+		err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 		assert(!err);
 
 		//
-		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
+		vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
 	}
 }
 
@@ -2924,7 +2878,7 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
 				.stageFlags = shader->type,
-				.pImmutableSamplers = NULL
+				.pImmutableSamplers = nullptr
 			};
 		}
 		for (auto uniformIt: shader->uniforms) {
@@ -2935,7 +2889,7 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
 					.stageFlags = shader->type,
-					.pImmutableSamplers = NULL
+					.pImmutableSamplers = nullptr
 				};
 			}
 		}
@@ -2944,18 +2898,18 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 
 	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.setLayoutCount = 1,
 		.pSetLayouts = &program->desc_layout,
@@ -2967,7 +2921,7 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.descriptorPool = desc_pool,
 		.descriptorSetCount = DESC_MAX,
 		.pSetLayouts = desc_layouts
@@ -2978,7 +2932,7 @@ void VKRenderer::createLinesRenderingProgram(program_type* program) {
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
 	assert(!err);
 }
 
@@ -3058,7 +3012,7 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 		cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cb.logicOpEnable = VK_FALSE;
 		cb.attachmentCount = haveColorBuffer == true?1:0;
-		cb.pAttachments = haveColorBuffer == true?&att_state:NULL;
+		cb.pAttachments = haveColorBuffer == true?&att_state:nullptr;
 
 		memset(&vp, 0, sizeof(vp));
 		vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -3069,7 +3023,7 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 
 		memset(&ms, 0, sizeof(ms));
 		ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		ms.pSampleMask = NULL;
+		ms.pSampleMask = nullptr;
 		ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
 		VkVertexInputBindingDescription vi_bindings[4];
@@ -3116,7 +3070,7 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 
 		memset(&vi, 0, sizeof(vi));
 		vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vi.pNext = NULL;
+		vi.pNext = nullptr;
 		vi.vertexBindingDescriptionCount = 4;
 		vi.pVertexBindingDescriptions = vi_bindings;
 		vi.vertexAttributeDescriptionCount = 4;
@@ -3125,10 +3079,10 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 		pipeline.pVertexInputState = &vi;
 		pipeline.pInputAssemblyState = &ia;
 		pipeline.pRasterizationState = &rs;
-		pipeline.pColorBlendState = haveColorBuffer == true?&cb:NULL;
+		pipeline.pColorBlendState = haveColorBuffer == true?&cb:nullptr;
 		pipeline.pMultisampleState = &ms;
 		pipeline.pViewportState = &vp;
-		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:NULL;
+		pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 		pipeline.pStages = shaderStages;
 		pipeline.renderPass = renderPass;
 		pipeline.pDynamicState = &dynamicState;
@@ -3136,14 +3090,14 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 		memset(&pipelineCache, 0, sizeof(pipelineCache));
 		pipelineCache.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 
-		err = vkCreatePipelineCache(device, &pipelineCache, NULL, &programPipeline.pipelineCache);
+		err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
 		assert(!err);
 
-		err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
+		err = vkCreateGraphicsPipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 		assert(!err);
 
 		//
-		vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
+		vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
 	}
 }
 
@@ -3200,7 +3154,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.descriptorCount = 1,
 				.stageFlags = shader->type,
-				.pImmutableSamplers = NULL
+				.pImmutableSamplers = nullptr
 			};
 		}
 
@@ -3210,25 +3164,25 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
 				.stageFlags = shader->type,
-				.pImmutableSamplers = NULL
+				.pImmutableSamplers = nullptr
 			};
 		}
 		shaderIdx++;
 	}
 	const VkDescriptorSetLayoutCreateInfo descriptor_layout = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.bindingCount = program->layout_bindings,
 		.pBindings = layout_bindings,
 	};
 
-	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, NULL, &program->desc_layout);
+	err = vkCreateDescriptorSetLayout(device, &descriptor_layout, nullptr, &program->desc_layout);
 	assert(!err);
 
 	const VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.setLayoutCount = 1,
 		.pSetLayouts = &program->desc_layout,
@@ -3240,7 +3194,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	//
 	VkDescriptorSetAllocateInfo alloc_info = {
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.descriptorPool = desc_pool,
 		.descriptorSetCount = DESC_MAX,
 		.pSetLayouts = desc_layouts
@@ -3251,37 +3205,37 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	}
 
 	//
-	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, NULL, &program->pipeline_layout);
+	err = vkCreatePipelineLayout(device, &pPipelineLayoutCreateInfo, nullptr, &program->pipeline_layout);
 	assert(!err);
 
 	// create pipepine
 	VkPipelineCacheCreateInfo pipelineCache = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.initialDataSize = 0,
-		.pInitialData = NULL
+		.pInitialData = nullptr
 	};
 
-	err = vkCreatePipelineCache(device, &pipelineCache, NULL, &programPipeline.pipelineCache);
+	err = vkCreatePipelineCache(device, &pipelineCache, nullptr, &programPipeline.pipelineCache);
 	assert(!err);
 
 	// create pipepine
 	VkComputePipelineCreateInfo pipeline = {
 		.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.stage = shaderStages[0],
 		.layout = program->pipeline_layout,
-		.basePipelineHandle = NULL,
+		.basePipelineHandle = nullptr,
 		.basePipelineIndex = 0
 
 	};
 
-	err = vkCreateComputePipelines(device, programPipeline.pipelineCache, 1, &pipeline, NULL, &programPipeline.pipeline);
+	err = vkCreateComputePipelines(device, programPipeline.pipelineCache, 1, &pipeline, nullptr, &programPipeline.pipeline);
 	assert(!err);
 
-	vkDestroyPipelineCache(device, programPipeline.pipelineCache, NULL);
+	vkDestroyPipelineCache(device, programPipeline.pipelineCache, nullptr);
 }
 
 inline void VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type* program) {
@@ -3496,11 +3450,11 @@ bool VKRenderer::linkProgram(int32_t programId)
 			VkResult err;
 			VkShaderModuleCreateInfo moduleCreateInfo;
 			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.pNext = NULL;
+			moduleCreateInfo.pNext = nullptr;
 			moduleCreateInfo.codeSize = shader->spirv.size() * sizeof(uint32_t);
 			moduleCreateInfo.pCode = shader->spirv.data();
 			moduleCreateInfo.flags = 0;
-			err = vkCreateShaderModule(device, &moduleCreateInfo, NULL, &shader->module);
+			err = vkCreateShaderModule(device, &moduleCreateInfo, nullptr, &shader->module);
 			if (err == VK_SUCCESS) {
 				if (VERBOSE == true) {
 					Console::println(
@@ -3912,14 +3866,14 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	depth_buffer_texture.width = width;
 	depth_buffer_texture.height = height;
 
-	if (depth_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, depth_buffer_texture.view, NULL);
-	if (depth_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, depth_buffer_texture.sampler, NULL);
+	if (depth_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, depth_buffer_texture.view, nullptr);
+	if (depth_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, depth_buffer_texture.sampler, nullptr);
 	if (depth_buffer_texture.image != VK_NULL_HANDLE &&
 		depth_buffer_texture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, depth_buffer_texture.image, depth_buffer_texture.allocation);
 
 	const VkImageCreateInfo image_create_info = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
 		.format = depth_buffer_texture.format,
@@ -3966,7 +3920,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	// create sampler
 	const VkSamplerCreateInfo sampler = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.magFilter = VK_FILTER_NEAREST,
 		.minFilter = VK_FILTER_NEAREST,
@@ -3984,13 +3938,13 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
-	err = vkCreateSampler(device, &sampler, NULL, &depth_buffer_texture.sampler);
+	err = vkCreateSampler(device, &sampler, nullptr, &depth_buffer_texture.sampler);
 	assert(!err);
 
 	// create image view
 	VkImageViewCreateInfo view = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.image = depth_buffer_texture.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -4004,7 +3958,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 			.layerCount = 1
 		},
 	};
-	err = vkCreateImageView(device, &view, NULL, &depth_buffer_texture.view);
+	err = vkCreateImageView(device, &view, nullptr, &depth_buffer_texture.view);
 	assert(!err);
 }
 
@@ -4024,14 +3978,14 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	color_buffer_texture.width = width;
 	color_buffer_texture.height = height;
 
-	if (color_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, color_buffer_texture.view, NULL);
-	if (color_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, color_buffer_texture.sampler, NULL);
+	if (color_buffer_texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, color_buffer_texture.view, nullptr);
+	if (color_buffer_texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, color_buffer_texture.sampler, nullptr);
 	if (color_buffer_texture.image != VK_NULL_HANDLE &&
 		color_buffer_texture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, color_buffer_texture.image, color_buffer_texture.allocation);
 
 	const VkImageCreateInfo image_create_info = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
 		.format = color_buffer_texture.format,
@@ -4078,7 +4032,7 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	// create sampler
 	const VkSamplerCreateInfo sampler = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.magFilter = VK_FILTER_LINEAR,
 		.minFilter = VK_FILTER_LINEAR,
@@ -4096,13 +4050,13 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 		.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
-	err = vkCreateSampler(device, &sampler, NULL, &color_buffer_texture.sampler);
+	err = vkCreateSampler(device, &sampler, nullptr, &color_buffer_texture.sampler);
 	assert(!err);
 
 	// create image view
 	VkImageViewCreateInfo view = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.image = color_buffer_texture.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -4121,7 +4075,7 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 			.layerCount = 1
 		}
 	};
-	err = vkCreateImageView(device, &view, NULL, &color_buffer_texture.view);
+	err = vkCreateImageView(device, &view, nullptr, &color_buffer_texture.view);
 	assert(!err);
 }
 
@@ -4348,7 +4302,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 
 	const VkSamplerCreateInfo sampler = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.magFilter = VK_FILTER_LINEAR,
 		.minFilter = VK_FILTER_LINEAR,
@@ -4368,7 +4322,7 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	};
 	VkImageViewCreateInfo view = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.image = texture_object.image,
 		.viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -4389,11 +4343,11 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	};
 
 	// create sampler
-	err = vkCreateSampler(device, &sampler, NULL, &texture_object.sampler);
+	err = vkCreateSampler(device, &sampler, nullptr, &texture_object.sampler);
 	assert(!err);
 
 	// create image view
-	err = vkCreateImageView(device, &view, NULL, &texture_object.view);
+	err = vkCreateImageView(device, &view, nullptr, &texture_object.view);
 	assert(!err);
 
 	//
@@ -4517,8 +4471,8 @@ void VKRenderer::disposeTexture(int32_t textureId)
 	textures.erase(textureObjectIt);
 	textures_rwlock.unlock();
 
-	if (texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, texture.view, NULL);
-	if (texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, texture.sampler, NULL);
+	if (texture.view != VK_NULL_HANDLE) vkDestroyImageView(device, texture.view, nullptr);
+	if (texture.sampler != VK_NULL_HANDLE) vkDestroySampler(device, texture.sampler, nullptr);
 	if (texture.image != VK_NULL_HANDLE &&
 		texture.allocation != VK_NULL_HANDLE) vmaDestroyImage(allocator, texture.image, texture.allocation);
 }
@@ -4563,7 +4517,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 	VkResult err;
 
 	{
-		if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, NULL);
+		if (frameBufferStruct.render_pass != VK_NULL_HANDLE) vkDestroyRenderPass(device, frameBufferStruct.render_pass, nullptr);
 
 		auto attachmentIdx = 0;
 		VkAttachmentDescription attachments[2];
@@ -4605,38 +4559,38 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.flags = 0,
 			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 			.inputAttachmentCount = 0,
-			.pInputAttachments = NULL,
+			.pInputAttachments = nullptr,
 			.colorAttachmentCount = static_cast<uint32_t>(colorBufferTexture != nullptr?1:0),
-			.pColorAttachments = colorBufferTexture != nullptr?&color_reference:NULL,
-			.pResolveAttachments = NULL,
-			.pDepthStencilAttachment = depthBufferTexture != nullptr?&depth_reference:NULL,
+			.pColorAttachments = colorBufferTexture != nullptr?&color_reference:nullptr,
+			.pResolveAttachments = nullptr,
+			.pDepthStencilAttachment = depthBufferTexture != nullptr?&depth_reference:nullptr,
 			.preserveAttachmentCount = 0,
-			.pPreserveAttachments = NULL
+			.pPreserveAttachments = nullptr
 		};
 		const VkRenderPassCreateInfo rp_info = {
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.flags = 0,
 			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
 			.pAttachments = attachments,
 			.subpassCount = 1,
 			.pSubpasses = &subpass,
 			.dependencyCount = 0,
-			.pDependencies = NULL
+			.pDependencies = nullptr
 		};
-		err = vkCreateRenderPass(device, &rp_info, NULL, &frameBufferStruct.render_pass);
+		err = vkCreateRenderPass(device, &rp_info, nullptr, &frameBufferStruct.render_pass);
 		assert(!err);
 	}
 
 	{
-		if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, NULL);
+		if (frameBufferStruct.frame_buffer != VK_NULL_HANDLE) vkDestroyFramebuffer(device, frameBufferStruct.frame_buffer, nullptr);
 		auto attachmentIdx = 0;
 		VkImageView attachments[2];
 		if (colorBufferTexture != nullptr) attachments[attachmentIdx++] = colorBufferTexture->view;
 		if (depthBufferTexture != nullptr) attachments[attachmentIdx++] = depthBufferTexture->view;
 		const VkFramebufferCreateInfo fb_info = {
 			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.flags = 0,
 			.renderPass = frameBufferStruct.render_pass,
 			.attachmentCount = static_cast<uint32_t>(attachmentIdx),
@@ -4645,7 +4599,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 			.height = colorBufferTexture != nullptr?colorBufferTexture->height:depthBufferTexture->height,
 			.layers = 1
 		};
-		err = vkCreateFramebuffer(device, &fb_info, NULL, &frameBufferStruct.frame_buffer);
+		err = vkCreateFramebuffer(device, &fb_info, nullptr, &frameBufferStruct.frame_buffer);
 		assert(!err);
 	}
 
@@ -4736,7 +4690,7 @@ void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(frameBufferId));
 		return;
 	}
-	vkDestroyFramebuffer(device, frameBufferIt->second.frame_buffer, NULL);
+	vkDestroyFramebuffer(device, frameBufferIt->second.frame_buffer, nullptr);
 	framebuffers.erase(frameBufferIt);
 }
 
@@ -4784,13 +4738,13 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 
 	const VkBufferCreateInfo buf_info = {
 		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.pNext = NULL,
+		.pNext = nullptr,
 		.flags = 0,
 		.size = static_cast<uint32_t>(size),
 		.usage = usage,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = NULL
+		.pQueueFamilyIndices = nullptr
 	};
 
 	VmaAllocationCreateInfo alloc_info = {};
@@ -5134,7 +5088,27 @@ inline void VKRenderer::endDrawCommandsAllContexts() {
 
 inline void VKRenderer::endDrawCommands(int contextIdx) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	submitContext(contextIdx);
+	VkResult err;
+
+	// end render passes
+	finishSetupCommandBuffer(contextIdx);
+	endRenderPass(contextIdx, __LINE__);
+
+	//
+	auto submitted_command_buffers_count = 0;
+	VkCommandBuffer submitted_command_buffers[DRAW_COMMANDBUFFER_MAX * 3];
+	for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
+		auto command_buffers = endDrawCommandBuffer(contextIdx, j, false);
+		for (auto command_buffer: command_buffers) {
+			if (command_buffer != VK_NULL_HANDLE) {
+				submitted_command_buffers[submitted_command_buffers_count++] = command_buffer;
+			}
+		}
+	}
+	if (submitted_command_buffers_count > 0) {
+		submitDrawCommandBuffers(submitted_command_buffers_count, submitted_command_buffers, contexts[contextIdx].draw_fence, true, true);
+		recreateContextFences(contextIdx);
+	}
 }
 
 inline void VKRenderer::executeCommand(int contextIdx) {
@@ -5207,7 +5181,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				}
 				descriptorSetWrites[uniform.position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = NULL,
+					.pNext = nullptr,
 					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(uniform.position),
 					.dstArrayElement = 0,
@@ -5233,20 +5207,20 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = NULL,
+				.pImageInfo = nullptr,
 				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = NULL
+				.pTexelBufferView = nullptr
 			};
 		}
 
 		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
 
 		//
 		#define OBJECTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	10
@@ -5303,7 +5277,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				}
 				descriptorSetWrites[uniform.position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = NULL,
+					.pNext = nullptr,
 					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(uniform.position),
 					.dstArrayElement = 0,
@@ -5329,20 +5303,20 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = NULL,
+				.pImageInfo = nullptr,
 				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = NULL
+				.pTexelBufferView = nullptr
 			};
 		}
 
 		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
 
 		//
 		#define POINTSRENDERCOMMAND_VERTEX_BUFFER_COUNT	4
@@ -5388,7 +5362,7 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				}
 				descriptorSetWrites[uniform.position] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = NULL,
+					.pNext = nullptr,
 					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(uniform.position),
 					.dstArrayElement = 0,
@@ -5414,20 +5388,20 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = NULL,
+				.pImageInfo = nullptr,
 				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = NULL
+				.pTexelBufferView = nullptr
 			};
 		}
 
 		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
 
 		//
 		#define LINESRENDERCOMMAND_VERTEX_BUFFER_COUNT	4
@@ -5460,15 +5434,15 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 				};
 				descriptorSetWrites[i] = {
 					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = NULL,
+					.pNext = nullptr,
 					.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 					.dstBinding = static_cast<uint32_t>(i),
 					.dstArrayElement = 0,
 					.descriptorCount = 1,
 					.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-					.pImageInfo = NULL,
+					.pImageInfo = nullptr,
 					.pBufferInfo = &bufferInfos[i],
-					.pTexelBufferView = NULL
+					.pTexelBufferView = nullptr
 				};
 			}
 
@@ -5485,20 +5459,20 @@ inline void VKRenderer::executeCommand(int contextIdx) {
 
 			descriptorSetWrites[shader->ubo_binding_idx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = NULL,
+				.pNext = nullptr,
 				.dstSet = contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]],
 				.dstBinding = static_cast<uint32_t>(shader->ubo_binding_idx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = NULL,
+				.pImageInfo = nullptr,
 				.pBufferInfo = &bufferInfos[shader->ubo_binding_idx],
-				.pTexelBufferView = NULL,
+				.pTexelBufferView = nullptr,
 			};
 		}
 
 		//
-		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, NULL);
+		vkUpdateDescriptorSets(device, contextTyped.program->layout_bindings, descriptorSetWrites, 0, nullptr);
 
 		//
 		vkCmdBindDescriptorSets(contextTyped.draw_cmds[contextTyped.draw_cmd_current][contextTyped.front_face_index], VK_PIPELINE_BIND_POINT_COMPUTE, contextTyped.program->pipeline_layout, 0, 1, &contextTyped.program->desc_sets[contextTyped.idx][contextTyped.program->desc_idxs[contextTyped.idx]], 0, nullptr);
@@ -5771,31 +5745,6 @@ void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numG
 	//
 	contextTyped.command_type = context_type::COMMAND_COMPUTE;
 	executeCommand(contextTyped.idx);
-}
-
-inline void VKRenderer::submitContext(int contextIdx) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	VkResult err;
-
-	// end render passes
-	finishSetupCommandBuffer(contextIdx);
-	endRenderPass(contextIdx, __LINE__);
-
-	//
-	auto submitted_command_buffers_count = 0;
-	VkCommandBuffer submitted_command_buffers[DRAW_COMMANDBUFFER_MAX * 3];
-	for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-		auto command_buffers = endDrawCommandBuffer(contextIdx, j, false);
-		for (auto command_buffer: command_buffers) {
-			if (command_buffer != VK_NULL_HANDLE) {
-				submitted_command_buffers[submitted_command_buffers_count++] = command_buffer;
-			}
-		}
-	}
-	if (submitted_command_buffers_count > 0) {
-		submitDrawCommandBuffers(submitted_command_buffers_count, submitted_command_buffers, contexts[contextIdx].draw_fence, true, true);
-		recreateContextFences(contextIdx);
-	}
 }
 
 void VKRenderer::memoryBarrier() {
