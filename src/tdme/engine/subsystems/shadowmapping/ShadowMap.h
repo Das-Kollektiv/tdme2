@@ -29,12 +29,12 @@ class tdme::engine::subsystems::shadowmapping::ShadowMap final
 	friend class ShadowMapping;
 
 private:
-	vector<Object3D*> visibleObjects {  };
-	ShadowMapping* shadowMapping {  };
-	Camera* lightCamera {  };
-	FrameBuffer* frameBuffer {  };
-	Matrix4x4 biasMatrix {  };
-	Matrix4x4 depthBiasMVPMatrix {  };
+	vector<Object3D*> visibleObjects;
+	ShadowMapping* shadowMapping { nullptr };
+	Camera* lightCamera { nullptr };
+	FrameBuffer* frameBuffer { nullptr };
+	Matrix4x4 biasMatrix;
+	Matrix4x4 depthBiasMVPMatrix;
 
 	/** 
 	 * Init frame buffer

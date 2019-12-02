@@ -32,7 +32,7 @@ private:
 	};
 	map<string, ShadowMappingShaderRenderImplementation*> shader;
 	bool running { false };
-	Matrix4x4 depthBiasMVPMatrix {  };
+	Matrix4x4 depthBiasMVPMatrix;
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
 	vector<ShadowMappingShaderRenderContext> contexts;

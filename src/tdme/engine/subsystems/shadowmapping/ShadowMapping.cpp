@@ -36,12 +36,9 @@ using tdme::utils::Console;
 
 ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, Object3DRenderer* object3DRenderer)
 {
-	width = Engine::getShadowMapWidth();
-	height = Engine::getShadowMapHeight();
 	this->engine = engine;
 	this->renderer = renderer;
 	this->object3DRenderer = object3DRenderer;
-	this->lightEyeDistanceScale = 4.0f;
 	shadowMaps.resize(engine->getLightCount());
 	for (auto i = 0; i < shadowMaps.size(); i++) {
 		shadowMaps[i] = nullptr;
@@ -81,7 +78,7 @@ void ShadowMapping::createShadowMaps()
 		if (light->isEnabled() == true) {
 			// create shadow map for light, if required
 			if (shadowMaps[i] == nullptr) {
-				auto shadowMap = new ShadowMap(this, width, height);
+				auto shadowMap = new ShadowMap(this, Engine::getShadowMapWidth(), Engine::getShadowMapHeight());
 				shadowMap->initialize();
 				shadowMaps[i] = shadowMap;
 			}

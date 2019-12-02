@@ -33,22 +33,19 @@ class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 private:
 	enum ShadowMapping_RunState {NONE, PRE, RENDER};
 
-	Renderer* renderer {  };
-	Object3DRenderer* object3DRenderer {  };
-	float lightEyeDistanceScale {  };
+	Renderer* renderer { nullptr };
+	Object3DRenderer* object3DRenderer { nullptr };
 
-	Matrix4x4 shadowTransformationsMatrix {  };
-	Matrix4x4 depthBiasMVPMatrix {  };
-	Matrix4x4 mvMatrix {  };
-	Matrix4x4 mvpMatrix {  };
-	Matrix4x4 normalMatrix {  };
+	Matrix4x4 shadowTransformationsMatrix;
+	Matrix4x4 depthBiasMVPMatrix;
+	Matrix4x4 mvMatrix;
+	Matrix4x4 mvpMatrix;
+	Matrix4x4 normalMatrix;
 
-	Engine* engine {  };
+	Engine* engine { nullptr };
 
-	vector<ShadowMap*> shadowMaps {  };
-	int32_t width {  };
-	int32_t height {  };
-	ShadowMapping_RunState runState {  };
+	vector<ShadowMap*> shadowMaps;
+	ShadowMapping_RunState runState { NONE };
 
 public:
 	/** 

@@ -115,7 +115,7 @@ void ShadowMap::render(Light* light)
 	Vector3 lightDirection;
 	Vector3 lightLookAt;
 	Vector3 lightLookFrom;
-	auto lightEyeDistance = lightDirection.set(camera->getLookAt()).sub(camera->getLookFrom()).computeLength() * shadowMapping->lightEyeDistanceScale;
+	auto lightEyeDistance = lightDirection.set(camera->getLookAt()).sub(camera->getLookFrom()).computeLength() * Engine::getShadowMapLightEyeDistanceScale();
 	// compute camera from view of light
 	lightDirection.set(light->getSpotDirection()).normalize();
 	lightLookAt.set(camera->getLookAt());
