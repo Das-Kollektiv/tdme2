@@ -551,9 +551,10 @@ public:
 	 * - the created offscreen engine must not be initialized
 	 * @param width width
 	 * @param height height
+	 * @param enableShadowMapping enable shadow mapping
 	 * @return off screen engine
 	 */
-	static Engine* createOffScreenInstance(int32_t width, int32_t height);
+	static Engine* createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping);
 
 	/** 
 	 * @return if initialized and ready to be used

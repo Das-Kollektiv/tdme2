@@ -250,9 +250,7 @@ Engine::~Engine() {
 	if (postProcessingFrameBuffer1 != nullptr) delete postProcessingFrameBuffer1;
 	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
 	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
-	if (shadowMappingEnabled == true) {
-		delete shadowMapping;
-	}
+	if (shadowMapping != nullptr) delete shadowMapping;
 	delete object3DRenderer;
 	if (instance == this) {
 		delete renderer;
@@ -283,7 +281,7 @@ Engine* Engine::getInstance()
 	return instance;
 }
 
-Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
+Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enableShadowMapping)
 {
 	if (instance == nullptr || instance->initialized == false) {
 		Console::println(string("Engine::createOffScreenInstance(): Engine not created or not initialized."));
@@ -307,7 +305,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height)
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++)
 		offScreenEngine->lights[i] = Light(renderer, i);
 	// create shadow mapping
-	if (instance->shadowMappingEnabled == true) {
+	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DRenderer);
 	}
 	//
