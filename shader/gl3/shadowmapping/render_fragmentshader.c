@@ -2,9 +2,8 @@
 
 // based on http://fabiensanglard.net/shadowmapping/index.php, modified by me
 
-#define SHADOWMAP_LOOKUPS	4
-
 // uniforms
+uniform int shadowMapLookUps;
 uniform sampler2D textureUnit;
 uniform float texturePixelWidth;
 uniform float texturePixelHeight;
@@ -78,18 +77,18 @@ void main() {
 
 		// determine visibility
 		float visibility = 0.0;
-		for (int y = 0; y < SHADOWMAP_LOOKUPS; y++)
-		for (int x = 0; x < SHADOWMAP_LOOKUPS; x++) {
+		for (int y = 0; y < shadowMapLookUps; y++)
+		for (int x = 0; x < shadowMapLookUps; x++) {
 			visibility+= texture(
 				textureUnit,
 				vsShadowCoord.xy +
 					vec2(
-						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + x) * texturePixelWidth,
-						(-SHADOWMAP_LOOKUPS / 2.0 + 0.5 + y) * texturePixelHeight
+						(-shadowMapLookUps / 2.0 + 0.5 + x) * texturePixelWidth,
+						(-shadowMapLookUps / 2.0 + 0.5 + y) * texturePixelHeight
 					)
 			).x < vsShadowCoord.z + depthBias?0.50:0.0;
 		}
-		visibility = visibility / (SHADOWMAP_LOOKUPS * SHADOWMAP_LOOKUPS);
+		visibility = visibility / (shadowMapLookUps * shadowMapLookUps);
 
 		// return color to be blended with framebuffer
 		outColor = vec4(0.0, 0.0, 0.0, visibility * vsShadowIntensity * attenuation * 0.5);

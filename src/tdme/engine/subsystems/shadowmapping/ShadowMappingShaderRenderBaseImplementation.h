@@ -23,11 +23,12 @@ using tdme::math::Vector3;
 class tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation: public ShadowMappingShaderRenderImplementation
 {
 protected:
-	Renderer* renderer {  };
-	int32_t renderVertexShaderId {  };
-	int32_t renderGeometryShaderId {  };
-	int32_t renderFragmentShaderId {  };
-	int32_t renderProgramId {  };
+	Renderer* renderer { nullptr };
+	int32_t renderVertexShaderId { -1 };
+	int32_t renderGeometryShaderId { -1 };
+	int32_t renderFragmentShaderId { -1 };
+	int32_t renderProgramId { -1 };
+	int32_t renderUniformShadowMapLookUps { -1 };
 	int32_t renderUniformTextureUnit { -1 };
 	int32_t renderUniformTexturePixelWidth { -1 };
 	int32_t renderUniformTexturePixelHeight { -1 };
@@ -49,7 +50,7 @@ protected:
 	int32_t renderUniformLightConstantAttenuation { -1 };
 	int32_t renderUniformLightLinearAttenuation { -1 };
 	int32_t renderUniformLightQuadraticAttenuation { -1 };
-	int32_t uniformFrame { -1 };
+	int32_t renderUniformFrame { -1 };
 	bool initialized {  };
 	int lightId { -1 };
 

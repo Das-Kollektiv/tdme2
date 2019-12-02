@@ -61,6 +61,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 		return;
 
 	//	uniforms
+	renderUniformShadowMapLookUps = renderer->getProgramUniformLocation(renderProgramId, "shadowMapLookUps");
 	renderUniformTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "textureUnit");
 	if (renderUniformTextureUnit == -1) return;
 	renderUniformTexturePixelWidth = renderer->getProgramUniformLocation(renderProgramId, "texturePixelWidth");
@@ -112,7 +113,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 	}
 
 	//
-	uniformFrame = renderer->getProgramUniformLocation(renderProgramId, "frame");
+	renderUniformFrame = renderer->getProgramUniformLocation(renderProgramId, "frame");
 
 	//
 	initialized = true;
@@ -122,7 +123,8 @@ void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine, voi
 {
 	renderer->useProgram(context, renderProgramId);
 	renderer->setProgramUniformInteger(context, renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
-	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+	if (renderUniformFrame != -1) renderer->setProgramUniformInteger(context, renderUniformFrame, engine->getTiming()->getFrame());
+	if (renderUniformShadowMapLookUps != -1) renderer->setProgramUniformInteger(context, renderUniformShadowMapLookUps, Engine::getShadowMapRenderLookUps());
 }
 
 void ShadowMappingShaderRenderBaseImplementation::unUseProgram(void* context)

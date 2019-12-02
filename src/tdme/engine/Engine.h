@@ -160,6 +160,7 @@ private:
 	static float animationBlendingTime;
 	static int32_t shadowMapWidth;
 	static int32_t shadowMapHeight;
+	static int32_t shadowMapRenderLookUps;
 	static float shadowMaplightEyeDistanceScale;
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
@@ -483,6 +484,13 @@ public:
 	}
 
 	/**
+	 * @return shadow map render look ups
+	 */
+	inline static int32_t getShadowMapRenderLookUps() {
+		return Engine::shadowMapRenderLookUps;
+	}
+
+	/**
 	 * Set shadow map size
 	 * @param width width
 	 * @param height height
@@ -490,6 +498,14 @@ public:
 	inline static void setShadowMapSize(int32_t width, int32_t height) {
 		Engine::shadowMapWidth = width;
 		Engine::shadowMapHeight = height;
+	}
+
+	/**
+	 * Set shadowmap look ups for each pixel when rendering
+	 * @param shadow map render look ups
+	 */
+	inline static void setShadowMapRenderLookUps(int32_t shadowMapRenderLookUps) {
+		Engine::shadowMapRenderLookUps = shadowMapRenderLookUps;
 	}
 
 	/**

@@ -179,6 +179,7 @@ bool Engine::have4K = false;
 float Engine::animationBlendingTime = 250.0f;
 int32_t Engine::shadowMapWidth = 0;
 int32_t Engine::shadowMapHeight = 0;
+int32_t Engine::shadowMapRenderLookUps = 0;
 float Engine::shadowMaplightEyeDistanceScale = 4.0f;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
@@ -442,6 +443,7 @@ void Engine::initialize()
 		// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 		shadowMappingEnabled = true;
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
+		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
 		skinningShaderEnabled = true;
 		animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
 	#else
@@ -453,6 +455,7 @@ void Engine::initialize()
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(1024, 1024);
+			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(4);
 			skinningShaderEnabled = false;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 		}
@@ -474,6 +477,7 @@ void Engine::initialize()
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
+			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
 			animationProcessingTarget = skinningShaderEnabled == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 		}
 		// GLES2 on Linux
@@ -486,6 +490,7 @@ void Engine::initialize()
 				shadowMappingEnabled = true;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
 				if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(1024, 1024);
+				if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(4);
 			} else {
 				shadowMappingEnabled = false;
 				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
