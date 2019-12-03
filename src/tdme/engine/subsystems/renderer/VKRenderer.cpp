@@ -5001,7 +5001,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	auto& contextTyped = *static_cast<context_type*>(context);
 
 	//
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.program_id));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(contextTyped.program_id) + ": " + to_string(contextTyped.idx) + ": " + to_string(triangles) + " / " + to_string(trianglesOffset) + " / " + to_string(instances));
 
 	// textures
 	textures_rwlock.readLock();
