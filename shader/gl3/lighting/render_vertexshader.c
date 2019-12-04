@@ -63,7 +63,7 @@ out vec4 vsEffectColorAdd;
 
 void main(void) {
 	#if defined(HAVE_FOLIAGE)
-		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin);
+		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex);
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif

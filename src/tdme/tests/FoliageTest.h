@@ -10,11 +10,11 @@ using tdme::application::Application;
 using tdme::engine::Engine;
 
 /** 
- * LOD test
+ * Foliage test
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::tests::LODTest final
+class tdme::tests::FoliageTest final
 	: public virtual Application, public virtual InputEventHandler
 {
 private:
@@ -58,5 +58,5 @@ public:
 	/**
 	 * Public constructor
 	 */
-	LODTest();
+	FoliageTest();
 };

@@ -329,6 +329,7 @@ SRCS = \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
+	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
@@ -598,6 +599,7 @@ all: \
 	GUITest \
 	HTTPClientTest \
 	LODTest \
+	FoliageTest \
 	PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
 	RayTracingTest \
@@ -667,6 +669,9 @@ HTTPClientTest:
 
 LODTest: 
 	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+FoliageTest: 
+	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 PathFindingTest: 
 	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

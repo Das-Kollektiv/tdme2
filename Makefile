@@ -457,6 +457,7 @@ SRCS = \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
+	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
@@ -771,7 +772,7 @@ MAIN_SRCS = \
 	src/tdme/tests/EntityHierarchyTest-main.cpp \
 	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
-	src/tdme/tests/SkinningTest-main.cpp \
+	src/tdme/tests/FoliageTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PivotTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
@@ -779,6 +780,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest3-main.cpp \
 	src/tdme/tests/PhysicsTest4-main.cpp \
 	src/tdme/tests/RayTracingTest-main.cpp \
+	src/tdme/tests/SkinningTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \

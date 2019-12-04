@@ -8,6 +8,7 @@ namespace tests {
 	class CrashTest;
 	class EngineTest;
 	class EntityHierarchyTest;
+	class FoliageTest;
 	class LODTest;
 	class PathFindingTest;
 	class PivotTest;

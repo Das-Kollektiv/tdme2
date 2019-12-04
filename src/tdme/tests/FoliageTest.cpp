@@ -1,4 +1,4 @@
-#include <tdme/tests/LODTest.h>
+#include <tdme/tests/FoliageTest.h>
 
 #include <string>
 
@@ -27,7 +27,7 @@
 using std::string;
 using std::to_string;
 
-using tdme::tests::LODTest;
+using tdme::tests::FoliageTest;
 
 using tdme::application::Application;
 using tdme::engine::Camera;
@@ -48,20 +48,20 @@ using tdme::math::Vector4;
 using tdme::utils::Console;
 using tdme::utils::Time;
 
-LODTest::LODTest()
+FoliageTest::FoliageTest()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 }
 
 
-void LODTest::main(int argc, char** argv)
+void FoliageTest::main(int argc, char** argv)
 {
-	auto lodTest = new LODTest();
-	lodTest->run(argc, argv, "LODTest", lodTest);
+	auto foliageTest = new FoliageTest();
+	foliageTest->run(argc, argv, "FoliageTest", foliageTest);
 }
 
-void LODTest::display()
+void FoliageTest::display()
 {
 	auto camLookFrom = engine->getCamera()->getLookFrom();
 	if (keyA == true) camLookFrom.addX(-20.0f / 60.0f);
@@ -79,24 +79,23 @@ void LODTest::display()
 	auto start = Time::getCurrentMillis();
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("LODTest::display::" + to_string(end - start) + "ms"));
+	Console::println(string("FoliageTest::display::" + to_string(end - start) + "ms"));
 }
 
-void LODTest::dispose()
+void FoliageTest::dispose()
 {
 	engine->dispose();
 }
 
-void LODTest::initialize()
+void FoliageTest::initialize()
 {
 	engine->initialize();
 	engine->setSceneColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	engine->addPostProcessingProgram("depth_fog");
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
-	cam->setLookFrom(Vector3(0.0f, 30.0f, 280.0f));
+	cam->setLookFrom(Vector3(0.0f, 30.0f/10.0f, 280.0f / 10.0f));
 	cam->setLookAt(Vector3(0.0f, 2.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
@@ -119,43 +118,30 @@ void LODTest::initialize()
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
-	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.FBX.tm");
-	auto treePineLOD2 = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03_LOD_Plane.FBX.tm");
-	int treeIdx = 0;
-	for (float z = -240.0f; z < 240.0f; z+= 5.0f)
-	for (float x = -240.0f; x < 240.0f; x+= 5.0f) {
-		auto entity = new LODObject3D(
-			"tree." + to_string(treeIdx++),
-			treePine,
-			LODObject3D::LODLEVELTYPE_MODEL,
-			100.0f,
-			treePineLOD2,
-			LODObject3D::LODLEVELTYPE_NONE,
-			0.0f,
-			nullptr
-		);
-		// try to fix missing/different lighting of LOD2 object plane
-		entity->setEffectColorMulLOD2(Color4(3.7f, 3.7f, 3.7f, 1.0f));
-		entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), Math::random() * 360.0f);
-		float scale = 1.0f + Math::random() / 3.0f;
-		entity->setScale(
-			Vector3(
-				Math::random() < 0.5f?scale:-scale,
-				scale,
-				Math::random() < 0.5f?scale:-scale
-			)
-		);
-		entity->setTranslation(Vector3(x, 0.0f, z));
-		entity->update();
-		engine->addEntity(entity);
+	auto reedModel = ModelReader::read("resources/tests/models/reed", "Mesh_Environment_Reed_06.fbx.tm");
+	int reedIdx = 0;
+	for (float z = -40.0f; z < 40.0f;) {
+		for (float x = -40.0f; x < 40.0f;) {
+			auto entity = new Object3D(
+				"reed." + to_string(reedIdx++),
+				reedModel
+			);
+			// try to fix missing/different lighting of LOD2 object plane
+			entity->setTranslation(Vector3(x, 0.0f, z));
+			entity->setShader("foliage");
+			entity->update();
+			engine->addEntity(entity);
+			x+= Math::random() * 0.75f + 0.25;
+		}
+		z+= Math::random() * 0.75f + 0.25;
 	}
 }
 
-void LODTest::reshape(int32_t width, int32_t height)
+void FoliageTest::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(0, 0, width, height);
 }
-void LODTest::onKeyDown (unsigned char key, int x, int y) {
+void FoliageTest::onKeyDown (unsigned char key, int x, int y) {
 	auto keyChar = tolower(key);
 	if (keyChar == u'w') keyW = true;
 	if (keyChar == u'a') keyA = true;
@@ -163,7 +149,7 @@ void LODTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == u'd') keyD = true;
 }
 
-void LODTest::onKeyUp(unsigned char key, int x, int y) {
+void FoliageTest::onKeyUp(unsigned char key, int x, int y) {
 	auto keyChar = tolower(key);
 	if (keyChar == u'w') keyW = false;
 	if (keyChar == u'a') keyA = false;
@@ -171,28 +157,28 @@ void LODTest::onKeyUp(unsigned char key, int x, int y) {
 	if (keyChar == u'd') keyD = false;
 }
 
-void LODTest::onSpecialKeyDown (int key, int x, int y) {
+void FoliageTest::onSpecialKeyDown (int key, int x, int y) {
 	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
 	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
 	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
 	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void LODTest::onSpecialKeyUp(int key, int x, int y) {
+void FoliageTest::onSpecialKeyUp(int key, int x, int y) {
 	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
 	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
 	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
 	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
 }
 
-void LODTest::onMouseDragged(int x, int y) {
+void FoliageTest::onMouseDragged(int x, int y) {
 }
 
-void LODTest::onMouseMoved(int x, int y) {
+void FoliageTest::onMouseMoved(int x, int y) {
 }
 
-void LODTest::onMouseButton(int button, int state, int x, int y) {
+void FoliageTest::onMouseButton(int button, int state, int x, int y) {
 }
 
-void LODTest::onMouseWheel(int button, int direction, int x, int y) {
+void FoliageTest::onMouseWheel(int button, int direction, int x, int y) {
 }
