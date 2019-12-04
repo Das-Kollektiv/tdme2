@@ -8,9 +8,10 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -33,9 +34,10 @@ using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
+using tdme::engine::Object3DRenderGroup;
 using tdme::engine::Rotation;
+using tdme::engine::Transformations;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -119,22 +121,21 @@ void FoliageTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	auto reedModel = ModelReader::read("resources/tests/models/reed", "Mesh_Environment_Reed_06.fbx.tm");
+	auto foliageObject = new Object3DRenderGroup("foliage", reedModel);
 	int reedIdx = 0;
-	for (float z = -40.0f; z < 40.0f;) {
-		for (float x = -40.0f; x < 40.0f;) {
-			auto entity = new Object3D(
-				"reed." + to_string(reedIdx++),
-				reedModel
-			);
-			// try to fix missing/different lighting of LOD2 object plane
-			entity->setTranslation(Vector3(x, 0.0f, z));
-			entity->setShader("foliage");
-			entity->update();
-			engine->addEntity(entity);
-			x+= Math::random() * 0.75f + 0.25;
+	for (float z = -20.0f; z < 20.0f;) {
+		for (float x = -20.0f; x < 20.0f;) {
+			Transformations transformations;
+			transformations.setTranslation(Vector3(x, 0.0f, z));
+			transformations.update();
+			foliageObject->addObject(transformations);
+			x+= Math::random() * 0.5f + 0.5;
 		}
 		z+= Math::random() * 0.75f + 0.25;
 	}
+	foliageObject->setShader("foliage");
+	foliageObject->updateRenderGroup();
+	engine->addEntity(foliageObject);
 }
 
 void FoliageTest::reshape(int32_t width, int32_t height)
