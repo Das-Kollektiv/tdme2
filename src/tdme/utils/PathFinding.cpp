@@ -171,9 +171,9 @@ PathFinding::PathFindingStatus PathFinding::step() {
 			(sloping == true ||
 			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
 			auto slopeWalkable = true;
+			float successorX = x * stepSize + node->x;
+			float successorZ = z * stepSize + node->z;
 			if (Math::abs(x) == 1 && Math::abs(z) == 1) {
-				float slopeTestX = x * (stepSize / 2.0f) + node->x;
-				float slopeTestZ = z * (stepSize / 2.0f) + node->z;
 				float slopeAngle = 0.0f;
 
 				//
@@ -184,7 +184,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 
 				// set up transformations
 				Transformations slopeTestTransformations;
-				slopeTestTransformations.setTranslation(Vector3(slopeTestX, node->y + 0.1f, slopeTestZ));
+				slopeTestTransformations.setTranslation(Vector3(successorX, node->y + 0.1f, successorZ));
 				slopeTestTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), slopeAngle);
 				slopeTestTransformations.update();
 
@@ -198,8 +198,6 @@ PathFinding::PathFindingStatus PathFinding::step() {
 			}
 			//
 			float yHeight;
-			float successorX = x * stepSize + node->x;
-			float successorZ = z * stepSize + node->z;
 			// first node or walkable?
 			if (slopeWalkable == true && isWalkableInternal(successorX, node->y, successorZ, yHeight)) {
 				// check if successor node equals previous node / node
@@ -342,8 +340,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize * 2.0f, 1.0f, stepSize * 2.0f),
-		Vector3(1.0f, 1.0f, 1.0f)
+		Vector3(stepSize * 3.0f, 1.0f, stepSize * 3.0f)
 	);
 	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 

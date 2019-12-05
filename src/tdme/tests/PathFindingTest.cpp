@@ -198,7 +198,7 @@ void PathFindingTest::initialize()
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, -4.5f));
-	pathFinding = new PathFinding(world);
+	pathFinding = new PathFinding(world, true);
 	if (pathFinding->findPath(
 			playerModelEntity->getBoundingVolumeAt(0)->getBoundingVolume(),
 			playerObject->getTransformations(),
