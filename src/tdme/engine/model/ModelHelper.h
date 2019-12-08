@@ -277,7 +277,9 @@ private:
 	/**
 	 * Prepare group for foliage shader
 	 * @param group group
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param shader shader
 	 */
-	static void prepareForFoliageShader(Group* group);
+	static void prepareForFoliageTreeShader(Group* group, const Matrix4x4& parentTransformationsMatrix, const string& shader);
 
 };

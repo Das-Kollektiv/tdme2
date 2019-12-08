@@ -20,7 +20,7 @@ using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
 /** 
- * Early z rejection shader to create a shadow map
+ * Early z rejection shader
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -13,7 +13,7 @@ using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
 using tdme::math::Matrix4x4;
 
 /** 
- * Early z rejection shader base class to render shadow map
+ * Early z rejection shader base class
  * @author Andreas Drewke
  * @version $Id$
  */

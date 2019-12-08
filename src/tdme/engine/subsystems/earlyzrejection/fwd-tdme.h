@@ -11,6 +11,7 @@ namespace earlyzrejection {
 	class EZRShaderPreDefaultImplementation;
 	class EZRShaderPreFoliageImplementation;
 	struct EZRShaderPreImplementation;
+	class EZRShaderPreTreeImplementation;
 }  // namespace earlyzrejection
 }  // namespace subsystems
 }  // namespace engine

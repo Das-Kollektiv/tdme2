@@ -5,6 +5,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
+#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreTreeImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPre;
@@ -13,6 +14,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreBaseImpleme
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementation;
+using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Console;
@@ -21,6 +23,7 @@ ShadowMappingShaderPre::ShadowMappingShaderPre(Renderer* renderer): renderer(ren
 {
 	if (ShadowMappingShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new ShadowMappingShaderPreDefaultImplementation(renderer);
 	if (ShadowMappingShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new ShadowMappingShaderPreFoliageImplementation(renderer);
+	if (ShadowMappingShaderPreTreeImplementation::isSupported(renderer) == true) shader["tree"] = new ShadowMappingShaderPreTreeImplementation(renderer);
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }

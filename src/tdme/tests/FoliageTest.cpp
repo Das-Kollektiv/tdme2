@@ -75,7 +75,7 @@ void FoliageTest::display()
 	Quaternion camRotationYQuaternion;
 	camRotationYQuaternion.rotate(camRotationY, Rotation::Y_AXIS);
 	auto camLookAt = engine->getCamera()->getLookAt();
-	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
+	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt).normalize().scale(80.0f);
 	engine->getCamera()->setLookFrom(camLookFrom);
 	engine->getCamera()->setLookAt(camLookAt.add(engine->getCamera()->getLookFrom()));
 	auto start = Time::getCurrentMillis();

@@ -68,10 +68,11 @@
         - custum shaders that currently include
           - lighting + depth fog
           - lighting + foliage + depth fog
+          - lighting + tree + depth fog
           - lighting + terrain + depth fog
+          - lighting + water + depth fog
           - solid(no lighting + no depth fog)
           - sky(no lighting + no depth fog + fragment depth at maximum)
-          - basic water shader
         - shadow mapping
         - early z rejection
         - post processing

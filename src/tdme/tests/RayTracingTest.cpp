@@ -218,7 +218,6 @@ void RayTracingTest::initialize()
 {
 	engine->initialize();
 	engine->setSceneColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	//engine->addPostProcessingProgram("depth_fog");
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);

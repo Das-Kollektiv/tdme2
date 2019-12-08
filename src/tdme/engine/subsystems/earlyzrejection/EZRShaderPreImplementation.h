@@ -11,7 +11,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 
 /** 
- * Early z rejection shader
+ * Early z rejection shader implementation
  * @author Andreas Drewke
  * @version $Id$
  */

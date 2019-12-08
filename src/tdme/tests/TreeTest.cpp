@@ -1,4 +1,4 @@
-#include <tdme/tests/LODTest.h>
+#include <tdme/tests/TreeTest.h>
 
 #include <string>
 
@@ -8,13 +8,13 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LODObject3D.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/math/Math.h>
@@ -27,19 +27,19 @@
 using std::string;
 using std::to_string;
 
-using tdme::tests::LODTest;
+using tdme::tests::TreeTest;
 
 using tdme::application::Application;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::LODObject3D;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::ModelHelper;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::math::Math;
@@ -48,20 +48,20 @@ using tdme::math::Vector4;
 using tdme::utils::Console;
 using tdme::utils::Time;
 
-LODTest::LODTest()
+TreeTest::TreeTest()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
 }
 
 
-void LODTest::main(int argc, char** argv)
+void TreeTest::main(int argc, char** argv)
 {
-	auto lodTest = new LODTest();
-	lodTest->run(argc, argv, "LODTest", lodTest);
+	auto treeTest = new TreeTest();
+	treeTest->run(argc, argv, "TreeTest", treeTest);
 }
 
-void LODTest::display()
+void TreeTest::display()
 {
 	auto camLookFrom = engine->getCamera()->getLookFrom();
 	if (keyA == true) camLookFrom.addX(-20.0f / 60.0f);
@@ -73,21 +73,21 @@ void LODTest::display()
 	Quaternion camRotationYQuaternion;
 	camRotationYQuaternion.rotate(camRotationY, Rotation::Y_AXIS);
 	auto camLookAt = engine->getCamera()->getLookAt();
-	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt);
+	camRotationYQuaternion.multiply(Vector3(0.0f, 0.0f, -1.0f), camLookAt).normalize().scale(80.0f);
 	engine->getCamera()->setLookFrom(camLookFrom);
 	engine->getCamera()->setLookAt(camLookAt.add(engine->getCamera()->getLookFrom()));
 	auto start = Time::getCurrentMillis();
 	engine->display();
 	auto end = Time::getCurrentMillis();
-	Console::println(string("LODTest::display::" + to_string(end - start) + "ms"));
+	Console::println(string("TreeTest::display::" + to_string(end - start) + "ms"));
 }
 
-void LODTest::dispose()
+void TreeTest::dispose()
 {
 	engine->dispose();
 }
 
-void LODTest::initialize()
+void TreeTest::initialize()
 {
 	engine->initialize();
 	engine->setSceneColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -95,8 +95,8 @@ void LODTest::initialize()
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(100.0f);
-	cam->setLookFrom(Vector3(0.0f, 30.0f, 280.0f));
-	cam->setLookAt(Vector3(0.0f, 2.5f, 0.0f));
+	cam->setLookFrom(Vector3(0.0f, 3.5f, 28.0f));
+	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -119,22 +119,14 @@ void LODTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.FBX.tm");
-	auto treePineLOD2 = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03_LOD_Plane.FBX.tm");
+	ModelHelper::prepareForShader(treePine, "tree");
 	int treeIdx = 0;
-	for (float z = -240.0f; z < 240.0f; z+= 5.0f)
-	for (float x = -240.0f; x < 240.0f; x+= 5.0f) {
-		auto entity = new LODObject3D(
+	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
+	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
+		auto entity = new Object3D(
 			"tree." + to_string(treeIdx++),
-			treePine,
-			LODObject3D::LODLEVELTYPE_MODEL,
-			100.0f,
-			treePineLOD2,
-			LODObject3D::LODLEVELTYPE_NONE,
-			0.0f,
-			nullptr
+			treePine
 		);
-		// try to fix missing/different lighting of LOD2 object plane
-		entity->setEffectColorMulLOD2(Color4(3.7f, 3.7f, 3.7f, 1.0f));
 		entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), Math::random() * 360.0f);
 		float scale = 1.0f + Math::random() / 3.0f;
 		entity->setScale(
@@ -145,16 +137,18 @@ void LODTest::initialize()
 			)
 		);
 		entity->setTranslation(Vector3(x, 0.0f, z));
+		entity->setDynamicShadowingEnabled(true);
+		entity->setShader("tree");
 		entity->update();
 		engine->addEntity(entity);
 	}
 }
 
-void LODTest::reshape(int32_t width, int32_t height)
+void TreeTest::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(0, 0, width, height);
 }
-void LODTest::onKeyDown (unsigned char key, int x, int y) {
+void TreeTest::onKeyDown (unsigned char key, int x, int y) {
 	auto keyChar = tolower(key);
 	if (keyChar == u'w') keyW = true;
 	if (keyChar == u'a') keyA = true;
@@ -162,7 +156,7 @@ void LODTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == u'd') keyD = true;
 }
 
-void LODTest::onKeyUp(unsigned char key, int x, int y) {
+void TreeTest::onKeyUp(unsigned char key, int x, int y) {
 	auto keyChar = tolower(key);
 	if (keyChar == u'w') keyW = false;
 	if (keyChar == u'a') keyA = false;
@@ -170,28 +164,28 @@ void LODTest::onKeyUp(unsigned char key, int x, int y) {
 	if (keyChar == u'd') keyD = false;
 }
 
-void LODTest::onSpecialKeyDown (int key, int x, int y) {
+void TreeTest::onSpecialKeyDown (int key, int x, int y) {
 	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
 	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
 	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
 	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void LODTest::onSpecialKeyUp(int key, int x, int y) {
+void TreeTest::onSpecialKeyUp(int key, int x, int y) {
 	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
 	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
 	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
 	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
 }
 
-void LODTest::onMouseDragged(int x, int y) {
+void TreeTest::onMouseDragged(int x, int y) {
 }
 
-void LODTest::onMouseMoved(int x, int y) {
+void TreeTest::onMouseMoved(int x, int y) {
 }
 
-void LODTest::onMouseButton(int button, int state, int x, int y) {
+void TreeTest::onMouseButton(int button, int state, int x, int y) {
 }
 
-void LODTest::onMouseWheel(int button, int direction, int x, int y) {
+void TreeTest::onMouseWheel(int button, int direction, int x, int y) {
 }

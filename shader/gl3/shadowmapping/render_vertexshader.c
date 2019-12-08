@@ -33,8 +33,10 @@ out vec3 vsPosition;
 {$FUNCTIONS}
 
 void main() {
-	#if defined(HAVE_FOLIAGE)
-		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex);
+	#if defined(HAVE_TREE)
+		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2]));
+	#elif defined(HAVE_FOLIAGE)
+		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, vec3(inModelMatrix[3][0], inModelMatrix[3][1], inModelMatrix[3][2]));
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif

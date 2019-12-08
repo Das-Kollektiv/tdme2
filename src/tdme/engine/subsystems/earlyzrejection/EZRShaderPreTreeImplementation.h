@@ -8,11 +8,11 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
 
 /** 
- * Early z rejection foliage shader class
+ * Early z rejection tre shader class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::earlyzrejection::EZRShaderPreFoliageImplementation: public EZRShaderPreBaseImplementation
+class tdme::engine::subsystems::earlyzrejection::EZRShaderPreTreeImplementation: public EZRShaderPreBaseImplementation
 {
 public:
 	/**
@@ -28,10 +28,10 @@ public:
 	 * Constructor
 	 * @param renderer renderer
 	 */
-	EZRShaderPreFoliageImplementation(Renderer* renderer);
+	EZRShaderPreTreeImplementation(Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~EZRShaderPreFoliageImplementation();
+	~EZRShaderPreTreeImplementation();
 };

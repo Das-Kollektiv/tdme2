@@ -12,12 +12,14 @@ namespace shadowmapping {
 	class ShadowMappingShaderPreBaseImplementation;
 	class ShadowMappingShaderPreDefaultImplementation;
 	class ShadowMappingShaderPreFoliageImplementation;
+	class ShadowMappingShaderPreTreeImplementation;
 	class ShadowMappingShaderRender;
 	struct ShadowMappingShaderRenderImplementation;
 	class ShadowMappingShaderRenderImplementation;
 	class ShadowMappingShaderRenderBaseImplementation;
 	class ShadowMappingShaderRenderDefaultImplementation;
 	class ShadowMappingShaderRenderFoliageImplementation;
+	class ShadowMappingShaderRenderTreeImplementation;
 	class ShadowMapping_RunState;
 }  // namespace shadowmapping
 }  // namespace subsystems

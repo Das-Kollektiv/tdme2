@@ -265,6 +265,7 @@ SRCS = \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreTreeImplementation.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp \
@@ -275,6 +276,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
+	src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \
 	src/tdme/engine/subsystems/lines/LinesShader.cpp \
 	src/tdme/engine/subsystems/lines/LinesObject3DInternal.cpp \
@@ -326,10 +328,12 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreTreeImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRender.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderFoliageImplementation.cpp \
+	src/tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
 	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \
@@ -471,6 +475,7 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServer.cpp \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
+	src/tdme/tests/TreeTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/gui/GUITest.cpp \
 	src/tdme/tools/leveleditor/TDMELevelEditor.cpp \
@@ -782,6 +787,7 @@ MAIN_SRCS = \
 	src/tdme/tests/RayTracingTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
+	src/tdme/tests/TreeTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
 	src/tdme/tests/WaterTest-main.cpp \

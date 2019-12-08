@@ -694,15 +694,10 @@ int ModelHelper::determineFaceCount(Group* group) {
 }
 
 void ModelHelper::prepareForShader(Model* model, const string& shader) {
-	if (shader == "foliage") {
-		for (auto groupIt: model->getSubGroups()) prepareForFoliageShader(groupIt.second);
-		if (model->getUpVector() == UpVector::Z_UP) {
-			Console::println("ModelHelper::prepareForShader(): " + model->getName() + ": fixing Z-Up to Y-Up");
-			Matrix4x4 z2yUpMatrix;
-			z2yUpMatrix.identity().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f));
-			model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().multiply(z2yUpMatrix));
-			model->setUpVector(UpVector::Y_UP);
-		}
+	if (shader == "foliage" || shader == "tree") {
+		for (auto groupIt: model->getSubGroups()) prepareForFoliageTreeShader(groupIt.second, model->getImportTransformationsMatrix(), shader);
+		model->setImportTransformationsMatrix(Matrix4x4().identity());
+		model->setUpVector(UpVector::Y_UP);
 	} else {
 		for (auto groupIt: model->getSubGroups()) prepareForDefaultShader(groupIt.second);
 	}
@@ -712,55 +707,54 @@ void ModelHelper::prepareForDefaultShader(Group* group) {
 	vector<Vector3> objectOrigins;
 	group->setOrigins(objectOrigins);
 	for (auto groupIt: group->getSubGroups()) {
-		prepareForFoliageShader(groupIt.second);
+		prepareForDefaultShader(groupIt.second);
 	}
 }
 
-void ModelHelper::prepareForFoliageShader(Group* group) {
+void ModelHelper::prepareForFoliageTreeShader(Group* group, const Matrix4x4& parentTransformationsMatrix, const string& shader) {
 	vector<Vector3> objectOrigins;
 	objectOrigins.resize(group->getVertices().size());
-	group->setOrigins(objectOrigins);
-	if (group->getModel()->getUpVector() == UpVector::Z_UP) {
-		if (group->getAnimation() != nullptr) Console::println("ModelHelper::prepareForFoliageShader(): animation available, this is not yet supported!");
-		if (group->getSkinning() != nullptr) Console::println("ModelHelper::prepareForFoliageShader(): skinning available, this is not yet supported!");
-		{
-			auto vertices = group->getVertices();
-			for (auto& vertex: vertices) {
-				auto tmp = vertex.getY();
-				vertex.setY(-vertex.getZ());
-				vertex.setZ(tmp);
-			}
-			group->setVertices(vertices);
+	Console::println("ModelHelper::prepareForShader(): " + group->getModel()->getName() + ": " + group->getId() + ": applying import and group matrices");
+	if (group->getAnimation() != nullptr) Console::println("ModelHelper::prepareForFoliageShader(): animation available, this is not yet supported!");
+	if (group->getSkinning() != nullptr) Console::println("ModelHelper::prepareForFoliageShader(): skinning available, this is not yet supported!");
+	auto transformationsMatrix = group->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+	{
+		auto vertices = group->getVertices();
+		auto vertexIdx = 0;
+		for (auto& vertex: vertices) {
+			transformationsMatrix.multiply(vertex, vertex);
+			if (shader == "tree") objectOrigins[vertexIdx].set(0.0f, vertex.getY(), 0.0f);
+			vertexIdx++;
 		}
-		{
-			auto normals = group->getNormals();
-			for (auto& normal: normals) {
-				auto tmp = normal.getY();
-				normal.setY(-normal.getZ());
-				normal.setZ(tmp);
-			}
-			group->setNormals(normals);
-		}
-		{
-			auto tangents = group->getTangents();
-			for (auto& tangent: tangents) {
-				auto tmp = tangent.getY();
-				tangent.setY(-tangent.getZ());
-				tangent.setZ(tmp);
-			}
-			group->setTangents(tangents);
-		}
-		{
-			auto bitangents = group->getBitangents();
-			for (auto& bitangent: bitangents) {
-				auto tmp = bitangent.getY();
-				bitangent.setY(-bitangent.getZ());
-				bitangent.setZ(tmp);
-			}
-			group->setBitangents(bitangents);
-		}
+		group->setVertices(vertices);
 	}
+	{
+		auto normals = group->getNormals();
+		for (auto& normal: normals) {
+			transformationsMatrix.multiplyNoTranslation(normal, normal);
+			normal.normalize();
+		}
+		group->setNormals(normals);
+	}
+	{
+		auto tangents = group->getTangents();
+		for (auto& tangent: tangents) {
+			transformationsMatrix.multiplyNoTranslation(tangent, tangent);
+			tangent.normalize();
+		}
+		group->setTangents(tangents);
+	}
+	{
+		auto bitangents = group->getBitangents();
+		for (auto& bitangent: bitangents) {
+			transformationsMatrix.multiplyNoTranslation(bitangent, bitangent);
+			bitangent.normalize();
+		}
+		group->setBitangents(bitangents);
+	}
+	group->setTransformationsMatrix(Matrix4x4().identity());
+	group->setOrigins(objectOrigins);
 	for (auto groupIt: group->getSubGroups()) {
-		prepareForFoliageShader(groupIt.second);
+		prepareForFoliageTreeShader(groupIt.second, transformationsMatrix, shader);
 	}
 }
