@@ -393,6 +393,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 	// all objects share the same object 3d group structure, so we just take the first one
 	vector<int32_t>* boundVBOBaseIds = nullptr;
 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
+	vector<int32_t>* boundVBOOrigins = nullptr;
 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
 		// render each faces entity
@@ -512,6 +513,11 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					renderer->bindTangentsBufferObject(context, (*currentVBONormalMappingIds)[0]);
 					// bitangent
 					renderer->bindBitangentsBufferObject(context, (*currentVBONormalMappingIds)[1]);
+				}
+				// bind render group object origins
+				auto currentVBOOrigins = _object3DGroup->renderer->vboOrigins;
+				if (currentVBOOrigins != nullptr && currentVBOOrigins != boundVBOOrigins) {
+					renderer->bindOrigins(context, (*currentVBOOrigins)[0]);
 				}
 				// set up local -> world transformations matrix
 				renderer->getModelViewMatrix().set(

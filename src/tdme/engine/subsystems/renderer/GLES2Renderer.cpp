@@ -203,7 +203,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
 				string(": failed: ") +
 				infoLogString
 			 )
-		 );
+		);
 		// remove shader
 		glDeleteShader(handle);
 		return 0;
@@ -257,7 +257,7 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 
 int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
-	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
+	auto uniformLocation = glGetUniformLocation(programId, name.c_str());
 	return uniformLocation;
 }
 
@@ -597,7 +597,10 @@ void GLES2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t buffe
 }
 
 void GLES2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
-	Console::println(string("GLES2Renderer::bindOrigins()::not implemented yet"));
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
+
 }
 
 void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
@@ -641,6 +644,7 @@ void GLES2Renderer::unbindBufferObjects(void* context)
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 	glDisableVertexAttribArray(3);
+	glDisableVertexAttribArray(4);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

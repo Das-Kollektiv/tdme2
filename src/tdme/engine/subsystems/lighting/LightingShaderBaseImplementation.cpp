@@ -42,6 +42,7 @@ void LightingShaderBaseImplementation::initialize()
 		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, "inNormal");
 		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, "inTextureUV");
+		renderer->setProgramAttributeLocation(renderLightingProgramId, 4, "inOrigin");
 	}
 
 	// link program
@@ -160,9 +161,7 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		updateLight(renderer, context, i);
 	}
 	// frame
-	if (uniformFrame != 1) {
-		renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
-	}
+	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 }
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)
