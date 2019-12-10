@@ -1,0 +1,198 @@
+diff --git a/shader/gl3/lighting/render_vertexshader.c b/shader/gl3/lighting/render_vertexshader.c
+index b9555d8a..10a02ebd 100644
+--- a/shader/gl3/lighting/render_vertexshader.c
++++ b/shader/gl3/lighting/render_vertexshader.c
+@@ -24,8 +24,6 @@ uniform mat3 textureMatrix;
+ uniform int normalTextureAvailable;
+ uniform int frame;
+ 
+-{$DEFINITIONS}
+-
+ uniform mat4 projectionMatrix;
+ uniform mat4 cameraMatrix;
+ 
+@@ -38,6 +36,8 @@ out vec3 vsBitangent;
+ out vec4 vsEffectColorMul;
+ out vec4 vsEffectColorAdd;
+ 
++{$DEFINITIONS}
++
+ #if defined(HAVE_TERRAIN_SHADER)
+ 	out vec3 vertex;
+ 	out vec3 normal;
+diff --git a/shader/gles2/functions/create_foliage_transform_matrix.inc.c b/shader/gles2/functions/create_foliage_transform_matrix.inc.c
+index 780b6af1..72ac4843 100644
+--- a/shader/gles2/functions/create_foliage_transform_matrix.inc.c
++++ b/shader/gles2/functions/create_foliage_transform_matrix.inc.c
+@@ -1,6 +1,6 @@
+ mat4 createFoliageTransformMatrix(vec3 origin, vec3 vertex, vec3 translation) {
+-	float zAxisRotation = (frame + int((origin.x + translation.x) * 8.0 * (translation.x + origin.x < 0.0?-1.0:1.0))) % 160;
+-	zAxisRotation = sin((clamp((((zAxisRotation < 160.0 / 2?zAxisRotation:160.0 - zAxisRotation) - (160.0 / 4.0)) * 1.0 / 8.0) * ((vertex.y - origin.y) * 2.0), -20.0, +20.0)) / 20.0 * 3.14) * 20.0;
++	float zAxisRotation = mod((float(frame) + (origin.x + translation.x) * 8.0 * (translation.x + origin.x < 0.0?-1.0:1.0)), 160.0);
++	zAxisRotation = sin((clamp((((zAxisRotation < 160.0 / 2.0?zAxisRotation:160.0 - zAxisRotation) - (160.0 / 4.0)) * 1.0 / 8.0) * ((vertex.y - origin.y) * 2.0), -20.0, +20.0)) / 20.0 * 3.14) * 20.0;
+ 	return
+ 		createTranslationMatrix(vec3(origin.x, origin.y, origin.z)) *
+ 		createRotationMatrix(vec3(0.0, 0.0, 1.0), zAxisRotation) *
+diff --git a/shader/gles2/functions/create_tree_transform_matrix.inc.c b/shader/gles2/functions/create_tree_transform_matrix.inc.c
+index 97785695..b8b3e7cb 100644
+--- a/shader/gles2/functions/create_tree_transform_matrix.inc.c
++++ b/shader/gles2/functions/create_tree_transform_matrix.inc.c
+@@ -1,6 +1,6 @@
+ mat4 createTreeTransformMatrix(vec3 origin, vec3 vertex, vec3 translation) {
+ 	if (abs(vertex.x - origin.x) < 0.25 || abs(vertex.z - origin.z) < 0.25) return mat4(1.0);
+-	float zAxisRotation = sin((int((translation.x * 50.0 + translation.z * 50.0 + vertex.y * 50.0 + frame) / 2.0) % 160) / 160.0 * 3.14) * 5.0;
++	float zAxisRotation = sin(mod(((translation.x * 50.0 + translation.z * 50.0 + vertex.y * 50.0 + float(frame)) / 2.0), 160.0) / 160.0 * 3.14) * 5.0;
+ 	if (vertex.x > 0.0) zAxisRotation*= -1.0;
+ 	return
+ 		createTranslationMatrix(vec3(origin.x, origin.y, origin.z)) *
+diff --git a/shader/gles2/lighting/render_vertexshader.c b/shader/gles2/lighting/render_vertexshader.c
+index bd62818c..6d82cbad 100644
+--- a/shader/gles2/lighting/render_vertexshader.c
++++ b/shader/gles2/lighting/render_vertexshader.c
+@@ -70,6 +70,7 @@ struct Light {
+ attribute vec3 inVertex;
+ attribute vec3 inNormal;
+ attribute vec2 inTextureUV;
++attribute vec3 inOrigin;
+ 
+ // uniforms
+ uniform mat4 mvpMatrix;
+@@ -82,10 +83,16 @@ uniform vec4 effectColorMul;
+ uniform Material material;
+ uniform Light lights[MAX_LIGHTS];
+ 
++uniform int frame;
++
+ // will be passed to fragment shader
+ varying vec2 vsFragTextureUV;
+ varying vec4 vsFragColor;
+ 
++{$DEFINITIONS}
++
++{$FUNCTIONS}
++
+ void computeLight(in int i, in vec3 normal, in vec3 position) {
+ 	vec3 lightDirection = lights[i].position.xyz - position.xyz;
+ 	float lightDistance = length(lightDirection);
+@@ -132,6 +139,15 @@ void computeLights(in vec3 normal, in vec3 position) {
+  
+  
+ void main(void) {
++	// TODO: Cannot use mv or mvp matrix as they change as view changes
++	#if defined(HAVE_TREE)
++		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, vec3(mvMatrix[3][0], mvMatrix[3][1], mvMatrix[3][2]));
++	#elif defined(HAVE_FOLIAGE)
++		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, vec3(mvMatrix[3][0], mvMatrix[3][1], mvMatrix[3][2]));
++	#else
++		mat4 shaderTransformMatrix = mat4(1.0);
++	#endif
++
+ 	// pass texture uv to fragment shader
+ 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
+ 
+@@ -141,14 +157,14 @@ void main(void) {
+ 	vsFragColor+= clamp(material.emission, 0.0, 1.0);
+ 
+ 	// compute gl position
+-	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
++	gl_Position = mvpMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+ 
+ 	// Eye-coordinate position of vertex, needed in various calculations
+ 	vec4 position4 = mvMatrix * vec4(inVertex, 1.0);
+ 	vec3 position = position4.xyz / position4.w;
+ 
+ 	// compute the normal
+-	vec3 normal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
++	vec3 normal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(inNormal, 0.0)));
+  
+ 	// compute lights
+ 	computeLights(normal, position);
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+index 5e13e382..d924032b 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+@@ -42,6 +42,7 @@ void LightingShaderBaseImplementation::initialize()
+ 		renderer->setProgramAttributeLocation(renderLightingProgramId, 0, "inVertex");
+ 		renderer->setProgramAttributeLocation(renderLightingProgramId, 1, "inNormal");
+ 		renderer->setProgramAttributeLocation(renderLightingProgramId, 2, "inTextureUV");
++		renderer->setProgramAttributeLocation(renderLightingProgramId, 4, "inOrigin");
+ 	}
+ 
+ 	// link program
+@@ -160,9 +161,7 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
+ 		updateLight(renderer, context, i);
+ 	}
+ 	// frame
+-	if (uniformFrame != 1) {
+-		renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+-	}
++	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+ }
+ 
+ void LightingShaderBaseImplementation::unUseProgram(void* context)
+diff --git a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+index e4c894eb..b82fa822 100644
+--- a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+@@ -203,7 +203,7 @@ int32_t GLES2Renderer::loadShader(int32_t type, const string& pathName, const st
+ 				string(": failed: ") +
+ 				infoLogString
+ 			 )
+-		 );
++		);
+ 		// remove shader
+ 		glDeleteShader(handle);
+ 		return 0;
+@@ -257,7 +257,7 @@ bool GLES2Renderer::linkProgram(int32_t programId)
+ 
+ int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const string& name)
+ {
+-	auto uniformLocation = glGetUniformLocation(programId, (name).c_str());
++	auto uniformLocation = glGetUniformLocation(programId, name.c_str());
+ 	return uniformLocation;
+ }
+ 
+@@ -597,7 +597,10 @@ void GLES2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t buffe
+ }
+ 
+ void GLES2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+-	Console::println(string("GLES2Renderer::bindOrigins()::not implemented yet"));
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(4);
++	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
++
+ }
+ 
+ void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
+@@ -641,6 +644,7 @@ void GLES2Renderer::unbindBufferObjects(void* context)
+ 	glDisableVertexAttribArray(1);
+ 	glDisableVertexAttribArray(2);
+ 	glDisableVertexAttribArray(3);
++	glDisableVertexAttribArray(4);
+ 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+ 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+ }
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp b/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
+index 246c86e0..c5f0c71e 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
++++ b/src/tdme/engine/subsystems/rendering/Object3DRenderer.cpp
+@@ -393,6 +393,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
+ 	// all objects share the same object 3d group structure, so we just take the first one
+ 	vector<int32_t>* boundVBOBaseIds = nullptr;
+ 	vector<int32_t>* boundVBOTangentBitangentIds = nullptr;
++	vector<int32_t>* boundVBOOrigins = nullptr;
+ 	for (auto object3DGroupIdx = 0; object3DGroupIdx < firstObject->object3dGroups.size(); object3DGroupIdx++) {
+ 		auto object3DGroup = firstObject->object3dGroups[object3DGroupIdx];
+ 		// render each faces entity
+@@ -513,6 +514,11 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
+ 					// bitangent
+ 					renderer->bindBitangentsBufferObject(context, (*currentVBONormalMappingIds)[1]);
+ 				}
++				// bind render group object origins
++				auto currentVBOOrigins = _object3DGroup->renderer->vboOrigins;
++				if (currentVBOOrigins != nullptr && currentVBOOrigins != boundVBOOrigins) {
++					renderer->bindOrigins(context, (*currentVBOOrigins)[0]);
++				}
+ 				// set up local -> world transformations matrix
+ 				renderer->getModelViewMatrix().set(
+ 					(_object3DGroup->mesh->skinning == true ?
