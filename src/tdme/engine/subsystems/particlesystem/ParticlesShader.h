@@ -54,10 +54,9 @@ public:
 
 	/** 
 	 * Update effect to program
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateEffect(Renderer* renderer, void* context);
+	void updateEffect(void* context);
 
 	/** 
 	 * Unuse particles shader program
@@ -67,10 +66,9 @@ public:
 
 	/** 
 	 * Update matrices to program
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateMatrices(Renderer* renderer, void* context);
+	void updateMatrices(void* context);
 
 	/**
 	 * Set parameters

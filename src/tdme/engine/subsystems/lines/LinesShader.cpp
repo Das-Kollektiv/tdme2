@@ -80,7 +80,7 @@ void LinesShader::useProgram(void* context)
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
 }
 
-void LinesShader::updateEffect(Renderer* renderer, void* context)
+void LinesShader::updateEffect(void* context)
 {
 	// skip if not running
 	if (isRunning == false)
@@ -97,7 +97,7 @@ void LinesShader::unUseProgram(void* context)
 	renderer->bindTexture(context, renderer->ID_NONE);
 }
 
-void LinesShader::updateMatrices(Renderer* renderer, void* context)
+void LinesShader::updateMatrices(void* context)
 {
 	// skip if not running
 	if (isRunning == false)

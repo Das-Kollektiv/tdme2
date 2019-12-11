@@ -25,107 +25,107 @@ EngineVKRenderer::EngineVKRenderer(Engine* engine) :
 void EngineVKRenderer::onUpdateProjectionMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateMatrices(this, context);
+		Engine::lightingShader->updateMatrices(context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateMatrices(this, context);
+		Engine::particlesShader->updateMatrices(context);
 
 	if (Engine::linesShader != nullptr)
-		Engine::linesShader->updateMatrices(this, context);
+		Engine::linesShader->updateMatrices(context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(this, context);
+		Engine::ezrShaderPre->updateMatrices(context);
 }
 
 void EngineVKRenderer::onUpdateCameraMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateMatrices(this, context);
+		Engine::lightingShader->updateMatrices(context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateMatrices(this, context);
+		Engine::particlesShader->updateMatrices(context);
 
 	if (Engine::linesShader != nullptr)
-		Engine::linesShader->updateMatrices(this, context);
+		Engine::linesShader->updateMatrices(context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(this, context);
+		Engine::ezrShaderPre->updateMatrices(context);
 }
 
 void EngineVKRenderer::onUpdateModelViewMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateMatrices(this, context);
+		Engine::lightingShader->updateMatrices(context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateMatrices(this, context);
+		Engine::particlesShader->updateMatrices(context);
 
 	if (Engine::linesShader != nullptr)
-		Engine::linesShader->updateMatrices(this, context);
+		Engine::linesShader->updateMatrices(context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMatrices(this, context);
+		Engine::ezrShaderPre->updateMatrices(context);
 }
 
 void EngineVKRenderer::onBindTexture(void* context, int32_t textureId)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->bindTexture(this, context, textureId);
+		Engine::lightingShader->bindTexture(context, textureId);
 
 	if (Engine::guiShader != nullptr)
-		Engine::guiShader->bindTexture(this, textureId);
+		Engine::guiShader->bindTexture(textureId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->bindTexture(context, textureId);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->bindTexture(this, context, textureId);
+		Engine::ezrShaderPre->bindTexture(context, textureId);
 }
 
 void EngineVKRenderer::onUpdateTextureMatrix(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateTextureMatrix(this, context);
+		Engine::lightingShader->updateTextureMatrix(context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateTextureMatrix(context);
 
 	if (Engine::guiShader != nullptr)
-		Engine::guiShader->updateTextureMatrix(this);
+		Engine::guiShader->updateTextureMatrix();
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateTextureMatrix(this, context);
+		Engine::ezrShaderPre->updateTextureMatrix(context);
 }
 
 void EngineVKRenderer::onUpdateEffect(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateEffect(this, context);
+		Engine::lightingShader->updateEffect(context);
 
 	if (Engine::particlesShader != nullptr)
-		Engine::particlesShader->updateEffect(this, context);
+		Engine::particlesShader->updateEffect(context);
 
 	if (Engine::linesShader != nullptr)
-		Engine::linesShader->updateEffect(this, context);
+		Engine::linesShader->updateEffect(context);
 
 	if (Engine::guiShader != nullptr)
-		Engine::guiShader->updateEffect(this);
+		Engine::guiShader->updateEffect();
 
 }
 
 void EngineVKRenderer::onUpdateLight(void* context, int32_t lightId)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateLight(this, context, lightId);
+		Engine::lightingShader->updateLight(context, lightId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateLight(context, lightId);
@@ -134,13 +134,13 @@ void EngineVKRenderer::onUpdateLight(void* context, int32_t lightId)
 void EngineVKRenderer::onUpdateMaterial(void* context)
 {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->updateMaterial(this, context);
+		Engine::lightingShader->updateMaterial(context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
 		Engine::currentEngine->shadowMapping->updateMaterial(context);
 
 	if (Engine::ezrShaderPre != nullptr)
-		Engine::ezrShaderPre->updateMaterial(this, context);
+		Engine::ezrShaderPre->updateMaterial(context);
 }
 
 void EngineVKRenderer::onUpdateShader(void* context) {

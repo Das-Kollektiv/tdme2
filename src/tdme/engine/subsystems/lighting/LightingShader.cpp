@@ -87,35 +87,35 @@ void LightingShader::unUseProgram()
 	engine = nullptr;
 }
 
-void LightingShader::updateEffect(Renderer* renderer, void* context)
+void LightingShader::updateEffect(void* context)
 {
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->updateEffect(renderer, context);
 }
 
-void LightingShader::updateMaterial(Renderer* renderer, void* context)
+void LightingShader::updateMaterial(void* context)
 {
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->updateMaterial(renderer, context);
 }
 
-void LightingShader::updateLight(Renderer* renderer, void* context, int32_t lightId)
+void LightingShader::updateLight(void* context, int32_t lightId)
 {
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->updateLight(renderer, context, lightId);
 }
 
-void LightingShader::updateMatrices(Renderer* renderer, void* context)
+void LightingShader::updateMatrices(void* context)
 {
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->updateMatrices(renderer, context);
 }
 
-void LightingShader::updateTextureMatrix(Renderer* renderer, void* context) {
+void LightingShader::updateTextureMatrix(void* context) {
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->updateTextureMatrix(renderer, context);
@@ -139,7 +139,7 @@ void LightingShader::setShader(void* context, const string& id) {
 	}
 }
 
-void LightingShader::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void LightingShader::bindTexture(void* context, int32_t textureId)
 {
 	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
 	if (lightingShaderContext.implementation == nullptr) return;

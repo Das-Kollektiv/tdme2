@@ -71,27 +71,27 @@ void EZRShaderPre::unUseProgram()
 	engine = nullptr;
 }
 
-void EZRShaderPre::updateMatrices(Renderer* renderer, void* context)
+void EZRShaderPre::updateMatrices(void* context)
 {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;
 	ezrShaderPreContext.implementation->updateMatrices(renderer, context);
 }
 
-void EZRShaderPre::updateTextureMatrix(Renderer* renderer, void* context) {
+void EZRShaderPre::updateTextureMatrix(void* context) {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;
 	ezrShaderPreContext.implementation->updateTextureMatrix(renderer, context);
 }
 
-void EZRShaderPre::updateMaterial(Renderer* renderer, void* context)
+void EZRShaderPre::updateMaterial(void* context)
 {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;
 	ezrShaderPreContext.implementation->updateMaterial(renderer, context);
 }
 
-void EZRShaderPre::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void EZRShaderPre::bindTexture(void* context, int32_t textureId)
 {
 	auto& ezrShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (ezrShaderPreContext.implementation == nullptr) return;

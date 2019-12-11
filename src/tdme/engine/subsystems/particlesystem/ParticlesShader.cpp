@@ -79,7 +79,7 @@ void ParticlesShader::useProgram(void* context)
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
 }
 
-void ParticlesShader::updateEffect(Renderer* renderer, void* context)
+void ParticlesShader::updateEffect(void* context)
 {
 	// skip if not running
 	if (isRunning == false) return;
@@ -94,7 +94,7 @@ void ParticlesShader::unUseProgram(void* context)
 	renderer->bindTexture(context, renderer->ID_NONE);
 }
 
-void ParticlesShader::updateMatrices(Renderer* renderer, void* context)
+void ParticlesShader::updateMatrices(void* context)
 {
 	// skip if not running
 	if (isRunning == false) return;

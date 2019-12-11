@@ -76,13 +76,13 @@ void GUIShader::unUseProgram()
 	isRunning = false;
 }
 
-void GUIShader::bindTexture(Renderer* renderer, int32_t textureId)
+void GUIShader::bindTexture(int32_t textureId)
 {
 	if (isRunning == false) return;
 	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 }
 
-void GUIShader::updateEffect(Renderer* renderer)
+void GUIShader::updateEffect()
 {
 	if (isRunning == false) return;
 
@@ -95,7 +95,7 @@ void GUIShader::updateEffect(Renderer* renderer)
 }
 
 
-void GUIShader::updateTextureMatrix(Renderer* renderer) {
+void GUIShader::updateTextureMatrix() {
 	if (isRunning == false) return;
 
 	// use default context

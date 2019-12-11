@@ -19,18 +19,18 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::lines::LinesShader final
 {
 private:
-	int32_t renderProgramId {  };
-	int32_t renderFragmentShaderId {  };
-	int32_t renderVertexShaderId {  };
-	int32_t uniformMVPMatrix {  };
-	int32_t uniformDiffuseTextureUnit {  };
-	int32_t uniformEffectColorMul {  };
-	int32_t uniformEffectColorAdd {  };
-	Matrix4x4 mvpMatrix {  };
-	bool isRunning {  };
-	bool initialized {  };
-	Engine* engine {  };
-	Renderer* renderer {  };
+	int32_t renderProgramId { -1 };
+	int32_t renderFragmentShaderId { -1 };
+	int32_t renderVertexShaderId { -1 };
+	int32_t uniformMVPMatrix { -1 };
+	int32_t uniformDiffuseTextureUnit { -1 };
+	int32_t uniformEffectColorMul { -1 };
+	int32_t uniformEffectColorAdd { -1 };
+	Matrix4x4 mvpMatrix;
+	bool isRunning;
+	bool initialized;
+	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
 
 public:
 
@@ -55,7 +55,7 @@ public:
 	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateEffect(Renderer* renderer, void* context);
+	void updateEffect(void* context);
 
 	/** 
 	 * Unuse particles shader program
@@ -68,7 +68,7 @@ public:
 	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateMatrices(Renderer* renderer, void* context);
+	void updateMatrices(void* context);
 
 	/**
 	 * Set parameters

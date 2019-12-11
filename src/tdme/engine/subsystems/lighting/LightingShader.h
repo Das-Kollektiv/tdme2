@@ -58,39 +58,34 @@ public:
 
 	/** 
 	 * Update effect to program
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateEffect(Renderer* renderer, void* context);
+	void updateEffect(void* context);
 
 	/** 
 	 * Update material to program
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateMaterial(Renderer* renderer, void* context);
+	void updateMaterial(void* context);
 
 	/** 
 	 * Update light to program
-	 * @param renderer renderer
 	 * @param context context
 	 * @param lightId light id
 	 */
-	void updateLight(Renderer* renderer, void* context, int32_t lightId);
+	void updateLight(void* context, int32_t lightId);
 
 	/** 
 	 * Update matrices to program
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateMatrices(Renderer* renderer, void* context);
+	void updateMatrices(void* context);
 
 	/** 
 	 * Update texture matrix to program
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateTextureMatrix(Renderer* renderer, void* context);
+	void updateTextureMatrix(void* context);
 
 	/**
 	 * Set shader
@@ -101,11 +96,10 @@ public:
 
 	/**
 	 * Bind texture
-	 * @param renderer renderer
 	 * @param context context
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, void* context, int32_t textureId);
+	void bindTexture(void* context, int32_t textureId);
 
 	/**
 	 * Public constructor

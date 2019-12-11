@@ -15,7 +15,7 @@ class tdme::gui::renderer::GUIShader final
 {
 
 private:
-	Renderer* renderer {  };
+	Renderer* renderer { nullptr };
 	int32_t vertexShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
 	int32_t programId { -1 };
@@ -24,8 +24,8 @@ private:
 	int32_t uniformEffectColorMul { -1 };
 	int32_t uniformEffectColorAdd { -1 };
 	int32_t uniformTextureMatrix { -1 };
-	bool initialized {  };
-	bool isRunning {  };
+	bool initialized;
+	bool isRunning;
 
 public:
 
@@ -51,25 +51,23 @@ public:
 
 	/** 
 	 * Bind texture
-	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, int32_t textureId);
+	void bindTexture(int32_t textureId);
 
 	/** 
 	 * Update effect to program
-	 * @param renderer renderer
 	 */
-	void updateEffect(Renderer* renderer);
+	void updateEffect();
 
 	/**
 	 * Update texure matrix to program
-	 * @param renderer renderer
 	 */
-	void updateTextureMatrix(Renderer* renderer);
+	void updateTextureMatrix();
 
 	/**
 	 * Public constructor
+	 * @param renderer renderer
 	 */
 	GUIShader(Renderer* renderer);
 };
