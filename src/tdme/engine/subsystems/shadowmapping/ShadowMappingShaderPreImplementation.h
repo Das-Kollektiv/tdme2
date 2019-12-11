@@ -48,9 +48,8 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
 	/** 
 	 * Set up pre program mvp matrix
 	 * @param context context
-	 * @param mvpMatrix mvp matrix
 	 */
-	virtual void updateMatrices(void* context, const Matrix4x4& mvpMatrix) = 0;
+	virtual void updateMatrices(void* context) = 0;
 
 	/**
 	 * Set up pre program texture matrix

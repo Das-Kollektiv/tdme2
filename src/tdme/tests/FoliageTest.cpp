@@ -123,16 +123,29 @@ void FoliageTest::initialize()
 	auto reedModel = ModelReader::read("resources/tests/models/reed", "Mesh_Environment_Reed_06.fbx.tm");
 	auto foliageObject = new Object3DRenderGroup("foliage", reedModel);
 	int reedIdx = 0;
-	for (float z = -20.0f; z < 20.0f;) {
-		for (float x = -20.0f; x < 20.0f;) {
-			Transformations transformations;
-			transformations.setTranslation(Vector3(x, 0.0f, z));
-			transformations.update();
-			foliageObject->addObject(transformations);
-			x+= Math::random() * 0.5f + 0.5;
+	#if defined(GLES2)
+		for (float z = -10.0f; z < 10.0f;) {
+			for (float x = -10.0f; x < 10.0f;) {
+				Transformations transformations;
+				transformations.setTranslation(Vector3(x, 0.0f, z));
+				transformations.update();
+				foliageObject->addObject(transformations);
+				x+= Math::random() * 1.0f + 1.0;
+			}
+			z+= Math::random() * 1.0f + 1.0;
 		}
-		z+= Math::random() * 0.75f + 0.25;
-	}
+	#else
+		for (float z = -20.0f; z < 20.0f;) {
+			for (float x = -20.0f; x < 20.0f;) {
+				Transformations transformations;
+				transformations.setTranslation(Vector3(x, 0.0f, z));
+				transformations.update();
+				foliageObject->addObject(transformations);
+				x+= Math::random() * 0.5f + 0.5;
+			}
+			z+= Math::random() * 0.5f + 0.5;
+		}
+	#endif
 	foliageObject->setShader("foliage");
 	foliageObject->updateRenderGroup();
 	engine->addEntity(foliageObject);

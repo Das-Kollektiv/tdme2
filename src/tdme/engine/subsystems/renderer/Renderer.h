@@ -334,7 +334,7 @@ public:
 	virtual void onUpdateCameraMatrix(void* context) = 0;
 
 	/** 
-	 * @return model view matrix
+	 * @return model view matrix or in some cases the model matrix
 	 */
 	virtual Matrix4x4& getModelViewMatrix();
 

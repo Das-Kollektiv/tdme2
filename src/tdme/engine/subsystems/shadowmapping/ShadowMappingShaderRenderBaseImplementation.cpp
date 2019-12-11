@@ -55,6 +55,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 		renderer->setProgramAttributeLocation(renderProgramId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(renderProgramId, 1, "inNormal");
 		renderer->setProgramAttributeLocation(renderProgramId, 2, "inTextureUV");
+		renderer->setProgramAttributeLocation(renderProgramId, 4, "inOrigin");
 	}
 	// link
 	if (renderer->linkProgram(renderProgramId) == false)
@@ -80,6 +81,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 		if (renderUniformMVPMatrix == -1) return;
 		renderUniformNormalMatrix = renderer->getProgramUniformLocation(renderProgramId, "normalMatrix");
 		if (renderUniformNormalMatrix == -1) return;
+		renderUniformModelTranslation = renderer->getProgramUniformLocation(renderProgramId, "modelTranslation");
 	}
 	uniformTextureMatrix = renderer->getProgramUniformLocation(renderProgramId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
@@ -131,29 +133,29 @@ void ShadowMappingShaderRenderBaseImplementation::unUseProgram(void* context)
 {
 }
 
-void ShadowMappingShaderRenderBaseImplementation::setProgramViewMatrices(void* context) {
+void ShadowMappingShaderRenderBaseImplementation::updateMatrices(void* context) {
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
+	} else {
+		Matrix4x4 mvMatrix;
+		Matrix4x4 mvpMatrix;
+		Matrix4x4 normalMatrix;
+		Vector3 modelTranslation;
+		// model view matrix
+		mvMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getCameraMatrix());
+		// object to screen matrix
+		mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
+		// normal matrix
+		normalMatrix.set(mvMatrix).invert().transpose();
+		// model translation
+		renderer->getModelViewMatrix().getTranslation(modelTranslation);
+		// upload
+		if (renderUniformMVMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, renderUniformMVMatrix, mvMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformMVPMatrix, mvpMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformNormalMatrix, normalMatrix.getArray());
+		if (renderUniformModelTranslation != -1) renderer->setProgramUniformFloatVec3(context, renderUniformModelTranslation, modelTranslation.getArray());
 	}
-}
-void ShadowMappingShaderRenderBaseImplementation::setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix)
-{
-	if (renderer->isInstancedRenderingAvailable() == true) return;
-	if (renderUniformMVMatrix == -1) return;
-	renderer->setProgramUniformFloatMatrix4x4(context, renderUniformMVMatrix, mvMatrix.getArray());
-}
-
-void ShadowMappingShaderRenderBaseImplementation::setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix)
-{
-	if (renderer->isInstancedRenderingAvailable() == true) return;
-	renderer->setProgramUniformFloatMatrix4x4(context, renderUniformMVPMatrix, mvpMatrix.getArray());
-}
-
-void ShadowMappingShaderRenderBaseImplementation::setProgramNormalMatrix(void* context, const Matrix4x4& normalMatrix)
-{
-	if (renderer->isInstancedRenderingAvailable() == true) return;
-	renderer->setProgramUniformFloatMatrix4x4(context, renderUniformNormalMatrix, normalMatrix.getArray());
 }
 
 void ShadowMappingShaderRenderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {

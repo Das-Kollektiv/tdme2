@@ -45,32 +45,11 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImpleme
 	 */
 	virtual void unUseProgram(void* context) = 0;
 
-	/** 
-	 * Set up program projection and camera matrix
-	 * @param context contet
-	 */
-	virtual void setProgramViewMatrices(void* context) = 0;
-
 	/**
-	 * Set up program model view matrix
-	 * @param context contet
-	 * @param mvMatrix model view matrix
+	 * Update matrices
+	 * @param context context
 	 */
-	virtual void setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix) = 0;
-
-	/** 
-	 * Set up program mvp matrix
-	 * @param context contet
-	 * @param mvpMatrix mvp matrix
-	 */
-	virtual void setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix) = 0;
-
-	/** 
-	 * Set up program normal matrix
-	 * @param context contet
-	 * @param normalMatrix normal matrix
-	 */
-	virtual void setProgramNormalMatrix(void* context, const Matrix4x4& normalMatrix) = 0;
+	virtual void updateMatrices(void* context) = 0;
 
 	/**
 	 * Set up pre program texture matrix

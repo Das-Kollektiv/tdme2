@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h>
+	#include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreBaseImplementation.h>
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
@@ -41,6 +41,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
 		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
+		renderer->setProgramAttributeLocation(programId, 4, "inOrigin");
 	}
 	// link
 	if (renderer->linkProgram(programId) == false) return;
@@ -56,6 +57,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 		//	uniforms
 		uniformMVPMatrix = renderer->getProgramUniformLocation(programId, "mvpMatrix");
 		if (uniformMVPMatrix == -1) return;
+		uniformModelTranslation = renderer->getProgramUniformLocation(programId, "modelTranslation");
 	}
 	uniformTextureMatrix = renderer->getProgramUniformLocation(programId, "textureMatrix");
 	if (uniformTextureMatrix == -1) return;
@@ -86,13 +88,20 @@ void ShadowMappingShaderPreBaseImplementation::unUseProgram(void* context)
 {
 }
 
-void ShadowMappingShaderPreBaseImplementation::updateMatrices(void* context, const Matrix4x4& mvpMatrix)
+void ShadowMappingShaderPreBaseImplementation::updateMatrices(void* context)
 {
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	} else {
+		Matrix4x4 mvpMatrix;
+		Vector3 modelTranslation;
+		// model view projection matrix
+		mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getCameraMatrix()).multiply(renderer->getProjectionMatrix());
+		// model translation
+		renderer->getModelViewMatrix().getTranslation(modelTranslation);
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
+		if (uniformModelTranslation != -1) renderer->setProgramUniformFloatVec3(context, uniformModelTranslation, modelTranslation.getArray());
 	}
 }
 

@@ -258,6 +258,7 @@ bool GLES2Renderer::linkProgram(int32_t programId)
 int32_t GLES2Renderer::getProgramUniformLocation(int32_t programId, const string& name)
 {
 	auto uniformLocation = glGetUniformLocation(programId, name.c_str());
+	// if (uniformLocation == -1) Console::println("GLES2Renderer::getProgramUniformLocation(): " + to_string(programId) + ": " + name + ": not found");
 	return uniformLocation;
 }
 

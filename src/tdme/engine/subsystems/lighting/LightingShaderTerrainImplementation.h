@@ -27,6 +27,7 @@ public:
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
 	virtual void unUseProgram(void* context) override;
+	virtual void updateMatrices(Renderer* renderer, void* context) override;
 
 	/**
 	 * Public constructor
@@ -35,6 +36,7 @@ public:
 	LightingShaderTerrainImplementation(Renderer* renderer);
 
 private:
+	int32_t uniformModelMatrix { -1 };
 	int32_t uniformGrasTextureUnit { -1 };
 	int32_t uniformDirtTextureUnit { -1 };
 	int32_t uniformSnowTextureUnit { -1 };

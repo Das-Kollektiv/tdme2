@@ -301,11 +301,7 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 	if (object3DGroup->mesh->skinning == true) {
 		modelViewMatrix.identity();
 	} else {
-		if (renderer->isInstancedRenderingAvailable() == true) {
-			modelViewMatrix.set(*object3DGroup->groupTransformationsMatrix).multiply(object3D->getTransformationsMatrix());
-		} else {
-			modelViewMatrix.set(*object3DGroup->groupTransformationsMatrix).multiply(object3D->getTransformationsMatrix()).multiply(renderer->getCameraMatrix());
-		}
+		modelViewMatrix.set(*object3DGroup->groupTransformationsMatrix).multiply(object3D->getTransformationsMatrix());
 	}
 	//
 	auto model = object3DGroup->object->getModel();
@@ -477,9 +473,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					renderer->setShader(context, objectShader);
 					renderer->onUpdateShader(context);
 					// update lights
-					for (auto j = 0; j < engine->lights.size(); j++) {
-						engine->lights[j].update(context);
-					}
+					for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(context);
+					materialUpdateOnly = false;
 				}
 				// set up material on first object
 				string materialKey;
@@ -525,8 +520,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 						modelViewMatrix.identity() :
 						modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
 					).
-						multiply(object->getTransformationsMatrix()).
-						multiply(cameraMatrix)
+						multiply(object->getTransformationsMatrix())
 				);
 				renderer->onUpdateModelViewMatrix(context);
 				// set up front face

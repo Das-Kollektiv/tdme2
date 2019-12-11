@@ -61,61 +61,37 @@ public:
 	 */
 	void unUseProgram();
 
-	/** 
-	 * Set up program projection and camera matrix
-	 */
-	void setProgramViewMatrices();
-
 	/**
-	 * Set up program model view matrix
+	 * Update matrices
 	 * @param context context
-	 * @param mvMatrix model view matrix
 	 */
-	void setProgramMVMatrix(void* context, const Matrix4x4& mvMatrix);
-
-	/** 
-	 * Set up program mvp matrix
-	 * @param context context
-	 * @param mvpMatrix mvp matrix
-	 */
-	void setProgramMVPMatrix(void* context, const Matrix4x4& mvpMatrix);
-
-	/** 
-	 * Set up program normal matrix
-	 * @param context context
-	 * @param normalMatrix normal matrix
-	 */
-	void setProgramNormalMatrix(void* context, const Matrix4x4& normalMatrix);
+	void updateMatrices(void* context);
 
 	/**
 	 * Set up pre program texture matrix
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateTextureMatrix(Renderer* renderer, void* context);
+	void updateTextureMatrix(void* context);
 
 	/**
 	 * Update material
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateMaterial(Renderer* renderer, void* context);
+	void updateMaterial(void* context);
 
 	/**
 	 * Update light
-	 * @param renderer renderer
 	 * @param context context
 	 * @param lightId light id
 	 */
-	void updateLight(Renderer* renderer, void* context, int32_t lightId);
+	void updateLight(void* context, int32_t lightId);
 
 	/**
 	 * Bind texture
-	 * @param renderer renderer
 	 * @param context context
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, void* context, int32_t textureId);
+	void bindTexture(void* context, int32_t textureId);
 
 	/** 
 	 * Set up program depth bias mvp matrix

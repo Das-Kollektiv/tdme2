@@ -27,7 +27,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
 
 bool LightingShaderTerrainImplementation::isSupported(Renderer* renderer) {
-	return renderer->getShaderVersion() == "gl3";
+	return true;
 }
 
 LightingShaderTerrainImplementation::LightingShaderTerrainImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
@@ -72,6 +72,8 @@ void LightingShaderTerrainImplementation::initialize()
 
 	//
 	initialized = false;
+
+	uniformModelMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "modelMatrix");
 
 	uniformGrasTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "grasTextureUnit");
 	if (uniformGrasTextureUnit == -1) return;
@@ -132,4 +134,9 @@ void LightingShaderTerrainImplementation::unUseProgram(void* context) {
 
 	//
 	LightingShaderBaseImplementation::unUseProgram(context);
+}
+
+void LightingShaderTerrainImplementation::updateMatrices(Renderer* renderer, void* context) {
+	LightingShaderBaseImplementation::updateMatrices(renderer, context);
+	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
 }

@@ -44,9 +44,6 @@ ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, Object3DRendere
 		shadowMaps[i] = nullptr;
 	}
 	depthBiasMVPMatrix.identity();
-	mvMatrix.identity();
-	mvpMatrix.identity();
-	normalMatrix.identity();
 	runState = ShadowMapping_RunState::NONE;
 }
 
@@ -216,7 +213,7 @@ void ShadowMapping::endObjectTransformations()
 	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
-void ShadowMapping::updateTextureMatrix(Renderer* renderer, void* context)
+void ShadowMapping::updateTextureMatrix(void* context)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
@@ -225,13 +222,13 @@ void ShadowMapping::updateTextureMatrix(Renderer* renderer, void* context)
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->updateTextureMatrix(renderer, context);
+				Engine::getShadowMappingShaderPre()->updateTextureMatrix(context);
 				goto end_switch0;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->updateTextureMatrix(renderer, context);
+				Engine::getShadowMappingShaderRender()->updateTextureMatrix(context);
 				goto end_switch0;
 			}
 		} else {
@@ -244,57 +241,36 @@ void ShadowMapping::updateTextureMatrix(Renderer* renderer, void* context)
 	}
 }
 
-void ShadowMapping::updateMatrices(Renderer* renderer, void* context)
+void ShadowMapping::updateMatrices(void* context)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
-
-	// model view matrix
-	mvMatrix.set(renderer->getModelViewMatrix());
-	// object to screen matrix
-	mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
-	// normal matrix
-	normalMatrix.set(mvMatrix).invert().transpose();
-	// upload
+	// delegate to shader
 	{
-		auto v = runState;
-		if (v == ShadowMapping_RunState::PRE) {
-			{
-				Engine::getShadowMappingShaderPre()->updateMatrices(context, mvpMatrix);
-				goto end_switch0;;
-			}
+		if (runState == ShadowMapping_RunState::PRE) {
+			Engine::getShadowMappingShaderPre()->updateMatrices(context);
 		} else
-		if (v == ShadowMapping_RunState::RENDER) {
-			{
-				auto shader = Engine::getShadowMappingShaderRender();
-				shader->setProgramMVMatrix(context, mvMatrix);
-				shader->setProgramMVPMatrix(context, mvpMatrix);
-				shader->setProgramNormalMatrix(context, normalMatrix);
-				goto end_switch0;;
-			}
+		if (runState == ShadowMapping_RunState::RENDER) {
+			Engine::getShadowMappingShaderRender()->updateMatrices(context);
 		} else {
-			{
-				Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
-				goto end_switch0;;
-			}
+			Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
 		}
-		end_switch0:;
 	}
 }
 
-void ShadowMapping::updateMaterial(Renderer* renderer, void* context) {
+void ShadowMapping::updateMaterial(void* context) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 	{
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->updateMaterial(renderer, context);
+				Engine::getShadowMappingShaderPre()->updateMaterial(context);
 				goto end_switch0;;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->updateMaterial(renderer, context);
+				Engine::getShadowMappingShaderRender()->updateMaterial(context);
 				goto end_switch0;;
 			}
 		}
@@ -302,26 +278,26 @@ void ShadowMapping::updateMaterial(Renderer* renderer, void* context) {
 	}
 }
 
-void ShadowMapping::updateLight(Renderer* renderer, void* context, int32_t lightId) {
+void ShadowMapping::updateLight(void* context, int32_t lightId) {
 	if (runState == ShadowMapping_RunState::RENDER) {
-		Engine::getShadowMappingShaderRender()->updateLight(renderer, context, lightId);
+		Engine::getShadowMappingShaderRender()->updateLight(context, lightId);
 	}
 }
 
-void ShadowMapping::bindTexture(Renderer* renderer, void* context, int32_t textureId) {
+void ShadowMapping::bindTexture(void* context, int32_t textureId) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 	{
 		auto v = runState;
 		if (v == ShadowMapping_RunState::PRE) {
 			{
-				Engine::getShadowMappingShaderPre()->bindTexture(renderer, context, textureId);
+				Engine::getShadowMappingShaderPre()->bindTexture(context, textureId);
 				goto end_switch0;;
 			}
 		} else
 		if (v == ShadowMapping_RunState::RENDER) {
 			{
-				Engine::getShadowMappingShaderRender()->bindTexture(renderer, context, textureId);
+				Engine::getShadowMappingShaderRender()->bindTexture(context, textureId);
 				goto end_switch0;;
 			}
 		}

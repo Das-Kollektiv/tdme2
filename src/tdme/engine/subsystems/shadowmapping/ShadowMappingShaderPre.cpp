@@ -70,27 +70,27 @@ void ShadowMappingShaderPre::unUseProgram()
 	engine = nullptr;
 }
 
-void ShadowMappingShaderPre::updateMatrices(void* context, const Matrix4x4& mvpMatrix)
+void ShadowMappingShaderPre::updateMatrices(void* context)
 {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateMatrices(context, mvpMatrix);
+	shadowMappingShaderPreContext.implementation->updateMatrices(context);
 }
 
-void ShadowMappingShaderPre::updateTextureMatrix(Renderer* renderer, void* context) {
+void ShadowMappingShaderPre::updateTextureMatrix(void* context) {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
 	shadowMappingShaderPreContext.implementation->updateTextureMatrix(renderer, context);
 }
 
-void ShadowMappingShaderPre::updateMaterial(Renderer* renderer, void* context)
+void ShadowMappingShaderPre::updateMaterial(void* context)
 {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
 	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, context);
 }
 
-void ShadowMappingShaderPre::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void ShadowMappingShaderPre::bindTexture(void* context, int32_t textureId)
 {
 	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;

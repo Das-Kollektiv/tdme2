@@ -38,9 +38,6 @@ private:
 
 	Matrix4x4 shadowTransformationsMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
-	Matrix4x4 mvMatrix;
-	Matrix4x4 mvpMatrix;
-	Matrix4x4 normalMatrix;
 
 	Engine* engine { nullptr };
 
@@ -96,24 +93,21 @@ public:
 
 	/** 
 	 * Update model view and projection matrix
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateMatrices(Renderer* renderer, void* context);
+	void updateMatrices(void* context);
 
 	/**
 	 * Update texture matrix
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateTextureMatrix(Renderer* renderer, void* context);
+	void updateTextureMatrix(void* context);
 
 	/**
 	 * Update material
-	 * @param renderer renderer
 	 * @param context context
 	 */
-	void updateMaterial(Renderer* renderer, void* context);
+	void updateMaterial(void* context);
 
 	/**
 	 * Set shader
@@ -124,17 +118,15 @@ public:
 
 	/**
 	 * Upload light
-	 * @param renderer renderer
 	 * @param lightId light id
 	 */
-	void updateLight(Renderer* renderer, void* context, int32_t lightId);
+	void updateLight(void* context, int32_t lightId);
 
 	/**
 	 * Bind texture
-	 * @param renderer renderer
 	 * @param textureId texture id
 	 */
-	void bindTexture(Renderer* renderer, void* context, int32_t textureId);
+	void bindTexture(void* context, int32_t textureId);
 
 	/** 
 	 * Update depth bias mvp matrix with given matrix

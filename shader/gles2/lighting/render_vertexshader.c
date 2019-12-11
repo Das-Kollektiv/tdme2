@@ -44,6 +44,8 @@
 #define FALSE		0
 #define MAX_LIGHTS	8
 
+{$DEFINITIONS}
+
 struct Material {
 	vec4 ambient;
 	vec4 diffuse;
@@ -70,11 +72,13 @@ struct Light {
 attribute vec3 inVertex;
 attribute vec3 inNormal;
 attribute vec2 inTextureUV;
+attribute vec3 inOrigin;
 
 // uniforms
 uniform mat4 mvpMatrix;
 uniform mat4 mvMatrix;
 uniform mat4 normalMatrix;
+uniform vec3 modelTranslation;
 uniform mat3 textureMatrix;
 
 uniform vec4 sceneColor;
@@ -82,9 +86,33 @@ uniform vec4 effectColorMul;
 uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
+uniform int frame;
+
+#if defined(HAVE_WATER_SHADER)
+	// uniforms
+	uniform float waterHeight;
+	uniform float time;
+	uniform int numWaves;
+	uniform float amplitude[4];
+	uniform float wavelength[4];
+	uniform float speed[4];
+	uniform vec2 direction[4];
+	uniform mat4 modelMatrix;
+#elif defined(HAVE_TERRAIN_SHADER)
+	varying vec3 vertex;
+	varying vec3 normal;
+	varying float height;
+	varying float slope;
+	uniform mat4 modelMatrix;
+#endif
+
 // will be passed to fragment shader
 varying vec2 vsFragTextureUV;
 varying vec4 vsFragColor;
+
+{$DEFINITIONS}
+
+{$FUNCTIONS}
 
 void computeLight(in int i, in vec3 normal, in vec3 position) {
 	vec3 lightDirection = lights[i].position.xyz - position.xyz;
@@ -130,8 +158,41 @@ void computeLights(in vec3 normal, in vec3 position) {
 	}
 }
  
- 
 void main(void) {
+	#if defined(HAVE_TREE)
+		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, modelTranslation);
+	#elif defined(HAVE_FOLIAGE)
+		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, modelTranslation);
+	#else
+		mat4 shaderTransformMatrix = mat4(1.0);
+	#endif
+
+	#if defined(HAVE_TERRAIN_SHADER)
+		vec4 heightVector4 = modelMatrix * vec4(inVertex, 1.0);
+		vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
+		vertex = heightVector3;
+		height = heightVector3.y;
+		vec3 worldNormal = normalize(vec3(modelMatrix * vec4(inNormal, 0.0)));
+		slope = abs(180.0 / 3.14 * acos(clamp(dot(worldNormal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
+		normal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
+	#elif defined(HAVE_WATER_SHADER)
+		// transformations matrices
+		vec4 worldPosition4 = modelMatrix * vec4(inVertex, 1.0);
+		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 10.0;
+		float height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
+		shaderTransformMatrix =
+			mat4(
+				1.0, 0.0, 0.0, 0.0,
+				0.0, 1.0, 0.0, 0.0,
+				0.0, 0.0, 1.0, 0.0,
+				0.0, height, 0.0, 1.0
+			);
+		vec3 normal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(waveNormal(worldPosition.x, worldPosition.z), 0.0)));
+	#else
+		// compute the normal
+		vec3 normal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(inNormal, 0.0)));
+	#endif
+
 	// pass texture uv to fragment shader
 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 
@@ -141,19 +202,20 @@ void main(void) {
 	vsFragColor+= clamp(material.emission, 0.0, 1.0);
 
 	// compute gl position
-	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
+	gl_Position = mvpMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 
 	// Eye-coordinate position of vertex, needed in various calculations
-	vec4 position4 = mvMatrix * vec4(inVertex, 1.0);
+	vec4 position4 = mvMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 	vec3 position = position4.xyz / position4.w;
 
-	// compute the normal
-	vec3 normal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
- 
 	// compute lights
 	computeLights(normal, position);
 
 	// take effect colors into account
-	vsFragColor = vsFragColor * effectColorMul;
+	vsFragColor*= effectColorMul;
 	vsFragColor.a = material.diffuse.a * effectColorMul.a;
+
+	#if defined(HAVE_WATER_SHADER)
+		vsFragColor*= vec4(0.25, 0.25, 0.8, 0.5);
+	#endif
 }

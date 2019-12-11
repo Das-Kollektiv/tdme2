@@ -34,7 +34,7 @@ void EngineVKRenderer::onUpdateProjectionMatrix(void* context)
 		Engine::linesShader->updateMatrices(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
+		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->updateMatrices(this, context);
@@ -52,7 +52,7 @@ void EngineVKRenderer::onUpdateCameraMatrix(void* context)
 		Engine::linesShader->updateMatrices(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
+		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->updateMatrices(this, context);
@@ -70,7 +70,7 @@ void EngineVKRenderer::onUpdateModelViewMatrix(void* context)
 		Engine::linesShader->updateMatrices(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMatrices(this, context);
+		Engine::currentEngine->shadowMapping->updateMatrices(context);
 
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->updateMatrices(this, context);
@@ -85,7 +85,7 @@ void EngineVKRenderer::onBindTexture(void* context, int32_t textureId)
 		Engine::guiShader->bindTexture(this, textureId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->bindTexture(this, context, textureId);
+		Engine::currentEngine->shadowMapping->bindTexture(context, textureId);
 
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->bindTexture(this, context, textureId);
@@ -97,7 +97,7 @@ void EngineVKRenderer::onUpdateTextureMatrix(void* context)
 		Engine::lightingShader->updateTextureMatrix(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateTextureMatrix(this, context);
+		Engine::currentEngine->shadowMapping->updateTextureMatrix(context);
 
 	if (Engine::guiShader != nullptr)
 		Engine::guiShader->updateTextureMatrix(this);
@@ -128,7 +128,7 @@ void EngineVKRenderer::onUpdateLight(void* context, int32_t lightId)
 		Engine::lightingShader->updateLight(this, context, lightId);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateLight(this, context, lightId);
+		Engine::currentEngine->shadowMapping->updateLight(context, lightId);
 }
 
 void EngineVKRenderer::onUpdateMaterial(void* context)
@@ -137,7 +137,7 @@ void EngineVKRenderer::onUpdateMaterial(void* context)
 		Engine::lightingShader->updateMaterial(this, context);
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->updateMaterial(this, context);
+		Engine::currentEngine->shadowMapping->updateMaterial(context);
 
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->updateMaterial(this, context);

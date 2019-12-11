@@ -24,7 +24,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 
 bool LightingShaderWaterImplementation::isSupported(Renderer* renderer) {
-	return renderer->getShaderVersion() == "gl3";
+	return true;
 }
 
 LightingShaderWaterImplementation::LightingShaderWaterImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
@@ -96,6 +96,7 @@ void LightingShaderWaterImplementation::initialize()
 		uniformDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "direction[" + to_string(i) + "]");
 		if (uniformDirection[i] == -1) return;
 	}
+	uniformModelMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "modelMatrix");
 
 	//
 	initialized = true;
@@ -118,4 +119,9 @@ void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context
 		renderer->setProgramUniformFloatVec2(context, uniformDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
 	}
 	time+= engine->getTiming()->getDeltaTime() / 1000.0f;
+}
+
+void LightingShaderWaterImplementation::updateMatrices(Renderer* renderer, void* context) {
+	LightingShaderBaseImplementation::updateMatrices(renderer, context);
+	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
 }

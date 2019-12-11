@@ -63,12 +63,12 @@ void LightingShaderBaseImplementation::initialize()
 		if (uniformDisplacementTextureAvailable == -1) return;
 
 	}
-	if (renderer->isSpecularMappingAvailable()) {
+	if (renderer->isSpecularMappingAvailable() == true) {
 		uniformSpecularTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureUnit");
 		uniformSpecularTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureAvailable");
 
 	}
-	if (renderer->isNormalMappingAvailable()) {
+	if (renderer->isNormalMappingAvailable() == true) {
 		uniformNormalTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureUnit");
 		uniformNormalTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "normalTextureAvailable");
 	}
@@ -87,6 +87,8 @@ void LightingShaderBaseImplementation::initialize()
 
 		uniformNormalMatrix = renderer->getProgramUniformLocation(renderLightingProgramId, "normalMatrix");
 		if (uniformNormalMatrix == -1) return;
+
+		uniformModelTranslation = renderer->getProgramUniformLocation(renderLightingProgramId, "modelTranslation");
 
 		uniformEffectColorMul = renderer->getProgramUniformLocation(renderLightingProgramId, "effectColorMul");
 		if (uniformEffectColorMul == -1) return;
@@ -236,25 +238,27 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* 
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
-	}
-
-	// skip if using instanced rendering
+	} else
 	if (renderer->isInstancedRenderingAvailable() == false) {
 		// matrices
 		Matrix4x4 mvMatrix;
 		Matrix4x4 mvpMatrix;
 		Matrix4x4 normalMatrix;
+		Vector3 modelTranslation;
 
 		// model view matrix
-		mvMatrix.set(renderer->getModelViewMatrix());
+		mvMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getCameraMatrix());
 		// object to screen matrix
 		mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
 		// normal matrix
 		normalMatrix.set(mvMatrix).invert().transpose();
+		// model translation
+		renderer->getModelViewMatrix().getTranslation(modelTranslation);
 		// upload matrices
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, mvMatrix.getArray());
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformNormalMatrix, normalMatrix.getArray());
+		if (uniformModelTranslation != -1) renderer->setProgramUniformFloatVec3(context, uniformModelTranslation, modelTranslation.getArray());
 	}
 }
 

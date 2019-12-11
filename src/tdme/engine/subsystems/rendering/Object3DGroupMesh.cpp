@@ -306,7 +306,8 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *conte
 				"Object3DGroupMesh::setupVertexIndicesBuffer(): " +
 				group->getModel()->getName() + ":" +
 				group->getName() + ":" +
-				"more than 2^16-1 indices"
+				"more than 2^16-1 indices: " +
+				to_string(indices.size())
 			);
 		}
 		auto sbIndices = ObjectBuffer::getByteBuffer(context, faceCount * 3 * sizeof(uint16_t))->asShortBuffer();

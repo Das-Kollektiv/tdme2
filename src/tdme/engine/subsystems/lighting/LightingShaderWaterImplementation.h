@@ -28,6 +28,7 @@ public:
 	// overriden methods
 	virtual void initialize() override;
 	virtual void useProgram(Engine* engine, void* context) override;
+	virtual void updateMatrices(Renderer* renderer, void* context) override;
 
 	/**
 	 * Public constructor
@@ -43,6 +44,7 @@ protected:
 	array<int32_t, WAVES_MAX> uniformWavelength;
 	array<int32_t, WAVES_MAX> uniformSpeed;
 	array<int32_t, WAVES_MAX> uniformDirection;
+	int32_t uniformModelMatrix { -1 };
 	float time { 0.0f };
 	array<float, WAVES_MAX> angle;
 };
