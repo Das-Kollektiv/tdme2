@@ -8,6 +8,7 @@
 #include <ext/zlib/zlib.h>
 
 #include <tdme/os/filesystem/FileNameFilter.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/StringTokenizer.h>
@@ -21,12 +22,13 @@ using std::to_string;
 using std::vector;
 
 using tdme::os::filesystem::ArchiveFileSystem;
+using tdme::os::threading::Mutex;
 using tdme::utils::StringUtils;
 using tdme::utils::StringTokenizer;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-ArchiveFileSystem::ArchiveFileSystem()
+ArchiveFileSystem::ArchiveFileSystem(): ifsMutex("afs-ifs-mutex")
 {
 	// open
 	ifs.open("archive.ta", ifstream::binary);
@@ -172,6 +174,9 @@ const string ArchiveFileSystem::getContentAsString(const string& pathName, const
 	}
 	auto& fileInformation = fileInformationIt->second;
 
+	//
+	ifsMutex.lock();
+
 	// seek
 	ifs.seekg(fileInformation.offset, ios::beg);
 
@@ -180,15 +185,17 @@ const string ArchiveFileSystem::getContentAsString(const string& pathName, const
 	if (fileInformation.compressed == 1) {
 		vector<uint8_t> compressedBuffer;
 		compressedBuffer.resize(fileInformation.bytesCompressed);
+		ifs.read((char*)compressedBuffer.data(), fileInformation.bytesCompressed);
+		ifsMutex.unlock();
 		vector<uint8_t> decompressedBuffer;
 		decompressedBuffer.resize(fileInformation.bytes);
-		ifs.read((char*)compressedBuffer.data(), fileInformation.bytesCompressed);
 		decompress(compressedBuffer, decompressedBuffer);
 		result.append((char*)decompressedBuffer.data(), fileInformation.bytes);
 	} else {
 		vector<uint8_t> buffer;
 		buffer.resize(fileInformation.bytes);
 		ifs.read((char*)buffer.data(), fileInformation.bytes);
+		ifsMutex.unlock();
 		result.append((char*)buffer.data(), fileInformation.bytes);
 	}
 
@@ -213,6 +220,8 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 	}
 	auto& fileInformation = fileInformationIt->second;
 
+	//
+	ifsMutex.lock();
 
 	// seek
 	ifs.seekg(fileInformation.offset, ios::beg);
@@ -221,12 +230,14 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 	if (fileInformation.compressed == 1) {
 		vector<uint8_t> compressedContent;
 		compressedContent.resize(fileInformation.bytesCompressed);
-		content.resize(fileInformation.bytes);
 		ifs.read((char*)compressedContent.data(), fileInformation.bytesCompressed);
+		ifsMutex.unlock();
+		content.resize(fileInformation.bytes);
 		decompress(compressedContent, content);
 	} else {
 		content.resize(fileInformation.bytes);
 		ifs.read((char*)content.data(), fileInformation.bytes);
+		ifsMutex.unlock();
 	}
 }
 

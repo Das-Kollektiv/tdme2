@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::ifstream;
@@ -17,6 +18,7 @@ using std::vector;
 
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::Mutex;
 
 /**
  * Archive file system implementation
@@ -32,6 +34,7 @@ private:
 		uint64_t bytesCompressed;
 		uint64_t offset;
 	};
+	Mutex ifsMutex;
 	ifstream ifs;
 	map<string, FileInformation> fileInformations;
 
