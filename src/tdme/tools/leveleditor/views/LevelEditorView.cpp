@@ -874,8 +874,8 @@ void LevelEditorView::initialize()
 	light0->setPosition(Vector4(0.0f, 20.0f, 0.0f, 1.0f));
 	light0->setEnabled(true);
 	auto cam = engine->getCamera();
-	cam->setZNear(1.0f);
-	cam->setZFar(1000.0f);
+	cam->setZNear(0.1f);
+	cam->setZFar(150.0f);
 	cam->setLookAt(level->getCenter());
 	gridCenter.set(cam->getLookAt());
 	camLookAt.set(engine->getCamera()->getLookAt());
@@ -893,7 +893,10 @@ void LevelEditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
 	TDMELevelEditor::getInstance()->getLevelEditorEntityLibraryScreenController()->setEntityLibrary();
 	loadLevel();
-	engine->getCamera()->setLookAt(camLookAt);
+	auto cam = engine->getCamera();
+	cam->setZNear(0.1f);
+	cam->setZFar(150.0f);
+	cam->setLookAt(camLookAt);
 }
 
 void LevelEditorView::deactivate()

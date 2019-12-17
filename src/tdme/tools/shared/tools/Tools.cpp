@@ -408,7 +408,7 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	// cam
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(100.0f);
+	cam->setZFar(15.0f);
 	auto lookAt = cam->getLookAt();
 	lookAt.set(entityBoundingBoxToUse->getCenter().clone().scale(objectScale));
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
