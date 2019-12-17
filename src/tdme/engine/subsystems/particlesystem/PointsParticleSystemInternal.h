@@ -90,41 +90,92 @@ public:
 	 */
 	void initialize();
 
-	const string& getId() override;
-	virtual void setRenderer(Renderer* renderer);
-	virtual void setEngine(Engine* engine);
-	bool isEnabled() override;
-	bool isActive() override;
-	void setEnabled(bool enabled) override;
-	const Color4& getEffectColorMul() const override;
-	void setEffectColorMul(const Color4& effectColorMul) override;
-	const Color4& getEffectColorAdd() const override;
-	void setEffectColorAdd(const Color4& effectColorAdd) override;
-	bool isPickable() override;
-	void setPickable(bool pickable) override;
-	bool isAutoEmit() override;
-	void setAutoEmit(bool autoEmit) override;
+	inline const string& getId() override {
+		return id;
+	}
+	inline virtual void setRenderer(Renderer* renderer) {
+		this->renderer = renderer;
+	}
+	inline virtual void setEngine(Engine* engine) {
+		this->engine = engine;
+	}
+	inline bool isEnabled() override {
+		return enabled;
+	}
+	inline bool isActive() override {
+		return active;
+	}
+	inline void setEnabled(bool enabled) override {
+		this->enabled = enabled;
+	}
+	inline const Color4& getEffectColorMul() const override {
+		return effectColorMul;
+	}
+	inline void setEffectColorMul(const Color4& effectColorMul) override {
+		this->effectColorMul = effectColorMul;
+	}
+	inline const Color4& getEffectColorAdd() const override {
+		return effectColorAdd;
+	}
+	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
+		this->effectColorAdd = effectColorAdd;
+	}
+	inline bool isPickable() override {
+		return pickable;
+	}
+	inline void setPickable(bool pickable) override {
+		this->pickable = pickable;
+	}
+	inline bool isAutoEmit() override {
+		return autoEmit;
+	}
+	inline void setAutoEmit(bool autoEmit) override {
+		this->autoEmit = autoEmit;
+	}
 
-	/** 
-	 * @return dynamic shadowing enabled
+	/**
+	 * @return if entity contributes to shadows
 	 */
-	virtual bool isDynamicShadowingEnabled();
+	inline virtual bool isContributesShadows() {
+		return false;
+	}
 
-	/** 
-	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing dynamicShadowing
+	/**
+	 * Enable/disable contributes shadows
+	 * @param contributesShadows contributes shadows
 	 */
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
+	inline virtual void setContributesShadows(bool contributesShadows) {
+		//
+	}
+
+	/**
+	 * @return if entity receives shadows
+	 */
+	inline virtual bool isReceivesShadows() {
+		return false;
+	}
+
+	/**
+	 * Enable/disable receives shadows
+	 * @param receivesShadows receives shadows
+	 */
+	inline virtual void setReceivesShadows(bool receivesShadows) {
+		//
+	}
 
 	/**
 	 * @return point size
 	 */
-	virtual float getPointSize();
+	inline virtual float getPointSize() {
+		return pointSize * pointSizeScale;
+	}
 
 	/**
 	 * @return texture id
 	 */
-	virtual int32_t getTextureId();
+	inline virtual int32_t getTextureId() {
+		return textureId;
+	}
 
 	/** 
 	 * Update transformations

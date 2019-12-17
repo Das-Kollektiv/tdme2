@@ -112,7 +112,8 @@ void PhysicsTest4::initialize()
 	boxModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	boxModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("box", boxModel);
-	entity->setDynamicShadowingEnabled(true);
+	entity->setContributesShadows(true);
+	entity->setReceivesShadows(true);
 	entity->setTranslation(Vector3(0.0f, 3.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
@@ -122,6 +123,7 @@ void PhysicsTest4::initialize()
 		auto _terrainModel = ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm");
 		entity = new Object3D("terrain", _terrainModel);
 		entity->setTranslation(Vector3(1.75f, 0.0f, -1.65f));
+		entity->setReceivesShadows(true);
 		entity->update();
 		engine->addEntity(entity);
 		Object3DModel terrainModel(_terrainModel);

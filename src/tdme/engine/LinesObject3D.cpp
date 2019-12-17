@@ -66,10 +66,6 @@ void LinesObject3D::setEnabled(bool enabled)
 	LinesObject3DInternal::setEnabled(enabled);
 }
 
-bool LinesObject3D::isFrustumCulling() {
-	return frustumCulling;
-}
-
 void LinesObject3D::setFrustumCulling(bool frustumCulling) {
 	// check if enabled and engine attached
 	if (enabled == true && engine != nullptr) {
@@ -85,15 +81,5 @@ void LinesObject3D::setFrustumCulling(bool frustumCulling) {
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
 	if (engine != nullptr) engine->registerEntity(this);
-}
-
-void LinesObject3D::dispose()
-{
-	LinesObject3DInternal::dispose();
-}
-
-void LinesObject3D::initialize()
-{
-	LinesObject3DInternal::initialize();
 }
 

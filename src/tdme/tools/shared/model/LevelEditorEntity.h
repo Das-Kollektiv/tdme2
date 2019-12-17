@@ -70,7 +70,8 @@ private:
 	string shaderId;
 	string distanceShaderId;
 	float distanceShaderDistance;
-	bool dynamicShadowing;
+	bool contributesShadows;
+	bool receivesShadows;
 	map<string, LevelEditorEntityAudio*> soundsById;
 	vector<LevelEditorEntityAudio*> sounds;
 
@@ -269,19 +270,33 @@ public:
 	}
 
 	/**
-	 * Is dynamic shadowing
-	 * @return dynamic shadowing enabled
+	 * @return if entity contributes to shadows
 	 */
-	inline bool isDynamicShadowing() {
-		return dynamicShadowing;
+	inline virtual bool isContributesShadows() {
+		return contributesShadows;
 	}
 
 	/**
-	 * Set dynamic shadowing
-	 * @param dynamicShadowing dynamic shadowing enabled
+	 * Enable/disable contributes shadows
+	 * @param contributesShadows contributes shadows
 	 */
-	inline void setDynamicShadowing(bool dynamicShadowing) {
-		this->dynamicShadowing = dynamicShadowing;
+	inline virtual void setContributesShadows(bool contributesShadows) {
+		this->contributesShadows = contributesShadows;
+	}
+
+	/**
+	 * @return if entity receives shadows
+	 */
+	inline virtual bool isReceivesShadows() {
+		return receivesShadows;
+	}
+
+	/**
+	 * Enable/disable receives shadows
+	 * @param receivesShadows receives shadows
+	 */
+	inline virtual void setReceivesShadows(bool receivesShadows) {
+		this->receivesShadows = receivesShadows;
 	}
 
 	/**

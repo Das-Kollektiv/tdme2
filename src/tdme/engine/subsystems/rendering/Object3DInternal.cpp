@@ -37,7 +37,8 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 	this->id = id;
 	enabled = true;
 	pickable = false;
-	dynamicShadowing = false;
+	contributesShadows = false;
+	receivesShadows = false;
 	effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	boundingBox.fromBoundingVolume(model->getBoundingBox());
@@ -46,21 +47,6 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 }
 
 Object3DInternal::~Object3DInternal() {
-}
-
-void Object3DInternal::setEnabled(bool enabled)
-{
-	this->enabled = enabled;
-}
-
-void Object3DInternal::setPickable(bool pickable)
-{
-	this->pickable = pickable;
-}
-
-void Object3DInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
-{
-	this->dynamicShadowing = dynamicShadowing;
 }
 
 void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer, const string& groupId, const string& facesEntityId)
@@ -132,16 +118,6 @@ void Object3DInternal::unsetTransformationsMatrix(const string& id) {
 	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
 	boundingBox.fromBoundingVolume(newBoundingBox);
 	delete newBoundingBox;
-}
-
-void Object3DInternal::initialize()
-{
-	Object3DBase::initialize();
-}
-
-void Object3DInternal::dispose()
-{
-	Object3DBase::dispose();
 }
 
 void Object3DInternal::fromTransformations(const Transformations& transformations)

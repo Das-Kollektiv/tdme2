@@ -136,93 +136,6 @@ void FogParticleSystemInternal::initialize() {
 	boundingBoxTransformed.update();
 }
 
-const string& FogParticleSystemInternal::getId()
-{
-	return id;
-}
-
-void FogParticleSystemInternal::setRenderer(Renderer* renderer)
-{
-	this->renderer = renderer;
-}
-
-void FogParticleSystemInternal::setEngine(Engine* engine)
-{
-	this->engine = engine;
-}
-
-bool FogParticleSystemInternal::isEnabled()
-{
-	return enabled;
-}
-
-bool FogParticleSystemInternal::isActive()
-{
-	return active;
-}
-
-void FogParticleSystemInternal::setEnabled(bool enabled)
-{
-	this->enabled = enabled;
-}
-
-const Color4& FogParticleSystemInternal::getEffectColorMul() const
-{
-	return effectColorMul;
-}
-
-void FogParticleSystemInternal::setEffectColorMul(const Color4& effectColorMul)
-{
-	this->effectColorMul = effectColorMul;
-}
-
-const Color4& FogParticleSystemInternal::getEffectColorAdd() const
-{
-	return effectColorAdd;
-}
-
-void FogParticleSystemInternal::setEffectColorAdd(const Color4& effectColorAdd)
-{
-	this->effectColorAdd = effectColorAdd;
-}
-
-bool FogParticleSystemInternal::isPickable()
-{
-	return pickable;
-}
-
-void FogParticleSystemInternal::setPickable(bool pickable)
-{
-	this->pickable = pickable;
-}
-
-bool FogParticleSystemInternal::isAutoEmit()
-{
-	return true;
-}
-
-void FogParticleSystemInternal::setAutoEmit(bool autoEmit)
-{
-	// no op
-}
-
-bool FogParticleSystemInternal::isDynamicShadowingEnabled()
-{
-	return false;
-}
-
-void FogParticleSystemInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
-{
-}
-
-float FogParticleSystemInternal::getPointSize() {
-	return pointSize * pointSizeScale;
-}
-
-int32_t FogParticleSystemInternal::getTextureId() {
-	return textureId;
-}
-
 void FogParticleSystemInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
@@ -296,12 +209,3 @@ void FogParticleSystemInternal::dispose()
 	engine->getTextureManager()->removeTexture(texture->getId());
 }
 
-int32_t FogParticleSystemInternal::emitParticles()
-{
-	return 0;
-}
-
-TransparentRenderPointsPool* FogParticleSystemInternal::getRenderPointsPool()
-{
-	return pointsRenderPool;
-}

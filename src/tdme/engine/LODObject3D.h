@@ -69,7 +69,8 @@ private:
 	int levelLOD;
 	bool enabled;
 	bool pickable;
-	bool dynamicShadowing;
+	bool contributesShadows;
+	bool receivesShadows;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	Color4 effectColorMulLOD2;
@@ -317,10 +318,6 @@ public:
 
 	void initialize() override;
 
-	inline bool isDynamicShadowingEnabled() override {
-		return dynamicShadowing;
-	}
-
 	inline bool isEnabled() override {
 		return enabled;
 	}
@@ -329,12 +326,26 @@ public:
 		return pickable;
 	}
 
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		this->dynamicShadowing = dynamicShadowing;
-		// delegate to LOD objects
-		if (objectLOD1 != nullptr) objectLOD1->setDynamicShadowingEnabled(dynamicShadowing);
-		if (objectLOD2 != nullptr) objectLOD2->setDynamicShadowingEnabled(dynamicShadowing);
-		if (objectLOD3 != nullptr) objectLOD3->setDynamicShadowingEnabled(dynamicShadowing);
+	inline virtual bool isContributesShadows() override {
+		return contributesShadows;
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		this->contributesShadows = contributesShadows;
+		if (objectLOD1 != nullptr) objectLOD1->setContributesShadows(contributesShadows);
+		if (objectLOD2 != nullptr) objectLOD2->setContributesShadows(contributesShadows);
+		if (objectLOD3 != nullptr) objectLOD3->setContributesShadows(contributesShadows);
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return receivesShadows;
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		this->receivesShadows = receivesShadows;
+		if (objectLOD1 != nullptr) objectLOD1->setReceivesShadows(receivesShadows);
+		if (objectLOD2 != nullptr) objectLOD2->setReceivesShadows(receivesShadows);
+		if (objectLOD3 != nullptr) objectLOD3->setReceivesShadows(receivesShadows);
 	}
 
 	inline void setPickable(bool pickable) override {

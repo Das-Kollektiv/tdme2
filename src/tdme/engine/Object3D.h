@@ -179,8 +179,20 @@ public:
 
 	void initialize() override;
 
-	inline bool isDynamicShadowingEnabled() override {
-		return Object3DInternal::isDynamicShadowingEnabled();
+	inline virtual bool isContributesShadows() override {
+		return Object3DInternal::isContributesShadows();
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		Object3DInternal::setContributesShadows(contributesShadows);
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return Object3DInternal::isReceivesShadows();
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		Object3DInternal::setReceivesShadows(receivesShadows);
 	}
 
 	inline bool isEnabled() override {
@@ -189,10 +201,6 @@ public:
 
 	inline bool isPickable() override {
 		return Object3DInternal::isPickable();
-	}
-
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		Object3DInternal::setDynamicShadowingEnabled(dynamicShadowing);
 	}
 
 	inline void setPickable(bool pickable) override {

@@ -479,9 +479,14 @@
 								</layout>
 								<space height="20" />
 								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
-									<checkbox id="rendering_dynamic_shadowing" name="rendering_dynamic_shadowing" value="1" />
+									<checkbox id="rendering_contributes_shadows" name="rendering_contributes_shadows" value="1" />
 									<space width="5" />
-									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Use dynamic shadowing" width="200" height="auto"/>
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Contributes shadows" width="200" height="auto"/>
+								</layout>
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<checkbox id="rendering_receives_shadows" name="rendering_receives_shadows" value="1" />
+									<space width="5" />
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Receives shadows" width="200" height="auto"/>
 								</layout>
 								<space height="5" />
 								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">

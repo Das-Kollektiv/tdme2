@@ -127,13 +127,13 @@ void ShadowMap::render(Light* light)
 	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(shadowMapping->engine->getCamera()->getFrustum())) {
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
 			if ((orgEntity = org->getEntity()) != nullptr) {
-				if (orgEntity->isDynamicShadowingEnabled() == false) continue;
+				if (orgEntity->isContributesShadows() == false) continue;
 				if ((object = dynamic_cast<Object3D*>(orgEntity)) != nullptr) {
 					object->preRender(context);
 					visibleObjects.push_back(object);
 				} else
 				if ((lodObject = dynamic_cast<LODObject3D*>(orgEntity)) != nullptr) {
-					if (lodObject->isDynamicShadowingEnabled() == false) continue;
+					if (lodObject->isContributesShadows() == false) continue;
 					auto object = lodObject->getLODObject();
 					if (object != nullptr) {
 						object->preRender(context);
@@ -143,12 +143,12 @@ void ShadowMap::render(Light* light)
 			}
 		} else
 		if ((object = dynamic_cast<Object3D*>(entity)) != nullptr) {
-			if (object->isDynamicShadowingEnabled() == false) continue;
+			if (object->isContributesShadows() == false) continue;
 			object->preRender(context);
 			visibleObjects.push_back(object);
 		} else
 		if ((lodObject = dynamic_cast<LODObject3D*>(entity)) != nullptr) {
-			if (lodObject->isDynamicShadowingEnabled() == false) continue;
+			if (lodObject->isContributesShadows() == false) continue;
 			auto object = lodObject->getLODObject();
 			if (object != nullptr) {
 				object->preRender(context);
@@ -156,14 +156,14 @@ void ShadowMap::render(Light* light)
 			}
 		} else
 		if ((opse = dynamic_cast<ObjectParticleSystem*>(entity)) != nullptr) {
-			if (opse->isDynamicShadowingEnabled() == false) continue;
+			if (opse->isContributesShadows() == false) continue;
 			for (auto object: opse->getEnabledObjects()) {
 				object->preRender(context);
 				visibleObjects.push_back(object);
 			}
 		} else
 		if ((opse = dynamic_cast<ObjectParticleSystem*>(entity)) != nullptr) {
-			if (opse->isDynamicShadowingEnabled() == false) continue;
+			if (opse->isContributesShadows() == false) continue;
 			for (auto object: opse->getEnabledObjects()) {
 				object->preRender(context);
 				visibleObjects.push_back(object);
@@ -173,7 +173,7 @@ void ShadowMap::render(Light* light)
 			for (auto ps: psg->getParticleSystems()) {
 				opse = dynamic_cast<ObjectParticleSystem*>(ps);
 				if (opse == nullptr) continue;
-				if (opse->isDynamicShadowingEnabled() == false) continue;
+				if (opse->isContributesShadows() == false) continue;
 				for (auto object: opse->getEnabledObjects()) {
 					object->preRender(context);
 					visibleObjects.push_back(object);
@@ -181,7 +181,7 @@ void ShadowMap::render(Light* light)
 			}
 		} else
 		if ((eh = dynamic_cast<EntityHierarchy*>(entity)) != nullptr) {
-			if (eh->isDynamicShadowingEnabled() == false) continue;
+			if (eh->isContributesShadows() == false) continue;
 			for (auto entity: eh->getEntities()) {
 				auto object = dynamic_cast<Object3D*>(entity);
 				if (object == nullptr || object->isEnabled() == false) continue;

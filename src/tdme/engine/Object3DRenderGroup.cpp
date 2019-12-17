@@ -59,7 +59,8 @@ Object3DRenderGroup::Object3DRenderGroup(
 {
 	this->enabled = true;
 	this->pickable = false;
-	this->dynamicShadowing = false;
+	this->contributesShadows = false;
+	this->receivesShadows = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->combinedModels.resize(Math::clamp(lodLevels, 1, 3));
@@ -344,7 +345,8 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedObject3D->setParentEntity(this);
 		combinedObject3D->setShader(shaderId);
 		combinedObject3D->setDistanceShader(distanceShaderId);
-		combinedObject3D->setDynamicShadowingEnabled(dynamicShadowing);
+		combinedObject3D->setContributesShadows(contributesShadows);
+		combinedObject3D->setReceivesShadows(receivesShadows);
 		combinedObject3D->setEngine(engine);
 		combinedObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
 		combinedObject3D->update();
@@ -366,7 +368,8 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedLODObject3D->setShader(shaderId);
 		combinedLODObject3D->setDistanceShader(distanceShaderId);
 		combinedLODObject3D->setDistanceShaderDistance(distanceShaderDistance);
-		combinedLODObject3D->setDynamicShadowingEnabled(dynamicShadowing);
+		combinedLODObject3D->setContributesShadows(contributesShadows);
+		combinedLODObject3D->setReceivesShadows(receivesShadows);
 		combinedLODObject3D->setEngine(engine);
 		combinedLODObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
 		combinedLODObject3D->update();

@@ -103,17 +103,28 @@ public:
 	virtual void setPickable(bool pickable) = 0;
 
 	/** 
-	 * @return dynamic shadowing enabled
+	 * @return if entity contributes to shadows
 	 */
-	virtual bool isDynamicShadowingEnabled() = 0;
+	virtual bool isContributesShadows() = 0;
 
 	/** 
-	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing dynamicShadowing
+	 * Enable/disable contributes shadows
+	 * @param contributesShadows contributes shadows
 	 */
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing) = 0;
+	virtual void setContributesShadows(bool contributesShadows) = 0;
 
 	/** 
+	 * @return if entity receives shadows
+	 */
+	virtual bool isReceivesShadows() = 0;
+
+	/**
+	 * Enable/disable receives shadows
+	 * @param receivesShadows receives shadows
+	 */
+	virtual void setReceivesShadows(bool receivesShadows) = 0;
+
+	/**
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */

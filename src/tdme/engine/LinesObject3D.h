@@ -70,7 +70,9 @@ public:
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setEnabled(bool enabled) override;
-	bool isFrustumCulling() override;
+	inline bool isFrustumCulling() override {
+		return frustumCulling;
+	}
 	void setFrustumCulling(bool frustumCulling) override;
 
 	/**
@@ -85,7 +87,9 @@ public:
 	LinesObject3D(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
 
 	// overriden methods
-	void dispose() override;
+	inline void dispose() override {
+		LinesObject3DInternal::dispose();
+	}
 
 	inline BoundingBox* getBoundingBox() override {
 		return LinesObject3DInternal::getBoundingBox();
@@ -115,10 +119,24 @@ public:
 		return LinesObject3DInternal::getId();
 	}
 
-	void initialize() override;
+	inline void initialize() override {
+		LinesObject3DInternal::initialize();
+	}
 
-	inline bool isDynamicShadowingEnabled() override {
-		return LinesObject3DInternal::isDynamicShadowingEnabled();
+	inline virtual bool isContributesShadows() override {
+		return LinesObject3DInternal::isContributesShadows();
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		LinesObject3DInternal::setContributesShadows(contributesShadows);
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return LinesObject3DInternal::isReceivesShadows();
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		LinesObject3DInternal::setReceivesShadows(receivesShadows);
 	}
 
 	inline bool isEnabled() override {
@@ -127,10 +145,6 @@ public:
 
 	inline bool isPickable() override {
 		return LinesObject3DInternal::isPickable();
-	}
-
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		LinesObject3DInternal::setDynamicShadowingEnabled(dynamicShadowing);
 	}
 
 	inline void setPickable(bool pickable) override {

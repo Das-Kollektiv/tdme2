@@ -44,7 +44,8 @@ private:
 	bool frustumCulling { true };
 
 	string id;
-	bool enableDynamicShadows;
+	bool contributesShadows;
+	bool receivesShadows;
 	bool enabled;
 	bool pickable;
 	bool autoEmit;
@@ -98,10 +99,11 @@ public:
 	 * Public constructor
 	 * @param id id
 	 * @param autoEmit auto emit
-	 * @param enableDynamicShadows enable dynamic shadows
+	 * @param contributesShadows contributes shadows
+	 * @param receivesShadows receives shadows
 	 * @param particleSystems particle systems
 	 */
-	ParticleSystemGroup(const string& id, bool autoEmit, bool enableDynamicShadows, const vector<ParticleSystemEntity*>& particleSystems);
+	ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystemEntity*>& particleSystems);
 
 	/**
 	 * Destructor
@@ -137,8 +139,28 @@ public:
 		return id;
 	}
 
-	inline bool isDynamicShadowingEnabled() override {
-		return enableDynamicShadows;
+	inline virtual bool isContributesShadows() override {
+		return contributesShadows;
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		this->contributesShadows = contributesShadows;
+		for (auto particleSystem: particleSystems) {
+			auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
+			if (ops != nullptr) ops->setContributesShadows(contributesShadows);
+		}
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return receivesShadows;
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		this->receivesShadows = receivesShadows;
+		for (auto particleSystem: particleSystems) {
+			auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
+			if (ops != nullptr) ops->setReceivesShadows(receivesShadows);
+		}
 	}
 
 	inline bool isEnabled() override {
@@ -147,14 +169,6 @@ public:
 
 	inline bool isPickable() override {
 		return pickable;
-	}
-
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		for (auto particleSystem: particleSystems) {
-			auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
-			if (ops != nullptr) ops->setDynamicShadowingEnabled(dynamicShadowing);
-		}
-		this->enableDynamicShadows = dynamicShadowing;
 	}
 
 	inline void setPickable(bool pickable) override {

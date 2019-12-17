@@ -118,6 +118,7 @@ void FoliageTest::initialize()
 	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
+	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	auto reedModel = ModelReader::read("resources/tests/models/reed", "Mesh_Environment_Reed_06.fbx.tm");
@@ -147,7 +148,8 @@ void FoliageTest::initialize()
 		}
 	#endif
 	foliageObject->setShader("foliage");
-	foliageObject->setDynamicShadowingEnabled(true);
+	foliageObject->setContributesShadows(true);
+	foliageObject->setReceivesShadows(true);
 	foliageObject->updateRenderGroup();
 	engine->addEntity(foliageObject);
 }

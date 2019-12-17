@@ -67,7 +67,8 @@ private:
 	string id;
 	bool enabled;
 	bool pickable;
-	bool dynamicShadowing;
+	bool contributesShadows;
+	bool receivesShadows;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
@@ -204,8 +205,22 @@ public:
 
 	void initialize() override;
 
-	inline bool isDynamicShadowingEnabled() override {
-		return dynamicShadowing;
+	inline bool isContributesShadows() override {
+		return contributesShadows;
+	}
+
+	inline void setContributesShadows(bool contributesShadows) override {
+		this->contributesShadows = contributesShadows;
+		for (auto entity: entities) entity->setContributesShadows(contributesShadows);
+	}
+
+	inline bool isReceivesShadows() override {
+		return receivesShadows;
+	}
+
+	inline void setReceivesShadows(bool receivesShadows) override {
+		this->receivesShadows = receivesShadows;
+		for (auto entity: entities) entity->setReceivesShadows(receivesShadows);
 	}
 
 	inline bool isEnabled() override {
@@ -214,10 +229,6 @@ public:
 
 	inline bool isPickable() override {
 		return pickable;
-	}
-
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		this->dynamicShadowing = dynamicShadowing;
 	}
 
 	inline void setPickable(bool pickable) override {

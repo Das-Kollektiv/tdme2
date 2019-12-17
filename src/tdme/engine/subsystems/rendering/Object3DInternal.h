@@ -35,7 +35,8 @@ protected:
 	string id;
 	bool enabled;
 	bool pickable;
-	bool dynamicShadowing;
+	bool contributesShadows;
+	bool receivesShadows;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
@@ -70,7 +71,9 @@ public:
 	 * Enable/disable rendering
 	 * @param enabled enabled
 	 */
-	virtual void setEnabled(bool enabled);
+	inline virtual void setEnabled(bool enabled) {
+		this->enabled = enabled;
+	}
 
 	/** 
 	 * @return if object is pickable
@@ -83,20 +86,39 @@ public:
 	 * Set this object pickable
 	 * @param pickable pickable
 	 */
-	virtual void setPickable(bool pickable);
-
-	/** 
-	 * @return dynamic shadowing enabled
-	 */
-	inline virtual bool isDynamicShadowingEnabled() {
-		return dynamicShadowing;
+	inline virtual void setPickable(bool pickable) {
+		this->pickable = pickable;
 	}
 
-	/** 
-	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing dynamicShadowing
+	/**
+	 * @return if entity contributes to shadows
 	 */
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
+	inline virtual bool isContributesShadows() {
+		return contributesShadows;
+	}
+
+	/**
+	 * Enable/disable contributes shadows
+	 * @param contributesShadows contributes shadows
+	 */
+	inline virtual void setContributesShadows(bool contributesShadows) {
+		this->contributesShadows = contributesShadows;
+	}
+
+	/**
+	 * @return if entity receives shadows
+	 */
+	inline virtual bool isReceivesShadows() {
+		return receivesShadows;
+	}
+
+	/**
+	 * Enable/disable receives shadows
+	 * @param receivesShadows receives shadows
+	 */
+	inline virtual void setReceivesShadows(bool receivesShadows) {
+		this->receivesShadows = receivesShadows;
+	}
 
 	/** 
 	 * The effect color will be multiplied with fragment color
@@ -177,8 +199,12 @@ public:
 	virtual void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId = string(), const string& facesEntityId = string());
 
 	// overriden methods
-	void initialize() override;
-	void dispose() override;
+	inline void initialize() override {
+		Object3DBase::initialize();
+	}
+	inline void dispose() override {
+		Object3DBase::dispose();
+	}
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
 	void setTransformationsMatrix(const string& id, const Matrix4x4& matrix) override;

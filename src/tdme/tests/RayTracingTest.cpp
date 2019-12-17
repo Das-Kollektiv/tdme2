@@ -243,6 +243,7 @@ void RayTracingTest::initialize()
 	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
+	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
@@ -259,7 +260,8 @@ void RayTracingTest::initialize()
 		);
 		entity->setTranslation(Vector3(x, 0.0f, z));
 		entity->update();
-		entity->setDynamicShadowingEnabled(true);
+		entity->setContributesShadows(true);
+		entity->setReceivesShadows(true);
 		engine->addEntity(entity);
 
 		// physics
@@ -281,7 +283,8 @@ void RayTracingTest::initialize()
 	capsuleBigModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
 	capsuleBigModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	entity = new Object3D("player", capsuleBigModel);
-	entity->setDynamicShadowingEnabled(true);
+	entity->setContributesShadows(true);
+	entity->setReceivesShadows(true);
 	entity->setTranslation(Vector3(-2.0f, 0.0f, 0.0f));
 	entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	entity->update();

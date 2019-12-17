@@ -57,7 +57,8 @@ protected:
 	Model* model { nullptr };
 	Vector3 objectScale;
 	bool autoEmit;
-	bool enableDynamicShadows;
+	bool contributesShadows;
+	bool receivesShadows;
 	vector<Particle> particles;
 	vector<Object3D*> objects;
 	vector<Object3D*> enabledObjects;
@@ -90,28 +91,71 @@ public:
 	const string& getId() override;
 	virtual void setEngine(Engine* engine);
 	virtual void setRenderer(Renderer* renderer);
-	bool isEnabled() override;
-	bool isActive() override;
-	void setEnabled(bool enabled) override;
-	const Color4& getEffectColorMul() const override;
-	void setEffectColorMul(const Color4& effectColorMul) override;
-	const Color4& getEffectColorAdd() const override;
-	void setEffectColorAdd(const Color4& effectColorAdd) override;
-	bool isPickable() override;
-	void setPickable(bool pickable) override;
-	bool isAutoEmit() override;
-	void setAutoEmit(bool autoEmit) override;
+	inline bool isEnabled() override {
+		return enabled;
+	}
+	inline bool isActive() override {
+		return enabledObjects.size() > 0;
+	}
+	inline void setEnabled(bool enabled) override {
+		this->enabled = enabled;
+	}
+	inline const Color4& getEffectColorMul() const override {
+		return effectColorMul;
+	}
+	inline void setEffectColorMul(const Color4& effectColorMul) override {
+		this->effectColorMul = effectColorMul;
+	}
+	inline const Color4& getEffectColorAdd() const override {
+		return effectColorAdd;
+	}
+	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
+		this->effectColorAdd = effectColorAdd;
+	}
+	inline bool isPickable() override {
+		return pickable;
+	}
+	inline void setPickable(bool pickable) override {
+		this->pickable = pickable;
+	}
+	inline bool isAutoEmit() override {
+		return autoEmit;
+	}
+	inline void setAutoEmit(bool autoEmit) override {
+		this->autoEmit = autoEmit;
+	}
 
-	/** 
-	 * @return dynamic shadowing enabled
+	/**
+	 * @return if entity contributes to shadows
 	 */
-	virtual bool isDynamicShadowingEnabled();
+	inline virtual bool isContributesShadows() {
+		return contributesShadows;
+	}
 
-	/** 
-	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing dynamicShadowing
+	/**
+	 * Enable/disable contributes shadows
+	 * @param contributesShadows contributes shadows
 	 */
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
+	inline virtual void setContributesShadows(bool contributesShadows) {
+		this->contributesShadows = contributesShadows;
+		for (auto i = 0; i < objects.size(); i++) objects[i]->setContributesShadows(contributesShadows);
+	}
+
+	/**
+	 * @return if entity receives shadows
+	 */
+	inline virtual bool isReceivesShadows() {
+		return receivesShadows;
+	}
+
+	/**
+	 * Enable/disable receives shadows
+	 * @param receivesShadows receives shadows
+	 */
+	inline virtual void setReceivesShadows(bool receivesShadows) {
+		this->receivesShadows = receivesShadows;
+		for (auto i = 0; i < objects.size(); i++) objects[i]->setReceivesShadows(receivesShadows);
+	}
 
 	/** 
 	 * Update transformations
@@ -128,11 +172,12 @@ public:
 	 * @param model model
 	 * @param scale scale
 	 * @param autoEmit auto emit
-	 * @param enableDynamicShadows enable dynamic shadows
+	 * @param contributesShadows enable contributes shadows
+	 * @param receivesShadows enable receives shadows
 	 * @param maxCount maxCount
 	 * @param emitter emitter
 	 */
-	ObjectParticleSystemInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+	ObjectParticleSystemInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 	/**
 	 * Destructor

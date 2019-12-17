@@ -19,7 +19,8 @@ EntityHierarchy::EntityHierarchy(const string& id): id(id)
 {
 	this->enabled = true;
 	this->pickable = false;
-	this->dynamicShadowing = false;
+	this->contributesShadows = false;
+	this->receivesShadows = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 }
@@ -57,7 +58,8 @@ void EntityHierarchy::addEntity(Entity* entity, const string& parentId) {
 	entity->setEngine(engine);
 	entity->setRenderer(renderer);
 	entity->setPickable(pickable);
-	entity->setDynamicShadowingEnabled(dynamicShadowing);
+	entity->setContributesShadows(contributesShadows);
+	entity->setReceivesShadows(receivesShadows);
 	entity->setEffectColorMul(effectColorMul);
 	entity->setEffectColorAdd(effectColorAdd);
 	if (initialized == true) entity->initialize();

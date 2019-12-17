@@ -348,7 +348,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 		entityBoundingBox = entity->getModel()->getBoundingBox();
 		if (model != nullptr) {
 			modelEntity = new Object3D("model", model);
-			modelEntity->setDynamicShadowingEnabled(true);
+			modelEntity->setContributesShadows(true);
+			modelEntity->setReceivesShadows(true);
 			modelEntity->setEffectColorMul(colorMul);
 			modelEntity->setEffectColorAdd(colorAdd);
 			dynamic_cast<Object3D*>(modelEntity)->setShader(entity->getShader());

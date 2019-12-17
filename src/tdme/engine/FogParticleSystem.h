@@ -108,8 +108,20 @@ public:
 		return FogParticleSystemInternal::getId();
 	}
 
-	inline bool isDynamicShadowingEnabled() override {
-		return FogParticleSystemInternal::isDynamicShadowingEnabled();
+	inline virtual bool isContributesShadows() override {
+		return FogParticleSystemInternal::isContributesShadows();
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		FogParticleSystemInternal::setContributesShadows(contributesShadows);
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return FogParticleSystemInternal::isReceivesShadows();
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		FogParticleSystemInternal::setReceivesShadows(receivesShadows);
 	}
 
 	inline bool isEnabled() override {
@@ -118,10 +130,6 @@ public:
 
 	inline bool isPickable() override {
 		return FogParticleSystemInternal::isPickable();
-	}
-
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		FogParticleSystemInternal::setDynamicShadowingEnabled(dynamicShadowing);
 	}
 
 	inline float getPointSize() override {

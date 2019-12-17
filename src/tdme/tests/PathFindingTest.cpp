@@ -191,7 +191,8 @@ void PathFindingTest::initialize()
 	// playerObject->getTranslation().set(-2.5f, 0.25f, -4.5f);
 	playerObject->update();
 	playerObject->setAnimation("walk");
-	playerObject->setDynamicShadowingEnabled(playerModelEntity->isDynamicShadowing());
+	playerObject->setContributesShadows(playerModelEntity->isContributesShadows());
+	playerObject->setReceivesShadows(playerModelEntity->isReceivesShadows());
 	engine->addEntity(playerObject);
 	pathIdx = 0;
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, -4.5f));

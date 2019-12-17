@@ -85,53 +85,129 @@ public:
 	 */
 	void initialize();
 
-	const string& getId() override;
-	virtual void setRenderer(Renderer* renderer);
-	virtual void setEngine(Engine* engine);
-	bool isEnabled() override;
-	bool isActive() override;
-	void setEnabled(bool enabled) override;
-	const Color4& getEffectColorMul() const override;
-	void setEffectColorMul(const Color4& effectColorMul) override;
-	const Color4& getEffectColorAdd() const override;
-	void setEffectColorAdd(const Color4& effectColorAdd) override;
-	bool isPickable() override;
-	void setPickable(bool pickable) override;
-	bool isAutoEmit() override;
-	void setAutoEmit(bool autoEmit) override;
+	inline const string& getId() override {
+		return id;
+	}
 
-	/** 
-	 * @return dynamic shadowing enabled
+	/**
+	 * Set renderer
+	 * @param renderer renderer
 	 */
-	virtual bool isDynamicShadowingEnabled();
+	inline virtual void setRenderer(Renderer* renderer) {
+		this->renderer = renderer;
+	}
 
-	/** 
-	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing dynamicShadowing
+	/**
+	 * Set engine
+	 * @param engine engine
 	 */
-	virtual void setDynamicShadowingEnabled(bool dynamicShadowing);
+	inline virtual void setEngine(Engine* engine) {
+		this->engine = engine;
+	}
+
+	inline virtual bool isEnabled() override {
+		return enabled;
+	}
+
+	inline virtual bool isActive() override {
+		return active;
+	}
+
+	inline virtual void setEnabled(bool enabled) override {
+		this->enabled = enabled;
+	}
+
+	inline virtual const Color4& getEffectColorMul() const override {
+		return effectColorMul;
+	}
+
+	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+		this->effectColorMul = effectColorMul;
+	}
+
+	inline virtual const Color4& getEffectColorAdd() const override {
+		return effectColorAdd;
+	}
+
+	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+		this->effectColorAdd = effectColorAdd;
+	}
+
+	inline virtual bool isPickable() override {
+		return pickable;
+	}
+
+	inline virtual void setPickable(bool pickable) override {
+		this->pickable = pickable;
+	}
+
+	inline virtual bool isAutoEmit() override {
+		return true;
+	}
+
+	inline virtual void setAutoEmit(bool autoEmit) override {
+		// no op
+	}
+
+	/**
+	 * @return if entity contributes to shadows
+	 */
+	inline virtual bool isContributesShadows() {
+		return false;
+	}
+
+	/**
+	 * Enable/disable contributes shadows
+	 * @param contributesShadows contributes shadows
+	 */
+	inline virtual void setContributesShadows(bool contributesShadows) {
+		//
+	}
+
+	/**
+	 * @return if entity receives shadows
+	 */
+	inline virtual bool isReceivesShadows() {
+		return false;
+	}
+
+	/**
+	 * Enable/disable receives shadows
+	 * @param receivesShadows receives shadows
+	 */
+	inline virtual void setReceivesShadows(bool receivesShadows) {
+		//
+	}
 
 	/**
 	 * @return point size
 	 */
-	virtual float getPointSize();
+	inline virtual float getPointSize() {
+		return pointSize * pointSizeScale;
+	}
 
 	/**
 	 * @return texture id
 	 */
-	virtual int32_t getTextureId();
+	inline virtual int32_t getTextureId() {
+		return textureId;
+	}
 
 	// overriden methods
 	void update() override;
 	void fromTransformations(const Transformations& transformations) override;
 	void updateParticles() override;
 	virtual void dispose();
-	int32_t emitParticles() override;
+	inline int32_t emitParticles() override {
+		return 0;
+	}
 
 	/** 
 	 * @return render points pool
 	 */
-	virtual TransparentRenderPointsPool* getRenderPointsPool();
+	inline virtual TransparentRenderPointsPool* getRenderPointsPool() {
+		return pointsRenderPool;
+	}
 
 	/**
 	 * Public constructor

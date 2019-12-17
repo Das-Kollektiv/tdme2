@@ -204,7 +204,14 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 			}
 		}
 	}
-	levelEditorEntity->setDynamicShadowing(jEntityRoot["ds"].GetBool());
+	if (jEntityRoot.FindMember("ds") != jEntityRoot.MemberEnd()) {
+		levelEditorEntity->setContributesShadows(jEntityRoot["ds"].GetBool());
+		levelEditorEntity->setReceivesShadows(jEntityRoot["ds"].GetBool());
+	} else
+	if (jEntityRoot.FindMember("cs") != jEntityRoot.MemberEnd() && jEntityRoot.FindMember("rs") != jEntityRoot.MemberEnd()) {
+		levelEditorEntity->setContributesShadows(jEntityRoot["cs"].GetBool());
+		levelEditorEntity->setReceivesShadows(jEntityRoot["rs"].GetBool());
+	}
 	levelEditorEntity->setRenderGroups(jEntityRoot.FindMember("rg") != jEntityRoot.MemberEnd()?jEntityRoot["rg"].GetBool():false);
 	levelEditorEntity->setShader(jEntityRoot.FindMember("s") != jEntityRoot.MemberEnd()?jEntityRoot["s"].GetString():"default");
 	levelEditorEntity->setDistanceShader(jEntityRoot.FindMember("sds") != jEntityRoot.MemberEnd()?jEntityRoot["sds"].GetString():"default");

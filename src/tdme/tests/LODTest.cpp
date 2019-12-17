@@ -116,6 +116,7 @@ void LODTest::initialize()
 	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
+	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.FBX.tm");
@@ -145,7 +146,8 @@ void LODTest::initialize()
 			)
 		);
 		entity->setTranslation(Vector3(x, 0.0f, z));
-		entity->setDynamicShadowingEnabled(true);
+		entity->setContributesShadows(true);
+		entity->setReceivesShadows(true);
 		entity->update();
 		engine->addEntity(entity);
 	}

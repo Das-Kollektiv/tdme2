@@ -46,7 +46,8 @@ LinesObject3DInternal::LinesObject3DInternal(const string& id, float lineWidth, 
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	this->pickable = false;
-	this->dynamicShadowing = false;
+	this->contributesShadows = false;
+	this->receivesShadows = false;
 	this->lineWidth = lineWidth;
 	this->points = points;
 	this->color = color;

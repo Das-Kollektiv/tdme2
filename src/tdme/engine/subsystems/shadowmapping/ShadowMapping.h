@@ -44,6 +44,8 @@ private:
 	vector<ShadowMap*> shadowMaps;
 	ShadowMapping_RunState runState { NONE };
 
+	vector<Object3D*> visibleObjectsReceivingShadows;
+
 public:
 	/** 
 	 * @return engine

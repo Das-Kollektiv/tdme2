@@ -113,6 +113,7 @@ void EntityHierarchyTest::initialize()
 	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
+	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 1.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
@@ -122,7 +123,8 @@ void EntityHierarchyTest::initialize()
 	boxModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	boxModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	auto entityHierarchy = new EntityHierarchy("test");
-	entityHierarchy->setDynamicShadowingEnabled(true);
+	entityHierarchy->setContributesShadows(true);
+	entityHierarchy->setReceivesShadows(true);
 	entityHierarchy->addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
 	entityHierarchy->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	entityHierarchy->addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
@@ -140,7 +142,8 @@ void EntityHierarchyTest::initialize()
 		entity = new ParticleSystemGroup(
 			"fire",
 			true,
-			true,
+			false,
+			false,
 			{
 				new PointsParticleSystem("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(0.0f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
 				new PointsParticleSystem("firetop", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(0.0f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, 10.0f, true),

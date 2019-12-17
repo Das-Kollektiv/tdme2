@@ -240,6 +240,7 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 					objectParticleSystem->getScale(),
 					objectParticleSystem->isAutoEmit(),
 					enableDynamicShadows,
+					enableDynamicShadows,
 					objectParticleSystem->getMaxCount(),
 					engineEmitter
 				);
@@ -354,6 +355,7 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 				id,
 				true,
 				true,
+				true,
 				particleSystems
 			);
 		}
@@ -380,7 +382,8 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 
 	//
 	if (entity != nullptr) {
-		entity->setDynamicShadowingEnabled(levelEditorEntity->isDynamicShadowing());
+		entity->setContributesShadows(levelEditorEntity->isContributesShadows());
+		entity->setReceivesShadows(levelEditorEntity->isReceivesShadows());
 		entity->fromTransformations(transformations);
 	}
 
@@ -428,7 +431,8 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 
 			entity->setTranslation(entity->getTranslation().clone().add(translation));
 			entity->setPickable(pickable);
-			entity->setDynamicShadowingEnabled(object->getEntity()->isDynamicShadowing());
+			entity->setContributesShadows(object->getEntity()->isContributesShadows());
+			entity->setReceivesShadows(object->getEntity()->isReceivesShadows());
 			if (object->getEntity()->getType() == LevelEditorEntity_EntityType::EMPTY) {
 				entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
 			}

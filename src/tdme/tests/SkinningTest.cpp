@@ -116,6 +116,7 @@ void SkinningTest::initialize()
 	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
+	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	auto character = ModelReader::read("resources/tests/models/mementoman", "mementoman.dae");
@@ -125,7 +126,8 @@ void SkinningTest::initialize()
 		auto entity = new Object3D("character." + to_string(characterIdx++), character);
 		entity->setTranslation(Vector3(x, 0.0f, z));
 		entity->update();
-		entity->setDynamicShadowingEnabled(true);
+		entity->setContributesShadows(true);
+		entity->setReceivesShadows(true);
 		engine->addEntity(entity);
 	}
 	Console::println("Spawned characters: " + to_string(characterIdx));

@@ -109,20 +109,12 @@ public:
 		return PointsParticleSystemInternal::getId();
 	}
 
-	inline bool isDynamicShadowingEnabled() override {
-		return PointsParticleSystemInternal::isDynamicShadowingEnabled();
-	}
-
 	inline bool isEnabled() override {
 		return PointsParticleSystemInternal::isEnabled();
 	}
 
 	inline bool isPickable() override {
 		return PointsParticleSystemInternal::isPickable();
-	}
-
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		PointsParticleSystemInternal::setDynamicShadowingEnabled(dynamicShadowing);
 	}
 
 	inline float getPointSize() override {
@@ -135,6 +127,22 @@ public:
 
 	inline void setPickable(bool pickable) override {
 		PointsParticleSystemInternal::setPickable(pickable);
+	}
+
+	inline virtual bool isContributesShadows() override {
+		return PointsParticleSystemInternal::isContributesShadows();
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		PointsParticleSystemInternal::setContributesShadows(contributesShadows);
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return PointsParticleSystemInternal::isReceivesShadows();
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		PointsParticleSystemInternal::setReceivesShadows(receivesShadows);
 	}
 
 	inline const Vector3& getTranslation() const override {

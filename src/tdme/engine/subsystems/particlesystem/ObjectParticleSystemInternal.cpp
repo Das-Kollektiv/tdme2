@@ -44,14 +44,15 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter)
+ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter)
 {
 	this->id = id;
 	this->enabled = true;
 	this->model = model;
 	this->objectScale = scale;
 	this->autoEmit = autoEmit;
-	this->enableDynamicShadows = enableDynamicShadows;
+	this->contributesShadows = contributesShadows;
+	this->receivesShadows = receivesShadows;
 	particles.resize(maxCount);
 	objects.resize(maxCount);
 	for (auto i = 0; i < objects.size(); i++) {
@@ -64,7 +65,8 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 		);
 		objects[i]->setEnabled(false);
 		objects[i]->setScale(objectScale);
-		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
+		objects[i]->setContributesShadows(contributesShadows);
+		objects[i]->setReceivesShadows(receivesShadows);
 		objects[i]->setPickable(false);
 	}
 	this->boundingBox = new BoundingBox();
@@ -99,74 +101,6 @@ void ObjectParticleSystemInternal::setRenderer(Renderer* renderer)
 	this->renderer = renderer;
 	for (auto i = 0; i < objects.size(); i++) {
 		objects[i]->setRenderer(renderer);
-	}
-}
-
-bool ObjectParticleSystemInternal::isEnabled()
-{
-	return enabled;
-}
-
-bool ObjectParticleSystemInternal::isActive()
-{
-	return enabledObjects.size() > 0;
-}
-
-void ObjectParticleSystemInternal::setEnabled(bool enabled)
-{
-	this->enabled = enabled;
-}
-
-const Color4& ObjectParticleSystemInternal::getEffectColorMul() const
-{
-	return effectColorMul;
-}
-
-void ObjectParticleSystemInternal::setEffectColorMul(const Color4& effectColorMul)
-{
-	this->effectColorMul = effectColorMul;
-}
-
-const Color4& ObjectParticleSystemInternal::getEffectColorAdd() const
-{
-	return effectColorAdd;
-}
-
-void ObjectParticleSystemInternal::setEffectColorAdd(const Color4& effectColorAdd)
-{
-	this->effectColorAdd = effectColorAdd;
-}
-
-bool ObjectParticleSystemInternal::isPickable()
-{
-	return pickable;
-}
-
-void ObjectParticleSystemInternal::setPickable(bool pickable)
-{
-	this->pickable = pickable;
-}
-
-bool ObjectParticleSystemInternal::isAutoEmit()
-{
-	return autoEmit;
-}
-
-void ObjectParticleSystemInternal::setAutoEmit(bool autoEmit)
-{
-	this->autoEmit = autoEmit;
-}
-
-bool ObjectParticleSystemInternal::isDynamicShadowingEnabled()
-{
-	return enableDynamicShadows;
-}
-
-void ObjectParticleSystemInternal::setDynamicShadowingEnabled(bool dynamicShadowing)
-{
-	enableDynamicShadows = dynamicShadowing;
-	for (auto i = 0; i < objects.size(); i++) {
-		objects[i]->setDynamicShadowingEnabled(enableDynamicShadows);
 	}
 }
 

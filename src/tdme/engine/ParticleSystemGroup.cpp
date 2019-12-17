@@ -27,13 +27,15 @@ using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
 using tdme::engine::primitives::BoundingBox;
 
-ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool enableDynamicShadows, const vector<ParticleSystemEntity*>& particleSystems) :
-	id(id), autoEmit(autoEmit), enableDynamicShadows(enableDynamicShadows), particleSystems(particleSystems)
+ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystemEntity*>& particleSystems) :
+	id(id), autoEmit(autoEmit), contributesShadows(contributesShadows), receivesShadows(receivesShadows), particleSystems(particleSystems)
 {
 	this->enabled = true;
 	this->pickable = false;
 	this->effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	this->effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+	this->contributesShadows = false;
+	this->receivesShadows = false;
 	// TODO: put parent entity into a interface
 	for (auto particleSystem: particleSystems) {
 		auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);

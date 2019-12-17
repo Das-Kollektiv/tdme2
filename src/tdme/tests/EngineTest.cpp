@@ -266,7 +266,8 @@ void EngineTest::initialize()
 		auto _barrel = ModelReader::read("resources/tests/models/barrel", "barrel.dae");
 		auto barrel = new Object3D("barrel", _barrel);
 		barrel->setTranslation(Vector3(1.5f, 0.35f, -2.0f));
-		barrel->setDynamicShadowingEnabled(true);
+		barrel->setContributesShadows(true);
+		barrel->setReceivesShadows(true);
 		barrel->setEnabled(true);
 		barrel->update();
 		engine->addEntity(barrel);
@@ -284,6 +285,7 @@ void EngineTest::initialize()
 		auto grass = new Object3D("ground", _grass);
 		grass->setEnabled(true);
 		grass->setScale(Vector3(8.0f, 1.0f, 8.0f));
+		grass->setReceivesShadows(true);
 		grass->update();
 		engine->addEntity(grass);
 		auto _player = ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae");
@@ -296,7 +298,8 @@ void EngineTest::initialize()
 		player1->update();
 		player1->setEnabled(true);
 		player1->setPickable(true);
-		player1->setDynamicShadowingEnabled(true);
+		player1->setContributesShadows(true);
+		player1->setReceivesShadows(true);
 		engine->addEntity(player1);
 		players.push_back(player1);
 		auto player2 = new Object3D("player2", _player);
@@ -306,7 +309,8 @@ void EngineTest::initialize()
 		player2->update();
 		player2->setEnabled(true);
 		player2->setPickable(true);
-		player2->setDynamicShadowingEnabled(true);
+		player2->setContributesShadows(true);
+		player2->setReceivesShadows(true);
 		players.push_back(player2);
 		engine->addEntity(player2);
 		auto _cube = ModelReader::read("resources/tests/models/test", "cube.dae");
@@ -315,7 +319,8 @@ void EngineTest::initialize()
 		cube->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		cube->update();
 		cube->setPickable(true);
-		cube->setDynamicShadowingEnabled(true);
+		cube->setContributesShadows(true);
+		cube->setReceivesShadows(true);
 		cube->setEnabled(true);
 		engine->addEntity(cube);
 		auto _wall = ModelReader::read("resources/tests/models/wall", "wall.dae");
@@ -335,7 +340,8 @@ void EngineTest::initialize()
 		osCube->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
 		osCube->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		osCube->setScale(Vector3(2.0f, 2.0f, 2.0f));
-		osCube->setDynamicShadowingEnabled(true);
+		osCube->setContributesShadows(true);
+		osCube->setReceivesShadows(true);
 		osCube->update();
 		osEngine->addEntity(osCube);
 		engine->addEntity(new PointsParticleSystem("circle", new CircleParticleEmitter(3000, 50, 50, Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(0.0f, 0.0f, 0.0f), 0.4f, 0.0f, 0.0f, Vector3(0.0f, 0.2f, 0.0f), Vector3(0.0f, 0.2f, 0.0f), Color4(1.0f, 1.0f, 1.0f, 0.3f), Color4(1.0f, 1.0f, 1.0f, 0.3f)), 1000, 10.0f, true));
@@ -348,7 +354,8 @@ void EngineTest::initialize()
 			new ParticleSystemGroup(
 				"fire",
 				true,
-				true,
+				false,
+				false,
 				{
 					new PointsParticleSystem("firebase", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.2f, 0.0f), 0.2f), Vector3(0.0f, 0.1f, 0.0f), Vector3(0.0f, 0.1f, 0.0f), Color4(0.0f, 0.0f, 0.0f, 0.5f), Color4(0.4f, 0.0f, 0.0f, 0.5f)), 2048, 10.0f, true),
 					new PointsParticleSystem("firetop", new SphereParticleEmitter(2048, 1024, 2048, 0, 0, new Sphere(Vector3(2.5f, 0.7f, 0.0f), 0.1f), Vector3(0.0f, 0.06f, 0.0f), Vector3(0.0f, 0.12f, 0.0f), Color4(0.75f, 0.0f, 0.0f, 0.5f), Color4(1.0f, 1.0f, 0.0f, 0.5f)), 2048, 10.0f, true),

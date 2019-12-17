@@ -41,20 +41,21 @@ class tdme::engine::subsystems::lines::LinesObject3DInternal
 	friend class tdme::engine::subsystems::rendering::Object3DRenderer;
 
 protected:
-	string id {  };
-	Engine* engine {  };
-	Renderer* renderer {  };
-	bool enabled {  };
-	float lineWidth {  };
+	string id;
+	Engine* engine { nullptr };
+	Renderer* renderer { nullptr };
+	bool enabled;
+	float lineWidth;
 	Texture* texture { nullptr };
-	int32_t textureId {  };
+	int32_t textureId { -1 };
 
-	BoundingBox boundingBox {  };
-	BoundingBox boundingBoxTransformed {  };
-	Color4 effectColorMul {  };
-	Color4 effectColorAdd {  };
-	bool pickable {  };
-	bool dynamicShadowing {  };
+	BoundingBox boundingBox;
+	BoundingBox boundingBoxTransformed;
+	Color4 effectColorMul;
+	Color4 effectColorAdd;
+	bool pickable;
+	bool contributesShadows;
+	bool receivesShadows;
 
 	vector<Vector3> points;
 	Color4 color;
@@ -156,19 +157,34 @@ public:
 		this->pickable = pickable;
 	}
 
-	/** 
-	 * @return dynamic shadowing enabled
+	/**
+	 * @return if entity contributes to shadows
 	 */
-	inline virtual bool isDynamicShadowingEnabled() {
-		return dynamicShadowing;
+	inline virtual bool isContributesShadows() {
+		return contributesShadows;
 	}
 
-	/** 
-	 * Enable/disable dynamic shadowing
-	 * @param dynamicShadowing dynamicShadowing
+	/**
+	 * Enable/disable contributes shadows
+	 * @param contributesShadows contributes shadows
 	 */
-	inline virtual void setDynamicShadowingEnabled(bool dynamicShadowing) {
-		this->dynamicShadowing = dynamicShadowing;
+	inline virtual void setContributesShadows(bool contributesShadows) {
+		this->contributesShadows = contributesShadows;
+	}
+
+	/**
+	 * @return if entity receives shadows
+	 */
+	inline virtual bool isReceivesShadows() {
+		return receivesShadows;
+	}
+
+	/**
+	 * Enable/disable receives shadows
+	 * @param receivesShadows receives shadows
+	 */
+	inline virtual void setReceivesShadows(bool receivesShadows) {
+		this->receivesShadows = receivesShadows;
 	}
 
 	/**

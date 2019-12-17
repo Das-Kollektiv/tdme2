@@ -89,7 +89,8 @@ void EmptyView::initModel()
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(entity->getModel()->getBoundingBox()));
 	auto model = engine->getEntity("model");
 	auto ground = engine->getEntity("ground");
-	model->setDynamicShadowingEnabled(false);
+	model->setContributesShadows(false);
+	model->setReceivesShadows(false);
 	ground->setEnabled(false);
 	auto modelBoundingVolume = engine->getEntity("model_bv");
 	if (modelBoundingVolume != nullptr) {

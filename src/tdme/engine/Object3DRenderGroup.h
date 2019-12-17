@@ -58,7 +58,8 @@ private:
 	string id;
 	bool enabled;
 	bool pickable;
-	bool dynamicShadowing;
+	bool contributesShadows;
+	bool receivesShadows;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
@@ -217,10 +218,6 @@ public:
 
 	void initialize() override;
 
-	inline bool isDynamicShadowingEnabled() override {
-		return dynamicShadowing;
-	}
-
 	inline bool isEnabled() override {
 		return enabled;
 	}
@@ -229,18 +226,26 @@ public:
 		return pickable;
 	}
 
-	// override methods
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		this->dynamicShadowing = dynamicShadowing;
-		if (combinedEntity != nullptr) {
-			combinedEntity->setDynamicShadowingEnabled(dynamicShadowing);
-		}
+	inline virtual bool isContributesShadows() override {
+		return contributesShadows;
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		this->contributesShadows = contributesShadows;
+		if (combinedEntity != nullptr) combinedEntity->setContributesShadows(contributesShadows);
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return receivesShadows;
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		this->receivesShadows = receivesShadows;
+		if (combinedEntity != nullptr) combinedEntity->setReceivesShadows(receivesShadows);
 	}
 
 	inline void setPickable(bool pickable) override {
-		if (combinedEntity != nullptr) {
-			combinedEntity->setPickable(pickable);
-		}
+		if (combinedEntity != nullptr) combinedEntity->setPickable(pickable);
 	}
 
 	inline const Vector3& getTranslation() const override {

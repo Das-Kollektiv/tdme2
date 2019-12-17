@@ -106,6 +106,13 @@ ShadowMap* ShadowMapping::getShadowMap(int idx) {
 
 void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 {
+	// only render for objects that receives shadows
+	for (auto object: visibleObjects) {
+		if (object->isReceivesShadows() == false) continue;
+		visibleObjectsReceivingShadows.push_back(object);
+	}
+
+	//
 	auto contextCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	runState = ShadowMapping_RunState::RENDER;
 	// render using shadow mapping program
@@ -145,7 +152,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		renderer->enableBlending();
 		// 	only opaque face entities as shadows will not be produced on transparent faces
 		object3DRenderer->render(
-			visibleObjects,
+			visibleObjectsReceivingShadows,
 			false,
 			Object3DRenderer::RENDERTYPE_NORMALS |
 			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
@@ -156,6 +163,7 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		//	disable blending
 		renderer->disableBlending();
 	}
+
 	// unuse shader program
 	shader->unUseProgram();
 
@@ -173,6 +181,10 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 	renderer->disableBlending();
 	renderer->enableDepthBufferWriting();
 	renderer->setDepthFunction(renderer->DEPTHFUNCTION_LESSEQUAL);
+
+	//
+	visibleObjectsReceivingShadows.clear();
+
 	//
 	runState = ShadowMapping_RunState::NONE;
 }

@@ -92,11 +92,12 @@ public:
 	 * @param model model
 	 * @param scale scale
 	 * @param autoEmit auto emit
-	 * @param enableDynamicShadows enable dynamic shadows
+	 * @param contributesShadows enable contributes shadows
+	 * @param receivesShadows enable receives shadows
 	 * @param maxCount max count
 	 * @param emitter emitter
 	 */
-	ObjectParticleSystem(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool enableDynamicShadows, int32_t maxCount, ParticleEmitter* emitter);
+	ObjectParticleSystem(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter);
 
 public:
 
@@ -125,8 +126,20 @@ public:
 		return ObjectParticleSystemInternal::getId();
 	}
 
-	inline bool isDynamicShadowingEnabled() override {
-		return ObjectParticleSystemInternal::isDynamicShadowingEnabled();
+	inline virtual bool isContributesShadows() override {
+		return ObjectParticleSystemInternal::isContributesShadows();
+	}
+
+	inline virtual void setContributesShadows(bool contributesShadows) override {
+		ObjectParticleSystemInternal::setContributesShadows(contributesShadows);
+	}
+
+	inline virtual bool isReceivesShadows() override {
+		return ObjectParticleSystemInternal::isReceivesShadows();
+	}
+
+	inline virtual void setReceivesShadows(bool receivesShadows) override {
+		ObjectParticleSystemInternal::setReceivesShadows(receivesShadows);
 	}
 
 	inline bool isEnabled() override {
@@ -135,10 +148,6 @@ public:
 
 	inline bool isPickable() override {
 		return ObjectParticleSystemInternal::isPickable();
-	}
-
-	inline void setDynamicShadowingEnabled(bool dynamicShadowing) override {
-		ObjectParticleSystemInternal::setDynamicShadowingEnabled(dynamicShadowing);
 	}
 
 	inline void setPickable(bool pickable) override {

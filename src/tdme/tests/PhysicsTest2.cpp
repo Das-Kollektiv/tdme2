@@ -105,6 +105,7 @@ void PhysicsTest2::initialize()
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();
+	entity->setReceivesShadows(true);
 	engine->addEntity(entity);
 	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
 	auto box = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(1.0f, 1.0f, 1.0f));
@@ -113,7 +114,8 @@ void PhysicsTest2::initialize()
 	boxModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	for (auto i = 0; i < BOX_COUNT; i++) {
 		entity = new Object3D("box" + to_string(i), boxModel);
-		entity->setDynamicShadowingEnabled(true);
+		entity->setContributesShadows(true);
+		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(0.0f, i * 2.0f + 1.0f, 0.0f));
 		entity->update();
 		engine->addEntity(entity);

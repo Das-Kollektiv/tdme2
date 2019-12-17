@@ -33,7 +33,8 @@ void EntityDisplayView::display(LevelEditorEntity* entity)
 {
 	if (entity != nullptr) {
 		auto model = engine->getEntity("model");
-		if (model != nullptr) model->setDynamicShadowingEnabled(displayShadowing);
+		if (model != nullptr) model->setContributesShadows(displayShadowing);
+		if (model != nullptr) model->setReceivesShadows(displayShadowing);
 		auto ground = engine->getEntity("ground");
 		if (ground != nullptr) ground->setEnabled(displayGroundPlate);
 	}
