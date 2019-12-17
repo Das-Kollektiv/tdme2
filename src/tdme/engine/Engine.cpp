@@ -180,7 +180,7 @@ float Engine::animationBlendingTime = 250.0f;
 int32_t Engine::shadowMapWidth = 0;
 int32_t Engine::shadowMapHeight = 0;
 int32_t Engine::shadowMapRenderLookUps = 0;
-float Engine::shadowMaplightEyeDistanceScale = 4.0f;
+float Engine::shadowMaplightEyeDistanceScale = 1.0f;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
 
@@ -452,7 +452,7 @@ void Engine::initialize()
 			Console::println(string("TDME::Using GL3+/CORE"));
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
-			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(1024, 1024);
+			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(4);
 			skinningShaderEnabled = false;
 			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
@@ -983,11 +983,6 @@ void Engine::display()
 	// restore camera from shadow map rendering
 	camera->update(context, width, height);
 
-	// store matrices
-	modelViewMatrix.set(renderer->getModelViewMatrix());
-	projectionMatrix.set(renderer->getProjectionMatrix());
-	cameraMatrix.set(renderer->getCameraMatrix());
-
 	// render lines objects
 	if (visibleLinesObjects.size() > 0) {
 		// use particle shader
@@ -1152,33 +1147,26 @@ void Engine::display()
 
 	//
 	for (auto engineThread: engineThreads) engineThread->state = EngineThread::STATE_WAITING;
-
-	// restore matrices
-	renderer->getModelViewMatrix().set(modelViewMatrix);
-	renderer->getProjectionMatrix().set(projectionMatrix);
-	renderer->getCameraMatrix().set(cameraMatrix);
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
 {
 	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
-	Matrix4x4 tmpMatrix4x4;
-	Vector4 tmpVector4a;
-	Vector4 tmpVector4b;
-	tmpMatrix4x4.set(modelViewMatrix).multiply(projectionMatrix).invert();
-	tmpMatrix4x4.multiply(
-		tmpVector4a.set(
+	Vector4 worldCoordinate4;
+	camera->getModelViewProjectionInvertedMatrix().multiply(
+		Vector4(
 			(2.0f * mouseX / width) - 1.0f,
 			1.0f - (2.0f * mouseY / height),
-			2.0f * z - 1.0f, 1.0f
+			2.0f * z - 1.0f,
+			1.0f
 		),
-		tmpVector4b
+		worldCoordinate4
 	);
-	tmpVector4b.scale(1.0f / tmpVector4b.getW());
+	worldCoordinate4.scale(1.0f / worldCoordinate4.getW());
 	worldCoordinate.set(
-		tmpVector4b.getX(),
-		tmpVector4b.getY(),
-		tmpVector4b.getZ()
+		worldCoordinate4.getX(),
+		worldCoordinate4.getY(),
+		worldCoordinate4.getZ()
 	);
 }
 
@@ -1656,17 +1644,13 @@ Entity* Engine::doRayCasting(
 
 void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
 {
-	Matrix4x4 tmpMatrix4x4;
-	Vector4 tmpVector4a;
-	Vector4 tmpVector4b;
+	Vector4 screenCoordinate4;
 	// convert to normalized device coordinates
-	tmpMatrix4x4.set(modelViewMatrix).multiply(projectionMatrix);
-	tmpMatrix4x4.multiply(tmpVector4b.set(worldCoordinate, 1.0f), tmpVector4a);
-	tmpVector4a.scale(1.0f / tmpVector4a.getW());
-	auto screenCoordinateXYZW = tmpVector4a.getArray();
+	camera->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f), screenCoordinate4);
+	screenCoordinate4.scale(1.0f / screenCoordinate4.getW());
 	// convert to screen coordinate
-	screenCoordinate.setX((screenCoordinateXYZW[0] + 1.0f) * width / 2.0f);
-	screenCoordinate.setY(height - ((screenCoordinateXYZW[1] + 1.0f) * height / 2.0f));
+	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * width / 2.0f);
+	screenCoordinate.setY(height - ((screenCoordinate4[1] + 1.0f) * height / 2.0f));
 }
 
 void Engine::dispose()

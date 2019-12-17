@@ -94,9 +94,9 @@ void LODTest::initialize()
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(100.0f);
-	cam->setLookFrom(Vector3(0.0f, 30.0f, 280.0f));
-	cam->setLookAt(Vector3(0.0f, 2.5f, 0.0f));
+	cam->setZFar(150.0f);
+	cam->setLookFrom(Vector3(0.0f, 25.0f, 280.0f));
+	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	auto light0 = engine->getLightAt(0);
 	light0->setAmbient(Color4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -145,6 +145,7 @@ void LODTest::initialize()
 			)
 		);
 		entity->setTranslation(Vector3(x, 0.0f, z));
+		entity->setDynamicShadowingEnabled(true);
 		entity->update();
 		engine->addEntity(entity);
 	}

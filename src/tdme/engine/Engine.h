@@ -206,9 +206,6 @@ private:
 	bool shadowMappingEnabled;
 	bool renderingInitiated;
 	bool renderingComputedTransformations;
-	Matrix4x4 modelViewMatrix;
-	Matrix4x4 projectionMatrix;
-	Matrix4x4 cameraMatrix;
 
 	vector<string> postProcessingPrograms;
 

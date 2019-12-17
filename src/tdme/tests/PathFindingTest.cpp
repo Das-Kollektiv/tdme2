@@ -177,7 +177,7 @@ void PathFindingTest::initialize()
 	Level::addLevel(world, &level);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(50.0f);
+	cam->setZFar(15.0f);
 	cam->setLookFrom(Vector3(0.0f, 10.0f, -6.0f));
 	cam->setLookAt(level.getCenter());
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));

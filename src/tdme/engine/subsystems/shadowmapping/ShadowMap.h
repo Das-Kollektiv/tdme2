@@ -15,6 +15,7 @@ using std::vector;
 using tdme::engine::Camera;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
+using tdme::engine::Object3D;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;

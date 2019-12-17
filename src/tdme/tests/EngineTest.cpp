@@ -229,7 +229,7 @@ void EngineTest::initialize()
 		osLight0->setEnabled(true);
 		auto osCam = osEngine->getCamera();
 		osCam->setZNear(0.1f);
-		osCam->setZFar(50.0f);
+		osCam->setZFar(15.0f);
 		osCam->setLookFrom(Vector3(0.0f, 4.0f, -4.0f));
 		osCam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 		osCam->setUpVector(osCam->computeUpVector(osCam->getLookFrom(), osCam->getLookAt()));
@@ -237,7 +237,7 @@ void EngineTest::initialize()
 	}
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(50.0f);
+	cam->setZFar(15.0f);
 	cam->setLookFrom(Vector3(0.0f, 3.0f, -8.0f));
 	cam->setLookAt(Vector3(0.0f, 0.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));

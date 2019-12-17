@@ -221,7 +221,7 @@ void RayTracingTest::initialize()
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(100.0f);
+	cam->setZFar(25.0f);
 	cam->setLookFrom(Vector3(0.0f, 5.0f, 10.0f));
 	cam->setLookAt(Vector3(0.0f, 2.5f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
@@ -259,6 +259,7 @@ void RayTracingTest::initialize()
 		);
 		entity->setTranslation(Vector3(x, 0.0f, z));
 		entity->update();
+		entity->setDynamicShadowingEnabled(true);
 		engine->addEntity(entity);
 
 		// physics

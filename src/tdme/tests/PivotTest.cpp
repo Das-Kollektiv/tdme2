@@ -83,7 +83,7 @@ void PivotTest::initialize()
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(100.0f);
+	cam->setZFar(15.0f);
 	cam->setLookFrom(Vector3(0.0f, 30.0f, 30.0f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));

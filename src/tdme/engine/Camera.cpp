@@ -5,6 +5,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/utils/Console.h>
 
 using tdme::engine::Camera;
 using tdme::math::Math;
@@ -12,6 +13,7 @@ using tdme::engine::Frustum;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
+using tdme::utils::Console;
 
 Camera::Camera(Renderer* renderer)
 {
@@ -22,7 +24,10 @@ Camera::Camera(Renderer* renderer)
 	fovY = 45.0f;
 	zNear = 10.0f;
 	zFar = 4000.0f;
+	cameraMode = CAMERAMODE_LOOKAT;
 	upVector.set(0.0f, 1.0f, 0.0f);
+	forwardVector.set(0.0f, 0.0f, 1.0f);
+	sideVector.set(1.0f, 0.0f, 0.0f);
 	lookFrom.set(0.0f, 50.0f, 400.0f);
 	lookAt.set(0.0f, 50.0f, 0.0f);
 	frustum = new Frustum(renderer);
@@ -52,10 +57,10 @@ Vector3 Camera::computeUpVector(const Vector3& lookFrom, const Vector3& lookAt)
 	return tmpUpVector;
 }
 
-Matrix4x4& Camera::computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar)
+Matrix4x4& Camera::computeProjectionMatrix()
 {
 	// see: see http://www.songho.ca/opengl/gl_transform.html
-	auto tangent = static_cast< float >(Math::tan(yfieldOfView / 2.0f * 3.1415927f / 180.0f));
+	auto tangent = static_cast< float >(Math::tan(fovY / 2.0f * 3.1415927f / 180.0f));
 	auto height = zNear * tangent;
 	auto width = height * aspect;
 	return computeFrustumMatrix(-width, width, -height, height, zNear, zFar);
@@ -84,19 +89,16 @@ Matrix4x4& Camera::computeFrustumMatrix(float left, float right, float bottom, f
 	);
 }
 
-Matrix4x4& Camera::computeModelViewMatrix(const Vector3& lookFrom, const Vector3& lookAt, const Vector3& upVector)
+Matrix4x4& Camera::computeModelViewMatrix()
 {
 	Matrix4x4 tmpAxesMatrix;
-	Vector3 tmpForward;
-	Vector3 tmpSide;
 	Vector3 tmpUp;
 	Vector3 tmpLookFromInverted;
-	tmpForward.set(lookAt).sub(lookFrom).normalize();
-	Vector3::computeCrossProduct(tmpForward, upVector, tmpSide).normalize();
-	Vector3::computeCrossProduct(tmpSide, tmpForward, tmpUp);
-	auto& sideXYZ = tmpSide.getArray();
-	auto& forwardXYZ = tmpForward.getArray();
-	auto& upXYZ = tmpUp.getArray();
+	if (cameraMode == CAMERAMODE_LOOKAT) {
+		forwardVector.set(lookAt).sub(lookFrom).normalize();
+		Vector3::computeCrossProduct(forwardVector, upVector, sideVector).normalize();
+	}
+	Vector3::computeCrossProduct(sideVector, forwardVector, tmpUp);
 	modelViewMatrix.
 		identity().
 		translate(
@@ -104,17 +106,17 @@ Matrix4x4& Camera::computeModelViewMatrix(const Vector3& lookFrom, const Vector3
 		).
 		multiply(
 			tmpAxesMatrix.set(
-				sideXYZ[0],
-				upXYZ[0],
-				-forwardXYZ[0],
+				sideVector[0],
+				tmpUp[0],
+				-forwardVector[0],
 				0.0f,
-				sideXYZ[1],
-				upXYZ[1],
-				-forwardXYZ[1],
+				sideVector[1],
+				tmpUp[1],
+				-forwardVector[1],
 				0.0f,
-				sideXYZ[2],
-				upXYZ[2],
-				-forwardXYZ[2],
+				sideVector[2],
+				tmpUp[2],
+				-forwardVector[2],
 				0.0f,
 				0.0f,
 				0.0f,
@@ -137,24 +139,45 @@ void Camera::update(void* context, int32_t width, int32_t height)
 		aspect = static_cast< float >(width) / static_cast< float >(height);
 		this->width = width;
 		this->height = height;
-		renderer->getViewportMatrix().set(width / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, height / 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0 + (width / 2.0f), 0 + (height / 2.0f), 0.0f, 1.0f);
+		renderer->getViewportMatrix().set(
+			width / 2.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			height / 2.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			1.0f,
+			0.0f,
+			0 + (width / 2.0f),
+			0 + (height / 2.0f),
+			0.0f,
+			1.0f
+		);
 	}
 
 	// setup projection and model view and such
-	renderer->getProjectionMatrix().set(computeProjectionMatrix(fovY, aspect, zNear, zFar));
+	renderer->getProjectionMatrix().set(computeProjectionMatrix());
 	renderer->onUpdateProjectionMatrix(context);
-	renderer->getModelViewMatrix().set(computeModelViewMatrix(lookFrom, lookAt, upVector));
+	renderer->getModelViewMatrix().set(computeModelViewMatrix());
 	renderer->onUpdateModelViewMatrix(context);
 	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
 	renderer->onUpdateCameraMatrix(context);
+
+	//
+	mvpInvertedMatrix.set(modelViewMatrix).multiply(projectionMatrix).invert();
+	mvpMatrix.set(modelViewMatrix).multiply(projectionMatrix);
 
 	frustumChanged =
 		reshaped == true ||
 		lastZNear != zNear ||
 		lastZFar != zFar ||
-		lastUpVector.equals(upVector) == false ||
-		lastLookFrom.equals(lookFrom) == false ||
-		lastLookAt.equals(lookAt) == false;
+		lastForwardVector.equals(forwardVector) == false ||
+		lastSideVector.equals(sideVector) == false ||
+		lastLookFrom.equals(lookFrom) == false;
 
 	if (frustumChanged == true) {
 		// update frustum
@@ -163,9 +186,8 @@ void Camera::update(void* context, int32_t width, int32_t height)
 
 	lastZNear = zNear;
 	lastZFar = zFar;
-	lastUpVector.set(upVector);
+	lastForwardVector.set(forwardVector);
+	lastSideVector.set(sideVector);
 	lastLookFrom.set(lookFrom);
-	lastLookAt.set(lookAt);
 }
-
 

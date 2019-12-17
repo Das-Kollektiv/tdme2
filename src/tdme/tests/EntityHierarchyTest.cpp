@@ -91,7 +91,7 @@ void EntityHierarchyTest::initialize()
 	Entity* entity = nullptr;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(100.0f);
+	cam->setZFar(25.0f);
 	cam->setLookFrom(Vector3(0.0f, 30.0f, 30.0f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));

@@ -14,9 +14,11 @@
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -34,9 +36,11 @@ using tdme::engine::Object3DRenderGroup;
 using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
+using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -44,6 +48,7 @@ ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height
 {
 	this->shadowMapping = shadowMapping;
 	lightCamera = new Camera(shadowMapping->renderer);
+	lightCamera->setCameraMode(Camera::CAMERAMODE_NONE);
 	frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER);
 	#if defined(VULKAN)
 		biasMatrix.set(
@@ -110,31 +115,7 @@ void ShadowMap::render(Light* light)
 
 	// clear visible objects
 	visibleObjects.clear();
-	// viewers camera
-	auto camera = shadowMapping->engine->getCamera();
-	Vector3 lightDirection;
-	Vector3 lightLookAt;
-	Vector3 lightLookFrom;
-	auto lightEyeDistance = lightDirection.set(camera->getLookAt()).sub(camera->getLookFrom()).computeLength() * Engine::getShadowMapLightEyeDistanceScale();
-	// compute camera from view of light
-	lightDirection.set(light->getSpotDirection()).normalize();
-	lightLookAt.set(camera->getLookAt());
-	lightLookFrom.set(lightLookAt).sub(lightDirection.scale(lightEyeDistance));
-	// determine light camera z far
-	auto lightCameraZFar = lightEyeDistance * 2.0f;
-	if (camera->getZFar() > lightCameraZFar)
-		lightCameraZFar = camera->getZFar();
-	// set up light camera from view of light
-	lightCamera->setZNear(camera->getZNear());
-	lightCamera->setZFar(lightCameraZFar);
-	lightCamera->setLookFrom(lightLookFrom);
-	lightCamera->setLookAt(lightLookAt);
-	lightCamera->setUpVector(lightCamera->computeUpVector(lightCamera->getLookFrom(), lightCamera->getLookAt()));
-	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
-	// Bind frame buffer to shadow map fbo id
-	frameBuffer->enableFrameBuffer();
-	// clear depth buffer
-	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
+
 	// determine visible objects and objects that should generate a shadow
 	Entity* orgEntity = nullptr;
 	Object3D* object = nullptr;
@@ -143,7 +124,7 @@ void ShadowMap::render(Light* light)
 	ObjectParticleSystem* opse = nullptr;
 	ParticleSystemGroup* psg = nullptr;
 	EntityHierarchy* eh = nullptr;
-	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
+	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(shadowMapping->engine->getCamera()->getFrustum())) {
 		if ((org = dynamic_cast<Object3DRenderGroup*>(entity)) != nullptr) {
 			if ((orgEntity = org->getEntity()) != nullptr) {
 				if (orgEntity->isDynamicShadowingEnabled() == false) continue;
@@ -209,6 +190,82 @@ void ShadowMap::render(Light* light)
 			}
 		}
 	}
+
+	//
+	auto camera = shadowMapping->engine->getCamera();
+
+	// try to determine light position
+
+	// 	left
+	Vector4 left;
+	camera->getModelViewProjectionInvertedMatrix().multiply(
+		Vector4(
+			(2.0f * 0.0f) - 1.0f,
+			1.0f - (2.0f * 0.5f),
+			2.0f * 0.997f - 1.0f,
+			1.0f
+		),
+		left
+	);
+	left.scale(1.0f / left.getW());
+
+	//	right
+	Vector4 right;
+	camera->getModelViewProjectionInvertedMatrix().multiply(
+		Vector4(
+			(2.0f * 1.0f) - 1.0f,
+			1.0f - (2.0f * 0.5f),
+			2.0f * 0.997f - 1.0f,
+			1.0f
+		),
+		right
+	);
+	right.scale(1.0f / right.getW());
+
+	//	center
+	Vector4 center4;
+	camera->getModelViewProjectionInvertedMatrix().multiply(
+		Vector4(
+			(2.0f * 0.5f) - 1.0f,
+			1.0f - (2.0f * 0.5f),
+			2.0f * 0.8f - 1.0f,
+			1.0f
+		),
+		center4
+	);
+	center4.scale(1.0f / center4.getW());
+
+	// so we get some contraints for the shadow map camera, TODO: improve me
+	Vector3 center(Vector3(center4.getX(), center4.getY(), center4.getZ()));
+	auto width = Vector3(right.getX(), right.getY(), right.getZ()).sub(Vector3(left.getX(), left.getY(), left.getZ())).computeLength() * Engine::getShadowMapLightEyeDistanceScale();
+
+	// viewers camera
+	Vector3 lightDirection;
+	Vector3 lightLookFrom;
+	// compute camera from view of light
+	lightDirection.set(light->getSpotDirection()).normalize();
+	lightLookFrom
+		.set(center)
+		.sub(lightDirection.clone().scale(width * 1.25f));
+	// set up light camera from view of light
+	Vector3 lightCameraUpVector;
+	Vector3 lightCameraSideVector;
+	lightCamera->setZNear(camera->getZNear());
+	lightCamera->setZFar(150.0f);
+	lightCamera->setLookFrom(lightLookFrom);
+	lightCamera->setForwardVector(lightDirection);
+	lightCamera->setSideVector(Vector3(1.0f, 0.0f, 0.0f));
+	// TODO: fix cross product NaN if side vector == forward vector
+	Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getSideVector(), lightCameraUpVector);
+	lightCamera->setUpVector(lightCameraUpVector);
+	Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getUpVector(), lightCameraSideVector);
+	lightCamera->setSideVector(lightCameraSideVector);
+	lightCamera->setUpVector(lightCameraUpVector);
+	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
+	// Bind frame buffer to shadow map fbo id
+	frameBuffer->enableFrameBuffer();
+	// clear depth buffer
+	shadowMapping->renderer->clear(shadowMapping->renderer->CLEAR_DEPTH_BUFFER_BIT);
 	// generate shadow map texture matrix
 	computeDepthBiasMVPMatrix();
 	// only draw opaque face entities as shadows will not be produced from transparent objects

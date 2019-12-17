@@ -128,7 +128,7 @@ void PhysicsTest1::initialize()
 	Object3D* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
-	cam->setZFar(50.0f);
+	cam->setZFar(15.0f);
 	cam->setLookFrom(Vector3(0.0f, 4.0f * 2.5f, -6.0f * 2.5f));
 	cam->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));

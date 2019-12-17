@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <tdme/tdme.h>
@@ -21,6 +20,9 @@ using tdme::math::Vector3;
  */
 class tdme::engine::Camera final
 {
+public:
+	enum CameraMode { CAMERAMODE_LOOKAT, CAMERAMODE_NONE };
+
 private:
 	static Vector3 defaultUp;
 	Renderer* renderer { nullptr };
@@ -30,19 +32,40 @@ private:
 	float fovY;
 	float zNear;
 	float zFar;
-	Vector3 upVector;
+	CameraMode cameraMode;
 	Vector3 lookFrom;
 	Vector3 lookAt;
+	Vector3 upVector;
+	Vector3 forwardVector;
+	Vector3 sideVector;
 	Matrix4x4 projectionMatrix;
 	Matrix4x4 modelViewMatrix;
+	Matrix4x4 mvpMatrix;
+	Matrix4x4 mvpInvertedMatrix;
 	Frustum* frustum { nullptr };
 	float lastZNear;
 	float lastZFar;
-	Vector3 lastUpVector;
+	Vector3 lastForwardVector;
+	Vector3 lastSideVector;
 	Vector3 lastLookFrom;
-	Vector3 lastLookAt;
 	bool frustumChanged;
+
 public:
+
+	/**
+	 * @return camera mode
+	 */
+	inline CameraMode getCameraMode() const {
+		return cameraMode;
+	}
+
+	/**
+	 * Set camera mode
+	 * @param camera mode
+	 */
+	inline void setCameraMode(CameraMode cameraMode) {
+		this->cameraMode = cameraMode;
+	}
 
 	/** 
 	 * @return field of view Y
@@ -105,6 +128,36 @@ public:
 	}
 
 	/** 
+	 * @return forward vector
+	 */
+	inline const Vector3& getForwardVector() const {
+		return forwardVector;
+	}
+
+	/**
+	 * Set forward vector
+	 * @param forwardVector forward vector
+	 */
+	inline void setForwardVector(const Vector3& forwardVector) {
+		this->forwardVector = forwardVector;
+	}
+
+	/**
+	 * @return side vector
+	 */
+	inline const Vector3& getSideVector() const {
+		return sideVector;
+	}
+
+	/**
+	 * Set side vector
+	 * @param sideVector side vector
+	 */
+	inline void setSideVector(const Vector3& sideVector) {
+		this->sideVector = sideVector;
+	}
+
+	/**
 	 * @return look from vector
 	 */
 	inline const Vector3& getLookFrom() const {
@@ -134,6 +187,34 @@ public:
 		this->lookAt = lookAt;
 	}
 
+	/**
+	 * @return model view matrix or camera matrix
+	 */
+	inline const Matrix4x4& getModelViewMatrix() const {
+		return modelViewMatrix;
+	}
+
+	/**
+	 * @return projection matrix
+	 */
+	inline const Matrix4x4& getProjectionMatrix() const {
+		return projectionMatrix;
+	}
+
+	/**
+	 * @return model view projection matrix
+	 */
+	inline const Matrix4x4& getModelViewProjectionMatrix() const {
+		return mvpMatrix;
+	}
+
+	/**
+	 * @return inverted model view porjection matrix
+	 */
+	inline const Matrix4x4& getModelViewProjectionInvertedMatrix() const {
+		return mvpInvertedMatrix;
+	}
+
 	/** 
 	 * @return frustum
 	 */
@@ -153,13 +234,9 @@ private:
 
 	/** 
 	 * Computes the projection matrix
-	 * @param yfieldOfView y field of view
-	 * @param aspect aspect
-	 * @param zNear z near
-	 * @param zFar z far
 	 * @return projection matrix
 	 */
-	Matrix4x4& computeProjectionMatrix(float yfieldOfView, float aspect, float zNear, float zFar);
+	Matrix4x4& computeProjectionMatrix();
 
 	/** 
 	 * Computes frustum matrix
@@ -175,12 +252,9 @@ private:
 
 	/** 
 	 * Computes projection matrix for given look from, look at and up vector
-	 * @param lookFrom look from
-	 * @param lookAt look at
-	 * @param upVector up vector
 	 * @return model view matrix
 	 */
-	Matrix4x4& computeModelViewMatrix(const Vector3& lookFrom, const Vector3& lookAt, const Vector3& upVector);
+	Matrix4x4& computeModelViewMatrix();
 
 public:
 
