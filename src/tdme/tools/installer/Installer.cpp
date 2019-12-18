@@ -79,7 +79,9 @@ void Installer::initialize()
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
 		unordered_map<string, string> parameters = {
-			{"name", "TDME2"}
+			{"name", "TDME2"},
+			{"diskspace", "300MB"},
+			{"installfolder", "/home/andreas/Applications/TDME2"}
 		};
 		engine->getGUI()->addScreen(
 			"installer_welcome",
@@ -176,10 +178,10 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		if (node->getId() == "button_install") {
 			screen = SCREEN_INSTALLING;
 		} else
-		if (node->getId() == "button_finished") {
-			screen = SCREEN_INSTALLING;
-		} else
 		if (node->getId() == "button_cancel") {
+			exit(0);
+		} else
+		if (node->getId() == "button_finish") {
 			exit(0);
 		}
 	}
