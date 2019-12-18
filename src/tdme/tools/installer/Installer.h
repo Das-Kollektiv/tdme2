@@ -7,7 +7,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
-#include <tdme/tools/gui/fwd-tdme.h>
+#include <tdme/tools/installer/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
@@ -20,19 +20,19 @@ using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIChangeListener;
 using tdme::tools::shared::views::PopUps;
 
-
 /** 
- * GUI Test
+ * Installer
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::gui::GUITest final
+class tdme::tools::installer::Installer final
 	: public virtual Application, public virtual GUIActionListener, public virtual GUIChangeListener
 {
 private:
-	string screenFileName;
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
+	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX };
+	Screen screen;
 
 public:
 	void initialize() override;
@@ -51,7 +51,6 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param screenFileName screen file name
 	 */
-	GUITest(const string& screenFileName);
+	Installer();
 };
