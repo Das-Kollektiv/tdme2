@@ -1,6 +1,7 @@
 #include <tdme/tools/installer/Installer.h>
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/application/Application.h>
@@ -34,6 +35,7 @@ using tdme::tools::installer::Installer;
 
 using std::string;
 using std::to_string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::application::Application;
@@ -76,46 +78,55 @@ void Installer::initialize()
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
+		unordered_map<string, string> parameters = {
+			{"name", "TDME2"}
+		};
 		engine->getGUI()->addScreen(
 			"installer_welcome",
 			GUIParser::parse(
 				"resources/screens/installer",
-				"installer_welcome.xml"
+				"installer_welcome.xml",
+				parameters
 			)
 		);
 		engine->getGUI()->addScreen(
 			"installer_license",
 			GUIParser::parse(
 				"resources/screens/installer",
-				"installer_license.xml"
+				"installer_license.xml",
+				parameters
 			)
 		);
 		engine->getGUI()->addScreen(
 			"installer_components",
 			GUIParser::parse(
 				"resources/screens/installer",
-				"installer_components.xml"
+				"installer_components.xml",
+				parameters
 			)
 		);
 		engine->getGUI()->addScreen(
 			"installer_path",
 			GUIParser::parse(
 				"resources/screens/installer",
-				"installer_path.xml"
+				"installer_path.xml",
+				parameters
 			)
 		);
 		engine->getGUI()->addScreen(
 			"installer_installing",
 			GUIParser::parse(
 				"resources/screens/installer",
-				"installer_installing.xml"
+				"installer_installing.xml",
+				parameters
 			)
 		);
 		engine->getGUI()->addScreen(
 			"installer_finished",
 			GUIParser::parse(
 				"resources/screens/installer",
-				"installer_finished.xml"
+				"installer_finished.xml",
+				parameters
 			)
 		);
 		engine->getGUI()->resetRenderScreens();

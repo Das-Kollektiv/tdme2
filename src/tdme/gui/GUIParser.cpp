@@ -115,18 +115,25 @@ using tinyxml::TiXmlAttribute;
 
 map<string, GUIElement*> GUIParser::elements;
 
-GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName)
+GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
-	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName));
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters)
 {
+	// replace attributes from element
+	auto newXML = xml;
+	for (auto parametersIt: parameters) {
+		newXML = StringUtils::replace(newXML, "{$" + parametersIt.first + "}", escapeQuotes(parametersIt.second));
+	}
+
+	//
 	TiXmlDocument xmlDocument;
-	xmlDocument.Parse(xml.c_str());
+	xmlDocument.Parse(newXML.c_str());
 	if (xmlDocument.Error() == true) {
 		throw GUIParserException(
-			string("GUIParser::parse():: Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "': \n\n" + xml
+			string("GUIParser::parse():: Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + "': \n\n" + newXML
 		);
 	}
 	TiXmlElement* xmlRoot = xmlDocument.RootElement();

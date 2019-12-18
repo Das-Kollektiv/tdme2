@@ -5,7 +5,7 @@
 			<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Select a folder in the list below, then click OK." color="#000000" />
 			<space height="20"/>
 			<layout background-color="#ffffff" vertical-align="center" alignment="horizontal" width="100%" height="auto">
-				<input id="input-path" width="100%" maxlength="120" text="C:\Progamm Files\$Name" />
+				<input id="input-path" width="100%" maxlength="120" text="C:\Progamm Files\{$name}" />
 			</layout>
 			<space height="20"/>
 			<layout background-color="#ffffff" border="1" alignment="horizontal" width="100%" height="*">

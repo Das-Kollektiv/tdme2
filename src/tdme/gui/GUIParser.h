@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -15,6 +16,7 @@
 #include <ext/tinyxml/tinyxml.h>
 
 using std::map;
+using std::unordered_map;
 using std::vector;
 
 using tdme::gui::elements::GUIElement;
@@ -41,20 +43,22 @@ public:
 	 * Parses a GUI XML file
 	 * @param pathName path name
 	 * @param fileName file name
+	 * @param parameters parameters aka key value paris for substitution
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName);
+	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = unordered_map<string, string>());
 
 	/** 
 	 * Parses a GUI XML content
 	 * @param xml xml
+	 * @param parameters parameters aka key value paris for substitution
 	 * @return GUI screen node
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml);
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = unordered_map<string, string>());
 
 	/** 
 	 * Parses a GUI XML file into parent node

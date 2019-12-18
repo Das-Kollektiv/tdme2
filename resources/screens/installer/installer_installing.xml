@@ -6,7 +6,7 @@
 				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Installing" color="#000000" />
 				<space height="10"/>
 				<layout padding-left="40" vertical-align="center" alignment="horizontal" width="auto" height="auto">
-					<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Please wait while Setup installs $Name on your computer." color="#000000" />
+					<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Please wait while Setup installs {$name} on your computer." color="#000000" />
 				</layout>
 			</layout>
 			<space width="*"/>

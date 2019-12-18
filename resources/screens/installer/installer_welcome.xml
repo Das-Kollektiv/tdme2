@@ -7,9 +7,9 @@
 			</layout>
 			
 			<layout padding="20" alignment="vertical" width="66%" height="100%">
-				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Welcome to the $Name Setup" color="#000000" />
+				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Welcome to the {$name} Setup" color="#000000" />
 				<space height="40"/>
-				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="This will install $Name on your computer." color="#000000" />
+				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="This will install {$name} on your computer." color="#000000" />
 				<space height="10" />
 				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="It is recommended that you close all other applications" color="#000000" />
 				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="before continuing." color="#000000" />

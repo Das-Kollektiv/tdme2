@@ -6,7 +6,7 @@
 				<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Licence" color="#000000" />
 				<space height="10"/>
 				<layout padding-left="40" vertical-align="center" alignment="horizontal" width="auto" height="auto">
-					<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Please review the licence terms before installing $Name." color="#000000" />
+					<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Please review the licence terms before installing {$name}." color="#000000" />
 				</layout>
 			</layout>
 			<space width="*"/>
@@ -51,7 +51,7 @@
 			<space height="20"/>
 			
 			<text font="resources/gui-system/fonts/Roboto_20.fnt" text="If you accept the terms of the agreement, click I Agree to continue. You must accept" color="#000000" />
-			<text font="resources/gui-system/fonts/Roboto_20.fnt" text="the agreement to install $Name." color="#000000" />
+			<text font="resources/gui-system/fonts/Roboto_20.fnt" text="the agreement to install {$name}." color="#000000" />
 			
 			<!-- <space height="10"/> -->
 			
