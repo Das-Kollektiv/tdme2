@@ -13,7 +13,7 @@ cp *.md package/tdme2
 cp bin/tdme/tests/AngleTest package/tdme2
 cp bin/tdme/tests/AudioTest package/tdme2
 cp bin/tdme/tests/EngineTest package/tdme2
-cp bin/tdme/tests/GUITest package/tdme2
+cp bin/tdme/tests/FoliageTest package/tdme2
 cp bin/tdme/tests/LODTest package/tdme2
 cp bin/tdme/tests/PathFindingTest package/tdme2
 cp bin/tdme/tests/PhysicsTest1 package/tdme2
@@ -24,11 +24,13 @@ cp bin/tdme/tests/PivotTest package/tdme2
 cp bin/tdme/tests/RayTracingTest package/tdme2
 cp bin/tdme/tests/SkinningTest package/tdme2
 cp bin/tdme/tests/ThreadingTest package/tdme2
+cp bin/tdme/tests/TreeTest package/tdme2
 cp bin/tdme/tests/UDPClientTest package/tdme2
 cp bin/tdme/tests/UDPServerTest package/tdme2
 cp bin/tdme/tools/cli/converttotm package/tdme2
 cp bin/tdme/tests/WaterTest package/tdme2
 cp bin/tdme/tools/cli/levelfixmodelszup2yup package/tdme2
+cp bin/tdme/tools/gui/GUITest package/tdme2
 cp bin/tdme/tools/leveleditor/TDMELevelEditor package/tdme2
 cp bin/tdme/tools/modeleditor/TDMEModelEditor package/tdme2
 cp bin/tdme/tools/particlesystem/TDMEParticleSystem package/tdme2
