@@ -109,7 +109,7 @@ public:
 	 * @param pattern pattern
 	 * @return if patter matches
 	 */
-	static bool matches(const string& src, const string& pattern);
+	static bool regexMatch(const string& src, const string& pattern);
 
 	/**
 	 * Replace regex pattern with given string
@@ -117,7 +117,7 @@ public:
 	 * @param pattern pattern to search
 	 * @param by string that will replace pattern occurrances
 	 */
-	static const string replaceAll(const string& src, const string& pattern, const string& by);
+	static const string regexReplace(const string& src, const string& pattern, const string& by);
 
 };
 

@@ -907,7 +907,7 @@ void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, con
 	}
 
 	// replace remaining unset parameters with empty spaces
-	newGuiElementTemplateXML = StringUtils::replaceAll(newGuiElementTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
+	newGuiElementTemplateXML = StringUtils::regexReplace(newGuiElementTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
 
 	// replace inner XML
 	newGuiElementTemplateXML = StringUtils::replace(newGuiElementTemplateXML, "{__InnerXML__}", getInnerXml(node));

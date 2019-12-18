@@ -311,7 +311,7 @@ const string ArchiveFileSystem::getCanonicalPath(const string& pathName, const s
 	auto canonicalPathString = canonicalPath;
 	if (canonicalPathString.length() == 0 ||
 		(StringUtils::startsWith(canonicalPathString, "/") == false &&
-		StringUtils::matches(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
+		StringUtils::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + "/" + canonicalPathString;
 	}
 

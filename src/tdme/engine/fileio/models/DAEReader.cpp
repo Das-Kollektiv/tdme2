@@ -1237,7 +1237,7 @@ const string DAEReader::makeFileNameRelative(const string& fileName)
 {
 	// check if absolute path
 	if (StringUtils::startsWith(fileName, "/") == true ||
-		StringUtils::matches(fileName, "^[A-Z]\\:\\\\.*$") == true) {
+		StringUtils::regexMatch(fileName, "^[A-Z]\\:\\\\.*$") == true) {
 		int indexSlash = fileName.find_last_of(L'/');
 		int indexBackslash = fileName.find_last_of(L'\\');
 		if (indexSlash != -1 || indexBackslash != -1) {

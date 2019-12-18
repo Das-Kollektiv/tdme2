@@ -106,7 +106,7 @@ bool StandardFileSystem::isPath(const string& pathName) {
 }
 
 bool StandardFileSystem::isDrive(const string& pathName) {
-	return StringUtils::matches(pathName, "^[a-zA-Z]\\:[\\/\\\\]?$");
+	return StringUtils::regexMatch(pathName, "^[a-zA-Z]\\:[\\/\\\\]?$");
 }
 
 bool StandardFileSystem::fileExists(const string& fileName) {
@@ -238,7 +238,7 @@ const string StandardFileSystem::getCanonicalPath(const string& pathName, const 
 	auto canonicalPathString = canonicalPath;
 	if (canonicalPathString.length() == 0 ||
 		(StringUtils::startsWith(canonicalPathString, "/") == false &&
-		StringUtils::matches(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
+		StringUtils::regexMatch(canonicalPathString, "^[a-zA-Z]\\:.*$") == false)) {
 		canonicalPathString = getCurrentWorkingPathName() + "/" + canonicalPathString;
 	}
 

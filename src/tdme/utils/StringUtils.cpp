@@ -104,10 +104,10 @@ const string StringUtils::toUpperCase(const string& src) {
 	return result;
 }
 
-bool StringUtils::matches(const string& src, const string& pattern) {
+bool StringUtils::regexMatch(const string& src, const string& pattern) {
 	return regex_match(src, regex(pattern));
 }
 
-const string StringUtils::replaceAll(const string& src, const string& pattern, const string& by) {
+const string StringUtils::regexReplace(const string& src, const string& pattern, const string& by) {
 	return regex_replace(src, regex(pattern), by);
 }

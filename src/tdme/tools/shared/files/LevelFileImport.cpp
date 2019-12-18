@@ -251,8 +251,8 @@ void LevelFileImport::determineMeshGroups(LevelEditorLevel* level, Group* group,
 	auto groupId = group->getId();
 	if (parentName.length() > 0) groupId = parentName + "." + groupId;
 	auto modelName = groupId;
-	modelName = StringUtils::replaceAll(modelName, "[-_]{1}[0-9]+$", "");
-	modelName = StringUtils::replaceAll(modelName, "[0-9]+$", "");
+	modelName = StringUtils::regexReplace(modelName, "[-_]{1}[0-9]+$", "");
+	modelName = StringUtils::regexReplace(modelName, "[0-9]+$", "");
 	auto haveName = entityLibrary->getEntityCount() == 0;
 	if (haveName == false) {
 		for (auto i = 0; i < 10000; i++) {
