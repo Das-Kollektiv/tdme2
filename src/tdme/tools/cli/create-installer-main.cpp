@@ -40,6 +40,7 @@ namespace installer {
 		uint8_t compressed;
 		uint64_t bytesCompressed;
 		uint64_t offset;
+		bool executable;
 	};
 };
 };
@@ -79,8 +80,12 @@ void scanDirData(const string& folder, vector<string>& totalFiles) {
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
 				// fonts
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
-				//
+				// files without ending
 				if (fileName.find(".") == string::npos) return true;
+				// properties
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".properties") == true) return true;
+				// tdme archive
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".ta") == true) return true;
 				//
 				return false;
 			}
@@ -159,9 +164,7 @@ void scanDirBin(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
-void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName) {
-	Console::print(archiveFileName + ": Processing file: " + fileName);
-
+void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool binFile) {
 	// read content
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(
@@ -169,6 +172,14 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		FileSystem::getInstance()->getFileName(fileName),
 		content
 	);
+
+	auto fileNameToUse = fileName;
+	// remove prefix if requested
+	if (binFile == true && fileName.find_last_of('/') != string::npos) {
+		fileNameToUse = StringUtils::substring(fileName, fileName.find_last_of('/') + 1);
+	}
+
+	Console::print(archiveFileName + ": Processing file: " + fileNameToUse);
 
 	// append to archive
 	ofstream ofs(archiveFileName.c_str(), ofstream::binary | ofstream::app);
@@ -240,11 +251,12 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 
 	// store file information
 	FileInformation fileInformation;
-	fileInformation.name = fileName;
+	fileInformation.name = fileNameToUse;
 	fileInformation.bytes = content.size();
 	fileInformation.compressed = compressed;
 	fileInformation.bytesCompressed = bytesCompressed;
 	fileInformation.offset = fileOffset;
+	fileInformation.executable = binFile;
 	fileInformations.push_back(fileInformation);
 
 	// done
@@ -271,7 +283,7 @@ int main(int argc, char** argv)
 			continue;
 		}
 		//
-		string cpu = "X64";
+		string cpu = "x64";
 		string os;
 		#if defined(__FreeBSD__)
 			os = "FreeBSD";
@@ -306,7 +318,8 @@ int main(int argc, char** argv)
 
 		//
 		vector<FileInformation> fileInformations;
-		vector<string> files;
+		vector<string> filesData;
+		vector<string> filesBin;
 
 		// parse includes definitions
 		StringTokenizer t;
@@ -325,10 +338,10 @@ int main(int argc, char** argv)
 
 			// scan files
 			if (type == "bin") {
-				scanDirBin(installerProperties.get("bin_folder", "") + "/" +file, files);
+				scanDirBin(installerProperties.get("bin_folder", "") + "/" + file, filesBin);
 			} else
 			if (type == "data") {
-				scanDirData(file, files);
+				scanDirData(file, filesData);
 			} else {
 				Console::println("Set: " + to_string(setIdx) + ": type = " + type + " unsupported!");
 			}
@@ -338,8 +351,13 @@ int main(int argc, char** argv)
 		}
 
 		// add files to archive
-		for (auto fileName: files) {
-			processFile(fileName, fileInformations, "installer/" + setFileName);
+		for (auto fileName: filesData) {
+			processFile(fileName, fileInformations, "installer/" + setFileName, false);
+		}
+
+		// add files to archive
+		for (auto fileName: filesBin) {
+			processFile(fileName, fileInformations, "installer/" + setFileName, true);
 		}
 
 		// add file informations
@@ -355,6 +373,7 @@ int main(int argc, char** argv)
 				ofs.write((char*)&fileInformation.compressed, sizeof(fileInformation.compressed));
 				ofs.write((char*)&fileInformation.bytesCompressed, sizeof(fileInformation.bytesCompressed));
 				ofs.write((char*)&fileInformation.offset, sizeof(fileInformation.offset));
+				ofs.write((char*)&fileInformation.executable, sizeof(fileInformation.executable));
 			}
 			ofs.write((char*)&fileInformationOffsetEnd, sizeof(fileInformationOffsetEnd));
 			ofs.write((char*)&fileInformationOffset, sizeof(fileInformationOffset));

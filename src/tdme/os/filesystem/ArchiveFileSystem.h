@@ -33,6 +33,7 @@ private:
 		uint8_t compressed;
 		uint64_t bytesCompressed;
 		uint64_t offset;
+		bool executable;
 	};
 	Mutex ifsMutex;
 	ifstream ifs;

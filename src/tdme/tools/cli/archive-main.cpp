@@ -36,6 +36,7 @@ namespace archive {
 		uint8_t compressed;
 		uint64_t bytesCompressed;
 		uint64_t offset;
+		bool executable;
 	};
 };
 };
@@ -72,6 +73,10 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) return true;
 				// fonts
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
+				//
+				if (fileName.find(".") == string::npos) return true;
+				//
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".properties") == true) return true;
 				//
 				return false;
 			}
@@ -177,6 +182,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	fileInformation.compressed = compressed;
 	fileInformation.bytesCompressed = bytesCompressed;
 	fileInformation.offset = fileOffset;
+	fileInformation.executable = false;
 	fileInformations.push_back(fileInformation);
 
 	// done
@@ -228,6 +234,7 @@ int main(int argc, char** argv)
 			ofs.write((char*)&fileInformation.compressed, sizeof(fileInformation.compressed));
 			ofs.write((char*)&fileInformation.bytesCompressed, sizeof(fileInformation.bytesCompressed));
 			ofs.write((char*)&fileInformation.offset, sizeof(fileInformation.offset));
+			ofs.write((char*)&fileInformation.executable, sizeof(fileInformation.executable));
 		}
 		ofs.write((char*)&fileInformationOffsetEnd, sizeof(fileInformationOffsetEnd));
 		ofs.write((char*)&fileInformationOffset, sizeof(fileInformationOffset));

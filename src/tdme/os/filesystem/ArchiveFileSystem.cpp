@@ -57,6 +57,7 @@ ArchiveFileSystem::ArchiveFileSystem(): ifsMutex("afs-ifs-mutex")
 		ifs.read((char*)&fileInformation.compressed, sizeof(fileInformation.compressed));
 		ifs.read((char*)&fileInformation.bytesCompressed, sizeof(fileInformation.bytesCompressed));
 		ifs.read((char*)&fileInformation.offset, sizeof(fileInformation.offset));
+		ifs.read((char*)&fileInformation.executable, sizeof(fileInformation.executable));
 		fileInformations[fileInformation.name] = fileInformation;
 	}
 }
