@@ -18,6 +18,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -52,6 +53,7 @@ using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINodeController;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -65,6 +67,7 @@ using tdme::utils::MutableString;
 
 Installer::Installer()
 {
+	Application::setLimitFPS(true);
 	Tools::loadSettings(this);
 	this->engine = Engine::getInstance();
 	this->popUps = new PopUps();
@@ -98,6 +101,14 @@ void Installer::initialize()
 				"installer_license.xml",
 				parameters
 			)
+		);
+		dynamic_cast<GUIParentNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("scrollarea_licence_inner"))->replaceSubNodes(
+			string("<multiline-text font=\"resources/gui-system/fonts/Roboto_20.fnt\" color=\"#000000\" width=\"100%\" height=\"auto\">\n") +
+			string("	<![CDATA[\n") +
+			FileSystem::getStandardFileSystem()->getContentAsString(".", "LICENSE") +
+			string("	]]>\n") +
+			string("</multiline-text>\n"),
+			true
 		);
 		engine->getGUI()->addScreen(
 			"installer_components",
