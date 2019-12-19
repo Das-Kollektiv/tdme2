@@ -17,9 +17,11 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
@@ -28,7 +30,10 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/Properties.h>
+#include <tdme/utils/StringUtils.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
 
@@ -52,9 +57,11 @@ using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::controller::FileDialogScreenController;
@@ -63,7 +70,10 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::Integer;
 using tdme::utils::MutableString;
+using tdme::utils::Properties;
+using tdme::utils::StringUtils;
 
 Installer::Installer()
 {
@@ -81,9 +91,10 @@ void Installer::initialize()
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
+		installerProperties.load("resources/installer", "installer.properties");
 		unordered_map<string, string> parameters = {
-			{"name", "TDME2"},
-			{"diskspace", "300MB"},
+			{"name", installerProperties.get("name", "TDME2 based application")},
+			{"diskspace", installerProperties.get("diskspace", "Unknown")},
 			{"installfolder", "/home/andreas/Applications/TDME2"}
 		};
 		engine->getGUI()->addScreen(
@@ -117,6 +128,25 @@ void Installer::initialize()
 				"installer_components.xml",
 				parameters
 			)
+		);
+		string setsXML = "<space height=\"10\" />\n";
+		for (auto setIdx = 1; true; setIdx++) {
+			auto setName = installerProperties.get("set" + to_string(setIdx), "");
+			auto setRequired = StringUtils::trim(StringUtils::toLowerCase(installerProperties.get("set" + to_string(setIdx) + "_required", "false"))) == "true";
+			if (setName.empty() == true) break;
+			setsXML+=
+				string("<element id=\"component" + to_string(setIdx) + "\" width=\"100%\" height=\"25\">\n") +
+				string("	<layout width=\"100%\" alignment=\"horizontal\">\n") +
+				string("		<space width=\"10\" />\n") +
+				string("		<checkbox name=\"checkbox_component" + to_string(setIdx) + "\" value=\"1\" selected=\"true\" disabled=\"" + (setRequired == true?"true":"false") + "\" />\n") +
+				string("		<space width=\"10\" />\n") +
+				string("		<text width=\"*\" font=\"resources/gui-system/fonts/Roboto_20.fnt\" text=\"" + GUIParser::escapeQuotes(setName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
+				string("	</layout>\n") +
+				string("</element>\n");
+		}
+		dynamic_cast<GUIParentNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("scrollarea_components_inner"))->replaceSubNodes(
+			setsXML,
+			true
 		);
 		engine->getGUI()->addScreen(
 			"installer_path",
@@ -194,6 +224,10 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		} else
 		if (node->getId() == "button_finish") {
 			exit(0);
+		} else
+		if (StringUtils::startsWith(node->getId(), "component") == true) {
+			auto setIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
+			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("set" + to_string(setIdx) + "_description", "No detail description.")));
 		}
 	}
 	engine->getGUI()->resetRenderScreens();
@@ -243,4 +277,3 @@ void Installer::main(int argc, char** argv)
 	auto installer = new Installer();
 	installer->run(argc, argv, "Installer");
 }
-

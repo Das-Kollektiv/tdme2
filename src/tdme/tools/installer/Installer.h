@@ -10,6 +10,7 @@
 #include <tdme/tools/installer/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/utils/Properties.h>
 
 using std::string;
 
@@ -19,6 +20,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIChangeListener;
 using tdme::tools::shared::views::PopUps;
+using tdme::utils::Properties;
 
 /** 
  * Installer
@@ -33,6 +35,7 @@ private:
 	PopUps* popUps { nullptr };
 	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX };
 	Screen screen;
+	Properties installerProperties;
 
 public:
 	void initialize() override;
