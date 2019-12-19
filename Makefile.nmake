@@ -619,6 +619,7 @@ all: \
 	archive \
 	converttotm \
 	copyanimationsetups \
+	create-installer \
 	generatelicenses \
 	levelfixmodelszup2yup \
 	fixdoxygen \
@@ -731,6 +732,9 @@ converttotm:
 
 copyanimationsetups:
 	cl /Fecopyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+create-installer:
+    cl /Fecreate-installer $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/create-installer-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 generatelicenses:
 	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
