@@ -1,5 +1,8 @@
 #include <tdme/tools/installer/Installer.h>
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -91,11 +94,16 @@ void Installer::initialize()
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
+		#if defined(_WIN32)
+			homeFolder = string(getenv("USERPROFILE"));
+		#else
+			homeFolder = string(getenv("HOME"));
+		#endif
 		installerProperties.load("resources/installer", "installer.properties");
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
-			{"installfolder", "/home/andreas/Applications/TDME2"}
+			{"installfolder", homeFolder + "/Applications/" + installerProperties.get("name", "TDME2 based application")}
 		};
 		engine->getGUI()->addScreen(
 			"installer_welcome",
@@ -186,6 +194,8 @@ void Installer::initialize()
 		engine->getGUI()->getScreen("installer_finished")->addActionListener(this);
 		engine->getGUI()->getScreen("installer_finished")->addChangeListener(this);
 		engine->getGUI()->addRenderScreen("installer_welcome");
+		engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+		engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	} catch (Exception& exception) {
 		engine->getGUI()->resetRenderScreens();
 		engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
@@ -225,6 +235,36 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		if (node->getId() == "button_finish") {
 			exit(0);
 		} else
+		if (node->getId() == "button_browse") {
+			class OnBrowseAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					installer->popUps->getFileDialogScreenController()->close();
+					dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_path")->getNodeById("install_folder"))->getController()->setValue(MutableString(installer->popUps->getFileDialogScreenController()->getPathName() + "/" + installer->installerProperties.get("name", "TDME2 based application")));
+				}
+
+				/**
+				 * Public constructor
+				 * @param installer installer
+				 */
+				OnBrowseAction(Installer* installer): installer(installer) {
+				}
+
+			private:
+				Installer* installer;
+			};
+
+			vector<string> extensions;
+			popUps->getFileDialogScreenController()->show(
+				homeFolder,
+				"Install in: ",
+				extensions,
+				"",
+				true,
+				new OnBrowseAction(this)
+			);
+		}
 		if (StringUtils::startsWith(node->getId(), "component") == true) {
 			auto componentIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
 			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
@@ -251,6 +291,8 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			engine->getGUI()->addRenderScreen("installer_finished");
 			break;
 	}
+	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }
 
 void Installer::onValueChanged(GUIElementNode* node) {

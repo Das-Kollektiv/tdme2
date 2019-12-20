@@ -36,6 +36,7 @@ private:
 	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX };
 	Screen screen;
 	Properties installerProperties;
+	string homeFolder;
 
 public:
 	void initialize() override;
