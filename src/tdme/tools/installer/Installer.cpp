@@ -38,6 +38,7 @@
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Properties.h>
+#include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 
@@ -80,6 +81,7 @@ using tdme::utils::Exception;
 using tdme::utils::Integer;
 using tdme::utils::MutableString;
 using tdme::utils::Properties;
+using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 Installer::Installer(): installThreadMutex("install-thread-mutex")
@@ -338,60 +340,90 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							}
 							Console::println("InstallThread::run(): newest timestamp: " + timestamp);
 							auto hadException = false;
-							for (auto componentIdx = 1; true; componentIdx++) {
-								auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
-								if (componentName.empty() == true) break;
-								Console::println("InstallThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
-								auto componentInclude = installer->installerProperties.get("component" + to_string(componentIdx) + "_include", "");
-								if (componentInclude.empty() == true) {
-									Console::println("InstallThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
-									continue;
-								}
-								auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + timestamp + ".ta";
-								//
-								Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
-								//
-								installer->installThreadMutex.lock();
-								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentName));
-								dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
-								installer->installThreadMutex.unlock();
+							vector<string> log;
+							auto installPath = dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_path")->getNodeById("install_folder"))->getController()->getValue().getString();
+							try {
+								Installer::createPathRecursively(installPath);
+							} catch (Exception& exception) {
+								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+								hadException = true;
+							}
 
-								try {
-									auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
-									vector<string> files;
-									installer->scanArchive(archiveFileSystem, files);
-									uint64_t totalSize = 0LL;
-									uint64_t doneSize = 0LL;
-									for (auto file: files) {
-										totalSize+= archiveFileSystem->getFileSize(
-											archiveFileSystem->getPathName(file),
-											archiveFileSystem->getFileName(file)
-										);
+							if (hadException == false) {
+								for (auto componentIdx = 1; true; componentIdx++) {
+									auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
+									if (componentName.empty() == true) break;
+									Console::println("InstallThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
+									auto componentInclude = installer->installerProperties.get("component" + to_string(componentIdx) + "_include", "");
+									if (componentInclude.empty() == true) {
+										Console::println("InstallThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
+										continue;
 									}
-									for (auto file: files) {
-										vector<uint8_t> content;
-										Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": " + file);
-										archiveFileSystem->getContent(
-											archiveFileSystem->getPathName(file),
-											archiveFileSystem->getFileName(file),
-											content
-										);
-										doneSize+= archiveFileSystem->getFileSize(
-											archiveFileSystem->getPathName(file),
-											archiveFileSystem->getFileName(file)
-										);
-										installer->installThreadMutex.lock();
-										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(file));
-										dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(doneSize) / static_cast<float>(totalSize), 2));
-										installer->installThreadMutex.unlock();
+									auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + timestamp + ".ta";
+									//
+									Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
+									//
+									installer->installThreadMutex.lock();
+									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentName));
+									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+									installer->installThreadMutex.unlock();
+
+									try {
+										auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+										vector<string> files;
+										Installer::scanArchive(archiveFileSystem, files);
+										uint64_t totalSize = 0LL;
+										uint64_t doneSize = 0LL;
+										for (auto file: files) {
+											totalSize+= archiveFileSystem->getFileSize(
+												archiveFileSystem->getPathName(file),
+												archiveFileSystem->getFileName(file)
+											);
+										}
+										for (auto file: files) {
+											vector<uint8_t> content;
+											Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": " + file);
+											archiveFileSystem->getContent(
+												archiveFileSystem->getPathName(file),
+												archiveFileSystem->getFileName(file),
+												content
+											);
+											auto generatedFileName = installPath + "/" + file;
+											Installer::createPathRecursively(
+												FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
+											);
+											FileSystem::getStandardFileSystem()->setContent(
+												FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+												FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
+												content
+											);
+											log.push_back(generatedFileName);
+											doneSize+= archiveFileSystem->getFileSize(
+												archiveFileSystem->getPathName(file),
+												archiveFileSystem->getFileName(file)
+											);
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(file));
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(doneSize) / static_cast<float>(totalSize), 2));
+											installer->installThreadMutex.unlock();
+										}
+										delete archiveFileSystem;
+									} catch (Exception& exception) {
+										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+										hadException = true;
+										break;
 									}
-									delete archiveFileSystem;
-								} catch (Exception& exception) {
-									installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
-									hadException = true;
-									break;
 								}
 							}
+
+							try {
+								log.push_back(installPath);
+								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.db", log);
+							} catch (Exception& exception) {
+								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+								hadException = true;
+							}
+
 							//
 							if (hadException == false) {
 								installer->installThreadMutex.lock();
@@ -453,6 +485,20 @@ void Installer::scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>
 			totalFiles.push_back((pathName.empty() == true?"":pathName + "/") + fileName);
 		} else {
 			scanArchive(archiveFileSystem, totalFiles, pathName + "/" + fileName);
+		}
+	}
+
+}
+
+void Installer::createPathRecursively(const string& pathName) {
+	StringTokenizer t;
+	t.tokenize(pathName, "/");
+	string pathCreating;
+	while (t.hasMoreTokens() == true) {
+		string pathComponent = t.nextToken();
+		pathCreating+= "/" + pathComponent;
+		if (FileSystem::getStandardFileSystem()->fileExists(pathCreating) == false) {
+			FileSystem::getStandardFileSystem()->createPath(pathCreating);
 		}
 	}
 

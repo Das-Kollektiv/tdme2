@@ -49,8 +49,13 @@ private:
 	 * @param totalFiles total files
 	 * @param pathName path name
 	 */
-	void scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName = string());
+	static void scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName = string());
 
+	/**
+	 * Create a path recursively
+	 * @param pathName path name
+	 */
+	static void createPathRecursively(const string& pathName);
 public:
 	void initialize() override;
 	void dispose() override;
