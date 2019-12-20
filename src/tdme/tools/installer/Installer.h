@@ -7,6 +7,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/installer/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -19,6 +20,7 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIChangeListener;
+using tdme::os::threading::Mutex;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
 
@@ -37,6 +39,7 @@ private:
 	Screen screen;
 	Properties installerProperties;
 	string homeFolder;
+	Mutex installThreadMutex;
 
 public:
 	void initialize() override;

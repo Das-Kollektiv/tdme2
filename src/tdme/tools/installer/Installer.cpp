@@ -27,6 +27,7 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/tools/shared/controller/FileDialogScreenController.h>
 #include <tdme/tools/shared/controller/InfoDialogScreenController.h>
 #include <tdme/tools/shared/tools/Tools.h>
@@ -67,6 +68,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::Thread;
 using tdme::tools::shared::controller::FileDialogScreenController;
 using tdme::tools::shared::controller::InfoDialogScreenController;
 using tdme::tools::shared::tools::Tools;
@@ -78,7 +80,7 @@ using tdme::utils::MutableString;
 using tdme::utils::Properties;
 using tdme::utils::StringUtils;
 
-Installer::Installer()
+Installer::Installer(): installThreadMutex("install-thread-mutex")
 {
 	Application::setLimitFPS(true);
 	Tools::loadSettings(this);
@@ -285,8 +287,75 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			engine->getGUI()->addRenderScreen("installer_path");
 			break;
 		case SCREEN_INSTALLING:
-			engine->getGUI()->addRenderScreen("installer_installing");
-			break;
+			{
+				engine->getGUI()->addRenderScreen("installer_installing");
+				class InstallThread: public Thread {
+					public:
+						InstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
+						}
+						void run() {
+							Console::println("InstallThread::run(): init");
+							installer->installThreadMutex.lock();
+							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Initializing ..."));
+							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
+							dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+							installer->installThreadMutex.unlock();
+
+							//
+							string cpu = "x64";
+							string os;
+							#if defined(__FreeBSD__)
+								os = "FreeBSD";
+							#elif defined(__HAIKU__)
+								os = "Haiku";
+							#elif defined(__linux__)
+								os = "Linux";
+							#elif defined(__APPLE__)
+								os = "MacOSX";
+							#elif defined(__NetBSD__)
+								os = "NetBSD";
+							#elif defined(_MSC_VER)
+								os = "Windows-MSC";
+							#elif defined(_WIN32)
+								os = "Windows-MINGW";
+							#else
+								os = "Unknown";
+							#endif
+							auto completionFileName = os + "-" + cpu + "-upload-";
+							// determine newest component file name
+							string timestamp;
+							vector<string> files;
+							FileSystem::getInstance()->list("installer", files);
+							for (auto file: files) {
+								if (StringUtils::startsWith(file, completionFileName) == true) {
+									Console::println("InstallThread: Have timestamp: " + file);
+									timestamp = StringUtils::substring(file, completionFileName.size());
+								}
+							}
+							Console::println("InstallThread::run(): newest timestamp: " + timestamp);
+							for (auto componentIdx = 1; true; componentIdx++) {
+								auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
+								if (componentName.empty() == true) break;
+								Console::println("InstallThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
+								auto componentInclude = installer->installerProperties.get("component" + to_string(componentIdx) + "_include", "");
+								if (componentInclude.empty() == true) {
+									Console::println("InstallThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
+									continue;
+								}
+								auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + timestamp + ".ta";
+								//
+								Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
+							}
+							// determine set names
+							Console::println("InstallThread::run(): done");
+						}
+					private:
+						Installer* installer;
+				};
+				InstallThread* installThread = new InstallThread(this);
+				installThread->start();
+				break;
+			}
 		case SCREEN_FINISHED:
 			engine->getGUI()->addRenderScreen("installer_finished");
 			break;
@@ -302,9 +371,11 @@ void Installer::onValueChanged(GUIElementNode* node) {
 
 void Installer::display()
 {
+	installThreadMutex.lock();
 	engine->display();
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
+	installThreadMutex.unlock();
 }
 
 void Installer::main(int argc, char** argv)

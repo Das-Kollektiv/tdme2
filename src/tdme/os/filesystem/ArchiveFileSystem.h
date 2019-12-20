@@ -68,6 +68,6 @@ public:
 	void createPath(const string& pathName) override;
 	void removePath(const string& pathName) override;
 	void removeFile(const string& pathName, const string& fileName) override;
-	ArchiveFileSystem();
+	ArchiveFileSystem(const string& fileName = "archive.ta");
 	virtual ~ArchiveFileSystem();
 };

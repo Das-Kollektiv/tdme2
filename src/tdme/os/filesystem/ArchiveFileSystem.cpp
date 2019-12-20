@@ -28,12 +28,12 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-ArchiveFileSystem::ArchiveFileSystem(): ifsMutex("afs-ifs-mutex")
+ArchiveFileSystem::ArchiveFileSystem(const string& fileName): ifsMutex("afs-ifs-mutex")
 {
 	// open
-	ifs.open("archive.ta", ifstream::binary);
+	ifs.open(fileName.c_str(), ifstream::binary);
 	if (ifs.is_open() == false) {
-		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): archive.ta");
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + fileName);
 	}
 
 	// read toc offset

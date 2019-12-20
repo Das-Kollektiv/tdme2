@@ -379,5 +379,14 @@ int main(int argc, char** argv)
 			ofs.write((char*)&fileInformationOffset, sizeof(fileInformationOffset));
 			ofs.close();
 		}
+
+		// add completion file
+		auto completionFileName = os + "-" + cpu + "-upload-" + fileNameTime;
+		// reset archive
+		{
+			ofstream ofs("installer/" + completionFileName, ofstream::binary | ofstream::trunc);
+			ofs.close();
+		}
+
 	}
 }
