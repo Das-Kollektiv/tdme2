@@ -126,6 +126,10 @@ bool ArchiveFileSystem::isExecutable(const string& pathName, const string& fileN
 	return fileInformation.executable;
 }
 
+void ArchiveFileSystem::setExecutable(const string& pathName, const string& fileName) {
+	throw FileSystemException("ArchiveFileSystem::createPath(): Not implemented yet");
+}
+
 uint64_t ArchiveFileSystem::getFileSize(const string& pathName, const string& fileName) {
 	// compose relative file name and remove ./
 	auto relativeFileName = pathName + "/" + fileName;

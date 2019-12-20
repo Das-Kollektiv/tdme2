@@ -397,11 +397,14 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 												FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
 												content
 											);
+											if (archiveFileSystem->isExecutable(archiveFileSystem->getPathName(file), archiveFileSystem->getFileName(file)) == true) {
+												FileSystem::getStandardFileSystem()->setExecutable(
+													FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+													FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
+												);
+											}
 											log.push_back(generatedFileName);
-											doneSize+= archiveFileSystem->getFileSize(
-												archiveFileSystem->getPathName(file),
-												archiveFileSystem->getFileName(file)
-											);
+											doneSize+= content.size();
 											installer->installThreadMutex.lock();
 											dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(file));
 											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(doneSize) / static_cast<float>(totalSize), 2));

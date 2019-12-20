@@ -115,8 +115,23 @@ bool StandardFileSystem::fileExists(const string& fileName) {
 }
 
 bool StandardFileSystem::isExecutable(const string& pathName, const string& fileName) {
-	// TODO: implement me!
-	return false;
+	struct stat s;
+	if (stat((pathName + "/" + fileName).c_str(), &s) != 0) return false;
+	return (s.st_mode & S_IXUSR) == S_IXUSR;
+}
+
+void StandardFileSystem::setExecutable(const string& pathName, const string& fileName) {
+	struct stat s;
+	if (stat((pathName + "/" + fileName).c_str(), &s) != 0) {
+		throw FileSystemException("Unable to set file to executable(" + to_string(errno) + "): " + pathName + "/" + fileName);
+	}
+	auto newMode = s.st_mode;
+	if ((s.st_mode & S_IRUSR) == S_IRUSR && (s.st_mode & S_IXUSR) == 0) newMode|= S_IXUSR;
+	if ((s.st_mode & S_IRGRP) == S_IRGRP && (s.st_mode & S_IXGRP) == 0) newMode|= S_IXGRP;
+	if ((s.st_mode & S_IROTH) == S_IROTH && (s.st_mode & S_IXOTH) == 0) newMode|= S_IXOTH;
+	if (chmod ((pathName + "/" + fileName).c_str(), newMode) < 0) {
+		throw FileSystemException("Unable to set file to executable(" + to_string(errno) + "): " + pathName + "/" + fileName);
+	}
 }
 
 uint64_t StandardFileSystem::getFileSize(const string& pathName, const string& fileName) {

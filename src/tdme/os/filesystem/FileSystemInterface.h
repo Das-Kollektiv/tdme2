@@ -139,6 +139,15 @@ struct tdme::os::filesystem::FileSystemInterface
 	virtual bool isExecutable(const string& pathName, const string& fileName) = 0;
 
 	/**
+	 * Set up file to be an executable file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @return success
+	 * @throws tdme::os::filesystem::FileSystemException
+	 */
+	virtual void setExecutable(const string& pathName, const string& fileName) = 0;
+
+	/**
 	 * Get canonical path name
 	 * @param pathName path name
 	 * @param fileName file name
