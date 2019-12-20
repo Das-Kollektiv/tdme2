@@ -114,6 +114,22 @@ bool StandardFileSystem::fileExists(const string& fileName) {
 	return stat(fileName.c_str(), &s) == 0;
 }
 
+bool StandardFileSystem::isExecutable(const string& pathName, const string& fileName) {
+	// TODO: implement me!
+	return false;
+}
+
+uint64_t StandardFileSystem::getFileSize(const string& pathName, const string& fileName) {
+	ifstream ifs(getFileName(pathName, fileName).c_str(), ifstream::binary);
+	if (ifs.is_open() == false) {
+		throw FileSystemException("Unable to open file for reading(" + to_string(errno) + "): " + pathName + "/" + fileName);
+	}
+	ifs.seekg( 0, ios::end );
+	size_t size = ifs.tellg();
+	ifs.close();
+	return size;
+}
+
 const string StandardFileSystem::getContentAsString(const string& pathName, const string& fileName) {
 	ifstream ifs(getFileName(pathName, fileName).c_str());
 	if (ifs.is_open() == false) {

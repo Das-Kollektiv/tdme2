@@ -93,6 +93,36 @@ bool ArchiveFileSystem::fileExists(const string& fileName) {
 	return fileInformations.find(relativeFileName) != fileInformations.end();
 }
 
+bool ArchiveFileSystem::isExecutable(const string& pathName, const string& fileName) {
+	// compose relative file name and remove ./
+	auto relativeFileName = pathName + "/" + fileName;
+	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
+
+	// determine file
+	auto fileInformationIt = fileInformations.find(relativeFileName);
+	if (fileInformationIt == fileInformations.end()) {
+		throw FileSystemException("Unable to open file for reading: " + relativeFileName);
+	}
+	auto& fileInformation = fileInformationIt->second;
+	//
+	return fileInformation.executable;
+}
+
+uint64_t ArchiveFileSystem::getFileSize(const string& pathName, const string& fileName) {
+	// compose relative file name and remove ./
+	auto relativeFileName = pathName + "/" + fileName;
+	if (StringUtils::startsWith(relativeFileName, "./")  == true) relativeFileName = StringUtils::substring(relativeFileName, 2);
+
+	// determine file
+	auto fileInformationIt = fileInformations.find(relativeFileName);
+	if (fileInformationIt == fileInformations.end()) {
+		throw FileSystemException("Unable to open file for reading: " + relativeFileName);
+	}
+	auto& fileInformation = fileInformationIt->second;
+	//
+	return fileInformation.bytes;
+}
+
 void ArchiveFileSystem::decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent) {
 	// see: https://www.zlib.net/zpipe.c
 

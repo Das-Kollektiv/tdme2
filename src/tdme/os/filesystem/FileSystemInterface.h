@@ -37,6 +37,14 @@ struct tdme::os::filesystem::FileSystemInterface
 	virtual const string getFileName(const string& pathName, const string& fileName) = 0;
 
 	/**
+	 * Return file size of given file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @return file size
+	 */
+	virtual uint64_t getFileSize(const string& pathName, const string& fileName) = 0;
+
+	/**
 	 * Get content as string
 	 * @param pathName path name
 	 * @param fileName file name
@@ -121,6 +129,14 @@ struct tdme::os::filesystem::FileSystemInterface
 	 * @return bool if file exists
 	 */
 	virtual bool fileExists(const string& fileName) = 0;
+
+	/**
+	 * Returns if file is a executable file
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @return is executable
+	 */
+	virtual bool isExecutable(const string& pathName, const string& fileName) = 0;
 
 	/**
 	 * Get canonical path name

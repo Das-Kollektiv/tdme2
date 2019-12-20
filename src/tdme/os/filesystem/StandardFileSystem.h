@@ -27,6 +27,8 @@ public:
 	bool isPath(const string& pathName) override;
 	bool isDrive(const string& pathName) override;
 	bool fileExists(const string& fileName) override;
+	bool isExecutable(const string& pathName, const string& fileName) override;
+	uint64_t getFileSize(const string& pathName, const string& fileName) override;
 	const string getContentAsString(const string& pathName, const string& fileName) override;
 	void setContentFromString(const string& pathName, const string& fileName, const string& content) override;
 	void getContent(const string& pathName, const string& fileName, vector<uint8_t>& content) override;
