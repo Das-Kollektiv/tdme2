@@ -152,7 +152,7 @@ void Installer::initialize()
 				string("<element id=\"component" + to_string(componentIdx) + "\" width=\"100%\" height=\"25\">\n") +
 				string("	<layout width=\"100%\" alignment=\"horizontal\">\n") +
 				string("		<space width=\"10\" />\n") +
-				string("		<checkbox name=\"checkbox_component" + to_string(componentIdx) + "\" value=\"1\" selected=\"true\" disabled=\"" + (componentRequired == true?"true":"false") + "\" />\n") +
+				string("		<checkbox id=\"checkbox_component" + to_string(componentIdx) + "\" name=\"checkbox_component" + to_string(componentIdx) + "\" value=\"1\" selected=\"true\" disabled=\"" + (componentRequired == true?"true":"false") + "\" />\n") +
 				string("		<space width=\"10\" />\n") +
 				string("		<text width=\"*\" font=\"resources/gui-system/fonts/Roboto_20.fnt\" text=\"" + GUIParser::escapeQuotes(componentName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
 				string("	</layout>\n") +
@@ -341,6 +341,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							Console::println("InstallThread::run(): newest timestamp: " + timestamp);
 							auto hadException = false;
 							vector<string> log;
+							vector<string> components;
 							auto installPath = dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_path")->getNodeById("install_folder"))->getController()->getValue().getString();
 							try {
 								Installer::createPathRecursively(installPath);
@@ -351,8 +352,17 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 
 							if (hadException == false) {
 								for (auto componentIdx = 1; true; componentIdx++) {
+									//
 									auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
 									if (componentName.empty() == true) break;
+
+									// check if marked
+									if (dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_components")->getNodeById("checkbox_component" + to_string(componentIdx)))->getController()->getValue().equals("1") == false) continue;
+
+									//
+									components.push_back(componentName);
+
+									//
 									Console::println("InstallThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
 									auto componentInclude = installer->installerProperties.get("component" + to_string(componentIdx) + "_include", "");
 									if (componentInclude.empty() == true) {
@@ -421,7 +431,8 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 
 							try {
 								log.push_back(installPath);
-								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.db", log);
+								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.files.db", log);
+								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.components.db", components);
 							} catch (Exception& exception) {
 								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 								hadException = true;
