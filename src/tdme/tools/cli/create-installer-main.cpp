@@ -49,7 +49,7 @@ namespace installer {
 
 using tdme::tools::cli::installer::FileInformation;
 
-void scanDirData(const string& folder, vector<string>& totalFiles) {
+void scanDirResources(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -109,13 +109,13 @@ void scanDirData(const string& folder, vector<string>& totalFiles) {
 			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
 				totalFiles.push_back(folder + "/" + fileName);
 			} else {
-				scanDirData(folder + "/" + fileName, totalFiles);
+				scanDirResources(folder + "/" + fileName, totalFiles);
 			}
 		}
 	}
 }
 
-void scanDirBin(const string& folder, vector<string>& totalFiles) {
+void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -158,13 +158,13 @@ void scanDirBin(const string& folder, vector<string>& totalFiles) {
 			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
 				totalFiles.push_back(folder + "/" + fileName);
 			} else {
-				scanDirBin(folder + "/" + fileName, totalFiles);
+				scanDirExecutables(folder + "/" + fileName, totalFiles);
 			}
 		}
 	}
 }
 
-void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool binFile) {
+void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool executableFile) {
 	// read content
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(
@@ -175,7 +175,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 
 	auto fileNameToUse = fileName;
 	// remove prefix if requested
-	if (binFile == true && fileName.find_last_of('/') != string::npos) {
+	if (executableFile == true && fileName.find_last_of('/') != string::npos) {
 		fileNameToUse = StringUtils::substring(fileName, fileName.find_last_of('/') + 1);
 	}
 
@@ -256,7 +256,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 	fileInformation.compressed = compressed;
 	fileInformation.bytesCompressed = bytesCompressed;
 	fileInformation.offset = fileOffset;
-	fileInformation.executable = binFile;
+	fileInformation.executable = executableFile;
 	fileInformations.push_back(fileInformation);
 
 	// done
@@ -273,13 +273,13 @@ int main(int argc, char** argv)
 
 	Properties installerProperties;
 	installerProperties.load("resources/installer", "installer.properties");
-	for (auto setIdx = 1; true; setIdx++) {
-		auto setName = installerProperties.get("set" + to_string(setIdx), "");
-		if (setName.empty() == true) break;
-		Console::println("Having set: " + to_string(setIdx) + ": " + setName);
-		auto setInclude = installerProperties.get("set" + to_string(setIdx) + "_include", "");
-		if (setInclude.empty() == true) {
-			Console::println("Set: " + to_string(setIdx) + ": missing includes. Skipping.");
+	for (auto componentIdx = 1; true; componentIdx++) {
+		auto componentName = installerProperties.get("component" + to_string(componentIdx), "");
+		if (componentName.empty() == true) break;
+		Console::println("Having component: " + to_string(componentIdx) + ": " + componentName);
+		auto componentInclude = installerProperties.get("component" + to_string(componentIdx) + "_include", "");
+		if (componentInclude.empty() == true) {
+			Console::println("component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 			continue;
 		}
 		//
@@ -302,9 +302,9 @@ int main(int argc, char** argv)
 		#else
 			os = "Unknown";
 		#endif
-		auto setFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(setName, " - ", "-"), " ", "-") + "-" + fileNameTime + ".ta";
+		auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + fileNameTime + ".ta";
 		//
-		Console::println("Set: " + to_string(setIdx) + ": set file name: " + setFileName);
+		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 
 		if (FileSystem::getInstance()->fileExists("installer") == false) {
 			FileSystem::getInstance()->createPath("installer");
@@ -312,7 +312,7 @@ int main(int argc, char** argv)
 
 		// reset archive
 		{
-			ofstream ofs("installer/" + setFileName, ofstream::binary | ofstream::trunc);
+			ofstream ofs("installer/" + componentFileName, ofstream::binary | ofstream::trunc);
 			ofs.close();
 		}
 
@@ -324,45 +324,45 @@ int main(int argc, char** argv)
 		// parse includes definitions
 		StringTokenizer t;
 		StringTokenizer t2;
-		t.tokenize(setInclude, ",");
+		t.tokenize(componentInclude, ",");
 		while (t.hasMoreTokens() == true) {
-			auto setIncludeDefinition = t.nextToken();
-			t2.tokenize(setIncludeDefinition, ":");
+			auto componentIncludeDefinition = t.nextToken();
+			t2.tokenize(componentIncludeDefinition, ":");
 			string type = t2.hasMoreTokens() == true?t2.nextToken():"";
 			string file = t2.hasMoreTokens() == true?t2.nextToken():"";
 			if (type.empty() == true || file.empty() == true) {
-				Console::println("Set: " + to_string(setIdx) + ": type or file empty. Skipping");
+				Console::println("Component: " + to_string(componentIdx) + ": type or file empty. Skipping");
 				continue;
 			}
-			Console::println("Set: " + to_string(setIdx) + ": type = " + type + "; file = " + file);
+			Console::println("Component: " + to_string(componentIdx) + ": type = " + type + "; file = " + file);
 
 			// scan files
-			if (type == "bin") {
-				scanDirBin(installerProperties.get("bin_folder", "") + "/" + file, filesBin);
+			if (type == "exe") {
+				scanDirExecutables(installerProperties.get("bin_folder", "") + "/" + file, filesBin);
 			} else
-			if (type == "data") {
-				scanDirData(file, filesData);
+			if (type == "res") {
+				scanDirResources(file, filesData);
 			} else {
-				Console::println("Set: " + to_string(setIdx) + ": type = " + type + " unsupported!");
+				Console::println("Component: " + to_string(componentIdx) + ": type = " + type + " unsupported!");
 			}
 
 			// process files
-			Console::println("Set: " + to_string(setIdx) + ": Processing files");
+			Console::println("Component: " + to_string(componentIdx) + ": Processing files");
 		}
 
 		// add files to archive
 		for (auto fileName: filesData) {
-			processFile(fileName, fileInformations, "installer/" + setFileName, false);
+			processFile(fileName, fileInformations, "installer/" + componentFileName, false);
 		}
 
 		// add files to archive
 		for (auto fileName: filesBin) {
-			processFile(fileName, fileInformations, "installer/" + setFileName, true);
+			processFile(fileName, fileInformations, "installer/" + componentFileName, true);
 		}
 
 		// add file informations
 		{
-			ofstream ofs("installer/" + setFileName, ofstream::binary | ofstream::app);
+			ofstream ofs("installer/" + componentFileName, ofstream::binary | ofstream::app);
 			uint32_t fileInformationOffsetEnd = 0LL;
 			uint64_t fileInformationOffset = ofs.tellp();
 			for (auto& fileInformation: fileInformations) {

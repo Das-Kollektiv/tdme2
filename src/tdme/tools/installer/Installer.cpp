@@ -129,23 +129,23 @@ void Installer::initialize()
 				parameters
 			)
 		);
-		string setsXML = "<space height=\"10\" />\n";
-		for (auto setIdx = 1; true; setIdx++) {
-			auto setName = installerProperties.get("set" + to_string(setIdx), "");
-			auto setRequired = StringUtils::trim(StringUtils::toLowerCase(installerProperties.get("set" + to_string(setIdx) + "_required", "false"))) == "true";
-			if (setName.empty() == true) break;
-			setsXML+=
-				string("<element id=\"component" + to_string(setIdx) + "\" width=\"100%\" height=\"25\">\n") +
+		string componentsXML = "<space height=\"10\" />\n";
+		for (auto componentIdx = 1; true; componentIdx++) {
+			auto componentName = installerProperties.get("component" + to_string(componentIdx), "");
+			auto componentRequired = StringUtils::trim(StringUtils::toLowerCase(installerProperties.get("component" + to_string(componentIdx) + "_required", "false"))) == "true";
+			if (componentName.empty() == true) break;
+			componentsXML+=
+				string("<element id=\"component" + to_string(componentIdx) + "\" width=\"100%\" height=\"25\">\n") +
 				string("	<layout width=\"100%\" alignment=\"horizontal\">\n") +
 				string("		<space width=\"10\" />\n") +
-				string("		<checkbox name=\"checkbox_component" + to_string(setIdx) + "\" value=\"1\" selected=\"true\" disabled=\"" + (setRequired == true?"true":"false") + "\" />\n") +
+				string("		<checkbox name=\"checkbox_component" + to_string(componentIdx) + "\" value=\"1\" selected=\"true\" disabled=\"" + (componentRequired == true?"true":"false") + "\" />\n") +
 				string("		<space width=\"10\" />\n") +
-				string("		<text width=\"*\" font=\"resources/gui-system/fonts/Roboto_20.fnt\" text=\"" + GUIParser::escapeQuotes(setName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
+				string("		<text width=\"*\" font=\"resources/gui-system/fonts/Roboto_20.fnt\" text=\"" + GUIParser::escapeQuotes(componentName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
 				string("	</layout>\n") +
 				string("</element>\n");
 		}
 		dynamic_cast<GUIParentNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("scrollarea_components_inner"))->replaceSubNodes(
-			setsXML,
+			componentsXML,
 			true
 		);
 		engine->getGUI()->addScreen(
@@ -226,8 +226,8 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			exit(0);
 		} else
 		if (StringUtils::startsWith(node->getId(), "component") == true) {
-			auto setIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
-			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("set" + to_string(setIdx) + "_description", "No detail description.")));
+			auto componentIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
+			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
 		}
 	}
 	engine->getGUI()->resetRenderScreens();
