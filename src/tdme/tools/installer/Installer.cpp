@@ -25,6 +25,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
@@ -66,6 +67,7 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
@@ -324,12 +326,14 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							auto completionFileName = os + "-" + cpu + "-upload-";
 							// determine newest component file name
 							string timestamp;
-							vector<string> files;
-							FileSystem::getInstance()->list("installer", files);
-							for (auto file: files) {
-								if (StringUtils::startsWith(file, completionFileName) == true) {
-									Console::println("InstallThread: Have timestamp: " + file);
-									timestamp = StringUtils::substring(file, completionFileName.size());
+							{
+								vector<string> files;
+								FileSystem::getInstance()->list("installer", files);
+								for (auto file: files) {
+									if (StringUtils::startsWith(file, completionFileName) == true) {
+										Console::println("InstallThread: Have timestamp: " + file);
+										timestamp = StringUtils::substring(file, completionFileName.size());
+									}
 								}
 							}
 							Console::println("InstallThread::run(): newest timestamp: " + timestamp);
@@ -345,6 +349,42 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 								auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + timestamp + ".ta";
 								//
 								Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
+								//
+								installer->installThreadMutex.lock();
+								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentFileName));
+								dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+								installer->installThreadMutex.unlock();
+
+								{
+									auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+									vector<string> files;
+									installer->scanArchive(archiveFileSystem, files);
+									uint64_t totalSize = 0LL;
+									uint64_t doneSize = 0LL;
+									for (auto file: files) {
+										totalSize+= archiveFileSystem->getFileSize(
+											archiveFileSystem->getPathName(file),
+											archiveFileSystem->getFileName(file)
+										);
+									}
+									for (auto file: files) {
+										doneSize+= archiveFileSystem->getFileSize(
+											archiveFileSystem->getPathName(file),
+											archiveFileSystem->getFileName(file)
+										);
+										installer->installThreadMutex.lock();
+										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(file));
+										dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(doneSize / totalSize, 2));
+										installer->installThreadMutex.unlock();
+									}
+									delete archiveFileSystem;
+								}
+
+								installer->installThreadMutex.lock();
+								installer->screen = SCREEN_FINISHED;
+								installer->engine->getGUI()->resetRenderScreens();
+								installer->engine->getGUI()->addRenderScreen("installer_finished");
+								installer->installThreadMutex.unlock();
 							}
 							// determine set names
 							Console::println("InstallThread::run(): done");
@@ -389,4 +429,17 @@ void Installer::main(int argc, char** argv)
 	}
 	auto installer = new Installer();
 	installer->run(argc, argv, "Installer");
+}
+
+void Installer::scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName) {
+	vector<string> files;
+	archiveFileSystem->list(pathName, files);
+	for (auto fileName: files) {
+		if (archiveFileSystem->isPath(pathName + "/" + fileName) == false) {
+			totalFiles.push_back(pathName + "/" + fileName);
+		} else {
+			scanArchive(archiveFileSystem, totalFiles, pathName + "/" + fileName);
+		}
+	}
+
 }

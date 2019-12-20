@@ -73,7 +73,24 @@ const string ArchiveFileSystem::getFileName(const string& pathName, const string
 
 void ArchiveFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives)
 {
-	throw FileSystemException("ArchiveFileSystem::list(): Not implemented yet");
+	auto _pathName = pathName;
+	if (StringUtils::endsWith(pathName, "/") == false) _pathName+= "/";
+	for (auto& fileInformationIt: fileInformations) {
+		auto fileName = fileInformationIt.second.name;
+		if (StringUtils::startsWith(fileName, _pathName) == true) {
+			try {
+				if (filter != nullptr && filter->accept(
+					getPathName(fileName),
+					getFileName(fileName)
+				) == false) continue;
+			} catch (Exception& exception) {
+				Console::println("StandardFileSystem::list(): Filter::accept(): " + pathName + "/" + fileName + ": " + exception.what());
+				continue;
+			}
+			files.push_back(StringUtils::substring(fileName, pathName.size()));
+		}
+	}
+	sort(files.begin(), files.end());
 }
 
 bool ArchiveFileSystem::isPath(const string& pathName) {

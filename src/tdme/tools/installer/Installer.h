@@ -7,6 +7,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/installer/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
@@ -20,6 +21,7 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListener_Type;
 using tdme::gui::events::GUIChangeListener;
+using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Properties;
@@ -36,10 +38,18 @@ private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
 	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX };
-	Screen screen;
+	volatile Screen screen;
 	Properties installerProperties;
 	string homeFolder;
 	Mutex installThreadMutex;
+
+	/**
+	 * Scan archive file system
+	 * @oaram archive archive file system
+	 * @param totalFiles total files
+	 * @param pathName path name
+	 */
+	void scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName = string());
 
 public:
 	void initialize() override;
