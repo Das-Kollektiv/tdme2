@@ -337,6 +337,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 								}
 							}
 							Console::println("InstallThread::run(): newest timestamp: " + timestamp);
+							auto hadException = false;
 							for (auto componentIdx = 1; true; componentIdx++) {
 								auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
 								if (componentName.empty() == true) break;
@@ -351,11 +352,11 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 								Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 								//
 								installer->installThreadMutex.lock();
-								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentFileName));
+								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentName));
 								dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
 								installer->installThreadMutex.unlock();
 
-								{
+								try {
 									auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
 									vector<string> files;
 									installer->scanArchive(archiveFileSystem, files);
@@ -368,18 +369,31 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 										);
 									}
 									for (auto file: files) {
+										vector<uint8_t> content;
+										Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": " + file);
+										archiveFileSystem->getContent(
+											archiveFileSystem->getPathName(file),
+											archiveFileSystem->getFileName(file),
+											content
+										);
 										doneSize+= archiveFileSystem->getFileSize(
 											archiveFileSystem->getPathName(file),
 											archiveFileSystem->getFileName(file)
 										);
 										installer->installThreadMutex.lock();
 										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(file));
-										dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(doneSize / totalSize, 2));
+										dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(doneSize) / static_cast<float>(totalSize), 2));
 										installer->installThreadMutex.unlock();
 									}
 									delete archiveFileSystem;
+								} catch (Exception& exception) {
+									installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+									hadException = true;
+									break;
 								}
-
+							}
+							//
+							if (hadException == false) {
 								installer->installThreadMutex.lock();
 								installer->screen = SCREEN_FINISHED;
 								installer->engine->getGUI()->resetRenderScreens();
@@ -436,7 +450,7 @@ void Installer::scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>
 	archiveFileSystem->list(pathName, files);
 	for (auto fileName: files) {
 		if (archiveFileSystem->isPath(pathName + "/" + fileName) == false) {
-			totalFiles.push_back(pathName + "/" + fileName);
+			totalFiles.push_back((pathName.empty() == true?"":pathName + "/") + fileName);
 		} else {
 			scanArchive(archiveFileSystem, totalFiles, pathName + "/" + fileName);
 		}

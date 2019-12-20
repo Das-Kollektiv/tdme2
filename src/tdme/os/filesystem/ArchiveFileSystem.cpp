@@ -73,8 +73,9 @@ const string ArchiveFileSystem::getFileName(const string& pathName, const string
 
 void ArchiveFileSystem::list(const string& pathName, vector<string>& files, FileNameFilter* filter, bool addDrives)
 {
+	// TODO: this currently lists all files beginning from given path, also files in sub folders
 	auto _pathName = pathName;
-	if (StringUtils::endsWith(pathName, "/") == false) _pathName+= "/";
+	if (_pathName.empty() == false && StringUtils::endsWith(pathName, "/") == false) _pathName+= "/";
 	for (auto& fileInformationIt: fileInformations) {
 		auto fileName = fileInformationIt.second.name;
 		if (StringUtils::startsWith(fileName, _pathName) == true) {
@@ -94,11 +95,11 @@ void ArchiveFileSystem::list(const string& pathName, vector<string>& files, File
 }
 
 bool ArchiveFileSystem::isPath(const string& pathName) {
-	throw FileSystemException("ArchiveFileSystem::isPath(): Not implemented yet");
+	return false;
 }
 
 bool ArchiveFileSystem::isDrive(const string& pathName) {
-	throw FileSystemException("ArchiveFileSystem::isDrive(): Not implemented yet");
+	return false;
 }
 
 bool ArchiveFileSystem::fileExists(const string& fileName) {
