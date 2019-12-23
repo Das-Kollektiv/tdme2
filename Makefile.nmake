@@ -439,7 +439,7 @@ EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinystr.cpp \
 	ext/tinyxml/tinyxml.cpp \
 	ext/tinyxml/tinyxmlerror.cpp \
-	ext/tinyxml/tinyxmlparser.cpp \
+	ext/tinyxml/tinyxmlparser.cpp
 
 EXT_ZLIB_SRCS = \
 	ext/zlib/adler32.c \
@@ -456,7 +456,7 @@ EXT_ZLIB_SRCS = \
 	ext/zlib/gzclose.c \
 	ext/zlib/gzlib.c \
 	ext/zlib/gzread.c \
-	ext/zlib/gzwrite.c  \
+	ext/zlib/gzwrite.c
 
 EXT_LIBPNG_SRCS = \
 	ext/libpng/pngrio.c \
@@ -473,7 +473,7 @@ EXT_LIBPNG_SRCS = \
 	ext/libpng/pngread.c \
 	ext/libpng/pngrutil.c \
 	ext/libpng/png.c \
-	ext/libpng/pngrtran.c \
+	ext/libpng/pngrtran.c
 
 EXT_VORBIS_SRCS = \
 	ext/vorbis/analysis.c \
@@ -499,11 +499,14 @@ EXT_VORBIS_SRCS = \
 	ext/vorbis/synthesis.c \
 	ext/vorbis/vorbisenc.c \
 	ext/vorbis/vorbisfile.c \
-	ext/vorbis/window.c \
+	ext/vorbis/window.c
 
 EXT_OGG_SRCS = \
 	ext/ogg/bitwise.c \
-	ext/ogg/framing.c \
+	ext/ogg/framing.c
+
+EXT_SHA256_SRCS = \
+    ext/sha256/sha256.cpp
 
 EXT_VHACD_SRCS = \
 	ext/v-hacd/src/VHACD_Lib/src/FloatMath.cpp \
@@ -515,7 +518,7 @@ EXT_VHACD_SRCS = \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdManifoldMesh.cpp \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdMesh.cpp \
 	ext/v-hacd/src/VHACD_Lib/src/vhacdRaycastMesh.cpp \
-	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp \
+	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp
 
 EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/body/Body.cpp \
@@ -582,7 +585,7 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/mathematics/Vector3.cpp \
 	ext/reactphysics3d/src/memory/MemoryManager.cpp \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
-	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp \
+	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
@@ -590,6 +593,7 @@ EXT_SRCS = \
 	$(EXT_LIBPNG_SRCS) \
 	$(EXT_VORBIS_SRCS) \
 	$(EXT_OGG_SRCS) \
+	$(EXT_SHA256_SRCS) \
 	$(EXT_VHACD_SRCS) \
 	$(EXT_REACTPHYSICS3D_SRCS)
 

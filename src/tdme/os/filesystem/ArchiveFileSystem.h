@@ -69,6 +69,7 @@ public:
 	void createPath(const string& pathName) override;
 	void removePath(const string& pathName) override;
 	void removeFile(const string& pathName, const string& fileName) override;
+	const string computeSHA256Hash();
 	ArchiveFileSystem(const string& fileName = "archive.ta");
 	virtual ~ArchiveFileSystem();
 };

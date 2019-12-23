@@ -40,6 +40,19 @@ public:
 	}
 
 	/**
+	 * Clamps a 64 bit int value to min or max value
+	 * @param value value
+	 * @param min min value
+	 * @param max max value
+	 * @return clamped value
+	 */
+	inline static int64_t clamp(int64_t value, int64_t min, int64_t max) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
+
+	/**
 	 * Clamps a float value to min or max value
 	 * @param value value
 	 * @param min min value
@@ -76,6 +89,15 @@ public:
 	 * @return absolute value
 	 */
 	inline static int32_t abs(int32_t value) {
+		return std::abs(value);
+	}
+
+	/**
+	 * Returns absolute value
+	 * @param value value
+	 * @return absolute value
+	 */
+	inline static int64_t abs(int64_t value) {
 		return std::abs(value);
 	}
 
@@ -169,6 +191,16 @@ public:
 	 * @param value2 value 2
 	 * @return higher value
 	 */
+	inline static int64_t max(int64_t value1, int64_t value2) {
+		return value1 > value2?value1:value2;
+	}
+
+	/**
+	 * Returns the higher value of given values
+	 * @param value1 value 1
+	 * @param value2 value 2
+	 * @return higher value
+	 */
 	inline static float max(float value1, float value2) {
 		return value1 > value2?value1:value2;
 	}
@@ -180,6 +212,16 @@ public:
 	 * @return lesser value
 	 */
 	inline static int32_t min(int32_t value1, int32_t value2) {
+		return value1 < value2?value1:value2;
+	}
+
+	/**
+	 * Returns the lesser value of given values
+	 * @param value1 value 1
+	 * @param value2 value 2
+	 * @return lesser value
+	 */
+	inline static int32_t min(int64_t value1, int64_t value2) {
 		return value1 < value2?value1:value2;
 	}
 

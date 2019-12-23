@@ -5,8 +5,10 @@
 #include <string>
 #include <vector>
 
+#include <ext/sha256/sha256.h>
 #include <ext/zlib/zlib.h>
 
+#include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/fwd-tdme.h>
@@ -21,6 +23,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::math::Math;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::threading::Mutex;
 using tdme::utils::StringUtils;
@@ -400,4 +403,30 @@ void ArchiveFileSystem::removePath(const string& pathName) {
 
 void ArchiveFileSystem::removeFile(const string& pathName, const string& fileName) {
 	throw FileSystemException("ArchiveFileSystem::removeFile(): Not implemented yet");
+}
+
+const string ArchiveFileSystem::computeSHA256Hash() {
+	ifs.seekg(0, ios::end);
+	auto bytesTotal = ifs.tellg();
+	ifs.seekg(0, ios::beg);
+
+	uint8_t input[16384];
+	unsigned char digest[SHA256::DIGEST_SIZE];
+	memset(digest, 0, SHA256::DIGEST_SIZE);
+
+	SHA256 ctx = SHA256();
+	ctx.init();
+	auto bytesRead = 0LL;
+	while (bytesRead < bytesTotal) {
+		auto bytesToRead = Math::min(bytesTotal - bytesRead, sizeof(input));
+		ifs.read((char*)input, bytesToRead);
+		ctx.update((const uint8_t*)input, bytesToRead);
+		bytesRead+= bytesToRead;
+	}
+	ctx.final(digest);
+
+	char buf[2 * SHA256::DIGEST_SIZE + 1];
+	buf[2 * SHA256::DIGEST_SIZE] = 0;
+	for (int i = 0; i < SHA256::DIGEST_SIZE; i++) sprintf(buf + i * 2, "%02x", digest[i]);
+	return std::string(buf);
 }

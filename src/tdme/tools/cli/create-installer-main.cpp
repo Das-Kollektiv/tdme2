@@ -6,6 +6,7 @@
 #include <ext/zlib/zlib.h>
 
 #include <tdme/os/filesystem/FileNameFilter.h>
+#include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
@@ -20,6 +21,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -269,6 +271,27 @@ int main(int argc, char** argv)
 	Console::println(string("Programmed 2019 by Andreas Drewke, drewke.net."));
 	Console::println();
 
+	//
+	string cpu = "x64";
+	string os;
+	#if defined(__FreeBSD__)
+		os = "FreeBSD";
+	#elif defined(__HAIKU__)
+		os = "Haiku";
+	#elif defined(__linux__)
+		os = "Linux";
+	#elif defined(__APPLE__)
+		os = "MacOSX";
+	#elif defined(__NetBSD__)
+		os = "NetBSD";
+	#elif defined(_MSC_VER)
+		os = "Windows-MSC";
+	#elif defined(_WIN32)
+		os = "Windows-MINGW";
+	#else
+		os = "Unknown";
+	#endif
+
 	auto fileNameTime = StringUtils::replace(StringUtils::replace(StringUtils::replace(Time::getAsString(), " ", "-" ), ":", ""), "-", "");
 
 	Properties installerProperties;
@@ -282,26 +305,8 @@ int main(int argc, char** argv)
 			Console::println("component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 			continue;
 		}
+
 		//
-		string cpu = "x64";
-		string os;
-		#if defined(__FreeBSD__)
-			os = "FreeBSD";
-		#elif defined(__HAIKU__)
-			os = "Haiku";
-		#elif defined(__linux__)
-			os = "Linux";
-		#elif defined(__APPLE__)
-			os = "MacOSX";
-		#elif defined(__NetBSD__)
-			os = "NetBSD";
-		#elif defined(_MSC_VER)
-			os = "Windows-MSC";
-		#elif defined(_WIN32)
-			os = "Windows-MINGW";
-		#else
-			os = "Unknown";
-		#endif
 		auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + fileNameTime + ".ta";
 		//
 		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
@@ -380,13 +385,19 @@ int main(int argc, char** argv)
 			ofs.close();
 		}
 
-		// add completion file
-		auto completionFileName = os + "-" + cpu + "-upload-" + fileNameTime;
-		// reset archive
-		{
-			ofstream ofs("installer/" + completionFileName, ofstream::binary | ofstream::trunc);
-			ofs.close();
-		}
+		// sha256 hash
+		auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+		auto archiveHash = archiveFileSystem->computeSHA256Hash();
+		delete archiveFileSystem;
+		FileSystem::getStandardFileSystem()->setContentFromString("installer", componentFileName + ".sha256", archiveHash);
+		Console::println("Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": hash: " + archiveHash);
+	}
 
+	// add completion file
+	auto completionFileName = os + "-" + cpu + "-upload-" + fileNameTime;
+	// reset archive
+	{
+		ofstream ofs("installer/" + completionFileName, ofstream::binary | ofstream::trunc);
+		ofs.close();
 	}
 }
