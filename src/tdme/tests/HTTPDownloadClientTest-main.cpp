@@ -24,8 +24,13 @@ int main(int argc, char *argv[]) {
 		httpDownloadClient.setFile("tdme2-freebsd-x64_2018-07-07-03-29.tgz");
 		httpDownloadClient.setURL("http://drewke.net/tdme2/tdme2-freebsd-x64_2018-07-07-03-29.tgz");
 		httpDownloadClient.execute();
-		while (httpDownloadClient.isFinished() == false) Thread::sleep(100LL);
+		Console::println("Download started");
+		while (httpDownloadClient.isFinished() == false) {
+			Console::println("Download progress: " + to_string(httpDownloadClient.getProgress() * 100.0f));
+			Thread::sleep(1000LL);
+		}
 		httpDownloadClient.join();
+		Console::println("Download finished");
 	} catch (Exception& exception) {
 		Console::println(string("Fail: ") + exception.what());
 	}

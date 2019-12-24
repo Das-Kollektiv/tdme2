@@ -68,19 +68,21 @@ string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, cons
 	return request;
 }
 
-void HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader) {
+uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader) {
 	string lastLine;
 	string line;
+	uint64_t headerSize = 0;
 	char lastChar = -1;
 	char currentChar;
 	while (rawResponse.eof() == false) {
 		rawResponse.get(currentChar);
+		headerSize++;
 		if (lastChar == '\r' && currentChar == '\n') {
 			if (line.size() != 0) {
 				httpHeader.push_back(line);
 			}
 			lastLine = line;
-			if (line.size() == 0 && lastLine.size() == 0) break;
+			if (line.size() == 0 && lastLine.size() == 0) return headerSize;
 			line.clear();
 		} else
 		if (currentChar != '\r' && currentChar != '\n') {
@@ -98,11 +100,20 @@ void HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int16_t
 			}
 		}
 	}
+	return 0LL;
 }
 
 void HTTPDownloadClient::reset() {
 	url.clear();
 	file.clear();
+	httpStatusCode = -1;
+	httpHeader.clear();
+	haveHeaders = false;
+	haveContentSize = false;
+	headerSize = 0LL;
+	contentSize = 0LL;
+	finished = true;
+	progress = 0.0f;
 }
 
 void HTTPDownloadClient::execute() {
@@ -150,10 +161,34 @@ void HTTPDownloadClient::execute() {
 						// download
 						char rawResponseBuf[16384];
 						auto rawResponseBytesRead = 0;
+						uint64_t bytesRead = 0;
 						try {
-							for (;true;) {
+							for (;isStopRequested() == false;) {
 								auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
 								ofs.write(rawResponseBuf, rawResponseBytesRead);
+								if (downloadClient->haveHeaders == false) {
+									// input file stream
+									ifstream ifs((downloadClient->file + ".download").c_str(), ofstream::binary);
+									if (ifs.is_open() == false) {
+										throw HTTPClientException("Unable to open file for reading(" + to_string(errno) + "): " + (downloadClient->file + ".download"));
+									}
+									// try to read headers
+									downloadClient->httpHeader.clear();
+									if ((downloadClient->headerSize = downloadClient->parseHTTPResponseHeaders(ifs, downloadClient->httpStatusCode, downloadClient->httpHeader)) > 0) {
+										downloadClient->haveHeaders = true;
+										for (auto header: downloadClient->httpHeader) {
+											if (StringUtils::startsWith(header, "Content-Length: ") == true) {
+												downloadClient->haveContentSize = true;
+												downloadClient->contentSize = Integer::parseInt(StringUtils::substring(header, string("Content-Length: ").size()));
+											}
+										}
+									}
+									ifs.close();
+								}
+								bytesRead+= rawResponseBytesRead;
+								if (downloadClient->haveHeaders == true && downloadClient->haveContentSize == true) {
+									downloadClient->progress = static_cast<float>(bytesRead - downloadClient->headerSize) / static_cast<float>(downloadClient->contentSize);
+								}
 							};
 						} catch (NIOIOSocketClosedException& sce) {
 							// end of stream
@@ -163,15 +198,14 @@ void HTTPDownloadClient::execute() {
 						ofs.close();
 					}
 
-					{
+					if (isStopRequested() == false) {
 						// input file stream
 						ifstream ifs((downloadClient->file + ".download").c_str(), ofstream::binary);
 						if (ifs.is_open() == false) {
 							throw HTTPClientException("Unable to open file for reading(" + to_string(errno) + "): " + (downloadClient->file + ".download"));
 						}
 
-						downloadClient->parseHTTPResponseHeaders(ifs, downloadClient->httpStatusCode, downloadClient->httpHeader);
-
+						ifs.seekg(downloadClient->headerSize, ios::beg);
 						auto ifsHeaderSize = ifs.tellg();
 						ifs.seekg(0, ios::end);
 						auto ifsSizeTotal = ifs.tellg();
@@ -200,10 +234,10 @@ void HTTPDownloadClient::execute() {
 
 						// close download file
 						ifs.close();
-
-						//
-						FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file + ".download");
 					}
+
+					//
+					FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file + ".download");
 
 					//
 					socket.shutdown();

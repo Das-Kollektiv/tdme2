@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fstream>
+#include <iostream>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -38,6 +38,10 @@ private:
 
 	Thread* downloadThread { nullptr };
 	Mutex downloadThreadMutex;
+	bool haveHeaders { false };
+	bool haveContentSize { false };
+	uint64_t headerSize { 0LL };
+	uint64_t contentSize { 0LL };
 	volatile bool finished { true };
 	volatile float progress { 0.0f };
 
@@ -53,8 +57,9 @@ private:
 	 * @param rawResponse raw response
 	 * @param httpStatusCode HTTP status code
 	 * @param httpHeader HTTP header
+	 * @return if http response headers have been submitted
 	 */
-	void parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader);
+	uint64_t parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader);
 
 public:
 
