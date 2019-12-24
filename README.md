@@ -159,6 +159,9 @@
             - Ready for REST providing all methods, setting content type and body
             - be able to set GET and POST parameters via unordered map 
             - IPV6 ready
+        - HTTP download client
+            - uses a separate thread to download to file
+            - IPV6 ready
     - Operating system abstraction layer
         - file system
             - standard file system
@@ -198,6 +201,7 @@
         - 3D rendering engine uses multiple threads if using Vulkan renderer, or one thread only if using a GL renderer
         - UDP client has its own thread
         - UDP server can have multiple IO threads, multiple worker threads and always has its own server thread
+        - HTTP download client has its own thread
         - physics or game mechanics can also run in a separate thread(s)
     - uses 3rd party libraries
     	- need to be installed 

@@ -14,6 +14,8 @@
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NIOIOSocketClosedException.h>
 #include <tdme/os/network/NIOTCPSocket.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -42,6 +44,8 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::network::Network;
 using tdme::os::network::NIOIOSocketClosedException;
 using tdme::os::network::NIOTCPSocket;
+using tdme::os::threading::Mutex;
+using tdme::os::threading::Thread;
 using tdme::utils::Character;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -50,6 +54,9 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 using tdme::network::httpclient::HTTPDownloadClient;
+
+HTTPDownloadClient::HTTPDownloadClient(): downloadThreadMutex("downloadthread-mutex") {
+}
 
 string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, const string& relativeUrl) {
 	auto request =
@@ -99,105 +106,141 @@ void HTTPDownloadClient::reset() {
 }
 
 void HTTPDownloadClient::execute() {
-	NIOTCPSocket socket;
-	try {
-		if (StringUtils::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
-		auto relativeUrl = StringUtils::substring(url, string("http://").size());
-		if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
-		auto slashIdx = relativeUrl.find('/');
-		auto hostName = relativeUrl;
-		if (slashIdx != -1) hostName = StringUtils::substring(relativeUrl, 0, slashIdx);
-		relativeUrl = StringUtils::substring(relativeUrl, hostName.size());
-
-		Console::println("HTTPClient::execute(): Hostname: " + hostName);
-		Console::println("HTTPClient::execute(): RelativeUrl: " + relativeUrl);
-
-		Console::print("HTTPDownloadClient::execute(): Resolving name to IP: " + hostName + ": ");
-		auto ip = Network::getIpByHostName(hostName);
-		if (ip.size() == 0) {
-			Console::println("HTTPDownloadClient::execute(): Failed");
-			throw HTTPClientException("Could not resolve host IP by host name");
-		}
-		Console::println(ip);
-
-		// socket
-		NIOTCPSocket::create(socket, NIOTCPSocket::determineIpVersion(ip));
-		socket.connect(ip, 80);
-		auto request = createHTTPRequestHeaders(hostName, relativeUrl);
-		socket.write((void*)request.data(), request.length());
-
-		{
-			// output file stream
-			ofstream ofs((file + ".download").c_str(), ofstream::binary);
-			if (ofs.is_open() == false) {
-				throw HTTPClientException("Unable to open file for writing(" + to_string(errno) + "): " + (file + ".download"));
+	class DownloadThread: public Thread {
+		public:
+			DownloadThread(HTTPDownloadClient* downloadClient): Thread("download-thread"), downloadClient(downloadClient) {
 			}
+			void run() {
+				downloadClient->finished = false;
+				downloadClient->progress = 0.0f;
+				NIOTCPSocket socket;
+				try {
+					if (StringUtils::startsWith(downloadClient->url, "http://") == false) throw HTTPClientException("Invalid protocol");
+					auto relativeUrl = StringUtils::substring(downloadClient->url, string("http://").size());
+					if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
+					auto slashIdx = relativeUrl.find('/');
+					auto hostName = relativeUrl;
+					if (slashIdx != -1) hostName = StringUtils::substring(relativeUrl, 0, slashIdx);
+					relativeUrl = StringUtils::substring(relativeUrl, hostName.size());
 
-			// download
-			char rawResponseBuf[16384];
-			auto rawResponseBytesRead = 0;
-			try {
-				for (;true;) {
-					auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
-					ofs.write(rawResponseBuf, rawResponseBytesRead);
-				};
-			} catch (NIOIOSocketClosedException& sce) {
-				// end of stream
+					Console::println("HTTPDownloadClient::execute(): Hostname: " + hostName);
+					Console::println("HTTPDownloadClient::execute(): RelativeUrl: " + relativeUrl);
+
+					Console::print("HTTPDownloadClient::execute(): Resolving name to IP: " + hostName + ": ");
+					auto ip = Network::getIpByHostName(hostName);
+					if (ip.size() == 0) {
+						Console::println("HTTPDownloadClient::execute(): Failed");
+						throw HTTPClientException("Could not resolve host IP by host name");
+					}
+					Console::println(ip);
+
+					// socket
+					NIOTCPSocket::create(socket, NIOTCPSocket::determineIpVersion(ip));
+					socket.connect(ip, 80);
+					auto request = downloadClient->createHTTPRequestHeaders(hostName, relativeUrl);
+					socket.write((void*)request.data(), request.length());
+
+					{
+						// output file stream
+						ofstream ofs((downloadClient->file + ".download").c_str(), ofstream::binary);
+						if (ofs.is_open() == false) {
+							throw HTTPClientException("Unable to open file for writing(" + to_string(errno) + "): " + (downloadClient->file + ".download"));
+						}
+
+						// download
+						char rawResponseBuf[16384];
+						auto rawResponseBytesRead = 0;
+						try {
+							for (;true;) {
+								auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
+								ofs.write(rawResponseBuf, rawResponseBytesRead);
+							};
+						} catch (NIOIOSocketClosedException& sce) {
+							// end of stream
+						}
+
+						// close download file
+						ofs.close();
+					}
+
+					{
+						// input file stream
+						ifstream ifs((downloadClient->file + ".download").c_str(), ofstream::binary);
+						if (ifs.is_open() == false) {
+							throw HTTPClientException("Unable to open file for reading(" + to_string(errno) + "): " + (downloadClient->file + ".download"));
+						}
+
+						downloadClient->parseHTTPResponseHeaders(ifs, downloadClient->httpStatusCode, downloadClient->httpHeader);
+
+						auto ifsHeaderSize = ifs.tellg();
+						ifs.seekg(0, ios::end);
+						auto ifsSizeTotal = ifs.tellg();
+						auto ifsSize = ifsSizeTotal - ifsHeaderSize;
+						ifs.seekg(ifsHeaderSize, ios::beg);
+
+						// output file stream
+						ofstream ofs(downloadClient->file.c_str(), ofstream::binary);
+						if (ofs.is_open() == false) {
+							throw HTTPClientException("Unable to open file for writing(" + to_string(errno) + "): " + downloadClient->file);
+						}
+
+						//
+						char buf[16384];
+						auto ifsBytesToRead = 0;
+						auto ifsBytesRead = 0;
+						do {
+							auto ifsBytesToRead = Math::min(ifsSize - ifsBytesRead, sizeof(buf));
+							ifs.read(buf, ifsBytesToRead);
+							ofs.write(buf, ifsBytesToRead);
+							ifsBytesRead+= ifsBytesToRead;
+						} while (ifsBytesRead < ifsSize);
+
+						// close target file
+						ofs.close();
+
+						// close download file
+						ifs.close();
+
+						//
+						FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file + ".download");
+					}
+
+					//
+					socket.shutdown();
+
+					//
+					downloadClient->finished = true;
+					downloadClient->progress = 1.0f;
+				} catch (Exception& exception) {
+					socket.shutdown();
+					Console::println(string("HTTPDownloadClient::execute(): performed HTTP request: FAILED: ") + exception.what());
+					// rethrow
+					throw;
+				}
 			}
+		private:
+			HTTPDownloadClient* downloadClient;
+	};
+	downloadThreadMutex.lock();
+	finished = false;
+	this->downloadThread = new DownloadThread(this);
+	downloadThreadMutex.unlock();
+	this->downloadThread->start();
+	downloadThreadMutex.unlock();
+}
 
-			// close download file
-			ofs.close();
-		}
+void HTTPDownloadClient::cancel() {
+	downloadThreadMutex.lock();
+	if (downloadThread != nullptr) downloadThread->stop();
+	downloadThreadMutex.unlock();
+}
 
-		{
-			// input file stream
-			ifstream ifs((file + ".download").c_str(), ofstream::binary);
-			if (ifs.is_open() == false) {
-				throw HTTPClientException("Unable to open file for reading(" + to_string(errno) + "): " + (file + ".download"));
-			}
-
-			parseHTTPResponseHeaders(ifs, httpStatusCode, httpHeader);
-
-			auto ifsHeaderSize = ifs.tellg();
-			ifs.seekg(0, ios::end);
-			auto ifsSizeTotal = ifs.tellg();
-			auto ifsSize = ifsSizeTotal - ifsHeaderSize;
-			ifs.seekg(ifsHeaderSize, ios::beg);
-
-			// output file stream
-			ofstream ofs(file.c_str(), ofstream::binary);
-			if (ofs.is_open() == false) {
-				throw HTTPClientException("Unable to open file for writing(" + to_string(errno) + "): " + file);
-			}
-
-			//
-			char buf[16384];
-			auto ifsBytesToRead = 0;
-			auto ifsBytesRead = 0;
-			do {
-				auto ifsBytesToRead = Math::min(ifsSize - ifsBytesRead, sizeof(buf));
-				ifs.read(buf, ifsBytesToRead);
-				ofs.write(buf, ifsBytesToRead);
-				ifsBytesRead+= ifsBytesToRead;
-			} while (ifsBytesRead < ifsSize);
-
-			// close target file
-			ofs.close();
-
-			// close download file
-			ifs.close();
-
-			//
-			FileSystem::getStandardFileSystem()->removeFile(".", file + ".download");
-		}
-
-		//
-		socket.shutdown();
-	} catch (Exception& exception) {
-		socket.shutdown();
-		Console::println(string("HTTPDownloadClient::execute(): performed HTTP request: FAILED: ") + exception.what());
-		// rethrow
-		throw;
+void HTTPDownloadClient::join() {
+	downloadThreadMutex.lock();
+	if (downloadThread != nullptr) {
+		downloadThread->join();
+		delete this->downloadThread;
+		this->downloadThread = nullptr;
 	}
-
+	downloadThreadMutex.unlock();
 }

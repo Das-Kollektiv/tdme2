@@ -9,6 +9,8 @@
 #include <tdme/network/httpclient/fwd-tdme.h>
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/NIOException.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/os/threading/Thread.h>
 
 using std::ifstream;
 using std::string;
@@ -18,6 +20,8 @@ using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::NIOException;
+using tdme::os::threading::Mutex;
+using tdme::os::threading::Thread;
 
 /**
  * HTTP download client
@@ -29,8 +33,13 @@ private:
 	string url;
 	string file;
 
-	int16_t httpStatusCode;
+	int16_t httpStatusCode { -1 };
 	vector<string> httpHeader;
+
+	Thread* downloadThread { nullptr };
+	Mutex downloadThreadMutex;
+	volatile bool finished { true };
+	volatile float progress { 0.0f };
 
 	/**
 	 * Create HTTP request headers
@@ -50,6 +59,11 @@ private:
 public:
 
 	static const constexpr int16_t HTTP_STATUSCODE_OK { 200 };
+
+	/**
+	 * Public constructor
+	 */
+	HTTPDownloadClient();
 
 	/**
 	 * Get URL
@@ -108,5 +122,26 @@ public:
 	inline const vector<string>& getResponseHeaders() {
 		return httpHeader;
 	}
+
+	inline bool isFinished() {
+		return finished;
+	}
+
+	/**
+	 * @return progress
+	 */
+	inline float getProgress() {
+		return progress;
+	}
+
+	/**
+	 * Cancel a started download
+	 */
+	void cancel();
+
+	/**
+	 * Wait until underlying thread has finished
+	 */
+	void join();
 
 };
