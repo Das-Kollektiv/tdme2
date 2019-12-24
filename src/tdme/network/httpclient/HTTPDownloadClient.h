@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <fstream>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -57,7 +57,7 @@ private:
 	 * @param rawResponse raw response
 	 * @param httpStatusCode HTTP status code
 	 * @param httpHeader HTTP header
-	 * @return if http response headers have been submitted
+	 * @return http header size or 0 if not yet completely submitted
 	 */
 	uint64_t parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader);
 
