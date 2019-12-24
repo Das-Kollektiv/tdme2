@@ -425,6 +425,7 @@ SRCS = \
 	src/tdme/gui/renderer/GUIShader.cpp \
 	src/tdme/network/httpclient/HTTPClient.cpp \
 	src/tdme/network/httpclient/HTTPClientException.cpp \
+	src/tdme/network/httpclient/HTTPDownloadClient.cpp \
 	src/tdme/network/udpclient/NIOClientException.cpp \
 	src/tdme/network/udpclient/NIOUDPClient.cpp \
 	src/tdme/network/udpclient/NIOUDPClientMessage.cpp \
@@ -781,6 +782,7 @@ MAIN_SRCS = \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/EntityHierarchyTest-main.cpp \
 	src/tdme/tests/HTTPClientTest-main.cpp \
+	src/tdme/tests/HTTPDownloadClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/FoliageTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \

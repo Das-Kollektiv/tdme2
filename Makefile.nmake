@@ -296,6 +296,7 @@ SRCS = \
 	src/tdme/gui/renderer/GUIShader.cpp \
 	src/tdme/network/httpclient/HTTPClient.cpp \
 	src/tdme/network/httpclient/HTTPClientException.cpp \
+	src/tdme/network/httpclient/HTTPDownloadClient.cpp \
 	src/tdme/network/udpclient/NIOClientException.cpp \
 	src/tdme/network/udpclient/NIOUDPClient.cpp \
 	src/tdme/network/udpclient/NIOUDPClientMessage.cpp \
@@ -609,6 +610,7 @@ all: \
 	GUITest \
 	Installer \
 	HTTPClientTest \
+	HTTPDownloadClientTest \
 	LODTest \
 	FoliageTest \
 	PathFindingTest \
@@ -679,6 +681,9 @@ EntityHierarchyTest:
 
 HTTPClientTest:
 	cl /FeHTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+HTTPDownloadClientTest:
+    cl /FeHTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 LODTest: 
 	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

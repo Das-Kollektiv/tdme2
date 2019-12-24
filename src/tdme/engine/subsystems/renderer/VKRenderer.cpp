@@ -2125,7 +2125,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				for (auto& uniformIt: shaderStruct.uniforms) {
 					if (uniformIt.second.type == shader_type::uniform_type::SAMPLER2D) continue;
 					auto uniformName = uniformIt.second.name;
-					line = StringUtils::replaceAll(
+					line = StringUtils::regexReplace(
 						line,
 						"(\\b)" + uniformName + "(\\b)",
 						"$1ubo_generated." + uniformName + "$2"
@@ -2133,7 +2133,7 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 				}
 				// rename arrays to ubo uniforms
 				for (auto& uniformName: uniformArrays) {
-					line = StringUtils::replaceAll(
+					line = StringUtils::regexReplace(
 						line,
 						"(\\b)" + uniformName + "(\\b)",
 						"$1ubo_generated." + uniformName + "$2"

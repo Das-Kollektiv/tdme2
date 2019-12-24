@@ -4,6 +4,7 @@
 namespace tdme {
 namespace network {
 namespace httpclient {
+	class HTTPDownloadClient;
 	class HTTPClient;
 	class HTTPClientException;
 } // namespace httpclient

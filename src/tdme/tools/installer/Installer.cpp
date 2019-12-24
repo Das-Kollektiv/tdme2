@@ -378,8 +378,9 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
 									installer->installThreadMutex.unlock();
 
+									ArchiveFileSystem* archiveFileSystem = nullptr;
 									try {
-										auto archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+										archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
 										vector<string> files;
 										Installer::scanArchive(archiveFileSystem, files);
 										uint64_t totalSize = 0LL;
@@ -421,7 +422,9 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 											installer->installThreadMutex.unlock();
 										}
 										delete archiveFileSystem;
+										archiveFileSystem = nullptr;
 									} catch (Exception& exception) {
+										if (archiveFileSystem != nullptr) delete archiveFileSystem;
 										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 										hadException = true;
 										break;
@@ -448,6 +451,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							}
 							// determine set names
 							Console::println("InstallThread::run(): done");
+							delete this;
 						}
 					private:
 						Installer* installer;

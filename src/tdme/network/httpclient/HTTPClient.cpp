@@ -9,7 +9,7 @@
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NIOTCPSocket.h>
-#include <tdme/os/network/NIOSocketException.h>
+#include <tdme/os/network/NIOIOSocketClosedException.h>
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -30,7 +30,7 @@ using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
-using tdme::os::network::NIOSocketException;
+using tdme::os::network::NIOIOSocketClosedException;
 using tdme::os::network::NIOTCPSocket;
 using tdme::utils::Character;
 using tdme::utils::Console;
@@ -161,13 +161,13 @@ void HTTPClient::execute() {
 		if (slashIdx != -1) hostName = StringUtils::substring(relativeUrl, 0, slashIdx);
 		relativeUrl = StringUtils::substring(relativeUrl, hostName.size());
 
-		Console::println("Hostname: " + hostName);
-		Console::println("RelativeUrl: " + relativeUrl);
+		Console::println("HTTPClient::execute(): Hostname: " + hostName);
+		Console::println("HTTPClient::execute(): RelativeUrl: " + relativeUrl);
 
 		Console::print("HTTPClient::execute(): Resolving name to IP: " + hostName + ": ");
 		auto ip = Network::getIpByHostName(hostName);
 		if (ip.size() == 0) {
-			Console::println("Failed");
+			Console::println("HTTPClient::execute(): Failed");
 			throw HTTPClientException("Could not resolve host IP by host name");
 		}
 		Console::println(ip);
@@ -179,10 +179,15 @@ void HTTPClient::execute() {
 
 		char rawResponseBuf[16384];
 		auto rawResponseBytesRead = 0;
-		do {
-			auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
-			rawResponse.write(rawResponseBuf, rawResponseBytesRead);
-		} while (rawResponseBytesRead == sizeof(rawResponseBuf));
+		try {
+			for (;true;) {
+				auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
+				rawResponse.write(rawResponseBuf, rawResponseBytesRead);
+			};
+		} catch (NIOIOSocketClosedException& sce) {
+			// end of stream
+		}
+
 		parseHTTPResponseHeaders(rawResponse, httpStatusCode, httpHeader);
 
 		Console::println("HTTPClient::execute(): performed HTTP request: HTTP status code: " + to_string(httpStatusCode));
