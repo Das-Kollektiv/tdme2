@@ -4,11 +4,7 @@
 #include <tdme/network/httpclient/HTTPDownloadClient.h>
 #include <tdme/os/threading/Thread.h>
 
-using std::string;
-using std::stringstream;
 using std::to_string;
-using std::unordered_map;
-using std::vector;
 
 using tdme::network::httpclient::HTTPDownloadClient;
 using tdme::os::network::Network;
