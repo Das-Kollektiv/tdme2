@@ -108,11 +108,9 @@ public:
 	void reset();
 
 	/**
-	 * Execute HTTP request
-	 * @throws tdme::network::HTTPDownloadClient::HTTPDownloadClientException
-	 * @throws tdme::os::network::NIOException
+	 * Starts the HTTP download to file
 	 */
-	void execute();
+	void start();
 
 	/**
 	 * @return HTTP status code

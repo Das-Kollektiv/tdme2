@@ -116,7 +116,7 @@ void HTTPDownloadClient::reset() {
 	progress = 0.0f;
 }
 
-void HTTPDownloadClient::execute() {
+void HTTPDownloadClient::start() {
 	class DownloadThread: public Thread {
 		public:
 			DownloadThread(HTTPDownloadClient* downloadClient): Thread("download-thread"), downloadClient(downloadClient) {

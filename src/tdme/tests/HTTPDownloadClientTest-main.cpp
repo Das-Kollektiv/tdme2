@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 		HTTPDownloadClient httpDownloadClient;
 		httpDownloadClient.setFile("tdme2-freebsd-x64_2018-07-07-03-29.tgz");
 		httpDownloadClient.setURL("http://drewke.net/tdme2/tdme2-freebsd-x64_2018-07-07-03-29.tgz");
-		httpDownloadClient.execute();
+		httpDownloadClient.start();
 		Console::println("Download started");
 		while (httpDownloadClient.isFinished() == false) {
 			Console::println("Download progress: " + to_string(httpDownloadClient.getProgress() * 100.0f));
