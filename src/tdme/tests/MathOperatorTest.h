@@ -20,6 +20,7 @@ public:
 	MathOperatorTest();
 
 	void testVector2Operators();
+	void testVector3Operators();
 
 private:
 	string succes = "Succes";
