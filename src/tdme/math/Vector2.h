@@ -114,7 +114,7 @@ public:
 	/** 
 	 * Scale this vector
 	 * @param scale scale
-	 * @return this vector 
+	 * @return this vector
 	 */
 	inline Vector2& scale(float scale) {
 		data[0] *= scale;
@@ -158,6 +158,113 @@ public:
     		return data[i];
     }
 
+	/**
+	 * Operator +
+	 * @param v vector to add
+	 * @return new vector (this + v)
+	 */
+	inline Vector2 operator +(Vector2& v) {
+		auto r = this->clone().add(v);
+		return r;
+	}
+
+	/**
+	 * Operator +
+	 * @param v vector to subtract
+	 * @return new vector (this - v)
+	 */
+	inline Vector2 operator -(Vector2& v) {
+		auto r = this->clone().sub(v);
+		return r;
+	}
+
+	/**
+	 * Operator * (float)
+	 * @param f value to multiply by
+	 * @return new vector (this * f)
+	 */
+	inline Vector2 operator *(float f) {
+		auto r = this->clone().scale(f);
+		return r;
+	}
+
+	/**
+	 * Operator * (Vector2&)
+	 * @param v vector to multiply by
+	 * @return new vector (this * v)
+	 */
+	inline Vector2 operator *(Vector2& v) {
+		auto r = this->clone().scale(v);
+		return r;
+	}
+
+	/**
+	 * Operator / (f)
+	 * @param v value to divide by
+	 * @return new vector (this / f)
+	 */
+	inline Vector2 operator /(float f) {
+		auto r = this->clone().scale(1.0f / f);
+		return r;
+	}
+
+	/**
+	 * Operator / (Vector2&)
+	 * @param v vector to divide by
+	 * @return new vector (this / v)
+	 */
+	inline Vector2 operator /(Vector2& v) {
+		auto vInverted = Vector2(1.0f / v[0], 1.0f / v[1]);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator +=
+	 * @param v vector to add
+	 * @return this vector added by v
+	 */
+	inline Vector2& operator +=(Vector2& v) {
+		return this->add(v);
+	}
+
+	/**
+	 * Operator -=
+	 * @param v vector to substract
+	 * @return this vector substracted by v
+	 */
+	inline Vector2& operator -=(Vector2& v) {
+		return this->sub(v);
+	}
+
+	/**
+	 * Operator *=
+	 * @param v vector to multiply by
+	 * @return this vector multiplied by v
+	 */
+	inline Vector2& operator *=(Vector2& v) {
+		return this->scale(v);
+	}
+
+	/**
+	 * Operator /=
+	 * @param v vector to devide by
+	 * @return this vector devided by v
+	 */
+	inline Vector2& operator /=(Vector2& v) {
+		auto vInverted = Vector2(1.0f / v[0], 1.0f / v[1]);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param v vector to compare to
+	 * @return equality
+	 */
+	inline bool operator ==(Vector2& v) {
+		return this->equals(v);
+	}
+
 	/** 
 	 * @return vector as array
 	 */
@@ -171,6 +278,29 @@ public:
 	 */
 	inline Vector2 clone() const {
 		return Vector2(data);
+	}
+
+	/**
+	 * Compares this vector with given vector
+	 * @param v vector v
+	 * @return equality
+	 */
+	inline bool equals(const Vector2& v) const {
+		return equals(v, Math::EPSILON);
+	}
+
+	/**
+	 * Compares this vector with given vector
+	 * @param v vector v
+	 * @param tolerance tolerance per component(x, y, z)
+	 * @return equality
+	 */
+	inline bool equals(const Vector2& v, float tolerance) const {
+		return (this == &v) ||
+			(
+				Math::abs(data[0] - v.data[0]) < tolerance &&
+				Math::abs(data[1] - v.data[1]) < tolerance
+			);
 	}
 
 	/**

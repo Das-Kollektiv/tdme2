@@ -479,6 +479,7 @@ SRCS = \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
 	src/tdme/tests/FoliageTest.cpp \
+	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
@@ -801,6 +802,7 @@ MAIN_SRCS = \
 	src/tdme/tests/HTTPDownloadClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
 	src/tdme/tests/FoliageTest-main.cpp \
+	src/tdme/tests/MathOperatorTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \
 	src/tdme/tests/PivotTest-main.cpp \
 	src/tdme/tests/PhysicsTest1-main.cpp \
