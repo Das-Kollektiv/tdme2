@@ -1,8 +1,6 @@
 #pragma once
 
 #include <fstream>
-#include <sstream>
-#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -14,8 +12,6 @@
 
 using std::ifstream;
 using std::string;
-using std::stringstream;
-using std::unordered_map;
 using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;

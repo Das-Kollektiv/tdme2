@@ -1,10 +1,7 @@
 #include <tdme/network/httpclient/HTTPDownloadClient.h>
 
 #include <fstream>
-#include <iomanip>
-#include <sstream>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include <tdme/math/Math.h>
@@ -25,16 +22,9 @@
 
 using std::ifstream;
 using std::ios;
-using std::hex;
-using std::nouppercase;
 using std::ofstream;
-using std::ostringstream;
-using std::setw;
 using std::string;
-using std::stringstream;
 using std::to_string;
-using std::unordered_map;
-using std::uppercase;
 using std::vector;
 
 using tdme::math::Math;
@@ -223,7 +213,7 @@ void HTTPDownloadClient::start() {
 						auto ifsBytesToRead = 0;
 						auto ifsBytesRead = 0;
 						do {
-							auto ifsBytesToRead = Math::min(ifsSize - ifsBytesRead, sizeof(buf));
+							auto ifsBytesToRead = Math::min(static_cast<int64_t>(ifsSize - ifsBytesRead), sizeof(buf));
 							ifs.read(buf, ifsBytesToRead);
 							ofs.write(buf, ifsBytesToRead);
 							ifsBytesRead+= ifsBytesToRead;
