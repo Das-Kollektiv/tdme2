@@ -127,14 +127,7 @@ void Installer::initialize()
 				parameters
 			)
 		);
-		dynamic_cast<GUIParentNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("scrollarea_licence_inner"))->replaceSubNodes(
-			string("<multiline-text font=\"resources/gui-system/fonts/Roboto_20.fnt\" color=\"#000000\" width=\"100%\" height=\"auto\">\n") +
-			string("	<![CDATA[\n") +
-			FileSystem::getStandardFileSystem()->getContentAsString(".", "LICENSE") +
-			string("	]]>\n") +
-			string("</multiline-text>\n"),
-			true
-		);
+		dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("licence_text"))->setText(MutableString(FileSystem::getStandardFileSystem()->getContentAsString(".", "LICENSE")));
 		engine->getGUI()->addScreen(
 			"installer_components",
 			GUIParser::parse(
@@ -462,6 +455,9 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			}
 		case SCREEN_FINISHED:
 			engine->getGUI()->addRenderScreen("installer_finished");
+			break;
+		default:
+			Console::println("Installer::onActionPerformed(): Unhandled screen: " + to_string(screen));
 			break;
 	}
 	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());

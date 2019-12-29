@@ -19,6 +19,7 @@
 
 using std::vector;
 using std::string;
+using std::to_string;
 
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::GUI;
@@ -185,8 +186,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	//
 	if (font != nullptr) {
 		// indents
-		auto xIndentLeft = computedConstraints.left + border.left + padding.left;
-		auto yIndentTop = computedConstraints.top + border.top + padding.top;
+		auto xIndentLeft = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + border.left + padding.left;
+		auto yIndentTop = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + border.top + padding.top;
 
 		// vertical alignment
 		auto y = 0;
