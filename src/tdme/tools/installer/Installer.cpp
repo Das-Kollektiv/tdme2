@@ -25,6 +25,8 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
+#include <tdme/network/httpclient/HTTPClient.h>
+#include <tdme/network/httpclient/HTTPDownloadClient.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -68,6 +70,8 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::network::httpclient::HTTPClient;
+using tdme::network::httpclient::HTTPDownloadClient;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -292,11 +296,6 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 						}
 						void run() {
 							Console::println("InstallThread::run(): init");
-							installer->installThreadMutex.lock();
-							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Initializing ..."));
-							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
-							dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
-							installer->installThreadMutex.unlock();
 
 							//
 							string cpu = "x64";
@@ -319,9 +318,10 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 								os = "Unknown";
 							#endif
 							auto completionFileName = os + "-" + cpu + "-upload-";
-							// determine newest component file name
 							string timestamp;
-							{
+
+							// determine newest component file name
+							if (timestamp.empty() == true) {
 								vector<string> files;
 								FileSystem::getInstance()->list("installer", files);
 								for (auto file: files) {
@@ -331,7 +331,105 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 									}
 								}
 							}
-							Console::println("InstallThread::run(): newest timestamp: " + timestamp);
+							if (timestamp.empty() == false) {
+								Console::println("InstallThread::run(): filesystem: newest timestamp: " + timestamp);
+							}
+
+							//
+							auto repository = installer->installerProperties.get("repository", "");
+							if (repository.empty() == false) {
+								string timestampWeb;
+								installer->installThreadMutex.lock();
+								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Downloading ..."));
+								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
+								dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+								installer->installThreadMutex.unlock();
+
+								// check repository via apache index file for now
+								try {
+									HTTPClient httpClient;
+									httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
+									httpClient.setURL(repository);
+									httpClient.execute();
+									auto response = httpClient.getResponse().str();
+									auto pos = 0;
+									while ((pos = response.find(completionFileName, pos)) != string::npos) {
+										pos+= completionFileName.size();
+										auto timestampWebNew = StringUtils::substring(response, pos, pos + 14);
+										pos+= 14;
+										if ((timestamp.empty() == true && (timestampWeb.empty() == true || timestampWebNew > timestampWeb)) ||
+											(timestamp.empty() == false && ((timestampWeb.empty() == true || timestampWebNew > timestampWeb) && timestampWebNew > timestamp))) {
+											timestampWeb = timestampWebNew;
+										}
+									}
+								} catch (Exception& exception) {
+									Console::println(string("Fail: ") + exception.what());
+								}
+
+								// download archives if newer
+								if (timestampWeb.empty() == false) {
+									Console::println("InstallThread::run(): repository: newest timestamp: " + timestampWeb);
+
+									// we use web installer archives
+									timestamp = timestampWeb;
+
+									// download them
+									HTTPDownloadClient httpDownloadClient;
+									for (auto componentIdx = 1; true; componentIdx++) {
+										//
+										auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
+										if (componentName.empty() == true) break;
+
+										//
+										Console::println("InstallThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
+										auto componentInclude = installer->installerProperties.get("component" + to_string(componentIdx) + "_include", "");
+										if (componentInclude.empty() == true) {
+											Console::println("InstallThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
+											continue;
+										}
+										auto componentFileName = os + "-" + cpu + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + timestamp + ".ta";
+
+										//
+										Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": Downloading");
+										//
+										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(componentFileName));
+
+										// sha256
+										httpDownloadClient.reset();
+										httpDownloadClient.setFile("./installer/" + componentFileName + ".sha256");
+										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName + ".sha256");
+										httpDownloadClient.start();
+										while (httpDownloadClient.isFinished() == false) {
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(httpDownloadClient.getProgress(), 2));
+											installer->installThreadMutex.unlock();
+											Thread::sleep(250LL);
+										}
+										httpDownloadClient.join();
+
+										// atchive
+										httpDownloadClient.reset();
+										httpDownloadClient.setFile("./installer/" + componentFileName);
+										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName);
+										httpDownloadClient.start();
+										while (httpDownloadClient.isFinished() == false) {
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(httpDownloadClient.getProgress(), 2));
+											installer->installThreadMutex.unlock();
+											Thread::sleep(250LL);
+										}
+										httpDownloadClient.join();
+									}
+								}
+							}
+
+							installer->installThreadMutex.lock();
+							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Initializing ..."));
+							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
+							dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+							installer->installThreadMutex.unlock();
+
+							//
 							auto hadException = false;
 							vector<string> log;
 							vector<string> components;
@@ -367,13 +465,22 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 									Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 									//
 									installer->installThreadMutex.lock();
-									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentName));
 									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString());
 									installer->installThreadMutex.unlock();
 
 									ArchiveFileSystem* archiveFileSystem = nullptr;
 									try {
+										installer->installThreadMutex.lock();
+										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Verifying " + componentName));
+										installer->installThreadMutex.unlock();
 										archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
+										if (archiveFileSystem->computeSHA256Hash() != FileSystem::getInstance()->getContentAsString("installer", componentFileName + ".sha256")) {
+											throw ExceptionBase("Failed to verify: " + componentFileName + ", remove files in ./installer/ and try again");
+										}
+										installer->installThreadMutex.lock();
+										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Installing " + componentName));
+										installer->installThreadMutex.unlock();
 										vector<string> files;
 										Installer::scanArchive(archiveFileSystem, files);
 										uint64_t totalSize = 0LL;

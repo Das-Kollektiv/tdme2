@@ -59,7 +59,7 @@ string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, cons
 }
 
 uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader) {
-	string lastLine;
+	httpHeader.clear();
 	string line;
 	uint64_t headerSize = 0;
 	char lastChar = -1;
@@ -71,8 +71,7 @@ uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int
 			if (line.size() != 0) {
 				httpHeader.push_back(line);
 			}
-			lastLine = line;
-			if (line.size() == 0 && lastLine.size() == 0) return headerSize;
+			if (line.size() == 0) return headerSize;
 			line.clear();
 		} else
 		if (currentChar != '\r' && currentChar != '\n') {
@@ -126,7 +125,6 @@ void HTTPDownloadClient::start() {
 
 					Console::println("HTTPDownloadClient::execute(): Hostname: " + hostName);
 					Console::println("HTTPDownloadClient::execute(): RelativeUrl: " + relativeUrl);
-
 					Console::print("HTTPDownloadClient::execute(): Resolving name to IP: " + hostName + ": ");
 					auto ip = Network::getIpByHostName(hostName);
 					if (ip.size() == 0) {
@@ -157,6 +155,8 @@ void HTTPDownloadClient::start() {
 								auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
 								ofs.write(rawResponseBuf, rawResponseBytesRead);
 								if (downloadClient->haveHeaders == false) {
+									// flush download file to disk
+									ofs.flush();
 									// input file stream
 									ifstream ifs((downloadClient->file + ".download").c_str(), ofstream::binary);
 									if (ifs.is_open() == false) {
@@ -248,7 +248,6 @@ void HTTPDownloadClient::start() {
 	downloadThreadMutex.lock();
 	finished = false;
 	this->downloadThread = new DownloadThread(this);
-	downloadThreadMutex.unlock();
 	this->downloadThread->start();
 	downloadThreadMutex.unlock();
 }

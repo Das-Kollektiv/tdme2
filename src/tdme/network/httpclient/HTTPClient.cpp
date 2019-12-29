@@ -106,7 +106,6 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string
 }
 
 void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& httpStatusCode, vector<string>& httpHeader) {
-	string lastLine;
 	string line;
 	char lastChar = -1;
 	char currentChar;
@@ -116,8 +115,7 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 			if (line.size() != 0) {
 				httpHeader.push_back(line);
 			}
-			lastLine = line;
-			if (line.size() == 0 && lastLine.size() == 0) break;
+			if (line.size() == 0) break;
 			line.clear();
 		} else
 		if (currentChar != '\r' && currentChar != '\n') {
