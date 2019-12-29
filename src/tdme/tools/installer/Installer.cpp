@@ -513,6 +513,34 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 													FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
 													FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
 												);
+												#if defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__)
+													Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
+													FileSystem::getStandardFileSystem()->setContentFromString(
+														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh",
+														string() +
+														"#!/bin/sh\n" +
+														"cd " + installPath + "\n" +
+														FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + "\n"
+													);
+													FileSystem::getStandardFileSystem()->setExecutable(
+														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh"
+													);
+													FileSystem::getStandardFileSystem()->setContentFromString(
+														installer->homeFolder + "/" + ".local/share/applications",
+														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop",
+														string() +
+														"[Desktop Entry]\n" +
+														"Name="  + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + "\n" +
+														"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
+														"Terminal=true\n" +
+														"Type=Application\n" +
+														"Icon=" + installPath + "/resources/logos/app_logo_small.png\n"
+													);
+													log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop");
+												#endif
+
 											}
 											log.push_back(generatedFileName);
 											doneSize+= content.size();
