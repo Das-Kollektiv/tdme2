@@ -5,6 +5,7 @@
 
 #include <ext/zlib/zlib.h>
 
+#include <tdme/application/Application.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -21,6 +22,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::application::Application;
 using tdme::os::filesystem::ArchiveFileSystem;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
@@ -272,35 +274,19 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	string cpu = "x64";
-	string os;
-	#if defined(__FreeBSD__)
-		os = "FreeBSD";
-	#elif defined(__HAIKU__)
-		os = "Haiku";
-	#elif defined(__linux__)
-		os = "Linux";
-	#elif defined(__APPLE__)
-		os = "MacOSX";
-	#elif defined(__NetBSD__)
-		os = "NetBSD";
-	#elif defined(_MSC_VER)
-		os = "Windows-MSC";
-	#elif defined(_WIN32)
-		os = "Windows-MINGW";
-	#else
-		os = "Unknown";
-	#endif
-
+	auto cpu = Application::getCPUName();
+	auto os = Application::getOSName();
 	auto fileNameTime = StringUtils::replace(StringUtils::replace(StringUtils::replace(Time::getAsString(), " ", "-" ), ":", ""), "-", "");
 
+	//
 	Properties installerProperties;
 	installerProperties.load("resources/installer", "installer.properties");
-	for (auto componentIdx = 1; true; componentIdx++) {
-		auto componentName = installerProperties.get("component" + to_string(componentIdx), "");
+	for (auto componentIdx = 0; true; componentIdx++) {
+		auto componentId = componentIdx == 0?"installer":"component" + to_string(componentIdx);
+		auto componentName = installerProperties.get(componentId, "");
 		if (componentName.empty() == true) break;
 		Console::println("Having component: " + to_string(componentIdx) + ": " + componentName);
-		auto componentInclude = installerProperties.get("component" + to_string(componentIdx) + "_include", "");
+		auto componentInclude = installerProperties.get(componentId + "_include", "");
 		if (componentInclude.empty() == true) {
 			Console::println("component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 			continue;

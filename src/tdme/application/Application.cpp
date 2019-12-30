@@ -302,6 +302,31 @@ void Application::setVSyncEnabled(bool vSync) {
 	#endif
 }
 
+string Application::getOSName() {
+	#if defined(__FreeBSD__)
+		return "FreeBSD";
+	#elif defined(__HAIKU__)
+		return "Haiku";
+	#elif defined(__linux__)
+		return "Linux";
+	#elif defined(__APPLE__)
+		return "MacOSX";
+	#elif defined(__NetBSD__)
+		return "NetBSD";
+	#elif defined(_MSC_VER)
+		return "Windows-MSC";
+	#elif defined(_WIN32)
+		return "Windows-MINGW";
+	#else
+		return "Unknown";
+	#endif
+}
+
+string Application::getCPUName() {
+	// TODO: implement me
+	return "x64";
+}
+
 void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {
 	Application::inputEventHandler = inputEventHandler;
 }

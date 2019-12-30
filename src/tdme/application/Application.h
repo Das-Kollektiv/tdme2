@@ -67,6 +67,16 @@ public:
 	static void setVSyncEnabled(bool vSync);
 
 	/**
+	 * @return Operating system the application is running on
+	 */
+	static string getOSName();
+
+	/**
+	 * @return CPU the application is running on
+	 */
+	static string getCPUName();
+
+	/**
 	 * Public constructor
 	 */
 	Application();

@@ -134,7 +134,7 @@ void Installer::initialize()
 				parameters
 			)
 		);
-		dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("licence_text"))->setText(MutableString(FileSystem::getStandardFileSystem()->getContentAsString(".", "LICENSE")));
+		dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("licence_text"))->setText(MutableString(FileSystem::getInstance()->getContentAsString(".", "LICENSE")));
 		engine->getGUI()->addScreen(
 			"installer_components",
 			GUIParser::parse(
@@ -301,35 +301,18 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							Console::println("InstallThread::run(): init");
 
 							//
-							string cpu = "x64";
-							string os;
-							#if defined(__FreeBSD__)
-								os = "FreeBSD";
-							#elif defined(__HAIKU__)
-								os = "Haiku";
-							#elif defined(__linux__)
-								os = "Linux";
-							#elif defined(__APPLE__)
-								os = "MacOSX";
-							#elif defined(__NetBSD__)
-								os = "NetBSD";
-							#elif defined(_MSC_VER)
-								os = "Windows-MSC";
-							#elif defined(_WIN32)
-								os = "Windows-MINGW";
-							#else
-								os = "Unknown";
-							#endif
+							auto cpu = Application::getCPUName();
+							auto os = Application::getOSName();
 							auto completionFileName = os + "-" + cpu + "-upload-";
 							string timestamp;
 
 							// determine newest component file name
 							if (timestamp.empty() == true) {
 								vector<string> files;
-								FileSystem::getInstance()->list("installer", files);
+								FileSystem::getStandardFileSystem()->list("installer", files);
 								for (auto file: files) {
 									if (StringUtils::startsWith(file, completionFileName) == true) {
-										Console::println("InstallThread: Have timestamp: " + file);
+										Console::println("InstallThread: Have upload completion file: " + file);
 										timestamp = StringUtils::substring(file, completionFileName.size());
 									}
 								}
@@ -444,6 +427,8 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 								hadException = true;
 							}
 
+							//
+							log.push_back(installPath);
 							if (hadException == false) {
 								for (auto componentIdx = 1; true; componentIdx++) {
 									//
@@ -478,7 +463,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Verifying " + componentName));
 										installer->installThreadMutex.unlock();
 										archiveFileSystem = new ArchiveFileSystem("installer/" + componentFileName);
-										if (archiveFileSystem->computeSHA256Hash() != FileSystem::getInstance()->getContentAsString("installer", componentFileName + ".sha256")) {
+										if (archiveFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", componentFileName + ".sha256")) {
 											throw ExceptionBase("Failed to verify: " + componentFileName + ", remove files in ./installer/ and try again");
 										}
 										installer->installThreadMutex.lock();
@@ -564,7 +549,6 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							}
 
 							try {
-								log.push_back(installPath);
 								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.files.db", log);
 								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.components.db", components);
 							} catch (Exception& exception) {
@@ -624,6 +608,28 @@ void Installer::main(int argc, char** argv)
 	if (argc > 1) {
 		Console::println("Usage: Installer");
 		exit(0);
+	}
+	// determine installer tdme archive
+	{
+		auto cpu = Application::getCPUName();
+		auto os = Application::getOSName();
+		auto completionFileName = os + "-" + cpu + "-upload-";
+		string timestamp;
+		// determine newest component file name
+		vector<string> files;
+		FileSystem::getStandardFileSystem()->list("installer", files);
+		for (auto file: files) {
+			if (StringUtils::startsWith(file, completionFileName) == true) {
+				Console::println("Installer::main(): Have upload completion file: " + file);
+				timestamp = StringUtils::substring(file, completionFileName.size());
+			}
+		}
+		if (timestamp.empty() == true) {
+			Console::println("Installer::main(): No installer TDME archive found. Exiting.");
+			exit(0);
+		}
+		// file system
+		FileSystem::setupFileSystem(new ArchiveFileSystem("./installer/" + os + "-" + cpu + "-" + "Installer" + "-" + timestamp + ".ta"));
 	}
 	auto installer = new Installer();
 	installer->run(argc, argv, "Installer");
