@@ -191,8 +191,6 @@
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
     - Integrate a scripting language to be able to script TDME2 applications or sub logics
-    - Build documentation
-    - Public API documentation
     - A release plan
     - A demonstration video
 
