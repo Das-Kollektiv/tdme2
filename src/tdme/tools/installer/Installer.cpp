@@ -37,6 +37,7 @@
 #include <tdme/tools/shared/views/PopUps.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
+#include <tdme/utils/ExceptionBase.h>
 #include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/Properties.h>
@@ -82,6 +83,7 @@ using tdme::tools::shared::tools::Tools;
 using tdme::tools::shared::views::PopUps;
 using tdme::utils::Console;
 using tdme::utils::Exception;
+using tdme::utils::ExceptionBase;
 using tdme::utils::Integer;
 using tdme::utils::MutableString;
 using tdme::utils::Properties;
@@ -110,6 +112,7 @@ void Installer::initialize()
 			homeFolder = string(getenv("HOME"));
 		#endif
 		installerProperties.load("resources/installer", "installer.properties");
+		if (installerProperties.get("version", "") != "1.9.9") throw ExceptionBase("Installer is outdated. Please uninstall and update installer.");
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
