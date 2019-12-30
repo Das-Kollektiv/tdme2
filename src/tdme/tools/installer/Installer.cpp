@@ -112,7 +112,7 @@ void Installer::initialize()
 			homeFolder = string(getenv("HOME"));
 		#endif
 		installerProperties.load("resources/installer", "installer.properties");
-		if (installerProperties.get("version", "") != "1.9.9") throw ExceptionBase("Installer is outdated. Please uninstall and update installer.");
+		if (installerProperties.get("version", "") != "1.9.9") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
