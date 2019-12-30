@@ -35,6 +35,7 @@ private:
 		uint64_t offset;
 		bool executable;
 	};
+	string fileName;
 	Mutex ifsMutex;
 	ifstream ifs;
 	map<string, FileInformation> fileInformations;
@@ -48,6 +49,12 @@ private:
 	void decompress(vector<uint8_t>& inContent, vector<uint8_t>& outContent);
 
 public:
+	/**
+	 * @return Returns underlying TDME2 archive file name
+	 */
+	const string& getArchiveFileName();
+
+	// overriden methods
 	const string getFileName(const string& path, const string& fileName) override;
 	void list(const string& pathName, vector<string>& files, FileNameFilter* filter = nullptr, bool addDrives = false) override;
 	bool isPath(const string& pathName) override;

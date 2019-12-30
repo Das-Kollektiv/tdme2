@@ -31,7 +31,7 @@ using tdme::utils::StringTokenizer;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-ArchiveFileSystem::ArchiveFileSystem(const string& fileName): ifsMutex("afs-ifs-mutex")
+ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName), ifsMutex("afs-ifs-mutex")
 {
 	// open
 	ifs.open(fileName.c_str(), ifstream::binary);
@@ -68,6 +68,10 @@ ArchiveFileSystem::ArchiveFileSystem(const string& fileName): ifsMutex("afs-ifs-
 ArchiveFileSystem::~ArchiveFileSystem()
 {
 	ifs.close();
+}
+
+const string& ArchiveFileSystem::getArchiveFileName() {
+	return fileName;
 }
 
 const string ArchiveFileSystem::getFileName(const string& pathName, const string& fileName) {

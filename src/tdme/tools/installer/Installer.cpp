@@ -430,13 +430,57 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							//
 							log.push_back(installPath);
 							if (hadException == false) {
+								// copy installer archive and sha256
+								{
+									auto file = dynamic_cast<ArchiveFileSystem*>(FileSystem::getInstance())->getArchiveFileName();
+									{
+										vector<uint8_t> content;
+										Console::println("InstallThread::run(): Installer: Copy: " + file);
+										FileSystem::getStandardFileSystem()->getContent(
+											FileSystem::getStandardFileSystem()->getPathName(file),
+											FileSystem::getStandardFileSystem()->getFileName(file),
+											content
+										);
+										auto generatedFileName = installPath + "/" + file;
+										Installer::createPathRecursively(
+											FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
+										);
+										FileSystem::getStandardFileSystem()->setContent(
+											FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+											FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
+											content
+										);
+									}
+									file+= ".sha256";
+									{
+										vector<uint8_t> content;
+										Console::println("InstallThread::run(): Installer: Copy: " + file);
+										FileSystem::getStandardFileSystem()->getContent(
+											FileSystem::getStandardFileSystem()->getPathName(file),
+											FileSystem::getStandardFileSystem()->getFileName(file),
+											content
+										);
+										auto generatedFileName = installPath + "/" + file;
+										Installer::createPathRecursively(
+											FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
+										);
+										FileSystem::getStandardFileSystem()->setContent(
+											FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+											FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
+											content
+										);
+									}
+								}
+								// copy components
 								for (auto componentIdx = 1; true; componentIdx++) {
 									//
 									auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
 									if (componentName.empty() == true) break;
 
 									// check if marked
+									installer->installThreadMutex.lock();
 									if (dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_components")->getNodeById("checkbox_component" + to_string(componentIdx)))->getController()->getValue().equals("1") == false) continue;
+									installer->installThreadMutex.unlock();
 
 									//
 									components.push_back(componentName);
@@ -551,6 +595,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							try {
 								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.files.db", log);
 								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.components.db", components);
+								FileSystem::getStandardFileSystem()->setContentFromString(installPath, "install.version.db", timestamp);
 							} catch (Exception& exception) {
 								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 								hadException = true;
@@ -613,23 +658,28 @@ void Installer::main(int argc, char** argv)
 	{
 		auto cpu = Application::getCPUName();
 		auto os = Application::getOSName();
-		auto completionFileName = os + "-" + cpu + "-upload-";
-		string timestamp;
+		auto installerArchiveFileNameStart = os + "-" + cpu + "-Installer-";
+		string installerArchiveFileName;
 		// determine newest component file name
 		vector<string> files;
 		FileSystem::getStandardFileSystem()->list("installer", files);
 		for (auto file: files) {
-			if (StringUtils::startsWith(file, completionFileName) == true) {
-				Console::println("Installer::main(): Have upload completion file: " + file);
-				timestamp = StringUtils::substring(file, completionFileName.size());
+			if (StringUtils::startsWith(file, installerArchiveFileNameStart) == true &&
+				StringUtils::endsWith(file, ".sha256") == false) {
+				Console::println("Installer::main(): Have installer tdme archive file: " + file);
+				installerArchiveFileName = file;
 			}
 		}
-		if (timestamp.empty() == true) {
+		if (installerArchiveFileName.empty() == true) {
 			Console::println("Installer::main(): No installer TDME archive found. Exiting.");
 			exit(0);
 		}
 		// file system
-		FileSystem::setupFileSystem(new ArchiveFileSystem("./installer/" + os + "-" + cpu + "-" + "Installer" + "-" + timestamp + ".ta"));
+		auto installerFileSystem = new ArchiveFileSystem("installer/" + installerArchiveFileName);
+		if (installerFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", installerArchiveFileName + ".sha256")) {
+			Console::println("Installer::main(): Failed to verify: " + installerArchiveFileName + ", get new installer and try again");
+		}
+		FileSystem::setupFileSystem(installerFileSystem);
 	}
 	auto installer = new Installer();
 	installer->run(argc, argv, "Installer");
