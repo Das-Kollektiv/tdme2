@@ -37,7 +37,7 @@ class tdme::tools::installer::Installer final
 private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
-	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX };
+	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX, SCREEN_WELCOME2, SCREEN_UNINSTALLING  };
 	volatile Screen screen;
 	Properties installerProperties;
 	string homeFolder;

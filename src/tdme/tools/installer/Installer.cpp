@@ -102,6 +102,11 @@ Installer::Installer(): installThreadMutex("install-thread-mutex")
 void Installer::initialize()
 {
 	try {
+		auto installed =
+			FileSystem::getStandardFileSystem()->fileExists("install.files.db") == true &&
+			FileSystem::getStandardFileSystem()->fileExists("install.components.db") == true &&
+			FileSystem::getStandardFileSystem()->fileExists("install.version.db") == true;
+		if (installed == true) screen = SCREEN_WELCOME2;
 		engine->initialize();
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 		setInputEventHandler(engine->getGUI());
@@ -186,6 +191,22 @@ void Installer::initialize()
 				parameters
 			)
 		);
+		engine->getGUI()->addScreen(
+			"installer_welcome2",
+			GUIParser::parse(
+				"resources/screens/installer",
+				"installer_welcome2.xml",
+				parameters
+			)
+		);
+		engine->getGUI()->addScreen(
+			"installer_uninstalling",
+			GUIParser::parse(
+				"resources/screens/installer",
+				"installer_uninstalling.xml",
+				parameters
+			)
+		);
 		engine->getGUI()->resetRenderScreens();
 		engine->getGUI()->getScreen("installer_welcome")->addActionListener(this);
 		engine->getGUI()->getScreen("installer_welcome")->addChangeListener(this);
@@ -199,7 +220,11 @@ void Installer::initialize()
 		engine->getGUI()->getScreen("installer_installing")->addChangeListener(this);
 		engine->getGUI()->getScreen("installer_finished")->addActionListener(this);
 		engine->getGUI()->getScreen("installer_finished")->addChangeListener(this);
-		engine->getGUI()->addRenderScreen("installer_welcome");
+		engine->getGUI()->getScreen("installer_welcome2")->addActionListener(this);
+		engine->getGUI()->getScreen("installer_welcome2")->addChangeListener(this);
+		engine->getGUI()->getScreen("installer_uninstalling")->addActionListener(this);
+		engine->getGUI()->getScreen("installer_uninstalling")->addChangeListener(this);
+		engine->getGUI()->addRenderScreen(installed == false?"installer_welcome":"installer_welcome2");
 		engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 		engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	} catch (Exception& exception) {
@@ -270,7 +295,10 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 				true,
 				new OnBrowseAction(this)
 			);
-		}
+		} else
+		if (node->getId() == "button_uninstall") {
+			screen = SCREEN_UNINSTALLING;
+		} else
 		if (StringUtils::startsWith(node->getId(), "component") == true) {
 			auto componentIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
 			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
@@ -570,6 +598,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 														"Type=Application\n" +
 														"Icon=" + installPath + "/resources/logos/app_logo_small.png\n"
 													);
+													log.push_back(generatedFileName + ".sh");
 													log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop");
 												#endif
 
@@ -623,6 +652,77 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		case SCREEN_FINISHED:
 			engine->getGUI()->addRenderScreen("installer_finished");
 			break;
+		case SCREEN_WELCOME2:
+			engine->getGUI()->addRenderScreen("installer_welcome2");
+			break;
+		case SCREEN_UNINSTALLING:
+		{
+			engine->getGUI()->addRenderScreen("installer_uninstalling");
+			class UninstallThread: public Thread {
+				public:
+					UninstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
+					}
+					void run() {
+						Console::println("UninstallThread::run(): init");
+
+						//
+						installer->installThreadMutex.lock();
+						dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("message"))->setText(MutableString("Uninstalling ..."));
+						dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("details"))->setText(MutableString("..."));
+						dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+						installer->installThreadMutex.unlock();
+
+						//
+						auto hadException = false;
+						vector<string> log;
+						try {
+							FileSystem::getStandardFileSystem()->getContentAsStringArray(".", "install.files.db", log);
+							for (auto i = 1; i < log.size(); i++) {
+								try {
+									installer->installThreadMutex.lock();
+									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("message"))->setText(MutableString("Uninstalling ..."));
+									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("details"))->setText(MutableString(log[i]));
+									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(i) / static_cast<float>(log.size()), 2));
+									installer->installThreadMutex.unlock();
+									FileSystem::getStandardFileSystem()->removeFile(
+										FileSystem::getStandardFileSystem()->getPathName(log[i]),
+										FileSystem::getStandardFileSystem()->getFileName(log[i])
+									);
+								} catch (Exception& innerException) {
+									Console::println(string("UninstallThread::run(): An error occurred: ") + innerException.what());
+								}
+							}
+						} catch (Exception& exception) {
+							installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+							hadException = true;
+						}
+
+						try {
+							FileSystem::getStandardFileSystem()->removeFile(".", "install.files.db");
+							FileSystem::getStandardFileSystem()->removeFile(".", "install.components.db");
+							FileSystem::getStandardFileSystem()->removeFile(".", "install.version.db");
+							FileSystem::getStandardFileSystem()->removeFile(".", "console.log");
+						} catch (Exception& exception) {
+							installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+							hadException = true;
+						}
+
+						//
+						if (hadException == false) {
+							// TODO: Maybe show a finishing screen
+							exit(0);
+						}
+						// determine set names
+						Console::println("UninstallThread::run(): done");
+						delete this;
+					}
+				private:
+					Installer* installer;
+			};
+			UninstallThread* uninstallThread = new UninstallThread(this);
+			uninstallThread->start();
+			break;
+		}
 		default:
 			Console::println("Installer::onActionPerformed(): Unhandled screen: " + to_string(screen));
 			break;
