@@ -1,5 +1,8 @@
 #include <tdme/os/filesystem/ArchiveFileSystem.h>
 
+#include <string.h>
+
+#include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <string>
@@ -19,6 +22,7 @@
 
 using std::ifstream;
 using std::ios;
+using std::sort;
 using std::string;
 using std::to_string;
 using std::vector;
