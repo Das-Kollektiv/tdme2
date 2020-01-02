@@ -44,8 +44,8 @@ ArchiveFileSystem::ArchiveFileSystem(const string& fileName): fileName(fileName)
 	}
 
 	// read toc offset
-	int64_t fileInformationOffset;
-	ifs.seekg(-sizeof(fileInformationOffset), ios::end);
+	uint64_t fileInformationOffset;
+	ifs.seekg(-static_cast<int64_t>(sizeof(fileInformationOffset)), ios::end);
 	ifs.read((char*)&fileInformationOffset, sizeof(fileInformationOffset));
 	ifs.seekg(fileInformationOffset, ios::beg);
 

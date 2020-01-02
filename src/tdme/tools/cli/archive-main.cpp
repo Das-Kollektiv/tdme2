@@ -109,6 +109,7 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 
 	// append to archive
 	ofstream ofs("archive.ta", ofstream::binary | ofstream::app);
+	ofs.seekp(0, ofstream::end);
 	uint64_t fileOffset = ofs.tellp();
 
 	//
@@ -224,6 +225,7 @@ int main(int argc, char** argv)
 	// add file informations
 	{
 		ofstream ofs("archive.ta", ofstream::binary | ofstream::app);
+		ofs.seekp(0, ofstream::end);
 		uint32_t fileInformationOffsetEnd = 0LL;
 		uint64_t fileInformationOffset = ofs.tellp();
 		for (auto& fileInformation: fileInformations) {
