@@ -184,9 +184,10 @@ struct tdme::os::filesystem::FileSystemInterface
 	/**
 	 * Remove path
 	 * @param pathName path name
+	 * @param recursive remove recursive
 	 * @return success
 	 */
-	virtual void removePath(const string& pathName) = 0;
+	virtual void removePath(const string& pathName, bool recursive) = 0;
 
 	/**
 	 * Remove file

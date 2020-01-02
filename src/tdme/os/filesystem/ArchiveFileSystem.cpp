@@ -405,7 +405,7 @@ void ArchiveFileSystem::createPath(const string& pathName) {
 	throw FileSystemException("ArchiveFileSystem::createPath(): Not implemented yet");
 }
 
-void ArchiveFileSystem::removePath(const string& pathName) {
+void ArchiveFileSystem::removePath(const string& pathName, bool recursive) {
 	throw FileSystemException("ArchiveFileSystem::removePath(): Not implemented yet");
 }
 

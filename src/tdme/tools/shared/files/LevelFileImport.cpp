@@ -322,7 +322,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 
 	string modelPathName = pathName + "/" + fileName + "-models";
 	if (FileSystem::getInstance()->fileExists(modelPathName)) {
-		FileSystem::getInstance()->removePath(modelPathName);
+		FileSystem::getInstance()->removePath(modelPathName, true);
 	}
 	FileSystem::getInstance()->createPath(modelPathName);
 

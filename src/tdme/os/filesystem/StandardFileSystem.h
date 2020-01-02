@@ -41,7 +41,7 @@ public:
 	const string getPathName(const string& fileName) override;
 	const string getFileName(const string& fileName) override;
 	void createPath(const string& pathName) override;
-	void removePath(const string& pathName) override;
+	void removePath(const string& pathName, bool recursive) override;
 	void removeFile(const string& pathName, const string& fileName) override;
 	StandardFileSystem();
 	virtual ~StandardFileSystem();

@@ -312,19 +312,21 @@ void StandardFileSystem::createPath(const string& pathName) {
 	}
 }
 
-void StandardFileSystem::removePath(const string& pathName) {
-	vector<string> files;
-	list(pathName, files, nullptr);
-	for (auto i = 0; i < files.size(); i++) {
-		auto file = files[i];
-		if (file == "." || file == "..") {
-			continue;
-		}
-		auto completeFileName = getFileName(pathName, file);
-		if (isPath(completeFileName)) {
-			removePath(completeFileName);
-		} else {
-			removeFile(pathName, file);
+void StandardFileSystem::removePath(const string& pathName, bool recursive) {
+	if (recursive == true) {
+		vector<string> files;
+		list(pathName, files, nullptr);
+		for (auto i = 0; i < files.size(); i++) {
+			auto file = files[i];
+			if (file == "." || file == "..") {
+				continue;
+			}
+			auto completeFileName = getFileName(pathName, file);
+			if (isPath(completeFileName)) {
+				removePath(completeFileName, true);
+			} else {
+				removeFile(pathName, file);
+			}
 		}
 	}
 	Console::println(string("StandardFileSystem::removePath(): Removing ") + pathName);
