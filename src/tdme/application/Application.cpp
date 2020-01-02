@@ -323,8 +323,21 @@ string Application::getOSName() {
 }
 
 string Application::getCPUName() {
-	// TODO: implement me
-	return "x64";
+	#if defined(__amd64__) || defined(_M_X64)
+		return "x64";
+	#elif defined(__ia64__) || defined(_M_IA64)
+		return "ia64";
+	#elif defined(__aarch64__)
+		return "aarch64";
+	#elif defined(__arm__) || defined(_M_ARM)
+		return "arm";
+	#elif defined(__powerpc64__)
+		return "ppc64";
+	#elif defined(__powerpc__)
+		return "ppc";
+	#else
+		return "Unknown";
+	#endif
 }
 
 void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {
