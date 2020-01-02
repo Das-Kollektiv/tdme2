@@ -328,7 +328,7 @@ string Application::getCPUName() {
 	#elif defined(__ia64__) || defined(_M_IA64)
 		return "ia64";
 	#elif defined(__aarch64__)
-		return "aarch64";
+		return "arm64";
 	#elif defined(__arm__) || defined(_M_ARM)
 		return "arm";
 	#elif defined(__powerpc64__)
