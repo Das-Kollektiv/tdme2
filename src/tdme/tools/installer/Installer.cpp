@@ -732,15 +732,20 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 							}
 						}
 
+						//
+						auto installFolder = log[0] + "/";
+
 						// remove folders that we created non recursive
 						if (hadException == false) {
-							auto installFolder = log[0] + "/";
 							vector<string> folders;
 							for (auto i = 1; i < log.size(); i++) {
 								auto folderCandidate = FileSystem::getStandardFileSystem()->getPathName(log[i]);
-								if (folderCandidate.empty() == true) continue;
-								if (StringUtils::startsWith(folderCandidate, installFolder) == true &&
-									FileSystem::getStandardFileSystem()->isPath(folderCandidate) == true) folders.push_back(folderCandidate);
+								if (FileSystem::getStandardFileSystem()->isPath(folderCandidate) == true) {
+									while (StringUtils::startsWith(folderCandidate, installFolder) == true) {
+										folders.push_back(folderCandidate);
+										folderCandidate = FileSystem::getStandardFileSystem()->getPathName(folderCandidate);
+									}
+								}
 							}
 							sort(folders.begin(), folders.end());
 							reverse(folders.begin(), folders.end());
@@ -756,6 +761,16 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 									Console::println(string("UninstallThread::run(): An error occurred: ") + innerException.what());
 								}
 							}
+
+							// remove installer folder
+							try {
+								FileSystem::getStandardFileSystem()->removePath(
+									installFolder + "installer",
+									true
+								);
+							} catch (Exception& innerException) {
+								Console::println(string("UninstallThread::run(): An error occurred: ") + innerException.what());
+							}
 						}
 
 						// remove install databases and console.log
@@ -765,6 +780,16 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 								FileSystem::getStandardFileSystem()->removeFile(".", "install.components.db");
 								FileSystem::getStandardFileSystem()->removeFile(".", "install.version.db");
 								FileSystem::getStandardFileSystem()->removeFile(".", "console.log");
+							} catch (Exception& exception) {
+								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+								hadException = true;
+							}
+						}
+
+						// remove install folder
+						if (hadException == false) {
+							try {
+								FileSystem::getStandardFileSystem()->removePath(installFolder, false);
 							} catch (Exception& exception) {
 								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 								hadException = true;
