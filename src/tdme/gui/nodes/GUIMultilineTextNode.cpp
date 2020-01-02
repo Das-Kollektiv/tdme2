@@ -13,6 +13,7 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
+#include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/MutableString.h>
@@ -32,6 +33,7 @@ using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
+using tdme::gui::renderer::GUIRenderer;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::MutableString;
@@ -185,6 +187,10 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 
 	//
 	if (font != nullptr) {
+		// screen dimensions
+		auto screenWidth = screenNode->getScreenWidth();
+		auto screenHeight = screenNode->getScreenHeight();
+
 		// indents
 		auto xIndentLeft = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + border.left + padding.left;
 		auto yIndentTop = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + border.top + padding.top;
@@ -236,16 +242,31 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 						x = (computedConstraints.width - (border.left + border.right + padding.left + padding.right) - lineWidth);
 					}
-					// flush/draw to screen
-					font->drawString(
-						guiRenderer,
-						x + xIndentLeft,
-						y + yIndentTop,
-						line,
-						0,
-						0,
-						color
-					);
+					{
+						float left = x + xIndentLeft;
+						float top = y + yIndentTop;
+						float width = lineWidth;
+						float height = font->getLineHeight();
+						if (guiRenderer->isQuadVisible(
+								((left) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+								((left + width) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+								((left + width) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+								((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
+							// flush/draw to screen
+							font->drawString(
+								guiRenderer,
+								x + xIndentLeft,
+								y + yIndentTop,
+								line,
+								0,
+								0,
+								color
+							);
+						}
+					}
 					// did we already had a whitespace?
 					if (hadBreak == false) {
 						// clear current line as it has been rendered
