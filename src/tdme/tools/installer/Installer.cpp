@@ -112,7 +112,7 @@ void Installer::initialize()
 		setInputEventHandler(engine->getGUI());
 		popUps->initialize();
 		#if defined(_WIN32)
-			homeFolder = string(getenv("USERPROFILE"));
+			homeFolder = StringUtils::replace(string(getenv("USERPROFILE")), '\\', '/');
 		#else
 			homeFolder = string(getenv("HOME"));
 		#endif
@@ -507,7 +507,10 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 
 									// check if marked
 									installer->installThreadMutex.lock();
-									if (dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_components")->getNodeById("checkbox_component" + to_string(componentIdx)))->getController()->getValue().equals("1") == false) continue;
+									if (dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_components")->getNodeById("checkbox_component" + to_string(componentIdx)))->getController()->getValue().equals("1") == false) {
+										installer->installThreadMutex.unlock();
+										continue;
+									}
 									installer->installThreadMutex.unlock();
 
 									//
@@ -804,8 +807,13 @@ void Installer::createPathRecursively(const string& pathName) {
 	string pathCreating;
 	while (t.hasMoreTokens() == true) {
 		string pathComponent = t.nextToken();
-		pathCreating+= "/" + pathComponent;
-		if (FileSystem::getStandardFileSystem()->fileExists(pathCreating) == false) {
+		#if defined(_WIN32)
+			pathCreating+= pathCreating.empty() == true?pathComponent:"/" + pathComponent;
+		#else
+			pathCreating+= "/" + pathComponent;
+		#endif
+		if (FileSystem::getStandardFileSystem()->isDrive(pathCreating) == false && FileSystem::getStandardFileSystem()->fileExists(pathCreating) == false) {
+			Console::println("Creating: " + pathCreating);
 			FileSystem::getStandardFileSystem()->createPath(pathCreating);
 		}
 	}
