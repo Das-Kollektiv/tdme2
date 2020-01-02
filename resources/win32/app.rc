@@ -1,0 +1,24 @@
+IDI_ICON ICON "app.ico"
+1 VERSIONINFO
+FILEVERSION     1,0,0,0
+PRODUCTVERSION  1,0,0,0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "drewke.net"
+      VALUE "FileDescription", "TDME2"
+      VALUE "FileVersion", "1.9.9"
+      VALUE "InternalName", "TDME2"
+      VALUE "LegalCopyright", "TDME2"
+      VALUE "OriginalFilename", "*.exe"
+      VALUE "ProductName", "TDME2"
+      VALUE "ProductVersion", "1.0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END

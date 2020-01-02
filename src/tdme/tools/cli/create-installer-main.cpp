@@ -79,6 +79,7 @@ void scanDirResources(const string& folder, vector<string>& totalFiles) {
 				// xml
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".xml") == true) return true;
 				// images
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".ico") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".png") == true) return true;
 				// fonts
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
@@ -131,13 +132,16 @@ void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
 				#if defined(_WIN32)
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".exe") == true) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dll") == true) return true;
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".bat") == true) return true;
 				#elif defined(__APPLE__)
 					if (fileName.find(".") == string::npos) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dylib") == true) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".sh") == true) return true;
 				#else
 					if (fileName.find(".") == string::npos) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".sh") == true) return true;
 				#endif
 				//
 				return false;
@@ -330,7 +334,11 @@ int main(int argc, char** argv)
 
 			// scan files
 			if (type == "exe") {
-				scanDirExecutables(installerProperties.get("bin_folder", "") + "/" + file, filesBin);
+				StringTokenizer t;
+				t.tokenize(installerProperties.get("exe_folder", ""), ",");
+				while (t.hasMoreTokens() == true) {
+					scanDirExecutables(t.nextToken() + "/" + file, filesBin);
+				}
 			} else
 			if (type == "res") {
 				scanDirResources(file, filesData);

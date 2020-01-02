@@ -603,6 +603,29 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 													);
 													log.push_back(generatedFileName + ".sh");
 													log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop");
+												#elif defined(_WIN32)
+													FileSystem::getStandardFileSystem()->setContentFromString(
+														installPath,
+														"windows-create-shortcut.bat",
+														FileSystem::getInstance()->getContentAsString(".", "windows-create-shortcut.bat")
+													);
+													auto startMenuFolder = string(installer->homeFolder) + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/" + installer->installerProperties.get("name", "TDME2 based application");
+													auto executable = FileSystem::getStandardFileSystem()->getFileName(generatedFileName);
+													Installer::createPathRecursively(startMenuFolder);
+													auto linkFile = startMenuFolder + "/" + StringUtils::substring(executable, 0, executable.rfind('.')) + ".lnk";
+													Console::println(
+														installPath + "/windows-create-shortcut.bat " +
+														"\"" + generatedFileName + "\" " +
+														"\"" + linkFile + "\""
+													);
+													Console::println(
+														Application::execute(installPath + "/windows-create-shortcut.bat " +
+															"\"" + generatedFileName + "\" " +
+															"\"" + linkFile + "\""
+														)
+													);
+													log.push_back(linkFile);
+													FileSystem::getStandardFileSystem()->removeFile(installPath, "windows-create-shortcut.bat");
 												#endif
 
 											}
