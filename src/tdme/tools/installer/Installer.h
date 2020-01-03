@@ -37,11 +37,25 @@ class tdme::tools::installer::Installer final
 private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
-	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX, SCREEN_WELCOME2, SCREEN_UNINSTALLING  };
+	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_CHECKFORUPDATE, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX, SCREEN_WELCOME2, SCREEN_UNINSTALLING  };
+	enum InstallerMode { INSTALLERMODE_NONE, INSTALLERMODE_INSTALL, INSTALLERMODE_UNINSTALL, INSTALLERMODE_UPDATE };
+	InstallerMode installerMode;
 	volatile Screen screen;
 	Properties installerProperties;
 	string homeFolder;
 	Mutex installThreadMutex;
+	bool installed;
+	string timestamp;
+
+	/**
+	 * Initialize screens
+	 */
+	void initializeScreens();
+
+	/**
+	 * Perform screen action
+	 */
+	void performScreenAction();
 
 	/**
 	 * Scan archive file system
