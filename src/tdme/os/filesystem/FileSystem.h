@@ -36,4 +36,9 @@ public:
 	 */
 	static void setupFileSystem(FileSystemInterface* fileSystem);
 
+	/**
+	 * Unset file system, which means disposing the old one and unset internal file system to use
+	 */
+	static void unsetFileSystem();
+
 };

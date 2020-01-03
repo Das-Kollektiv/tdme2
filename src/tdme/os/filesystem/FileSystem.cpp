@@ -31,3 +31,9 @@ void FileSystem::setupFileSystem(FileSystemInterface* fileSystem)
 {
 	FileSystem::fileSystem = fileSystem;
 }
+
+void FileSystem::unsetFileSystem()
+{
+	if (FileSystem::fileSystem != nullptr) delete FileSystem::fileSystem;
+	FileSystem::fileSystem = nullptr;
+}

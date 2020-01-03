@@ -116,6 +116,21 @@ void Installer::initializeScreens() {
 		} catch (Exception& exception) {
 		}
 
+		if (timestamp.empty() == true) {
+			try {
+				timestamp = FileSystem::getStandardFileSystem()->getContentAsString(".", "install.version.db");
+			} catch (Exception& exception) {
+			}
+		}
+
+		string installFolder;
+		try {
+			vector<string> log;
+			FileSystem::getStandardFileSystem()->getContentAsStringArray(".", "install.files.db", log);
+			if (log.size() > 0) installFolder = log[0];
+		} catch (Exception& exception) {
+		}
+
 		engine->getGUI()->removeScreen("installer_welcome");
 		engine->getGUI()->removeScreen("installer_license");
 		engine->getGUI()->removeScreen("installer_components");
@@ -129,7 +144,7 @@ void Installer::initializeScreens() {
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
-			{"installfolder", homeFolder + "/Applications/" + installerProperties.get("name", "TDME2 based application")}
+			{"installfolder", installFolder.empty() == true?homeFolder + "/Applications/" + installerProperties.get("name", "TDME2 based application"):installFolder}
 		};
 		engine->getGUI()->addScreen(
 			"installer_welcome",
@@ -255,19 +270,19 @@ void Installer::performScreenAction() {
 	switch (screen) {
 		case SCREEN_WELCOME:
 			engine->getGUI()->addRenderScreen("installer_welcome");
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 			break;
 		case SCREEN_LICENSE:
 			engine->getGUI()->addRenderScreen("installer_license");
-			break;
-		case SCREEN_COMPONENTS:
-			engine->getGUI()->addRenderScreen("installer_components");
-			break;
-		case SCREEN_PATH:
-			engine->getGUI()->addRenderScreen("installer_folder");
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 			break;
 		case SCREEN_CHECKFORUPDATE:
 			{
 				engine->getGUI()->addRenderScreen("installer_installing");
+				engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+				engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 				class CheckForUpdateThread: public Thread {
 					public:
 					CheckForUpdateThread(Installer* installer): Thread("checkforupdate-thread"), installer(installer) {
@@ -333,14 +348,12 @@ void Installer::performScreenAction() {
 
 									// download them
 									HTTPDownloadClient httpDownloadClient;
-									for (auto componentIdx = 1; true; componentIdx++) {
-										//
-										auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
+									for (auto componentIdx = 0; true; componentIdx++) {
+										auto componentId = componentIdx == 0?"installer":"component" + to_string(componentIdx);
+										auto componentName = installer->installerProperties.get(componentId, "");
 										if (componentName.empty() == true) break;
-
-										//
 										Console::println("CheckForUpdateThread::run(): Having component: " + to_string(componentIdx) + ": " + componentName);
-										auto componentInclude = installer->installerProperties.get("component" + to_string(componentIdx) + "_include", "");
+										auto componentInclude = installer->installerProperties.get(componentId + "_include", "");
 										if (componentInclude.empty() == true) {
 											Console::println("CheckForUpdateThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 											continue;
@@ -380,15 +393,18 @@ void Installer::performScreenAction() {
 									}
 								}
 							}
-							// determine set names
-							Console::println("CheckForUpdateThread::run(): done");
-							delete this;
 
 							//
 							installer->installThreadMutex.lock();
-							installer->screen = SCREEN_INSTALLING;
+							installer->mountInstallerFileSystem(installer->timestamp);
+							installer->initializeScreens();
+							installer->screen = SCREEN_COMPONENTS;
 							installer->performScreenAction();
 							installer->installThreadMutex.unlock();
+
+							// determine set names
+							Console::println("CheckForUpdateThread::run(): done");
+							delete this;
 						}
 					private:
 						Installer* installer;
@@ -397,9 +413,21 @@ void Installer::performScreenAction() {
 				checkForUpdateThread->start();
 				break;
 			}
+		case SCREEN_COMPONENTS:
+			engine->getGUI()->addRenderScreen("installer_components");
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
+			break;
+		case SCREEN_PATH:
+			engine->getGUI()->addRenderScreen("installer_folder");
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
+			break;
 		case SCREEN_INSTALLING:
 			{
 				engine->getGUI()->addRenderScreen("installer_installing");
+				engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+				engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 				class InstallThread: public Thread {
 					public:
 						InstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
@@ -429,7 +457,7 @@ void Installer::performScreenAction() {
 							log.push_back(installPath);
 							if (hadException == false) {
 								// copy installer archive and sha256
-								{
+								if (installer->installerMode == INSTALLERMODE_INSTALL) {
 									auto file = dynamic_cast<ArchiveFileSystem*>(FileSystem::getInstance())->getArchiveFileName();
 									{
 										vector<uint8_t> content;
@@ -632,6 +660,8 @@ void Installer::performScreenAction() {
 								installer->screen = SCREEN_FINISHED;
 								installer->engine->getGUI()->resetRenderScreens();
 								installer->engine->getGUI()->addRenderScreen("installer_finished");
+								installer->engine->getGUI()->addRenderScreen(installer->popUps->getFileDialogScreenController()->getScreenNode()->getId());
+								installer->engine->getGUI()->addRenderScreen(installer->popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 								installer->installThreadMutex.unlock();
 							}
 							// determine set names
@@ -647,13 +677,19 @@ void Installer::performScreenAction() {
 			}
 		case SCREEN_FINISHED:
 			engine->getGUI()->addRenderScreen("installer_finished");
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 			break;
 		case SCREEN_WELCOME2:
 			engine->getGUI()->addRenderScreen("installer_welcome2");
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 			break;
 		case SCREEN_UNINSTALLING:
 		{
 			engine->getGUI()->addRenderScreen("installer_uninstalling");
+			engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+			engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 			class UninstallThread: public Thread {
 				public:
 					UninstallThread(Installer* installer): Thread("install-thread"), installer(installer) {
@@ -725,14 +761,16 @@ void Installer::performScreenAction() {
 								}
 							}
 
-							// remove installer folder
-							try {
-								FileSystem::getStandardFileSystem()->removePath(
-									installFolder + "installer",
-									true
-								);
-							} catch (Exception& exception) {
-								Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+							// remove installer folder if not updating
+							if (installer->installerMode == INSTALLERMODE_UNINSTALL) {
+								try {
+									FileSystem::getStandardFileSystem()->removePath(
+										installFolder + "installer",
+										true
+									);
+								} catch (Exception& exception) {
+									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+								}
 							}
 						}
 
@@ -760,8 +798,15 @@ void Installer::performScreenAction() {
 
 						//
 						if (hadException == false) {
-							// TODO: Maybe show a finishing screen
-							exit(0);
+							if (installer->installerMode == INSTALLERMODE_UPDATE) {
+								installer->installThreadMutex.lock();
+								installer->screen = SCREEN_INSTALLING;
+								installer->performScreenAction();
+								installer->installThreadMutex.unlock();
+							} else {
+								// TODO: Maybe show a finishing screen
+								exit(0);
+							}
 						}
 						// determine set names
 						Console::println("UninstallThread::run(): done");
@@ -820,17 +865,21 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 	Console::println(node->getId() + ": onActionPerformed(): " + type->getName());
 	if (type == GUIActionListener_Type::PERFORMED) {
 		if (node->getId() == "button_next") {
-			screen = static_cast<Screen>(static_cast<int>(screen) + 1 % static_cast<int>(SCREEN_MAX));
+			if (screen == SCREEN_COMPONENTS && installerMode == INSTALLERMODE_UPDATE) {
+				screen = SCREEN_UNINSTALLING;
+			} else {
+				screen = static_cast<Screen>(static_cast<int>(screen) + 1 % static_cast<int>(SCREEN_MAX));
+			}
 		} else
 		if (node->getId() == "button_back") {
 			screen = static_cast<Screen>(static_cast<int>(screen) - 1 % static_cast<int>(SCREEN_MAX));
 		} else
 		if (node->getId() == "button_agree") {
-			screen = SCREEN_COMPONENTS;
-		} else
-		if (node->getId() == "button_install") {
 			installerMode = INSTALLERMODE_INSTALL;
 			screen = SCREEN_CHECKFORUPDATE;
+		} else
+		if (node->getId() == "button_install") {
+			screen = SCREEN_INSTALLING;
 		} else
 		if (node->getId() == "button_cancel") {
 			exit(0);
@@ -874,11 +923,11 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		} else
 		if (node->getId() == "button_update") {
 			installerMode = INSTALLERMODE_UPDATE;
-			screen = SCREEN_UNINSTALLING;
+			screen = SCREEN_CHECKFORUPDATE;
 		} else
 		if (node->getId() == "button_repair") {
 			installerMode = INSTALLERMODE_UPDATE;
-			screen = SCREEN_UNINSTALLING;
+			screen = SCREEN_CHECKFORUPDATE;
 		} else
 		if (StringUtils::startsWith(node->getId(), "component") == true) {
 			auto componentIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
@@ -904,18 +953,11 @@ void Installer::display()
 	installThreadMutex.unlock();
 }
 
-void Installer::main(int argc, char** argv)
-{
-	Console::println(string("Installer 1.9.9"));
-	Console::println(string("Programmed 2017-2018 by Andreas Drewke, drewke.net."));
-	Console::println();
-	if (argc > 1) {
-		Console::println("Usage: Installer");
-		exit(0);
-	}
+void Installer::mountInstallerFileSystem(const string& timestamp) {
+	Console::println("Installer::mountInstallerFileSystem(): timestamp: " + (timestamp.empty() == false?timestamp:"no timestamp"));
 	// determine installer tdme archive
 	{
-		auto installerArchiveFileNameStart = Application::getOSName() + "-" + Application::getCPUName() + "-Installer-";
+		auto installerArchiveFileNameStart = Application::getOSName() + "-" + Application::getCPUName() + "-Installer-" + (timestamp.empty() == false?timestamp + ".ta":"");
 		string installerArchiveFileName;
 		// determine newest component file name
 		vector<string> files;
@@ -936,8 +978,23 @@ void Installer::main(int argc, char** argv)
 		if (installerFileSystem->computeSHA256Hash() != FileSystem::getStandardFileSystem()->getContentAsString("installer", installerArchiveFileName + ".sha256")) {
 			Console::println("Installer::main(): Failed to verify: " + installerArchiveFileName + ", get new installer and try again");
 		}
+		Console::println("Installer::mountInstallerFileSystem(): unmounting");
+		FileSystem::unsetFileSystem();
+		Console::println("Installer::mountInstallerFileSystem(): mounting: " + installerArchiveFileName);
 		FileSystem::setupFileSystem(installerFileSystem);
 	}
+}
+
+void Installer::main(int argc, char** argv)
+{
+	Console::println(string("Installer 1.9.9"));
+	Console::println(string("Programmed 2019-2020 by Andreas Drewke, drewke.net."));
+	Console::println();
+	if (argc > 1) {
+		Console::println("Usage: Installer");
+		exit(0);
+	}
+	mountInstallerFileSystem();
 	auto installer = new Installer();
 	installer->run(argc, argv, "Installer");
 }

@@ -37,7 +37,7 @@ class tdme::tools::installer::Installer final
 private:
 	Engine* engine { nullptr };
 	PopUps* popUps { nullptr };
-	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_CHECKFORUPDATE, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX, SCREEN_WELCOME2, SCREEN_UNINSTALLING  };
+	enum Screen { SCREEN_WELCOME, SCREEN_LICENSE, SCREEN_CHECKFORUPDATE, SCREEN_COMPONENTS, SCREEN_PATH, SCREEN_INSTALLING, SCREEN_FINISHED, SCREEN_MAX, SCREEN_WELCOME2, SCREEN_UNINSTALLING  };
 	enum InstallerMode { INSTALLERMODE_NONE, INSTALLERMODE_INSTALL, INSTALLERMODE_UNINSTALL, INSTALLERMODE_UPDATE };
 	InstallerMode installerMode;
 	volatile Screen screen;
@@ -46,6 +46,11 @@ private:
 	Mutex installThreadMutex;
 	bool installed;
 	string timestamp;
+
+	/**
+	 * Moint installer file system
+	 */
+	static void mountInstallerFileSystem(const string& timestamp = string());
 
 	/**
 	 * Initialize screens
