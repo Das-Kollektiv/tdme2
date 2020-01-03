@@ -387,6 +387,13 @@ void Installer::performScreenAction() {
 											Thread::sleep(250LL);
 										}
 										httpDownloadClient.join();
+										if (httpDownloadClient.getStatusCode() != 200) {
+											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName);
+											//
+											Console::println("CheckForUpdateThread::run(): done");
+											delete this;
+											return;
+										}
 
 										// atchive
 										httpDownloadClient.reset();
@@ -400,6 +407,13 @@ void Installer::performScreenAction() {
 											Thread::sleep(250LL);
 										}
 										httpDownloadClient.join();
+										if (httpDownloadClient.getStatusCode() != 200) {
+											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName);
+											//
+											Console::println("CheckForUpdateThread::run(): done");
+											delete this;
+											return;
+										}
 									}
 
 									//
@@ -899,7 +913,11 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			}
 		} else
 		if (node->getId() == "button_back") {
-			screen = static_cast<Screen>(static_cast<int>(screen) - 1 % static_cast<int>(SCREEN_MAX));
+			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_UPDATE || installerMode == INSTALLERMODE_REPAIR)) {
+				screen = SCREEN_WELCOME2;
+			} else {
+				screen = static_cast<Screen>(static_cast<int>(screen) - 1 % static_cast<int>(SCREEN_MAX));
+			}
 		} else
 		if (node->getId() == "button_agree") {
 			installerMode = INSTALLERMODE_INSTALL;
