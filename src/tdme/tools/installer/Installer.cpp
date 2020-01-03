@@ -290,17 +290,22 @@ void Installer::performScreenAction() {
 						void run() {
 							Console::println("CheckForUpdateThread::run(): init");
 
+							auto currentTimestamp = installer->timestamp;
+
 							//
+							auto repairHaveLocalFile = false;
 							auto completionFileName = Application::getOSName() + "-" + Application::getCPUName() + "-upload-";
+							if (installer->installerMode == INSTALLERMODE_REPAIR) completionFileName += "-" + installer->timestamp;
 
 							// determine newest component file name
-							if (installer->timestamp.empty() == true) {
+							if (installer->timestamp.empty() == true || installer->installerMode == INSTALLERMODE_REPAIR) {
 								vector<string> files;
 								FileSystem::getStandardFileSystem()->list("installer", files);
 								for (auto file: files) {
 									if (StringUtils::startsWith(file, completionFileName) == true) {
 										Console::println("CheckForUpdateThread: Have upload completion file: " + file);
 										installer->timestamp = StringUtils::substring(file, completionFileName.size());
+										repairHaveLocalFile = true;
 									}
 								}
 							}
@@ -319,24 +324,29 @@ void Installer::performScreenAction() {
 								installer->installThreadMutex.unlock();
 
 								// check repository via apache index file for now
-								try {
-									HTTPClient httpClient;
-									httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
-									httpClient.setURL(repository);
-									httpClient.execute();
-									auto response = httpClient.getResponse().str();
-									auto pos = 0;
-									while ((pos = response.find(completionFileName, pos)) != string::npos) {
-										pos+= completionFileName.size();
-										auto timestampWebNew = StringUtils::substring(response, pos, pos + 14);
-										pos+= 14;
-										if ((installer->timestamp.empty() == true && (timestampWeb.empty() == true || timestampWebNew > timestampWeb)) ||
-											(installer->timestamp.empty() == false && ((timestampWeb.empty() == true || timestampWebNew > timestampWeb) && timestampWebNew > installer->timestamp))) {
-											timestampWeb = timestampWebNew;
+								if (installer->installerMode == INSTALLERMODE_UPDATE) {
+									try {
+										HTTPClient httpClient;
+										httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
+										httpClient.setURL(repository);
+										httpClient.execute();
+										auto response = httpClient.getResponse().str();
+										auto pos = 0;
+										while ((pos = response.find(completionFileName, pos)) != string::npos) {
+											pos+= completionFileName.size();
+											auto timestampWebNew = StringUtils::substring(response, pos, pos + 14);
+											pos+= 14;
+											if ((installer->timestamp.empty() == true && (timestampWeb.empty() == true || timestampWebNew > timestampWeb)) ||
+												(installer->timestamp.empty() == false && ((timestampWeb.empty() == true || timestampWebNew > timestampWeb) && timestampWebNew > installer->timestamp))) {
+												timestampWeb = timestampWebNew;
+											}
 										}
+									} catch (Exception& exception) {
+										Console::println(string("CheckForUpdateThread::run(): An error occurred: ") + exception.what());
 									}
-								} catch (Exception& exception) {
-									Console::println(string("Fail: ") + exception.what());
+								} else
+								if (installer->installerMode == INSTALLERMODE_REPAIR && repairHaveLocalFile == false) {
+									timestampWeb = installer->timestamp;
 								}
 
 								// download archives if newer
@@ -391,7 +401,24 @@ void Installer::performScreenAction() {
 										}
 										httpDownloadClient.join();
 									}
+
+									//
+									try {
+										FileSystem::getStandardFileSystem()->setContentFromString("installer", Application::getOSName() + "-" + Application::getCPUName() + "-upload-" + timestampWeb, "");
+									} catch (Exception& exception) {
+										Console::println(string("CheckForUpdateThread::run(): An error occurred: ") + exception.what());
+									}
 								}
+							}
+
+							// no update available, but update was requested
+							if (installer->installerMode == INSTALLERMODE_UPDATE && installer->timestamp <= currentTimestamp) {
+								installer->popUps->getInfoDialogScreenController()->show("Information", "No update available");
+								//
+								Console::println("CheckForUpdateThread::run(): done");
+								delete this;
+								//
+								return;
 							}
 
 							//
@@ -402,7 +429,7 @@ void Installer::performScreenAction() {
 							installer->performScreenAction();
 							installer->installThreadMutex.unlock();
 
-							// determine set names
+							//
 							Console::println("CheckForUpdateThread::run(): done");
 							delete this;
 						}
@@ -798,7 +825,7 @@ void Installer::performScreenAction() {
 
 						//
 						if (hadException == false) {
-							if (installer->installerMode == INSTALLERMODE_UPDATE) {
+							if (installer->installerMode == INSTALLERMODE_UPDATE || installer->installerMode == INSTALLERMODE_REPAIR) {
 								installer->installThreadMutex.lock();
 								installer->screen = SCREEN_INSTALLING;
 								installer->performScreenAction();
@@ -865,7 +892,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 	Console::println(node->getId() + ": onActionPerformed(): " + type->getName());
 	if (type == GUIActionListener_Type::PERFORMED) {
 		if (node->getId() == "button_next") {
-			if (screen == SCREEN_COMPONENTS && installerMode == INSTALLERMODE_UPDATE) {
+			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_UPDATE || installerMode == INSTALLERMODE_REPAIR)) {
 				screen = SCREEN_UNINSTALLING;
 			} else {
 				screen = static_cast<Screen>(static_cast<int>(screen) + 1 % static_cast<int>(SCREEN_MAX));
@@ -926,7 +953,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			screen = SCREEN_CHECKFORUPDATE;
 		} else
 		if (node->getId() == "button_repair") {
-			installerMode = INSTALLERMODE_UPDATE;
+			installerMode = INSTALLERMODE_REPAIR;
 			screen = SCREEN_CHECKFORUPDATE;
 		} else
 		if (StringUtils::startsWith(node->getId(), "component") == true) {
