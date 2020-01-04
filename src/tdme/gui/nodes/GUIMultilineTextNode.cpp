@@ -14,6 +14,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
+#include <tdme/math/Math.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/MutableString.h>
@@ -34,6 +35,7 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::math::Math;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::MutableString;
@@ -65,6 +67,14 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->text.set(text);
 	this->autoWidth = 0;
 	this->autoHeight = 0;
+	this->parentOffsetsChanged = true;
+	this->parentXOffsetLast = 0.0f;
+	this->parentYOffsetLast = 0.0f;
+	this->yLast = 0.0f;
+	this->charStartIdx = 0;
+	this->charEndIdx = text.length();
+	this->widthLast = -1;
+	this->heightLast = -1;
 	if (this->font != nullptr) this->font->initialize();
 }
 
@@ -98,6 +108,9 @@ int32_t GUIMultilineTextNode::getContentHeight()
 void GUIMultilineTextNode::computeContentAlignment() {
 	// If fixed width requested and no computed constraints yet, abort
 	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && computedConstraints.width == -1) return;
+	// width did not change, but relayout has been requested
+	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && widthLast == computedConstraints.width) return;
+	// no font, exit
 	if (font == nullptr) return;
 
 	//
@@ -165,10 +178,22 @@ void GUIMultilineTextNode::computeContentAlignment() {
 			}
 		}
 	}
+	//
+	this->parentOffsetsChanged = true;
+	this->widthLast = computedConstraints.width;
+	this->heightLast = computedConstraints.height;
 }
 
 void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->text = text;
+	this->parentOffsetsChanged = true;
+	this->parentXOffsetLast = 0.0f;
+	this->parentYOffsetLast = 0.0f;
+	this->charStartIdx = 0;
+	this->charEndIdx = text.length();
+	this->yLast = 0.0f;
+	this->widthLast = -1;
+	this->heightLast = -1;
 	screenNode->layout(this);
 }
 
@@ -209,7 +234,21 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		string line;
 		string word;
 		bool hadBreak = false;
-		for (auto i = 0; i < text.length(); i++) {
+		auto parentXOffset = computeParentChildrenRenderOffsetXTotal();
+		auto parentYOffset = computeParentChildrenRenderOffsetYTotal();
+		if (parentOffsetsChanged == true ||
+			Math::abs(parentXOffset - parentXOffsetLast) > Math::EPSILON ||
+			Math::abs(parentYOffset - parentYOffsetLast) > Math::EPSILON) {
+			parentXOffsetLast = parentXOffset;
+			parentYOffsetLast = parentYOffset;
+			charStartIdx = 0;
+			charEndIdx = text.length();
+			parentOffsetsChanged = false;
+		} else {
+			y = yLast;
+		}
+		bool visible = false;
+		for (auto i = charStartIdx; i < charEndIdx; i++) {
 			auto c = text.charAt(i);
 			// last char
 			auto lastChar = i == text.length() - 1;
@@ -265,6 +304,15 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 								0,
 								color
 							);
+							if (visible == false) {
+								visible = true;
+								charStartIdx = i;
+								yLast = y;
+							}
+						} else
+						if (visible == true) {
+							visible = false;
+							charEndIdx = i;
 						}
 					}
 					// did we already had a whitespace?

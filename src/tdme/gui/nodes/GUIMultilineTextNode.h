@@ -52,6 +52,14 @@ private:
 	int autoWidth;
 	int autoHeight;
 
+	bool parentOffsetsChanged;
+	float parentXOffsetLast;
+	float parentYOffsetLast;
+	float yLast;
+	int charStartIdx;
+	int charEndIdx;
+	int widthLast;
+	int heightLast;
 protected:
 	/** 
 	 * @return node type
