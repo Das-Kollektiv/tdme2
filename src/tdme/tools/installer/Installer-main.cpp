@@ -1,8 +1,16 @@
 #include <tdme/tools/installer/Installer.h>
 
+#include <tdme/os/network/Network.h>
+
+using tdme::os::network::Network;
+
 int main(int argc, char** argv)
 {
-    ::tdme::tools::installer::Installer::main(argc, argv);
+	// initialize network module
+	Network::initialize();
 
-    return 0;
+	//
+	::tdme::tools::installer::Installer::main(argc, argv);
+
+	return 0;
 }
