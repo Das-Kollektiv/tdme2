@@ -11,7 +11,6 @@
 
 using std::map;
 using std::string;
-using std::to_string;
 
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::fileio::textures::Texture;
