@@ -215,6 +215,7 @@
             - libpng
             - ReactPhysics3D
             - RapidJSON
+            - sha256
             - tinyxml
             - V-HACD
             - Vorbis/OGG
