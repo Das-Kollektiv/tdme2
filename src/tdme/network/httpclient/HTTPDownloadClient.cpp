@@ -192,7 +192,8 @@ void HTTPDownloadClient::start() {
 						ofs.close();
 					}
 
-					if (isStopRequested() == false) {
+					// transfer to real file
+					if (downloadClient->httpStatusCode == 200 && isStopRequested() == false) {
 						// input file stream
 						ifstream ifs((downloadClient->file + ".download").c_str(), ofstream::binary);
 						if (ifs.is_open() == false) {
@@ -232,7 +233,6 @@ void HTTPDownloadClient::start() {
 
 					//
 					FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file + ".download");
-					if (downloadClient->httpStatusCode != 200) FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file);
 
 					//
 					socket.shutdown();

@@ -295,7 +295,7 @@ void Installer::performScreenAction() {
 							//
 							auto repairHaveLocalFile = false;
 							auto completionFileName = Application::getOSName() + "-" + Application::getCPUName() + "-upload-";
-							if (installer->installerMode == INSTALLERMODE_REPAIR) completionFileName += "-" + installer->timestamp;
+							if (installer->installerMode == INSTALLERMODE_REPAIR) completionFileName += installer->timestamp;
 
 							// determine newest component file name
 							if (installer->timestamp.empty() == true || installer->installerMode == INSTALLERMODE_REPAIR) {
@@ -315,7 +315,7 @@ void Installer::performScreenAction() {
 
 							//
 							auto repository = installer->installerProperties.get("repository", "");
-							if (repository.empty() == false) {
+							if (repository.empty() == false && (installer->installerMode != INSTALLERMODE_REPAIR || repairHaveLocalFile == false)) {
 								string timestampWeb;
 								installer->installThreadMutex.lock();
 								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Downloading ..."));
@@ -1001,7 +1001,7 @@ void Installer::display()
 void Installer::mountInstallerFileSystem(const string& timestamp) {
 	Console::println("Installer::mountInstallerFileSystem(): timestamp: " + (timestamp.empty() == false?timestamp:"no timestamp"));
 	// determine installer tdme archive
-	{
+	try {
 		auto installerArchiveFileNameStart = Application::getOSName() + "-" + Application::getCPUName() + "-Installer-" + (timestamp.empty() == false?timestamp + ".ta":"");
 		string installerArchiveFileName;
 		// determine newest component file name
@@ -1027,6 +1027,9 @@ void Installer::mountInstallerFileSystem(const string& timestamp) {
 		FileSystem::unsetFileSystem();
 		Console::println("Installer::mountInstallerFileSystem(): mounting: " + installerArchiveFileName);
 		FileSystem::setupFileSystem(installerFileSystem);
+	} catch (Exception& exception) {
+		Console::println(string("Installer::mountInstallerFileSystem(): ") + exception.what());
+		exit(0);
 	}
 }
 
