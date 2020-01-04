@@ -17,6 +17,9 @@ using tdme::tools::shared::controller::ProgressBarScreenController;
 
 PopUps::PopUps() 
 {
+	fileDialogScreenController = new FileDialogScreenController();
+	infoDialogScreenController = new InfoDialogScreenController();
+	progressBarScreenController = new ProgressBarScreenController();
 }
 
 PopUps::~PopUps() {
@@ -42,11 +45,8 @@ ProgressBarScreenController* PopUps::getProgressBarScreenController()
 
 void PopUps::initialize()
 {
-	fileDialogScreenController = new FileDialogScreenController();
 	fileDialogScreenController->initialize();
-	infoDialogScreenController = new InfoDialogScreenController();
 	infoDialogScreenController->initialize();
-	progressBarScreenController = new ProgressBarScreenController();
 	progressBarScreenController->initialize();
 	Engine::getInstance()->getGUI()->addScreen(fileDialogScreenController->getScreenNode()->getId(), fileDialogScreenController->getScreenNode());
 	Engine::getInstance()->getGUI()->addScreen(infoDialogScreenController->getScreenNode()->getId(), infoDialogScreenController->getScreenNode());
@@ -55,6 +55,9 @@ void PopUps::initialize()
 
 void PopUps::dispose()
 {
+	Engine::getInstance()->getGUI()->removeScreen(fileDialogScreenController->getScreenNode()->getId());
+	Engine::getInstance()->getGUI()->removeScreen(infoDialogScreenController->getScreenNode()->getId());
+	Engine::getInstance()->getGUI()->removeScreen(progressBarScreenController->getScreenNode()->getId());
 	fileDialogScreenController->dispose();
 	infoDialogScreenController->dispose();
 	progressBarScreenController->dispose();

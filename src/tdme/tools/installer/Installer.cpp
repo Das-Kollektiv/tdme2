@@ -106,6 +106,7 @@ Installer::Installer(): installThreadMutex("install-thread-mutex")
 	installerMode = INSTALLERMODE_NONE;
 	screen = SCREEN_WELCOME;
 	installed = false;
+	remountInstallerArchive = false;
 }
 
 void Installer::initializeScreens() {
@@ -131,14 +132,11 @@ void Installer::initializeScreens() {
 		} catch (Exception& exception) {
 		}
 
-		engine->getGUI()->removeScreen("installer_welcome");
-		engine->getGUI()->removeScreen("installer_license");
-		engine->getGUI()->removeScreen("installer_components");
-		engine->getGUI()->removeScreen("installer_folder");
-		engine->getGUI()->removeScreen("installer_installing");
-		engine->getGUI()->removeScreen("installer_finished");
-		engine->getGUI()->removeScreen("installer_welcome2");
-		engine->getGUI()->removeScreen("installer_uninstalling");
+		//
+		popUps->dispose();
+		engine->getGUI()->reset();
+		popUps->initialize();
+
 		installerProperties.load("resources/installer", "installer.properties");
 		if (installerProperties.get("version", "") != "1.9.9") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
 		unordered_map<string, string> parameters = {
@@ -437,10 +435,8 @@ void Installer::performScreenAction() {
 
 							//
 							installer->installThreadMutex.lock();
-							installer->mountInstallerFileSystem(installer->timestamp);
-							installer->initializeScreens();
 							installer->screen = SCREEN_COMPONENTS;
-							installer->performScreenAction();
+							installer->remountInstallerArchive = true;
 							installer->installThreadMutex.unlock();
 
 							//
@@ -992,6 +988,12 @@ void Installer::onValueChanged(GUIElementNode* node) {
 void Installer::display()
 {
 	installThreadMutex.lock();
+	if (remountInstallerArchive == true) {
+		mountInstallerFileSystem(timestamp);
+		initializeScreens();
+		performScreenAction();
+		remountInstallerArchive = false;
+	}
 	engine->display();
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();

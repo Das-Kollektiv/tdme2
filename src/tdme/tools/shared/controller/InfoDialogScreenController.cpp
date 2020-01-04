@@ -52,6 +52,7 @@ void InfoDialogScreenController::initialize()
 
 void InfoDialogScreenController::dispose()
 {
+	screenNode = nullptr;
 }
 
 void InfoDialogScreenController::show(const string& caption, const string& message)

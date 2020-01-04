@@ -11,6 +11,7 @@
 
 using std::map;
 using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::fileio::textures::Texture;
@@ -38,7 +39,6 @@ TextureManager_TextureManaged* TextureManager::addTexture(const string& id, bool
 		//
 		auto textureManaged = textureManagedIt->second;
 		textureManaged->incrementReferenceCounter();
-		auto textureId = textureManaged->getRendererId();
 		mutex.unlock();
 		// yep, return renderer texture id
 		created = false;

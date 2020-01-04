@@ -67,7 +67,7 @@ private:
 	/** 
 	 * The height of a line 
 	 */
-	int32_t lineHeight;
+	int32_t lineHeight { 0 };
 
 public:
 

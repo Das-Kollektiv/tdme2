@@ -89,6 +89,7 @@ void FileDialogScreenController::initialize()
 
 void FileDialogScreenController::dispose()
 {
+	screenNode = nullptr;
 }
 
 bool FileDialogScreenController::setupFileDialogListBox()

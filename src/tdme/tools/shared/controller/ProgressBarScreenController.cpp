@@ -58,6 +58,7 @@ void ProgressBarScreenController::initialize()
 
 void ProgressBarScreenController::dispose()
 {
+	screenNode = nullptr;
 }
 
 void ProgressBarScreenController::show()

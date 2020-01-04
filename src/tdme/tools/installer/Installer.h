@@ -46,6 +46,7 @@ private:
 	Mutex installThreadMutex;
 	bool installed;
 	string timestamp;
+	bool remountInstallerArchive;
 
 	/**
 	 * Moint installer file system
