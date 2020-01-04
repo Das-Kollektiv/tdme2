@@ -62,6 +62,7 @@ uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int
 	httpHeader.clear();
 	string line;
 	uint64_t headerSize = 0;
+	uint64_t returnHeaderSize = 0;
 	char lastChar = -1;
 	char currentChar;
 	while (rawResponse.eof() == false) {
@@ -71,7 +72,10 @@ uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int
 			if (line.size() != 0) {
 				httpHeader.push_back(line);
 			}
-			if (line.size() == 0) return headerSize;
+			if (line.size() == 0) {
+				returnHeaderSize = headerSize;
+				break;
+			}
 			line.clear();
 		} else
 		if (currentChar != '\r' && currentChar != '\n') {
@@ -89,7 +93,7 @@ uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int
 			}
 		}
 	}
-	return 0LL;
+	return returnHeaderSize;
 }
 
 void HTTPDownloadClient::reset() {
@@ -228,6 +232,7 @@ void HTTPDownloadClient::start() {
 
 					//
 					FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file + ".download");
+					if (downloadClient->httpStatusCode != 200) FileSystem::getStandardFileSystem()->removeFile(".", downloadClient->file);
 
 					//
 					socket.shutdown();

@@ -377,7 +377,7 @@ void Installer::performScreenAction() {
 
 										// sha256
 										httpDownloadClient.reset();
-										httpDownloadClient.setFile("./installer/" + componentFileName + ".sha256");
+										httpDownloadClient.setFile("installer/" + componentFileName + ".sha256");
 										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName + ".sha256");
 										httpDownloadClient.start();
 										while (httpDownloadClient.isFinished() == false) {
@@ -388,7 +388,7 @@ void Installer::performScreenAction() {
 										}
 										httpDownloadClient.join();
 										if (httpDownloadClient.getStatusCode() != 200) {
-											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName);
+											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName + ".sha256(" + to_string(httpDownloadClient.getStatusCode()) + ")");
 											//
 											Console::println("CheckForUpdateThread::run(): done");
 											delete this;
@@ -397,7 +397,7 @@ void Installer::performScreenAction() {
 
 										// atchive
 										httpDownloadClient.reset();
-										httpDownloadClient.setFile("./installer/" + componentFileName);
+										httpDownloadClient.setFile("installer/" + componentFileName);
 										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName);
 										httpDownloadClient.start();
 										while (httpDownloadClient.isFinished() == false) {
@@ -408,7 +408,7 @@ void Installer::performScreenAction() {
 										}
 										httpDownloadClient.join();
 										if (httpDownloadClient.getStatusCode() != 200) {
-											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName);
+											installer->popUps->getInfoDialogScreenController()->show("An error occurred:", "File not found in repository: " + componentFileName + "(" + to_string(httpDownloadClient.getStatusCode()) + ")");
 											//
 											Console::println("CheckForUpdateThread::run(): done");
 											delete this;
