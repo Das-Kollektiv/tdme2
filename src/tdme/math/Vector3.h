@@ -446,7 +446,7 @@ public:
 	 * @param v vector to add
 	 * @return new vector (this + v)
 	 */
-	inline Vector3 operator +(Vector3& v) {
+	inline Vector3 operator +(const Vector3& v) const {
 		auto r = this->clone().add(v);
 		return r;
 	}
@@ -456,7 +456,7 @@ public:
 	 * @param v vector to subtract
 	 * @return new vector (this - v)
 	 */
-	inline Vector3 operator -(Vector3& v) {
+	inline Vector3 operator -(const Vector3& v) const {
 		auto r = this->clone().sub(v);
 		return r;
 	}
@@ -466,7 +466,7 @@ public:
 	 * @param f value to multiply by
 	 * @return new vector (this * f)
 	 */
-	inline Vector3 operator *(float f) {
+	inline Vector3 operator *(const float f) const {
 		auto r = this->clone().scale(f);
 		return r;
 	}
@@ -476,7 +476,7 @@ public:
 	 * @param v vector to multiply by
 	 * @return new vector (this * v)
 	 */
-	inline Vector3 operator *(Vector3& v) {
+	inline Vector3 operator *(const Vector3& v) const {
 		auto r = this->clone().scale(v);
 		return r;
 	}
@@ -486,7 +486,7 @@ public:
 	 * @param v value to divide by
 	 * @return new vector (this / f)
 	 */
-	inline Vector3 operator /(float f) {
+	inline Vector3 operator /(const float f) const {
 		auto r = this->clone().scale(1.0f / f);
 		return r;
 	}
@@ -496,7 +496,7 @@ public:
 	 * @param v vector to divide by
 	 * @return new vector (this / v)
 	 */
-	inline Vector3 operator /(Vector3& v) {
+	inline Vector3 operator /(const Vector3& v) const {
 		auto vInverted = Vector3(1.0f / v[0], 1.0f / v[1], 1.0f / v[2]);
 		auto r = this->clone().scale(vInverted);
 		return r;
@@ -507,7 +507,7 @@ public:
 	 * @param v vector to add
 	 * @return this vector added by v
 	 */
-	inline Vector3& operator +=(Vector3& v) {
+	inline Vector3& operator +=(const Vector3& v) {
 		return this->add(v);
 	}
 
