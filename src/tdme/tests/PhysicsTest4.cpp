@@ -132,7 +132,7 @@ void PhysicsTest4::initialize()
 	} catch (Exception& exception) {
 		Console::print(string("PhysicsTest4::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
-		exit(0);
+		Application::exit(1);
 	}
 }
 

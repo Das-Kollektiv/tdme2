@@ -1,6 +1,7 @@
 #include <string>
 #include <cstdlib>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/math/Matrix4x4.h>
@@ -17,6 +18,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
+using tdme::application::Application;
 using tdme::engine::Transformations;
 using tdme::engine::model::RotationOrder;
 using tdme::math::Matrix4x4;
@@ -40,7 +42,7 @@ int main(int argc, char** argv)
 	Console::println();
 	if (argc != 2) {
 		Console::println("Usage: levelfixmodelszup2yup level.tl");
-		exit(0);
+		Application::exit(1);
 	}
 	string levelFileName = string(argv[1]);
 	try {

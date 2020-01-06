@@ -93,12 +93,24 @@ public:
 	void setInputEventHandler(InputEventHandler* inputEventHandler);
 
 	/**
-	 * Execute a command
+	 * Execute a command and wait until it finished running
 	 * @param command command to execute
 	 * @throws std::runtime_error
 	 * @return application output
 	 */
 	static string execute(const string& command);
+
+	/**
+	 * Execute a command in background
+	 * @param command command to execute
+	 */
+	static void executeBackground(const string& command);
+
+	/**
+	 * Exits this application with given exit code
+	 * @param exitCode exit code
+	 */
+	static void exit(int exitCode);
 
 	/**
 	 * @return If window is active on Win32, on other platforms it currently always return true

@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <vector>
 
 #include <tdme/application/Application.h>
 #include <tdme/engine/Engine.h>
@@ -619,7 +620,9 @@ void Installer::performScreenAction() {
 														string() +
 														"#!/bin/sh\n" +
 														"cd " + installPath + "\n" +
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + "\n"
+														"nohup " +
+														FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + " " +
+														"</dev/null &>/dev/null &\n"
 													);
 													FileSystem::getStandardFileSystem()->setExecutable(
 														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
@@ -632,7 +635,7 @@ void Installer::performScreenAction() {
 														"[Desktop Entry]\n" +
 														"Name="  + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + "\n" +
 														"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
-														"Terminal=true\n" +
+														"Terminal=false\n" +
 														"Type=Application\n" +
 														"Icon=" + installPath + "/resources/logos/app_logo_small.png\n"
 													);
@@ -842,7 +845,7 @@ void Installer::performScreenAction() {
 								installer->installThreadMutex.unlock();
 							} else {
 								// TODO: Maybe show a finishing screen
-								exit(0);
+								Application::exit(0);
 							}
 						}
 						// determine set names
@@ -923,10 +926,21 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			screen = SCREEN_INSTALLING;
 		} else
 		if (node->getId() == "button_cancel") {
-			exit(0);
+			Application::exit(0);
 		} else
 		if (node->getId() == "button_finish") {
-			exit(0);
+			if (installerProperties.get("launch", "").empty() == false &&
+				dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_finished")->getNodeById("checkbox_launch"))->getController()->getValue().equals("1") == true) {
+				#if defined(_WIN32)
+					// TODO: implement me
+				#else
+					Application::executeBackground(
+						dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString() + "/" +
+						installerProperties.get("launch", "") + ".sh"
+					);
+				#endif
+			}
+			Application::exit(0);
 		} else
 		if (node->getId() == "button_browse") {
 			class OnBrowseAction: public virtual Action
@@ -1018,7 +1032,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp) {
 		}
 		if (installerArchiveFileName.empty() == true) {
 			Console::println("Installer::main(): No installer TDME archive found. Exiting.");
-			exit(0);
+			Application::exit(1);
 		}
 		// file system
 		auto installerFileSystem = new ArchiveFileSystem("installer/" + installerArchiveFileName);
@@ -1031,7 +1045,7 @@ void Installer::mountInstallerFileSystem(const string& timestamp) {
 		FileSystem::setupFileSystem(installerFileSystem);
 	} catch (Exception& exception) {
 		Console::println(string("Installer::mountInstallerFileSystem(): ") + exception.what());
-		exit(0);
+		Application::exit(1);
 	}
 }
 
@@ -1042,7 +1056,7 @@ void Installer::main(int argc, char** argv)
 	Console::println();
 	if (argc > 1) {
 		Console::println("Usage: Installer");
-		exit(0);
+		Application::exit(1);
 	}
 	mountInstallerFileSystem();
 	auto installer = new Installer();

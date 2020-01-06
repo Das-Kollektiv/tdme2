@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/math/Vector3.h>
@@ -25,8 +26,8 @@ using std::map;
 using std::string;
 using std::vector;
 
-
 using tdme::tools::shared::model::LevelPropertyPresets;
+using tdme::application::Application;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::math::Vector3;
@@ -57,7 +58,7 @@ LevelPropertyPresets::LevelPropertyPresets(const string& pathName, const string&
 			xmlDocument.ErrorDesc() +
 			"'. Exiting.\n"
 		);
-		exit(1);
+		Application::exit(1);
 	}
 	TiXmlElement* xmlRoot = xmlDocument.RootElement();
 
@@ -133,7 +134,7 @@ LevelPropertyPresets* LevelPropertyPresets::getInstance()
 		} catch (Exception& exception) {
 			Console::println(string(" LevelPropertyPresets::getInstance(): An error occurred: "));
 			Console::print(string(exception.what()));
-			exit(0);
+			Application::exit(1);
 		}
 	}
 	return instance;

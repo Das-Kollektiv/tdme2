@@ -1,6 +1,7 @@
 #include <string>
 #include <cstdlib>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
@@ -10,6 +11,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
+using tdme::application::Application;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Model;
 using tdme::engine::fileio::models::ModelReader;
@@ -26,7 +28,7 @@ int main(int argc, char** argv)
 	Console::println();
 	if (argc != 3) {
 		Console::println("Usage: copyanimationsetups sourcefile targetfile.tm");
-		exit(0);
+		Application::exit(1);
 	}
 	string sourceFileName = string(argv[1]);
 	string targetFileName = string(argv[2]);

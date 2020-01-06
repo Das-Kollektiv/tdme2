@@ -107,7 +107,7 @@ void TDMEModelEditor::display()
 			view->deactivate();
 			view->dispose();
 		}
-		exit(0);
+		Application::exit(0);
 	}
 }
 

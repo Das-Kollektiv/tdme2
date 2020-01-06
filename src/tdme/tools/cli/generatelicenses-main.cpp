@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/application/Application.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -13,6 +14,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::application::Application;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -79,7 +81,7 @@ int main(int argc, char** argv)
 
 	if (argc < 2 || argc > 3 || (argc == 3 && indent.empty() == false && indent != "indent")) {
 		Console::println("Usage: generatelicenses path [indent]");
-		exit(0);
+		Application::exit(1);
 	}
 
 	if (indent == "indent") indent = "\t";

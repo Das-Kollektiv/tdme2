@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 
+#include <tdme/application/Application.h>
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -13,6 +14,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+using tdme::application::Application;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -184,7 +186,7 @@ int main(int argc, char** argv)
 
 	if (argc != 2) {
 		Console::println("Usage: fixdoxyen path_to_headers");
-		exit(0);
+		Application::exit(1);
 	}
 
 	auto pathToHeaders = string(argv[1]);

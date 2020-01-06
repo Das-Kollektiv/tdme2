@@ -119,7 +119,7 @@ void TDMELevelEditor::display() {
 		view->display();
 	if (quitRequested == true) {
 		dispose();
-		exit(0);
+		Application::exit(0);
 	}
 }
 

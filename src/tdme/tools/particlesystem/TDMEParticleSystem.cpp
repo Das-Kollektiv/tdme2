@@ -106,7 +106,7 @@ void TDMEParticleSystem::display()
 			view->deactivate();
 			view->dispose();
 		}
-		exit(0);
+		Application::exit(0);
 	}
 }
 

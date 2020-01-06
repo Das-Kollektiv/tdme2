@@ -90,6 +90,18 @@ string Application::execute(const string& command) {
 	return result;
 }
 
+void Application::executeBackground(const string& command) {
+	#if defined(_WIN32)
+		// TODO
+	#else
+		system((command + " </dev/null &>/dev/null &").c_str());
+	#endif
+}
+
+void Application::exit(int exitCode) {
+	::exit(exitCode);
+}
+
 #if defined(_WIN32)
 	LONG WINAPI windowsExceptionHandler(struct _EXCEPTION_POINTERS* exceptionInfo) {
 		// see:
@@ -528,7 +540,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			GLenum glewInitStatus = glewInit();
 			if (glewInitStatus != GLEW_OK) {
 				Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
-				exit(0);
+				Application::exit(1);
 			}
 		#endif
 		// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);

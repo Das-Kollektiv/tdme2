@@ -63,7 +63,7 @@ using std::max;
     do {                                                                       \
         printf(err_msg);                                                       \
         fflush(stdout);                                                        \
-        exit(1);                                                               \
+        Application::exit(1);                                                  \
     } while (0)
 
 #define GET_INSTANCE_PROC_ADDR(inst, entrypoint)														\

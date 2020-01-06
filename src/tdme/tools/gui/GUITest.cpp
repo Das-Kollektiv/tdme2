@@ -179,7 +179,7 @@ void GUITest::main(int argc, char** argv)
 	Console::println();
 	if (argc > 2) {
 		Console::println("Usage: GUITest [screen.xml]");
-		exit(0);
+		Application::exit(1);
 	}
 	string screenFileName = argc == 2?argv[1]:"";
 	Console::println("Loading: " + screenFileName);

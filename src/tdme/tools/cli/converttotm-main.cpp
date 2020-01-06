@@ -1,6 +1,7 @@
 #include <string>
 #include <cstdlib>
 
+#include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -8,6 +9,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
+using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::os::filesystem::FileSystem;
@@ -22,7 +24,7 @@ int main(int argc, char** argv)
 	Console::println();
 	if (argc != 3) {
 		Console::println("Usage: converttotm inputfile outputfile");
-		exit(0);
+		Application::exit(1);
 	}
 	string inputFileName = string(argv[1]);
 	string outputFileName = string(argv[2]);
