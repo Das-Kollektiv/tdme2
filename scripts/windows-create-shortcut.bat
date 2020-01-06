@@ -13,7 +13,7 @@ SET LOG=".\%~N0_runtime.log"
   echo Set oLink = oWS.CreateShortcut^(sLinkFile^)
   echo oLink.TargetPath = oWS.ExpandEnvironmentStrings^(!Esc_LinkTarget!^)
   echo oLink.WorkingDirectory = oFSO.GetParentFolderName^(oLink.TargetPath!^)
-  echo oLink.IconLocation = oLink.WorkingDirectory ^& "/resources/win32/app.ico"
+  echo oLink.IconLocation = oLink.WorkingDirectory ^& "\resources\win32\app.ico"
   echo oLink.Save
 )1>!cSctVBS!
 cscript //nologo .\!cSctVBS!

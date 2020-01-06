@@ -932,7 +932,17 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			if (installerProperties.get("launch", "").empty() == false &&
 				dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_finished")->getNodeById("checkbox_launch"))->getController()->getValue().equals("1") == true) {
 				#if defined(_WIN32)
-					// TODO: implement me
+					auto installFolder = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
+					string drive;
+					if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+					system(
+						(string() +
+						drive +
+						"cd " +
+						"\"" + installFolder + "/" + "\"" +
+						" && start " +
+						installerProperties.get("launch", "") + ".exe").c_str()
+					);
 				#else
 					Application::executeBackground(
 						dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString() + "/" +

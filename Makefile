@@ -133,6 +133,7 @@ else ifeq ($(OS), Linux)
 	OFLAGS := -O2
 else
 	# Windows, VULKAN
+	# TODO: No console flags: -Wl,-subsystem,windows
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS = -DVULKAN
 		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src

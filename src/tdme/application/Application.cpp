@@ -92,7 +92,7 @@ string Application::execute(const string& command) {
 
 void Application::executeBackground(const string& command) {
 	#if defined(_WIN32)
-		// TODO
+		system(("start " + command).c_str());
 	#else
 		system((command + " </dev/null &>/dev/null &").c_str());
 	#endif

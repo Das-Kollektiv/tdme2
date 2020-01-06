@@ -248,6 +248,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			y = yLast;
 		}
 		bool visible = false;
+		auto _charStartIdx = charStartIdx;
 		for (auto i = charStartIdx; i < charEndIdx; i++) {
 			auto c = text.charAt(i);
 			// last char
@@ -306,7 +307,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							);
 							if (visible == false) {
 								visible = true;
-								charStartIdx = i;
+								charStartIdx = _charStartIdx;
 								yLast = y;
 							}
 						} else
@@ -335,6 +336,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					hadBreak = false;
 					// move y
 					y+= font->getLineHeight();
+					//
+					_charStartIdx = i + 1;
 				} else
 				if (c != '\n') {
 					// no flush yet, add word to line
