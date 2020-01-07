@@ -143,23 +143,6 @@ VKRenderer::VKRenderer():
 	FRAMEBUFFER_DEFAULT = 0;
 }
 
-inline bool VKRenderer::memoryTypeFromProperties(uint32_t typeBits, VkFlags requirements_mask, uint32_t *typeIndex) {
-    uint32_t i;
-    // Search memtypes to find first index with those properties
-    for (i = 0; i < VK_MAX_MEMORY_TYPES; i++) {
-        if ((typeBits & 1) == 1) {
-            // Type is available, does it match user properties?
-            if ((memory_properties.memoryTypes[i].propertyFlags & requirements_mask) == requirements_mask) {
-                *typeIndex = i;
-                return true;
-            }
-        }
-        typeBits >>= 1;
-    }
-    // No memory types matched, return failure
-    return false;
-}
-
 inline VkBool32 VKRenderer::checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers) {
 	uint32_t i, j;
 	for (i = 0; i < check_count; i++) {
@@ -478,7 +461,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_objec
 
 	VmaAllocationCreateInfo image_alloc_create_info = {};
 	image_alloc_create_info.usage = VMA_MEMORY_USAGE_UNKNOWN;
-	image_alloc_create_info.memoryTypeBits = required_props;
+	image_alloc_create_info.requiredFlags = required_props;
 
 
 	VmaAllocationInfo allocation_info = {};
@@ -1364,7 +1347,7 @@ void VKRenderer::initializeRenderPass() {
 			.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 			.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE,
 			.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 			.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 		},
@@ -4542,7 +4525,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 				.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 				.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 				.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+				.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE,
 				.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 				.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 			};
@@ -4733,7 +4716,7 @@ inline VkBuffer VKRenderer::getBufferObjectInternalNoLock(int32_t bufferObjectId
 }
 
 void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo) {
-	 //
+	//
 	VkResult err;
 
 	const VkBufferCreateInfo buf_info = {
@@ -4749,7 +4732,7 @@ void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
 
 	VmaAllocationCreateInfo alloc_info = {};
 	alloc_info.usage = VMA_MEMORY_USAGE_UNKNOWN;
-	alloc_info.memoryTypeBits = properties;
+	alloc_info.requiredFlags = properties;
 
 	//
 	err = vmaCreateBuffer(allocator, &buf_info, &alloc_info, &buffer, &allocation, &allocationInfo);
