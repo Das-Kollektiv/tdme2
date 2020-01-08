@@ -902,7 +902,7 @@ void Installer::reshape(int32_t width, int32_t height)
 }
 
 void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) {
-	Console::println(node->getId() + ": onActionPerformed(): " + type->getName());
+	Console::println("Installer::onActionPerformed(): " + node->getId() + ": " + type->getName());
 	if (type == GUIActionListener_Type::PERFORMED) {
 		if (node->getId() == "button_next") {
 			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_UPDATE || installerMode == INSTALLERMODE_REPAIR)) {
@@ -913,7 +913,15 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		} else
 		if (node->getId() == "button_back") {
 			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_UPDATE || installerMode == INSTALLERMODE_REPAIR)) {
+				try {
+					timestamp = FileSystem::getStandardFileSystem()->getContentAsString(".", "install.version.db");
+				} catch (Exception& exception) {
+					Console::println(string("Installer::onActionPerformed(): An error occurred: ") + exception.what());
+				}
 				screen = SCREEN_WELCOME2;
+			} else
+			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_INSTALL)) {
+				screen = SCREEN_LICENSE;
 			} else {
 				screen = static_cast<Screen>(static_cast<int>(screen) - 1 % static_cast<int>(SCREEN_MAX));
 			}
