@@ -676,7 +676,7 @@ void VKRenderer::initializeSwapChain() {
 		height = surfCapabilities.currentExtent.height;
 	}
 
-	VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_FIFO_KHR;
+	VkPresentModeKHR swapchainPresentMode = VK_PRESENT_MODE_IMMEDIATE_KHR; // no vsync, VK_PRESENT_MODE_FIFO_KHR: vsync
 
 	// Determine the number of VkImage's to use in the swap chain.
 	// Application desires to only acquire 1 image at a time (which is
