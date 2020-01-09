@@ -473,6 +473,13 @@ void Installer::performScreenAction() {
 						void run() {
 							Console::println("InstallThread::run(): init");
 
+							// we can not just overwrite executables on windows specially the installer exe or the libraries of it
+							// we need to install them with .update suffix and remove the suffix after installer is closed
+							#if defined(_WIN32)
+								vector<string> windowsUpdateRenameFiles;
+							#endif
+
+							//
 							installer->installThreadMutex.lock();
 							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Initializing ..."));
 							dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
@@ -602,17 +609,33 @@ void Installer::performScreenAction() {
 											Installer::createPathRecursively(
 												FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
 											);
+											#if defined(_WIN32)
+												auto windowsGeneratedFile = generatedFileName;
+												if (
+													(installer->installerMode == INSTALLERMODE_REPAIR ||
+													installer->installerMode == INSTALLERMODE_UPDATE) &&
+													(StringUtils::endsWith(StringUtils::toLowerCase(generatedFileName), ".exe") == true ||
+													StringUtils::endsWith(StringUtils::toLowerCase(generatedFileName), ".dll") == true)) {
+													windowsUpdateRenameFiles.push_back(FileSystem::getStandardFileSystem()->getFileName(generatedFileName));
+													windowsGeneratedFile+= ".update";
+												}
+											#endif
+
 											FileSystem::getStandardFileSystem()->setContent(
 												FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-												FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
+												#if defined(_WIN32)
+													FileSystem::getStandardFileSystem()->getFileName(windowsGeneratedFile),
+												#else
+													FileSystem::getStandardFileSystem()->getFileName(generatedFileName),
+												#endif
 												content
 											);
 											if (archiveFileSystem->isExecutable(archiveFileSystem->getPathName(file), archiveFileSystem->getFileName(file)) == true) {
-												FileSystem::getStandardFileSystem()->setExecutable(
-													FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-													FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
-												);
 												#if defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__)
+													FileSystem::getStandardFileSystem()->setExecutable(
+														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+														FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
+													);
 													Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
 													FileSystem::getStandardFileSystem()->setContentFromString(
 														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
@@ -684,6 +707,36 @@ void Installer::performScreenAction() {
 									}
 								}
 							}
+
+							#if defined(_WIN32)
+								if (installer->installerMode == INSTALLERMODE_REPAIR ||
+									installer->installerMode == INSTALLERMODE_UPDATE) {
+									string updateFinishBatch;
+									updateFinishBatch+= "@ECHO OFF\r\n";
+									updateFinishBatch+= "ECHO FINISHING UPDATE. PLEASE DO NOT CLOSE.\r\n";
+									auto loopIdx = 0;
+									for (auto file: windowsUpdateRenameFiles) {
+										auto updateFile = file + ".update";
+										auto backupFile = file + ".backup";
+										updateFinishBatch+=
+											":loop" + to_string(loopIdx) + "\r\n" +
+											"if exist \"" + file + "\" (\r\n" +
+											"	rename \"" + file + "\" \"" + backupFile + "\" 2>nul || goto loop" + to_string(loopIdx) + "\r\n" +
+											"	del \"" + backupFile + "\"\r\n" +
+											"	rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											") else (\r\n" +
+											"	rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											")\r\n";
+										loopIdx++;
+									}
+									try {
+										FileSystem::getStandardFileSystem()->setContentFromString(installPath, "update-finish.bat", updateFinishBatch);
+									} catch (Exception& exception) {
+										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+										hadException = true;
+									}
+								}
+							#endif
 
 							try {
 								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.files.db", log);
@@ -943,11 +996,17 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 					auto installFolder = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 					string drive;
 					if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+					string finishUpdate;
+					if (installerMode == INSTALLERMODE_REPAIR ||
+						installerMode == INSTALLERMODE_UPDATE) {
+						finishUpdate+= " && update-finish.bat";
+					}
 					system(
 						(string() +
 						drive +
 						"cd " +
 						"\"" + installFolder + "/" + "\"" +
+						finishUpdate +
 						" && start " +
 						installerProperties.get("launch", "") + ".exe").c_str()
 					);
@@ -956,6 +1015,22 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 						dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString() + "/" +
 						installerProperties.get("launch", "") + ".sh"
 					);
+				#endif
+			} else {
+				#if defined(_WIN32)
+					auto installFolder = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
+					string drive;
+					if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+					if (installerMode == INSTALLERMODE_REPAIR ||
+						installerMode == INSTALLERMODE_UPDATE) {
+						system(
+							(string() +
+							drive +
+							"cd " +
+							"\"" + installFolder + "/" + "\"" +
+							" && update-finish.bat").c_str()
+						);
+					}
 				#endif
 			}
 			Application::exit(0);

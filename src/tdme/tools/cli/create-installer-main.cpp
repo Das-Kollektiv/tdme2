@@ -100,13 +100,13 @@ void scanDirResources(const string& folder, vector<string>& totalFiles) {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->fileExists(folder) == false) {
-		Console::println("Error: scanDirData: file does not exist: " + folder);
+		Console::println("Error: scanDirResources: file does not exist: " + folder);
 	} else
 	if (FileSystem::getInstance()->isPath(folder) == false) {
 		if (listFilter.accept(".", folder) == true) {
 			totalFiles.push_back(folder);
 		} else {
-			Console::println("Error: scanDirData: file exist, but does not match filter: " + folder);
+			Console::println("Error: scanDirResources: file exist, but does not match filter: " + folder);
 		}
 	} else {
 		FileSystem::getInstance()->list(folder, files, &listFilter);
@@ -152,13 +152,13 @@ void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->fileExists(folder) == false) {
-		Console::println("Error: scanDirData: file does not exist: " + folder);
+		Console::println("Error: scanDirExecutables: file does not exist: " + folder);
 	} else
 	if (FileSystem::getInstance()->isPath(folder) == false) {
 		if (listFilter.accept(".", folder) == true) {
 			totalFiles.push_back(folder);
 		} else {
-			Console::println("Error: scanDirData: file exist, but does not match filter: " + folder);
+			Console::println("Error: scanDirExecutables: file exist, but does not match filter: " + folder);
 		}
 	} else {
 		FileSystem::getInstance()->list(folder, files, &listFilter);
