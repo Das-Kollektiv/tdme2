@@ -543,6 +543,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				Application::exit(1);
 			}
 		#endif
+		#if defined(_WIN32)
+			setIcon("resources/win32/app.ico");
+		#endif
 		// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 		glutReshapeFunc(Application::reshapeInternal);
 		glutDisplayFunc(Application::displayInternal);
