@@ -99,11 +99,20 @@ void processFile(const string& fileName) {
 					bool paramIgnore = false;
 					auto smallerCount = 0;
 					auto roundBracketCount = 0;
+					string methodName;
 					string param;
 					vector<string> params;
 					for (auto i = 0; i < method.length() && method[i] != ';' && method[i] != '{' && roundBracketCount >= 0; i++) {
 						if (paramBegin == false) {
-							if (method[i] == '(') paramBegin = true;
+							if (method[i] == '(') {
+								StringTokenizer t;
+								t.tokenize(methodName, "\t\n ");
+								while (t.hasMoreTokens() == true) methodName = t.nextToken();
+								methodName = StringUtils::trim(methodName);
+								paramBegin = true;
+							} else { 
+								methodName+= method[i];
+							}	
 						} else
 						if (method[i] == '<') {
 							smallerCount++;
@@ -154,15 +163,15 @@ void processFile(const string& fileName) {
 							if (paramIdx < paramsFinal.size()) {
 								docLine.insert(docLineParamIdx + 7, paramsFinal[paramIdx++] + " ");
 							} else {
-								Console::println("Warning: Missing parameter " + to_string(paramIdx));
+								Console::println(fileName + ": " + methodName + "(): " + "Warning: Missing parameter " + to_string(paramIdx));
 							}
 						}
 						newDoc.push_back(docLine);
 					}
 					if (paramIdx != paramsFinal.size()) {
-						Console::print("Warning: Having extra parameter: ");
-						// for (auto i = paramIdx; i < paramsFinal.size(); i++) Console::print(paramsFinal[i] + " ");
-						// Console::println();
+						Console::println(fileName + ": " + methodName + "(): " + "Warning: Having extra parameter: ");
+						for (auto i = paramIdx; i < paramsFinal.size(); i++) Console::print(paramsFinal[i] + " ");
+						Console::println();
 					}
 					for (auto i = docLineStartIdx; i <= docLineEndIdx; i++) {
 						newFileContent[i] = newDoc[i - docLineStartIdx];
