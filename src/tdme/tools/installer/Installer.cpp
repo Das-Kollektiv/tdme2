@@ -728,18 +728,20 @@ void Installer::performScreenAction() {
 									string updateFinishBatch;
 									updateFinishBatch+= "@ECHO OFF\r\n";
 									updateFinishBatch+= "ECHO FINISHING UPDATE. PLEASE DO NOT CLOSE.\r\n";
+									updateFinishBatch+= "setlocal EnableDelayedExpansion\r\n";
 									auto loopIdx = 0;
 									for (auto file: windowsUpdateRenameFiles) {
 										auto updateFile = file + ".update";
-										auto backupFile = file + ".backup";
 										updateFinishBatch+=
 											":loop" + to_string(loopIdx) + "\r\n" +
-											"if exist \"" + file + "\" (\r\n" +
-											"	rename \"" + file + "\" \"" + backupFile + "\" 2>nul || goto loop" + to_string(loopIdx) + "\r\n" +
-											"	del \"" + backupFile + "\"\r\n" +
-											"	rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
-											") else (\r\n" +
-											"	rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											"if exist \"" + updateFile + "\" (\r\n" +
+											"	if exist \"" + file + "\" (\r\n" +
+											"		del \"" + file + "\"\r\n" +
+											"		if exist \"" + file + "\" goto loop" + to_string(loopIdx) + "\r\n" +
+											"		rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											"	) else (\r\n" +
+											"		rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											"	)\r\n" +
 											")\r\n";
 										loopIdx++;
 									}
@@ -927,9 +929,11 @@ void Installer::performScreenAction() {
 			break;
 		}
 		default:
-			Console::println("Installer::onActionPerformed(): Unhandled screen: " + to_string(screen));
+			Console::println("Installer::performScreenAction(): Unhandled screen: " + to_string(screen));
 			break;
 	}
+	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }
 
 void Installer::initialize()
@@ -977,6 +981,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			} else {
 				screen = static_cast<Screen>(static_cast<int>(screen) + 1 % static_cast<int>(SCREEN_MAX));
 			}
+			performScreenAction();
 		} else
 		if (node->getId() == "button_back") {
 			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_UPDATE || installerMode == INSTALLERMODE_REPAIR)) {
@@ -992,13 +997,16 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			} else {
 				screen = static_cast<Screen>(static_cast<int>(screen) - 1 % static_cast<int>(SCREEN_MAX));
 			}
+			performScreenAction();
 		} else
 		if (node->getId() == "button_agree") {
 			installerMode = INSTALLERMODE_INSTALL;
 			screen = SCREEN_CHECKFORUPDATE;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_install") {
 			screen = SCREEN_INSTALLING;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_cancel") {
 			Application::exit(0);
@@ -1010,19 +1018,21 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 					auto installFolder = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 					string drive;
 					if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
-					string finishUpdate;
+					string finishCommand;
 					if (installerMode == INSTALLERMODE_REPAIR ||
 						installerMode == INSTALLERMODE_UPDATE) {
-						finishUpdate+= " && update-finish.bat";
+						finishCommand+= " && start cmd /c \"update-finish.bat && del update-finish.bat && " + installerProperties.get("launch", "") + ".exe" + "\"";
+					} else {
+						finishCommand+= " && start cmd /c \"" + installerProperties.get("launch", "") + ".exe" + "\"";
 					}
 					system(
-						(string() +
-						drive +
-						"cd " +
-						"\"" + installFolder + "/" + "\"" +
-						finishUpdate +
-						" && start " +
-						installerProperties.get("launch", "") + ".exe").c_str()
+						(
+							string() +
+							drive +
+							"cd " +
+							"\"" + installFolder + "/" + "\"" +
+							finishCommand
+						).c_str()
 					);
 				#else
 					Application::executeBackground(
@@ -1038,11 +1048,12 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 					if (installerMode == INSTALLERMODE_REPAIR ||
 						installerMode == INSTALLERMODE_UPDATE) {
 						system(
-							(string() +
-							drive +
-							"cd " +
-							"\"" + installFolder + "/" + "\"" +
-							" && update-finish.bat").c_str()
+							(
+								string() +
+								drive +
+								"cd " +
+								"\"" + installFolder + "/" + "\"" +
+								" && start cmd /c \"update-finish.bat && del update-finish.bat\"").c_str()
 						);
 					}
 				#endif
@@ -1082,23 +1093,23 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		if (node->getId() == "button_uninstall") {
 			installerMode = INSTALLERMODE_UNINSTALL;
 			screen = SCREEN_UNINSTALLING;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_update") {
 			installerMode = INSTALLERMODE_UPDATE;
 			screen = SCREEN_CHECKFORUPDATE;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_repair") {
 			installerMode = INSTALLERMODE_REPAIR;
 			screen = SCREEN_CHECKFORUPDATE;
+			performScreenAction();
 		} else
 		if (StringUtils::startsWith(node->getId(), "component") == true) {
 			auto componentIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
 			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
 		}
 	}
-	performScreenAction();
-	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }
 
 void Installer::onValueChanged(GUIElementNode* node) {
