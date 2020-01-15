@@ -1009,6 +1009,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			performScreenAction();
 		} else
 		if (node->getId() == "button_cancel") {
+			FileSystem::unsetFileSystem();
 			Application::exit(0);
 		} else
 		if (node->getId() == "button_finish") {
@@ -1058,6 +1059,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 					}
 				#endif
 			}
+			FileSystem::unsetFileSystem();
 			Application::exit(0);
 		} else
 		if (node->getId() == "button_browse") {
@@ -1115,7 +1117,6 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 void Installer::onValueChanged(GUIElementNode* node) {
 	Console::println(node->getName() + ": onValueChanged(): " + node->getController()->getValue().getString());
 }
-
 
 void Installer::display()
 {
@@ -1210,5 +1211,4 @@ void Installer::createPathRecursively(const string& pathName) {
 			FileSystem::getStandardFileSystem()->createPath(pathCreating);
 		}
 	}
-
 }

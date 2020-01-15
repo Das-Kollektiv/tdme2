@@ -53,7 +53,7 @@ namespace installer {
 
 using tdme::tools::cli::installer::FileInformation;
 
-void scanDirResources(const string& folder, vector<string>& totalFiles) {
+static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -86,7 +86,12 @@ void scanDirResources(const string& folder, vector<string>& totalFiles) {
 				// fonts
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fnt") == true) return true;
 				// files without ending
-				if (fileName.find(".") == string::npos) return true;
+				//	TODO: fix me, paths get submitted here too as filename
+				if (fileName.rfind(".") == string::npos ||
+					(fileName.rfind("/") != string::npos &&
+					fileName.rfind(".") < fileName.rfind("/"))) {
+					return true;
+				}
 				// properties
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".properties") == true) return true;
 				// tdme archive
@@ -120,7 +125,7 @@ void scanDirResources(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
-void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
+static void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -134,12 +139,22 @@ void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dll") == true) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".bat") == true) return true;
 				#elif defined(__APPLE__)
-					if (fileName.find(".") == string::npos) return true;
+					// TODO: fix me, paths get submitted here too as filename
+					if (fileName.rfind(".") == string::npos ||
+						(fileName.rfind("/") != string::npos &&
+						fileName.rfind(".") < fileName.rfind("/"))) {
+						return true;
+					}
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dylib") == true) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".sh") == true) return true;
 				#else
-					if (fileName.find(".") == string::npos) return true;
+					// TODO: fix me, paths get submitted here too as filename
+					if (fileName.rfind(".") == string::npos ||
+						(fileName.rfind("/") != string::npos &&
+						fileName.rfind(".") < fileName.rfind("/"))) {
+						return true;
+					}
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
 					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".sh") == true) return true;
 				#endif
@@ -172,7 +187,7 @@ void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
-void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool executableFile) {
+void processFile(const string& fileName, vector<FileInformation>& fileInformations, const string& archiveFileName, bool executableFile, const string& baseFolder = string()) {
 	// read content
 	vector<uint8_t> content;
 	FileSystem::getInstance()->getContent(
@@ -181,10 +196,10 @@ void processFile(const string& fileName, vector<FileInformation>& fileInformatio
 		content
 	);
 
-	auto fileNameToUse = fileName;
+	auto fileNameToUse = StringUtils::startsWith(fileName, baseFolder + "/") == true?StringUtils::substring(fileName, (baseFolder + "/").size(), fileName.size()):fileName;
 	// remove prefix if requested
 	if (executableFile == true && fileName.find_last_of('/') != string::npos) {
-		fileNameToUse = StringUtils::substring(fileName, fileName.find_last_of('/') + 1);
+		fileNameToUse = StringUtils::substring(fileNameToUse, fileNameToUse.find_last_of('/') + 1);
 	}
 
 	Console::print(archiveFileName + ": Processing file: " + fileNameToUse);
@@ -279,6 +294,7 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
+	string tdmeFolder = "../tdme2";
 	auto cpu = Application::getCPUName();
 	auto os = Application::getOSName();
 	auto fileNameTime = StringUtils::replace(StringUtils::replace(StringUtils::replace(Time::getAsString(), " ", "-" ), ":", ""), "-", "");
@@ -340,8 +356,18 @@ int main(int argc, char** argv)
 					scanDirExecutables(t.nextToken() + "/" + file, filesBin);
 				}
 			} else
+			if (type == "!exe") {
+				StringTokenizer t;
+				t.tokenize(installerProperties.get("exe_folder", ""), ",");
+				while (t.hasMoreTokens() == true) {
+					scanDirExecutables(tdmeFolder + "/" + t.nextToken() + "/" + file, filesBin);
+				}
+			} else
 			if (type == "res") {
 				scanDirResources(file, filesData);
+			} else
+			if (type == "!res") {
+				scanDirResources(tdmeFolder + "/" + file, filesData);
 			} else {
 				Console::println("Component: " + to_string(componentIdx) + ": type = " + type + " unsupported!");
 			}
@@ -352,12 +378,12 @@ int main(int argc, char** argv)
 
 		// add files to archive
 		for (auto fileName: filesData) {
-			processFile(fileName, fileInformations, "installer/" + componentFileName, false);
+			processFile(fileName, fileInformations, "installer/" + componentFileName, false, tdmeFolder);
 		}
 
 		// add files to archive
 		for (auto fileName: filesBin) {
-			processFile(fileName, fileInformations, "installer/" + componentFileName, true);
+			processFile(fileName, fileInformations, "installer/" + componentFileName, true, tdmeFolder);
 		}
 
 		// add file informations

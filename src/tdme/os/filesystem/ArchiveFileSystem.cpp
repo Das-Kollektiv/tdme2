@@ -130,7 +130,7 @@ bool ArchiveFileSystem::isExecutable(const string& pathName, const string& fileN
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
 	if (fileInformationIt == fileInformations.end()) {
-		throw FileSystemException("Unable to open file for reading: " + relativeFileName);
+		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
 	auto& fileInformation = fileInformationIt->second;
 	//
@@ -149,7 +149,7 @@ uint64_t ArchiveFileSystem::getFileSize(const string& pathName, const string& fi
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
 	if (fileInformationIt == fileInformations.end()) {
-		throw FileSystemException("Unable to open file for reading: " + relativeFileName);
+		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
 	auto& fileInformation = fileInformationIt->second;
 	//
@@ -234,7 +234,7 @@ const string ArchiveFileSystem::getContentAsString(const string& pathName, const
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
 	if (fileInformationIt == fileInformations.end()) {
-		throw FileSystemException("Unable to open file for reading: " + relativeFileName);
+		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
 	auto& fileInformation = fileInformationIt->second;
 
@@ -280,7 +280,7 @@ void ArchiveFileSystem::getContent(const string& pathName, const string& fileNam
 	// determine file
 	auto fileInformationIt = fileInformations.find(relativeFileName);
 	if (fileInformationIt == fileInformations.end()) {
-		throw FileSystemException("Unable to open file for reading: " + relativeFileName);
+		throw FileSystemException("Unable to open file for reading: " + relativeFileName + ": " + pathName + "/" + fileName);
 	}
 	auto& fileInformation = fileInformationIt->second;
 
