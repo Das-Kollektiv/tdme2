@@ -632,61 +632,75 @@ void Installer::performScreenAction() {
 											);
 											if (archiveFileSystem->isExecutable(archiveFileSystem->getPathName(file), archiveFileSystem->getFileName(file)) == true) {
 												#if defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__)
-													FileSystem::getStandardFileSystem()->setExecutable(
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
-													);
-													Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
-													FileSystem::getStandardFileSystem()->setContentFromString(
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh",
-														string() +
-														"#!/bin/sh\n" +
-														"cd " + installPath + "\n" +
-														"nohup " +
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + " " +
-														"</dev/null &>/dev/null &\n"
-													);
-													FileSystem::getStandardFileSystem()->setExecutable(
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh"
-													);
-													FileSystem::getStandardFileSystem()->setContentFromString(
-														installer->homeFolder + "/" + ".local/share/applications",
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop",
-														string() +
-														"[Desktop Entry]\n" +
-														"Name="  + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + "\n" +
-														"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
-														"Terminal=false\n" +
-														"Type=Application\n" +
-														"Icon=" + installPath + "/resources/logos/app_logo_small.png\n"
-													);
-													log.push_back(generatedFileName + ".sh");
-													log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop");
+													auto startMenuName = installer->installerProperties.get("startmenu_" + StringUtils::toLowerCase(FileSystem::getStandardFileSystem()->getFileName(generatedFileName)), "");
+													if (startMenuName.empty() == false) {
+														FileSystem::getStandardFileSystem()->setExecutable(
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+															FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
+														);
+														Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
+														FileSystem::getStandardFileSystem()->setContentFromString(
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh",
+															string() +
+															"#!/bin/sh\n" +
+															"cd " + installPath + "\n" +
+															"nohup " +
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + " " +
+															"</dev/null &>/dev/null &\n"
+														);
+														FileSystem::getStandardFileSystem()->setExecutable(
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh"
+														);
+														FileSystem::getStandardFileSystem()->setContentFromString(
+															installer->homeFolder + "/" + ".local/share/applications",
+															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop",
+															string() +
+															"[Desktop Entry]\n" +
+															"Name="  + startMenuName + "\n" +
+															"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
+															"Terminal=false\n" +
+															"Type=Application\n" +
+															"Icon=" + installPath + "/resources/logos/app_logo_small.png\n"
+														);
+														log.push_back(generatedFileName + ".sh");
+														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop");
+													}
 												#elif defined(_WIN32)
-													FileSystem::getStandardFileSystem()->setContentFromString(
-														installPath,
-														"windows-create-shortcut.bat",
-														FileSystem::getInstance()->getContentAsString(".", "windows-create-shortcut.bat")
-													);
-													auto startMenuFolder = string(installer->homeFolder) + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/" + installer->installerProperties.get("name", "TDME2 based application");
 													auto executable = FileSystem::getStandardFileSystem()->getFileName(generatedFileName);
-													Installer::createPathRecursively(startMenuFolder);
-													auto linkFile = startMenuFolder + "/" + StringUtils::substring(executable, 0, executable.rfind('.')) + ".lnk";
-													Console::println(
-														installPath + "/windows-create-shortcut.bat " +
-														"\"" + generatedFileName + "\" " +
-														"\"" + linkFile + "\""
+													auto startMenuName = installer->installerProperties.get(
+														"startmenu_" +
+														StringUtils::substring(
+															StringUtils::toLowerCase(executable),
+															0,
+															executable.rfind('.')
+														),
+														""
 													);
-													Console::println(
-														Application::execute(installPath + "/windows-create-shortcut.bat " +
+													if (startMenuName.empty() == false) {
+														FileSystem::getStandardFileSystem()->setContentFromString(
+															installPath,
+															"windows-create-shortcut.bat",
+															FileSystem::getInstance()->getContentAsString(".", "windows-create-shortcut.bat")
+														);
+														auto startMenuFolder = string(installer->homeFolder) + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/" + installer->installerProperties.get("name", "TDME2 based application");
+														Installer::createPathRecursively(startMenuFolder);
+														auto linkFile = startMenuFolder + "/" + startMenuName + ".lnk";
+														Console::println(
+															installPath + "/windows-create-shortcut.bat " +
 															"\"" + generatedFileName + "\" " +
 															"\"" + linkFile + "\""
-														)
-													);
-													log.push_back(linkFile);
-													FileSystem::getStandardFileSystem()->removeFile(installPath, "windows-create-shortcut.bat");
+														);
+														Console::println(
+															Application::execute(installPath + "/windows-create-shortcut.bat " +
+																"\"" + generatedFileName + "\" " +
+																"\"" + linkFile + "\""
+															)
+														);
+														log.push_back(linkFile);
+														FileSystem::getStandardFileSystem()->removeFile(installPath, "windows-create-shortcut.bat");
+													}
 												#endif
 
 											}
