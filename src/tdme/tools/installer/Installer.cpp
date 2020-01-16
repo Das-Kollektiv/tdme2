@@ -868,18 +868,16 @@ void Installer::performScreenAction() {
 							}
 							#if defined(_WIN32)
 								if (installer->installerMode == INSTALLERMODE_UNINSTALL) {
-									#if defined(_WIN32)
-										{
-											auto file = "console.log";
-											uninstallFinishBatch+=
-												":loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
-												"if exist \"" + file + "\" (\r\n" +
-												"	del \"" + file + "\" > nul 2>&1\r\n" +
-												"	if exist \"" + file + "\" goto loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
-												")\r\n";
-											uninstallFinishBatchLoopIdx++;
-										}
-									#endif
+									{
+										auto file = "console.log";
+										uninstallFinishBatch+=
+											":loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+											"if exist \"" + file + "\" (\r\n" +
+											"	del \"" + file + "\" > nul 2>&1\r\n" +
+											"	if exist \"" + file + "\" goto loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+											")\r\n";
+										uninstallFinishBatchLoopIdx++;
+									}
 									try {
 										FileSystem::getStandardFileSystem()->setContentFromString(installFolder, "uninstall-finish.bat", uninstallFinishBatch);
 									} catch (Exception& exception) {
