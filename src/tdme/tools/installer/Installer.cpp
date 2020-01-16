@@ -873,11 +873,31 @@ void Installer::performScreenAction() {
 
 							// remove installer folder if not updating
 							if (installer->installerMode == INSTALLERMODE_UNINSTALL) {
+								FileSystem::unsetFileSystem();
+								vector<string> installerFiles;
 								try {
-									FileSystem::getStandardFileSystem()->removePath(
+									FileSystem::getStandardFileSystem()->list(
 										installFolder + "installer",
-										true
+										installerFiles
 									);
+								} catch (Exception& exception) {
+									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+								}
+								for (auto installerFile: installerFiles) {
+									if (StringUtils::endsWith(installerFile, ".ta") == true ||
+										StringUtils::endsWith(installerFile, ".sha256") == true) {
+										try {
+											FileSystem::getStandardFileSystem()->removeFile(
+												installFolder + "installer",
+												installerFile
+											);
+										} catch (Exception& exception) {
+											Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+										}
+									}
+								}
+								try {
+									FileSystem::getStandardFileSystem()->removePath(installFolder + "installer", false);
 								} catch (Exception& exception) {
 									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
 								}
