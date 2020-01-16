@@ -30,6 +30,8 @@ private:
 	unordered_map<string, string> postParameters;
 	string body;
 	string contentType;
+	string username;
+	string password;
 
 	stringstream rawResponse;
 	int16_t httpStatusCode;
@@ -94,6 +96,38 @@ public:
 	 */
 	inline void setMethod(const string& method) {
 		this->method = method;
+	}
+
+	/**
+	 * Get username
+	 * @return username
+	 */
+	inline const string& getUsername() {
+		return username;
+	}
+
+	/**
+	 * Set username
+	 * @param username user name
+	 */
+	inline void setUsername(const string& username) {
+		this->username = username;
+	}
+
+	/**
+	 * Get password
+	 * @return password
+	 */
+	inline const string& getPassword() {
+		return password;
+	}
+
+	/**
+	 * Set password
+	 * @param password password
+	 */
+	inline void setPassword(const string& password) {
+		this->password = password;
 	}
 
 	/**

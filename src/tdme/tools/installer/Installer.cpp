@@ -328,6 +328,8 @@ void Installer::performScreenAction() {
 										HTTPClient httpClient;
 										httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
 										httpClient.setURL(repository);
+										httpClient.setUsername(installer->installerProperties.get("repository_username", ""));
+										httpClient.setPassword(installer->installerProperties.get("repository_password", ""));
 										httpClient.execute();
 										auto response = httpClient.getResponse().str();
 										auto pos = 0;
@@ -376,6 +378,8 @@ void Installer::performScreenAction() {
 
 										// sha256
 										httpDownloadClient.reset();
+										httpDownloadClient.setUsername(installer->installerProperties.get("repository_username", ""));
+										httpDownloadClient.setPassword(installer->installerProperties.get("repository_password", ""));
 										httpDownloadClient.setFile("installer/" + componentFileName + ".sha256");
 										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName + ".sha256");
 										httpDownloadClient.start();

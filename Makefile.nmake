@@ -418,6 +418,7 @@ SRCS = \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
+	src/tdme/utils/Base64EncDec.cpp \
 	src/tdme/utils/Character.cpp \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \

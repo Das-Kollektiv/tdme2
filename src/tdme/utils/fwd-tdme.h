@@ -3,6 +3,7 @@
 
 namespace tdme {
 namespace utils {
+	class Base64EncDec;
 	class Buffer;
 	class ByteBuffer;
 	class Character;

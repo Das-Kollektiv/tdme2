@@ -10,6 +10,7 @@
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NIOTCPSocket.h>
 #include <tdme/os/network/NIOIOSocketClosedException.h>
+#include <tdme/utils/Base64EncDec.h>
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -32,6 +33,7 @@ using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
 using tdme::os::network::NIOIOSocketClosedException;
 using tdme::os::network::NIOTCPSocket;
+using tdme::utils::Base64EncDec;
 using tdme::utils::Character;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -83,6 +85,11 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string
 		string("User-Agent: tdme2-httpclient\r\n") +
 		string("Host: " + hostName + "\r\n") +
 		string("Connection: close\r\n");
+	if (username.empty() == false || password.empty() == false) {
+		string base64Pass;
+		Base64EncDec::encode(username + ":" + password, base64Pass);
+		request+= "Authorization: Basic " + base64Pass + "\r\n";
+	}
 	if (contentType.size() > 0) {
 		request+=
 			string("Content-Type: " + contentType + "\r\n");
