@@ -18,7 +18,7 @@ void Base64EncDec::encode(const string& decodedString, string& encodedString) {
 		while (valb >= 0) {
 			encodedString.push_back(dictionary[(val >> valb) & 0x3F]);
 			valb-= 6;
-    	}
+		}
 	}
 	if (valb > -6) encodedString.push_back(dictionary[((val << 8) >> (valb + 8)) & 0x3F]);
 	while (encodedString.size() % 4) encodedString.push_back('=');
