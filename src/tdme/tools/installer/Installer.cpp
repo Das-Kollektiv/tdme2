@@ -688,14 +688,15 @@ void Installer::performScreenAction() {
 														Installer::createPathRecursively(startMenuFolder);
 														auto linkFile = startMenuFolder + "/" + startMenuName + ".lnk";
 														Console::println(
-															installPath + "/windows-create-shortcut.bat " +
-															"\"" + generatedFileName + "\" " +
-															"\"" + linkFile + "\""
+															StringUtils::replace(StringUtils::replace(installPath, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+															"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
+															"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
 														);
 														Console::println(
-															Application::execute(installPath + "/windows-create-shortcut.bat " +
-																"\"" + generatedFileName + "\" " +
-																"\"" + linkFile + "\""
+															Application::execute(
+																StringUtils::replace(StringUtils::replace(installPath, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+																"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
+																"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
 															)
 														);
 														log.push_back(linkFile);
