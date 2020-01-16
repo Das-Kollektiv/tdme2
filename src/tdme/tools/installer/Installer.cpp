@@ -490,16 +490,16 @@ void Installer::performScreenAction() {
 							auto hadException = false;
 							vector<string> log;
 							vector<string> components;
-							auto installPath = dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
+							auto installFolder = dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 							try {
-								Installer::createPathRecursively(installPath);
+								Installer::createPathRecursively(installFolder);
 							} catch (Exception& exception) {
 								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 								hadException = true;
 							}
 
 							//
-							log.push_back(installPath);
+							log.push_back(installFolder);
 							if (hadException == false) {
 								// copy installer archive and sha256
 								if (installer->installerMode == INSTALLERMODE_INSTALL) {
@@ -512,7 +512,7 @@ void Installer::performScreenAction() {
 											FileSystem::getStandardFileSystem()->getFileName(file),
 											content
 										);
-										auto generatedFileName = installPath + "/" + file;
+										auto generatedFileName = installFolder + "/" + file;
 										Installer::createPathRecursively(
 											FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
 										);
@@ -531,7 +531,7 @@ void Installer::performScreenAction() {
 											FileSystem::getStandardFileSystem()->getFileName(file),
 											content
 										);
-										auto generatedFileName = installPath + "/" + file;
+										auto generatedFileName = installFolder + "/" + file;
 										Installer::createPathRecursively(
 											FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
 										);
@@ -605,7 +605,7 @@ void Installer::performScreenAction() {
 												archiveFileSystem->getFileName(file),
 												content
 											);
-											auto generatedFileName = installPath + "/" + file;
+											auto generatedFileName = installFolder + "/" + file;
 											Installer::createPathRecursively(
 												FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
 											);
@@ -680,7 +680,7 @@ void Installer::performScreenAction() {
 													);
 													if (startMenuName.empty() == false) {
 														FileSystem::getStandardFileSystem()->setContentFromString(
-															installPath,
+															installFolder,
 															"windows-create-shortcut.bat",
 															FileSystem::getInstance()->getContentAsString(".", "windows-create-shortcut.bat")
 														);
@@ -688,19 +688,19 @@ void Installer::performScreenAction() {
 														Installer::createPathRecursively(startMenuFolder);
 														auto linkFile = startMenuFolder + "/" + startMenuName + ".lnk";
 														Console::println(
-															StringUtils::replace(StringUtils::replace(installPath, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+															StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 															"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
 															"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
 														);
 														Console::println(
 															Application::execute(
-																StringUtils::replace(StringUtils::replace(installPath, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+																StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 																"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
 																"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
 															)
 														);
 														log.push_back(linkFile);
-														FileSystem::getStandardFileSystem()->removeFile(installPath, "windows-create-shortcut.bat");
+														FileSystem::getStandardFileSystem()->removeFile(installFolder, "windows-create-shortcut.bat");
 													}
 												#endif
 
@@ -747,7 +747,7 @@ void Installer::performScreenAction() {
 										loopIdx++;
 									}
 									try {
-										FileSystem::getStandardFileSystem()->setContentFromString(installPath, "update-finish.bat", updateFinishBatch);
+										FileSystem::getStandardFileSystem()->setContentFromString(installFolder, "update-finish.bat", updateFinishBatch);
 									} catch (Exception& exception) {
 										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 										hadException = true;
@@ -756,9 +756,9 @@ void Installer::performScreenAction() {
 							#endif
 
 							try {
-								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.files.db", log);
-								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.components.db", components);
-								FileSystem::getStandardFileSystem()->setContentFromString(installPath, "install.version.db", installer->timestamp);
+								FileSystem::getStandardFileSystem()->setContentFromStringArray(installFolder, "install.files.db", log);
+								FileSystem::getStandardFileSystem()->setContentFromStringArray(installFolder, "install.components.db", components);
+								FileSystem::getStandardFileSystem()->setContentFromString(installFolder, "install.version.db", installer->timestamp);
 							} catch (Exception& exception) {
 								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 								hadException = true;
@@ -823,7 +823,18 @@ void Installer::performScreenAction() {
 							installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 							hadException = true;
 						}
+
+						//
+						auto installFolder = log.size() > 0?log[0] + "/":"";
+
 						if (hadException == false) {
+							#if defined(_WIN32)
+								auto uninstallFinishBatchLoopIdx = 0;
+								string uninstallFinishBatch;
+								uninstallFinishBatch+= "@ECHO OFF\r\n";
+								uninstallFinishBatch+= "ECHO FINISHING UNINSTALL. PLEASE DO NOT CLOSE.\r\n";
+								uninstallFinishBatch+= "setlocal EnableDelayedExpansion\r\n";
+							#endif
 							for (auto i = 1; i < log.size(); i++) {
 								try {
 									installer->installThreadMutex.lock();
@@ -831,18 +842,53 @@ void Installer::performScreenAction() {
 									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("details"))->setText(MutableString(log[i]));
 									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(i) / static_cast<float>(log.size()), 2));
 									installer->installThreadMutex.unlock();
-									FileSystem::getStandardFileSystem()->removeFile(
-										FileSystem::getStandardFileSystem()->getPathName(log[i]),
-										FileSystem::getStandardFileSystem()->getFileName(log[i])
-									);
+									if (FileSystem::getStandardFileSystem()->fileExists(log[i]) == true) {
+										FileSystem::getStandardFileSystem()->removeFile(
+											FileSystem::getStandardFileSystem()->getPathName(log[i]),
+											FileSystem::getStandardFileSystem()->getFileName(log[i])
+										);
+									}
 								} catch (Exception& innerException) {
 									Console::println(string("UninstallThread::run(): An error occurred: ") + innerException.what());
+									#if defined(_WIN32)
+										if (installer->installerMode == INSTALLERMODE_UNINSTALL &&
+											(StringUtils::endsWith(log[i], ".dll") == true ||
+											StringUtils::endsWith(log[i], ".exe") == true)) {
+											auto file = FileSystem::getStandardFileSystem()->getFileName(log[i]);
+											uninstallFinishBatch+=
+												":loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+												"if exist \"" + file + "\" (\r\n" +
+												"	del \"" + file + "\" > nul 2>&1\r\n" +
+												"	if exist \"" + file + "\" goto loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+												")\r\n";
+											uninstallFinishBatchLoopIdx++;
+										}
+									#endif
 								}
 							}
+							#if defined(_WIN32)
+								if (installer->installerMode == INSTALLERMODE_UNINSTALL) {
+									#if defined(_WIN32)
+										{
+											auto file = "console.log";
+											uninstallFinishBatch+=
+												":loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+												"if exist \"" + file + "\" (\r\n" +
+												"	del \"" + file + "\" > nul 2>&1\r\n" +
+												"	if exist \"" + file + "\" goto loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+												")\r\n";
+											uninstallFinishBatchLoopIdx++;
+										}
+									#endif
+									try {
+										FileSystem::getStandardFileSystem()->setContentFromString(installFolder, "uninstall-finish.bat", uninstallFinishBatch);
+									} catch (Exception& exception) {
+										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+										hadException = true;
+									}
+								}
+							#endif
 						}
-
-						//
-						auto installFolder = log[0] + "/";
 
 						// remove folders that we created non recursive
 						if (hadException == false) {
@@ -935,6 +981,16 @@ void Installer::performScreenAction() {
 								installer->installThreadMutex.unlock();
 							} else {
 								// TODO: Maybe show a finishing screen
+								string drive;
+								if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+								system(
+									(
+										string() +
+										drive +
+										"cd " +
+										"\"" + installFolder + "/" + "\"" +
+										" && start cmd /c \"uninstall-finish.bat && del uninstall-finish.bat && cd .. && rmdir \"\"\"" + StringUtils::replace(installFolder, "/", "\\") + "\"\"\" > nul 2>&1\"").c_str()
+								);
 								Application::exit(0);
 							}
 						}
