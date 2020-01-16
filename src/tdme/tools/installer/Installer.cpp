@@ -282,6 +282,9 @@ void Installer::performScreenAction() {
 				engine->getGUI()->addRenderScreen("installer_installing");
 				engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 				engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
+				dynamic_cast<GUITextNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Checking for updates ..."));
+				dynamic_cast<GUITextNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
+				dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
 				class CheckForUpdateThread: public Thread {
 					public:
 					CheckForUpdateThread(Installer* installer): Thread("checkforupdate-thread"), installer(installer) {
@@ -316,11 +319,6 @@ void Installer::performScreenAction() {
 							auto repository = installer->installerProperties.get("repository", "");
 							if (repository.empty() == false && (installer->installerMode != INSTALLERMODE_REPAIR || repairHaveLocalFile == false)) {
 								string timestampWeb;
-								installer->installThreadMutex.lock();
-								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Downloading ..."));
-								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
-								dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
-								installer->installThreadMutex.unlock();
 
 								// check repository via apache index file for now
 								if (installer->installerMode == INSTALLERMODE_INSTALL ||
@@ -375,7 +373,12 @@ void Installer::performScreenAction() {
 										//
 										Console::println("CheckForUpdateThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": Downloading");
 										//
+										installer->installThreadMutex.lock();
+										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Downloading ..."));
 										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(componentFileName));
+										dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+										installer->installThreadMutex.unlock();
+
 
 										// sha256
 										httpDownloadClient.reset();
