@@ -323,7 +323,8 @@ void Installer::performScreenAction() {
 								installer->installThreadMutex.unlock();
 
 								// check repository via apache index file for now
-								if (installer->installerMode == INSTALLERMODE_UPDATE) {
+								if (installer->installerMode == INSTALLERMODE_INSTALL ||
+									installer->installerMode == INSTALLERMODE_UPDATE) {
 									try {
 										HTTPClient httpClient;
 										httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
