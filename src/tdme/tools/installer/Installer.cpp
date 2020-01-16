@@ -736,11 +736,11 @@ void Installer::performScreenAction() {
 											":loop" + to_string(loopIdx) + "\r\n" +
 											"if exist \"" + updateFile + "\" (\r\n" +
 											"	if exist \"" + file + "\" (\r\n" +
-											"		del \"" + file + "\"\r\n" +
+											"		del \"" + file + "\" > nul 2>&1\r\n" +
 											"		if exist \"" + file + "\" goto loop" + to_string(loopIdx) + "\r\n" +
-											"		rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											"		rename \"" + updateFile + "\" \"" + file + "\" > nul 2>&1\r\n" +
 											"	) else (\r\n" +
-											"		rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											"		rename \"" + updateFile + "\" \"" + file + "\" > nul 2>&1\r\n" +
 											"	)\r\n" +
 											")\r\n";
 										loopIdx++;
