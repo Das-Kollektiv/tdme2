@@ -885,7 +885,7 @@ void Installer::performScreenAction() {
 								}
 								for (auto installerFile: installerFiles) {
 									if (StringUtils::endsWith(installerFile, ".ta") == true ||
-										StringUtils::endsWith(installerFile, ".sha256") == true) {
+										StringUtils::endsWith(installerFile, ".ta.sha256") == true) {
 										try {
 											FileSystem::getStandardFileSystem()->removeFile(
 												installFolder + "installer",
