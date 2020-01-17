@@ -652,7 +652,7 @@ void Installer::performScreenAction() {
 															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh",
 															string() +
 															"#!/bin/sh\n" +
-															"cd " + installPath + "\n" +
+															"cd " + installFolder + "\n" +
 															"nohup " +
 															FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + " " +
 															"</dev/null &>/dev/null &\n"
@@ -663,17 +663,17 @@ void Installer::performScreenAction() {
 														);
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															installer->homeFolder + "/" + ".local/share/applications",
-															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop",
+															startMenuName + ".desktop",
 															string() +
 															"[Desktop Entry]\n" +
 															"Name="  + startMenuName + "\n" +
 															"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
 															"Terminal=false\n" +
 															"Type=Application\n" +
-															"Icon=" + installPath + "/resources/logos/app_logo_small.png\n"
+															"Icon=" + installFolder + "/resources/logos/app_logo_small.png\n"
 														);
 														log.push_back(generatedFileName + ".sh");
-														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop");
+														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + startMenuName + ".desktop");
 													}
 												#elif defined(_WIN32)
 													auto executable = FileSystem::getStandardFileSystem()->getFileName(generatedFileName);
