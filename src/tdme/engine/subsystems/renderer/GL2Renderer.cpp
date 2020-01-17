@@ -630,7 +630,9 @@ void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
 }
 
 void GL2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
-	Console::println(string("GL2Renderer::bindOrigins()::not implemented yet"));
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)

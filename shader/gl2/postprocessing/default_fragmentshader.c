@@ -1,4 +1,6 @@
-#version 110
+#version 100
+
+precision mediump float;
 
 // uniforms
 uniform sampler2D colorBufferTextureUnit;
@@ -10,7 +12,7 @@ uniform float bufferTexturePixelHeight;
 varying vec2 vsFragTextureUV;
 
 // main
-void main (void) {
+void main(void) {
 	gl_FragColor = texture2D(colorBufferTextureUnit, vsFragTextureUV);
-	gl_FragDepth = texture2D(depthBufferTextureUnit, vsFragTextureUV).r;
+	//gl_FragDepth = texture2D(depthBufferTextureUnit, vsFragTextureUV).r;
 }

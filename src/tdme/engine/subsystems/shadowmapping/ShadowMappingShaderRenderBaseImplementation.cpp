@@ -95,7 +95,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 	renderUniformLightDirection = renderer->getProgramUniformLocation(renderProgramId, "lightDirection");
 	if (renderUniformLightDirection == -1) return;
-	if (shaderVersion != "gles2") {
+	if (shaderVersion != "gl2") {
 		if (renderer->isInstancedRenderingAvailable() == false) {
 			renderUniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvMatrix");
 			if (renderUniformMVMatrix == -1) return;
