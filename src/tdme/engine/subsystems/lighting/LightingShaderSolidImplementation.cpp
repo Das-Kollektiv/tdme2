@@ -42,11 +42,7 @@ void LightingShaderSolidImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting",
 		"render_vertexshader.c",
-		"#define HAVE_SOLID_SHADING",
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/lighting",
-			"render_computevertex.inc.c"
-		)
+		"#define HAVE_SOLID_SHADING"
 	);
 	if (renderLightingVertexShaderId == 0) return;
 

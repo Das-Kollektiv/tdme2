@@ -29,12 +29,7 @@ void EZRShaderPreDefaultImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/earlyzrejection",
-		"pre_vertexshader.c",
-		"",
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/earlyzrejection",
-			"pre_computevertex.inc.c"
-		)
+		"pre_vertexshader.c"
 	);
 	if (vertexShaderId == 0) return;
 	fragmentShaderId = renderer->loadShader(

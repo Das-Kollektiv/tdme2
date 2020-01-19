@@ -32,11 +32,6 @@ void EZRShaderPreFoliageImplementation::initialize()
 		"pre_vertexshader.c",
 		"#define HAVE_FOLIAGE",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/earlyzrejection",
-			"pre_computevertex.inc.c"
-		) +
-		"\n\n" +
-		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.c"
 		) +

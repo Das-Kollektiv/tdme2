@@ -32,11 +32,6 @@ void ShadowMappingShaderPreTreeImplementation::initialize()
 		"pre_vertexshader.c",
 		"#define HAVE_TREE",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/shadowmapping",
-			"pre_computevertex.inc.c"
-		) +
-		"\n\n" +
-		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.c"
 		) +

@@ -36,11 +36,6 @@ void ShadowMappingShaderRenderTreeImplementation::initialize()
 		"render_vertexshader.c",
 		"#define HAVE_TREE",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/shadowmapping",
-			"render_computevertex.inc.c"
-		) +
-		"\n\n" +
-		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.c"
 		) +

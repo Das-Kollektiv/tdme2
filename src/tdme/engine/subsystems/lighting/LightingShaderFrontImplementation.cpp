@@ -42,11 +42,7 @@ void LightingShaderFrontImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting",
 		"render_vertexshader.c",
-		"#define HAVE_SOLID_SHADING\n#define HAVE_FRONT",
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/lighting",
-			"render_computevertex.inc.c"
-		)
+		"#define HAVE_SOLID_SHADING\n#define HAVE_FRONT"
 	);
 	if (renderLightingVertexShaderId == 0) return;
 

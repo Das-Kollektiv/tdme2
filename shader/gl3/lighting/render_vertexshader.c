@@ -70,37 +70,60 @@ void main(void) {
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif
 
-	//
+	// normal matrix
+	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix * shaderTransformMatrix))));
+
 	#if defined(HAVE_TERRAIN_SHADER)
 		vec4 heightVector4 = inModelMatrix * vec4(inVertex, 1.0);
 		vec3 heightVector3 = heightVector4.xyz / heightVector4.w;
 		vertex = heightVector3;
 		height = heightVector3.y;
-		mat4 normalMatrix = mat4(transpose(inverse(mat3(inModelMatrix))));
-		vec4 normalVector4 = normalMatrix * vec4(inNormal, 0.0);
+		vec4 normalVector4 = mat4(transpose(inverse(mat3(inModelMatrix)))) * vec4(inNormal, 0.0);
 		normal = normalize(normalVector4.xyz);
 		slope = abs(180.0 / 3.14 * acos(clamp(dot(normal, vec3(0.0, 1.0, 0.0)), -1.0, 1.0)));
-	#endif
-
-	#if defined(HAVE_WATER_SHADER)
-		vec3 worldPosition = computeWorldPosition(vec4(inVertex, 1.0), shaderTransformMatrix);
-		worldPosition*= 10.0;
-		height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
-		vsNormal = waveNormal(worldPosition.x, worldPosition.z);
-		computeVertex(
-			vec4(inVertex, 1.0),
-			vsNormal,
+		vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
+	#elif defined(HAVE_WATER_SHADER)
+		// transformations matrices
+		vec4 worldPosition4 = inModelMatrix * vec4(inVertex, 1.0);
+		vec3 worldPosition = (worldPosition4.xyz / worldPosition4.w).xyz * 10.0;
+		float height = waterHeight * waveHeight(worldPosition.x, worldPosition.z);
+		shaderTransformMatrix =
 			mat4(
 				1.0, 0.0, 0.0, 0.0,
 				0.0, 1.0, 0.0, 0.0,
 				0.0, 0.0, 1.0, 0.0,
 				0.0, height, 0.0, 1.0
-			)
-		);
+			);
+		vsNormal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(waveNormal(worldPosition.x, worldPosition.z), 0.0)));
 	#else
-		// compute vertex and pass to fragment shader
-		computeVertex(vec4(inVertex, 1.0), inNormal, shaderTransformMatrix);
+		// compute the normal
+		vsNormal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(inNormal, 0.0)));
 	#endif
+
+	// transformations matrices
+	mat4 mvMatrix = cameraMatrix * inModelMatrix * shaderTransformMatrix;
+	mat4 mvpMatrix = projectionMatrix * cameraMatrix * inModelMatrix * shaderTransformMatrix;
+
+	// texure UV
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
+
+	// normal texture
+	if (normalTextureAvailable == 1) {
+		vsTangent = normalize(vec3(normalMatrix * vec4(inTangent, 0.0)));
+		vsBitangent = normalize(vec3(normalMatrix * vec4(inBitangent, 0.0)));
+	} else {
+		vsTangent = vec3(0.0, 0.0, 0.0);
+		vsBitangent = vec3(0.0, 0.0, 0.0);
+	}
+
+	// effect colors
+	vsEffectColorMul = inEffectColorMul;
+	vsEffectColorAdd = inEffectColorAdd;
+
+	// gl position
+	vec4 vsPosition4 = mvMatrix * vec4(inVertex, 1.0);
+	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
+	vsPosition = vsPosition4.xyz / vsPosition4.w;
 
 	#if defined(HAVE_DEPTH_FOG)
 		fragDepth = gl_Position.z;

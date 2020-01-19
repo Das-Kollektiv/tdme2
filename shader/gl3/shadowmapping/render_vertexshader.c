@@ -42,5 +42,26 @@ void main() {
 	#endif
 
 	// compute vertex and pass to fragment shader
-	computeVertex(vec4(inVertex, 1.0), inNormal, shaderTransformMatrix);
+	mat4 mvMatrix = cameraMatrix * inModelMatrix * shaderTransformMatrix;
+	mat4 mvpMatrix = projectionMatrix * cameraMatrix * inModelMatrix * shaderTransformMatrix;
+	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix * shaderTransformMatrix))));
+
+	// texure UV
+	vsFragTextureUV = vec2(textureMatrix * vec3(vsFragTextureUV, 1.0));
+
+	// shadow coord
+	vsShadowCoord = depthBiasMVPMatrix * inModelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	vsShadowCoord = vsShadowCoord / vsShadowCoord.w;
+
+	// shadow intensity
+	vec3 normalTransformed = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
+	vsShadowIntensity = clamp(abs(dot(normalize(lightDirection.xyz), normalTransformed)), 0.0, 1.0);
+
+	// eye coordinate position of vertex, needed in various calculations
+	vec4 vsPosition4 = mvMatrix * vec4(inVertex, 1.0);
+	vsPosition = vsPosition4.xyz / vsPosition4.w;
+
+	// compute gl position
+	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
+	gl_Position.z-= 0.0001;
 }
