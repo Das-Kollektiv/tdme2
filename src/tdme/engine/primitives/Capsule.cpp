@@ -79,7 +79,7 @@ void Capsule::setScale(const Vector3& scale) {
 	);
 
 	// determine local translation
-	collisionShapeLocalTranslation.set(center);
+	collisionShapeLocalTranslation.set(center).scale(scale);
 	collisionShapeLocalTransform.setPosition(
 		reactphysics3d::Vector3(
 			collisionShapeLocalTranslation.getX(),
@@ -89,8 +89,9 @@ void Capsule::setScale(const Vector3& scale) {
 	);
 
 	// create capsule
+	// TODO: negative scale can lead to wrong orientation here
 	collisionShape = new reactphysics3d::CapsuleShape(
-		Math::max(Math::EPSILON, radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY()))),
+		Math::max(Math::EPSILON, radius * Math::max(Math::abs(scale.getZ()), Math::max(Math::abs(scale.getX()), Math::abs(scale.getY())))),
 		Math::max(Math::EPSILON, bScaled.clone().sub(aScaled).computeLength())
 	);
 

@@ -38,32 +38,25 @@ void BoundingVolume::computeBoundingBox() {
 }
 
 void BoundingVolume::fromTransformations(const Transformations& transformations) {
-	auto& transformationsMatrix = transformations.getTransformationsMatrix();
-
 	//
-	auto scaleVectorTransformed =
-		collisionShapeLocalTransform.getOrientation() *
+	setScale(transformations.getScale());
+
+	// set transform
+	collisionShapeTransform.setPosition(
 		reactphysics3d::Vector3(
-			transformations.getScale().getX(),
-			transformations.getScale().getY(),
-			transformations.getScale().getZ()
-		);
-
-	//
-	if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
-	if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
-	if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
-
-	// set bounding volume scale
-	setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
-
-	// apply rotation
-	collisionShapeTransform.setFromOpenGL(transformationsMatrix.getArray().data());
-
-	// normalize orientation to remove scale
-	auto collisionShapeTransformOrientation = collisionShapeTransform.getOrientation();
-	collisionShapeTransformOrientation.normalize();
-	collisionShapeTransform.setOrientation(collisionShapeTransformOrientation);
+			transformations.getTranslation().getX(),
+			transformations.getTranslation().getY(),
+			transformations.getTranslation().getZ()
+		)
+	);
+	collisionShapeTransform.setOrientation(
+		reactphysics3d::Quaternion(
+			transformations.getRotationsQuaternion().getX(),
+			transformations.getRotationsQuaternion().getY(),
+			transformations.getRotationsQuaternion().getZ(),
+			transformations.getRotationsQuaternion().getW()
+		)
+	);
 
 	// compute bounding box
 	computeBoundingBox();
