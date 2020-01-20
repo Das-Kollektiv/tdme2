@@ -36,7 +36,7 @@ void Sphere::setScale(const Vector3& scale) {
 	// remove old collision shape
 	if (collisionShape != nullptr) delete collisionShape;
 
-	collisionShapeLocalTranslation.set(center);
+	collisionShapeLocalTranslation.set(center).scale(scale);
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 	collisionShape = new reactphysics3d::SphereShape(
 		Math::max(Math::EPSILON, radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY())))

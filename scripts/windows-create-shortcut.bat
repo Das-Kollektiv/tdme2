@@ -5,7 +5,6 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 SET Esc_LinkDest=%2
 SET Esc_LinkTarget=%1
 SET cSctVBS=CreateShortcut.vbs
-SET LOG=".\%~N0_runtime.log"
 ((
   echo Set oWS = WScript.CreateObject^("WScript.Shell"^)
   echo Set oFSO = CreateObject^("Scripting.FileSystemObject"^)
@@ -18,7 +17,7 @@ SET LOG=".\%~N0_runtime.log"
 )1>!cSctVBS!
 cscript //nologo .\!cSctVBS!
 DEL !cSctVBS! /f /q
-)1>>!LOG! 2>>&1
+)1>>nul 2>>&1
 goto :eof
 :usage
 @echo Syntax

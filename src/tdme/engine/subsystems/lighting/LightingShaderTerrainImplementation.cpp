@@ -53,11 +53,7 @@ void LightingShaderTerrainImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting",
 		"render_vertexshader.c",
-		"#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG",
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/lighting",
-			"render_computevertex.inc.c"
-		)
+		"#define HAVE_TERRAIN_SHADER\n#define HAVE_DEPTH_FOG"
 	);
 	if (renderLightingVertexShaderId == 0) return;
 

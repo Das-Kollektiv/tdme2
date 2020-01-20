@@ -45,11 +45,6 @@ void LightingShaderFoliageImplementation::initialize()
 		"render_vertexshader.c",
 		"#define HAVE_FOLIAGE\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/lighting",
-			"render_computevertex.inc.c"
-		) +
-		"\n\n" +
-		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.c"
 		) +

@@ -33,12 +33,7 @@ void ShadowMappingShaderRenderDefaultImplementation::initialize()
 	renderVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"render_vertexshader.c",
-		"",
-		FileSystem::getInstance()->getContentAsString(
-			"shader/" + shaderVersion + "/shadowmapping",
-			"render_computevertex.inc.c"
-		)
+		"render_vertexshader.c"
 	);
 	if (renderVertexShaderId == 0) return;
 

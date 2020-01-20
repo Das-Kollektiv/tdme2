@@ -63,12 +63,12 @@ GUIInputInternalNode::GUIInputInternalNode(
 	):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = GUI::getFont(font);
+	this->font = font.empty() == true?nullptr:GUI::getFont(font);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);
 	this->colorDisabled = colorDisabled.empty() == true || colorDisabled.length() == 0 ? GUIColor() : GUIColor(colorDisabled);
 	this->text = text;
 	this->maxLength = maxLength;
-	this->font->initialize();
+	if (this->font != nullptr) this->font->initialize();
 	this->controller = new GUIInputInternalController(this);
 	this->controller->initialize();
 }
@@ -97,12 +97,12 @@ bool GUIInputInternalNode::isContentNode()
 
 int32_t GUIInputInternalNode::getContentWidth()
 {
-	return font->getTextWidth(text) + border.left + border.right + padding.left + padding.right;
+	return font == nullptr?0:font->getTextWidth(text) + border.left + border.right + padding.left + padding.right;
 }
 
 int32_t GUIInputInternalNode::getContentHeight()
 {
-	return font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
+	return font == nullptr?0:font->getLineHeight() + border.top + border.bottom + padding.top + padding.bottom;
 }
 
 GUIFont* GUIInputInternalNode::getFont()
@@ -122,7 +122,7 @@ int32_t GUIInputInternalNode::getMaxLength()
 
 void GUIInputInternalNode::dispose()
 {
-	this->font->dispose();
+	if (font != nullptr) font->dispose();
 	GUINode::dispose();
 	this->controller->dispose();
 }
@@ -135,11 +135,11 @@ void GUIInputInternalNode::render(GUIRenderer* guiRenderer)
 	auto controller = dynamic_cast< GUIInputInternalController* >(this->controller);
 	auto inputController = dynamic_cast< GUIInputController* >(this->getParentControllerNode()->getController());
 	auto disable = inputController->isDisabled();
-	font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
+	if (font != nullptr) font->drawString(guiRenderer, computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft, computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop, text, controller->getOffset(), 0, disable == false ? color : colorDisabled);
 	if (static_cast< GUIParentNode* >(screenNode->getGUI()->getFocussedNode()) == this->parentNode && controller->getCursorMode() == GUIInputInternalController::CURSORMODE_SHOW) {
 		auto screenWidth = screenNode->getScreenWidth();
 		auto screenHeight = screenNode->getScreenHeight();
-		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex());
+		float left = computedConstraints.left + computedConstraints.alignmentLeft + border.left + padding.left + (font != nullptr?font->getTextIndexX(text, controller->getOffset(), 0, controller->getIndex()):0);
 		float top = computedConstraints.top + computedConstraints.alignmentTop + border.top + padding.top;
 		float width = 2;
 		float height = computedConstraints.height - border.top - border.bottom- padding.top - padding.bottom;

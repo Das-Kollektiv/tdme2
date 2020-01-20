@@ -1,4 +1,6 @@
-#version 120
+#version 100
+
+precision mediump float;
 
 // uniforms
 uniform sampler2D diffuseTextureUnit;
@@ -6,9 +8,9 @@ uniform int diffuseTextureAvailable;
 uniform vec4 effectColorMul;
 uniform vec4 effectColorAdd;
 
-// passed from fragment shader
-varying vec4 vsFragColor;
+// passed from vertex shader
 varying vec2 vsFragTextureUV;
+varying vec4 vsFragColor;
 
 // main
 void main (void) {

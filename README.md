@@ -158,8 +158,10 @@
             - uses a blocking TCP socket, thus it has a simple blocking API
             - Ready for REST providing all methods, setting content type and body
             - be able to set GET and POST parameters via unordered map 
+            - supports basic authentification
             - IPV6 ready
         - HTTP download client
+            - supports basic authentification
             - uses a separate thread to download to file
             - IPV6 ready
     - Operating system abstraction layer

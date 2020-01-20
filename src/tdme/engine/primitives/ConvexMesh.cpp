@@ -86,7 +86,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	collisionShapeLocalTranslation.scale(1.0f / indices.size());
 
 	// center
-	center.set(collisionShapeLocalTranslation);
+	center.set(collisionShapeLocalTranslation).scale(scale);
 
 	// scale collision shape local translation
 	collisionShapeLocalTranslation.scale(scale);

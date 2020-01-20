@@ -234,18 +234,9 @@ void Body::resetProxyShapes() {
 
 	// set up scale
 	for (auto boundingVolume: boundingVolumes) {
-		// "scale vector transformed" which takes transformations scale and orientation into account
-		auto scaleVectorTransformed =
-			boundingVolume->collisionShapeLocalTransform.getOrientation() *
-			reactphysics3d::Vector3(transformations.getScale().getX(), transformations.getScale().getY(), transformations.getScale().getZ());
-
-		if (scaleVectorTransformed.x < 0.0f) scaleVectorTransformed.x*= -1.0f;
-		if (scaleVectorTransformed.y < 0.0f) scaleVectorTransformed.y*= -1.0f;
-		if (scaleVectorTransformed.z < 0.0f) scaleVectorTransformed.z*= -1.0f;
-
 		// scale bounding volume and recreate it if nessessary
-		if (boundingVolume->getScale().equals(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z)) == false) {
-			boundingVolume->setScale(Vector3(scaleVectorTransformed.x, scaleVectorTransformed.y, scaleVectorTransformed.z));
+		if (boundingVolume->getScale().equals(transformations.getScale()) == false) {
+			boundingVolume->setScale(transformations.getScale());
 		}
 	}
 
@@ -478,16 +469,6 @@ void Body::fromTransformations(const Transformations& transformations)
 		transformationsScale.set(transformations.getScale());
 	}
 
-	// rigig body transform
-	auto& transformationsMatrix = this->transformations.getTransformationsMatrix();
-	reactphysics3d::Transform transform;
-	// take from transformations matrix
-	transform.setFromOpenGL(transformationsMatrix.getArray().data());
-	// normalize orientation to remove scale
-	auto transformOrientation = transform.getOrientation();
-	transformOrientation.normalize();
-	transform.setOrientation(transformOrientation);
-
 	/*
 	// TODO: center of mass ~ pivot
 	// set center of mass which is basically center of bv for now
@@ -509,7 +490,21 @@ void Body::fromTransformations(const Transformations& transformations)
 	*/
 
 	// set transform
-	collisionBody->setTransform(transform);
+	collisionBody->setTransform(
+		reactphysics3d::Transform(
+			reactphysics3d::Vector3(
+				this->transformations.getTranslation().getX(),
+				this->transformations.getTranslation().getY(),
+				this->transformations.getTranslation().getZ()
+			),
+			reactphysics3d::Quaternion(
+				this->transformations.getRotationsQuaternion().getX(),
+				this->transformations.getRotationsQuaternion().getY(),
+				this->transformations.getRotationsQuaternion().getZ(),
+				this->transformations.getRotationsQuaternion().getW()
+			)
+		)
+	);
 }
 
 void Body::addForce(const Vector3& forceOrigin, const Vector3& force)

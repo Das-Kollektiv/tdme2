@@ -282,6 +282,9 @@ void Installer::performScreenAction() {
 				engine->getGUI()->addRenderScreen("installer_installing");
 				engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
 				engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
+				dynamic_cast<GUITextNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Checking for updates ..."));
+				dynamic_cast<GUITextNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
+				dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
 				class CheckForUpdateThread: public Thread {
 					public:
 					CheckForUpdateThread(Installer* installer): Thread("checkforupdate-thread"), installer(installer) {
@@ -316,18 +319,16 @@ void Installer::performScreenAction() {
 							auto repository = installer->installerProperties.get("repository", "");
 							if (repository.empty() == false && (installer->installerMode != INSTALLERMODE_REPAIR || repairHaveLocalFile == false)) {
 								string timestampWeb;
-								installer->installThreadMutex.lock();
-								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Downloading ..."));
-								dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString("..."));
-								dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
-								installer->installThreadMutex.unlock();
 
 								// check repository via apache index file for now
-								if (installer->installerMode == INSTALLERMODE_UPDATE) {
+								if (installer->installerMode == INSTALLERMODE_INSTALL ||
+									installer->installerMode == INSTALLERMODE_UPDATE) {
 									try {
 										HTTPClient httpClient;
 										httpClient.setMethod(HTTPClient::HTTP_METHOD_GET);
 										httpClient.setURL(repository);
+										httpClient.setUsername(installer->installerProperties.get("repository_username", ""));
+										httpClient.setPassword(installer->installerProperties.get("repository_password", ""));
 										httpClient.execute();
 										auto response = httpClient.getResponse().str();
 										auto pos = 0;
@@ -372,10 +373,17 @@ void Installer::performScreenAction() {
 										//
 										Console::println("CheckForUpdateThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName + ": Downloading");
 										//
+										installer->installThreadMutex.lock();
+										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Downloading ..."));
 										dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString(componentFileName));
+										dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+										installer->installThreadMutex.unlock();
+
 
 										// sha256
 										httpDownloadClient.reset();
+										httpDownloadClient.setUsername(installer->installerProperties.get("repository_username", ""));
+										httpDownloadClient.setPassword(installer->installerProperties.get("repository_password", ""));
 										httpDownloadClient.setFile("installer/" + componentFileName + ".sha256");
 										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName + ".sha256");
 										httpDownloadClient.start();
@@ -490,16 +498,16 @@ void Installer::performScreenAction() {
 							auto hadException = false;
 							vector<string> log;
 							vector<string> components;
-							auto installPath = dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
+							auto installFolder = dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 							try {
-								Installer::createPathRecursively(installPath);
+								Installer::createPathRecursively(installFolder);
 							} catch (Exception& exception) {
 								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 								hadException = true;
 							}
 
 							//
-							log.push_back(installPath);
+							log.push_back(installFolder);
 							if (hadException == false) {
 								// copy installer archive and sha256
 								if (installer->installerMode == INSTALLERMODE_INSTALL) {
@@ -512,7 +520,7 @@ void Installer::performScreenAction() {
 											FileSystem::getStandardFileSystem()->getFileName(file),
 											content
 										);
-										auto generatedFileName = installPath + "/" + file;
+										auto generatedFileName = installFolder + "/" + file;
 										Installer::createPathRecursively(
 											FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
 										);
@@ -531,7 +539,7 @@ void Installer::performScreenAction() {
 											FileSystem::getStandardFileSystem()->getFileName(file),
 											content
 										);
-										auto generatedFileName = installPath + "/" + file;
+										auto generatedFileName = installFolder + "/" + file;
 										Installer::createPathRecursively(
 											FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
 										);
@@ -605,7 +613,7 @@ void Installer::performScreenAction() {
 												archiveFileSystem->getFileName(file),
 												content
 											);
-											auto generatedFileName = installPath + "/" + file;
+											auto generatedFileName = installFolder + "/" + file;
 											Installer::createPathRecursively(
 												FileSystem::getStandardFileSystem()->getPathName(generatedFileName)
 											);
@@ -632,61 +640,76 @@ void Installer::performScreenAction() {
 											);
 											if (archiveFileSystem->isExecutable(archiveFileSystem->getPathName(file), archiveFileSystem->getFileName(file)) == true) {
 												#if defined(__FreeBSD__) || defined(__linux__) || defined(__NetBSD__)
-													FileSystem::getStandardFileSystem()->setExecutable(
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
-													);
-													Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
-													FileSystem::getStandardFileSystem()->setContentFromString(
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh",
-														string() +
-														"#!/bin/sh\n" +
-														"cd " + installPath + "\n" +
-														"nohup " +
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + " " +
-														"</dev/null &>/dev/null &\n"
-													);
-													FileSystem::getStandardFileSystem()->setExecutable(
-														FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh"
-													);
-													FileSystem::getStandardFileSystem()->setContentFromString(
-														installer->homeFolder + "/" + ".local/share/applications",
-														FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop",
-														string() +
-														"[Desktop Entry]\n" +
-														"Name="  + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + "\n" +
-														"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
-														"Terminal=false\n" +
-														"Type=Application\n" +
-														"Icon=" + installPath + "/resources/logos/app_logo_small.png\n"
-													);
-													log.push_back(generatedFileName + ".sh");
-													log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".desktop");
+													auto startMenuName = installer->installerProperties.get("startmenu_" + StringUtils::toLowerCase(FileSystem::getStandardFileSystem()->getFileName(generatedFileName)), "");
+													if (startMenuName.empty() == false) {
+														FileSystem::getStandardFileSystem()->setExecutable(
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+															FileSystem::getStandardFileSystem()->getFileName(generatedFileName)
+														);
+														Installer::createPathRecursively(installer->homeFolder + "/" + ".local/share/applications/");
+														FileSystem::getStandardFileSystem()->setContentFromString(
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh",
+															string() +
+															"#!/bin/sh\n" +
+															"cd " + installFolder + "\n" +
+															"nohup " +
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + " " +
+															"</dev/null &>/dev/null &\n"
+														);
+														FileSystem::getStandardFileSystem()->setExecutable(
+															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
+															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh"
+														);
+														FileSystem::getStandardFileSystem()->setContentFromString(
+															installer->homeFolder + "/" + ".local/share/applications",
+															startMenuName + ".desktop",
+															string() +
+															"[Desktop Entry]\n" +
+															"Name="  + startMenuName + "\n" +
+															"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
+															"Terminal=false\n" +
+															"Type=Application\n" +
+															"Icon=" + installFolder + "/resources/logos/app_logo_small.png\n"
+														);
+														log.push_back(generatedFileName + ".sh");
+														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + startMenuName + ".desktop");
+													}
 												#elif defined(_WIN32)
-													FileSystem::getStandardFileSystem()->setContentFromString(
-														installPath,
-														"windows-create-shortcut.bat",
-														FileSystem::getInstance()->getContentAsString(".", "windows-create-shortcut.bat")
-													);
-													auto startMenuFolder = string(installer->homeFolder) + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/" + installer->installerProperties.get("name", "TDME2 based application");
 													auto executable = FileSystem::getStandardFileSystem()->getFileName(generatedFileName);
-													Installer::createPathRecursively(startMenuFolder);
-													auto linkFile = startMenuFolder + "/" + StringUtils::substring(executable, 0, executable.rfind('.')) + ".lnk";
-													Console::println(
-														installPath + "/windows-create-shortcut.bat " +
-														"\"" + generatedFileName + "\" " +
-														"\"" + linkFile + "\""
+													auto startMenuName = installer->installerProperties.get(
+														"startmenu_" +
+														StringUtils::substring(
+															StringUtils::toLowerCase(executable),
+															0,
+															executable.rfind('.')
+														),
+														""
 													);
-													Console::println(
-														Application::execute(installPath + "/windows-create-shortcut.bat " +
-															"\"" + generatedFileName + "\" " +
-															"\"" + linkFile + "\""
-														)
-													);
-													log.push_back(linkFile);
-													FileSystem::getStandardFileSystem()->removeFile(installPath, "windows-create-shortcut.bat");
+													if (startMenuName.empty() == false) {
+														FileSystem::getStandardFileSystem()->setContentFromString(
+															installFolder,
+															"windows-create-shortcut.bat",
+															FileSystem::getInstance()->getContentAsString(".", "windows-create-shortcut.bat")
+														);
+														auto startMenuFolder = string(installer->homeFolder) + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/" + installer->installerProperties.get("name", "TDME2 based application");
+														Installer::createPathRecursively(startMenuFolder);
+														auto linkFile = startMenuFolder + "/" + startMenuName + ".lnk";
+														Console::println(
+															StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+															"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
+															"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
+														);
+														Console::println(
+															Application::execute(
+																StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
+																"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
+																"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
+															)
+														);
+														log.push_back(linkFile);
+														FileSystem::getStandardFileSystem()->removeFile(installFolder, "windows-create-shortcut.bat");
+													}
 												#endif
 
 											}
@@ -714,23 +737,25 @@ void Installer::performScreenAction() {
 									string updateFinishBatch;
 									updateFinishBatch+= "@ECHO OFF\r\n";
 									updateFinishBatch+= "ECHO FINISHING UPDATE. PLEASE DO NOT CLOSE.\r\n";
+									updateFinishBatch+= "setlocal EnableDelayedExpansion\r\n";
 									auto loopIdx = 0;
 									for (auto file: windowsUpdateRenameFiles) {
 										auto updateFile = file + ".update";
-										auto backupFile = file + ".backup";
 										updateFinishBatch+=
 											":loop" + to_string(loopIdx) + "\r\n" +
-											"if exist \"" + file + "\" (\r\n" +
-											"	rename \"" + file + "\" \"" + backupFile + "\" 2>nul || goto loop" + to_string(loopIdx) + "\r\n" +
-											"	del \"" + backupFile + "\"\r\n" +
-											"	rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
-											") else (\r\n" +
-											"	rename \"" + updateFile + "\" \"" + file + "\"\r\n" +
+											"if exist \"" + updateFile + "\" (\r\n" +
+											"	if exist \"" + file + "\" (\r\n" +
+											"		del \"" + file + "\" > nul 2>&1\r\n" +
+											"		if exist \"" + file + "\" goto loop" + to_string(loopIdx) + "\r\n" +
+											"		rename \"" + updateFile + "\" \"" + file + "\" > nul 2>&1\r\n" +
+											"	) else (\r\n" +
+											"		rename \"" + updateFile + "\" \"" + file + "\" > nul 2>&1\r\n" +
+											"	)\r\n" +
 											")\r\n";
 										loopIdx++;
 									}
 									try {
-										FileSystem::getStandardFileSystem()->setContentFromString(installPath, "update-finish.bat", updateFinishBatch);
+										FileSystem::getStandardFileSystem()->setContentFromString(installFolder, "update-finish.bat", updateFinishBatch);
 									} catch (Exception& exception) {
 										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 										hadException = true;
@@ -739,9 +764,9 @@ void Installer::performScreenAction() {
 							#endif
 
 							try {
-								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.files.db", log);
-								FileSystem::getStandardFileSystem()->setContentFromStringArray(installPath, "install.components.db", components);
-								FileSystem::getStandardFileSystem()->setContentFromString(installPath, "install.version.db", installer->timestamp);
+								FileSystem::getStandardFileSystem()->setContentFromStringArray(installFolder, "install.files.db", log);
+								FileSystem::getStandardFileSystem()->setContentFromStringArray(installFolder, "install.components.db", components);
+								FileSystem::getStandardFileSystem()->setContentFromString(installFolder, "install.version.db", installer->timestamp);
 							} catch (Exception& exception) {
 								installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 								hadException = true;
@@ -806,7 +831,18 @@ void Installer::performScreenAction() {
 							installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
 							hadException = true;
 						}
+
+						//
+						auto installFolder = log.size() > 0?log[0] + "/":"";
+
 						if (hadException == false) {
+							#if defined(_WIN32)
+								auto uninstallFinishBatchLoopIdx = 0;
+								string uninstallFinishBatch;
+								uninstallFinishBatch+= "@ECHO OFF\r\n";
+								uninstallFinishBatch+= "ECHO FINISHING UNINSTALL. PLEASE DO NOT CLOSE.\r\n";
+								uninstallFinishBatch+= "setlocal EnableDelayedExpansion\r\n";
+							#endif
 							for (auto i = 1; i < log.size(); i++) {
 								try {
 									installer->installThreadMutex.lock();
@@ -814,18 +850,51 @@ void Installer::performScreenAction() {
 									dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("details"))->setText(MutableString(log[i]));
 									dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_uninstalling")->getNodeById("progressbar"))->getController()->setValue(MutableString(static_cast<float>(i) / static_cast<float>(log.size()), 2));
 									installer->installThreadMutex.unlock();
-									FileSystem::getStandardFileSystem()->removeFile(
-										FileSystem::getStandardFileSystem()->getPathName(log[i]),
-										FileSystem::getStandardFileSystem()->getFileName(log[i])
-									);
+									if (FileSystem::getStandardFileSystem()->fileExists(log[i]) == true) {
+										FileSystem::getStandardFileSystem()->removeFile(
+											FileSystem::getStandardFileSystem()->getPathName(log[i]),
+											FileSystem::getStandardFileSystem()->getFileName(log[i])
+										);
+									}
 								} catch (Exception& innerException) {
 									Console::println(string("UninstallThread::run(): An error occurred: ") + innerException.what());
+									#if defined(_WIN32)
+										if (installer->installerMode == INSTALLERMODE_UNINSTALL &&
+											(StringUtils::endsWith(log[i], ".dll") == true ||
+											StringUtils::endsWith(log[i], ".exe") == true)) {
+											auto file = FileSystem::getStandardFileSystem()->getFileName(log[i]);
+											uninstallFinishBatch+=
+												":loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+												"if exist \"" + file + "\" (\r\n" +
+												"	del \"" + file + "\" > nul 2>&1\r\n" +
+												"	if exist \"" + file + "\" goto loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+												")\r\n";
+											uninstallFinishBatchLoopIdx++;
+										}
+									#endif
 								}
 							}
+							#if defined(_WIN32)
+								if (installer->installerMode == INSTALLERMODE_UNINSTALL) {
+									{
+										auto file = "console.log";
+										uninstallFinishBatch+=
+											":loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+											"if exist \"" + file + "\" (\r\n" +
+											"	del \"" + file + "\" > nul 2>&1\r\n" +
+											"	if exist \"" + file + "\" goto loop" + to_string(uninstallFinishBatchLoopIdx) + "\r\n" +
+											")\r\n";
+										uninstallFinishBatchLoopIdx++;
+									}
+									try {
+										FileSystem::getStandardFileSystem()->setContentFromString(installFolder, "uninstall-finish.bat", uninstallFinishBatch);
+									} catch (Exception& exception) {
+										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
+										hadException = true;
+									}
+								}
+							#endif
 						}
-
-						//
-						auto installFolder = log[0] + "/";
 
 						// remove folders that we created non recursive
 						if (hadException == false) {
@@ -856,11 +925,31 @@ void Installer::performScreenAction() {
 
 							// remove installer folder if not updating
 							if (installer->installerMode == INSTALLERMODE_UNINSTALL) {
+								FileSystem::unsetFileSystem();
+								vector<string> installerFiles;
 								try {
-									FileSystem::getStandardFileSystem()->removePath(
+									FileSystem::getStandardFileSystem()->list(
 										installFolder + "installer",
-										true
+										installerFiles
 									);
+								} catch (Exception& exception) {
+									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+								}
+								for (auto installerFile: installerFiles) {
+									if (StringUtils::endsWith(installerFile, ".ta") == true ||
+										StringUtils::endsWith(installerFile, ".ta.sha256") == true) {
+										try {
+											FileSystem::getStandardFileSystem()->removeFile(
+												installFolder + "installer",
+												installerFile
+											);
+										} catch (Exception& exception) {
+											Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
+										}
+									}
+								}
+								try {
+									FileSystem::getStandardFileSystem()->removePath(installFolder + "installer", false);
 								} catch (Exception& exception) {
 									Console::println(string("UninstallThread::run(): An error occurred: ") + exception.what());
 								}
@@ -898,6 +987,16 @@ void Installer::performScreenAction() {
 								installer->installThreadMutex.unlock();
 							} else {
 								// TODO: Maybe show a finishing screen
+								string drive;
+								if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
+								system(
+									(
+										string() +
+										drive +
+										"cd " +
+										"\"" + installFolder + "/" + "\"" +
+										" && start cmd /c \"uninstall-finish.bat && del uninstall-finish.bat && cd .. && rmdir \"\"\"" + StringUtils::replace(installFolder, "/", "\\") + "\"\"\" > nul 2>&1\"").c_str()
+								);
 								Application::exit(0);
 							}
 						}
@@ -913,9 +1012,11 @@ void Installer::performScreenAction() {
 			break;
 		}
 		default:
-			Console::println("Installer::onActionPerformed(): Unhandled screen: " + to_string(screen));
+			Console::println("Installer::performScreenAction(): Unhandled screen: " + to_string(screen));
 			break;
 	}
+	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }
 
 void Installer::initialize()
@@ -963,6 +1064,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			} else {
 				screen = static_cast<Screen>(static_cast<int>(screen) + 1 % static_cast<int>(SCREEN_MAX));
 			}
+			performScreenAction();
 		} else
 		if (node->getId() == "button_back") {
 			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_UPDATE || installerMode == INSTALLERMODE_REPAIR)) {
@@ -978,15 +1080,19 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			} else {
 				screen = static_cast<Screen>(static_cast<int>(screen) - 1 % static_cast<int>(SCREEN_MAX));
 			}
+			performScreenAction();
 		} else
 		if (node->getId() == "button_agree") {
 			installerMode = INSTALLERMODE_INSTALL;
 			screen = SCREEN_CHECKFORUPDATE;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_install") {
 			screen = SCREEN_INSTALLING;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_cancel") {
+			FileSystem::unsetFileSystem();
 			Application::exit(0);
 		} else
 		if (node->getId() == "button_finish") {
@@ -996,19 +1102,21 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 					auto installFolder = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
 					string drive;
 					if (installFolder[1] == ':') drive = StringUtils::substring(installFolder, 0, 2) + " && ";
-					string finishUpdate;
+					string finishCommand;
 					if (installerMode == INSTALLERMODE_REPAIR ||
 						installerMode == INSTALLERMODE_UPDATE) {
-						finishUpdate+= " && update-finish.bat";
+						finishCommand+= " && start cmd /c \"update-finish.bat && del update-finish.bat && " + installerProperties.get("launch", "") + ".exe" + "\"";
+					} else {
+						finishCommand+= " && start cmd /c \"" + installerProperties.get("launch", "") + ".exe" + "\"";
 					}
 					system(
-						(string() +
-						drive +
-						"cd " +
-						"\"" + installFolder + "/" + "\"" +
-						finishUpdate +
-						" && start " +
-						installerProperties.get("launch", "") + ".exe").c_str()
+						(
+							string() +
+							drive +
+							"cd " +
+							"\"" + installFolder + "/" + "\"" +
+							finishCommand
+						).c_str()
 					);
 				#else
 					Application::executeBackground(
@@ -1024,15 +1132,17 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 					if (installerMode == INSTALLERMODE_REPAIR ||
 						installerMode == INSTALLERMODE_UPDATE) {
 						system(
-							(string() +
-							drive +
-							"cd " +
-							"\"" + installFolder + "/" + "\"" +
-							" && update-finish.bat").c_str()
+							(
+								string() +
+								drive +
+								"cd " +
+								"\"" + installFolder + "/" + "\"" +
+								" && start cmd /c \"update-finish.bat && del update-finish.bat\"").c_str()
 						);
 					}
 				#endif
 			}
+			FileSystem::unsetFileSystem();
 			Application::exit(0);
 		} else
 		if (node->getId() == "button_browse") {
@@ -1068,29 +1178,28 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		if (node->getId() == "button_uninstall") {
 			installerMode = INSTALLERMODE_UNINSTALL;
 			screen = SCREEN_UNINSTALLING;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_update") {
 			installerMode = INSTALLERMODE_UPDATE;
 			screen = SCREEN_CHECKFORUPDATE;
+			performScreenAction();
 		} else
 		if (node->getId() == "button_repair") {
 			installerMode = INSTALLERMODE_REPAIR;
 			screen = SCREEN_CHECKFORUPDATE;
+			performScreenAction();
 		} else
 		if (StringUtils::startsWith(node->getId(), "component") == true) {
 			auto componentIdx = Integer::parseInt(StringUtils::substring(node->getId(), string("component").size()));
 			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
 		}
 	}
-	performScreenAction();
-	engine->getGUI()->addRenderScreen(popUps->getFileDialogScreenController()->getScreenNode()->getId());
-	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 }
 
 void Installer::onValueChanged(GUIElementNode* node) {
 	Console::println(node->getName() + ": onValueChanged(): " + node->getController()->getValue().getString());
 }
-
 
 void Installer::display()
 {
@@ -1185,5 +1294,4 @@ void Installer::createPathRecursively(const string& pathName) {
 			FileSystem::getStandardFileSystem()->createPath(pathCreating);
 		}
 	}
-
 }

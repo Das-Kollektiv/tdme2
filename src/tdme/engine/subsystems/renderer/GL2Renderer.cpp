@@ -25,6 +25,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
@@ -45,6 +46,7 @@ using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utils::Console;
+using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
 GL2Renderer::GL2Renderer() 
@@ -192,6 +194,20 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 		"{$FUNCTIONS}",
 		functions + "\n\n"
 	);
+	// some adjustments to have GLES2 shader working with GL2
+	shaderSource = StringUtils::replace(shaderSource, "#version 100", "#version 120");
+	shaderSource = StringUtils::replace(shaderSource, "\r", "");
+	{
+		StringTokenizer t;
+		t.tokenize(shaderSource, "\n");
+		shaderSource.clear();
+		while (t.hasMoreTokens() == true) {
+			auto line = t.nextToken();
+			if (StringUtils::startsWith(line, "precision") == true) continue;
+			shaderSource+= line + "\n";
+		}
+	}
+	//
 	string sourceString = (shaderSource);
 	char* sourceHeap = new char[sourceString.length() + 1];
 	strcpy(sourceHeap, sourceString.c_str());
@@ -630,7 +646,9 @@ void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
 }
 
 void GL2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
-	Console::println(string("GL2Renderer::bindOrigins()::not implemented yet"));
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)

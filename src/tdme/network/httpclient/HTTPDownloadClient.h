@@ -28,6 +28,8 @@ class tdme::network::httpclient::HTTPDownloadClient {
 private:
 	string url;
 	string file;
+	string username;
+	string password;
 
 	int16_t httpStatusCode { -1 };
 	vector<string> httpHeader;
@@ -65,6 +67,38 @@ public:
 	 * Public constructor
 	 */
 	HTTPDownloadClient();
+
+	/**
+	 * Get username
+	 * @return username
+	 */
+	inline const string& getUsername() {
+		return username;
+	}
+
+	/**
+	 * Set username
+	 * @param username user name
+	 */
+	inline void setUsername(const string& username) {
+		this->username = username;
+	}
+
+	/**
+	 * Get password
+	 * @return password
+	 */
+	inline const string& getPassword() {
+		return password;
+	}
+
+	/**
+	 * Set password
+	 * @param password password
+	 */
+	inline void setPassword(const string& password) {
+		this->password = password;
+	}
 
 	/**
 	 * Get URL

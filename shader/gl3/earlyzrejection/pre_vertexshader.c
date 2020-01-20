@@ -32,6 +32,12 @@ void main() {
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif
 
-	// compute vertex and pass to fragment shader
-	computeVertex(vec4(inVertex, 1.0), shaderTransformMatrix);
+	// transformations matrices
+	mat4 mvpMatrix = projectionMatrix * cameraMatrix * inModelMatrix * shaderTransformMatrix;
+
+	// texure UV
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
+
+	// gl position
+	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
 }

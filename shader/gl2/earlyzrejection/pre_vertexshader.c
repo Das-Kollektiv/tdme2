@@ -1,11 +1,11 @@
-#version 120
+#version 100
 
-// layouts
+precision highp float;
+
 attribute vec3 inVertex;
 attribute vec3 inNormal;
 attribute vec2 inTextureUV;
 
-// uniforms
 uniform mat4 mvpMatrix;
 uniform mat3 textureMatrix;
 

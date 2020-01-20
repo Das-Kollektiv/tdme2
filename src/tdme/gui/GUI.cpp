@@ -156,9 +156,8 @@ GUIFont* GUI::getFont(const string& fileName)
 		} catch (Exception& exception) {
 			Console::print(string("GUI::getFont(): An error occurred: "));
 			Console::println(string(exception.what()));
-			throw;
+			return nullptr;
 		}
-
 		(*fontCache)[canonicalFile] = font;
 	}
 	else {

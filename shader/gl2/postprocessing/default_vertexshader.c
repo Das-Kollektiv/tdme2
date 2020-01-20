@@ -1,6 +1,8 @@
-#version 110
+#version 100
 
-// layouts
+precision mediump float;
+
+// attributes
 attribute vec3 inVertex;
 attribute vec2 inTextureUV;
 

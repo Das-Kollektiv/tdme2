@@ -13,6 +13,7 @@
 #include <tdme/os/network/NIOTCPSocket.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
+#include <tdme/utils/Base64EncDec.h>
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
@@ -36,6 +37,7 @@ using tdme::os::network::NIOIOSocketClosedException;
 using tdme::os::network::NIOTCPSocket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
+using tdme::utils::Base64EncDec;
 using tdme::utils::Character;
 using tdme::utils::Console;
 using tdme::utils::Exception;
@@ -53,7 +55,13 @@ string HTTPDownloadClient::createHTTPRequestHeaders(const string& hostName, cons
 		string("GET " + relativeUrl + " HTTP/1.1\r\n") +
 		string("User-Agent: tdme2-httpdownloadclient\r\n") +
 		string("Host: " + hostName + "\r\n") +
-		string("Connection: close\r\n") +
+		string("Connection: close\r\n");
+	if (username.empty() == false || password.empty() == false) {
+		string base64Pass;
+		Base64EncDec::encode(username + ":" + password, base64Pass);
+		request+= "Authorization: Basic " + base64Pass + "\r\n";
+	}
+	request+=
 		string("\r\n");
 	return request;
 }
