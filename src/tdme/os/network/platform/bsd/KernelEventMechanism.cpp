@@ -1,5 +1,5 @@
 // kqueue
-#if defined(__FreeBSD__)
+	#if defined(__FreeBSD__) || defined(__OpenBSD__)
 	#include <sys/types.h>
 #endif
 #include <sys/event.h>
@@ -11,6 +11,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NIOInterest.h>
 #include <tdme/os/network/KernelEventMechanism.h>

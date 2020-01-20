@@ -43,7 +43,7 @@
 	#define KEYBOARD_KEYCODE_F12 GLFW_KEY_F12
 
 #else
-	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
+	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__) || defined(_WIN32)
 		#include <GL/freeglut.h>
 	#elif defined(__APPLE__)
 		#include <GLUT/glut.h>

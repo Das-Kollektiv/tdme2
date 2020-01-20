@@ -83,6 +83,19 @@ else ifeq ($(OS), NetBSD)
 			src/tdme/engine/fileio/models/ModelReader.cpp
 	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lfreeglut -lopenal -pthread
 	OFLAGS := -O2
+else ifeq ($(OS), OpenBSD)
+	# OpenBSD
+	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+			src/tdme/engine/EngineGL2Renderer.cpp \
+			src/tdme/engine/EngineGL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R6/lib -L/usr/local/lib -lstdc++ -lGLEW -lGL -lglut -lopenal -pthread
+	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers

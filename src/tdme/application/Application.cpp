@@ -2,7 +2,7 @@
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
 #else
-	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 		#if !defined(GLES2)
 			#define GLEW_NO_GLU
 			#include <GL/glew.h>
@@ -305,7 +305,7 @@ void Application::setVSyncEnabled(bool vSync) {
 	#if defined(VULKAN)
 		// not yet
 	#else
-		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 			// TODO: a.drewke: vsync
 			// glXSwapIntervalEXT(vSync == true?1:0);
 		#elif defined(_WIN32)
@@ -325,6 +325,8 @@ string Application::getOSName() {
 		return "MacOSX";
 	#elif defined(__NetBSD__)
 		return "NetBSD";
+	#elif defined(__OpenBSD__)
+		return "OpenBSD";
 	#elif defined(_MSC_VER)
 		return "Windows-MSC";
 	#elif defined(_WIN32)
@@ -514,7 +516,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutInit(&argc, argv);
 		#if defined(__APPLE__)
 			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-		#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__)) && !defined(GLES2)) || defined(_WIN32)
+		#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32)
 			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 			glutInitContextProfile(GLUT_CORE_PROFILE);
 			/*
@@ -531,11 +533,11 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutInitWindowPosition(windowXPosition, windowYPosition);
 		glutCreateWindow(title.c_str());
 		if (fullScreen == true) {
-			#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)
+			#if defined(_WIN32) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 				glutFullScreen();
 			#endif
 		}
-		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
+		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
 			glewExperimental = true;
 			GLenum glewInitStatus = glewInit();
 			if (glewInitStatus != GLEW_OK) {
@@ -557,7 +559,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutMotionFunc(Application::glutOnMouseDragged);
 		glutPassiveMotionFunc(Application::glutOnMouseMoved);
 		glutMouseFunc(Application::glutOnMouseButton);
-		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32)
+		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__) || defined(_WIN32)
 			glutMouseWheelFunc(Application::glutOnMouseWheel);
 		#endif
 		glutMainLoop();

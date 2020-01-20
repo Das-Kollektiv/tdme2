@@ -2,7 +2,7 @@
 
 #if defined(__APPLE__)
 	#include <OpenAL/alc.h>
-#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
 	#include <AL/alc.h>
 #endif
 
