@@ -234,6 +234,7 @@
         - Mac Os X(port completed)
         - FreeBSD(port completed)
         - NetBSD(port completed)
+        - OpenBSD(port is WIP)
         - Haiku(port completed)
         - Android(port pending)
         - iOS(port pending)
