@@ -21,14 +21,14 @@ class tdme::audio::AudioEntity
 	friend class Audio;
 
 protected:
-	string id {  };
-	bool looping {  };
-	bool fixed {  };
-	float pitch {  };
-	float gain {  };
-	Vector3 sourcePosition {  };
-	Vector3 sourceDirection {  };
-	Vector3 sourceVelocity {  };
+	string id;
+	bool looping;
+	bool fixed;
+	float pitch;
+	float gain;
+	Vector3 sourcePosition;
+	Vector3 sourceDirection;
+	Vector3 sourceVelocity;
 
 public:
 

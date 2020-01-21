@@ -42,11 +42,11 @@ private:
 
 	map<string, AudioEntity*> audioEntities;
 
-	AudioBufferManager audioBufferManager {  };
-	Vector3 listenerPosition {  };
-	Vector3 listenerVelocity {  };
-	Vector3 listenerOrientationAt {  };
-	Vector3 listenerOrientationUp {  };
+	AudioBufferManager audioBufferManager;
+	Vector3 listenerPosition;
+	Vector3 listenerVelocity;
+	Vector3 listenerOrientationAt;
+	Vector3 listenerOrientationUp;
 
 	/**
 	 * Private constructor

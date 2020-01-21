@@ -26,12 +26,12 @@ class tdme::audio::AudioStream
 
 private:
 	bool initiated { false };
-	array<uint32_t, 2> alBufferIds {  };
-	uint32_t alSourceId {  };
-	uint32_t sampleRate {  };
-	uint8_t channels {  };
-	ByteBuffer* data {  };
-	int32_t format {  };
+	array<uint32_t, 2> alBufferIds;
+	uint32_t alSourceId;
+	uint32_t sampleRate;
+	uint8_t channels;
+	ByteBuffer* data { nullptr };
+	int32_t format;
 	bool playing { false };
 
 public:

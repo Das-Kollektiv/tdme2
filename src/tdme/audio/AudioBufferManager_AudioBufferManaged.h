@@ -19,9 +19,9 @@ class tdme::audio::AudioBufferManager_AudioBufferManaged
 	friend class Sound;
 
 private:
-	string id {  };
-	int32_t alId {  };
-	int32_t referenceCounter {  };
+	string id;
+	int32_t alId;
+	int32_t referenceCounter;
 
 	/** 
 	 * @return audio buffer id

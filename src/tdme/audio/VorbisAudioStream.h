@@ -26,8 +26,8 @@ class tdme::audio::VorbisAudioStream final
 	friend class Audio;
 
 private:
-	string pathName {  };
-	string fileName {  };
+	string pathName;
+	string fileName;
 	VorbisDecoder decoder;
 	bool initiated { false };
 

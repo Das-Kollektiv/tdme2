@@ -140,7 +140,12 @@ int32_t VorbisDecoder::readFromStream(ByteBuffer* data) {
 			&vf,
 			(char*)(data->getBuffer() + read),
 			data->getCapacity() - read,
-			0,
+			// powerpc and powerpc64 are considered to use big endianess for now
+			#if defined(__powerpc__) || defined(__powerpc64__)
+				1,
+			#else
+				0,
+			#endif
 			2,
 			1,
 			&section

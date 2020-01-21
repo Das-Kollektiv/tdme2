@@ -21,12 +21,12 @@ class tdme::audio::Sound final
 	friend class Audio;
 
 private:
-	bool initiated {  };
-	string pathName {  };
-	string fileName {  };
-	string bufferId {  };
-	uint32_t alBufferId {  };
-	uint32_t alSourceId {  };
+	bool initiated;
+	string pathName;
+	string fileName;
+	string bufferId;
+	uint32_t alBufferId;
+	uint32_t alSourceId;
 
 public:
 	/**
