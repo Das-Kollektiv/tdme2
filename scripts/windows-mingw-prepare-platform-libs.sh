@@ -1,4 +1,5 @@
 #!/bin/bash
+rm -rf platform
 mkdir platform
 mkdir platform/libs
 cp /mingw64/bin/glew32.dll platform/libs/
