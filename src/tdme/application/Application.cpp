@@ -552,6 +552,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutReshapeFunc(Application::reshapeInternal);
 		glutDisplayFunc(Application::displayInternal);
 		glutIdleFunc(Application::displayInternal);
+		glutIgnoreKeyRepeat(true);
 		glutKeyboardFunc(Application::glutOnKeyDown);
 		glutKeyboardUpFunc(Application::glutOnKeyUp);
 		glutSpecialFunc(Application::glutOnSpecialKeyDown);
