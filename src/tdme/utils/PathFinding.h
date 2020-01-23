@@ -45,13 +45,14 @@ public:
 	 * @param world world
 	 * @param sloping sloping
 	 * @param stepsMax steps max
+	 * @param actorHeight actor height
 	 * @param stepSize step size
 	 * @param stepSizeLast step size last
 	 * @param actorStepUpMax actor step up max
 	 * @param skipOnCollisionTypeIds skip cells with given collision type ids
 	 * @param maxTries max tries
 	 */
-	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f, uint16_t skipOnCollisionTypeIds = 0, int maxTries = 5);
+	PathFinding(World* world, bool sloping = false, int stepsMax = 1000, float actorHeight = 2.0f, float stepSize = 0.5f, float stepSizeLast = 0.75f, float actorStepUpMax = 0.25f, uint16_t skipOnCollisionTypeIds = 0, int maxTries = 5);
 
 	/**
 	 * Destructor
@@ -80,18 +81,15 @@ public:
 
 	/**
 	 * Finds path to given end position
-	 * @param actorBoundingVolume actor original bounding volume
-	 * @param actorTransformations current actor transformations
+	 * @param startPosition start position
 	 * @param endPosition end position
 	 * @param collisionTypeIds collision type ids
 	 * @param path path from actor to target
 	 * @param alternativeEndSteps alternative end steps
 	 * @param customTest custom test
-	 * @param actorXHalfExtensionOverride explicitly set actor X half extension
-	 * @param actorZHalfExtensionOverride explicitly set actor Z half extension
 	 * @return success
 	 */
-	bool findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr, float actorXHalfExtensionOverride = 0.0f, float actorZHalfExtensionOverride = 0.0f);
+	bool findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps = 0, PathFindingCustomTest* customTest = nullptr);
 
 	/**
 	 * Checks if a cell is walkable
@@ -174,7 +172,7 @@ private:
 	 * @param startPosition start position
 	 * @param endPosition end position
 	 */
-	void start(Vector3 startPosition, Vector3 endPosition);
+	void start(const Vector3& startPosition, const Vector3& endPosition);
 
 	/**
 	 * Processes one step in AStar path finding
@@ -187,6 +185,7 @@ private:
 	PathFindingCustomTest* customTest;
 	bool sloping;
 	int stepsMax;
+	float actorHeight;
 	float stepSize;
 	float stepSizeLast;
 	float actorStepUpMax;
@@ -197,11 +196,6 @@ private:
 	stack<PathFindingNode*> successorNodes;
 	map<string, PathFindingNode*> openNodes;
 	map<string, PathFindingNode*> closedNodes;
-	Vector3 sideVector { 1.0f, 0.0f, 0.0f };
-	Vector3 forwardVector { 0.0f, 0.0f, 1.0f };
-	Transformations actorTransformations;
 	BoundingVolume* actorBoundingVolume;
 	BoundingVolume* actorBoundingVolumeSlopeTest;
-	float actorXHalfExtension;
-	float actorZHalfExtension;
 };

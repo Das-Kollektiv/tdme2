@@ -39,7 +39,7 @@ using tdme::utils::Time;
 
 using tdme::utils::PathFinding;
 
-PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float stepSize, float stepSizeLast, float actorStepUpMax, uint16_t skipOnCollisionTypeIds, int maxTries) {
+PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float actorHeight, float stepSize, float stepSizeLast, float actorStepUpMax, uint16_t skipOnCollisionTypeIds, int maxTries) {
 	this->world = world;
 	this->customTest = nullptr;
 	this->sloping = sloping;
@@ -47,14 +47,13 @@ PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float stepSiz
 	this->actorBoundingVolume = nullptr;
 	this->actorBoundingVolumeSlopeTest = nullptr;
 	this->stepsMax = stepsMax;
+	this->actorHeight = actorHeight;
 	this->stepSize = stepSize;
 	this->stepSizeLast = stepSizeLast;
 	this->actorStepUpMax = actorStepUpMax;
 	this->skipOnCollisionTypeIds = skipOnCollisionTypeIds;
 	this->maxTries = maxTries;
 	this->collisionTypeIds = 0;
-	this->actorXHalfExtension = 0.0f;
-	this->actorZHalfExtension = 0.0f;
 }
 
 PathFinding::~PathFinding() {
@@ -80,11 +79,11 @@ bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, u
 
 bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
 	// determine y height of ground plate of actor bounding volume
-	float _z = z - actorZHalfExtension;
+	float _z = z - stepSize / 2.0f;
 	height = -10000.0f;
 	Vector3 actorPosition;
 	for (auto i = 0; i < 2; i++) {
-		float _x = x - actorXHalfExtension;
+		float _x = x - stepSize / 2.0f;
 		for (auto j = 0; j < 2; j++) {
 			Vector3 actorPositionCandidate;
 			auto body = world->determineHeight(
@@ -97,12 +96,13 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 				return false;
 			}
 			if (actorPosition.getY() > height) height = actorPosition.getY();
-			_x+= actorXHalfExtension * 2.0f;
+			_x+= stepSize;
 		}
-		_z+= actorZHalfExtension * 2.0f;
+		_z+= stepSize;
 	}
 
 	// set up transformations
+	Transformations actorTransformations;
 	actorTransformations.setTranslation(Vector3(x, height + 0.1f, z));
 	actorTransformations.update();
 
@@ -115,7 +115,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 	return world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
 }
 
-void PathFinding::start(Vector3 startPosition, Vector3 endPosition) {
+void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition) {
 	// start node
 	auto& startXYZ = startPosition.getArray();
 	PathFindingNode* start = new PathFindingNode();
@@ -298,12 +298,12 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	return PathFindingStatus::PATH_STEP;
 }
 
-bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transformations& actorTransformations, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest, float actorXHalfExtensionOverride, float actorZHalfExtensionOverride) {
+bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
 	// clear path
 	path.clear();
 
 	// equal start and end position?
-	if (actorTransformations.getTranslation().equals(endPosition, 0.1f) == true) {
+	if (startPosition.equals(endPosition, 0.1f) == true) {
 		if (VERBOSE == true) Console::println("PathFinding::findPath(): start position == end position! Exiting!");
 		path.push_back(endPosition);
 		return true;
@@ -321,39 +321,40 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 	//
 	this->collisionTypeIds = collisionTypeIds;
 
-	// TODO: try to avoid cloning actor bv
-	auto actorBoundingVolumeTransformed = actorBoundingVolume->clone();
-	actorBoundingVolumeTransformed->fromTransformations(actorTransformations);
-	this->actorXHalfExtension = actorXHalfExtensionOverride != 0.0f?actorXHalfExtensionOverride:actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getX() / 2.0f; // Check me: RP3D seem to report too big AABBs
-	this->actorZHalfExtension = actorZHalfExtensionOverride != 0.0f?actorZHalfExtensionOverride:actorBoundingVolumeTransformed->getBoundingBoxTransformed().getDimensions().getZ() / 2.0f; // Check me: RP3D seem to report too big AABBs
-	delete actorBoundingVolumeTransformed;
-
 	// init bounding volume, transformations, collision body
-	this->actorBoundingVolume = actorBoundingVolume;
-	this->actorTransformations.fromTransformations(actorTransformations);
-	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
-
-	// init bounding volume for slope testcollision body
-	//	TODO: check if it can be generated more dynamically according to actor bounding volume
-	auto actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
-		Vector3(0.0f, 1.0f, 0.0f),
+	actorBoundingVolume = new OrientedBoundingBox(
+		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize * 3.0f, 1.0f, stepSize * 3.0f)
+		Vector3(stepSize, actorHeight / 2.0f, stepSize)
+	);
+	// set up transformations
+	Transformations actorTransformations;
+	actorTransformations.setTranslation(startPosition);
+	actorTransformations.update();
+	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
+
+	// init bounding volume for slope testcollision body
+	auto actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
+		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
+		OrientedBoundingBox::AABB_AXIS_X,
+		OrientedBoundingBox::AABB_AXIS_Y,
+		OrientedBoundingBox::AABB_AXIS_Z,
+		Vector3(stepSize * 3.0f, actorHeight / 2.0f, stepSize * 3.0f)
 	);
 	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 
 	// positions
 	Vector3 startPositionComputed;
-	startPositionComputed.set(this->actorTransformations.getTranslation());
+	startPositionComputed.set(startPosition);
 
 	// compute possible end positions
 	vector<Vector3> endPositionCandidates;
 	{
 		Vector3 forwardVector;
 		Vector3 sideVector;
-		forwardVector.set(endPosition).sub(startPositionComputed).normalize();
+		forwardVector.set(endPosition).sub(startPositionComputed).setY(0.0f).normalize();
 		Vector3::computeCrossProduct(forwardVector, Vector3(0.0f, 1.0f, 0.0f), sideVector).normalize();
 		if (Float::isNaN(sideVector.getX()) ||
 			Float::isNaN(sideVector.getY()) ||
@@ -395,9 +396,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 					to_string(endPositionComputed.getX()) + ", " +
 					to_string(endPositionComputed.getY()) + ", " +
 					to_string(endPositionComputed.getZ()) + " / " +
-					to_string(endYHeight) + " / " +
-					to_string(actorXHalfExtension) + ", " +
-					to_string(actorZHalfExtension)
+					to_string(endYHeight)
 				);
 			}
 			//
@@ -414,9 +413,7 @@ bool PathFinding::findPath(BoundingVolume* actorBoundingVolume, const Transforma
 				to_string(startPositionComputed.getZ()) + " --> " +
 				to_string(endPositionComputed.getX()) + ", " +
 				to_string(endPositionComputed.getY()) + ", " +
-				to_string(endPositionComputed.getZ()) + " / " +
-				to_string(actorXHalfExtension) + ", " +
-				to_string(actorZHalfExtension)
+				to_string(endPositionComputed.getZ())
 			);
 		}
 

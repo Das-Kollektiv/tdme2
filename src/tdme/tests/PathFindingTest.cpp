@@ -147,8 +147,7 @@ void PathFindingTest::display()
 		if (pathIdx >= path.size()) {
 			pathIdx = 0;
 			if (pathFinding->findPath(
-					playerModelEntity->getBoundingVolumeAt(0)->getBoundingVolume(),
-					*playerObject,
+					playerObject->getTranslation(),
 					pathPositions[(int)(Math::random() * pathPositions.size())],
 					Level::RIGIDBODY_TYPEID_STATIC,
 					path
@@ -188,7 +187,6 @@ void PathFindingTest::initialize()
 	playerObject = new Object3D("player", playerModelEntity->getModel());
 	playerObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	playerObject->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
-	// playerObject->getTranslation().set(-2.5f, 0.25f, -4.5f);
 	playerObject->update();
 	playerObject->setAnimation("walk");
 	playerObject->setContributesShadows(playerModelEntity->isContributesShadows());
@@ -199,10 +197,9 @@ void PathFindingTest::initialize()
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, -4.5f));
-	pathFinding = new PathFinding(world, true);
+	pathFinding = new PathFinding(world);
 	if (pathFinding->findPath(
-			playerModelEntity->getBoundingVolumeAt(0)->getBoundingVolume(),
-			playerObject->getTransformations(),
+			playerObject->getTransformations().getTranslation(),
 			pathPositions[(int)(Math::random() * pathPositions.size())],
 			Level::RIGIDBODY_TYPEID_STATIC,
 			path
