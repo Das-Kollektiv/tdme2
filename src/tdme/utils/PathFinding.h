@@ -70,11 +70,11 @@ public:
 		string result;
 		int32_t value = 0;
 		result.reserve(sizeof(value) * 3);
-		value = static_cast<int>(x * 100);
+		value = static_cast<int>(x * 10);
 		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(y * 100);
+		value = static_cast<int>(y * 10);
 		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(z * 100);
+		value = static_cast<int>(z * 10);
 		result.append((char*)&value, sizeof(value));
 		return result;
 	}

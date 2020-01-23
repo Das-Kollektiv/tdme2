@@ -176,15 +176,21 @@ PathFinding::PathFindingStatus PathFinding::step() {
 			if (Math::abs(x) == 1 && Math::abs(z) == 1) {
 				float slopeAngle = 0.0f;
 
-				//
-				if (x == -1 && z == -1) slopeAngle = 0.0f - 45.0f; else
-				if (x == +1 && z == -1) slopeAngle = 0.0f + 45.0f; else
-				if (x == +1 && z == +1) slopeAngle = 180.0f - 45.0f; else
-				if (x == -1 && z == +1) slopeAngle = 180.0f + 45.0f;
+				// slope angle and center
+				auto toVector = Vector3(successorX, node->y, successorZ);
+				auto fromVector = Vector3(node->x, node->y, node->z);
+				auto axis = toVector.clone().sub(fromVector);
+				auto center = axis.clone().scale(0.5f).add(fromVector).setY(node->y + 0.1f);
+				axis.normalize();
+				slopeAngle = Vector3::computeAngle(
+					Vector3(0.0f, 0.0f, 1.0f),
+					axis,
+					Vector3(0.0f, 1.0f, 0.0f)
+				);
 
 				// set up transformations
 				Transformations slopeTestTransformations;
-				slopeTestTransformations.setTranslation(Vector3(successorX, node->y + 0.1f, successorZ));
+				slopeTestTransformations.setTranslation(center);
 				slopeTestTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), slopeAngle);
 				slopeTestTransformations.update();
 
@@ -341,7 +347,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
 		OrientedBoundingBox::AABB_AXIS_Z,
-		Vector3(stepSize * 3.0f, actorHeight / 2.0f, stepSize * 3.0f)
+		Vector3(stepSize * 2.0f, actorHeight / 2.0f, stepSize * 2.5f)
 	);
 	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
 
