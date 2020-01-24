@@ -51,8 +51,8 @@ protected:
 	int32_t renderUniformLightConstantAttenuation { -1 };
 	int32_t renderUniformLightLinearAttenuation { -1 };
 	int32_t renderUniformLightQuadraticAttenuation { -1 };
-	int32_t renderUniformFrame { -1 };
-	bool initialized {  };
+	int32_t renderUniformTime { -1 };
+	bool initialized;
 	int lightId { -1 };
 
 public:

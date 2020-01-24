@@ -71,7 +71,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 	if (uniformDiffuseTextureMaskedTransparencyThreshold == -1) return;
 
 	//
-	uniformFrame = renderer->getProgramUniformLocation(programId, "frame");
+	uniformTime = renderer->getProgramUniformLocation(programId, "time");
 
 	//
 	initialized = true;
@@ -81,7 +81,7 @@ void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* 
 {
 	renderer->useProgram(context, programId);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
-	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 
 void ShadowMappingShaderPreBaseImplementation::unUseProgram(void* context)

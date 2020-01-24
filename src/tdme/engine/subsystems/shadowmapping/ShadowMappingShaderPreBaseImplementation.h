@@ -35,7 +35,7 @@ protected:
 	int32_t uniformDiffuseTextureAvailable { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
 	int32_t uniformDiffuseTextureMaskedTransparencyThreshold { -1 };
-	int32_t uniformFrame { -1 };
+	int32_t uniformTime { -1 };
 	bool initialized { false };
 
 public:

@@ -130,7 +130,7 @@ void LightingShaderBaseImplementation::initialize()
 	}
 
 	// use foliage animation
-	uniformFrame = renderer->getProgramUniformLocation(renderLightingProgramId, "frame");
+	uniformTime = renderer->getProgramUniformLocation(renderLightingProgramId, "time");
 
 	//
 	initialized = true;
@@ -163,7 +163,7 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		updateLight(renderer, context, i);
 	}
 	// frame
-	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 
 void LightingShaderBaseImplementation::unUseProgram(void* context)

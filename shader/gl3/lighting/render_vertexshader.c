@@ -22,7 +22,7 @@ uniform sampler2D displacementTextureUnit;
 uniform int displacementTextureAvailable;
 uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
-uniform int frame;
+uniform float time;
 
 {$DEFINITIONS}
 
@@ -46,7 +46,6 @@ out vec4 vsEffectColorAdd;
 #elif defined(HAVE_WATER_SHADER)
 	// uniforms
 	uniform float waterHeight;
-	uniform float time;
 	uniform int numWaves;
 	uniform float amplitude[4];
 	uniform float wavelength[4];

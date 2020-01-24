@@ -20,7 +20,7 @@ uniform mat4 depthBiasMVPMatrix;
 uniform vec3 lightPosition;
 uniform vec3 lightDirection;
 uniform mat3 textureMatrix;
-uniform int frame;
+uniform float time;
 
 {$DEFINITIONS}
 

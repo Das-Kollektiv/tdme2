@@ -14,7 +14,7 @@ layout (location = 12) in vec3 inOrigin;
 uniform mat4 cameraMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 textureMatrix;
-uniform int frame;
+uniform float time;
 
 {$DEFINITIONS}
 
