@@ -4,6 +4,7 @@
 
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
@@ -35,6 +36,7 @@ BatchRendererPoints::BatchRendererPoints(Renderer* renderer, int32_t id)
 	this->renderer = renderer;
 	this->acquired = false;
 	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 3 * sizeof(float)))->asFloatBuffer();
+	sbSpriteIndices = (sbSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(int32_t)))->asShortBuffer();
 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
 }
 
@@ -49,7 +51,7 @@ void BatchRendererPoints::initialize()
 	// initialize if not yet done
 	if (vboIds == nullptr) {
 		auto created = false;
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 2, false, false, created);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 3, false, false, created);
 		vboIds = vboManaged->getVBOIds();
 	}
 }
@@ -64,12 +66,16 @@ void BatchRendererPoints::render(void* context)
 	auto points = fbVertices.getPosition() / 3 /* 3 components */;
 	// upload vertices
 	renderer->uploadBufferObject(context, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	// upload sprite indices
+	renderer->uploadBufferObject(context, (*vboIds)[1], sbSpriteIndices.getPosition() * sizeof(uint16_t), &sbSpriteIndices);
 	// upload colors
-	renderer->uploadBufferObject(context, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject(context, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
 	// bind vertices
 	renderer->bindVerticesBufferObject(context, (*vboIds)[0]);
+	// bind sprite indices
+	renderer->bindSpriteIndicesBufferObject(context, (*vboIds)[1]);
 	// bind colors
-	renderer->bindColorsBufferObject(context, (*vboIds)[1]);
+	renderer->bindColorsBufferObject(context, (*vboIds)[2]);
 	// draw
 	renderer->drawPointsFromBufferObjects(context, points, 0);
 }
@@ -85,5 +91,6 @@ void BatchRendererPoints::dispose()
 void BatchRendererPoints::clear()
 {
 	fbVertices.clear();
+	sbSpriteIndices.clear();
 	fbColors.clear();
 }

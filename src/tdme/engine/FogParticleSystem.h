@@ -80,8 +80,11 @@ public:
 	 * @param maxPoints max points
 	 * @param pointSize point size
 	 * @param texture texture
+	 * @param textureHorizontalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
 	 */
-	FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr);
+	FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
 public:
 	// overridden methods
 	void setEngine(Engine* engine) override;
@@ -108,19 +111,19 @@ public:
 		return FogParticleSystemInternal::getId();
 	}
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return FogParticleSystemInternal::isContributesShadows();
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		FogParticleSystemInternal::setContributesShadows(contributesShadows);
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return FogParticleSystemInternal::isReceivesShadows();
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		FogParticleSystemInternal::setReceivesShadows(receivesShadows);
 	}
 
@@ -130,14 +133,6 @@ public:
 
 	inline bool isPickable() override {
 		return FogParticleSystemInternal::isPickable();
-	}
-
-	inline float getPointSize() override {
-		return FogParticleSystemInternal::getPointSize();
-	}
-
-	inline int32_t getTextureId() override {
-		return FogParticleSystemInternal::getTextureId();
 	}
 
 	inline void setPickable(bool pickable) override {

@@ -17,8 +17,8 @@ using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::primitives::BoundingBox;
 
-FogParticleSystem::FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture) :
-	FogParticleSystemInternal(id, emitter, maxPoints, pointSize, texture)
+FogParticleSystem::FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps):
+	FogParticleSystemInternal(id, emitter, maxPoints, pointSize, texture, textureHorizontalSprites, textureVerticalSprites, fps)
 {
 }
 

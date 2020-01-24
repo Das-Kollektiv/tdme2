@@ -45,6 +45,7 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	Vector3 tmpAxis;
 	// set up particle
 	particle->active = true;
+	particle->spriteIndex = 0.0f;
 	auto obbAxes = obbTransformed->getAxes();
 	auto& obbHalfExtensionXYZ = obbTransformed->getHalfExtension().getArray();
 	// emit particle in oriented bounding box

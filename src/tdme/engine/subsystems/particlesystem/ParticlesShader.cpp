@@ -51,6 +51,7 @@ void ParticlesShader::initialize()
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(renderProgramId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(renderProgramId, 1, "inSpriteIndex");
 		renderer->setProgramAttributeLocation(renderProgramId, 3, "inColor");
 	}
 	// link program
@@ -69,6 +70,10 @@ void ParticlesShader::initialize()
 	if (uniformEffectColorMul == -1) return;
 	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, "effectColorAdd");
 	if (uniformEffectColorAdd == -1) return;
+	uniformSpritesHorizontal = renderer->getProgramUniformLocation(renderProgramId, "spritesHorizontal");
+	if (uniformSpritesHorizontal == -1) return;
+	uniformSpritesVertical = renderer->getProgramUniformLocation(renderProgramId, "spritesVertical");
+	if (uniformSpritesVertical == -1) return;
 	initialized = true;
 }
 
@@ -104,7 +109,9 @@ void ParticlesShader::updateMatrices(void* context)
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, renderer->getModelViewMatrix().getArray());
 }
 
-void ParticlesShader::setParameters(void* context, int32_t textureId, float pointSize) {
+void ParticlesShader::setParameters(void* context, int32_t textureId, int32_t textureSpritesHorizontal, int32_t textureSpritesVertical, float pointSize) {
 	renderer->setProgramUniformFloat(context, uniformPointSize, renderer->pointSize * pointSize);
+	renderer->setProgramUniformInteger(context, uniformSpritesHorizontal, textureSpritesHorizontal);
+	renderer->setProgramUniformInteger(context, uniformSpritesVertical, textureSpritesVertical);
 	renderer->bindTexture(context, textureId);
 }

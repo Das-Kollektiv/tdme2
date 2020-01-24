@@ -1017,6 +1017,8 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 		const Color4* effectColorAdd;
 		const Color4* effectColorMul;
 		int32_t textureId;
+		int32_t textureHorizontalSprites;
+		int32_t textureVerticalSprites;
 		float pointSize;
 	};
 	unordered_set<Entity*> rendererPses;
@@ -1050,7 +1052,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 					.effectColorAdd = &ppse->getEffectColorAdd(),
 					.effectColorMul = &ppse->getEffectColorMul(),
 					.textureId = ppse->getTextureId(),
-					.pointSize = ppse->getPointSize()
+					.pointSize = ppse->getPointSize(),
+					.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
+					.textureVerticalSprites = ppse->getTextureVerticalSprites()
 				};
 				renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
 			} else {
@@ -1060,7 +1064,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 						.effectColorAdd = &fpse->getEffectColorAdd(),
 						.effectColorMul = &fpse->getEffectColorMul(),
 						.textureId = fpse->getTextureId(),
-						.pointSize = fpse->getPointSize()
+						.pointSize = fpse->getPointSize(),
+						.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
+						.textureVerticalSprites = fpse->getTextureVerticalSprites()
 					};
 					renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
 				}
@@ -1078,7 +1084,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 							.effectColorAdd = &ppse->getEffectColorAdd(),
 							.effectColorMul = &ppse->getEffectColorMul(),
 							.textureId = ppse->getTextureId(),
-							.pointSize = ppse->getPointSize()
+							.pointSize = ppse->getPointSize(),
+							.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
+							.textureVerticalSprites = ppse->getTextureVerticalSprites()
 						};
 						renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
 					} else {
@@ -1089,7 +1097,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 								.effectColorAdd = &fpse->getEffectColorAdd(),
 								.effectColorMul = &fpse->getEffectColorMul(),
 								.textureId = fpse->getTextureId(),
-								.pointSize = fpse->getPointSize()
+								.pointSize = fpse->getPointSize(),
+								.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
+								.textureVerticalSprites = fpse->getTextureVerticalSprites()
 							};
 						}
 					}
@@ -1111,7 +1121,7 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 					renderer->getEffectColorMul(context) = pseParameters->effectColorMul->getArray();
 					renderer->onUpdateEffect(context);
 					// TODO: maybe use onBindTexture() or onUpdatePointSize()
-					engine->getParticlesShader()->setParameters(context, pseParameters->textureId, pseParameters->pointSize);
+					engine->getParticlesShader()->setParameters(context, pseParameters->textureId, pseParameters->textureHorizontalSprites, pseParameters->textureVerticalSprites, pseParameters->pointSize);
 					// render, clear
 					psePointBatchRenderer->render(context);
 					psePointBatchRenderer->clear();

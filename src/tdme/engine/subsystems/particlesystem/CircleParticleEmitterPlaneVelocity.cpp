@@ -45,6 +45,7 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	Vector3 side;
 	// set up particle
 	particle->active = true;
+	particle->spriteIndex = 0.0f;
 	// emit particle on circle spanned on axis 0 and axis 1
 	auto rnd = Math::random();
 	cosOnAxis0.set(axis0Transformed).scale(Math::cos(Math::PI * 2 * rnd));

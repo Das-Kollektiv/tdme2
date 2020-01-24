@@ -578,6 +578,20 @@ void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
+void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+}
+
+void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+}
+
 void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	Console::println(string("GL2Renderer::uploadIndicesBufferObject()::not implemented yet"));
@@ -614,6 +628,13 @@ void GL2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(1, 1, GL_UNSIGNED_SHORT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)

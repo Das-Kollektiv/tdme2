@@ -81,8 +81,11 @@ public:
 	 * @param pointSize point size
 	 * @param autoEmit auto emit
 	 * @param texture texture
+	 * @param textureHorizonalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
 	 */
-	PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
+	PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
 public:
 	// overridden methods
 	void setEngine(Engine* engine) override;
@@ -117,31 +120,23 @@ public:
 		return PointsParticleSystemInternal::isPickable();
 	}
 
-	inline float getPointSize() override {
-		return PointsParticleSystemInternal::getPointSize();
-	}
-
-	inline int32_t getTextureId() override {
-		return PointsParticleSystemInternal::getTextureId();
-	}
-
 	inline void setPickable(bool pickable) override {
 		PointsParticleSystemInternal::setPickable(pickable);
 	}
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return PointsParticleSystemInternal::isContributesShadows();
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		PointsParticleSystemInternal::setContributesShadows(contributesShadows);
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return PointsParticleSystemInternal::isReceivesShadows();
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		PointsParticleSystemInternal::setReceivesShadows(receivesShadows);
 	}
 

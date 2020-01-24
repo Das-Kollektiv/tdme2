@@ -5,6 +5,7 @@ precision highp int;
 
 // layout
 layout (location = 0) in vec3 inVertex;
+layout (location = 1) in int inSpriteIndex;
 layout (location = 3) in vec4 inColor;
 
 // uniforms
@@ -13,7 +14,8 @@ uniform mat4 mvMatrix;
 uniform float pointSize;
 
 // will be passed to fragment shader
-out vec4 fragColor;
+out vec4 vsFragColor;
+flat out int vsSpriteIndex;
 
 #if defined(HAVE_DEPTH_FOG)
 	out float fragDepth;
@@ -21,7 +23,8 @@ out vec4 fragColor;
 
 void main(void) {
 	//
-	fragColor = inColor;
+	vsFragColor = inColor;
+	vsSpriteIndex = inSpriteIndex;
 
 	// compute gl position
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);

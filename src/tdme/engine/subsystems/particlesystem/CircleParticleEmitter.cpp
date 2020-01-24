@@ -45,6 +45,7 @@ void CircleParticleEmitter::emit(Particle* particle)
 	Vector3 sinOnAxis1;
 	// set up particle
 	particle->active = true;
+	particle->spriteIndex = 0.0f;
 	// emit particle in circle spanned on axis 0 and axis 1
 	auto rnd = static_cast< float >(Math::random());
 	cosOnAxis0.set(axis0Transformed).scale(Math::cos(Math::PI * 2 * rnd));

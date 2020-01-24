@@ -17,8 +17,8 @@ using tdme::engine::Transformations;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::primitives::BoundingBox;
 
-PointsParticleSystem::PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture) :
-	PointsParticleSystemInternal(id, emitter, maxPoints, pointSize, autoEmit, texture)
+PointsParticleSystem::PointsParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps) :
+	PointsParticleSystemInternal(id, emitter, maxPoints, pointSize, autoEmit, texture, textureHorizontalSprites, textureVerticalSprites, fps)
 {
 }
 

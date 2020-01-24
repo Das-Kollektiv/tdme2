@@ -43,7 +43,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture)
+FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps)
 {
 	this->id = id;
 	this->enabled = true;
@@ -60,6 +60,9 @@ FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleE
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
 	this->textureId = 0;
+	this->textureHorizontalSprites = textureHorizontalSprites;
+	this->textureVerticalSprites = textureVerticalSprites;
+	this->fps = fps;
 }
 
 FogParticleSystemInternal::~FogParticleSystemInternal() {
@@ -168,7 +171,8 @@ void FogParticleSystemInternal::updateParticles()
 	for (auto i = 0; i < particles.size(); i++) {
 		auto& particle = particles[i];
 		if (particle.active == false) continue;
-
+		// sprite index
+		particle.spriteIndex+= (static_cast<float>(timeDelta) / 1000.0f) * fps;
 		// transform particle position to camera space
 		modelMatrix.multiply(particle.position, point);
 		//
@@ -187,7 +191,7 @@ void FogParticleSystemInternal::updateParticles()
 			if (positionXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = positionXYZ[1];
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
-		pointsRenderPool->addPoint(point, particle.color, 1, this);
+		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % 16, particle.color, 1, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {

@@ -40,7 +40,7 @@
             - render group objects for foliage and such including LOD support
             - particle systems which
               - are object based
-              - or point based
+              - or point based, including sprite sheet animation support
               - or for fog purposes
               - and support
                 - basic/point emitter
@@ -184,6 +184,7 @@
     - documentation
 
 - What is WIP or planned
+	- Sprite sheet animation support for point/fog based particle systems
 	- Makefile generator for TDME2 based projects
 	- Installer
 	- Water shader

@@ -28,6 +28,8 @@ private:
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformEffectColorMul { -1 };
 	int32_t uniformEffectColorAdd { -1 };
+	int32_t uniformSpritesHorizontal { -1 };
+	int32_t uniformSpritesVertical{ -1 };
 	Matrix4x4 mvpMatrix;
 	bool isRunning;
 	bool initialized;
@@ -74,9 +76,11 @@ public:
 	 * Set parameters
 	 * @param context context
 	 * @param textureId texture id
+	 * @param textureSpritesHorizontal horizontal sprites in texture
+	 * @param textureSpritesVertical vertical sprites in texture
 	 * @param pointSize point size
 	 */
-	void setParameters(void* context, int32_t textureId, float pointSize);
+	void setParameters(void* context, int32_t textureId, int32_t textureSpritesHorizontal, int32_t textureSpritesVertical, float pointSize);
 
 	/**
 	 * Public constructor

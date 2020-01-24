@@ -18,6 +18,7 @@ using tdme::math::Vector3;
 struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 {
 	bool acquired;
+	uint16_t spriteIndex;
 	Vector3 point;
 	Color4 color;
 	int particleSystemType;

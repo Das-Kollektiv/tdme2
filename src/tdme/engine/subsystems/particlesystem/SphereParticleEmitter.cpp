@@ -44,6 +44,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 {
 	// set up particle
 	particle->active = true;
+	particle->spriteIndex = 0.0f;
 	particle->position.set(
 		Math::random() * 2.0f - 1.0f,
 		Math::random() * 2.0f - 1.0f,

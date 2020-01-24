@@ -558,6 +558,20 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
+void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+}
+
+void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+}
+
 void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	Console::println(string("GL3Renderer::uploadIndicesBufferObject()::not implemented yet"));
@@ -594,6 +608,13 @@ void GL3Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
 }
 
 void GL3Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)

@@ -3,8 +3,10 @@
 uniform sampler2D diffuseTextureUnit;
 uniform vec4 effectColorMul;
 uniform vec4 effectColorAdd;
-
-in vec4 fragColor;
+uniform int spritesHorizontal;
+uniform int spritesVertical;
+in vec4 vsFragColor;
+flat in int vsSpriteIndex;
 out vec4 outColor;
 
 #if defined(HAVE_DEPTH_FOG)
@@ -17,7 +19,8 @@ out vec4 outColor;
 #endif
 
 void main(void) {
-	outColor = clamp(effectColorAdd + texture(diffuseTextureUnit, gl_PointCoord) * fragColor * effectColorMul, 0.0, 1.0);
+	vec2 spriteCoord = (gl_PointCoord / vec2(spritesHorizontal, spritesVertical)) + vec2((1.0 / spritesHorizontal) * int(vsSpriteIndex % 4), 1.0 - ((1.0 / spritesHorizontal) * int(vsSpriteIndex / 4)));
+	outColor = clamp(effectColorAdd + texture(diffuseTextureUnit, spriteCoord) * vsFragColor * effectColorMul, 0.0, 1.0);
 	#if defined(HAVE_DEPTH_FOG)
 		if (fragDepth > FOG_DISTANCE_NEAR) {
 			float fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);

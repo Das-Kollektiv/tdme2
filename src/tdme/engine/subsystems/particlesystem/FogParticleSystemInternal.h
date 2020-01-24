@@ -58,6 +58,9 @@ protected:
 	float pointSizeScale;
 	Texture* texture { nullptr };
 	int32_t textureId;
+	int32_t textureHorizontalSprites;
+	int32_t textureVerticalSprites;
+	float fps;
 	TransparentRenderPointsPool* pointsRenderPool { nullptr };
 
 	BoundingBox boundingBox;
@@ -93,7 +96,7 @@ public:
 	 * Set renderer
 	 * @param renderer renderer
 	 */
-	inline virtual void setRenderer(Renderer* renderer) {
+	inline void setRenderer(Renderer* renderer) {
 		this->renderer = renderer;
 	}
 
@@ -101,58 +104,58 @@ public:
 	 * Set engine
 	 * @param engine engine
 	 */
-	inline virtual void setEngine(Engine* engine) {
+	inline void setEngine(Engine* engine) {
 		this->engine = engine;
 	}
 
-	inline virtual bool isEnabled() override {
+	inline bool isEnabled() override {
 		return enabled;
 	}
 
-	inline virtual bool isActive() override {
+	inline bool isActive() override {
 		return active;
 	}
 
-	inline virtual void setEnabled(bool enabled) override {
+	inline void setEnabled(bool enabled) override {
 		this->enabled = enabled;
 	}
 
-	inline virtual const Color4& getEffectColorMul() const override {
+	inline const Color4& getEffectColorMul() const override {
 		return effectColorMul;
 	}
 
-	inline virtual void setEffectColorMul(const Color4& effectColorMul) override {
+	inline void setEffectColorMul(const Color4& effectColorMul) override {
 		this->effectColorMul = effectColorMul;
 	}
 
-	inline virtual const Color4& getEffectColorAdd() const override {
+	inline const Color4& getEffectColorAdd() const override {
 		return effectColorAdd;
 	}
 
-	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) override {
+	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
 		this->effectColorAdd = effectColorAdd;
 	}
 
-	inline virtual bool isPickable() override {
+	inline bool isPickable() override {
 		return pickable;
 	}
 
-	inline virtual void setPickable(bool pickable) override {
+	inline void setPickable(bool pickable) override {
 		this->pickable = pickable;
 	}
 
-	inline virtual bool isAutoEmit() override {
+	inline bool isAutoEmit() override {
 		return true;
 	}
 
-	inline virtual void setAutoEmit(bool autoEmit) override {
+	inline void setAutoEmit(bool autoEmit) override {
 		// no op
 	}
 
 	/**
 	 * @return if entity contributes to shadows
 	 */
-	inline virtual bool isContributesShadows() {
+	inline bool isContributesShadows() {
 		return false;
 	}
 
@@ -160,14 +163,14 @@ public:
 	 * Enable/disable contributes shadows
 	 * @param contributesShadows contributes shadows
 	 */
-	inline virtual void setContributesShadows(bool contributesShadows) {
+	inline void setContributesShadows(bool contributesShadows) {
 		//
 	}
 
 	/**
 	 * @return if entity receives shadows
 	 */
-	inline virtual bool isReceivesShadows() {
+	inline bool isReceivesShadows() {
 		return false;
 	}
 
@@ -175,29 +178,43 @@ public:
 	 * Enable/disable receives shadows
 	 * @param receivesShadows receives shadows
 	 */
-	inline virtual void setReceivesShadows(bool receivesShadows) {
+	inline void setReceivesShadows(bool receivesShadows) {
 		//
 	}
 
 	/**
 	 * @return point size
 	 */
-	inline virtual float getPointSize() {
+	inline float getPointSize() {
 		return pointSize * pointSizeScale;
 	}
 
 	/**
 	 * @return texture id
 	 */
-	inline virtual int32_t getTextureId() {
+	inline int32_t getTextureId() {
 		return textureId;
+	}
+
+	/**
+	 * @return texture horizontal sprites
+	 */
+	inline int32_t getTextureHorizontalSprites(){
+		return textureHorizontalSprites;
+	}
+
+	/**
+	 * @return texture vertical sprites
+	 */
+	inline int32_t getTextureVerticalSprites(){
+		return textureVerticalSprites;
 	}
 
 	// overriden methods
 	void update() override;
 	void fromTransformations(const Transformations& transformations) override;
 	void updateParticles() override;
-	virtual void dispose();
+	void dispose();
 	inline int32_t emitParticles() override {
 		return 0;
 	}
@@ -216,8 +233,11 @@ public:
 	 * @param maxPoints max points
 	 * @param pointSize point size
 	 * @param texture texture
+	 * @param textureHorizontalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
 	 */
-	FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr);
+	FogParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
 
 	/**
 	 * Destructor

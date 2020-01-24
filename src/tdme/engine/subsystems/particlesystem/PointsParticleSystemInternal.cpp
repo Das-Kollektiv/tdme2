@@ -45,7 +45,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 
-PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture)
+PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps)
 {
 	this->id = id;
 	this->enabled = true;
@@ -64,6 +64,9 @@ PointsParticleSystemInternal::PointsParticleSystemInternal(const string& id, Par
 	this->pointsRenderPool = nullptr;
 	this->texture = texture;
 	this->textureId = 0;
+	this->textureHorizontalSprites = textureHorizontalSprites;
+	this->textureVerticalSprites = textureVerticalSprites;
+	this->fps = fps;
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 }
 
@@ -118,6 +121,8 @@ void PointsParticleSystemInternal::updateParticles()
 			particle.active = false;
 			continue;
 		}
+		// sprite index
+		particle.spriteIndex+= (static_cast<float>(timeDelta) / 1000.0f) * fps;
 		// add gravity if our particle have a noticeable mass
 		if (particle.mass > Math::EPSILON)
 			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDelta) / 1000.0f);
@@ -150,7 +155,7 @@ void PointsParticleSystemInternal::updateParticles()
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
 		//
-		pointsRenderPool->addPoint(particle.position, particle.color, 0, this);
+		pointsRenderPool->addPoint(particle.position, static_cast<uint16_t>(particle.spriteIndex) % 16, color, 0, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {

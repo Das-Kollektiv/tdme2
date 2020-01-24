@@ -5,13 +5,16 @@
 #include <tdme/tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 #include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderPoint.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
+using std::to_string;
 using std::vector;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderPoint;
 using tdme::engine::subsystems::renderer::Renderer;
 
@@ -32,6 +35,8 @@ private:
 	bool acquired;
 	ByteBuffer* fbVerticesByteBuffer { nullptr };
 	FloatBuffer fbVertices;
+	ByteBuffer* sbSpriteIndicesByteBuffer { nullptr };
+	ShortBuffer sbSpriteIndices;
 	ByteBuffer* fbColorsByteBuffer { nullptr };
 	FloatBuffer fbColors;
 
@@ -52,6 +57,7 @@ private:
 	 */
 	inline void addPoint(const TransparentRenderPoint* point) {
 		fbVertices.put(point->point.getArray());
+		sbSpriteIndices.put(point->spriteIndex);
 		fbColors.put(point->color.getArray());
 	}
 

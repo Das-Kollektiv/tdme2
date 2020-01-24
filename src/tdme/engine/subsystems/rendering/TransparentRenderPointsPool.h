@@ -36,11 +36,12 @@ public:
 	/** 
 	 * Creates an transparent render point entity in pool
 	 * @param point point
+	 * @param spriteIndex sprite index
 	 * @param color color
 	 * @param particleSystemType particle system type
 	 * @param particleSystem particle system
 	 */
-	inline void addPoint(const Vector3& point, const Color4& color, int particleSystemType, void* particleSystem) {
+	inline void addPoint(const Vector3& point, uint16_t spriteIndex, const Color4& color, int particleSystemType, void* particleSystem) {
 		// check for pool overflow
 		if (poolIdx >= transparentRenderPoints.size()) {
 			Console::println(string("TransparentRenderPointsPool::createTransparentRenderPoint(): Too many transparent render points"));
@@ -50,6 +51,7 @@ public:
 		auto transparentRenderPoint = transparentRenderPoints[poolIdx++];
 		transparentRenderPoint->acquired = true;
 		transparentRenderPoint->point = point;
+		transparentRenderPoint->spriteIndex = spriteIndex;
 		transparentRenderPoint->color = color;
 		transparentRenderPoint->particleSystemType = particleSystemType;
 		transparentRenderPoint->particleSystem = particleSystem;

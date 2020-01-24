@@ -62,6 +62,9 @@ protected:
 	float pointSizeScale;
 	Texture* texture { nullptr };
 	int32_t textureId;
+	int32_t textureHorizontalSprites;
+	int32_t textureVerticalSprites;
+	float fps;
 	TransparentRenderPointsPool* pointsRenderPool { nullptr };
 
 	BoundingBox boundingBox;
@@ -166,15 +169,29 @@ public:
 	/**
 	 * @return point size
 	 */
-	inline virtual float getPointSize() {
+	inline float getPointSize() {
 		return pointSize * pointSizeScale;
 	}
 
 	/**
 	 * @return texture id
 	 */
-	inline virtual int32_t getTextureId() {
+	inline int32_t getTextureId() {
 		return textureId;
+	}
+
+	/**
+	 * @return texture horizontal sprites
+	 */
+	inline int32_t getTextureHorizontalSprites(){
+		return textureHorizontalSprites;
+	}
+
+	/**
+	 * @return texture vertical sprites
+	 */
+	inline int32_t getTextureVerticalSprites(){
+		return textureVerticalSprites;
 	}
 
 	/** 
@@ -199,8 +216,11 @@ public:
 	 * @param pointSize point size
 	 * @param autoEmit auto emit
 	 * @param texture texture
+	 * @param textureHorizonalSprites texture horizonal sprites
+	 * @param textureVerticalSprites texture vertical sprites
+	 * @param fps frames per seconds
 	 */
-	PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr);
+	PointsParticleSystemInternal(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, bool autoEmit, Texture* texture = nullptr, int32_t textureHorizontalSprites = 1, int32_t textureVerticalSprites = 1, float fps = 10.0f);
 
 	/**
 	 * Destructor

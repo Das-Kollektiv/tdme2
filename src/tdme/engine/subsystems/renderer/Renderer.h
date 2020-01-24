@@ -541,7 +541,7 @@ public:
 	 */
 	virtual vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared) = 0;
 
-	/** 
+	/**
 	 * Uploads buffer data to buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
@@ -549,6 +549,24 @@ public:
 	 * @param data data
 	 */
 	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
+
+	/**
+	 * Uploads buffer data to buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 * @param size size
+	 * @param data data
+	 */
+	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+
+	/**
+	 * Uploads buffer data to buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 * @param size size
+	 * @param data data
+	 */
+	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
 	/** 
 	 * Uploads buffer data to buffer object
@@ -595,6 +613,13 @@ public:
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind sprite indices buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/** 
 	 * Bind colors buffer object

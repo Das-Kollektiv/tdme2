@@ -37,6 +37,7 @@ void PointParticleEmitter::emit(Particle* particle)
 {
 	// set up particle
 	particle->active = true;
+	particle->spriteIndex = 0.0f;
 	particle->position.set(positionTransformed);
 	particle->velocity.set(
 		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),

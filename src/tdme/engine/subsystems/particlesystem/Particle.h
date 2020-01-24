@@ -19,6 +19,7 @@ using tdme::math::Vector3;
 struct tdme::engine::subsystems::particlesystem::Particle final
 {
 	bool active;
+	float spriteIndex;
 	Vector3 velocity;
 	Vector3 position;
 	float mass;
