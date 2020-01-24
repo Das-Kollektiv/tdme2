@@ -86,12 +86,11 @@ uniform vec4 effectColorMul;
 uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 
-uniform int frame;
+uniform float time;
 
 #if defined(HAVE_WATER_SHADER)
 	// uniforms
 	uniform float waterHeight;
-	uniform float time;
 	uniform int numWaves;
 	uniform float amplitude[4];
 	uniform float wavelength[4];

@@ -11,7 +11,7 @@ uniform mat4 mvpMatrix;
 uniform vec3 modelTranslation;
 uniform mat3 textureMatrix;
 
-uniform int frame;
+uniform float time;
 
 // will be passed to fragment shader
 varying vec2 vsFragTextureUV;
