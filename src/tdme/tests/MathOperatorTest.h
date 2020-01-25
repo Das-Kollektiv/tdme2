@@ -21,8 +21,9 @@ public:
 
 	void testVector2Operators();
 	void testVector3Operators();
+	void testVector4Operators();
 
 private:
-	string succes = "Succes";
-	string fail = "fail";
+	string success = "Success";
+	string fail = "Fail";
 };
