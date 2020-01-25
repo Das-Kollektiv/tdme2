@@ -346,7 +346,7 @@ public:
 	}
 
 	/** 
-	 * Adds a vector
+	 * Subtracts a vector
 	 * @param v v
 	 * @return this vector 
 	 */
