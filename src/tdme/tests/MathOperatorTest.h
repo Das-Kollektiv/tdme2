@@ -22,6 +22,7 @@ public:
 	void testVector2Operators();
 	void testVector3Operators();
 	void testVector4Operators();
+	void testQuaternionOperators();
 
 private:
 	string success = "Success";
