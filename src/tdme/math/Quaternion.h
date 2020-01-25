@@ -203,7 +203,7 @@ public:
 	}
 
 	/** 
-	 * Multiplies this quaternion with quaternion q
+	 * Adds given quaternion q to this quaternion
 	 * @param q quaterion q
 	 * @return this quaternion
 	 */
@@ -212,6 +212,19 @@ public:
 		data[1] += q.data[1];
 		data[2] += q.data[2];
 		data[3] += q.data[3];
+		return *this;
+	}
+
+	/**
+	 * Subtracts given quaternion q from this quaternion
+	 * @param q quaterion q
+	 * @return this quaternion
+	 */
+	inline Quaternion& sub(const Quaternion& q) {
+		data[0] -= q.data[0];
+		data[1] -= q.data[1];
+		data[2] -= q.data[2];
+		data[3] -= q.data[3];
 		return *this;
 	}
 
@@ -231,7 +244,7 @@ public:
 	/** 
 	 * Multiplies a quaternion with given vector v
 	 * @param v vector v
-	 * @param dest dest
+	 * @param dest destination vector
 	 * @return dest
 	 */
 	inline Vector3& multiply(const Vector3& v, Vector3& dest) const {
@@ -282,6 +295,165 @@ public:
 	 */
 	inline array<float, 4>& getArray() const {
 		return (array<float, 4>&)data;
+	}
+
+	/**
+	 * Array access operator
+	 * @param i index
+	 * @return quaternion component
+	 */
+	inline float& operator[](int i) {
+		return data[i];
+	}
+
+	/**
+	 * Const array access operator
+	 * @param i index
+	 * @return quaternion component
+	 */
+	inline const float& operator[](int i) const {
+		return data[i];
+	}
+
+	/**
+	 * Operator +
+	 * @param q quaternion to add
+	 * @return new quaternion (this + q)
+	 */
+	inline Quaternion operator +(const Quaternion& q) const {
+		auto r = this->clone().add(q);
+		return r;
+	}
+
+	/**
+	 * Operator -
+	 * @param q quaternion to subtrct
+	 * @return new quaternion (this - q)
+	 */
+	inline Quaternion operator -(const Quaternion& q) const {
+		auto r = this->clone().sub(q);
+		return r;
+	}
+
+	/**
+	 * Operator * (float)
+	 * @param f value to multiply by
+	 * @return new quaternion (this * f)
+	 */
+	inline Quaternion operator *(const float f) const {
+		auto r = this->clone().scale(f);
+		return r;
+	}
+
+	/**
+	 * Operator * (Quaternion&)
+	 * @param q quaternion to multiply by
+	 * @return new quaternion (this * q)
+	 */
+	inline Quaternion operator *(const Quaternion& q) const {
+		auto r = this->clone().multiply(q);
+		return r;
+	}
+
+	/**
+	 * Operator / (f)
+	 * @param q value to divide by
+	 * @return new quaternion (this / f)
+	 */
+	inline Quaternion operator /(const float f) const {
+		auto r = this->clone().scale(1.0f / f);
+		return r;
+	}
+
+	/**
+	 * Operator / (Quaternion&)
+	 * @param q quaternion to divide by
+	 * @return new quaternion (this / q)
+	 */
+	inline Quaternion operator /(const Quaternion& q) const {
+		auto qInverted = Quaternion(1.0f / q[0], 1.0f / q[1], 1.0f / q[2], 1.0f / q[3]);
+		auto r = this->clone().multiply(qInverted);
+		return r;
+	}
+
+	/**
+	 * Operator +=
+	 * @param q quaternion to add
+	 * @return this quaternion added by q
+	 */
+	inline Quaternion& operator +=(const Quaternion& q) {
+		return this->add(q);
+	}
+
+	/**
+	 * Operator -=
+	 * @param q quaternion to substract
+	 * @return this quaternion substracted by q
+	 */
+	inline Quaternion& operator -=(Quaternion& q) {
+		return this->sub(q);
+	}
+
+	/**
+	 * Operator *=
+	 * @param q quaternion to multiply by
+	 * @return this quaternion multiplied by q
+	 */
+	inline Quaternion& operator *=(Quaternion& q) {
+		return this->multiply(q);
+	}
+
+	/**
+	 * Operator /=
+	 * @param q quaternion to devide by
+	 * @return this quaternion devided by q
+	 */
+	inline Quaternion& operator /=(Quaternion& q) {
+		auto qInverted = Quaternion(1.0f / q[0], 1.0f / q[1], 1.0f / q[2], 1.0f / q[3]);
+		return this->multiply(qInverted);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param q quaternion to compare to
+	 * @return equality
+	 */
+
+	inline bool operator ==(Quaternion& q) {
+		return this->equals(q);
+	}
+
+	/**
+	 * Clones the quaternion
+	 * @return new cloned vector
+	 */
+	inline Quaternion clone() const {
+		return Quaternion(*this);
+	}
+
+	/**
+	 * Compares this quaternion with given quaternion
+	 * @param q quaternion q
+	 * @return equality
+	 */
+	inline bool equals(const Quaternion& q) const {
+		return equals(q, Math::EPSILON);
+	}
+
+	/**
+	 * Compares this quaternion with given quaternion
+	 * @param q quaternion q
+	 * @param tolerance tolerance per component(x, y, z)
+	 * @return equality
+	 */
+	inline bool equals(const Quaternion& q, float tolerance) const {
+		return (this == &q) ||
+			(
+				Math::abs(data[0] - q.data[0]) < tolerance &&
+				Math::abs(data[1] - q.data[1]) < tolerance &&
+				Math::abs(data[2] - q.data[2]) < tolerance &&
+				Math::abs(data[3] - q.data[3]) < tolerance
+			);
 	}
 
 	/**
