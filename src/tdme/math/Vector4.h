@@ -146,6 +146,33 @@ public:
 	}
 
 	/** 
+	 * Adds a vector
+	 * @param v v
+	 * @return this vector
+	 */
+	inline Vector4& add(const Vector4& v) {
+		data[0] += v.data[0];
+		data[1] += v.data[1];
+		data[2] += v.data[2];
+		data[3] += v.data[3];
+		return *this;
+	}
+
+	/**
+	 * Subtracts a vector
+	 * @param v v
+	 * @return this vector
+	 */
+	inline Vector4& sub(const Vector4& v) {
+		data[0] -= v.data[0];
+		data[1] -= v.data[1];
+		data[2] -= v.data[2];
+		data[3] -= v.data[3];
+		return *this;
+	}
+
+
+	/**
 	 * Scale this vector
 	 * @param scale scale
 	 * @return this vector 
@@ -189,6 +216,114 @@ public:
 		return data[i];
     }
 
+    /**
+	 * Operator +
+	 * @param v vector to add
+	 * @return new vector (this + v)
+	 */
+	inline Vector4 operator +(const Vector4& v) const {
+		auto r = this->clone().add(v);
+		return r;
+	}
+
+	/**
+	 * Operator -
+	 * @param v vector to subtract
+	 * @return new vector (this - v)
+	 */
+	inline Vector4 operator -(const Vector4& v) const {
+		auto r = this->clone().sub(v);
+		return r;
+	}
+
+	/**
+	 * Operator * (float)
+	 * @param f value to multiply by
+	 * @return new vector (this * f)
+	 */
+	inline Vector4 operator *(const float f) const {
+		auto r = this->clone().scale(f);
+		return r;
+	}
+
+	/**
+	 * Operator * (Vector4&)
+	 * @param v vector to multiply by
+	 * @return new vector (this * v)
+	 */
+	inline Vector4 operator *(const Vector4& v) const {
+		auto r = this->clone().scale(v);
+		return r;
+	}
+
+	/**
+	 * Operator / (f)
+	 * @param v value to divide by
+	 * @return new vector (this / f)
+	 */
+	inline Vector4 operator /(const float f) const {
+		auto r = this->clone().scale(1.0f / f);
+		return r;
+	}
+
+	/**
+	 * Operator / (Vector4&)
+	 * @param v vector to divide by
+	 * @return new vector (this / v)
+	 */
+	inline Vector4 operator /(const Vector4& v) const {
+		auto vInverted = Vector4(1.0f / v[0], 1.0f / v[1], 1.0f / v[2], 1.0f / v[3]);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator +=
+	 * @param v vector to add
+	 * @return this vector added by v
+	 */
+	inline Vector4& operator +=(const Vector4& v) {
+		return this->add(v);
+	}
+
+	/**
+	 * Operator -=
+	 * @param v vector to substract
+	 * @return this vector substracted by v
+	 */
+	inline Vector4& operator -=(Vector4& v) {
+		return this->sub(v);
+	}
+
+	/**
+	 * Operator *=
+	 * @param v vector to multiply by
+	 * @return this vector multiplied by v
+	 */
+	inline Vector4& operator *=(Vector4& v) {
+		return this->scale(v);
+	}
+
+	/**
+	 * Operator /=
+	 * @param v vector to devide by
+	 * @return this vector devided by v
+	 */
+	inline Vector4& operator /=(Vector4& v) {
+		auto vInverted = Vector4(1.0f / v[0], 1.0f / v[1], 1.0f / v[2], 1.0f / v[3]);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param v vector to compare to
+	 * @return equality
+	 */
+
+	inline bool operator ==(Vector4& v) {
+		return this->equals(v);
+	}
+
 	/** 
 	 * @return vector as array
 	 */
@@ -202,6 +337,31 @@ public:
 	 */
 	inline Vector4 clone() const {
 		return Vector4(*this);
+	}
+
+	/**
+	 * Compares this vector with given vector
+	 * @param v vector v
+	 * @return equality
+	 */
+	inline bool equals(const Vector4& v) const {
+		return equals(v, Math::EPSILON);
+	}
+
+	/**
+	 * Compares this vector with given vector
+	 * @param v vector v
+	 * @param tolerance tolerance per component(x, y, z)
+	 * @return equality
+	 */
+	inline bool equals(const Vector4& v, float tolerance) const {
+		return (this == &v) ||
+			(
+				Math::abs(data[0] - v.data[0]) < tolerance &&
+				Math::abs(data[1] - v.data[1]) < tolerance &&
+				Math::abs(data[2] - v.data[2]) < tolerance &&
+				Math::abs(data[3] - v.data[3]) < tolerance
+			);
 	}
 
 	/**
