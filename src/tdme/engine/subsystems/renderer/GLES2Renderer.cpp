@@ -544,7 +544,6 @@ void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, in
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
-
 void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
