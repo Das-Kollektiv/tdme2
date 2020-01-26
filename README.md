@@ -184,7 +184,6 @@
     - documentation
 
 - What is WIP or planned
-	- Sprite sheet animation support for point/fog based particle systems
 	- Makefile generator for TDME2 based projects
 	- Installer
 	- Water shader
