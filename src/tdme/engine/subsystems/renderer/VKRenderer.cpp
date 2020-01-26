@@ -2038,12 +2038,12 @@ int32_t VKRenderer::loadShader(int32_t type, const string& pathName, const strin
 					newShaderSourceLines.push_back("// " + line);
 					if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Have uniform: " + uniform);
 				} else
-				if (StringUtils::startsWith(line, "out ") == true) {
+				if (StringUtils::startsWith(line, "out ") == true || StringUtils::startsWith(line, "flat out ") == true) {
 					newShaderSourceLines.push_back("layout (location = " + to_string(outLocationCount) + ") " + line);
 					if (VERBOSE == true) Console::println("layout (location = " + to_string(outLocationCount) + ") " + line);
 					outLocationCount++;
 				} else
-				if (StringUtils::startsWith(line, "in ") == true) {
+				if (StringUtils::startsWith(line, "in ") == true || StringUtils::startsWith(line, "flat in ") == true) {
 					newShaderSourceLines.push_back("layout (location = " + to_string(inLocationCount) + ") " + line);
 					if (VERBOSE == true) Console::println("layout (location = " + to_string(inLocationCount) + ") " + line);
 					inLocationCount++;
@@ -2757,13 +2757,13 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 		vi_attrs[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 		vi_attrs[0].offset = 0;
 
-		// normals
+		// sprite indices
 		vi_bindings[1].binding = 1;
-		vi_bindings[1].stride = sizeof(float) * 3;
+		vi_bindings[1].stride = sizeof(uint16_t);
 		vi_bindings[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		vi_attrs[1].binding = 1;
 		vi_attrs[1].location = 1;
-		vi_attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+		vi_attrs[1].format = VK_FORMAT_R16_UINT;
 		vi_attrs[1].offset = 0;
 
 		// texture coordinates
@@ -4909,6 +4909,18 @@ void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32
 	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
+void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+{
+	auto& contextTyped = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+}
+
+void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+{
+	auto& contextTyped = *static_cast<context_type*>(context);
+	uploadBufferObjectInternal(contextTyped.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+}
+
 void VKRenderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	auto& contextTyped = *static_cast<context_type*>(context);
@@ -4937,6 +4949,11 @@ void VKRenderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
 }
 
 void VKRenderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
+{
+	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
+}
+
+void VKRenderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
 {
 	(*static_cast<context_type*>(context)).bound_buffers[1] = bufferObjectId;
 }
