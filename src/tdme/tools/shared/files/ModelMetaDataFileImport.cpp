@@ -404,6 +404,9 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 						particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
 						particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + Tools::getFileName(particleTransparencyTextureFileName)
 					);
+					if (jPointParticleSystem.FindMember("ths") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureHorizontalSprites(jPointParticleSystem["ths"].GetInt());
+					if (jPointParticleSystem.FindMember("tvs") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureVerticalSprites(jPointParticleSystem["tvs"].GetInt());
+					if (jPointParticleSystem.FindMember("fps") != jPointParticleSystem.MemberEnd()) pointParticleSystem->setTextureSpritesFPS(jPointParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
 					Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
 					Console::println(string(exception.what()));
@@ -426,6 +429,9 @@ void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSyste
 						particleTexturePathName + "/" + Tools::getFileName(particleTextureFileName),
 						particleTransparencyTextureFileName.size() == 0?string():particleTransparencyTexturePathName + "/" + Tools::getFileName(particleTransparencyTextureFileName)
 					);
+					if (jFogParticleSystem.FindMember("ths") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureHorizontalSprites(jFogParticleSystem["ths"].GetInt());
+					if (jFogParticleSystem.FindMember("tvs") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureVerticalSprites(jFogParticleSystem["tvs"].GetInt());
+					if (jFogParticleSystem.FindMember("fps") != jFogParticleSystem.MemberEnd()) fogParticleSystem->setTextureSpritesFPS(jFogParticleSystem["fps"].GetFloat());
 				} catch (Exception& exception) {
 					Console::print(string("ModelMetaDataFileImport::doImport(): An error occurred: "));
 					Console::println(string(exception.what()));

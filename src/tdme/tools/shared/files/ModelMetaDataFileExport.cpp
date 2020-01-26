@@ -264,6 +264,9 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jPointParticleSystem.AddMember("ps", Value(particleSystem->getPointParticleSystem()->getPointSize()), jAllocator);
 					jPointParticleSystem.AddMember("t", Value(particleSystem->getPointParticleSystem()->getTextureFileName(), jAllocator), jAllocator);
 					jPointParticleSystem.AddMember("tt", Value(particleSystem->getPointParticleSystem()->getTransparencyTextureFileName(), jAllocator), jAllocator);
+					jPointParticleSystem.AddMember("ths", Value(particleSystem->getPointParticleSystem()->getTextureHorizontalSprites()), jAllocator);
+					jPointParticleSystem.AddMember("tvs", Value(particleSystem->getPointParticleSystem()->getTextureVerticalSprites()), jAllocator);
+					jPointParticleSystem.AddMember("fps", Value(particleSystem->getPointParticleSystem()->getTextureSpritesFPS()), jAllocator);
 					jPointParticleSystem.AddMember("ae", Value(particleSystem->getPointParticleSystem()->isAutoEmit()), jAllocator);
 					jParticleSystem.AddMember("pps", jPointParticleSystem, jAllocator);
 				} else
@@ -275,6 +278,9 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jFogParticleSystem.AddMember("ps", Value(particleSystem->getFogParticleSystem()->getPointSize()), jAllocator);
 					jFogParticleSystem.AddMember("t", Value(particleSystem->getFogParticleSystem()->getTextureFileName(), jAllocator), jAllocator);
 					jFogParticleSystem.AddMember("tt", Value(particleSystem->getFogParticleSystem()->getTransparencyTextureFileName(), jAllocator), jAllocator);
+					jFogParticleSystem.AddMember("ths", Value(particleSystem->getPointParticleSystem()->getTextureHorizontalSprites()), jAllocator);
+					jFogParticleSystem.AddMember("tvs", Value(particleSystem->getPointParticleSystem()->getTextureVerticalSprites()), jAllocator);
+					jFogParticleSystem.AddMember("fps", Value(particleSystem->getPointParticleSystem()->getTextureSpritesFPS()), jAllocator);
 					jParticleSystem.AddMember("fps", jFogParticleSystem, jAllocator);
 				} else {
 					Console::println(
