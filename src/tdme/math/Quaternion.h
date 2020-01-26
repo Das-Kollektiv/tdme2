@@ -356,6 +356,16 @@ public:
 	}
 
 	/**
+	 * Operattor * (Vector&)
+	 * @param v vector to multiply by
+	 * @return new Vector ()thic * v
+	 */
+	inline Vector3 operator *(const Vector3& v) const {
+		auto r = Vector3();
+		return this->multiply(v, r);
+	}
+
+	/**
 	 * Operator / (f)
 	 * @param q value to divide by
 	 * @return new quaternion (this / f)

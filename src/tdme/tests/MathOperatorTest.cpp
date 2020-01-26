@@ -397,9 +397,21 @@ void MathOperatorTest::testQuaternionOperators() {
 	} else {
 		Console::println(string(this->fail));
 	}
+
 	q3 = q2;
 	Console::print(string("operator *(Quaternion&): "));
 	if (q3 * q2 == q3.multiply(q2)) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	q3 = q2;
+	auto v1 = Vector3(4.75, 0.98, 7.0228);
+	auto v2 = Vector3();
+	Console::print(string("operator *(Vector3&): "));
+	q3.multiply(v1, v2);
+	if (q3 * v1 == v2) {
 		Console::println(string(this->success));
 	} else {
 		Console::println(string(this->fail));
