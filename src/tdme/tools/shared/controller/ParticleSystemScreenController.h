@@ -79,10 +79,16 @@ private:
 	GUIElementNode* ppsPointSize { nullptr };
 	GUIElementNode* ppsTexture { nullptr };
 	GUIElementNode* ppsTransparencyTexture { nullptr };
+	GUIElementNode* ppsHorizontalSprites { nullptr };
+	GUIElementNode* ppsVerticalSprites { nullptr };
+	GUIElementNode* ppsFPS { nullptr };
 	GUIElementNode* fpsMaxPoints { nullptr };
 	GUIElementNode* fpsPointSize { nullptr };
 	GUIElementNode* fpsTexture { nullptr };
 	GUIElementNode* fpsTransparencyTexture { nullptr };
+	GUIElementNode* fpsHorizontalSprites { nullptr };
+	GUIElementNode* fpsVerticalSprites { nullptr };
+	GUIElementNode* fpsFPS { nullptr };
 	GUIElementNode* ppeCount { nullptr };
 	GUIElementNode* ppeLifeTime { nullptr };
 	GUIElementNode* ppeLifeTimeRnd { nullptr };

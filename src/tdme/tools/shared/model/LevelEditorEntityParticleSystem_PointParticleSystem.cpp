@@ -16,11 +16,6 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleS
 
 LevelEditorEntityParticleSystem_PointParticleSystem::LevelEditorEntityParticleSystem_PointParticleSystem() 
 {
-	maxPoints = 4000;
-	pointSize = 10.0f;
-	textureFileName = "";
-	texture = nullptr;
-	autoEmit = true;
 }
 
 void LevelEditorEntityParticleSystem_PointParticleSystem::setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName) {

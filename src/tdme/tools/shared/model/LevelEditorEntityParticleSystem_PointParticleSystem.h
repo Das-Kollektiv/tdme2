@@ -27,12 +27,15 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 class tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleSystem final
 {
 private:
-	int32_t maxPoints;
-	float pointSize;
+	int32_t maxPoints{ 4000 };
+	float pointSize{ 10.0f };
 	string textureFileName;
 	string transparencyTextureFileName;
 	Texture* texture { nullptr };
-	bool autoEmit;
+	int32_t textureHorizontalSprites{ 1 };
+	int32_t textureVerticalSprites{ 1 };
+	bool autoEmit{ true };
+	float textureSpritesFPS { 10.0f };
 
 public:
 
@@ -93,6 +96,51 @@ public:
 	 * @param transparencyTextureFileName transparency texture file name
 	 */
 	void setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName = string());
+
+	/**
+	 * @return horizontal number of sprites in texture
+	 */
+	int32_t getTextureHorizontalSprites() {
+		return textureHorizontalSprites;
+	}
+
+	/**
+	 * Set texture horizontal number of sprites
+	 * @param textureHorizontalSprites horizontal number of sprites
+	 */
+	void setTextureHorizontalSprites(int32_t textureHorizontalSprites) {
+		this->textureHorizontalSprites = textureHorizontalSprites;
+	}
+
+	/**
+	 * @return vertical number of sprites in texture
+	 */
+	int32_t getTextureVerticalSprites() {
+		return textureVerticalSprites;
+	}
+
+	/**
+	 * Set texture vertical number of sprites
+	 * @param textureVerticalSprites vertical number of sprites
+	 */
+	void setTextureVerticalSprites(int32_t textureVerticalSprites) {
+		this->textureVerticalSprites = textureVerticalSprites;
+	}
+
+	/**
+	 * @return texture sprites frames per second
+	 */
+	inline float getTextureSpritesFPS() {
+		return textureSpritesFPS;
+	}
+
+	/**
+	 * Set texture sprites frames per second
+	 * @param textureSpritesFPS frames per second
+	 */
+	inline void setTextureSpritesFPS(float textureSpritesFPS) {
+		this->textureSpritesFPS = textureSpritesFPS;
+	}
 
 	/**
 	 * @return is auto emit

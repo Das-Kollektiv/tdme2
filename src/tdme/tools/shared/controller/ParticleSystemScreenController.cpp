@@ -208,11 +208,17 @@ void ParticleSystemScreenController::initialize()
 		ppsPointSize = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_pointsize"));
 		ppsTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_texture"));
 		ppsTransparencyTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_transparency_texture"));
+		ppsHorizontalSprites = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_horizontal_sprites"));
+		ppsVerticalSprites = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_vertical_sprites"));
+		ppsFPS = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_fps"));
 		ppsAutoEmit = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("pps_auto_emit"));
 		fpsMaxPoints = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_maxpoints"));
 		fpsPointSize = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_pointsize"));
 		fpsTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_texture"));
 		fpsTransparencyTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_transparency_texture"));
+		fpsHorizontalSprites = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_horizontal_sprites"));
+		fpsVerticalSprites = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_vertical_sprites"));
+		fpsFPS = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("fps_fps"));
 		ppeCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_count"));
 		ppeLifeTime = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_lifetime"));
 		ppeLifeTimeRnd = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("ppe_lifetimernd"));
@@ -427,6 +433,9 @@ void ParticleSystemScreenController::setParticleSystemType()
 			ppsTexture->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureFileName()));
 			ppsTransparencyTexture->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTransparencyTextureFileName()));
 			ppsAutoEmit->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->isAutoEmit() == true ? "1" : ""));
+			ppsHorizontalSprites->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureHorizontalSprites()));
+			ppsVerticalSprites->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureVerticalSprites()));
+			ppsFPS->getController()->setValue(MutableString(particleSystem->getPointParticleSystem()->getTextureSpritesFPS()));
 		} else
 		if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			particleSystemTypes->getController()->setValue(MutableString(TYPE_FOGPARTICLESYSTEM));
@@ -435,6 +444,9 @@ void ParticleSystemScreenController::setParticleSystemType()
 			fpsPointSize->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getPointSize(), 4));
 			fpsTexture->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getTextureFileName()));
 			fpsTransparencyTexture->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getTransparencyTextureFileName()));
+			fpsHorizontalSprites->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getTextureHorizontalSprites()));
+			fpsVerticalSprites->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getTextureVerticalSprites()));
+			fpsFPS->getController()->setValue(MutableString(particleSystem->getFogParticleSystem()->getTextureSpritesFPS()));
 		} else {
 			Console::println(
 				string(
@@ -470,11 +482,17 @@ void ParticleSystemScreenController::onParticleSystemTypeDataApply()
 				particleSystem->getPointParticleSystem()->setPointSize(Tools::convertToFloat(ppsPointSize->getController()->getValue().getString()));
 				particleSystem->getPointParticleSystem()->setTextureFileName(ppsTexture->getController()->getValue().getString(), ppsTransparencyTexture->getController()->getValue().getString());
 				particleSystem->getPointParticleSystem()->setAutoEmit(ppsAutoEmit->getController()->getValue().getString() == "1");
+				particleSystem->getPointParticleSystem()->setTextureHorizontalSprites(Tools::convertToInt(ppsHorizontalSprites->getController()->getValue().getString()));
+				particleSystem->getPointParticleSystem()->setTextureVerticalSprites(Tools::convertToInt(ppsVerticalSprites->getController()->getValue().getString()));
+				particleSystem->getPointParticleSystem()->setTextureSpritesFPS(Tools::convertToFloat(ppsFPS->getController()->getValue().getString()));
 			} else
 			if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 				particleSystem->getFogParticleSystem()->setMaxPoints(Tools::convertToInt(fpsMaxPoints->getController()->getValue().getString()));
 				particleSystem->getFogParticleSystem()->setPointSize(Tools::convertToFloat(fpsPointSize->getController()->getValue().getString()));
 				particleSystem->getFogParticleSystem()->setTextureFileName(fpsTexture->getController()->getValue().getString(), fpsTransparencyTexture->getController()->getValue().getString());
+				particleSystem->getFogParticleSystem()->setTextureHorizontalSprites(Tools::convertToInt(fpsHorizontalSprites->getController()->getValue().getString()));
+				particleSystem->getFogParticleSystem()->setTextureVerticalSprites(Tools::convertToInt(fpsVerticalSprites->getController()->getValue().getString()));
+				particleSystem->getFogParticleSystem()->setTextureSpritesFPS(Tools::convertToFloat(fpsFPS->getController()->getValue().getString()));
 			} else {
 				Console::println(
 					string(

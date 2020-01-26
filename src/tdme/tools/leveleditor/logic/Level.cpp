@@ -253,7 +253,10 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 					pointParticleSystem->getMaxPoints(),
 					pointParticleSystem->getPointSize(),
 					pointParticleSystem->isAutoEmit(),
-					pointParticleSystem->getTexture()
+					pointParticleSystem->getTexture(),
+					pointParticleSystem->getTextureHorizontalSprites(),
+					pointParticleSystem->getTextureVerticalSprites(),
+					pointParticleSystem->getTextureSpritesFPS()
 				);
 			} else
 			if (v == LevelEditorEntityParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
@@ -263,7 +266,10 @@ Entity* Level::createParticleSystem(LevelEditorEntityParticleSystem* particleSys
 					engineEmitter,
 					fogParticleSystem->getMaxPoints(),
 					fogParticleSystem->getPointSize(),
-					fogParticleSystem->getTexture()
+					fogParticleSystem->getTexture(),
+					fogParticleSystem->getTextureHorizontalSprites(),
+					fogParticleSystem->getTextureVerticalSprites(),
+					fogParticleSystem->getTextureSpritesFPS()
 				);
 			} else {
 				Console::println(

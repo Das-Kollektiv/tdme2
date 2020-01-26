@@ -16,10 +16,6 @@ using tdme::tools::shared::model::LevelEditorEntityParticleSystem_FogParticleSys
 
 LevelEditorEntityParticleSystem_FogParticleSystem::LevelEditorEntityParticleSystem_FogParticleSystem()
 {
-	maxPoints = 4000;
-	pointSize = 10.0f;
-	textureFileName = "";
-	texture = nullptr;
 }
 
 void LevelEditorEntityParticleSystem_FogParticleSystem::setTextureFileName(const string& textureFileName, const string& transparencyTextureFileName) {

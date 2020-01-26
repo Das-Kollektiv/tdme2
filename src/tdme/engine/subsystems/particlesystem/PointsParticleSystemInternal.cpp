@@ -155,7 +155,7 @@ void PointsParticleSystemInternal::updateParticles()
 			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
 		}
 		//
-		pointsRenderPool->addPoint(particle.position, static_cast<uint16_t>(particle.spriteIndex) % 16, color, 0, this);
+		pointsRenderPool->addPoint(particle.position, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), color, 0, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {
