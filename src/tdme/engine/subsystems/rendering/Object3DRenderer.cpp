@@ -1052,9 +1052,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 					.effectColorAdd = &ppse->getEffectColorAdd(),
 					.effectColorMul = &ppse->getEffectColorMul(),
 					.textureId = ppse->getTextureId(),
-					.pointSize = ppse->getPointSize(),
 					.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
-					.textureVerticalSprites = ppse->getTextureVerticalSprites()
+					.textureVerticalSprites = ppse->getTextureVerticalSprites(),
+					.pointSize = ppse->getPointSize()
 				};
 				renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
 			} else {
@@ -1064,9 +1064,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 						.effectColorAdd = &fpse->getEffectColorAdd(),
 						.effectColorMul = &fpse->getEffectColorMul(),
 						.textureId = fpse->getTextureId(),
-						.pointSize = fpse->getPointSize(),
 						.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
-						.textureVerticalSprites = fpse->getTextureVerticalSprites()
+						.textureVerticalSprites = fpse->getTextureVerticalSprites(),
+						.pointSize = fpse->getPointSize()
 					};
 					renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
 				}
@@ -1084,9 +1084,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 							.effectColorAdd = &ppse->getEffectColorAdd(),
 							.effectColorMul = &ppse->getEffectColorMul(),
 							.textureId = ppse->getTextureId(),
-							.pointSize = ppse->getPointSize(),
 							.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
-							.textureVerticalSprites = ppse->getTextureVerticalSprites()
+							.textureVerticalSprites = ppse->getTextureVerticalSprites(),
+							.pointSize = ppse->getPointSize()
 						};
 						renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
 					} else {
@@ -1097,9 +1097,9 @@ void Object3DRenderer::render(const vector<Entity*>& pses)
 								.effectColorAdd = &fpse->getEffectColorAdd(),
 								.effectColorMul = &fpse->getEffectColorMul(),
 								.textureId = fpse->getTextureId(),
-								.pointSize = fpse->getPointSize(),
 								.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
-								.textureVerticalSprites = fpse->getTextureVerticalSprites()
+								.textureVerticalSprites = fpse->getTextureVerticalSprites(),
+								.pointSize = fpse->getPointSize()
 							};
 						}
 					}

@@ -97,12 +97,15 @@ public:
 	void disposeFrameBufferObject(int32_t frameBufferId) override;
 	vector<int32_t> createBufferObjects(int32_t buffers, bool useGPUMemory, bool shared) override;
 	void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) override;
+	void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
+	void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(void* context, int32_t bufferObjectId) override;
+	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindColorsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(void* context, int32_t bufferObjectId) override;
 	void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) override;

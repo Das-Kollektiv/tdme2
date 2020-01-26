@@ -5,8 +5,8 @@ uniform vec4 effectColorMul;
 uniform vec4 effectColorAdd;
 uniform int spritesHorizontal;
 uniform int spritesVertical;
-in vec4 vsFragColor;
 flat in int vsSpriteIndex;
+in vec4 vsFragColor;
 out vec4 outColor;
 
 #if defined(HAVE_DEPTH_FOG)

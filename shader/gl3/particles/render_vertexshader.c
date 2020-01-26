@@ -14,8 +14,8 @@ uniform mat4 mvMatrix;
 uniform float pointSize;
 
 // will be passed to fragment shader
-out vec4 vsFragColor;
 flat out int vsSpriteIndex;
+out vec4 vsFragColor;
 
 #if defined(HAVE_DEPTH_FOG)
 	out float fragDepth;

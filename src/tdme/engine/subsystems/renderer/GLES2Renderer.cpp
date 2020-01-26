@@ -530,6 +530,21 @@ void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, in
 	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 }
 
+void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+}
+
+void GLES2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
+	glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
+}
+
+
 void GLES2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
@@ -559,6 +574,13 @@ void GLES2Renderer::bindVerticesBufferObject(void* context, int32_t bufferObject
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GLES2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 1, GL_UNSIGNED_SHORT, false, 0, 0LL);
 }
 
 void GLES2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
