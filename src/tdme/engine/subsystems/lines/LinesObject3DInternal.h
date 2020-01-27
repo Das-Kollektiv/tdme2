@@ -77,7 +77,7 @@ public:
 	/**
 	 * @return id
 	 */
-	inline virtual const string& getId() {
+	inline const string& getId() {
 		return id;
 	}
 
@@ -85,7 +85,7 @@ public:
 	 * Set renderer
 	 * @param renderer renderer
 	 */
-	inline virtual void setRenderer(Renderer* renderer) {
+	inline void setRenderer(Renderer* renderer) {
 		this->renderer = renderer;
 	}
 
@@ -93,14 +93,14 @@ public:
 	 * Set engine
 	 * @param engine engine
 	 */
-	inline virtual void setEngine(Engine* engine) {
+	inline void setEngine(Engine* engine) {
 		this->engine = engine;
 	}
 
 	/**
 	 * @return is enabled
 	 */
-	inline virtual bool isEnabled() {
+	inline bool isEnabled() {
 		return enabled;
 	}
 
@@ -108,14 +108,14 @@ public:
 	 * Set enabled
 	 * @param enabled enabled
 	 */
-	inline virtual void setEnabled(bool enabled) {
+	inline void setEnabled(bool enabled) {
 		this->enabled = enabled;
 	}
 
 	/**
 	 * @return effect color mul
 	 */
-	inline virtual const Color4& getEffectColorMul() const {
+	inline const Color4& getEffectColorMul() const {
 		return effectColorMul;
 	}
 
@@ -123,14 +123,14 @@ public:
 	 * Set effect color mul
 	 * @param effectColorMul effect color mul
 	 */
-	inline virtual void setEffectColorMul(const Color4& effectColorMul) {
+	inline void setEffectColorMul(const Color4& effectColorMul) {
 		this->effectColorMul = effectColorMul;
 	}
 
 	/**
 	 * @return effect color mul
 	 */
-	inline virtual const Color4& getEffectColorAdd() const {
+	inline const Color4& getEffectColorAdd() const {
 		return effectColorMul;
 	}
 
@@ -138,14 +138,14 @@ public:
 	 * Set effect color add
 	 * @param effectColorAdd effect color add
 	 */
-	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) {
+	inline void setEffectColorAdd(const Color4& effectColorAdd) {
 		this->effectColorAdd = effectColorAdd;
 	}
 
 	/**
 	 * @return is pickable
 	 */
-	inline virtual bool isPickable() const {
+	inline bool isPickable() const {
 		return pickable;
 	}
 
@@ -153,14 +153,14 @@ public:
 	 * Set pickable
 	 * @param pickable pickable
 	 */
-	inline virtual void setPickable(bool pickable) {
+	inline void setPickable(bool pickable) {
 		this->pickable = pickable;
 	}
 
 	/**
 	 * @return if entity contributes to shadows
 	 */
-	inline virtual bool isContributesShadows() {
+	inline bool isContributesShadows() {
 		return contributesShadows;
 	}
 
@@ -168,14 +168,14 @@ public:
 	 * Enable/disable contributes shadows
 	 * @param contributesShadows contributes shadows
 	 */
-	inline virtual void setContributesShadows(bool contributesShadows) {
+	inline void setContributesShadows(bool contributesShadows) {
 		this->contributesShadows = contributesShadows;
 	}
 
 	/**
 	 * @return if entity receives shadows
 	 */
-	inline virtual bool isReceivesShadows() {
+	inline bool isReceivesShadows() {
 		return receivesShadows;
 	}
 
@@ -183,21 +183,21 @@ public:
 	 * Enable/disable receives shadows
 	 * @param receivesShadows receives shadows
 	 */
-	inline virtual void setReceivesShadows(bool receivesShadows) {
+	inline void setReceivesShadows(bool receivesShadows) {
 		this->receivesShadows = receivesShadows;
 	}
 
 	/**
 	 * @return bounding box
 	 */
-	inline virtual BoundingBox* getBoundingBox() {
+	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
 	/**
 	 * @return bounding box transformed
 	 */
-	inline virtual BoundingBox* getBoundingBoxTransformed() {
+	inline BoundingBox* getBoundingBoxTransformed() {
 		return &boundingBoxTransformed;
 	}
 
@@ -218,23 +218,23 @@ public:
 	/** 
 	 * Update transformations
 	 */
-	virtual void update() override;
+	void update() override;
 
 	/**
 	 * From transformations
 	 * @param transformations transformations
 	 */
-	virtual void fromTransformations(const Transformations& transformations) override;
+	void fromTransformations(const Transformations& transformations) override;
 
 	/**
 	 * Initialize
 	 */
-	virtual void initialize();
+	void initialize();
 
 	/**
 	 * Dispose
 	 */
-	virtual void dispose();
+	void dispose();
 
 	/**
 	 * Public constructor

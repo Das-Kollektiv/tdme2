@@ -326,22 +326,22 @@ public:
 		return pickable;
 	}
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return contributesShadows;
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		this->contributesShadows = contributesShadows;
 		if (objectLOD1 != nullptr) objectLOD1->setContributesShadows(contributesShadows);
 		if (objectLOD2 != nullptr) objectLOD2->setContributesShadows(contributesShadows);
 		if (objectLOD3 != nullptr) objectLOD3->setContributesShadows(contributesShadows);
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return receivesShadows;
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		this->receivesShadows = receivesShadows;
 		if (objectLOD1 != nullptr) objectLOD1->setReceivesShadows(receivesShadows);
 		if (objectLOD2 != nullptr) objectLOD2->setReceivesShadows(receivesShadows);
@@ -352,8 +352,8 @@ public:
 		this->pickable = pickable;
 	}
 
-	inline const Matrix4x4 getTransformationsMatrix(const string& id) {
-		return objectLOD1->getTransformationsMatrix(id);
+	inline const Matrix4x4 getGroupTransformationsMatrix(const string& id) {
+		return objectLOD1->getGroupTransformationsMatrix(id);
 	}
 
 	inline const Vector3& getTranslation() const override {

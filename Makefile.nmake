@@ -161,6 +161,7 @@ SRCS = \
 	src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp \
 	src/tdme/engine/subsystems/rendering/BatchRendererTriangles.cpp \
 	src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp \
+	src/tdme/engine/subsystems/rendering/Object3DAnimation.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
 	src/tdme/engine/subsystems/rendering/Object3DGroup.cpp \

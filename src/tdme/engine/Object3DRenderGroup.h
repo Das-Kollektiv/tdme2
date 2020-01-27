@@ -42,7 +42,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /** 
- * Object 3D render group
+ * Object 3D render group for static objects that might be animated by shaders
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -226,20 +226,20 @@ public:
 		return pickable;
 	}
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return contributesShadows;
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		this->contributesShadows = contributesShadows;
 		if (combinedEntity != nullptr) combinedEntity->setContributesShadows(contributesShadows);
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return receivesShadows;
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		this->receivesShadows = receivesShadows;
 		if (combinedEntity != nullptr) combinedEntity->setReceivesShadows(receivesShadows);
 	}

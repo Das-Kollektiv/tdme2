@@ -117,7 +117,6 @@ void Object3DRenderGroup::combineGroup(Group* sourceGroup, const vector<Vector3>
 	}
 
 	{
-
 		auto sourceGroupVerticesSize = sourceGroup->getVertices().size();
 		auto sourceGroupNormalsSize = sourceGroup->getNormals().size();
 		auto sourceGroupTextureCoordinatesSize = sourceGroup->getTextureCoordinates().size();

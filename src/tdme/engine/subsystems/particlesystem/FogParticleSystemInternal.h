@@ -222,7 +222,7 @@ public:
 	/** 
 	 * @return render points pool
 	 */
-	inline virtual TransparentRenderPointsPool* getRenderPointsPool() {
+	inline TransparentRenderPointsPool* getRenderPointsPool() {
 		return pointsRenderPool;
 	}
 

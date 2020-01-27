@@ -8,6 +8,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/math/Matrix2D3x3.h>
 
@@ -19,6 +20,7 @@ using tdme::engine::Transformations;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::math::Matrix2D3x3;
 
 /** 
@@ -56,14 +58,14 @@ public:
 	/** 
 	 * @return object id
 	 */
-	inline virtual const string& getId() {
+	inline const string& getId() {
 		return id;
 	}
 
 	/** 
 	 * @return true if enabled to be rendered
 	 */
-	inline virtual bool isEnabled() {
+	inline bool isEnabled() {
 		return enabled;
 	}
 
@@ -71,14 +73,14 @@ public:
 	 * Enable/disable rendering
 	 * @param enabled enabled
 	 */
-	inline virtual void setEnabled(bool enabled) {
+	inline void setEnabled(bool enabled) {
 		this->enabled = enabled;
 	}
 
 	/** 
 	 * @return if object is pickable
 	 */
-	inline virtual bool isPickable() {
+	inline bool isPickable() {
 		return pickable;
 	}
 
@@ -86,14 +88,14 @@ public:
 	 * Set this object pickable
 	 * @param pickable pickable
 	 */
-	inline virtual void setPickable(bool pickable) {
+	inline void setPickable(bool pickable) {
 		this->pickable = pickable;
 	}
 
 	/**
 	 * @return if entity contributes to shadows
 	 */
-	inline virtual bool isContributesShadows() {
+	inline bool isContributesShadows() {
 		return contributesShadows;
 	}
 
@@ -101,14 +103,14 @@ public:
 	 * Enable/disable contributes shadows
 	 * @param contributesShadows contributes shadows
 	 */
-	inline virtual void setContributesShadows(bool contributesShadows) {
+	inline void setContributesShadows(bool contributesShadows) {
 		this->contributesShadows = contributesShadows;
 	}
 
 	/**
 	 * @return if entity receives shadows
 	 */
-	inline virtual bool isReceivesShadows() {
+	inline bool isReceivesShadows() {
 		return receivesShadows;
 	}
 
@@ -116,7 +118,7 @@ public:
 	 * Enable/disable receives shadows
 	 * @param receivesShadows receives shadows
 	 */
-	inline virtual void setReceivesShadows(bool receivesShadows) {
+	inline void setReceivesShadows(bool receivesShadows) {
 		this->receivesShadows = receivesShadows;
 	}
 
@@ -124,7 +126,7 @@ public:
 	 * The effect color will be multiplied with fragment color
 	 * @return effect color
 	 */
-	inline virtual const Color4& getEffectColorMul() const {
+	inline const Color4& getEffectColorMul() const {
 		return effectColorMul;
 	}
 
@@ -132,7 +134,7 @@ public:
 	 * The effect color that will be multiplied with fragment color
 	 * @param effectColorMul effect color
 	 */
-	inline virtual void setEffectColorMul(const Color4& effectColorMul) {
+	inline void setEffectColorMul(const Color4& effectColorMul) {
 		this->effectColorMul = effectColorMul;
 	}
 
@@ -140,7 +142,7 @@ public:
 	 * The effect color will be added to fragment color
 	 * @return effect color
 	 */
-	inline virtual const Color4& getEffectColorAdd() const {
+	inline const Color4& getEffectColorAdd() const {
 		return effectColorAdd;
 	}
 
@@ -148,14 +150,14 @@ public:
 	 * The effect color will be added to fragment color
 	 * @return effect color
 	 */
-	inline virtual void setEffectColorAdd(const Color4& effectColorAdd) {
+	inline void setEffectColorAdd(const Color4& effectColorAdd) {
 		this->effectColorAdd = effectColorAdd;
 	}
 
 	/** 
 	 * @return bounding box
 	 */
-	inline virtual BoundingBox* getBoundingBox() {
+	inline BoundingBox* getBoundingBox() {
 		return &boundingBox;
 	}
 
@@ -163,7 +165,7 @@ public:
 	 * Retrieves bounding sphere with transformations applied
 	 * @return bounding sphere
 	 */
-	inline virtual BoundingBox* getBoundingBoxTransformed() {
+	inline BoundingBox* getBoundingBoxTransformed() {
 		return &boundingBoxTransformed;
 	}
 
@@ -196,7 +198,7 @@ public:
 	 * @param groupId group id or empty string for all
 	 * @param facesEntityId faces entity id or empty string for all
 	 */
-	virtual void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId = string(), const string& facesEntityId = string());
+	void setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& groupId = string(), const string& facesEntityId = string());
 
 	// overriden methods
 	inline void initialize() override {
@@ -207,8 +209,9 @@ public:
 	}
 	void fromTransformations(const Transformations& transformations) override;
 	void update() override;
-	void setTransformationsMatrix(const string& id, const Matrix4x4& matrix) override;
-	void unsetTransformationsMatrix(const string& id) override;
+
+	void setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix);
+	void unsetGroupTransformationsMatrix(const string& id);
 
 	/**
 	 * Public constructor
@@ -220,5 +223,5 @@ public:
 	/**
 	 * Destructor
 	 */
-	~Object3DInternal();
+	virtual ~Object3DInternal();
 };

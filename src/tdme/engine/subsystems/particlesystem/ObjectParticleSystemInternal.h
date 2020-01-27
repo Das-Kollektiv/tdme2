@@ -89,8 +89,8 @@ protected:
 
 public:
 	const string& getId() override;
-	virtual void setEngine(Engine* engine);
-	virtual void setRenderer(Renderer* renderer);
+	void setEngine(Engine* engine);
+	void setRenderer(Renderer* renderer);
 	inline bool isEnabled() override {
 		return enabled;
 	}
@@ -128,7 +128,7 @@ public:
 	/**
 	 * @return if entity contributes to shadows
 	 */
-	inline virtual bool isContributesShadows() {
+	inline bool isContributesShadows() {
 		return contributesShadows;
 	}
 
@@ -136,7 +136,7 @@ public:
 	 * Enable/disable contributes shadows
 	 * @param contributesShadows contributes shadows
 	 */
-	inline virtual void setContributesShadows(bool contributesShadows) {
+	inline void setContributesShadows(bool contributesShadows) {
 		this->contributesShadows = contributesShadows;
 		for (auto i = 0; i < objects.size(); i++) objects[i]->setContributesShadows(contributesShadows);
 	}
@@ -144,7 +144,7 @@ public:
 	/**
 	 * @return if entity receives shadows
 	 */
-	inline virtual bool isReceivesShadows() {
+	inline bool isReceivesShadows() {
 		return receivesShadows;
 	}
 
@@ -152,7 +152,7 @@ public:
 	 * Enable/disable receives shadows
 	 * @param receivesShadows receives shadows
 	 */
-	inline virtual void setReceivesShadows(bool receivesShadows) {
+	inline void setReceivesShadows(bool receivesShadows) {
 		this->receivesShadows = receivesShadows;
 		for (auto i = 0; i < objects.size(); i++) objects[i]->setReceivesShadows(receivesShadows);
 	}
@@ -164,7 +164,7 @@ public:
 	void fromTransformations(const Transformations& transformations) override;
 	int32_t emitParticles() override;
 	void updateParticles() override;
-	virtual void dispose();
+	void dispose();
 
 	/**
 	 * Public constructor

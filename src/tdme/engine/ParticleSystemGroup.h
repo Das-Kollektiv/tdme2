@@ -139,11 +139,11 @@ public:
 		return id;
 	}
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return contributesShadows;
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		this->contributesShadows = contributesShadows;
 		for (auto particleSystem: particleSystems) {
 			auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);
@@ -151,11 +151,11 @@ public:
 		}
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return receivesShadows;
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		this->receivesShadows = receivesShadows;
 		for (auto particleSystem: particleSystems) {
 			auto ops = dynamic_cast<ObjectParticleSystem*>(particleSystem);

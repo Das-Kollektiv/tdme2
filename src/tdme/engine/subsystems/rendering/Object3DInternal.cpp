@@ -98,8 +98,8 @@ void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const 
 	}
 }
 
-void Object3DInternal::setTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
-	Object3DBase::setTransformationsMatrix(id, matrix);
+void Object3DInternal::setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
+	Object3DBase::setGroupTransformationsMatrix(id, matrix);
 	map<string, Matrix4x4*> _overridenTransformationsMatrices;
 	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
 		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
@@ -109,8 +109,8 @@ void Object3DInternal::setTransformationsMatrix(const string& id, const Matrix4x
 	delete newBoundingBox;
 }
 
-void Object3DInternal::unsetTransformationsMatrix(const string& id) {
-	Object3DBase::unsetTransformationsMatrix(id);
+void Object3DInternal::unsetGroupTransformationsMatrix(const string& id) {
+	Object3DBase::unsetGroupTransformationsMatrix(id);
 	map<string, Matrix4x4*> _overridenTransformationsMatrices;
 	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
 		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);

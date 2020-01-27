@@ -120,7 +120,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
 		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
 		for (auto groupIt: model->getGroups()) {
-			auto& transformedGroupMatrix = object3DModelInternal->getTransformationsMatrix(groupIt.second->getId());
+			auto& transformedGroupMatrix = object3DModelInternal->getGroupTransformationsMatrix(groupIt.second->getId());
 			transformedGroupMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);
 			if (firstVertex == true) {
 				minX = vertex[0];

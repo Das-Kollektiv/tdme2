@@ -96,10 +96,10 @@ public:
 	inline const string& getId() override {
 		return id;
 	}
-	inline virtual void setRenderer(Renderer* renderer) {
+	inline void setRenderer(Renderer* renderer) {
 		this->renderer = renderer;
 	}
-	inline virtual void setEngine(Engine* engine) {
+	inline void setEngine(Engine* engine) {
 		this->engine = engine;
 	}
 	inline bool isEnabled() override {
@@ -139,7 +139,7 @@ public:
 	/**
 	 * @return if entity contributes to shadows
 	 */
-	inline virtual bool isContributesShadows() {
+	inline bool isContributesShadows() {
 		return false;
 	}
 
@@ -147,14 +147,14 @@ public:
 	 * Enable/disable contributes shadows
 	 * @param contributesShadows contributes shadows
 	 */
-	inline virtual void setContributesShadows(bool contributesShadows) {
+	inline void setContributesShadows(bool contributesShadows) {
 		//
 	}
 
 	/**
 	 * @return if entity receives shadows
 	 */
-	inline virtual bool isReceivesShadows() {
+	inline bool isReceivesShadows() {
 		return false;
 	}
 
@@ -162,7 +162,7 @@ public:
 	 * Enable/disable receives shadows
 	 * @param receivesShadows receives shadows
 	 */
-	inline virtual void setReceivesShadows(bool receivesShadows) {
+	inline void setReceivesShadows(bool receivesShadows) {
 		//
 	}
 
@@ -200,13 +200,13 @@ public:
 	void update() override;
 	void fromTransformations(const Transformations& transformations) override;
 	void updateParticles() override;
-	virtual void dispose();
+	void dispose();
 	int32_t emitParticles() override;
 
 	/** 
 	 * @return render points pool
 	 */
-	virtual TransparentRenderPointsPool* getRenderPointsPool();
+	TransparentRenderPointsPool* getRenderPointsPool();
 
 	/**
 	 * Public constructor

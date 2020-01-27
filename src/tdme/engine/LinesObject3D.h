@@ -123,19 +123,19 @@ public:
 		LinesObject3DInternal::initialize();
 	}
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return LinesObject3DInternal::isContributesShadows();
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		LinesObject3DInternal::setContributesShadows(contributesShadows);
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return LinesObject3DInternal::isReceivesShadows();
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		LinesObject3DInternal::setReceivesShadows(receivesShadows);
 	}
 

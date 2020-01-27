@@ -126,19 +126,19 @@ public:
 		return ObjectParticleSystemInternal::getId();
 	}
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return ObjectParticleSystemInternal::isContributesShadows();
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		ObjectParticleSystemInternal::setContributesShadows(contributesShadows);
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return ObjectParticleSystemInternal::isReceivesShadows();
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		ObjectParticleSystemInternal::setReceivesShadows(receivesShadows);
 	}
 

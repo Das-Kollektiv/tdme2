@@ -11,6 +11,7 @@ namespace rendering {
 	class BatchRendererTriangles;
 	class ModelUtilitiesInternal;
 	class ModelStatistics;
+	class Object3DAnimation;
 	class Object3DBase;
 	class Object3DBase_TransformedFacesIterator;
 	class Object3DGroup;

@@ -13,6 +13,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/engine/subsystems/rendering/Object3DInternal.h>
@@ -32,6 +33,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::rendering::Object3DInternal;
@@ -59,7 +61,6 @@ private:
 	friend class Object3DRenderGroup;
 	friend class ObjectParticleSystem;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
-
 
 	Engine* engine { nullptr };
 	Entity* parentEntity { nullptr };
@@ -179,19 +180,19 @@ public:
 
 	void initialize() override;
 
-	inline virtual bool isContributesShadows() override {
+	inline bool isContributesShadows() override {
 		return Object3DInternal::isContributesShadows();
 	}
 
-	inline virtual void setContributesShadows(bool contributesShadows) override {
+	inline void setContributesShadows(bool contributesShadows) override {
 		Object3DInternal::setContributesShadows(contributesShadows);
 	}
 
-	inline virtual bool isReceivesShadows() override {
+	inline bool isReceivesShadows() override {
 		return Object3DInternal::isReceivesShadows();
 	}
 
-	inline virtual void setReceivesShadows(bool receivesShadows) override {
+	inline void setReceivesShadows(bool receivesShadows) override {
 		Object3DInternal::setReceivesShadows(receivesShadows);
 	}
 
@@ -205,18 +206,6 @@ public:
 
 	inline void setPickable(bool pickable) override {
 		Object3DInternal::setPickable(pickable);
-	}
-
-	inline const Matrix4x4 getTransformationsMatrix(const string& id) override {
-		return Object3DInternal::getTransformationsMatrix(id);
-	}
-
-	inline void setTransformationsMatrix(const string& id, const Matrix4x4& matrix) override {
-		return Object3DInternal::setTransformationsMatrix(id, matrix);
-	}
-
-	inline void unsetTransformationsMatrix(const string& id) override {
-		Object3DInternal::unsetTransformationsMatrix(id);
 	}
 
 	inline const Vector3& getTranslation() const override {
