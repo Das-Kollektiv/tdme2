@@ -109,7 +109,7 @@ public:
 	 * @param f value to multiply by
 	 * @return new matrix (this * f)
      */
-    inline Matrix4x4& operator *(const float f) const {
+    inline Matrix4x4 operator *(const float f) const {
     	auto r = this->clone().scale(f);
     	return r;
     }
