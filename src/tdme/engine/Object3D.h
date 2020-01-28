@@ -60,6 +60,7 @@ private:
 	friend class LODObject3D;
 	friend class Object3DRenderGroup;
 	friend class ObjectParticleSystem;
+	friend class SkinnedObject3DRenderGroup;
 	friend class tdme::engine::subsystems::shadowmapping::ShadowMap;
 
 	Engine* engine { nullptr };
@@ -129,6 +130,14 @@ private:
 		Transformations::applyParentTransformations(parentTransformations);
 		updateBoundingBox();
 	}
+
+	/**
+	 * Private constructor
+	 * @param id id
+	 * @param model model
+	 * @param instances render multiple objects at once by duplication
+	 */
+	Object3D(const string& id, Model* model, int instances);
 
 public:
 

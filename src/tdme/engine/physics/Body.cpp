@@ -536,7 +536,7 @@ void Body::addTorque(const Vector3& torque)
 		Console::println("Body::addTorque(): no rigid body attached");
 		return;
 	}
-	rigidBody->applyForceToCenterOfMass(
+	rigidBody->applyTorque(
 		reactphysics3d::Vector3(torque.getX(), torque.getY(), torque.getZ())
 	);
 }

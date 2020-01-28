@@ -120,6 +120,18 @@ public:
 	void fromBoundingVolumeWithTransformations(BoundingBox* original, const Transformations& transformations);
 
 	/**
+	 * Extend bounding box with given bounding box
+	 * @param boundingBox bounding box
+	 */
+	inline void extend(BoundingBox* boundingBox) {
+		for (auto i = 0; i < 3; i++) {
+			if (boundingBox->getMin()[i] < min[i]) min[i] = boundingBox->getMin()[i];
+			if (boundingBox->getMax()[i] > max[i]) max[i] = boundingBox->getMax()[i];
+		}
+		update();
+	}
+
+	/**
 	 * Updates this bounding box
 	 */
 	void update();

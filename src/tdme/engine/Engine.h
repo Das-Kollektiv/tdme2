@@ -102,6 +102,7 @@ class tdme::engine::Engine final
 	friend class ParticleSystemGroup;
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
+	friend class SkinnedObject3DRenderGroup;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;

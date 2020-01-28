@@ -119,11 +119,7 @@ void EntityHierarchy::updateHierarchy(const Transformations& parentTransformatio
 	for (auto entityIt: entityHierarchyLevel.children) {
 		auto entity = entityIt.second.entity;
 		entity->update();
-		auto entityBoundingBox = entity->getBoundingBoxTransformed();
-		for (auto i = 0; i < 3; i++) {
-			if (entityBoundingBox->getMin()[i] < boundingBox.getMin()[i]) boundingBox.getMin()[i] = entityBoundingBox->getMin()[i];
-			if (entityBoundingBox->getMax()[i] > boundingBox.getMax()[i]) boundingBox.getMax()[i] = entityBoundingBox->getMax()[i];
-		}
+		boundingBox.extend(entity->getBoundingBoxTransformed());
 		entity->applyParentTransformations(parentTransformations);
 	}
 	for (auto& childIt: entityHierarchyLevel.children) {

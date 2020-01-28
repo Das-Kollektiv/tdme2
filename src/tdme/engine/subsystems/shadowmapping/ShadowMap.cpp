@@ -162,13 +162,6 @@ void ShadowMap::render(Light* light)
 				visibleObjects.push_back(object);
 			}
 		} else
-		if ((opse = dynamic_cast<ObjectParticleSystem*>(entity)) != nullptr) {
-			if (opse->isContributesShadows() == false) continue;
-			for (auto object: opse->getEnabledObjects()) {
-				object->preRender(context);
-				visibleObjects.push_back(object);
-			}
-		} else
 		if ((psg = dynamic_cast<ParticleSystemGroup*>(entity)) != nullptr) {
 			for (auto ps: psg->getParticleSystems()) {
 				opse = dynamic_cast<ObjectParticleSystem*>(ps);

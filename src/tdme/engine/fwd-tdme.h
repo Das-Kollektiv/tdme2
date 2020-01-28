@@ -32,6 +32,7 @@ namespace engine {
 		class PartitionOctTree_PartitionTreeNode;
 		class PointsParticleSystem;
 		class Rotation;
+		class SkinnedObject3DRenderGroup;
 		class Timing;
 		class Transformations;
 		class WindowManager;

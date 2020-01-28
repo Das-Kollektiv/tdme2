@@ -11,6 +11,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Rotation.h>
+#include <tdme/engine/SkinnedObject3DRenderGroup.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
@@ -36,6 +37,7 @@ using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Rotation;
+using tdme::engine::SkinnedObject3DRenderGroup;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
@@ -120,15 +122,36 @@ void SkinningTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	auto character = ModelReader::read("resources/tests/models/mementoman", "mementoman.dae");
-	int characterIdx = 0;
-	for (float z = -15.0f; z < 15.0f; z+= 1.8f)
-	for (float x = -15.0f; x < 15.0f; x+= 1.8f) {
-		auto entity = new Object3D("character." + to_string(characterIdx++), character);
-		entity->setTranslation(Vector3(x, 0.0f, z));
-		entity->update();
-		entity->setContributesShadows(true);
-		entity->setReceivesShadows(true);
-		engine->addEntity(entity);
+	/*
+	auto characters = new SkinnedObject3DRenderGroup("characters", character, 17 * 17);
+	auto characterIdx = 0;
+	float z = -15.0f;
+	for (int characterZ = 0; characterZ < 17; characterZ++) {
+		float x = -15.0f;
+		for (int characterX = 0; characterX < 17; characterX++) {
+			characters->getObjectTransformations(characterIdx).setTranslation(Vector3(x, 0.0f, z));
+			characters->getObjectTransformations(characterIdx).update();
+			x+= 1.8f;
+		}
+		z+= 1.8f;
+	}
+	characters->updateRenderGroup();
+	engine->addEntity(characters);
+	*/
+	auto characterIdx = 0;
+	float z = -15.0f;
+	for (int characterZ = 0; characterZ < 17; characterZ++) {
+		float x = -15.0f;
+		for (int characterX = 0; characterX < 17; characterX++) {
+			auto entity = new Object3D("character." + to_string(characterIdx++), character);
+			entity->setTranslation(Vector3(x, 0.0f, z));
+			entity->update();
+			entity->setContributesShadows(true);
+			entity->setReceivesShadows(true);
+			engine->addEntity(entity);
+			x+= 1.8f;
+		}
+		z+= 1.8f;
 	}
 	Console::println("Spawned characters: " + to_string(characterIdx));
 }

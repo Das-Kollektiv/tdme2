@@ -38,6 +38,7 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
+#include <tdme/engine/SkinnedObject3DRenderGroup.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Group.h>
@@ -112,6 +113,7 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystem;
+using tdme::engine::SkinnedObject3DRenderGroup;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;

@@ -111,11 +111,7 @@ void ParticleSystemGroup::updateParticles()
 	// compute new bounding box
 	boundingBox.fromBoundingVolume(dynamic_cast<Entity*>(particleSystems[0])->getBoundingBox());
 	for (auto i = 1; i < particleSystems.size(); i++) {
-		auto psAdditionalBoundingBox = dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox();
-		for (auto j = 0; j < 3; j++) {
-			if (psAdditionalBoundingBox->getMin()[j] < boundingBox.getMin()[j]) boundingBox.getMin()[j] = psAdditionalBoundingBox->getMin()[j];
-			if (psAdditionalBoundingBox->getMax()[j] > boundingBox.getMax()[j]) boundingBox.getMax()[j] = psAdditionalBoundingBox->getMax()[j];
-		}
+		boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
 	}
 	boundingBox.update();
 

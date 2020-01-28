@@ -501,4 +501,3 @@ map<string, Matrix4x4*>* Object3DAnimation::getSkinningGroupsMatrices(Group* gro
 	}
 	return nullptr;
 }
-

@@ -132,7 +132,6 @@ Object3DGroupMesh* Object3DBase::getMesh(const string& groupId)
 	return nullptr;
 }
 
-
 void Object3DBase::initialize()
 {
 	auto meshManager = Engine::getInstance()->getMeshManager();
