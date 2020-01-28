@@ -1,5 +1,6 @@
 #include <tdme/tests/MathOperatorTest.h>
 
+#include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -7,6 +8,7 @@
 #include <tdme/utils/Console.h>
 
 using tdme::tests::MathOperatorTest;
+using tdme::math::Matrix2D3x3;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -25,6 +27,7 @@ void MathOperatorTest::main()
 	mt->testVector3Operators();
 	mt->testVector4Operators();
 	mt->testQuaternionOperators();
+	mt->testMatrix2D3x3Operators();
 }
 
 void MathOperatorTest::testVector2Operators()
@@ -472,6 +475,58 @@ void MathOperatorTest::testQuaternionOperators() {
 	qInverted = Quaternion(1.0f / q1[0], 1.0f / q1[1], 1.0f / q1[2], 1.0f / q1[3]);
 	Console::print(string("operator /=: "));
 	if ((q2 /= q1) == q3.multiply(qInverted)) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+}
+
+void MathOperatorTest::testMatrix2D3x3Operators() {
+	Matrix2D3x3 m1 = Matrix2D3x3(14.0, 45.3, 0.342, 2.43, 14.0, 45.3, 0.342, 2.43, 4.5);
+	Matrix2D3x3 m2, m3, m4 = Matrix2D3x3(0.48, 19.33, 7.209, 5.905, 9.0, 14.0, 45.3, 0.342, 2.43);
+	Vector2 v = Vector2(2.480, 9.33);
+	float f = 3.4;
+
+
+	Console::println(string("\nMatrix2D3x3 operators\n-----------------"));
+
+	// operator ==
+	Console::print(string("operator ==: "));
+	if ((m1 == m1) == (m1.equals(m1) )) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	// operator *
+	Console::print(string("operator *(float): "));
+	if (m2 * f == m3.scale(f)) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	Console::print(string("operator *(Matrix2D3x3&): "));
+	if (m2 * m3 == m2.multiply(m3)) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	auto v1 = Vector2(4.75, 0.98);
+	auto v2 = Vector2();
+	Console::print(string("operator *(Vector2&): "));
+	m2.multiply(v1, v2);
+	if (m3 * v1 == v2) {
+		Console::println(string(this->success));
+	} else {
+		Console::println(string(this->fail));
+	}
+
+	// operator *=
+	m2 = m3;
+	Console::print(string("operator *=: "));
+	if ((m2 *= m1) == m3.multiply(m1)) {
 		Console::println(string(this->success));
 	} else {
 		Console::println(string(this->fail));

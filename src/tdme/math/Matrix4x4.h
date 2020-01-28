@@ -104,6 +104,65 @@ public:
     		return data[i];
     }
 
+    /**
+     * Operator * (float)
+	 * @param f value to multiply by
+	 * @return new matrix (this * f)
+     */
+    inline Matrix4x4& operator *(const float f) const {
+    	auto r = this->clone().scale(f);
+    	return r;
+    }
+
+    /**
+     * Operator * (Matrix4x4&)
+     * @param m matrix to multiply by
+	 * @return new matrix (this * m)
+     */
+    inline Matrix4x4 operator *(const Matrix4x4& m) const {
+    	auto r = this->clone().multiply(m);
+    	return r;
+    }
+
+    /**
+     * Operator * (Vector3&)
+     * @param v vector to multiply by
+	 * @return new vector (this * v)
+     */
+    inline Vector3 operator *(const Vector3& v) const {
+    	auto r = Vector3();
+    	return this->multiply(v, r);
+    }
+
+    /**
+	 * Operator * (Vector4&)
+	 * @param v vector to multiply by
+	 * @return new vector (this * v)
+	 */
+    inline Vector4 operator *(const Vector4& v) const {
+		auto r = Vector4();
+		return this->multiply(v, r);
+	}
+
+    /*
+     * Operator *=
+	 * @param m matrix to multiply by
+	 * @return this matrix multiplied by m
+	 */
+    inline Matrix4x4& operator *=(const Matrix4x4 m) {
+    	return this->multiply(m);
+    }
+
+    /**
+	 * Equality comparison operator
+	 * @param m matrix to compare to
+	 * @return equality
+	 */
+
+	inline bool operator ==(Matrix4x4& m) {
+		return this->equals(m);
+	}
+
 	/**
 	 * Get coordinate system axes
 	 * @param xAxis x axis
