@@ -21,11 +21,10 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Quaternion;
 
-Object3D::Object3D(const string& id, Model* model, int instances): Object3D(id, model) {
+Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances) {
 }
 
-Object3D::Object3D(const string& id, Model* model) :
-	Object3DInternal(id, model)
+Object3D::Object3D(const string& id, Model* model): Object3DInternal(id, model, 1)
 {
 }
 

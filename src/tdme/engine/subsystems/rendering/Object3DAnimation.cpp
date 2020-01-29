@@ -366,7 +366,7 @@ inline void Object3DAnimation::updateSkinningTransformationsMatrices(const map<s
 	}
 }
 
-void Object3DAnimation::computeTransformations(const Matrix4x4& objectTransformationsMatrix, AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime)
+void Object3DAnimation::computeTransformations(const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, map<string, Matrix4x4*>& transformationsMatrices, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime)
 {
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
@@ -387,7 +387,7 @@ void Object3DAnimation::computeTransformations(const Matrix4x4& objectTransforma
 		Matrix4x4 parentTransformationsMatrix;
 		parentTransformationsMatrix.set(model->getImportTransformationsMatrix());
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			parentTransformationsMatrix.multiply(objectTransformationsMatrix);
+			parentTransformationsMatrix.multiply(instanceTransformationsMatrix);
 		}
 		// calculate transformations matrices
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, transformationsMatrices, 0);
@@ -399,25 +399,25 @@ void Object3DAnimation::computeTransformations(const Matrix4x4& objectTransforma
 		Matrix4x4 parentTransformationsMatrix;
 		parentTransformationsMatrix.set(model->getImportTransformationsMatrix());
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			parentTransformationsMatrix.multiply(objectTransformationsMatrix);
+			parentTransformationsMatrix.multiply(instanceTransformationsMatrix);
 		}
 		// calculate transformations matrices
 		computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &baseAnimation, transformationsMatrices, 0);
 	}
 }
 
-void Object3DAnimation::computeTransformations(void* context, const Matrix4x4& objectTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
+void Object3DAnimation::computeTransformations(void* context, const Matrix4x4& instanceTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
 	// compute last animation matrices if required
 	auto baseAnimationIdxLast = transformationsMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
 	if (baseAnimationIdxLast != -1 &&
 		baseAnimations[baseAnimationIdxLast].lastAtTime != -1LL) {
-		computeTransformations(objectTransformationsMatrix, baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], context, lastFrameAtTime, currentFrameAtTime);
+		computeTransformations(instanceTransformationsMatrix, baseAnimations[baseAnimationIdxLast], transformationsMatrices[1 + baseAnimationIdxLast], context, lastFrameAtTime, currentFrameAtTime);
 	} else {
 		baseAnimationIdxLast = -1;
 	}
 
 	// compute current animation matrices
-	computeTransformations(objectTransformationsMatrix, baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], context, lastFrameAtTime, currentFrameAtTime);
+	computeTransformations(instanceTransformationsMatrix, baseAnimations[baseAnimationIdx], transformationsMatrices[transformationsMatrices.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], context, lastFrameAtTime, currentFrameAtTime);
 
 	// blend if required
 	if (transformationsMatrices.size() > 1) {

@@ -7,13 +7,14 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
+#include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
 
 using std::map;
 using std::vector;
@@ -33,11 +34,13 @@ using tdme::engine::subsystems::rendering::Object3DGroupMesh;
  * Object3D base class
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::rendering::Object3DBase: public Transformations, public Object3DAnimation
+class tdme::engine::subsystems::rendering::Object3DBase
 {
 	friend class Object3DGroup;
+	friend class Object3DGroupMesh;
 	friend class Object3DBase_TransformedFacesIterator;
 	friend class ModelUtilitiesInternal;
+	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
 	Object3DBase_TransformedFacesIterator* transformedFacesIterator { nullptr };
@@ -46,14 +49,22 @@ protected:
 	Model* model;
 	vector<Object3DGroup*> object3dGroups;
 	bool usesManagers;
+	int instances;
+	int visibleInstances;
+	vector<Object3DAnimation*> instanceAnimations;
+	vector<bool> instanceVisibility;
+	vector<Transformations> instanceTransformations;
+	int currentInstance;
+	Engine::AnimationProcessingTarget animationProcessingTarget;
 
 	/**
-	 * Public constructor
+	 * Private constructor
 	 * @param model model
 	 * @param useManagers use mesh and object 3d group renderer model manager
 	 * @param animationProcessingTarget animation processing target
+	 * @param instances instances to compute and render by duplication
 	 */
-	Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget);
+	Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, int instances);
 
 	/**
 	 * Destructor
@@ -76,7 +87,12 @@ public:
 	 * @param currentFrameAtTime time of current animation computation
 	 */
 	virtual inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime){
-		Object3DAnimation::computeTransformations(context, Transformations::getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
+		visibleInstances = 0;
+		for (auto i = 0; i < instances; i++) {
+			if (instanceVisibility[i] == false) continue;
+			instanceAnimations[i]->computeTransformations(context, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
+			visibleInstances++;
+		}
 		Object3DGroup::computeTransformations(context, object3dGroups);
 	} 
 
@@ -113,4 +129,133 @@ public:
 	 * Disposes this object3d 
 	 */
 	virtual void dispose();
+
+	/**
+	 * @return current instance
+	 */
+	inline int getCurrentInstance() {
+		return currentInstance;
+	}
+
+	/**
+	 * Set current instance
+	 * @param current instance
+	 */
+	inline void setCurrentInstance(int currentInstance) {
+		this->currentInstance = currentInstance;
+	}
+
+	/**
+	 * Sets up a base animation to play
+	 * @param id id
+	 * @param speed speed whereas 1.0 is default speed
+	 */
+	inline void setAnimation(const string& id, float speed = 1.0f) {
+		instanceAnimations[currentInstance]->setAnimation(id, speed);
+	}
+
+	/**
+	 * Set up animation speed
+	 * @param speed speed whereas 1.0 is default speed
+	 */
+	inline void setAnimationSpeed(float speed) {
+		instanceAnimations[currentInstance]->setAnimationSpeed(speed);
+	}
+
+	/**
+	 * Overlays a animation above the base animation
+	 * @param id id
+	 */
+	inline void addOverlayAnimation(const string& id) {
+		instanceAnimations[currentInstance]->addOverlayAnimation(id);
+	}
+
+	/**
+	 * Removes a overlay animation
+	 * @param id id
+	 */
+	inline void removeOverlayAnimation(const string& id) {
+		instanceAnimations[currentInstance]->removeOverlayAnimation(id);
+	}
+
+	/**
+	 * Removes all finished overlay animations
+	 */
+	inline void removeOverlayAnimationsFinished() {
+		instanceAnimations[currentInstance]->removeOverlayAnimationsFinished();
+	}
+
+	/**
+	 * Removes all overlay animations
+	 */
+	inline void removeOverlayAnimations() {
+		instanceAnimations[currentInstance]->removeOverlayAnimations();
+	}
+
+	/**
+	 * @return active animation setup id
+	 */
+	inline const string getAnimation() {
+		return instanceAnimations[currentInstance]->getAnimation();
+	}
+
+	/**
+	 * Returns current base animation time
+	 * @return 0.0 <= time <= 1.0
+	 */
+	inline float getAnimationTime() {
+		return instanceAnimations[currentInstance]->getAnimationTime();
+	}
+
+	/**
+	 * Returns if there is currently running a overlay animation with given id
+	 * @param id id
+	 * @return animation is running
+	 */
+	inline bool hasOverlayAnimation(const string& id) {
+		return instanceAnimations[currentInstance]->hasOverlayAnimation(id);
+	}
+
+	/**
+	 * Returns current overlay animation time
+	 * @param id id
+	 * @return 0.0 <= time <= 1.0
+	 */
+	inline float getOverlayAnimationTime(const string& id) {
+		return instanceAnimations[currentInstance]->getOverlayAnimationTime(id);
+	}
+
+	/**
+	 * Returns transformation matrix for given group
+	 * @param id group id
+	 * @return transformation matrix or identity matrix if not found
+	 */
+	inline const Matrix4x4 getGroupTransformationsMatrix(const string& id) {
+		return instanceAnimations[currentInstance]->getGroupTransformationsMatrix(id);
+	}
+
+	/**
+	 * Set transformation matrix for given group
+	 * @param id group id
+	 * @param matrix transformation matrix
+	 */
+	inline void setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
+		instanceAnimations[currentInstance]->setGroupTransformationsMatrix(id, matrix);
+	}
+
+	/**
+	 * Unset transformation matrix for given group
+	 * @param id group id
+	 */
+	inline void unsetGroupTransformationsMatrix(const string& id) {
+		instanceAnimations[currentInstance]->unsetGroupTransformationsMatrix(id);
+	}
+
+	/**
+	 * @return this transformations matrix
+	 */
+	inline const Matrix4x4& getTransformationsMatrix() const {
+		return instanceTransformations[currentInstance].getTransformationsMatrix();
+	}
+
 };

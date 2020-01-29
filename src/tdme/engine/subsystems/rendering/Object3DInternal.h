@@ -47,12 +47,7 @@ protected:
 	/**
 	 * Update bounding volume
 	 */
-	inline void updateBoundingBox() {
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
-		boundingBoxTransformed.getMax().add(0.05f); // same here
-		boundingBoxTransformed.update();
-	}
+	void updateBoundingBox();
 
 public:
 	/** 
@@ -207,8 +202,8 @@ public:
 	inline void dispose() override {
 		Object3DBase::dispose();
 	}
-	void fromTransformations(const Transformations& transformations) override;
-	void update() override;
+	void fromTransformations(const Transformations& transformations);
+	void update();
 
 	void setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix);
 	void unsetGroupTransformationsMatrix(const string& id);
@@ -217,8 +212,9 @@ public:
 	 * Public constructor
 	 * @param id id
 	 * @param model model
+	 * @param instances instances to compute and render by duplication
 	 */
-	Object3DInternal(const string& id, Model* model);
+	Object3DInternal(const string& id, Model* model, int instances);
 
 	/**
 	 * Destructor

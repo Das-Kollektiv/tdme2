@@ -40,6 +40,7 @@ using tdme::utils::Console;
  */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 {
+	friend class Object3DGroupMesh;
 	friend class Object3DRenderer;
 	friend class Object3DRenderer_TransparentRenderFacesGroupPool;
 

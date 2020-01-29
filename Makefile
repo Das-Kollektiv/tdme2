@@ -240,7 +240,6 @@ SRCS = \
 	src/tdme/engine/PartitionOctTree.cpp \
 	src/tdme/engine/PointsParticleSystem.cpp \
 	src/tdme/engine/Rotation.cpp \
-	src/tdme/engine/SkinnedObject3DRenderGroup.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \

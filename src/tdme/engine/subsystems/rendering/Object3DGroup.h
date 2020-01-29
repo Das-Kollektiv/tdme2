@@ -41,6 +41,7 @@ class tdme::engine::subsystems::rendering::Object3DGroup final
 	friend class ModelUtilitiesInternal;
 	friend class Object3DBase;
 	friend class Object3DBase_TransformedFacesIterator;
+	friend class Object3DGroupMesh;
 	friend class Object3DGroupRenderer;
 	friend class Object3DInternal;
 	friend class Object3DRenderer;

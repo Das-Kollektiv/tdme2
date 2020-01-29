@@ -19,6 +19,7 @@
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/subsystems/manager/MeshManager.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
+#include <tdme/engine/subsystems/rendering/Object3DAnimation.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
@@ -48,6 +49,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::rendering::AnimationState;
+using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
@@ -56,11 +58,21 @@ using tdme::utils::Console;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget): Object3DAnimation(model, animationProcessingTarget)
+Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, int instances)
 {
 	this->model = model;
 	this->animationProcessingTarget = animationProcessingTarget;
 	this->usesManagers = useManagers;
+	this->instances = instances;
+	this->visibleInstances = instances;
+	this->currentInstance = 0;
+	instanceAnimations.resize(instances);
+	instanceVisibility.resize(instances);
+	instanceTransformations.resize(instances);
+	for (auto i = 0; i < instances; i++) {
+		instanceVisibility[i] = true;
+		instanceAnimations[i] = new Object3DAnimation(model, animationProcessingTarget);
+	}
 	transformedFacesIterator = nullptr;
 	// object 3d groups
 	Object3DGroup::createGroups(this, useManagers, animationProcessingTarget, object3dGroups);
@@ -141,6 +153,12 @@ void Object3DBase::initialize()
 		auto object3DGroup = object3dGroups[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
 		if (object3DGroup->mesh == nullptr) {
+			vector<map<string, Matrix4x4*>*> instancesTransformationsMatrices;
+			vector<map<string, Matrix4x4*>*> instancesSkinningGroupsMatrices;
+			for (auto animation: object3DGroup->object->instanceAnimations) {
+				instancesTransformationsMatrices.push_back(&animation->transformationsMatrices[0]);
+				instancesSkinningGroupsMatrices.push_back(animation->getSkinningGroupsMatrices(object3DGroup->group));
+			}
 			if (usesManagers == true) {
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
 				if (object3DGroup->mesh == nullptr) {
@@ -148,8 +166,8 @@ void Object3DBase::initialize()
 						object3DGroup->renderer,
 						animationProcessingTarget,
 						object3DGroup->group,
-						object3DGroup->object->transformationsMatrices[0],
-						getSkinningGroupsMatrices(object3DGroup->group)
+						instancesTransformationsMatrices,
+						instancesSkinningGroupsMatrices
 					);
 				}
 			} else {
@@ -157,8 +175,8 @@ void Object3DBase::initialize()
 					object3DGroup->renderer,
 					animationProcessingTarget,
 					object3DGroup->group,
-					object3DGroup->object->transformationsMatrices[0],
-					getSkinningGroupsMatrices(object3DGroup->group)
+					instancesTransformationsMatrices,
+					instancesSkinningGroupsMatrices
 				);
 			}
 		}

@@ -74,6 +74,8 @@ private:
 		Matrix4x4Negative matrix4x4Negative;
 		vector<Object3D*> objectsToRender;
 		vector<Object3D*> objectsNotRendered;
+		vector<Object3D*> objectsByModelToRender;
+		vector<Object3D*> objectsByModelNotRendered;
 	};
 
 	Engine* engine { nullptr };
@@ -207,6 +209,7 @@ private:
 		}
 
 		// render objects
+		auto& context = contexts[threadIdx];
 		for (auto& objectsByShaderAndModelIt: objectsByShadersAndModels) {
 			auto& objectsByModels = objectsByShaderAndModelIt.second;
 			for (auto& objectsByModelIt: objectsByModels) {
@@ -215,7 +218,19 @@ private:
 					continue;
 				} else
 				if (objectsByModel.size() > 0) {
-					renderObjectsOfSameType(threadIdx, objectsByModel, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+					do {
+						for (auto object: objectsByModel) {
+							if (context.objectsByModelToRender.size() == 0 || object->visibleInstances == context.objectsByModelToRender[0]->visibleInstances) {
+								context.objectsByModelToRender.push_back(object);
+							} else {
+								context.objectsByModelNotRendered.push_back(object);
+							}
+						}
+						renderObjectsOfSameType(threadIdx, context.objectsByModelToRender, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
+						objectsByModel = context.objectsByModelNotRendered;
+						context.objectsByModelToRender.clear();
+						context.objectsByModelNotRendered.clear();
+					} while (objectsByModel.size() > 0);
 				}
 				objectsByModel.clear();
 			}

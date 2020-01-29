@@ -86,7 +86,9 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 				":" +
 				group->getId() +
 				":" +
-				to_string(animationProcessingTarget);
+				to_string(animationProcessingTarget) +
+				":" +
+				to_string(object3D->instances);
 			if (group->getSkinning() != nullptr || (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
 				object3DGroup->id =
 					object3DGroup->id +
@@ -97,6 +99,12 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 			object3DGroup->group = group;
 			object3DGroup->animated = animated;
 			object3DGroup->renderer = new Object3DGroupRenderer(object3DGroup);
+			vector<map<string, Matrix4x4*>*> instancesTransformationsMatrices;
+			vector<map<string, Matrix4x4*>*> instancesSkinningGroupsMatrices;
+			for (auto animation: object3D->instanceAnimations) {
+				instancesTransformationsMatrices.push_back(&animation->transformationsMatrices[0]);
+				instancesSkinningGroupsMatrices.push_back(animation->getSkinningGroupsMatrices(object3DGroup->group));
+			}
 			if (useManagers == true) {
 				auto meshManager = Engine::getInstance()->getMeshManager();
 				object3DGroup->mesh = meshManager->getMesh(object3DGroup->id);
@@ -105,8 +113,8 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 						object3DGroup->renderer,
 						animationProcessingTarget,
 						group,
-						object3D->transformationsMatrices[0],
-						object3D->getSkinningGroupsMatrices(group)
+						instancesTransformationsMatrices,
+						instancesSkinningGroupsMatrices
 					);
 					meshManager->addMesh(object3DGroup->id, object3DGroup->mesh);
 				}
@@ -115,8 +123,8 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 					object3DGroup->renderer,
 					animationProcessingTarget,
 					group,
-					object3D->transformationsMatrices[0],
-					object3D->getSkinningGroupsMatrices(group)
+					instancesTransformationsMatrices,
+					instancesSkinningGroupsMatrices
 				);
 			}
 			object3DGroup->textureMatricesByEntities.resize(group->getFacesEntities().size());
@@ -141,7 +149,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 				object3DGroup->materialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// determine group transformations matrix
-			object3DGroup->groupTransformationsMatrix = object3D->transformationsMatrices[0].find(group->getId())->second;
+			object3DGroup->groupTransformationsMatrix = object3D->instanceAnimations[0]->transformationsMatrices[0].find(group->getId())->second;
 		}
 		// but still check sub groups
 		createGroups(object3D, group->getSubGroups(), animated, useManagers, animationProcessingTarget, object3DGroups);

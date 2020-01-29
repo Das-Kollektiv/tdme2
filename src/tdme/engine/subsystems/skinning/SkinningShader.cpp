@@ -12,6 +12,7 @@
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
+#include <tdme/engine/subsystems/rendering/Object3DBase.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
@@ -37,6 +38,7 @@ using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::engine::subsystems::rendering::Object3DGroupRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
@@ -79,8 +81,12 @@ void SkinningShader::initialize()
 	if (renderer->linkProgram(programId) == false) return;
 
 	//
-	uniformSkinningCount = renderer->getProgramUniformLocation(programId, "skinningCount");
-	if (uniformSkinningCount == -1) return;
+	uniformVertexCount = renderer->getProgramUniformLocation(programId, "vertexCount");
+	if (uniformVertexCount == -1) return;
+	uniformMatrixCount = renderer->getProgramUniformLocation(programId, "matrixCount");
+	if (uniformMatrixCount == -1) return;
+	uniformInstanceCount = renderer->getProgramUniformLocation(programId, "instanceCount");
+	if (uniformInstanceCount == -1) return;
 
 	//
 	initialized = true;
@@ -204,22 +210,36 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	renderer->bindSkinningVerticesResultBufferObject(context, (*vboBaseIds)[1]);
 	renderer->bindSkinningNormalsResultBufferObject(context, (*vboBaseIds)[2]);
 
-	// upload matrices
+	// upload matrices and set corresponding uniforms
 	{
+		Matrix4x4 skinningMatrix;
+		auto currentInstance = object3DGroupMesh->object3D->getCurrentInstance();
 		auto skinning = group->getSkinning();
 		auto& skinningJoints = skinning->getJoints();
-		auto fbMatrices = ObjectBuffer::getByteBuffer(context, skinningJoints.size() * 16 * sizeof(float))->asFloatBuffer();
-		for (auto& joint: skinningJoints) {
-			fbMatrices.put(object3DGroupMesh->skinningMatrices->find(joint.getGroupId())->second->getArray());
+		auto fbMatrices = ObjectBuffer::getByteBuffer(context, object3DGroupMesh->object3D->instances * skinningJoints.size() * 16 * sizeof(float))->asFloatBuffer();
+		for (auto i = 0; i < object3DGroupMesh->object3D->instances; i++) {
+			if (object3DGroupMesh->object3D->instanceVisibility[i] == false) continue;
+			object3DGroupMesh->object3D->setCurrentInstance(i);
+			for (auto& joint: skinningJoints) {
+				fbMatrices.put((skinningMatrix.set(*object3DGroupMesh->skinningMatrices[i]->find(joint.getGroupId())->second).multiply(object3DGroupMesh->object3D->getTransformationsMatrix()).getArray()));
+			}
 		}
+		object3DGroupMesh->object3D->setCurrentInstance(currentInstance);
 		renderer->uploadSkinningBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
+		renderer->setProgramUniformInteger(context, uniformMatrixCount, skinningJoints.size());
+		renderer->setProgramUniformInteger(context, uniformInstanceCount, object3DGroupMesh->object3D->visibleInstances);
 	}
 
 	// skinning count
-	renderer->setProgramUniformInteger(context, uniformSkinningCount, vertices.size());
+	renderer->setProgramUniformInteger(context, uniformVertexCount, vertices.size());
 
 	// do it so
-	renderer->dispatchCompute(context, (int)Math::ceil(vertices.size() / 16.0f), 1, 1);
+	renderer->dispatchCompute(
+		context,
+		(int)Math::ceil(vertices.size() / 16.0f),
+		(int)Math::ceil(object3DGroupMesh->object3D->instances / 16.0f),
+		1
+	);
 }
 
 void SkinningShader::unUseProgram()

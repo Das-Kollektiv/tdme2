@@ -38,7 +38,6 @@
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PartitionOctTree.h>
 #include <tdme/engine/PointsParticleSystem.h>
-#include <tdme/engine/SkinnedObject3DRenderGroup.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Group.h>
@@ -113,7 +112,6 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PartitionOctTree;
 using tdme::engine::PointsParticleSystem;
-using tdme::engine::SkinnedObject3DRenderGroup;
 using tdme::engine::Timing;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Group;
@@ -473,7 +471,7 @@ void Engine::initialize()
 				Console::println(string("TDME::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
 				renderer = new EngineGL2Renderer(this);
 			}
-			skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+			skinningShaderEnabled = (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4; // TODO: Move me into renderer backend
 			// Console::println(string("TDME::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);

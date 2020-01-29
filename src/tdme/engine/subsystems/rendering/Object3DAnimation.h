@@ -29,8 +29,10 @@ using tdme::math::Matrix4x4;
  */
 class tdme::engine::subsystems::rendering::Object3DAnimation
 {
-	friend class tdme::engine::SkinnedObject3DRenderGroup;
-
+	friend class tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
+	friend class tdme::engine::subsystems::rendering::Object3DBase;
+	friend class tdme::engine::subsystems::rendering::Object3DGroup;
+	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 private:
 	/**
 	 * Determine skinned group count

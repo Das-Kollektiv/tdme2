@@ -31,8 +31,8 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 using tdme::math::Vector3;
 
-Object3DInternal::Object3DInternal(const string& id, Model* model) :
-	Object3DBase(model, true, Engine::animationProcessingTarget)
+Object3DInternal::Object3DInternal(const string& id, Model* model, int instances) :
+	Object3DBase(model, true, Engine::animationProcessingTarget, instances)
 {
 	this->id = id;
 	enabled = true;
@@ -42,7 +42,6 @@ Object3DInternal::Object3DInternal(const string& id, Model* model) :
 	effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
 	boundingBox.fromBoundingVolume(model->getBoundingBox());
-	boundingBoxTransformed.fromBoundingVolume(model->getBoundingBox());
 	updateBoundingBox();
 }
 
@@ -101,7 +100,7 @@ void Object3DInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const 
 void Object3DInternal::setGroupTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
 	Object3DBase::setGroupTransformationsMatrix(id, matrix);
 	map<string, Matrix4x4*> _overridenTransformationsMatrices;
-	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+	for (auto overridenTransformationsMatrixIt: instanceAnimations[currentInstance]->overridenTransformationsMatrices) {
 		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
 	}
 	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
@@ -112,7 +111,7 @@ void Object3DInternal::setGroupTransformationsMatrix(const string& id, const Mat
 void Object3DInternal::unsetGroupTransformationsMatrix(const string& id) {
 	Object3DBase::unsetGroupTransformationsMatrix(id);
 	map<string, Matrix4x4*> _overridenTransformationsMatrices;
-	for (auto overridenTransformationsMatrixIt: overridenTransformationsMatrices) {
+	for (auto overridenTransformationsMatrixIt: instanceAnimations[currentInstance]->overridenTransformationsMatrices) {
 		_overridenTransformationsMatrices[overridenTransformationsMatrixIt.first] = new Matrix4x4(*overridenTransformationsMatrixIt.second);
 	}
 	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overridenTransformationsMatrices);
@@ -122,13 +121,21 @@ void Object3DInternal::unsetGroupTransformationsMatrix(const string& id) {
 
 void Object3DInternal::fromTransformations(const Transformations& transformations)
 {
-	Object3DBase::fromTransformations(transformations);
+	instanceTransformations[currentInstance].fromTransformations(transformations);
 	updateBoundingBox();
 }
 
 void Object3DInternal::update()
 {
-	Object3DBase::update();
+	instanceTransformations[currentInstance].update();
 	updateBoundingBox();
 }
 
+void Object3DInternal::updateBoundingBox() {
+	BoundingBox instanceBoundingBox;
+	boundingBoxTransformed.fromBoundingVolumeWithTransformations(model->getBoundingBox(), instanceTransformations[0]);
+	for (auto i = 1; i < instances; i++) {
+		instanceBoundingBox.fromBoundingVolumeWithTransformations(model->getBoundingBox(), instanceTransformations[i]);
+		boundingBoxTransformed.extend(&instanceBoundingBox);
+	}
+}

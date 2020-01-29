@@ -3,7 +3,7 @@
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
 
 Object3DModelInternal::Object3DModelInternal(Model* model) :
-	Object3DBase(model, false, Engine::AnimationProcessingTarget::CPU_NORENDERING)
+	Object3DBase(model, false, Engine::AnimationProcessingTarget::CPU_NORENDERING, 1)
 {
 }
 

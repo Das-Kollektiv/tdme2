@@ -27,6 +27,7 @@ class tdme::engine::subsystems::rendering::Object3DGroupRenderer final
 {
 	friend class Object3DRenderer;
 	friend class tdme::engine::Object3D;
+	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:

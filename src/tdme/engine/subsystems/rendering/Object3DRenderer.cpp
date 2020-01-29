@@ -399,7 +399,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
 			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces().size();
+			auto faces = facesEntity->getFaces().size() * firstObject->visibleInstances;
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -423,15 +423,14 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					// set up transparent render faces
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces(
-							(_object3DGroup->mesh->skinning == true ?
-								modelViewMatrix.identity() :
-								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-							).
-								multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
-								object->object3dGroups[object3DGroupIdx],
-								faceEntityIdx,
-								faceIdx
-							);
+							(_object3DGroup->mesh->skinning == true?
+								modelViewMatrix.identity():
+								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix).multiply(object->getTransformationsMatrix())
+							).multiply(cameraMatrix),
+							object->object3dGroups[object3DGroupIdx],
+							faceEntityIdx,
+							faceIdx
+						);
 					}
 				}
 				// keep track of rendered faces
@@ -453,8 +452,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 						transparentRenderFacesPool->createTransparentRenderFaces(
 							(_object3DGroup->mesh->skinning == true ?
 								modelViewMatrix.identity() :
-								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-							).multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
+								modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix).multiply(object->getTransformationsMatrix())
+							).multiply(cameraMatrix),
 							_object3DGroup,
 							faceEntityIdx,
 							faceIdx
@@ -516,11 +515,9 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 				}
 				// set up local -> world transformations matrix
 				renderer->getModelViewMatrix().set(
-					(_object3DGroup->mesh->skinning == true ?
-						modelViewMatrix.identity() :
-						modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-					).
-						multiply(object->getTransformationsMatrix())
+					_object3DGroup->mesh->skinning == true?
+						modelViewMatrix.identity():
+						modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix).multiply(object->getTransformationsMatrix())
 				);
 				renderer->onUpdateModelViewMatrix(context);
 				// set up front face
@@ -540,10 +537,10 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					shadowMapping != nullptr) {
 					shadowMapping->startObjectTransformations(
 						context,
-						(_object3DGroup->mesh->skinning == true ?
+						_object3DGroup->mesh->skinning == true ?
 							modelViewMatrix.identity() :
-							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix)
-						).multiply(object->getTransformationsMatrix()));
+							modelViewMatrix.set(*_object3DGroup->groupTransformationsMatrix).multiply(object->getTransformationsMatrix())
+					);
 				}
 				// set up texture matrix
 				//	TODO: check if texture is in use
@@ -605,7 +602,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
 			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces().size();
+			auto faces = facesEntity->getFaces().size() * firstObject->visibleInstances;
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -626,15 +623,14 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 						// set up transparent render faces
 						if (collectTransparentFaces == true) {
 							transparentRenderFacesPool->createTransparentRenderFaces(
-								(_object3DGroup->mesh->skinning == true ?
+								(_object3DGroup->mesh->skinning == true?
 									modelViewMatrixTemp.identity() :
-									modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
-								).
-									multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
-									object->object3dGroups[object3DGroupIdx],
-									faceEntityIdx,
-									faceIdx
-								);
+									modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix).multiply(object->getTransformationsMatrix())
+								).multiply(cameraMatrix),
+								object->object3dGroups[object3DGroupIdx],
+								faceEntityIdx,
+								faceIdx
+							);
 						}
 					}
 					// keep track of rendered faces
@@ -694,8 +690,8 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 							transparentRenderFacesPool->createTransparentRenderFaces(
 								(_object3DGroup->mesh->skinning == true ?
 									modelViewMatrixTemp.identity() :
-									modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
-								).multiply(object->getTransformationsMatrix()).multiply(cameraMatrix),
+									modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix).multiply(object->getTransformationsMatrix())
+								).multiply(cameraMatrix),
 								_object3DGroup,
 								faceEntityIdx,
 								faceIdx
@@ -820,10 +816,9 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 
 					// set up local -> world transformations matrix
 					modelViewMatrix.set(
-						(_object3DGroup->mesh->skinning == true ?
+						_object3DGroup->mesh->skinning == true?
 							modelViewMatrixTemp.identity() :
-							modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix)
-						).
+							modelViewMatrixTemp.set(*_object3DGroup->groupTransformationsMatrix).
 							multiply(object->getTransformationsMatrix())
 					);
 

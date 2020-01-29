@@ -42,7 +42,7 @@ using tdme::math::Vector3;
 BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overridenGroupTransformationsMatrices)
 {
 	Object3DModelInternal object3dModel(model);
-	object3dModel.overridenTransformationsMatrices = overridenGroupTransformationsMatrices;
+	object3dModel.instanceAnimations[0]->overridenTransformationsMatrices = overridenGroupTransformationsMatrices;
 	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&object3dModel);
 	if (boundingBox == nullptr) boundingBox = ModelUtilitiesInternal::createBoundingBoxNoMesh(&object3dModel);
 	return boundingBox;
@@ -66,7 +66,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		// calculate transformations matrices without world transformations
 		auto parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
+		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->instanceAnimations[0]->transformationsMatrices[0], 0);
 		Object3DGroup::computeTransformations(nullptr, object3DModelInternal->object3dGroups);
 		// parse through object groups to determine min, max
 		for (auto object3DGroup : object3DModelInternal->object3dGroups) {
@@ -118,7 +118,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelIntern
 		// calculate transformations matrices without world transformations
 		auto parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
-		object3DModelInternal->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->transformationsMatrices[0], 0);
+		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(model->getSubGroups(), parentTransformationsMatrix, &animationState, object3DModelInternal->instanceAnimations[0]->transformationsMatrices[0], 0);
 		for (auto groupIt: model->getGroups()) {
 			auto& transformedGroupMatrix = object3DModelInternal->getGroupTransformationsMatrix(groupIt.second->getId());
 			transformedGroupMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f), vertex);

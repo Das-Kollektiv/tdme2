@@ -40,7 +40,9 @@ private:
 
 	int32_t programId { -1 };
 	int32_t shaderId { -1 };
-	int32_t uniformSkinningCount { -1 };
+	int32_t uniformVertexCount { -1 };
+	int32_t uniformMatrixCount { -1 };
+	int32_t uniformInstanceCount { -1 };
 	bool isRunning;
 	bool initialized;
 	Renderer* renderer { nullptr };
