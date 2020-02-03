@@ -346,7 +346,7 @@ public:
 	}
 
 	/** 
-	 * Adds a vector
+	 * Subtracts a vector
 	 * @param v v
 	 * @return this vector 
 	 */
@@ -439,6 +439,113 @@ public:
 				Math::abs(data[1] - v.data[1]) < tolerance &&
 				Math::abs(data[2] - v.data[2]) < tolerance
 			);
+	}
+
+	/**
+	 * Operator +
+	 * @param v vector to add
+	 * @return new vector (this + v)
+	 */
+	inline Vector3 operator +(const Vector3& v) const {
+		auto r = this->clone().add(v);
+		return r;
+	}
+
+	/**
+	 * Operator +
+	 * @param v vector to subtract
+	 * @return new vector (this - v)
+	 */
+	inline Vector3 operator -(const Vector3& v) const {
+		auto r = this->clone().sub(v);
+		return r;
+	}
+
+	/**
+	 * Operator * (float)
+	 * @param f value to multiply by
+	 * @return new vector (this * f)
+	 */
+	inline Vector3 operator *(const float f) const {
+		auto r = this->clone().scale(f);
+		return r;
+	}
+
+	/**
+	 * Operator * (Vector3&)
+	 * @param v vector to multiply by
+	 * @return new vector (this * v)
+	 */
+	inline Vector3 operator *(const Vector3& v) const {
+		auto r = this->clone().scale(v);
+		return r;
+	}
+
+	/**
+	 * Operator / (f)
+	 * @param v value to divide by
+	 * @return new vector (this / f)
+	 */
+	inline Vector3 operator /(const float f) const {
+		auto r = this->clone().scale(1.0f / f);
+		return r;
+	}
+
+	/**
+	 * Operator / (Vector3&)
+	 * @param v vector to divide by
+	 * @return new vector (this / v)
+	 */
+	inline Vector3 operator /(const Vector3& v) const {
+		auto vInverted = Vector3(1.0f / v[0], 1.0f / v[1], 1.0f / v[2]);
+		auto r = this->clone().scale(vInverted);
+		return r;
+	}
+
+	/**
+	 * Operator +=
+	 * @param v vector to add
+	 * @return this vector added by v
+	 */
+	inline Vector3& operator +=(const Vector3& v) {
+		return this->add(v);
+	}
+
+	/**
+	 * Operator -=
+	 * @param v vector to substract
+	 * @return this vector substracted by v
+	 */
+	inline Vector3& operator -=(Vector3& v) {
+		return this->sub(v);
+	}
+
+	/**
+	 * Operator *=
+	 * @param v vector to multiply by
+	 * @return this vector multiplied by v
+	 */
+	inline Vector3& operator *=(Vector3& v) {
+		return this->scale(v);
+	}
+
+	/**
+	 * Operator /=
+	 * @param v vector to devide by
+	 * @return this vector devided by v
+	 */
+	inline Vector3& operator /=(Vector3& v) {
+		auto vInverted = Vector3(1.0f / v[0], 1.0f / v[1], 1.0f / v[2]);
+		return this->scale(vInverted);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param v vector to compare to
+	 * @return equality
+	 */
+	inline bool operator ==(Vector3& v) {
+		return this->equals(v);
 	}
 
 	/**

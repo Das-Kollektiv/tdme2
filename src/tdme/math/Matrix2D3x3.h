@@ -228,6 +228,55 @@ public:
 	}
 
 	/**
+	 * Operator * (float)
+	 * @param f value to multiply by
+	 * @return new matrix (this * f)
+	 */
+	inline Matrix2D3x3 operator *(const float f) const {
+		auto r = this->clone().scale(f);
+		return r;
+	}
+
+	/**
+	 * Operator * (Matrix2D3x3&)
+	 * @param m matrix to multiply by
+	 * @return new matrix (this * m)
+	 */
+	inline Matrix2D3x3 operator *(const Matrix2D3x3& m) const {
+		auto r = this->clone().multiply(m);
+		return r;
+	}
+
+	/*
+	 * Operator * (Vector2&)
+	 * @param v vector to multiply by
+	 * @return new vector (this * v)
+	 */
+	inline Vector2 operator *(const Vector2& v) const {
+		auto r = Vector2();
+		return this->multiply(v, r);
+	}
+
+	/**
+	 * Operator *=
+	 * @param m matrix to multiply by
+	 * @return this matrix multiplied by m
+	 */
+	inline Matrix2D3x3& operator *=(const Matrix2D3x3& m) {
+		return this->multiply(m);
+	}
+
+	/**
+	 * Equality comparison operator
+	 * @param m matrix to compare to
+	 * @return equality
+	 */
+
+	inline bool operator ==(Matrix2D3x3& m) {
+		return this->equals(m);
+	}
+
+	/**
 	 * Returns array data
 	 * @return array data
 	 */

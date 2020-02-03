@@ -10,6 +10,7 @@ namespace tests {
 	class EntityHierarchyTest;
 	class FoliageTest;
 	class LODTest;
+	class MathOperatorTest;
 	class PathFindingTest;
 	class PivotTest;
 	class PhysicsTest1;
