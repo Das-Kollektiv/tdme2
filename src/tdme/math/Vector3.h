@@ -471,12 +471,30 @@ public:
 
 	/**
 	 * Operator /=
-	 * @param v vector to devide by
-	 * @return this vector devided by v
+	 * @param v vector to divide by
+	 * @return this vector divided by v
 	 */
 	inline Vector3& operator /=(const Vector3& v) {
 		auto vInverted = Vector3(1.0f / v[0], 1.0f / v[1], 1.0f / v[2]);
 		return this->scale(vInverted);
+	}
+
+	/**
+	 * Operator *=
+	 * @param f float to multiply by
+	 * @return this vector multiplied by f
+	 */
+	inline Vector3& operator *=(const float f) {
+		return this->scale(f);
+	}
+
+	/**
+	 * Operator /=
+	 * @param f float to divide by
+	 * @return this vector divided by f
+	 */
+	inline Vector3& operator /=(const float f) {
+		return this->scale(1.0f / f);
 	}
 
 	/**

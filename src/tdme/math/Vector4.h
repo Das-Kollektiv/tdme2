@@ -315,6 +315,24 @@ public:
 	}
 
 	/**
+	 * Operator *=
+	 * @param f float to multiply by
+	 * @return this vector multiplied by f
+	 */
+	inline Vector4& operator *=(const float f) {
+		return this->scale(f);
+	}
+
+	/**
+	 * Operator /=
+	 * @param f float to divide by
+	 * @return this vector divided by f
+	 */
+	inline Vector4& operator /=(const float f) {
+		return this->scale(1.0f / f);
+	}
+
+	/**
 	 * Equality comparison operator
 	 * @param v vector to compare to
 	 * @return equality
