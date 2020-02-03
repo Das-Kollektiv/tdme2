@@ -456,7 +456,7 @@ public:
 	 * @param v vector to substract
 	 * @return this vector substracted by v
 	 */
-	inline Vector3& operator -=(Vector3& v) {
+	inline Vector3& operator -=(const Vector3& v) {
 		return this->sub(v);
 	}
 
@@ -465,7 +465,7 @@ public:
 	 * @param v vector to multiply by
 	 * @return this vector multiplied by v
 	 */
-	inline Vector3& operator *=(Vector3& v) {
+	inline Vector3& operator *=(const Vector3& v) {
 		return this->scale(v);
 	}
 
@@ -474,7 +474,7 @@ public:
 	 * @param v vector to devide by
 	 * @return this vector devided by v
 	 */
-	inline Vector3& operator /=(Vector3& v) {
+	inline Vector3& operator /=(const Vector3& v) {
 		auto vInverted = Vector3(1.0f / v[0], 1.0f / v[1], 1.0f / v[2]);
 		return this->scale(vInverted);
 	}
@@ -484,7 +484,7 @@ public:
 	 * @param v vector to compare to
 	 * @return equality
 	 */
-	inline bool operator ==(Vector3& v) {
+	inline bool operator ==(const Vector3& v) {
 		return this->equals(v);
 	}
 
