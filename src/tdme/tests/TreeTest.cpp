@@ -64,10 +64,10 @@ void TreeTest::main(int argc, char** argv)
 void TreeTest::display()
 {
 	auto camLookFrom = engine->getCamera()->getLookFrom();
-	if (keyA == true) camLookFrom.addX(-20.0f / 60.0f);
-	if (keyD == true) camLookFrom.addX(+20.0f / 60.0f);
-	if (keyW == true) camLookFrom.addZ(-20.0f / 60.0f);
-	if (keyS == true) camLookFrom.addZ(+20.0f / 60.0f);
+	if (keyA == true) camLookFrom.add(Vector3(-20.0f / 60.0f, 0.0f, 0.0f));
+	if (keyD == true) camLookFrom.add(Vector3(+20.0f / 60.0f, 0.0f, 0.0f));
+	if (keyW == true) camLookFrom.add(Vector3(0.0f, 0.0f, -20.0f / 60.0f));
+	if (keyS == true) camLookFrom.add(Vector3(0.0f, 0.0f, +20.0f / 60.0f));
 	if (keyLeft == true) camRotationY+= 1.0f;
 	if (keyRight == true) camRotationY-= 1.0f;
 	Quaternion camRotationYQuaternion;

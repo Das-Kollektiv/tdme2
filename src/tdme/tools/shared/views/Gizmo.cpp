@@ -248,7 +248,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			{
 				vector<Vector3> vertices = planeXZ;
 				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
-					deltaScale.addX(gizmoDeltaMovement.getX());
+					deltaScale.add(Vector3(gizmoDeltaMovement.getX(), 0.0f, 0.0f));
 				}
 				break;
 			}
@@ -256,7 +256,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			{
 				vector<Vector3> vertices = planeYZ;
 				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
-					deltaScale.addY(gizmoDeltaMovement.getY());
+					deltaScale.add(Vector3(0.0f, gizmoDeltaMovement.getY(), 0.0f));
 				}
 				break;
 			}
@@ -264,7 +264,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			{
 				vector<Vector3> vertices = planeXZ;
 				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
-					deltaScale.addZ(-gizmoDeltaMovement.getZ());
+					deltaScale.add(Vector3(0.0f, 0.0f, -gizmoDeltaMovement.getZ()));
 				}
 				break;
 			}
@@ -272,8 +272,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			{
 				vector<Vector3> vertices = planeYZ;
 				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
-					deltaScale.addY(gizmoDeltaMovement.getY());
-					deltaScale.addZ(gizmoDeltaMovement.getZ());
+					deltaScale.add(Vector3(0.0f, gizmoDeltaMovement.getY(), gizmoDeltaMovement.getZ()));
 				}
 				break;
 			}
@@ -281,8 +280,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			{
 				vector<Vector3> vertices = planeXZ;
 				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
-					deltaScale.addX(gizmoDeltaMovement.getX());
-					deltaScale.addZ(gizmoDeltaMovement.getZ());
+					deltaScale.add(Vector3(gizmoDeltaMovement.getX(), 0.0f, gizmoDeltaMovement.getZ()));
 				}
 				break;
 			}
@@ -290,8 +288,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			{
 				vector<Vector3> vertices = planeXY;
 				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement) == true) {
-					deltaScale.addX(gizmoDeltaMovement.getX());
-					deltaScale.addY(gizmoDeltaMovement.getY());
+					deltaScale.add(Vector3(gizmoDeltaMovement.getX(), gizmoDeltaMovement.getY(), 0.0f));
 				}
 				break;
 			}

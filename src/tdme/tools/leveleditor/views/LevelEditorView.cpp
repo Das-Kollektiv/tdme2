@@ -642,7 +642,7 @@ void LevelEditorView::display()
 							worldCoordinate = snappedWorldCoordinate;
 						}
 					}
-					worldCoordinate.subY(selectedEngineEntity->getBoundingBox()->getMin().getY());
+					worldCoordinate.sub(Vector3(0.0f, selectedEngineEntity->getBoundingBox()->getMin().getY(), 0.0f));
 					transformations.setTranslation(worldCoordinate);
 					transformations.setRotationAngle(level->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
 					transformations.update();

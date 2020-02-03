@@ -127,14 +127,14 @@ void PathFindingTest::display()
 	bool hadMovement = false;
 	auto playerTranslation = playerObject->getTranslation();
 	if (determinePlayerCompletedStepX() == false) {
-		if (hadMovement == false) playerTranslation.addX(playerXDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f);
+		if (hadMovement == false) playerTranslation.add(Vector3(playerXDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f, 0.0f, 0.0f));
 		playerObject->getRotation(0).setAngle(playerXDirection > 0.1f?90.0f:270.0f);
 		hadMovement = true;
 	} else {
 		playerTranslation.setX(path[pathIdx].getX());
 	}
 	if (determinePlayerCompletedStepZ() == false) {
-		if (hadMovement == false) playerTranslation.addZ(playerZDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f);
+		if (hadMovement == false) playerTranslation.add(Vector3(0.0f, 0.0f, playerZDirection * engine->getTiming()->getDeltaTime() / 1000.0f * 4.0f));
 		playerObject->getRotation(0).setAngle(playerZDirection > 0.1f?0.0f:180.0f);
 		hadMovement = true;
 	} else {

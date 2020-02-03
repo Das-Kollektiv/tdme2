@@ -201,8 +201,8 @@ public:
 	 */
 	inline Vector2& multiply(const Vector2& v, Vector2& dest) const {
 		return dest.set(
-		    data[0] * v.data[0] + data[3] * v.data[1] + data[6],
-		    data[1] * v.data[0] + data[4] * v.data[1] + data[7]
+			data[0] * v.data[0] + data[3] * v.data[1] + data[6],
+			data[1] * v.data[0] + data[4] * v.data[1] + data[7]
 		);
 	}
 

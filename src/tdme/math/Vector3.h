@@ -80,26 +80,6 @@ public:
 	}
 
 	/** 
-	 * Add to x component
-	 * @param x x
-	 * @return this vector
-	 */
-	inline Vector3& addX(float x) {
-		data[0]+= x;
-		return *this;
-	}
-
-	/** 
-	 * Sub from x component
-	 * @param x x
-	 * @return this vector
-	 */
-	inline Vector3& subX(float x) {
-		data[0]-= x;
-		return *this;
-	}
-
-	/** 
 	 * @return y
 	 */
 	inline float getY() const {
@@ -113,26 +93,6 @@ public:
 	 */
 	inline Vector3& setY(float y) {
 		data[1] = y;
-		return *this;
-	}
-
-	/** 
-	 * Add to y component
-	 * @param y y
-	 * @return this vector
-	 */
-	inline Vector3& addY(float y) {
-		data[1]+= y;
-		return *this;
-	}
-
-	/** 
-	 * Sub from y component
-	 * @param y y
-	 * @return this vector
-	 */
-	inline Vector3& subY(float y) {
-		data[1]-= y;
 		return *this;
 	}
 
@@ -153,43 +113,23 @@ public:
 		return *this;
 	}
 
-	/** 
-	 * Add to z component
-	 * @param z z
-	 * @return this vector
-	 */
-	inline Vector3& addZ(float z) {
-		data[2]+= z;
-		return *this;
-	}
-
-	/** 
-	 * Sub from z component
-	 * @param z z
-	 * @return this vector
-	 */
-	inline Vector3& subZ(float z) {
-		data[2]-= z;
-		return *this;
-	}
-
 	/**
 	 * Array access operator
 	 * @param i index
 	 * @return vector3 component
 	 */
-    inline float& operator[](int i) {
+	inline float& operator[](int i) {
 		return data[i];
-    }
+	}
 
 	/**
 	 * Const array access operator
 	 * @param i index
 	 * @return vector3 component
 	 */
-    inline const float& operator[](int i) const {
+	inline const float& operator[](int i) const {
 		return data[i];
-    }
+	}
 
 	/** 
 	 * @return vector as array

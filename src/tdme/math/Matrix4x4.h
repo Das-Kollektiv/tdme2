@@ -91,69 +91,69 @@ public:
 	 * @param i index
 	 * @return vector3 component
 	 */
-    inline float& operator[](int i) {
-    		return data[i];
-    }
+	inline float& operator[](int i) {
+		return data[i];
+	}
 
 	/**
 	 * Const array access operator
 	 * @param i index
 	 * @return vector3 component
 	 */
-    inline const float& operator[](int i) const {
-    		return data[i];
-    }
+	inline const float& operator[](int i) const {
+		return data[i];
+	}
 
-    /**
-     * Operator * (float)
+	/**
+	 * Operator * (float)
 	 * @param f value to multiply by
 	 * @return new matrix (this * f)
-     */
-    inline Matrix4x4 operator *(const float f) const {
-    	auto r = this->clone().scale(f);
-    	return r;
-    }
+	 */
+	inline Matrix4x4 operator *(const float f) const {
+		auto r = this->clone().scale(f);
+		return r;
+	}
 
-    /**
-     * Operator * (Matrix4x4&)
-     * @param m matrix to multiply by
+	/**
+	 * Operator * (Matrix4x4&)
+	 * @param m matrix to multiply by
 	 * @return new matrix (this * m)
-     */
-    inline Matrix4x4 operator *(const Matrix4x4& m) const {
-    	auto r = this->clone().multiply(m);
-    	return r;
-    }
+	 */
+	inline Matrix4x4 operator *(const Matrix4x4& m) const {
+		auto r = this->clone().multiply(m);
+		return r;
+	}
 
-    /**
-     * Operator * (Vector3&)
-     * @param v vector to multiply by
+	/**
+	 * Operator * (Vector3&)
+	 * @param v vector to multiply by
 	 * @return new vector (this * v)
-     */
-    inline Vector3 operator *(const Vector3& v) const {
-    	auto r = Vector3();
-    	return this->multiply(v, r);
-    }
+	 */
+	inline Vector3 operator *(const Vector3& v) const {
+		auto r = Vector3();
+		return this->multiply(v, r);
+	}
 
-    /**
+	/**
 	 * Operator * (Vector4&)
 	 * @param v vector to multiply by
 	 * @return new vector (this * v)
 	 */
-    inline Vector4 operator *(const Vector4& v) const {
+	inline Vector4 operator *(const Vector4& v) const {
 		auto r = Vector4();
 		return this->multiply(v, r);
 	}
 
-    /*
-     * Operator *=
+	/*
+	 * Operator *=
 	 * @param m matrix to multiply by
 	 * @return this matrix multiplied by m
 	 */
-    inline Matrix4x4& operator *=(const Matrix4x4 m) {
-    	return this->multiply(m);
-    }
+	inline Matrix4x4& operator *=(const Matrix4x4 m) {
+		return this->multiply(m);
+	}
 
-    /**
+	/**
 	 * Equality comparison operator
 	 * @param m matrix to compare to
 	 * @return equality
@@ -427,34 +427,34 @@ public:
 	inline Matrix4x4& rotate(float angle, const Vector3& v) {
 		// see: http://www.songho.ca/opengl/gl_matrix.html
 		auto& vXYZ = v.getArray();
-	    float c = Math::cos(angle * Math::DEG2RAD);    // cosine
-	    float s = Math::sin(angle * Math::DEG2RAD);    // sine
-	    float c1 = 1.0f - c;                // 1 - c
-	    float m0 = data[0],  m4 = data[4],  m8 = data[8],  m12= data[12],
-	          m1 = data[1],  m5 = data[5],  m9 = data[9],  m13= data[13],
-	          m2 = data[2],  m6 = data[6],  m10= data[10], m14= data[14];
-	    float r0 = vXYZ[0] * vXYZ[0] * c1 + c;
-	    float r1 = vXYZ[0] * vXYZ[1] * c1 + vXYZ[2] * s;
-	    float r2 = vXYZ[0] * vXYZ[2] * c1 - vXYZ[1] * s;
-	    float r4 = vXYZ[0] * vXYZ[1] * c1 - vXYZ[2] * s;
-	    float r5 = vXYZ[1] * vXYZ[1] * c1 + c;
-	    float r6 = vXYZ[1] * vXYZ[2] * c1 + vXYZ[0] * s;
-	    float r8 = vXYZ[0] * vXYZ[2] * c1 + vXYZ[1] * s;
-	    float r9 = vXYZ[1] * vXYZ[2] * c1 - vXYZ[0] * s;
-	    float r10= vXYZ[2] * vXYZ[2] * c1 + c;
-	    data[0] = r0 * m0 + r4 * m1 + r8 * m2;
-	    data[1] = r1 * m0 + r5 * m1 + r9 * m2;
-	    data[2] = r2 * m0 + r6 * m1 + r10* m2;
-	    data[4] = r0 * m4 + r4 * m5 + r8 * m6;
-	    data[5] = r1 * m4 + r5 * m5 + r9 * m6;
-	    data[6] = r2 * m4 + r6 * m5 + r10* m6;
-	    data[8] = r0 * m8 + r4 * m9 + r8 * m10;
-	    data[9] = r1 * m8 + r5 * m9 + r9 * m10;
-	    data[10]= r2 * m8 + r6 * m9 + r10* m10;
-	    data[12]= r0 * m12+ r4 * m13+ r8 * m14;
-	    data[13]= r1 * m12+ r5 * m13+ r9 * m14;
-	    data[14]= r2 * m12+ r6 * m13+ r10* m14;
-	    return *this;
+		float c = Math::cos(angle * Math::DEG2RAD);    // cosine
+		float s = Math::sin(angle * Math::DEG2RAD);    // sine
+		float c1 = 1.0f - c;                // 1 - c
+		float m0 = data[0],  m4 = data[4],  m8 = data[8],  m12= data[12],
+			  m1 = data[1],  m5 = data[5],  m9 = data[9],  m13= data[13],
+			  m2 = data[2],  m6 = data[6],  m10= data[10], m14= data[14];
+		float r0 = vXYZ[0] * vXYZ[0] * c1 + c;
+		float r1 = vXYZ[0] * vXYZ[1] * c1 + vXYZ[2] * s;
+		float r2 = vXYZ[0] * vXYZ[2] * c1 - vXYZ[1] * s;
+		float r4 = vXYZ[0] * vXYZ[1] * c1 - vXYZ[2] * s;
+		float r5 = vXYZ[1] * vXYZ[1] * c1 + c;
+		float r6 = vXYZ[1] * vXYZ[2] * c1 + vXYZ[0] * s;
+		float r8 = vXYZ[0] * vXYZ[2] * c1 + vXYZ[1] * s;
+		float r9 = vXYZ[1] * vXYZ[2] * c1 - vXYZ[0] * s;
+		float r10= vXYZ[2] * vXYZ[2] * c1 + c;
+		data[0] = r0 * m0 + r4 * m1 + r8 * m2;
+		data[1] = r1 * m0 + r5 * m1 + r9 * m2;
+		data[2] = r2 * m0 + r6 * m1 + r10* m2;
+		data[4] = r0 * m4 + r4 * m5 + r8 * m6;
+		data[5] = r1 * m4 + r5 * m5 + r9 * m6;
+		data[6] = r2 * m4 + r6 * m5 + r10* m6;
+		data[8] = r0 * m8 + r4 * m9 + r8 * m10;
+		data[9] = r1 * m8 + r5 * m9 + r9 * m10;
+		data[10]= r2 * m8 + r6 * m9 + r10* m10;
+		data[12]= r0 * m12+ r4 * m13+ r8 * m14;
+		data[13]= r1 * m12+ r5 * m13+ r9 * m14;
+		data[14]= r2 * m12+ r6 * m13+ r10* m14;
+		return *this;
 	}
 
 	/** 

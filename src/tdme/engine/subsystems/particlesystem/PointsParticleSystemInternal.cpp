@@ -125,7 +125,7 @@ void PointsParticleSystemInternal::updateParticles()
 		particle.spriteIndex+= (static_cast<float>(timeDelta) / 1000.0f) * fps;
 		// add gravity if our particle have a noticeable mass
 		if (particle.mass > Math::EPSILON)
-			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDelta) / 1000.0f);
+			particle.velocity.sub(Vector3(0.0f, 0.5f * Math::g * static_cast< float >(timeDelta) / 1000.0f, 0.0f));
 		// TODO:
 		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
 		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
@@ -211,7 +211,7 @@ int32_t PointsParticleSystemInternal::emitParticles()
 		// add some movement with a min of 0 time delta and a max of engine time delta
 		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * timeDelta));
 		if (particle.mass > Math::EPSILON)
-			particle.velocity.subY(0.5f * Math::g * static_cast< float >(timeDeltaRnd) / 1000.0f);
+			particle.velocity.sub(Vector3(0.0f, 0.5f * Math::g * static_cast< float >(timeDeltaRnd) / 1000.0f, 0.0f));
 		particle.position.add(velocityForTime.set(particle.velocity).scale(timeDeltaRnd / 1000.0f));
 		//
 		particlesSpawned++;

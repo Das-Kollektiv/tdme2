@@ -147,7 +147,7 @@ void EngineTest::display()
 	auto circleTranslation = circleTransformations.getTranslation();
 	circleTranslation.setX(players[0]->getTranslation().getX());
 	circleTranslation.setZ(players[0]->getTranslation().getZ());
-	circleTranslation.addY(0.1f);
+	circleTranslation.add(Vector3(0.0f, 0.1f, 0.0f));
 	if (circleTranslation.getY() > 1.5f) {
 		circleTranslation.setY(0.0f);
 	}
