@@ -146,6 +146,21 @@ public:
 	}
 
 	/**
+	 * @return current instance visibility
+	 */
+	inline bool getInstanceVisibility() {
+		return instanceVisibility[currentInstance];
+	}
+
+	/**
+	 * Set current instance visibility
+	 * @param visibility instance visibility
+	 */
+	inline void setInstanceVisibility(bool visibility) {
+		instanceVisibility[currentInstance] = visibility;
+	}
+
+	/**
 	 * Sets up a base animation to play
 	 * @param id id
 	 * @param speed speed whereas 1.0 is default speed

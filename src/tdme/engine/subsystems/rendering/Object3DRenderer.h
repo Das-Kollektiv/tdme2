@@ -220,7 +220,7 @@ private:
 				if (objectsByModel.size() > 0) {
 					do {
 						for (auto object: objectsByModel) {
-							if (context.objectsByModelToRender.size() == 0 || object->visibleInstances == context.objectsByModelToRender[0]->visibleInstances) {
+							if (context.objectsByModelToRender.size() == 0 || object->instances == context.objectsByModelToRender[0]->instances) {
 								context.objectsByModelToRender.push_back(object);
 							} else {
 								context.objectsByModelNotRendered.push_back(object);

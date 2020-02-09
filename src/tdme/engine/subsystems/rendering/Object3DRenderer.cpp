@@ -399,7 +399,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
 			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces().size() * firstObject->visibleInstances;
+			auto faces = facesEntity->getFaces().size() * firstObject->instances;
+			auto facesToRender = facesEntity->getFaces().size() * firstObject->visibleInstances;
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -550,7 +551,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					renderer->onUpdateTextureMatrix(context);
 				}
 				// draw
-				renderer->drawIndexedTrianglesFromBufferObjects(context, faces, faceIdx);
+				renderer->drawIndexedTrianglesFromBufferObjects(context, facesToRender, faceIdx);
 				// do transformations end to shadow mapping
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 					shadowMapping != nullptr) {
@@ -602,7 +603,8 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 		for (auto faceEntityIdx = 0; faceEntityIdx < facesEntityIdxCount; faceEntityIdx++) {
 			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
-			auto faces = facesEntity->getFaces().size() * firstObject->visibleInstances;
+			auto faces = facesEntity->getFaces().size() * firstObject->instances;
+			auto facesToRender = facesEntity->getFaces().size() * firstObject->visibleInstances;
 			// material
 			auto material = facesEntity->getMaterial();
 			// determine if transparent
@@ -873,7 +875,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 					}
 
 					// draw
-					renderer->drawInstancedIndexedTrianglesFromBufferObjects(context, faces, faceIdx, objectsToRenderIssue);
+					renderer->drawInstancedIndexedTrianglesFromBufferObjects(context, facesToRender, faceIdx, objectsToRenderIssue);
 				}
 
 				// clear list of objects we did not render
