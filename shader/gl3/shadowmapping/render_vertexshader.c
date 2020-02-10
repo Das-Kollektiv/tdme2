@@ -47,7 +47,7 @@ void main() {
 	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix * shaderTransformMatrix))));
 
 	// texure UV
-	vsFragTextureUV = vec2(textureMatrix * vec3(vsFragTextureUV, 1.0));
+	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 
 	// shadow coord
 	vsShadowCoord = depthBiasMVPMatrix * inModelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
