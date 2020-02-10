@@ -120,9 +120,26 @@ void SkinningTest::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	auto character = ModelReader::read("resources/tests/models/mementoman", "mementoman.dae");
-	auto characters = new Object3D("characters", character, 17 * 17);
-	#define SO3DRG
-	#if defined(SO3DRG)
+	#if defined(GLES2)
+		auto characters = new Object3D("characters", character, 5 * 5);
+		auto characterIdx = 0;
+		float z = -5.0f;
+		for (int characterZ = 0; characterZ < 5; characterZ++) {
+			float x = -5.0f;
+			for (int characterX = 0; characterX < 5; characterX++) {
+				characters->setCurrentInstance(characterIdx);
+				characters->setTranslation(Vector3(x, 0.0f, z));
+				characters->update();
+				characterIdx++;
+				x+= 2.0f;
+			}
+			z+= 2.0f;
+		}
+		characters->setContributesShadows(true);
+		characters->setReceivesShadows(true);
+		engine->addEntity(characters);
+	#else
+		auto characters = new Object3D("characters", character, 17 * 17);
 		auto characterIdx = 0;
 		float z = -15.0f;
 		for (int characterZ = 0; characterZ < 17; characterZ++) {
@@ -139,22 +156,6 @@ void SkinningTest::initialize()
 		characters->setContributesShadows(true);
 		characters->setReceivesShadows(true);
 		engine->addEntity(characters);
-	#else
-		auto characterIdx = 0;
-		float z = -15.0f;
-		for (int characterZ = 0; characterZ < 17; characterZ++) {
-			float x = -15.0f;
-			for (int characterX = 0; characterX < 17; characterX++) {
-				auto entity = new Object3D("character." + to_string(characterIdx++), character);
-				entity->setTranslation(Vector3(x, 0.0f, z));
-				entity->update();
-				entity->setContributesShadows(true);
-				entity->setReceivesShadows(true);
-				engine->addEntity(entity);
-				x+= 1.8f;
-			}
-			z+= 1.8f;
-		}
 	#endif
 	Console::println("Spawned characters: " + to_string(characterIdx));
 }
