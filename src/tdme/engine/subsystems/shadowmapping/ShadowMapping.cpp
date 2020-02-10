@@ -155,7 +155,6 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 			visibleObjectsReceivingShadows,
 			false,
 			Object3DRenderer::RENDERTYPE_NORMALS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS | // TODO: actually this is not required, but GL2 currently needs this
 			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
 			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
 			Object3DRenderer::RENDERTYPE_SHADOWMAPPING
