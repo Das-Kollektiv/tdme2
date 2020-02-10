@@ -115,7 +115,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 	}
 
 	//
-	renderUniformTime = renderer->getProgramUniformLocation(renderProgramId, "frame");
+	renderUniformTime = renderer->getProgramUniformLocation(renderProgramId, "time");
 
 	//
 	initialized = true;
