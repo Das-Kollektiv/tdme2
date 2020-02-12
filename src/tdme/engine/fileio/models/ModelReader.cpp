@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <tdme/engine/fileio/models/DAEReader.h>
+#include <tdme/engine/fileio/models/GLTFReader.h>
 #include <tdme/engine/fileio/models/TMReader.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/model/Model.h>
@@ -17,6 +18,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::models::DAEReader;
+using tdme::engine::fileio::models::GLTFReader;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
@@ -27,7 +29,7 @@ using tdme::utils::StringUtils;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 
-vector<string> ModelReader::extensions = {"dae", "tm"};
+vector<string> ModelReader::extensions = {"dae", "glb", "tm"};
 
 const vector<string>& ModelReader::getModelExtensions() {
 	return extensions;
@@ -38,6 +40,9 @@ Model* ModelReader::read(const string& pathName, const string& fileName)
 	try {
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
 			return DAEReader::read(pathName, fileName);
+		} else
+		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glb") == true) {
+			return GLTFReader::read(pathName, fileName);
 		} else
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
 			return TMReader::read(pathName, fileName);

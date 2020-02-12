@@ -7,10 +7,10 @@ namespace engine {
 namespace fileio {
 namespace models {
 	class DAEReader;
-	class DAEReader_AuthoringTool;
 	class ModelFileIOException;
 	class ModelReader;
 	class FBXReader;
+	class GLTFReader;
 	class TMReader;
 	class TMWriter;
 	class WFObjReader;

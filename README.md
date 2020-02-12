@@ -21,6 +21,7 @@
                 - group names/ids must not have whitespace characters
                 - requires baked matrices
             - FBX via FBX SDK
+            - GLTF via tinygltf
             - TDME Model file format
                 - this is a much more efficient model file format for TDME
                 - can be read and written
@@ -219,6 +220,7 @@
             - ReactPhysics3D
             - RapidJSON
             - sha256
+            - tinygltf
             - tinyxml
             - V-HACD
             - Vorbis/OGG

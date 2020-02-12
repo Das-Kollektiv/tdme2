@@ -100,6 +100,7 @@ SRCS = \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
+	src/tdme/engine/fileio/models/GLTFReader.cpp \
 	src/tdme/engine/fileio/models/ModelFileIOException.cpp \
 	src/tdme/engine/fileio/models/TMReader.cpp \
 	src/tdme/engine/fileio/models/TMWriter.cpp \
