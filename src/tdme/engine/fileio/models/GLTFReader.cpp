@@ -104,7 +104,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	ModelHelper::prepareForIndexedRendering(model);
 
 	return model;
-}	
+}
 
 size_t GLTFReader::getComponentTypeByteSize(int type) {
 	switch (type) {
@@ -161,6 +161,44 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 	auto& mesh = gltfModel.meshes[gltfNode.mesh];
 	int facesEntityIdx = 0;
 	for (auto& gltfPrimitive: mesh.primitives) {
+		Material* material = nullptr;
+		if (gltfPrimitive.material != -1) {
+			auto& gltfMaterial = gltfModel.materials[gltfPrimitive.material];
+			auto& gltfMaterialName = gltfMaterial.name;
+			auto materialIt = model->getMaterials().find(gltfMaterialName);
+			if (materialIt != model->getMaterials().end()) {
+				material = materialIt->second;
+			} else {
+				material = new Material(gltfMaterial.name);
+				auto& gltfMaterialBaseColorTexture = gltfMaterial.values.find("baseColorTexture")->second;
+				// TODO: This does not seem to work in any case
+				if (gltfMaterialBaseColorTexture.TextureIndex() != -1) {
+					/*
+					Console::println(gltfMaterialName + " => Color Factor: ");
+					for (auto value: gltfMaterialBaseColorTexture.ColorFactor()) {
+						Console::print(to_string(value));
+					}
+					Console::println();
+					*/
+					auto& gltfTexture = gltfModel.textures[gltfMaterialBaseColorTexture.TextureIndex()];
+					auto& image = gltfModel.images[gltfTexture.source];
+					Console::println(image.uri);
+					Console::println(image.mimeType);
+					if (image.mimeType == "image/png")
+						try {
+							auto fileName = image.name + ".png";
+							FileSystem::getStandardFileSystem()->setContent(".", fileName, image.image);
+							material->setDiffuseTexture(".", fileName);
+					} catch (Exception& exception) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
+					}
+				}
+				Console::println(gltfMaterialName + " => Texture Index : " + to_string(gltfMaterialBaseColorTexture.TextureIndex()));
+				Console::println(gltfMaterialName + " => Texture Scale : " + to_string(gltfMaterialBaseColorTexture.TextureScale()));
+				Console::println(gltfMaterialName + " => Texture Strength : " + to_string(gltfMaterialBaseColorTexture.TextureStrength()));
+				model->getMaterials()[material->getId()] = material;
+			}
+		}
 		if (gltfPrimitive.mode != 4) {
 			Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid primitive mode: " + to_string(gltfPrimitive.mode));
 			continue;
@@ -222,6 +260,7 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 			}	
 		}
 		FacesEntity facesEntity(group, group->getId() + "-" + to_string(facesEntityIdx));
+		facesEntity.setMaterial(material);
 		vector<Face> faces;
 		for (auto idx: indices) {
 			faces.push_back(Face(group, start + 0, start + 1, start + 2, start + 0, start + 1, start + 2, start + 0, start + 1, start + 2));

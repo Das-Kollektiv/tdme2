@@ -186,6 +186,7 @@
     - documentation
 
 - What is WIP or planned
+	- GLTF reader
 	- Makefile generator for TDME2 based projects
 	- Installer
 	- Water shader
