@@ -6,6 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
+#include <ext/libpng/png.h>
 #include <ext/tinygltf/tiny_gltf.h>
 
 #include <tdme/engine/model/Animation.h>
@@ -187,7 +188,9 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 					if (image.mimeType == "image/png")
 						try {
 							auto fileName = image.name + ".png";
-							FileSystem::getStandardFileSystem()->setContent(".", fileName, image.image);
+							if (writePNG(".", fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+								Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
+							}
 							material->setDiffuseTexture(".", fileName);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
@@ -216,7 +219,7 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 					{
 						// TODO: stride
 						const uint16_t* indicesBufferData = (const uint16_t*)(indicesBuffer.data.data() + indicesBufferView.byteOffset);
-						for (auto i = 0; i < indicesBufferView.byteLength / 2; i++) {
+						for (auto i = 0; i < indicesAccessor.count; i++) {
 							indices.push_back(indicesBufferData[i]);
 						}
 						break;
@@ -225,7 +228,7 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 					{
 						// TODO: stride
 						const uint32_t* indicesBufferData = (const uint32_t*)(indicesBuffer.data.data() + indicesBufferView.byteOffset);
-						for (auto i = 0; i < indicesBufferView.byteLength / 4; i++) {
+						for (auto i = 0; i < indicesAccessor.count; i++) {
 							indices.push_back(indicesBufferData[i]);
 						}
 						break;
@@ -291,3 +294,61 @@ void GLTFReader::parseNodeChildren(const tinygltf::Model& gltfModel, const vecto
 	}	
 } 
 
+bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels) {
+	// see: https://gist.github.com/niw/5963798
+	FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
+	if (!fp) {
+		Console::println("Engine::makeScreenshot(): Failed to create file: " + pathName + "/" + fileName);
+		return false;
+	}
+
+	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (!png) {
+		fclose(fp);
+		return false;
+	}
+
+	png_infop info = png_create_info_struct(png);
+	if (!info) {
+		fclose(fp);
+		return false;
+	}
+
+	if (setjmp(png_jmpbuf(png))) {
+		fclose(fp);
+		return false;
+	}
+
+	png_init_io(png, fp);
+
+	// output is 8bit depth, RGBA format.
+	png_set_IHDR(
+		png,
+		info,
+		width,
+		height,
+		8,
+		bitsPerPixel == 32?PNG_COLOR_TYPE_RGBA:PNG_COLOR_TYPE_RGB,
+		PNG_INTERLACE_NONE,
+		PNG_COMPRESSION_TYPE_DEFAULT,
+		PNG_FILTER_TYPE_DEFAULT
+	);
+	png_write_info(png, info);
+
+	// Remove the alpha channel for PNG_COLOR_TYPE_RGB format
+	// png_set_filler(png, 0, PNG_FILLER_AFTER);
+
+	png_bytep* row_pointers = new png_bytep[height];
+	for (auto y = 0; y < height; y++) row_pointers[y] = (png_bytep)(pixels + 	width * (bitsPerPixel / 8) * (height - 1 - y));
+
+	png_write_image(png, row_pointers);
+	png_write_end(png, NULL);
+
+	free (row_pointers);
+
+	fclose(fp);
+
+	png_destroy_write_struct(&png, &info);
+
+	return true;
+}

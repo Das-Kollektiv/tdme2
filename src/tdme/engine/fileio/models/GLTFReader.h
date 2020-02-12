@@ -64,4 +64,15 @@ private:
 	 * @param parentGroup TDME parent group
 	 */
 	static void parseNodeChildren(const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Group* parentGroup); 
+
+	/**
+	 * Write PNG from memory
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param bitsPerPixel bits per pixel (24 or 32)
+	 * @param width width
+	 * @param height height
+	 * @param pixels pixels
+	 */
+	static bool writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels);
 };
