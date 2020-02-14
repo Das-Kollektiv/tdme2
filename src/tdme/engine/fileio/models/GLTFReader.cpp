@@ -101,9 +101,8 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	ModelHelper::setupJoints(model);
 	// fix animation length
 	ModelHelper::fixAnimationLength(model);
-	// prepare for indexed rendering
-	ModelHelper::prepareForIndexedRendering(model);
 
+	//
 	return model;
 }
 
@@ -180,11 +179,11 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 						Console::print(to_string(value));
 					}
 					Console::println();
+					Console::println(image.uri);
+					Console::println(image.mimeType);
 					*/
 					auto& gltfTexture = gltfModel.textures[gltfMaterialBaseColorTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
-					Console::println(image.uri);
-					Console::println(image.mimeType);
 					if (image.mimeType == "image/png")
 						try {
 							auto fileName = image.name + ".png";
@@ -196,9 +195,11 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
 					}
 				}
+				/*
 				Console::println(gltfMaterialName + " => Texture Index : " + to_string(gltfMaterialBaseColorTexture.TextureIndex()));
 				Console::println(gltfMaterialName + " => Texture Scale : " + to_string(gltfMaterialBaseColorTexture.TextureScale()));
 				Console::println(gltfMaterialName + " => Texture Strength : " + to_string(gltfMaterialBaseColorTexture.TextureStrength()));
+				*/
 				model->getMaterials()[material->getId()] = material;
 			}
 		}
@@ -237,13 +238,16 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 					Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid indices component size: " + to_string(getComponentTypeByteSize(indicesAccessor.componentType)));
 			}
 		}
-		auto start = vertices.size();
+		auto start = 0;
+		bool haveVertices = false;
+		bool haveNormals = false;
+		bool haveTextureCoordinates = false;
 		for (auto& gltfAttributeIt: gltfPrimitive.attributes) {
 			auto gltfBufferType = gltfAttributeIt.first;
 			auto& attributeAccessor = gltfModel.accessors[gltfAttributeIt.second];
 			auto& attributeBufferView = gltfModel.bufferViews[attributeAccessor.bufferView];
 			auto& attributeBuffer = gltfModel.buffers[attributeBufferView.buffer];
-			if (getComponentTypeByteSize(attributeAccessor.componentType) != 4){
+			if (getComponentTypeByteSize(attributeAccessor.componentType) != 4) {
 				Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
 				continue;
 			} 
@@ -252,22 +256,58 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 			} else {
 				const float* bufferData = (const float*)(attributeBuffer.data.data() + attributeBufferView.byteOffset);
 				if (gltfBufferType == "POSITION") {
-					for (auto idx: indices) vertices.push_back(Vector3(bufferData[idx * 3 + 0], bufferData[idx * 3 + 1], bufferData[idx * 3 + 2]));
+					haveVertices = true;
+					start = vertices.size();
+					if (start + attributeAccessor.count > vertices.size()) vertices.resize(start + attributeAccessor.count);
+					for (auto i = 0; i < attributeAccessor.count; i++) {
+						vertices[start + i] = Vector3(bufferData[i * 3 + 0], bufferData[i * 3 + 1], bufferData[i * 3 + 2]);
+					}
 				} else
 				if (gltfBufferType == "NORMAL") {
-					for (auto idx: indices) normals.push_back(Vector3(bufferData[idx * 3 + 0], bufferData[idx * 3 + 1], bufferData[idx * 3 + 2]));
+					haveNormals = true;
+					start = normals.size();
+					if (start + attributeAccessor.count > normals.size()) normals.resize(start + attributeAccessor.count);
+					for (auto i = 0; i < attributeAccessor.count; i++) {
+						normals[start + i] = Vector3(bufferData[i * 3 + 0], bufferData[i * 3 + 1], bufferData[i * 3 + 2]);
+					}
 				} else
 				if (gltfBufferType == "TEXCOORD_0") {
-					for (auto idx: indices) textureCoordinates.push_back(TextureCoordinate(bufferData[idx * 2 + 0], bufferData[idx * 2 + 1]));
+					haveTextureCoordinates = true;
+					start = textureCoordinates.size();
+					if (start + attributeAccessor.count > textureCoordinates.size()) textureCoordinates.resize(start + attributeAccessor.count);
+					for (auto i = 0; i < attributeAccessor.count; i++) {
+						textureCoordinates[start + i] = TextureCoordinate(bufferData[i * 2 + 0], bufferData[i * 2 + 1]);
+					}
+				} else {
+					Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid buffer type: " + gltfBufferType);
 				}
 			}	
 		}
 		FacesEntity facesEntity(group, group->getId() + "-" + to_string(facesEntityIdx));
 		facesEntity.setMaterial(material);
 		vector<Face> faces;
-		for (auto idx: indices) {
-			faces.push_back(Face(group, start + 0, start + 1, start + 2, start + 0, start + 1, start + 2, start + 0, start + 1, start + 2));
-			start+= 3;
+		if (haveVertices == false || haveNormals == false) throw ModelFileIOException("Missing vertices or normals");
+		if (haveTextureCoordinates == true) {
+			for (auto i = 0; i < indices.size() / 3; i++) {
+				faces.push_back(
+					Face(
+						group,
+						start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2],
+						start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2],
+						start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2]
+					)
+				);
+			}
+		} else {
+			for (auto i = 0; i < indices.size() / 3; i++) {
+				faces.push_back(
+					Face(
+						group,
+						start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2],
+						start + indices[i * 3 + 0], start + indices[i * 3 + 1], start + indices[i * 3 + 2]
+					)
+				);
+			}
 		}
 		facesEntity.setFaces(faces);
 		facesEntities.push_back(facesEntity);
