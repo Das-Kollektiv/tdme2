@@ -47,7 +47,7 @@ private:
 	map<string, Group*> groups;
 	map<string, Group*> subGroups;
 	bool skinning;
-	float fps {  };
+	float fps;
 	map<string, AnimationSetup*> animationSetups;
 	Matrix4x4 importTransformationsMatrix;
 	BoundingBox* boundingBox;

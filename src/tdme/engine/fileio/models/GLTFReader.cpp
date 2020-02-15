@@ -1,6 +1,8 @@
 #include <tdme/engine/fileio/models/GLTFReader.h>
 
+#include <map>
 #include <string>
+#include <vector>
 
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -25,6 +27,7 @@
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -34,8 +37,10 @@
 
 #include <ext/tinyxml/tinyxml.h>
 
+using std::map;
 using std::to_string;
 using std::string;
+using std::vector;
 
 using tdme::engine::fileio::models::GLTFReader;
 using tdme::engine::model::Animation;
@@ -54,6 +59,7 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Matrix4x4;
+using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
@@ -79,12 +85,15 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	auto model = new Model(
 		FileSystem::getInstance()->getCanonicalPath(pathName, fileName),
 		fileName,
-		UpVector::Y_UP,
+		UpVector::Z_UP,
 		RotationOrder::ZYX,
 		nullptr,
 		model::Model::AUTHORINGTOOL_UNKNOWN
 	);
+	// TODO: Z-Up for now
+	model->setImportTransformationsMatrix((Matrix4x4()).identity().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 
+	// parse nodes aka scene
 	for (auto& gltfScene: gltfModel.scenes) {
 		for (auto gltfNodeIdx: gltfScene.nodes) { 
 			auto& node = gltfModel.nodes[gltfNodeIdx]; 
@@ -95,8 +104,86 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 		}	
 	} 
 
+	// animations
+	// TODO: key times and interpolation
+	auto maxFrames = 0;
+	for (auto& gltfAnimation: gltfModel.animations) {
+		map<string, int> animationMatricesCount;
+		// TRS matrices for each frame and groups
+		map<string, vector<Matrix4x4>> animationScaleMatrices;
+		map<string, vector<Matrix4x4>> animationRotationMatrices;
+		map<string, vector<Matrix4x4>> animationTranslationMatrices;
+		for (auto& gltfChannel: gltfAnimation.channels) {
+			Console::println(gltfModel.nodes[gltfChannel.target_node].name + ": " + gltfChannel.target_path);
+			Group* group = model->getGroupById(gltfModel.nodes[gltfChannel.target_node].name);
+			auto& gltfSample = gltfAnimation.samplers[gltfChannel.sampler];
+			auto& animationInputAccessor = gltfModel.accessors[gltfSample.input];
+			auto& animationInputBufferView = gltfModel.bufferViews[animationInputAccessor.bufferView];
+			auto& animationInputBuffer = gltfModel.buffers[animationInputBufferView.buffer];
+			const float* animationInputBufferData = (const float*)(animationInputBuffer.data.data() + animationInputBufferView.byteOffset);
+			if (animationInputAccessor.count > animationMatricesCount[group->getId()]) {
+				animationScaleMatrices[group->getId()].resize(animationInputAccessor.count);
+				animationRotationMatrices[group->getId()].resize(animationInputAccessor.count);
+				animationTranslationMatrices[group->getId()].resize(animationInputAccessor.count);
+				for (auto i = animationMatricesCount[group->getId()]; i < animationInputAccessor.count; i++) {
+					animationScaleMatrices[group->getId()][i].identity();
+					animationRotationMatrices[group->getId()][i].identity();
+					animationTranslationMatrices[group->getId()][i].identity();
+				}
+				animationMatricesCount[group->getId()] = animationInputAccessor.count;
+				if (animationInputAccessor.count > maxFrames) maxFrames = animationInputAccessor.count;
+			}
+			/*
+			// TODO: later
+			Console::println("Input: ");
+			for (auto i = 0; i < animationInputAccessor.count; i++) {
+				Console::print(to_string(animationInputBufferData[i]) + ";");
+			}
+			Console::println();
+			*/
+			auto& animationOutputAccessor = gltfModel.accessors[gltfSample.output];
+			auto& animationOutputBufferView = gltfModel.bufferViews[animationOutputAccessor.bufferView];
+			auto& animationOutputBuffer = gltfModel.buffers[animationOutputBufferView.buffer];
+			const float* animationOutputBufferData = (const float*)(animationOutputBuffer.data.data() + animationOutputBufferView.byteOffset);
+			if (gltfChannel.target_path == "translation") {
+				for (auto i = 0; i < animationOutputAccessor.count / 3; i++) {
+					animationTranslationMatrices[group->getId()][i].translate(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
+				}
+			} else
+			if (gltfChannel.target_path == "rotation") {
+				Quaternion rotationQuaternion;
+				for (auto i = 0; i < animationOutputAccessor.count / 4; i++) {
+					rotationQuaternion.set(animationOutputBufferData[i * 4 + 0], animationOutputBufferData[i * 4 + 1], animationOutputBufferData[i * 4 + 2], animationOutputBufferData[i * 4 + 3]);
+					rotationQuaternion.computeMatrix(animationRotationMatrices[group->getId()][i]);
+				}
+			} else
+			if (gltfChannel.target_path == "scale") {
+				for (auto i = 0; i < animationOutputAccessor.count / 3; i++) {
+					animationTranslationMatrices[group->getId()][i].scale(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
+				}
+			} else {
+				Console::println("GLTFReader::GLTFReader(): " + gltfAnimation.name + ": Invalid target path:" + gltfChannel.target_path);
+			}
+		}
+		// set up groups animations if we have frames
+		for (auto& animationMatricesCountIt: animationMatricesCount) {
+			Group* group = model->getGroupById(animationMatricesCountIt.first);
+			if (group != nullptr && animationMatricesCount[group->getId()] > 0) {
+				vector<Matrix4x4> animationFinalMatrices;
+				animationFinalMatrices.resize(animationMatricesCount[group->getId()]);
+				for (auto i = 0; i < animationMatricesCount[group->getId()]; i++) {
+					animationFinalMatrices[i].set(animationScaleMatrices[group->getId()][i]);
+					animationFinalMatrices[i].multiply(animationRotationMatrices[group->getId()][i]);
+					animationFinalMatrices[i].multiply(animationTranslationMatrices[group->getId()][i]);
+				}
+				auto animation = group->createAnimation();
+				animation->setTransformationsMatrices(animationFinalMatrices);
+			}
+		}
+	}
+
 	// create default animations
-	if (ModelHelper::hasDefaultAnimation(model) == false) ModelHelper::createDefaultAnimation(model, 0);
+	ModelHelper::createDefaultAnimation(model, maxFrames);
 	// set up joints
 	ModelHelper::setupJoints(model);
 	// fix animation length
