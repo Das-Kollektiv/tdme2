@@ -65,3 +65,13 @@ Joint* Skinning::getJointByName(const string& name)
 	}
 	return nullptr;
 }
+
+int Skinning::getJointIndexByName(const string& name)
+{
+	auto idx = 0;
+	for (auto& joint: joints) {
+		if (joint.getGroupId() == name) return idx;
+		idx++;
+	}
+	return -1;
+}

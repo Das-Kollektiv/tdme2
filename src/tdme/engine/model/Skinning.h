@@ -80,6 +80,12 @@ public:
 	Joint* getJointByName(const string& name);
 
 	/**
+	 * Get joint index by name
+	 * @param name name
+	 * @return joint index
+	 */
+	int getJointIndexByName(const string& name);
+	/**
 	 * Public constructor
 	 */
 	Skinning();

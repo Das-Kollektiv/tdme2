@@ -114,7 +114,6 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 		map<string, vector<Matrix4x4>> animationRotationMatrices;
 		map<string, vector<Matrix4x4>> animationTranslationMatrices;
 		for (auto& gltfChannel: gltfAnimation.channels) {
-			Console::println(gltfModel.nodes[gltfChannel.target_node].name + ": " + gltfChannel.target_path);
 			Group* group = model->getGroupById(gltfModel.nodes[gltfChannel.target_node].name);
 			auto& gltfSample = gltfAnimation.samplers[gltfChannel.sampler];
 			auto& animationInputAccessor = gltfModel.accessors[gltfSample.input];
@@ -216,7 +215,7 @@ size_t GLTFReader::getComponentTypeByteSize(int type) {
 Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Group* parentGroup) {
 	auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
 	auto group = new Group(model, parentGroup, gltfNode.name, gltfNode.name);
-	if (gltfNode.matrix.size() == 16) { 
+	if (gltfNode.matrix.size() == 16) {
 		group->setTransformationsMatrix(
 			Matrix4x4(
 				static_cast<float>(gltfNode.matrix[0]),
@@ -238,9 +237,31 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 			)
 		);
 	} else {
-		Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid matrix with " + to_string(gltfNode.matrix.size()) + " elements");
-	} 	
+		Matrix4x4 groupScaleMatrices;
+		Matrix4x4 groupRotationMatrices;
+		Matrix4x4 groupTranslationMatrices;
+		groupScaleMatrices.identity();
+		groupRotationMatrices.identity();
+		groupTranslationMatrices.identity();
+		if (gltfNode.scale.size() == 3) {
+			groupScaleMatrices.scale(Vector3(gltfNode.scale[0], gltfNode.scale[1], gltfNode.scale[2]));
+		}
+		if (gltfNode.rotation.size() == 4) {
+			Quaternion rotationQuaternion(gltfNode.rotation[0], gltfNode.rotation[1], gltfNode.rotation[2], gltfNode.rotation[3]);
+			rotationQuaternion.computeMatrix(groupRotationMatrices);
+		}
+		if (gltfNode.translation.size() == 3) {
+			groupTranslationMatrices.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
+		}
+		Matrix4x4 groupTransformationsMatrix;
+		groupTransformationsMatrix.set(groupScaleMatrices);
+		groupTransformationsMatrix.multiply(groupRotationMatrices);
+		groupTransformationsMatrix.multiply(groupTranslationMatrices);
+		group->setTransformationsMatrix(groupTransformationsMatrix);
+	}
 	if (gltfNode.mesh == -1) return group;
+	vector<int> joints;
+	vector<float> weights;
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<TextureCoordinate> textureCoordinates;
@@ -302,8 +323,8 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 			if (indicesBufferView.byteStride != 0) {
 				Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid stride: " + to_string(indicesBufferView.byteStride));
 			} else
-			switch (getComponentTypeByteSize(indicesAccessor.componentType)) {
-				case 2:	
+			switch (indicesAccessor.componentType) {
+				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 					{
 						// TODO: stride
 						const uint16_t* indicesBufferData = (const uint16_t*)(indicesBuffer.data.data() + indicesBufferView.byteOffset);
@@ -312,7 +333,7 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 						}
 						break;
 					} 
-				case 4:	
+				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
 					{
 						// TODO: stride
 						const uint32_t* indicesBufferData = (const uint32_t*)(indicesBuffer.data.data() + indicesBufferView.byteOffset);
@@ -322,7 +343,7 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 						break;
 					} 
 				default:
-					Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid indices component size: " + to_string(getComponentTypeByteSize(indicesAccessor.componentType)));
+					Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid indices component: " + to_string(indicesAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(indicesAccessor.componentType)));
 			}
 		}
 		auto start = 0;
@@ -334,41 +355,78 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 			auto& attributeAccessor = gltfModel.accessors[gltfAttributeIt.second];
 			auto& attributeBufferView = gltfModel.bufferViews[attributeAccessor.bufferView];
 			auto& attributeBuffer = gltfModel.buffers[attributeBufferView.buffer];
-			if (getComponentTypeByteSize(attributeAccessor.componentType) != 4) {
-				Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
-				continue;
-			} 
 			if (attributeBufferView.byteStride != 0) {
 				Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes stride: " + to_string(attributeBufferView.byteStride));
 			} else {
-				const float* bufferData = (const float*)(attributeBuffer.data.data() + attributeBufferView.byteOffset);
 				if (gltfBufferType == "POSITION") {
+					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						continue;
+					}
 					haveVertices = true;
 					start = vertices.size();
 					if (start + attributeAccessor.count > vertices.size()) vertices.resize(start + attributeAccessor.count);
+					const float* bufferData = (const float*)(attributeBuffer.data.data() + attributeBufferView.byteOffset);
 					for (auto i = 0; i < attributeAccessor.count; i++) {
 						vertices[start + i] = Vector3(bufferData[i * 3 + 0], bufferData[i * 3 + 1], bufferData[i * 3 + 2]);
 					}
 				} else
 				if (gltfBufferType == "NORMAL") {
+					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						continue;
+					}
 					haveNormals = true;
-					start = normals.size();
+					auto start = normals.size();
 					if (start + attributeAccessor.count > normals.size()) normals.resize(start + attributeAccessor.count);
+					const float* bufferData = (const float*)(attributeBuffer.data.data() + attributeBufferView.byteOffset);
 					for (auto i = 0; i < attributeAccessor.count; i++) {
 						normals[start + i] = Vector3(bufferData[i * 3 + 0], bufferData[i * 3 + 1], bufferData[i * 3 + 2]);
 					}
 				} else
 				if (gltfBufferType == "TEXCOORD_0") {
+					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						continue;
+					}
 					haveTextureCoordinates = true;
-					start = textureCoordinates.size();
+					auto start = textureCoordinates.size();
 					if (start + attributeAccessor.count > textureCoordinates.size()) textureCoordinates.resize(start + attributeAccessor.count);
+					const float* bufferData = (const float*)(attributeBuffer.data.data() + attributeBufferView.byteOffset);
 					for (auto i = 0; i < attributeAccessor.count; i++) {
 						textureCoordinates[start + i] = TextureCoordinate(bufferData[i * 2 + 0], bufferData[i * 2 + 1]);
+					}
+				} else
+				if (gltfBufferType == "COLOR_0") {
+					// ignored for now
+				} else
+				if (gltfBufferType == "WEIGHTS_0") {
+					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						continue;
+					}
+					auto start = weights.size();
+					if (start + attributeAccessor.count * 4 > weights.size()) weights.resize(start + attributeAccessor.count * 4);
+					const float* bufferData = (const float*)(attributeBuffer.data.data() + attributeBufferView.byteOffset);
+					for (auto i = 0; i < attributeAccessor.count * 4; i++) {
+						weights[start + i] = bufferData[i];
+					}
+				} else
+				if (gltfBufferType == "JOINTS_0") {
+					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+						continue;
+					}
+					auto start = joints.size();
+					if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
+					const uint16_t* bufferData = (const uint16_t*)(attributeBuffer.data.data() + attributeBufferView.byteOffset);
+					for (auto i = 0; i < attributeAccessor.count * 4; i++) {
+						joints[start + i] = bufferData[i];
 					}
 				} else {
 					Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid buffer type: " + gltfBufferType);
 				}
-			}	
+			}
 		}
 		FacesEntity facesEntity(group, group->getId() + "-" + to_string(facesEntityIdx));
 		facesEntity.setMaterial(material);
@@ -399,6 +457,70 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 		facesEntity.setFaces(faces);
 		facesEntities.push_back(facesEntity);
 		facesEntityIdx++;
+	}
+
+	// skinning
+	if (gltfNode.skin != -1) {
+		auto& gltfSkin = gltfModel.skins[gltfNode.skin];
+		auto& inverseBindMatricesAccessor = gltfModel.accessors[gltfSkin.inverseBindMatrices];
+		auto& inverseBindMatricesBufferView = gltfModel.bufferViews[inverseBindMatricesAccessor.bufferView];
+		auto& inverseBindMatricesBuffer = gltfModel.buffers[inverseBindMatricesBufferView.buffer];
+		const float* inverseBindMatricesBufferData = nullptr;
+		if (inverseBindMatricesBufferView.byteStride != 0) {
+			Console::println("GLTFReader::parseNode(): " + group->getId() + ": Invalid attributes stride: " + to_string(inverseBindMatricesBufferView.byteStride));
+		} else
+		if (inverseBindMatricesAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+			Console::println("GLTFReader::parseNode(): " + group->getId() + ": Inverse bind matrices: Invalid attributes component: " + to_string(inverseBindMatricesAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(inverseBindMatricesAccessor.componentType)));
+		} else {
+			inverseBindMatricesBufferData = (const float*)(inverseBindMatricesBuffer.data.data() + inverseBindMatricesBufferView.byteOffset);
+		}
+		if (inverseBindMatricesBufferData != nullptr) {
+			auto skinning = group->createSkinning();
+			{
+				vector<Joint> skinningJoints;
+				for (auto gltfJointNodeIdx: gltfSkin.joints) {
+					Joint joint(gltfModel.nodes[gltfJointNodeIdx].name);
+					joint.setBindMatrix(
+						Matrix4x4(
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 0],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 1],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 2],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 3],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 4],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 5],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 6],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 7],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 8],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 9],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 10],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 11],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 12],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 13],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 14],
+							inverseBindMatricesBufferData[skinningJoints.size() * 16 + 15]
+						)
+					);
+					skinningJoints.push_back(joint);
+				}
+				skinning->setJoints(skinningJoints);
+			}
+			{
+				vector<float> skinningWeights;
+				vector<vector<JointWeight>> skinningJointWeights;
+				skinningJointWeights.resize(vertices.size());
+				for (auto i = 0; i < vertices.size(); i++) {
+					for (auto j = 0; j < 4; j++) {
+						auto skinningJointIndex = skinning->getJointIndexByName(gltfModel.nodes[joints[i * 4 + j]].name);
+						if (skinningJointIndex != -1) {
+							skinningJointWeights[i].push_back(JointWeight(skinningJointIndex, skinningWeights.size()));
+							skinningWeights.push_back(weights[i * 4 + j]);
+						}
+					}
+				}
+				skinning->setWeights(skinningWeights);
+				skinning->setVerticesJointsWeights(skinningJointWeights);
+			}
+		}
 	}
 
 	// set up group
