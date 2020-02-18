@@ -510,15 +510,13 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 				vector<vector<JointWeight>> skinningJointWeights;
 				skinningJointWeights.resize(vertices.size());
 				for (auto i = 0; i < vertices.size(); i++) {
-					Console::print(to_string(i) + ": ");
 					for (auto j = 0; j < 4; j++) {
 						if (weights[i * 4 + j] > 0.0f) {
-							Console::print(to_string(joints[i * 4 + j]) + " -> " + to_string(weights[i * 4 + j]) + "; ");
+							// TODO: reuse weights
 							skinningJointWeights[i].push_back(JointWeight(joints[i * 4 + j], skinningWeights.size()));
 							skinningWeights.push_back(weights[i * 4 + j]);
 						}
 					}
-					Console::println();
 				}
 				skinning->setWeights(skinningWeights);
 				skinning->setVerticesJointsWeights(skinningJointWeights);
