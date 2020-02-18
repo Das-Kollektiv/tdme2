@@ -382,6 +382,18 @@ public:
 	 */
 	void bindTexture(int32_t textureId);
 
+	/**
+	 * Bind mask texture
+	 * @param textureId texture
+	 */
+	void bindMask(int32_t textureId);
+
+	/**
+	 * Set mask max value
+	 * @param maskMaxValue mask maximum value
+	 */
+	void setMaskMaxValue(float maskMaxValue);
+
 	/** 
 	 * Render 
 	 */

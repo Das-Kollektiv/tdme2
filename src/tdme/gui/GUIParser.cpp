@@ -48,6 +48,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
@@ -102,6 +103,7 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
@@ -547,7 +549,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-top"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-bottom")))
-					)
+					),
+					StringUtils::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("mask"))))),
+					Float::parseFloat(string(AVOID_NULLPTR_STRING(node->Attribute("mask-max-value"))))
 				);
 				guiParentNode->addSubNode(guiImageNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {

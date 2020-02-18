@@ -942,6 +942,19 @@ public:
 	 */
 	virtual void bindVertexArrayObject(int32_t vertexArrayObjectId) = 0;
 
+	/**
+	 * Get mask max value
+	 * @return mask max value
+	 */
+	virtual float getMaskMaxValue(void* context) = 0;
+
+	/**
+	 * Set mask max value
+	 * @param context context
+	 * @param maskMinValue mask mask value
+	 */
+	virtual void setMaskMaxValue(void* context, float maskMaxValue) = 0;
+
 	/** 
 	 * Set up renderer for GUI rendering
 	 */

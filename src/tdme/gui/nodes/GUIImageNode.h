@@ -47,6 +47,9 @@ private:
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
 	GUINode_Clipping clipping;
+	Texture* maskTexture { nullptr };
+	float maskMaxValue;
+	int32_t maskTextureId { 0 };
 
 protected:
 	/** 
@@ -77,6 +80,8 @@ protected:
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
 	 * @param clipping clipping
+	 * @param mask mask image
+	 * @param maskMaxValue maximum value of mask to display image
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIImageNode(
@@ -99,7 +104,9 @@ protected:
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,
-		const GUINode_Clipping& clipping
+		const GUINode_Clipping& clipping,
+		const string& mask,
+		float maskMaxValue
 	);
 
 public:
@@ -110,15 +117,15 @@ public:
 	void render(GUIRenderer* guiRenderer) override;
 
 	/**
+	 * @return image source
+	 */
+	const string& getSource();
+
+	/**
 	 * Set image source
 	 * @param source source
 	 */
 	void setSource(const string& source);
-
-	/**
-	 * @return image source
-	 */
-	const string& getSource();
 
 	/**
 	 * Set texture matrix
@@ -163,8 +170,35 @@ public:
 	 */
 	static GUINode_Clipping createClipping(const string& allClipping, const string& left, const string& top, const string& right, const string& bottom);
 
+	/**
+	 * @return mask source
+	 */
+	const string& getMask();
+
+	/**
+	 * Set mask source
+	 * @param mask mask source
+	 */
+	void setMask(const string& mask);
+
+	/**
+	 * @return maximum value of mask to display image
+	 */
+	float getMaskMaxValue() {
+		return maskMaxValue;
+	}
+
+	/**
+	 * Set maximum value of mask to display image
+	 * @param maskMinValue value of mask to display image
+	 */
+	void setMaskMaxValue(float maskMaxValue) {
+		this->maskMaxValue = maskMaxValue;
+	}
+
 private:
 	string source;
 	Matrix2D3x3 textureMatrix;
 	GUINode_Scale9Grid scale9Grid;
+	string mask;
 };

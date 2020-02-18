@@ -50,6 +50,15 @@ void GUIShader::initialize()
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(programId, "diffuseTextureAvailable");
 	if (uniformDiffuseTextureAvailable == -1) return;
 
+	uniformMaskTextureUnit = renderer->getProgramUniformLocation(programId, "maskTextureUnit");
+	if (uniformMaskTextureUnit == -1) return;
+
+	uniformMaskTextureAvailable = renderer->getProgramUniformLocation(programId, "maskTextureAvailable");
+	if (uniformMaskTextureAvailable == -1) return;
+
+	uniformMaskMaxValue = renderer->getProgramUniformLocation(programId, "maskMaxValue");
+	if (uniformMaskMaxValue == -1) return;
+
 	uniformEffectColorMul = renderer->getProgramUniformLocation(programId, "effectColorMul");
 	if (uniformEffectColorMul == -1) return;
 
@@ -67,6 +76,9 @@ void GUIShader::useProgram()
 {
 	renderer->useProgram(renderer->getDefaultContext(), programId);
 	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureUnit, 0);
+	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformMaskTextureUnit, 1);
+	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformMaskTextureAvailable, 0);
+	renderer->setProgramUniformFloat(renderer->getDefaultContext(), uniformMaskMaxValue, 1.0);
 	isRunning = true;
 }
 
@@ -79,7 +91,15 @@ void GUIShader::unUseProgram()
 void GUIShader::bindTexture(int32_t textureId)
 {
 	if (isRunning == false) return;
-	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+	switch(renderer->getTextureUnit(renderer->getDefaultContext())) {
+		case 0:
+			renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			break;
+		case 1:
+			renderer->setProgramUniformFloat(renderer->getDefaultContext(), uniformMaskMaxValue, renderer->getMaskMaxValue(renderer->getDefaultContext()));
+			renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformMaskTextureAvailable, textureId == 0 ? 0 : 1);
+			break;
+	}
 }
 
 void GUIShader::updateEffect()

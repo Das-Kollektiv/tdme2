@@ -49,3 +49,11 @@ const string SingleThreadedRenderer::getShader(void* context) {
 void SingleThreadedRenderer::setShader(void* context, const string& id) {
 	shader = id;
 }
+
+float SingleThreadedRenderer::getMaskMaxValue(void* context) {
+	return maskMaxValue;
+}
+
+void SingleThreadedRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
+	this->maskMaxValue = maskMaxValue;
+}

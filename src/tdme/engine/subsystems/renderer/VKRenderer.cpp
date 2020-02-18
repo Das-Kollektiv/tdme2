@@ -5865,3 +5865,13 @@ void VKRenderer::setShader(void* context, const string& id) {
 	if (VERBOSE == true) Console::println("VKRenderer::setShader(): " + to_string(contextTyped.idx) + ": " + contextTyped.shader + " --> " + id);
 	contextTyped.shader = id;
 }
+
+float VKRenderer::getMaskMaxValue(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.maskMaxValue;
+}
+
+void VKRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.maskMaxValue = maskMaxValue;
+}

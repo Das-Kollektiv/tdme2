@@ -2,8 +2,10 @@
 
 // uniforms
 uniform sampler2D diffuseTextureUnit;
-
 uniform int diffuseTextureAvailable;
+uniform sampler2D maskTextureUnit;
+uniform int maskTextureAvailable;
+uniform float maskMaxValue;
 uniform vec4 effectColorMul;
 uniform vec4 effectColorAdd;
 
@@ -16,6 +18,10 @@ out vec4 outColor;
 
 // main
 void main(void) {
+	if (maskTextureAvailable == 1) {
+		vec3 maskColor = texture2D(maskTextureUnit, vsFragTextureUV).rgb;
+		if ((maskColor.r + maskColor.g + maskColor.b) / 3.0 > maskMaxValue) discard;
+	}
 	if (diffuseTextureAvailable == 1) {
 		outColor = clamp((effectColorAdd + texture(diffuseTextureUnit, vsFragTextureUV) * vsFragColor * effectColorMul), 0.0, 1.0);
 	} else {

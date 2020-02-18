@@ -288,6 +288,8 @@ private:
 		int front_face_index { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
 
 		int32_t program_id { 0 };
+
+		float maskMaxValue { 1.0f };
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
@@ -573,6 +575,9 @@ public:
 	virtual Renderer_Material& getMaterial(void* context) override;
 	virtual const string getShader(void* context) override;
 	virtual void setShader(void* context, const string& id) override;
+	virtual float getMaskMaxValue(void* context) override;
+	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
+
 
 public:
 	/**

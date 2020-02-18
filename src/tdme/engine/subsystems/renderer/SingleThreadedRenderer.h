@@ -34,6 +34,7 @@ private:
 	Renderer_Material material;
 	array<Renderer_Light, 8> lights;
 	Matrix2D3x3 textureMatrix;
+	float maskMaxValue { 1.0f };
 
 protected:
 	string shader;
@@ -46,6 +47,8 @@ public:
 	virtual Renderer_Material& getMaterial(void* context) override;
 	virtual const string getShader(void* context) override;
 	virtual void setShader(void* context, const string& id) override;
+	virtual float getMaskMaxValue(void* context) override;
+	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
 
 	/**
 	 * Public constructor

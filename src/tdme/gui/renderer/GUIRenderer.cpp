@@ -317,6 +317,17 @@ void GUIRenderer::bindTexture(int32_t textureId)
 	renderer->bindTexture(renderer->getDefaultContext(), textureId);
 }
 
+void GUIRenderer::bindMask(int32_t textureId)
+{
+	renderer->setTextureUnit(renderer->getDefaultContext(), 1);
+	renderer->bindTexture(renderer->getDefaultContext(), textureId);
+	renderer->setTextureUnit(renderer->getDefaultContext(), 0);
+}
+
+void GUIRenderer::setMaskMaxValue(float maskMaxValue) {
+	renderer->setMaskMaxValue(renderer->getDefaultContext(), maskMaxValue);
+}
+
 void GUIRenderer::render()
 {
 	if (quadCount == 0) {

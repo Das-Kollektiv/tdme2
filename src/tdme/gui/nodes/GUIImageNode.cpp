@@ -52,7 +52,9 @@ GUIImageNode::GUIImageNode(
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Scale9Grid& scale9Grid,
-	const GUINode_Clipping& clipping):
+	const GUINode_Clipping& clipping,
+	const string& mask,
+	float maskMaxValue):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->effectColorMul = effectColorMul;
@@ -61,6 +63,8 @@ GUIImageNode::GUIImageNode(
 	this->textureMatrix.identity();
 	this->setSource(source);
 	this->clipping = clipping;
+	this->setMask(mask);
+	this->maskMaxValue = maskMaxValue;
 }
 
 const string GUIImageNode::getNodeType()
@@ -123,6 +127,10 @@ void GUIImageNode::render(GUIRenderer* guiRenderer)
 
 	// render texture if required
 	if (textureId != 0) {
+		if (maskTextureId != 0) {
+			guiRenderer->setMaskMaxValue(maskMaxValue);
+			guiRenderer->bindMask(maskTextureId);
+		}
 		auto screenWidth = screenNode->getScreenWidth();
 		auto screenHeight = screenNode->getScreenHeight();
 		guiRenderer->bindTexture(textureId);
@@ -462,8 +470,16 @@ void GUIImageNode::render(GUIRenderer* guiRenderer)
 		}
 		guiRenderer->render();
 		guiRenderer->bindTexture(0);
+		if (maskTextureId != 0) {
+			guiRenderer->setMaskMaxValue(1.0f);
+			guiRenderer->bindMask(0);
+		}
 		guiRenderer->setTexureMatrix((Matrix2D3x3()).identity());
 	}
+}
+
+const string& GUIImageNode::getSource() {
+	return source;
 }
 
 void GUIImageNode::setSource(const string& source) {
@@ -474,10 +490,6 @@ void GUIImageNode::setSource(const string& source) {
 	this->source = source;
 	this->texture = source.empty() == true?nullptr:GUI::getImage(source);
 	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
-}
-
-const string& GUIImageNode::getSource() {
-	return source;
 }
 
 void GUIImageNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
@@ -516,4 +528,18 @@ GUINode_Clipping GUIImageNode::createClipping(const string& allClipping, const s
 	clipping.right = getRequestedPixelValue(right, clipping.right);
 	clipping.bottom = getRequestedPixelValue(bottom, clipping.bottom);
 	return clipping;
+}
+
+const string& GUIImageNode::getMask() {
+	return mask;
+}
+
+void GUIImageNode::setMask(const string& mask) {
+	if (maskTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(maskTexture->getId());
+		maskTexture = nullptr;
+	}
+	this->mask = mask;
+	this->maskTexture = mask.empty() == true?nullptr:GUI::getImage(mask);
+	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, nullptr);
 }

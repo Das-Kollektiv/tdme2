@@ -6,6 +6,7 @@
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementIgnoreEventsController.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_ComputedConstraints.h>
@@ -20,6 +21,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/Float.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -30,6 +32,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementIgnoreEventsController;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
@@ -43,6 +46,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::Console;
+using tdme::utils::Float;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
 
@@ -284,6 +288,7 @@ void GUIElementNode::executeExpression(const string& expression) {
 			nodeId = StringUtils::trim(t2.nextToken());
 			subCommand = StringUtils::trim(t2.nextToken());
 		}
+		// element (controller) values
 		if (subCommand == "value") {
 			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
 			auto nodeController = nodeElementNode != nullptr?nodeElementNode->getController():nullptr;
@@ -298,6 +303,7 @@ void GUIElementNode::executeExpression(const string& expression) {
 				Console::println("GUIElementController::executeExpression(): Unknown value in expression: " + value);
 			}
 		} else
+		// element conditions
 		if (subCommand == "condition") {
 			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
 			if (nodeElementNode != nullptr) {
@@ -322,8 +328,20 @@ void GUIElementNode::executeExpression(const string& expression) {
 					nodeElementNode->getActiveConditions().add(value);
 				}
 			}
+		} else
+		// image node specific data
+		if (subCommand == "maskmaxvalue") {
+			auto imageNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById(nodeId));
+			if (StringUtils::endsWith(value, ".value") == true) {
+				auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringUtils::substring(value, 0, value.length() - string(".value").size())));
+				auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
+				if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parseFloat(nodeValueController->getValue().getString()));
+			} else {
+				imageNode->setMaskMaxValue(Float::parseFloat(value));
+			}
+		} else {
+			Console::println("GUIElementController::executeExpression(): Unknown sub command in expression: " + subCommand);
 		}
-
 	}
 }
 
