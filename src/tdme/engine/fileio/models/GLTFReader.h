@@ -50,20 +50,22 @@ private:
 
 	/**
 	 * Parse GLTF node
+	 * @param pathName path name
 	 * @param gltfModel GLTF mode
 	 * @param gltfNodeIdx GLTF node index
 	 * @param model TDME model 
 	 * @param parentGroup TDME parent group
 	 */
-	static Group* parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Group* parentGroup);
+	static Group* parseNode(const string& pathName, const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Group* parentGroup);
 
 	/**
 	 * Parse GLTF node children into TDME group
+	 * @param pathName path name
 	 * @param gltfModel GLTF model
 	 * @param gltfNodeChildrenIdx GLTF node children indices
 	 * @param parentGroup TDME parent group
 	 */
-	static void parseNodeChildren(const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Group* parentGroup); 
+	static void parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Group* parentGroup);
 
 	/**
 	 * Write PNG from memory

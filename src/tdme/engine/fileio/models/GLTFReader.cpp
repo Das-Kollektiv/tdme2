@@ -97,10 +97,10 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	for (auto& gltfScene: gltfModel.scenes) {
 		for (auto gltfNodeIdx: gltfScene.nodes) { 
 			auto& node = gltfModel.nodes[gltfNodeIdx]; 
-			auto group = parseNode(gltfModel, gltfNodeIdx, model, nullptr);
+			auto group = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr);
 			model->getGroups()[group->getId()] = group;
 			model->getSubGroups()[group->getId()] = group;
-			if (node.children.empty() == false) parseNodeChildren(gltfModel, node.children, group);
+			if (node.children.empty() == false) parseNodeChildren(pathName, gltfModel, node.children, group);
 		}	
 	} 
 
@@ -213,7 +213,7 @@ size_t GLTFReader::getComponentTypeByteSize(int type) {
 	}
 }
 
-Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Group* parentGroup) {
+Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Group* parentGroup) {
 	auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
 	auto group = new Group(model, parentGroup, gltfNode.name, gltfNode.name);
 	if (gltfNode.matrix.size() == 16) {
@@ -296,10 +296,10 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 					if (image.mimeType == "image/png")
 						try {
 							auto fileName = image.name + ".png";
-							if (writePNG(".", fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+							if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 								Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
 							}
-							material->setDiffuseTexture(".", fileName);
+							material->setDiffuseTexture(pathName, fileName);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
 					}
@@ -534,13 +534,13 @@ Group* GLTFReader::parseNode(const tinygltf::Model& gltfModel, int gltfNodeIdx, 
 	return group;
 } 
 
-void GLTFReader::parseNodeChildren(const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Group* parentGroup) {
+void GLTFReader::parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Group* parentGroup) {
 	for (auto gltfNodeIdx: gltfNodeChildrenIdx) { 
 		auto& node = gltfModel.nodes[gltfNodeIdx];
-		auto group = parseNode(gltfModel, gltfNodeIdx, parentGroup->getModel(), parentGroup);
+		auto group = parseNode(pathName, gltfModel, gltfNodeIdx, parentGroup->getModel(), parentGroup);
 		parentGroup->getModel()->getGroups()[group->getId()] = group;
 		parentGroup->getSubGroups()[group->getId()] = group;
-		if (node.children.empty() == false) parseNodeChildren(gltfModel, node.children, group);
+		if (node.children.empty() == false) parseNodeChildren(pathName, gltfModel, node.children, group);
 	}	
 } 
 
@@ -571,6 +571,23 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 
 	png_init_io(png, fp);
 
+	auto targetBitsPerPixel = bitsPerPixel;
+	png_bytep* row_pointers = new png_bytep[height];
+	for (auto y = 0; y < height; y++) row_pointers[y] = (png_bytep)(pixels + 	width * (bitsPerPixel / 8) * (height - 1 - y));
+	// try to reduce from 32 bits with alpha to 24 bits without alpha
+	if (targetBitsPerPixel == 32) {
+		targetBitsPerPixel = 24;
+		for (auto y = 0; y < height; y++) {
+			for (auto x = 0; x < width / 4; x++) {
+				if (row_pointers[y][x * 4 + 3] < 255) {
+					targetBitsPerPixel = 32;
+					break;
+				}
+			}
+			if (targetBitsPerPixel == 32) break;
+		}
+	}
+
 	// output is 8bit depth, RGBA format.
 	png_set_IHDR(
 		png,
@@ -578,7 +595,7 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 		width,
 		height,
 		8,
-		bitsPerPixel == 32?PNG_COLOR_TYPE_RGBA:PNG_COLOR_TYPE_RGB,
+		targetBitsPerPixel == 32?PNG_COLOR_TYPE_RGBA:PNG_COLOR_TYPE_RGB,
 		PNG_INTERLACE_NONE,
 		PNG_COMPRESSION_TYPE_DEFAULT,
 		PNG_FILTER_TYPE_DEFAULT
@@ -586,10 +603,9 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 	png_write_info(png, info);
 
 	// Remove the alpha channel for PNG_COLOR_TYPE_RGB format
-	// png_set_filler(png, 0, PNG_FILLER_AFTER);
-
-	png_bytep* row_pointers = new png_bytep[height];
-	for (auto y = 0; y < height; y++) row_pointers[y] = (png_bytep)(pixels + 	width * (bitsPerPixel / 8) * (height - 1 - y));
+	if (bitsPerPixel == 32 && targetBitsPerPixel == 24) {
+		png_set_filler(png, 0, PNG_FILLER_AFTER);
+	}
 
 	png_write_image(png, row_pointers);
 	png_write_end(png, NULL);
