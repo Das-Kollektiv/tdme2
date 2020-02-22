@@ -19,7 +19,7 @@ out vec4 outColor;
 // main
 void main(void) {
 	if (maskTextureAvailable == 1) {
-		vec3 maskColor = texture2D(maskTextureUnit, vsFragTextureUV).rgb;
+		vec3 maskColor = texture(maskTextureUnit, vsFragTextureUV).rgb;
 		if ((maskColor.r + maskColor.g + maskColor.b) / 3.0 > maskMaxValue) discard;
 	}
 	if (diffuseTextureAvailable == 1) {
