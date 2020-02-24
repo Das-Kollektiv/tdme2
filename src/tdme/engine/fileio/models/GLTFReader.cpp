@@ -36,8 +36,6 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 
-#include <ext/tinyxml/tinyxml.h>
-
 using std::map;
 using std::to_string;
 using std::set;
@@ -71,6 +69,7 @@ using tdme::utils::Exception;
 
 Model* GLTFReader::read(const string& pathName, const string& fileName)
 {
+	// load model
 	string err;
 	string warn;
 	tinygltf::Model gltfModel;
@@ -92,8 +91,6 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 		nullptr,
 		model::Model::AUTHORINGTOOL_UNKNOWN
 	);
-	// TODO: Z-Up for now
-	// model->setImportTransformationsMatrix((Matrix4x4()).identity().rotate(-90.0f, Vector3(1.0f, 0.0f, 0.0f)));
 
 	// parse nodes aka scene
 	for (auto& gltfScene: gltfModel.scenes) {
@@ -107,7 +104,6 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	} 
 
 	// animations
-	// TODO: key times and interpolation
 	auto maxFrames = 0;
 	{
 		set<string> animationGroups;
