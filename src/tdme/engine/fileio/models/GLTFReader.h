@@ -49,6 +49,17 @@ private:
 	static size_t getComponentTypeByteSize(int type);
 
 	/**
+	 * Interpolate key frames to our internal 30fps format
+	 * @param frameTimeCount frame time count
+	 * @param frameTimes frameTimes
+	 * @param keyFrameMatrices key frame matrices
+	 * @param interpolatedMatrixCount interpolated matrix count
+	 * @param interpolatedMatrices interpolated matrices
+	 * @param frameStartIdx frame start idx
+	 */
+	static void interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Matrix4x4>& keyFrameMatrices, int interpolatedMatrixCount, vector<Matrix4x4>& interpolatedMatrices, int frameStartIdx);
+
+	/**
 	 * Parse GLTF node
 	 * @param pathName path name
 	 * @param gltfModel GLTF mode

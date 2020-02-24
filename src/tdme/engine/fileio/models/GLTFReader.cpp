@@ -115,7 +115,6 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 		map<string, vector<Matrix4x4>> animationRotationMatrices;
 		map<string, vector<Matrix4x4>> animationTranslationMatrices;
 		for (auto& gltfAnimation: gltfModel.animations) {
-			// TRS matrices for each frame and groups
 			auto frames = 0;
 			for (auto& gltfChannel: gltfAnimation.channels) {
 				Group* group = model->getGroupById(gltfModel.nodes[gltfChannel.target_node].name);
@@ -125,51 +124,57 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				auto& animationInputBufferView = gltfModel.bufferViews[animationInputAccessor.bufferView];
 				auto& animationInputBuffer = gltfModel.buffers[animationInputBufferView.buffer];
 				const float* animationInputBufferData = (const float*)(animationInputBuffer.data.data() + animationInputAccessor.byteOffset + animationInputBufferView.byteOffset);
-				if (maxFrames + animationInputAccessor.count > animationScaleMatrices[group->getId()].size()) {
-					animationScaleMatrices[group->getId()].resize(maxFrames + animationInputAccessor.count);
-					for (auto i = 0; i < animationInputAccessor.count; i++) animationScaleMatrices[group->getId()][maxFrames + i].identity();
+				auto channelFrames = static_cast<int32_t>(Math::ceil(animationInputBufferData[animationInputAccessor.count - 1] * 30.0f));
+				if (maxFrames + channelFrames > animationScaleMatrices[group->getId()].size()) {
+					animationScaleMatrices[group->getId()].resize(maxFrames + channelFrames);
+					for (auto i = 0; i < channelFrames; i++) animationScaleMatrices[group->getId()][maxFrames + i].identity();
 				}
-				if (maxFrames + animationInputAccessor.count > animationRotationMatrices[group->getId()].size()) {
-					animationRotationMatrices[group->getId()].resize(maxFrames + animationInputAccessor.count);
-					for (auto i = 0; i < animationInputAccessor.count; i++) animationRotationMatrices[group->getId()][maxFrames + i].identity();
+				if (maxFrames + channelFrames > animationRotationMatrices[group->getId()].size()) {
+					animationRotationMatrices[group->getId()].resize(maxFrames + channelFrames);
+					for (auto i = 0; i < channelFrames; i++) animationRotationMatrices[group->getId()][maxFrames + i].identity();
 				}
-				if (maxFrames + animationInputAccessor.count > animationTranslationMatrices[group->getId()].size()) {
-					animationTranslationMatrices[group->getId()].resize(maxFrames + animationInputAccessor.count);
-					for (auto i = 0; i < animationInputAccessor.count; i++) animationTranslationMatrices[group->getId()][maxFrames + i].identity();
+				if (maxFrames + channelFrames > animationTranslationMatrices[group->getId()].size()) {
+					animationTranslationMatrices[group->getId()].resize(maxFrames + channelFrames);
+					for (auto i = 0; i < channelFrames; i++) animationTranslationMatrices[group->getId()][maxFrames + i].identity();
 				}
-				/*
-				// TODO: later
-				Console::println("Input: ");
-				for (auto i = 0; i < animationInputAccessor.count; i++) {
-					Console::print(to_string(animationInputBufferData[i]) + ";");
-				}
-				Console::println();
-				*/
 				auto& animationOutputAccessor = gltfModel.accessors[gltfSample.output];
 				auto& animationOutputBufferView = gltfModel.bufferViews[animationOutputAccessor.bufferView];
 				auto& animationOutputBuffer = gltfModel.buffers[animationOutputBufferView.buffer];
 				const float* animationOutputBufferData = (const float*)(animationOutputBuffer.data.data() + animationOutputAccessor.byteOffset + animationOutputBufferView.byteOffset);
 				if (gltfChannel.target_path == "translation") {
+					vector<Matrix4x4> keyFrameMatrices;
+					keyFrameMatrices.resize(animationOutputAccessor.count);
 					for (auto i = 0; i < animationOutputAccessor.count; i++) {
-						animationTranslationMatrices[group->getId()][maxFrames + i].translate(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
+						keyFrameMatrices[i].identity();
+						keyFrameMatrices[i].translate(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
 					}
+					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, animationTranslationMatrices[group->getId()], maxFrames);
 				} else
 				if (gltfChannel.target_path == "rotation") {
+					vector<Matrix4x4> keyFrameMatrices;
+					keyFrameMatrices.resize(animationOutputAccessor.count);
 					Quaternion rotationQuaternion;
 					for (auto i = 0; i < animationOutputAccessor.count; i++) {
+						keyFrameMatrices[i].identity();
 						rotationQuaternion.set(animationOutputBufferData[i * 4 + 0], animationOutputBufferData[i * 4 + 1], animationOutputBufferData[i * 4 + 2], animationOutputBufferData[i * 4 + 3]);
-						rotationQuaternion.computeMatrix(animationRotationMatrices[group->getId()][maxFrames + i]);
+						rotationQuaternion.computeMatrix(keyFrameMatrices[i]);
 					}
+					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, animationRotationMatrices[group->getId()], maxFrames);
 				} else
 				if (gltfChannel.target_path == "scale") {
+					vector<Matrix4x4> keyFrameMatrices;
+					keyFrameMatrices.resize(animationOutputAccessor.count);
 					for (auto i = 0; i < animationOutputAccessor.count; i++) {
-						animationScaleMatrices[group->getId()][maxFrames + i].scale(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
+						keyFrameMatrices[i].identity();
+						keyFrameMatrices[i].scale(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
 					}
+					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, animationScaleMatrices[group->getId()], maxFrames);
 				} else {
 					Console::println("GLTFReader::GLTFReader(): " + gltfAnimation.name + ": Invalid target path:" + gltfChannel.target_path);
 				}
-				if (animationInputAccessor.count > frames) frames = animationInputAccessor.count;
+				if (channelFrames > frames) frames = channelFrames;
 			}
+			model->addAnimationSetup(gltfAnimation.name, maxFrames, maxFrames + frames - 1, false);
 			maxFrames+= frames;
 		}
 		// set up groups animations if we have frames
@@ -216,6 +221,31 @@ size_t GLTFReader::getComponentTypeByteSize(int type) {
 			return sizeof(double);
 		default:
 			return 0;
+	}
+}
+
+void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Matrix4x4>& keyFrameMatrices, int interpolatedMatrixCount, vector<Matrix4x4>& interpolatedMatrices, int frameStartIdx) { 
+	auto tansformationsMatrixLast = &keyFrameMatrices[0];
+	auto keyFrameIdx = 0;
+	auto frameIdx = 0;
+	auto timeStampLast = 0.0f;
+	for (auto i = 0; i < frameTimeCount; i++) {
+		auto keyFrameTime = frameTimes[i];
+		auto transformationsMatrixCurrent = &keyFrameMatrices[(keyFrameIdx) % keyFrameMatrices.size()];
+		float timeStamp;
+		for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / 30.0f) {
+			if (frameIdx >= interpolatedMatrixCount) {
+				// TODO: check me again!
+				// Console::println(string("Warning: skipping frame: ") + to_string(frameIdx));
+				frameIdx++;
+				continue;
+			}
+			Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast), interpolatedMatrices[frameStartIdx +  frameIdx]);
+			frameIdx++;
+		}
+		timeStampLast = timeStamp;
+		tansformationsMatrixLast = transformationsMatrixCurrent;
+		keyFrameIdx++;
 	}
 }
 

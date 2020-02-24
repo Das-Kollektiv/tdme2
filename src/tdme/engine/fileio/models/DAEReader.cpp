@@ -384,7 +384,8 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 									float timeStamp;
 									for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / fps) {
 										if (frameIdx >= frames) {
-											Console::println(string("Warning: skipping frame: ") + to_string(frameIdx));
+											// TODO: check me again!
+											// Console::println(string("Warning: skipping frame: ") + to_string(frameIdx));
 											frameIdx++;
 											continue;
 										}
