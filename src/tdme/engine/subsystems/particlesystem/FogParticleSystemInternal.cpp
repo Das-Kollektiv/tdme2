@@ -73,7 +73,6 @@ void FogParticleSystemInternal::initialize() {
 	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, renderer->getDefaultContext());
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 
-	//
 	// enable particle system
 	active = true;
 	// emit particles
@@ -156,14 +155,15 @@ void FogParticleSystemInternal::updateParticles()
 	if (enabled == false || active == false) return;
 
 	//
+	auto& center = emitter->getCenter();
 	Vector3 point;
 	// bounding box transformed min, max xyz
 	auto& bbMinXYZ = boundingBox.getMin().getArray();
 	auto& bbMaxXYZ = boundingBox.getMax().getArray();
 	//
 	auto haveBoundingBox = false;
-	// points are stored in camera space in points render pool
-	auto& modelMatrix = getTransformationsMatrix();
+	// transformations
+	auto& transformationsMatrix = getTransformationsMatrix();
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -173,24 +173,27 @@ void FogParticleSystemInternal::updateParticles()
 		if (particle.active == false) continue;
 		// sprite index
 		particle.spriteIndex+= (static_cast<float>(timeDelta) / 1000.0f) * fps;
-		// transform particle position to camera space
-		modelMatrix.multiply(particle.position, point);
 		//
 		activeParticles++;
 		// set up bounding box
-		auto& positionXYZ = particle.position.getArray();
+		point.set(particle.position);
+		point.add(center);
+		auto& pointXYZ = point.getArray();
 		if (haveBoundingBox == false) {
-			bbMinXYZ = positionXYZ;
-			bbMaxXYZ = positionXYZ;
+			bbMinXYZ = pointXYZ;
+			bbMaxXYZ = pointXYZ;
 			haveBoundingBox = true;
 		} else {
-			if (positionXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = positionXYZ[0];
-			if (positionXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = positionXYZ[1];
-			if (positionXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = positionXYZ[2];
-			if (positionXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = positionXYZ[0];
-			if (positionXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = positionXYZ[1];
-			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
+			if (pointXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = pointXYZ[0];
+			if (pointXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = pointXYZ[1];
+			if (pointXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = pointXYZ[2];
+			if (pointXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = pointXYZ[0];
+			if (pointXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = pointXYZ[1];
+			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
+		// transform particle according to its transformations
+		transformationsMatrix.multiply(point, point);
+		// add to render points pool
 		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), particle.color, 1, this);
 	}
 	// auto disable particle system if no more active particles

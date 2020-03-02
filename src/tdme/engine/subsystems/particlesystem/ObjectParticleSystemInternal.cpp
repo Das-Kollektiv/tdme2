@@ -135,6 +135,8 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 	}
 	// skip if nothing to spawn
 	if (particlesToSpawn == 0) return 0;
+	//
+	auto& center = emitter->getCenter();
 	// spawn
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {
@@ -142,6 +144,7 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 		if (particle.active == true) continue;
 		// emit particle
 		emitter->emit(&particle);
+		particle.position.add(center);
 		// enable object
 		auto object = objects[i];
 		object->setTranslation(particle.position);
@@ -160,6 +163,8 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 
 void ObjectParticleSystemInternal::updateParticles()
 {
+	auto& center = emitter->getCenter();
+	Vector3 point;
 	Vector3 velocityForTime;
 	auto first = true;
 	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
@@ -189,7 +194,9 @@ void ObjectParticleSystemInternal::updateParticles()
 		object->setEffectColorAdd(effectColorAdd);
 		object->setEffectColorMul(effectColorMul);
 		// translation
-		object->setTranslation(object->getTranslation().clone().add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f)));
+		point.set(particle.position);
+		point.add(center);
+		object->setTranslation(point.add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f)));
 		object->update();
 		if (first == true) {
 			boundingBoxTransformed.getMin().set(object->getBoundingBoxTransformed()->getMin());

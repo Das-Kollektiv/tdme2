@@ -117,6 +117,10 @@ public:
 	void setEngine(Engine* engine) override;
 	void setRenderer(Renderer* renderer) override;
 
+	inline ParticleEmitter* getEmitter() override {
+		return nullptr;
+	}
+
 	inline const Color4& getEffectColorAdd() const override {
 		return effectColorAdd;
 	}

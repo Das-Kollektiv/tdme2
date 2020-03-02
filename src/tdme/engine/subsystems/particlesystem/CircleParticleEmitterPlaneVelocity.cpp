@@ -53,7 +53,6 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	particle->position.set(cosOnAxis0);
 	particle->position.add(sinOnAxis1);
 	particle->position.scale(radiusTransformed);
-	particle->position.add(centerTransformed);
 	// compute velocity
 	particle->velocity.set(particle->position).sub(centerTransformed).normalize().scale(velocity + (Math::random() * velocityRnd)).scale(scale);
 	// mass

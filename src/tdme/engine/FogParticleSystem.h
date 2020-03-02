@@ -91,6 +91,10 @@ public:
 	void setRenderer(Renderer* renderer) override;
 	void dispose() override;
 
+	inline ParticleEmitter* getEmitter() override {
+		return FogParticleSystemInternal::getEmitter();
+	}
+
 	inline const Color4& getEffectColorAdd() const override {
 		return FogParticleSystemInternal::getEffectColorAdd();
 	}

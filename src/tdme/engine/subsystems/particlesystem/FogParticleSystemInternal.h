@@ -88,6 +88,10 @@ public:
 	 */
 	void initialize();
 
+	inline ParticleEmitter* getEmitter() override {
+		return emitter;
+	}
+
 	inline const string& getId() override {
 		return id;
 	}

@@ -76,15 +76,16 @@ protected:
 	float particlesToSpawnRemainder;
 
 	/**
-	 * Update internal
+	 * Update bounding volume
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
 		getTransformationsMatrix().getScale(scale);
 		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
-		emitter->fromTransformations(*this);
-		inverseTransformation.fromTransformations(*this);
-		inverseTransformation.invert();
+		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
+		boundingBoxTransformed.getMax().add(0.05f); // same here
+		boundingBoxTransformed.update();
 	}
 
 public:
@@ -92,6 +93,10 @@ public:
 	 * Initialize
 	 */
 	void initialize();
+
+	inline ParticleEmitter* getEmitter() override {
+		return emitter;
+	}
 
 	inline const string& getId() override {
 		return id;

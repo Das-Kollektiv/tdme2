@@ -26,6 +26,11 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal
 	 */
 	virtual ~ParticleSystemEntityInternal() {}
 
+	/**
+	 * @return particle emitter
+	 */
+	virtual ParticleEmitter* getEmitter() = 0;
+
 	/** 
 	 * @return object id
 	 */

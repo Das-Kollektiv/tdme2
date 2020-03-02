@@ -97,6 +97,9 @@ void PointsParticleSystemInternal::updateParticles()
 	if (enabled == false || active == false)
 		return;
 
+	//
+	auto& center = emitter->getCenter();
+	Vector3 point;
 	Vector3 velocityForTime;
 	// bounding box transformed min, max xyz
 	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
@@ -105,6 +108,8 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
+	// transformations
+	auto& transformationsMatrix = getTransformationsMatrix();
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -141,21 +146,25 @@ void PointsParticleSystemInternal::updateParticles()
 		//
 		activeParticles++;
 		// set up bounding box
-		auto& positionXYZ = particle.position.getArray();
+		point.set(particle.position);
+		point.add(center);
+		auto& pointXYZ = point.getArray();
 		if (haveBoundingBox == false) {
-			bbMinXYZ = positionXYZ;
-			bbMaxXYZ = positionXYZ;
+			bbMinXYZ = pointXYZ;
+			bbMaxXYZ = pointXYZ;
 			haveBoundingBox = true;
 		} else {
-			if (positionXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = positionXYZ[0];
-			if (positionXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = positionXYZ[1];
-			if (positionXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = positionXYZ[2];
-			if (positionXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = positionXYZ[0];
-			if (positionXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = positionXYZ[1];
-			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
+			if (pointXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = pointXYZ[0];
+			if (pointXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = pointXYZ[1];
+			if (pointXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = pointXYZ[2];
+			if (pointXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = pointXYZ[0];
+			if (pointXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = pointXYZ[1];
+			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
-		//
-		pointsRenderPool->addPoint(particle.position, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), color, 0, this);
+		// transform particle according to its transformations
+		transformationsMatrix.multiply(point, point);
+		// add to render points pool
+		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), color, 0, this);
 	}
 	// auto disable particle system if no more active particles
 	if (activeParticles == 0) {
@@ -163,11 +172,11 @@ void PointsParticleSystemInternal::updateParticles()
 		return;
 	}
 	// scale a bit up to make picking work better
+	boundingBox.update();
+	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 	boundingBoxTransformed.getMin().sub(0.05f);
 	boundingBoxTransformed.getMax().add(0.05f);
-	// compute bounding boxes
 	boundingBoxTransformed.update();
-	boundingBox.fromBoundingVolumeWithTransformations(&boundingBoxTransformed, inverseTransformation);
 }
 
 void PointsParticleSystemInternal::dispose()
@@ -199,6 +208,8 @@ int32_t PointsParticleSystemInternal::emitParticles()
 	if (particlesToSpawn == 0) return 0;
 	//
 	Vector3 velocityForTime;
+	//
+	auto& center = emitter->getCenter();
 	// spawn
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {
@@ -207,6 +218,7 @@ int32_t PointsParticleSystemInternal::emitParticles()
 			continue;
 		// emit particle
 		emitter->emit(&particle);
+		particle.position.add(center);
 		// add gravity if our particle have a noticable mass, add translation
 		// add some movement with a min of 0 time delta and a max of engine time delta
 		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * timeDelta));

@@ -45,7 +45,11 @@ private:
 	Vector3 axis1Transformed;
 
 public:
-	// override methods
+	// overriden methods
+	inline const Vector3& getCenter() const override {
+		return centerTransformed;
+	}
+
 	inline int32_t getCount() const override {
 		return count;
 	}

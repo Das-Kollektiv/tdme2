@@ -9,6 +9,7 @@
 #include <tdme/tools/shared/controller/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
 #include <tdme/tools/shared/views/fwd-tdme.h>
+#include <tdme/tools/shared/views/Gizmo.h>
 #include <tdme/tools/shared/views/View.h>
 #include <tdme/tools/shared/views/PlayableSoundView.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
@@ -26,6 +27,7 @@ using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::tools::shared::views::EntityPhysicsView;
 using tdme::tools::shared::views::EntityDisplayView;
 using tdme::tools::shared::views::EntitySoundsView;
+using tdme::tools::shared::views::Gizmo;
 using tdme::tools::shared::views::View;
 using tdme::tools::shared::views::PlayableSoundView;
 using tdme::tools::shared::views::PopUps;
@@ -39,6 +41,7 @@ class tdme::tools::shared::views::SharedParticleSystemView
 	: public virtual View
 	, public virtual PlayableSoundView
 	, public virtual GUIInputEventHandler
+	, protected Gizmo
 {
 protected:
 	Engine* engine {  };
@@ -60,6 +63,9 @@ private:
 	int64_t audioOffset { -1LL };
 	int particleSystemIdx { 0 };
 	Vector3 objectScale;
+	int32_t mouseDownLastX;
+	int32_t mouseDownLastY;
+	Vector3 totalDeltaScale;
 
 	/**
 	 * Load settings
@@ -188,6 +194,27 @@ public:
 	 * On set entity data hook
 	 */
 	virtual void onSetEntityData();
+
+	/**
+	 * Update GIZMO
+	 * @param entity level editor entity
+	 */
+	virtual void updateGizmo(LevelEditorEntity* entity);
+
+	/**
+	 * Set GIZMO rotation
+	 * @param entity level editor entity
+	 * @param transformations transformations
+	 */
+	virtual void setGizmoRotation(LevelEditorEntity* entity, const Transformations& transformations);
+
+	/**
+	 * Apply particle system transformations
+	 * @param entity entity
+	 * @param objectScale object scale
+	 * @param guiOnly GUI only
+	 */
+	void applyParticleSystemTransformations(LevelEditorEntity* entity, const Vector3& objectScale, bool guiOnly);
 
 	/**
 	 * Public constructor

@@ -4,7 +4,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
@@ -39,7 +39,12 @@ private:
 	Color4 colorStart;
 	Color4 colorEnd;
 public:
-	// override methods
+	// overriden methods
+
+	inline const Vector3& getCenter() const override {
+		return obbTransformed->getCenter();
+	}
+
 	inline int32_t getCount() const override {
 		return count;
 	}

@@ -53,7 +53,6 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	particle->position.add(tmpAxis.set(obbAxes[0]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[0] * 2.0f) - obbHalfExtensionXYZ[0]));
 	particle->position.add(tmpAxis.set(obbAxes[1]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[1] * 2.0f) - obbHalfExtensionXYZ[1]));
 	particle->position.add(tmpAxis.set(obbAxes[2]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
-	particle->position.add(obbTransformed->getCenter());
 	// compute velocity
 	particle->velocity.set(
 		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),

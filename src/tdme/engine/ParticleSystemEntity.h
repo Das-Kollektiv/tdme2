@@ -5,10 +5,12 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 
 using std::string;
 
 using tdme::engine::Entity;
+using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 
 /** 
  * Particle system entity interface
@@ -21,6 +23,11 @@ struct tdme::engine::ParticleSystemEntity: public Entity
 	 * Public destructor
 	 */
 	virtual ~ParticleSystemEntity() {}
+
+	/**
+	 * @return particle emitter
+	 */
+	virtual ParticleEmitter* getEmitter() = 0;
 
 	/** 
 	 * @return true if active / particles available

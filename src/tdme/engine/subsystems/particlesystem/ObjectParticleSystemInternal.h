@@ -88,6 +88,10 @@ protected:
 	}
 
 public:
+	inline ParticleEmitter* getEmitter() override {
+		return emitter;
+	}
+
 	const string& getId() override;
 	void setEngine(Engine* engine);
 	void setRenderer(Renderer* renderer);

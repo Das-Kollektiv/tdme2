@@ -92,6 +92,10 @@ public:
 	void setRenderer(Renderer* renderer) override;
 	void dispose() override;
 
+	inline ParticleEmitter* getEmitter() override {
+		return PointsParticleSystemInternal::getEmitter();
+	}
+
 	inline const Color4& getEffectColorAdd() const override {
 		return PointsParticleSystemInternal::getEffectColorAdd();
 	}
