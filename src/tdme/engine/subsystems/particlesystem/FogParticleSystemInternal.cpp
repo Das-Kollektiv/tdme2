@@ -155,8 +155,11 @@ void FogParticleSystemInternal::updateParticles()
 	if (enabled == false || active == false) return;
 
 	//
-	auto& center = emitter->getCenter();
+	Vector3 center;
 	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
+	localTransformationsMatrix.getTranslation(center);
+	center.add(emitter->getCenter());
+	//
 	Vector3 point;
 	// bounding box transformed min, max xyz
 	auto& bbMinXYZ = boundingBox.getMin().getArray();

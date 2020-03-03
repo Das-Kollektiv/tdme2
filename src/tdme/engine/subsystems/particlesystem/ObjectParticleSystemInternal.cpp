@@ -135,8 +135,6 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 	}
 	// skip if nothing to spawn
 	if (particlesToSpawn == 0) return 0;
-	//
-	auto& center = emitter->getCenter();
 	// spawn
 	auto particlesSpawned = 0;
 	for (auto i = 0; i < particles.size(); i++) {
@@ -162,8 +160,12 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 
 void ObjectParticleSystemInternal::updateParticles()
 {
-	auto& center = emitter->getCenter();
+	//
+	Vector3 center;
 	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
+	localTransformationsMatrix.getTranslation(center);
+	center.add(emitter->getCenter());
+	//
 	Vector3 point;
 	Vector3 velocityForTime;
 	auto first = true;

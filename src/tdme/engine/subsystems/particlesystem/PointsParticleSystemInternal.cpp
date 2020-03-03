@@ -98,8 +98,11 @@ void PointsParticleSystemInternal::updateParticles()
 		return;
 
 	//
-	auto& center = emitter->getCenter();
+	Vector3 center;
 	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
+	localTransformationsMatrix.getTranslation(center);
+	center.add(emitter->getCenter());
+	//
 	Vector3 point;
 	Vector3 velocityForTime;
 	// bounding box transformed min, max xyz
