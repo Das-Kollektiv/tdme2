@@ -69,6 +69,8 @@ protected:
 	Color4 effectColorAdd;
 	bool pickable;
 
+	Transformations localTransformations;
+
 	/**
 	 * Update bounding volume
 	 */
@@ -76,6 +78,7 @@ protected:
 		Vector3 scale;
 		getTransformationsMatrix().getScale(scale);
 		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
+		pointSizeScale*= Math::max(localTransformations.getScale().getX(), Math::max(localTransformations.getScale().getY(), localTransformations.getScale().getZ()));
 		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
 		boundingBoxTransformed.getMax().add(0.05f); // same here
@@ -221,6 +224,13 @@ public:
 	void dispose();
 	inline int32_t emitParticles() override {
 		return 0;
+	}
+	inline const Transformations& getLocalTransformations() override {
+		return localTransformations;
+	}
+	inline void setLocalTransformations(const Transformations& transformations) override {
+		this->localTransformations = transformations;
+		updateInternal();
 	}
 
 	/** 

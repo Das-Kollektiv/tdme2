@@ -144,7 +144,6 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 		if (particle.active == true) continue;
 		// emit particle
 		emitter->emit(&particle);
-		particle.position.add(center);
 		// enable object
 		auto object = objects[i];
 		object->setTranslation(particle.position);
@@ -164,6 +163,7 @@ int32_t ObjectParticleSystemInternal::emitParticles()
 void ObjectParticleSystemInternal::updateParticles()
 {
 	auto& center = emitter->getCenter();
+	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
 	Vector3 point;
 	Vector3 velocityForTime;
 	auto first = true;
@@ -195,6 +195,7 @@ void ObjectParticleSystemInternal::updateParticles()
 		object->setEffectColorMul(effectColorMul);
 		// translation
 		point.set(particle.position);
+		localTransformationsMatrix.multiply(point, point);
 		point.add(center);
 		object->setTranslation(point.add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f)));
 		object->update();

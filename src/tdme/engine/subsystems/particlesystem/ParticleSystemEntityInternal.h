@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 
@@ -118,4 +118,15 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal
 	 * Update transformations
 	 */
 	virtual void update() = 0;
+
+	/**
+	 * @return local transformations
+	 */
+	virtual const Transformations& getLocalTransformations() = 0;
+
+	/**
+	 * Set local transformations
+	 * @param transformations local transformations
+	 */
+	virtual void setLocalTransformations(const Transformations& transformations) = 0;
 };

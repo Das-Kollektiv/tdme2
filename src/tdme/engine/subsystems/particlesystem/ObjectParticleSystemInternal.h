@@ -6,6 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/Transformations.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
@@ -70,6 +71,7 @@ protected:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	float particlesToSpawnRemainder;
+	Transformations localTransformations;
 
 	/**
 	 * Update internal
@@ -78,6 +80,7 @@ protected:
 		Vector3 scale;
 		getTransformationsMatrix().getScale(scale);
 		scale.scale(objectScale);
+		scale.scale(localTransformations.getScale());
 		for (auto object: objects) {
 			object->setScale(scale);
 			object->update();
@@ -169,6 +172,14 @@ public:
 	int32_t emitParticles() override;
 	void updateParticles() override;
 	void dispose();
+
+	inline const Transformations& getLocalTransformations() override {
+		return localTransformations;
+	}
+	inline void setLocalTransformations(const Transformations& transformations) override {
+		this->localTransformations = transformations;
+		updateInternal();
+	}
 
 	/**
 	 * Public constructor

@@ -99,6 +99,7 @@ void PointsParticleSystemInternal::updateParticles()
 
 	//
 	auto& center = emitter->getCenter();
+	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
 	Vector3 point;
 	Vector3 velocityForTime;
 	// bounding box transformed min, max xyz
@@ -147,6 +148,7 @@ void PointsParticleSystemInternal::updateParticles()
 		activeParticles++;
 		// set up bounding box
 		point.set(particle.position);
+		localTransformationsMatrix.multiply(point, point);
 		point.add(center);
 		auto& pointXYZ = point.getArray();
 		if (haveBoundingBox == false) {
@@ -218,7 +220,6 @@ int32_t PointsParticleSystemInternal::emitParticles()
 			continue;
 		// emit particle
 		emitter->emit(&particle);
-		particle.position.add(center);
 		// add gravity if our particle have a noticable mass, add translation
 		// add some movement with a min of 0 time delta and a max of engine time delta
 		auto timeDeltaRnd = static_cast< int64_t >((Math::random() * timeDelta));

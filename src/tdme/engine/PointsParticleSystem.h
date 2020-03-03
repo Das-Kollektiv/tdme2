@@ -227,4 +227,11 @@ public:
 	void setAutoEmit(bool autoEmit) override;
 	void updateParticles() override;
 
+	inline const Transformations& getLocalTransformations() override {
+		return PointsParticleSystemInternal::getLocalTransformations();
+	}
+	inline void setLocalTransformations(const Transformations& transformations) override {
+		PointsParticleSystemInternal::setLocalTransformations(transformations);
+	}
+
 };

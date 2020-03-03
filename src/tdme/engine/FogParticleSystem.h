@@ -226,4 +226,11 @@ public:
 	void setAutoEmit(bool autoEmit) override;
 	void updateParticles() override;
 
+	inline const Transformations& getLocalTransformations() override {
+		return FogParticleSystemInternal::getLocalTransformations();
+	}
+	inline void setLocalTransformations(const Transformations& transformations) override {
+		FogParticleSystemInternal::setLocalTransformations(transformations);
+	}
+
 };

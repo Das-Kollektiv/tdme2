@@ -75,6 +75,8 @@ protected:
 	bool pickable;
 	float particlesToSpawnRemainder;
 
+	Transformations localTransformations;
+
 	/**
 	 * Update bounding volume
 	 */
@@ -82,6 +84,7 @@ protected:
 		Vector3 scale;
 		getTransformationsMatrix().getScale(scale);
 		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
+		pointSizeScale*= Math::max(localTransformations.getScale().getX(), Math::max(localTransformations.getScale().getY(), localTransformations.getScale().getZ()));
 		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
 		boundingBoxTransformed.getMax().add(0.05f); // same here
@@ -207,6 +210,13 @@ public:
 	void updateParticles() override;
 	void dispose();
 	int32_t emitParticles() override;
+	inline const Transformations& getLocalTransformations() override {
+		return localTransformations;
+	}
+	inline void setLocalTransformations(const Transformations& transformations) override {
+		this->localTransformations = transformations;
+		updateInternal();
+	}
 
 	/** 
 	 * @return render points pool

@@ -54,6 +54,7 @@ private:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	vector<ParticleSystemEntity*> particleSystems;
+	Transformations localTransformations;
 
 	// overridden methods
 	inline void setParentEntity(Entity* entity) override {
@@ -266,5 +267,14 @@ public:
 
 	void setAutoEmit(bool autoEmit) override;
 	void updateParticles() override;
+
+	inline const Transformations& getLocalTransformations() override {
+		return localTransformations;
+	}
+
+	inline void setLocalTransformations(const Transformations& transformations) override {
+		localTransformations = transformations;
+		for (auto particleSystem: particleSystems) particleSystem->setLocalTransformations(localTransformations);
+	}
 
 };
