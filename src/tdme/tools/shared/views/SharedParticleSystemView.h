@@ -210,11 +210,9 @@ public:
 
 	/**
 	 * Apply particle system transformations
-	 * @param entity entity
-	 * @param objectScale object scale
 	 * @param guiOnly GUI only
 	 */
-	void applyParticleSystemTransformations(LevelEditorEntity* entity, const Vector3& objectScale, bool guiOnly);
+	void applyParticleSystemTransformations(bool guiOnly);
 
 	/**
 	 * Public constructor

@@ -230,7 +230,7 @@ void SharedParticleSystemView::handleInputEvents()
 				auto selectedEntity = engine->getEntity("model");
 				auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
 				if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
-				if (selectedEntity != nullptr) applyParticleSystemTransformations(entity, objectScale, false);
+				if (selectedEntity != nullptr) applyParticleSystemTransformations(false);
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					setGizmoMode(GIZMOMODE_NONE);
 					updateGizmo(entity);
@@ -271,18 +271,21 @@ void SharedParticleSystemView::handleInputEvents()
 						if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
 						if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 							selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
-							selectedEntity->setScale(selectedEntity->getScale().clone().scale(deltaScale));
-							if (selectedEntity->getRotationCount() == 0) {
-								selectedEntity->addRotation(Rotation::Z_AXIS, 0.0f);
-								selectedEntity->addRotation(Rotation::Y_AXIS, 0.0f);
-								selectedEntity->addRotation(Rotation::X_AXIS, 0.0f);
-							}
-							selectedEntity->setRotationAngle(0, selectedEntity->getRotationAngle(0) + deltaRotation[2]);
-							selectedEntity->setRotationAngle(1, selectedEntity->getRotationAngle(1) + deltaRotation[1]);
-							selectedEntity->setRotationAngle(2, selectedEntity->getRotationAngle(2) + deltaRotation[0]);
 							selectedEntity->update();
-							setGizmoRotation(entity, selectedEntity->getTransformations());
-							applyParticleSystemTransformations(entity, objectScale, true);
+							auto localTransformations = dynamic_cast<ParticleSystemEntity*>(selectedEntity)->getLocalTransformations();
+							localTransformations.setScale(localTransformations.getScale().clone().scale(deltaScale));
+							if (localTransformations.getRotationCount() == 0) {
+								localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
+								localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
+								localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
+							}
+							localTransformations.setRotationAngle(0, localTransformations.getRotationAngle(0) + deltaRotation[2]);
+							localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
+							localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
+							localTransformations.update();
+							dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
+							setGizmoRotation(entity, localTransformations);
+							applyParticleSystemTransformations(true);
 						}
 						if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 							Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
@@ -564,10 +567,11 @@ void SharedParticleSystemView::setGizmoRotation(LevelEditorEntity* entity, const
 	Gizmo::setGizmoRotation(transformations);
 }
 
-void SharedParticleSystemView::applyParticleSystemTransformations(LevelEditorEntity* entity, const Vector3& objectScale, bool guiOnly) {
+void SharedParticleSystemView::applyParticleSystemTransformations(bool guiOnly) {
 	if (guiOnly == true) return;
 	{
 		auto transformations = engine->getEntity("model")->getTransformations();
+		auto localTransformations = dynamic_cast<ParticleSystemEntity*>(engine->getEntity("model"))->getLocalTransformations();
 		auto objectScaleInverted = Vector3(
 			1.0f / objectScale.getX(),
 			1.0f / objectScale.getY(),
