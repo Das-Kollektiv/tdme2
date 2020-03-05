@@ -71,7 +71,7 @@ using tdme::tools::shared::views::PopUps;
 using tdme::utils::Character;
 using tdme::utils::Console;
 
-EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps): Gizmo(Engine::getInstance(), 2.0f)
+EntityPhysicsView::EntityPhysicsView(EntityPhysicsSubScreenController* entityPhysicsSubScreenController, PopUps* popUps): Gizmo(Engine::getInstance(), "epv", 2.0f)
 {
 	this->engine = Engine::getInstance();
 	this->popUps = popUps;
@@ -101,50 +101,62 @@ void EntityPhysicsView::initialize()
 
 void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t idx)
 {
-	BoundingBox* aabb = nullptr;
+	BoundingBox aabb;
 	if (entity->getModel() != nullptr) {
-		aabb = entity->getModel()->getBoundingBox();
+		aabb = *entity->getModel()->getBoundingBox();
+	} else
+	if (engine->getEntity("model") != nullptr){
+		Transformations transformations;
+		transformations.setScale(
+			Vector3(
+				1.0f / engine->getEntity("model")->getScale().getX(),
+				1.0f / engine->getEntity("model")->getScale().getY(),
+				1.0f / engine->getEntity("model")->getScale().getZ()
+			)
+		);
+		transformations.update();
+		aabb.fromBoundingVolumeWithTransformations(engine->getEntity("model")->getBoundingBoxTransformed(), transformations);
 	} else {
-		aabb = new BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
+		aabb = BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 	}
-	auto obb = new OrientedBoundingBox(aabb);
-	entityPhysicsSubScreenController->setupSphere(idx, obb->getCenter(), obb->getHalfExtension().computeLength());
+	auto obb = OrientedBoundingBox(&aabb);
+	entityPhysicsSubScreenController->setupSphere(idx, obb.getCenter(), obb.getHalfExtension().computeLength());
 	{
 		Vector3 a;
 		Vector3 b;
 		auto radius = 0.0f;
-		auto& halfExtensionXYZ = obb->getHalfExtension().getArray();
+		auto& halfExtensionXYZ = obb.getHalfExtension().getArray();
 		if (halfExtensionXYZ[0] > halfExtensionXYZ[1] && halfExtensionXYZ[0] > halfExtensionXYZ[2]) {
 			radius = Math::sqrt(halfExtensionXYZ[1] * halfExtensionXYZ[1] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a.set(obb->getAxes()[0]);
+			a.set(obb.getAxes()[0]);
 			a.scale(-(halfExtensionXYZ[0] - radius));
-			a.add(obb->getCenter());
-			b.set(obb->getAxes()[0]);
+			a.add(obb.getCenter());
+			b.set(obb.getAxes()[0]);
 			b.scale(+(halfExtensionXYZ[0] - radius));
-			b.add(obb->getCenter());
+			b.add(obb.getCenter());
 		} else
 		if (halfExtensionXYZ[1] > halfExtensionXYZ[0] && halfExtensionXYZ[1] > halfExtensionXYZ[2]) {
 			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[2] * halfExtensionXYZ[2]);
-			a.set(obb->getAxes()[1]);
+			a.set(obb.getAxes()[1]);
 			a.scale(-(halfExtensionXYZ[1] - radius));
-			a.add(obb->getCenter());
-			b.set(obb->getAxes()[1]);
+			a.add(obb.getCenter());
+			b.set(obb.getAxes()[1]);
 			b.scale(+(halfExtensionXYZ[1] - radius));
-			b.add(obb->getCenter());
+			b.add(obb.getCenter());
 		} else {
 			radius = Math::sqrt(halfExtensionXYZ[0] * halfExtensionXYZ[0] + halfExtensionXYZ[1] * halfExtensionXYZ[1]);
-			a.set(obb->getAxes()[2]);
+			a.set(obb.getAxes()[2]);
 			a.scale(-(halfExtensionXYZ[2] - radius));
-			a.add(obb->getCenter());
-			b.set(obb->getAxes()[2]);
+			a.add(obb.getCenter());
+			b.set(obb.getAxes()[2]);
 			b.scale(+(halfExtensionXYZ[2] - radius));
-			b.add(obb->getCenter());
+			b.add(obb.getCenter());
 		}
 		entityPhysicsSubScreenController->setupCapsule(idx, a, b, radius);
 	}
 
-	entityPhysicsSubScreenController->setupBoundingBox(idx, aabb->getMin(), aabb->getMax());
-	entityPhysicsSubScreenController->setupOrientedBoundingBox(idx, obb->getCenter(), obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2], obb->getHalfExtension());
+	entityPhysicsSubScreenController->setupBoundingBox(idx, aabb.getMin(), aabb.getMax());
+	entityPhysicsSubScreenController->setupOrientedBoundingBox(idx, obb.getCenter(), obb.getAxes()[0], obb.getAxes()[1], obb.getAxes()[2], obb.getHalfExtension());
 	entityPhysicsSubScreenController->selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 }
 
@@ -589,4 +601,8 @@ void EntityPhysicsView::startEditingBoundingVolume(LevelEditorEntity* entity) {
 
 void EntityPhysicsView::endEditingBoundingVolume(LevelEditorEntity* entity) {
 	engine->removeEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUME_EDITING_ID);
+}
+
+bool EntityPhysicsView::isEditingBoundingVolume(LevelEditorEntity* entity) {
+	return displayBoundingVolumeIdx != DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 }

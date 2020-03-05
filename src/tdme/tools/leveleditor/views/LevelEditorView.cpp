@@ -150,7 +150,7 @@ vector<string> LevelEditorView::OBJECTCOLOR_NAMES = {
 	"none"
 };
 
-LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance())
+LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "le")
 {
 	this->popUps = popUps;
 	snappingX = 1.0f;

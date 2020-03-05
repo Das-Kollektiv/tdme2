@@ -736,9 +736,10 @@ public:
 	 * @param mouseY mouse y
 	 * @param filter filter
 	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr) {
+	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
 		return
 			getEntityByMousePosition(
 				false,
@@ -754,7 +755,8 @@ public:
 				visibleLinesObjects,
 				visibleObjectEntityHierarchies,
 				filter,
-				object3DGroup
+				object3DGroup,
+				particleSystemEntity
 			);
 	}
 
@@ -765,9 +767,10 @@ public:
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
 	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Group** object3DGroup = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
@@ -861,6 +864,7 @@ private:
 	 * @param entityHierarchies entity hierarchies
 	 * @param filter filter
 	 * @param object3DGroup pointer to store group of Object3D to if appliable
+	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
 	Entity* getEntityByMousePosition(
@@ -877,7 +881,8 @@ private:
 		const vector<LinesObject3D*>& linesObjects,
 		const vector<EntityHierarchy*>& entityHierarchies,
 		EntityPickingFilter* filter = nullptr,
-		Group** object3DGroup = nullptr
+		Group** object3DGroup = nullptr,
+		ParticleSystemEntity** particleSystemEntity = nullptr
 	);
 
 	/**

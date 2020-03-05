@@ -112,7 +112,7 @@ using tdme::utils::Exception;
 using tdme::utils::Properties;
 using tdme::utils::StringUtils;
 
-SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine::getInstance())
+SharedParticleSystemView::SharedParticleSystemView(PopUps* popUps): Gizmo(Engine::getInstance(), "spsv")
 {
 	this->popUps = popUps;
 	engine = Engine::getInstance();
@@ -211,97 +211,113 @@ void SharedParticleSystemView::reloadFile()
 
 void SharedParticleSystemView::handleInputEvents()
 {
-	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
-		auto& event = engine->getGUI()->getKeyboardEvents()[i];
-		if (event.isProcessed() == true) continue;
-		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
-		if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(entity); event.setProcessed(true); }
-		if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(entity); event.setProcessed(true); }
-		if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(entity); event.setProcessed(true); }
-		if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(entity); event.setProcessed(true); }
-	}
-	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
-		auto& event = engine->getGUI()->getMouseEvents()[i];
+	if (entityPhysicsView->isEditingBoundingVolume(entity) == false) {
+		for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
+			auto& event = engine->getGUI()->getKeyboardEvents()[i];
+			if (event.isProcessed() == true) continue;
+			auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
+			if (Character::toLowerCase(event.getKeyChar()) == '1') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ALL); updateGizmo(entity); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '2') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_TRANSLATE); updateGizmo(entity); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(entity); event.setProcessed(true); }
+			if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(entity); event.setProcessed(true); }
+		}
+		for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
+			auto& event = engine->getGUI()->getMouseEvents()[i];
 
-		if (event.isProcessed() == true) continue;
+			if (event.isProcessed() == true) continue;
 
-		if (event.getButton() == MOUSE_BUTTON_LEFT) {
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
-				auto selectedEntity = engine->getEntity("model");
-				auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
-				if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
-				if (selectedEntity != nullptr) applyParticleSystemTransformations(false);
-				if (getGizmoMode() != GIZMOMODE_NONE) {
-					setGizmoMode(GIZMOMODE_NONE);
-					updateGizmo(entity);
-				}
-				totalDeltaScale.set(0.0, 0.0f, 0.0f);
-				event.setProcessed(true);
-			} else
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
-				Group* selectedEntityGroup = nullptr;
-				Entity* selectedEntity = nullptr;
-				if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityGroup);
-				if (getGizmoMode() == GIZMOMODE_NONE && selectedEntity == nullptr) {
-					removeGizmo();
-					totalDeltaScale.set(0.0, 0.0f, 0.0f);
-					event.setProcessed(true);
-				} else
-				if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
-					event.setProcessed(true);
-				} else
-				if (selectedEntity != nullptr) {
-					updateGizmo(entity);
-					totalDeltaScale.set(0.0, 0.0f, 0.0f);
-					event.setProcessed(true);
-				}
-			} else
-			if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
-				if (getGizmoMode() != GIZMOMODE_NONE) {
-					Vector3 deltaTranslation;
-					Vector3 deltaRotation;
-					Vector3 deltaScale;
-					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
-						totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
-						auto gizmoEntity = getGizmoObject3D();
-						auto selectedEntity = engine->getEntity("model");
-						auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
-						if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
-						if (gizmoEntity != nullptr && selectedEntity != nullptr) {
-							selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
-							selectedEntity->update();
-							auto localTransformations = dynamic_cast<ParticleSystemEntity*>(selectedEntity)->getLocalTransformations();
-							localTransformations.setScale(localTransformations.getScale().clone().scale(deltaScale));
-							if (localTransformations.getRotationCount() == 0) {
-								localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
-								localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
-								localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
-							}
-							localTransformations.setRotationAngle(0, localTransformations.getRotationAngle(0) + deltaRotation[2]);
-							localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
-							localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
-							localTransformations.update();
-							dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
-							setGizmoRotation(entity, localTransformations);
-							applyParticleSystemTransformations(true);
-						}
-						if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
-							Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
-							Math::abs(deltaTranslation.getZ()) > Math::EPSILON) {
-							updateGizmo(entity);
-						}
+			if (event.getButton() == MOUSE_BUTTON_LEFT) {
+				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_RELEASED) {
+					auto selectedEntity = engine->getEntity("model");
+					auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
+					if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
+					if (getGizmoMode() != GIZMOMODE_NONE) {
+						if (selectedEntity != nullptr) applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), false);
+						setGizmoMode(GIZMOMODE_NONE);
+						updateGizmo(entity);
 					}
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
+					totalDeltaScale.set(0.0, 0.0f, 0.0f);
 					event.setProcessed(true);
+				} else
+				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_PRESSED) {
+					Group* selectedEntityGroup = nullptr;
+					ParticleSystemEntity* selectedSubParticleSystem = nullptr;
+					Entity* selectedEntity = nullptr;
+					if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityGroup, &selectedSubParticleSystem);
+					if (getGizmoMode() == GIZMOMODE_NONE && selectedEntity == nullptr) {
+						removeGizmo();
+						totalDeltaScale.set(0.0, 0.0f, 0.0f);
+						event.setProcessed(true);
+					} else
+					if (determineGizmoMode(selectedEntity, selectedEntityGroup) == true) {
+						mouseDownLastX = event.getXUnscaled();
+						mouseDownLastY = event.getYUnscaled();
+						event.setProcessed(true);
+					} else
+					if (selectedEntity != nullptr) {
+						auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
+						if (psg != nullptr && selectedSubParticleSystem != nullptr) {
+							auto particleSystemIdx = 0;
+							for (auto pse: psg->getParticleSystems()) {
+								if (pse == selectedSubParticleSystem) {
+									setParticleSystemIndex(particleSystemIdx);
+									break;
+								}
+								particleSystemIdx++;
+							}
+						} else {
+							setParticleSystemIndex(0);
+						} 
+						event.setProcessed(true);
+					}
+				} else
+				if (event.getType() == GUIMouseEvent_Type::MOUSEEVENT_DRAGGED) {
+					if (getGizmoMode() != GIZMOMODE_NONE) {
+						Vector3 deltaTranslation;
+						Vector3 deltaRotation;
+						Vector3 deltaScale;
+						if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+							totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
+							auto gizmoEntity = getGizmoObject3D();
+							auto selectedEntity = engine->getEntity("model");
+							auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
+							if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
+							if (gizmoEntity != nullptr && selectedEntity != nullptr) {
+								selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
+								selectedEntity->update();
+								auto localTransformations = dynamic_cast<ParticleSystemEntity*>(selectedEntity)->getLocalTransformations();
+								localTransformations.setScale(localTransformations.getScale().clone().scale(deltaScale));
+								if (localTransformations.getRotationCount() == 0) {
+									localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
+									localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
+									localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
+								}
+								localTransformations.setRotationAngle(0, localTransformations.getRotationAngle(0) + deltaRotation[2]);
+								localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
+								localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
+								localTransformations.update();
+								dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
+								setGizmoRotation(entity, localTransformations);
+								applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), true);
+							}
+							if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
+								Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
+								Math::abs(deltaTranslation.getZ()) > Math::EPSILON) {
+								updateGizmo(entity);
+							}
+						}
+						mouseDownLastX = event.getXUnscaled();
+						mouseDownLastY = event.getYUnscaled();
+						event.setProcessed(true);
+					}
 				}
 			}
 		}
+	} else {
+		removeGizmo();
+		entityPhysicsView->handleInputEvents(entity, objectScale);
 	}
-	//entityPhysicsView->handleInputEvents(entity, objectScale);
-	//cameraRotationInputHandler->handleInputEvents();
+	cameraRotationInputHandler->handleInputEvents();
 }
 
 void SharedParticleSystemView::display()
@@ -502,10 +518,12 @@ int SharedParticleSystemView::getParticleSystemIndex() {
 }
 
 void SharedParticleSystemView::setParticleSystemIndex(int idx) {
+	Console::println("SharedParticleSystemView::setParticleSystemIndex(): " + to_string(idx));
 	this->particleSystemIdx = idx;
 	updateGUIElements();
+	updateGizmo(entity);
+	totalDeltaScale.set(0.0, 0.0f, 0.0f);
 }
-
 
 void SharedParticleSystemView::playSound(const string& soundId) {
 	audio->removeEntity("sound");
@@ -539,20 +557,14 @@ void SharedParticleSystemView::playSound(const string& soundId) {
 void SharedParticleSystemView::updateGizmo(LevelEditorEntity* entity) {
 	auto selectedEntity = engine->getEntity("model");
 	auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
-	if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
+	if (psg != nullptr) {
+		selectedEntity = particleSystemIdx >= psg->getParticleSystems().size()?nullptr:psg->getParticleSystems()[particleSystemIdx];
+	} else {
+		if (particleSystemIdx > 0) selectedEntity = nullptr;
+	}
 	auto pse = dynamic_cast<ParticleSystemEntity*>(selectedEntity);
 	if (selectedEntity != nullptr) {
 		if (pse != nullptr) {
-			Console::println(
-				"emit: " +
-				to_string(pse->getEmitter()->getCenter().getX()) + ", " +
-				to_string(pse->getEmitter()->getCenter().getY()) + ", " +
-				to_string(pse->getEmitter()->getCenter().getZ()) + "; " +
-				"trans: " +
-				to_string(selectedEntity->getTranslation().getX()) + ", " +
-				to_string(selectedEntity->getTranslation().getY()) + ", " +
-				to_string(selectedEntity->getTranslation().getZ())
-			);
 			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()));
 		} else {
 			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter());
@@ -567,11 +579,11 @@ void SharedParticleSystemView::setGizmoRotation(LevelEditorEntity* entity, const
 	Gizmo::setGizmoRotation(transformations);
 }
 
-void SharedParticleSystemView::applyParticleSystemTransformations(bool guiOnly) {
+void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly) {
 	if (guiOnly == true) return;
 	{
-		auto transformations = engine->getEntity("model")->getTransformations();
-		auto localTransformations = dynamic_cast<ParticleSystemEntity*>(engine->getEntity("model"))->getLocalTransformations();
+		auto transformations = particleSystemEntity->getTransformations();
+		auto localTransformations = particleSystemEntity->getLocalTransformations();
 		auto objectScaleInverted = Vector3(
 			1.0f / objectScale.getX(),
 			1.0f / objectScale.getY(),
@@ -633,7 +645,9 @@ void SharedParticleSystemView::applyParticleSystemTransformations(bool guiOnly) 
 		transformations.setScale(objectScale);
 		transformations.update();
 		modelEntity = Level::createEntity(entity, "model", transformations);
-		if (modelEntity != nullptr) engine->addEntity(modelEntity);
-
+		if (modelEntity != nullptr) {
+			modelEntity->setPickable(true);
+			engine->addEntity(modelEntity);
+		}
 	}
 }

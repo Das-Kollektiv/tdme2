@@ -73,6 +73,16 @@ void FogParticleSystemInternal::initialize() {
 	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, renderer->getDefaultContext());
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 
+	//
+	Vector3 center;
+	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
+	localTransformationsMatrix.getTranslation(center);
+	center.add(emitter->getCenter());
+	// transformations
+	auto& transformationsMatrix = getTransformationsMatrix();
+	//
+	Vector3 point;
+
 	// enable particle system
 	active = true;
 	// emit particles
@@ -109,18 +119,23 @@ void FogParticleSystemInternal::initialize() {
 		color[3] += colorAdd[3] * static_cast< float >(timeRnd);
 
 		// set up bounding box
-		auto& positionXYZ = particle.position.getArray();
+		point.set(particle.position);
+		localTransformationsMatrix.multiply(point, point);
+		point.add(center);
+
+		// set up bounding box
+		auto& pointXYZ = point.getArray();
 		if (haveBoundingBox == false) {
-			bbMinXYZ = positionXYZ;
-			bbMaxXYZ = positionXYZ;
+			bbMinXYZ = pointXYZ;
+			bbMaxXYZ = pointXYZ;
 			haveBoundingBox = true;
 		} else {
-			if (positionXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = positionXYZ[0];
-			if (positionXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = positionXYZ[1];
-			if (positionXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = positionXYZ[2];
-			if (positionXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = positionXYZ[0];
-			if (positionXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = positionXYZ[1];
-			if (positionXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = positionXYZ[2];
+			if (pointXYZ[0] < bbMinXYZ[0]) bbMinXYZ[0] = pointXYZ[0];
+			if (pointXYZ[1] < bbMinXYZ[1]) bbMinXYZ[1] = pointXYZ[1];
+			if (pointXYZ[2] < bbMinXYZ[2]) bbMinXYZ[2] = pointXYZ[2];
+			if (pointXYZ[0] > bbMaxXYZ[0]) bbMaxXYZ[0] = pointXYZ[0];
+			if (pointXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = pointXYZ[1];
+			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
 	}
 
@@ -183,6 +198,7 @@ void FogParticleSystemInternal::updateParticles()
 		point.set(particle.position);
 		localTransformationsMatrix.multiply(point, point);
 		point.add(center);
+		//
 		auto& pointXYZ = point.getArray();
 		if (haveBoundingBox == false) {
 			bbMinXYZ = pointXYZ;

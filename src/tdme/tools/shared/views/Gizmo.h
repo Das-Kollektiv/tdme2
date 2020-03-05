@@ -51,6 +51,7 @@ public:
 
 private:
 	Engine* engine { nullptr };
+	string id;
 	GizmoType gizmoType;
 	GizmoMode gizmoMode;
 	Vector3 gizmoLastResult;
@@ -61,9 +62,10 @@ public:
 	/**
 	 * Public constructor
 	 * @param engine engine
+	 * @param id id
 	 * @param gizmoBaseScale gizmo base scale
 	 */
-	Gizmo(Engine* engine, float gizmoBaseScale = 1.0f);
+	Gizmo(Engine* engine, const string& id, float gizmoBaseScale = 1.0f);
 
 	/**
 	 * Destructor

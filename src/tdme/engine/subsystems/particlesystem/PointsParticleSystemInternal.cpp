@@ -106,8 +106,8 @@ void PointsParticleSystemInternal::updateParticles()
 	Vector3 point;
 	Vector3 velocityForTime;
 	// bounding box transformed min, max xyz
-	auto& bbMinXYZ = boundingBoxTransformed.getMin().getArray();
-	auto& bbMaxXYZ = boundingBoxTransformed.getMax().getArray();
+	auto& bbMinXYZ = boundingBox.getMin().getArray();
+	auto& bbMaxXYZ = boundingBox.getMax().getArray();
 	//
 	auto haveBoundingBox = false;
 	// compute distance from camera
@@ -153,6 +153,7 @@ void PointsParticleSystemInternal::updateParticles()
 		point.set(particle.position);
 		localTransformationsMatrix.multiply(point, point);
 		point.add(center);
+		//
 		auto& pointXYZ = point.getArray();
 		if (haveBoundingBox == false) {
 			bbMinXYZ = pointXYZ;

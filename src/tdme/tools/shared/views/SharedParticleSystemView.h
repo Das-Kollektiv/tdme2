@@ -16,10 +16,10 @@
 
 using std::string;
 
-using tdme::tools::shared::views::View;
-using tdme::gui::events::GUIInputEventHandler;
 using tdme::audio::Audio;
 using tdme::engine::Engine;
+using tdme::engine::ParticleSystemEntity;
+using tdme::gui::events::GUIInputEventHandler;
 using tdme::math::Vector3;
 using tdme::tools::shared::controller::ParticleSystemScreenController;
 using tdme::tools::shared::model::LevelEditorEntity;
@@ -210,9 +210,10 @@ public:
 
 	/**
 	 * Apply particle system transformations
+	 * @param particleSystemEntity particle system entity
 	 * @param guiOnly GUI only
 	 */
-	void applyParticleSystemTransformations(bool guiOnly);
+	void applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly);
 
 	/**
 	 * Public constructor

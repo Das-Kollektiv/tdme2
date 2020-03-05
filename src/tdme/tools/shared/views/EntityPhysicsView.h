@@ -267,6 +267,11 @@ public:
 	void endEditingBoundingVolume(LevelEditorEntity* entity);
 
 	/**
+	 * @return is editing bounding volume
+	 */
+	bool isEditingBoundingVolume(LevelEditorEntity* entity);
+
+	/**
 	 * Public constructor
 	 * @param entityPhysicsSubScreenController pop ups
 	 * @param popUps model editor screen controller
