@@ -1300,7 +1300,7 @@ Entity* Engine::getEntityByMousePosition(
 				selectedObject3DGroup = nullptr;
 				selectedParticleSystem = nullptr;
 				auto selectedSubEntityDistance = Float::MAX_VALUE;
-				// iterate sub point partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
+				// iterate sub partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
 				for (auto subEntity: entity->getParticleSystems()) {
 					if (LineSegment::doesBoundingBoxCollideWithLineSegment(subEntity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
 						auto subEntityDistance = tmpVector3e.set(subEntity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
