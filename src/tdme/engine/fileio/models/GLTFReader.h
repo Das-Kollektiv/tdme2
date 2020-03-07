@@ -22,8 +22,8 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Group;
 using tdme::os::filesystem::FileSystemException;
 
-/** 
- * Collada DAE model reader
+/**
+ * GLTF model reader
  * @author Andreas Drewke
  * @version $Id$
  */
