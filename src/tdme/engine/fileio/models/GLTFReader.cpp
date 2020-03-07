@@ -70,11 +70,14 @@ using tdme::utils::Exception;
 Model* GLTFReader::read(const string& pathName, const string& fileName)
 {
 	// load model
+	vector<uint8_t> glftBinaryData;
+	FileSystem::getInstance()->getContent(pathName, fileName, glftBinaryData);
+	// parse model
 	string err;
 	string warn;
 	tinygltf::Model gltfModel;
 	tinygltf::TinyGLTF gltfLoader;
-	auto ret = gltfLoader.LoadBinaryFromFile(&gltfModel, &err, &warn, pathName + "/" + fileName); 
+	auto ret = gltfLoader.LoadBinaryFromMemory(&gltfModel, &err, &warn, glftBinaryData.data(), glftBinaryData.size());
 	if (warn.empty() == false) Console::println("GLTFReader::read(): warnings: " + warn);
 	if (err.empty() == false) Console::println("GLTFReader::read(): errors: " + err);
 	if (ret == false){
