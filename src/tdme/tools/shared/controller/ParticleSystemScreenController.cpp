@@ -714,6 +714,56 @@ void ParticleSystemScreenController::unsetParticleSystemEmitter() {
 	particleSystemEmitterApply->getController()->setDisabled(true);
 }
 
+void ParticleSystemScreenController::updatePointParticleSystemEmitter(const Vector3& position) {
+	ppePosition->getController()->setValue(MutableString(Tools::formatVector3(position)));
+}
+
+void ParticleSystemScreenController::updateBoundingBoxParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension) {
+	bbpeObbCenter->getController()->setValue(MutableString(Tools::formatVector3(center)));
+	bbpeObbHalfextension->getController()->setValue(MutableString(Tools::formatVector3(halfExtension)));
+	Vector3 rotation;
+	Matrix4x4 rotationMatrix;
+	rotationMatrix.identity();
+	rotationMatrix.setAxes(axis0, axis1, axis2);
+	rotationMatrix.computeEulerAngles(rotation);
+	bbpeObbRotationX->getController()->setValue(MutableString(Tools::formatFloat(rotation.getX())));
+	bbpeObbRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotation.getY())));
+	bbpeObbRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
+}
+
+void ParticleSystemScreenController::updateCircleParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, float radius) {
+	cpeCenter->getController()->setValue(MutableString(Tools::formatVector3(center)));
+	cpeRadius->getController()->setValue(MutableString(radius, 4));
+	Vector3 tmpAxis;
+	Vector3 rotation;
+	Matrix4x4 rotationMatrix;
+	rotationMatrix.identity();
+	rotationMatrix.setAxes(axis0, Vector3::computeCrossProduct(axis0, axis1, tmpAxis), axis1);
+	rotationMatrix.computeEulerAngles(rotation);
+	cpeRotationX->getController()->setValue(MutableString(Tools::formatFloat(rotation.getX())));
+	cpeRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotation.getY())));
+	cpeRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
+}
+
+void ParticleSystemScreenController::updateCirclePlaneVelocityParticleSystemEmitter(const Vector3& center, const Vector3& axis0, const Vector3& axis1, float radius) {
+	cpepvCenter->getController()->setValue(MutableString(Tools::formatVector3(center)));
+	cpepvRadius->getController()->setValue(MutableString(radius, 4));
+	Vector3 tmpAxis;
+	Vector3 rotation;
+	Matrix4x4 rotationMatrix;
+	rotationMatrix.identity();
+	rotationMatrix.setAxes(axis0, Vector3::computeCrossProduct(axis0, axis1, tmpAxis), axis1);
+	rotationMatrix.computeEulerAngles(rotation);
+	cpepvRotationX->getController()->setValue(MutableString(Tools::formatFloat(rotation.getX())));
+	cpepvRotationY->getController()->setValue(MutableString(Tools::formatFloat(rotation.getY())));
+	cpepvRotationZ->getController()->setValue(MutableString(Tools::formatFloat(rotation.getZ())));
+}
+
+void ParticleSystemScreenController::updateSphereParticleSystemEmitter(const Vector3& center, float radius) {
+	speCenter->getController()->setValue(MutableString(Tools::formatVector3(center)));
+	speRadius->getController()->setValue(MutableString(radius, 4));
+}
+
 void ParticleSystemScreenController::setParticleSystemEmitter()
 {
 	particleSystemEmitters->getController()->setDisabled(false);

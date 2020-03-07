@@ -108,16 +108,6 @@ void ParticleSystemGroup::updateParticles()
 	// update particles
 	for (auto particleSystem: particleSystems) particleSystem->updateParticles();
 
-	// compute new bounding box
-	boundingBox.fromBoundingVolume(dynamic_cast<Entity*>(particleSystems[0])->getBoundingBox());
-	for (auto i = 1; i < particleSystems.size(); i++) {
-		boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
-	}
-	boundingBox.update();
-
-	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-
 	//
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

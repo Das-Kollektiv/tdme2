@@ -78,35 +78,36 @@ public:
 		this->displayBoundingVolumeIdx = displayBoundingVolumeIdx;
 	}
 
-	/** 
+	/**
 	 * @return pop up views
 	 */
 	virtual PopUps* getPopUpsViews();
 
-	/** 
+	/**
 	 * Init
 	 */
 	virtual void initialize();
 
-	/** 
+	/**
 	 * Reset bounding volume
 	 * @param entity entity
 	 * @param idx idx
+	 * @param type type
 	 */
-	virtual void resetBoundingVolume(LevelEditorEntity* entity, int32_t idx);
+	virtual void resetBoundingVolume(LevelEditorEntity* entity, int32_t idx, int32_t type);
 
-	/** 
+	/**
 	 * Set bounding volumes
 	 * @param entity entity
 	 */
 	virtual void setBoundingVolumes(LevelEditorEntity* entity);
 
-	/** 
+	/**
 	 * Unset bounding volumes
 	 */
 	virtual void unsetBoundingVolumes();
 
-	/** 
+	/**
 	 * Select bounding volume type
 	 * @param idx idx
 	 * @param bvTypeId bounding volume type
@@ -154,7 +155,7 @@ private:
 	 */
 	void clearModelBoundingVolume(int32_t idx);
 
-	/** 
+	/**
 	 * Setup model bounding volume
 	 * @param entity entity
 	 * @param idx idx
@@ -163,14 +164,14 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * On bounding volume none apply
 	 * @param entity entity
 	 * @param idx bounding volume index
 	 */
 	virtual void applyBoundingVolumeNone(LevelEditorEntity* entity, int32_t idx);
 
-	/** 
+	/**
 	 * On bounding volume sphere apply
 	 * @param entity entity
 	 * @param idx bounding volume index
@@ -179,7 +180,7 @@ public:
 	 */
 	virtual void applyBoundingVolumeSphere(LevelEditorEntity* entity, int32_t idx, const Vector3& center, float radius);
 
-	/** 
+	/**
 	 * On bounding volume capsule apply
 	 * @param entity entity
 	 * @param idx bounding volume index
@@ -189,7 +190,7 @@ public:
 	 */
 	virtual void applyBoundingVolumeCapsule(LevelEditorEntity* entity, int32_t idx, const Vector3& a, const Vector3& b, float radius);
 
-	/** 
+	/**
 	 * On bounding volume AABB apply
 	 * @param entity entity
 	 * @param idx bounding volume index
@@ -198,7 +199,7 @@ public:
 	 */
 	virtual void applyBoundingVolumeAabb(LevelEditorEntity* entity, int32_t idx, const Vector3& min, const Vector3& max);
 
-	/** 
+	/**
 	 * On bounding volume OBB apply
 	 * @param entity entity
 	 * @param idx bounding volume index
@@ -210,7 +211,7 @@ public:
 	 */
 	virtual void applyBoundingVolumeObb(LevelEditorEntity* entity, int32_t idx, const Vector3& center, const Vector3& axis0, const Vector3& axis1, const Vector3& axis2, const Vector3& halfExtension);
 
-	/** 
+	/**
 	 * On bounding volume convex mesh apply
 	 * @param entity entity
 	 * @param idx bounding volume index

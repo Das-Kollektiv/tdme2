@@ -130,7 +130,7 @@ string Tools::formatColor4(const Color4& value)
 		formatFloat(value.getAlpha());
 }
 
-void Tools::convertToArray(const string& text, array<float, 3>& array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const string& text, array<float, 3>& array)
 {
 	auto i = 0;
 	StringTokenizer t;
@@ -140,7 +140,7 @@ void Tools::convertToArray(const string& text, array<float, 3>& array) /* throws
 	}
 }
 
-void Tools::convertToArray(const string& text, array<float, 4>& array) /* throws(NumberFormatException) */
+void Tools::convertToArray(const string& text, array<float, 4>& array)
 {
 	auto i = 0;
 	StringTokenizer t;
@@ -150,33 +150,33 @@ void Tools::convertToArray(const string& text, array<float, 4>& array) /* throws
 	}
 }
 
-Vector3 Tools::convertToVector3(const string& text) /* throws(NumberFormatException) */
+Vector3 Tools::convertToVector3(const string& text)
 {
 	Vector3 v;
 	convertToArray(text, v.getArray());
 	return v;
 }
 
-Vector4 Tools::convertToVector4(const string& text) /* throws(NumberFormatException) */
+Vector4 Tools::convertToVector4(const string& text)
 {
 	Vector4 v;
 	convertToArray(text, v.getArray());
 	return v;
 }
 
-Color4 Tools::convertToColor4(const string& text) /* throws(NumberFormatException) */
+Color4 Tools::convertToColor4(const string& text)
 {
 	Color4 color;
 	convertToArray(text, color.getArray());
 	return color;
 }
 
-float Tools::convertToFloat(const string& text) /* throws(NumberFormatException) */
+float Tools::convertToFloat(const string& text)
 {
 	return Float::parseFloat(text);
 }
 
-int32_t Tools::convertToInt(const string& text) /* throws(NumberFormatException) */
+int32_t Tools::convertToInt(const string& text)
 {
 	return Integer::parseInt(text);
 }

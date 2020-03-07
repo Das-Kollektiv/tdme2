@@ -85,6 +85,7 @@ void TriggerView::setEntity(LevelEditorEntity* entity)
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID)->getBoundingBox()));
+	cameraRotationInputHandler->reset();
 	updateGUIElements();
 }
 

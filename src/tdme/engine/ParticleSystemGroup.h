@@ -73,10 +73,36 @@ public:
 	void initialize() override;
 
 	inline BoundingBox* getBoundingBox() override {
+		if (particleSystems.empty() == false) {
+			// compute new bounding box
+			boundingBox.fromBoundingVolume(dynamic_cast<Entity*>(particleSystems[0])->getBoundingBox());
+			for (auto i = 1; i < particleSystems.size(); i++) {
+				boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
+			}
+			boundingBox.update();
+
+			// update bounding box transformed
+			boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		}
+
+		//
 		return &boundingBox;
 	}
 
 	inline BoundingBox* getBoundingBoxTransformed() override {
+		if (particleSystems.empty() == false) {
+			// compute new bounding box
+			boundingBox.fromBoundingVolume(dynamic_cast<Entity*>(particleSystems[0])->getBoundingBox());
+			for (auto i = 1; i < particleSystems.size(); i++) {
+				boundingBox.extend(dynamic_cast<Entity*>(particleSystems[i])->getBoundingBox());
+			}
+			boundingBox.update();
+
+			// update bounding box transformed
+			boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		}
+
+		//
 		return &boundingBoxTransformed;
 	}
 

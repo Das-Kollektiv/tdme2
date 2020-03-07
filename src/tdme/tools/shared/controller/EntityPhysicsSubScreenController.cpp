@@ -110,7 +110,7 @@ void EntityPhysicsSubScreenController::initialize(GUIScreenNode* screenNode)
 	try {
 		for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
 			boundingVolumeTypeDropDown[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_type_" + to_string(i)));
-			boundingVolumeNoneApply[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_apply_" + to_string(i)));
+			boundingVolumeApply[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_boundingvolume_apply_" + to_string(i)));
 			boundingVolume[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_" + to_string(i)));
 			boundingvolumeSphereCenter[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_sphere_center_" + to_string(i)));
 			boundingvolumeSphereRadius[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("boundingvolume_sphere_radius_" + to_string(i)));
@@ -164,13 +164,13 @@ void EntityPhysicsSubScreenController::disableBoundingVolume(int32_t idx)
 {
 	view->selectBoundingVolumeType(idx, 0);
 	boundingVolumeTypeDropDown[idx]->getController()->setDisabled(true);
-	boundingVolumeNoneApply[idx]->getController()->setDisabled(true);
+	boundingVolumeApply[idx]->getController()->setDisabled(true);
 }
 
 void EntityPhysicsSubScreenController::enableBoundingVolume(int32_t idx)
 {
 	boundingVolumeTypeDropDown[idx]->getController()->setDisabled(false);
-	boundingVolumeNoneApply[idx]->getController()->setDisabled(false);
+	boundingVolumeApply[idx]->getController()->setDisabled(false);
 }
 
 void EntityPhysicsSubScreenController::setupModelBoundingVolumeType(LevelEditorEntity* entity, int32_t idx)
@@ -314,21 +314,27 @@ void EntityPhysicsSubScreenController::onBoundingVolumeTypeApply(LevelEditorEnti
 	view->selectBoundingVolumeType(idx, boundingVolumeTypeId);
 	switch (boundingVolumeTypeId) {
 	case (0):
+		view->resetBoundingVolume(entity, idx, 0);
 		onBoundingVolumeNoneApply(entity, idx);
 		break;
 	case (1):
+		view->resetBoundingVolume(entity, idx, 1);
 		onBoundingVolumeSphereApply(entity, idx);
 		break;
 	case (2):
+		view->resetBoundingVolume(entity, idx, 2);
 		onBoundingVolumeCapsuleApply(entity, idx);
 		break;
 	case (3):
+		view->resetBoundingVolume(entity, idx, 3);
 		onBoundingVolumeAabbApply(entity, idx);
 		break;
 	case (4):
+		view->resetBoundingVolume(entity, idx, 4);
 		onBoundingVolumeObbApply(entity, idx);
 		break;
 	case (5):
+		view->resetBoundingVolume(entity, idx, 5);
 		onBoundingVolumeConvexMeshApply(entity, idx);
 		break;
 	}
@@ -337,7 +343,7 @@ void EntityPhysicsSubScreenController::onBoundingVolumeTypeApply(LevelEditorEnti
 void EntityPhysicsSubScreenController::onBoundingVolumeNoneApply(LevelEditorEntity* entity, int32_t idx)
 {
 	view->applyBoundingVolumeNone(entity, idx);
-	view->resetBoundingVolume(entity, idx);
+	view->resetBoundingVolume(entity, idx, 0);
 }
 
 void EntityPhysicsSubScreenController::onBoundingVolumeSphereApply(LevelEditorEntity* entity, int32_t idx)
@@ -730,25 +736,25 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 		auto v = type;
 		if (v == GUIActionListener_Type::PERFORMED) {
 			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_apply_")) {
-				onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+				onBoundingVolumeTypeApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), '_') + 1)));
 			} else
 			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_sphere_apply_")) {
-				onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+				onBoundingVolumeSphereApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), '_') + 1)));
 			} else
 			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_capsule_apply_")) {
-				onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+				onBoundingVolumeCapsuleApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), '_') + 1)));
 			} else
 			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_obb_apply_")) {
-				onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+				onBoundingVolumeObbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), '_') + 1)));
 			} else
 			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_aabb_apply_")) {
-				onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+				onBoundingVolumeAabbApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), '_') + 1)));
 			} else
 			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_convexmesh_apply_")) {
-				onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+				onBoundingVolumeConvexMeshApply(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), '_') + 1)));
 			} else
 			if (StringUtils::startsWith(node->getId(), "button_boundingvolume_convexmesh_file_")) {
-				onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), static_cast< int32_t >(u'_')) + 1)));
+				onBoundingVolumeConvexMeshFile(entity, Tools::convertToIntSilent(node->getId().substr(StringUtils::lastIndexOf(node->getId(), '_') + 1)));
 			} else
 			if (node->getId() == "button_terrain_mesh_apply") {
 				onSetTerrainMesh(entity);
@@ -769,27 +775,37 @@ void EntityPhysicsSubScreenController::onActionPerformed(GUIActionListener_Type*
 				onPhysicsBodyApply(entity);
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_properties_boundingvolume_") == true) {
-				boundingVolumeIdxActivated = Integer::parseInt(StringUtils::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				view->startEditingBoundingVolume(entity);
+				if (entity != nullptr) {
+					boundingVolumeIdxActivated = Integer::parseInt(StringUtils::substring(node->getId(), string("tab_properties_boundingvolume_").size()));
+					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+					view->startEditingBoundingVolume(entity);
+				}
 			} else
 			if (node->getId() == "tab_properties_boundingvolume") {
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				if (boundingVolumeIdxActivated != EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(entity);
+				if (entity != nullptr) {
+					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+					if (boundingVolumeIdxActivated != EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL) view->startEditingBoundingVolume(entity);
+				}
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_properties_convexmeshes") == true) {
-				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				view->endEditingBoundingVolume(entity);
+				if (entity != nullptr) {
+					boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+					view->endEditingBoundingVolume(entity);
+				}
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_properties_terrain") == true) {
-				boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
-				view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
-				view->endEditingBoundingVolume(entity);
+				if (entity != nullptr) {
+					boundingVolumeIdxActivated = EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL;
+					view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
+					view->endEditingBoundingVolume(entity);
+				}
 			} else
 			if (StringUtils::startsWith(node->getId(), "tab_") == true) {
-				view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
-				view->endEditingBoundingVolume(entity);
+				if (entity != nullptr) {
+					view->setDisplayBoundingVolumeIdx(EntityPhysicsView::DISPLAY_BOUNDINGVOLUMEIDX_ALL);
+					view->endEditingBoundingVolume(entity);
+				}
 			}
 		}
 	}

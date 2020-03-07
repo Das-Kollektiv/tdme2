@@ -14,6 +14,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/views/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/utils/Character.h>
+#include <tdme/utils/Console.h>
 
 using tdme::tools::shared::views::CameraRotationInputHandler;
 using tdme::engine::Camera;
@@ -28,6 +29,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::tools::shared::views::CameraRotationInputHandlerEventHandler;
 using tdme::utils::Character;
+using tdme::utils::Console;
 
 CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRotationInputHandlerEventHandler* eventHandler)
 {
@@ -141,19 +143,19 @@ void CameraRotationInputHandler::handleInputEvents()
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_DOWN)
 			keyDown = isKeyDown;
 
-		if (Character::toLowerCase(event.getKeyChar()) == u'.')
+		if (Character::toLowerCase(event.getKeyChar()) == '.')
 			keyPeriod = isKeyDown;
 
-		if (Character::toLowerCase(event.getKeyChar()) == u',')
+		if (Character::toLowerCase(event.getKeyChar()) == ',')
 			keyComma = isKeyDown;
 
-		if (Character::toLowerCase(event.getKeyChar()) == u'+')
+		if (Character::toLowerCase(event.getKeyChar()) == '+')
 			keyPlus = isKeyDown;
 
-		if (Character::toLowerCase(event.getKeyChar()) == u'-')
+		if (Character::toLowerCase(event.getKeyChar()) == '-')
 			keyMinus = isKeyDown;
 
-		if (Character::toLowerCase(event.getKeyChar()) == u'r')
+		if (Character::toLowerCase(event.getKeyChar()) == 'r')
 			keyR = isKeyDown;
 
 	}
@@ -197,20 +199,23 @@ void CameraRotationInputHandler::handleInputEvents()
 		if (entity != nullptr) {
 			boundingBoxTransformed = *entity->getBoundingBoxTransformed();
 		}
-		resetRequested = false;
 	}
 	auto cam = engine->getCamera();
 	auto lookAt = cam->getLookAt();
-	if (entity != nullptr) {
-		auto entityBoundingBoxTransformed = entity->getBoundingBoxTransformed();
-		for (auto i = 0; i < 3; i++) {
-			if (entityBoundingBoxTransformed->getMin()[i] < boundingBoxTransformed.getMin()[i]) boundingBoxTransformed.getMin()[i] = entityBoundingBoxTransformed->getMin()[i];
-			if (entityBoundingBoxTransformed->getMax()[i] > boundingBoxTransformed.getMax()[i]) boundingBoxTransformed.getMax()[i] = entityBoundingBoxTransformed->getMax()[i];
+	if (resetRequested == true) {
+		Console::println("CameraRotationInputHandler::handleInputEvents(): reset");
+		if (entity != nullptr) {
+			auto entityBoundingBoxTransformed = entity->getBoundingBoxTransformed();
+			for (auto i = 0; i < 3; i++) {
+				if (entityBoundingBoxTransformed->getMin()[i] < boundingBoxTransformed.getMin()[i]) boundingBoxTransformed.getMin()[i] = entityBoundingBoxTransformed->getMin()[i];
+				if (entityBoundingBoxTransformed->getMax()[i] > boundingBoxTransformed.getMax()[i]) boundingBoxTransformed.getMax()[i] = entityBoundingBoxTransformed->getMax()[i];
+			}
+			boundingBoxTransformed.update();
+			lookAt.set(boundingBoxTransformed.getCenter());
+		} else {
+			lookAt.set(0.0f, 0.0f, 0.0f);
 		}
-		boundingBoxTransformed.update();
-		lookAt.set(boundingBoxTransformed.getCenter());
-	} else {
-		lookAt.set(0.0f, 0.0f, 0.0f);
+		resetRequested = false;
 	}
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 	Vector3 forwardVectorTransformed;

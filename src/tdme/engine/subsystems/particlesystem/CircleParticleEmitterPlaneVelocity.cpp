@@ -28,6 +28,7 @@ CircleParticleEmitterPlaneVelocity::CircleParticleEmitterPlaneVelocity(int32_t c
 	this->radius = radius;
 	this->mass = mass;
 	this->massRnd = massRnd;
+	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity = velocity;
 	this->velocityRnd = velocityRnd;
 	this->colorStart.set(colorStart);
@@ -42,7 +43,6 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 {
 	Vector3 cosOnAxis0;
 	Vector3 sinOnAxis1;
-	Vector3 side;
 	// set up particle
 	particle->active = true;
 	particle->spriteIndex = 0.0f;
@@ -54,7 +54,7 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 	particle->position.add(sinOnAxis1);
 	particle->position.scale(radiusTransformed);
 	// compute velocity
-	particle->velocity.set(particle->position).sub(centerTransformed).normalize().scale(velocity + (Math::random() * velocityRnd)).scale(scale);
+	particle->velocity.set(particle->position).normalize().scale(velocity + (Math::random() * velocityRnd)).scale(scale);
 	// mass
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
 	// life time
@@ -71,7 +71,6 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 
 void CircleParticleEmitterPlaneVelocity::fromTransformations(const Transformations& transformations)
 {
-	Vector3 side;
 	auto& transformationsMatrix = transformations.getTransformationsMatrix();
 	// apply rotation, scale, translation
 	transformationsMatrix.multiply(center, centerTransformed);

@@ -21,6 +21,7 @@
           - circle particle emitter
           - circle particle emitter with velocity on circle plane
           - sphere particle emitter
+      -  emitters can be transformed by using a gizmo
     - setting up bounding volumes
         - none
         - sphere

@@ -165,6 +165,7 @@ void SharedParticleSystemView::setEntity(LevelEditorEntity* entity)
 	this->entity = entity;
 	this->particleSystemIdx = 0;
 	initParticleSystemRequested = true;
+	entity->setDefaultBoundingVolumes();
 }
 
 void SharedParticleSystemView::initParticleSystemRequest()
@@ -580,7 +581,6 @@ void SharedParticleSystemView::setGizmoRotation(LevelEditorEntity* entity, const
 }
 
 void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly) {
-	if (guiOnly == true) return;
 	{
 		auto transformations = particleSystemEntity->getTransformations();
 		auto localTransformations = particleSystemEntity->getLocalTransformations();
@@ -598,22 +598,53 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 		} else
 		if (emitterType == LevelEditorEntityParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getPointParticleEmitter();
-			emitter->setPosition(transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getPosition()));
+			auto position = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getPosition());
+			if (guiOnly == false) {
+				emitter->setPosition(position);
+			} else {
+				particleSystemScreenController->updatePointParticleSystemEmitter(position);
+			}
 		} else
 		if (emitterType == LevelEditorEntityParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
+			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getObbCenter());
+			auto axis0 = emitter->getObbAxis0().clone().scale(emitter->getObbHalfextension().getX() * 2.0f);
+			auto axis1 = emitter->getObbAxis1().clone().scale(emitter->getObbHalfextension().getY() * 2.0f);
+			auto axis2 = emitter->getObbAxis2().clone().scale(emitter->getObbHalfextension().getZ() * 2.0f);
+			auto halfExtension = emitter->getObbHalfextension();
+			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0, axis0);
+			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1, axis1);
+			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis2, axis2);
+			halfExtension.set(
+				Vector3(
+					Math::clamp(axis0.computeLength() / 2.0f, 0.01f, 1000.0f),
+					Math::clamp(axis1.computeLength() / 2.0f, 0.01f, 1000.0f),
+					Math::clamp(axis2.computeLength() / 2.0f, 0.01f, 1000.0f)
+				)
+			);
+			axis0.normalize();
+			axis1.normalize();
+			axis2.normalize();
+			if (guiOnly == false) {
+				emitter->setObbCenter(center);
+				emitter->setObbAxis0(axis0);
+				emitter->setObbAxis1(axis1);
+				emitter->setObbAxis2(axis2);
+				emitter->setObbHalfextension(halfExtension);
+			} else {
+				particleSystemScreenController->updateBoundingBoxParticleSystemEmitter(center, axis0, axis1, axis2, halfExtension);
+			}
 		} else
 		if (emitterType == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			Vector3 tmpVector3;
 			auto emitter = particleSystem->getCircleParticleEmitter();
-			emitter->setCenter(transformations.getTransformationsMatrix().multiply(emitter->getCenter(), tmpVector3));
-		} else
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
-			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-		} else
-		if (emitterType == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
-			auto emitter = particleSystem->getSphereParticleEmitter();
-			emitter->setCenter(transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter()));
+			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
+			auto axis0 = emitter->getAxis0();
+			auto axis1 = emitter->getAxis1();
+			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0, axis0);
+			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1, axis1);
+			axis0.normalize();
+			axis1.normalize();
 			auto scale = 1.0f;
 			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -627,7 +658,71 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 				Math::abs(totalDeltaScale.getZ()) > Math::abs(totalDeltaScale.getY())) {
 				scale+= totalDeltaScale.getZ();
 			}
-			emitter->setRadius(Math::clamp(emitter->getRadius() * Math::abs(scale), 0.01f, 1000.0f));
+			auto radius = Math::clamp(emitter->getRadius() * Math::abs(scale), 0.01f, 1000.0f);
+			if (guiOnly == false) {
+				emitter->setCenter(center);
+				emitter->setAxis0(axis0);
+				emitter->setAxis1(axis1);
+				emitter->setRadius(radius);
+			} else {
+				particleSystemScreenController->updateCircleParticleSystemEmitter(center, axis0, axis1, radius);
+			}
+		} else
+		if (emitterType == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
+			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
+			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
+			auto axis0 = emitter->getAxis0();
+			auto axis1 = emitter->getAxis1();
+			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0, axis0);
+			localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1, axis1);
+			axis0.normalize();
+			axis1.normalize();
+			auto scale = 1.0f;
+			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
+				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
+				scale+= totalDeltaScale.getX();
+			} else
+			if (Math::abs(totalDeltaScale.getY()) > Math::abs(totalDeltaScale.getX()) &&
+				Math::abs(totalDeltaScale.getY()) > Math::abs(totalDeltaScale.getZ())) {
+				scale+= totalDeltaScale.getY();
+			} else
+			if (Math::abs(totalDeltaScale.getZ()) > Math::abs(totalDeltaScale.getX()) &&
+				Math::abs(totalDeltaScale.getZ()) > Math::abs(totalDeltaScale.getY())) {
+				scale+= totalDeltaScale.getZ();
+			}
+			auto radius = Math::clamp(emitter->getRadius() * Math::abs(scale), 0.01f, 1000.0f);
+			if (guiOnly == false) {
+				emitter->setCenter(center);
+				emitter->setAxis0(axis0);
+				emitter->setAxis1(axis1);
+				emitter->setRadius(radius);
+			} else {
+				particleSystemScreenController->updateCirclePlaneVelocityParticleSystemEmitter(center, axis0, axis1, radius);
+			}
+		} else
+		if (emitterType == LevelEditorEntityParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
+			auto emitter = particleSystem->getSphereParticleEmitter();
+			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
+			auto scale = 1.0f;
+			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
+				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
+				scale+= totalDeltaScale.getX();
+			} else
+			if (Math::abs(totalDeltaScale.getY()) > Math::abs(totalDeltaScale.getX()) &&
+				Math::abs(totalDeltaScale.getY()) > Math::abs(totalDeltaScale.getZ())) {
+				scale+= totalDeltaScale.getY();
+			} else
+			if (Math::abs(totalDeltaScale.getZ()) > Math::abs(totalDeltaScale.getX()) &&
+				Math::abs(totalDeltaScale.getZ()) > Math::abs(totalDeltaScale.getY())) {
+				scale+= totalDeltaScale.getZ();
+			}
+			auto radius = Math::clamp(emitter->getRadius() * Math::abs(scale), 0.01f, 1000.0f);
+			if (guiOnly == false) {
+				emitter->setCenter(center);
+				emitter->setRadius(radius);
+			} else {
+				particleSystemScreenController->updateSphereParticleSystemEmitter(center, radius);
+			}
 		} else {
 			Console::println(
 				string(
@@ -638,7 +733,8 @@ void SharedParticleSystemView::applyParticleSystemTransformations(ParticleSystem
 			);
 		}
 	}
-	{
+	if (guiOnly == false) {
+		particleSystemScreenController->setParticleSystemEmitter();
 		auto modelEntity = engine->getEntity("model");
 		if (modelEntity != nullptr) engine->removeEntity("model");
 		Transformations transformations;

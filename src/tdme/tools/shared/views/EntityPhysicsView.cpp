@@ -99,7 +99,7 @@ void EntityPhysicsView::initialize()
 	}
 }
 
-void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t idx)
+void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t idx, int32_t type)
 {
 	BoundingBox aabb;
 	if (entity->getModel() != nullptr) {
@@ -120,8 +120,14 @@ void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t i
 		aabb = BoundingBox(Vector3(-0.5f, 0.0f, -0.5f), Vector3(0.5f, 3.0f, 0.5f));
 	}
 	auto obb = OrientedBoundingBox(&aabb);
-	entityPhysicsSubScreenController->setupSphere(idx, obb.getCenter(), obb.getHalfExtension().computeLength());
-	{
+	auto boundingVolume = entity->getBoundingVolumeAt(idx);
+	if (type == 0) {
+		entityPhysicsSubScreenController->selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
+	} else
+	if (type == 1) {
+		entityPhysicsSubScreenController->setupSphere(idx, obb.getCenter(), obb.getHalfExtension().computeLength());
+	} else
+	if (type == 2) {
 		Vector3 a;
 		Vector3 b;
 		auto radius = 0.0f;
@@ -153,17 +159,19 @@ void EntityPhysicsView::resetBoundingVolume(LevelEditorEntity* entity, int32_t i
 			b.add(obb.getCenter());
 		}
 		entityPhysicsSubScreenController->setupCapsule(idx, a, b, radius);
+	} else
+	if (type == 3) {
+		entityPhysicsSubScreenController->setupBoundingBox(idx, aabb.getMin(), aabb.getMax());
+	} else
+	if (type == 4) {
+		entityPhysicsSubScreenController->setupOrientedBoundingBox(idx, obb.getCenter(), obb.getAxes()[0], obb.getAxes()[1], obb.getAxes()[2], obb.getHalfExtension());
 	}
-
-	entityPhysicsSubScreenController->setupBoundingBox(idx, aabb.getMin(), aabb.getMax());
-	entityPhysicsSubScreenController->setupOrientedBoundingBox(idx, obb.getCenter(), obb.getAxes()[0], obb.getAxes()[1], obb.getAxes()[2], obb.getHalfExtension());
-	entityPhysicsSubScreenController->selectBoundingVolume(idx, EntityPhysicsSubScreenController_BoundingVolumeType::NONE);
 }
 
 void EntityPhysicsView::setBoundingVolumes(LevelEditorEntity* entity)
 {
 	for (auto i = 0; i < LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT; i++) {
-		resetBoundingVolume(entity, i);
+		resetBoundingVolume(entity, i, 0);
 	}
 	for (auto i = 0; i < entity->getBoundingVolumeCount(); i++) {
 		auto bv = entity->getBoundingVolumeAt(i);
