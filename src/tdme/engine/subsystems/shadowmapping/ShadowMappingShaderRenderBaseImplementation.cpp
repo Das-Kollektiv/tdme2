@@ -147,7 +147,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateMatrices(void* context) 
 		// object to screen matrix
 		mvpMatrix.set(mvMatrix).multiply(renderer->getProjectionMatrix());
 		// normal matrix
-		normalMatrix.set(mvMatrix).invert().transpose();
+		normalMatrix.set(renderer->getModelViewMatrix()).invert().transpose();
 		// model translation
 		renderer->getModelViewMatrix().getTranslation(modelTranslation);
 		// upload

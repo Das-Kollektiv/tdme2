@@ -57,9 +57,8 @@ void Light::update(void* context) {
 		light.enabled = 1;
 		light.ambient = ambient.getArray();
 		light.diffuse = diffuse.getArray();
-		light.position = renderer->getCameraMatrix().multiply(position, lightPositionTransformed).scale(Math::abs(lightPositionTransformed.getW()) < Math::EPSILON?1.0f:1.0f / lightPositionTransformed.getW()).setW(1.0f).getArray();
-		renderer->getCameraMatrix().multiply(spotDirection4.set(spotDirection, 0.0f), spotDirection4Transformed);
-		light.spotDirection = tmpVector3.set(spotDirection4Transformed.getX(), spotDirection4Transformed.getY(), spotDirection4Transformed.getZ()).getArray();
+		light.position = position.getArray();
+		light.spotDirection = spotDirection.getArray();
 		light.spotExponent = spotExponent;
 		light.spotCosCutoff = static_cast< float >(Math::cos(Math::PI / 180.0f * spotCutOff));
 		light.constantAttenuation = constantAttenuation;

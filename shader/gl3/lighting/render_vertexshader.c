@@ -37,6 +37,7 @@ out vec3 vsTangent;
 out vec3 vsBitangent;
 out vec4 vsEffectColorMul;
 out vec4 vsEffectColorAdd;
+out vec3 vsEyeDirection;
 
 #if defined(HAVE_TERRAIN_SHADER)
 	out vec3 vertex;
@@ -70,7 +71,7 @@ void main(void) {
 	#endif
 
 	// normal matrix
-	mat4 normalMatrix = mat4(transpose(inverse(mat3(cameraMatrix * inModelMatrix * shaderTransformMatrix))));
+	mat4 normalMatrix = mat4(transpose(inverse(mat3(inModelMatrix * shaderTransformMatrix))));
 
 	#if defined(HAVE_TERRAIN_SHADER)
 		vec4 heightVector4 = inModelMatrix * vec4(inVertex, 1.0);
@@ -96,11 +97,10 @@ void main(void) {
 		vsNormal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(waveNormal(worldPosition.x, worldPosition.z), 0.0)));
 	#else
 		// compute the normal
-		vsNormal = normalize(vec3(normalMatrix * shaderTransformMatrix * vec4(inNormal, 0.0)));
+		vsNormal = normalize(vec3(normalMatrix * vec4(inNormal, 0.0)));
 	#endif
 
 	// transformations matrices
-	mat4 mvMatrix = cameraMatrix * inModelMatrix * shaderTransformMatrix;
 	mat4 mvpMatrix = projectionMatrix * cameraMatrix * inModelMatrix * shaderTransformMatrix;
 
 	// texure UV
@@ -120,9 +120,15 @@ void main(void) {
 	vsEffectColorAdd = inEffectColorAdd;
 
 	// gl position
-	vec4 vsPosition4 = mvMatrix * vec4(inVertex, 1.0);
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
+
+	// world position
+	vec4 vsPosition4 = inModelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 	vsPosition = vsPosition4.xyz / vsPosition4.w;
+
+	// eye direction
+	vsPosition4 = cameraMatrix * vsPosition4;
+	vsEyeDirection = normalize(-vsPosition4.xyz / vsPosition4.w);
 
 	#if defined(HAVE_DEPTH_FOG)
 		fragDepth = gl_Position.z;

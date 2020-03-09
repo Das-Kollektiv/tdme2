@@ -78,7 +78,7 @@ attribute vec3 inOrigin;
 uniform mat4 mvpMatrix;
 uniform mat4 mvMatrix;
 uniform mat4 normalMatrix;
-uniform vec3 modelTranslation;
+uniform mat4 modelMatrix;
 uniform mat3 textureMatrix;
 
 uniform vec4 sceneColor;
@@ -96,13 +96,11 @@ uniform float time;
 	uniform float wavelength[4];
 	uniform float speed[4];
 	uniform vec2 direction[4];
-	uniform mat4 modelMatrix;
 #elif defined(HAVE_TERRAIN_SHADER)
 	varying vec3 vertex;
 	varying vec3 normal;
 	varying float height;
 	varying float slope;
-	uniform mat4 modelMatrix;
 #endif
 
 // will be passed to fragment shader
@@ -113,11 +111,10 @@ varying vec4 vsFragColor;
 
 {$FUNCTIONS}
 
-void computeLight(in int i, in vec3 normal, in vec3 position) {
+void computeLight(in int i, in vec3 normal, in vec3 position, in vec3 eyeDirection) {
 	vec3 lightDirection = lights[i].position.xyz - position.xyz;
 	float lightDistance = length(lightDirection);
 	lightDirection = normalize(lightDirection);
-	vec3 eyeDirection = normalize(-position);
 	vec3 reflectionDirection = normalize(reflect(-lightDirection, normal));
 
 	// compute attenuation
@@ -146,22 +143,22 @@ void computeLight(in int i, in vec3 normal, in vec3 position) {
 		clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * material.shininess) * lightAttenuation, 0.0, 1.0);
 }
 
-void computeLights(in vec3 normal, in vec3 position) {
+void computeLights(in vec3 normal, in vec3 position, in vec3 eyeDirection) {
 	// process each light
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		// skip on disabled lights
 		if (lights[i].enabled == FALSE) continue;
 
 		// compute light
-		computeLight(i, normal, position);
+		computeLight(i, normal, position, eyeDirection);
 	}
 }
  
 void main(void) {
 	#if defined(HAVE_TREE)
-		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, modelTranslation);
+		mat4 shaderTransformMatrix = createTreeTransformMatrix(inOrigin, inVertex, vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]));
 	#elif defined(HAVE_FOLIAGE)
-		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, modelTranslation);
+		mat4 shaderTransformMatrix = createFoliageTransformMatrix(inOrigin, inVertex, vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]));
 	#else
 		mat4 shaderTransformMatrix = mat4(1.0);
 	#endif
@@ -203,12 +200,16 @@ void main(void) {
 	// compute gl position
 	gl_Position = mvpMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 
-	// Eye-coordinate position of vertex, needed in various calculations
-	vec4 position4 = mvMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	// world position of vertex, needed in various calculations
+	vec4 position4 = modelMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
 	vec3 position = position4.xyz / position4.w;
 
+	// eye direction
+	position4 = mvMatrix * shaderTransformMatrix * vec4(inVertex, 1.0);
+	vec3 eyeDirection = normalize(-position4.xyz / position4.w);
+
 	// compute lights
-	computeLights(normal, position);
+	computeLights(normal, position, eyeDirection);
 
 	// take effect colors into account
 	vsFragColor*= effectColorMul;

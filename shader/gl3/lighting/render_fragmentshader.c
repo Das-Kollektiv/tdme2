@@ -89,6 +89,7 @@ in vec3 vsTangent;
 in vec3 vsBitangent;
 in vec4 vsEffectColorMul;
 in vec4 vsEffectColorAdd;
+in vec3 vsEyeDirection;
 
 // out
 out vec4 outColor;
@@ -173,7 +174,6 @@ vec4 fragColor;
 		vec3 lightDirection = lights[i].position.xyz - position.xyz;
 		float lightDistance = length(lightDirection);
 		lightDirection = normalize(lightDirection);
-		vec3 eyeDirection = normalize(-position);
 		vec3 reflectionDirection = normalize(reflect(-lightDirection, normal));
 
 		// compute attenuation
@@ -199,7 +199,7 @@ vec4 fragColor;
 		fragColor+=
 			clamp(lights[i].ambient * material.ambient, 0.0, 1.0) +
 			clamp(lights[i].diffuse * material.diffuse * max(dot(normal, lightDirection), 0.0) * lightAttenuation, 0.0, 1.0) +
-			clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, eyeDirection), 0.0), 0.3 * materialShininess) * lightAttenuation, 0.0, 1.0);
+			clamp(lights[i].specular * material.specular * pow(max(dot(reflectionDirection, vsEyeDirection), 0.0), 0.3 * materialShininess) * lightAttenuation, 0.0, 1.0);
 	}
 
 	void computeLights(in vec3 normal, in vec3 position) {
