@@ -22,8 +22,8 @@ EntityDisplayView::EntityDisplayView(EntityDisplaySubScreenController* entityDis
 {
 	this->engine = Engine::getInstance();
 	this->entityDisplaySubScreenController = entityDisplaySubScreenController;
-	displayGroundPlate = false;
-	displayShadowing = false;
+	displayGroundPlate = true;
+	displayShadowing = true;
 }
 
 EntityDisplayView::~EntityDisplayView() {
@@ -37,5 +37,6 @@ void EntityDisplayView::display(LevelEditorEntity* entity)
 		if (model != nullptr) model->setReceivesShadows(displayShadowing);
 		auto ground = engine->getEntity("ground");
 		if (ground != nullptr) ground->setEnabled(displayGroundPlate);
+		if (ground != nullptr) ground->setReceivesShadows(displayShadowing);
 	}
 }

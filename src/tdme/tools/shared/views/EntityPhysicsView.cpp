@@ -252,10 +252,16 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 	if (entityBoundingVolume == nullptr) return;
 
 	{
+		Vector3 objectScale(1.0f, 1.0f, 1.0f);
+		auto modelEntity = engine->getEntity("model");
+		if (modelEntity != nullptr) objectScale = modelEntity->getScale();
 		auto modelBoundingVolumeEntityId = LevelEditorEntity::MODEL_BOUNDINGVOLUME_IDS[idx];
 		if (entityBoundingVolume->getModel() != nullptr) {
 			auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
+			modelBoundingVolumeEntity->setScale(objectScale);
+			modelBoundingVolumeEntity->setRenderPass(Object3D::RENDERPASS_POST_POSTPROCESSING);
 			modelBoundingVolumeEntity->setEnabled(false);
+			modelBoundingVolumeEntity->update();
 			dynamic_cast<EntityHierarchy*>(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID))->addEntity(modelBoundingVolumeEntity);
 		}
 	}
@@ -278,6 +284,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 				transformations.update();
 				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, Tools::getDefaultObb());
 				modelBoundingVolumeEntity->fromTransformations(transformations);
+				modelBoundingVolumeEntity->setRenderPass(Object3D::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setEnabled(false);
 				engine->addEntity(modelBoundingVolumeEntity);
 			} else {
@@ -293,6 +300,7 @@ void EntityPhysicsView::setupModelBoundingVolume(LevelEditorEntity* entity, int3
 					pivot = capsule->getA().clone().add(capsule->getB()).scale(0.5f);
 				}
 				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, entityBoundingVolume->getModel());
+				modelBoundingVolumeEntity->setRenderPass(Object3D::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setPivot(pivot);
 				modelBoundingVolumeEntity->setScale(boundingVolumesEntity->getScale());
 				modelBoundingVolumeEntity->setPivot(modelBoundingVolumeEntity->getPivot().clone().scale(boundingVolumesEntity->getScale()));

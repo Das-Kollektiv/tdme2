@@ -249,9 +249,11 @@ float Tools::computeMaxAxisDimension(BoundingBox* boundingBox)
 
 Model* Tools::createGroundModel(float width, float depth, float y)
 {
-	auto ground = new Model("ground", "ground", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
+	auto modelId = "ground" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
+	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material("ground");
 	groundMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	groundMaterial->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
 	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundGroup = new Group(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
@@ -262,10 +264,10 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	vector<Vector3> groundNormals;
 	groundNormals.push_back(Vector3(0.0f, 1.0f, 0.0f));
 	vector<TextureCoordinate> groundTextureCoordinates;
+	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, depth));
 	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 0.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(0.0f, 1.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(1.0f, 1.0f));
-	groundTextureCoordinates.push_back(TextureCoordinate(1.0f, 0.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(width, 0.0f));
+	groundTextureCoordinates.push_back(TextureCoordinate(width, depth));
 	vector<Face> groundFacesGround;
 	groundFacesGround.push_back(Face(groundGroup, 0, 1, 2, 0, 0, 0, 0, 1, 2));
 	groundFacesGround.push_back(Face(groundGroup, 2, 3, 0, 0, 0, 0, 2, 3, 0));
@@ -378,6 +380,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 	);
 	auto groundObject = new Object3D("ground", ground);
 	groundObject->setEnabled(false);
+	groundObject->setScale(objectScale);
+	groundObject->update();
 	engine->addEntity(groundObject);
 
 	//

@@ -301,8 +301,8 @@ void SharedModelEditorView::loadSettings()
 		Properties settings;
 		settings.load("settings", "modeleditor.properties");
 		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
-		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
-		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
+		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
+		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 		modelEditorScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 		modelEditorScreenController->getAudioPath()->setPath(settings.get("audio.path", "."));
 	} catch (Exception& exception) {

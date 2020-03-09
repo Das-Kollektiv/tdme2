@@ -391,8 +391,8 @@ void SharedParticleSystemView::loadSettings()
 		Properties settings;
 		settings.load("settings", "particlesystem.properties");
 		entityPhysicsView->setDisplayBoundingVolume(settings.get("display.boundingvolumes", "false") == "true");
-		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "false") == "true");
-		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "false") == "true");
+		entityDisplayView->setDisplayGroundPlate(settings.get("display.groundplate", "true") == "true");
+		entityDisplayView->setDisplayShadowing(settings.get("display.shadowing", "true") == "true");
 		particleSystemScreenController->getParticleSystemPath()->setPath(settings.get("particlesystem.path", "."));
 		particleSystemScreenController->getModelPath()->setPath(settings.get("model.path", "."));
 	} catch (Exception& exception) {
