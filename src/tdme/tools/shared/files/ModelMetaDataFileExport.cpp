@@ -117,9 +117,7 @@ void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& j
 	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) {
 		//
 		auto modelPathName = Tools::getPath(lodLevel->getFileName());
-		auto modelFileName =
-			 Tools::getFileName(lodLevel->getFileName()) +
-			 (StringUtils::endsWith(lodLevel->getFileName(), ".tm") == false ? ".tm" : "");
+		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(lodLevel->getFileName())) + ".tm";
 		TMWriter::write(
 			lodLevel->getModel(),
 			modelPathName,
@@ -143,9 +141,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 	rapidjson::Document::AllocatorType& jAllocator = jDocument.GetAllocator();
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {
 		auto modelPathName = Tools::getPath(entity->getFileName());
-		auto modelFileName =
-			 Tools::getFileName(entity->getFileName()) +
-			 (StringUtils::endsWith(entity->getFileName(), ".tm") == false ? ".tm" : "");
+		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(entity->getFileName())) + ".tm";
 		TMWriter::write(
 			entity->getModel(),
 			modelPathName,
@@ -240,7 +236,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jObjectParticleSystem.SetObject();
 					if (particleSystem->getObjectParticleSystem()->getModelFile().length() > 0) {
 						auto modelPathName = Tools::getPath(particleSystem->getObjectParticleSystem()->getModelFile());
-						auto modelFileName = Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile() + (StringUtils::endsWith(particleSystem->getObjectParticleSystem()->getModelFile(), ".tm") == false ? ".tm" : ""));
+						auto modelFileName = Tools::removeFileEnding(Tools::getFileName(particleSystem->getObjectParticleSystem()->getModelFile())) + ".tm";
 						TMWriter::write(
 							particleSystem->getObjectParticleSystem()->getModel(),
 							modelPathName,

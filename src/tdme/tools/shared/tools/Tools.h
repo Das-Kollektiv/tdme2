@@ -200,6 +200,13 @@ public:
 	static const string getFileName(const string& fileName);
 
 	/**
+	 * Remove file ending, e.g. .dae, .fbx, ...
+	 * @param fileName file name
+	 * @return file name
+	 */
+	static const string removeFileEnding(const string& fileName);
+
+	/**
 	 * Load settings
 	 * @param application application
 	 */

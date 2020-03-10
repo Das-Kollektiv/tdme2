@@ -1207,7 +1207,7 @@ void ModelEditorScreenController::onModelSave()
 	if (fileName.length() == 0) {
 		fileName = view->getFileName();
 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == false) {
-			fileName = fileName + ".tmm";
+			fileName = Tools::removeFileEnding(fileName) + ".tmm";
 		}
 	}
 	vector<string> extensions = {

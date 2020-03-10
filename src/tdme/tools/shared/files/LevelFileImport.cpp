@@ -486,7 +486,7 @@ void LevelFileImport::doImportFromModel(const string& pathName, const string& fi
 	// export to tl
 	LevelFileExport::doExport(
 		pathName,
-		fileName + ".tl",
+		Tools::removeFileEnding(fileName) + ".tl",
 		level
 	);
 

@@ -477,6 +477,16 @@ const string Tools::getFileName(const string& fileName)
 	return FileSystem::getInstance()->getFileName(fileName);
 }
 
+const string Tools::removeFileEnding(const string& fileName)
+{
+	auto idx = fileName.rfind('.');
+	if (idx == string::npos) {
+		return fileName;
+	} else {
+		return fileName.substr(0, idx);
+	}
+}
+
 void Tools::loadSettings(Application* application) {
 	Properties settings;
 
