@@ -374,8 +374,8 @@ void Tools::setupEntity(LevelEditorEntity* entity, Engine* engine, const Transfo
 
 	// generate ground
 	auto ground = createGroundModel(
-		(entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) * 1.0f,
-		(entityBoundingBoxToUse->getMax().getZ() - entityBoundingBoxToUse->getMin().getZ()) * 1.0f,
+		Math::ceil((entityBoundingBoxToUse->getMax().getX() - entityBoundingBoxToUse->getMin().getX()) * 1.0f),
+		Math::ceil((entityBoundingBoxToUse->getMax().getZ() - entityBoundingBoxToUse->getMin().getZ()) * 1.0f),
 		entityBoundingBoxToUse->getMin().getY() - Math::EPSILON
 	);
 	auto groundObject = new Object3D("ground", ground);
