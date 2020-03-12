@@ -178,10 +178,10 @@ public:
 	}
 
 	/** 
-	 * Creates an empty animation object
-	 * @param frames frames
+	 * Sets animation object
+	 * @param animation animation
 	 */
-	Animation* createAnimation();
+	void setAnimation(Animation* animation);
 
 	/** 
 	 * @return skinning or null
@@ -191,10 +191,10 @@ public:
 	}
 
 	/** 
-	 * Creates an empty skinning object
-	 * @return skinning
+	 * Sets skinning object
+	 * @param skinning skinning
 	 */
-	Skinning* createSkinning();
+	void setSkinning(Skinning* skinning);
 
 	/** 
 	 * @return number of faces in group

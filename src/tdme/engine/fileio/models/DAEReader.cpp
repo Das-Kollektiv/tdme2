@@ -372,7 +372,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 							auto frames = static_cast< int32_t >(Math::ceil(keyFrameTimes[keyFrameTimes.size() - 1] * fps));
 							if (frames > 0) {
 								ModelHelper::createDefaultAnimation(model, frames);
-								group->createAnimation();
+								auto animation = new Animation();
 								vector<Matrix4x4> transformationsMatrices;
 								transformationsMatrices.resize(frames);
 								auto tansformationsMatrixLast = &keyFrameMatrices[0];
@@ -396,7 +396,8 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 									tansformationsMatrixLast = transformationsMatrixCurrent;
 									keyFrameIdx++;
 								}
-								group->getAnimation()->setTransformationsMatrices(transformationsMatrices);
+								animation->setTransformationsMatrices(transformationsMatrices);
+								group->setAnimation(animation);
 							}
 						}
 					}
@@ -531,7 +532,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	auto group = new Group(model, parentGroup, xmlNodeId, xmlNodeName);
 
 	// create skinning
-	auto skinning = group->createSkinning();
+	auto skinning = new Skinning();
 
 	// parse geometry
 	readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
@@ -684,7 +685,9 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 		verticesJointsWeights.push_back(vertexJointsWeights);
 	}
 	skinning->setVerticesJointsWeights(verticesJointsWeights);
+	group->setSkinning(skinning);
 
+	//
 	return group;
 }
 

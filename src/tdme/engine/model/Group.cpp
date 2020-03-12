@@ -89,17 +89,16 @@ void Group::setBitangents(const vector<Vector3>& bitangents)
 	}
 }
 
-Animation* Group::createAnimation()
-{
-	animation = new Animation();
-	return animation;
+void Group::setAnimation(Animation* animation) {
+	if (this->animation != nullptr) delete this->animation;
+	this->animation = animation;
 }
 
-Skinning* Group::createSkinning()
+void Group::setSkinning(Skinning* skinning)
 {
-	skinning = new Skinning();
-	model->setHasSkinning(true);
-	return skinning;
+	if (this->skinning != nullptr) delete this->skinning;
+	if (skinning != nullptr) model->setHasSkinning(true);
+	this->skinning = skinning;
 }
 
 int32_t Group::getFaceCount() const

@@ -187,8 +187,9 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				animationFinalMatrices[i].multiply(animationRotationMatrices[group->getId()][i]);
 				animationFinalMatrices[i].multiply(animationTranslationMatrices[group->getId()][i]);
 			}
-			auto animation = group->createAnimation();
+			auto animation = new Animation();
 			animation->setTransformationsMatrices(animationFinalMatrices);
+			group->setAnimation(animation);
 		}
 	}
 
@@ -511,7 +512,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 			inverseBindMatricesBufferData = (const float*)(inverseBindMatricesBuffer.data.data() + inverseBindMatricesAccessor.byteOffset + inverseBindMatricesBufferView.byteOffset);
 		}
 		if (inverseBindMatricesBufferData != nullptr) {
-			auto skinning = group->createSkinning();
+			auto skinning = new Skinning();
 			{
 				vector<Joint> skinningJoints;
 				for (auto gltfJointNodeIdx: gltfSkin.joints) {
@@ -556,6 +557,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				skinning->setWeights(skinningWeights);
 				skinning->setVerticesJointsWeights(skinningJointWeights);
 			}
+			group->setSkinning(skinning);
 		}
 	}
 

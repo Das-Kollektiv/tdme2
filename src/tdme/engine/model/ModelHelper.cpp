@@ -231,7 +231,7 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 	if (animation != nullptr) {
 		vector<Matrix4x4> newTransformationsMatrices;
 		auto oldTransformationsMatrices = root->getAnimation()->getTransformationsMatrices();
-		animation = root->createAnimation();
+		auto animation = new Animation();
 		newTransformationsMatrices.resize(frames);
 		for (auto i = 0; i < frames; i++) {
 			if (i < oldTransformationsMatrices.size()) {
@@ -241,6 +241,7 @@ void ModelHelper::fixAnimationLength(Group* root, int32_t frames)
 			}
 		}
 		animation->setTransformationsMatrices(newTransformationsMatrices);
+		root->setAnimation(animation);
 	}
 	for (auto it: root->getSubGroups()) {
 		Group* group = it.second;

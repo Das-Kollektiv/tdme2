@@ -269,14 +269,15 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Group* g)
 	} else {
 		array<float, 16> matrixArray;
 		auto frames = is->readInt();
-		g->createAnimation();
+		auto animation = new Animation();
 		vector<Matrix4x4> transformationsMatrices;
 		transformationsMatrices.resize(frames);
 		for (auto i = 0; i < transformationsMatrices.size(); i++) {
 			is->readFloatArray(matrixArray);
 			transformationsMatrices[i].set(matrixArray);
 		}
-		g->getAnimation()->setTransformationsMatrices(transformationsMatrices);
+		animation->setTransformationsMatrices(transformationsMatrices);
+		g->setAnimation(animation);
 		return g->getAnimation();
 	}
 }
@@ -350,7 +351,7 @@ JointWeight TMReader::readSkinningJointWeight(TMReaderInputStream* is)
 void TMReader::readSkinning(TMReaderInputStream* is, Group* g)
 {
 	if (is->readBoolean() == true) {
-		auto skinning = g->createSkinning();
+		auto skinning = new Skinning();
 		skinning->setWeights(is->readFloatVector());
 		vector<Joint> joints;
 		joints.resize(is->readInt());
@@ -367,6 +368,7 @@ void TMReader::readSkinning(TMReaderInputStream* is, Group* g)
 			}
 		}
 		skinning->setVerticesJointsWeights(verticesJointsWeight);
+		g->setSkinning(skinning);
 	}
 }
 
