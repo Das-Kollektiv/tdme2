@@ -1,6 +1,11 @@
-NAME = tdme
+NAME = tdme2
 LIB := lib$(NAME).a
 EXT_LIB := lib$(NAME)-ext.a
+
+BIN = bin
+LIB_DIR = lib
+OBJ = obj
+OBJ_DEBUG = obj-debug
 
 CPPVERSION = -std=gnu++11
 STACKFLAGS =
@@ -171,10 +176,26 @@ else
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
-		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	endif
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
+endif
+
+ifeq ($(HASHLINK), YES)
+	EXT_HL_SRCS = \
+		ext/hashlink/src/code.c \
+		ext/hashlink/src/jit.c \
+		ext/hashlink/src/module.c \
+		ext/hashlink/src/debugger.c \
+
+	HL_CFLAGS = -O2 -std=c11 -I ext/hashlink/src -I include/pcre -I include/mikktspace -g -D LIBHL_EXPORTS
+	EXTRAFLAGS := $(EXTRAFLAGS) -DHASHLINK
+	INCLUDES := $(INCLUDES) -I ext/hashlink/src
+	EXTRA_LIBS := $(EXTRA_LIBS) -ldl -L. -lhl
+	LDFLAGS := $(LDFLAGS) -lm -Wl,-rpath,. -Wl,--export-dynamic -Wl,--no-undefined
+else
+	EXT_HL_SRCS =
+	HL_CFLAGS =
 endif
 
 CPPFLAGS := $(INCLUDES)
@@ -189,11 +210,19 @@ CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
 
-BIN = bin
-OBJ = obj
-OBJ_DEBUG = obj-debug
+#TODO
+ifeq ($(LIBS-SHARED), YES)
+	OBJ := obj/shared
+	OBJ_DEBUG := obj-debug/shared
+	CXX := $(CXX) -fPIC
+	LIB := lib$(NAME).so
+	EXT_LIB := lib$(NAME)-ext.so
+else
+	OBJ := obj/static
+	OBJ_DEBUG := obj-debug/static
+endif
 
-LIBS := $(BIN)/$(LIB) $(BIN)/$(EXT_LIB)
+LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB)
 
 SRC = src
 TINYXML = tinyxml
@@ -208,6 +237,7 @@ SPIRV = vulkan/spirv
 GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
+HL = hashlink
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -568,6 +598,7 @@ SRCS = \
 	src/tdme/utils/Character.cpp \
 	src/tdme/utils/Enum.cpp \
 	src/tdme/utils/Float.cpp \
+	src/tdme/utils/HashLink.cpp \
 	src/tdme/utils/HexEncDec.cpp \
 	src/tdme/utils/Integer.cpp \
 	src/tdme/utils/IntEncDec.cpp \
@@ -581,8 +612,6 @@ SRCS = \
 	src/tdme/utils/ExceptionBase.cpp \
 	src/tdme/utils/Console.cpp \
 	$(SRCS_PLATFORM)
-
-EXT_SRCS = \
 
 EXT_TINYXML_SRCS = \
 	ext/tinyxml/tinystr.cpp \
@@ -626,7 +655,6 @@ EXT_LIBPNG_SRCS = \
 
 EXT_VORBIS_SRCS = \
 	ext/vorbis/analysis.c \
-	ext/vorbis/barkmel.c \
 	ext/vorbis/bitrate.c \
 	ext/vorbis/block.c \
 	ext/vorbis/codebook.c \
@@ -646,7 +674,6 @@ EXT_VORBIS_SRCS = \
 	ext/vorbis/sharedbook.c \
 	ext/vorbis/smallft.c \
 	ext/vorbis/synthesis.c \
-	ext/vorbis/tone.c \
 	ext/vorbis/vorbisenc.c \
 	ext/vorbis/vorbisfile.c \
 	ext/vorbis/window.c
@@ -799,6 +826,7 @@ MAIN_SRCS = \
 	src/tdme/tests/CrashTest-main.cpp \
 	src/tdme/tests/EngineTest-main.cpp \
 	src/tdme/tests/EntityHierarchyTest-main.cpp \
+	src/tdme/tests/HashLinkTest-main.cpp \
 	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/HTTPDownloadClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
@@ -834,7 +862,6 @@ MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)
 OBJS = $(SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 OBJS_DEBUG = $(SRCS_DEBUG:$(SRC)/%.cpp=$(OBJ_DEBUG)/%.o)
 
-EXT_OBJS = $(EXT_SRCS:ext/$(SRC)/%.cpp=$(OBJ)/%.o)
 EXT_TINYXML_OBJS = $(EXT_TINYXML_SRCS:ext/$(TINYXML)/%.cpp=$(OBJ)/%.o)
 EXT_ZLIB_OBJS = $(EXT_ZLIB_SRCS:ext/$(ZLIB)/%.c=$(OBJ)/%.o)
 EXT_LIBPNG_OBJS = $(EXT_LIBPNG_SRCS:ext/$(LIBPNG)/%.c=$(OBJ)/%.o)
@@ -847,27 +874,33 @@ EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_VMA_OBJS = $(EXT_VMA_SRCS:ext/$(VMA)/%.cpp=$(OBJ)/vulkan/%.o)
+EXT_HL_OBJS = $(EXT_HL_SRCS:ext/$(HL)/%.c=$(OBJ)/%.o)
 
 all: $(LIBS)
 
 define cpp-command
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 endef
 
 define cpp-command-debug
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_DEBUG) -c -o $@ $<
 endef
 
 define cpp-command-ext-rp3d
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) $(CPPFLAGS) $(CXXFLAGS_EXT_RP3D) -c -o $@ $<
 endef
 
 define c-command
-@mkdir -p $(dir $@); 
+@mkdir -p $(dir $@);
 @echo Compile $<; $(CXX) -x c $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+endef
+
+define c-command-hl
+@mkdir -p $(dir $@);
+@echo Compile $<; $(CXX) -x c $(HL_CFLAGS) -c -o $@ $<
 endef
 
 $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
@@ -875,9 +908,6 @@ $(OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 
 $(OBJS_DEBUG):$(OBJ_DEBUG)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command-debug)
-
-$(EXT_OBJS):$(OBJ)/%.o: ext/$(SRC)/%.cpp | print-opts
-	$(cpp-command)
 
 $(EXT_TINYXML_OBJS):$(OBJ)/%.o: ext/$(TINYXML)/%.cpp | print-opts
 	$(cpp-command)
@@ -914,25 +944,38 @@ $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | pr
 
 $(EXT_VMA_OBJS):$(OBJ)/vulkan/%.o: ext/$(VMA)/%.cpp | print-opts
 	$(cpp-command)
+$(EXT_HL_OBJS):$(OBJ)/%.o: ext/$(HL)/%.c | print-opts
+	$(c-command-hl)
 
 %.a:
-	@echo Archive $@
+	@echo Archive $@ created
 	@mkdir -p $(dir $@)
 	@rm -f $@
 	@ar rcs $@ $^
 
-$(BIN)/$(LIB): $(OBJS) $(OBJS_DEBUG)
+%.so:
+	@echo Shared library $@ created
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(CXX) -shared  $^ -o $@
 
-$(BIN)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS)
+
+$(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
+
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(EXT_HL_OBJS)
 
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
-	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(BIN) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+
+hashlink:
+	(cd ext/hashlink && $(MAKE) clean && $(MAKE) && mkdir -p ../../$(LIB_DIR) && cp libhl.so ../../$(LIB_DIR))
 
 mains: $(MAINS)
 
+# TODO make sure that always directory obj and obj-debug are removed
 clean:
-	rm -rf $(OBJ) $(OBJ_DEBUG) $(BIN)
+	rm -rf obj obj-debug $(LIB_DIR) $(BIN)
 
 print-opts:
 	@echo Building with \"$(CXX) $(CPPFLAGS) $(CXXFLAGS)\"

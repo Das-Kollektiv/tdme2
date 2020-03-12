@@ -186,16 +186,16 @@
     - documentation
 
 - What is WIP or planned
-	- GLTF reader
-	- Makefile generator for TDME2 based projects
-	- Installer
-	- Water shader
+    - GLTF reader
+    - Makefile generator for TDME2 based projects
+    - Installer
+    - Integrate Haxe via HashLink to be able to script TDME2 applications or sub logics
+    - Water shader
     - Improve on Vulkan
     - PBR lighting shader for GL3/CORE+
     - Expose shader and post processing programs setup API
     - Some UI elements need some default skinning fixes
     - WaveFront OBJ model file reader is broken currently
-    - Integrate a scripting language to be able to script TDME2 applications or sub logics
     - A release plan
     - A demonstration video
 
@@ -217,6 +217,7 @@
             - GLFW3(optional, required for Vulkan)
         - included in TDME2 repository
             - FBXSDK
+            - Hashlink
             - libpng
             - ReactPhysics3D
             - RapidJSON
