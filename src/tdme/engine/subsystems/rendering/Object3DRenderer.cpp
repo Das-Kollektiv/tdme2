@@ -22,6 +22,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -86,6 +87,7 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::physics::CollisionDetection;
 using tdme::engine::subsystems::lighting::LightingShader;
@@ -403,12 +405,13 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 			auto facesToRender = facesEntity->getFaces().size() * firstObject->visibleInstances;
 			// material
 			auto material = facesEntity->getMaterial();
+			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
 			// determine if transparent
 			auto transparentFacesEntity = false;
 			//	via material
-			if (material != nullptr) {
-				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
-				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+			if (specularMaterialProperties != nullptr) {
+				if (specularMaterialProperties->hasColorTransparency() == true || specularMaterialProperties->hasTextureTransparency() == true) transparentFacesEntity = true;
+				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
 					renderer->disableCulling(context);
 				}
 			}
@@ -490,7 +493,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 					//	texture coordinates
 					if (isTextureCoordinatesAvailable == true &&
 						(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
-						((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && material != nullptr && material->hasDiffuseTextureMaskedTransparency() == true))) {
+						((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && specularMaterialProperties != nullptr && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true))) {
 						renderer->bindTextureCoordinatesBufferObject(context, (*currentVBOIds)[3]);
 					}
 					// 	indices
@@ -560,8 +563,8 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 			}
 			// keep track of rendered faces
 			faceIdx += faces;
-			if (material != nullptr) {
-				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+			if (specularMaterialProperties != nullptr) {
+				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
 					renderer->enableCulling(context);
 				}
 			}
@@ -607,11 +610,12 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 			auto facesToRender = facesEntity->getFaces().size() * firstObject->visibleInstances;
 			// material
 			auto material = facesEntity->getMaterial();
+			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
 			// determine if transparent
 			auto transparentFacesEntity = false;
 			//	via material
-			if (material != nullptr) {
-				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true) transparentFacesEntity = true;
+			if (specularMaterialProperties != nullptr) {
+				if (specularMaterialProperties->hasColorTransparency() == true || specularMaterialProperties->hasTextureTransparency() == true) transparentFacesEntity = true;
 
 				// skip, if requested
 				if (transparentFacesEntity == true) {
@@ -641,7 +645,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 					continue;
 				}
 
-				if (material->hasDiffuseTextureTransparency() == true && material->hasDiffuseTextureMaskedTransparency() == true) {
+				if (specularMaterialProperties->hasDiffuseTextureTransparency() == true && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
 					if (cullingMode != 0) {
 						renderer->disableCulling(context);
 						cullingMode = 0;
@@ -763,7 +767,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 						//	texture coordinates
 						if (isTextureCoordinatesAvailable == true &&
 							(((renderTypes & RENDERTYPE_TEXTUREARRAYS) == RENDERTYPE_TEXTUREARRAYS) ||
-							((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && material != nullptr && material->hasDiffuseTextureMaskedTransparency() == true))) {
+							((renderTypes & RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY && specularMaterialProperties != nullptr && specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true))) {
 							renderer->bindTextureCoordinatesBufferObject(context, (*currentVBOBaseIds)[3]);
 						}
 						// 	indices
@@ -908,6 +912,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 
 	// material key
 	materialKey = material->getId();
@@ -920,13 +925,13 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 		// apply materials
 		if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
 			auto& rendererMaterial = renderer->getMaterial(context);
-			rendererMaterial.ambient = material->getAmbientColor().getArray();
-			rendererMaterial.diffuse = material->getDiffuseColor().getArray();
-			rendererMaterial.specular = material->getSpecularColor().getArray();
-			rendererMaterial.emission = material->getEmissionColor().getArray();
-			rendererMaterial.shininess = material->getShininess();
-			rendererMaterial.diffuseTextureMaskedTransparency = material->hasDiffuseTextureMaskedTransparency();
-			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = material->getDiffuseTextureMaskedTransparencyThreshold();
+			rendererMaterial.ambient = specularMaterialProperties->getAmbientColor().getArray();
+			rendererMaterial.diffuse = specularMaterialProperties->getDiffuseColor().getArray();
+			rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
+			rendererMaterial.emission = specularMaterialProperties->getEmissionColor().getArray();
+			rendererMaterial.shininess = specularMaterialProperties->getShininess();
+			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
+			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
 			renderer->onUpdateMaterial(context);
 		}
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
@@ -954,11 +959,11 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
 		auto& rendererMaterial = renderer->getMaterial(context);
-		rendererMaterial.diffuseTextureMaskedTransparency = material->hasDiffuseTextureMaskedTransparency();
-		rendererMaterial.diffuseTextureMaskedTransparencyThreshold = material->getDiffuseTextureMaskedTransparencyThreshold();
+		rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
+		rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
 		renderer->onUpdateMaterial(context);
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
-			material->hasDiffuseTextureMaskedTransparency() == true) {
+			specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
 			auto diffuseTextureId =
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] :

@@ -805,7 +805,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 	if (fbxSkinCount == 1) {
 		FbxSkin* fbxSkinDeformer = (FbxSkin*)fbxNode->GetMesh()->GetDeformer(0, FbxDeformer::eSkin);
 		int fbxClusterCount = fbxSkinDeformer->GetClusterCount();
-		auto skinning = group->createSkinning();
+		auto skinning = new Skinning();
 		vector<Joint> joints;
 		vector<float> weights;
 		map<int, vector<JointWeight>> jointWeightsByVertices;
@@ -885,6 +885,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			}
 		}
 		skinning->setVerticesJointsWeights(verticesJointsWeights);
+		group->setSkinning(skinning);
 	} else {
 		Console::println("FBXReader::processMeshNode(): " + to_string(fbxSkinCount) + " skins per mesh: Not supported");
 	}
@@ -900,7 +901,11 @@ Group* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Group* par
 void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame, const FbxTime& fbxEndFrame, Model* model, int frameOffset) {
 	auto fbxNodeName = fbxNode->GetName();
 	auto group = model->getGroupById(fbxNodeName);
-	if (group->getAnimation() == nullptr) group->createAnimation();
+	auto animation = group->getAnimation();
+	if (group->getAnimation() == nullptr) {
+		animation = new Animation();
+		group->setAnimation(animation);
+	}
 	auto transformationsMatrices = group->getAnimation()->getTransformationsMatrices();
 	transformationsMatrices.resize(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
 	FbxTime fbxFrameTime;

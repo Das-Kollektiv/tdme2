@@ -10,6 +10,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
@@ -30,6 +31,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::FacesEntity;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::ModelStatistics;
@@ -192,7 +194,9 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 			auto transparentFacesEntity = false;
 			//	via material
 			if (material != nullptr) {
-				if (material->hasColorTransparency() == true || material->hasTextureTransparency() == true)
+				auto specularMaterialProperties = material->getSpecularMaterialProperties();
+				if (specularMaterialProperties != nullptr &&
+					(specularMaterialProperties->hasColorTransparency() == true || specularMaterialProperties->hasTextureTransparency() == true))
 					transparentFacesEntity = true;
 
 			}

@@ -16,7 +16,6 @@
 - What is already working
     - 3d engine
         - model parsing
-            - WaveFront OBJ
             - DAE parsing with skinned meshes and animations
                 - group names/ids must not have whitespace characters
                 - requires baked matrices
@@ -25,7 +24,7 @@
             - TDME Model file format
                 - this is a much more efficient model file format for TDME
                 - can be read and written
-            - DAE and WaveFront OBJ files require triangulated meshes for now
+            - DAE files require triangulated meshes for now
         - objects/entity types
             - 3d model based objects with
                 - animations
@@ -195,7 +194,6 @@
     - PBR lighting shader for GL3/CORE+
     - Expose shader and post processing programs setup API
     - Some UI elements need some default skinning fixes
-    - WaveFront OBJ model file reader is broken currently
     - A release plan
     - A demonstration video
 

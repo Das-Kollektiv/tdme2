@@ -17,6 +17,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/primitives/Capsule.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -46,6 +47,7 @@ using tdme::engine::Rotation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -109,8 +111,8 @@ void EntityHierarchyTest::initialize()
 	light0->setEnabled(true);
 	auto ground = new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(30.0f, 1.0f, 30.0f));
 	auto groundModel = PrimitiveModel::createModel(ground, "ground_model");
-	groundModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	groundModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+	groundModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	entity = new Object3D("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
@@ -120,8 +122,8 @@ void EntityHierarchyTest::initialize()
 	// auto box = new Capsule(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.5f, 0.0f), 0.5f);
 	// auto box = new Sphere(Vector3(0.0f, 2.0f, 0.0f), 1.0f);
 	auto boxModel = PrimitiveModel::createModel(box, "box_model");
-	boxModel->getMaterials()["tdme.primitive.material"]->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
-	boxModel->getMaterials()["tdme.primitive.material"]->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
+	boxModel->getMaterials()["tdme.primitive.material"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	auto entityHierarchy = new EntityHierarchy("test");
 	entityHierarchy->setContributesShadows(true);
 	entityHierarchy->setReceivesShadows(true);

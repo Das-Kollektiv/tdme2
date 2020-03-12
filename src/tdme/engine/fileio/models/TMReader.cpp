@@ -14,12 +14,13 @@
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -45,12 +46,13 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -140,22 +142,23 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 {
 	auto id = is->readString();
 	auto m = new Material(id);
+	auto smp = new SpecularMaterialProperties();
 	array<float, 4> colorRGBAArray;
 	is->readFloatArray(colorRGBAArray);
-	m->setAmbientColor(Color4(colorRGBAArray));
+	smp->setAmbientColor(Color4(colorRGBAArray));
 	is->readFloatArray(colorRGBAArray);
-	m->setDiffuseColor(Color4(colorRGBAArray));
+	smp->setDiffuseColor(Color4(colorRGBAArray));
 	is->readFloatArray(colorRGBAArray);
-	m->setSpecularColor(Color4(colorRGBAArray));
+	smp->setSpecularColor(Color4(colorRGBAArray));
 	is->readFloatArray(colorRGBAArray);
-	m->setEmissionColor(Color4(colorRGBAArray));
-	m->setShininess(is->readFloat());
+	smp->setEmissionColor(Color4(colorRGBAArray));
+	smp->setShininess(is->readFloat());
 	auto diffuseTexturePathName = is->readString();
 	auto diffuseTextureFileName = is->readString();
 	auto diffuseTransparencyTexturePathName = is->readString();
 	auto diffuseTransparencyTextureFileName = is->readString();
 	if (diffuseTextureFileName.size() != 0) {
-		m->setDiffuseTexture(
+		smp->setDiffuseTexture(
 			getTexturePath(pathName, diffuseTexturePathName, diffuseTextureFileName),
 			diffuseTextureFileName,
 			getTexturePath(pathName, diffuseTransparencyTexturePathName, diffuseTransparencyTextureFileName),
@@ -165,7 +168,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	auto specularTexturePathName = is->readString();
 	auto specularTextureFileName = is->readString();
 	if (specularTextureFileName.size() != 0) {
-		m->setSpecularTexture(
+		smp->setSpecularTexture(
 			getTexturePath(pathName, specularTexturePathName, specularTextureFileName),
 			specularTextureFileName
 		);
@@ -173,7 +176,7 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	auto normalTexturePathName = is->readString();
 	auto normalTextureFileName = is->readString();
 	if (normalTextureFileName.size() != 0) {
-		m->setNormalTexture(
+		smp->setNormalTexture(
 			getTexturePath(pathName, normalTexturePathName, normalTextureFileName),
 			normalTextureFileName
 		);
@@ -181,23 +184,24 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	auto displacementTexturePathName = is->readString();
 	auto displacementTextureFileName = is->readString();
 	if (displacementTextureFileName.size() != 0) {
-		m->setDisplacementTexture(
+		smp->setDisplacementTexture(
 			getTexturePath(pathName, displacementTexturePathName, displacementTextureFileName),
 			displacementTextureFileName
 		);
 	}
-	m->setDiffuseTextureMaskedTransparency(is->readBoolean());
+	smp->setDiffuseTextureMaskedTransparency(is->readBoolean());
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11)) {
-		m->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
+		smp->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
-		m->setTextureMatrix(Matrix2D3x3(textureMatrix));
+		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
 	}
+	m->setSpecularMaterialProperties(smp);
 	return m;
 }
 

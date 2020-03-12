@@ -14,11 +14,12 @@
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -42,11 +43,12 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -84,24 +86,25 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 {
+	auto smp = m->getSpecularMaterialProperties();
 	os->writeString(m->getId());
-	os->writeFloatArray(m->getAmbientColor().getArray());
-	os->writeFloatArray(m->getDiffuseColor().getArray());
-	os->writeFloatArray(m->getSpecularColor().getArray());
-	os->writeFloatArray(m->getEmissionColor().getArray());
-	os->writeFloat(m->getShininess());
-	os->writeString(m->getDiffuseTexturePathName());
-	os->writeString(m->getDiffuseTextureFileName());
-	os->writeString(m->getDiffuseTransparencyTexturePathName());
-	os->writeString(m->getDiffuseTransparencyTextureFileName());
-	os->writeString(m->getSpecularTexturePathName());
-	os->writeString(m->getSpecularTextureFileName());
-	os->writeString(m->getNormalTexturePathName());
-	os->writeString(m->getNormalTextureFileName());
-	os->writeString(m->getDisplacementTexturePathName());
-	os->writeString(m->getDisplacementTextureFileName());
-	os->writeBoolean(m->hasDiffuseTextureMaskedTransparency());
-	os->writeFloat(m->getDiffuseTextureMaskedTransparencyThreshold());
+	os->writeFloatArray(smp->getAmbientColor().getArray());
+	os->writeFloatArray(smp->getDiffuseColor().getArray());
+	os->writeFloatArray(smp->getSpecularColor().getArray());
+	os->writeFloatArray(smp->getEmissionColor().getArray());
+	os->writeFloat(smp->getShininess());
+	os->writeString(smp->getDiffuseTexturePathName());
+	os->writeString(smp->getDiffuseTextureFileName());
+	os->writeString(smp->getDiffuseTransparencyTexturePathName());
+	os->writeString(smp->getDiffuseTransparencyTextureFileName());
+	os->writeString(smp->getSpecularTexturePathName());
+	os->writeString(smp->getSpecularTextureFileName());
+	os->writeString(smp->getNormalTexturePathName());
+	os->writeString(smp->getNormalTextureFileName());
+	os->writeString(smp->getDisplacementTexturePathName());
+	os->writeString(smp->getDisplacementTextureFileName());
+	os->writeBoolean(smp->hasDiffuseTextureMaskedTransparency());
+	os->writeFloat(smp->getDiffuseTextureMaskedTransparencyThreshold());
 	os->writeFloatArray(m->getTextureMatrix().getArray());
 }
 

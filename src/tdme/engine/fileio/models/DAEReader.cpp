@@ -19,12 +19,13 @@
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -65,12 +66,13 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -975,6 +977,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 	}
 	// parse effect
 	auto material = new Material(xmlNodeId);
+	auto specularMaterialProperties = new SpecularMaterialProperties();
 	string xmlDiffuseTextureId;
 	string xmlTransparencyTextureId;
 	string xmlSpecularTextureId;
@@ -1032,7 +1035,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->setDiffuseColor(Color4(colorArray));
+							specularMaterialProperties->setDiffuseColor(Color4(colorArray));
 						}
 						// texture
 						for (auto xmlTexture: getChildrenByTagName(xmlDiffuse, "texture")) {
@@ -1065,7 +1068,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->setAmbientColor(Color4(colorArray));
+							specularMaterialProperties->setAmbientColor(Color4(colorArray));
 						}
 					}
 					// emission
@@ -1078,7 +1081,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->setEmissionColor(Color4(colorArray));
+							specularMaterialProperties->setEmissionColor(Color4(colorArray));
 						}
 					}
 					// specular
@@ -1115,17 +1118,17 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							for (auto i = 0; i < colorArray.size(); i++) {
 								colorArray[i] = Float::parseFloat(t.nextToken());
 							}
-							material->setSpecularColor(Color4(colorArray));
+							specularMaterialProperties->setSpecularColor(Color4(colorArray));
 							hasSpecularColor = true;
 						}
 					}
 					if (hasSpecularMap == true && hasSpecularColor == false) {
-						material->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+						specularMaterialProperties->setSpecularColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 					}
 					// shininess
 					for (auto xmlShininess: getChildrenByTagName(xmlTechniqueNode, "shininess"))
 					for (auto xmlFloat: getChildrenByTagName(xmlShininess, "float")) {
-						material->setShininess(Float::parseFloat(string(AVOID_NULLPTR_STRING(xmlFloat->GetText()))));
+						specularMaterialProperties->setShininess(Float::parseFloat(string(AVOID_NULLPTR_STRING(xmlFloat->GetText()))));
 					}
 				}
 				// normal/bump texture
@@ -1173,7 +1176,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 		if (xmlDiffuseTextureFilename.length() > 0) {
 			xmlDiffuseTextureFilename = makeFileNameRelative(xmlDiffuseTextureFilename);
 			// add texture
-			material->setDiffuseTexture(pathName, xmlDiffuseTextureFilename, pathName, xmlTransparencyTextureFilename);
+			specularMaterialProperties->setDiffuseTexture(pathName, xmlDiffuseTextureFilename, pathName, xmlTransparencyTextureFilename);
 		}
 	}
 
@@ -1185,7 +1188,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 		if (xmlSpecularTextureFilename.length() > 0) {
 			xmlSpecularTextureFilename = makeFileNameRelative(xmlSpecularTextureFilename);
 			// add texture
-			material->setSpecularTexture(pathName, xmlSpecularTextureFilename);
+			specularMaterialProperties->setSpecularTexture(pathName, xmlSpecularTextureFilename);
 		}
 	}
 
@@ -1197,7 +1200,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 		if (xmlBumpTextureFilename.length() > 0) {
 			xmlBumpTextureFilename = makeFileNameRelative(xmlBumpTextureFilename);
 			// add texture
-			material->setNormalTexture(pathName, xmlBumpTextureFilename);
+			specularMaterialProperties->setNormalTexture(pathName, xmlBumpTextureFilename);
 		}
 	}
 
@@ -1206,29 +1209,32 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 	string xmlDisplacementFilename;
 	// add texture
 	if (xmlDisplacementFilename.length() > 0) {
-		material->setDisplacementTexture(pathName, xmlDisplacementFilename);
+		specularMaterialProperties->setDisplacementTexture(pathName, xmlDisplacementFilename);
 	}
 	*/
 
 	// adjust ambient light with blender
-	if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
-		material->setAmbientColor(
+	if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && specularMaterialProperties->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
+		specularMaterialProperties->setAmbientColor(
 			Color4(
-				material->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-				material->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-				material->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+				specularMaterialProperties->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+				specularMaterialProperties->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+				specularMaterialProperties->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
 				1.0f
 			)
 		);
-		material->setDiffuseColor(
+		specularMaterialProperties->setDiffuseColor(
 			Color4(
-				material->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
-				material->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
-				material->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
-				material->getDiffuseColor().getAlpha()
+				specularMaterialProperties->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
+				specularMaterialProperties->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
+				specularMaterialProperties->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
+				specularMaterialProperties->getDiffuseColor().getAlpha()
 			)
 		);
 	}
+
+	// add specular material properties
+	material->setSpecularMaterialProperties(specularMaterialProperties);
 
 	// add material to library
 	model->getMaterials()[material->getId()] = material;

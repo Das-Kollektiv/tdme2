@@ -21,12 +21,13 @@
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -52,12 +53,13 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -315,6 +317,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				material = materialIt->second;
 			} else {
 				material = new Material(gltfMaterial.name);
+				auto specularMaterialProperties = new SpecularMaterialProperties();
 				auto& gltfMaterialBaseColorTexture = gltfMaterial.values.find("baseColorTexture")->second;
 				// TODO: This does not seem to work in any case
 				if (gltfMaterialBaseColorTexture.TextureIndex() != -1) {
@@ -335,7 +338,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 							if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
 								Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
 							}
-							material->setDiffuseTexture(pathName, fileName);
+							specularMaterialProperties->setDiffuseTexture(pathName, fileName);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
 					}
@@ -345,6 +348,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				Console::println(gltfMaterialName + " => Texture Scale : " + to_string(gltfMaterialBaseColorTexture.TextureScale()));
 				Console::println(gltfMaterialName + " => Texture Strength : " + to_string(gltfMaterialBaseColorTexture.TextureStrength()));
 				*/
+				material->setSpecularMaterialProperties(specularMaterialProperties);
 				model->getMaterials()[material->getId()] = material;
 			}
 		}

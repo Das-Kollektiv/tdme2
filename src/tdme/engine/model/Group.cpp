@@ -90,13 +90,13 @@ void Group::setBitangents(const vector<Vector3>& bitangents)
 }
 
 void Group::setAnimation(Animation* animation) {
-	if (this->animation != nullptr) delete this->animation;
+	if (this->animation != nullptr && this->animation != animation) delete this->animation;
 	this->animation = animation;
 }
 
 void Group::setSkinning(Skinning* skinning)
 {
-	if (this->skinning != nullptr) delete this->skinning;
+	if (this->skinning != nullptr && this->skinning != skinning) delete this->skinning;
 	if (skinning != nullptr) model->setHasSkinning(true);
 	this->skinning = skinning;
 }

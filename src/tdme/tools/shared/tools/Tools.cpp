@@ -18,11 +18,12 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/PrimitiveModel.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
@@ -67,11 +68,12 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::PrimitiveModel;
 using tdme::engine::primitives::OrientedBoundingBox;
@@ -252,8 +254,9 @@ Model* Tools::createGroundModel(float width, float depth, float y)
 	auto modelId = "ground" + to_string(static_cast<int>(width * 100)) + "x" + to_string(static_cast<int>(depth * 100)) + "@" + to_string(static_cast<int>(y * 100));
 	auto ground = new Model(modelId, modelId, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto groundMaterial = new Material("ground");
-	groundMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
-	groundMaterial->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
+	groundMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	groundMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	groundMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
 	ground->getMaterials()["ground"] = groundMaterial;
 	auto groundGroup = new Group(ground, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;

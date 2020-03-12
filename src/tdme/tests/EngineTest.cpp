@@ -23,11 +23,12 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitter.h>
@@ -65,11 +66,12 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
+using tdme::engine::model::UpVector;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
@@ -108,8 +110,9 @@ Model* EngineTest::createWallModel()
 {
 	auto wall = new Model("wall", "wall", UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto wallMaterial = new Material("wall");
-	wallMaterial->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	wallMaterial->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	wallMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	wallMaterial->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
+	wallMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 	wall->getMaterials()["wall"] = wallMaterial;
 	auto wallGroup = new Group(wall, nullptr, "wall", "wall");
 	vector<FacesEntity> groupFacesEntities;

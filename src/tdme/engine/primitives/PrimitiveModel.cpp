@@ -9,10 +9,11 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
@@ -35,10 +36,11 @@ using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
-using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::ConvexMesh;
@@ -64,7 +66,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->setAmbientColor(
+	auto specularMaterialProperties = new SpecularMaterialProperties();
+	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -72,7 +75,7 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 			1.0f
 		)
 	);
-	material->setDiffuseColor(
+	specularMaterialProperties->setDiffuseColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -80,7 +83,8 @@ Model* PrimitiveModel::createBoundingBoxModel(BoundingBox* boundingBox, const st
 			0.5f
 		)
 	);
-	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -145,7 +149,8 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->setAmbientColor(
+	auto specularMaterialProperties = new SpecularMaterialProperties();
+	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -153,7 +158,7 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 			1.0f
 		)
 	);
-	material->setDiffuseColor(
+	specularMaterialProperties->setDiffuseColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -161,7 +166,8 @@ Model* PrimitiveModel::createOrientedBoundingBoxModel(OrientedBoundingBox* orien
 			0.5f
 		)
 	);
-	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -229,7 +235,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->setAmbientColor(
+	auto specularMaterialProperties = new SpecularMaterialProperties();
+	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -237,7 +244,7 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 			1.0f
 		)
 	);
-	material->setDiffuseColor(
+	specularMaterialProperties->setDiffuseColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -245,7 +252,8 @@ Model* PrimitiveModel::createSphereModel(Sphere* sphere, const string& id, int32
 			0.5f
 		)
 	);
-	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -359,7 +367,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	// material
 	auto material = new Material("tdme.primitive.material");
-	material->setAmbientColor(
+	auto specularMaterialProperties = new SpecularMaterialProperties();
+	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -367,7 +376,7 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 			1.0f
 		)
 	);
-	material->setDiffuseColor(
+	specularMaterialProperties->setDiffuseColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -375,7 +384,8 @@ Model* PrimitiveModel::createCapsuleModel(Capsule* capsule, const string& id, in
 			0.5f
 		)
 	);
-	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	// group
 	auto group = new Group(model, nullptr, "group", "group");
@@ -490,7 +500,8 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 	//	Note: there is no hurry as LE and ME do not use scale for level editor entity bounding volumes
 	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(1.01f));
 	auto material = new Material("tdme.primitive.material");
-	material->setAmbientColor(
+	auto specularMaterialProperties = new SpecularMaterialProperties();
+	specularMaterialProperties->setAmbientColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -498,7 +509,7 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 			1.0f
 		)
 	);
-	material->setDiffuseColor(
+	specularMaterialProperties->setDiffuseColor(
 		Color4(
 			245.0f / 255.0f * 0.5f,
 			40.0f / 255.0f * 0.5f,
@@ -506,7 +517,8 @@ void PrimitiveModel::setupConvexMeshModel(Model* model)
 			0.5f
 		)
 	);
-	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	specularMaterialProperties->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	material->setSpecularMaterialProperties(specularMaterialProperties);
 	model->getMaterials()[material->getId()] = material;
 	setupConvexMeshMaterial(model->getSubGroups(), material);
 }

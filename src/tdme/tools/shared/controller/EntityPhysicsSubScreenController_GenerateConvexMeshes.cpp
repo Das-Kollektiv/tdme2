@@ -15,6 +15,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/Object3DModel.h>
@@ -57,6 +58,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::Model;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::Object3DModel;
@@ -323,9 +325,10 @@ void EntityPhysicsSubScreenController_GenerateConvexMeshes::generateConvexMeshes
 Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, double* points, uint32_t* triangles, uint32_t pointCount, uint32_t triangleCount) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
-	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
-	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
-	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	model->getMaterials()[material->getId()] = material;
 	auto group = new Group(model, nullptr, "group", "group");
 	vector<Vector3> vertices;
@@ -384,9 +387,10 @@ Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const 
 Model* EntityPhysicsSubScreenController_GenerateConvexMeshes::createModel(const string& id, vector<Triangle>& triangles) {
 	auto model = new Model(id, id, UpVector::Y_UP, RotationOrder::XYZ, nullptr);
 	auto material = new Material("tdme.primitive.material");
-	material->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
-	material->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
-	material->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	material->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	material->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
+	material->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.5f, 0.5f, 0.5f));
+	material->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	model->getMaterials()[material->getId()] = material;
 	auto group = new Group(model, nullptr, "group", "group");
 	vector<Vector3> vertices;

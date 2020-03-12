@@ -9,6 +9,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -50,6 +51,11 @@ using tdme::tools::shared::controller::ModelEditorScreenController;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::model::AnimationSetup;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::Group;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener_Type;
@@ -626,27 +632,30 @@ void ModelEditorScreenController::unsetMaterials() {
 void ModelEditorScreenController::onMaterialDropDownApply() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
+	SpecularMaterialProperties defaultSpecularMaterialProperties;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) specularMaterialProperties = &defaultSpecularMaterialProperties;
 
 	materialsMaterialName->getController()->setValue(MutableString(material->getId()));
-	materialsMaterialAmbient->getController()->setValue(MutableString(Tools::formatColor4(material->getAmbientColor())));
-	materialsMaterialDiffuse->getController()->setValue(MutableString(Tools::formatColor4(material->getDiffuseColor())));
-	materialsMaterialSpecular->getController()->setValue(MutableString(Tools::formatColor4(material->getSpecularColor())));
-	materialsMaterialEmission->getController()->setValue(MutableString(Tools::formatColor4(material->getEmissionColor())));
-	materialsMaterialShininess->getController()->setValue(MutableString(Tools::formatFloat(material->getShininess())));
+	materialsMaterialAmbient->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getAmbientColor())));
+	materialsMaterialDiffuse->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getDiffuseColor())));
+	materialsMaterialSpecular->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getSpecularColor())));
+	materialsMaterialEmission->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getEmissionColor())));
+	materialsMaterialShininess->getController()->setValue(MutableString(Tools::formatFloat(specularMaterialProperties->getShininess())));
 	materialsMaterialDiffuseTexture->getController()->setValue(
-		MutableString(material->getDiffuseTexturePathName()).append(material->getDiffuseTexturePathName() == ""?"":"/").append(material->getDiffuseTextureFileName())
+		MutableString(specularMaterialProperties->getDiffuseTexturePathName()).append(specularMaterialProperties->getDiffuseTexturePathName() == ""?"":"/").append(specularMaterialProperties->getDiffuseTextureFileName())
 	);
 	materialsMaterialDiffuseTransparencyTexture->getController()->setValue(
-		MutableString(material->getDiffuseTransparencyTexturePathName()).append(material->getDiffuseTransparencyTexturePathName() == ""?"":"/").append(material->getDiffuseTransparencyTextureFileName())
+		MutableString(specularMaterialProperties->getDiffuseTransparencyTexturePathName()).append(specularMaterialProperties->getDiffuseTransparencyTexturePathName() == ""?"":"/").append(specularMaterialProperties->getDiffuseTransparencyTextureFileName())
 	);
 	materialsMaterialNormalTexture->getController()->setValue(
-		MutableString(material->getNormalTexturePathName()).append(material->getNormalTexturePathName() == ""?"":"/").append(material->getNormalTextureFileName())
+		MutableString(specularMaterialProperties->getNormalTexturePathName()).append(specularMaterialProperties->getNormalTexturePathName() == ""?"":"/").append(specularMaterialProperties->getNormalTextureFileName())
 	);
 	materialsMaterialSpecularTexture->getController()->setValue(
-		MutableString(material->getSpecularTexturePathName()).append(material->getSpecularTexturePathName() == ""?"":"/").append(material->getSpecularTextureFileName())
+		MutableString(specularMaterialProperties->getSpecularTexturePathName()).append(specularMaterialProperties->getSpecularTexturePathName() == ""?"":"/").append(specularMaterialProperties->getSpecularTextureFileName())
 	);
-	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString(material->hasDiffuseTextureMaskedTransparency() == true?"1":""));
-	materialsMaterialMaskedTransparencyThreshold->getController()->setValue(MutableString(Tools::formatFloat(material->getDiffuseTextureMaskedTransparencyThreshold())));
+	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+	materialsMaterialMaskedTransparencyThreshold->getController()->setValue(MutableString(Tools::formatFloat(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold())));
 }
 
 Material* ModelEditorScreenController::getSelectedMaterial() {
@@ -659,30 +668,34 @@ Material* ModelEditorScreenController::getSelectedMaterial() {
 void ModelEditorScreenController::onMaterialApply() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
-
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
 	try {
 		view->resetEntity();
-		material->setAmbientColor(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
-		material->setDiffuseColor(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
-		material->setSpecularColor(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
-		material->setEmissionColor(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
-		material->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue().getString()));
-		material->setDiffuseTexture(
+		specularMaterialProperties->setAmbientColor(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
+		specularMaterialProperties->setDiffuseColor(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
+		specularMaterialProperties->setSpecularColor(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
+		specularMaterialProperties->setEmissionColor(Tools::convertToColor4(materialsMaterialEmission->getController()->getValue().getString()));
+		specularMaterialProperties->setShininess(Tools::convertToFloat(materialsMaterialShininess->getController()->getValue().getString()));
+		specularMaterialProperties->setDiffuseTexture(
 			Tools::getPath(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialDiffuseTexture->getController()->getValue().getString()),
 			Tools::getPath(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialDiffuseTransparencyTexture->getController()->getValue().getString())
 		);
-		material->setNormalTexture(
+		specularMaterialProperties->setNormalTexture(
 			Tools::getPath(materialsMaterialNormalTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialNormalTexture->getController()->getValue().getString())
 		);
-		material->setSpecularTexture(
+		specularMaterialProperties->setSpecularTexture(
 			Tools::getPath(materialsMaterialSpecularTexture->getController()->getValue().getString()),
 			Tools::getFileName(materialsMaterialSpecularTexture->getController()->getValue().getString())
 		);
-		material->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
-		material->setDiffuseTextureMaskedTransparencyThreshold(Tools::convertToFloat(materialsMaterialMaskedTransparencyThreshold->getController()->getValue().getString()));
+		specularMaterialProperties->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
+		specularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(Tools::convertToFloat(materialsMaterialMaskedTransparencyThreshold->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -691,6 +704,11 @@ void ModelEditorScreenController::onMaterialApply() {
 void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
 
 	class OnLoadTexture: public virtual Action
 	{
@@ -727,10 +745,10 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 
 	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		material->getDiffuseTextureFileName() != ""?material->getDiffuseTexturePathName():modelPath->getPath(),
+		specularMaterialProperties->getDiffuseTextureFileName() != ""?specularMaterialProperties->getDiffuseTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		material->getDiffuseTextureFileName(),
+		specularMaterialProperties->getDiffuseTextureFileName(),
 		true,
 		new OnLoadTexture(this, materialsMaterialDiffuseTexture)
 	);
@@ -739,6 +757,11 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTexture() {
 void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
 
 	class OnLoadTexture: public virtual Action
 	{
@@ -775,10 +798,10 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 
 	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		material->getDiffuseTransparencyTextureFileName() != ""?material->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
+		specularMaterialProperties->getDiffuseTransparencyTextureFileName() != ""?specularMaterialProperties->getDiffuseTransparencyTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		material->getDiffuseTransparencyTextureFileName(),
+		specularMaterialProperties->getDiffuseTransparencyTextureFileName(),
 		true,
 		new OnLoadTexture(this, materialsMaterialDiffuseTransparencyTexture)
 	);
@@ -787,6 +810,11 @@ void ModelEditorScreenController::onMaterialLoadDiffuseTransparencyTexture() {
 void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
 
 	class OnLoadTexture: public virtual Action
 	{
@@ -823,10 +851,10 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 
 	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		material->getNormalTextureFileName() != ""?material->getNormalTexturePathName():modelPath->getPath(),
+		specularMaterialProperties->getNormalTextureFileName() != ""?specularMaterialProperties->getNormalTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		material->getNormalTextureFileName(),
+		specularMaterialProperties->getNormalTextureFileName(),
 		true,
 		new OnLoadTexture(this, materialsMaterialNormalTexture)
 	);
@@ -835,6 +863,11 @@ void ModelEditorScreenController::onMaterialLoadNormalTexture() {
 void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
 
 	class OnLoadTexture: public virtual Action
 	{
@@ -871,10 +904,10 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 
 	auto extensions = TextureReader::getTextureExtensions();
 	view->getPopUpsViews()->getFileDialogScreenController()->show(
-		material->getSpecularTextureFileName() != ""?material->getSpecularTexturePathName():modelPath->getPath(),
+		specularMaterialProperties->getSpecularTextureFileName() != ""?specularMaterialProperties->getSpecularTexturePathName():modelPath->getPath(),
 		"Load from: ",
 		extensions,
-		material->getSpecularTextureFileName(),
+		specularMaterialProperties->getSpecularTextureFileName(),
 		true,
 		new OnLoadTexture(this, materialsMaterialNormalTexture)
 	);

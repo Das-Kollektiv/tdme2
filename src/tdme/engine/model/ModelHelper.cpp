@@ -17,6 +17,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper_VertexOrder.h>
 #include <tdme/engine/model/Skinning.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/math/Matrix4x4.h>
@@ -46,6 +47,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::model::Skinning;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::math::Matrix4x4;
@@ -178,8 +180,9 @@ void ModelHelper::setDiffuseMaskedTransparency(Model* model, bool maskedTranspar
 	auto materials = model->getMaterials();
 	for (auto it = materials.begin(); it != materials.end(); ++it) {
 		auto material = it->second;
-		if (material->hasDiffuseTextureTransparency() == true) {
-			material->setDiffuseTextureMaskedTransparency(maskedTransparency);
+		if (material->getSpecularMaterialProperties() != nullptr &&
+			material->getSpecularMaterialProperties()->hasDiffuseTextureTransparency() == true) {
+			material->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(maskedTransparency);
 		}
 	}
 }
@@ -273,38 +276,43 @@ void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 
 Material* ModelHelper::cloneMaterial(const Material* material) {
 	auto clonedMaterial = new Material(material->getId());
-	clonedMaterial->setAmbientColor(material->getAmbientColor());
-	clonedMaterial->setDiffuseColor(material->getDiffuseColor());
-	clonedMaterial->setEmissionColor(material->getEmissionColor());
-	clonedMaterial->setSpecularColor(material->getSpecularColor());
-	clonedMaterial->setShininess(material->getShininess());
-	clonedMaterial->setDiffuseTextureMaskedTransparency(material->hasDiffuseTextureTransparency());
-	clonedMaterial->setDiffuseTextureMaskedTransparencyThreshold(material->getDiffuseTextureMaskedTransparencyThreshold());
-	if (material->getDiffuseTextureFileName().length() != 0) {
-		clonedMaterial->setDiffuseTexture(
-			material->getDiffuseTexturePathName(),
-			material->getDiffuseTextureFileName(),
-			material->getDiffuseTransparencyTexturePathName(),
-			material->getDiffuseTransparencyTextureFileName()
-		);
-	}
-	if (material->getNormalTextureFileName().length() != 0) {
-		clonedMaterial->setNormalTexture(
-			material->getNormalTexturePathName(),
-			material->getNormalTextureFileName()
-		);
-	}
-	if (material->getSpecularTextureFileName().length() != 0) {
-		clonedMaterial->setSpecularTexture(
-			material->getSpecularTexturePathName(),
-			material->getSpecularTextureFileName()
-		);
-	}
-	if (material->getDisplacementTextureFileName().length() != 0) {
-		clonedMaterial->setDisplacementTexture(
-			material->getDisplacementTexturePathName(),
-			material->getDisplacementTextureFileName()
-		);
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties != nullptr) {
+		auto clonedSpecularMaterialProperties = new SpecularMaterialProperties();
+		clonedSpecularMaterialProperties->setAmbientColor(specularMaterialProperties->getAmbientColor());
+		clonedSpecularMaterialProperties->setDiffuseColor(specularMaterialProperties->getDiffuseColor());
+		clonedSpecularMaterialProperties->setEmissionColor(specularMaterialProperties->getEmissionColor());
+		clonedSpecularMaterialProperties->setSpecularColor(specularMaterialProperties->getSpecularColor());
+		clonedSpecularMaterialProperties->setShininess(specularMaterialProperties->getShininess());
+		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparency(specularMaterialProperties->hasDiffuseTextureTransparency());
+		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold());
+		if (specularMaterialProperties->getDiffuseTextureFileName().length() != 0) {
+			clonedSpecularMaterialProperties->setDiffuseTexture(
+				specularMaterialProperties->getDiffuseTexturePathName(),
+				specularMaterialProperties->getDiffuseTextureFileName(),
+				specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
+				specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+			);
+		}
+		if (specularMaterialProperties->getNormalTextureFileName().length() != 0) {
+			clonedSpecularMaterialProperties->setNormalTexture(
+				specularMaterialProperties->getNormalTexturePathName(),
+				specularMaterialProperties->getNormalTextureFileName()
+			);
+		}
+		if (specularMaterialProperties->getSpecularTextureFileName().length() != 0) {
+			clonedSpecularMaterialProperties->setSpecularTexture(
+				specularMaterialProperties->getSpecularTexturePathName(),
+				specularMaterialProperties->getSpecularTextureFileName()
+			);
+		}
+		if (specularMaterialProperties->getDisplacementTextureFileName().length() != 0) {
+			clonedSpecularMaterialProperties->setDisplacementTexture(
+				specularMaterialProperties->getDisplacementTexturePathName(),
+				specularMaterialProperties->getDisplacementTextureFileName()
+			);
+		}
+		clonedMaterial->setSpecularMaterialProperties(clonedSpecularMaterialProperties);
 	}
 	return clonedMaterial;
 }

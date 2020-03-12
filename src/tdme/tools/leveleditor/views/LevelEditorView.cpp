@@ -20,11 +20,12 @@
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
-#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
+#include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/gui/GUI.h>
@@ -97,6 +98,7 @@ using tdme::engine::model::UpVector;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
@@ -1009,11 +1011,17 @@ Model* LevelEditorView::createLevelEditorGroundPlateModel()
 {
 	auto groundPlate = new Model("tdme.leveleditor.grid", "tdme.leveleditor.grid", UpVector::Y_UP, RotationOrder::XYZ, new BoundingBox(Vector3(0.0f, -0.01f, 0.0f), Vector3(10000.0f, +0.01f, 10000.0f)));
 	auto groundPlateMaterial = new Material("ground");
-	auto groundPlateMaterialDiffuseColor = groundPlateMaterial->getDiffuseColor();
-	groundPlateMaterialDiffuseColor.setAlpha(0.75f);
-	groundPlateMaterial->setDiffuseColor(groundPlateMaterialDiffuseColor);
-	groundPlateMaterial->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
-	groundPlateMaterial->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
+	groundPlateMaterial->setSpecularMaterialProperties(new SpecularMaterialProperties());
+	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseColor(
+		Color4(
+			groundPlateMaterial->getSpecularMaterialProperties()->getDiffuseColor().getRed(),
+			groundPlateMaterial->getSpecularMaterialProperties()->getDiffuseColor().getGreen(),
+			groundPlateMaterial->getSpecularMaterialProperties()->getDiffuseColor().getBlue(),
+			0.75f
+		)
+	);
+	groundPlateMaterial->getSpecularMaterialProperties()->setDiffuseTexture("resources/engine/tools/leveleditor/textures", "groundplate.png");
+	groundPlateMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(0.0f, 0.0f, 0.0f, 1.0f));
 	groundPlate->getMaterials()["ground"] = groundPlateMaterial;
 	auto groundGroup = new Group(groundPlate, nullptr, "ground", "ground");
 	vector<Vector3> groundVertices;
