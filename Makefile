@@ -176,6 +176,7 @@ else
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
+		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	endif
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2
