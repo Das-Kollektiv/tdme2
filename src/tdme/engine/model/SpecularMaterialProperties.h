@@ -14,7 +14,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
 using tdme::math::Matrix2D3x3;
 
-/** 
+/**
  * Represents specular material properties
  * @author andreas.drewke
  * @version $Id$
@@ -23,7 +23,6 @@ class tdme::engine::model::SpecularMaterialProperties final
 {
 
 private:
-	string id;
 	Color4 ambientColor;
 	Color4 diffuseColor;
 	Color4 specularColor;
@@ -43,9 +42,6 @@ private:
 	string normalTexturePathName;
 	string normalTextureFileName;
 	Texture* normalTexture;
-	string displacementTexturePathName;
-	string displacementTextureFileName;
-	Texture* displacementTexture;
 	Matrix2D3x3 textureMatrix;
 
 	/**
@@ -55,7 +51,7 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * @return ambient color
 	 */
 	inline const Color4& getAmbientColor() const {
@@ -70,7 +66,7 @@ public:
 		this->ambientColor = ambientColor;
 	}
 
-	/** 
+	/**
 	 * @return diffuse color
 	 */
 	inline const Color4& getDiffuseColor() const {
@@ -85,7 +81,7 @@ public:
 		this->diffuseColor = diffuseColor;
 	}
 
-	/** 
+	/**
 	 * @return specular color
 	 */
 	inline const Color4& getSpecularColor() const {
@@ -100,7 +96,7 @@ public:
 		this->specularColor = specularColor;
 	}
 
-	/** 
+	/**
 	 * @return emission color
 	 */
 	inline const Color4& getEmissionColor() const {
@@ -115,14 +111,14 @@ public:
 		this->emissionColor = emissionColor;
 	}
 
-	/** 
+	/**
 	 * @return shininess
 	 */
 	inline float getShininess() const {
 		return shininess;
 	}
 
-	/** 
+	/**
 	 * Set up material shininess
 	 * @param shininess shininess
 	 */
@@ -130,21 +126,21 @@ public:
 		this->shininess = shininess;
 	}
 
-	/** 
+	/**
 	 * @return diffuse texture path name
 	 */
 	inline const string& getDiffuseTexturePathName() const {
 		return diffuseTexturePathName;
 	}
 
-	/** 
+	/**
 	 * @return diffuse texture file name
 	 */
 	inline const string& getDiffuseTextureFileName() const {
 		return diffuseTextureFileName;
 	}
 
-	/** 
+	/**
 	 * @return diffuse transparency texture path name
 	 */
 	inline const string& getDiffuseTransparencyTexturePathName() const {
@@ -174,14 +170,14 @@ public:
 		return diffuseTexture != nullptr;
 	}
 
-	/** 
+	/**
 	 * @return the material's diffuse texture
 	 */
 	inline Texture* getDiffuseTexture() const {
 		return diffuseTexture;
 	}
 
-	/** 
+	/**
 	 * @return diffuse texture has transparent pixels
 	 */
 	inline bool hasDiffuseTextureTransparency() const {
@@ -218,112 +214,77 @@ public:
 		diffuseTextureMaskedTransparencyThreshold = maskedTransparencyThreshold;
 	}
 
-	/** 
+	/**
 	 * @return specular texture path name
 	 */
 	inline const string& getSpecularTexturePathName() const {
 		return specularTexturePathName;
 	}
 
-	/** 
+	/**
 	 * @return specular texture file name
 	 */
 	inline const string& getSpecularTextureFileName() const {
 		return specularTextureFileName;
 	}
 
-	/** 
+	/**
 	 * Set up a specular texture
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
 	void setSpecularTexture(const string& pathName, const string& fileName);
 
-	/** 
+	/**
 	 * @return if material has a specular texture
 	 */
 	inline bool hasSpecularTexture() const {
 		return specularTexture != nullptr;
 	}
 
-	/** 
+	/**
 	 * @return the material's specular texture
 	 */
 	inline Texture* getSpecularTexture() const {
 		return specularTexture;
 	}
 
-	/** 
+	/**
 	 * @return normal texture path name
 	 */
 	inline const string& getNormalTexturePathName() const {
 		return normalTexturePathName;
 	}
 
-	/** 
+	/**
 	 * @return normal texture file name
 	 */
 	inline const string& getNormalTextureFileName() const {
 		return normalTextureFileName;
 	}
 
-	/** 
+	/**
 	 * Set up a normal texture
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
 	void setNormalTexture(const string& pathName, const string& fileName);
 
-	/** 
+	/**
 	 * @return if material has a normal texture
 	 */
 	inline bool hasNormalTexture() const {
 		return normalTexture != nullptr;
 	}
 
-	/** 
+	/**
 	 * @return the material's normal texture
 	 */
 	inline Texture* getNormalTexture() const {
 		return normalTexture;
 	}
 
-	/** 
-	 * @return displacement texture path name
-	 */
-	inline const string& getDisplacementTexturePathName() const {
-		return displacementTexturePathName;
-	}
-
-	/** 
-	 * @return displacement texture file name
-	 */
-	inline const string& getDisplacementTextureFileName() const {
-		return displacementTextureFileName;
-	}
-
-	/** 
-	 * Set up a displacement texture
-	 * @param pathName path name
-	 * @param fileName file name
-	 */
-	void setDisplacementTexture(const string& pathName, const string& fileName);
-
-	/** 
-	 * @return if material has a displacement texture
-	 */
-	inline bool hasDisplacementTexture() const {
-		return displacementTexture != nullptr;
-	}
-
-	/** 
-	 * @return the material's displacement texture
-	 */
-	inline Texture* getDisplacementTexture() const {
-		return displacementTexture;
-	}
-
-	/** 
+	/**
 	 * @return if color is transparent
 	 */
 	inline bool hasColorTransparency() const {
@@ -354,7 +315,6 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param id id
 	 */
 	SpecularMaterialProperties();
 

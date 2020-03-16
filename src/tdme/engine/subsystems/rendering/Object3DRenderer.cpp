@@ -940,11 +940,6 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
 				renderer->bindTexture(context, object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
 			}
-			// bind displacement texture
-			if (renderer->isDisplacementMappingAvailable() == true) {
-				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
-				renderer->bindTexture(context, object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx]);
-			}
 			// bind normal texture
 			if (renderer->isNormalMappingAvailable() == true) {
 				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_NORMAL);

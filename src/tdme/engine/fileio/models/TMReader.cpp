@@ -181,13 +181,9 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			normalTextureFileName
 		);
 	}
-	auto displacementTexturePathName = is->readString();
-	auto displacementTextureFileName = is->readString();
-	if (displacementTextureFileName.size() != 0) {
-		smp->setDisplacementTexture(
-			getTexturePath(pathName, displacementTexturePathName, displacementTextureFileName),
-			displacementTextureFileName
-		);
+	if ((version[0] == 1 && version[1] == 9 && version[2] < 12)) {
+		auto displacementTexturePathName = is->readString();
+		auto displacementTextureFileName = is->readString();
 	}
 	smp->setDiffuseTextureMaskedTransparency(is->readBoolean());
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||

@@ -30,14 +30,12 @@ SpecularMaterialProperties::SpecularMaterialProperties()
 	diffuseTextureMaskedTransparencyThreshold = 0.1f;
 	specularTexture = nullptr;
 	normalTexture = nullptr;
-	displacementTexture = nullptr;
 }
 
 SpecularMaterialProperties::~SpecularMaterialProperties() {
 	if (diffuseTexture != nullptr) diffuseTexture->releaseReference();
 	if (specularTexture != nullptr) specularTexture->releaseReference();
 	if (normalTexture != nullptr) normalTexture->releaseReference();
-	if (displacementTexture != nullptr) displacementTexture->releaseReference();
 }
 
 void SpecularMaterialProperties::setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName, const string& transparencyFileName)
@@ -90,11 +88,4 @@ void SpecularMaterialProperties::setNormalTexture(const string& pathName, const 
 	normalTexturePathName = pathName;
 	normalTextureFileName = fileName;
 	normalTexture = TextureReader::read(pathName, fileName);
-}
-
-void SpecularMaterialProperties::setDisplacementTexture(const string& pathName, const string& fileName)
-{
-	displacementTexturePathName = pathName;
-	displacementTextureFileName = fileName;
-	displacementTexture = TextureReader::read(pathName, fileName);
 }

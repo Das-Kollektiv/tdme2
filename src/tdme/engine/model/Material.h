@@ -8,6 +8,7 @@
 
 using std::string;
 
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::math::Matrix2D3x3;
 
@@ -34,6 +35,7 @@ public:
 private:
 	string id;
 	SpecularMaterialProperties* specularMaterialProperties { nullptr };
+	PBRMaterialProperties* pbrMaterialProperties { nullptr };
 	Matrix2D3x3 textureMatrix;
 
 public:
@@ -60,10 +62,30 @@ public:
 	}
 
 	/**
+	 * @return PBR material properties
+	 */
+	inline const PBRMaterialProperties* getPBRMaterialProperties() const {
+		return pbrMaterialProperties;
+	}
+
+	/**
+	 * @return PBR material properties
+	 */
+	inline PBRMaterialProperties* getPBRMaterialProperties() {
+		return pbrMaterialProperties;
+	}
+
+	/**
 	 * Set specular material properties
 	 * @param specularMaterialProperties specular material properties
 	 */
 	void setSpecularMaterialProperties(SpecularMaterialProperties* specularMaterialProperties);
+
+	/**
+	 * Set PBR material properties
+	 * @param pbrMaterialProperties PBR material properties
+	 */
+	void setPBRMaterialProperties(PBRMaterialProperties* pbrMaterialProperties);
 
 	/**
 	 * @return texture matrix

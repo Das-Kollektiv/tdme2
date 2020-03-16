@@ -306,12 +306,6 @@ Material* ModelHelper::cloneMaterial(const Material* material) {
 				specularMaterialProperties->getSpecularTextureFileName()
 			);
 		}
-		if (specularMaterialProperties->getDisplacementTextureFileName().length() != 0) {
-			clonedSpecularMaterialProperties->setDisplacementTexture(
-				specularMaterialProperties->getDisplacementTexturePathName(),
-				specularMaterialProperties->getDisplacementTextureFileName()
-			);
-		}
 		clonedMaterial->setSpecularMaterialProperties(clonedSpecularMaterialProperties);
 	}
 	return clonedMaterial;

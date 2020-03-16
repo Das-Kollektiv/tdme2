@@ -1,5 +1,6 @@
 #include <tdme/engine/model/Material.h>
 
+#include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 
 #include <string>
@@ -7,7 +8,7 @@
 using std::string;
 
 using tdme::engine::model::Material;
-
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 
 Material::Material(const string& id)
@@ -22,6 +23,13 @@ void Material::setSpecularMaterialProperties(SpecularMaterialProperties* specula
 		delete this->specularMaterialProperties;
 	}
 	this->specularMaterialProperties = specularMaterialProperties;
+}
+
+void Material::setPBRMaterialProperties(PBRMaterialProperties* pbrMaterialProperties) {
+	if (this->pbrMaterialProperties != nullptr && this->pbrMaterialProperties != pbrMaterialProperties) {
+		delete this->pbrMaterialProperties;
+	}
+	this->pbrMaterialProperties = pbrMaterialProperties;
 }
 
 Material::~Material() {

@@ -63,7 +63,6 @@ private:
 	vector<int32_t> materialDiffuseTextureIdsByEntities;
 	vector<int32_t> dynamicDiffuseTextureIdsByEntities;
 	vector<int32_t> materialSpecularTextureIdsByEntities;
-	vector<int32_t> materialDisplacementTextureIdsByEntities;
 	vector<int32_t> materialNormalTextureIdsByEntities;
 	Object3DGroupRenderer* renderer { nullptr };
 	Object3DGroupMesh* mesh { nullptr };

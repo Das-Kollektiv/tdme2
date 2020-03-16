@@ -141,13 +141,11 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 			object3DGroup->materialDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
 			object3DGroup->dynamicDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
 			object3DGroup->materialSpecularTextureIdsByEntities.resize(group->getFacesEntities().size());
-			object3DGroup->materialDisplacementTextureIdsByEntities.resize(group->getFacesEntities().size());
 			object3DGroup->materialNormalTextureIdsByEntities.resize(group->getFacesEntities().size());
 			for (auto j = 0; j < group->getFacesEntities().size(); j++) {
 				object3DGroup->materialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->dynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->materialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DGroup->materialDisplacementTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->materialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// determine group transformations matrix
@@ -189,14 +187,6 @@ void Object3DGroup::setupTextures(Renderer* renderer, void* context, Object3DGro
 			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
-	// load displacement texture
-	if (renderer->isDisplacementMappingAvailable() == true && object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
-		if (specularMaterialProperties->getDisplacementTexture() != nullptr) {
-			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDisplacementTexture(), context);
-		} else {
-			object3DGroup->materialDisplacementTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
-		}
-	}
 	// load normal texture
 	if (renderer->isNormalMappingAvailable() == true && object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (specularMaterialProperties->getNormalTexture() != nullptr) {
@@ -236,15 +226,6 @@ void Object3DGroup::dispose()
 				textureManager->removeTexture(specularMaterialProperties->getSpecularTexture()->getId());
 			// mark as removed
 			materialSpecularTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
-		}
-		// displacement texture
-		auto displacementTextureId = materialDisplacementTextureIdsByEntities[j];
-		if (displacementTextureId != Object3DGroup::TEXTUREID_NONE && displacementTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
-			// remove texture from texture manager
-			if (specularMaterialProperties->getDisplacementTexture() != nullptr)
-				textureManager->removeTexture(specularMaterialProperties->getDisplacementTexture()->getId());
-			// mark as removed
-			materialDisplacementTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 		// normal texture
 		auto normalTextureId = materialNormalTextureIdsByEntities[j];

@@ -23,6 +23,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -55,6 +56,7 @@ using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -317,37 +319,56 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				material = materialIt->second;
 			} else {
 				material = new Material(gltfMaterial.name);
+				auto pbrMaterialProperties = new PBRMaterialProperties();
 				auto specularMaterialProperties = new SpecularMaterialProperties();
-				auto& gltfMaterialBaseColorTexture = gltfMaterial.values.find("baseColorTexture")->second;
-				// TODO: This does not seem to work in any case
-				if (gltfMaterialBaseColorTexture.TextureIndex() != -1) {
-					/*
-					Console::println(gltfMaterialName + " => Color Factor: ");
-					for (auto value: gltfMaterialBaseColorTexture.ColorFactor()) {
-						Console::print(to_string(value));
-					}
-					Console::println();
-					Console::println(image.uri);
-					Console::println(image.mimeType);
-					*/
+				// we ignore for now Factor, ColorFactor, TextureScale, TextureStrength, TextureTexCoord as I do not see them feasible in Blender exported GLTF files
+				if (gltfMaterial.values.find("baseColorTexture") != gltfMaterial.values.end() &&
+					gltfMaterial.values.find("baseColorTexture")->second.TextureIndex() != -1) {
+					auto& gltfMaterialBaseColorTexture = gltfMaterial.values.find("baseColorTexture")->second;
 					auto& gltfTexture = gltfModel.textures[gltfMaterialBaseColorTexture.TextureIndex()];
 					auto& image = gltfModel.images[gltfTexture.source];
-					if (image.mimeType == "image/png")
-						try {
-							auto fileName = image.name + ".png";
-							if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
-								Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
-							}
-							specularMaterialProperties->setDiffuseTexture(pathName, fileName);
+					try {
+						auto fileName = image.name + ".png";
+						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+							Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
+						}
+						pbrMaterialProperties->setBaseColorTexture(pathName, fileName);
+						specularMaterialProperties->setDiffuseTexture(pathName, fileName);
 					} catch (Exception& exception) {
 						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
 					}
 				}
-				/*
-				Console::println(gltfMaterialName + " => Texture Index : " + to_string(gltfMaterialBaseColorTexture.TextureIndex()));
-				Console::println(gltfMaterialName + " => Texture Scale : " + to_string(gltfMaterialBaseColorTexture.TextureScale()));
-				Console::println(gltfMaterialName + " => Texture Strength : " + to_string(gltfMaterialBaseColorTexture.TextureStrength()));
-				*/
+				if (gltfMaterial.values.find("metallicRoughnessTexture") != gltfMaterial.values.end() &&
+					gltfMaterial.values.find("metallicRoughnessTexture")->second.TextureIndex() != -1) {
+					auto& gltfMetallicRoughnessTexture = gltfMaterial.values.find("metallicRoughnessTexture")->second;
+					auto& gltfTexture = gltfModel.textures[gltfMetallicRoughnessTexture.TextureIndex()];
+					auto& image = gltfModel.images[gltfTexture.source];
+					try {
+						auto fileName = image.name + ".png";
+						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+							Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
+						}
+						pbrMaterialProperties->setMetallicRoughnessTexture(pathName, fileName);
+					} catch (Exception& exception) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
+					}
+				}
+				if (gltfMaterial.additionalValues.find("normalTexture") != gltfMaterial.values.end() &&
+					gltfMaterial.additionalValues.find("normalTexture")->second.TextureIndex() != -1) {
+					auto& gltfNormalTexture = gltfMaterial.additionalValues.find("normalTexture")->second;
+					auto& gltfTexture = gltfModel.textures[gltfNormalTexture.TextureIndex()];
+					auto& image = gltfModel.images[gltfTexture.source];
+					try {
+						auto fileName = image.name + ".png";
+						if (writePNG(pathName, fileName, image.component == 3?24:32, image.width, image.height, (const uint8_t*)image.image.data()) == false) {
+							Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: Could not write PNG: " + fileName);
+						}
+						pbrMaterialProperties->setNormalTexture(pathName, fileName);
+					} catch (Exception& exception) {
+						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
+					}
+				}
+				material->setPBRMaterialProperties(pbrMaterialProperties);
 				material->setSpecularMaterialProperties(specularMaterialProperties);
 				model->getMaterials()[material->getId()] = material;
 			}
