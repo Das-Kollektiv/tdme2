@@ -60,10 +60,10 @@ private:
 	Group* group { nullptr };
 	bool animated { false };
 	vector<Matrix2D3x3> textureMatricesByEntities;
-	vector<int32_t> materialDiffuseTextureIdsByEntities;
-	vector<int32_t> dynamicDiffuseTextureIdsByEntities;
-	vector<int32_t> materialSpecularTextureIdsByEntities;
-	vector<int32_t> materialNormalTextureIdsByEntities;
+	vector<int32_t> specularMaterialDiffuseTextureIdsByEntities;
+	vector<int32_t> specularMaterialDynamicDiffuseTextureIdsByEntities;
+	vector<int32_t> specularMaterialSpecularTextureIdsByEntities;
+	vector<int32_t> specularMaterialNormalTextureIdsByEntities;
 	Object3DGroupRenderer* renderer { nullptr };
 	Object3DGroupMesh* mesh { nullptr };
 	Matrix4x4* groupTransformationsMatrix { nullptr };

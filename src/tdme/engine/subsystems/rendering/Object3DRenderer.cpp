@@ -938,12 +938,12 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 			// bind specular texture
 			if (renderer->isSpecularMappingAvailable() == true) {
 				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
-				renderer->bindTexture(context, object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx]);
+				renderer->bindTexture(context, object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx]);
 			}
 			// bind normal texture
 			if (renderer->isNormalMappingAvailable() == true) {
 				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_NORMAL);
-				renderer->bindTexture(context, object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx]);
+				renderer->bindTexture(context, object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx]);
 			}
 			// switch back texture unit to diffuse unit
 			renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
@@ -960,9 +960,9 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 			specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
 			auto diffuseTextureId =
-				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
-				object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
-				object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx];
+				object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
+				object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
+				object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx];
 			materialKey+= ",";
 			materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
 			if (updateOnly == false || currentMaterialKey.empty() == true) {

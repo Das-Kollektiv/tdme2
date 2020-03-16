@@ -138,15 +138,15 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 					object3DGroup->textureMatricesByEntities[j].identity();
 				}
 			}
-			object3DGroup->materialDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
-			object3DGroup->dynamicDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
-			object3DGroup->materialSpecularTextureIdsByEntities.resize(group->getFacesEntities().size());
-			object3DGroup->materialNormalTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->specularMaterialDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->specularMaterialSpecularTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->specularMaterialNormalTextureIdsByEntities.resize(group->getFacesEntities().size());
 			for (auto j = 0; j < group->getFacesEntities().size(); j++) {
-				object3DGroup->materialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DGroup->dynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DGroup->materialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DGroup->materialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->specularMaterialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->specularMaterialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->specularMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// determine group transformations matrix
 			object3DGroup->groupTransformationsMatrix = object3D->instanceAnimations[0]->transformationsMatrices[0].find(group->getId())->second;
@@ -172,27 +172,27 @@ void Object3DGroup::setupTextures(Renderer* renderer, void* context, Object3DGro
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 
 	// load diffuse texture
-	if (object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+	if (object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
-			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), context);
+			object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), context);
 		} else {
-			object3DGroup->materialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
 	// load specular texture
-	if (renderer->isSpecularMappingAvailable() == true && object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+	if (renderer->isSpecularMappingAvailable() == true && object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (specularMaterialProperties->getSpecularTexture() != nullptr) {
-			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), context);
+			object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), context);
 		} else {
-			object3DGroup->materialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
 	// load normal texture
-	if (renderer->isNormalMappingAvailable() == true && object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+	if (renderer->isNormalMappingAvailable() == true && object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 		if (specularMaterialProperties->getNormalTexture() != nullptr) {
-			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), context);
+			object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), context);
 		} else {
-			object3DGroup->materialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 		}
 	}
 }
@@ -210,31 +210,31 @@ void Object3DGroup::dispose()
 		auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
 		if (specularMaterialProperties == nullptr) continue;
 		// diffuse texture
-		auto diffuseTextureId = materialDiffuseTextureIdsByEntities[j];
+		auto diffuseTextureId = specularMaterialDiffuseTextureIdsByEntities[j];
 		if (diffuseTextureId != Object3DGroup::TEXTUREID_NONE && diffuseTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
 			// remove texture from texture manager
 			if (specularMaterialProperties->getDiffuseTexture() != nullptr)
 				textureManager->removeTexture(specularMaterialProperties->getDiffuseTexture()->getId());
 			// mark as removed
-			materialDiffuseTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			specularMaterialDiffuseTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 		// specular texture
-		auto specularTextureId = materialSpecularTextureIdsByEntities[j];
+		auto specularTextureId = specularMaterialSpecularTextureIdsByEntities[j];
 		if (specularTextureId != Object3DGroup::TEXTUREID_NONE && specularTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
 			// remove texture from texture manager
 			if (specularMaterialProperties->getSpecularTexture() != nullptr)
 				textureManager->removeTexture(specularMaterialProperties->getSpecularTexture()->getId());
 			// mark as removed
-			materialSpecularTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			specularMaterialSpecularTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 		// normal texture
-		auto normalTextureId = materialNormalTextureIdsByEntities[j];
+		auto normalTextureId = specularMaterialNormalTextureIdsByEntities[j];
 		if (normalTextureId != Object3DGroup::TEXTUREID_NONE && normalTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
 			// remove texture from texture manager
 			if (specularMaterialProperties->getNormalTexture() != nullptr)
 				textureManager->removeTexture(specularMaterialProperties->getNormalTexture()->getId());
 			// mark as removed
-			materialNormalTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			specularMaterialNormalTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
 		}
 	}
 }

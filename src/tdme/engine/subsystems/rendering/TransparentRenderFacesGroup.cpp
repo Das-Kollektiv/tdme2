@@ -66,7 +66,7 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DGroup*
 		",";
 		(material == nullptr ? "tdme.material.none" : material->getId()) + // TODO: material id could contain this "," delimiter
 		",";
-	key.append((const char*)&object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx], sizeof(object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx]));
+	key.append((const char*)&object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx], sizeof(object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx]));
 	key.append(",");
 	key.append((const char*)&facesEntityIdx, sizeof(facesEntityIdx));
 	key.append(",");

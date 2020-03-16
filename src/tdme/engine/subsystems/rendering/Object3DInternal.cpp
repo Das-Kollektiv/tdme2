@@ -73,7 +73,7 @@ void Object3DInternal::bindDiffuseTexture(int32_t textureId, const string& group
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
 			// set dynamic texture id
-			object3DGroup->dynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
+			object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
 		}
 	}
 }
