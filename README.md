@@ -19,12 +19,12 @@
             - DAE parsing with skinned meshes and animations
                 - group names/ids must not have whitespace characters
                 - requires baked matrices
+                - requires triangulated meshes for now
             - FBX via FBX SDK
             - GLTF via tinygltf
             - TDME Model file format
                 - this is a much more efficient model file format for TDME
                 - can be read and written
-            - DAE files require triangulated meshes for now
         - objects/entity types
             - 3d model based objects with
                 - animations
