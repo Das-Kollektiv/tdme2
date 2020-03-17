@@ -79,9 +79,10 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 	if ((version[0] != 1 || version[1] != 0 || version[2] != 0) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 9) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 10) &&
-		(version[0] != 1 || version[1] != 9 || version[2] != 11)) {
+		(version[0] != 1 || version[1] != 9 || version[2] != 11) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 12)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11 but is " +
+			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12 but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -188,11 +189,13 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	smp->setDiffuseTextureMaskedTransparency(is->readBoolean());
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 10) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 11)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 12)) {
 		smp->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 10) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 11)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 12)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
 		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
@@ -208,7 +211,8 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 	auto endFrame = is->readInt();
 	auto loop = is->readBoolean();
 	auto speed = 1.0f;
-	if ((version[0] == 1 && version[1] == 9 && version[2] == 11)) {
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 11) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 12)) {
 		speed = is->readFloat();
 	}
 	if (overlayFromGroupId.length() == 0) {

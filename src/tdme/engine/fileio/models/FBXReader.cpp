@@ -21,6 +21,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -48,6 +49,7 @@ using tdme::engine::model::ModelHelper;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
@@ -397,6 +399,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 			material = model->getMaterials()[fbxMaterialName];
 			if (material == nullptr) {
 				material = new Material(fbxMaterialName);
+				auto specularMaterialProperties = new SpecularMaterialProperties();
 				if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId)) {
 					FbxPropertyT<FbxDouble3> fbxColor3;
 					FbxPropertyT<FbxDouble> fbxTransparency;
@@ -405,7 +408,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Ambient;
 					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->AmbientFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
-						material->setAmbientColor(
+						specularMaterialProperties->setAmbientColor(
 							Color4(
 								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
 								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
@@ -418,7 +421,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->DiffuseFactor;
 					fbxTransparency = ((FbxSurfacePhong*)fbxMaterial)->TransparencyFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true && fbxTransparency.IsValid() == true)
-					material->setDiffuseColor(
+						specularMaterialProperties->setDiffuseColor(
 						Color4(
 							static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
 							static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
@@ -434,7 +437,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Emissive;
 					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->EmissiveFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
-						material->setEmissionColor(
+						specularMaterialProperties->setEmissionColor(
 							Color4(
 								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
 								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
@@ -446,7 +449,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Specular;
 					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->SpecularFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
-						material->setSpecularColor(
+						specularMaterialProperties->setSpecularColor(
 							Color4(
 								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
 								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
@@ -457,7 +460,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					}
 					fbxShinienss = ((FbxSurfacePhong*)fbxMaterial)->Shininess;
 					if (fbxShinienss.IsValid() == true) {
-						material->setShininess(static_cast<float>(fbxShinienss.Get()));
+						specularMaterialProperties->setShininess(static_cast<float>(fbxShinienss.Get()));
 					}
 				} else
 				if (fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId)) {
@@ -467,7 +470,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					fbxColor3 = ((FbxSurfaceLambert*)fbxMaterial)->Ambient;
 					fbxFactor = ((FbxSurfaceLambert*)fbxMaterial)->AmbientFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
-						material->setAmbientColor(
+						specularMaterialProperties->setAmbientColor(
 							Color4(
 								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
 								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
@@ -480,7 +483,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					fbxFactor = ((FbxSurfaceLambert*)fbxMaterial)->DiffuseFactor;
 					fbxTransparency = ((FbxSurfaceLambert*)fbxMaterial)->TransparencyFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true && fbxTransparency.IsValid() == true)
-					material->setDiffuseColor(
+						specularMaterialProperties->setDiffuseColor(
 						Color4(
 							static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
 							static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
@@ -496,7 +499,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					fbxColor3 = ((FbxSurfaceLambert*)fbxMaterial)->Emissive;
 					fbxFactor = ((FbxSurfaceLambert*)fbxMaterial)->EmissiveFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
-						material->setEmissionColor(
+						specularMaterialProperties->setEmissionColor(
 							Color4(
 								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
 								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
@@ -554,7 +557,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				}
 				if (diffuseTextureFileName.length() > 0) {
-					material->setDiffuseTexture(
+					specularMaterialProperties->setDiffuseTexture(
 						FileSystem::getInstance()->fileExists(
 							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(diffuseTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(diffuseTextureFileName),
@@ -574,7 +577,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						):
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				if (normalTextureFileName.length() > 0) {
-					material->setNormalTexture(
+					specularMaterialProperties->setNormalTexture(
 						FileSystem::getInstance()->fileExists(
 							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(normalTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(normalTextureFileName),
@@ -590,7 +593,7 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 						):
 						FbxCast<FbxFileTexture>(fbxProperty.GetSrcObject<FbxLayeredTexture>(0))->GetFileName();
 				if (specularTextureFileName.length() > 0) {
-					material->setSpecularTexture(
+					specularMaterialProperties->setSpecularTexture(
 						FileSystem::getInstance()->fileExists(
 							FileSystem::getInstance()->getCanonicalPath(pathName, FileSystem::getInstance()->getFileName(specularTextureFileName))
 						)?pathName:FileSystem::getInstance()->getPathName(specularTextureFileName),
@@ -598,24 +601,25 @@ Group* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Group* parentG
 					);
 				}
 				// adjust ambient light with blender
-				if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && material->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
-					material->setAmbientColor(
+				if (model->getAuthoringTool() == Model::AUTHORINGTOOL_BLENDER && specularMaterialProperties->getAmbientColor().equals(BLENDER_AMBIENT_NONE)) {
+					specularMaterialProperties->setAmbientColor(
 						Color4(
-							material->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-							material->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
-							material->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+							specularMaterialProperties->getDiffuseColor().getRed() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+							specularMaterialProperties->getDiffuseColor().getGreen() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
+							specularMaterialProperties->getDiffuseColor().getBlue() * BLENDER_AMBIENT_FROM_DIFFUSE_SCALE,
 							1.0f
 						)
 					);
-					material->setDiffuseColor(
+					specularMaterialProperties->setDiffuseColor(
 						Color4(
-							material->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
-							material->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
-							material->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
-							material->getDiffuseColor().getAlpha()
+							specularMaterialProperties->getDiffuseColor().getRed() * BLENDER_DIFFUSE_SCALE,
+							specularMaterialProperties->getDiffuseColor().getGreen() * BLENDER_DIFFUSE_SCALE,
+							specularMaterialProperties->getDiffuseColor().getBlue() * BLENDER_DIFFUSE_SCALE,
+							specularMaterialProperties->getDiffuseColor().getAlpha()
 						)
 					);
 				}
+				material->setSpecularMaterialProperties(specularMaterialProperties);
 				model->getMaterials()[material->getId()] = material;
 			}
 		}
