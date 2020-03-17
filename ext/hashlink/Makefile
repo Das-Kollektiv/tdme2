@@ -12,7 +12,7 @@ LFLAGS = -L. -lhl
 LIBFLAGS =
 HLFLAGS = -ldl
 LIBEXT = so
-LIBTURBOJPEG = -lturbojpeg
+LIBTURBOJPEG =
 
 PCRE = include/pcre/pcre_chartables.o include/pcre/pcre_compile.o include/pcre/pcre_dfa_exec.o \
 	include/pcre/pcre_exec.o include/pcre/pcre_fullinfo.o include/pcre/pcre_globals.o \
@@ -62,7 +62,7 @@ endif
 else ifeq ($(UNAME),Darwin)
 
 # Mac
-LIBEXT=dylib
+#LIBEXT=dylib
 CFLAGS += -m$(ARCH) -I /opt/libjpeg-turbo/include -I /usr/local/opt/jpeg-turbo/include -I /usr/local/include -I /usr/local/opt/libvorbis/include -I /usr/local/opt/openal-soft/include -Dopenal_soft  -DGL_SILENCE_DEPRECATION
 LFLAGS += -Wl,-export_dynamic -L/usr/local/lib
 
