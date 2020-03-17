@@ -971,7 +971,7 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 
 hashlink:
-	(cd ext/hashlink && $(MAKE) clean && $(MAKE) libhl && mkdir -p ../../$(LIB_DIR) && cp libhl.so ../../$(LIB_DIR))
+	(cd ext/hashlink && $(MAKE) clean && $(MAKE) libhl && mkdir -p ../../$(LIB_DIR) && cp libhl.so ../../$(LIB_DIR) && $(MAKE) clean)
 
 mains: $(MAINS)
 
