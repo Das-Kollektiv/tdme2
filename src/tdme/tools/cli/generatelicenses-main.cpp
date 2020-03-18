@@ -52,11 +52,12 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 }
 
 void processFile(const string& indent, const string& fileName) {
+	auto _fileName = StringUtils::startsWith(fileName, "./") == true?StringUtils::substring(fileName, 2, fileName.size()):fileName;
 	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, lines);
-	Console::println(indent + fileName);
+	Console::println(indent + _fileName);
 	Console::print(indent);
-	for (auto i = 0; i < fileName.size() + 2; i++) Console::print("-");
+	for (auto i = 0; i < _fileName.size() + 2; i++) Console::print("-");
 	Console::println();
 	Console::println();
 	for (auto& line: lines) {
@@ -76,11 +77,11 @@ int main(int argc, char** argv)
 	Console::println(string("Programmed 2018 by Andreas Drewke, drewke.net."));
 	Console::println();
 
-	auto pathToHeaders = string(argv[1]);
-	auto indent = argc == 2?string():string(argv[2]);
+	auto pathToHeaders = "."; // we do search in pwd
+	auto indent = argc > 1?string(argv[1]):string();
 
-	if (argc < 2 || argc > 3 || (argc == 3 && indent.empty() == false && indent != "indent")) {
-		Console::println("Usage: generatelicenses path [indent]");
+	if (argc > 2 || (argc == 2 && indent.empty() == false && indent != "indent")) {
+		Console::println("Usage: generatelicenses [indent]");
 		Application::exit(1);
 	}
 
@@ -91,7 +92,10 @@ int main(int argc, char** argv)
 	scanDir(pathToHeaders, files);
 
 	Console::println("Processing files");
+	Console::println("------------------");
+	Console::println();
 	for (auto fileName: files) {
+		if (fileName == "./LICENSE") continue; // ignore own project license
 		processFile(indent, fileName);
 	}
 }
