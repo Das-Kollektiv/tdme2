@@ -32,7 +32,7 @@ void LightingShaderFoliageImplementation::initialize()
 	//	fragment shader
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + shaderVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting/specular",
 		"render_fragmentshader.c",
 		"#define HAVE_DEPTH_FOG"
 	);
@@ -41,7 +41,7 @@ void LightingShaderFoliageImplementation::initialize()
 	//	vertex shader
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
-		"shader/" + shaderVersion + "/lighting",
+		"shader/" + shaderVersion + "/lighting/specular",
 		"render_vertexshader.c",
 		"#define HAVE_FOLIAGE\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
