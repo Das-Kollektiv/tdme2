@@ -1688,7 +1688,7 @@ bool VKRenderer::isNormalMappingAvailable()
 bool VKRenderer::isPBRAvailable()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return false;
+	return true;
 }
 
 bool VKRenderer::isInstancedRenderingAvailable() {

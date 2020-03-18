@@ -649,6 +649,7 @@ bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bi
 			if (targetBitsPerPixel == 32) break;
 		}
 	}
+	targetBitsPerPixel = 24; // TODO: This is only a workaround for now, please remove it
 
 	// output is 8bit depth, RGBA format.
 	png_set_IHDR(

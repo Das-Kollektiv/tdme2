@@ -1,26 +1,26 @@
-#include <animation.glsl>
+#version 330
 
-attribute vec4 a_Position;
-varying vec3 v_Position;
+layout (location = 0) in vec3 a_Position;
+out vec3 v_Position;
 
 #ifdef HAS_NORMALS
-attribute vec4 a_Normal;
+layout (location = 1) in vec3 a_Normal;
 #endif
 
 #ifdef HAS_TANGENTS
-attribute vec4 a_Tangent;
+layout (location = 4) in vec3 a_Tangent;
 #endif
 
 #ifdef HAS_NORMALS
 #ifdef HAS_TANGENTS
-varying mat3 v_TBN;
+out mat3 v_TBN;
 #else
-varying vec3 v_Normal;
+out vec3 v_Normal;
 #endif
 #endif
 
 #ifdef HAS_UV_SET1
-attribute vec2 a_UV1;
+layout (location = 2) in vec2 a_UV1;
 #endif
 
 #ifdef HAS_UV_SET2
@@ -41,37 +41,18 @@ varying vec4 v_Color;
 #endif
 
 uniform mat4 u_ViewProjectionMatrix;
-uniform mat4 u_ModelMatrix;
-uniform mat4 u_NormalMatrix;
+layout (location = 6) in mat4 u_ModelMatrix;
 
 vec4 getPosition()
 {
-    vec4 pos = a_Position;
-
-#ifdef USE_MORPHING
-    pos += getTargetPosition();
-#endif
-
-#ifdef USE_SKINNING
-    pos = getSkinningMatrix() * pos;
-#endif
-
+    vec4 pos = vec4(a_Position, 1.0);
     return pos;
 }
 
 #ifdef HAS_NORMALS
 vec4 getNormal()
 {
-    vec4 normal = a_Normal;
-
-#ifdef USE_MORPHING
-    normal += getTargetNormal();
-#endif
-
-#ifdef USE_SKINNING
-    normal = getSkinningNormalMatrix() * normal;
-#endif
-
+    vec4 normal = vec4(a_Normal, 0.0);
     return normalize(normal);
 }
 #endif
@@ -79,16 +60,7 @@ vec4 getNormal()
 #ifdef HAS_TANGENTS
 vec4 getTangent()
 {
-    vec4 tangent = a_Tangent;
-
-#ifdef USE_MORPHING
-    tangent += getTargetTangent();
-#endif
-
-#ifdef USE_SKINNING
-    tangent = getSkinningMatrix() * tangent;
-#endif
-
+    vec4 tangent = vec4(a_Tangent, 0.0);
     return normalize(tangent);
 }
 #endif
@@ -100,6 +72,7 @@ void main()
 
     #ifdef HAS_NORMALS
     #ifdef HAS_TANGENTS
+    mat4 u_NormalMatrix = mat4(transpose(inverse(mat3(u_ModelMatrix))));
     vec4 tangent = getTangent();
     vec3 normalW = normalize(vec3(u_NormalMatrix * vec4(getNormal().xyz, 0.0)));
     vec3 tangentW = normalize(vec3(u_ModelMatrix * vec4(tangent.xyz, 0.0)));

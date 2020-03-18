@@ -12,6 +12,8 @@
 // [4] "An Inexpensive BRDF Model for Physically based Rendering" by Christophe Schlick
 //     https://www.cs.virginia.edu/~jdl/bib/appearance/analytic%20models/schlick94b.pdf
 
+#version 330
+
 #ifdef USE_TEX_LOD
 #extension GL_EXT_shader_texture_lod: enable
 #endif
@@ -25,9 +27,7 @@
 
 precision highp float;
 
-#include <tonemapping.glsl>
-#include <textures.glsl>
-#include <functions.glsl>
+{$FUNCTIONS}
 
 // KHR_lights_punctual extension.
 // see https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
@@ -57,11 +57,9 @@ const int LightType_Spot = 2;
 uniform Light u_Lights[LIGHT_COUNT];
 #endif
 
-#if defined(MATERIAL_SPECULARGLOSSINESS) || defined(MATERIAL_METALLICROUGHNESS)
 uniform float u_MetallicFactor;
 uniform float u_RoughnessFactor;
 uniform vec4 u_BaseColorFactor;
-#endif
 
 #ifdef MATERIAL_SPECULARGLOSSINESS
 uniform vec3 u_SpecularFactor;
@@ -293,23 +291,23 @@ void main()
 
 #ifdef MATERIAL_METALLICROUGHNESS
 
-#ifdef HAS_METALLIC_ROUGHNESS_MAP
-    // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
-    // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
-    vec4 mrSample = texture2D(u_MetallicRoughnessSampler, getMetallicRoughnessUV());
-    perceptualRoughness = mrSample.g * u_RoughnessFactor;
-    metallic = mrSample.b * u_MetallicFactor;
-#else
-    metallic = u_MetallicFactor;
-    perceptualRoughness = u_RoughnessFactor;
-#endif
+    if (u_MetallicRoughnessSamplerAvailable == 1)
+        // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
+        // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
+        vec4 mrSample = texture2D(u_MetallicRoughnessSampler, getMetallicRoughnessUV());
+        perceptualRoughness = mrSample.g * u_RoughnessFactor;
+        metallic = mrSample.b * u_MetallicFactor;
+    } else {
+        metallic = u_MetallicFactor;
+        perceptualRoughness = u_RoughnessFactor;
+    }
 
     // The albedo may be defined from a base texture or a flat color
-#ifdef HAS_BASE_COLOR_MAP
-    baseColor = SRGBtoLINEAR(texture2D(u_BaseColorSampler, getBaseColorUV())) * u_BaseColorFactor;
-#else
-    baseColor = u_BaseColorFactor;
-#endif
+    if (u_BaseColorSamplerAvailable == 1 {
+        baseColor = SRGBtoLINEAR(texture2D(u_BaseColorSampler, getBaseColorUV())) * u_BaseColorFactor;
+    } else {
+        baseColor = u_BaseColorFactor;
+    }
 
     baseColor *= getVertexColor();
 
@@ -418,11 +416,11 @@ void main()
     #endif
 
     #ifdef DEBUG_NORMAL
-        #ifdef HAS_NORMAL_MAP
+        if (u_NormalSamplerAvailable == 1) {
             gl_FragColor.rgb = texture2D(u_NormalSampler, getNormalUV()).rgb;
-        #else
+        } else {
             gl_FragColor.rgb = vec3(0.5, 0.5, 1.0);
-        #endif
+        }
     #endif
 
     #ifdef DEBUG_BASECOLOR

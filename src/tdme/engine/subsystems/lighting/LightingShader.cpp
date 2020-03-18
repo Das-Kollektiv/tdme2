@@ -4,6 +4,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.h>
+#include <tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.h>
@@ -18,6 +19,7 @@ using tdme::engine::subsystems::lighting::LightingShaderBackImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFrontImplementation;
+using tdme::engine::subsystems::lighting::LightingShaderPBRDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderSolidImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
@@ -38,6 +40,7 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) shader["terrain"] = new LightingShaderTerrainImplementation(renderer);
 	if (LightingShaderTreeImplementation::isSupported(renderer) == true) shader["tree"] = new LightingShaderTreeImplementation(renderer);
 	if (LightingShaderWaterImplementation::isSupported(renderer) == true) shader["water"] = new LightingShaderWaterImplementation(renderer);
+	if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) shader["pbr-default"] = new LightingShaderPBRDefaultImplementation(renderer);
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }

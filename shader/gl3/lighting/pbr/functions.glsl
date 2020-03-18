@@ -7,17 +7,17 @@ varying vec3 v_Position;
 
 #ifdef HAS_NORMALS
 #ifdef HAS_TANGENTS
-varying mat3 v_TBN;
+in mat3 v_TBN;
 #else
-varying vec3 v_Normal;
+in vec3 v_Normal;
 #endif
 #endif
 
 #ifdef HAS_VERTEX_COLOR_VEC3
-varying vec3 v_Color;
+in vec3 v_Color;
 #endif
 #ifdef HAS_VERTEX_COLOR_VEC4
-varying vec4 v_Color;
+in vec4 v_Color;
 #endif
 
 struct AngularInfo
@@ -73,14 +73,14 @@ vec3 getNormal()
     mat3 tbn = v_TBN;
 #endif
 
-#ifdef HAS_NORMAL_MAP
-    vec3 n = texture2D(u_NormalSampler, UV).rgb;
-    n = normalize(tbn * ((2.0 * n - 1.0) * vec3(u_NormalScale, u_NormalScale, 1.0)));
-#else
-    // The tbn matrix is linearly interpolated, so we need to re-normalize
-    vec3 n = normalize(tbn[2].xyz);
-#endif
-
+    vec3 n;
+    if (u_NormalSamplerAvailable == 1) {
+        n = texture2D(u_NormalSampler, UV).rgb;
+        n = normalize(tbn * ((2.0 * n - 1.0) * vec3(u_NormalScale, u_NormalScale, 1.0)));
+    } else {
+        // The tbn matrix is linearly interpolated, so we need to re-normalize
+        n = normalize(tbn[2].xyz);
+    }
     return n;
 }
 

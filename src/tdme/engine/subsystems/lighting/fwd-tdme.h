@@ -13,6 +13,8 @@ namespace lighting {
 	class LightingShaderDefaultImplementation;
 	class LightingShaderFoliageImplementation;
 	class LightingShaderFrontImplementation;
+	class LightingShaderPBRBaseImplementation;
+	class LightingShaderPBRDefaultImplementation;
 	class LightingShaderSkyImplementation;
 	class LightingShaderSolidImplementation;
 	class LightingShaderTerrainImplementation;

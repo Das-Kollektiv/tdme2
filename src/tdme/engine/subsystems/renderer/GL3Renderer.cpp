@@ -152,7 +152,7 @@ bool GL3Renderer::isNormalMappingAvailable()
 
 bool GL3Renderer::isPBRAvailable()
 {
-	return false;
+	return true;
 }
 
 bool GL3Renderer::isInstancedRenderingAvailable() {
