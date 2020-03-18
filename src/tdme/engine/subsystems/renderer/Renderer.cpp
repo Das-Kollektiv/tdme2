@@ -2,14 +2,14 @@
 
 #include <tdme/math/Math.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Material.h>
+#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
 using tdme::utils::FloatBuffer;
 using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_Material;
+using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 
 Renderer::Renderer()

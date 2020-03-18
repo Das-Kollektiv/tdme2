@@ -6,7 +6,6 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Material.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Console.h>
@@ -19,7 +18,6 @@ using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_Material;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Console;

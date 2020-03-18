@@ -107,7 +107,7 @@ void EZRShaderPreBaseImplementation::updateTextureMatrix(Renderer* renderer, voi
 
 void EZRShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
-	auto material = renderer->getMaterial(context);
+	auto material = renderer->getSpecularMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
 }

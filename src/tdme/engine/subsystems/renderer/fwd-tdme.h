@@ -11,7 +11,7 @@ namespace renderer {
 	class GLES2Renderer;
 	class Renderer;
 	class Renderer_Light;
-	class Renderer_Material;
+	class Renderer_SpecularMaterial;
 	class SingleThreadedRenderer;
 	class VKRenderer;
 }  // namespace renderer

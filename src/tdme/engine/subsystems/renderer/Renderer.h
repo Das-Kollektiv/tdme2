@@ -9,7 +9,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Material.h>
+#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -24,7 +24,7 @@ using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer_Light;
-using tdme::engine::subsystems::renderer::Renderer_Material;
+using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
@@ -792,7 +792,7 @@ public:
 	 * @param context context
 	 * @return material
 	 */
-	virtual Renderer_Material& getMaterial(void* context) = 0;
+	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) = 0;
 
 	/** 
 	 * On update material

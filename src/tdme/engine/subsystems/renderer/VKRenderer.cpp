@@ -36,6 +36,9 @@
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
@@ -99,9 +102,8 @@ using tdme::engine::Timing;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
-
-using tdme::engine::Engine;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -5850,9 +5852,9 @@ array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
 	return contextTyped.effect_color_add;
 }
 
-Renderer_Material& VKRenderer::getMaterial(void* context) {
+Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
-	return contextTyped.material;
+	return contextTyped.specularMaterial;
 }
 
 const string VKRenderer::getShader(void* context) {

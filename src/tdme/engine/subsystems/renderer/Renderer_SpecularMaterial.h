@@ -10,7 +10,7 @@ using std::array;
 /** 
  * Renderer material data entity
  */
-struct tdme::engine::subsystems::renderer::Renderer_Material
+struct tdme::engine::subsystems::renderer::Renderer_SpecularMaterial
 {
 	array<float, 4> ambient {{ 0.2f, 0.2f, 0.2f, 1.0f }};
 	array<float, 4> diffuse {{ 0.8f, 0.8f, 0.8f, 1.0f }};

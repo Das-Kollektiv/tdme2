@@ -19,6 +19,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/os/threading/Mutex.h>
@@ -35,6 +36,7 @@ using std::vector;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix2D3x3;
 using tdme::utils::ByteBuffer;
@@ -279,7 +281,7 @@ private:
 		string shader;
 		array<float, 4> effect_color_mul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 		array<float, 4> effect_color_add {{ 0.0f, 0.0f, 0.0f, 0.0f }};
-		Renderer_Material material;
+		Renderer_SpecularMaterial specularMaterial;
 		array<Renderer_Light, 8> lights;
 		Matrix2D3x3 texture_matrix;
 
@@ -572,7 +574,7 @@ public:
 	virtual Renderer_Light& getLight(void* context, int32_t lightId) override;
 	virtual array<float, 4>& getEffectColorMul(void* context) override;
 	virtual array<float, 4>& getEffectColorAdd(void* context) override;
-	virtual Renderer_Material& getMaterial(void* context) override;
+	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) override;
 	virtual const string getShader(void* context) override;
 	virtual void setShader(void* context, const string& id) override;
 	virtual float getMaskMaxValue(void* context) override;

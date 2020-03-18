@@ -924,7 +924,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	if (updateOnly == false) {
 		// apply materials
 		if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-			auto& rendererMaterial = renderer->getMaterial(context);
+			auto& rendererMaterial = renderer->getSpecularMaterial(context);
 			rendererMaterial.ambient = specularMaterialProperties->getAmbientColor().getArray();
 			rendererMaterial.diffuse = specularMaterialProperties->getDiffuseColor().getArray();
 			rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
@@ -953,7 +953,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	// bind diffuse texture
 	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
-		auto& rendererMaterial = renderer->getMaterial(context);
+		auto& rendererMaterial = renderer->getSpecularMaterial(context);
 		rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
 		rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
 		renderer->onUpdateMaterial(context);

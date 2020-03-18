@@ -111,7 +111,7 @@ void ShadowMappingShaderPreBaseImplementation::updateTextureMatrix(Renderer* ren
 
 void ShadowMappingShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
-	auto material = renderer->getMaterial(context);
+	auto material = renderer->getSpecularMaterial(context);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
 	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
 }
