@@ -152,9 +152,9 @@ public:
 	virtual bool isNormalMappingAvailable() = 0;
 
 	/** 
-	 * @return if displacement mapping is supported
+	 * @return if PBR lighting is supported
 	 */
-	virtual bool isDisplacementMappingAvailable() = 0;
+	virtual bool isPBRAvailable() = 0;
 
 	/** 
 	 * Checks if instanced rendering is available

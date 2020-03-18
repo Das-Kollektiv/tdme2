@@ -1685,7 +1685,7 @@ bool VKRenderer::isNormalMappingAvailable()
 	return true;
 }
 
-bool VKRenderer::isDisplacementMappingAvailable()
+bool VKRenderer::isPBRAvailable()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	return false;

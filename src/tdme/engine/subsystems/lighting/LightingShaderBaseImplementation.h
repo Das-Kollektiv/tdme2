@@ -39,8 +39,6 @@ protected:
 	int32_t uniformSpecularTextureAvailable { -1 };
 	int32_t uniformNormalTextureUnit { -1 };
 	int32_t uniformNormalTextureAvailable { -1 };
-	int32_t uniformDisplacementTextureUnit { -1 };
-	int32_t uniformDisplacementTextureAvailable { -1 };
 	int32_t uniformProjectionMatrix { -1 };
 	int32_t uniformCameraMatrix { -1 };
 	int32_t uniformMVPMatrix { -1 };

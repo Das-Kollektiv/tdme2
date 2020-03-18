@@ -57,7 +57,7 @@ public:
 	bool isUsingProgramAttributeLocation() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
-	bool isDisplacementMappingAvailable() override;
+	bool isPBRAvailable() override;
 	bool isInstancedRenderingAvailable() override;
 	bool isUsingShortIndices() override;
 	bool isGeometryShaderAvailable() override;

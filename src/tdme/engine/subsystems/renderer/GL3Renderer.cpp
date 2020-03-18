@@ -150,7 +150,7 @@ bool GL3Renderer::isNormalMappingAvailable()
 	return true;
 }
 
-bool GL3Renderer::isDisplacementMappingAvailable()
+bool GL3Renderer::isPBRAvailable()
 {
 	return false;
 }

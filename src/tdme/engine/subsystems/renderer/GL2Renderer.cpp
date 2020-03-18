@@ -156,7 +156,7 @@ bool GL2Renderer::isNormalMappingAvailable()
 	return false;
 }
 
-bool GL2Renderer::isDisplacementMappingAvailable()
+bool GL2Renderer::isPBRAvailable()
 {
 	return false;
 }

@@ -135,7 +135,7 @@ bool GLES2Renderer::isNormalMappingAvailable()
 	return false;
 }
 
-bool GLES2Renderer::isDisplacementMappingAvailable()
+bool GLES2Renderer::isPBRAvailable()
 {
 	return false;
 }

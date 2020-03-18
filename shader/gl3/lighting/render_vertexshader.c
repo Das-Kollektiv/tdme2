@@ -18,8 +18,6 @@ layout (location = 11) in vec4 inEffectColorAdd;
 layout (location = 12) in vec3 inOrigin;
 
 // uniforms
-uniform sampler2D displacementTextureUnit;
-uniform int displacementTextureAvailable;
 uniform mat3 textureMatrix;
 uniform int normalTextureAvailable;
 uniform float time;

@@ -55,14 +55,7 @@ void LightingShaderBaseImplementation::initialize()
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparency");
 	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparencyThreshold");
 
-	if (renderer->isDisplacementMappingAvailable() == true) {
-		uniformDisplacementTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "displacementTextureUnit");
-		if (uniformDisplacementTextureUnit == -1) return;
-
-		uniformDisplacementTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "displacementTextureAvailable");
-		if (uniformDisplacementTextureAvailable == -1) return;
-
-	}
+	// additional mapping
 	if (renderer->isSpecularMappingAvailable() == true) {
 		uniformSpecularTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureUnit");
 		uniformSpecularTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "specularTextureAvailable");
@@ -153,9 +146,6 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 	}
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
 		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::TEXTUREUNIT_NORMAL);
-	}
-	if (renderer->isDisplacementMappingAvailable() == true && uniformDisplacementTextureUnit != -1) {
-		renderer->setProgramUniformInteger(context, uniformDisplacementTextureUnit, LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
 	}
 	// initialize dynamic uniforms
 	updateEffect(renderer, context);
@@ -284,12 +274,5 @@ void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* con
 
 			if (uniformNormalTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformNormalTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
-		case LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT:
-			if (renderer->isDisplacementMappingAvailable() == false)
-				break;
-
-			renderer->setProgramUniformInteger(context, uniformDisplacementTextureAvailable, textureId == 0 ? 0 : 1);
-			break;
 	}
-
 }

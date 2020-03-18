@@ -984,11 +984,6 @@ void Object3DRenderer::clearMaterial(void* context)
 		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
 		renderer->bindTexture(context, renderer->ID_NONE);
 	}
-	// unbind displacement texture
-	if (renderer->isDisplacementMappingAvailable() == true) {
-		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DISPLACEMENT);
-		renderer->bindTexture(context, renderer->ID_NONE);
-	}
 	// unbind normal texture
 	if (renderer->isNormalMappingAvailable()) {
 		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_NORMAL);
