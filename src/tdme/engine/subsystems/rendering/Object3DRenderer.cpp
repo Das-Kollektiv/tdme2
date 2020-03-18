@@ -937,16 +937,16 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
 			// bind specular texture
 			if (renderer->isSpecularMappingAvailable() == true) {
-				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
+				renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
 				renderer->bindTexture(context, object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx]);
 			}
 			// bind normal texture
 			if (renderer->isNormalMappingAvailable() == true) {
-				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_NORMAL);
+				renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 				renderer->bindTexture(context, object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx]);
 			}
 			// switch back texture unit to diffuse unit
-			renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+			renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 		}
 	}
 
@@ -966,7 +966,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 			materialKey+= ",";
 			materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
 			if (updateOnly == false || currentMaterialKey.empty() == true) {
-				renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+				renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 				renderer->bindTexture(context, diffuseTextureId);
 			}
 		}
@@ -977,20 +977,20 @@ void Object3DRenderer::clearMaterial(void* context)
 {
 	// TODO: optimize me! We do not need always to clear material
 	// unbind diffuse texture
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 	renderer->bindTexture(context, renderer->ID_NONE);
 	// unbind specular texture
 	if (renderer->isSpecularMappingAvailable() == true) {
-		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
+		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
 		renderer->bindTexture(context, renderer->ID_NONE);
 	}
 	// unbind normal texture
 	if (renderer->isNormalMappingAvailable()) {
-		renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_NORMAL);
+		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 		renderer->bindTexture(context, renderer->ID_NONE);
 	}
 	// set diffuse texture unit
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 }
 
 void Object3DRenderer::render(const vector<Entity*>& pses)

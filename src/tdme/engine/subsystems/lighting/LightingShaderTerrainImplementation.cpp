@@ -98,33 +98,33 @@ void LightingShaderTerrainImplementation::useProgram(Engine* engine, void* conte
 
 	//
 	auto currentTextureUnit = renderer->getTextureUnit(context);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_GRAS);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
 	renderer->bindTexture(context, grasTextureId);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_DIRT);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
 	renderer->bindTexture(context, dirtTextureId);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_STONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
 	renderer->bindTexture(context, stoneTextureId);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_SNOW);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
 	renderer->bindTexture(context, snowTextureId);
 	renderer->setTextureUnit(context, currentTextureUnit);
 
 	//
-	renderer->setProgramUniformInteger(context, uniformGrasTextureUnit, LightingShaderConstants::TEXTUREUNIT_TERRAIN_GRAS);
-	renderer->setProgramUniformInteger(context, uniformDirtTextureUnit, LightingShaderConstants::TEXTUREUNIT_TERRAIN_DIRT);
-	renderer->setProgramUniformInteger(context, uniformSnowTextureUnit, LightingShaderConstants::TEXTUREUNIT_TERRAIN_SNOW);
-	renderer->setProgramUniformInteger(context, uniformStoneTextureUnit, LightingShaderConstants::TEXTUREUNIT_TERRAIN_STONE);
+	renderer->setProgramUniformInteger(context, uniformGrasTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
+	renderer->setProgramUniformInteger(context, uniformDirtTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
+	renderer->setProgramUniformInteger(context, uniformSnowTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
+	renderer->setProgramUniformInteger(context, uniformStoneTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
 }
 
 void LightingShaderTerrainImplementation::unUseProgram(void* context) {
 	//
 	auto currentTextureUnit = renderer->getTextureUnit(context);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_GRAS);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_GRAS);
 	renderer->bindTexture(context, renderer->ID_NONE);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_DIRT);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_DIRT);
 	renderer->bindTexture(context, renderer->ID_NONE);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_STONE);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_STONE);
 	renderer->bindTexture(context, renderer->ID_NONE);
-	renderer->setTextureUnit(context, LightingShaderConstants::TEXTUREUNIT_TERRAIN_SNOW);
+	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_TERRAIN_SNOW);
 	renderer->bindTexture(context, renderer->ID_NONE);
 	renderer->setTextureUnit(context, currentTextureUnit);
 

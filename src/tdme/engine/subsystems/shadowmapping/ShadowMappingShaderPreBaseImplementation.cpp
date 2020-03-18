@@ -80,7 +80,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, programId);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 
@@ -119,7 +119,7 @@ void ShadowMappingShaderPreBaseImplementation::updateMaterial(Renderer* renderer
 void ShadowMappingShaderPreBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
-		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:
 			renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}

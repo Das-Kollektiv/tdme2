@@ -195,7 +195,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer
 void ShadowMappingShaderRenderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
-		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:
 			renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}

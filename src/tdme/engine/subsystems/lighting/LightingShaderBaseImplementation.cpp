@@ -139,13 +139,13 @@ void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	}
 	if (uniformDiffuseTextureUnit != -1) {
-		renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+		renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 	}
 	if (renderer->isSpecularMappingAvailable() == true && uniformSpecularTextureUnit != -1) {
-		renderer->setProgramUniformInteger(context, uniformSpecularTextureUnit, LightingShaderConstants::TEXTUREUNIT_SPECULAR);
+		renderer->setProgramUniformInteger(context, uniformSpecularTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
 	}
 	if (renderer->isNormalMappingAvailable() == true && uniformNormalTextureUnit != -1) {
-		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::TEXTUREUNIT_NORMAL);
+		renderer->setProgramUniformInteger(context, uniformNormalTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
 	}
 	// initialize dynamic uniforms
 	updateEffect(renderer, context);
@@ -257,18 +257,18 @@ void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, v
 void LightingShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
-		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:
 			if (uniformDiffuseTextureAvailable != -1) {
 				renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			}
 			break;
-		case LightingShaderConstants::TEXTUREUNIT_SPECULAR:
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR:
 			if (renderer->isSpecularMappingAvailable() == false)
 				break;
 
 			if (uniformSpecularTextureAvailable != -1) renderer->setProgramUniformInteger(context, uniformSpecularTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
-		case LightingShaderConstants::TEXTUREUNIT_NORMAL:
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL:
 			if (renderer->isNormalMappingAvailable() == false)
 				break;
 

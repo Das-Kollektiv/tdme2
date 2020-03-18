@@ -78,7 +78,7 @@ void EZRShaderPreBaseImplementation::initialize()
 void EZRShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, programId);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::TEXTUREUNIT_DIFFUSE);
+	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 }
 
@@ -115,7 +115,7 @@ void EZRShaderPreBaseImplementation::updateMaterial(Renderer* renderer, void* co
 void EZRShaderPreBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
 	switch (renderer->getTextureUnit(context)) {
-		case LightingShaderConstants::TEXTUREUNIT_DIFFUSE:
+		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:
 			renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
