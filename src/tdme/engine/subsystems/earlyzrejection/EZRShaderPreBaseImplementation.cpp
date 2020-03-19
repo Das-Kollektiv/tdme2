@@ -78,6 +78,7 @@ void EZRShaderPreBaseImplementation::initialize()
 void EZRShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, programId);
+	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
 }

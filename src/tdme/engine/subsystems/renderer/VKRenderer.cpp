@@ -3649,6 +3649,16 @@ void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 }
 
+int32_t VKRenderer::getLighting(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.lighting;
+}
+
+void VKRenderer::setLighting(void* context, int32_t lighting) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.lighting = lighting;
+}
+
 void VKRenderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(x) + ", " + to_string(y) + "; " + to_string(width) + ", " + to_string(height));

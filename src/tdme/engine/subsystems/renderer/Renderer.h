@@ -58,6 +58,10 @@ public:
 	int32_t FRONTFACE_CW;
 	int32_t FRONTFACE_CCW;
 
+	int32_t LIGHTING_NONE;
+	int32_t LIGHTING_SPECULAR;
+	int32_t LIGHTING_PBR;
+
 protected:
 	int32_t viewPortX;
 	int32_t viewPortY;
@@ -296,6 +300,20 @@ public:
 	 * @param name attribute name
 	 */
 	virtual void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) = 0;
+
+	/**
+	 * Get current lighting model
+	 * @param context context
+	 * @return lighting, see LIGHTING_*
+	 */
+	virtual int32_t getLighting(void* context) = 0;
+
+	/**
+	 * Set current lighting model
+	 * @param context context
+	 * @param lighting lighting, see LIGHTING_*
+	 */
+	virtual void setLighting(void* context, int32_t lighting) = 0;
 
 	/** 
 	 * Set up viewport parameter

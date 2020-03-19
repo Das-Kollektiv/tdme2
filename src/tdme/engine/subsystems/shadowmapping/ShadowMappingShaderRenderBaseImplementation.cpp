@@ -124,6 +124,7 @@ void ShadowMappingShaderRenderBaseImplementation::initialize()
 void ShadowMappingShaderRenderBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, renderProgramId);
+	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
 	renderer->setProgramUniformInteger(context, renderUniformTextureUnit, ShadowMap::TEXTUREUNIT);
 	if (renderUniformTime != -1) renderer->setProgramUniformFloat(context, renderUniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 	if (renderUniformShadowMapLookUps != -1) renderer->setProgramUniformInteger(context, renderUniformShadowMapLookUps, Engine::getShadowMapRenderLookUps());

@@ -77,6 +77,7 @@ void LinesShader::useProgram(void* context)
 {
 	isRunning = true;
 	renderer->useProgram(context, renderProgramId);
+	renderer->setLighting(context, renderer->LIGHTING_NONE);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
 }
 

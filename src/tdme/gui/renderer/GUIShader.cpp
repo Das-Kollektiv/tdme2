@@ -74,17 +74,18 @@ void GUIShader::initialize()
 
 void GUIShader::useProgram()
 {
-	renderer->useProgram(renderer->getDefaultContext(), programId);
-	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureUnit, 0);
-	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformMaskTextureUnit, 1);
-	renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformMaskTextureAvailable, 0);
-	renderer->setProgramUniformFloat(renderer->getDefaultContext(), uniformMaskMaxValue, 1.0);
+	auto defaultContext = renderer->getDefaultContext();
+	renderer->useProgram(defaultContext, programId);
+	renderer->setLighting(defaultContext, renderer->LIGHTING_NONE);
+	renderer->setProgramUniformInteger(defaultContext, uniformDiffuseTextureUnit, 0);
+	renderer->setProgramUniformInteger(defaultContext, uniformMaskTextureUnit, 1);
+	renderer->setProgramUniformInteger(defaultContext, uniformMaskTextureAvailable, 0);
+	renderer->setProgramUniformFloat(defaultContext, uniformMaskMaxValue, 1.0);
 	isRunning = true;
 }
 
 void GUIShader::unUseProgram()
 {
-	renderer->useProgram(renderer->getDefaultContext(), renderer->ID_NONE);
 	isRunning = false;
 }
 

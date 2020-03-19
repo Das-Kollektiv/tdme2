@@ -133,6 +133,7 @@ void LightingShaderBaseImplementation::initialize()
 void LightingShaderBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, renderLightingProgramId);
+	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
 	// initialize static uniforms
 	if (renderer->isInstancedRenderingAvailable() == true) {
 		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());

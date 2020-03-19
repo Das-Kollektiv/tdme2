@@ -35,6 +35,9 @@ Renderer::Renderer()
 	FRAMEBUFFER_DEFAULT = -1;
 	FRONTFACE_CW = -1;
 	FRONTFACE_CCW = -1;
+	LIGHTING_NONE = 0;
+	LIGHTING_SPECULAR = 1;
+	LIGHTING_PBR = 2;
 	viewPortX = 0;
 	viewPortY = 0;
 	viewPortWidth = 0;

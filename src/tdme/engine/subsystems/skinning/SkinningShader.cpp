@@ -105,6 +105,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 	if (skinningContext.running == false) {
 		skinningContext.running = true;
 		renderer->useProgram(context, programId);
+		renderer->setLighting(context, renderer->LIGHTING_NONE);
 	}
 
 	// vbo base ids

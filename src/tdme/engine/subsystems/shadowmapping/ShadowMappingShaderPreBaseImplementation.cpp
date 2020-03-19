@@ -80,6 +80,7 @@ void ShadowMappingShaderPreBaseImplementation::initialize()
 void ShadowMappingShaderPreBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, programId);
+	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
 	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }

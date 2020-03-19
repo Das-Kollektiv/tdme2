@@ -35,11 +35,15 @@ private:
 	array<Renderer_Light, 8> lights;
 	Matrix2D3x3 textureMatrix;
 	float maskMaxValue { 1.0f };
+	int32_t lighting { 0 };
 
 protected:
 	string shader;
 
 public:
+	// overriden methods
+	virtual int32_t getLighting(void* context) override;
+	virtual void setLighting(void* context, int32_t lighting) override;
 	virtual Matrix2D3x3& getTextureMatrix(void* context) override;
 	virtual Renderer_Light& getLight(void* context, int32_t lightId) override;
 	virtual array<float, 4>& getEffectColorMul(void* context) override;
@@ -63,6 +67,6 @@ public:
 private:
 
 	//
-	friend class Renderer_Material;
+	friend class Renderer_SpecularMaterial;
 	friend class Renderer_Light;
 };

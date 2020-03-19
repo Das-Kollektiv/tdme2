@@ -124,6 +124,7 @@ void FrameBufferRenderShader::useProgram()
 {
 	auto context = renderer->getDefaultContext();
 	renderer->useProgram(context, programId);
+	renderer->setLighting(context, renderer->LIGHTING_NONE);
 	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
 	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
 	isRunning = true;

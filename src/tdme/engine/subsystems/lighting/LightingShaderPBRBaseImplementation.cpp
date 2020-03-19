@@ -46,6 +46,7 @@ void LightingShaderPBRBaseImplementation::initialize()
 void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, void* context)
 {
 	renderer->useProgram(context, renderLightingProgramId);
+	renderer->setLighting(context, renderer->LIGHTING_PBR);
 }
 
 void LightingShaderPBRBaseImplementation::unUseProgram(void* context)

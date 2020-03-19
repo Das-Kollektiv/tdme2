@@ -22,6 +22,14 @@ SingleThreadedRenderer::SingleThreadedRenderer()
 SingleThreadedRenderer::~SingleThreadedRenderer() {
 }
 
+int32_t SingleThreadedRenderer::getLighting(void* context) {
+	return lighting;
+}
+
+void SingleThreadedRenderer::setLighting(void* context, int32_t lighting) {
+	this->lighting = lighting;
+}
+
 Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(void* context) {
 	return textureMatrix;
 }
