@@ -187,74 +187,85 @@ void Application::exit(int exitCode) {
 			#error "Machine not supported"
 		#endif
 
-		int frameIdx = 1;
-		while (StackWalk64(image, process, thread, &stackFrame, &context, NULL, &SymFunctionTableAccess64, &SymGetModuleBase64, NULL)) {
-			if (stackFrame.AddrPC.Offset == stackFrame.AddrReturn.Offset) break;
-			if (stackFrame.AddrPC.Offset == 0) continue;
+		// construct backtrace and save it to console.log and crash.log
+		{
+			int frameIdx = 1;
+			vector<string> backtraceLines;
+			while (StackWalk64(image, process, thread, &stackFrame, &context, NULL, &SymFunctionTableAccess64, &SymGetModuleBase64, NULL)) {
+				if (stackFrame.AddrPC.Offset == stackFrame.AddrReturn.Offset) break;
+				if (stackFrame.AddrPC.Offset == 0) continue;
 
-			auto line = 0;
-			char _fileName[1024];
-			char _functionName[1024];
+				auto line = 0;
+				char _fileName[1024];
+				char _functionName[1024];
 
-			// Get function name
-			{
-				#define cnBufferSize 1024
-				unsigned char byBuffer[sizeof(IMAGEHLP_SYMBOL64) + cnBufferSize];
-				IMAGEHLP_SYMBOL64* pSymbol = (IMAGEHLP_SYMBOL64*)byBuffer;
-				DWORD64 dwDisplacement;
-				memset(pSymbol, 0, sizeof(IMAGEHLP_SYMBOL64) + cnBufferSize);
-				pSymbol->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
-				pSymbol->MaxNameLength = cnBufferSize;
-				if (!SymGetSymFromAddr64(process, stackFrame.AddrPC.Offset, &dwDisplacement, pSymbol)) {
-					strcpy(_functionName, "??");
-				} else {
-					pSymbol->Name[cnBufferSize-1] = '\0';
-					strcpy(_functionName, pSymbol->Name);
-				}
-			}
-
-			// Get file/line number
-			{
-				IMAGEHLP_LINE64 theLine;
-				DWORD dwDisplacement;
-				memset(&theLine, 0, sizeof(theLine));
-				theLine.SizeOfStruct = sizeof(theLine);
-				if(!SymGetLineFromAddr64(process, stackFrame.AddrPC.Offset, &dwDisplacement, &theLine))
+				// Get function name
 				{
-					strcpy(_fileName, "??");
-				}
-				else
-				{
-					const char* pszFile = strrchr(theLine.FileName, '\\');
-					if (!pszFile) pszFile = theLine.FileName; else ++pszFile;
-					strncpy(_fileName, pszFile, cnBufferSize);
-					line = theLine.LineNumber;
-				}
-			}
-
-			//
-			string functionName = _functionName;
-			string fileName = _fileName;
-			#if defined(_MSC_VER) == false
-				if (functionName == "??") {
-					string hexAddr;
-					HexEncDec::encodeInt(stackFrame.AddrPC.Offset, hexAddr);
-					string addr2LineCommand = "\"" + addr2lineToolCmd + " -f -p -e " + string(pathToExecutable) + " " + hexAddr + "\"";
-					auto addr2LineOutput = Application::execute(addr2LineCommand);
-					StringTokenizer t;
-					t.tokenize(addr2LineOutput, " ");
-					if (t.hasMoreTokens() == true) {
-						auto addr2lineFunctionName = t.nextToken();
-						addr2LineOutput = StringUtils::replace(addr2LineOutput, addr2lineFunctionName, RTTI::demangle(addr2lineFunctionName.c_str()));
+					#define cnBufferSize 1024
+					unsigned char byBuffer[sizeof(IMAGEHLP_SYMBOL64) + cnBufferSize];
+					IMAGEHLP_SYMBOL64* pSymbol = (IMAGEHLP_SYMBOL64*)byBuffer;
+					DWORD64 dwDisplacement;
+					memset(pSymbol, 0, sizeof(IMAGEHLP_SYMBOL64) + cnBufferSize);
+					pSymbol->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL64);
+					pSymbol->MaxNameLength = cnBufferSize;
+					if (!SymGetSymFromAddr64(process, stackFrame.AddrPC.Offset, &dwDisplacement, pSymbol)) {
+						strcpy(_functionName, "??");
+					} else {
+						pSymbol->Name[cnBufferSize-1] = '\0';
+						strcpy(_functionName, pSymbol->Name);
 					}
-					Console::print(to_string(frameIdx) + ": " + addr2LineOutput);
-				} else {
-					Console::println(to_string(frameIdx) + ": " + string(RTTI::demangle(_functionName)) + " at " + fileName + ":" + to_string(line));
 				}
-			#else
-				Console::println(to_string(frameIdx) + ": " + functionName + " at " + fileName + ":" + to_string(line));
-			#endif
-			frameIdx++;
+
+				// Get file/line number
+				{
+					IMAGEHLP_LINE64 theLine;
+					DWORD dwDisplacement;
+					memset(&theLine, 0, sizeof(theLine));
+					theLine.SizeOfStruct = sizeof(theLine);
+					if(!SymGetLineFromAddr64(process, stackFrame.AddrPC.Offset, &dwDisplacement, &theLine))
+					{
+						strcpy(_fileName, "??");
+					}
+					else
+					{
+						const char* pszFile = strrchr(theLine.FileName, '\\');
+						if (!pszFile) pszFile = theLine.FileName; else ++pszFile;
+						strncpy(_fileName, pszFile, cnBufferSize);
+						line = theLine.LineNumber;
+					}
+				}
+
+				//
+				string functionName = _functionName;
+				string fileName = _fileName;
+				#if defined(_MSC_VER) == false
+					if (functionName == "??") {
+						string hexAddr;
+						HexEncDec::encodeInt(stackFrame.AddrPC.Offset, hexAddr);
+						string addr2LineCommand = "\"" + addr2lineToolCmd + " -f -p -e " + string(pathToExecutable) + " " + hexAddr + "\"";
+						auto addr2LineOutput = Application::execute(addr2LineCommand);
+						StringTokenizer t;
+						t.tokenize(addr2LineOutput, " ");
+						if (t.hasMoreTokens() == true) {
+							auto addr2lineFunctionName = t.nextToken();
+							addr2LineOutput = StringUtils::replace(addr2LineOutput, addr2lineFunctionName, RTTI::demangle(addr2lineFunctionName.c_str()));
+						}
+						auto backtraceLine = to_string(frameIdx) + ": " + addr2LineOutput;
+						Console::println(backtraceLine);
+						backtraceLines.push_back(backtraceLine);
+					} else {
+						auto backtraceLine = to_string(frameIdx) + ": " + string(RTTI::demangle(_functionName)) + " at " + fileName + ":" + to_string(line);
+						Console::println(backtraceLine);
+						backtraceLines.push_back(backtraceLine);
+					}
+				#else
+					Console::println(to_string(frameIdx) + ": " + functionName + " at " + fileName + ":" + to_string(line));
+				#endif
+				frameIdx++;
+			}
+
+			// store also to crash.log
+			FileSystem::getInstance()->setContentFromStringArray(".", "crash.log", backtraceLines);
 		}
 
 		SymCleanup(process);
