@@ -64,6 +64,9 @@ private:
 	vector<int32_t> specularMaterialDynamicDiffuseTextureIdsByEntities;
 	vector<int32_t> specularMaterialSpecularTextureIdsByEntities;
 	vector<int32_t> specularMaterialNormalTextureIdsByEntities;
+	vector<int32_t> pbrMaterialBaseColorTextureIdsByEntities;
+	vector<int32_t> pbrMaterialMetallicRoughnessTextureIdsByEntities;
+	vector<int32_t> pbrMaterialNormalTextureIdsByEntities;
 	Object3DGroupRenderer* renderer { nullptr };
 	Object3DGroupMesh* mesh { nullptr };
 	Matrix4x4* groupTransformationsMatrix { nullptr };

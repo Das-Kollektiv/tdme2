@@ -12,6 +12,7 @@
 #include <tdme/engine/model/Joint.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/subsystems/manager/MeshManager.h>
@@ -37,6 +38,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Joint;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::subsystems::manager::MeshManager;
@@ -142,11 +144,17 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 			object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities.resize(group->getFacesEntities().size());
 			object3DGroup->specularMaterialSpecularTextureIdsByEntities.resize(group->getFacesEntities().size());
 			object3DGroup->specularMaterialNormalTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->pbrMaterialBaseColorTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->pbrMaterialMetallicRoughnessTextureIdsByEntities.resize(group->getFacesEntities().size());
+			object3DGroup->pbrMaterialNormalTextureIdsByEntities.resize(group->getFacesEntities().size());
 			for (auto j = 0; j < group->getFacesEntities().size(); j++) {
 				object3DGroup->specularMaterialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->specularMaterialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
 				object3DGroup->specularMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->pbrMaterialBaseColorTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->pbrMaterialMetallicRoughnessTextureIdsByEntities[j] = TEXTUREID_NONE;
+				object3DGroup->pbrMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// determine group transformations matrix
 			object3DGroup->groupTransformationsMatrix = object3D->instanceAnimations[0]->transformationsMatrices[0].find(group->getId())->second;
@@ -170,29 +178,58 @@ void Object3DGroup::setupTextures(Renderer* renderer, void* context, Object3DGro
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
-
-	// load diffuse texture
-	if (object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
-		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
-			object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), context);
-		} else {
-			object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+	if (specularMaterialProperties != nullptr) {
+		// load specular diffuse texture
+		if (object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+			if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
+				object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), context);
+			} else {
+				object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			}
+		}
+		// load specular specular texture
+		if (renderer->isSpecularMappingAvailable() == true && object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+			if (specularMaterialProperties->getSpecularTexture() != nullptr) {
+				object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), context);
+			} else {
+				object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			}
+		}
+		// load specular normal texture
+		if (renderer->isNormalMappingAvailable() == true && object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+			if (specularMaterialProperties->getNormalTexture() != nullptr) {
+				object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), context);
+			} else {
+				object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			}
 		}
 	}
-	// load specular texture
-	if (renderer->isSpecularMappingAvailable() == true && object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
-		if (specularMaterialProperties->getSpecularTexture() != nullptr) {
-			object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), context);
-		} else {
-			object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+	// load PBR textures
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties != nullptr && renderer->isPBRAvailable() == true) {
+		// load PBR base color texture
+		if (object3DGroup->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+			if (pbrMaterialProperties->getBaseColorTexture() != nullptr) {
+				object3DGroup->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getBaseColorTexture(), context);
+			} else {
+				object3DGroup->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			}
 		}
-	}
-	// load normal texture
-	if (renderer->isNormalMappingAvailable() == true && object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
-		if (specularMaterialProperties->getNormalTexture() != nullptr) {
-			object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), context);
-		} else {
-			object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+		// load PBR metallic roughness texture
+		if (object3DGroup->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+			if (pbrMaterialProperties->getMetallicRoughnessTexture() != nullptr) {
+				object3DGroup->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getMetallicRoughnessTexture(), context);
+			} else {
+				object3DGroup->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			}
+		}
+		// load PBR normal texture
+		if (object3DGroup->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+			if (pbrMaterialProperties->getNormalTexture() != nullptr) {
+				object3DGroup->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getNormalTexture(), context);
+			} else {
+				object3DGroup->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+			}
 		}
 	}
 }
@@ -208,33 +245,64 @@ void Object3DGroup::dispose()
 		auto material = facesEntities[j].getMaterial();
 		//	skip if no material was set up
 		auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
-		if (specularMaterialProperties == nullptr) continue;
-		// diffuse texture
-		auto diffuseTextureId = specularMaterialDiffuseTextureIdsByEntities[j];
-		if (diffuseTextureId != Object3DGroup::TEXTUREID_NONE && diffuseTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
-			// remove texture from texture manager
-			if (specularMaterialProperties->getDiffuseTexture() != nullptr)
-				textureManager->removeTexture(specularMaterialProperties->getDiffuseTexture()->getId());
-			// mark as removed
-			specularMaterialDiffuseTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+		if (specularMaterialProperties != nullptr) {
+			// specular diffuse texture
+			auto specularDiffuseTextureId = specularMaterialDiffuseTextureIdsByEntities[j];
+			if (specularDiffuseTextureId != Object3DGroup::TEXTUREID_NONE && specularDiffuseTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
+				// remove texture from texture manager
+				if (specularMaterialProperties->getDiffuseTexture() != nullptr)
+					textureManager->removeTexture(specularMaterialProperties->getDiffuseTexture()->getId());
+				// mark as removed
+				specularMaterialDiffuseTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			}
+			// specular specular texture
+			auto specularSpecularTextureId = specularMaterialSpecularTextureIdsByEntities[j];
+			if (specularSpecularTextureId != Object3DGroup::TEXTUREID_NONE && specularSpecularTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
+				// remove texture from texture manager
+				if (specularMaterialProperties->getSpecularTexture() != nullptr)
+					textureManager->removeTexture(specularMaterialProperties->getSpecularTexture()->getId());
+				// mark as removed
+				specularMaterialSpecularTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			}
+			// specular normal texture
+			auto specularNormalTextureId = specularMaterialNormalTextureIdsByEntities[j];
+			if (specularNormalTextureId != Object3DGroup::TEXTUREID_NONE && specularNormalTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
+				// remove texture from texture manager
+				if (specularMaterialProperties->getNormalTexture() != nullptr)
+					textureManager->removeTexture(specularMaterialProperties->getNormalTexture()->getId());
+				// mark as removed
+				specularMaterialNormalTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			}
 		}
-		// specular texture
-		auto specularTextureId = specularMaterialSpecularTextureIdsByEntities[j];
-		if (specularTextureId != Object3DGroup::TEXTUREID_NONE && specularTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
-			// remove texture from texture manager
-			if (specularMaterialProperties->getSpecularTexture() != nullptr)
-				textureManager->removeTexture(specularMaterialProperties->getSpecularTexture()->getId());
-			// mark as removed
-			specularMaterialSpecularTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
-		}
-		// normal texture
-		auto normalTextureId = specularMaterialNormalTextureIdsByEntities[j];
-		if (normalTextureId != Object3DGroup::TEXTUREID_NONE && normalTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
-			// remove texture from texture manager
-			if (specularMaterialProperties->getNormalTexture() != nullptr)
-				textureManager->removeTexture(specularMaterialProperties->getNormalTexture()->getId());
-			// mark as removed
-			specularMaterialNormalTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+		// PBR textures
+		auto pbrMaterialProperties = material != nullptr?material->getPBRMaterialProperties():nullptr;
+		if (pbrMaterialProperties != nullptr) {
+			// PBR base color texture
+			auto pbrBaseColorTextureId = pbrMaterialBaseColorTextureIdsByEntities[j];
+			if (pbrBaseColorTextureId != Object3DGroup::TEXTUREID_NONE && pbrBaseColorTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
+				// remove texture from texture manager
+				if (pbrMaterialProperties->getBaseColorTexture() != nullptr)
+					textureManager->removeTexture(pbrMaterialProperties->getBaseColorTexture()->getId());
+				// mark as removed
+				pbrMaterialBaseColorTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			}
+			auto pbrMetallicRoughnessTextureId = pbrMaterialMetallicRoughnessTextureIdsByEntities[j];
+			if (pbrMetallicRoughnessTextureId != Object3DGroup::TEXTUREID_NONE && pbrMetallicRoughnessTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
+				// remove texture from texture manager
+				if (pbrMaterialProperties->getMetallicRoughnessTexture() != nullptr)
+					textureManager->removeTexture(pbrMaterialProperties->getMetallicRoughnessTexture()->getId());
+				// mark as removed
+				pbrMaterialMetallicRoughnessTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			}
+			// PBR normal texture
+			auto pbrNormalTextureId = pbrMaterialNormalTextureIdsByEntities[j];
+			if (pbrNormalTextureId != Object3DGroup::TEXTUREID_NONE && pbrNormalTextureId != Object3DGroup::TEXTUREID_NOTUSED) {
+				// remove texture from texture manager
+				if (pbrMaterialProperties->getNormalTexture() != nullptr)
+					textureManager->removeTexture(pbrMaterialProperties->getNormalTexture()->getId());
+				// mark as removed
+				pbrMaterialNormalTextureIdsByEntities[j] = Object3DGroup::TEXTUREID_NONE;
+			}
 		}
 	}
 }
