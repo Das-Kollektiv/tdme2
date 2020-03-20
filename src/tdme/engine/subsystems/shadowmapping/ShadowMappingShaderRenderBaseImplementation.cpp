@@ -175,7 +175,7 @@ void ShadowMappingShaderRenderBaseImplementation::updateLight(Renderer* renderer
 		return;
 	}
 
-	auto light = renderer->getLight(context, lightId);
+	auto& light = renderer->getLight(context, lightId);
 	auto lightPosition = Vector3(light.position[0], light.position[1], light.position[2]);
 	auto lightSpotDirection = Vector3(light.spotDirection[0], light.spotDirection[1], light.spotDirection[2]);
 	if (renderUniformLightPosition != -1) renderer->setProgramUniformFloatVec3(context, renderUniformLightPosition, lightPosition.getArray());

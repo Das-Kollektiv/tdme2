@@ -27,6 +27,8 @@
 
 precision highp float;
 
+{$DEFINITIONS}
+
 {$FUNCTIONS}
 
 // KHR_lights_punctual extension.
@@ -34,6 +36,8 @@ precision highp float;
 
 struct Light
 {
+    int enabled;
+
     vec3 direction;
     float range;
 
@@ -45,8 +49,6 @@ struct Light
 
     float outerConeCos;
     int type;
-
-    vec2 padding;
 };
 
 const int LightType_Directional = 0;
@@ -290,8 +292,7 @@ void main()
 #endif // ! MATERIAL_SPECULARGLOSSINESS
 
 #ifdef MATERIAL_METALLICROUGHNESS
-
-    if (u_MetallicRoughnessSamplerAvailable == 1)
+    if (u_MetallicRoughnessSamplerAvailable == 1) {
         // Roughness is stored in the 'g' channel, metallic is stored in the 'b' channel.
         // This layout intentionally reserves the 'r' channel for (optional) occlusion map data
         vec4 mrSample = texture2D(u_MetallicRoughnessSampler, getMetallicRoughnessUV());
@@ -303,7 +304,7 @@ void main()
     }
 
     // The albedo may be defined from a base texture or a flat color
-    if (u_BaseColorSamplerAvailable == 1 {
+    if (u_BaseColorSamplerAvailable == 1) {
         baseColor = SRGBtoLINEAR(texture2D(u_BaseColorSampler, getBaseColorUV())) * u_BaseColorFactor;
     } else {
         baseColor = u_BaseColorFactor;
@@ -367,6 +368,9 @@ void main()
     for (int i = 0; i < LIGHT_COUNT; ++i)
     {
         Light light = u_Lights[i];
+
+        if (light.enabled == 0) continue;
+
         if (light.type == LightType_Directional)
         {
             color += applyDirectionalLight(light, materialInfo, normal, view);

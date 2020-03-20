@@ -31,6 +31,29 @@ protected:
 	int32_t renderLightingProgramId { -1 };
 	int32_t renderLightingFragmentShaderId { -1 };
 	int32_t renderLightingVertexShaderId { -1 };
+	int32_t uniformBaseColorFactor { -1 };
+	int32_t uniformBaseColorSampler { -1 };
+	int32_t uniformBaseColorSamplerAvailable { -1 };
+	int32_t uniformCamera { -1 };
+	int32_t uniformExposure { -1 };
+	int32_t uniformMetallicFactor { -1 };
+	int32_t uniformMetallicRoughnessSampler { -1 };
+	int32_t uniformMetallicRoughnessSamplerAvailable { -1 };
+	int32_t uniformNormalSampler { -1 };
+	int32_t uniformNormalSamplerAvailable { -1 };
+	int32_t uniformNormalScale { -1 };
+	int32_t uniformRoughnessFactor { -1 };
+	int32_t uniformViewProjectionMatrix { -1 };
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightDirection;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightRange;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightColor;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightIntensity;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightPosition;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightInnerConeCos;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightOuterConeCos;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightType;
+
 	bool initialized { false };
 	Renderer* renderer { nullptr };
 public:

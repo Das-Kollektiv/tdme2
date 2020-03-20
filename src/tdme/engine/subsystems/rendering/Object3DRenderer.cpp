@@ -922,53 +922,77 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 
 	//
 	if (updateOnly == false) {
-		// apply materials
-		if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-			auto& rendererMaterial = renderer->getSpecularMaterial(context);
-			rendererMaterial.ambient = specularMaterialProperties->getAmbientColor().getArray();
-			rendererMaterial.diffuse = specularMaterialProperties->getDiffuseColor().getArray();
-			rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
-			rendererMaterial.emission = specularMaterialProperties->getEmissionColor().getArray();
-			rendererMaterial.shininess = specularMaterialProperties->getShininess();
-			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
-			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
-			renderer->onUpdateMaterial(context);
-		}
-		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
-			// bind specular texture
-			if (renderer->isSpecularMappingAvailable() == true) {
-				renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
-				renderer->bindTexture(context, object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx]);
+		if (renderer->getLighting(context) == renderer->LIGHTING_SPECULAR) {
+			// apply materials
+			if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
+				auto& rendererMaterial = renderer->getSpecularMaterial(context);
+				rendererMaterial.ambient = specularMaterialProperties->getAmbientColor().getArray();
+				rendererMaterial.diffuse = specularMaterialProperties->getDiffuseColor().getArray();
+				rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
+				rendererMaterial.emission = specularMaterialProperties->getEmissionColor().getArray();
+				rendererMaterial.shininess = specularMaterialProperties->getShininess();
+				rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
+				rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
+				renderer->onUpdateMaterial(context);
 			}
-			// bind normal texture
-			if (renderer->isNormalMappingAvailable() == true) {
-				renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
-				renderer->bindTexture(context, object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx]);
+			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
+				// bind specular texture
+				if (renderer->isSpecularMappingAvailable() == true) {
+					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
+					renderer->bindTexture(context, object3DGroup->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx]);
+				}
+				// bind normal texture
+				if (renderer->isNormalMappingAvailable() == true) {
+					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
+					renderer->bindTexture(context, object3DGroup->specularMaterialNormalTextureIdsByEntities[facesEntityIdx]);
+				}
+				// switch back texture unit to diffuse unit
+				renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 			}
-			// switch back texture unit to diffuse unit
-			renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+		} else
+		if (renderer->getLighting(context) == renderer->LIGHTING_PBR) {
+			// apply materials
+			if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
+				// TODO
+			}
+			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
+				// bind metallic roughness texture
+				renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+				renderer->bindTexture(context, object3DGroup->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx]);
+				// bind normal texture
+				renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+				renderer->bindTexture(context, object3DGroup->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx]);
+				// switch back texture unit to base color unit
+				renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+			}
 		}
 	}
 
-	// bind diffuse texture
+	// bind diffuse/base color texture
 	if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
-		auto& rendererMaterial = renderer->getSpecularMaterial(context);
-		rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
-		rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
-		renderer->onUpdateMaterial(context);
-		if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
-			specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
-			auto diffuseTextureId =
-				object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
-				object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
-				object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx];
-			materialKey+= ",";
-			materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
-			if (updateOnly == false || currentMaterialKey.empty() == true) {
-				renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
-				renderer->bindTexture(context, diffuseTextureId);
+		if (renderer->getLighting(context) == renderer->LIGHTING_SPECULAR) {
+			auto& rendererMaterial = renderer->getSpecularMaterial(context);
+			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
+			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
+			renderer->onUpdateMaterial(context);
+			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
+				specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+				auto diffuseTextureId =
+					object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DGroup::TEXTUREID_NONE ?
+					object3DGroup->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
+					object3DGroup->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx];
+				materialKey+= ",";
+				materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
+				if (updateOnly == false || currentMaterialKey.empty() == true) {
+					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+					renderer->bindTexture(context, diffuseTextureId);
+				}
 			}
+		} else
+		if (renderer->getLighting(context) == renderer->LIGHTING_PBR) {
+			renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+			renderer->bindTexture(context, object3DGroup->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx]);
 		}
 	}
 }
@@ -976,21 +1000,36 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 void Object3DRenderer::clearMaterial(void* context)
 {
 	// TODO: optimize me! We do not need always to clear material
-	// unbind diffuse texture
-	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
-	renderer->bindTexture(context, renderer->ID_NONE);
-	// unbind specular texture
-	if (renderer->isSpecularMappingAvailable() == true) {
-		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
+	if (renderer->getLighting(context) == renderer->LIGHTING_SPECULAR) {
+		// unbind diffuse texture
+		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 		renderer->bindTexture(context, renderer->ID_NONE);
-	}
-	// unbind normal texture
-	if (renderer->isNormalMappingAvailable()) {
-		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
+		// unbind specular texture
+		if (renderer->isSpecularMappingAvailable() == true) {
+			renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_SPECULAR);
+			renderer->bindTexture(context, renderer->ID_NONE);
+		}
+		// unbind normal texture
+		if (renderer->isNormalMappingAvailable()) {
+			renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_NORMAL);
+			renderer->bindTexture(context, renderer->ID_NONE);
+		}
+		// set diffuse texture unit
+		renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+	} else
+	if (renderer->getLighting(context) == renderer->LIGHTING_PBR) {
+		// unbind base color texture
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 		renderer->bindTexture(context, renderer->ID_NONE);
+		// unbind metallic roughness texture
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+		renderer->bindTexture(context, renderer->ID_NONE);
+		// unbind normal texture
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+		renderer->bindTexture(context, renderer->ID_NONE);
+		// set diffuse texture unit
+		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 	}
-	// set diffuse texture unit
-	renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
 }
 
 void Object3DRenderer::render(const vector<Entity*>& pses)

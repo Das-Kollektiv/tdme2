@@ -23,6 +23,7 @@ PBRMaterialProperties::PBRMaterialProperties()
 
 PBRMaterialProperties::~PBRMaterialProperties() {
 	if (baseColorTexture != nullptr) baseColorTexture->releaseReference();
+	if (metallicRoughnessTexture != nullptr) metallicRoughnessTexture->releaseReference();
 	if (normalTexture != nullptr) normalTexture->releaseReference();
 }
 

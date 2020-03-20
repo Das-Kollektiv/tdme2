@@ -3,7 +3,7 @@
 const float M_PI = 3.141592653589793;
 const float c_MinReflectance = 0.04;
 
-varying vec3 v_Position;
+in vec3 v_Position;
 
 #ifdef HAS_NORMALS
 #ifdef HAS_TANGENTS

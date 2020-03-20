@@ -33,7 +33,7 @@ void LightingShaderPBRDefaultImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"metallic-roughness.frag",
-		"#define HAS_NORMALS\n#define HAS_UV_SET1",
+		"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/lighting/pbr",
 			"tonemapping.glsl"
@@ -55,7 +55,8 @@ void LightingShaderPBRDefaultImplementation::initialize()
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
-		"primitive.vert"
+		"primitive.vert",
+		"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n"
 	);
 	if (renderLightingVertexShaderId == 0) return;
 

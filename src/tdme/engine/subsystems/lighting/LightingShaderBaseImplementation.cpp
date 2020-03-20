@@ -208,7 +208,7 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)
 {
 	// lights
-	auto light = renderer->getLight(context, lightId);
+	auto& light = renderer->getLight(context, lightId);
 	renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
 	if (light.enabled == 1) {
 		if (uniformLightAmbient[lightId] != -1) renderer->setProgramUniformFloatVec4(context, uniformLightAmbient[lightId], light.ambient);

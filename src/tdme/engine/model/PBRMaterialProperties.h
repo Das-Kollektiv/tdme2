@@ -43,14 +43,14 @@ public:
 	 * @return base color texture path name
 	 */
 	inline const string& getBaseColorTexturePathName() const {
-		return normalTexturePathName;
+		return baseColorTexturePathName;
 	}
 
 	/**
 	 * @return base color texture file name
 	 */
 	inline const string& getBaseColorTextureFileName() const {
-		return normalTextureFileName;
+		return baseColorTextureFileName;
 	}
 
 	/**
@@ -64,7 +64,7 @@ public:
 	 * @return if material has a base color texture
 	 */
 	inline bool hasBaseColorTexture() const {
-		return normalTexture != nullptr;
+		return baseColorTexture != nullptr;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public:
 	 * @return metallic roughness texture path name
 	 */
 	inline const string& getMetallicRoughnessTexturePathName() const {
-		return baseColorTexturePathName;
+		return metallicRoughnessTexturePathName;
 	}
 
 	/**
