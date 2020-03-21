@@ -45,6 +45,7 @@ protected:
 	int32_t uniformRoughnessFactor { -1 };
 	int32_t uniformViewProjectionMatrix { -1 };
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
+	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightDirection;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightRange;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightColor;

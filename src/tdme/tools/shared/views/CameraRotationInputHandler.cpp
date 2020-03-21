@@ -121,7 +121,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		auto mouseWheel = event.getWheelY();
 		if (mouseWheel != 0) {
 			scale += mouseWheel * 0.1f;
-			if (scale < 0.05f) scale = 0.05f;
+			if (scale < 0.0001f) scale = 0.0001f;
 			scaling = true;
 		}
 	}
@@ -177,9 +177,10 @@ void CameraRotationInputHandler::handleInputEvents()
 		scaling = true;
 		scale += 0.05f;
 	}
-	if (keyPlus  == true && scale > 0.05f) {
+	if (keyPlus  == true) {
 		scaling = true;
 		scale -= 0.05f;
+		if (scale < 0.0001f) scale = 0.0001f;
 	}
 
 	if (keyR == true || resetRequested == true) {

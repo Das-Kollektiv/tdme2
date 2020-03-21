@@ -65,6 +65,10 @@ int Renderer::getContextIndex(void* context) {
 	return 0;
 }
 
+Vector3& Renderer::getCameraPosition() {
+	return cameraPosition;
+}
+
 Matrix4x4& Renderer::getProjectionMatrix()
 {
 	return projectionMatrix;

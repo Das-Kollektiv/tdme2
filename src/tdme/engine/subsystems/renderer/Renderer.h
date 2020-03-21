@@ -69,6 +69,7 @@ protected:
 	int32_t viewPortHeight;
 
 private:
+	Vector3 cameraPosition;
 	Matrix4x4 projectionMatrix;
 	Matrix4x4 cameraMatrix;
 	Matrix4x4 modelViewMatrix;
@@ -314,6 +315,11 @@ public:
 	 * @param lighting lighting, see LIGHTING_*
 	 */
 	virtual void setLighting(void* context, int32_t lighting) = 0;
+
+	/**
+	 * @return camera position
+	 */
+	virtual Vector3& getCameraPosition();
 
 	/** 
 	 * Set up viewport parameter

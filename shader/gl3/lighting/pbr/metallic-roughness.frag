@@ -38,6 +38,10 @@ struct Light
 {
     int enabled;
 
+    #ifndef USE_IBL
+        vec3 ambient;
+    #endif
+
     vec3 direction;
     float range;
 
@@ -372,6 +376,10 @@ void main()
         Light light = u_Lights[i];
 
         if (light.enabled == 0) continue;
+
+        #ifndef USE_IBL
+            color += light.ambient * baseColor.rgb;
+        #endif
 
         if (light.type == LightType_Directional)
         {

@@ -159,7 +159,8 @@ void Camera::update(void* context, int32_t width, int32_t height)
 		);
 	}
 
-	// setup projection and model view and such
+	// setup projection and model view matrices and such
+	renderer->getCameraPosition().set(lookFrom);
 	renderer->getProjectionMatrix().set(computeProjectionMatrix());
 	renderer->onUpdateProjectionMatrix(context);
 	renderer->getModelViewMatrix().set(computeModelViewMatrix());

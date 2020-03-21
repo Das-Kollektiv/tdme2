@@ -71,6 +71,8 @@ void LightingShaderPBRBaseImplementation::initialize()
 	for (auto i = 0; i < Engine::LIGHTS_MAX; i++) {
 		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].enabled");
 		if (uniformLightEnabled[i] == -1) return;
+		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].ambient");
+		if (uniformLightAmbient[i] == -1) return;
 		uniformLightDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].direction");
 		if (uniformLightDirection[i] == -1) return;
 		uniformLightRange[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].range");
@@ -124,6 +126,16 @@ void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, void* 
 	auto& light = renderer->getLight(context, lightId);
 	if (uniformLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
 	if (light.enabled == 1) {
+		if (uniformLightAmbient[lightId] != -1)
+			renderer->setProgramUniformFloatVec3(
+				context,
+				uniformLightAmbient[lightId],
+				{{
+					light.ambient[0],
+					light.ambient[1],
+					light.ambient[2]
+				}}
+			);
 		if (uniformLightDirection[lightId] != -1) renderer->setProgramUniformFloatVec3(context, uniformLightDirection[lightId], light.spotDirection);
 		if (uniformLightRange[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightRange[lightId], 0.0f);
 		if (uniformLightColor[lightId] != -1)
@@ -131,9 +143,9 @@ void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, void* 
 				context,
 				uniformLightColor[lightId],
 				{{
-					light.ambient[0] + light.diffuse[0],
-					light.ambient[1] + light.diffuse[1],
-					light.ambient[2] + light.diffuse[2]
+					light.diffuse[0],
+					light.diffuse[1],
+					light.diffuse[2]
 				}}
 			);
 		if (uniformLightIntensity[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightIntensity[lightId], 1.0f);
@@ -147,13 +159,11 @@ void LightingShaderPBRBaseImplementation::updateMatrices(Renderer* renderer, voi
 	// set up camera position and view projection matrices
 	// matrices
 	Matrix4x4 vpMatrix;
-	Vector3 camera;
-	renderer->getCameraMatrix().getTranslation(camera);
 	// object to screen matrix
 	vpMatrix.set(renderer->getCameraMatrix()).multiply(renderer->getProjectionMatrix());
 	// upload matrices
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformViewProjectionMatrix, vpMatrix.getArray());
-	renderer->setProgramUniformFloatVec3(context, uniformCamera, camera.getArray());
+	renderer->setProgramUniformFloatVec3(context, uniformCamera, renderer->getCameraPosition().getArray());
 }
 
 void LightingShaderPBRBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
