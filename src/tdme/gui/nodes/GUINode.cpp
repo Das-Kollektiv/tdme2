@@ -99,7 +99,7 @@ GUINode::GUINode(
 	this->backgroundTextureId = 0;
 	if (backgroundImage.length() > 0) {
 		this->backgroundTexture = GUI::getImage(backgroundImage);
-		this->backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, TextureManager::TEXTURETYPE_TEXTURE, nullptr);
+		this->backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, nullptr);
 	}
 	this->backgroundImageScale9Grid = backgroundImageScale9Grid;
 	this->backgroundImageEffectColorMul = backgroundImageEffectColorMul;

@@ -77,7 +77,7 @@ PointsParticleSystemInternal::~PointsParticleSystemInternal() {
 }
 
 void PointsParticleSystemInternal::initialize() {
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), TextureManager::TEXTURETYPE_TEXTURE, renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, TextureManager::TEXTURETYPE_TEXTURE, renderer->getDefaultContext());
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, renderer->getDefaultContext());
 }
 
 void PointsParticleSystemInternal::update()

@@ -70,13 +70,6 @@ GL3Renderer::GL3Renderer()
 	DEPTHFUNCTION_EQUAL = GL_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = GL_LEQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = GL_GEQUAL;
-	TEXTURETYPE_TEXTURE = GL_TEXTURE_2D;
-	TEXTURETYPE_CUBEMAP_POSITIVE_X = GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-	TEXTURETYPE_CUBEMAP_NEGATIVE_X = GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-	TEXTURETYPE_CUBEMAP_POSITIVE_Y = GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-	TEXTURETYPE_CUBEMAP_NEGATIVE_Y = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-	TEXTURETYPE_CUBEMAP_POSITIVE_Z = GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-	TEXTURETYPE_CUBEMAP_NEGATIVE_Z = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 	activeTextureUnit = 0;
 	engineVAO = 0;
 }
@@ -470,18 +463,18 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height)
 	return colorBufferTextureGlId;
 }
 
-void GL3Renderer::uploadTexture(void* context, int32_t textureType, Texture* texture)
+void GL3Renderer::uploadTexture(void* context, Texture* texture)
 {
-	glTexImage2D(textureType, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(textureType, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
-	glTexParameteri(textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (texture->isUseMipMap() == true) glGenerateMipmap(textureType);
+	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
 	if (texture->isRepeat() == true) {
-		glTexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	} else {
-		glTexParameteri(textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
 }
 

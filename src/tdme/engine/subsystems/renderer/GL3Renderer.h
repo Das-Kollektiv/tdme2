@@ -89,7 +89,7 @@ public:
 	int32_t createTexture() override;
 	int32_t createDepthBufferTexture(int32_t width, int32_t height) override;
 	int32_t createColorBufferTexture(int32_t width, int32_t height) override;
-	void uploadTexture(void* context, int32_t textureType, Texture* texture) override;
+	void uploadTexture(void* context, Texture* texture) override;
 	void resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void bindTexture(void* context, int32_t textureId) override;

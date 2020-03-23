@@ -489,7 +489,7 @@ void GUIImageNode::setSource(const string& source) {
 	}
 	this->source = source;
 	this->texture = source.empty() == true?nullptr:GUI::getImage(source);
-	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, TextureManager::TEXTURETYPE_TEXTURE, nullptr);
+	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
 }
 
 void GUIImageNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
@@ -541,5 +541,5 @@ void GUIImageNode::setMask(const string& mask) {
 	}
 	this->mask = mask;
 	this->maskTexture = mask.empty() == true?nullptr:GUI::getImage(mask);
-	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, TextureManager::TEXTURETYPE_TEXTURE, nullptr);
+	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, nullptr);
 }

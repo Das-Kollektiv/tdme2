@@ -61,13 +61,6 @@ public:
 	int32_t LIGHTING_NONE;
 	int32_t LIGHTING_SPECULAR;
 	int32_t LIGHTING_PBR;
-	int32_t TEXTURETYPE_TEXTURE;
-	int32_t TEXTURETYPE_CUBEMAP_POSITIVE_X;
-	int32_t TEXTURETYPE_CUBEMAP_NEGATIVE_X;
-	int32_t TEXTURETYPE_CUBEMAP_POSITIVE_Y;
-	int32_t TEXTURETYPE_CUBEMAP_NEGATIVE_Y;
-	int32_t TEXTURETYPE_CUBEMAP_POSITIVE_Z;
-	int32_t TEXTURETYPE_CUBEMAP_NEGATIVE_Z;
 
 protected:
 	int32_t viewPortX;
@@ -503,10 +496,9 @@ public:
 	/**
 	 * Uploads texture data to current bound texture
 	 * @param context context
-	 * @param textureType texture type
 	 * @param texture texture
 	 */
-	virtual void uploadTexture(void* context, int32_t textureType, Texture* texture) = 0;
+	virtual void uploadTexture(void* context, Texture* texture) = 0;
 
 	/** 
 	 * Resizes a depth texture
