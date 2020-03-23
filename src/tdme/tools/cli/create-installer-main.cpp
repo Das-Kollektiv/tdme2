@@ -73,6 +73,7 @@ static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".fbx") == true) return true;
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glb") == true) return true;
 				// meta
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tmm") == true) return true;
 				// level

@@ -1088,6 +1088,7 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			performScreenAction();
 		} else
 		if (node->getId() == "button_install") {
+			dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->setValue(MutableString(StringUtils::replace(dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString(), "\\", "/")));
 			screen = SCREEN_INSTALLING;
 			performScreenAction();
 		} else
@@ -1151,7 +1152,8 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			public:
 				void performAction() override {
 					installer->popUps->getFileDialogScreenController()->close();
-					dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->setValue(MutableString(installer->popUps->getFileDialogScreenController()->getPathName() + "/" + installer->installerProperties.get("name", "TDME2 based application")));
+					auto pathToShow = installer->popUps->getFileDialogScreenController()->getPathName() + "/" + installer->installerProperties.get("name", "TDME2 based application");
+					dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->setValue(MutableString(pathToShow));
 				}
 
 				/**
@@ -1166,8 +1168,14 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 			};
 
 			vector<string> extensions;
+			auto pathToShow = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_folder")->getNodeById("install_folder"))->getController()->getValue().getString();
+			pathToShow = StringUtils::replace(pathToShow, "\\", "/");
+			while (FileSystem::getStandardFileSystem()->fileExists(pathToShow) == false || FileSystem::getStandardFileSystem()->isPath(pathToShow) == false) {
+				pathToShow = FileSystem::getStandardFileSystem()->getPathName(pathToShow);
+			}
+			if (StringUtils::startsWith(pathToShow, "/") == false) pathToShow = homeFolder;
 			popUps->getFileDialogScreenController()->show(
-				homeFolder,
+				pathToShow,
 				"Install in: ",
 				extensions,
 				"",

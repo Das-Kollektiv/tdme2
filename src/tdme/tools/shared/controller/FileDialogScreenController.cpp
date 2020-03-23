@@ -45,7 +45,7 @@ using tdme::utils::StringUtils;
 
 FileDialogScreenController::FileDialogScreenController() 
 {
-	this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
+	this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	this->applyAction = nullptr;
 	this->enableFilter = false;
 	this->filtered = false;
@@ -98,7 +98,7 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	{
 	public:
 		bool accept(const string& pathName, const string& fileName) override {
-			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
+			if (FileSystem::getStandardFileSystem()->isPath(pathName + "/" + fileName) == true) return true;
 			for (auto& extension : fileDialogScreenController->extensions) {
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), "." + extension) == true) return true;
 
@@ -129,13 +129,12 @@ bool FileDialogScreenController::setupFileDialogListBox()
 	try {
 		auto directory = cwd;
 		ExtensionFilter extensionsFilter(this);
-		FileSystem::getInstance()->list(directory, fileList, &extensionsFilter, FileSystem::getInstance()->isDrive(directory));
+		FileSystem::getStandardFileSystem()->list(directory, fileList, &extensionsFilter, FileSystem::getStandardFileSystem()->isDrive(directory));
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::setupFileDialogListBox(): An error occurred: "));
 		Console::println(string(exception.what()));
 		success = false;
 	}
-
 	setupFileDialogListBoxFiles(fileList);
 	if (enableFilter == true) fileName->getController()->setValue(MutableString("Type a string to filter the list..."));
 
@@ -177,15 +176,15 @@ void FileDialogScreenController::setupFileDialogListBoxFiles(const vector<string
 void FileDialogScreenController::show(const string& cwd, const string& captionText, const vector<string>& extensions, const string& fileName, bool enableFilter, Action* applyAction)
 {
 	try {
-		this->cwd = FileSystem::getInstance()->getCanonicalPath(cwd, "");
-		if (FileSystem::getInstance()->isPath(this->cwd) == false) {
-			this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
+		this->cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, "");
+		if (FileSystem::getStandardFileSystem()->isPath(this->cwd) == false) {
+			this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 		}
 	} catch (Exception& exception) {
 		Console::print(string("FileDialogScreenController::show(): An error occurred: "));
 		Console::print(string(exception.what()));
 		Console::println(": using cwd!");
-		this->cwd = FileSystem::getInstance()->getCurrentWorkingPathName();
+		this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	}
 	this->captionText = captionText;
 	this->extensions = extensions;
@@ -207,7 +206,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 	try {
 		if (node->getId().compare(files->getId()) == 0) {
 			auto selectedFile = node->getController()->getValue().getString();
-			if (FileSystem::getInstance()->isDrive(selectedFile) == true) {
+			if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
 				auto lastCwd = cwd;
 				cwd = selectedFile;
 				if (setupFileDialogListBox() == false) {
@@ -215,10 +214,10 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 					setupFileDialogListBox();
 				}
 			} else
-			if (FileSystem::getInstance()->isPath(cwd + "/" + selectedFile) == true) {
+			if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + selectedFile) == true) {
 				auto lastCwd = cwd;
 				try {
-					cwd = FileSystem::getInstance()->getCanonicalPath(cwd, selectedFile);
+					cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
 				} catch (Exception& exception) {
 					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 					Console::println(string(exception.what()));
@@ -238,7 +237,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 		if (node->getId() == "filedialog_filename") {
 			if (enableFilter == true) {
 				auto filterString = StringUtils::toLowerCase(node->getController()->getValue().getString());
-				if (FileSystem::getInstance()->fileExists(cwd + "/" + filterString) == true) {
+				if (FileSystem::getStandardFileSystem()->fileExists(cwd + "/" + filterString) == true) {
 					auto selectedFile = node->getController()->getValue().getString();
 					setupFileDialogListBoxFiles(fileList, selectedFile);
 				} else {
