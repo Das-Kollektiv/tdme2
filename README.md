@@ -187,7 +187,7 @@
 - What is WIP or planned
     - GLTF reader
     - Makefile generator for TDME2 based projects
-    - Installer
+    - Installer for MacOSX
     - Integrate Haxe via HashLink to be able to script TDME2 applications or sub logics
     - Water shader
     - Improve on Vulkan
