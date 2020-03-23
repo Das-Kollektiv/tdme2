@@ -97,9 +97,11 @@ public:
 	int32_t createDepthBufferTexture(int32_t width, int32_t height) override;
 	int32_t createColorBufferTexture(int32_t width, int32_t height) override;
 	void uploadTexture(void* context, Texture* texture) override;
+	void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) override;
 	void resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void bindTexture(void* context, int32_t textureId) override;
+	void bindCubeMapTexture(void* context, int32_t textureId) override;
 	void disposeTexture(int32_t textureId) override;
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;

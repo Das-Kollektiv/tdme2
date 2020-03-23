@@ -20,5 +20,8 @@ struct tdme::engine::subsystems::lighting::LightingShaderConstants final
 	static constexpr int32_t PBR_TEXTUREUNIT_BASECOLOR { 0 };
 	static constexpr int32_t PBR_TEXTUREUNIT_METALLICROUGHNESS { 1 };
 	static constexpr int32_t PBR_TEXTUREUNIT_NORMAL { 2 };
+	static constexpr int32_t PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE { 3 };
+	static constexpr int32_t PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR { 4 };
+	static constexpr int32_t PBR_TEXTUREUNIT_ENVIRONMENT_BRDF { 5 };
 
 };

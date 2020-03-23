@@ -500,6 +500,13 @@ public:
 	 */
 	virtual void uploadTexture(void* context, Texture* texture) = 0;
 
+	/**
+	 * Uploads cube map texture data to current bound texture
+	 * @param context context
+	 * @param texture texture
+	 */
+	virtual void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) = 0;
+
 	/** 
 	 * Resizes a depth texture
 	 * @param textureId texture id
@@ -522,6 +529,13 @@ public:
 	 * @param textureId textureId
 	 */
 	virtual void bindTexture(void* context, int32_t textureId) = 0;
+
+	/**
+	 * Binds a cube map texture with given id or unbinds when using ID_NONE
+	 * @param context context
+	 * @param textureId textureId
+	 */
+	virtual void bindCubeMapTexture(void* context, int32_t textureId) = 0;
 
 	/** 
 	 * On bind texture event

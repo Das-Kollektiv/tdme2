@@ -14,11 +14,17 @@
 
 #version 330
 
+{$DEFINITIONS}
+
 #ifdef USE_TEX_LOD
 #extension GL_EXT_shader_texture_lod: enable
 #endif
 
 #extension GL_OES_standard_derivatives : enable
+
+#ifdef USE_IBL
+#extension GL_NV_shadow_samplers_cube : enable
+#endif
 
 #ifdef USE_HDR
 #extension GL_OES_texture_float : enable
@@ -26,8 +32,6 @@
 #endif
 
 precision highp float;
-
-{$DEFINITIONS}
 
 {$FUNCTIONS}
 

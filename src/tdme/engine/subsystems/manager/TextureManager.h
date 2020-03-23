@@ -41,7 +41,7 @@ public:
 	 */
 	TextureManager_TextureManaged* addTexture(const string& id, bool& created);
 
-	/** 
+	/**
 	 * Adds a texture to manager
 	 * @param texture texture
 	 * @param context context or nullptr if using default context
@@ -49,7 +49,21 @@ public:
 	 */
 	int32_t addTexture(Texture* texture, void* context = nullptr);
 
-	/** 
+	/**
+	 * Adds a cube map texture to manager
+	 * @param id id
+	 * @param textureLeft texture left
+	 * @param textureRight texture right
+	 * @param textureTop texture top
+	 * @param textureBottom texture bottom
+	 * @param textureFront texture front
+	 * @param textureBack texture back
+	 * @param context context or nullptr if using default context
+	 * @returns texture id
+	 */
+	int32_t addCubeMapTexture(const string& id, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack, void* context = nullptr);
+
+	/**
 	 * Removes a texture from manager / open gl stack
 	 * @param textureId texture id
 	 */

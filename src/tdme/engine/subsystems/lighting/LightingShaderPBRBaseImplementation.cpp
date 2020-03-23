@@ -4,7 +4,9 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
@@ -16,8 +18,10 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
+using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer_Light;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
@@ -72,7 +76,6 @@ void LightingShaderPBRBaseImplementation::initialize()
 		uniformLightEnabled[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].enabled");
 		if (uniformLightEnabled[i] == -1) return;
 		uniformLightAmbient[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].ambient");
-		if (uniformLightAmbient[i] == -1) return;
 		uniformLightDirection[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].direction");
 		if (uniformLightDirection[i] == -1) return;
 		uniformLightRange[i] = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Lights[" + to_string(i) + "].range");
@@ -91,6 +94,36 @@ void LightingShaderPBRBaseImplementation::initialize()
 		if (uniformLightType[i] == -1) return;
 	}
 
+	// IBL
+ 	uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(renderLightingProgramId, "u_DiffuseEnvSampler");
+ 	uniformSpecularEnvSampler = renderer->getProgramUniformLocation(renderLightingProgramId, "u_SpecularEnvSampler");
+ 	uniformbrdfLUT = renderer->getProgramUniformLocation(renderLightingProgramId, "u_brdfLUT");
+
+	string environmentType = "studio_grey";
+	textureDiffuseEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-diffuse",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
+			renderer->getDefaultContext()
+		);
+	textureSpecularEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-specular",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
+			renderer->getDefaultContext()
+		);
+	texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->getDefaultContext());
+
 	//
 	initialized = true;
 }
@@ -101,12 +134,22 @@ void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, void* conte
 	renderer->setLighting(context, renderer->LIGHTING_PBR);
 	renderer->setProgramUniformFloatVec4(context, uniformBaseColorFactor, {{ 1.0f, 1.0f, 1.0f, 1.0f }});
 	renderer->setProgramUniformInteger(context, uniformBaseColorSampler, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
-	renderer->setProgramUniformFloat(context, uniformExposure, 1.0f);
+	renderer->setProgramUniformFloat(context, uniformExposure, 5.0f);
 	renderer->setProgramUniformFloat(context, uniformMetallicFactor, 1.0f);
 	renderer->setProgramUniformInteger(context, uniformMetallicRoughnessSampler, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
 	renderer->setProgramUniformInteger(context, uniformNormalSampler, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
 	renderer->setProgramUniformFloat(context, uniformNormalScale, 1.0f);
 	renderer->setProgramUniformFloat(context, uniformRoughnessFactor, 1.0f);
+	renderer->setProgramUniformInteger(context, uniformDiffuseEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+	renderer->setProgramUniformInteger(context, uniformSpecularEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+	renderer->setProgramUniformInteger(context, uniformbrdfLUT, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+	renderer->bindCubeMapTexture(context, textureDiffuseEnvSampler);
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+	renderer->bindCubeMapTexture(context, textureSpecularEnvSampler);
+	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+	renderer->bindCubeMapTexture(context, texturebrdfLUT);
+	renderer->setTextureUnit(context, 0);
 }
 
 void LightingShaderPBRBaseImplementation::unUseProgram(void* context)
@@ -171,7 +214,6 @@ void LightingShaderPBRBaseImplementation::updateTextureMatrix(Renderer* renderer
 
 void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
 {
-	if (renderer->isPBRAvailable() == false) return;
 	switch (renderer->getTextureUnit(context)) {
 		case LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR:
 			if (uniformBaseColorSamplerAvailable != -1) renderer->setProgramUniformInteger(context, uniformBaseColorSamplerAvailable, textureId == 0 ? 0 : 1);

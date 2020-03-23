@@ -44,6 +44,13 @@ protected:
 	int32_t uniformNormalScale { -1 };
 	int32_t uniformRoughnessFactor { -1 };
 	int32_t uniformViewProjectionMatrix { -1 };
+	int32_t uniformDiffuseEnvSampler { -1 };
+	int32_t uniformSpecularEnvSampler { -1 };
+	int32_t uniformbrdfLUT { -1 };
+	int32_t textureDiffuseEnvSampler { -1 };
+	int32_t textureSpecularEnvSampler { -1 };
+	int32_t texturebrdfLUT { -1 };
+
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightEnabled;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightAmbient;
 	array<int32_t, Engine::LIGHTS_MAX> uniformLightDirection;
