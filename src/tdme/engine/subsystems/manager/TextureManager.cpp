@@ -29,7 +29,7 @@ TextureManager::~TextureManager() {
 	}
 }
 
-TextureManager_TextureManaged* TextureManager::addTexture(const string& id, bool& created)
+TextureManager_TextureManaged* TextureManager::addTexture(const string& id, TextureType textureType, bool& created)
 {
 	// check if we already manage this texture
 	mutex.lock();
@@ -57,10 +57,10 @@ TextureManager_TextureManaged* TextureManager::addTexture(const string& id, bool
 	return textureManaged;
 }
 
-int32_t TextureManager::addTexture(Texture* texture, void* context)
+int32_t TextureManager::addTexture(Texture* texture, TextureType textureType, void* context)
 {
 	bool created;
-	auto textureManaged = addTexture(texture->getId(), created);
+	auto textureManaged = addTexture(texture->getId(), textureType, created);
 	auto rendererId = textureManaged->getRendererId();
 	if (context == nullptr) context = renderer->getDefaultContext();
 
@@ -69,7 +69,7 @@ int32_t TextureManager::addTexture(Texture* texture, void* context)
 		// bind texture
 		renderer->bindTexture(context, rendererId);
 		// upload texture
-		renderer->uploadTexture(context, texture);
+		renderer->uploadTexture(context, getTextureType(textureType), texture);
 		// unbind texture
 		renderer->bindTexture(context, renderer->ID_NONE);
 		//

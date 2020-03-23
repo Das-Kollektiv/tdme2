@@ -84,10 +84,10 @@ void LightingShaderTerrainImplementation::initialize()
 	if (uniformStoneTextureUnit == -1) return;
 
 	//
-	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_gras.png"), renderer->getDefaultContext());
-	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_dirt.png"), renderer->getDefaultContext());
-	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_snow.png"), renderer->getDefaultContext());
-	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_stone.png"), renderer->getDefaultContext());
+	grasTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_gras.png"), TextureManager::TEXTURETYPE_TEXTURE, renderer->getDefaultContext());
+	dirtTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_dirt.png"), TextureManager::TEXTURETYPE_TEXTURE, renderer->getDefaultContext());
+	snowTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_snow.png"), TextureManager::TEXTURETYPE_TEXTURE, renderer->getDefaultContext());
+	stoneTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "terrain_stone.png"), TextureManager::TEXTURETYPE_TEXTURE, renderer->getDefaultContext());
 
 	//
 	initialized = true;

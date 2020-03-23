@@ -142,6 +142,13 @@ VKRenderer::VKRenderer():
 	DEPTHFUNCTION_EQUAL = VK_COMPARE_OP_EQUAL;
 	DEPTHFUNCTION_LESSEQUAL = VK_COMPARE_OP_LESS_OR_EQUAL;
 	DEPTHFUNCTION_GREATEREQUAL = VK_COMPARE_OP_GREATER_OR_EQUAL;
+	TEXTURETYPE_TEXTURE = 1; // TODO
+	TEXTURETYPE_CUBEMAP_POSITIVE_X = 2; // TODO
+	TEXTURETYPE_CUBEMAP_NEGATIVE_X = 3; // TODO
+	TEXTURETYPE_CUBEMAP_POSITIVE_Y = 4; // TODO
+	TEXTURETYPE_CUBEMAP_NEGATIVE_Y = 5; // TODO
+	TEXTURETYPE_CUBEMAP_POSITIVE_Z = 6; // TODO
+	TEXTURETYPE_CUBEMAP_NEGATIVE_Z = 7; // TODO
 	FRAMEBUFFER_DEFAULT = 0;
 }
 
@@ -4074,9 +4081,11 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	assert(!err);
 }
 
-void VKRenderer::uploadTexture(void* context, Texture* texture)
+void VKRenderer::uploadTexture(void* context, int32_t textureType, Texture* texture)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
+	// TODO: Cubemap
 
 	// have our context typed
 	auto& contextTyped = *static_cast<context_type*>(context);
