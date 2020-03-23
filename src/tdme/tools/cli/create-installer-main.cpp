@@ -128,6 +128,96 @@ static void scanDirResources(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
+static void scanDirLibraries(const string& folder, vector<string>& totalFiles) {
+	class ListFilter : public virtual FileNameFilter {
+		public:
+			virtual ~ListFilter() {}
+
+			bool accept(const string& pathName, const string& fileName) override {
+				if (fileName == ".") return false;
+				if (fileName == "..") return false;
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
+				// static libraries
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".a") == true) return true;
+				// dynamic libraries
+				#if defined(_WIN32)
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dll") == true) return true;
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".lib") == true) return true;
+				#elif defined(__APPLE__)
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dylib") == true) return true;
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
+				#else
+					if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".so") == true) return true;
+				#endif
+				//
+				return false;
+			}
+	};
+
+	ListFilter listFilter;
+	vector<string> files;
+
+	if (FileSystem::getInstance()->fileExists(folder) == false) {
+		Console::println("Error: scanDirLibraries: file does not exist: " + folder);
+	} else
+	if (FileSystem::getInstance()->isPath(folder) == false) {
+		if (listFilter.accept(".", folder) == true) {
+			totalFiles.push_back(folder);
+		} else {
+			Console::println("Error: scanDirLibraries: file exist, but does not match filter: " + folder);
+		}
+	} else {
+		FileSystem::getInstance()->list(folder, files, &listFilter);
+		for (auto fileName: files) {
+			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
+				totalFiles.push_back(folder + "/" + fileName);
+			} else {
+				scanDirLibraries(folder + "/" + fileName, totalFiles);
+			}
+		}
+	}
+}
+
+static void scanDirHeaders(const string& folder, vector<string>& totalFiles) {
+	class ListFilter : public virtual FileNameFilter {
+		public:
+			virtual ~ListFilter() {}
+
+			bool accept(const string& pathName, const string& fileName) override {
+				if (fileName == ".") return false;
+				if (fileName == "..") return false;
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
+				// headers
+				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".h") == true) return true;
+				//
+				return false;
+			}
+	};
+
+	ListFilter listFilter;
+	vector<string> files;
+
+	if (FileSystem::getInstance()->fileExists(folder) == false) {
+		Console::println("Error: scanDirHeaders: file does not exist: " + folder);
+	} else
+	if (FileSystem::getInstance()->isPath(folder) == false) {
+		if (listFilter.accept(".", folder) == true) {
+			totalFiles.push_back(folder);
+		} else {
+			Console::println("Error: scanDirHeaders: file exist, but does not match filter: " + folder);
+		}
+	} else {
+		FileSystem::getInstance()->list(folder, files, &listFilter);
+		for (auto fileName: files) {
+			if (FileSystem::getInstance()->isPath(folder + "/" + fileName) == false) {
+				totalFiles.push_back(folder + "/" + fileName);
+			} else {
+				scanDirHeaders(folder + "/" + fileName, totalFiles);
+			}
+		}
+	}
+}
+
 static void scanDirExecutables(const string& folder, vector<string>& totalFiles) {
 	class ListFilter : public virtual FileNameFilter {
 		public:
@@ -371,6 +461,12 @@ int main(int argc, char** argv)
 			} else
 			if (type == "!res") {
 				scanDirResources(tdmeFolder + "/" + file, filesData);
+			} else
+			if (type == "lib") {
+				scanDirLibraries(file, filesData);
+			} else
+			if (type == "api") {
+				scanDirHeaders(file, filesData);
 			} else {
 				Console::println("Component: " + to_string(componentIdx) + ": type = " + type + " unsupported!");
 			}
