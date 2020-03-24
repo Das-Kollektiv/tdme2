@@ -6,9 +6,10 @@
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/AnimationSetup.h>
+#include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/Group.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
@@ -52,9 +53,10 @@ using tdme::tools::shared::controller::ModelEditorScreenController;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::AnimationSetup;
+using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
-using tdme::engine::model::Group;
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
@@ -215,6 +217,21 @@ void ModelEditorScreenController::initialize()
 		materialsMaterialDiffuseTransparencyTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_diffuse_transparency_texture_clear"));;
 		materialsMaterialNormalTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_normal_texture_clear"));;
 		materialsMaterialSpecularTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_specular_texture_clear"));;
+		materialsMaterialPBREnabled = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_enabled"));
+		materialsMaterialPBRBaseColorFactor = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_base_color_factor"));
+		materialsMaterialPBRBaseColorTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_base_color_texture"));
+		materialsMaterialPBRBaseColorTextureLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_pbr_base_color_texture_load"));
+		materialsMaterialPBRBaseColorTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_pbr_base_color_texture_clear"));
+		materialsMaterialPBRMetallicFactor = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_metallic_factor"));
+		materialsMaterialPBRRoughnessFactor = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_roughness_factor"));
+		materialsMaterialPBRMetallicRoughnessTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_metallic_roughness_texture"));
+		materialsMaterialPBRMetallicRoughnessTextureLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_pbr_metallic_roughness_texture_load"));
+		materialsMaterialPBRMetallicRoughnessTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_pbr_metallic_roughness_texture_clear"));
+		materialsMaterialPBRNormalScale = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_normal_scale"));
+		materialsMaterialPBRNormalTexture = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_normal_texture"));
+		materialsMaterialPBRNormalTextureLoad = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_pbr_normal_texture_load"));
+		materialsMaterialPBRNormalTextureClear = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_pbr_normal_texture_clear"));
+		materialsMaterialPBRExposure = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_pbr_exposure"));
 		materialsMaterialUseMaskedTransparency = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_use_masked_transparency"));;
 		materialsMaterialMaskedTransparencyThreshold = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("materials_material_masked_transparency_threshold"));;
 		materialsMaterialApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_materials_material_apply"));
@@ -623,6 +640,30 @@ void ModelEditorScreenController::unsetMaterials() {
 	materialsMaterialSpecularTextureLoad->getController()->setDisabled(true);
 	materialsMaterialSpecularTextureClear->getController()->setDisabled(true);
 	materialsMaterialShininess->getController()->setValue(MutableString());
+	materialsMaterialPBREnabled->getController()->setDisabled(true);
+	materialsMaterialPBREnabled->getController()->setValue(MutableString());
+	materialsMaterialPBRBaseColorFactor->getController()->setDisabled(true);
+	materialsMaterialPBRBaseColorFactor->getController()->setValue(MutableString());
+	materialsMaterialPBRBaseColorTexture->getController()->setDisabled(true);
+	materialsMaterialPBRBaseColorTexture->getController()->setValue(MutableString());
+	materialsMaterialPBRBaseColorTextureLoad->getController()->setDisabled(true);
+	materialsMaterialPBRBaseColorTextureClear->getController()->setDisabled(true);
+	materialsMaterialPBRMetallicFactor->getController()->setDisabled(true);
+	materialsMaterialPBRMetallicFactor->getController()->setValue(MutableString());
+	materialsMaterialPBRRoughnessFactor->getController()->setDisabled(true);
+	materialsMaterialPBRRoughnessFactor->getController()->setValue(MutableString());
+	materialsMaterialPBRMetallicRoughnessTexture->getController()->setDisabled(true);
+	materialsMaterialPBRMetallicRoughnessTexture->getController()->setValue(MutableString());
+	materialsMaterialPBRMetallicRoughnessTextureLoad->getController()->setDisabled(true);
+	materialsMaterialPBRMetallicRoughnessTextureClear->getController()->setDisabled(true);
+	materialsMaterialPBRNormalScale->getController()->setDisabled(true);
+	materialsMaterialPBRNormalScale->getController()->setValue(MutableString());
+	materialsMaterialPBRNormalTexture->getController()->setDisabled(true);
+	materialsMaterialPBRNormalTexture->getController()->setValue(MutableString());
+	materialsMaterialPBRNormalTextureLoad->getController()->setDisabled(true);
+	materialsMaterialPBRNormalTextureClear->getController()->setDisabled(true);
+	materialsMaterialPBRExposure->getController()->setDisabled(true);
+	materialsMaterialPBRExposure->getController()->setValue(MutableString());
 	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString());
 	materialsMaterialUseMaskedTransparency->getController()->setDisabled(true);
 	materialsMaterialMaskedTransparencyThreshold->getController()->setValue(MutableString());
@@ -635,7 +676,9 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 	SpecularMaterialProperties defaultSpecularMaterialProperties;
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) specularMaterialProperties = &defaultSpecularMaterialProperties;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 
+	// specular
 	materialsMaterialName->getController()->setValue(MutableString(material->getId()));
 	materialsMaterialAmbient->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getAmbientColor())));
 	materialsMaterialDiffuse->getController()->setValue(MutableString(Tools::formatColor4(specularMaterialProperties->getDiffuseColor())));
@@ -654,7 +697,72 @@ void ModelEditorScreenController::onMaterialDropDownApply() {
 	materialsMaterialSpecularTexture->getController()->setValue(
 		MutableString(specularMaterialProperties->getSpecularTexturePathName()).append(specularMaterialProperties->getSpecularTexturePathName() == ""?"":"/").append(specularMaterialProperties->getSpecularTextureFileName())
 	);
-	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+
+	// pbr
+	materialsMaterialPBREnabled->getController()->setDisabled(false);
+	materialsMaterialPBREnabled->getController()->setValue(MutableString(pbrMaterialProperties != nullptr?"1":""));
+	if (pbrMaterialProperties != nullptr) {
+		materialsMaterialPBRBaseColorFactor->getController()->setDisabled(false);
+		materialsMaterialPBRBaseColorFactor->getController()->setValue(MutableString(Tools::formatColor4(pbrMaterialProperties->getBaseColorFactor())));
+		materialsMaterialPBRBaseColorTexture->getController()->setDisabled(false);
+		materialsMaterialPBRBaseColorTexture->getController()->setValue(
+			MutableString(
+				pbrMaterialProperties->getBaseColorTexturePathName()).append(pbrMaterialProperties->getBaseColorTexturePathName() == ""?"":"/").append(pbrMaterialProperties->getBaseColorTextureFileName()
+			)
+		);
+		materialsMaterialPBRBaseColorTextureLoad->getController()->setDisabled(false);
+		materialsMaterialPBRBaseColorTextureClear->getController()->setDisabled(false);
+		materialsMaterialPBRMetallicFactor->getController()->setDisabled(false);
+		materialsMaterialPBRMetallicFactor->getController()->setValue(MutableString(Tools::formatFloat(pbrMaterialProperties->getMetallicFactor())));
+		materialsMaterialPBRRoughnessFactor->getController()->setDisabled(false);
+		materialsMaterialPBRRoughnessFactor->getController()->setValue(MutableString(Tools::formatFloat(pbrMaterialProperties->getRoughnessFactor())));
+		materialsMaterialPBRMetallicRoughnessTexture->getController()->setDisabled(false);
+		materialsMaterialPBRMetallicRoughnessTexture->getController()->setValue(
+			MutableString(
+				pbrMaterialProperties->getMetallicRoughnessTexturePathName()).append(pbrMaterialProperties->getMetallicRoughnessTexturePathName() == ""?"":"/").append(pbrMaterialProperties->getMetallicRoughnessTextureFileName()
+			)
+		);
+		materialsMaterialPBRMetallicRoughnessTextureLoad->getController()->setDisabled(false);
+		materialsMaterialPBRMetallicRoughnessTextureClear->getController()->setDisabled(false);
+		materialsMaterialPBRNormalScale->getController()->setDisabled(false);
+		materialsMaterialPBRNormalScale->getController()->setValue(MutableString(Tools::formatFloat(pbrMaterialProperties->getNormalScale())));
+		materialsMaterialPBRNormalTexture->getController()->setDisabled(false);
+		materialsMaterialPBRNormalTexture->getController()->setValue(
+			MutableString(
+				pbrMaterialProperties->getNormalTexturePathName()).append(pbrMaterialProperties->getNormalTexturePathName() == ""?"":"/").append(pbrMaterialProperties->getNormalTextureFileName()
+			)
+		);
+		materialsMaterialPBRNormalTextureLoad->getController()->setDisabled(false);
+		materialsMaterialPBRNormalTextureClear->getController()->setDisabled(false);
+		materialsMaterialPBRExposure->getController()->setDisabled(false);
+		materialsMaterialPBRExposure->getController()->setValue(MutableString(Tools::formatFloat(pbrMaterialProperties->getExposure())));
+	} else {
+		materialsMaterialPBRBaseColorFactor->getController()->setDisabled(true);
+		materialsMaterialPBRBaseColorFactor->getController()->setValue(MutableString());
+		materialsMaterialPBRBaseColorTexture->getController()->setDisabled(true);
+		materialsMaterialPBRBaseColorTexture->getController()->setValue(MutableString());
+		materialsMaterialPBRBaseColorTextureLoad->getController()->setDisabled(true);
+		materialsMaterialPBRBaseColorTextureClear->getController()->setDisabled(true);
+		materialsMaterialPBRMetallicFactor->getController()->setDisabled(true);
+		materialsMaterialPBRMetallicFactor->getController()->setValue(MutableString());
+		materialsMaterialPBRRoughnessFactor->getController()->setDisabled(true);
+		materialsMaterialPBRRoughnessFactor->getController()->setValue(MutableString());
+		materialsMaterialPBRMetallicRoughnessTexture->getController()->setDisabled(true);
+		materialsMaterialPBRMetallicRoughnessTexture->getController()->setValue(MutableString());
+		materialsMaterialPBRMetallicRoughnessTextureLoad->getController()->setDisabled(true);
+		materialsMaterialPBRMetallicRoughnessTextureClear->getController()->setDisabled(true);
+		materialsMaterialPBRNormalScale->getController()->setDisabled(true);
+		materialsMaterialPBRNormalScale->getController()->setValue(MutableString());
+		materialsMaterialPBRNormalTexture->getController()->setDisabled(true);
+		materialsMaterialPBRNormalTexture->getController()->setValue(MutableString());
+		materialsMaterialPBRNormalTextureLoad->getController()->setDisabled(true);
+		materialsMaterialPBRNormalTextureClear->getController()->setDisabled(true);
+		materialsMaterialPBRExposure->getController()->setDisabled(false);
+		materialsMaterialPBRExposure->getController()->setValue(MutableString());
+	}
+
+	//
+	materialsMaterialUseMaskedTransparency->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true || (pbrMaterialProperties != nullptr && pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true)?"1":""));
 	materialsMaterialMaskedTransparencyThreshold->getController()->setValue(MutableString(Tools::formatFloat(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold())));
 }
 
@@ -673,8 +781,14 @@ void ModelEditorScreenController::onMaterialApply() {
 		specularMaterialProperties = new SpecularMaterialProperties();
 		material->setSpecularMaterialProperties(specularMaterialProperties);
 	}
+	auto pbrMaterialProperties =
+		materialsMaterialPBREnabled->getController()->getValue().getString() == "1"?
+			(material->getPBRMaterialProperties() != nullptr?material->getPBRMaterialProperties():new PBRMaterialProperties()):
+			nullptr;
+	material->setPBRMaterialProperties(pbrMaterialProperties);
 	try {
 		view->resetEntity();
+		// specular
 		specularMaterialProperties->setAmbientColor(Tools::convertToColor4(materialsMaterialAmbient->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseColor(Tools::convertToColor4(materialsMaterialDiffuse->getController()->getValue().getString()));
 		specularMaterialProperties->setSpecularColor(Tools::convertToColor4(materialsMaterialSpecular->getController()->getValue().getString()));
@@ -696,6 +810,30 @@ void ModelEditorScreenController::onMaterialApply() {
 		);
 		specularMaterialProperties->setDiffuseTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
 		specularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(Tools::convertToFloat(materialsMaterialMaskedTransparencyThreshold->getController()->getValue().getString()));
+		// pbr
+		if (pbrMaterialProperties != nullptr) {
+			pbrMaterialProperties->setBaseColorFactor(Tools::convertToColor4(materialsMaterialPBRBaseColorFactor->getController()->getValue().getString()));
+			pbrMaterialProperties->setBaseColorTexture(
+				Tools::getPath(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString()),
+				Tools::getFileName(materialsMaterialPBRBaseColorTexture->getController()->getValue().getString())
+			);
+			pbrMaterialProperties->setMetallicFactor(Tools::convertToFloat(materialsMaterialPBRMetallicFactor->getController()->getValue().getString()));
+			pbrMaterialProperties->setRoughnessFactor(Tools::convertToFloat(materialsMaterialPBRRoughnessFactor->getController()->getValue().getString()));
+			pbrMaterialProperties->setMetallicRoughnessTexture(
+				Tools::getPath(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString()),
+				Tools::getFileName(materialsMaterialPBRMetallicRoughnessTexture->getController()->getValue().getString())
+			);
+			pbrMaterialProperties->setNormalScale(Tools::convertToFloat(materialsMaterialPBRNormalScale->getController()->getValue().getString()));
+			pbrMaterialProperties->setNormalTexture(
+				Tools::getPath(materialsMaterialPBRNormalTexture->getController()->getValue().getString()),
+				Tools::getFileName(materialsMaterialPBRNormalTexture->getController()->getValue().getString())
+			);
+			pbrMaterialProperties->setExposure(Tools::convertToFloat(materialsMaterialPBRExposure->getController()->getValue().getString()));
+			pbrMaterialProperties->setBaseColorTextureMaskedTransparency(materialsMaterialUseMaskedTransparency->getController()->getValue().getString() == "1"?true:false);
+			pbrMaterialProperties->setBaseColorTextureMaskedTransparencyThreshold(Tools::convertToFloat(materialsMaterialMaskedTransparencyThreshold->getController()->getValue().getString()));
+		} else {
+			onMaterialDropDownApply();
+		}
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
@@ -910,6 +1048,153 @@ void ModelEditorScreenController::onMaterialLoadSpecularTexture() {
 		specularMaterialProperties->getSpecularTextureFileName(),
 		true,
 		new OnLoadTexture(this, materialsMaterialNormalTexture)
+	);
+}
+
+void ModelEditorScreenController::onMaterialLoadPBRBaseColorTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			guiElementNode->getController()->setValue(
+				MutableString().
+					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					append("/").
+					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+			);
+			modelEditorScreenController->getModelPath()->setPath(
+				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 * @param guiElementNode gui element node
+		 */
+		OnLoadTexture(ModelEditorScreenController* modelEditorScreenController, GUIElementNode* guiElementNode)
+			: modelEditorScreenController(modelEditorScreenController)
+			, guiElementNode(guiElementNode) {
+		}
+
+
+	private:
+		ModelEditorScreenController* modelEditorScreenController;
+		GUIElementNode* guiElementNode;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		pbrMaterialProperties != nullptr && pbrMaterialProperties->getBaseColorTextureFileName() != ""?pbrMaterialProperties->getBaseColorTexturePathName():modelPath->getPath(),
+		"Load from: ",
+		extensions,
+		pbrMaterialProperties != nullptr?pbrMaterialProperties->getBaseColorTextureFileName():"",
+		true,
+		new OnLoadTexture(this, materialsMaterialPBRBaseColorTexture)
+	);
+}
+
+void ModelEditorScreenController::onMaterialLoadPBRMetallicRoughnessTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			guiElementNode->getController()->setValue(
+				MutableString().
+					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					append("/").
+					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+			);
+			modelEditorScreenController->getModelPath()->setPath(
+				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 * @param guiElementNode gui element node
+		 */
+		OnLoadTexture(ModelEditorScreenController* modelEditorScreenController, GUIElementNode* guiElementNode)
+			: modelEditorScreenController(modelEditorScreenController)
+			, guiElementNode(guiElementNode) {
+		}
+
+
+	private:
+		ModelEditorScreenController* modelEditorScreenController;
+		GUIElementNode* guiElementNode;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		pbrMaterialProperties != nullptr && pbrMaterialProperties->getMetallicRoughnessTextureFileName() != ""?pbrMaterialProperties->getMetallicRoughnessTexturePathName():modelPath->getPath(),
+		"Load from: ",
+		extensions,
+		pbrMaterialProperties != nullptr?pbrMaterialProperties->getMetallicRoughnessTextureFileName():"",
+		true,
+		new OnLoadTexture(this, materialsMaterialPBRMetallicRoughnessTexture)
+	);
+}
+
+void ModelEditorScreenController::onMaterialLoadPBRNormalTexture() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+
+	class OnLoadTexture: public virtual Action
+	{
+	public:
+		void performAction() override {
+			MutableString value;
+			guiElementNode->getController()->setValue(
+				MutableString().
+					set(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()).
+					append("/").
+					append(modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getFileName())
+			);
+			modelEditorScreenController->getModelPath()->setPath(
+				modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->getPathName()
+			);
+			modelEditorScreenController->getView()->getPopUpsViews()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param modelEditorScreenController model editor screen controller
+		 * @param guiElementNode gui element node
+		 */
+		OnLoadTexture(ModelEditorScreenController* modelEditorScreenController, GUIElementNode* guiElementNode)
+			: modelEditorScreenController(modelEditorScreenController)
+			, guiElementNode(guiElementNode) {
+		}
+
+
+	private:
+		ModelEditorScreenController* modelEditorScreenController;
+		GUIElementNode* guiElementNode;
+	};
+
+	auto extensions = TextureReader::getTextureExtensions();
+	view->getPopUpsViews()->getFileDialogScreenController()->show(
+		pbrMaterialProperties != nullptr && pbrMaterialProperties->getNormalTextureFileName() != ""?pbrMaterialProperties->getNormalTexturePathName():modelPath->getPath(),
+		"Load from: ",
+		extensions,
+		pbrMaterialProperties != nullptr?pbrMaterialProperties->getNormalTextureFileName():"",
+		true,
+		new OnLoadTexture(this, materialsMaterialPBRNormalTexture)
 	);
 }
 
@@ -1290,6 +1575,37 @@ void ModelEditorScreenController::onRenderingApply()
 	view->updateRendering();
 }
 
+void ModelEditorScreenController::onMaterialPBREnabledValueChanged() {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	auto disabled = materialsMaterialPBREnabled->getController()->getValue().getString() != "1";
+	materialsMaterialPBRBaseColorFactor->getController()->setDisabled(disabled);
+	materialsMaterialPBRBaseColorTexture->getController()->setDisabled(disabled);
+	materialsMaterialPBRBaseColorTextureLoad->getController()->setDisabled(disabled);
+	materialsMaterialPBRBaseColorTextureClear->getController()->setDisabled(disabled);
+	materialsMaterialPBRMetallicFactor->getController()->setDisabled(disabled);
+	materialsMaterialPBRRoughnessFactor->getController()->setDisabled(disabled);
+	materialsMaterialPBRMetallicRoughnessTexture->getController()->setDisabled(disabled);
+	materialsMaterialPBRMetallicRoughnessTextureLoad->getController()->setDisabled(disabled);
+	materialsMaterialPBRMetallicRoughnessTextureClear->getController()->setDisabled(disabled);
+	materialsMaterialPBRNormalScale->getController()->setDisabled(disabled);
+	materialsMaterialPBRNormalTexture->getController()->setDisabled(disabled);
+	materialsMaterialPBRNormalTextureLoad->getController()->setDisabled(disabled);
+	materialsMaterialPBRNormalTextureClear->getController()->setDisabled(disabled);
+	materialsMaterialPBRExposure->getController()->setDisabled(disabled);
+	if (disabled == false && pbrMaterialProperties == nullptr) {
+		materialsMaterialPBRBaseColorFactor->getController()->setValue(MutableString(Tools::formatColor4(Color4(1.0f, 1.0f, 1.0f, 1.0f))));
+		materialsMaterialPBRBaseColorTexture->getController()->setValue(MutableString());
+		materialsMaterialPBRMetallicFactor->getController()->setValue(MutableString(Tools::formatFloat(1.0f)));
+		materialsMaterialPBRRoughnessFactor->getController()->setValue(MutableString(Tools::formatFloat(1.0f)));
+		materialsMaterialPBRMetallicRoughnessTexture->getController()->setValue(MutableString());
+		materialsMaterialPBRNormalScale->getController()->setValue(MutableString(Tools::formatFloat(1.0f)));
+		materialsMaterialPBRNormalTexture->getController()->setValue(MutableString());
+		materialsMaterialPBRExposure->getController()->setValue(MutableString(Tools::formatFloat(1.0f)));
+	}
+}
+
 void ModelEditorScreenController::saveFile(const string& pathName, const string& fileName) /* throws(Exception) */
 {
 	view->saveFile(pathName, fileName);
@@ -1309,6 +1625,9 @@ void ModelEditorScreenController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "animations_dropdown") {
 		onAnimationDropDownValueChanged();
+	} else
+	if (node->getId() == "materials_material_pbr_enabled") {
+		onMaterialPBREnabledValueChanged();
 	} else {
 		entityBaseSubScreenController->onValueChanged(node, view->getEntity());
 		entityPhysicsSubScreenController->onValueChanged(node, view->getEntity());
@@ -1381,6 +1700,24 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 			} else
 			if (node->getId().compare("button_materials_material_specular_texture_clear") == 0) {
 				onMaterialClearTexture(materialsMaterialSpecularTexture);
+			} else
+			if (node->getId().compare("button_materials_material_pbr_base_color_texture_load") == 0) {
+				onMaterialLoadPBRBaseColorTexture();
+			} else
+			if (node->getId().compare("button_materials_material_pbr_base_color_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialPBRBaseColorTexture);
+			} else
+			if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_load") == 0) {
+				onMaterialLoadPBRMetallicRoughnessTexture();
+			} else
+			if (node->getId().compare("button_materials_material_pbr_metallic_roughness_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialPBRMetallicRoughnessTexture);
+			} else
+			if (node->getId().compare("button_materials_material_pbr_normal_texture_load") == 0) {
+				onMaterialLoadPBRNormalTexture();
+			} else
+			if (node->getId().compare("button_materials_material_pbr_normal_texture_clear") == 0) {
+				onMaterialClearTexture(materialsMaterialPBRNormalTexture);
 			} else
 			if (node->getId().compare("animations_dropdown_apply") == 0) {
 				onAnimationDropDownApply();

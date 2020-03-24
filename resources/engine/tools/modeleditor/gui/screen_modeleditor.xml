@@ -676,6 +676,88 @@
 									</layout>
 								</layout>
 								<space height="20" />
+								<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+									<checkbox id="materials_material_pbr_enabled" name="materials_material_pbr_enabled" value="1" />
+									<space width="5" />
+									<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Enable PBR" width="auto" height="auto"/>
+								</layout>
+                                <space height="10" />
+                                <layout alignment="horizontal" width="auto" height="auto">
+                                    <layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+                                        <text font="resources/gui-system/fonts/Roboto_20.fnt" text="Base color factor" width="145" height="auto"/>
+                                        <space width="5" />
+                                        <input id="materials_material_pbr_base_color_factor" name="materials_material_pbr_base_color_factor" width="450" height="auto" text="Base color factor" />
+                                    </layout>
+                                </layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Base color texture" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_pbr_base_color_texture" name="materials_material_pbr_base_color_texture" width="302" height="auto" text="Base color texture" disabled="true" />
+										<space width="10" />
+										<button id="button_materials_material_pbr_base_color_texture_load" name="button_materials_material_pbr_base_color_texture_load" text="Load" width="60" height="auto" />
+										<space width="10" />
+										<button id="button_materials_material_pbr_base_color_texture_clear" name="button_materials_material_pbr_base_color_texture_clear" text="Clear" width="60" height="auto" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Metallic factor" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_pbr_metallic_factor" name="materials_material_pbr_metallic_factor" width="450" height="auto" text="Metallic factor" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Roughness factor" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_pbr_roughness_factor" name="materials_material_pbr_roughness_factor" width="450" height="auto" text="Roughness factor" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Metallic/Roughness" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_pbr_metallic_roughness_texture" name="materials_material_pbr_metallic_roughness_texture" width="302" height="auto" text="Metallic/roughness texture" disabled="true" />
+										<space width="10" />
+										<button id="button_materials_material_pbr_metallic_roughness_texture_load" name="button_materials_material_pbr_metallic_roughness_texture_load" text="Load" width="60" height="auto" />
+										<space width="10" />
+										<button id="button_materials_material_pbr_metallic_roughness_texture_clear" name="button_materials_material_pbr_metallic_roughness_texture_clear" text="Clear" width="60" height="auto" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Normal scale" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_pbr_normal_scale" name="materials_material_pbr_normal_scale" width="450" height="auto" text="Normal scaler" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Normal texture" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_pbr_normal_texture" name="materials_material_pbr_normal_texture" width="302" height="auto" text="Base color texture" disabled="true" />
+										<space width="10" />
+										<button id="button_materials_material_pbr_normal_texture_load" name="button_materials_material_pbr_normal_texture_load" text="Load" width="60" height="auto" />
+										<space width="10" />
+										<button id="button_materials_material_pbr_normal_texture_clear" name="button_materials_material_pbr_normal_texture_clear" text="Clear" width="60" height="auto" />
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout alignment="horizontal" width="auto" height="auto">
+									<layout width="auto" height="auto" alignment="horizontal" vertical-align="center">
+										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Exposure" width="145" height="auto"/>
+										<space width="5" />
+										<input id="materials_material_pbr_exposure" name="materials_material_pbr_exposure" width="450" height="auto" text="Exposure" />
+									</layout>
+								</layout>
+								<space height="20" />
 								<layout alignment="horizontal" width="auto" height="auto">
 									<layout width="602" height="auto" alignment="horizontal" vertical-align="center">
 										<text font="resources/gui-system/fonts/Roboto_20.fnt" text="Masked transp." width="145" height="auto"/>

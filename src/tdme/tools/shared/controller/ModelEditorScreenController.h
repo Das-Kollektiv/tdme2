@@ -98,6 +98,21 @@ private:
 	GUIElementNode* materialsMaterialDiffuseTransparencyTextureClear { nullptr };
 	GUIElementNode* materialsMaterialNormalTextureClear { nullptr };
 	GUIElementNode* materialsMaterialSpecularTextureClear { nullptr };
+	GUIElementNode* materialsMaterialPBREnabled { nullptr };
+	GUIElementNode* materialsMaterialPBRBaseColorFactor { nullptr };
+	GUIElementNode* materialsMaterialPBRBaseColorTexture { nullptr };
+	GUIElementNode* materialsMaterialPBRBaseColorTextureLoad { nullptr };
+	GUIElementNode* materialsMaterialPBRBaseColorTextureClear { nullptr };
+	GUIElementNode* materialsMaterialPBRMetallicFactor { nullptr };
+	GUIElementNode* materialsMaterialPBRRoughnessFactor { nullptr };
+	GUIElementNode* materialsMaterialPBRMetallicRoughnessTexture { nullptr };
+	GUIElementNode* materialsMaterialPBRMetallicRoughnessTextureLoad { nullptr };
+	GUIElementNode* materialsMaterialPBRMetallicRoughnessTextureClear { nullptr };
+	GUIElementNode* materialsMaterialPBRNormalScale { nullptr };
+	GUIElementNode* materialsMaterialPBRNormalTexture { nullptr };
+	GUIElementNode* materialsMaterialPBRNormalTextureLoad { nullptr };
+	GUIElementNode* materialsMaterialPBRNormalTextureClear { nullptr };
+	GUIElementNode* materialsMaterialPBRExposure { nullptr };
 	GUIElementNode* materialsMaterialUseMaskedTransparency { nullptr };
 	GUIElementNode* materialsMaterialMaskedTransparencyThreshold { nullptr };
 	GUIElementNode* materialsMaterialApply { nullptr };
@@ -294,6 +309,26 @@ public:
 	 * On material load specular texture
 	 */
 	void onMaterialLoadSpecularTexture();
+
+	/**
+	 * On material load PBR base color texture
+	 */
+	void onMaterialLoadPBRBaseColorTexture();
+
+	/**
+	 * On material load PBR metallic roughness texture
+	 */
+	void onMaterialLoadPBRMetallicRoughnessTexture();
+
+	/**
+	 * On material load PBR normal texture
+	 */
+	void onMaterialLoadPBRNormalTexture();
+
+	/**
+	 * On material PBR enabled value changed
+	 */
+	void onMaterialPBREnabledValueChanged();
 
 	/**
 	 * On material clear texture
