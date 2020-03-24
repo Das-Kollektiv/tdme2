@@ -33,7 +33,11 @@ void LightingShaderPBRDefaultImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"metallic-roughness.frag",
-		"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
+		#if !defined (__APPLE__)
+			"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
+		#else
+			"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\\n",
+		#endif
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/lighting/pbr",
 			"tonemapping.glsl"
@@ -56,7 +60,11 @@ void LightingShaderPBRDefaultImplementation::initialize()
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"primitive.vert",
-		"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n"
+		#if !defined (__APPLE__)
+			"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n"
+		#else
+			"#define LIGHT_COUNT	8\n#define HAS_NORMALS\n#define HAS_UV_SET1\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\\n"
+		#endif
 	);
 	if (renderLightingVertexShaderId == 0) return;
 
