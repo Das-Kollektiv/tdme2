@@ -8,7 +8,7 @@
 using std::array;
 
 /** 
- * Renderer material data entity
+ * Renderer specular material data entity
  */
 struct tdme::engine::subsystems::renderer::Renderer_SpecularMaterial
 {

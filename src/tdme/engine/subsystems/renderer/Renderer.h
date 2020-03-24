@@ -9,6 +9,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
+#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
 #include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -24,11 +25,12 @@ using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer_Light;
+using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
 using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
-/** 
+/**
  * Renderer interface
  * @author Andreas Drewke
  * @ersion $Id$
@@ -94,17 +96,17 @@ public:
 	 */
 	virtual int getContextIndex(void* context);
 
-	/** 
+	/**
 	 * Initialize renderer
 	 */
 	virtual void initialize() = 0;
 
-	/** 
+	/**
 	 * Pre Frame Initialization
 	 */
 	virtual void initializeFrame();
 
-	/** 
+	/**
 	 * Finish frame
 	 */
 	virtual void finishFrame() = 0;
@@ -114,7 +116,7 @@ public:
 	 */
 	virtual const string getShaderVersion() = 0;
 
-	/** 
+	/**
 	 * @return if renderer is supporting multi threaded rendering
 	 */
 	virtual bool isSupportingMultithreadedRendering() = 0;
@@ -135,33 +137,33 @@ public:
 	 */
 	virtual bool isBufferObjectsAvailable() = 0;
 
-	/** 
+	/**
 	 * Checks if depth texture is available
 	 * @return depth texture is available
 	 */
 	virtual bool isDepthTextureAvailable() = 0;
 
-	/** 
+	/**
 	 * @return requires program attribute location
 	 */
 	virtual bool isUsingProgramAttributeLocation() = 0;
 
-	/** 
+	/**
 	 * @return if specular mapping is supported
 	 */
 	virtual bool isSpecularMappingAvailable() = 0;
 
-	/** 
+	/**
 	 * @return if normal mapping is supported
 	 */
 	virtual bool isNormalMappingAvailable() = 0;
 
-	/** 
+	/**
 	 * @return if PBR lighting is supported
 	 */
 	virtual bool isPBRAvailable() = 0;
 
-	/** 
+	/**
 	 * Checks if instanced rendering is available
 	 * @return instance rendering availability
 	 */
@@ -182,7 +184,7 @@ public:
 	 */
 	virtual int32_t getTextureUnits() = 0;
 
-	/** 
+	/**
 	 * Loads a shader into open gl stack
 	 * @param type type
 	 * @param pathName path name
@@ -200,28 +202,28 @@ public:
 	 */
 	virtual void useProgram(void* context, int32_t programId) = 0;
 
-	/** 
+	/**
 	 * Creates a shader program
 	 * @param type type
 	 * @return int
 	 */
 	virtual int32_t createProgram(int type) = 0;
 
-	/** 
+	/**
 	 * Attaches a shader to a program
 	 * @param programId program id
 	 * @param shaderId shader id
 	 */
 	virtual void attachShaderToProgram(int32_t programId, int32_t shaderId) = 0;
 
-	/** 
+	/**
 	 * Links attached shaders to a program
 	 * @param programId program id
 	 * @return success
 	 */
 	virtual bool linkProgram(int32_t programId) = 0;
 
-	/** 
+	/**
 	 * Returns location of given uniform variable
 	 * @param programId program id
 	 * @param name uniform name
@@ -229,7 +231,7 @@ public:
 	 */
 	virtual int32_t getProgramUniformLocation(int32_t programId, const string& name) = 0;
 
-	/** 
+	/**
 	 * Set up a integer uniform value
 	 * @param context context
 	 * @param uniformId uniform id
@@ -237,7 +239,7 @@ public:
 	 */
 	virtual void setProgramUniformInteger(void* context, int32_t uniformId, int32_t value) = 0;
 
-	/** 
+	/**
 	 * Set up a float uniform value
 	 * @param context context
 	 * @param uniformId uniform id
@@ -245,7 +247,7 @@ public:
 	 */
 	virtual void setProgramUniformFloat(void* context, int32_t uniformId, float value) = 0;
 
-	/** 
+	/**
 	 * Set up a float matrix 3x3 uniform value
 	 * @param context context
 	 * @param uniformId uniform id
@@ -261,7 +263,7 @@ public:
 	 */
 	virtual void setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& value) = 0;
 
-	/** 
+	/**
 	 * Set up a float matrices 4x4 uniform values
 	 * @param context context
 	 * @param uniformId uniform id
@@ -270,7 +272,7 @@ public:
 	 */
 	virtual void setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data) = 0;
 
-	/** 
+	/**
 	 * Set up a float vec4 uniform value
 	 * @param context context
 	 * @param uniformId uniform id
@@ -278,7 +280,7 @@ public:
 	 */
 	virtual void setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data) = 0;
 
-	/** 
+	/**
 	 * Set up a float vec3 uniform value
 	 * @param context context
 	 * @param uniformId uniform id
@@ -286,7 +288,7 @@ public:
 	 */
 	virtual void setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data) = 0;
 
-	/** 
+	/**
 	 * Set up a float vec2 uniform value
 	 * @param context context
 	 * @param uniformId uniform id
@@ -321,7 +323,7 @@ public:
 	 */
 	virtual Vector3& getCameraPosition();
 
-	/** 
+	/**
 	 * Set up viewport parameter
 	 * @param x x
 	 * @param y y
@@ -330,50 +332,50 @@ public:
 	 */
 	virtual void setViewPort(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
 
-	/** 
+	/**
 	 * Update viewport
 	 */
 	virtual void updateViewPort() = 0;
 
-	/** 
+	/**
 	 * @return projection matrix
 	 */
 	virtual Matrix4x4& getProjectionMatrix();
 
-	/** 
+	/**
 	 * Update projection matrix event
 	 * @param context context
 	 */
 	virtual void onUpdateProjectionMatrix(void* context) = 0;
 
-	/** 
+	/**
 	 * @return camera matrix
 	 */
 	virtual Matrix4x4& getCameraMatrix();
 
-	/** 
+	/**
 	 * Update camera matrix event
 	 * @param context context
 	 */
 	virtual void onUpdateCameraMatrix(void* context) = 0;
 
-	/** 
+	/**
 	 * @return model view matrix or in some cases the model matrix
 	 */
 	virtual Matrix4x4& getModelViewMatrix();
 
-	/** 
+	/**
 	 * Update model view matrix event
 	 * @param context context
 	 */
 	virtual void onUpdateModelViewMatrix(void* context) = 0;
 
-	/** 
+	/**
 	 * @return view port matrix
 	 */
 	virtual Matrix4x4& getViewportMatrix();
 
-	/** 
+	/**
 	 * Get texture matrix
 	 * @param context context
 	 * @return texture matrix
@@ -386,7 +388,7 @@ public:
 	 */
 	virtual void onUpdateTextureMatrix(void* context) = 0;
 
-	/** 
+	/**
 	 * Set up clear color
 	 * @param red red
 	 * @param green green
@@ -395,13 +397,13 @@ public:
 	 */
 	virtual void setClearColor(float red, float green, float blue, float alpha) = 0;
 
-	/** 
+	/**
 	 * Enable culling
 	 * @param context context
 	 */
 	virtual void enableCulling(void* context) = 0;
 
-	/** 
+	/**
 	 * Disable culling
 	 * @param context context
 	 */
@@ -420,27 +422,27 @@ public:
 	 */
 	virtual void setCullFace(int32_t cullFace) = 0;
 
-	/** 
+	/**
 	 * Enables blending
 	 */
 	virtual void enableBlending() = 0;
 
-	/** 
+	/**
 	 * Disables blending
 	 */
 	virtual void disableBlending() = 0;
 
-	/** 
+	/**
 	 * Enable depth buffer writing
 	 */
 	virtual void enableDepthBufferWriting() = 0;
 
-	/** 
+	/**
 	 * Disable depth buffer writing
 	 */
 	virtual void disableDepthBufferWriting() = 0;
 
-	/** 
+	/**
 	 * Disable depth buffer test
 	 */
 	virtual void disableDepthBufferTest() = 0;
@@ -456,7 +458,7 @@ public:
 	 */
 	virtual void setDepthFunction(int32_t depthFunction) = 0;
 
-	/** 
+	/**
 	 * Set up GL rendering colormask
 	 * @param red red
 	 * @param green green
@@ -465,19 +467,19 @@ public:
 	 */
 	virtual void setColorMask(bool red, bool green, bool blue, bool alpha) = 0;
 
-	/** 
+	/**
 	 * Clear render buffer with given mask
 	 * @param mask mask
 	 */
 	virtual void clear(int32_t mask) = 0;
 
-	/** 
+	/**
 	 * Creates a texture
 	 * @return texture id
 	 */
 	virtual int32_t createTexture() = 0;
 
-	/** 
+	/**
 	 * Creates a depth buffer texture
 	 * @param width width
 	 * @param height height
@@ -485,7 +487,7 @@ public:
 	 */
 	virtual int32_t createDepthBufferTexture(int32_t width, int32_t height) = 0;
 
-	/** 
+	/**
 	 * Creates a color buffer texture
 	 * @param width width
 	 * @param height height
@@ -507,7 +509,7 @@ public:
 	 */
 	virtual void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) = 0;
 
-	/** 
+	/**
 	 * Resizes a depth texture
 	 * @param textureId texture id
 	 * @param width width
@@ -515,7 +517,7 @@ public:
 	 */
 	virtual void resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height) = 0;
 
-	/** 
+	/**
 	 * Resize color buffer texture
 	 * @param textureId texture id
 	 * @param width width
@@ -523,7 +525,7 @@ public:
 	 */
 	virtual void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) = 0;
 
-	/** 
+	/**
 	 * Binds a texture with given id or unbinds when using ID_NONE
 	 * @param context context
 	 * @param textureId textureId
@@ -537,20 +539,20 @@ public:
 	 */
 	virtual void bindCubeMapTexture(void* context, int32_t textureId) = 0;
 
-	/** 
+	/**
 	 * On bind texture event
 	 * @param context context
 	 * @param textureId textureId
 	 */
 	virtual void onBindTexture(void* context, int32_t textureId) = 0;
 
-	/** 
+	/**
 	 * Dispose a texture
 	 * @param textureId texture id
 	 */
 	virtual void disposeTexture(int32_t textureId) = 0;
 
-	/** 
+	/**
 	 * Creates a frame buffer object with depth texture attached
 	 * @param depthBufferTextureGlId colorBufferTextureGlId TODO
 	 * @param colorBufferTextureGlId depth texture gl id
@@ -558,19 +560,19 @@ public:
 	 */
 	virtual int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) = 0;
 
-	/** 
+	/**
 	 * Enables a framebuffer to be rendered
 	 * @param frameBufferId frameBufferId
 	 */
 	virtual void bindFrameBuffer(int32_t frameBufferId) = 0;
 
-	/** 
+	/**
 	 * Disposes a frame buffer object
 	 * @param frameBufferId frame buffer id
 	 */
 	virtual void disposeFrameBufferObject(int32_t frameBufferId) = 0;
 
-	/** 
+	/**
 	 * Generate buffer objects for vertex data and such
 	 * @param buffers buffers
 	 * @param useGPUMemory use GPU memory
@@ -606,7 +608,7 @@ public:
 	 */
 	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
-	/** 
+	/**
 	 * Uploads buffer data to buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
@@ -615,7 +617,7 @@ public:
 	 */
 	virtual void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
-	/** 
+	/**
 	 * Uploads buffer data to buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
@@ -624,28 +626,28 @@ public:
 	 */
 	virtual void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
 
-	/** 
+	/**
 	 * Bind indices buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
-	/** 
+	/**
 	 * Bind texture coordinates buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
-	/** 
+	/**
 	 * Bind vertices buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindVerticesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
-	/** 
+	/**
 	 * Bind normals buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
@@ -659,28 +661,28 @@ public:
 	 */
 	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
 
-	/** 
+	/**
 	 * Bind colors buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindColorsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
-	/** 
+	/**
 	 * Bind tangents buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindTangentsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
-	/** 
+	/**
 	 * Bind bitangents buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
-	/** 
+	/**
 	 * Bind model matrices buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
@@ -725,7 +727,7 @@ public:
 	 */
 	virtual void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) = 0;
 
-	/** 
+	/**
 	 * Draw instanced triangles from buffer objects
 	 * @param context context
 	 * @param triangles triangles
@@ -734,7 +736,7 @@ public:
 	 */
 	virtual void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
 
-	/** 
+	/**
 	 * Draw triangles from buffer objects
 	 * @param context context
 	 * @param triangles triangles
@@ -764,26 +766,26 @@ public:
 	 */
 	virtual void drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
 
-	/** 
+	/**
 	 * Unbind buffer objects
 	 * @param context context
 	 */
 	virtual void unbindBufferObjects(void* context) = 0;
 
-	/** 
+	/**
 	 * Disposes a frame buffer object
 	 * @param bufferObjectIds frame buffer id
 	 */
 	virtual void disposeBufferObjects(vector<int32_t>& bufferObjectIds) = 0;
 
-	/** 
+	/**
 	 * Get texture unit
 	 * @param context context
 	 * @return active texture unit
 	 */
 	virtual int32_t getTextureUnit(void* context) = 0;
 
-	/** 
+	/**
 	 * Sets up texture unit
 	 * @param context context
 	 * @param textureUnit texture unit
@@ -798,7 +800,7 @@ public:
 	 */
 	virtual Renderer_Light& getLight(void* context, int32_t lightId) = 0;
 
-	/** 
+	/**
 	 * Update light
 	 * @param context context
 	 * @param lightId light id
@@ -819,20 +821,27 @@ public:
 	 */
 	virtual array<float, 4>& getEffectColorAdd(void* context) = 0;
 
-	/** 
+	/**
 	 * Update material
 	 * @param context context
 	 */
 	virtual void onUpdateEffect(void* context) = 0;
 
-	/** 
-	 * Get material
+	/**
+	 * Get specular material
 	 * @param context context
 	 * @return material
 	 */
 	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) = 0;
 
-	/** 
+	/**
+	 * Get PBR material
+	 * @param context context
+	 * @return material
+	 */
+	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) = 0;
+
+	/**
 	 * On update material
 	 * @param context context
 	 */
@@ -857,7 +866,7 @@ public:
 	 */
 	virtual void onUpdateShader(void* context) = 0;
 
-	/** 
+	/**
 	 * Reads a pixel depth
 	 * @param x x
 	 * @param y y
@@ -993,12 +1002,12 @@ public:
 	 */
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) = 0;
 
-	/** 
+	/**
 	 * Set up renderer for GUI rendering
 	 */
 	virtual void initGuiMode() = 0;
 
-	/** 
+	/**
 	 * Set up renderer for 3d rendering
 	 */
 	virtual void doneGuiMode() = 0;

@@ -4,21 +4,28 @@
 
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/model/Color4.h>
 
 using std::string;
 
 using tdme::engine::model::PBRMaterialProperties;
+using tdme::engine::model::Color4;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 
 PBRMaterialProperties::PBRMaterialProperties()
 {
+	baseColorFactor.set(1.0f, 1.0f, 1.0f, 1.0f);
 	baseColorTexture = nullptr;
-	metallicRoughnessTexture = nullptr;
-	normalTexture = nullptr;
 	baseColorTextureTransparency = false;
 	baseColorTextureMaskedTransparency = false;
 	baseColorTextureMaskedTransparencyThreshold = 0.1f;
+	metallicFactor = 1.0f;
+	roughnessFactor = 1.0f;
+	metallicRoughnessTexture = nullptr;
+	normalScale = 1.0f;
+	normalTexture = nullptr;
+	exposure = 1.0f;
 }
 
 PBRMaterialProperties::~PBRMaterialProperties() {

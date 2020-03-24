@@ -50,6 +50,10 @@ Renderer_SpecularMaterial& SingleThreadedRenderer::getSpecularMaterial(void* con
 	return specularMaterial;
 }
 
+Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(void* context) {
+	return pbrMaterial;
+}
+
 const string SingleThreadedRenderer::getShader(void* context) {
 	return shader;
 }

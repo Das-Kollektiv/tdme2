@@ -7,6 +7,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
+#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
 #include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -17,6 +18,7 @@ using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::renderer::Renderer_Light;
+using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
 using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -32,6 +34,7 @@ private:
 	array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 	array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 	Renderer_SpecularMaterial specularMaterial;
+	Renderer_PBRMaterial pbrMaterial;
 	array<Renderer_Light, 8> lights;
 	Matrix2D3x3 textureMatrix;
 	float maskMaxValue { 1.0f };
@@ -49,6 +52,7 @@ public:
 	virtual array<float, 4>& getEffectColorMul(void* context) override;
 	virtual array<float, 4>& getEffectColorAdd(void* context) override;
 	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) override;
+	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) override;
 	virtual const string getShader(void* context) override;
 	virtual void setShader(void* context, const string& id) override;
 	virtual float getMaskMaxValue(void* context) override;

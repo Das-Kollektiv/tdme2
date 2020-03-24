@@ -7,11 +7,13 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
-#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer_Light.h>
+#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/Float.h>
 
 using std::to_string;
 using std::string;
@@ -22,11 +24,13 @@ using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
-using tdme::engine::subsystems::renderer::Renderer_Light;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::Renderer_Light;
+using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utils::Console;
+using tdme::utils::Float;
 
 LightingShaderPBRBaseImplementation::LightingShaderPBRBaseImplementation(Renderer* renderer)
 {
@@ -52,6 +56,8 @@ void LightingShaderPBRBaseImplementation::initialize()
 	if (uniformBaseColorSampler == -1) return;
 	uniformBaseColorSamplerAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "u_BaseColorSamplerAvailable");
 	if (uniformBaseColorSamplerAvailable == -1) return;
+	uniformAlphaCutoff = renderer->getProgramUniformLocation(renderLightingProgramId, "u_AlphaCutoff");
+	if (uniformAlphaCutoff == -1) return;
 	uniformCamera = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Camera");
 	if (uniformCamera == -1) return;
 	uniformExposure = renderer->getProgramUniformLocation(renderLightingProgramId, "u_Exposure");
@@ -134,18 +140,9 @@ void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, void* conte
 {
 	renderer->useProgram(context, renderLightingProgramId);
 	renderer->setLighting(context, renderer->LIGHTING_PBR);
-	renderer->setProgramUniformFloatVec4(context, uniformBaseColorFactor, {{ 1.0f, 1.0f, 1.0f, 1.0f }});
 	renderer->setProgramUniformInteger(context, uniformBaseColorSampler, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
-	#if !defined (__APPLE__)
-		renderer->setProgramUniformFloat(context, uniformExposure, 5.0f);
-	#else
-		renderer->setProgramUniformFloat(context, uniformExposure, 1.0f);
-	#endif
-	renderer->setProgramUniformFloat(context, uniformMetallicFactor, 1.0f);
 	renderer->setProgramUniformInteger(context, uniformMetallicRoughnessSampler, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
 	renderer->setProgramUniformInteger(context, uniformNormalSampler, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
-	renderer->setProgramUniformFloat(context, uniformNormalScale, 1.0f);
-	renderer->setProgramUniformFloat(context, uniformRoughnessFactor, 1.0f);
 	renderer->setProgramUniformInteger(context, uniformDiffuseEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
 	renderer->setProgramUniformInteger(context, uniformSpecularEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
 	renderer->setProgramUniformInteger(context, uniformbrdfLUT, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
@@ -170,6 +167,13 @@ void LightingShaderPBRBaseImplementation::updateEffect(Renderer* renderer, void*
 
 void LightingShaderPBRBaseImplementation::updateMaterial(Renderer* renderer, void* context)
 {
+	auto material = renderer->getPBRMaterial(context);
+	renderer->setProgramUniformFloatVec4(context, uniformBaseColorFactor, material.baseColorFactor);
+	renderer->setProgramUniformFloat(context, uniformExposure, material.exposure);
+	renderer->setProgramUniformFloat(context, uniformMetallicFactor, material.metallicFactor);
+	renderer->setProgramUniformFloat(context, uniformRoughnessFactor, material.roughnessFactor);
+	renderer->setProgramUniformFloat(context, uniformNormalScale, material.normalScale);
+	renderer->setProgramUniformFloat(context, uniformAlphaCutoff, material.baseColorTextureMaskedTransparency == 1?Float::MIN_VALUE:material.baseColorTextureMaskedTransparencyThreshold);
 }
 
 void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)

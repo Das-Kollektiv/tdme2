@@ -34,6 +34,7 @@ protected:
 	int32_t uniformBaseColorFactor { -1 };
 	int32_t uniformBaseColorSampler { -1 };
 	int32_t uniformBaseColorSamplerAvailable { -1 };
+	int32_t uniformAlphaCutoff { -1 };
 	int32_t uniformCamera { -1 };
 	int32_t uniformExposure { -1 };
 	int32_t uniformMetallicFactor { -1 };

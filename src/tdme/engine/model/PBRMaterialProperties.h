@@ -4,11 +4,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/model/Color4.h>
+
 
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::model::Color4;
 
 /** 
  * Represents specular material properties
@@ -19,18 +21,23 @@ class tdme::engine::model::PBRMaterialProperties final
 {
 
 private:
+	Color4 baseColorFactor;
 	string baseColorTexturePathName;
 	string baseColorTextureFileName;
 	Texture* baseColorTexture;
 	bool baseColorTextureMaskedTransparency;
 	float baseColorTextureMaskedTransparencyThreshold;
 	bool baseColorTextureTransparency;
+	float metallicFactor;
+	float roughnessFactor;
 	string metallicRoughnessTexturePathName;
 	string metallicRoughnessTextureFileName;
 	Texture* metallicRoughnessTexture;
+	float normalScale;
 	string normalTexturePathName;
 	string normalTextureFileName;
 	Texture* normalTexture;
+	float exposure;
 
 	/**
 	 * Checks and set ups base color texture transparency
@@ -38,6 +45,21 @@ private:
 	void checkBaseColorTextureTransparency();
 
 public:
+
+	/**
+	 * @return base color factor
+	 */
+	inline const Color4& getBaseColorFactor() const {
+		return baseColorFactor;
+	}
+
+	/**
+	 * Set base color factor
+	 * @param baseColorFactor base color factor
+	 */
+	inline void setBaseColorFactor(const Color4& baseColorFactor) {
+		this->baseColorFactor = baseColorFactor;
+	}
 
 	/**
 	 * @return base color texture path name
@@ -110,6 +132,37 @@ public:
 	inline void setBaseColorTextureMaskedTransparencyThreshold(float maskedTransparencyThreshold) {
 		baseColorTextureMaskedTransparencyThreshold = maskedTransparencyThreshold;
 	}
+
+	/**
+	 * @return metallic factor
+	 */
+	inline float getMetallicFactor() const {
+		return metallicFactor;
+	}
+
+	/**
+	 * Set metallic factor
+	 * @param metallicFactor metallic factor
+	 */
+	inline void setMetallicFactor(float metallicFactor) {
+		this->metallicFactor = metallicFactor;
+	}
+
+	/**
+	 * @return roughness factor
+	 */
+	inline float getRoughnessFactor() const {
+		return roughnessFactor;
+	}
+
+	/**
+	 * Set roughness factor
+	 * @param roughnessFactor roughness factor
+	 */
+	inline void setRoughnessFactor(float roughnessFactor) {
+		this->roughnessFactor = roughnessFactor;
+	}
+
 	/**
 	 * @return metallic roughness texture path name
 	 */
@@ -146,6 +199,21 @@ public:
 	}
 
 	/**
+	 * @return normal scale
+	 */
+	inline float getNormalScale() const {
+		return normalScale;
+	}
+
+	/**
+	 * Set normal scale
+	 * @param normalScale normal scale
+	 */
+	inline void setNormalScale(float normalScale) {
+		this->normalScale = normalScale;
+	}
+
+	/**
 	 * @return normal texture path name
 	 */
 	inline const string& getNormalTexturePathName() const {
@@ -178,6 +246,21 @@ public:
 	 */
 	inline Texture* getNormalTexture() const {
 		return normalTexture;
+	}
+
+	/**
+	 * @return exposure
+	 */
+	inline float getExposure() const {
+		return exposure;
+	}
+
+	/**
+	 * Set exposure
+	 * @param exposure exposure
+	 */
+	inline void setExposure(float exposure) {
+		this->exposure = exposure;
 	}
 
 	/**

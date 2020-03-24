@@ -22,6 +22,7 @@
 #include <tdme/engine/model/Group.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/physics/CollisionDetection.h>
@@ -87,6 +88,7 @@ using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::physics::CollisionDetection;
@@ -913,6 +915,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 
 	// material key
 	materialKey = material->getId();
@@ -931,7 +934,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 				rendererMaterial.specular = specularMaterialProperties->getSpecularColor().getArray();
 				rendererMaterial.emission = specularMaterialProperties->getEmissionColor().getArray();
 				rendererMaterial.shininess = specularMaterialProperties->getShininess();
-				rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
+				rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
 				rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
 				renderer->onUpdateMaterial(context);
 			}
@@ -953,7 +956,25 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 		if (renderer->getLighting(context) == renderer->LIGHTING_PBR) {
 			// apply materials
 			if ((renderTypes & RENDERTYPE_MATERIALS) == RENDERTYPE_MATERIALS) {
-				// TODO
+				auto& rendererMaterial = renderer->getPBRMaterial(context);
+				if (pbrMaterialProperties == nullptr) {
+					rendererMaterial.baseColorFactor = {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+					rendererMaterial.metallicFactor = 1.0f;
+					rendererMaterial.roughnessFactor = 1.0f;
+					rendererMaterial.normalScale = 1.0f;
+					rendererMaterial.exposure = 1.0f;
+					rendererMaterial.baseColorTextureMaskedTransparency = 0;
+					rendererMaterial.baseColorTextureMaskedTransparencyThreshold = 0.0f;
+				} else {
+					rendererMaterial.baseColorFactor = pbrMaterialProperties->getBaseColorFactor().getArray();
+					rendererMaterial.metallicFactor = pbrMaterialProperties->getMetallicFactor();
+					rendererMaterial.roughnessFactor = pbrMaterialProperties->getRoughnessFactor();
+					rendererMaterial.normalScale = pbrMaterialProperties->getNormalScale();
+					rendererMaterial.exposure = pbrMaterialProperties->getExposure();
+					rendererMaterial.baseColorTextureMaskedTransparency = pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?1:0;
+					rendererMaterial.baseColorTextureMaskedTransparencyThreshold = pbrMaterialProperties->getBaseColorTextureMaskedTransparencyThreshold();
+				}
+				renderer->onUpdateMaterial(context);
 			}
 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES) {
 				// bind metallic roughness texture
@@ -973,7 +994,7 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 		((renderTypes & RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY)) {
 		if (renderer->getLighting(context) == renderer->LIGHTING_SPECULAR) {
 			auto& rendererMaterial = renderer->getSpecularMaterial(context);
-			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency();
+			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
 			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
 			renderer->onUpdateMaterial(context);
 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
@@ -991,6 +1012,15 @@ void Object3DRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup
 			}
 		} else
 		if (renderer->getLighting(context) == renderer->LIGHTING_PBR) {
+			auto& rendererMaterial = renderer->getPBRMaterial(context);
+			if (pbrMaterialProperties == nullptr) {
+				rendererMaterial.baseColorTextureMaskedTransparency = 0;
+				rendererMaterial.baseColorTextureMaskedTransparencyThreshold = 0.0f;
+			} else {
+				rendererMaterial.baseColorTextureMaskedTransparency = pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?1:0;
+				rendererMaterial.baseColorTextureMaskedTransparencyThreshold = pbrMaterialProperties->getBaseColorTextureMaskedTransparencyThreshold();
+			}
+			renderer->onUpdateMaterial(context);
 			renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 			renderer->bindTexture(context, object3DGroup->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx]);
 		}

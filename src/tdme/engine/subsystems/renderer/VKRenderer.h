@@ -19,6 +19,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
 #include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/os/threading/ReadWriteLock.h>
@@ -36,6 +37,7 @@ using std::vector;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
 using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 using tdme::math::Matrix2D3x3;
@@ -281,6 +283,7 @@ private:
 		string shader;
 		array<float, 4> effect_color_mul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 		array<float, 4> effect_color_add {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+		Renderer_PBRMaterial pbrMaterial;
 		Renderer_SpecularMaterial specularMaterial;
 		array<Renderer_Light, 8> lights;
 		Matrix2D3x3 texture_matrix;
@@ -513,9 +516,11 @@ public:
 	int32_t createDepthBufferTexture(int32_t width, int32_t height) override;
 	int32_t createColorBufferTexture(int32_t width, int32_t height) override;
 	void uploadTexture(void* context, Texture* texture) override;
+	void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) override;
 	void resizeDepthBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void resizeColorBufferTexture(int32_t textureId, int32_t width, int32_t height) override;
 	void bindTexture(void* context, int32_t textureId) override;
+	void bindCubeMapTexture(void* context, int32_t textureId) override;
 	void disposeTexture(int32_t textureId) override;
 	int32_t createFramebufferObject(int32_t depthBufferTextureGlId, int32_t colorBufferTextureGlId) override;
 	void bindFrameBuffer(int32_t frameBufferId) override;
@@ -579,6 +584,7 @@ public:
 	virtual array<float, 4>& getEffectColorMul(void* context) override;
 	virtual array<float, 4>& getEffectColorAdd(void* context) override;
 	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) override;
+	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) override;
 	virtual const string getShader(void* context) override;
 	virtual void setShader(void* context, const string& id) override;
 	virtual float getMaskMaxValue(void* context) override;

@@ -38,6 +38,7 @@
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer_PBRMaterial.h>
 #include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -103,6 +104,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::renderer::Renderer_PBRMaterial;
 using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
@@ -4074,6 +4076,10 @@ void VKRenderer::createColorBufferTexture(int32_t textureId, int32_t width, int3
 	assert(!err);
 }
 
+void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
+}
+
 void VKRenderer::uploadTexture(void* context, Texture* texture)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
@@ -4379,6 +4385,10 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	auto texture = textureIt->second;
 	createColorBufferTexture(textureId, width, height);
 	if (texture.frame_buffer_object_id != 0) createFramebufferObject(texture.frame_buffer_object_id);
+}
+
+void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Not yet implemented");
 }
 
 void VKRenderer::bindTexture(void* context, int32_t textureId)
@@ -5865,6 +5875,11 @@ array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
 Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	return contextTyped.specularMaterial;
+}
+
+Renderer_PBRMaterial& VKRenderer::getPBRMaterial(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.pbrMaterial;
 }
 
 const string VKRenderer::getShader(void* context) {
