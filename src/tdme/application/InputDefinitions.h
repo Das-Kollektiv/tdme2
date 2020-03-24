@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(VULKAN)
+#if defined(VULKAN) || defined(GLFW3)
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
 

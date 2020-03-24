@@ -755,7 +755,7 @@ void GUI::onMouseDragged(int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	#if defined(__APPLE__) && !defined(VULKAN)
+	#if defined(__APPLE__) && !defined(VULKAN) && !defined(GLFW3)
 		guiMouseEvent.setControlDown(false);
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);
@@ -784,7 +784,7 @@ void GUI::onMouseMoved(int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	#if defined(__APPLE__) && !defined(VULKAN)
+	#if defined(__APPLE__) && !defined(VULKAN) && !defined(GLFW3)
 		guiMouseEvent.setControlDown(false);
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);
@@ -814,7 +814,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	#if defined(__APPLE__) && !defined(VULKAN)
+	#if defined(__APPLE__) && !defined(VULKAN) && !defined(GLFW3)
 		guiMouseEvent.setControlDown(false);
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);
@@ -844,7 +844,7 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(direction * 1.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	#if defined(__APPLE__) && !defined(VULKAN)
+	#if defined(__APPLE__) && !defined(VULKAN) && !defined(GLFW3)
 		guiMouseEvent.setControlDown(false);
 		guiMouseEvent.setAltDown(false);
 		guiMouseEvent.setShiftDown(false);

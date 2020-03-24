@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(VULKAN)
+#if defined(VULKAN) || defined(GLFW3)
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
 	#define MOUSE_CURSOR_DISABLED 0
@@ -250,7 +250,7 @@ private:
 	static bool limitFPS;
 	string title;
 
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 		static GLFWwindow* glfwWindow;
 		static array<uint32_t, 10> glfwButtonDownFrames;
 		static int glfwMods;
@@ -269,7 +269,7 @@ private:
 	 */
 	static void reshapeInternal(int32_t width, int32_t height);
 
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 		/**
 		 * GLFW on char
 		 * @param window window

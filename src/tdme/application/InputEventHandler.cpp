@@ -1,4 +1,4 @@
-#if defined(VULKAN)
+#if defined(VULKAN) || defined(GLFW3)
 	#include <tdme/application/Application.h>
 	using tdme::application::Application;
 #else
@@ -19,7 +19,7 @@ InputEventHandler::~InputEventHandler() {
 }
 
 int InputEventHandler::getKeyboardModifiers() {
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 		return Application::application->glfwMods;
 	#else
 		return glutGetModifiers();

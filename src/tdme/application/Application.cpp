@@ -1,6 +1,8 @@
 #if defined(VULKAN)
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
+#elif defined(GLFW3)
+	#include <GLFW/glfw3.h>
 #else
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
 		#if !defined(GLES2)
@@ -30,7 +32,7 @@
 	#include <tdme/os/threading/Mutex.h>
 #endif
 
-#if defined(__APPLE__) && !defined(VULKAN)
+#if defined(__APPLE__) && !defined(VULKAN) && !defined(GLFW3)
 	#include <Carbon/Carbon.h>
 #endif
 
@@ -300,7 +302,7 @@ InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
 bool Application::limitFPS = false;
 
-#if defined(VULKAN)
+#if defined(VULKAN) || defined(GLFW3)
 	GLFWwindow* Application::glfwWindow = nullptr;
 	array<uint32_t, 10> Application::glfwButtonDownFrames;
 	int Application::glfwMods = 0;
@@ -325,7 +327,7 @@ Application::~Application() {
 }
 
 void Application::setVSyncEnabled(bool vSync) {
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 		// not yet
 	#else
 		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
@@ -412,7 +414,7 @@ int32_t Application::getWindowWidth() const {
 void Application::setWindowWidth(int32_t windowWidth) {
 	this->windowWidth = windowWidth;
 	if (initialized == true) {
-		#if defined(VULKAN)
+		#if defined(VULKAN) || defined(GLFW3)
 			glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 		#else
 			glutReshapeWindow(windowWidth, windowHeight);
@@ -427,7 +429,7 @@ int32_t Application::getWindowHeight() const {
 void Application::setWindowHeight(int32_t windowHeight) {
 	this->windowHeight = windowHeight;
 	if (initialized == true) {
-		#if defined(VULKAN)
+		#if defined(VULKAN) || defined(GLFW3)
 			glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 		#else
 			glutReshapeWindow(windowWidth, windowHeight);
@@ -442,7 +444,7 @@ bool Application::isFullScreen() const {
 void Application::setFullScreen(bool fullScreen) {
 	this->fullScreen = fullScreen;
 	if (initialized == true) {
-		#if defined(VULKAN)
+		#if defined(VULKAN) || defined(GLFW3)
 		#else
 			if (fullScreen == true) {
 				glutFullScreen();
@@ -461,7 +463,7 @@ void Application::installExceptionHandler() {
 }
 
 void Application::setMouseCursor(int mouseCursor) {
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 		if (mouseCursor == MOUSE_CURSOR_DISABLED) {
 			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		} else
@@ -474,7 +476,7 @@ void Application::setMouseCursor(int mouseCursor) {
 }
 
 void Application::setMousePosition(int x, int y) {
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 		glfwSetCursorPos(glfwWindow, x, y);
 	#else
 		#if defined(__APPLE__)
@@ -490,13 +492,13 @@ void Application::setMousePosition(int x, int y) {
 }
 
 void Application::swapBuffers() {
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 	#else
 		glutSwapBuffers();
 	#endif
 }
 
-#if defined(VULKAN)
+#if defined(VULKAN) || defined(GLFW3)
 	static void glfwErrorCallback(int error, const char* description) {
 		Console::println(string("glfwErrorCallback(): ") + description);
 	}
@@ -505,23 +507,39 @@ void Application::swapBuffers() {
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
 	this->title = title;
 	Application::inputEventHandler = inputEventHandler;
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 		glfwSetErrorCallback(glfwErrorCallback);
 		if (glfwInit() == false) {
 			Console::println("glflInit(): failed!");
 			return;
 		}
-		if (glfwVulkanSupported() == false) {
-			Console::println("glfwVulkanSupported(): Vulkan not available!");
-			return;
-		}
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		#if defined(VULKAN)
+			if (glfwVulkanSupported() == false) {
+				Console::println("glfwVulkanSupported(): Vulkan not available!");
+				return;
+			}
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		#else
+			#if defined(__APPLE__)
+				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+				glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
+			#else
+				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			#endif
+		#endif
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		if (glfwWindow == nullptr) {
 			Console::println("glfwCreateWindow(): Could not create window");
 			glfwTerminate();
 			return;
 		}
+		#if !defined(VULKAN)
+			glfwMakeContextCurrent(glfwWindow);
+		#endif
 		glfwSetCharCallback(glfwWindow, Application::glfwOnChar);
 		glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
 		glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
@@ -602,7 +620,7 @@ void Application::setIcon(const string& fileName) {
 void Application::displayInternal() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
-		#if defined(VULKAN)
+		#if defined(VULKAN) || defined(GLFW3)
 			Application::application->reshape(Application::application->windowWidth, Application::application->windowHeight);
 		#endif
 		Application::application->initialized = true;
@@ -610,14 +628,14 @@ void Application::displayInternal() {
 	int64_t timeNow = Time::getCurrentMillis();
 	int64_t timeFrame = 1000/Application::FPS;
 	if (Application::timeLast != -1L) {
-		#if !defined(VULKAN)
+		#if !defined(VULKAN) || defined(GLFW3)
 			int64_t timePassed = timeNow - timeLast;
 			if (limitFPS == true && timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
 		#endif
 	}
 	Application::timeLast = timeNow;
 	Application::application->display();
-	#if defined(VULKAN)
+	#if defined(VULKAN) || defined(GLFW3)
 	#else
 		glutSwapBuffers();
 	#endif
@@ -631,7 +649,7 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 	Application::application->reshape(width, height);
 }
 
-#if defined(VULKAN)
+#if defined(VULKAN) || defined(GLFW3)
 
 	void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
 		/*
