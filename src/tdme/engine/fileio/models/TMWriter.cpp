@@ -15,6 +15,7 @@
 #include <tdme/engine/model/JointWeight.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -44,6 +45,7 @@ using tdme::engine::model::Joint;
 using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -62,7 +64,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(12));
+	os.writeByte(static_cast< uint8_t >(13));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
@@ -87,6 +89,7 @@ void TMWriter::write(Model* model, const string& pathName, const string& fileNam
 void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 {
 	auto smp = m->getSpecularMaterialProperties();
+	auto pmp = m->getPBRMaterialProperties();
 	os->writeString(m->getId());
 	os->writeFloatArray(smp->getAmbientColor().getArray());
 	os->writeFloatArray(smp->getDiffuseColor().getArray());
@@ -104,6 +107,24 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 	os->writeBoolean(smp->hasDiffuseTextureMaskedTransparency());
 	os->writeFloat(smp->getDiffuseTextureMaskedTransparencyThreshold());
 	os->writeFloatArray(m->getTextureMatrix().getArray());
+	if (pmp == nullptr) {
+		os->writeBoolean(false);
+	} else {
+		os->writeBoolean(true);
+		os->writeFloatArray(pmp->getBaseColorFactor().getArray());
+		os->writeString(pmp->getBaseColorTexturePathName());
+		os->writeString(pmp->getBaseColorTextureFileName());
+		os->writeBoolean(pmp->hasBaseColorTextureMaskedTransparency());
+		os->writeFloat(pmp->getBaseColorTextureMaskedTransparencyThreshold());
+		os->writeFloat(pmp->getMetallicFactor());
+		os->writeFloat(pmp->getRoughnessFactor());
+		os->writeString(pmp->getMetallicRoughnessTexturePathName());
+		os->writeString(pmp->getMetallicRoughnessTextureFileName());
+		os->writeFloat(pmp->getNormalScale());
+		os->writeString(pmp->getNormalTexturePathName());
+		os->writeString(pmp->getNormalTextureFileName());
+		os->writeFloat(pmp->getExposure());
+	}
 }
 
 void TMWriter::writeAnimationSetup(TMWriterOutputStream* os, AnimationSetup* animationSetup) {

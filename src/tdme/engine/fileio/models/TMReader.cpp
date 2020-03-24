@@ -16,6 +16,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/ModelHelper.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/model/Skinning.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
@@ -48,6 +49,7 @@ using tdme::engine::model::JointWeight;
 using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper;
+using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::RotationOrder;
 using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -80,9 +82,10 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 		(version[0] != 1 || version[1] != 9 || version[2] != 9) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 10) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 11) &&
-		(version[0] != 1 || version[1] != 9 || version[2] != 12)) {
+		(version[0] != 1 || version[1] != 9 || version[2] != 12) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 13)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12 but is " +
+			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13 but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -182,7 +185,9 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			normalTextureFileName
 		);
 	}
-	if ((version[0] == 1 && version[1] == 9 && version[2] < 12)) {
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 10) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 11)) {
 		auto displacementTexturePathName = is->readString();
 		auto displacementTextureFileName = is->readString();
 	}
@@ -190,17 +195,48 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 12)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 13) ) {
 		smp->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 12)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 13)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
 		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
 	}
 	m->setSpecularMaterialProperties(smp);
+	if (version[0] == 1 && version[1] == 9 && version[2] == 13) {
+		if (is->readBoolean() == true) {
+			auto pmp = new PBRMaterialProperties();
+			is->readFloatArray(colorRGBAArray);
+			pmp->setBaseColorFactor(Color4(colorRGBAArray));
+			auto baseColorTexturePathName = is->readString();
+			auto baseColorTextureFileName = is->readString();
+			if (baseColorTextureFileName.size() != 0) {
+				pmp->setBaseColorTexture(baseColorTexturePathName, baseColorTextureFileName);
+			}
+			pmp->setBaseColorTextureMaskedTransparency(is->readBoolean());
+			pmp->setBaseColorTextureMaskedTransparency(is->readFloat());
+			pmp->setMetallicFactor(is->readFloat());
+			pmp->setRoughnessFactor(is->readFloat());
+			auto metallicRoughnessTexturePathName = is->readString();
+			auto metallicRoughnessTextureFileName = is->readString();
+			if (metallicRoughnessTextureFileName.size() != 0) {
+				pmp->setMetallicRoughnessTexture(metallicRoughnessTexturePathName, metallicRoughnessTextureFileName);
+			}
+			pmp->setNormalScale(is->readFloat());
+			auto normalTexturePathName = is->readString();
+			auto normalTextureFileName = is->readString();
+			if (normalTextureFileName.size() != 0) {
+				pmp->setNormalTexture(normalTexturePathName, normalTextureFileName);
+			}
+			pmp->setExposure(is->readFloat());
+			m->setPBRMaterialProperties(pmp);
+		}
+	}
 	return m;
 }
 
@@ -212,7 +248,8 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 	auto loop = is->readBoolean();
 	auto speed = 1.0f;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 11) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 12)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 13)) {
 		speed = is->readFloat();
 	}
 	if (overlayFromGroupId.length() == 0) {
