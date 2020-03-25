@@ -74,7 +74,7 @@ void FrameBuffer::dispose()
 void FrameBuffer::enableFrameBuffer()
 {
 	Engine::renderer->bindFrameBuffer(frameBufferId);
-	Engine::renderer->setViewPort(0, 0, width, width);
+	Engine::renderer->setViewPort(0, 0, width, height);
 	Engine::renderer->updateViewPort();
 }
 
