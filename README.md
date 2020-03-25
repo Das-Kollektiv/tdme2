@@ -185,12 +185,12 @@
     - documentation
 
 - What is WIP or planned
+    - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects
     - Installer for MacOSX
     - Integrate Haxe via HashLink to be able to script TDME2 applications or sub logics
     - Water shader
     - Improve on Vulkan
-    - PBR lighting shader for GL3/CORE+
     - Expose shader and post processing programs setup API
     - Some UI elements need some default skinning fixes
     - A release plan
