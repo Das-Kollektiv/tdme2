@@ -35,8 +35,8 @@ Camera::Camera(Renderer* renderer)
 	lastZNear = -1.0f;
 	frustumChanged = true;
 	viewPortEnabled = false;
-	viewPortLeft = -1;
-	viewPortTop = -1;
+	viewPortLeft = 0;
+	viewPortTop = 0;
 	viewPortWidth = -1;
 	viewPortHeight = -1;
 }
