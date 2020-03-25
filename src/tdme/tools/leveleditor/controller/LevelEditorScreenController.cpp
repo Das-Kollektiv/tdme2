@@ -170,6 +170,7 @@ void LevelEditorScreenController::initialize()
 			ligthsSpotDirectionCompute[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_light" + to_string(i) + "_spotdirection_compute"));
 			lightsEnabled[i] = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("light" + to_string(i) + "_enabled"));
 		}
+		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
  	} catch (Exception& exception) {
 		Console::print(string("LevelEditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -1100,4 +1101,12 @@ void LevelEditorScreenController::showErrorPopUp(const string& caption, const st
 {
 	Console::println(string(caption + ":" + message));
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
+}
+
+void LevelEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
+	auto& constraints = viewPort->getComputedConstraints();
+	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
+	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
+	width = constraints.width;
+	height = constraints.height;
 }

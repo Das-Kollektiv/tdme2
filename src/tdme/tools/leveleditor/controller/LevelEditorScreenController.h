@@ -119,6 +119,7 @@ private:
 	array<GUIElementNode*, 4> lightsSpotCutoff;
 	array<GUIElementNode*, 4> ligthsSpotDirectionCompute;
 	array<GUIElementNode*, 4> lightsEnabled;
+	GUIElementNode* viewPort { nullptr };
 	FileDialogPath* mapPath { nullptr };
 
 public:
@@ -471,6 +472,15 @@ public:
 	 * Shows the error pop up
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * Get viewport rectangle
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 */
+	void getViewPort(int& left, int& top, int& width, int& height);
 
 	/**
 	 * Public constructor

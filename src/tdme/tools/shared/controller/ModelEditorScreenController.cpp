@@ -249,6 +249,7 @@ void ModelEditorScreenController::initialize()
 		buttonToolsComputeNormals = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_computenormals"));
 		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
 		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
+		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
 		statsOpaqueFaces->getController()->setDisabled(true);
 		statsTransparentFaces->getController()->setDisabled(true);
 		statsMaterialCount->getController()->setDisabled(true);
@@ -1734,4 +1735,12 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 		}
 	}
 
+}
+
+void ModelEditorScreenController::getViewPort(int& left, int& top, int& width, int& height) {
+	auto& constraints = viewPort->getComputedConstraints();
+	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
+	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
+	width = constraints.width;
+	height = constraints.height;
 }

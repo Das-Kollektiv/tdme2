@@ -4,6 +4,7 @@
 
 #include <tdme/gui/GUIParser.h>
 #include <tdme/gui/events/Action.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
@@ -22,6 +23,7 @@ using std::string;
 using tdme::tools::leveleditor::controller::EmptyScreenController;
 using tdme::gui::GUIParser;
 using tdme::gui::events::Action;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -75,6 +77,7 @@ void EmptyScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
+		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
 	} catch (Exception& exception) {
 		Console::print(string("EmptyScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -129,4 +132,12 @@ void EmptyScreenController::onValueChanged(GUIElementNode* node)
 void EmptyScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
+}
+
+void EmptyScreenController::getViewPort(int& left, int& top, int& width, int& height) {
+	auto& constraints = viewPort->getComputedConstraints();
+	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
+	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
+	width = constraints.width;
+	height = constraints.height;
 }

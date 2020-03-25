@@ -130,6 +130,7 @@ private:
 	GUIElementNode* statsOpaqueFaces { nullptr };
 	GUIElementNode* statsTransparentFaces { nullptr };
 	GUIElementNode* statsMaterialCount { nullptr };
+	GUIElementNode* viewPort { nullptr };
 
 	FileDialogPath* modelPath { nullptr };
 	FileDialogPath* audioPath { nullptr };
@@ -454,6 +455,15 @@ public:
 	 * @param node node
 	 */
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+
+	/**
+	 * Get viewport rectangle
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 */
+	void getViewPort(int& left, int& top, int& width, int& height);
 
 	/**
 	 * Public constructor

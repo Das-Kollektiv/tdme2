@@ -1159,8 +1159,8 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	Vector4 worldCoordinate4;
 	camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
-			(2.0f * mouseX / width) - 1.0f,
-			1.0f - (2.0f * mouseY / height),
+			(2.0f * (mouseX - camera->getViewPortLeft()) / camera->getViewPortWidth()) - 1.0f,
+			1.0f - (2.0f * (mouseY - camera->getViewPortTop()) / camera->getViewPortHeight()),
 			2.0f * z - 1.0f,
 			1.0f
 		),
@@ -1730,8 +1730,11 @@ void Engine::dispose()
 void Engine::initGUIMode()
 {
 	// use framebuffer if we have one
-	if (frameBuffer != nullptr)
+	if (frameBuffer != nullptr) {
 		frameBuffer->enableFrameBuffer();
+	} else {
+		frameBuffer->disableFrameBuffer();
+	}
 
 	renderer->initGuiMode();
 }

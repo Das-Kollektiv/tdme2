@@ -101,6 +101,7 @@ void TriggerScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenCaption = dynamic_cast< GUITextNode* >(screenNode->getNodeById("screen_caption"));
+		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
 	} catch (Exception& exception) {
 		Console::print(string("TriggerScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -158,4 +159,12 @@ void TriggerScreenController::onActionPerformed(GUIActionListener_Type* type, GU
 {
 	entityBaseSubScreenController->onActionPerformed(type, node, view->getEntity());
 	entityPhysicsSubScreenController->onActionPerformed(type, node, view->getEntity());
+}
+
+void TriggerScreenController::getViewPort(int& left, int& top, int& width, int& height) {
+	auto& constraints = viewPort->getComputedConstraints();
+	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
+	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
+	width = constraints.width;
+	height = constraints.height;
 }

@@ -85,7 +85,6 @@ void TriggerView::setEntity(LevelEditorEntity* entity)
 	Tools::setupEntity(entity, engine, cameraRotationInputHandler->getLookFromRotations(), cameraRotationInputHandler->getScale(), 1, objectScale);
 	Tools::oseThumbnail(entity);
 	cameraRotationInputHandler->setMaxAxisDimension(Tools::computeMaxAxisDimension(engine->getEntity(LevelEditorEntity::MODEL_BOUNDINGVOLUMES_ID)->getBoundingBox()));
-	cameraRotationInputHandler->reset();
 	updateGUIElements();
 }
 
@@ -97,6 +96,21 @@ void TriggerView::handleInputEvents()
 
 void TriggerView::display()
 {
+	// viewport
+	auto xScale = (float)engine->getWidth() / (float)triggerScreenController->getScreenNode()->getScreenWidth();
+	auto yScale = (float)engine->getHeight() / (float)triggerScreenController->getScreenNode()->getScreenHeight();
+	auto viewPortLeft = 0;
+	auto viewPortTop = 0;
+	auto viewPortWidth = 0;
+	auto viewPortHeight = 0;
+	triggerScreenController->getViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+	viewPortLeft = (int)((float)viewPortLeft * xScale);
+	viewPortTop = (int)((float)viewPortTop * yScale);
+	viewPortWidth = (int)((float)viewPortWidth * xScale);
+	viewPortHeight = (int)((float)viewPortHeight * yScale);
+	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+
+	// rendering
 	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();

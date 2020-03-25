@@ -351,7 +351,7 @@ void GL2Renderer::setProgramAttributeLocation(int32_t programId, int32_t locatio
 void GL2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t height)
 {
 	this->viewPortX = x;
-	this->viewPortY = x;
+	this->viewPortY = y;
 	this->viewPortWidth = width;
 	this->viewPortHeight = height;
 	this->pointSize = width > height ? width / 120.0f : height / 120.0f * 16 / 9;

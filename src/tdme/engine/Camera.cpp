@@ -34,6 +34,11 @@ Camera::Camera(Renderer* renderer)
 	lastZFar = -1.0f;
 	lastZNear = -1.0f;
 	frustumChanged = true;
+	viewPortEnabled = false;
+	viewPortLeft = -1;
+	viewPortTop = -1;
+	viewPortWidth = -1;
+	viewPortHeight = -1;
 }
 
 Camera::~Camera() {
@@ -129,31 +134,39 @@ Matrix4x4& Camera::computeModelViewMatrix()
 
 void Camera::update(void* context, int32_t width, int32_t height)
 {
-	// setup new view port if required
 	auto reshaped = false;
-	if (this->width != width || this->height != height) {
+	auto _width = width;
+	auto _height = height;
+	if (viewPortEnabled == true) {
+		_width = viewPortWidth;
+		_height = viewPortHeight;
+	} else {
+		viewPortWidth = width;
+		viewPortHeight = height;
+	}
+	if (this->width != _width || this->height != _height) {
 		reshaped = true;
-		if (height <= 0)
-			height = 1;
+		if (_height <= 0)
+			_height = 1;
 
-		aspect = static_cast< float >(width) / static_cast< float >(height);
-		this->width = width;
-		this->height = height;
+		aspect = static_cast< float >(_width) / static_cast< float >(_height);
+		this->width = _width;
+		this->height = _height;
 		renderer->getViewportMatrix().set(
-			width / 2.0f,
+			_width / 2.0f,
 			0.0f,
 			0.0f,
 			0.0f,
 			0.0f,
-			height / 2.0f,
+			_height / 2.0f,
 			0.0f,
 			0.0f,
 			0.0f,
 			0.0f,
 			1.0f,
 			0.0f,
-			0 + (width / 2.0f),
-			0 + (height / 2.0f),
+			0 + (_width / 2.0f),
+			0 + (_height / 2.0f),
 			0.0f,
 			1.0f
 		);
@@ -190,5 +203,8 @@ void Camera::update(void* context, int32_t width, int32_t height)
 	lastForwardVector.set(forwardVector);
 	lastSideVector.set(sideVector);
 	lastLookFrom.set(lookFrom);
-}
 
+	// viewport
+	renderer->setViewPort(viewPortLeft, height - viewPortTop - viewPortHeight, viewPortWidth, viewPortHeight);
+	renderer->updateViewPort();
+}

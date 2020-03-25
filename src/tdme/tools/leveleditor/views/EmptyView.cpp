@@ -106,11 +106,28 @@ void EmptyView::handleInputEvents()
 
 void EmptyView::display()
 {
+	// commands
 	if (initModelRequested == true) {
 		initModel();
 		cameraRotationInputHandler->reset();
 		initModelRequested = false;
 	}
+
+	// viewport
+	auto xScale = (float)engine->getWidth() / (float)emptyScreenController->getScreenNode()->getScreenWidth();
+	auto yScale = (float)engine->getHeight() / (float)emptyScreenController->getScreenNode()->getScreenHeight();
+	auto viewPortLeft = 0;
+	auto viewPortTop = 0;
+	auto viewPortWidth = 0;
+	auto viewPortHeight = 0;
+	emptyScreenController->getViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+	viewPortLeft = (int)((float)viewPortLeft * xScale);
+	viewPortTop = (int)((float)viewPortTop * yScale);
+	viewPortWidth = (int)((float)viewPortWidth * xScale);
+	viewPortHeight = (int)((float)viewPortHeight * yScale);
+	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+
+	// rendering
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
 }

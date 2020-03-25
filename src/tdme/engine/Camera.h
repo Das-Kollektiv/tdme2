@@ -49,6 +49,11 @@ private:
 	Vector3 lastSideVector;
 	Vector3 lastLookFrom;
 	bool frustumChanged;
+	bool viewPortEnabled;
+	int viewPortLeft;
+	int viewPortTop;
+	int viewPortWidth;
+	int viewPortHeight;
 
 public:
 
@@ -229,6 +234,60 @@ public:
 	 * @return up vector
 	 */
 	static Vector3 computeUpVector(const Vector3& lookFrom, const Vector3& lookAt);
+
+	/**
+	 * Enable custom view port
+	 * @param viewPortLeft view port left
+	 * @param viewPortTop view port right
+	 * @param viewPortWidth view port width
+	 * @param viewPortHeight view port height
+	 */
+	inline void enableViewPort(int viewPortLeft, int viewPortTop, int viewPortWidth, int viewPortHeight) {
+		this->viewPortEnabled = true;
+		this->viewPortLeft = viewPortLeft;
+		this->viewPortTop = viewPortTop;
+		this->viewPortWidth = viewPortWidth;
+		this->viewPortHeight = viewPortHeight;
+	}
+
+	/**
+	 * Disable custom view port
+	 */
+	inline void disableViewPort() {
+		this->viewPortEnabled = false;
+		this->viewPortLeft = 0;
+		this->viewPortTop = 0;
+		this->viewPortWidth = width;
+		this->viewPortHeight = height;
+	}
+
+	/**
+	 * @return viewport left
+	 */
+	inline int getViewPortLeft() {
+		return viewPortLeft;
+	}
+
+	/**
+	 * @return viewport top
+	 */
+	inline int getViewPortTop() {
+		return viewPortTop;
+	}
+
+	/**
+	 * @return viewport width
+	 */
+	inline int getViewPortWidth() {
+		return viewPortWidth;
+	}
+
+	/**
+	 * @return viewport height
+	 */
+	inline int getViewPortHeight() {
+		return viewPortHeight;
+	}
 
 private:
 

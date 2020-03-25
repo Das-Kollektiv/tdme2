@@ -48,6 +48,7 @@ private:
 	FileDialogPath* modelPath { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUITextNode* screenCaption { nullptr };
+	GUIElementNode* viewPort { nullptr };
 
 public:
 	/**
@@ -101,6 +102,15 @@ public:
 	void showErrorPopUp(const string& caption, const string& message);
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) override;
+
+	/**
+	 * Get viewport rectangle
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 */
+	void getViewPort(int& left, int& top, int& width, int& height);
 
 	/**
 	 * Public constructor

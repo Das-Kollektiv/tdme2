@@ -285,6 +285,7 @@ void ParticleSystemScreenController::initialize()
 		particleSystemsListbox = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("particlesystems_listbox"));
 		particleSystemAddButton = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_particlesystem_add"));
 		particleSystemRemoveButton = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_particlesystem_remove"));
+		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
 	} catch (Exception& exception) {
 		Console::print(string("ParticleSystemScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -1259,4 +1260,12 @@ void ParticleSystemScreenController::onActionPerformed(GUIActionListener_Type* t
 			}
 		}
 	}
+}
+
+void ParticleSystemScreenController::getViewPort(int& left, int& top, int& width, int& height) {
+	auto& constraints = viewPort->getComputedConstraints();
+	left = constraints.left + constraints.alignmentLeft + constraints.contentAlignmentLeft;
+	top = constraints.top + constraints.alignmentTop + constraints.contentAlignmentTop;
+	width = constraints.width;
+	height = constraints.height;
 }

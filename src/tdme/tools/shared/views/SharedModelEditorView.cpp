@@ -230,11 +230,13 @@ void SharedModelEditorView::handleInputEvents()
 
 void SharedModelEditorView::display()
 {
+	// audio
 	if (audioOffset > 0 && Time::getCurrentMillis() - audioStarted >= audioOffset) {
 		auto sound = audio->getEntity("sound");
 		if (sound != nullptr) sound->play();
 		audioOffset = -1LL;
 	}
+	// commands
 	if (loadModelRequested == true) {
 		initModelRequested = true;
 		initModelRequestedReset = false;
@@ -248,6 +250,22 @@ void SharedModelEditorView::display()
 		initModelRequestedReset = false;
 		cameraRotationInputHandler->reset();
 	}
+
+	// viewport
+	auto xScale = (float)engine->getWidth() / (float)modelEditorScreenController->getScreenNode()->getScreenWidth();
+	auto yScale = (float)engine->getHeight() / (float)modelEditorScreenController->getScreenNode()->getScreenHeight();
+	auto viewPortLeft = 0;
+	auto viewPortTop = 0;
+	auto viewPortWidth = 0;
+	auto viewPortHeight = 0;
+	modelEditorScreenController->getViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+	viewPortLeft = (int)((float)viewPortLeft * xScale);
+	viewPortTop = (int)((float)viewPortTop * yScale);
+	viewPortWidth = (int)((float)viewPortWidth * xScale);
+	viewPortHeight = (int)((float)viewPortHeight * yScale);
+	engine->getCamera()->enableViewPort(viewPortLeft, viewPortTop, viewPortWidth, viewPortHeight);
+
+	// rendering
 	entityDisplayView->display(entity);
 	entityPhysicsView->display(entity);
 	engine->getGUI()->handleEvents();
