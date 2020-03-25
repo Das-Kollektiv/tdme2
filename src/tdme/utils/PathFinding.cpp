@@ -446,20 +446,26 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 						// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 						int nodesCount = 0;
 						for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
+							nodesCount++;
+							if (nodesCount > 0 && nodesCount % 100 == 0) {
+								Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()));
+							}
+							Vector3 pathPosition(
+								node->x,
+								node->y,
+								node->z
+							);
+							if (Float::isNaN(pathPosition.getX()) ||
+								Float::isNaN(pathPosition.getY()) ||
+								Float::isNaN(pathPosition.getZ())) {
+								Console::println("PathFinding::findPath(): compute path: step: NAN");
+								done = true;
+								break;
+							}
 							path.
 								push_back(
-									Vector3(
-										node->x,
-										node->y,
-										node->z
-									)
+									pathPosition
 								);
-							/*
-							if (nodesCount > 0 && nodesCount % 100 == 0) {
-								Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount));
-							}
-							*/
-							nodesCount++;
 						}
 						reverse(path.begin(), path.end());
 						if (path.size() > 1) path.erase(path.begin());
