@@ -61,7 +61,8 @@ class tdme::gui::nodes::GUIScreenNode final
 	friend class GUIParentNode;
 
 private:
-	GUI* gui {  };
+	string applicationRootPath;
+	GUI* gui { nullptr };
 	int32_t nodeCounter;
 	int32_t screenWidth;
 	int32_t screenHeight;
@@ -86,6 +87,13 @@ private:
 	bool reshapeRequested;
 
 public:
+
+	/**
+	 * @return application root path
+	 */
+	inline const string& getApplicationRootPath() {
+		return applicationRootPath;
+	}
 
 	/** 
 	 * @return GUI
@@ -175,6 +183,7 @@ protected:
 
 	/**
 	 * Constructor
+	 * @param applicationRootPath application root path
 	 * @param id id
 	 * @param flow flow
 	 * @param overflowX overflow x
@@ -196,6 +205,7 @@ protected:
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIScreenNode(
+		const string& applicationRootPath,
 		const string& id,
 		GUINode_Flow* flow,
 		GUIParentNode_Overflow* overflowX,

@@ -1,13 +1,16 @@
 #include <tdme/gui/elements/GUISelectBoxMultipleOption.h>
 
+#include <string>
+#include <unordered_map>
+
 #include <tdme/gui/elements/GUISelectBoxMultipleOptionController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUISelectBoxMultipleOption;
 using tdme::gui::elements::GUISelectBoxMultipleOptionController;
@@ -20,7 +23,6 @@ string GUISelectBoxMultipleOption::NAME = "selectbox-multiple-option";
 
 GUISelectBoxMultipleOption::GUISelectBoxMultipleOption()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox-multiple-option.xml");
 }
 
 const string& GUISelectBoxMultipleOption::getName()
@@ -28,14 +30,14 @@ const string& GUISelectBoxMultipleOption::getName()
 	return NAME;
 }
 
-const string& GUISelectBoxMultipleOption::getTemplate()
+const string GUISelectBoxMultipleOption::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"selectbox-multiple-option.xml":fileName);
 }
 
-map<string, string>& GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUISelectBoxMultipleOption::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	return attributes;
 }

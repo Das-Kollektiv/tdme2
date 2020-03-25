@@ -1,10 +1,16 @@
 #include <tdme/gui/elements/GUIDropDownOption.h>
 
+#include <string>
+#include <unordered_map>
+
 #include <tdme/gui/elements/GUIDropDownOptionController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+
+using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUIDropDownOption;
 using tdme::gui::elements::GUIDropDownOptionController;
@@ -17,7 +23,6 @@ string GUIDropDownOption::NAME = "dropdown-option";
 
 GUIDropDownOption::GUIDropDownOption()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "dropdown-option.xml");
 }
 
 const string& GUIDropDownOption::getName()
@@ -25,14 +30,14 @@ const string& GUIDropDownOption::getName()
 	return NAME;
 }
 
-const string& GUIDropDownOption::getTemplate()
+const string GUIDropDownOption::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"dropdown-option.xml":fileName);
 }
 
-map<string, string>& GUIDropDownOption::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUIDropDownOption::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	return attributes;
 }

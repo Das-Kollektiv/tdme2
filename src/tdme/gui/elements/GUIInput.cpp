@@ -1,11 +1,18 @@
 #include <tdme/gui/elements/GUIInput.h>
 
+#include <string>
+#include <unordered_map>
+
 #include <tdme/gui/elements/GUIInputController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using tdme::gui::elements::GUIInput;
+
+using std::string;
+using std::unordered_map;
+
 using tdme::gui::elements::GUIInputController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
@@ -15,7 +22,6 @@ string GUIInput::NAME = "input";
 
 GUIInput::GUIInput()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "input.xml");
 }
 
 const string& GUIInput::getName()
@@ -23,14 +29,14 @@ const string& GUIInput::getName()
 	return NAME;
 }
 
-const string& GUIInput::getTemplate()
+const string GUIInput::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"input.xml":fileName);
 }
 
-map<string, string>& GUIInput::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUIInput::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "auto";
 	attributes["height"] = "auto";

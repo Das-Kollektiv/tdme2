@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUITabsHeader.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUITabsHeaderController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUITabsHeader;
 using tdme::gui::elements::GUITabsHeaderController;
@@ -23,7 +23,6 @@ string GUITabsHeader::NAME = "tabs-header";
 
 GUITabsHeader::GUITabsHeader()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs-header.xml");
 }
 
 const string& GUITabsHeader::getName()
@@ -31,14 +30,14 @@ const string& GUITabsHeader::getName()
 	return NAME;
 }
 
-const string& GUITabsHeader::getTemplate()
+const string GUITabsHeader::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"tabs-header.xml":fileName);
 }
 
-map<string, string>& GUITabsHeader::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUITabsHeader::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	return attributes;
 }

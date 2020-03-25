@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUITabs.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUITabsController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsController;
@@ -23,7 +23,6 @@ string GUITabs::NAME = "tabs";
 
 GUITabs::GUITabs()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tabs.xml");
 }
 
 const string& GUITabs::getName()
@@ -31,14 +30,14 @@ const string& GUITabs::getName()
 	return NAME;
 }
 
-const string& GUITabs::getTemplate()
+const string GUITabs::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"tabs.xml":fileName);
 }
 
-map<string, string>& GUITabs::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUITabs::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "100%";
 	attributes["height"] = "*";

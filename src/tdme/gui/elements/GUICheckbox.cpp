@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUICheckbox.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUICheckboxController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUICheckbox;
 using tdme::gui::elements::GUICheckboxController;
@@ -23,7 +23,6 @@ string GUICheckbox::NAME = "checkbox";
 
 GUICheckbox::GUICheckbox()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "checkbox.xml");
 }
 
 const string& GUICheckbox::getName()
@@ -31,14 +30,14 @@ const string& GUICheckbox::getName()
 	return NAME;
 }
 
-const string& GUICheckbox::getTemplate()
+const string GUICheckbox::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"checkbox.xml":fileName);
 }
 
-map<string, string>& GUICheckbox::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUICheckbox::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	return attributes;
 }

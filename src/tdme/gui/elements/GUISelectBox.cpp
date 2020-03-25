@@ -1,10 +1,16 @@
 #include <tdme/gui/elements/GUISelectBox.h>
 
+#include <string>
+#include <unordered_map>
+
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+
+using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUISelectBox;
 using tdme::gui::elements::GUISelectBoxController;
@@ -17,7 +23,6 @@ string GUISelectBox::NAME = "selectbox";
 
 GUISelectBox::GUISelectBox()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "selectbox.xml");
 }
 
 const string& GUISelectBox::getName()
@@ -25,14 +30,14 @@ const string& GUISelectBox::getName()
 	return NAME;
 }
 
-const string& GUISelectBox::getTemplate()
+const string GUISelectBox::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"selectbox.xml":fileName);
 }
 
-map<string, string>& GUISelectBox::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUISelectBox::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "100%";
 	attributes["height"] = "auto";

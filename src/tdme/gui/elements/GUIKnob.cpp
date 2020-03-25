@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUIKnob.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUIKnobController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUIKnob;
 using tdme::gui::elements::GUIKnobController;
@@ -23,7 +23,6 @@ string GUIKnob::NAME = "knob";
 
 GUIKnob::GUIKnob()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "knob.xml");
 }
 
 const string& GUIKnob::getName()
@@ -31,14 +30,14 @@ const string& GUIKnob::getName()
 	return NAME;
 }
 
-const string& GUIKnob::getTemplate()
+const string GUIKnob::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"knob.xml":fileName);
 }
 
-map<string, string>& GUIKnob::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUIKnob::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";

@@ -1,10 +1,16 @@
 #include <tdme/gui/elements/GUIScrollAreaHorizontal.h>
 
+#include <string>
+#include <unordered_map>
+
 #include <tdme/gui/elements/GUIScrollAreaHorizontalController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+
+using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUIScrollAreaHorizontal;
 using tdme::gui::elements::GUIScrollAreaHorizontalController;
@@ -17,7 +23,6 @@ string GUIScrollAreaHorizontal::NAME = "scrollarea-horizontal";
 
 GUIScrollAreaHorizontal::GUIScrollAreaHorizontal()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "scrollarea-horizontal.xml");
 }
 
 const string& GUIScrollAreaHorizontal::getName()
@@ -25,14 +30,14 @@ const string& GUIScrollAreaHorizontal::getName()
 	return NAME;
 }
 
-const string& GUIScrollAreaHorizontal::getTemplate()
+const string GUIScrollAreaHorizontal::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"scrollarea-horizontal.xml":fileName);
 }
 
-map<string, string>& GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUIScrollAreaHorizontal::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "100%";
 	attributes["height"] = "100%";

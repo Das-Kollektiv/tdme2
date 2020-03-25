@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUIButton.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUIButtonController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUIButton;
 using tdme::gui::elements::GUIButtonController;
@@ -23,7 +23,6 @@ string GUIButton::NAME = "button";
 
 GUIButton::GUIButton()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "button.xml");
 }
 
 const string& GUIButton::getName()
@@ -31,14 +30,14 @@ const string& GUIButton::getName()
 	return NAME;
 }
 
-const string& GUIButton::getTemplate()
+const string GUIButton::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"button.xml":fileName);
 }
 
-map<string, string>& GUIButton::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUIButton::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["width"] = "auto";
 	attributes["height"] = "auto";

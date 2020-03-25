@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUITabContent.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUITabContentController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabContentController;
@@ -23,7 +23,6 @@ string GUITabContent::NAME = "tab-content";
 
 GUITabContent::GUITabContent()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "tab-content.xml");
 }
 
 const string& GUITabContent::getName()
@@ -31,14 +30,14 @@ const string& GUITabContent::getName()
 	return NAME;
 }
 
-const string& GUITabContent::getTemplate()
+const string GUITabContent::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"tab-content.xml":fileName);
 }
 
-map<string, string>& GUITabContent::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUITabContent::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["horizontal-align"] = "center";
 	attributes["vertical-align"] = "center";

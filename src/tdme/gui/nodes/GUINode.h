@@ -118,7 +118,7 @@ protected:
 	GUINode_RequestedConstraints requestedConstraints;
 	GUINode_ComputedConstraints computedConstraints;
 	GUIColor backgroundColor;
-	Texture* backgroundTexture;
+	Texture* backgroundTexture { nullptr };
 	int32_t backgroundTextureId;
 	GUINode_Scale9Grid backgroundImageScale9Grid;
 	GUIColor backgroundImageEffectColorMul;
@@ -487,6 +487,12 @@ public:
 	 * @param toNode stop at node to node
 	 */
 	virtual void scrollToNodeX(GUIParentNode* toNode);
+
+	/**
+	 * Set background image
+	 * @param backgroundImage background image
+	 */
+	virtual void setBackgroundImage(const string& backgroundImage);
 
 	/**
 	 * Dump node

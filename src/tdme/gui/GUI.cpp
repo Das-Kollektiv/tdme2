@@ -133,14 +133,14 @@ vector<GUIKeyboardEvent>& GUI::getKeyboardEvents()
 	return keyboardEvents;
 }
 
-GUIFont* GUI::getFont(const string& fileName)
+GUIFont* GUI::getFont(const string& applicationRootPath, const string& fileName)
 {
 	string canonicalFile;
 	string path;
 	string file;
 	GUIFont* font;
 	try {
-		canonicalFile = FileSystem::getInstance()->getCanonicalPath(".", fileName);
+		canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
 		path = FileSystem::getInstance()->getPathName(canonicalFile);
 		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {
@@ -166,14 +166,14 @@ GUIFont* GUI::getFont(const string& fileName)
 	return font;
 }
 
-Texture* GUI::getImage(const string& fileName)
+Texture* GUI::getImage(const string& applicationRootPath, const string& fileName)
 {
 	// TODO: fix me, proper get path, filename
 	string canonicalFile;
 	string path;
 	string file;
 	try {
-		canonicalFile = FileSystem::getInstance()->getCanonicalPath(".", fileName);
+		canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
 		path = FileSystem::getInstance()->getPathName(canonicalFile);
 		file = FileSystem::getInstance()->getFileName(canonicalFile);
 	} catch (Exception& exception) {

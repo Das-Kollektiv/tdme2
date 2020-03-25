@@ -97,10 +97,7 @@ GUINode::GUINode(
 	this->backgroundColor = backgroundColor;
 	this->backgroundTexture = nullptr;
 	this->backgroundTextureId = 0;
-	if (backgroundImage.length() > 0) {
-		this->backgroundTexture = GUI::getImage(backgroundImage);
-		this->backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, nullptr);
-	}
+	this->setBackgroundImage(backgroundImage);
 	this->backgroundImageScale9Grid = backgroundImageScale9Grid;
 	this->backgroundImageEffectColorMul = backgroundImageEffectColorMul;
 	this->backgroundImageEffectColorAdd = backgroundImageEffectColorAdd;
@@ -1200,4 +1197,16 @@ bool GUINode::cfEmpty(const vector<string>& arguments) {
 			argument == "''") return true;
 	}
 	return false;
+}
+
+void GUINode::setBackgroundImage(const string& backgroundImage) {
+	if (backgroundTexture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(backgroundTexture->getId());
+		backgroundTexture = nullptr;
+		backgroundTextureId = 0;
+	}
+	if (backgroundImage.length() > 0) {
+		backgroundTexture = GUI::getImage(screenNode->getApplicationRootPath(), backgroundImage);
+		backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, nullptr);
+	}
 }

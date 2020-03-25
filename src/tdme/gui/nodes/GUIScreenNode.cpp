@@ -56,6 +56,7 @@ using tdme::utils::Integer;
 using tdme::utils::MutableString;
 
 GUIScreenNode::GUIScreenNode(
+	const string& applicationRootPath,
 	const string& id,
 	GUINode_Flow* flow,
 	GUIParentNode_Overflow* overflowX,
@@ -75,8 +76,9 @@ GUIScreenNode::GUIScreenNode(
 	bool scrollable,
 	bool popUp
 ):
-	GUIParentNode(nullptr, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
+	this->applicationRootPath = applicationRootPath;
 	this->sizeConstraints = sizeConstraints;
 	this->gui = nullptr;
 	this->nodeCounter = 0;

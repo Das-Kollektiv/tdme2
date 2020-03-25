@@ -143,19 +143,21 @@ public:
 
 	/** 
 	 * Get font
+	 * @param applicationRootPath application root path
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return font
 	 */
-	static GUIFont* getFont(const string& fileName);
+	static GUIFont* getFont(const string& applicationRootPath, const string& fileName);
 
-	/** 
+	/**
 	 * Get image
+	 * @param applicationRootPath application root path
 	 * @param fileName file name
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return texture
 	 */
-	static Texture* getImage(const string& fileName);
+	static Texture* getImage(const string& applicationRootPath, const string& fileName);
 
 	/** 
 	 * Get screen

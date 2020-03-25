@@ -1,7 +1,7 @@
 #include <tdme/gui/GUIParser.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/GUIParserException.h>
 #include <tdme/gui/elements/GUIButton.h>
@@ -48,6 +48,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
@@ -56,8 +57,8 @@
 
 #include <ext/tinyxml/tinyxml.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
@@ -103,6 +104,7 @@ using tdme::gui::nodes::GUIVerticalScrollbarInternalNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::shared::tools::Tools;
 using tdme::utils::Float;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
@@ -119,10 +121,10 @@ map<string, GUIElement*> GUIParser::elements;
 
 GUIScreenNode* GUIParser::parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters)
 {
-	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters);
+	return parse(FileSystem::getInstance()->getContentAsString(pathName, fileName), parameters, pathName);
 }
 
-GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters)
+GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, string>& parameters, const string& pathName)
 {
 	// replace attributes from element
 	auto newXML = xml;
@@ -145,6 +147,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	}
 
 	guiScreenNode = new GUIScreenNode(
+		FileSystem::getInstance()->getCanonicalPath(Tools::getGameRootPath(pathName), ""),
 		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("id"))),
 		GUINode::createFlow(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("flow")))),
 		GUIParentNode::createOverflow(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("overflow-x")))),
@@ -160,7 +163,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("height")))
 		),
 		GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-color"))), GUIColor::GUICOLOR_TRANSPARENT),
-		string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image"))),
+		"",
 		GUINode::createScale9Grid(
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9"))),
 			string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image-scale9-left"))),
@@ -200,6 +203,9 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
 		StringUtils::equalsIgnoreCase(StringUtils::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true")
 	);
+	// workaround for having GUINode constructor to be called before GUIScreenNode constructor
+	// so GUIScreenNode::applicationRootPath is not available at GUIScreenNode::GUINode construction time
+	guiScreenNode->setBackgroundImage(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image"))));
 	parseGUINode(guiScreenNode, xmlRoot, nullptr);
 	return guiScreenNode;
 }
@@ -871,11 +877,12 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 			} else
 			if (nodeTagName == "template") {
 				auto src = string(AVOID_NULLPTR_STRING(node->Attribute("src")));
-				map<string, string> attributes;
+				unordered_map<string, string> attributes;
 				parseTemplate(
 					guiParentNode,
 					node,
 					FileSystem::getInstance()->getContentAsString(
+						guiParentNode->getScreenNode()->getApplicationRootPath() + "/" +
 						FileSystem::getInstance()->getPathName(src),
 						FileSystem::getInstance()->getFileName(src)
 					),
@@ -892,7 +899,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 						"'"
 					);
 				}
-				parseTemplate(guiParentNode, node, guiElementIt->second->getTemplate(), guiElementIt->second->getAttributes(guiParentNode->screenNode), guiElementIt->second);
+				parseTemplate(guiParentNode, node, guiElementIt->second->getTemplate(guiParentNode->getScreenNode()->getApplicationRootPath()), guiElementIt->second->getAttributes(guiParentNode->screenNode), guiElementIt->second);
 			}
 		}
 	}
@@ -901,7 +908,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 	}
 }
 
-void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& templateXML, map<string, string>& attributes, GUIElement* guiElement) {
+void GUIParser::parseTemplate(GUIParentNode* parentNode, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
 	auto newGuiElementTemplateXML = templateXML;
 
 	// replace attributes given

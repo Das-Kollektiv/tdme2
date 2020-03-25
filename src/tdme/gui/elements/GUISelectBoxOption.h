@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
@@ -10,8 +10,8 @@
 #include <tdme/gui/elements/GUIElement.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUIElement;
 using tdme::gui::nodes::GUINode;
@@ -30,18 +30,15 @@ class tdme::gui::elements::GUISelectBoxOption final
 
 private:
 	static string NAME;
-	map<string, string> attributes;
-	string templateXML;
 
 public:
 	const string& getName() override;
-	const string& getTemplate() override;
-	map<string, string>& getAttributes(GUIScreenNode* screenNode) override;
+	const string getTemplate(const string& pathName, const string& fileName = string()) override;
+	unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) override;
 	GUINodeController* createController(GUINode* node) override;
 
 	/**
 	 * Public constructor
-	 * @throws tdme::os::filesystem::FileSystemException
 	 */
 	GUISelectBoxOption();
 };

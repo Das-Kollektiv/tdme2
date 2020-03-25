@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUISliderH.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUISliderHController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUISliderH;
 using tdme::gui::elements::GUISliderHController;
@@ -23,7 +23,6 @@ string GUISliderH::NAME = "slider-horizontal";
 
 GUISliderH::GUISliderH()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "slider-h.xml");
 }
 
 const string& GUISliderH::getName()
@@ -31,14 +30,14 @@ const string& GUISliderH::getName()
 	return NAME;
 }
 
-const string& GUISliderH::getTemplate()
+const string GUISliderH::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"slider-h.xml":fileName);
 }
 
-map<string, string>& GUISliderH::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUISliderH::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";

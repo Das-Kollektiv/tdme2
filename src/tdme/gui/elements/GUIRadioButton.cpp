@@ -1,7 +1,7 @@
 #include <tdme/gui/elements/GUIRadioButton.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/gui/elements/GUIRadioButtonController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIRadioButtonController;
@@ -23,7 +23,6 @@ string GUIRadioButton::NAME = "radiobutton";
 
 GUIRadioButton::GUIRadioButton()
 {
-	templateXML = FileSystem::getInstance()->getContentAsString("resources/gui-system/definitions/elements", "radiobutton.xml");
 }
 
 const string& GUIRadioButton::getName()
@@ -31,14 +30,14 @@ const string& GUIRadioButton::getName()
 	return NAME;
 }
 
-const string& GUIRadioButton::getTemplate()
+const string GUIRadioButton::getTemplate(const string& pathName, const string& fileName)
 {
-	return templateXML;
+	return FileSystem::getInstance()->getContentAsString(pathName + "/resources/gui-system/definitions/elements", fileName.empty() == true?"radiobutton.xml":fileName);
 }
 
-map<string, string>& GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
+unordered_map<string, string> GUIRadioButton::getAttributes(GUIScreenNode* screenNode)
 {
-	attributes.clear();
+	unordered_map<string, string> attributes;
 	attributes["id"] = screenNode->allocateNodeId();
 	return attributes;
 }

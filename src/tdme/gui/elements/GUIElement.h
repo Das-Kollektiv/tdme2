@@ -1,13 +1,13 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utils/fwd-tdme.h>
 
-using std::map;
+using std::unordered_map;
 using std::string;
 
 using tdme::gui::nodes::GUINode;
@@ -30,16 +30,20 @@ public:
 	virtual const string& getName() = 0;
 
 	/** 
+	 * Retrieve template from given path name and optional file name
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return template
 	 */
-	virtual const string& getTemplate() = 0;
+	virtual const string getTemplate(const string& pathName, const string& fileName = string()) = 0;
 
 	/** 
 	 * Get default attributes
 	 * @param screenNode screen node
 	 * @return default attributes
 	 */
-	virtual map<string, string>& getAttributes(GUIScreenNode* screenNode) = 0;
+	virtual unordered_map<string, string> getAttributes(GUIScreenNode* screenNode) = 0;
 
 	/** 
 	 * Create controller which is attached to this node
