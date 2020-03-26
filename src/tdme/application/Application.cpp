@@ -441,24 +441,26 @@ bool Application::isFullScreen() const {
 
 void Application::setFullScreen(bool fullScreen) {
 	this->fullScreen = fullScreen;
-	#if defined(VULKAN) || defined(GLFW3)
-		auto windowMonitor = glfwGetWindowMonitor(glfwWindow);
-		if (windowMonitor == nullptr && fullScreen == true) {
-			auto monitor = glfwGetPrimaryMonitor();
-			auto mode = glfwGetVideoMode(monitor);
-			glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-		} else
-		if (windowMonitor != nullptr && fullScreen == false) {
-			glfwSetWindowMonitor(glfwWindow, NULL, windowXPosition, windowYPosition, windowWidth, windowHeight, 0);
-		}
-	#else
-		if (fullScreen == true) {
-			glutFullScreen();
-		} else {
-			glutPositionWindow(windowXPosition, windowYPosition);
-			glutReshapeWindow(windowWidth, windowHeight);
-		}
-	#endif
+	if (initialized == true) {
+		#if defined(VULKAN) || defined(GLFW3)
+			auto windowMonitor = glfwGetWindowMonitor(glfwWindow);
+			if (windowMonitor == nullptr && fullScreen == true) {
+				auto monitor = glfwGetPrimaryMonitor();
+				auto mode = glfwGetVideoMode(monitor);
+				glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+			} else
+			if (windowMonitor != nullptr && fullScreen == false) {
+				glfwSetWindowMonitor(glfwWindow, NULL, windowXPosition, windowYPosition, windowWidth, windowHeight, 0);
+			}
+		#else
+			if (fullScreen == true) {
+				glutFullScreen();
+			} else {
+				glutPositionWindow(windowXPosition, windowYPosition);
+				glutReshapeWindow(windowWidth, windowHeight);
+			}
+		#endif
+	}
 }
 
 void Application::installExceptionHandler() {
@@ -543,7 +545,6 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			return;
 		}
 		glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
-		setFullScreen(fullScreen);
 		#if !defined(VULKAN)
 			glfwMakeContextCurrent(glfwWindow);
 			#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
@@ -589,7 +590,6 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutInitWindowSize(windowWidth, windowHeight);
 		glutInitWindowPosition(windowXPosition, windowYPosition);
 		glutCreateWindow(title.c_str());
-		setFullScreen(fullScreen);
 		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
 			glewExperimental = true;
 			GLenum glewInitStatus = glewInit();
@@ -632,6 +632,7 @@ void Application::setIcon(const string& fileName) {
 void Application::displayInternal() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
+		Application::application->setFullScreen(Application::application->fullScreen);
 		#if defined(VULKAN) || defined(GLFW3)
 			Application::application->reshape(Application::application->windowWidth, Application::application->windowHeight);
 		#endif
