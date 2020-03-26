@@ -1270,7 +1270,7 @@ void Installer::main(int argc, char** argv)
 	}
 	mountInstallerFileSystem();
 	auto installer = new Installer();
-	installer->run(argc, argv, "Installer");
+	installer->run(argc, argv, "Installer", nullptr, Application::WINDOW_HINT_NOTRESIZEABLE);
 }
 
 void Installer::scanArchive(ArchiveFileSystem* archiveFileSystem, vector<string>& totalFiles, const string& pathName) {

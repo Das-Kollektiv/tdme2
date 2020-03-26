@@ -43,7 +43,10 @@ class tdme::application::Application
 
 public:
 
-	static constexpr int32_t FPS { 60 };
+	static constexpr int WINDOW_HINT_NONE { 0 };
+	static constexpr int WINDOW_HINT_NOTRESIZEABLE { 1 };
+
+	static constexpr int FPS { 60 };
 
 	/**
 	 * @return if FPS should be limited to 60 frames per seconds
@@ -201,8 +204,9 @@ public:
 	 * @param argv argument values
 	 * @param title title
 	 * @param inputEventHandler application input event handler
+	 * @param windowHints window hints
 	 */
-	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr);
+	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
 
 	/**
 	 * Set application icon, currently this is Win32 only

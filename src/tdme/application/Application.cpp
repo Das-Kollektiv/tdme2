@@ -515,7 +515,7 @@ void Application::swapBuffers() {
 	}
 #endif
 
-void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler) {
+void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
 	this->title = title;
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN) || defined(GLFW3)
@@ -531,6 +531,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			}
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		#else
+				if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) {
+					glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+				}
 				array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
 				glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
 				auto i = 0;
