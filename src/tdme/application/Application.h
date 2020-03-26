@@ -316,6 +316,14 @@ private:
 		 * @param y y
 		 */
 		static void glfwOnMouseWheel(GLFWwindow* window, double x, double y);
+
+		/**
+		 * GLFW on window resize
+		 * @param window window
+		 * @param width width
+		 * @param height height
+		 */
+		static void glfwOnWindowResize(GLFWwindow* window, int width, int height);
 	#else
 		/**
 		 * On key down

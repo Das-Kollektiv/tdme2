@@ -322,6 +322,9 @@ void PhysicsTest1::reshape(int32_t width, int32_t height)
 	engine->reshape(0, 0, width, height);
 }
 
+void PhysicsTest1::onChar(unsigned int key, int x, int y) {
+}
+
 void PhysicsTest1::onKeyDown (unsigned char key, int x, int y) {
 	auto keyChar = tolower(key);
 	if (keyChar == u'w') keyW = true;

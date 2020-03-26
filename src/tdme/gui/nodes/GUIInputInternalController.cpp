@@ -173,7 +173,11 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 		auto keyChar = event->getKeyChar();
 		if (disabled == false && keyChar >= 32 && keyChar < 127) {
 			event->setProcessed(true);
-			if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+			#if defined(VULKAN) || defined(GLFW3)
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY) {
+			#else
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
+			#endif
 				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
 					textInputNode->getText().insert(index, event->getKeyChar());
 					index++;

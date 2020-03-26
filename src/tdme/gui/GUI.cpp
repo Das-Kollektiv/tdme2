@@ -672,6 +672,23 @@ void GUI::handleEvents()
 	unlockEvents();
 }
 
+void GUI::onChar(unsigned int key, int x, int y) {
+	fakeMouseMovedEvent();
+	lockEvents();
+	GUIKeyboardEvent guiKeyboardEvent;
+	guiKeyboardEvent.setTime(Time::getCurrentMillis());
+	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY);
+	guiKeyboardEvent.setKeyCode(key);
+	guiKeyboardEvent.setKeyChar(key);
+	guiKeyboardEvent.setMetaDown(false);
+	guiKeyboardEvent.setControlDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
+	guiKeyboardEvent.setAltDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
+	guiKeyboardEvent.setShiftDown((InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setProcessed(false);
+	keyboardEvents.push_back(guiKeyboardEvent);
+	unlockEvents();
+}
+
 void GUI::onKeyDown (unsigned char key, int x, int y) {
 	fakeMouseMovedEvent();
 	lockEvents();

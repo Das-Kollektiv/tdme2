@@ -23,6 +23,7 @@ public:
 	static GUIKeyboardEvent_Type *KEYBOARDEVENT_NONE;
 	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY_PRESSED;
 	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY_RELEASED;
+	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY;
 	GUIKeyboardEvent_Type(const string& name, int ordinal);
 	static GUIKeyboardEvent_Type* valueOf(const string& a0);
 };

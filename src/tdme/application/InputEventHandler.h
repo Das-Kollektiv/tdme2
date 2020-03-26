@@ -24,6 +24,14 @@ public:
 	static int getKeyboardModifiers();
 
 	/**
+	 * On char (applies to GLFW3)
+	 * @param key key
+	 * @param x x
+	 * @param y y
+	 */
+	virtual void onChar(unsigned int key, int x, int y) = 0;
+
+	/**
 	 * On key down
 	 * @param key key
 	 * @param x x

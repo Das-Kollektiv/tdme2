@@ -302,6 +302,10 @@ void RayTracingTest::reshape(int32_t width, int32_t height)
 {
 	engine->reshape(0, 0, width, height);
 }
+
+void RayTracingTest::onChar(unsigned int key, int x, int y) {
+}
+
 void RayTracingTest::onKeyDown (unsigned char key, int x, int y) {
 	auto keyChar = tolower(key);
 	if (keyChar == 'w') keyUp = true;

@@ -1,14 +1,10 @@
 #include <tdme/engine/Engine.h>
 
 #if defined(VULKAN) || defined(GLFW3)
-	#define GLFW_INCLUDE_VULKAN
-	#include <GLFW/glfw3.h>
-	#if !defined(VULKAN)
-		#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
-			#define GLEW_NO_GLU
-			#include <GL/glew.h>
-		#endif
+	#if defined(VULKAN)
+		#define GLFW_INCLUDE_VULKAN
 	#endif
+	#include <GLFW/glfw3.h>
 #else
 	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
 		#define GLEW_NO_GLU

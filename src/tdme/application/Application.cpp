@@ -2,24 +2,22 @@
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
 #elif defined(GLFW3)
+	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
+		#define GLEW_NO_GLU
+		#include <GL/glew.h>
+		#if defined(_WIN32)
+			#include <GL/wglew.h>
+		#endif
+	#endif
 	#include <GLFW/glfw3.h>
 #else
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
-		#if !defined(GLES2)
-			#define GLEW_NO_GLU
-			#include <GL/glew.h>
-			// TODO: a.drewke: vsync
-			// #include <GL/glxew.h>
-		#endif
 		#include <GL/freeglut.h>
 	#elif defined(__APPLE__)
 		#include <GLUT/glut.h>
 	#elif defined(_WIN32)
-		#include <GL/glew.h>
-		#include <GL/wglew.h>
 		#include <GL/freeglut.h>
 	#elif defined(__HAIKU__)
-		#include <GL/glew.h>
 		#include <GL/glut.h>
 	#endif
 #endif
@@ -520,18 +518,18 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			}
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		#else
-			#if defined(__APPLE__)
-				glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-				glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+				array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
 				glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
-			#else
-				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-			#endif
+				auto i = 0;
+				for (auto& glVersion: glVersions) {
+					glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
+					glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
+					glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
+					glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
+					glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+					if (glfwWindow != nullptr) break;
+				}
 		#endif
-		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		if (glfwWindow == nullptr) {
 			Console::println("glfwCreateWindow(): Could not create window");
 			glfwTerminate();
@@ -539,12 +537,21 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		}
 		#if !defined(VULKAN)
 			glfwMakeContextCurrent(glfwWindow);
+			#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
+				glewExperimental = true;
+				GLenum glewInitStatus = glewInit();
+				if (glewInitStatus != GLEW_OK) {
+					Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
+					Application::exit(1);
+				}
+			#endif
 		#endif
 		glfwSetCharCallback(glfwWindow, Application::glfwOnChar);
 		glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
 		glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
 		glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
 		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
+		glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
 		while (glfwWindowShouldClose(glfwWindow) == false) {
 			displayInternal();
 			#if !defined(VULKAN)
@@ -652,13 +659,10 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 #if defined(VULKAN) || defined(GLFW3)
 
 	void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
-		/*
 		if (Application::inputEventHandler == nullptr) return;
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
-		Application::inputEventHandler->onKeyDown(key, (int)mouseX, (int)mouseY);
-		Application::inputEventHandler->onKeyUp(key, (int)mouseX, (int)mouseY);
-		*/
+		Application::inputEventHandler->onChar(key, (int)mouseX, (int)mouseY);
 	}
 
 	bool Application::glfwIsSpecialKey(int key) {
@@ -754,6 +758,11 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 		if (x != 0.0) Application::inputEventHandler->onMouseWheel(0, (int)x, (int)mouseX, (int)mouseY);
 		if (y != 0.0) Application::inputEventHandler->onMouseWheel(1, (int)y, (int)mouseX, (int)mouseY);
 	}
+
+	void Application::glfwOnWindowResize(GLFWwindow* window, int width, int height) {
+		Application::reshapeInternal(width, height);
+	}
+
 #else
 	void Application::glutOnKeyDown (unsigned char key, int x, int y) {
 		if (Application::inputEventHandler == nullptr) return;

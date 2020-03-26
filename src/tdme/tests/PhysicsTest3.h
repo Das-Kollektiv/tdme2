@@ -58,6 +58,7 @@ public:
 	void reshape(int32_t width, int32_t height) override;
 
 	// override methods
+	void onChar(unsigned int key, int x, int y) override;
 	void onKeyDown (unsigned char key, int x, int y) override;
 	void onKeyUp(unsigned char key, int x, int y) override;
 	void onSpecialKeyDown (int key, int x, int y) override;

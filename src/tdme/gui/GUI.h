@@ -290,6 +290,14 @@ private:
 
 public:
 	/**
+	 * On char
+	 * @param key key
+	 * @param x x
+	 * @param y y
+	 */
+
+	void onChar(unsigned int key, int x, int y) override;
+	/**
 	 * On key down
 	 * @param key key
 	 * @param x x

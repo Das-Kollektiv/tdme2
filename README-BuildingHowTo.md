@@ -11,7 +11,7 @@ pkg install git
 pkg install gmake
 pkg install glew
 pkg install openal-soft
-pkg install freeglut
+pkg install glfw
 exit
 ```
 
