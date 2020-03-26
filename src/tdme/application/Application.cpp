@@ -763,6 +763,7 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 		}
 		glfwMouseButtonLast = action == MOUSE_BUTTON_DOWN?button:-1;
 	}
+
 	void Application::glfwOnMouseWheel(GLFWwindow* window, double x, double y) {
 		if (Application::inputEventHandler == nullptr) return;
 		double mouseX, mouseY;
