@@ -252,7 +252,8 @@ private:
 
 	#if defined(VULKAN) || defined(GLFW3)
 		static GLFWwindow* glfwWindow;
-		static array<uint32_t, 10> glfwButtonDownFrames;
+		static array<uint32_t, 10> glfwMouseButtonDownFrames;
+		static int glfwMouseButtonLast;
 		static int glfwMods;
 		static bool capsLockEnabled;
 	#endif

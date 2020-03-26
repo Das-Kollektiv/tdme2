@@ -302,7 +302,8 @@ bool Application::limitFPS = false;
 
 #if defined(VULKAN) || defined(GLFW3)
 	GLFWwindow* Application::glfwWindow = nullptr;
-	array<uint32_t, 10> Application::glfwButtonDownFrames;
+	array<uint32_t, 10> Application::glfwMouseButtonDownFrames;
+	int Application::glfwMouseButtonLast = -1;
 	int Application::glfwMods = 0;
 	bool Application::capsLockEnabled = false;
 #endif
@@ -500,6 +501,9 @@ void Application::setMousePosition(int x, int y) {
 
 void Application::swapBuffers() {
 	#if defined(VULKAN) || defined(GLFW3)
+		#if !defined(VULKAN)
+			glfwSwapBuffers(glfwWindow);
+		#endif
 	#else
 		glutSwapBuffers();
 	#endif
@@ -673,6 +677,7 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 
 	bool Application::glfwIsSpecialKey(int key) {
 		return
+			key == GLFW_KEY_SPACE ||
 			key == GLFW_KEY_UP ||
 			key == GLFW_KEY_DOWN ||
 			key == GLFW_KEY_LEFT ||
@@ -738,7 +743,7 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 
 	void Application::glfwOnMouseMoved(GLFWwindow* window, double x, double y) {
 		if (Application::inputEventHandler == nullptr) return;
-		if (glfwButtonDownFrames[0] > 0) {
+		if (glfwMouseButtonLast != -1 && glfwMouseButtonDownFrames[glfwMouseButtonLast] > 0) {
 			Application::inputEventHandler->onMouseDragged((int)x, (int)y);
 		} else {
 			Application::inputEventHandler->onMouseMoved((int)x, (int)y);
@@ -752,10 +757,11 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 		Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, (int)mouseX, (int)mouseY);
 		if (action == GLFW_PRESS) {
-			glfwButtonDownFrames[button]++;
+			glfwMouseButtonDownFrames[button]++;
 		} else {
-			glfwButtonDownFrames[button] = 0;
+			glfwMouseButtonDownFrames[button] = 0;
 		}
+		glfwMouseButtonLast = action == MOUSE_BUTTON_DOWN?button:-1;
 	}
 	void Application::glfwOnMouseWheel(GLFWwindow* window, double x, double y) {
 		if (Application::inputEventHandler == nullptr) return;

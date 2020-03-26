@@ -127,9 +127,8 @@ void CameraRotationInputHandler::handleInputEvents()
 	}
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
-		if (event.isProcessed() == true)
-			continue;
-
+		if (event.isProcessed() == true) continue;
+		if (event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT)
 			keyLeft = isKeyDown;
