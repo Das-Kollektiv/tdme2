@@ -361,7 +361,7 @@ void LevelEditorView::handleInputEvents()
 	for (auto i = 0; i < engine->getGUI()->getKeyboardEvents().size(); i++) {
 		auto& event = engine->getGUI()->getKeyboardEvents()[i];
 		if (event.isProcessed() == true) continue;
-		if (event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY) continue;
+		if (event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
 		keyControl = event.isControlDown();
 		keyShift = event.isShiftDown();

@@ -677,7 +677,7 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	lockEvents();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY);
+	guiKeyboardEvent.setType(GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED);
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);

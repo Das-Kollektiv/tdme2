@@ -174,7 +174,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUINode* node, GUIKeyboardE
 		if (disabled == false && keyChar >= 32 && keyChar < 127) {
 			event->setProcessed(true);
 			#if defined(VULKAN) || defined(GLFW3)
-				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY) {
+				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED) {
 			#else
 				if (event->getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED) {
 			#endif

@@ -20,10 +20,10 @@ class tdme::gui::events::GUIKeyboardEvent_Type final: public Enum
 	friend class GUIKeyboardEvent;
 
 public:
-	static GUIKeyboardEvent_Type *KEYBOARDEVENT_NONE;
-	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY_PRESSED;
-	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY_RELEASED;
-	static GUIKeyboardEvent_Type *KEYBOARDEVENT_KEY;
+	static GUIKeyboardEvent_Type* KEYBOARDEVENT_NONE;
+	static GUIKeyboardEvent_Type* KEYBOARDEVENT_KEY_PRESSED;
+	static GUIKeyboardEvent_Type* KEYBOARDEVENT_KEY_RELEASED;
+	static GUIKeyboardEvent_Type* KEYBOARDEVENT_KEY_TYPED;
 	GUIKeyboardEvent_Type(const string& name, int ordinal);
 	static GUIKeyboardEvent_Type* valueOf(const string& a0);
 };
