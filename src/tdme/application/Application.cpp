@@ -9,6 +9,7 @@
 			#include <GL/wglew.h>
 		#endif
 	#endif
+	#define GLFW_INCLUDE_NONE
 	#include <GLFW/glfw3.h>
 #else
 	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
@@ -552,6 +553,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			return;
 		}
 		glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
+		#if defined(_WIN32)
+			setIcon("resources/win32/app.ico");
+		#endif
 		#if !defined(VULKAN)
 			glfwMakeContextCurrent(glfwWindow);
 			#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
@@ -597,6 +601,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutInitWindowSize(windowWidth, windowHeight);
 		glutInitWindowPosition(windowXPosition, windowYPosition);
 		glutCreateWindow(title.c_str());
+		#if defined(_WIN32)
+			setIcon("resources/win32/app.ico");
+		#endif
 		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
 			glewExperimental = true;
 			GLenum glewInitStatus = glewInit();
@@ -604,9 +611,6 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
 				Application::exit(1);
 			}
-		#endif
-		#if defined(_WIN32)
-			setIcon("resources/win32/app.ico");
 		#endif
 		// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 		glutReshapeFunc(Application::reshapeInternal);

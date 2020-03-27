@@ -167,6 +167,7 @@ else
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext\vulkan\runtime\mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	else
+		EXTRAFLAGS = -DGLFW3
 		# Windows, GL
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -177,7 +178,7 @@ else
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
 		INCLUDES := $(INCLUDES) -Isrc -Iext -Iext/src -I/mingw64/include/
-		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lfreeglut -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
+		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	endif
 	STACKFLAGS := -Wl,--stack,0x1000000
 	OFLAGS := -O2

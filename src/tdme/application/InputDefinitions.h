@@ -3,6 +3,8 @@
 #if defined(VULKAN) || defined(GLFW3)
 	#if defined(GLFW3)
 		#define GLFW_INCLUDE_VULKAN
+	#else
+		#define GLFW_INCLUDE_NONE
 	#endif
 	#include <GLFW/glfw3.h>
 

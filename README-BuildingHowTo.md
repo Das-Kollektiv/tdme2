@@ -128,7 +128,7 @@ pacman -S make
 pacman -S mingw-w64-x86_64-gcc
 pacman -S mingw-w64-x86_64-glew
 pacman -S mingw-w64-x86_64-openal
-pacman -S mingw-w64-x86_64-freeglut
+pacman -S mingw-w64-x86_64-glfw
 ```
 
 ### 1.4.2. Clone repository

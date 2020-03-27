@@ -1,7 +1,11 @@
 #pragma once
 
 #if defined(VULKAN) || defined(GLFW3)
-	#define GLFW_INCLUDE_VULKAN
+	#if defined(VULKAN)
+		#define GLFW_INCLUDE_VULKAN
+	#else
+		#define GLFW_INCLUDE_NONE
+	#endif
 	#include <GLFW/glfw3.h>
 	#define MOUSE_CURSOR_DISABLED 0
 	#define MOUSE_CURSOR_ENABLED 1

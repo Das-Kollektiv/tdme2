@@ -219,7 +219,7 @@
             - glew
             - pthreads
             - Vulkan(optional)
-            - GLFW3(default on FreeBSD, required for Vulkan)
+            - GLFW3(default on FreeBSD, Windows/MINGW, required for Vulkan)
         - included in TDME2 repository
             - FBXSDK
             - Hashlink
