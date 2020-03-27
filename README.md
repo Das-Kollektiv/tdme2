@@ -177,6 +177,14 @@
             - read write lock
             - semaphore
             - thread
+    - Installer
+        - TDME2 itself and TDME2 applications can be installed with TDME2 installer, which supports
+            - offline installations
+            - installation using HTTP download from a repository which is easy to set up
+            - updating/repairing/uninstalling
+        - TDME2 tools contains the installer creation application, whereas
+            - installer definitions are set up using simple property files
+            - create-installer is able to group files into components
 
 - What does it (maybe still) lack
     - physics
