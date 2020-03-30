@@ -298,7 +298,7 @@ Entity* Level::createEmpty(const string& id, const Transformations& transformati
 	return entity;
 }
 
-Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations) {
+Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, int instances) {
 	Entity* entity = nullptr;
 
 	// objects
@@ -331,7 +331,8 @@ Entity* Level::createEntity(LevelEditorEntity* levelEditorEntity, const string& 
 			// single
 			entity = new Object3D(
 				id,
-				levelEditorEntity->getModel()
+				levelEditorEntity->getModel(),
+				instances
 			);
 			auto object = dynamic_cast<Object3D*>(entity);
 			object->setShader(levelEditorEntity->getShader());

@@ -234,9 +234,10 @@ public:
 	 * @param levelEditorEntity level editor entity
 	 * @param id id
 	 * @param transformations transformations
+	 * @param instances instances which applies only for skinned objects
 	 * @return entity
 	 */
-	static Entity* createEntity(LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations);
+	static Entity* createEntity(LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, int instances = 1);
 
 	/**
 	 * Create engine entity

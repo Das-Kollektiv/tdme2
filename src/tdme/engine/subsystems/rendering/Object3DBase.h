@@ -161,6 +161,15 @@ public:
 	}
 
 	/**
+	 * Get instance animation
+	 * @param instance instance
+	 * @return instance animation
+	 */
+	Object3DAnimation* getInstanceAnimation() {
+		return instanceAnimations[currentInstance];
+	}
+
+	/**
 	 * Sets up a base animation to play
 	 * @param id id
 	 * @param speed speed whereas 1.0 is default speed

@@ -198,6 +198,7 @@ private:
 		for (auto objectIdx = 0; objectIdx < objects.size(); objectIdx++) {
 			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
 			auto object = objects[objectIdx];
+			if (object->visibleInstances == 0) continue;
 			auto objectShader = object->getDistanceShader().length() == 0?
 				object->getShader():
 				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
@@ -220,7 +221,9 @@ private:
 				if (objectsByModel.size() > 0) {
 					do {
 						for (auto object: objectsByModel) {
-							if (context.objectsByModelToRender.size() == 0 || object->instances == context.objectsByModelToRender[0]->instances) {
+							if (context.objectsByModelToRender.size() == 0 ||
+								(object->instances == context.objectsByModelToRender[0]->instances &&
+								object->visibleInstances == context.objectsByModelToRender[0]->visibleInstances)) {
 								context.objectsByModelToRender.push_back(object);
 							} else {
 								context.objectsByModelNotRendered.push_back(object);

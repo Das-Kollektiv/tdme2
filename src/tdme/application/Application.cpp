@@ -703,7 +703,19 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 			key == GLFW_KEY_RIGHT_SHIFT ||
 			key == GLFW_KEY_RIGHT_CONTROL ||
 			key == GLFW_KEY_RIGHT_ALT ||
-			key == GLFW_KEY_RIGHT_SUPER;
+			key == GLFW_KEY_RIGHT_SUPER ||
+			key == GLFW_KEY_F1 ||
+			key == GLFW_KEY_F2 ||
+			key == GLFW_KEY_F3 ||
+			key == GLFW_KEY_F4 ||
+			key == GLFW_KEY_F5 ||
+			key == GLFW_KEY_F6 ||
+			key == GLFW_KEY_F7 ||
+			key == GLFW_KEY_F8 ||
+			key == GLFW_KEY_F9 ||
+			key == GLFW_KEY_F10 ||
+			key == GLFW_KEY_F11 ||
+			key == GLFW_KEY_F12;
 	}
 
 	void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {

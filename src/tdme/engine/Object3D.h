@@ -85,7 +85,7 @@ private:
 			auto timing = engine->getTiming();
 			auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 			auto currentFrame = timing->getFrame();
-			auto distanceFromCamera = getTranslation().clone().sub(engine->getCamera()->getLookFrom()).computeLengthSquared();
+			auto distanceFromCamera = (engine->getCamera()->getLookFrom() - getBoundingBoxTransformed()->computeClosestPointInBoundingBox(engine->getCamera()->getLookFrom())).computeLengthSquared();
 			if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
 				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
 			} else
