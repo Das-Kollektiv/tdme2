@@ -1,7 +1,7 @@
 #pragma once
 
 #if defined(VULKAN) || defined(GLFW3)
-	#if defined(GLFW3)
+	#if defined(VULKAN)
 		#define GLFW_INCLUDE_VULKAN
 	#else
 		#define GLFW_INCLUDE_NONE
