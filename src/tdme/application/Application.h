@@ -213,10 +213,9 @@ public:
 	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
 
 	/**
-	 * Set application icon, currently this is Win32 only
-	 * @param icon icon file name
+	 * Set application icon
 	 */
-	void setIcon(const string& fileName);
+	void setIcon();
 
 	/** 
 	 * Init

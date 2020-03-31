@@ -45,9 +45,12 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Character.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/HexEncDec.h>
@@ -63,9 +66,12 @@ using std::to_string;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
+using tdme::utils::ByteBuffer;
 using tdme::utils::Character;
 using tdme::utils::Console;
 using tdme::utils::HexEncDec;
@@ -553,9 +559,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			return;
 		}
 		glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
-		#if defined(_WIN32)
-			setIcon("resources/win32/app.ico");
-		#endif
+		setIcon();
 		#if !defined(VULKAN)
 			glfwMakeContextCurrent(glfwWindow);
 			#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
@@ -601,9 +605,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glutInitWindowSize(windowWidth, windowHeight);
 		glutInitWindowPosition(windowXPosition, windowYPosition);
 		glutCreateWindow(title.c_str());
-		#if defined(_WIN32)
-			setIcon("resources/win32/app.ico");
-		#endif
+		setIcon();
 		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
 			glewExperimental = true;
 			GLenum glewInitStatus = glewInit();
@@ -631,11 +633,34 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	#endif
 }
 
-void Application::setIcon(const string& fileName) {
+void Application::setIcon() {
 	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
-	#if defined(_WIN32)
+	#if defined(VULKAN) || defined(GLFW3)
+		auto texture = TextureReader::read("resources/logos", "app_logo_small.png", false, false);
+		if (texture != nullptr) {
+			auto textureData = texture->getTextureData();
+			auto textureWidth = texture->getTextureWidth();
+			auto textureHeight = texture->getTextureHeight();
+			auto textureBytePerPixel = texture->getDepth() == 32?4:3;
+			auto glfwPixels = new uint8_t[textureWidth * textureHeight * 4];
+			for (auto y = 0; y < textureHeight; y++)
+			for (auto x = 0; x < textureWidth; x++) {
+				glfwPixels[y * textureWidth * 4 + x * 4 + 0] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 0);
+				glfwPixels[y * textureWidth * 4 + x * 4 + 1] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 1);
+				glfwPixels[y * textureWidth * 4 + x * 4 + 2] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 2);
+				glfwPixels[y * textureWidth * 4 + x * 4 + 3] = textureBytePerPixel == 3?255:textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 3);
+			}
+			GLFWimage glfwIcon;
+			glfwIcon.width = texture->getWidth();
+			glfwIcon.height = texture->getHeight();
+			glfwIcon.pixels = glfwPixels;
+			glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
+			texture->releaseReference();
+			delete glfwIcon.pixels;
+		}
+	#elif defined(_WIN32)
 		HWND hwnd = FindWindow(NULL, title.c_str());
-		HANDLE icon = LoadImage(GetModuleHandle(nullptr), fileName.c_str(), IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
+		HANDLE icon = LoadImage(GetModuleHandle(nullptr), "resources/win32/app.ico", IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
 		SendMessage(hwnd, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
 	#endif
 }
