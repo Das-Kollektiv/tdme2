@@ -142,7 +142,7 @@ public:
 	 * @param current instance
 	 */
 	inline void setCurrentInstance(int currentInstance) {
-		this->currentInstance = currentInstance;
+		if (currentInstance >= 0 && currentInstance < instances) this->currentInstance = currentInstance;
 	}
 
 	/**

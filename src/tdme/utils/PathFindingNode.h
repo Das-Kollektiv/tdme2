@@ -51,6 +51,6 @@ struct tdme::utils::PathFindingNode final
 	/**
 	 * Previous node
 	 */
-	PathFindingNode* previousNode;
+	string previousNodeKey;
 
 };

@@ -199,6 +199,10 @@ private:
 			if (threadCount > 1 && objectIdx % threadCount != threadIdx) continue;
 			auto object = objects[objectIdx];
 			if (object->enabledInstances == 0) continue;
+			if (object->enabledInstances > object->instances) {
+				Console::println("Object3DRenderer::renderFunction(): " + object->getId() + ": more enabled instances than instances." + to_string(object->enabledInstances) + " / " + to_string(object->instances));
+				continue;
+			}
 			auto objectShader = object->getDistanceShader().length() == 0?
 				object->getShader():
 				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?

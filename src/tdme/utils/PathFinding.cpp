@@ -125,7 +125,6 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 	start->costsAll = 0.0f;
 	start->costsReachPoint = 0.0f;
 	start->costsEstimated = 0.0f;
-	start->previousNode = nullptr;
 	start->key = toKey(start->x, start->y, start->z);
 
 	// end node
@@ -136,7 +135,6 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 	end->costsAll = 0.0f;
 	end->costsReachPoint = 0.0f;
 	end->costsEstimated = 0.0f;
-	end->previousNode = nullptr;
 	end->key = toKey(end->x, end->y, end->z);
 
 	// set up start node costs
@@ -161,7 +159,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 
 	//
 	if (equalsLastNode(node, end)) {
-		end->previousNode = node->previousNode;
+		end->previousNodeKey = node->previousNodeKey;
 		return PathFindingStatus::PATH_FOUND;
 	} else {
 		// Find valid successors
@@ -211,15 +209,19 @@ PathFinding::PathFindingStatus PathFinding::step() {
 					continue;
 				}
 				// Add the node to the available sucessorNodes
-				PathFindingNode* successorNode = new PathFindingNode();
+				auto successorNode = new PathFindingNode();
 				successorNode->x = successorX;
 				successorNode->z = successorZ;
 				successorNode->y = yHeight;
 				successorNode->costsAll = 0.0f;
 				successorNode->costsReachPoint = 0.0f;
 				successorNode->costsEstimated = 0.0f;
-				successorNode->previousNode = nullptr;
 				successorNode->key = toKey(successorNode->x, successorNode->y, successorNode->z);
+				if (successorNode->key == node->key) {
+					Console::println("GOT YOU MOTHER FUCKER! GOT YOU MOTHER FUCKER! GOT YOU MOTHER FUCKER!");
+					delete successorNode;
+					continue;
+				}
 				successorNodes.push(successorNode);
 			}
 		}
@@ -229,14 +231,13 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	while (successorNodes.empty() == false) {
 		PathFindingNode* successorNode = successorNodes.top();
 		successorNodes.pop();
-		auto successorNodeKey = successorNode->key;
 
 		// Compute successor node's costs by costs to reach nodes point and the computed distance from node to successor node
 		float successorCostsReachPoint = node->costsReachPoint + computeDistance(successorNode, node);
 
 		// Find sucessor node in open nodes list
 		PathFindingNode* openListNode = nullptr;
-		auto openListNodeIt = openNodes.find(successorNodeKey);
+		auto openListNodeIt = openNodes.find(successorNode->key);
 		if (openListNodeIt != openNodes.end()) {
 			openListNode = openListNodeIt->second;
 		}
@@ -253,7 +254,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 
 		// Find successor node in closed nodes list
 		PathFindingNode* closedListNode = nullptr;
-		auto closedListNodeIt = closedNodes.find(successorNodeKey);
+		auto closedListNodeIt = closedNodes.find(successorNode->key);
 		if (closedListNodeIt != closedNodes.end()) {
 			closedListNode = closedListNodeIt->second;
 		}
@@ -269,7 +270,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		}
 
 		// Sucessor node is the node with least cost to this point
-		successorNode->previousNode = node;
+		successorNode->previousNodeKey = node->key;
 		successorNode->costsReachPoint = successorCostsReachPoint;
 		successorNode->costsEstimated = computeDistance(successorNode, end);
 		successorNode->costsAll = successorNode->costsReachPoint + successorNode->costsEstimated;
@@ -288,17 +289,14 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
-		openNodes[successorNodeKey] = successorNode;
+		openNodes[successorNode->key] = successorNode;
 	}
 
-	// node key
-	auto nodeKey = node->key;
-
 	// Remove node from open nodes, as we checked its successors
-	openNodes.erase(nodeKey);
+	openNodes.erase(node->key);
 
 	// add node to closed nodes list, as we checked its successors
-	closedNodes[nodeKey] = node;
+	closedNodes[node->key] = node;
 
 	//
 	return PathFindingStatus::PATH_STEP;
@@ -445,7 +443,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 					{
 						// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 						int nodesCount = 0;
-						for (PathFindingNode* node = end; node != nullptr; node = node->previousNode) {
+						for (auto node = end; node != nullptr; node = closedNodes.find(node->previousNodeKey)->second) {
 							nodesCount++;
 							if (nodesCount > 0 && nodesCount % 100 == 0) {
 								Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()));
