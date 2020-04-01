@@ -217,8 +217,8 @@ PathFinding::PathFindingStatus PathFinding::step() {
 				successorNode->costsReachPoint = 0.0f;
 				successorNode->costsEstimated = 0.0f;
 				successorNode->key = toKey(successorNode->x, successorNode->y, successorNode->z);
+				// this should never happen, but still I like to check for it
 				if (successorNode->key == node->key) {
-					Console::println("GOT YOU MOTHER FUCKER! GOT YOU MOTHER FUCKER! GOT YOU MOTHER FUCKER!");
 					delete successorNode;
 					continue;
 				}
