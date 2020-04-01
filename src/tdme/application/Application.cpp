@@ -656,7 +656,7 @@ void Application::setIcon() {
 			glfwIcon.pixels = glfwPixels;
 			glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
 			texture->releaseReference();
-			delete glfwIcon.pixels;
+			delete [] glfwPixels;
 		}
 	#elif defined(_WIN32)
 		HWND hwnd = FindWindow(NULL, title.c_str());

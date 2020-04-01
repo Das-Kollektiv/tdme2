@@ -212,11 +212,6 @@ public:
 	 */
 	void run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler = nullptr, int windowHints = WINDOW_HINT_NONE);
 
-	/**
-	 * Set application icon
-	 */
-	void setIcon();
-
 	/** 
 	 * Init
 	 */
@@ -264,6 +259,11 @@ private:
 		static int glfwMods;
 		static bool capsLockEnabled;
 	#endif
+
+	/**
+	 * Set application icon
+	 */
+	void setIcon();
 
 	/**
 	 * Display function
