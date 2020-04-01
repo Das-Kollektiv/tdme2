@@ -404,7 +404,7 @@ void Object3DRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D
 			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
 			auto faces = facesEntity->getFaces().size() * firstObject->instances;
-			auto facesToRender = facesEntity->getFaces().size() * firstObject->visibleInstances;
+			auto facesToRender = facesEntity->getFaces().size() * firstObject->enabledInstances;
 			// material
 			auto material = facesEntity->getMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;
@@ -609,7 +609,7 @@ void Object3DRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vec
 			auto facesEntity = &facesEntities[faceEntityIdx];
 			auto isTextureCoordinatesAvailable = facesEntity->isTextureCoordinatesAvailable();
 			auto faces = facesEntity->getFaces().size() * firstObject->instances;
-			auto facesToRender = facesEntity->getFaces().size() * firstObject->visibleInstances;
+			auto facesToRender = facesEntity->getFaces().size() * firstObject->enabledInstances;
 			// material
 			auto material = facesEntity->getMaterial();
 			auto specularMaterialProperties = material != nullptr?material->getSpecularMaterialProperties():nullptr;

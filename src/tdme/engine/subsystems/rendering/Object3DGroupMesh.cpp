@@ -262,7 +262,7 @@ void Object3DGroupMesh::computeTransformations(void* context)
 			Matrix4x4 transformationsMatrix; // TODO: try to avoid multiplying matrix with at each vertex
 			auto currentInstance = object3D->getCurrentInstance();
 			for (auto i = 0; i < object3D->instances; i++) {
-				if (object3D->instanceVisibility[i] == false) continue;
+				if (object3D->instanceEnabled[i] == false) continue;
 				object3D->setCurrentInstance(i);
 				for (auto vertexIndex = 0; vertexIndex < groupVertices.size(); vertexIndex++) {
 					// do vertices

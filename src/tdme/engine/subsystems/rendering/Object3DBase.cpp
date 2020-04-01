@@ -64,13 +64,13 @@ Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProc
 	this->animationProcessingTarget = animationProcessingTarget;
 	this->usesManagers = useManagers;
 	this->instances = instances;
-	this->visibleInstances = instances;
+	this->enabledInstances = instances;
 	this->currentInstance = 0;
 	instanceAnimations.resize(instances);
-	instanceVisibility.resize(instances);
+	instanceEnabled.resize(instances);
 	instanceTransformations.resize(instances);
 	for (auto i = 0; i < instances; i++) {
-		instanceVisibility[i] = true;
+		instanceEnabled[i] = true;
 		instanceAnimations[i] = new Object3DAnimation(model, animationProcessingTarget);
 	}
 	transformedFacesIterator = nullptr;

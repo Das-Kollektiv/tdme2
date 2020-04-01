@@ -50,9 +50,9 @@ protected:
 	vector<Object3DGroup*> object3dGroups;
 	bool usesManagers;
 	int instances;
-	int visibleInstances;
+	int enabledInstances;
 	vector<Object3DAnimation*> instanceAnimations;
-	vector<bool> instanceVisibility;
+	vector<bool> instanceEnabled;
 	vector<Transformations> instanceTransformations;
 	int currentInstance;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
@@ -87,11 +87,11 @@ public:
 	 * @param currentFrameAtTime time of current animation computation
 	 */
 	virtual inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime){
-		visibleInstances = 0;
+		enabledInstances = 0;
 		for (auto i = 0; i < instances; i++) {
-			if (instanceVisibility[i] == false) continue;
+			if (instanceEnabled[i] == false) continue;
 			instanceAnimations[i]->computeTransformations(context, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
-			visibleInstances++;
+			enabledInstances++;
 		}
 		Object3DGroup::computeTransformations(context, object3dGroups);
 	} 
@@ -146,27 +146,18 @@ public:
 	}
 
 	/**
-	 * @return current instance visibility
+	 * @return current instance enabled
 	 */
-	inline bool getInstanceVisibility() {
-		return instanceVisibility[currentInstance];
+	inline bool getInstanceEnabled() {
+		return instanceEnabled[currentInstance];
 	}
 
 	/**
-	 * Set current instance visibility
-	 * @param visibility instance visibility
+	 * Set current instance enabled
+	 * @param enabled instance enabled
 	 */
-	inline void setInstanceVisibility(bool visibility) {
-		instanceVisibility[currentInstance] = visibility;
-	}
-
-	/**
-	 * Get instance animation
-	 * @param instance instance
-	 * @return instance animation
-	 */
-	Object3DAnimation* getInstanceAnimation() {
-		return instanceAnimations[currentInstance];
+	inline void setInstanceEnabled(bool enabled) {
+		instanceEnabled[currentInstance] = enabled;
 	}
 
 	/**

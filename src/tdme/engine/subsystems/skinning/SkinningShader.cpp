@@ -219,7 +219,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		auto& skinningJoints = skinning->getJoints();
 		auto fbMatrices = ObjectBuffer::getByteBuffer(context, object3DGroupMesh->object3D->instances * skinningJoints.size() * 16 * sizeof(float))->asFloatBuffer();
 		for (auto i = 0; i < object3DGroupMesh->object3D->instances; i++) {
-			if (object3DGroupMesh->object3D->instanceVisibility[i] == false) continue;
+			if (object3DGroupMesh->object3D->instanceEnabled[i] == false) continue;
 			object3DGroupMesh->object3D->setCurrentInstance(i);
 			for (auto& joint: skinningJoints) {
 				fbMatrices.put((skinningMatrix.set(*object3DGroupMesh->skinningMatrices[i]->find(joint.getGroupId())->second).multiply(object3DGroupMesh->object3D->getTransformationsMatrix()).getArray()));
@@ -228,7 +228,7 @@ void SkinningShader::computeSkinning(void* context, Object3DGroupMesh* object3DG
 		object3DGroupMesh->object3D->setCurrentInstance(currentInstance);
 		renderer->uploadSkinningBufferObject(context, (*modelSkinningCacheCached->matricesVboIds[contextIdx])[0], fbMatrices.getPosition() * sizeof(float), &fbMatrices);
 		renderer->setProgramUniformInteger(context, uniformMatrixCount, skinningJoints.size());
-		renderer->setProgramUniformInteger(context, uniformInstanceCount, object3DGroupMesh->object3D->visibleInstances);
+		renderer->setProgramUniformInteger(context, uniformInstanceCount, object3DGroupMesh->object3D->enabledInstances);
 	}
 
 	// skinning count
