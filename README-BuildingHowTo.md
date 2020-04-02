@@ -39,7 +39,7 @@ sudo apt-get install make
 sudo apt-get install g++
 sudo apt-get install libglew-dev
 sudo apt-get install libopenal-dev
-sudo apt-get install freeglut3-dev
+sudo apt-get install libglfw3-dev
 ```
 
 ### 1.2.2. Clone repository

@@ -542,7 +542,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 					glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 				}
 				array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
-				glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
+				#if defined(__APPLE__)
+					glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
+				#endif
 				auto i = 0;
 				for (auto& glVersion: glVersions) {
 					glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
