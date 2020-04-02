@@ -353,7 +353,7 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 						Console::println("GLTFReader::parseNode(): " + group->getId() + ": An error occurred: " + exception.what());
 					}
 				}
-				if (gltfMaterial.additionalValues.find("normalTexture") != gltfMaterial.values.end() &&
+				if (gltfMaterial.additionalValues.find("normalTexture") != gltfMaterial.additionalValues.end() &&
 					gltfMaterial.additionalValues.find("normalTexture")->second.TextureIndex() != -1) {
 					auto& gltfNormalTexture = gltfMaterial.additionalValues.find("normalTexture")->second;
 					auto& gltfTexture = gltfModel.textures[gltfNormalTexture.TextureIndex()];

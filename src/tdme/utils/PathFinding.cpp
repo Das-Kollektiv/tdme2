@@ -43,7 +43,6 @@ PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float actorHe
 	this->world = world;
 	this->customTest = nullptr;
 	this->sloping = sloping;
-	this->end = new PathFindingNode();
 	this->actorBoundingVolume = nullptr;
 	this->actorBoundingVolumeSlopeTest = nullptr;
 	this->stepsMax = stepsMax;
@@ -57,7 +56,6 @@ PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float actorHe
 }
 
 PathFinding::~PathFinding() {
-	delete end;
 }
 
 void PathFinding::reset() {
@@ -118,7 +116,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition) {
 	// start node
 	auto& startXYZ = startPosition.getArray();
-	PathFindingNode* start = new PathFindingNode();
+	auto start = new PathFindingNode();
 	start->x = startXYZ[0];
 	start->y = startXYZ[1];
 	start->z = startXYZ[2];
@@ -129,16 +127,16 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 
 	// end node
 	auto& endXYZ = endPosition.getArray();
-	end->x = endXYZ[0];
-	end->y = endXYZ[1];
-	end->z = endXYZ[2];
-	end->costsAll = 0.0f;
-	end->costsReachPoint = 0.0f;
-	end->costsEstimated = 0.0f;
-	end->key = toKey(end->x, end->y, end->z);
+	end.x = endXYZ[0];
+	end.y = endXYZ[1];
+	end.z = endXYZ[2];
+	end.costsAll = 0.0f;
+	end.costsReachPoint = 0.0f;
+	end.costsEstimated = 0.0f;
+	end.key = toKey(end.x, end.y, end.z);
 
 	// set up start node costs
-	start->costsEstimated = computeDistance(start, end);
+	start->costsEstimated = computeDistance(start, &end);
 	start->costsAll = start->costsEstimated;
 
 	// put to open nodes
@@ -158,8 +156,8 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	}
 
 	//
-	if (equalsLastNode(node, end)) {
-		end->previousNodeKey = node->previousNodeKey;
+	if (equalsLastNode(node, &end)) {
+		end.previousNodeKey = node->previousNodeKey;
 		return PathFindingStatus::PATH_FOUND;
 	} else {
 		// Find valid successors
@@ -272,7 +270,7 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		// Sucessor node is the node with least cost to this point
 		successorNode->previousNodeKey = node->key;
 		successorNode->costsReachPoint = successorCostsReachPoint;
-		successorNode->costsEstimated = computeDistance(successorNode, end);
+		successorNode->costsEstimated = computeDistance(successorNode, &end);
 		successorNode->costsAll = successorNode->costsReachPoint + successorNode->costsEstimated;
 
 		// Remove found node from open nodes list, since it was less optimal
@@ -443,11 +441,12 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 					{
 						// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 						int nodesCount = 0;
-						for (auto node = end; node != nullptr; node = closedNodes.find(node->previousNodeKey)->second) {
+						map<string, PathFindingNode*>::iterator nodeIt;
+						for (auto node = &end; node != nullptr; node = (nodeIt = closedNodes.find(node->previousNodeKey)) != closedNodes.end()?nodeIt->second:nullptr) {
 							nodesCount++;
-							if (nodesCount > 0 && nodesCount % 100 == 0) {
-								Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()));
-							}
+							// if (nodesCount > 0 && nodesCount % 100 == 0) {
+								Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
+							// }
 							Vector3 pathPosition(
 								node->x,
 								node->y,

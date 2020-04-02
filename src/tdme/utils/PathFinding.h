@@ -192,7 +192,7 @@ private:
 	uint16_t skipOnCollisionTypeIds;
 	uint16_t collisionTypeIds;
 	int maxTries;
-	PathFindingNode* end;
+	PathFindingNode end;
 	stack<PathFindingNode*> successorNodes;
 	map<string, PathFindingNode*> openNodes;
 	map<string, PathFindingNode*> closedNodes;
