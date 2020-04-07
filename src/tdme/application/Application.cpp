@@ -543,7 +543,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				}
 				array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
 				#if defined(__APPLE__)
-					glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
+					glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 				#endif
 				auto i = 0;
 				for (auto& glVersion: glVersions) {

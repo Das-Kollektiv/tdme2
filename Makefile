@@ -22,10 +22,10 @@ OS := $(shell sh -c 'uname -s 2>/dev/null')
 ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# Mac OS X
-	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include
+	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
 	ifeq ($(VULKAN), YES)
 		EXTRAFLAGS := -DVULKAN 
-		INCLUDES := $(INCLUDES) -Iext/glfw3/include -Iext\vulkan\vma\src
+		INCLUDES := $(INCLUDES) -Iext\vulkan\vma\src
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 				src/tdme/engine/EngineVKRenderer.cpp \
@@ -36,6 +36,7 @@ ifeq ($(OS), Darwin)
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3 -l vulkan.1 -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	else
+		EXTRAFLAGS := -DGLFW3
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -43,7 +44,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -Lext/glfw3/macosx/lib -l glfw.3 -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
 	endif
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
