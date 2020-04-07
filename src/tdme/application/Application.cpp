@@ -31,7 +31,7 @@
 	#include <tdme/os/threading/Mutex.h>
 #endif
 
-#if defined(__APPLE__) && !defined(VULKAN) && !defined(GLFW3)
+#if defined(__APPLE__)
 	#include <Carbon/Carbon.h>
 #endif
 
@@ -492,7 +492,17 @@ void Application::setMouseCursor(int mouseCursor) {
 
 void Application::setMousePosition(int x, int y) {
 	#if defined(VULKAN) || defined(GLFW3)
-		glfwSetCursorPos(glfwWindow, x, y);
+		#if defined(__APPLE__)
+			int windowXPos, windowYPos;
+			glfwGetWindowPos(Application::glfwWindow, &windowXPos, &windowYPos);
+			CGPoint point;
+			point.x = windowXPos + x;
+			point.y = windowYPos + y;
+			CGWarpMouseCursorPosition(point);
+			CGAssociateMouseAndMouseCursorPosition(true);
+		#else
+			glfwSetCursorPos(glfwWindow, x, y);
+		#endif
 	#else
 		#if defined(__APPLE__)
 			CGPoint point;
