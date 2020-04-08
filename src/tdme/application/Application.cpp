@@ -767,14 +767,14 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 			}
 		}
 		if (glfwIsSpecialKey(key) == true) {
-			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+			if (action == GLFW_PRESS/* || action == GLFW_REPEAT*/) {
 				Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
 			} else
 			if (action == GLFW_RELEASE) {
 				Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
 			}
 		} else {
-			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+			if (action == GLFW_PRESS/* || action == GLFW_REPEAT*/) {
 				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
 				if (keyName != nullptr) {
 					Application::inputEventHandler->onKeyDown(
