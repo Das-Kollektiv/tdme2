@@ -680,11 +680,11 @@ void Application::setIcon() {
 void Application::displayInternal() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
-		Application::application->setFullScreen(Application::application->fullScreen);
 		#if defined(VULKAN) || defined(GLFW3)
 			Application::application->reshape(Application::application->windowWidth, Application::application->windowHeight);
 		#endif
 		Application::application->initialized = true;
+		Application::application->setFullScreen(Application::application->fullScreen);
 	}
 	int64_t timeNow = Time::getCurrentMillis();
 	int64_t timeFrame = 1000/Application::FPS;
