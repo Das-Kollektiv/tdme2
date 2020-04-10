@@ -203,8 +203,44 @@ void FileDialogScreenController::close()
 
 void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 {
-	try {
-		if (node->getId() == "filedialog_filename") {
+	if (node->getId() == "filedialog_files") {
+		try {
+			auto selectedFile = node->getController()->getValue().getString();
+			if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
+				auto lastCwd = cwd;
+				cwd = selectedFile;
+				if (setupFileDialogListBox() == false) {
+					cwd = lastCwd;
+					setupFileDialogListBox();
+				}
+			} else
+			if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + selectedFile) == true) {
+				auto lastCwd = cwd;
+				try {
+					cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
+				} catch (Exception& exception) {
+					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+					Console::println(string(exception.what()));
+				}
+				if (setupFileDialogListBox() == false) {
+					cwd = lastCwd;
+					setupFileDialogListBox();
+				}
+			} else {
+				if (filtered == true) {
+					setupFileDialogListBoxFiles(fileList, selectedFile);
+					filtered = false;
+				}
+				fileName->getController()->setValue(selectedFile);
+			}
+		} catch (Exception& exception) {
+			Console::print(string("FileDialogScreenController::onActionPerformed(): An error occurred: "));
+			Console::println(string(exception.what()));
+			fileName->getController()->setValue(MutableString());
+		}
+	} else
+	if (node->getId() == "filedialog_filename") {
+		try {
 			if (enableFilter == true) {
 				auto filterString = StringUtils::toLowerCase(node->getController()->getValue().getString());
 				if (FileSystem::getStandardFileSystem()->fileExists(cwd + "/" + filterString) == true) {
@@ -219,62 +255,22 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 					filtered = true;
 				}
 			}
+		} catch (Exception& exception) {
+			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+			Console::println(string(exception.what()));
+			fileName->getController()->setValue(MutableString());
 		}
-	} catch (Exception& exception) {
-		Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
-		Console::println(string(exception.what()));
-		fileName->getController()->setValue(MutableString());
 	}
 }
 
 void FileDialogScreenController::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node)
 {
-	{
-		auto v = type;
-		if (v == GUIActionListener_Type::PERFORMED) {
-			if (node->getId().compare("filedialog_apply") == 0) {
-				if (applyAction != nullptr) applyAction->performAction();
-			} else
-			if (node->getId().compare("filedialog_abort") == 0) {
-				close();
-			} else {
-				try {
-					if (node->getId().compare(files->getId()) == 0) {
-						auto selectedFile = node->getController()->getValue().getString();
-						if (FileSystem::getStandardFileSystem()->isDrive(selectedFile) == true) {
-							auto lastCwd = cwd;
-							cwd = selectedFile;
-							if (setupFileDialogListBox() == false) {
-								cwd = lastCwd;
-								setupFileDialogListBox();
-							}
-						} else
-						if (FileSystem::getStandardFileSystem()->isPath(cwd + "/" + selectedFile) == true) {
-							auto lastCwd = cwd;
-							try {
-								cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
-							} catch (Exception& exception) {
-								Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
-								Console::println(string(exception.what()));
-							}
-							if (setupFileDialogListBox() == false) {
-								cwd = lastCwd;
-								setupFileDialogListBox();
-							}
-						} else {
-							if (filtered == true) {
-								setupFileDialogListBoxFiles(fileList, selectedFile);
-								filtered = false;
-							}
-							fileName->getController()->setValue(selectedFile);
-						}
-					}
-				} catch (Exception& exception) {
-					Console::print(string("FileDialogScreenController::onActionPerformed(): An error occurred: "));
-					Console::println(string(exception.what()));
-					fileName->getController()->setValue(MutableString());
-				}
-			}
+	if (type == GUIActionListener_Type::PERFORMED) {
+		if (node->getId() == "filedialog_apply") {
+			if (applyAction != nullptr) applyAction->performAction();
+		} else
+		if (node->getId() == "filedialog_abort") {
+			close();
 		}
 	}
 }
