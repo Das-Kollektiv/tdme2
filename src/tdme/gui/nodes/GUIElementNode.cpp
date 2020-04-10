@@ -271,9 +271,9 @@ const string& GUIElementNode::getOnChangeExpression() {
 
 void GUIElementNode::executeExpression(const string& expression) {
 	StringTokenizer t1;
+	StringTokenizer t2;
 	t1.tokenize(expression, ";");
 	while (t1.hasMoreTokens()) {
-		StringTokenizer t2;
 		t2.tokenize(t1.nextToken(), "=");
 		string command;
 		string value;
@@ -326,6 +326,30 @@ void GUIElementNode::executeExpression(const string& expression) {
 					nodeElementNode->getActiveConditions().remove(value);
 				} else {
 					nodeElementNode->getActiveConditions().add(value);
+				}
+			}
+		} else
+		if (subCommand == "condition?") {
+			t2.tokenize(value, "?:");
+			string testCondition = t2.hasMoreTokens() == true?t2.nextToken():"";
+			string setOnTrueCondition = t2.hasMoreTokens() == true?t2.nextToken():"";
+			string setOnFalseCondition = t2.hasMoreTokens() == true?t2.nextToken():"";
+			if (value.find('?') == string::npos ||
+				value.find(':') == string::npos ||
+				value.find(':') < value.find('?') ||
+				testCondition.empty() == true ||
+				setOnTrueCondition.empty() == true ||
+				setOnFalseCondition.empty() == true) {
+				Console::println("GUIElementController::executeExpression(): ?= requires the following format 'node.condition?=xxx?yyy:ccc'");
+			}
+			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
+			if (nodeElementNode != nullptr) {
+				if (nodeElementNode->getActiveConditions().has(testCondition) == true) {
+					nodeElementNode->getActiveConditions().remove(setOnFalseCondition);
+					nodeElementNode->getActiveConditions().add(setOnTrueCondition);
+				} else {
+					nodeElementNode->getActiveConditions().remove(setOnTrueCondition);
+					nodeElementNode->getActiveConditions().add(setOnFalseCondition);
 				}
 			}
 		} else
