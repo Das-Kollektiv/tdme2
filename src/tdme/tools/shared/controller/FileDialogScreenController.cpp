@@ -234,7 +234,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				fileName->getController()->setValue(selectedFile);
 			}
 		} catch (Exception& exception) {
-			Console::print(string("FileDialogScreenController::onActionPerformed(): An error occurred: "));
+			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
 			Console::println(string(exception.what()));
 			fileName->getController()->setValue(MutableString());
 		}
