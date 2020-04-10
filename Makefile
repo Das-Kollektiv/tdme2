@@ -34,7 +34,7 @@ ifeq ($(OS), Darwin)
 				src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw.3 -l vulkan.1 -l$(NAME)-ext -framework GLUT -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw3 -l vulkan.1 -l$(NAME)-ext -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL
 	else
 		EXTRAFLAGS := -DGLFW3
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -44,7 +44,7 @@ ifeq ($(OS), Darwin)
 			src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 			src/tdme/engine/fileio/models/FBXReader.cpp \
 			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -Lext/glfw3/macosx/lib -l glfw.3 -framework OpenGL -framework Cocoa -framework Carbon -framework OpenAL
+		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -Lext/glfw3/macosx/lib -l glfw3 -framework Cocoa -framework OpenGL -framework IOKit -framework Carbon -framework OpenAL
 	endif
 	STACKFLAGS := -Wl,-stack_size -Wl,0x1000000
 	OFLAGS := -O2
