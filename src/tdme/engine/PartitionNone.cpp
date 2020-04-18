@@ -48,13 +48,3 @@ const vector<Entity*>& PartitionNone::getVisibleEntities(Frustum* frustum)
 {
 	return entities;
 }
-
-VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(BoundingVolume* cbv)
-{
-	return &arrayListIteratorMultiple;
-}
-
-VectorIteratorMultiple<Entity*>* PartitionNone::getObjectsNearTo(const Vector3& center, const Vector3& halfExtension)
-{
-	return &arrayListIteratorMultiple;
-}

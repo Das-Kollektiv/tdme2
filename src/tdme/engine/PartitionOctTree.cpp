@@ -108,7 +108,8 @@ void PartitionOctTree::removeEntity(Entity* entity)
 		partitionObjects.erase(remove(partitionObjects.begin(), partitionObjects.end(), entity), partitionObjects.end());
 		objectPartitionsVector->erase(objectPartitionsVector->begin() + lastIdx);
 		if (partitionObjects.empty() == true) {
-			auto rootPartitionTreeNode = partitionTreeNode->parent->parent;
+			auto rootPartitionTreeNode = partitionTreeNode;
+			while (rootPartitionTreeNode->parent != nullptr) rootPartitionTreeNode = rootPartitionTreeNode->parent;
 			// check if whole top level partition is empty
 			if (isPartitionNodeEmpty(rootPartitionTreeNode) == true) {
 				// yep, remove it
@@ -138,28 +139,16 @@ const vector<Entity*>& PartitionOctTree::getVisibleEntities(Frustum* frustum)
 	return visibleEntities;
 }
 
-VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(BoundingVolume* cbv)
-{
-	entityIterator.clear();
-	auto lookUps = 0;
-	for (auto& subNode: treeRoot.subNodes) {
-		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &cbv->getBoundingBoxTransformed());
+void PartitionOctTree::dumpNode(PartitionOctTree_PartitionTreeNode* node, int indent) {
+	for (auto i = 0; i < indent; i++) Console::print("\t");
+	Console::println(to_string(node->x) + "/" + to_string(node->y) + "/" + to_string(node->z) + ": ");
+	for (auto entity: node->partitionEntities) {
+		for (auto i = 0; i < indent + 1; i++) Console::print("\t");
+		Console::println(entity->getId());
 	}
-	return &entityIterator;
+	for (auto subNode: node->subNodes) dumpNode(&subNode, indent + 1);
 }
 
-VectorIteratorMultiple<Entity*>* PartitionOctTree::getObjectsNearTo(const Vector3& center, const Vector3& halfExtension)
-{
-	BoundingBox boundingBox;
-	boundingBox.getMin().set(center);
-	boundingBox.getMin().sub(halfExtension);
-	boundingBox.getMax().set(center);
-	boundingBox.getMax().add(halfExtension);
-	boundingBox.update();
-	entityIterator.clear();
-	auto lookUps = 0;
-	for (auto& subNode: treeRoot.subNodes) {
-		lookUps += doPartitionTreeLookUpNearEntities(&subNode, &boundingBox);
-	}
-	return &entityIterator;
+void PartitionOctTree::dump() {
+	dumpNode(&treeRoot, 0);
 }

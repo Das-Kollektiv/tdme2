@@ -221,36 +221,21 @@ private:
 		return lookUps;
 	}
 
-	/** 
-	 * Do partition tree lookup for near entities to cbv
+	/**
+	 * Dump node to console
 	 * @param node node
-	 * @param cbv computed bounding volume
+	 * @param indent indent
 	 */
-	inline int32_t doPartitionTreeLookUpNearEntities(PartitionOctTree_PartitionTreeNode* node, BoundingBox* cbv) {
-		// check if given cbv collides with partition node bv
-		if (CollisionDetection::doCollideAABBvsAABBFast(cbv, &node->bv) == false) {
-			return 1;
-		}
-		// if this node already has the partition cbvs add it to the iterator
-		if (node->partitionEntities.size() > 0) {
-			entityIterator.addVector(&node->partitionEntities);
-			return 1;
-		} else
-		// otherwise check sub nodes
-		if (node->subNodes.size() > 0) {
-			auto lookUps = 1;
-			for (auto& subNode: node->subNodes) {
-				lookUps += doPartitionTreeLookUpNearEntities(&subNode, cbv);
-			}
-			return lookUps;
-		}
-		return 0;
-	}
+	void dumpNode(PartitionOctTree_PartitionTreeNode* node, int indent);
 
 public:
+	// overriden methods
 	const vector<Entity*>& getVisibleEntities(Frustum* frustum) override;
-	VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) override;
-	VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center, const Vector3& halfExtension = Vector3(0.1f, 0.1f, 0.1f)) override;
+
+	/**
+	 * Dump oct tree to console
+	 */
+	void dump();
 
 	/**
 	 * Public constructor

@@ -121,8 +121,8 @@ void LODTest::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.FBX.tm");
-	auto treePineLOD2 = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03_LOD_Plane.FBX.tm");
+	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.tm");
+	auto treePineLOD2 = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03_LOD_Plane.tm");
 	int treeIdx = 0;
 	for (float z = -240.0f; z < 240.0f; z+= 5.0f)
 	for (float x = -240.0f; x < 240.0f; x+= 5.0f) {

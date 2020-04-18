@@ -51,21 +51,6 @@ struct tdme::engine::Partition
 	 */
 	virtual const vector<Entity*>& getVisibleEntities(Frustum* frustum) = 0;
 
-	/** 
-	 * Get objects near to bounding volume
-	 * @param cbv cbv
-	 * @return objects near to cbv
-	 */
-	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(BoundingVolume* cbv) = 0;
-
-	/** 
-	 * Get objects near to given world position
-	 * @param center center
-	 * @param halfExtension half extension
-	 * @return objects near to given world position
-	 */
-	virtual VectorIteratorMultiple<Entity*>* getObjectsNearTo(const Vector3& center, const Vector3& halfExtension = Vector3(0.1f, 0.1f, 0.1f)) = 0;
-
 	/**
 	 * Destructor
 	 */

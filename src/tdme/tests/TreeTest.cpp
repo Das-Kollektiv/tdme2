@@ -121,7 +121,7 @@ void TreeTest::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.FBX.tm");
+	auto treePine = ModelReader::read("resources/tests/models/lod-tree", "Mesh_Environment_Tree_Pine_03.tm");
 	ModelHelper::prepareForShader(treePine, "tree");
 	int treeIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f)
