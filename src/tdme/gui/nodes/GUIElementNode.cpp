@@ -307,8 +307,33 @@ void GUIElementNode::executeExpression(const string& expression) {
 		if (subCommand == "condition") {
 			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
 			if (nodeElementNode != nullptr) {
-				nodeElementNode->getActiveConditions().removeAll();
-				nodeElementNode->getActiveConditions().add(value);
+				if (value.find('?') != string::npos &&
+					value.find(':') != string::npos &&
+					value.find(':') > value.find('?')) {
+					t2.tokenize(value, "?:");
+					string testCondition = t2.hasMoreTokens() == true?t2.nextToken():"";
+					string setOnTrueCondition = t2.hasMoreTokens() == true?t2.nextToken():"";
+					string setOnFalseCondition = t2.hasMoreTokens() == true?t2.nextToken():"";
+					if (testCondition.empty() == true ||
+						setOnTrueCondition.empty() == true ||
+						setOnFalseCondition.empty() == true) {
+						Console::println("GUIElementController::executeExpression(): = ternary operator requires the following format 'node.condition=a?b:c'");
+					} else {
+						auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
+						if (nodeElementNode != nullptr) {
+							if (nodeElementNode->getActiveConditions().has(testCondition) == true) {
+								nodeElementNode->getActiveConditions().removeAll();
+								nodeElementNode->getActiveConditions().add(setOnTrueCondition);
+							} else {
+								nodeElementNode->getActiveConditions().removeAll();
+								nodeElementNode->getActiveConditions().add(setOnFalseCondition);
+							}
+						}
+					}
+				} else {
+					nodeElementNode->getActiveConditions().removeAll();
+					nodeElementNode->getActiveConditions().add(value);
+				}
 			}
 		} else
 		if (subCommand == "condition-") {
@@ -340,7 +365,7 @@ void GUIElementNode::executeExpression(const string& expression) {
 				testCondition.empty() == true ||
 				setOnTrueCondition.empty() == true ||
 				setOnFalseCondition.empty() == true) {
-				Console::println("GUIElementController::executeExpression(): ?= requires the following format 'node.condition?=xxx?yyy:ccc'");
+				Console::println("GUIElementController::executeExpression(): ?= ternary operator requires the following format 'node.condition?=a?b:c'");
 			}
 			auto nodeElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(nodeId));
 			if (nodeElementNode != nullptr) {

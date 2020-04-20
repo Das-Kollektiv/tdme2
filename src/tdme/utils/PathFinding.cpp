@@ -445,7 +445,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 						for (auto node = &end; node != nullptr; node = (nodeIt = closedNodes.find(node->previousNodeKey)) != closedNodes.end()?nodeIt->second:nullptr) {
 							nodesCount++;
 							// if (nodesCount > 0 && nodesCount % 100 == 0) {
-								Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
+							//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
 							// }
 							Vector3 pathPosition(
 								node->x,
