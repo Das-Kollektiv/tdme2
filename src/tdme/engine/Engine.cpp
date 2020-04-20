@@ -326,8 +326,18 @@ void Engine::setPartition(Partition* partition)
 
 void Engine::addEntity(Entity* entity)
 {
-	// dispose old entity if any did exist in engine with same id
-	removeEntity(entity->getId());
+	{
+		auto entityByIdIt = entitiesById.find(entity->getId());
+		if (entityByIdIt != entitiesById.end()) {
+			// check if we want to add this entity a second time
+			if (entity == entityByIdIt->second) {
+				Console::println("Engine::addEntity(): " + entity->getId() + ": entity already added!");
+				return;
+			}
+			// dispose old entity if any did exist in engine with same id
+			removeEntity(entity->getId());
+		}
+	}
 
 	// init entity
 	entity->setEngine(this);
@@ -379,41 +389,41 @@ void Engine::removeEntity(const string& id)
 {
 	// get entity and remove if we have any
 	auto entityByIdIt = entitiesById.find(id);
-	if (entityByIdIt != entitiesById.end()) {
-		//
-		auto entity = entityByIdIt->second;
+	if (entityByIdIt == entitiesById.end()) return;
 
-		//
-		auto hierarchicalId = entity->getId();
-		for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
+	//
+	auto entity = entityByIdIt->second;
 
-		//
-		entitiesById.erase(entityByIdIt);
-		autoEmitParticleSystemEntities.erase(hierarchicalId);
-		noFrustumCullingEntitiesById.erase(hierarchicalId);
+	//
+	auto hierarchicalId = entity->getId();
+	for (auto _entity = entity->getParentEntity(); _entity != nullptr; _entity = _entity->getParentEntity()) hierarchicalId = _entity->getId() + "." + hierarchicalId;
 
-		// remove from partition if enabled and frustum culling requested
-		if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
-		// dispose entity
-		entity->setEngine(nullptr);
-		entity->setRenderer(nullptr);
-		entity->dispose();
-		delete entity;
+	//
+	entitiesById.erase(entityByIdIt);
+	autoEmitParticleSystemEntities.erase(hierarchicalId);
+	noFrustumCullingEntitiesById.erase(hierarchicalId);
 
-		// delete from lists
-		visibleObjects.erase(remove(visibleObjects.begin(), visibleObjects.end(), entity), visibleObjects.end());
-		visibleObjectsPostPostProcessing.erase(remove(visibleObjectsPostPostProcessing.begin(), visibleObjectsPostPostProcessing.end(), entity), visibleObjectsPostPostProcessing.end());
-		visibleObjectsNoDepthTest.erase(remove(visibleObjectsNoDepthTest.begin(), visibleObjectsNoDepthTest.end(), entity), visibleObjectsNoDepthTest.end());
-		visibleLODObjects.erase(remove(visibleLODObjects.begin(), visibleLODObjects.end(), entity), visibleLODObjects.end());
-		visibleOpses.erase(remove(visibleOpses.begin(), visibleOpses.end(), entity), visibleOpses.end());
-		visiblePpses.erase(remove(visiblePpses.begin(), visiblePpses.end(), entity), visiblePpses.end());
-		visiblePsgs.erase(remove(visiblePsgs.begin(), visiblePsgs.end(), entity), visiblePsgs.end());
-		visibleLinesObjects.erase(remove(visibleLinesObjects.begin(), visibleLinesObjects.end(), entity), visibleLinesObjects.end());
-		visibleObjectRenderGroups.erase(remove(visibleObjectRenderGroups.begin(), visibleObjectRenderGroups.end(), entity), visibleObjectRenderGroups.end());
-		visibleObjectEntityHierarchies.erase(remove(visibleObjectEntityHierarchies.begin(), visibleObjectEntityHierarchies.end(), entity), visibleObjectEntityHierarchies.end());
-		visibleEZRObjects.erase(remove(visibleEZRObjects.begin(), visibleEZRObjects.end(), entity), visibleEZRObjects.end());
-		noFrustumCullingEntities.erase(remove(noFrustumCullingEntities.begin(), noFrustumCullingEntities.end(), entity), noFrustumCullingEntities.end());
-	}
+	// remove from partition if enabled and frustum culling requested
+	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
+	// dispose entity
+	entity->setEngine(nullptr);
+	entity->setRenderer(nullptr);
+	entity->dispose();
+	delete entity;
+
+	// delete from lists
+	visibleObjects.erase(remove(visibleObjects.begin(), visibleObjects.end(), entity), visibleObjects.end());
+	visibleObjectsPostPostProcessing.erase(remove(visibleObjectsPostPostProcessing.begin(), visibleObjectsPostPostProcessing.end(), entity), visibleObjectsPostPostProcessing.end());
+	visibleObjectsNoDepthTest.erase(remove(visibleObjectsNoDepthTest.begin(), visibleObjectsNoDepthTest.end(), entity), visibleObjectsNoDepthTest.end());
+	visibleLODObjects.erase(remove(visibleLODObjects.begin(), visibleLODObjects.end(), entity), visibleLODObjects.end());
+	visibleOpses.erase(remove(visibleOpses.begin(), visibleOpses.end(), entity), visibleOpses.end());
+	visiblePpses.erase(remove(visiblePpses.begin(), visiblePpses.end(), entity), visiblePpses.end());
+	visiblePsgs.erase(remove(visiblePsgs.begin(), visiblePsgs.end(), entity), visiblePsgs.end());
+	visibleLinesObjects.erase(remove(visibleLinesObjects.begin(), visibleLinesObjects.end(), entity), visibleLinesObjects.end());
+	visibleObjectRenderGroups.erase(remove(visibleObjectRenderGroups.begin(), visibleObjectRenderGroups.end(), entity), visibleObjectRenderGroups.end());
+	visibleObjectEntityHierarchies.erase(remove(visibleObjectEntityHierarchies.begin(), visibleObjectEntityHierarchies.end(), entity), visibleObjectEntityHierarchies.end());
+	visibleEZRObjects.erase(remove(visibleEZRObjects.begin(), visibleEZRObjects.end(), entity), visibleEZRObjects.end());
+	noFrustumCullingEntities.erase(remove(noFrustumCullingEntities.begin(), noFrustumCullingEntities.end(), entity), noFrustumCullingEntities.end());
 }
 
 void Engine::reset()
