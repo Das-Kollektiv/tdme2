@@ -46,7 +46,7 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	Object3DBase* object3D;
+	int instances;
 	Object3DGroupRenderer* object3DGroupRenderer;
 	Group* group;
 	int32_t faceCount;
@@ -88,15 +88,17 @@ private:
 	 * @param group group
 	 * @param transformationMatrices instances transformationm matrices
 	 * @param skinningMatrices instances skinning matrices
+	 * @param instances instances
 	 * @return object 3d group mesh
 	 */
-	static Object3DGroupMesh* createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices);
+	static Object3DGroupMesh* createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
 
 	/** 
 	 * Computes mesh transformations
 	 * @param context context
+	 * @param object3DBase object 3d base
 	 */
-	void computeTransformations(void* context);
+	void computeTransformations(void* context, Object3DBase* object3DBase);
 
 	/** 
 	 * Recreates group float buffers

@@ -167,7 +167,8 @@ void Object3DBase::initialize()
 						animationProcessingTarget,
 						object3DGroup->group,
 						instancesTransformationsMatrices,
-						instancesSkinningGroupsMatrices
+						instancesSkinningGroupsMatrices,
+						instances
 					);
 				}
 			} else {
@@ -176,7 +177,8 @@ void Object3DBase::initialize()
 					animationProcessingTarget,
 					object3DGroup->group,
 					instancesTransformationsMatrices,
-					instancesSkinningGroupsMatrices
+					instancesSkinningGroupsMatrices,
+					instances
 				);
 			}
 		}

@@ -51,7 +51,6 @@ using tdme::utils::Console;
 
 Object3DGroupMesh::Object3DGroupMesh()
 {
-	object3D = nullptr;
 	object3DGroupRenderer = nullptr;
 	group = nullptr;
 	vertices = nullptr;
@@ -67,11 +66,11 @@ Object3DGroupMesh::Object3DGroupMesh()
 	animationProcessingTarget = Engine::AnimationProcessingTarget::NONE;
 }
 
-Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices)
+Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3DGroupRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Group* group, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances)
 {
 	auto mesh = new Object3DGroupMesh();
 	//
-	mesh->object3D = object3DGroupRenderer->object3DGroup->object;
+	mesh->instances = instances;
 	mesh->object3DGroupRenderer = object3DGroupRenderer;
 	mesh->group = group;
 	// group data
@@ -89,35 +88,35 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 	mesh->skinning = skinning != nullptr;
 	mesh->skinningMatrices = skinningMatrices;
 	// set up transformed vertices, normals and friends
-	if (mesh->object3D->instances > 1 || (skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) ||
+	if (mesh->instances > 1 || (skinning != nullptr && animationProcessingTarget == Engine::AnimationProcessingTarget::CPU) ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		// transformed mesh vertices
-		mesh->transformedVertices.resize(groupVertices.size() * mesh->object3D->instances);
+		mesh->transformedVertices.resize(groupVertices.size() * mesh->instances);
 		mesh->vertices = &mesh->transformedVertices;
 		{
 			auto idx = 0;
-			for (auto i = 0; i < mesh->object3D->instances; i++)
+			for (auto i = 0; i < mesh->instances; i++)
 			for (auto j = 0; j < groupVertices.size(); j++) {
 				mesh->transformedVertices[idx++].set(groupVertices[j]);
 			}
 		}
 		// transformed mesh normals
-		mesh->transformedNormals.resize(groupNormals.size() * mesh->object3D->instances);
+		mesh->transformedNormals.resize(groupNormals.size() * mesh->instances);
 		mesh->normals = &mesh->transformedNormals;
 		{
 			auto idx = 0;
-			for (auto i = 0; i < mesh->object3D->instances; i++)
+			for (auto i = 0; i < mesh->instances; i++)
 			for (auto j = 0; j < groupNormals.size(); j++) {
 				mesh->transformedNormals[idx++].set(groupNormals[j]);
 			}
 		}
-		if (mesh->object3D->instances > 1) {
+		if (mesh->instances > 1) {
 			// transformed mesh texture coordinates
-			mesh->transformedTextureCoordinates.resize(groupTextureCoordinates.size() * mesh->object3D->instances);
+			mesh->transformedTextureCoordinates.resize(groupTextureCoordinates.size() * mesh->instances);
 			mesh->textureCoordinates = &mesh->transformedTextureCoordinates;
 			{
 				auto idx = 0;
-				for (auto i = 0; i < mesh->object3D->instances; i++)
+				for (auto i = 0; i < mesh->instances; i++)
 				for (auto j = 0; j < groupTextureCoordinates.size(); j++) {
 					mesh->transformedTextureCoordinates[idx++].set(groupTextureCoordinates[j]);
 				}
@@ -127,11 +126,11 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 		}
 		// transformed mesh tangents
 		if (groupTangents.size() > 0) {
-			mesh->transformedTangents.resize(groupTangents.size() * mesh->object3D->instances);
+			mesh->transformedTangents.resize(groupTangents.size() * mesh->instances);
 			mesh->tangents = &mesh->transformedTangents;
 			{
 				auto idx = 0;
-				for (auto i = 0; i < mesh->object3D->instances; i++)
+				for (auto i = 0; i < mesh->instances; i++)
 				for (auto j = 0; j < groupTangents.size(); j++) {
 					mesh->transformedTangents[idx++].set(groupTangents[j]);
 				}
@@ -139,11 +138,11 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 		}
 		// transformed mesh bitangents
 		if (groupBitangents.size() > 0) {
-			mesh->transformedBitangents.resize(groupBitangents.size() * mesh->object3D->instances);
+			mesh->transformedBitangents.resize(groupBitangents.size() * mesh->instances);
 			mesh->bitangents = &mesh->transformedBitangents;
 			{
 				auto idx = 0;
-				for (auto i = 0; i < mesh->object3D->instances; i++)
+				for (auto i = 0; i < mesh->instances; i++)
 				for (auto j = 0; j < groupBitangents.size(); j++) {
 					mesh->transformedBitangents[idx++].set(groupBitangents[j]);
 				}
@@ -167,11 +166,11 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 	for (auto& facesEntity : group->getFacesEntities()) {
 		indicesCount += 3 * facesEntity.getFaces().size();
 	}
-	mesh->indices.resize(mesh->object3D->instances * indicesCount);
+	mesh->indices.resize(mesh->instances * indicesCount);
 	{
 		auto j = 0;
 		for (auto& facesEntity : group->getFacesEntities()) {
-			for (auto i = 0; i < mesh->object3D->instances; i++) {
+			for (auto i = 0; i < mesh->instances; i++) {
 				for (auto& face : facesEntity.getFaces())
 				for (auto& vertexIndex : face.getVertexIndices()) {
 					mesh->indices[j++] = groupVertices.size() * i + vertexIndex;
@@ -195,8 +194,8 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 		// skinning computation caches if computing skinning on CPU
 		if (mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || mesh->animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			mesh->cSkinningJointWeight.resize(groupVertices.size());
-			mesh->cSkinningJointTransformationsMatrices.resize(mesh->object3D->instances);
-			for (auto i = 0; i < mesh->object3D->instances; i++) mesh->cSkinningJointTransformationsMatrices[i].resize(groupVertices.size());
+			mesh->cSkinningJointTransformationsMatrices.resize(mesh->instances);
+			for (auto i = 0; i < mesh->instances; i++) mesh->cSkinningJointTransformationsMatrices[i].resize(groupVertices.size());
 			// compute joint weight caches
 			auto& joints = skinning->getJoints();
 			auto& weights = skinning->getWeights();
@@ -205,7 +204,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 				auto vertexJointWeights = jointsWeights[vertexIndex].size();
 				if (vertexJointWeights > mesh->cSkinningMaxVertexWeights) mesh->cSkinningMaxVertexWeights = vertexJointWeights;
 				mesh->cSkinningJointWeight[vertexIndex].resize(vertexJointWeights);
-				for (auto i = 0; i < mesh->object3D->instances; i++) mesh->cSkinningJointTransformationsMatrices[i][vertexIndex].resize(vertexJointWeights);
+				for (auto i = 0; i < mesh->instances; i++) mesh->cSkinningJointTransformationsMatrices[i][vertexIndex].resize(vertexJointWeights);
 				{
 					auto jointWeightIdx = 0;
 					for (auto& jointWeight : jointsWeights[vertexIndex]) {
@@ -215,7 +214,7 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 						jointWeightIdx++;
 					}
 				}
-				for (auto i = 0; i < mesh->object3D->instances; i++) {
+				for (auto i = 0; i < mesh->instances; i++) {
 					auto jointWeightIdx = 0;
 					for (auto& jointWeight : jointsWeights[vertexIndex]) {
 						auto& joint = joints[jointWeight.getJointIndex()];
@@ -232,14 +231,14 @@ Object3DGroupMesh* Object3DGroupMesh::createMesh(Object3DGroupRenderer* object3D
 	return mesh;
 }
 
-void Object3DGroupMesh::computeTransformations(void* context)
+void Object3DGroupMesh::computeTransformations(void* context, Object3DBase* object3DBase)
 {
 	// transformations for skinned meshes
 	auto skinning = group->getSkinning();
 	if (skinning != nullptr) {
 		// compute skinning on CPU if required
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
-			Engine::getSkinningShader()->computeSkinning(context, this);
+			Engine::getSkinningShader()->computeSkinning(context, object3DBase, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			Vector3 tmpVector3;
@@ -260,10 +259,10 @@ void Object3DGroupMesh::computeTransformations(void* context)
 			float weightNormalized;
 			auto j = 0;
 			Matrix4x4 transformationsMatrix; // TODO: try to avoid multiplying matrix with at each vertex
-			auto currentInstance = object3D->getCurrentInstance();
-			for (auto i = 0; i < object3D->instances; i++) {
-				if (object3D->instanceEnabled[i] == false) continue;
-				object3D->setCurrentInstance(i);
+			auto currentInstance = object3DBase->getCurrentInstance();
+			for (auto i = 0; i < instances; i++) {
+				if (object3DBase->instanceEnabled[i] == false) continue;
+				object3DBase->setCurrentInstance(i);
 				for (auto vertexIndex = 0; vertexIndex < groupVertices.size(); vertexIndex++) {
 					// do vertices
 					vertex = &groupVertices[vertexIndex];
@@ -279,7 +278,7 @@ void Object3DGroupMesh::computeTransformations(void* context)
 					for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
 						auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
 						// skinning transformation matrix
-						transformationsMatrix.set(*cSkinningJointTransformationsMatrices[i][vertexIndex][vertexJointWeightIdx]).multiply(object3D->getTransformationsMatrix());
+						transformationsMatrix.set(*cSkinningJointTransformationsMatrices[i][vertexIndex][vertexJointWeightIdx]).multiply(object3DBase->getTransformationsMatrix());
 						// vertex
 						transformedVertex->add(transformationsMatrix.multiply(*vertex, tmpVector3).scale(weight));
 						// normals
@@ -316,7 +315,7 @@ void Object3DGroupMesh::computeTransformations(void* context)
 				}
 				j++;
 			}
-			object3D->setCurrentInstance(currentInstance);
+			object3DBase->setCurrentInstance(currentInstance);
 			// recreate buffers
 			recreateBuffers();
 		}
@@ -358,7 +357,7 @@ bool Object3DGroupMesh::getRecreatedBuffers()
 void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *context, int32_t vboId) {
 	// upload
 	if (renderer->isUsingShortIndices() == true) {
-		if (object3D->instances * indices.size() > 65535) {
+		if (instances * indices.size() > 65535) {
 			Console::println(
 				"Object3DGroupMesh::setupVertexIndicesBuffer(): " +
 				group->getModel()->getName() + ":" +
@@ -367,18 +366,18 @@ void Object3DGroupMesh::setupVertexIndicesBuffer(Renderer *renderer, void *conte
 				to_string(indices.size())
 			);
 		}
-		auto sbIndices = ObjectBuffer::getByteBuffer(context, object3D->instances * faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
+		auto sbIndices = ObjectBuffer::getByteBuffer(context, instances * faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
 		// create face vertex indices, will never be changed in engine
-		for (auto i = 0; i < object3D->instances; i++)
+		for (auto i = 0; i < instances; i++)
 		for (auto index: indices) {
 			sbIndices.put(index);
 		}
 		// done, upload
 		renderer->uploadIndicesBufferObject(context, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 	} else {
-		auto ibIndices = ObjectBuffer::getByteBuffer(context, object3D->instances * faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
+		auto ibIndices = ObjectBuffer::getByteBuffer(context, instances * faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
 		// create face vertex indices, will never be changed in engine
-		for (auto i = 0; i < object3D->instances; i++)
+		for (auto i = 0; i < instances; i++)
 		for (auto index: indices) {
 			ibIndices.put(index);
 		}

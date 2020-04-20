@@ -16,6 +16,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::subsystems::rendering::Object3DBase;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
 using tdme::math::Matrix4x4;
 using tdme::os::threading::Mutex;
@@ -75,9 +76,10 @@ public:
 	/**
 	 * Compute skinning
 	 * @param context context
+	 * @param object3DBase object 3D base
 	 * @param object3DGroupMesh object 3d group mesh
 	 */
-	void computeSkinning(void* context, Object3DGroupMesh* object3DGroupMesh);
+	void computeSkinning(void* context, Object3DBase* object3DBase, Object3DGroupMesh* object3DGroupMesh);
 
 	/**
 	 * Reset

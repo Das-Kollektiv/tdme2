@@ -118,7 +118,8 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 						animationProcessingTarget,
 						group,
 						instancesTransformationsMatrices,
-						instancesSkinningGroupsMatrices
+						instancesSkinningGroupsMatrices,
+						object3D->instances
 					);
 					meshManager->addMesh(object3DGroup->id, object3DGroup->mesh);
 				}
@@ -128,7 +129,8 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 					animationProcessingTarget,
 					group,
 					instancesTransformationsMatrices,
-					instancesSkinningGroupsMatrices
+					instancesSkinningGroupsMatrices,
+					object3D->instances
 				);
 			}
 			object3DGroup->textureMatricesByEntities.resize(group->getFacesEntities().size());
@@ -167,7 +169,7 @@ void Object3DGroup::createGroups(Object3DBase* object3D, const map<string, Group
 void Object3DGroup::computeTransformations(void* context, vector<Object3DGroup*>& object3DGroups)
 {
 	for (auto object3DGroup : object3DGroups) {
-		object3DGroup->mesh->computeTransformations(context);
+		object3DGroup->mesh->computeTransformations(context, object3DGroup->object);
 	}
 }
 

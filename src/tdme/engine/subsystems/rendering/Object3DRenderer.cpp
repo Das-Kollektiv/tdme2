@@ -330,7 +330,7 @@ void Object3DRenderer::prepareTransparentFaces(const vector<TransparentRenderFac
 		}
 		textureCoordinates = facesEntity->isTextureCoordinatesAvailable();
 		// create group key
-		string transparentRenderFacesGroupKey = TransparentRenderFacesGroup::createKey(model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object3D->getShader());
+		auto transparentRenderFacesGroupKey = TransparentRenderFacesGroup::createKey(model, object3DGroup, facesEntityIdx, effectColorAdd, effectColorMul, material, textureCoordinates, object3D->getShader());
 		// get group
 		TransparentRenderFacesGroup* trfGroup = nullptr;
 		auto trfGroupIt = transparentRenderFacesGroups.find(transparentRenderFacesGroupKey);
