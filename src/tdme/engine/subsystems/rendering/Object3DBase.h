@@ -131,6 +131,13 @@ public:
 	virtual void dispose();
 
 	/**
+	 * @return maximum of instances
+	 */
+	inline int getInstances() {
+		return instances;
+	}
+
+	/**
 	 * @return current instance
 	 */
 	inline int getCurrentInstance() {
