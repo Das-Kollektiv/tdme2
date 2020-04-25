@@ -39,7 +39,7 @@ void Sphere::setScale(const Vector3& scale) {
 	collisionShapeLocalTranslation.set(center).scale(scale);
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 	collisionShape = new reactphysics3d::SphereShape(
-		Math::max(Math::EPSILON, radius * Math::max(scale.getZ(), Math::max(scale.getX(), scale.getY())))
+		Math::max(Math::EPSILON, radius * Math::max(Math::abs(scale.getZ()), Math::max(Math::abs(scale.getX()), Math::abs(scale.getY()))))
 	);
 	// compute bounding box
 	computeBoundingBox();

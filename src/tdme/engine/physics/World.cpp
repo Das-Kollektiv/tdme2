@@ -254,25 +254,9 @@ void World::update(float deltaTime)
 			physicsTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 		}
 
-		// rotations, also apply additional rotations regarding negative scales
+		// rotations
 		Quaternion rotationsQuaternion(transformOrientation.x, transformOrientation.y, transformOrientation.z, transformOrientation.w);
-		if (body->transformationsScale.getZ() < 0.0f) {
-			Quaternion qTmp = Quaternion();
-			qTmp.rotate(180.0f, Vector3(1.0f, 0.0f, 0.0f));
-			rotationsQuaternion.multiply(qTmp);
-		}
-		if (body->transformationsScale.getY() < 0.0f) {
-			Quaternion qTmp = Quaternion();
-			qTmp.rotate(180.0f, Vector3(0.0f, 0.0f, 1.0f));
-			rotationsQuaternion.multiply(qTmp);
-		}
-		if (body->transformationsScale.getX() < 0.0f) {
-			Quaternion qTmp = Quaternion();
-			qTmp.rotate(180.0f, Vector3(0.0f, 1.0f, 0.0f));
-			rotationsQuaternion.multiply(qTmp);
-		}
 		physicsTransformations.getRotation(0).fromQuaternion(rotationsQuaternion);
-
 		// scale
 		physicsTransformations.setScale(body->transformationsScale);
 		// translation
