@@ -36,8 +36,8 @@ public:
 		int32_t depth,
 		int32_t width, int32_t height,
 		int32_t textureWidth, int32_t textureHeight,
-		ByteBuffer* textureData)
-		:
+		ByteBuffer* textureData):
+		ReferenceCounter(),
 		id(id),
 		depth(depth),
 		width(width),

@@ -37,5 +37,4 @@ void ReferenceCounter::releaseReference() {
 }
 
 void ReferenceCounter::onDelete() {
-	// no op here
 }

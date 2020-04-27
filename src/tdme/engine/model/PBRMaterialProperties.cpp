@@ -36,6 +36,7 @@ PBRMaterialProperties::~PBRMaterialProperties() {
 
 void PBRMaterialProperties::setBaseColorTexture(const string& pathName, const string& fileName)
 {
+	if (baseColorTexture != nullptr) baseColorTexture->releaseReference();
 	baseColorTexturePathName = pathName;
 	baseColorTextureFileName = fileName;
 	baseColorTexture = TextureReader::read(pathName, fileName);
@@ -44,6 +45,7 @@ void PBRMaterialProperties::setBaseColorTexture(const string& pathName, const st
 
 void PBRMaterialProperties::setMetallicRoughnessTexture(const string& pathName, const string& fileName)
 {
+	if (metallicRoughnessTexture != nullptr) metallicRoughnessTexture->releaseReference();
 	metallicRoughnessTexturePathName = pathName;
 	metallicRoughnessTextureFileName = fileName;
 	metallicRoughnessTexture = TextureReader::read(pathName, fileName);
@@ -51,6 +53,7 @@ void PBRMaterialProperties::setMetallicRoughnessTexture(const string& pathName, 
 
 void PBRMaterialProperties::setNormalTexture(const string& pathName, const string& fileName)
 {
+	if (normalTexture != nullptr) normalTexture->releaseReference();
 	normalTexturePathName = pathName;
 	normalTextureFileName = fileName;
 	normalTexture = TextureReader::read(pathName, fileName);

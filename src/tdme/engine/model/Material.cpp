@@ -34,6 +34,7 @@ void Material::setPBRMaterialProperties(PBRMaterialProperties* pbrMaterialProper
 
 Material::~Material() {
 	if (this->specularMaterialProperties != nullptr) delete this->specularMaterialProperties;
+	if (this->pbrMaterialProperties != nullptr) delete this->pbrMaterialProperties;
 }
 
 string Material::defaultMaterialId = "tdme.default_material";

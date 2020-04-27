@@ -35,16 +35,16 @@ class tdme::tools::shared::model::LevelEditorLevel final
 	: public ModelProperties
 {
 private:
-	string gameRoot {  };
-	string pathName {  };
-	string fileName {  };
-	RotationOrder* rotationOrder {  };
-	vector<LevelEditorLight*> lights {  };
-	LevelEditorEntityLibrary* entityLibrary {  };
-	map<string, LevelEditorObject*> objectsById {  };
-	vector<LevelEditorObject*> objects {  };
-	int32_t objectIdx {  };
-	BoundingBox boundingBox {  };
+	string gameRoot;
+	string pathName;
+	string fileName;
+	RotationOrder* rotationOrder { nullptr };
+	vector<LevelEditorLight*> lights;
+	LevelEditorEntityLibrary* entityLibrary { nullptr };
+	map<string, LevelEditorObject*> objectsById;
+	vector<LevelEditorObject*> objects;
+	int32_t objectIdx;
+	BoundingBox boundingBox;
 	Vector3 dimension;
 	Vector3 center;
 
