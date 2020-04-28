@@ -320,7 +320,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 
 void Engine::setPartition(Partition* partition)
 {
-	if (this->partition != nullptr) delete this->partition;
+	if (this->partition != nullptr && this->partition != partition) delete this->partition;
 	this->partition = partition;
 }
 
