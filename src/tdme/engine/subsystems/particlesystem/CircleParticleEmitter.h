@@ -37,7 +37,6 @@ private:
 	float radiusTransformed;
 	float mass;
 	float massRnd;
-	Vector3 scale;
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Color4 colorStart;

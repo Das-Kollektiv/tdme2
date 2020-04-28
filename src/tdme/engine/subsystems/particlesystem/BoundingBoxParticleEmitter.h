@@ -33,7 +33,6 @@ private:
 	float massRnd;
 	OrientedBoundingBox* obb { nullptr };
 	OrientedBoundingBox* obbTransformed { nullptr };
-	Vector3 scale;
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Color4 colorStart;

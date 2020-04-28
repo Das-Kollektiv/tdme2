@@ -85,7 +85,6 @@ protected:
 			object->setScale(scale);
 			object->update();
 		}
-		emitter->fromTransformations(*this);
 		inverseTransformation.fromTransformations(*this);
 		inverseTransformation.invert();
 	}

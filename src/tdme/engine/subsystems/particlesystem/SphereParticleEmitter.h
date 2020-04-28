@@ -34,7 +34,6 @@ private:
 	float massRnd;
 	Sphere* sphere { nullptr };
 	Sphere* sphereTransformed { nullptr };
-	Vector3 scale;
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Color4 colorStart;

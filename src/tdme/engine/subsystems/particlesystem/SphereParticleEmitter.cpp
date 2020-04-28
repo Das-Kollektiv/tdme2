@@ -28,7 +28,6 @@ SphereParticleEmitter::SphereParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->massRnd = massRnd;
 	this->sphere = sphere;
 	this->sphereTransformed = static_cast< Sphere* >(sphere->clone());
-	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -51,9 +50,9 @@ void SphereParticleEmitter::emit(Particle* particle)
 		Math::random() * 2.0f - 1.0f
 	).normalize().scale(sphereTransformed->getRadius());
 	particle->velocity.set(
-		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		scale[1] * velocity[1] + (Math::random() * scale[1] * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		scale[2] * velocity[2] + (Math::random() * scale[2] * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
+		velocity[0] + (Math::random() * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocity[1] + (Math::random() * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocity[2] + (Math::random() * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	particle->mass = mass + (Math::random() * (massRnd));
 	particle->lifeTimeMax = lifeTime + static_cast< int64_t >((Math::random() * lifeTimeRnd));
@@ -76,6 +75,7 @@ void SphereParticleEmitter::fromTransformations(const Transformations& transform
 	// 	translate center
 	transformationsMatrix.multiply(sphere->getCenter(), center);
 	// scale and radius transformed
+	Vector3 scale;
 	transformationsMatrix.getScale(scale);
 	*sphereTransformed = Sphere(center, sphere->getRadius() * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ())));
 }

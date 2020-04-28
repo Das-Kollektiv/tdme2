@@ -165,6 +165,8 @@ void ObjectParticleSystemInternal::updateParticles()
 	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
 	localTransformationsMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
+	// transformations
+	auto& transformationsMatrix = getTransformationsMatrix();
 	//
 	Vector3 point;
 	Vector3 velocityForTime;
@@ -192,6 +194,8 @@ void ObjectParticleSystemInternal::updateParticles()
 		// TODO:
 		//	maybe take air resistance into account like a huge paper needs more time to fall than a sphere of paper
 		//	or heat for smoke or fire, whereas having no mass for those particles works around this problem for now
+		// translation
+		particle.position.add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f));
 		// update up effect colors
 		object->setEffectColorAdd(effectColorAdd);
 		object->setEffectColorMul(effectColorMul);
@@ -199,7 +203,10 @@ void ObjectParticleSystemInternal::updateParticles()
 		point.set(particle.position);
 		localTransformationsMatrix.multiply(point, point);
 		point.add(center);
-		object->setTranslation(point.add(velocityForTime.set(particle.velocity).scale(static_cast< float >(timeDelta) / 1000.0f)));
+		// transform particle according to its transformations
+		transformationsMatrix.multiply(point, point);
+		// apply to object
+		object->setTranslation(point);
 		object->update();
 		if (first == true) {
 			boundingBoxTransformed.getMin().set(object->getBoundingBoxTransformed()->getMin());

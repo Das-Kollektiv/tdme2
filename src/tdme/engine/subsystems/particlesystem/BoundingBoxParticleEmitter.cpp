@@ -27,7 +27,6 @@ BoundingBoxParticleEmitter::BoundingBoxParticleEmitter(int32_t count, int64_t li
 	this->mass = mass;
 	this->massRnd = massRnd;
 	this->obb = obb;
-	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -55,9 +54,9 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 	particle->position.add(tmpAxis.set(obbAxes[2]).scale((static_cast< float >(Math::random()) * obbHalfExtensionXYZ[2] * 2.0f) - obbHalfExtensionXYZ[2]));
 	// compute velocity
 	particle->velocity.set(
-		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		scale[1] * velocity[1] + (Math::random() * scale[1] * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		scale[2] * velocity[2] + (Math::random() * scale[2] * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
+		velocity[0] + (Math::random() * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocity[1] + (Math::random() * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocity[2] + (Math::random() * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	// mass
 	particle->mass = mass + (Math::random() * (massRnd));
@@ -76,6 +75,7 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 void BoundingBoxParticleEmitter::fromTransformations(const Transformations& transformations)
 {
 	Vector3 center;
+	Vector3 scale;
 	array<Vector3, 3> axes;
 	array<Vector3, 3> axesTransformed;
 	Vector3 halfExtension;

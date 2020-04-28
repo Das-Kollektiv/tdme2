@@ -32,7 +32,6 @@ CircleParticleEmitter::CircleParticleEmitter(int32_t count, int64_t lifeTime, in
 	this->radiusTransformed = radius;
 	this->mass = mass;
 	this->massRnd = massRnd;
-	this->scale.set(1.0f, 1.0f, 1.0f);
 	this->velocity.set(velocity);
 	this->velocityRnd.set(velocityRnd);
 	this->colorStart.set(colorStart);
@@ -55,9 +54,9 @@ void CircleParticleEmitter::emit(Particle* particle)
 	particle->position.scale(radiusTransformed);
 	// compute velocity
 	particle->velocity.set(
-		scale[0] * velocity[0] + (Math::random() * scale[0] * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		scale[1] * velocity[1] + (Math::random() * scale[1] * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
-		scale[2] * velocity[2] + (Math::random() * scale[2] * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
+		velocity[0] + (Math::random() * velocityRnd[0] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocity[1] + (Math::random() * velocityRnd[1] * (Math::random() > 0.5 ? +1.0f : -1.0f)),
+		velocity[2] + (Math::random() * velocityRnd[2] * (Math::random() > 0.5 ? +1.0f : -1.0f))
 	);
 	// mass
 	particle->mass = mass + static_cast< float >((Math::random() * (massRnd)));
@@ -83,6 +82,7 @@ void CircleParticleEmitter::fromTransformations(const Transformations& transform
 	transformationsMatrix.multiplyNoTranslation(axis0, axis0Transformed).normalize();
 	transformationsMatrix.multiplyNoTranslation(axis1, axis1Transformed).normalize();
 	// scale and radius transformed
+	Vector3 scale;
 	transformationsMatrix.getScale(scale);
 	radiusTransformed = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 }

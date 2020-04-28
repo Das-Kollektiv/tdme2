@@ -32,7 +32,6 @@ private:
 	float massRnd;
 	Vector3 position;
 	Vector3 positionTransformed;
-	Vector3 scale;
 	Vector3 velocity;
 	Vector3 velocityRnd;
 	Vector3 zeroPosition;
