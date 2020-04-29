@@ -23,7 +23,7 @@
         - supports executing other applications or background applications
         - provides a crash handler for port-msc and port-mingw which also saves backtrace to crash.log
         - supports swapping double buffered buffers (to screen)
-        . supports checking if application is active (port-mingw, port-msc only for now)
+        - supports checking if application is active (port-mingw, port-msc only for now)
         - provides application life cycle
     - 3d engine
         - model parsing
