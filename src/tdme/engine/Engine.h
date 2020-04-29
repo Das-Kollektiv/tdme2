@@ -177,6 +177,8 @@ private:
 
 	int32_t width { -1 };
 	int32_t height { -1 };
+	int32_t scaledWidth { -1 };
+	int32_t scaledHeight { -1 };
 	GUI* gui { nullptr };
 	Timing* timing { nullptr };
 	Camera* camera { nullptr };
@@ -583,6 +585,20 @@ public:
 		return height;
 	}
 
+	/**
+	 * @return scaled width
+	 */
+	inline int32_t getScaledWidth() {
+		return scaledWidth;
+	}
+
+	/**
+	 * @return scaled height
+	 */
+	inline int32_t getScaledHeight() {
+		return scaledHeight;
+	}
+
 	/** 
 	 * @return GUI
 	 */
@@ -699,12 +715,27 @@ public:
 
 	/** 
 	 * Reshape
-	 * @param x x
-	 * @param y y
 	 * @param width width
 	 * @param height height
 	 */
-	void reshape(int32_t x, int32_t y, int32_t width, int32_t height);
+	void reshape(int32_t width, int32_t height);
+
+	/**
+	 * Scale which applies to main engine only
+	 * @param width width
+	 * @param height height
+	 */
+	void scale(int32_t width, int32_t height);
+
+	/**
+	 * Disable scaling, which applies to main engine only
+	 */
+	void unscale();
+
+	/**
+	 * Render scaled main engine to screen
+	 */
+	void renderToScreen();
 
 	/** 
 	 * Renders the scene

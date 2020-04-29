@@ -14,6 +14,17 @@
         - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
 
 - What is already working
+    - application
+        - initiates GL/Vulkan context and does HID via GLUT or GLFW3
+        - supports setting window position and dimension
+        - supports setting full screen or windowed mode
+        - supports setting application icon
+        - supports setting mouse position and mouse cursor
+        - supports executing other applications or background applications
+        - provides a crash handler for port-msc and port-mingw which also saves backtrace to crash.log
+        - supports swapping double buffered buffers (to screen)
+        . supports checking if application is active (port-mingw, port-msc only for now)
+        - provides application life cycle
     - 3d engine
         - model parsing
             - DAE parsing with skinned meshes and animations
@@ -86,6 +97,7 @@
         - supports offscreen instances
             - rendering can be captured as screenshot
             - rendering can be used (in other engine instances) as diffuse texture
+        - supports down/up scaled rendering of main engine
         - screenshot ability
         - multiple renderer
           - GLES2, GL2, GL3+/CORE and Vulkan(still experimental)

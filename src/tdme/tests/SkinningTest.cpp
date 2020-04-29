@@ -164,7 +164,7 @@ void SkinningTest::initialize()
 
 void SkinningTest::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(0, 0, width, height);
+	engine->reshape(width, height);
 }
 
 void SkinningTest::onChar(unsigned int key, int x, int y) {

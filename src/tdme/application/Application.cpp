@@ -421,7 +421,7 @@ void Application::setWindowWidth(int32_t windowWidth) {
 	this->windowWidth = windowWidth;
 	if (initialized == true) {
 		#if defined(VULKAN) || defined(GLFW3)
-			glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
+			if (fullScreen == false) glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 		#else
 			glutReshapeWindow(windowWidth, windowHeight);
 		#endif
@@ -436,7 +436,7 @@ void Application::setWindowHeight(int32_t windowHeight) {
 	this->windowHeight = windowHeight;
 	if (initialized == true) {
 		#if defined(VULKAN) || defined(GLFW3)
-			glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
+			if (fullScreen == false) glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 		#else
 			glutReshapeWindow(windowWidth, windowHeight);
 		#endif

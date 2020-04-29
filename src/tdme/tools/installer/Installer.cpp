@@ -1052,7 +1052,7 @@ void Installer::dispose()
 
 void Installer::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(0, 0, width, height);
+	engine->reshape(width, height);
 }
 
 void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* node) {

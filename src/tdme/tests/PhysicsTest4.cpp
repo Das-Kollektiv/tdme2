@@ -140,7 +140,7 @@ void PhysicsTest4::initialize()
 
 void PhysicsTest4::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(0, 0, width, height);
+	engine->reshape(width, height);
 }
 
 void PhysicsTest4::onChar(unsigned int key, int x, int y) {

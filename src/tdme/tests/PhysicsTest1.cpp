@@ -319,7 +319,7 @@ void PhysicsTest1::initialize()
 
 void PhysicsTest1::reshape(int32_t width, int32_t height)
 {
-	engine->reshape(0, 0, width, height);
+	engine->reshape(width, height);
 }
 
 void PhysicsTest1::onChar(unsigned int key, int x, int y) {

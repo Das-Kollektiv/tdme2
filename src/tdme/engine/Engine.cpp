@@ -314,7 +314,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DRenderer);
 	}
 	//
-	offScreenEngine->reshape(0, 0, width, height);
+	offScreenEngine->reshape(width, height);
 	return offScreenEngine;
 }
 
@@ -665,7 +665,7 @@ void Engine::initialize()
 	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
 }
 
-void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
+void Engine::reshape(int32_t width, int32_t height)
 {
 	// set current engine
 	currentEngine = this;
@@ -675,18 +675,60 @@ void Engine::reshape(int32_t x, int32_t y, int32_t width, int32_t height)
 	this->height = height;
 
 	// update frame buffer if we have one
-	if (frameBuffer != nullptr) frameBuffer->reshape(width, height);
+	if (frameBuffer != nullptr) frameBuffer->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
 
 	// update post processing frame buffer if we have one
-	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->reshape(width, height);
-	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->reshape(width, height);
-	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(width, height);
+	if (postProcessingFrameBuffer1 != nullptr) postProcessingFrameBuffer1->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
+	if (postProcessingFrameBuffer2 != nullptr) postProcessingFrameBuffer2->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
+	if (postProcessingTemporaryFrameBuffer != nullptr) postProcessingTemporaryFrameBuffer->reshape(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
 
 	// update shadow mapping
 	if (shadowMapping != nullptr) shadowMapping->reshape(width, height);
 
+	// unset scaling frame buffer if width and height matches scaling
+	if (this == Engine::instance && scaledWidth != -1 && scaledHeight != -1) {
+		if (this->width == scaledWidth && this->height == scaledHeight) {
+			if (frameBuffer != nullptr) frameBuffer->dispose();
+			frameBuffer = nullptr;
+		} else {
+			if (frameBuffer == nullptr) {
+				frameBuffer = new FrameBuffer(scaledWidth, scaledHeight, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+				frameBuffer->initialize();
+			} else {
+				frameBuffer->reshape(scaledWidth, scaledHeight);
+			}
+		}
+	}
+
 	// update GUI system
 	gui->reshape(width, height);
+}
+
+void Engine::scale(int32_t width, int32_t height)
+{
+	if (this != Engine::instance) return;
+	scaledWidth = width;
+	scaledHeight = height;
+	if (frameBuffer != nullptr) frameBuffer->dispose();
+	frameBuffer = nullptr;
+	if (scaledWidth != this->width || scaledHeight != this->height) {
+		frameBuffer = new FrameBuffer(scaledWidth, scaledHeight, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+		frameBuffer->initialize();
+	}
+	reshape(this->width, this->height);
+}
+
+void Engine::unscale()
+{
+	scaledWidth = -1;
+	scaledHeight = -1;
+	if (frameBuffer != nullptr) frameBuffer->dispose();
+	frameBuffer = nullptr;
+	reshape(this->width, this->height);
+}
+
+void Engine::renderToScreen() {
+	if (this == Engine::instance && frameBuffer != nullptr) frameBuffer->renderToScreen();
 }
 
 void Engine::initRendering()
@@ -962,11 +1004,11 @@ void Engine::display()
 	// create post processing frame buffers if having post processing
 	if (postProcessingPrograms.size() > 0) {
 		if (postProcessingFrameBuffer1 == nullptr) {
-			postProcessingFrameBuffer1 = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer1 = new FrameBuffer(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			postProcessingFrameBuffer1->initialize();
 		}
 		if (postProcessingFrameBuffer2 == nullptr) {
-			postProcessingFrameBuffer2 = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			postProcessingFrameBuffer2 = new FrameBuffer(scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 			postProcessingFrameBuffer2->initialize();
 		}
 		postProcessingFrameBuffer1->enableFrameBuffer();
@@ -996,7 +1038,7 @@ void Engine::display()
 	renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 
 	// restore camera from shadow map rendering
-	camera->update(context, width, height);
+	camera->update(context, scaledWidth != -1?scaledWidth:width, scaledHeight != -1?scaledHeight:height);
 
 	// render lines objects
 	if (visibleLinesObjects.size() > 0) {
@@ -1080,9 +1122,6 @@ void Engine::display()
 		doPostProcessing(PostProcessingProgram::RENDERPASS_FINAL, {{postProcessingFrameBuffer1, postProcessingFrameBuffer2 }}, frameBuffer);
 	}
 
-	// render objects to target frame buffer or screen
-	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
-
 	// render objects that are have post post processing render pass
 	if (visibleObjectsPostPostProcessing.size() > 0) {
 		// use lighting shader
@@ -1164,12 +1203,14 @@ void Engine::display()
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
 {
+	auto scaleFactorWidth = static_cast<float>(scaledWidth != -1?scaledWidth:width) / static_cast<float>(width);
+	auto scaleFactorHeight = static_cast<float>(scaledHeight != -1?scaledHeight:height) / static_cast<float>(height);
 	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
 	Vector4 worldCoordinate4;
 	camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
-			(2.0f * (mouseX - camera->getViewPortLeft()) / camera->getViewPortWidth()) - 1.0f,
-			1.0f - (2.0f * (mouseY - camera->getViewPortTop()) / camera->getViewPortHeight()),
+			(2.0f * (mouseX * scaleFactorWidth - camera->getViewPortLeft()) / camera->getViewPortWidth()) - 1.0f,
+			1.0f - (2.0f * (mouseY * scaleFactorHeight- camera->getViewPortTop()) / camera->getViewPortHeight()),
 			2.0f * z - 1.0f,
 			1.0f
 		),
@@ -1189,8 +1230,12 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	if (frameBuffer != nullptr)
 		frameBuffer->enableFrameBuffer();
 
+	//
+	auto scaleFactorWidth = static_cast<float>(scaledWidth != -1?scaledWidth:width) / static_cast<float>(width);
+	auto scaleFactorHeight = static_cast<float>(scaledHeight != -1?scaledHeight:height) / static_cast<float>(height);
+
 	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
-	auto z = renderer->readPixelDepth(mouseX, height - mouseY);
+	auto z = renderer->readPixelDepth(mouseX * scaleFactorWidth, (height  - mouseY) * scaleFactorHeight);
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr)
