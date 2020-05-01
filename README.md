@@ -15,7 +15,7 @@
 
 - What is already working
     - application
-        - initiates GL/Vulkan context and does HID via GLUT or GLFW3
+        - creates main window and initializes OpenGL/Vulkan context and does HID via GLUT or GLFW3
         - supports setting window position and dimension
         - supports setting full screen or windowed mode
         - supports setting application icon
