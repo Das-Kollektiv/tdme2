@@ -204,10 +204,9 @@ protected:
 
 	/**
 	 * Check if conditions are met
-	 * @param elementNode element node
 	 * @return conditions met
 	 */
-	virtual bool checkConditions(GUIElementNode* elementNode = nullptr);
+	virtual bool checkConditions();
 
 	/**
 	 * @return compute parent children render offset X total

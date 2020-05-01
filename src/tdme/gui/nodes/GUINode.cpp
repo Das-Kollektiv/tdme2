@@ -400,7 +400,7 @@ GUINodeConditions GUINode::createConditions(const string& conditions)
 	return guiNodeConditions;
 }
 
-bool GUINode::checkConditions(GUIElementNode* elementNode)
+bool GUINode::checkConditions()
 {
 	auto& showOn = this->showOn.conditions;
 	auto& hideOn = this->hideOn.conditions;
@@ -416,10 +416,8 @@ bool GUINode::checkConditions(GUIElementNode* elementNode)
 
 	}
 
-	if (elementNode == nullptr) {
-		for (GUINode* node = parentNode; node != nullptr && (elementNode = dynamic_cast< GUIElementNode* >(node)) == nullptr; node = node->parentNode);
-		if (elementNode == nullptr) return true;
-	}
+	GUIElementNode* elementNode = nullptr;
+	for (GUINode* node = parentNode; node != nullptr && (elementNode = dynamic_cast<GUIElementNode*>(node)) == nullptr; node = node->parentNode);
 
 	StringTokenizer t;
 	string function;
