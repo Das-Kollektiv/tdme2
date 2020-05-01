@@ -115,6 +115,11 @@ public:
 	static void executeBackground(const string& command);
 
 	/**
+	 * Cancels a users requested exit (ALT-F4 or X button)
+	 */
+	static void cancelExit();
+
+	/**
 	 * Exits this application with given exit code
 	 * @param exitCode exit code
 	 */
@@ -235,6 +240,11 @@ public:
 	 */
 	virtual void dispose() = 0;
 
+	/**
+	 * On close
+	 */
+	virtual void onClose();
+
 private:
 	struct ApplicationShutdown {
 		~ApplicationShutdown();
@@ -252,6 +262,7 @@ private:
 	static int64_t timeLast;
 	static bool limitFPS;
 	string title;
+	int exitCode;
 
 	#if defined(VULKAN) || defined(GLFW3)
 		static GLFWwindow* glfwWindow;
@@ -333,6 +344,11 @@ private:
 		 * @param height height
 		 */
 		static void glfwOnWindowResize(GLFWwindow* window, int width, int height);
+
+		/**
+		 * GLFW on close
+		 */
+		static void glfwOnClose(GLFWwindow* window);
 	#else
 		/**
 		 * On key down

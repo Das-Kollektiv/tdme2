@@ -105,8 +105,19 @@ void Application::executeBackground(const string& command) {
 	#endif
 }
 
+void Application::cancelExit() {
+	#if defined(VULKAN) || defined(GLFW3)
+		glfwSetWindowShouldClose(glfwWindow, GLFW_FALSE);
+	#endif
+}
+
 void Application::exit(int exitCode) {
-	::exit(exitCode);
+	Application::application->exitCode = exitCode;
+	#if defined(VULKAN) || defined(GLFW3)
+		glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
+	#else
+		::exit(exitCode);
+	#endif
 }
 
 #if defined(_WIN32)
@@ -547,6 +558,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				return;
 			}
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		#else
 				if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) {
 					glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -592,6 +604,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
 		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
 		glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
+		glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
 		while (glfwWindowShouldClose(glfwWindow) == false) {
 			displayInternal();
 			#if !defined(VULKAN)
@@ -600,6 +613,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			glfwPollEvents();
 		}
 		glfwTerminate();
+		if (exitCode != 0) ::exit(exitCode);
 	#else
 		glutInit(&argc, argv);
 		#if defined(__APPLE__)
@@ -835,6 +849,10 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 		Application::reshapeInternal(width, height);
 	}
 
+	void Application::glfwOnClose(GLFWwindow* window) {
+		Application::application->onClose();
+	}
+
 #else
 	void Application::glutOnKeyDown (unsigned char key, int x, int y) {
 		if (Application::inputEventHandler == nullptr) return;
@@ -888,3 +906,6 @@ void Application::reshapeInternal(int32_t width, int32_t height) {
 		Application::inputEventHandler->onMouseWheel(button, direction, x, y);
 	}
 #endif
+
+void Application::onClose() {
+}

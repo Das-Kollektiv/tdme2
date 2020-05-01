@@ -1303,3 +1303,7 @@ void Installer::createPathRecursively(const string& pathName) {
 		}
 	}
 }
+
+void Installer::onClose() {
+	Application::cancelExit();
+}

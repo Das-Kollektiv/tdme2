@@ -10,7 +10,8 @@ int main(int argc, char** argv)
 	Network::initialize();
 
 	//
-	::tdme::tools::installer::Installer::main(argc, argv);
+	tdme::tools::installer::Installer::main(argc, argv);
 
+	//
 	return 0;
 }
