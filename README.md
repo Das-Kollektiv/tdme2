@@ -211,6 +211,7 @@
     - documentation
 
 - What is WIP or planned
+    - Shader parameters
     - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects
     - Installer for MacOSX
