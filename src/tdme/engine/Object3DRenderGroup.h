@@ -76,7 +76,7 @@ private:
 	array<int, 3> lodReduceBy;
 	bool enableEarlyZRejection { false };
 	map<string, string> shaderParameters;
-	string shaderParametersHash;
+	map<string, string> distanceShaderParameters;
 
 	/**
 	 * Compute bounding box
@@ -117,14 +117,6 @@ private:
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
 		updateBoundingBox();
-	}
-
-	/**
-	 * Get shader parameters hash
-	 * @return shader parameters hash
-	 */
-	inline const string& getShaderParametersHash() {
-		return shaderParametersHash;
 	}
 
 public:
@@ -408,20 +400,46 @@ public:
 	}
 
 	/**
+	 * Get shader parameters
+	 * @return shader parameters
+	 */
+	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
+		return shaderParameters;
+	}
+
+	/**
 	 * Set shader parameters
 	 * @param parameters shader parameters
 	 */
 	inline void setShaderParameters(const map<string, string>& parameters) {
 		shaderParameters = parameters;
-		shaderParametersHash.clear();
-		for (auto& parameterIt: shaderParameters) {
-			shaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
-		}
 		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
 			dynamic_cast<Object3D*>(combinedEntity)->setShaderParameters(shaderParameters);
 		} else
 		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
 			dynamic_cast<LODObject3D*>(combinedEntity)->setShaderParameters(shaderParameters);
+		}
+	}
+
+	/**
+	 * Get distance shader parameters
+	 * @return distance shader parameters
+	 */
+	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
+		return distanceShaderParameters;
+	}
+
+	/**
+	 * Set distance shader parameters
+	 * @param parameters distance shader parameters
+	 */
+	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
+		distanceShaderParameters = parameters;
+		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<Object3D*>(combinedEntity)->setDistanceShaderParameters(distanceShaderParameters);
+		} else
+		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<LODObject3D*>(combinedEntity)->setDistanceShaderParameters(distanceShaderParameters);
 		}
 	}
 

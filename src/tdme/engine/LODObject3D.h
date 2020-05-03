@@ -82,7 +82,7 @@ private:
 	float distanceShaderDistance { 50.0f };
 	bool enableEarlyZRejection { false };
 	map<string, string> shaderParameters;
-	string shaderParametersHash;
+	map<string, string> distanceShaderParameters;
 
 	/**
 	 * Set parent entity, needs to be called before adding to engine
@@ -106,14 +106,6 @@ private:
 		if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
 		if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
 		if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
-	}
-
-	/**
-	 * Get shader parameters hash
-	 * @return shader parameters hash
-	 */
-	inline const string& getShaderParametersHash() {
-		return shaderParametersHash;
 	}
 
 public:
@@ -515,13 +507,28 @@ public:
 	 */
 	inline void setShaderParameters(const map<string, string>& parameters) {
 		shaderParameters = parameters;
-		shaderParametersHash.clear();
-		for (auto& parameterIt: shaderParameters) {
-			shaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
-		}
 		if (objectLOD1 != nullptr) objectLOD1->setShaderParameters(shaderParameters);
 		if (objectLOD2 != nullptr) objectLOD2->setShaderParameters(shaderParameters);
 		if (objectLOD3 != nullptr) objectLOD3->setShaderParameters(shaderParameters);
+	}
+
+	/**
+	 * Get distance shader parameters
+	 * @return distance shader parameters
+	 */
+	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
+		return distanceShaderParameters;
+	}
+
+	/**
+	 * Set distance shader parameters
+	 * @param parameters distance shader parameters
+	 */
+	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
+		distanceShaderParameters = parameters;
+		if (objectLOD1 != nullptr) objectLOD1->setDistanceShaderParameters(distanceShaderParameters);
+		if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderParameters(distanceShaderParameters);
+		if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderParameters(distanceShaderParameters);
 	}
 
 };

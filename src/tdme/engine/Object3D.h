@@ -79,7 +79,8 @@ private:
 	int64_t timeTransformationsLast { -1LL };
 	map<string, string> shaderParameters;
 	string shaderParametersHash;
-
+	map<string, string> distanceShaderParameters;
+	string distanceShaderParametersHash;
 
 	/**
 	 * Compute animations
@@ -406,6 +407,26 @@ public:
 		shaderParametersHash.clear();
 		for (auto& parameterIt: shaderParameters) {
 			shaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
+		}
+	}
+
+	/**
+	 * Get distance shader parameters
+	 * @return distance shader parameters
+	 */
+	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
+		return distanceShaderParameters;
+	}
+
+	/**
+	 * Set distance shader parameters
+	 * @param parameters distance shader parameters
+	 */
+	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
+		distanceShaderParameters = parameters;
+		distanceShaderParametersHash.clear();
+		for (auto& parameterIt: shaderParameters) {
+			distanceShaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
 		}
 	}
 

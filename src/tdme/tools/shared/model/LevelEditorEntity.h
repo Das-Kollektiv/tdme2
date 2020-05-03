@@ -74,6 +74,8 @@ private:
 	bool receivesShadows;
 	map<string, LevelEditorEntityAudio*> soundsById;
 	vector<LevelEditorEntityAudio*> sounds;
+	map<string, string> shaderParameters;
+	map<string, string> distanceShaderParameters;
 
 public:
 
@@ -414,6 +416,38 @@ public:
 	 * @return success
 	 */
 	LevelEditorEntityAudio* addSound(const string& id);
+
+	/**
+	 * Get shader parameters
+	 * @return shader parameters
+	 */
+	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
+		return shaderParameters;
+	}
+
+	/**
+	 * Set shader parameters
+	 * @param parameters shader parameters
+	 */
+	inline void setShaderParameters(const map<string, string>& parameters) {
+		shaderParameters = parameters;
+	}
+
+	/**
+	 * Get distance shader parameters
+	 * @return shader parameters
+	 */
+	inline const map<string, string>& getDistanceShaderParameters(const map<string, string>& parameters) {
+		return distanceShaderParameters;
+	}
+
+	/**
+	 * Set distance shader parameters
+	 * @param parameters distance shader parameters
+	 */
+	inline void setDistanceShaderParameters(const map<string, string>& parameters) {
+		distanceShaderParameters = parameters;
+	}
 
 	/**
 	 * Creates a level editor model
