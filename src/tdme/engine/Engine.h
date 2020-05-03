@@ -175,6 +175,15 @@ private:
 	static float transformationsComputingReduction1Distance;
 	static float transformationsComputingReduction2Distance;
 
+	struct Shader {
+		ShaderType type;
+		string id;
+		map<string, string> parameterTypes;
+		map<string, string> parameterDefaults;
+	};
+
+	static map<string, Shader> shaders;
+
 
 	int32_t width { -1 };
 	int32_t height { -1 };
@@ -224,15 +233,6 @@ private:
 	bool initialized;
 
 	bool isUsingPostProcessingTemporaryFrameBuffer;
-
-	struct Shader {
-		ShaderType type;
-		string id;
-		map<string, string> parameterTypes;
-		map<string, string> parameterDefaults;
-	};
-
-	map<string, Shader> shaders;
 
 	class EngineThread: public Thread {
 		friend class Engine;
@@ -555,6 +555,35 @@ public:
 	inline static void setTransformationsComputingReduction2Distance(float transformationsComputingReduction2Distance) {
 		Engine::transformationsComputingReduction2Distance = transformationsComputingReduction2Distance;
 	}
+
+	/**
+	 * Returns registered shaders for given type
+	 * @param type type
+	 */
+	static const vector<string> getRegisteredShader(ShaderType type);
+
+	/**
+	 * Register shader
+	 * @param type shader type
+	 * @param shaderId shader id
+	 * @param parameterTypes parameter types
+	 * @param parameterDefaults parameter defaults
+	 */
+	static void registerShader(ShaderType type, const string& shaderId, const map<string, string> parameterTypes, const map<string, string> parametersDefaults);
+
+	/**
+	 * Returns parameter types of shader with given id
+	 * @param shaderId shader id
+	 * @return shader parameter types
+	 */
+	static const map<string, string> getShaderParameterTypes(const string& shaderId);
+
+	/**
+	 * Returns parameter default value of shader with given id
+	 * @param shaderId shader id
+	 * @return shader parameter defaults
+	 */
+	static const map<string, string> getShaderParameterDefaults(const string& shaderId);
 
 	/**
 	 * Returns engine instance
@@ -972,34 +1001,5 @@ private:
 	 * @param targetFrameBuffer target frame buffer
 	 */
 	void doPostProcessing(PostProcessingProgram::RenderPass renderPass, const array<FrameBuffer*, 2> postProcessingFrameBuffers, FrameBuffer* targetFrameBuffer);
-
-	/**
-	 * Returns registered shaders for given type
-	 * @param type type
-	 */
-	const vector<string> getRegisteredShader(ShaderType type);
-
-	/**
-	 * Register shader
-	 * @param type shader type
-	 * @param shaderId shader id
-	 * @param parameterTypes parameter types
-	 * @param parameterDefaults parameter defaults
-	 */
-	void registerShader(ShaderType type, const string& shaderId, const map<string, string> parameterTypes, const map<string, string> parametersDefaults);
-
-	/**
-	 * Returns parameter types of shader with given id
-	 * @param shaderId shader id
-	 * @return shader parameter types
-	 */
-	const map<string, string> getShaderParameterTypes(const string& shaderId);
-
-	/**
-	 * Returns parameter default value of shader with given id
-	 * @param shaderId shader id
-	 * @return shader parameter defaults
-	 */
-	const map<string, string> getShaderParameterDefaults(const string& shaderId);
 
 };

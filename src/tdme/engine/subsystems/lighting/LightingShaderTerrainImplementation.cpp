@@ -15,6 +15,7 @@
 using std::to_string;
 using std::string;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
@@ -95,6 +96,9 @@ void LightingShaderTerrainImplementation::initialize()
 
 	//
 	initialized = true;
+
+	// register shader
+	Engine::registerShader(Engine::ShaderType::OBJECT3D, getId(), {}, {});
 }
 
 void LightingShaderTerrainImplementation::useProgram(Engine* engine, void* context) {

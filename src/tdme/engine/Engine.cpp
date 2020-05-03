@@ -16,6 +16,7 @@
 #endif
 
 #include <algorithm>
+#include <map>
 #include <string>
 
 #include <tdme/application/Application.h>
@@ -90,6 +91,7 @@
 
 #include <ext/libpng/png.h>
 
+using std::map;
 using std::remove;
 using std::string;
 using std::to_string;
@@ -188,6 +190,7 @@ int32_t Engine::shadowMapRenderLookUps = 0;
 float Engine::shadowMaplightEyeDistanceScale = 1.0f;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
+map<string, Engine::Shader> Engine::shaders;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
 

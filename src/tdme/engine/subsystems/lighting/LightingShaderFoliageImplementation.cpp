@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 
 #include <tdme/os/filesystem/FileSystem.h>
@@ -10,6 +11,7 @@
 using std::to_string;
 using std::string;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -72,5 +74,15 @@ void LightingShaderFoliageImplementation::initialize()
 
 	//
 	LightingShaderBaseImplementation::initialize();
+
+	// register shader
+	if (initialized == true) {
+		Engine::registerShader(
+			Engine::ShaderType::OBJECT3D,
+			getId(),
+			{{"speed", "float;0.0;10.0"}},
+			{{"speed", "1.0"}}
+		);
+	}
 }
 

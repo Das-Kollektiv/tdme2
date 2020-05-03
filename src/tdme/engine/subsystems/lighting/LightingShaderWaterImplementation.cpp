@@ -5,6 +5,7 @@
 #include <array>
 #include <string>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Math.h>
@@ -15,6 +16,7 @@ using std::array;
 using std::string;
 using std::to_string;
 
+using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
@@ -103,6 +105,14 @@ void LightingShaderWaterImplementation::initialize()
 
 	//
 	for (auto i = 0; i < 4; i++) angle[i] = -Math::PI / 3.0f + Math::random() * Math::PI * 2.0f / 3.0f;
+
+	// register shader
+	Engine::registerShader(
+		Engine::ShaderType::OBJECT3D,
+		getId(),
+		{{"speed", "float;0.0;10.0"}},
+		{{"speed", "1.0"}}
+	);
 }
 
 void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context) {

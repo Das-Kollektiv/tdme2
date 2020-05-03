@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -9,6 +10,7 @@
 using std::to_string;
 using std::string;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -19,12 +21,12 @@ bool LightingShaderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
-const string LightingShaderDefaultImplementation::getId() {
-	return "default";
-}
-
 LightingShaderDefaultImplementation::LightingShaderDefaultImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
 {
+}
+
+const string LightingShaderDefaultImplementation::getId() {
+	return "default";
 }
 
 void LightingShaderDefaultImplementation::initialize()
@@ -57,5 +59,8 @@ void LightingShaderDefaultImplementation::initialize()
 
 	//
 	LightingShaderBaseImplementation::initialize();
+
+	// register shader
+	if (initialized == true) Engine::registerShader(Engine::ShaderType::OBJECT3D, getId(), {}, {});
 }
 

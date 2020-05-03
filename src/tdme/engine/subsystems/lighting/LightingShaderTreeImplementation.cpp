@@ -4,12 +4,14 @@
 
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 
+#include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 
 using std::to_string;
 using std::string;
 
+using tdme::engine::Engine;
 using tdme::engine::subsystems::lighting::LightingShaderBaseImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -72,5 +74,15 @@ void LightingShaderTreeImplementation::initialize()
 
 	//
 	LightingShaderBaseImplementation::initialize();
+
+	// register shader
+	if (initialized == true) {
+		Engine::registerShader(
+			Engine::ShaderType::OBJECT3D,
+			getId(),
+			{{"speed", "float;0.0;10.0"}},
+			{{"speed", "1.0"}}
+		);
+	}
 }
 
