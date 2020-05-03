@@ -52,7 +52,6 @@ EntityBaseSubScreenController::EntityBaseSubScreenController(PopUps* popUps, Act
 	this->view = new EntityBaseView(this);
 	this->popUps = popUps;
 	this->onSetEntityDataAction = onSetEntityDataAction;
-	value = new MutableString();
 }
 
 EntityBaseSubScreenController::~EntityBaseSubScreenController() {
@@ -149,7 +148,7 @@ void EntityBaseSubScreenController::setEntityProperties(LevelEditorEntity* entit
 	entityPropertySave->getController()->setDisabled(true);
 	entityPropertyName->getController()->setDisabled(true);
 	entityPropertyValue->getController()->setDisabled(true);
-	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? value->set(presetId) : value->set("none"));
+	entityPropertiesPresets->getController()->setValue(presetId.length() > 0 ? MutableString(presetId) : MutableString("none"));
 	auto entityPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + "_inner")));
 	auto idx = 1;
 	string entityPropertiesListBoxSubNodesXML = "";
@@ -186,7 +185,7 @@ void EntityBaseSubScreenController::unsetEntityProperties()
 {
 	auto modelPropertiesListBoxInnerNode = dynamic_cast< GUIParentNode* >((entityPropertiesList->getScreenNode()->getNodeById(entityPropertiesList->getId() + "_inner")));
 	modelPropertiesListBoxInnerNode->clearSubNodes();
-	entityPropertiesPresets->getController()->setValue(value->set("none"));
+	entityPropertiesPresets->getController()->setValue(MutableString("none"));
 	entityPropertiesPresets->getController()->setDisabled(true);
 	entityPropertyPresetApply->getController()->setDisabled(true);
 	entityPropertiesList->getController()->setDisabled(true);
@@ -244,8 +243,8 @@ void EntityBaseSubScreenController::onEntityPropertiesSelectionChanged(LevelEdit
 	entityPropertyRemove->getController()->setDisabled(true);
 	auto entityProperty = entity->getProperty(entityPropertiesList->getController()->getValue().getString());
 	if (entityProperty != nullptr) {
-		entityPropertyName->getController()->setValue(value->set(entityProperty->getName()));
-		entityPropertyValue->getController()->setValue(value->set(entityProperty->getValue()));
+		entityPropertyName->getController()->setValue(MutableString(entityProperty->getName()));
+		entityPropertyValue->getController()->setValue(MutableString(entityProperty->getValue()));
 		entityPropertyName->getController()->setDisabled(false);
 		entityPropertyValue->getController()->setDisabled(false);
 		entityPropertySave->getController()->setDisabled(false);

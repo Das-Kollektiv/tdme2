@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -16,6 +17,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 
 using std::string;
+using std::vector;
 
 using tdme::engine::model::Material;
 using tdme::tools::shared::controller::ScreenController;
@@ -224,6 +226,12 @@ public:
 	 * Unset pivot tab
 	 */
 	void unsetPivot();
+
+	/**
+	 * Set rendering shader
+	 * @param shaders shaders
+	 */
+	void setRenderingShaders(const vector<string>& shaders);
 
 	/**
 	 * Set renering options

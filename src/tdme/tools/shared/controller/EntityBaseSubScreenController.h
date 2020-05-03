@@ -34,21 +34,20 @@ class tdme::tools::shared::controller::EntityBaseSubScreenController
 {
 private:
 	static MutableString TEXT_EMPTY;
-	EntityBaseView* view {  };
-	PopUps* popUps {  };
-	GUIElementNode* entityName {  };
-	GUIElementNode* entityDescription {  };
-	GUIElementNode* entityApply {  };
-	GUIElementNode* entityPropertyName {  };
-	GUIElementNode* entityPropertyValue {  };
-	GUIElementNode* entityPropertySave {  };
-	GUIElementNode* entityPropertyAdd {  };
-	GUIElementNode* entityPropertyRemove {  };
-	GUIElementNode* entityPropertiesList {  };
-	GUIElementNode* entityPropertyPresetApply {  };
-	GUIElementNode* entityPropertiesPresets {  };
-	Action* onSetEntityDataAction {  };
-	MutableString* value {  };
+	EntityBaseView* view { nullptr };
+	PopUps* popUps { nullptr };
+	GUIElementNode* entityName { nullptr };
+	GUIElementNode* entityDescription { nullptr };
+	GUIElementNode* entityApply { nullptr };
+	GUIElementNode* entityPropertyName { nullptr };
+	GUIElementNode* entityPropertyValue { nullptr };
+	GUIElementNode* entityPropertySave { nullptr };
+	GUIElementNode* entityPropertyAdd { nullptr };
+	GUIElementNode* entityPropertyRemove { nullptr };
+	GUIElementNode* entityPropertiesList { nullptr };
+	GUIElementNode* entityPropertyPresetApply { nullptr };
+	GUIElementNode* entityPropertiesPresets { nullptr };
+	Action* onSetEntityDataAction { nullptr };
 
 public:
 

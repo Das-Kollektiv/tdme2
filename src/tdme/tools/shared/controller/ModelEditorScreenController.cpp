@@ -318,6 +318,43 @@ void ModelEditorScreenController::unsetPivot()
 	pivotApply->getController()->setDisabled(true);
 }
 
+void ModelEditorScreenController::setRenderingShaders(const vector<string>& shaders) {
+	auto idx = 1;
+	string renderingShadersDropDownSubNodesXML = "";
+	for (auto shader: shaders) {
+		renderingShadersDropDownSubNodesXML =
+			renderingShadersDropDownSubNodesXML +
+			"<dropdown-option text=\"" +
+			GUIParser::escapeQuotes(shader) +
+			"\" value=\"" +
+			GUIParser::escapeQuotes(shader) +
+			"\" " +
+			(shader == "default"?"selected=\"true\" " : "") +
+			"/>\n";
+	}
+	try {
+		dynamic_cast< GUIParentNode* >((renderingShader->getScreenNode()->getNodeById(renderingShader->getId() + "_inner")))->replaceSubNodes(
+			"<scrollarea-vertical id=\"" +
+				renderingShader->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"150\">\n" +
+				renderingShadersDropDownSubNodesXML +
+				"</scrollarea-vertical>\n",
+			false
+		);
+		dynamic_cast< GUIParentNode* >((renderingShader->getScreenNode()->getNodeById(renderingDistanceShader->getId() + "_inner")))->replaceSubNodes(
+			"<scrollarea-vertical id=\"" +
+				renderingDistanceShader->getId() +
+				"_inner_scrollarea\" width=\"100%\" height=\"150\">\n" +
+				renderingShadersDropDownSubNodesXML +
+				"</scrollarea-vertical>\n",
+			false
+		);
+	} catch (Exception& exception) {
+		Console::print(string("ModelEditorScreenController::setRenderingShaders(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+}
+
 void ModelEditorScreenController::setRendering(LevelEditorEntity* entity)
 {
 	renderingContributesShadows->getController()->setDisabled(false);

@@ -345,6 +345,7 @@ void SharedModelEditorView::initialize()
 	}
 	loadSettings();
 	modelEditorScreenController->getEntityDisplaySubScreenController()->setupDisplay();
+	modelEditorScreenController->setRenderingShaders(Engine::getRegisteredShader(Engine::ShaderType::OBJECT3D));
 	entityPhysicsView->initialize();
 	updateGUIElements();
 }
