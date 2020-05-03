@@ -348,6 +348,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedObject3D->setReceivesShadows(receivesShadows);
 		combinedObject3D->setEngine(engine);
 		combinedObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
+		combinedObject3D->setShaderParameters(shaderParameters);
 		combinedObject3D->update();
 		combinedEntity = combinedObject3D;
 	} else
@@ -371,6 +372,7 @@ void Object3DRenderGroup::updateRenderGroup() {
 		combinedLODObject3D->setReceivesShadows(receivesShadows);
 		combinedLODObject3D->setEngine(engine);
 		combinedLODObject3D->setEnableEarlyZRejection(enableEarlyZRejection);
+		combinedLODObject3D->setShaderParameters(shaderParameters);
 		combinedLODObject3D->update();
 		combinedEntity = combinedLODObject3D;
 	}

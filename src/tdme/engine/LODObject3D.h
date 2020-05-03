@@ -81,6 +81,8 @@ private:
 	string distanceShaderId { "" };
 	float distanceShaderDistance { 50.0f };
 	bool enableEarlyZRejection { false };
+	map<string, string> shaderParameters;
+	string shaderParametersHash;
 
 	/**
 	 * Set parent entity, needs to be called before adding to engine
@@ -104,6 +106,14 @@ private:
 		if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
 		if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
 		if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
+	}
+
+	/**
+	 * Get shader parameters hash
+	 * @return shader parameters hash
+	 */
+	inline const string& getShaderParametersHash() {
+		return shaderParametersHash;
 	}
 
 public:
@@ -490,5 +500,28 @@ public:
 	 * @param enableEarlyZRejection enable early z rejection
 	 */
 	void setEnableEarlyZRejection(bool enableEarlyZRejection);
+
+	/**
+	 * Get shader parameters
+	 * @return shader parameters
+	 */
+	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
+		return shaderParameters;
+	}
+
+	/**
+	 * Set shader parameters
+	 * @param parameters shader parameters
+	 */
+	inline void setShaderParameters(const map<string, string>& parameters) {
+		shaderParameters = parameters;
+		shaderParametersHash.clear();
+		for (auto& parameterIt: shaderParameters) {
+			shaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
+		}
+		if (objectLOD1 != nullptr) objectLOD1->setShaderParameters(shaderParameters);
+		if (objectLOD2 != nullptr) objectLOD2->setShaderParameters(shaderParameters);
+		if (objectLOD3 != nullptr) objectLOD3->setShaderParameters(shaderParameters);
+	}
 
 };

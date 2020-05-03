@@ -75,6 +75,8 @@ private:
 	float distanceShaderDistance { 50.0f };
 	array<int, 3> lodReduceBy;
 	bool enableEarlyZRejection { false };
+	map<string, string> shaderParameters;
+	string shaderParametersHash;
 
 	/**
 	 * Compute bounding box
@@ -115,6 +117,14 @@ private:
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
 		updateBoundingBox();
+	}
+
+	/**
+	 * Get shader parameters hash
+	 * @return shader parameters hash
+	 */
+	inline const string& getShaderParametersHash() {
+		return shaderParametersHash;
 	}
 
 public:
@@ -395,6 +405,24 @@ public:
 	 */
 	inline void setEnableEarlyZRejection(bool enableEarlyZRejection) {
 		this->enableEarlyZRejection = enableEarlyZRejection;
+	}
+
+	/**
+	 * Set shader parameters
+	 * @param parameters shader parameters
+	 */
+	inline void setShaderParameters(const map<string, string>& parameters) {
+		shaderParameters = parameters;
+		shaderParametersHash.clear();
+		for (auto& parameterIt: shaderParameters) {
+			shaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
+		}
+		if (dynamic_cast<Object3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<Object3D*>(combinedEntity)->setShaderParameters(shaderParameters);
+		} else
+		if (dynamic_cast<LODObject3D*>(combinedEntity) != nullptr) {
+			dynamic_cast<LODObject3D*>(combinedEntity)->setShaderParameters(shaderParameters);
+		}
 	}
 
 };
