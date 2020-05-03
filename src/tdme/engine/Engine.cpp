@@ -1938,3 +1938,30 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 		postProcessingFrameBuffers[postProcessingFrameBufferIdx]->renderToScreen();
 	}
 }
+
+const vector<string> Engine::getRegisteredShader(ShaderType type) {
+	vector<string> result;
+	for (auto shadersIt: shaders) {
+		auto& shader = shadersIt.second;
+		if (shader.type == type) {
+			result.push_back(shader.id);
+		}
+	}
+	return result;
+}
+
+void Engine::registerShader(ShaderType type, const string& shaderId, const map<string, string> parameterTypes, const map<string, string> parameterDefaults) {
+	if (shaders.find(shaderId) != shaders.end()) {
+		Console::println("Engine::registerShader(): Shader already registered: " + shaderId);
+		return;
+	}
+	shaders[shaderId] = {.type = type, .id = shaderId, .parameterTypes = parameterTypes, .parameterDefaults = parameterDefaults };
+}
+
+const map<string, string> Engine::getShaderParameterTypes(const string& shaderId) {
+	return shaders.find(shaderId)->second.parameterTypes;
+}
+
+const map<string, string> Engine::getShaderParameterDefaults(const string& shaderId) {
+	return shaders.find(shaderId)->second.parameterDefaults;
+}

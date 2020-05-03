@@ -136,7 +136,8 @@ class tdme::engine::Engine final
 	friend class tdme::gui::renderer::GUIFont;
 
 public:
-	enum AnimationProcessingTarget {NONE, CPU, CPU_NORENDERING, GPU};
+	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
+	enum ShaderType { OBJECT3D };
 	static constexpr int LIGHTS_MAX { 8 };
 
 protected:
@@ -223,6 +224,15 @@ private:
 	bool initialized;
 
 	bool isUsingPostProcessingTemporaryFrameBuffer;
+
+	struct Shader {
+		ShaderType type;
+		string id;
+		map<string, string> parameterTypes;
+		map<string, string> parameterDefaults;
+	};
+
+	map<string, Shader> shaders;
 
 	class EngineThread: public Thread {
 		friend class Engine;
@@ -962,4 +972,34 @@ private:
 	 * @param targetFrameBuffer target frame buffer
 	 */
 	void doPostProcessing(PostProcessingProgram::RenderPass renderPass, const array<FrameBuffer*, 2> postProcessingFrameBuffers, FrameBuffer* targetFrameBuffer);
+
+	/**
+	 * Returns registered shaders for given type
+	 * @param type type
+	 */
+	const vector<string> getRegisteredShader(ShaderType type);
+
+	/**
+	 * Register shader
+	 * @param type shader type
+	 * @param shaderId shader id
+	 * @param parameterTypes parameter types
+	 * @param parameterDefaults parameter defaults
+	 */
+	void registerShader(ShaderType type, const string& shaderId, const map<string, string> parameterTypes, const map<string, string> parametersDefaults);
+
+	/**
+	 * Returns parameter types of shader with given id
+	 * @param shaderId shader id
+	 * @return shader parameter types
+	 */
+	const map<string, string> getShaderParameterTypes(const string& shaderId);
+
+	/**
+	 * Returns parameter default value of shader with given id
+	 * @param shaderId shader id
+	 * @return shader parameter defaults
+	 */
+	const map<string, string> getShaderParameterDefaults(const string& shaderId);
+
 };

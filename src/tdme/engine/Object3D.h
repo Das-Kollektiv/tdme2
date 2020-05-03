@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -23,6 +24,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Quaternion.h>
 
+using std::map;
 using std::string;
 
 using tdme::engine::Camera;
@@ -75,6 +77,9 @@ private:
 	bool disableDepthTest { false };
 	int64_t frameTransformationsLast { -1LL };
 	int64_t timeTransformationsLast { -1LL };
+	map<string, string> shaderParameters;
+	string shaderParametersHash;
+
 
 	/**
 	 * Compute animations
@@ -130,6 +135,14 @@ private:
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		for (auto& transformations: instanceTransformations) transformations.applyParentTransformations(parentTransformations);
 		updateBoundingBox();
+	}
+
+	/**
+	 * Get shader parameters hash
+	 * @return shader parameters hash
+	 */
+	inline const string& getShaderParametersHash() {
+		return shaderParametersHash;
 	}
 
 public:
@@ -374,6 +387,26 @@ public:
 	 */
 	inline void setDisableDepthTest(bool disableDepthTest) {
 		this->disableDepthTest = disableDepthTest;
+	}
+
+	/**
+	 * Get shader parameters
+	 * @return shader parameters
+	 */
+	inline const map<string, string>& getShaderParameters(const map<string, string>& parameters) {
+		return shaderParameters;
+	}
+
+	/**
+	 * Set shader parameters
+	 * @param parameters shader parameters
+	 */
+	inline void setShaderParameters(const map<string, string>& parameters) {
+		shaderParameters = parameters;
+		shaderParametersHash.clear();
+		for (auto& parameterIt: shaderParameters) {
+			shaderParametersHash+= parameterIt.first + "=" + parameterIt.second + ";";
+		}
 	}
 
 };
