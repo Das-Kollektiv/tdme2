@@ -16,15 +16,17 @@
 - What is already working
     - application
         - creates main window and initializes OpenGL/Vulkan context and does HID via GLUT or GLFW3
-        - supports setting window position and dimension
-        - supports setting full screen or windowed mode
-        - supports setting application icon
-        - supports setting mouse position and mouse cursor
-        - supports executing other applications or background applications
-        - provides a crash handler for port-msc and port-mingw which also saves backtrace to crash.log
-        - supports swapping double buffered buffers (to screen)
-        - supports checking if application is active (port-mingw, port-msc only for now)
-        - provides application life cycle
+        - supports
+          - setting window position and dimension
+          - setting full screen or windowed, borderless windowed mode
+          - setting application icon
+          - setting mouse position and mouse cursor
+          - executing other applications or background applications
+          - swapping double buffered buffers (to screen) manually if required
+          - checking if application is active (port-mingw, port-msc only for now)
+        - provides
+          - a crash handler for port-msc and port-mingw which also saves backtrace to crash.log
+          - application life cycle
     - math
         - Math class with common math functions
         - Vector2, Vector3, Vector3, Matrix3x3, Matrix4x4 and Quaternion class
