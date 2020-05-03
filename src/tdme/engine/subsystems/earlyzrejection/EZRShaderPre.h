@@ -38,7 +38,6 @@ private:
 	vector<EZRShaderPreContext> contexts;
 
 public:
-
 	/** 
 	 * @return if initialized and ready to use
 	 */

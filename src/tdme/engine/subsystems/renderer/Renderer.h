@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <map>
 #include <vector>
 #include <string>
 
@@ -16,8 +17,9 @@
 #include <tdme/math/Matrix4x4.h>
 
 using std::array;
-using std::vector;
+using std::map;
 using std::string;
+using std::vector;
 
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
@@ -848,15 +850,16 @@ public:
 	virtual void onUpdateMaterial(void* context) = 0;
 
 	/**
-	 * Set shader
+	 * Get shader
 	 * @param context context
 	 */
-	virtual const string getShader(void* context) = 0;
+	virtual const string& getShader(void* context) = 0;
 
 	/**
 	 * Set shader
 	 * @param context context
 	 * @param id shader id
+	 * @param parameters parameters
 	 */
 	virtual void setShader(void* context, const string& id) = 0;
 
@@ -865,6 +868,32 @@ public:
 	 * @param context context
 	 */
 	virtual void onUpdateShader(void* context) = 0;
+
+	/**
+	 * Set shader parameters hash
+	 * @param context context
+	 */
+	virtual const string& getShaderParametersHash(void* context) = 0;
+
+	/**
+	 * Get shader parameters
+	 * @param context context
+	 * @return shader parameters
+	 */
+	virtual const map<string, string>& getShaderParameters(void* context) = 0;
+
+	/**
+	 * Set shader parameters
+	 * @param context context
+	 * @param parameters shader parameters
+	 */
+	virtual void setShaderParameters(void* context, const map<string, string>& parameters) = 0;
+
+	/**
+	 * On update shader parameters
+	 * @param context context
+	 */
+	virtual void onUpdateShaderParameters(void* context) = 0;
 
 	/**
 	 * Reads a pixel depth

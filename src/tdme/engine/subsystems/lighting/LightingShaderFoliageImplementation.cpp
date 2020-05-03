@@ -24,6 +24,10 @@ LightingShaderFoliageImplementation::LightingShaderFoliageImplementation(Rendere
 {
 }
 
+const string LightingShaderFoliageImplementation::getId() {
+	return "foliage";
+}
+
 void LightingShaderFoliageImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

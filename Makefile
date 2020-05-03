@@ -316,19 +316,14 @@ SRCS = \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPre.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.cpp \
-	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.cpp \
-	src/tdme/engine/subsystems/earlyzrejection/EZRShaderPreTreeImplementation.cpp \
 	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
-	src/tdme/engine/subsystems/lighting/LightingShaderBackImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
-	src/tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
-	src/tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \

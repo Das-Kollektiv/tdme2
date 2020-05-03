@@ -249,6 +249,7 @@ void EntityRenderer::render(const vector<Object3D*>& objects, bool renderTranspa
 		renderer->enableBlending();
 		// disable foliage animation
 		// reset shader
+		// TODO: shader parameters
 		renderer->setShader(renderer->getDefaultContext(), string());
 		renderer->onUpdateShader(renderer->getDefaultContext());
 		// have identity texture matrix
@@ -474,6 +475,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
 						object->getShader():
 						object->getDistanceShader();
+				// TODO: shader parameters
 				if (renderer->getShader(context) != objectShader) {
 					renderer->setShader(context, objectShader);
 					renderer->onUpdateShader(context);

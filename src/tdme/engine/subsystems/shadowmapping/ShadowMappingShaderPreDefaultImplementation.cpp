@@ -1,8 +1,12 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreDefaultImplementation.h>
 
+#include <string>
+
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+
+using std::to_string;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreDefaultImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -18,6 +22,10 @@ ShadowMappingShaderPreDefaultImplementation::ShadowMappingShaderPreDefaultImplem
 }
 
 ShadowMappingShaderPreDefaultImplementation::~ShadowMappingShaderPreDefaultImplementation() {
+}
+
+const string ShadowMappingShaderPreDefaultImplementation::getId() {
+	return "default";
 }
 
 void ShadowMappingShaderPreDefaultImplementation::initialize()

@@ -250,6 +250,8 @@ void LightingShaderBaseImplementation::updateMatrices(Renderer* renderer, void* 
 	}
 }
 
+// TODO: shader parameters
+
 void LightingShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
 	//
 	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());

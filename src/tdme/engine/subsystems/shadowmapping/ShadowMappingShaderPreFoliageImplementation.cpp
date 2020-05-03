@@ -1,8 +1,12 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreFoliageImplementation.h>
 
+#include <string>
+
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+
+using std::to_string;
 
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreFoliageImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -18,6 +22,10 @@ ShadowMappingShaderPreFoliageImplementation::ShadowMappingShaderPreFoliageImplem
 }
 
 ShadowMappingShaderPreFoliageImplementation::~ShadowMappingShaderPreFoliageImplementation() {
+}
+
+const string ShadowMappingShaderPreFoliageImplementation::getId() {
+	return "foliage";
 }
 
 void ShadowMappingShaderPreFoliageImplementation::initialize()

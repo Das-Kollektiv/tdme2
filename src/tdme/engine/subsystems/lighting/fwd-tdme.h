@@ -8,15 +8,12 @@ namespace lighting {
 	class LightingShader;
 	struct LightingShaderConstants;
 	struct LightingShaderImplementation;
-	class LightingShaderBackImplementation;
 	class LightingShaderBaseImplementation;
 	class LightingShaderDefaultImplementation;
 	class LightingShaderFoliageImplementation;
-	class LightingShaderFrontImplementation;
 	class LightingShaderPBRBaseImplementation;
 	class LightingShaderPBRDefaultImplementation;
 	class LightingShaderSkyImplementation;
-	class LightingShaderSolidImplementation;
 	class LightingShaderTerrainImplementation;
 	class LightingShaderTreeImplementation;
 	class LightingShaderWaterImplementation;

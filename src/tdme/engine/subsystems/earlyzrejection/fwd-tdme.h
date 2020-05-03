@@ -9,9 +9,7 @@ namespace earlyzrejection {
 	struct EZRShaderPreImplementation;
 	class EZRShaderPreBaseImplementation;
 	class EZRShaderPreDefaultImplementation;
-	class EZRShaderPreFoliageImplementation;
 	struct EZRShaderPreImplementation;
-	class EZRShaderPreTreeImplementation;
 }  // namespace earlyzrejection
 }  // namespace subsystems
 }  // namespace engine

@@ -23,6 +23,10 @@ LightingShaderPBRDefaultImplementation::LightingShaderPBRDefaultImplementation(R
 {
 }
 
+const string LightingShaderPBRDefaultImplementation::getId() {
+	return "pbr-default";
+}
+
 void LightingShaderPBRDefaultImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

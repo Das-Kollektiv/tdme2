@@ -1,10 +1,14 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
+
+using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -21,6 +25,11 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderPreImplementa
 	 * Destructor
 	 */
 	virtual ~ShadowMappingShaderPreImplementation() {}
+
+	/**
+	 * @return shader id
+	 */
+	virtual const string getId() = 0;
 
 	/** 
 	 * @return if initialized and ready to use

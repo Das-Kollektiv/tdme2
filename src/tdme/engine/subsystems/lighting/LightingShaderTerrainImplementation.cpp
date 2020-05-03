@@ -34,6 +34,10 @@ LightingShaderTerrainImplementation::LightingShaderTerrainImplementation(Rendere
 {
 }
 
+const string LightingShaderTerrainImplementation::getId() {
+	return "terrain";
+}
+
 void LightingShaderTerrainImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

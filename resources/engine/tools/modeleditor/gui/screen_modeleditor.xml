@@ -454,8 +454,8 @@
 									<dropdown id="rendering_shader" name="rendering_shader" width="200" height="auto" text="Default">
 										<dropdown-option text="Default" value="default" />
 										<dropdown-option text="Foliage" value="foliage" />
-										<dropdown-option text="Tree" value="tree" />
 										<dropdown-option text="Terrain" value="terrain" />
+										<dropdown-option text="Tree" value="tree" />
 										<dropdown-option text="Water" value="water" />
 										<dropdown-option text="PBR Default" value="pbr-default" />
 									</dropdown>

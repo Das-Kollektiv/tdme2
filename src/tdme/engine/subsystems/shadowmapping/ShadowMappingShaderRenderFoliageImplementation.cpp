@@ -25,6 +25,10 @@ ShadowMappingShaderRenderFoliageImplementation::~ShadowMappingShaderRenderFoliag
 {
 }
 
+const string ShadowMappingShaderRenderFoliageImplementation::getId() {
+	return "foliage";
+}
+
 void ShadowMappingShaderRenderFoliageImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

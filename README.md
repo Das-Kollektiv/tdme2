@@ -82,13 +82,13 @@
             - supports specular shininess mapping on GL3+/CORE, Vulkan
             - supports normal mapping on GL3+/CORE, Vulkan
         - custum shaders that currently include
-          - lighting + depth fog
-          - lighting + foliage + depth fog
-          - lighting + tree + depth fog
-          - lighting + terrain + depth fog
-          - lighting + water + depth fog
-          - solid(no lighting + no depth fog)
+          - specular lighting + depth fog
+          - specular lighting + foliage + depth fog
+          - specular lighting + tree + depth fog
+          - specular lighting + terrain + depth fog
+          - specular lighting + water + depth fog(WIP)
           - sky(no lighting + no depth fog + fragment depth at maximum)
+          - PBR lighting(WIP)
         - shadow mapping
         - early z rejection
         - post processing

@@ -31,6 +31,10 @@ LightingShaderWaterImplementation::LightingShaderWaterImplementation(Renderer* r
 {
 }
 
+const string LightingShaderWaterImplementation::getId() {
+	return "water";
+}
+
 void LightingShaderWaterImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

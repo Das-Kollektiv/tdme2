@@ -19,6 +19,10 @@ bool LightingShaderDefaultImplementation::isSupported(Renderer* renderer) {
 	return true;
 }
 
+const string LightingShaderDefaultImplementation::getId() {
+	return "default";
+}
+
 LightingShaderDefaultImplementation::LightingShaderDefaultImplementation(Renderer* renderer): LightingShaderBaseImplementation(renderer)
 {
 }

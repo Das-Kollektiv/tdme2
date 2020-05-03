@@ -1,8 +1,12 @@
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.h>
 
+#include <string>
+
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+
+using std::string;
 
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -18,6 +22,10 @@ EZRShaderPreDefaultImplementation::EZRShaderPreDefaultImplementation(Renderer* r
 }
 
 EZRShaderPreDefaultImplementation::~EZRShaderPreDefaultImplementation() {
+}
+
+const string EZRShaderPreDefaultImplementation::getId() {
+	return "default";
 }
 
 void EZRShaderPreDefaultImplementation::initialize()

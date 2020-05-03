@@ -25,6 +25,10 @@ ShadowMappingShaderRenderDefaultImplementation::~ShadowMappingShaderRenderDefaul
 {
 }
 
+const string ShadowMappingShaderRenderDefaultImplementation::getId() {
+	return "default";
+}
+
 void ShadowMappingShaderRenderDefaultImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

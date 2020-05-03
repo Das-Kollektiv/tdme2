@@ -23,6 +23,10 @@ LightingShaderSkyImplementation::LightingShaderSkyImplementation(Renderer* rende
 {
 }
 
+const string LightingShaderSkyImplementation::getId() {
+	return "sky";
+}
+
 void LightingShaderSkyImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

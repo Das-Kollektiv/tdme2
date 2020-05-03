@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h>
@@ -23,6 +25,7 @@ public:
 	static bool isSupported(Renderer* renderer);
 
 	// overriden methods
+	virtual const string getId() override;
 	virtual void initialize() override;
 
 	/**

@@ -152,3 +152,6 @@ void EngineGLES2Renderer::onUpdateShader(void* context) {
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->setShader(context, shader);
 }
+
+void EngineGLES2Renderer::onUpdateShaderParameters(void* context) {
+}

@@ -22,6 +22,11 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderImpleme
 	 */
 	virtual ~ShadowMappingShaderRenderImplementation() {}
 
+	/**
+	 * @return shader id
+	 */
+	virtual const string getId() = 0;
+
 	/** 
 	 * @return if initialized and ready to use
 	 */

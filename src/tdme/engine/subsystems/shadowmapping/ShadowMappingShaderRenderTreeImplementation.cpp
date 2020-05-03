@@ -25,6 +25,10 @@ ShadowMappingShaderRenderTreeImplementation::~ShadowMappingShaderRenderTreeImple
 {
 }
 
+const string ShadowMappingShaderRenderTreeImplementation::getId() {
+	return "tree";
+}
+
 void ShadowMappingShaderRenderTreeImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

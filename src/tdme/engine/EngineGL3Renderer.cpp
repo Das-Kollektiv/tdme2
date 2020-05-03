@@ -153,3 +153,6 @@ void EngineGL3Renderer::onUpdateShader(void* context) {
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->setShader(context, shader);
 }
+
+void EngineGL3Renderer::onUpdateShaderParameters(void* context) {
+}

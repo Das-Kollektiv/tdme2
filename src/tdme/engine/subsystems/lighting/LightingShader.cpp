@@ -1,12 +1,9 @@
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 
-#include <tdme/engine/subsystems/lighting/LightingShaderBackImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.h>
-#include <tdme/engine/subsystems/lighting/LightingShaderFrontImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.h>
-#include <tdme/engine/subsystems/lighting/LightingShaderSolidImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.h>
@@ -15,13 +12,10 @@
 #include <tdme/utils/Console.h>
 
 using tdme::engine::subsystems::lighting::LightingShader;
-using tdme::engine::subsystems::lighting::LightingShaderBackImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderFoliageImplementation;
-using tdme::engine::subsystems::lighting::LightingShaderFrontImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderPBRDefaultImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderSkyImplementation;
-using tdme::engine::subsystems::lighting::LightingShaderSolidImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderTreeImplementation;
 using tdme::engine::subsystems::lighting::LightingShaderWaterImplementation;
@@ -31,16 +25,13 @@ using tdme::utils::Console;
 
 LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 {
-	if (LightingShaderBackImplementation::isSupported(renderer) == true) shader["back"] = new LightingShaderBackImplementation(renderer);
-	if (LightingShaderDefaultImplementation::isSupported(renderer) == true) shader["default"] = new LightingShaderDefaultImplementation(renderer);
-	if (LightingShaderFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new LightingShaderFoliageImplementation(renderer);
-	if (LightingShaderFrontImplementation::isSupported(renderer) == true) shader["front"] = new LightingShaderFrontImplementation(renderer);
-	if (LightingShaderSkyImplementation::isSupported(renderer) == true) shader["sky"] = new LightingShaderSkyImplementation(renderer);
-	if (LightingShaderSolidImplementation::isSupported(renderer) == true) shader["solid"] = new LightingShaderSolidImplementation(renderer);
-	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) shader["terrain"] = new LightingShaderTerrainImplementation(renderer);
-	if (LightingShaderTreeImplementation::isSupported(renderer) == true) shader["tree"] = new LightingShaderTreeImplementation(renderer);
-	if (LightingShaderWaterImplementation::isSupported(renderer) == true) shader["water"] = new LightingShaderWaterImplementation(renderer);
-	if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) shader["pbr-default"] = new LightingShaderPBRDefaultImplementation(renderer);
+	if (LightingShaderDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (LightingShaderFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (LightingShaderSkyImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderSkyImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (LightingShaderTerrainImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderTerrainImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (LightingShaderTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	if (LightingShaderWaterImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderWaterImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
+	// if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }
@@ -123,6 +114,8 @@ void LightingShader::updateTextureMatrix(void* context) {
 	if (lightingShaderContext.implementation == nullptr) return;
 	lightingShaderContext.implementation->updateTextureMatrix(renderer, context);
 }
+
+// TODO: shader parameters
 
 void LightingShader::setShader(void* context, const string& id) {
 	if (running == false) return;

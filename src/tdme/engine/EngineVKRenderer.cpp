@@ -153,3 +153,6 @@ void EngineVKRenderer::onUpdateShader(void* context) {
 	if (Engine::ezrShaderPre != nullptr)
 		Engine::ezrShaderPre->setShader(context, getShader(context));
 }
+
+void EngineVKRenderer::onUpdateShaderParameters(void* context) {
+}

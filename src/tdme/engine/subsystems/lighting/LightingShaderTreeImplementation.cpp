@@ -24,6 +24,10 @@ LightingShaderTreeImplementation::LightingShaderTreeImplementation(Renderer* ren
 {
 }
 
+const string LightingShaderTreeImplementation::getId() {
+	return "tree";
+}
+
 void LightingShaderTreeImplementation::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();

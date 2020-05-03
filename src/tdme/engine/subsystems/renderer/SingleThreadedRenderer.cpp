@@ -54,12 +54,24 @@ Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(void* context) {
 	return pbrMaterial;
 }
 
-const string SingleThreadedRenderer::getShader(void* context) {
+const string& SingleThreadedRenderer::getShader(void* context) {
 	return shader;
 }
 
 void SingleThreadedRenderer::setShader(void* context, const string& id) {
 	shader = id;
+}
+
+const string& SingleThreadedRenderer::getShaderParametersHash(void* context) {
+	return shaderParametersHash;
+}
+
+const map<string, string>& SingleThreadedRenderer::getShaderParameters(void* context) {
+	return shaderParameters;
+}
+
+void SingleThreadedRenderer::setShaderParameters(void* context, const map<string, string>& parameters) {
+	shaderParameters = parameters;
 }
 
 float SingleThreadedRenderer::getMaskMaxValue(void* context) {

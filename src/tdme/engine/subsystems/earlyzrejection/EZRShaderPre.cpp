@@ -3,9 +3,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreDefaultImplementation.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreFoliageImplementation.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreImplementation.h>
-#include <tdme/engine/subsystems/earlyzrejection/EZRShaderPreTreeImplementation.h>
 #include <tdme/math/Matrix4x4.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
@@ -13,18 +11,14 @@ using tdme::engine::subsystems::earlyzrejection::EZRShaderPre;
 using tdme::engine::Engine;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreBaseImplementation;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreDefaultImplementation;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreFoliageImplementation;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderPreImplementation;
-using tdme::engine::subsystems::earlyzrejection::EZRShaderPreTreeImplementation;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Console;
 
 EZRShaderPre::EZRShaderPre(Renderer* renderer): renderer(renderer)
 {
-	if (EZRShaderPreDefaultImplementation::isSupported(renderer) == true) shader["default"] = new EZRShaderPreDefaultImplementation(renderer);
-	if (EZRShaderPreFoliageImplementation::isSupported(renderer) == true) shader["foliage"] = new EZRShaderPreFoliageImplementation(renderer);
-	if (EZRShaderPreTreeImplementation::isSupported(renderer) == true) shader["tree"] = new EZRShaderPreTreeImplementation(renderer);
+	if (EZRShaderPreDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new EZRShaderPreDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	auto threadCount = renderer->isSupportingMultithreadedRendering() == true?Engine::getThreadCount():1;
 	contexts.resize(threadCount);
 }

@@ -25,6 +25,7 @@ public:
 	void onUpdateLight(void* context, int32_t lightId) override;
 	void onUpdateMaterial(void* context) override;
 	void onUpdateShader(void* context) override;
+	void onUpdateShaderParameters(void* context) override;
 
 	/**
 	 * Public constructor

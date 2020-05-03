@@ -1,9 +1,13 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderRenderBaseImplementation.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMappingShaderRenderBaseImplementation;
@@ -24,6 +28,7 @@ public:
 	static bool isSupported(Renderer* renderer);
 
 	// overriden methods
+	virtual const string getId() override;
 	virtual void initialize() override;
 
 	/**

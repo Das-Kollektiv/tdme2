@@ -281,6 +281,8 @@ private:
 		array<uint32_t, 3> command_count { 0 };
 
 		string shader;
+		string shaderParametersHash;
+		map<string, string> shaderParameters;
 		array<float, 4> effect_color_mul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
 		array<float, 4> effect_color_add {{ 0.0f, 0.0f, 0.0f, 0.0f }};
 		Renderer_PBRMaterial pbrMaterial;
@@ -585,8 +587,11 @@ public:
 	virtual array<float, 4>& getEffectColorAdd(void* context) override;
 	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) override;
 	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) override;
-	virtual const string getShader(void* context) override;
+	virtual const string& getShader(void* context) override;
 	virtual void setShader(void* context, const string& id) override;
+	virtual const string& getShaderParametersHash(void* context) override;
+	virtual const map<string, string>& getShaderParameters(void* context) override;
+	virtual void setShaderParameters(void* context, const map<string, string>& parameters) override;
 	virtual float getMaskMaxValue(void* context) override;
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
 

@@ -1491,7 +1491,7 @@ void VKRenderer::reshape() {
 	delete [] frame_buffers_last;
 
 	//
-	Engine::getInstance()->reshape(0, 0, width, height);
+	Engine::getInstance()->reshape(width, height);
 }
 
 void VKRenderer::initializeFrame()
@@ -5882,7 +5882,7 @@ Renderer_PBRMaterial& VKRenderer::getPBRMaterial(void* context) {
 	return contextTyped.pbrMaterial;
 }
 
-const string VKRenderer::getShader(void* context) {
+const string& VKRenderer::getShader(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
 	return contextTyped.shader;
 }
@@ -5892,6 +5892,22 @@ void VKRenderer::setShader(void* context, const string& id) {
 	if (VERBOSE == true) Console::println("VKRenderer::setShader(): " + to_string(contextTyped.idx) + ": " + contextTyped.shader + " --> " + id);
 	contextTyped.shader = id;
 }
+
+const string& VKRenderer::getShaderParametersHash(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.shaderParametersHash;
+}
+
+const map<string, string>& VKRenderer::getShaderParameters(void* context) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	return contextTyped.shaderParameters;
+}
+
+void VKRenderer::setShaderParameters(void* context, const map<string, string>& parameters) {
+	auto& contextTyped = *static_cast<context_type*>(context);
+	contextTyped.shaderParameters = parameters;
+}
+
 
 float VKRenderer::getMaskMaxValue(void* context) {
 	auto& contextTyped = *static_cast<context_type*>(context);
