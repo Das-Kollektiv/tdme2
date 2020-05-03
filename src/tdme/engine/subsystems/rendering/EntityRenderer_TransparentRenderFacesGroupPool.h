@@ -5,14 +5,14 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
 
 using tdme::utils::Pool;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 
 /**
- * Transparent render faces group pool
+ * Entity renderer transparent render faces group pool
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::rendering::Object3DRenderer_TransparentRenderFacesGroupPool: public Pool<TransparentRenderFacesGroup*>
+class tdme::engine::subsystems::rendering::EntityRenderer_TransparentRenderFacesGroupPool: public Pool<TransparentRenderFacesGroup*>
 {
 protected:
 	/**
@@ -23,5 +23,5 @@ public:
 	/**
 	 * Public constructor
 	 */
-	Object3DRenderer_TransparentRenderFacesGroupPool();
+	EntityRenderer_TransparentRenderFacesGroupPool();
 };

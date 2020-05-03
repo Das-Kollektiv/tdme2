@@ -5,7 +5,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMappingShaderPreImplementation.h>
@@ -23,7 +23,7 @@ using std::to_string;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping_RunState;
@@ -34,7 +34,7 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utils::Console;
 
-ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, Object3DRenderer* object3DRenderer)
+ShadowMapping::ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* object3DRenderer)
 {
 	this->engine = engine;
 	this->renderer = renderer;
@@ -154,10 +154,10 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 		object3DRenderer->render(
 			visibleObjectsReceivingShadows,
 			false,
-			Object3DRenderer::RENDERTYPE_NORMALS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_SHADOWMAPPING
+			EntityRenderer::RENDERTYPE_NORMALS |
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_SHADOWMAPPING
 		);
 		//	disable blending
 		renderer->disableBlending();

@@ -31,7 +31,7 @@ using tdme::math::Matrix2D3x3;
 class tdme::engine::subsystems::rendering::Object3DInternal
 	: public Object3DBase
 {
-	friend class Object3DRenderer;
+	friend class EntityRenderer;
 
 protected:
 	string id;

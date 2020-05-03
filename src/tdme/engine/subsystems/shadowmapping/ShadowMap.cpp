@@ -15,7 +15,7 @@
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/math/Math.h>
@@ -37,7 +37,7 @@ using tdme::engine::LODObject3D;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::math::Math;
@@ -265,8 +265,8 @@ void ShadowMap::render(Light* light)
 	shadowMapping->object3DRenderer->render(
 		visibleObjects,
 		false,
-		Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-		Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+		EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+		EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
 	);
 }
 

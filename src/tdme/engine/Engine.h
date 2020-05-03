@@ -19,7 +19,7 @@
 #include <tdme/engine/subsystems/lines/fwd-tdme.h>
 #include <tdme/engine/subsystems/manager/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingProgram.h>
@@ -68,8 +68,8 @@ using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
-using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::EntityRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::postprocessing::PostProcessing;
@@ -118,7 +118,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::rendering::Object3DBase;
 	friend class tdme::engine::subsystems::rendering::Object3DGroup;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupRenderer;
-	friend class tdme::engine::subsystems::rendering::Object3DRenderer;
+	friend class tdme::engine::subsystems::rendering::EntityRenderer;
 	friend class tdme::engine::subsystems::rendering::Object3DInternal;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
@@ -211,7 +211,7 @@ private:
 
 	vector<Object3D*> visibleEZRObjects;
 
-	Object3DRenderer* object3DRenderer { nullptr };
+	EntityRenderer* object3DRenderer { nullptr };
 
 	static bool skinningShaderEnabled;
 	bool shadowMappingEnabled;
@@ -235,7 +235,7 @@ private:
 		Engine* engine;
 
 		struct {
-			Object3DRenderer_InstancedRenderFunctionParameters parameters;
+			EntityRenderer_InstancedRenderFunctionParameters parameters;
 			unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
 			TransparentRenderFacesPool* transparentRenderFacesPool;
 		} rendering;
@@ -345,7 +345,7 @@ private:
 	/**
 	 * @return object 3d renderer
 	 */
-	inline Object3DRenderer* getObject3DRenderer() {
+	inline EntityRenderer* getEntityRenderer() {
 		return object3DRenderer;
 	}
 

@@ -38,7 +38,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::lines::LinesObject3DInternal
 	: public Transformations
 {
-	friend class tdme::engine::subsystems::rendering::Object3DRenderer;
+	friend class tdme::engine::subsystems::rendering::EntityRenderer;
 
 protected:
 	string id;

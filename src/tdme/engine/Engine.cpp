@@ -59,8 +59,8 @@
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroupMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer_InstancedRenderFunctionParameters.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessing.h>
@@ -130,8 +130,8 @@ using tdme::engine::subsystems::manager::MeshManager;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
-using tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters;
+using tdme::engine::subsystems::rendering::EntityRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
@@ -298,7 +298,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create GUI
 	offScreenEngine->gui = new GUI(offScreenEngine, guiRenderer);
 	// create object 3d vbo renderer
-	offScreenEngine->object3DRenderer = new Object3DRenderer(offScreenEngine, renderer);
+	offScreenEngine->object3DRenderer = new EntityRenderer(offScreenEngine, renderer);
 	offScreenEngine->object3DRenderer->initialize();
 	// create framebuffers
 	offScreenEngine->frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
@@ -538,7 +538,7 @@ void Engine::initialize()
 	renderer->initializeFrame();
 
 	// create object 3d renderer
-	object3DRenderer = new Object3DRenderer(this, renderer);
+	object3DRenderer = new EntityRenderer(this, renderer);
 	object3DRenderer->initialize();
 	GUIParser::initialize();
 
@@ -1062,8 +1062,8 @@ void Engine::display()
 		object3DRenderer->render(
 			visibleEZRObjects,
 			false,
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY
 		);
 		// done
 		ezrShaderPre->unUseProgram();
@@ -1080,15 +1080,15 @@ void Engine::display()
 		object3DRenderer->render(
 			visibleObjects,
 			true,
-			Object3DRenderer::RENDERTYPE_NORMALS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
-			Object3DRenderer::RENDERTYPE_MATERIALS |
-			Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_TEXTURES |
-			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_LIGHTS
+			EntityRenderer::RENDERTYPE_NORMALS |
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_EFFECTCOLORS |
+			EntityRenderer::RENDERTYPE_MATERIALS |
+			EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_TEXTURES |
+			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_LIGHTS
 		);
 
 		// unuse lighting shader
@@ -1133,15 +1133,15 @@ void Engine::display()
 		object3DRenderer->render(
 			visibleObjectsPostPostProcessing,
 			true,
-			Object3DRenderer::RENDERTYPE_NORMALS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
-			Object3DRenderer::RENDERTYPE_MATERIALS |
-			Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_TEXTURES |
-			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_LIGHTS
+			EntityRenderer::RENDERTYPE_NORMALS |
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_EFFECTCOLORS |
+			EntityRenderer::RENDERTYPE_MATERIALS |
+			EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_TEXTURES |
+			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_LIGHTS
 		);
 
 		// unuse lighting shader
@@ -1165,15 +1165,15 @@ void Engine::display()
 		object3DRenderer->render(
 			visibleObjectsNoDepthTest,
 			true,
-			Object3DRenderer::RENDERTYPE_NORMALS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS |
-			Object3DRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_EFFECTCOLORS |
-			Object3DRenderer::RENDERTYPE_MATERIALS |
-			Object3DRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_TEXTURES |
-			Object3DRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-			Object3DRenderer::RENDERTYPE_LIGHTS
+			EntityRenderer::RENDERTYPE_NORMALS |
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
+			EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_EFFECTCOLORS |
+			EntityRenderer::RENDERTYPE_MATERIALS |
+			EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_TEXTURES |
+			EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+			EntityRenderer::RENDERTYPE_LIGHTS
 		);
 
 		//

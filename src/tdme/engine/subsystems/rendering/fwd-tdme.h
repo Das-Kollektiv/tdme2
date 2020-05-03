@@ -9,6 +9,9 @@ namespace rendering {
 	class AnimationState;
 	class BatchRendererPoints;
 	class BatchRendererTriangles;
+	class EntityRenderer;
+	class EntityRenderer_InstancedRenderFunctionParameters;
+	class EntityRenderer_TransparentRenderFacesGroupPool;
 	class ModelUtilitiesInternal;
 	class ModelStatistics;
 	class Object3DAnimation;
@@ -19,9 +22,6 @@ namespace rendering {
 	class Object3DGroupRenderer;
 	class Object3DInternal;
 	class Object3DModelInternal;
-	class Object3DRenderer;
-	class Object3DRenderer_InstancedRenderFunctionParameters;
-	class Object3DRenderer_TransparentRenderFacesGroupPool;
 	class RenderTransparentRenderPointsPool;
 	struct TransparentRenderFace;
 	class TransparentRenderFacesGroup;

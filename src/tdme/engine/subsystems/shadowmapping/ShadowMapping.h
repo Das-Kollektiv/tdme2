@@ -14,7 +14,7 @@
 using std::vector;
 
 using tdme::engine::Engine;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
 using tdme::math::Matrix4x4;
@@ -34,7 +34,7 @@ private:
 	enum ShadowMapping_RunState {NONE, PRE, RENDER};
 
 	Renderer* renderer { nullptr };
-	Object3DRenderer* object3DRenderer { nullptr };
+	EntityRenderer* object3DRenderer { nullptr };
 
 	Matrix4x4 shadowTransformationsMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
@@ -149,7 +149,7 @@ public:
 	 * @param renderer renderer
 	 * @param object3DRenderer object 3d renderer
 	 */
-	ShadowMapping(Engine* engine, Renderer* renderer, Object3DRenderer* object3DRenderer);
+	ShadowMapping(Engine* engine, Renderer* renderer, EntityRenderer* object3DRenderer);
 
 	/**
 	 * Destructor

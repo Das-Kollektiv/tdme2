@@ -25,7 +25,7 @@ using tdme::engine::subsystems::renderer::Renderer;
  */
 class tdme::engine::subsystems::rendering::BatchRendererPoints final
 {
-	friend class Object3DRenderer;
+	friend class EntityRenderer;
 
 private:
 	static constexpr int32_t POINT_COUNT { 65535 };

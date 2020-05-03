@@ -22,7 +22,7 @@ using std::vector;
 class tdme::engine::subsystems::rendering::ObjectBuffer
 {
 	friend class Object3DGroupMesh;
-	friend class Object3DRenderer;
+	friend class EntityRenderer;
 	friend class BatchRendererTriangles;
 	friend class tdme::engine::Engine;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;

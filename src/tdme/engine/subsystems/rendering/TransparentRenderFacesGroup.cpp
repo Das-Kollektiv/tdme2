@@ -7,7 +7,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/Object3DGroup.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utils/Console.h>
@@ -21,7 +21,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::utils::Key;
@@ -37,7 +37,7 @@ TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 	this->textureCoordinates = false;
 }
 
-void TransparentRenderFacesGroup::set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
+void TransparentRenderFacesGroup::set(EntityRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
 	this->object3DRenderer = object3DRenderer;
 	this->batchRenderers.clear();
@@ -112,7 +112,7 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, voi
 	renderer->onUpdateEffect(context);
 	// material
 	string materialKey;
-	object3DRenderer->setupMaterial(context, object3DGroup, facesEntityIdx, Object3DRenderer::RENDERTYPE_ALL, false, materialKey);
+	object3DRenderer->setupMaterial(context, object3DGroup, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix(context);

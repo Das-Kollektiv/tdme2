@@ -41,7 +41,7 @@ class tdme::engine::subsystems::rendering::Object3DGroupMesh final
 	friend class Object3DBase_TransformedFacesIterator;
 	friend class Object3DGroup;
 	friend class Object3DGroupRenderer;
-	friend class Object3DRenderer;
+	friend class EntityRenderer;
 	friend class TransparentRenderFacesPool;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 

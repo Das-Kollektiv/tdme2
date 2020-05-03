@@ -11,11 +11,11 @@ using std::string;
 using tdme::engine::Object3D;
 
 /** 
- * Object 3D renderer parameters
+ * Entity renderer parameters
  * @author Andreas Drewke
  * @version $Id$
  */
-struct tdme::engine::subsystems::rendering::Object3DRenderer_InstancedRenderFunctionParameters final {
+struct tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters final {
 	vector<Object3D*> objects;
 	uint32_t renderTypes;
 	bool collectTransparentFaces;

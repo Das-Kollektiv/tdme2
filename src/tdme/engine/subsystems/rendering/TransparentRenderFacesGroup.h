@@ -8,7 +8,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
-#include <tdme/engine/subsystems/rendering/Object3DRenderer.h>
+#include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector2.h>
@@ -26,7 +26,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::Object3DGroup;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
@@ -41,11 +41,11 @@ using tdme::utils::Console;
 class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 {
 	friend class Object3DGroupMesh;
-	friend class Object3DRenderer;
-	friend class Object3DRenderer_TransparentRenderFacesGroupPool;
+	friend class EntityRenderer;
+	friend class EntityRenderer_TransparentRenderFacesGroupPool;
 
 private:
-	Object3DRenderer* object3DRenderer { nullptr };
+	EntityRenderer* object3DRenderer { nullptr };
 	vector<BatchRendererTriangles*> batchRenderers;
 	Model* model { nullptr };
 	Object3DGroup* object3DGroup { nullptr };
@@ -71,7 +71,7 @@ private:
 	 * @param textureCoordinates texture coordinates
 	 * @param shader shader
 	 */
-	void set(Object3DRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
+	void set(EntityRenderer* object3DRenderer, Model* model, Object3DGroup* object3DGroup, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/** 
 	 * Creates a key for given transparent render faces group attributes

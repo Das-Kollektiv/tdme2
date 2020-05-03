@@ -57,7 +57,7 @@ using tdme::utils::Pool;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::rendering::Object3DRenderer final {
+class tdme::engine::subsystems::rendering::EntityRenderer final {
 	friend class Object3DGroupRenderer;
 	friend class TransparentRenderFacesGroup;
 	friend class tdme::engine::Engine;
@@ -84,7 +84,7 @@ private:
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
 	unordered_map<string, unordered_map<string, vector<Object3D*>>> objectsByShadersAndModels;
 	vector<TransparentRenderFace*> groupTransparentRenderFaces;
-	Object3DRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
+	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
 	unordered_map<string, TransparentRenderFacesGroup*> transparentRenderFacesGroups;
 	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
@@ -299,12 +299,12 @@ public:
 	 * @param engine engine
 	 * @param renderer renderer
 	 */
-	Object3DRenderer(Engine* engine, Renderer* renderer);
+	EntityRenderer(Engine* engine, Renderer* renderer);
 
 	/**
 	 * Destructor
 	 */
-	~Object3DRenderer();
+	~EntityRenderer();
 
 	/**
 	 * Compare entities by distance from camera

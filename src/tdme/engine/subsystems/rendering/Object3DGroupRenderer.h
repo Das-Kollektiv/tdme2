@@ -15,7 +15,7 @@ using std::vector;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::rendering::Object3DGroup;
 using tdme::engine::subsystems::rendering::Object3DGroupMesh;
-using tdme::engine::subsystems::rendering::Object3DRenderer;
+using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
 /** 
@@ -25,7 +25,7 @@ using tdme::engine::subsystems::skinning::SkinningShader;
  */
 class tdme::engine::subsystems::rendering::Object3DGroupRenderer final
 {
-	friend class Object3DRenderer;
+	friend class EntityRenderer;
 	friend class tdme::engine::Object3D;
 	friend class tdme::engine::subsystems::rendering::Object3DGroupMesh;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
