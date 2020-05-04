@@ -27,7 +27,7 @@ void PostProcessingShaderDefaultImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"default_fragmentshader.c"
+		"default_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -35,7 +35,7 @@ void PostProcessingShaderDefaultImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"default_vertexshader.c"
+		"default_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 

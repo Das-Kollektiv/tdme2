@@ -32,7 +32,7 @@ void ParticlesShader::initialize()
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/particles",
-		"render_fragmentshader.c",
+		"render_fragmentshader.frag",
 		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderFragmentShaderId == 0) return;
@@ -40,7 +40,7 @@ void ParticlesShader::initialize()
 	renderVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/particles",
-		"render_vertexshader.c",
+		"render_vertexshader.vert",
 		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderVertexShaderId == 0) return;

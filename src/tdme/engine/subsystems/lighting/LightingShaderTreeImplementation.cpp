@@ -39,7 +39,7 @@ void LightingShaderTreeImplementation::initialize()
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
-		"render_fragmentshader.c",
+		"render_fragmentshader.frag",
 		"#define HAVE_DEPTH_FOG"
 	);
 	if (renderLightingFragmentShaderId == 0) return;
@@ -48,21 +48,21 @@ void LightingShaderTreeImplementation::initialize()
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
-		"render_vertexshader.c",
+		"render_vertexshader.vert",
 		"#define HAVE_TREE\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_rotation_matrix.inc.c"
+			"create_rotation_matrix.inc.glsl"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_translation_matrix.inc.c"
+			"create_translation_matrix.inc.glsl"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_tree_transform_matrix.inc.c"
+			"create_tree_transform_matrix.inc.glsl"
 		)
 	);
 	if (renderLightingVertexShaderId == 0) return;

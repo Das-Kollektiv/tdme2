@@ -57,7 +57,6 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// shader
-				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".c") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glsl") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".vert") == true) return true;
 				if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".frag") == true) return true;

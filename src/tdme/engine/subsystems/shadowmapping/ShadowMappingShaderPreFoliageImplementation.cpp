@@ -37,28 +37,28 @@ void ShadowMappingShaderPreFoliageImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_vertexshader.c",
+		"pre_vertexshader.vert",
 		"#define HAVE_FOLIAGE",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_rotation_matrix.inc.c"
+			"create_rotation_matrix.inc.glsl"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_translation_matrix.inc.c"
+			"create_translation_matrix.inc.glsl"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_foliage_transform_matrix.inc.c"
+			"create_foliage_transform_matrix.inc.glsl"
 		)
 	);
 	if (vertexShaderId == 0) return;
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_fragmentshader.c"
+		"pre_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 

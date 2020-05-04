@@ -41,14 +41,14 @@ void FrameBufferRenderShader::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
-		"render_vertexshader.c"
+		"render_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/framebuffer",
-		"render_fragmentshader.c"
+		"render_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 

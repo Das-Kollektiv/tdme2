@@ -37,21 +37,21 @@ void ShadowMappingShaderRenderTreeImplementation::initialize()
 	renderVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"render_vertexshader.c",
+		"render_vertexshader.vert",
 		"#define HAVE_TREE",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_rotation_matrix.inc.c"
+			"create_rotation_matrix.inc.glsl"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_translation_matrix.inc.c"
+			"create_translation_matrix.inc.glsl"
 		) +
 		"\n\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"create_tree_transform_matrix.inc.c"
+			"create_tree_transform_matrix.inc.glsl"
 		)
 	);
 	if (renderVertexShaderId == 0) return;
@@ -59,7 +59,7 @@ void ShadowMappingShaderRenderTreeImplementation::initialize()
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"render_fragmentshader.c"
+		"render_fragmentshader.frag"
 	);
 	if (renderFragmentShaderId == 0) return;
 

@@ -27,7 +27,7 @@ void PostProcessingShaderSSAOImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"ssao_fragmentshader.c",
+		"ssao_fragmentshader.frag",
 		Engine::is4K() == true?"#define HAVE_4K":""
 	);
 	if (fragmentShaderId == 0) return;
@@ -36,7 +36,7 @@ void PostProcessingShaderSSAOImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"ssao_vertexshader.c"
+		"ssao_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 

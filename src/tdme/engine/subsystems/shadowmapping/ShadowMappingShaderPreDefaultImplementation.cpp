@@ -37,13 +37,13 @@ void ShadowMappingShaderPreDefaultImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_vertexshader.c"
+		"pre_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/shadowmapping",
-		"pre_fragmentshader.c"
+		"pre_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 

@@ -46,7 +46,7 @@ void LightingShaderWaterImplementation::initialize()
 	renderLightingFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
-		"render_fragmentshader.c",
+		"render_fragmentshader.frag",
 		"#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG"
 	);
 	if (renderLightingFragmentShaderId == 0) return;
@@ -55,11 +55,11 @@ void LightingShaderWaterImplementation::initialize()
 	renderLightingVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lighting/specular",
-		"render_vertexshader.c",
+		"render_vertexshader.vert",
 		"#define HAVE_WATER_SHADER\n#define HAVE_DEPTH_FOG",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
-			"render_water.inc.c"
+			"render_water.inc.glsl"
 		)
 	);
 	if (renderLightingVertexShaderId == 0) return;

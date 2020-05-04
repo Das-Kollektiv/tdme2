@@ -39,7 +39,7 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"ssao_map_fragmentshader.c"
+		"ssao_map_fragmentshader.frag"
 	);
 	if (fragmentShaderId == 0) return;
 
@@ -47,7 +47,7 @@ void PostProcessingShaderSSAOMapImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"ssao_map_vertexshader.c"
+		"ssao_map_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 

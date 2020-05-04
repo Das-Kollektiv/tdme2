@@ -69,7 +69,7 @@ void SkinningShader::initialize()
 	shaderId = renderer->loadShader(
 		renderer->SHADER_COMPUTE_SHADER,
 		"shader/" + shaderVersion + "/skinning",
-		"skinning.c"
+		"skinning.glsl"
 	);
 	if (shaderId == 0) return;
 

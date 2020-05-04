@@ -27,7 +27,7 @@ void PostProcessingShaderBlurImplementation::initialize()
 	fragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"blur_fragmentshader.c",
+		"blur_fragmentshader.frag",
 		Engine::is4K() == true?"#define HAVE_4K":""
 	);
 	if (fragmentShaderId == 0) return;
@@ -36,7 +36,7 @@ void PostProcessingShaderBlurImplementation::initialize()
 	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/postprocessing",
-		"blur_vertexshader.c"
+		"blur_vertexshader.vert"
 	);
 	if (vertexShaderId == 0) return;
 

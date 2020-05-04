@@ -32,7 +32,7 @@ void LinesShader::initialize()
 	renderFragmentShaderId = renderer->loadShader(
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lines",
-		"render_fragmentshader.c"
+		"render_fragmentshader.frag"
 	);
 	if (renderFragmentShaderId == 0)
 		return;
@@ -40,7 +40,7 @@ void LinesShader::initialize()
 	renderVertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/lines",
-		"render_vertexshader.c"
+		"render_vertexshader.vert"
 	);
 	if (renderVertexShaderId == 0)
 		return;
