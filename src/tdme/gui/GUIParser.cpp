@@ -965,12 +965,18 @@ const string GUIParser::getInnerXml(TiXmlElement* node)
 
 const string GUIParser::unescapeQuotes(const string& str)
 {
-	return StringUtils::replace(str, "&quot;", "\"");
+	string result;
+	result = StringUtils::replace(str, "&quot;", "\"");
+	result = StringUtils::replace(result, "&#39;", "'");
+	return result;
 }
 
 const string GUIParser::escapeQuotes(const string& str)
 {
-	return StringUtils::replace(str, "\"", "&quot;");
+	string result;
+	result = StringUtils::replace(str, "\"", "&quot;");
+	result = StringUtils::replace(result, "'", "&#39;");
+	return result;
 }
 
 void GUIParser::addElement(GUIElement* guiElement)
