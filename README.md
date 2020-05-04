@@ -29,7 +29,7 @@
           - application life cycle
     - math
         - Math class with common math functions
-        - Vector2, Vector3, Vector3, Matrix3x3, Matrix4x4 and Quaternion class
+        - Vector2, Vector3, Vector4, Matrix3x3, Matrix4x4 and Quaternion class
             - those have a ordinary API + operators, the latter is still a bit WIP
     - 3d engine
         - model parsing
