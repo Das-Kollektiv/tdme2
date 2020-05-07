@@ -37,7 +37,7 @@ Audio::Audio()
 	//
 	listenerPosition.set(0.0f, 0.0f, 0.0);
 	listenerVelocity.set(0.0f, 0.0f, 0.0);
-	listenerOrientationAt.set(0.0f, 0.0f, -1.0f);
+	listenerOrientationAt.set(0.0f, 0.0f, 1.0f);
 	listenerOrientationUp.set(0.0f, 1.0f, 0.0f);
 
 	// init listener position
