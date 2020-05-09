@@ -158,6 +158,7 @@
             - slider horizontal
             - slider vertical
             - tabs
+        - Note that TDME2 GUI is fully customizable in terms of appearance by modifying its XML definitions
         - includes a simple script language
             - to react on events with like on-mouse-click, ... and on-change for elements
             - to manipulate conditions of elements, values of element controller and node properties
