@@ -375,9 +375,9 @@ void GUI::setFoccussedNode(GUIElementNode* newFoccussedNode)
 	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
 	if (focussedNode == newFoccussedNode) return;
 	unfocusNode();
-	this->focussedNodeScreenId = newFoccussedNode->getScreenNode()->getId();
-	this->focussedNodeNodeId = newFoccussedNode->getId();
-	focusNode();
+	this->focussedNodeScreenId = newFoccussedNode == nullptr?string():newFoccussedNode->getScreenNode()->getId();
+	this->focussedNodeNodeId = newFoccussedNode == nullptr?string():newFoccussedNode->getId();
+	if (newFoccussedNode != nullptr) focusNode();
 	determineFocussedNodes();
 }
 

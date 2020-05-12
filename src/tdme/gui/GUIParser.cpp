@@ -208,6 +208,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 	// so GUIScreenNode::applicationRootPath is not available at GUIScreenNode::GUINode construction time
 	guiScreenNode->setBackgroundImage(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("background-image"))));
 	parseGUINode(guiScreenNode, xmlRoot, nullptr);
+	guiScreenNode->setConditionsMet();
 	return guiScreenNode;
 }
 

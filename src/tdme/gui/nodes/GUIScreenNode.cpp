@@ -196,8 +196,36 @@ void GUIScreenNode::layout()
 
 void GUIScreenNode::layout(GUINode* node)
 {
-	if (dynamic_cast< GUIParentNode* >(node) != nullptr) {
-		auto parentNode = dynamic_cast< GUIParentNode* >(node);
+	auto _node = node;
+	// find a node that is a valid base for layouting from
+	while (
+		_node->parentNode != nullptr &&
+		// auto depends on its children dimensions, so do relayout the parent
+		((_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
+		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
+		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO ||
+		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) ||
+		// percent depend on its parent sizedimensions so make sure its already layouted
+		(_node->layouted == false &&
+		(_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
+		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
+		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT ||
+		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::PERCENT)) ||
+		// star depend on its parent dimensions, so make sure its already layouted
+		(_node->layouted == false &&
+		(_node->requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
+		_node->requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
+		_node->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR ||
+		_node->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR)))) {
+		_node = _node->parentNode;
+	}
+	// last step, make sure all parents until screen node are layouted
+	while (_node->parentNode != nullptr &&_node->layouted == false) {
+		_node = _node->parentNode;
+	}
+	// do the magic
+	if (dynamic_cast< GUIParentNode* >(_node) != nullptr) {
+		auto parentNode = dynamic_cast<GUIParentNode*>(_node);
 		if (parentNode->conditionsMet == true) {
 			parentNode->layoutSubNodes();
 			parentNode->layoutSubNodes();
@@ -214,13 +242,13 @@ void GUIScreenNode::layout(GUINode* node)
 			parentNode->layouted = false;
 		}
 	} else {
-		if (node->conditionsMet == true) {
-			node->computeContentAlignment();
-			node->layouted = true;
-			auto controller = node->getController();
+		if (_node->conditionsMet == true) {
+			_node->computeContentAlignment();
+			auto controller = _node->getController();
 			if (controller != nullptr) controller->postLayout();
+			_node->layouted = true;
 		} else {
-			node->layouted = false;
+			_node->layouted = false;
 		}
 	}
 }
@@ -237,7 +265,7 @@ void GUIScreenNode::setScreenSize(int32_t width, int32_t height)
 	this->computedConstraints.top = 0;
 	this->computedConstraints.width = width;
 	this->computedConstraints.height = height;
-	layouted = false;
+	this->layouted = false;
 }
 
 const string GUIScreenNode::getNodeType()

@@ -449,21 +449,7 @@ void GUINode::setConditionsMet()
 void GUINode::layoutOnDemand() {
 	if (conditionsMet == false) return;
 	if (screenNode->layouted == false || layouted == false) {
-		auto i = 0;
-		auto nodeToLayoutCandidate = this->parentNode;
-		auto nodeToLayout = static_cast<GUINode*>(nullptr);
-		while (nodeToLayoutCandidate != nullptr) {
-			if (nodeToLayout == nullptr && nodeToLayoutCandidate->layouted == true && dynamic_cast<GUIParentNode*>(nodeToLayoutCandidate) != nullptr) {
-				nodeToLayout = nodeToLayoutCandidate;
-			} else
-			if (nodeToLayout != nullptr && nodeToLayoutCandidate->layouted == false) {
-				nodeToLayout = nullptr;
-			}
-
-			nodeToLayoutCandidate = nodeToLayoutCandidate->parentNode;
-			i++;
-		}
-		screenNode->layout(nodeToLayout != nullptr && nodeToLayout->parentNode != nullptr?nodeToLayout->parentNode:screenNode);
+		screenNode->layout(this);
 	}
 }
 
@@ -1040,16 +1026,10 @@ void GUINode::scrollToNodeY(GUIParentNode* toNode)
 {
 	auto scrollYParentNode = this->parentNode;
 	while (true == true) {
-		if (scrollYParentNode == toNode || scrollYParentNode == nullptr)
-			return;
-
-		if (scrollYParentNode->overflowY == GUIParentNode_Overflow::SCROLL) {
-			break;
-		}
+		if (scrollYParentNode == toNode || scrollYParentNode == nullptr) return;
+		if (scrollYParentNode->overflowY == GUIParentNode_Overflow::SCROLL) break;
 		scrollYParentNode = scrollYParentNode->parentNode;
-		if (scrollYParentNode == nullptr)
-			return;
-
+		if (scrollYParentNode == nullptr) return;
 	}
 	if (computedConstraints.top < scrollYParentNode->getChildrenRenderOffsetY() + scrollYParentNode->computedConstraints.top) {
 		scrollYParentNode->setChildrenRenderOffsetY(computedConstraints.top - scrollYParentNode->computedConstraints.top);
