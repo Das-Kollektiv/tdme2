@@ -321,6 +321,9 @@ Group* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltf
 				material = new Material(gltfMaterial.name);
 				auto pbrMaterialProperties = new PBRMaterialProperties();
 				auto specularMaterialProperties = new SpecularMaterialProperties();
+				// some adjustment, lets see if we can extract this later
+				specularMaterialProperties->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
+				specularMaterialProperties->setDiffuseColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));
 				// we ignore for now Factor, ColorFactor, TextureScale, TextureStrength, TextureTexCoord as I do not see them feasible in Blender exported GLTF files
 				if (gltfMaterial.values.find("baseColorTexture") != gltfMaterial.values.end() &&
 					gltfMaterial.values.find("baseColorTexture")->second.TextureIndex() != -1) {
