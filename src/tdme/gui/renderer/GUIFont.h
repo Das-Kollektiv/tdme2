@@ -24,7 +24,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utils::MutableString;
 
-/** 
+/**
  * GUI Font
  * A font implementation that will parse the output of the AngelCode font tool available at:
  * @see http://www.angelcode.com/products/bmfont/
@@ -49,29 +49,29 @@ class tdme::gui::renderer::GUIFont final
 private:
 	static MutableString LINEHEIGHT_STRING;
 
-	/** 
+	/**
 	 * The image containing the bitmap font 
 	 */
 	Texture* texture { nullptr };
 
-	/** 
+	/**
 	 * Texture id 
 	 */
 	int32_t textureId { -1 };
 
-	/** 
+	/**
 	 * The characters building up the font 
 	 */
 	map<int32_t, GUIFont_CharacterDefinition*> chars;
 
-	/** 
+	/**
 	 * The height of a line 
 	 */
 	int32_t lineHeight { 0 };
 
 public:
 
-	/** 
+	/**
 	 * Parse the font definition file
 	 * @param pathName font path name
 	 * @param fileName font file name
@@ -81,7 +81,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Parse a single character line from the definition
 	 * @param line line The line to be parsed
 	 * @return The character definition from the line
@@ -101,17 +101,17 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * Init
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Dispose
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Draw string
 	 * @param guiRenderer gui renderer
 	 * @param x x
@@ -123,7 +123,7 @@ public:
 	 */
 	void drawString(GUIRenderer* guiRenderer, int32_t x, int32_t y, const MutableString& text, int32_t offset, int32_t length, const GUIColor& color);
 
-	/** 
+	/**
 	 * Get text index X of given text and index
 	 * @param text text
 	 * @param offset offset
@@ -133,7 +133,7 @@ public:
 	 */
 	int32_t getTextIndexX(const MutableString& text, int32_t offset, int32_t length, int32_t index);
 
-	/** 
+	/**
 	 * Get text index by text and X in space of text
 	 * @param text text
 	 * @param offset offset
@@ -143,28 +143,35 @@ public:
 	 */
 	int32_t getTextIndexByX(const MutableString& text, int32_t offset, int32_t length, int32_t textX);
 
-	/** 
+	/**
 	 * Get the offset from the draw location the font will place glyphs
 	 * @param text text The text that is to be tested
 	 * @return The yoffset from the y draw location at which text will start
 	 */
 	int32_t getYOffset(const MutableString& text);
 
-	/** 
+	/**
 	 * Text height
 	 * @param text text
 	 * @return text height
 	 */
 	int32_t getTextHeight(const MutableString& text);
 
-	/** 
+	/**
 	 * Text width
 	 * @param text text
 	 * @return text width
 	 */
 	int32_t getTextWidth(const MutableString& text);
 
-	/** 
+	/**
+	 * Get text index X at width
+	 * @param text text
+	 * @return text width
+	 */
+	int32_t getTextIndexXAtWidth(const MutableString& text, int32_t width);
+
+	/**
 	 * @return line height
 	 */
 	int32_t getLineHeight();

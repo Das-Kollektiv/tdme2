@@ -18,6 +18,7 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Exception.h>
 #include <tdme/utils/MutableString.h>
+#include <tdme/utils/StringUtils.h>
 
 using std::vector;
 using std::string;
@@ -39,6 +40,7 @@ using tdme::math::Math;
 using tdme::utils::Console;
 using tdme::utils::Exception;
 using tdme::utils::MutableString;
+using tdme::utils::StringUtils;
 
 GUIMultilineTextNode::GUIMultilineTextNode(
 	GUIScreenNode* screenNode,
@@ -72,7 +74,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->parentYOffsetLast = 0.0f;
 	this->yLast = 0.0f;
 	this->charStartIdx = 0;
-	this->charEndIdx = text.length();
+	this->charEndIdx = text.length() - 1;
 	this->widthLast = -1;
 	this->heightLast = -1;
 	if (this->font != nullptr) this->font->initialize();
@@ -116,68 +118,72 @@ void GUIMultilineTextNode::computeContentAlignment() {
 	//
 	autoWidth = 0;
 	autoHeight = 0;
-	{
-		string line;
-		string word;
-		bool hadBreak = false;
-		for (auto i = 0; i < text.length(); i++) {
-			auto c = text.charAt(i);
-			// last char
-			auto lastChar = i == text.length() - 1;
-			// check for separation char or last char
-			if (c == '\n' || c == ' ' || c == '\t' || lastChar == true) {
-				// if last char add it to current word
-				if (lastChar == true) word+= c;
-				// determine current line width + word width
-				auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
-				// check if too long
-				auto tooLong =
-					requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO &&
-					lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
-				// if not auto and too long then draw current line and do a new line or flush last text
-				if (tooLong == true ||
-					c == '\n' ||
-					lastChar == true) {
-					// add word to line if required
-					if (tooLong == false || hadBreak == false) line+= word;
-					// determine current line width
-					lineWidth = font->getTextWidth(MutableString(line));
-					// did we already had a whitespace?
-					if (hadBreak == false) {
-						// clear current line as it has been rendered
-						line.clear();
-					} else
-					// too long?
-					if (tooLong == true) {
-						// new line is current word
-						line = word;
-						// add white space if we have one
-						if (c != '\n') line+= c;
-					} else {
-						// otherwise empty current line
-						line.clear();
-					}
-					// empty word
+	string line;
+	string word;
+	bool hadBreak = false;
+	for (auto i = 0; i < text.length(); i++) {
+		auto c = text.charAt(i);
+		// last char
+		auto lastChar = i == text.length() - 1;
+		// check for separation char or last char
+		if (c == '\n' || c == ' ' || c == '\t' || lastChar == true) {
+			// if last char add it to current word
+			if (lastChar == true) word+= c;
+			// determine current line width + word width
+			auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
+			// check if too long
+			auto tooLong =
+				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO &&
+				lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
+			// if not auto and too long then draw current line and do a new line or flush last text
+			if (tooLong == true ||
+				c == '\n' ||
+				lastChar == true) {
+				// add word to line if required
+				if ((tooLong == true && hadBreak == false) || lastChar == true || c == '\n') {
+					line+= word;
 					word.clear();
-					// reset
-					hadBreak = false;
+				}
+				//
+				string lineToRender = line;
+				string lineLeft;
+				//
+				do {
+					//
+					auto separationAt = font->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
+					lineLeft = StringUtils::substring(lineToRender, separationAt + 1);
+					lineToRender = StringUtils::substring(lineToRender, 0, separationAt + 1);
+					// determine current line width
+					lineWidth = font->getTextWidth(MutableString(lineToRender));
 					// track dimension
 					if (lineWidth > autoWidth) autoWidth = lineWidth;
 					autoHeight+= font->getLineHeight();
-				} else
-				if (c != '\n') {
-					// no flush yet, add word to line
-					line+= word + c;
-					// reset
-					word.clear();
-					hadBreak = true;
-				}
-			} else {
-				// regular character
-				word+= c;
+					//
+					lineToRender = lineLeft;
+					lineLeft.clear();
+				} while (lineToRender.empty() == false);
+				// new line is current word
+				line = word;
+				// add white space if we have one
+				if (c != '\n') line+= c;
+				// empty word
+				word.clear();
+				// reset
+				hadBreak = false;
+			} else
+			if (c != '\n') {
+				// no flush yet, add word to line
+				line+= word + c;
+				// reset
+				word.clear();
+				hadBreak = lastChar == false;
 			}
+		} else {
+			// regular character
+			word+= c;
 		}
 	}
+
 	//
 	this->parentOffsetsChanged = true;
 	this->widthLast = computedConstraints.width;
@@ -190,7 +196,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->parentXOffsetLast = 0.0f;
 	this->parentYOffsetLast = 0.0f;
 	this->charStartIdx = 0;
-	this->charEndIdx = text.length();
+	this->charEndIdx = text.length() - 1;
 	this->yLast = 0.0f;
 	this->widthLast = -1;
 	this->heightLast = -1;
@@ -211,66 +217,81 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	GUINode::render(guiRenderer);
 
 	//
-	if (font != nullptr) {
-		// screen dimensions
-		auto screenWidth = screenNode->getScreenWidth();
-		auto screenHeight = screenNode->getScreenHeight();
+	if (font == nullptr) return;
 
-		// indents
-		auto xIndentLeft = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + border.left + padding.left;
-		auto yIndentTop = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + border.top + padding.top;
+	// screen dimensions
+	auto screenWidth = screenNode->getScreenWidth();
+	auto screenHeight = screenNode->getScreenHeight();
 
-		// vertical alignment
-		auto y = 0;
-		if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
-			// no op
-		} else
-		if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
-			y = (computedConstraints.height - (border.top + border.bottom + padding.top + padding.bottom) - autoHeight) / 2;
-		} else
-		if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
-			y = (computedConstraints.height - (border.top + border.bottom + padding.top + padding.bottom) - autoHeight);
-		}
-		string line;
-		string word;
-		bool hadBreak = false;
-		auto parentXOffset = computeParentChildrenRenderOffsetXTotal();
-		auto parentYOffset = computeParentChildrenRenderOffsetYTotal();
-		if (parentOffsetsChanged == true ||
-			Math::abs(parentXOffset - parentXOffsetLast) > Math::EPSILON ||
-			Math::abs(parentYOffset - parentYOffsetLast) > Math::EPSILON) {
-			parentXOffsetLast = parentXOffset;
-			parentYOffsetLast = parentYOffset;
-			charStartIdx = 0;
-			charEndIdx = text.length();
-			parentOffsetsChanged = false;
-		} else {
-			y = yLast;
-		}
-		bool visible = false;
-		auto _charStartIdx = charStartIdx;
-		for (auto i = charStartIdx; i < charEndIdx; i++) {
-			auto c = text.charAt(i);
-			// last char
-			auto lastChar = i == text.length() - 1;
-			// check for separation char or last char
-			if (c == '\n' || c == ' ' || c == '\t' || lastChar == true) {
-				// if last char add it to current word
-				if (lastChar == true) word+= c;
-				// determine current line width + word width
-				auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
-				// check if too long
-				auto tooLong =
-					requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO &&
-					lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
-				// if not auto and too long then draw current line and do a new line or flush last text
-				if (tooLong == true ||
-					c == '\n' ||
-					lastChar == true) {
-					// add word to line if required
-					if (tooLong == false || hadBreak == false) line+= word;
+	// indents
+	auto xIndentLeft = computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.contentAlignmentLeft + border.left + padding.left;
+	auto yIndentTop = computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.contentAlignmentTop + border.top + padding.top;
+
+	// vertical alignment
+	auto y = 0;
+	if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
+		// no op
+	} else
+	if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
+		y = (computedConstraints.height - (border.top + border.bottom + padding.top + padding.bottom) - autoHeight) / 2;
+	} else
+	if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
+		y = (computedConstraints.height - (border.top + border.bottom + padding.top + padding.bottom) - autoHeight);
+	}
+	string line;
+	string word;
+	bool hadBreak = false;
+	auto parentXOffset = computeParentChildrenRenderOffsetXTotal();
+	auto parentYOffset = computeParentChildrenRenderOffsetYTotal();
+	if (parentOffsetsChanged == true ||
+		Math::abs(parentXOffset - parentXOffsetLast) > Math::EPSILON ||
+		Math::abs(parentYOffset - parentYOffsetLast) > Math::EPSILON) {
+		parentXOffsetLast = parentXOffset;
+		parentYOffsetLast = parentYOffset;
+		charStartIdx = 0;
+		charEndIdx = text.length() - 1;
+		parentOffsetsChanged = false;
+		yLast = 0;
+	} else {
+		y = yLast;
+	}
+	bool visible = false;
+	auto _charStartIdx = charStartIdx;
+	auto _y = y;
+	for (auto i = charStartIdx; i <= charEndIdx; i++) {
+		auto c = text.charAt(i);
+		// last char
+		auto lastChar = i == charEndIdx;
+		// check for separation char or last char
+		if (c == '\n' || c == ' ' || c == '\t' || lastChar == true) {
+			// if last char add it to current word
+			if (lastChar == true) word+= c;
+			// determine current line width + word width
+			auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
+			// check if too long
+			auto tooLong =
+				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO &&
+				lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
+			// if not auto and too long then draw current line and do a new line or flush last text
+			if (tooLong == true ||
+				c == '\n' ||
+				lastChar == true) {
+				// add word to line if required
+				if ((tooLong == true && hadBreak == false) || lastChar == true || c == '\n') {
+					line+= word;
+					word.clear();
+				}
+				//
+				string lineToRender = line;
+				string lineLeft;
+				//
+				do {
+					//
+					auto separationAt = font->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
+					lineLeft = StringUtils::substring(lineToRender, separationAt + 1);
+					lineToRender = StringUtils::substring(lineToRender, 0, separationAt + 1);
 					// determine current line width
-					lineWidth = font->getTextWidth(MutableString(line));
+					lineWidth = font->getTextWidth(MutableString(lineToRender));
 					// horizontal alignment
 					auto x = 0;
 					if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
@@ -300,7 +321,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 								guiRenderer,
 								x + xIndentLeft,
 								y + yIndentTop,
-								line,
+								lineToRender,
 								0,
 								0,
 								color
@@ -308,7 +329,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							if (visible == false) {
 								visible = true;
 								charStartIdx = _charStartIdx;
-								yLast = y;
+								yLast = _y;
 							}
 						} else
 						if (visible == true) {
@@ -316,40 +337,36 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							charEndIdx = i;
 						}
 					}
-					// did we already had a whitespace?
-					if (hadBreak == false) {
-						// clear current line as it has been rendered
-						line.clear();
-					} else
-					if (tooLong == true) {
-						// new line is current word
-						line = word;
-						// add white space if we have one
-						if (c != '\n') line+= c;
-					} else {
-						// otherwise empty current line
-						line.clear();
-					}
-					// empty word
-					word.clear();
-					// reset
-					hadBreak = false;
 					// move y
 					y+= font->getLineHeight();
 					//
+					lineToRender = lineLeft;
+					lineLeft.clear();
+				} while (lineToRender.empty() == false);
+				// new line is current word
+				line = word;
+				// add white space if we have one
+				if (c != '\n') line+= c;
+				// empty word
+				word.clear();
+				// reset
+				hadBreak = false;
+				//
+				if (c == '\n') {
 					_charStartIdx = i + 1;
-				} else
-				if (c != '\n') {
-					// no flush yet, add word to line
-					line+= word + c;
-					// reset
-					word.clear();
-					hadBreak = true;
+					_y = y;
 				}
-			} else {
-				// regular character
-				word+= c;
+			} else
+			if (c != '\n') {
+				// no flush yet, add word to line
+				line+= word + c;
+				// reset
+				word.clear();
+				hadBreak = lastChar == false;
 			}
+		} else {
+			// regular character
+			word+= c;
 		}
 	}
 }

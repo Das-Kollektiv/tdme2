@@ -55,7 +55,7 @@ private:
 	bool parentOffsetsChanged;
 	float parentXOffsetLast;
 	float parentYOffsetLast;
-	float yLast;
+	int yLast;
 	int charStartIdx;
 	int charEndIdx;
 	int widthLast;

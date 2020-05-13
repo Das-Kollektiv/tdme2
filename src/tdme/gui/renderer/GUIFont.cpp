@@ -224,6 +224,19 @@ int32_t GUIFont::getTextWidth(const MutableString& text)
 	return width;
 }
 
+int32_t GUIFont::getTextIndexXAtWidth(const MutableString& text, int32_t width) {
+	auto x = 0;
+	for (auto i = 0; i < text.length(); i++) {
+		auto character = text.charAt(i);
+		auto charDef = getCharacter(character);
+		if (charDef == nullptr) continue;
+		auto xAdvance = charDef->xAdvance;
+		x += xAdvance;
+		if (x > width) return i;
+	}
+	return text.length() - 1;
+}
+
 int32_t GUIFont::getLineHeight()
 {
 	return lineHeight;
