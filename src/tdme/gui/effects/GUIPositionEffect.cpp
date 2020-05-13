@@ -9,24 +9,11 @@ using tdme::gui::renderer::GUIRenderer;
 
 GUIPositionEffect::GUIPositionEffect() 
 {
-	init();
-}
-
-void GUIPositionEffect::init()
-{
-	positionXStart = 0.0f;
-	positionXEnd = 0.0f;
-	positionYStart = 0.0f;
-	positionYEnd = 0.0f;
-	positionX = 0.0f;
-	positionY = 0.0f;
 }
 
 void GUIPositionEffect::apply(GUIRenderer* guiRenderer)
 {
-	if (active == false)
-		return;
-
+	if (active == false) return;
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
 	positionX = positionXStart + ((positionXEnd - positionXStart) / timeTotal * (timeTotal - timeLeft));

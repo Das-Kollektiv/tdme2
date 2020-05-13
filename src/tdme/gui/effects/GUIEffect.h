@@ -17,11 +17,11 @@ class tdme::gui::effects::GUIEffect
 {
 
 protected:
-	bool active {  };
-	float timeTotal {  };
-	float timeLeft {  };
-	float timePassed {  };
-	Action* action {  };
+	bool active { false };
+	float timeTotal { 0.0 };
+	float timeLeft { 0.0 };
+	float timePassed { 0.0 };
+	Action* action { nullptr };
 
 public:
 

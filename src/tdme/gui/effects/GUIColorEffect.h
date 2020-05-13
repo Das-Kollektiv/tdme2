@@ -15,17 +15,16 @@ using tdme::gui::renderer::GUIRenderer;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::effects::GUIColorEffect
-	: public GUIEffect
+class tdme::gui::effects::GUIColorEffect: public GUIEffect
 {
 
 private:
-	GUIColor colorAddStart {  };
-	GUIColor colorAddEnd {  };
-	GUIColor colorMulStart {  };
-	GUIColor colorMulEnd {  };
-	GUIColor colorAdd {  };
-	GUIColor colorMul {  };
+	GUIColor colorAddStart { 0.0f, 0.0f, 0.0f, 0.0f };
+	GUIColor colorAddEnd { 0.0f, 0.0f, 0.0f, 0.0f };
+	GUIColor colorMulStart { 1.0f, 1.0f, 1.0f, 1.0f };
+	GUIColor colorMulEnd { 1.0f, 1.0f, 1.0f, 1.0f };
+	GUIColor colorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
+	GUIColor colorMul { 1.0f, 1.0f, 1.0f, 1.0f };
 
 public:
 
@@ -96,11 +95,5 @@ public:
 	 * Public constructor
 	 */
 	GUIColorEffect();
-
-private:
-	/**
-	 * Init
-	 */
-	void init();
 
 };

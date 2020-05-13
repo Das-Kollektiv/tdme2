@@ -9,18 +9,11 @@ using tdme::gui::renderer::GUIRenderer;
 
 GUIColorEffect::GUIColorEffect()
 {
-	init();
-}
-
-void GUIColorEffect::init()
-{
 }
 
 void GUIColorEffect::apply(GUIRenderer* guiRenderer)
 {
-	if (active == false)
-		return;
-
+	if (active == false) return;
 	colorMul.set(colorMulStart.getRed() + ((colorMulEnd.getRed() - colorMulStart.getRed()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getGreen() + ((colorMulEnd.getGreen() - colorMulStart.getGreen()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getBlue() + ((colorMulEnd.getBlue() - colorMulStart.getBlue()) / timeTotal * (timeTotal - timeLeft)), colorMulStart.getAlpha() + ((colorMulEnd.getAlpha() - colorMulStart.getAlpha()) / timeTotal * (timeTotal - timeLeft)));
 	guiRenderer->setGUIEffectColorMul(colorMul);
 	colorAdd.set(colorAddStart.getRed() + ((colorAddEnd.getRed() - colorAddStart.getRed()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getGreen() + ((colorAddEnd.getGreen() - colorAddStart.getGreen()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getBlue() + ((colorAddEnd.getBlue() - colorAddStart.getBlue()) / timeTotal * (timeTotal - timeLeft)), colorAddStart.getAlpha() + ((colorAddEnd.getAlpha() - colorAddStart.getAlpha()) / timeTotal * (timeTotal - timeLeft)));

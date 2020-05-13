@@ -13,17 +13,16 @@ using tdme::gui::renderer::GUIRenderer;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::effects::GUIPositionEffect
-	: public GUIEffect
+class tdme::gui::effects::GUIPositionEffect: public GUIEffect
 {
 
 private:
-	float positionXStart {  };
-	float positionXEnd {  };
-	float positionYStart {  };
-	float positionYEnd {  };
-	float positionX {  };
-	float positionY {  };
+	float positionXStart { 0.0f };
+	float positionXEnd { 0.0f };
+	float positionYStart { 0.0f };
+	float positionYEnd { 0.0f };
+	float positionX { 0.0f };
+	float positionY { 0.0f };
 
 public:
 
@@ -90,12 +89,8 @@ public:
 	// override methods
 	void apply(GUIRenderer* guiRenderer) override;
 
-	// Public constructor
-	GUIPositionEffect();
-
-private:
 	/**
-	 * Init
+	 *  Public constructor
 	 */
-	void init();
+	GUIPositionEffect();
 };
