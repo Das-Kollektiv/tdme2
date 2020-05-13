@@ -432,12 +432,11 @@ public:
 	void setValues(const map<string, MutableString>& values);
 
 	/** 
-	 * Add effect that will be removed if finished
+	 * Add effect, effect already registered with the is will be removed
 	 * @param id id
 	 * @param effect effect
-	 * @return success
 	 */
-	bool addEffect(const string& id, GUIEffect* effect);
+	void addEffect(const string& id, GUIEffect* effect);
 
 	/** 
 	 * Get effect
@@ -449,9 +448,8 @@ public:
 	/** 
 	 * Remove effect
 	 * @param id id
-	 * @return success
 	 */
-	bool removeEffect(const string& id);
+	void removeEffect(const string& id);
 
 public:
 	/**

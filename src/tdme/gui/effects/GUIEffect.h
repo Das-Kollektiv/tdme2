@@ -70,8 +70,9 @@ public:
 	/** 
 	 * Updates the effect to GUI renderer and updates time
 	 * @param guiRenderer gui renderer
+	 * @return if action should be called
 	 */
-	virtual void update(GUIRenderer* guiRenderer);
+	virtual bool update(GUIRenderer* guiRenderer);
 
 	/** 
 	 * Apply effect

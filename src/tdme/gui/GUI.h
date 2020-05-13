@@ -40,7 +40,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utils::Time;
 
-/** 
+/**
  * GUI module class
  * @author Andreas Drewke
  * @version $Id$
@@ -94,54 +94,54 @@ private:
 
 public:
 
-	/** 
+	/**
 	 * @return width
 	 */
 	int32_t getWidth();
 
-	/** 
+	/**
 	 * @return height
 	 */
 	int32_t getHeight();
 
-	/** 
+	/**
 	 * Init
 	 */
 	void initialize();
 
-	/** 
+	/**
 	 * Reshape
 	 * @param width width
 	 * @param height height
 	 */
 	void reshape(int32_t width, int32_t height);
 
-	/** 
+	/**
 	 * Dispose
 	 */
 	void dispose();
 
-	/** 
+	/**
 	 * Lock mouse events
 	 */
 	void lockEvents();
 
-	/** 
+	/**
 	 * Unlock events
 	 */
 	void unlockEvents();
 
-	/** 
+	/**
 	 * @return mouse events
 	 */
 	vector<GUIMouseEvent>& getMouseEvents();
 
-	/** 
+	/**
 	 * @return keyboard events
 	 */
 	vector<GUIKeyboardEvent>& getKeyboardEvents();
 
-	/** 
+	/**
 	 * Get font
 	 * @param applicationRootPath application root path
 	 * @param fileName file name
@@ -159,43 +159,49 @@ public:
 	 */
 	static Texture* getImage(const string& applicationRootPath, const string& fileName);
 
-	/** 
+	/**
 	 * Get screen
 	 * @param id id
 	 * @return screen
 	 */
 	GUIScreenNode* getScreen(const string& id);
 
-	/** 
+	/**
 	 * Add screen
 	 * @param id id
 	 * @param screen gui
 	 */
 	void addScreen(const string& id, GUIScreenNode* screen);
 
-	/** 
+	/**
 	 * Removes an screen
 	 * @param id id
 	 */
 	void removeScreen(const string& id);
 
-	/** 
+	/**
 	 * Removes all screens and caches
 	 */
 	void reset();
 
-	/** 
+	/**
 	 * Reset render screens
 	 */
 	void resetRenderScreens();
 
-	/** 
+	/**
+	 * Returns if given screen is beeing rendered
+	 * @param screenId screenId
+	 */
+	bool hasRenderScreen(const string& screenId);
+
+	/**
 	 * Add render screen
 	 * @param screenId screenId
 	 */
 	void addRenderScreen(const string& screenId);
 
-	/** 
+	/**
 	 * Remove render screen
 	 * @param screenId screenId
 	 */
@@ -206,52 +212,52 @@ public:
 	 */
 	GUIColor& getFoccussedBorderColor();
 
-	/** 
+	/**
 	 * Invalidate focussed node
 	 */
 	void invalidateFocussedNode();
 
 private:
 
-	/** 
+	/**
 	 * Determine focussed nodes
 	 */
 	void determineFocussedNodes();
 
 public:
 
-	/** 
+	/**
 	 * @return focussed node
 	 */
 	GUIElementNode* getFocussedNode();
 
-	/** 
+	/**
 	 * Unfocus current focussed node
 	 */
 	void unfocusNode();
 
-	/** 
+	/**
 	 * Focus current focussed node
 	 */
 	void focusNode();
 
-	/** 
+	/**
 	 * Set focussed node
 	 * @param newFoccussedNode foccussed node
 	 */
 	void setFoccussedNode(GUIElementNode* newFoccussedNode);
 
-	/** 
+	/**
 	 * Focus next node
 	 */
 	void focusNextNode();
 
-	/** 
+	/**
 	 * Focus next node
 	 */
 	void focusPreviousNode();
 
-	/** 
+	/**
 	 * Render GUIs
 	 */
 	void render();
@@ -265,7 +271,7 @@ public:
 
 private:
 
-	/** 
+	/**
 	 * Handle mouse event for given node
 	 * @param node node
 	 * @param event event
@@ -361,14 +367,14 @@ public:
 	 */
 	void onMouseWheel(int button, int direction, int x, int y) override;
 
-	/** 
+	/**
 	 * Handle screen events
 	 */
 	void handleEvents();
 
 private:
 
-	/** 
+	/**
 	 * Fake mouse moved event
 	 */
 	void fakeMouseMovedEvent();

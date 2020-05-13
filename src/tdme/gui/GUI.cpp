@@ -268,6 +268,13 @@ void GUI::resetRenderScreens()
 	renderScreens.clear();
 }
 
+bool GUI::hasRenderScreen(const string& screenId) {
+	for (auto renderScreen: renderScreens) {
+		if (renderScreen->getId() == screenId) return true;
+	}
+	return false;
+}
+
 void GUI::addRenderScreen(const string& screenId)
 {
 	auto screenIt = screens.find(screenId);
@@ -330,6 +337,7 @@ void GUI::determineFocussedNodes()
 
 GUIElementNode* GUI::getFocussedNode()
 {
+	if (focussedNodeScreenId.empty() == true || focussedNodeNodeId.empty() == true) return nullptr;
 	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
 	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
 	return focussedNode;

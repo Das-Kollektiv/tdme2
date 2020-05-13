@@ -13,7 +13,6 @@ GUIPositionEffect::GUIPositionEffect()
 
 void GUIPositionEffect::apply(GUIRenderer* guiRenderer)
 {
-	if (active == false) return;
 	float screenWidth = guiRenderer->getGUI()->getWidth();
 	float screenHeight = guiRenderer->getGUI()->getHeight();
 	positionX = positionXStart + ((positionXEnd - positionXStart) / timeTotal * (timeTotal - timeLeft));

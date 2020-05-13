@@ -28,20 +28,17 @@ void GUIEffect::start()
 	timePassed = 0.0f;
 }
 
-void GUIEffect::update(GUIRenderer* guiRenderer)
+bool GUIEffect::update(GUIRenderer* guiRenderer)
 {
-	if (active == false)
-		return;
-
-	// TODO: Do not use timing from main engine
+	if (active == false) return false;
+	// TODO: Maybe do not use timing from main engine
 	timePassed = static_cast< float >((Engine::getInstance()->getTiming()->getDeltaTime())) / 1000.0f;
 	timeLeft -= timePassed;
 	if (timeLeft < 0.0f) {
 		timeLeft = 0.0f;
 		active = false;
-		if (action != nullptr) {
-			action->performAction();
-		}
+		return true;
 	}
+	return false;
 }
 

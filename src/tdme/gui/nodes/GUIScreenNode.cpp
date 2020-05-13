@@ -7,6 +7,7 @@
 
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/effects/GUIEffect.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
@@ -36,6 +37,7 @@ using std::to_string;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::gui::effects::GUIEffect;
+using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
@@ -327,13 +329,15 @@ bool GUIScreenNode::removeNode(GUINode* node)
 void GUIScreenNode::render(GUIRenderer* guiRenderer)
 {
 	guiRenderer->initScreen(this);
+	vector<Action*> actions;
 	for (const auto& i : effects) {
 		auto effect = i.second;
 		if (effect->isActive() == true) {
-			effect->update(guiRenderer);
+			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) actions.push_back(effect->getAction());
 			effect->apply(guiRenderer);
 		}
 	}
+	for (auto action: actions) action->performAction();
 	GUIParentNode::layoutOnDemand();
 	GUIParentNode::render(guiRenderer);
 	guiRenderer->doneScreen();
@@ -533,33 +537,25 @@ void GUIScreenNode::setValues(const map<string, MutableString>& values)
 	}
 }
 
-bool GUIScreenNode::addEffect(const string& id, GUIEffect* effect)
+void GUIScreenNode::addEffect(const string& id, GUIEffect* effect)
 {
-	if (effects.find(id) != effects.end()) {
-		return false;
-	}
+	removeEffect(id);
 	effects[id] = effect;
-	return true;
 }
 
 GUIEffect* GUIScreenNode::getEffect(const string& id)
 {
 	auto effectIt = effects.find(id);
-	if (effectIt == effects.end()) {
-		return nullptr;
-	}
+	if (effectIt == effects.end()) return nullptr;
 	return effectIt->second;
 }
 
-bool GUIScreenNode::removeEffect(const string& id)
+void GUIScreenNode::removeEffect(const string& id)
 {
 	auto effectIt = effects.find(id);
-	if (effectIt == effects.end()) {
-		return false;
-	}
+	if (effectIt == effects.end()) return;
 	delete effectIt->second;
 	effects.erase(effectIt);
-	return true;
 }
 
 GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight)
