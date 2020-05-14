@@ -141,24 +141,27 @@
             - scrollbars
             - space
             - text + multiline text
-        - supported compound elements
-            - button
-            - checkbox
-            - dropdown
-            - image button
-            - input
-            - knob
-            - progress bar
-            - radio button
-            - scrollarea both
-            - scrollarea horizontal
-            - scrollarea vertical
-            - selectbox
-            - selectbox multiple
-            - slider horizontal
-            - slider vertical
-            - tabs
-        - Note that TDME2 GUI is fully customizable in terms of appearance by modifying its XML definitions
+        - supports custom templates and compound elements defined by templates and its controllers
+            - compound elements
+                - button
+                - checkbox
+                - dropdown
+                - image button
+                - input
+                - knob
+                - progress bar
+                - radio button
+                - scrollarea both
+                - scrollarea horizontal
+                - scrollarea vertical
+                - selectbox
+                - selectbox multiple
+                - slider horizontal
+                - slider vertical
+                - tabs
+            - supports custom templates in general
+            - supports overriding used template of a compound element while using its controller
+            - so TDME2 GUI is fully customizable in terms of appearance by modifying its XML definitions
         - includes a simple script language
             - to react on events with like on-mouse-click, ... and on-change for elements
             - to manipulate conditions of elements, values of element controller and node properties
