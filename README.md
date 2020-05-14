@@ -161,7 +161,7 @@
                 - tabs
             - supports custom templates in general
             - supports overriding used template of a compound element while using its controller
-            - so TDME2 GUI is fully customizable in terms of appearance by modifying its XML definitions
+            - so TDME2 GUI is fully customizable in terms of appearance by modifying or adding XML template definitions
         - includes a simple script language
             - to react on events with like on-mouse-click, ... and on-change for elements
             - to manipulate conditions of elements, values of element controller and node properties
