@@ -294,7 +294,7 @@ void RayTracingTest::initialize()
 	world->addRigidBody("player", true, Level::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 
 	//
-	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/screens", "crosshair.xml"));
+	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/tests/screens", "crosshair.xml"));
 	engine->getGUI()->addRenderScreen("crosshair");
 }
 
