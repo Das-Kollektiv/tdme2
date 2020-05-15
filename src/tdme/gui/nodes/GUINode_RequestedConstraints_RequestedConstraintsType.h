@@ -26,6 +26,7 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 class tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType final: public Enum
 {
 public:
+	static GUINode_RequestedConstraints_RequestedConstraintsType* NONE;
 	static GUINode_RequestedConstraints_RequestedConstraintsType* PIXEL;
 	static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
 	static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;

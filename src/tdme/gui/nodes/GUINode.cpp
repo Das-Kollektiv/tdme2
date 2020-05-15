@@ -169,11 +169,13 @@ GUINode_ComputedConstraints& GUINode::getComputedConstraints()
 
 void GUINode::setLeft(int32_t left)
 {
+	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
 	computedConstraints.left = left;
 }
 
 void GUINode::setTop(int32_t top)
 {
+	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
 	computedConstraints.top = top;
 }
 
@@ -228,6 +230,9 @@ void GUINode::computeContentAlignment()
 
 int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedConstraintsType* type, int32_t autoValue, int32_t parentValue, int32_t value)
 {
+	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::NONE)) {
+		return 0;
+	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL)) {
 		return value;
 	} else
@@ -251,9 +256,9 @@ GUINode_Alignments GUINode::createAlignments(const string& horizontal, const str
 GUINode_RequestedConstraints GUINode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
 	GUINode_RequestedConstraints constraints;
-	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
 	constraints.left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
-	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
 	constraints.top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
 	constraints.widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
 	constraints.width = getRequestedConstraintsValue(StringUtils::trim(width), -1);

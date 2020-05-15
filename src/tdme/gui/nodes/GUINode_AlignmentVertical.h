@@ -25,11 +25,10 @@ using tdme::gui::nodes::GUINode_AlignmentVertical;
 class tdme::gui::nodes::GUINode_AlignmentVertical final: public Enum
 {
 public:
+	static GUINode_AlignmentVertical* NONE;
 	static GUINode_AlignmentVertical* TOP;
 	static GUINode_AlignmentVertical* CENTER;
 	static GUINode_AlignmentVertical* BOTTOM;
-
 	GUINode_AlignmentVertical(const string& name, int ordinal);
 	static GUINode_AlignmentVertical* valueOf(const string& a0);
-
 };

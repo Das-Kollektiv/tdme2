@@ -157,6 +157,7 @@ bool GUIElementNode::isFocusable()
 
 void GUIElementNode::setTop(int32_t top)
 {
+	if (requestedConstraints.topType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) top = requestedConstraints.top;
 	GUIParentNode::setTop(top);
 	top += computedConstraints.alignmentTop;
 	for (auto i = 0; i < subNodes.size(); i++) {
@@ -166,6 +167,7 @@ void GUIElementNode::setTop(int32_t top)
 
 void GUIElementNode::setLeft(int32_t left)
 {
+	if (requestedConstraints.leftType == GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) left = requestedConstraints.left;
 	GUIParentNode::setLeft(left);
 	left += computedConstraints.alignmentLeft;
 	for (auto i = 0; i < subNodes.size(); i++) {

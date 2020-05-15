@@ -222,9 +222,9 @@ void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)
 GUINode_RequestedConstraints GUIParentNode::createRequestedConstraints(const string& left, const string& top, const string& width, const string& height)
 {
 	GUINode_RequestedConstraints constraints;
-	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.leftType = getRequestedConstraintsType(StringUtils::trim(left), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
 	constraints.left = getRequestedConstraintsValue(StringUtils::trim(left), 0);
-	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL);
+	constraints.topType = getRequestedConstraintsType(StringUtils::trim(top), GUINode_RequestedConstraints_RequestedConstraintsType::NONE);
 	constraints.top = getRequestedConstraintsValue(StringUtils::trim(top), 0);
 	constraints.widthType = getRequestedConstraintsType(StringUtils::trim(width), GUINode_RequestedConstraints_RequestedConstraintsType::AUTO);
 	constraints.width = getRequestedConstraintsValue(StringUtils::trim(width), -1);

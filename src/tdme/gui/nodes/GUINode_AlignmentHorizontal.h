@@ -26,6 +26,7 @@ using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 class tdme::gui::nodes::GUINode_AlignmentHorizontal final: public Enum
 {
 public:
+	static GUINode_AlignmentHorizontal* NONE;
 	static GUINode_AlignmentHorizontal* LEFT;
 	static GUINode_AlignmentHorizontal* CENTER;
 	static GUINode_AlignmentHorizontal* RIGHT;
