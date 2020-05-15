@@ -28,6 +28,16 @@ bool GUINodeConditions::has(const string& condition) const {
 	return find(conditions.begin(), conditions.end(), condition) != conditions.end();
 }
 
+void GUINodeConditions::set(const string& condition) {
+	this->conditions = {{ condition }};
+	updateElementNode();
+}
+
+void GUINodeConditions::set(const vector<string>& conditions) {
+	this->conditions = conditions;
+	updateElementNode();
+}
+
 bool GUINodeConditions::add(const string& condition)
 {
 	auto conditionsChanged = has(condition) == false;

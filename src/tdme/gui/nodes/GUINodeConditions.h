@@ -49,6 +49,18 @@ public:
 	 */
 	bool has(const string& condition) const;
 
+	/**
+	 * Set condition
+	 * @param condition condition
+	 */
+	void set(const string& condition);
+
+	/**
+	 * Set multiple conditions
+	 * @param conditions conditions
+	 */
+	void set(const vector<string>& conditions);
+
 	/** 
 	 * Add a condition
 	 * @param condition condition
