@@ -142,11 +142,6 @@ protected:
 	virtual bool isContentNode() = 0;
 
 	/**
-	 * @return requested constraints
-	 */
-	virtual GUINode_RequestedConstraints& getRequestsConstraints();
-
-	/**
 	 * Set computed left
 	 * @param left left
 	 */
@@ -304,6 +299,11 @@ public:
 	 * @return padding
 	 */
 	virtual GUINode_Padding& getPadding();
+
+	/**
+	 * @return requested constraints
+	 */
+	virtual GUINode_RequestedConstraints& getRequestsConstraints();
 
 	/**
 	 * @return computed constraints
