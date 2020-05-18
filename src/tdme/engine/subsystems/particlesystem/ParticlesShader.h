@@ -23,13 +23,16 @@ private:
 	int32_t renderFragmentShaderId { -1 };
 	int32_t renderVertexShaderId { -1 };
 	int32_t uniformMVPMatrix { -1 };
-	int32_t uniformMVMatrix { -1 };
 	int32_t uniformPointSize { -1 };
 	int32_t uniformDiffuseTextureUnit { -1 };
 	int32_t uniformEffectColorMul { -1 };
 	int32_t uniformEffectColorAdd { -1 };
 	int32_t uniformSpritesHorizontal { -1 };
 	int32_t uniformSpritesVertical{ -1 };
+	int32_t uniformViewPortWidth { -1 };
+	int32_t uniformViewPortHeight { -1 };
+	int32_t uniformProjectionMatrixXx { -1 };
+	int32_t uniformProjectionMatrixYy { -1 };
 	Matrix4x4 mvpMatrix;
 	bool isRunning;
 	bool initialized;

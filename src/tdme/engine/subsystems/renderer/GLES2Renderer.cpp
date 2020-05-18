@@ -313,7 +313,6 @@ void GLES2Renderer::setViewPort(int32_t x, int32_t y, int32_t width, int32_t hei
 	this->viewPortY = y;
 	this->viewPortWidth = width;
 	this->viewPortHeight = height;
-	this->pointSize = width > height ? width / 120.0f : height / 120.0f * 16 / 9;
 }
 
 void GLES2Renderer::updateViewPort()

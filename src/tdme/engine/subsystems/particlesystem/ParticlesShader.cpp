@@ -60,8 +60,6 @@ void ParticlesShader::initialize()
 	// get uniforms
 	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
 	if (uniformMVPMatrix == -1) return;
-	uniformMVMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvMatrix");
-	if (uniformMVMatrix == -1) return;
 	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, "pointSize");
 	if (uniformPointSize == -1) return;
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnit");
@@ -74,6 +72,14 @@ void ParticlesShader::initialize()
 	if (uniformSpritesHorizontal == -1) return;
 	uniformSpritesVertical = renderer->getProgramUniformLocation(renderProgramId, "spritesVertical");
 	if (uniformSpritesVertical == -1) return;
+	uniformViewPortWidth = renderer->getProgramUniformLocation(renderProgramId, "viewPortWidth");
+	if (uniformViewPortWidth == -1) return;
+	uniformViewPortHeight = renderer->getProgramUniformLocation(renderProgramId, "viewPortHeight");
+	if (uniformViewPortHeight == -1) return;
+	uniformProjectionMatrixXx = renderer->getProgramUniformLocation(renderProgramId, "projectionMatrixXx");
+	if (uniformProjectionMatrixXx == -1) return;
+	uniformProjectionMatrixYy = renderer->getProgramUniformLocation(renderProgramId, "projectionMatrixYy");
+	if (uniformProjectionMatrixYy == -1) return;
 	initialized = true;
 }
 
@@ -107,11 +113,14 @@ void ParticlesShader::updateMatrices(void* context)
 	// object to screen matrix
 	mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
 	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
-	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVMatrix, renderer->getModelViewMatrix().getArray());
+	renderer->setProgramUniformFloat(context, uniformProjectionMatrixXx, renderer->getProjectionMatrix().getArray()[0]);
+	renderer->setProgramUniformFloat(context, uniformProjectionMatrixYy, renderer->getProjectionMatrix().getArray()[5]);
+	renderer->setProgramUniformInteger(context, uniformViewPortWidth, renderer->getViewPortWidth());
+	renderer->setProgramUniformInteger(context, uniformViewPortHeight, renderer->getViewPortHeight());
 }
 
 void ParticlesShader::setParameters(void* context, int32_t textureId, int32_t textureSpritesHorizontal, int32_t textureSpritesVertical, float pointSize) {
-	renderer->setProgramUniformFloat(context, uniformPointSize, renderer->pointSize * pointSize);
+	renderer->setProgramUniformFloat(context, uniformPointSize, pointSize);
 	renderer->setProgramUniformInteger(context, uniformSpritesHorizontal, textureSpritesHorizontal);
 	renderer->setProgramUniformInteger(context, uniformSpritesVertical, textureSpritesVertical);
 	renderer->bindTexture(context, textureId);

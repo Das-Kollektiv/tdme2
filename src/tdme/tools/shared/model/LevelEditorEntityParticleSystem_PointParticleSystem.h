@@ -28,7 +28,7 @@ class tdme::tools::shared::model::LevelEditorEntityParticleSystem_PointParticleS
 {
 private:
 	int32_t maxPoints{ 4000 };
-	float pointSize{ 10.0f };
+	float pointSize{ 0.1f };
 	string textureFileName;
 	string transparencyTextureFileName;
 	Texture* texture { nullptr };

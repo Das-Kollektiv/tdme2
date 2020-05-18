@@ -80,8 +80,6 @@ private:
 	Matrix4x4 viewportMatrix;
 
 public:
-	float pointSize;
-
 	/**
 	 * @return default context
 	 */
@@ -185,6 +183,16 @@ public:
 	 * @return number of texture units
 	 */
 	virtual int32_t getTextureUnits() = 0;
+
+	/**
+	 * @return viewport width
+	 */
+	virtual int32_t getViewPortWidth();
+
+	/**
+	 * @return viewport height
+	 */
+	virtual int32_t getViewPortHeight();
 
 	/**
 	 * Loads a shader into open gl stack

@@ -43,7 +43,6 @@ Renderer::Renderer()
 	viewPortWidth = 0;
 	viewPortHeight = 0;
 	TEXTUREUNITS_MAX = 2;
-	pointSize = 0.0;
 	projectionMatrix.identity();
 	cameraMatrix.identity();
 	modelViewMatrix.identity();
@@ -87,6 +86,14 @@ Matrix4x4& Renderer::getModelViewMatrix()
 Matrix4x4& Renderer::getViewportMatrix()
 {
 	return viewportMatrix;
+}
+
+int32_t Renderer::getViewPortWidth() {
+	return viewPortWidth;
+}
+
+int32_t Renderer::getViewPortHeight() {
+	return viewPortHeight;
 }
 
 void Renderer::initializeFrame() {

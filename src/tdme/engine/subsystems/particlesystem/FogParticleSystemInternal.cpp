@@ -225,8 +225,8 @@ void FogParticleSystemInternal::updateParticles()
 	// scale a bit up to make picking work better
 	boundingBox.update();
 	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-	boundingBoxTransformed.getMin().sub(0.05f);
-	boundingBoxTransformed.getMax().add(0.05f);
+	boundingBoxTransformed.getMin().sub(0.05f + pointSize * pointSizeScale);
+	boundingBoxTransformed.getMax().add(0.05f + pointSize * pointSizeScale);
 	boundingBoxTransformed.update();
 }
 
