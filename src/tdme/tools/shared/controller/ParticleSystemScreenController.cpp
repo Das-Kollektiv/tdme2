@@ -620,7 +620,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				Vector3 obbAxis0;
 				Vector3 obbAxis1;
 				Vector3 obbAxis2;
-				transformations.getTransformationsMatrix().clone().getAxes(obbAxis0, obbAxis1, obbAxis2);
+				transformations.getTransformationsMatrix().getAxes(obbAxis0, obbAxis1, obbAxis2);
 				emitter->setObbAxis0(obbAxis0);
 				emitter->setObbAxis1(obbAxis1);
 				emitter->setObbAxis2(obbAxis2);
@@ -648,7 +648,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				Vector3 tmpVector3;
 				Vector3 axis0;
 				Vector3 axis1;
-				transformations.getTransformationsMatrix().clone().setAxes(axis0, tmpVector3, axis1);
+				transformations.getTransformationsMatrix().getAxes(axis0, tmpVector3, axis1);
 				emitter->setAxis0(axis0);
 				emitter->setAxis1(axis1);
 			} else
@@ -675,7 +675,7 @@ void ParticleSystemScreenController::onParticleSystemEmitterDataApply()
 				Vector3 tmpVector3;
 				Vector3 axis0;
 				Vector3 axis1;
-				transformations.getTransformationsMatrix().clone().setAxes(axis0, tmpVector3, axis1);
+				transformations.getTransformationsMatrix().getAxes(axis0, tmpVector3, axis1);
 				emitter->setAxis0(axis0);
 				emitter->setAxis1(axis1);
 			} else

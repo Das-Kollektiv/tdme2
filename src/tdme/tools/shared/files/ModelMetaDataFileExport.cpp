@@ -403,6 +403,7 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 				} else
 				if (v == LevelEditorEntityParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 					Value jCircleParticleEmitterPlaneVelocity;
+					jCircleParticleEmitterPlaneVelocity.SetObject();
 					auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
 					jCircleParticleEmitterPlaneVelocity.AddMember("c", Value(emitter->getCount()), jAllocator);
 					jCircleParticleEmitterPlaneVelocity.AddMember("lt", Value(emitter->getLifeTime()), jAllocator);
