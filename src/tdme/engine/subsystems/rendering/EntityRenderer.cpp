@@ -660,6 +660,11 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						cullingMode = 1;
 					}
 				}
+			} else {
+				if (cullingMode != 1) {
+					renderer->enableCulling(context);
+					cullingMode = 1;
+				}
 			}
 
 			// draw this faces entity for each object
@@ -685,7 +690,6 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 				//
 				auto textureMatrix = object3DRenderContext.objectsToRender[0]->object3dGroups[object3DGroupIdx]->textureMatricesByEntities[faceEntityIdx];
-				cullingMode = -1;
 
 				// draw objects
 				for (auto objectIdx = 0; objectIdx < objectCount; objectIdx++) {
@@ -838,7 +842,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					if (cullingMode == 1) {
 						if (frontFace == -1) {
 							frontFace = objectFrontFace;
-							// renderer->setFrontFace(context, frontFace);
+							renderer->setFrontFace(context, frontFace);
 						} else
 						if (objectFrontFace != frontFace) {
 							object3DRenderContext.objectsNotRendered.push_back(object);
