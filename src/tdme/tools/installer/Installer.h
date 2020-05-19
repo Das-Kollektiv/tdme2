@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -15,6 +16,7 @@
 #include <tdme/utils/Properties.h>
 
 using std::string;
+using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
@@ -47,6 +49,7 @@ private:
 	bool installed;
 	string timestamp;
 	bool remountInstallerArchive;
+	vector<string> downloadedFiles;
 
 	/**
 	 * Moint installer file system

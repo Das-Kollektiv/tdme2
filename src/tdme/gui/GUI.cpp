@@ -215,7 +215,7 @@ void GUI::addScreen(const string& id, GUIScreenNode* screen)
 		return;
 	}
 	screens.emplace(id, screen);
-	screen->reshapeRequested = true;
+	reshapeScreen(screen);
 }
 
 void GUI::removeScreen(const string& id)

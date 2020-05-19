@@ -127,14 +127,14 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 
 	invalidateRenderCaches();
 	setConditionsMet();
-	screenNode->layout(this->parentNode);
+	screenNode->layout(this);
 
 	if (overflowX == GUIParentNode_Overflow::SCROLL) {
 		float elementWidth = computedConstraints.width;
 		float contentWidth = getContentWidth();
 		auto scrollableWidth = contentWidth - elementWidth;
-		if (scrollableWidth < 0.0) scrollableWidth = 0.0;
-		if (childrenRenderOffsetX < 0) childrenRenderOffsetX = 0;
+		if (scrollableWidth < 0.0f) scrollableWidth = 0.0;
+		if (childrenRenderOffsetX < 0.0f) childrenRenderOffsetX = 0.0f;
 		if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
 	}
 
@@ -142,8 +142,8 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 		float elementHeight = computedConstraints.height;
 		float contentHeight = getContentHeight();
 		auto scrollableHeight = contentHeight - elementHeight;
-		if (scrollableHeight < 0.0) scrollableHeight = 0.0;
-		if (childrenRenderOffsetY < 0) childrenRenderOffsetY = 0;
+		if (scrollableHeight < 0.0f) scrollableHeight = 0.0f;
+		if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
 		if (childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
 	}
 }

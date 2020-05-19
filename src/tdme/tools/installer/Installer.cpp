@@ -379,8 +379,11 @@ void Installer::performScreenAction() {
 										dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
 										installer->installThreadMutex.unlock();
 
-
 										// sha256
+										installer->installThreadMutex.lock();
+										installer->downloadedFiles.push_back("installer/" + componentFileName + ".sha256.download");
+										installer->downloadedFiles.push_back("installer/" + componentFileName + ".sha256");
+										installer->installThreadMutex.unlock();
 										httpDownloadClient.reset();
 										httpDownloadClient.setUsername(installer->installerProperties.get("repository_username", ""));
 										httpDownloadClient.setPassword(installer->installerProperties.get("repository_password", ""));
@@ -402,7 +405,11 @@ void Installer::performScreenAction() {
 											return;
 										}
 
-										// atchive
+										// archive
+										installer->installThreadMutex.lock();
+										installer->downloadedFiles.push_back("installer/" + componentFileName + ".download");
+										installer->downloadedFiles.push_back("installer/" + componentFileName);
+										installer->installThreadMutex.unlock();
 										httpDownloadClient.reset();
 										httpDownloadClient.setFile("installer/" + componentFileName);
 										httpDownloadClient.setURL(installer->installerProperties.get("repository", "") + componentFileName);
@@ -556,10 +563,29 @@ void Installer::performScreenAction() {
 									auto componentName = installer->installerProperties.get("component" + to_string(componentIdx), "");
 									if (componentName.empty() == true) break;
 
+									// component file name
+									auto componentFileName = Application::getOSName() + "-" + Application::getCPUName() + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + installer->timestamp + ".ta";
+
 									// check if marked
 									installer->installThreadMutex.lock();
 									if (dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_components")->getNodeById("checkbox_component" + to_string(componentIdx)))->getController()->getValue().equals("1") == false) {
 										installer->installThreadMutex.unlock();
+										// delete installer component archive archive
+										if (installer->installerMode == Installer::INSTALLERMODE_UPDATE || installer->installerMode == Installer::INSTALLERMODE_REPAIR) {
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+											dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Deleting " + componentName));
+											dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString());
+											installer->installThreadMutex.unlock();
+											FileSystem::getStandardFileSystem()->removeFile("installer", componentFileName);
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(50.0f, 2));
+											installer->installThreadMutex.unlock();
+											FileSystem::getStandardFileSystem()->removeFile("installer", componentFileName + ".sha256");
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(100.0f, 2));
+											installer->installThreadMutex.unlock();
+										}
 										continue;
 									}
 									installer->installThreadMutex.unlock();
@@ -574,7 +600,6 @@ void Installer::performScreenAction() {
 										Console::println("InstallThread::run(): component: " + to_string(componentIdx) + ": missing includes. Skipping.");
 										continue;
 									}
-									auto componentFileName = Application::getOSName() + "-" + Application::getCPUName() + "-" + StringUtils::replace(StringUtils::replace(componentName, " - ", "-"), " ", "-") + "-" + installer->timestamp + ".ta";
 									//
 									Console::println("InstallThread::run(): Component: " + to_string(componentIdx) + ": component file name: " + componentFileName);
 									//
@@ -722,6 +747,23 @@ void Installer::performScreenAction() {
 										}
 										delete archiveFileSystem;
 										archiveFileSystem = nullptr;
+
+										// delete installer component archive archive
+										if (installer->installerMode == Installer::INSTALLERMODE_UPDATE || installer->installerMode == Installer::INSTALLERMODE_REPAIR) {
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
+											dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("message"))->setText(MutableString("Deleting " + componentName));
+											dynamic_cast<GUITextNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("details"))->setText(MutableString());
+											installer->installThreadMutex.unlock();
+											FileSystem::getStandardFileSystem()->removeFile("installer", componentFileName);
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(50.0f, 2));
+											installer->installThreadMutex.unlock();
+											FileSystem::getStandardFileSystem()->removeFile("installer", componentFileName + ".sha256");
+											installer->installThreadMutex.lock();
+											dynamic_cast<GUIElementNode*>(installer->engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(100.0f, 2));
+											installer->installThreadMutex.unlock();
+										}
 									} catch (Exception& exception) {
 										if (archiveFileSystem != nullptr) delete archiveFileSystem;
 										installer->popUps->getInfoDialogScreenController()->show("An error occurred:", exception.what());
@@ -1094,6 +1136,14 @@ void Installer::onActionPerformed(GUIActionListener_Type* type, GUIElementNode* 
 		} else
 		if (node->getId() == "button_cancel") {
 			FileSystem::unsetFileSystem();
+			// delete downloaded files
+			for (auto downloadedFile: downloadedFiles) {
+				try {
+					FileSystem::getStandardFileSystem()->removeFile(".", downloadedFile);
+				} catch (Exception& exception) {
+					Console::println("Installer::onActionPerformed(): Removing downloaded file failed: " + downloadedFile);
+				}
+			}
 			Application::exit(0);
 		} else
 		if (node->getId() == "button_finish") {
