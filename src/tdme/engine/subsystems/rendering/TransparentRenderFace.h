@@ -12,10 +12,10 @@ using tdme::engine::subsystems::rendering::Object3DGroup;
  */
 struct tdme::engine::subsystems::rendering::TransparentRenderFace final
 {
-	Object3DGroup* object3DGroup {  };
-	int32_t facesEntityIdx {  };
-	int32_t faceIdx {  };
-	float distanceFromCamera {  };
+	Object3DGroup* object3DGroup;
+	int32_t facesEntityIdx;
+	int32_t faceIdx;
+	float distanceFromCamera;
 
 	/**
 	 * Compare

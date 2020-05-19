@@ -87,6 +87,7 @@ void FogParticleSystem::setFrustumCulling(bool frustumCulling) {
 }
 
 void FogParticleSystem::setAutoEmit(bool autoEmit) {
+	if (this->isAutoEmit() == autoEmit) return;
 	// delegate to base class
 	FogParticleSystemInternal::setAutoEmit(autoEmit);
 	// delegate change to engine

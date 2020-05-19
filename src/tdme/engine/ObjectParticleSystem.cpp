@@ -89,6 +89,7 @@ void ObjectParticleSystem::setFrustumCulling(bool frustumCulling) {
 }
 
 void ObjectParticleSystem::setAutoEmit(bool autoEmit) {
+	if (this->isAutoEmit() == autoEmit) return;
 	// delegate to base class
 	ObjectParticleSystemInternal::setAutoEmit(autoEmit);
 	// delegate change to engine

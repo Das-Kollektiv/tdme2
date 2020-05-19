@@ -1100,6 +1100,7 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 
 	// set up renderer state
 	renderer->enableBlending();
+	renderer->disableDepthBufferTest();
 	// 	model view matrix
 	renderer->getModelViewMatrix().identity();
 	renderer->onUpdateModelViewMatrix(context);
@@ -1215,6 +1216,7 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 	// TODO: before render sort all pps by distance to camera and render them in correct order
 	// unset renderer state
 	renderer->disableBlending();
+	renderer->enableDepthBufferTest();
 	// restore renderer state
 	renderer->unbindBufferObjects(context);
 	renderer->getModelViewMatrix().set(modelViewMatrix);

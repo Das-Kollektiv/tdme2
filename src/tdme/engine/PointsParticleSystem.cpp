@@ -87,6 +87,7 @@ void PointsParticleSystem::setFrustumCulling(bool frustumCulling) {
 }
 
 void PointsParticleSystem::setAutoEmit(bool autoEmit) {
+	if (this->isAutoEmit() == autoEmit) return;
 	// delegate to base class
 	PointsParticleSystemInternal::setAutoEmit(autoEmit);
 	// delegate change to engine
