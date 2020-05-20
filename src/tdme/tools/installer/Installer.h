@@ -52,7 +52,7 @@ private:
 	vector<string> downloadedFiles;
 
 	/**
-	 * Moint installer file system
+	 * Mount installer file system
 	 */
 	static void mountInstallerFileSystem(const string& timestamp = string());
 
