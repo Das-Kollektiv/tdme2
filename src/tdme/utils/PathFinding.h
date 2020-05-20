@@ -12,6 +12,8 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/FlowMap.h>
+#include <tdme/utils/FlowMapCell.h>
 #include <tdme/utils/PathFindingNode.h>
 #include <tdme/utils/PathFindingCustomTest.h>
 
@@ -27,6 +29,8 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Console;
+using tdme::utils::FlowMap;
+using tdme::utils::FlowMapCell;
 using tdme::utils::PathFindingNode;
 using tdme::utils::PathFindingCustomTest;
 
@@ -41,133 +45,6 @@ public:
 	enum PathFindingStatus {PATH_STEP, PATH_FOUND, PATH_NOWAY};
 
 	static constexpr bool VERBOSE { false };
-
-	struct DijkstraCellStruct {
-		string id;
-		bool tested;
-		Vector3 position;
-		bool walkable;
-		float costs;
-	};
-
-	/**
-	 * Flow map cell
-	 * @author Andreas Drewke
-	 * @version $Id$
-	 */
-	class FlowMapCell {
-		friend class PathFinding;
-		private:
-			/**
-			 * Private constructor
-			 * @param position position
-			 * @param walkable walkable
-			 * @param direction direction
-			 */
-			FlowMapCell(const Vector3& position, bool walkable, const Vector3& direction): position(position), walkable(walkable), direction(direction) {
-			}
-
-		public:
-			/**
-			 * @return cell position
-			 */
-			inline const Vector3& getPosition() const {
-				return position;
-			}
-
-			/**
-			 * @return if cell is walkable
-			 */
-			inline bool isWalkable() const {
-				return walkable;
-			}
-
-			/**
-			 * @return cell movement direction
-			 */
-			inline const Vector3& getDirection() const {
-				return direction;
-			}
-
-		private:
-			Vector3 position;
-			bool walkable;
-			Vector3 direction;
-	};
-
-	/**
-	 * Flow map cell
-	 * @author Andreas Drewke
-	 * @version $Id$
-	 */
-	class FlowMap {
-		friend class PathFinding;
-		private:
-			float stepSize;
-			map<string, const FlowMapCell*> cells;
-
-			/**
-			 * Adds a cell to flow map
-			 * @param cell cell
-			 */
-			void addCell(const FlowMapCell* cell) {
-				auto cellId = toKey(
-					Math::floor(cell->getPosition().getX() / stepSize) * stepSize,
-					Math::floor(cell->getPosition().getZ() / stepSize) * stepSize
-				);
-				cells[cellId] = cell;
-			}
-
-		public:
-			/**
-			 * Constructor
-			 */
-			FlowMap(float stepSize): stepSize(stepSize) {
-			}
-
-			/**
-			 * Get cell
-			 * @param x x
-			 * @param z z
-			 */
-			const FlowMapCell* getCell(float x, float z) {
-				auto cellId = toKey(
-					Math::floor(x / stepSize) * stepSize,
-					Math::floor(z / stepSize) * stepSize
-				);
-				auto cellIt = cells.find(cellId);
-				if (cellIt == cells.end()) return nullptr;
-				return cellIt->second;
-			}
-
-			/**
-			 * Dump to console
-			 */
-			void dump() {
-				for (auto it: cells) {
-					auto id = it.first;
-					auto& cell = *it.second;
-					auto cellId = toKey(
-						Math::floor(cell.position.getX() / stepSize) * stepSize,
-						Math::floor(cell.position.getZ() / stepSize) * stepSize
-					);
-					Console::println(
-						"id: " + cellId + ", " +
-						"position:" +
-						to_string(cell.getPosition().getX()) + ", " +
-						to_string(cell.getPosition().getY()) + ", " +
-						to_string(cell.getPosition().getZ()) + "; " +
-						"walkable: " +
-						to_string(cell.walkable) + "; " +
-						"direction: " +
-						to_string(cell.getDirection().getX()) + "; " +
-						to_string(cell.getDirection().getY()) + ", " +
-						to_string(cell.getDirection().getZ())
-					);
-				}
-			}
-
-	};
 
 	/**
 	 * Public constructor
@@ -209,24 +86,6 @@ public:
 	}
 
 	/**
-	 * Return string representation of given x,z for path finding key
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 * @return string representation
-	 */
-	inline static string toKey(float x, float z) {
-		string result;
-		int32_t value = 0;
-		value = static_cast<int>(x * 10.0f);
-		result.append(to_string(value));
-		result.append(",");
-		value = static_cast<int>(z * 10.0f);
-		result.append(to_string(value));
-		return result;
-	}
-
-	/**
 	 * Finds path to given end position
 	 * @param startPosition start position
 	 * @param endPosition end position
@@ -259,7 +118,7 @@ public:
 	 * @param collisionTypeIds collision type ids
 	 * @param customTest custom test
 	 */
-	FlowMap* createFlowMap(map<string, DijkstraCellStruct>& dijkstraCellMap, const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest = nullptr);
+	FlowMap* createFlowMap(const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest = nullptr);
 
 private:
 	/**

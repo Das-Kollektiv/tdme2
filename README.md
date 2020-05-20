@@ -119,6 +119,11 @@
         - uses A*
         - is paired with physics world to determine if a "cell" is walkable
         - optional custom walkable test
+    - path finding/flow maps
+        - path finding utility supports generating flow maps
+        - uses fast dijkstra algorithm
+        - is paired with physics world to determine if a "cell" is walkable
+        - optional custom walkable test
     - 3d audio
         - decoder
           - ogg vorbis decoder
@@ -215,7 +220,6 @@
     - documentation
 
 - What is WIP or planned
-    - Flow maps
     - Shader parameters
     - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects

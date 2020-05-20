@@ -10,6 +10,8 @@ namespace utils {
 	class Enum;
 	class Float;
 	class FloatBuffer;
+	class FlowMap;
+	class FlowMapCell;
 	class HashLink;
 	class HexEncDec;
 	class IntBuffer;

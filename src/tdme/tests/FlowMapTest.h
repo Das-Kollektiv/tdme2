@@ -12,6 +12,7 @@
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/tools/shared/model/LevelEditorLevel.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
+#include <tdme/utils/FlowMap.h>
 #include <tdme/utils/PathFinding.h>
 
 using std::vector;
@@ -24,6 +25,7 @@ using tdme::engine::physics::World;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorEntity;
+using tdme::utils::FlowMap;
 using tdme::utils::PathFinding;
 
 /** 
@@ -40,13 +42,13 @@ private:
 	LevelEditorLevel level;
 	LevelEditorEntity* playerModelEntity { nullptr };
 	Model* emptyModel { nullptr };
-	Object3D* startPointObject { nullptr };
-	Object3D* endPointObject { nullptr };
+	Object3D* startPlayerObject { nullptr };
+	Object3D* endPlayerObject { nullptr };
 	PathFinding* pathFinding { nullptr };
 	vector<Vector3> pathPositions;
 	vector<Vector3> path;
 	int64_t timeLastUpdate;
-	PathFinding::FlowMap* flowMap { nullptr };
+	FlowMap* flowMap { nullptr };
 	int32_t frames;
 
 	/**
