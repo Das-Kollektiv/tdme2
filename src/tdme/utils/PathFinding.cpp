@@ -518,7 +518,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 	return success;
 }
 
-FlowMap* PathFinding::createFlowMap(const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest) {
+const FlowMap* PathFinding::createFlowMap(const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest) {
 	// set up custom test
 	this->customTest = customTest;
 
@@ -687,6 +687,29 @@ FlowMap* PathFinding::createFlowMap(const Vector3& endPosition, const Vector3& c
 				minDijkstraCell->walkable,
 				direction
 			);
+		}
+	}
+
+	// do some post adjustments
+	for (auto z = -depth / 2; z < depth / 2; z+= stepSize)
+	for (auto x = -width / 2; x < width / 2; x+= stepSize) {
+		auto cell = flowMap->getCell(x + center.getX(), z + center.getZ());
+		if (cell == nullptr) continue;
+		auto topCell = flowMap->getCell(x + center.getX(), -1 * stepSize + z + center.getZ());
+		if (topCell == nullptr && cell->getDirection().getZ() < 0.0f){
+			cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
+		}
+		auto bottomCell = flowMap->getCell(x + center.getX(), 1 * stepSize + z + center.getZ());
+		if (bottomCell == nullptr && cell->getDirection().getZ() > 0.0f){
+			cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
+		}
+		auto leftCell = flowMap->getCell(-1 * stepSize + x + center.getX(), z + center.getZ());
+		if (leftCell == nullptr && cell->getDirection().getX() < 0.0f){
+			cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
+		}
+		auto rightCell = flowMap->getCell(1 * stepSize + x + center.getX(), z + center.getZ());
+		if (rightCell == nullptr && cell->getDirection().getX() > 0.0f){
+			cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
 		}
 	}
 

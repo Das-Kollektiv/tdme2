@@ -77,7 +77,22 @@ public:
 	 * @param x x
 	 * @param z z
 	 */
-	inline const FlowMapCell* getCell(float x, float z) {
+	inline FlowMapCell* getCell(float x, float z) {
+		auto cellId = toKey(
+			Math::floor(x / stepSize) * stepSize,
+			Math::floor(z / stepSize) * stepSize
+		);
+		auto cellIt = cells.find(cellId);
+		if (cellIt == cells.end()) return nullptr;
+		return &cellIt->second;
+	}
+
+	/**
+	 * Get cell
+	 * @param x x
+	 * @param z z
+	 */
+	inline const FlowMapCell* getCell(float x, float z) const {
 		auto cellId = toKey(
 			Math::floor(x / stepSize) * stepSize,
 			Math::floor(z / stepSize) * stepSize

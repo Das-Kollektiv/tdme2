@@ -118,7 +118,7 @@ public:
 	 * @param collisionTypeIds collision type ids
 	 * @param customTest custom test
 	 */
-	FlowMap* createFlowMap(const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest = nullptr);
+	const FlowMap* createFlowMap(const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest = nullptr);
 
 private:
 	/**

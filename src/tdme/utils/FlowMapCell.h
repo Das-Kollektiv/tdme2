@@ -47,6 +47,14 @@ public:
 		return direction;
 	}
 
+	/**
+	 * Set movement direction
+	 * @param cell movement direction
+	 */
+	inline void setDirection(const Vector3& direction) {
+		this->direction = direction;
+	}
+
 private:
 	Vector3 position;
 	bool walkable;

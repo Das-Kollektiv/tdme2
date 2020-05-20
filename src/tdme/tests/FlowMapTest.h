@@ -48,7 +48,7 @@ private:
 	vector<Vector3> pathPositions;
 	vector<Vector3> path;
 	int64_t timeLastUpdate;
-	FlowMap* flowMap { nullptr };
+	const FlowMap* flowMap { nullptr };
 	int32_t frames;
 
 	/**
