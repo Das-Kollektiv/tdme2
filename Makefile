@@ -203,6 +203,7 @@ else
 	HL_CFLAGS =
 endif
 
+OFLAGS := 
 CPPFLAGS := $(INCLUDES)
 CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
 #CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
@@ -512,6 +513,7 @@ SRCS = \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
+	src/tdme/tests/FlowMapTest.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/MathOperatorTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
@@ -833,6 +835,7 @@ MAIN_SRCS = \
 	src/tdme/tests/HTTPClientTest-main.cpp \
 	src/tdme/tests/HTTPDownloadClientTest-main.cpp \
 	src/tdme/tests/LODTest-main.cpp \
+	src/tdme/tests/FlowMapTest-main.cpp \
 	src/tdme/tests/FoliageTest-main.cpp \
 	src/tdme/tests/MathOperatorTest-main.cpp \
 	src/tdme/tests/PathFindingTest-main.cpp \

@@ -334,6 +334,7 @@ SRCS = \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
+	src/tdme/tests/FlowMapTest.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
@@ -613,6 +614,7 @@ all: \
 	HTTPClientTest \
 	HTTPDownloadClientTest \
 	LODTest \
+	FlowMapTest \
 	FoliageTest \
 	PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \

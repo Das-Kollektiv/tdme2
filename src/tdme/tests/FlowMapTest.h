@@ -6,6 +6,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tests/fwd-tdme.h>
@@ -18,6 +19,7 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
+using tdme::engine::model::Model;
 using tdme::engine::physics::World;
 using tdme::math::Vector3;
 using tdme::tools::shared::model::LevelEditorLevel;
@@ -29,7 +31,7 @@ using tdme::utils::PathFinding;
  * @author andreas.drewke
  * @version $Id$
  */
-class tdme::tests::PathFindingTest final
+class tdme::tests::FlowMapTest final
 	: public virtual Application
 {
 private:
@@ -37,31 +39,15 @@ private:
 	Engine* engine { nullptr };
 	LevelEditorLevel level;
 	LevelEditorEntity* playerModelEntity { nullptr };
-	Object3D* playerObject { nullptr };
+	Model* emptyModel { nullptr };
+	Object3D* startPointObject { nullptr };
+	Object3D* endPointObject { nullptr };
 	PathFinding* pathFinding { nullptr };
 	vector<Vector3> pathPositions;
 	vector<Vector3> path;
 	int64_t timeLastUpdate;
-	int32_t pathIdx;
-	float playerXDirection;
-	float playerZDirection;
-
-	/**
-	 * Determine player movement direction
-	 */
-	void determinePlayerMovementDirection();
-
-	/**
-	 * Determine id player completed current step in path for X axis
-	 * @return completed
-	 */
-	bool determinePlayerCompletedStepX();
-
-	/**
-	 * Determine id player completed current step in path for Z axis
-	 * @return completed
-	 */
-	bool determinePlayerCompletedStepZ();
+	PathFinding::FlowMap* flowMap { nullptr };
+	int32_t frames;
 
 	/**
 	 * Do path finding
@@ -84,5 +70,5 @@ public:
 	/**
 	 * Public constructor
 	 */
-	PathFindingTest();
+	FlowMapTest();
 };

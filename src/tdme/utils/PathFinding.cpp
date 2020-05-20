@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <stack>
+#include <vector>
 
 #include <tdme/engine/Transformations.h>
 #include <tdme/engine/physics/Body.h>
@@ -23,6 +24,7 @@ using std::reverse;
 using std::stack;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::Transformations;
 using tdme::engine::physics::World;
@@ -70,7 +72,14 @@ void PathFinding::reset() {
 }
 
 bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
+	Console::print(
+		"PathFinding::isWalkableInternal(): " +
+		to_string(x) + ", " +
+		to_string(y) + ", " +
+		to_string(z)
+	);
 	auto walkable = isWalkable(x, y, z, height, collisionTypeIds, ignoreStepUpMax);
+	Console::println(", success: " + to_string(walkable));
 	if (walkable == false) return false;
 	return customTest == nullptr || customTest->isWalkable(this, x, height, z) == true;
 }
@@ -514,4 +523,191 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 
 	// return success
 	return success;
+}
+
+PathFinding::FlowMap* PathFinding::createFlowMap(map<string, DijkstraCellStruct>& dijkstraCellMap, const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest) {
+	// set up custom test
+	this->customTest = customTest;
+
+	// initialize custom test
+	if (this->customTest != nullptr) this->customTest->initialize();
+
+	//
+	this->collisionTypeIds = collisionTypeIds;
+
+	// init bounding volume, transformations, collision body
+	actorBoundingVolume = new OrientedBoundingBox(
+		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
+		OrientedBoundingBox::AABB_AXIS_X,
+		OrientedBoundingBox::AABB_AXIS_Y,
+		OrientedBoundingBox::AABB_AXIS_Z,
+		Vector3(stepSize, actorHeight / 2.0f, stepSize)
+	);
+	// set up transformations
+	Transformations actorTransformations;
+	actorTransformations.setTranslation(endPosition);
+	actorTransformations.update();
+	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
+
+	// see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
+	// generate cost map via dijkstra
+	vector<DijkstraCellStruct*> dijkstraCellsToProcess;
+	for (auto z = -depth / 2; z < depth / 2; z+= stepSize) {
+		for (auto x = -width / 2; x < width / 2; x+= stepSize) {
+			auto cellPosition = Vector3(
+				Math::floor((x + center.getX()) / stepSize) * stepSize,
+				-10000.0f,
+				Math::floor((z + center.getZ()) / stepSize) * stepSize
+			);
+			auto cellKey = toKey(
+				cellPosition.getX(),
+				cellPosition.getZ()
+			);
+			dijkstraCellMap[cellKey] =
+				{
+					.id = cellKey,
+					.tested = false,
+					.position = cellPosition,
+					.walkable = false,
+					.costs = 0.0f
+				};
+		}
+	}
+
+	// set up end position in costs map
+	{
+		auto endPositionGrid = Vector3(
+			Math::floor(endPosition.getX() / stepSize) * stepSize,
+			endPosition.getY(),
+			Math::floor(endPosition.getZ() / stepSize) * stepSize
+		);
+		auto endPositionCellKey = toKey(
+			endPositionGrid.getX(),
+			endPositionGrid.getZ()
+		);
+		auto dijkstraCellEndPositionIt = dijkstraCellMap.find(endPositionCellKey);
+		if (dijkstraCellEndPositionIt == dijkstraCellMap.end()) {
+			Console::println("PathFinding::createFlowMap(): end position not in dijkstra cell map");
+			return nullptr;
+		} else {
+			auto& dijkstraCellEndPosition = dijkstraCellEndPositionIt->second;
+			dijkstraCellEndPosition.tested = true;
+			dijkstraCellEndPosition.position = endPositionGrid;
+			dijkstraCellEndPosition.walkable = true;
+			dijkstraCellEndPosition.costs = 0.0f;
+			dijkstraCellsToProcess.push_back(&dijkstraCellEndPosition);
+		}
+	}
+
+	// compute costs and put it into map
+	for (auto i = 0; i < dijkstraCellsToProcess.size(); i++) {
+		auto& dijkstraCell = *dijkstraCellsToProcess[i];
+		for (auto z = -1; z <= 1; z++)
+		for (auto x = -1; x <= 1; x++)
+		if ((z != 0 || x != 0)/* &&
+			(Math::abs(x) == 1 && Math::abs(z) == 1) == false*/) {
+			float neighbourX = x * stepSize + dijkstraCell.position.getX();
+			float neighbourZ = z * stepSize + dijkstraCell.position.getZ();
+			auto neighbourCellKey = toKey(
+				Math::floor(neighbourX / stepSize) * stepSize,
+				Math::floor(neighbourZ / stepSize) * stepSize
+			);
+			auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellKey);
+			if (dijkstraNeighbourCellIt == dijkstraCellMap.end()) {
+				continue;
+			}
+			auto& dijkstraNeighbourCell = dijkstraNeighbourCellIt->second;
+			if (dijkstraNeighbourCell.tested == true) continue;
+			float neighbourY;
+			auto walkable = isWalkableInternal(neighbourX, dijkstraCell.position.getY(), neighbourZ, neighbourY);
+			if (walkable == true) {
+				dijkstraNeighbourCell.id = neighbourCellKey;
+				dijkstraNeighbourCell.tested = true;
+				dijkstraNeighbourCell.walkable = walkable;
+				dijkstraNeighbourCell.position.setY(neighbourY);
+				dijkstraNeighbourCell.costs = dijkstraCell.costs + 1.0f;
+				dijkstraCellsToProcess.push_back(&dijkstraNeighbourCell);
+			}
+		}
+	}
+
+	// generate flow map
+	auto flowMap = new FlowMap(stepSize);
+	for (auto z = -depth / 2; z < depth / 2; z+= stepSize)
+	for (auto x = -width / 2; x < width / 2; x+= stepSize) {
+		auto cellPosition = Vector3(
+			Math::floor((x + center.getX()) / stepSize) * stepSize,
+			0.0f,
+			Math::floor((z + center.getZ()) / stepSize) * stepSize
+		);
+		auto cellKey = toKey(
+			cellPosition.getX(),
+			cellPosition.getZ()
+		);
+
+		// walkable?
+		auto dijkstraCellIt = dijkstraCellMap.find(cellKey);
+		if (dijkstraCellIt == dijkstraCellMap.end()) {
+			continue;
+		}
+		auto& dijkstraCell = dijkstraCellIt->second;
+		if (dijkstraCell.walkable == false) continue;
+
+		// check neighbours around our current cell
+		DijkstraCellStruct* minDijkstraCell = nullptr;
+		auto minCosts = 0.0f;
+		for (auto _z = -1; _z <= 1; _z++)
+		for (auto _x = -1; _x <= 1; _x++)
+		if ((_z != 0 || _x != 0)/* &&
+			(Math::abs(_x) == 1 && Math::abs(_z) == 1) == false*/) {
+			//
+			float neighbourX = _x * stepSize + cellPosition.getX();
+			float neighbourZ = _z * stepSize + cellPosition.getZ();
+			auto neighbourCellKey = toKey(
+				Math::floor(neighbourX / stepSize) * stepSize,
+				Math::floor(neighbourZ / stepSize) * stepSize
+			);
+			auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellKey);
+			if (dijkstraNeighbourCellIt == dijkstraCellMap.end()) {
+				continue;
+			} else {
+				auto& dijkstraNeighbourCell = dijkstraNeighbourCellIt->second;
+				if (dijkstraNeighbourCell.walkable == true/* && flowMap->getCell(neighbourX, neighbourZ) == nullptr*/) {
+					auto dijkstraNeighbourCellCosts = dijkstraNeighbourCell.costs - dijkstraCell.costs;
+					if (minDijkstraCell == nullptr || dijkstraNeighbourCellCosts < minCosts) {
+						minDijkstraCell = &dijkstraNeighbourCell;
+						minCosts = dijkstraNeighbourCellCosts;
+					}
+				}
+			}
+		}
+		if (minDijkstraCell != nullptr) {
+			auto direction = minDijkstraCell->position.clone().sub(dijkstraCell.position).setY(0.0f).normalize();
+			auto flowMapCell = new FlowMapCell(
+				cellPosition, 
+				minDijkstraCell->walkable,
+				direction
+			);
+			flowMap->addCell(flowMapCell);
+			Console::println("Neighbour: " + cellKey + " / cell: " + minDijkstraCell->id);
+		} else {
+			Console::println("No neighbour: " + cellKey);
+		}
+	}
+	flowMap->dump();
+
+	// unset actor bounding volume and remove rigid body
+	this->actorBoundingVolume = nullptr;
+	this->actorBoundingVolumeSlopeTest = nullptr;
+	world->removeBody("tdme.pathfinding.actor");
+	world->removeBody("tdme.pathfinding.actor.slopetest");
+
+	// dispose custom test
+	if (this->customTest != nullptr) {
+		this->customTest->dispose();
+		this->customTest = nullptr;
+	}
+
+	//
+	return flowMap;
 }

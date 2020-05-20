@@ -146,16 +146,7 @@ void PathFindingTest::display()
 		pathIdx = pathIdx + 1;
 		if (pathIdx >= path.size()) {
 			pathIdx = 0;
-			if (pathFinding->findPath(
-					playerObject->getTranslation(),
-					pathPositions[(int)(Math::random() * pathPositions.size())],
-					Level::RIGIDBODY_TYPEID_STATIC,
-					path
-				) == true) {
-				Console::println("Found a path: steps: " + to_string(path.size()));
-			} else {
-				Console::println("Found no path");
-			}
+			doPathFinding();
 		}
 		determinePlayerMovementDirection();
 	}
@@ -198,6 +189,16 @@ void PathFindingTest::initialize()
 	pathPositions.push_back(Vector3(2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, -4.5f));
 	pathFinding = new PathFinding(world);
+	doPathFinding();
+	determinePlayerMovementDirection();
+}
+
+void PathFindingTest::reshape(int32_t width, int32_t height)
+{
+	engine->reshape(width, height);
+}
+
+void PathFindingTest::doPathFinding() {
 	if (pathFinding->findPath(
 			playerObject->getTransformations().getTranslation(),
 			pathPositions[(int)(Math::random() * pathPositions.size())],
@@ -208,10 +209,4 @@ void PathFindingTest::initialize()
 	} else {
 		Console::println("Found no path");
 	}
-	determinePlayerMovementDirection();
-}
-
-void PathFindingTest::reshape(int32_t width, int32_t height)
-{
-	engine->reshape(width, height);
 }

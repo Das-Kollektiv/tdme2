@@ -240,7 +240,6 @@ void main(void) {
 	//
 	fragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	fragColor+= clamp(material.emission, 0.0, 1.0);
-	fragColor = fragColor * vsEffectColorMul;
 
 	#if defined(HAVE_SOLID_SHADING)
 		fragColor+= material.ambient;
@@ -272,6 +271,7 @@ void main(void) {
 	#endif
 
 		// take effect colors into account
+	fragColor*= vsEffectColorMul;
 	fragColor.a = material.diffuse.a * vsEffectColorMul.a;
 
 	#if defined(HAVE_DEPTH_FOG)
