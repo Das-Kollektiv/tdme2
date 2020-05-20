@@ -84,21 +84,27 @@ void FlowMapTest::main(int argc, char** argv)
 
 void FlowMapTest::display()
 {
-	auto cell = flowMap->getCell(startPlayerObject->getTranslation().getX(), startPlayerObject->getTranslation().getZ());
-	if (cell != nullptr) {
-		if (startPlayerObject->getAnimation() != "walk") startPlayerObject->setAnimation("walk");
-		startPlayerObject->setTranslation(startPlayerObject->getTranslation() + cell->getDirection() * 2.0f / 60.0f);
-		auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
-		startPlayerObject->setRotationAngle(0, yRotationAngle);
-		startPlayerObject->update();
+	if (startPlayerCellPosition.clone().sub(startPlayerObject->getTranslation()).computeLength() < 0.1f){
+		auto cell = flowMap->getCell(startPlayerObject->getTranslation().getX(), startPlayerObject->getTranslation().getZ());
+		if (cell != nullptr) {
+			startPlayerCellDirection = cell->getDirection();
+			startPlayerCellPosition = startPlayerObject->getTranslation().clone().add(startPlayerCellDirection.clone().scale(flowMap->getStepSize()));
+			if (startPlayerObject->getAnimation() != "walk") startPlayerObject->setAnimation("walk");
+			auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
+			startPlayerObject->setRotationAngle(0, yRotationAngle);
+		} else {
+			startPlayerObject->setAnimation("still");
+			startPlayerCellDirection = Vector3();
+		}
 	} else {
-		startPlayerObject->setAnimation("still");
-	}
-	if (endPlayerObject->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
-		doPathFinding();
+		if (endPlayerObject->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
+			doPathFinding();
+		} else {
+			startPlayerObject->setTranslation(startPlayerObject->getTranslation() + startPlayerCellDirection * 2.0f / 60.0f);
+			startPlayerObject->update();
+		}
 	}
 	engine->display();
-	frames++;
 }
 
 void FlowMapTest::dispose()
@@ -162,6 +168,8 @@ void FlowMapTest::doPathFinding() {
 	}
 	startPlayerObject->setTranslation(endPlayerObject->getTransformations().getTranslation());
 	startPlayerObject->update();
+	startPlayerCellPosition.set(startPlayerObject->getTranslation());
+	startPlayerCellDirection = Vector3();
 	endPlayerObject->setTranslation(pathPositions[(int)(Math::random() * pathPositions.size())]);
 	endPlayerObject->update();
 	flowMap = pathFinding->createFlowMap(

@@ -68,7 +68,7 @@ public:
 	/**
 	 * @return step size 
 	 */
-	inline float getStepSize() {
+	inline float getStepSize() const {
 		return stepSize;
 	} 
 
