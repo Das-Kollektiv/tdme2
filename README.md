@@ -215,6 +215,7 @@
     - documentation
 
 - What is WIP or planned
+    - Flow maps
     - Shader parameters
     - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects
