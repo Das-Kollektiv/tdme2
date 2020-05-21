@@ -65,8 +65,9 @@ bool GUINodeConditions::removeAll()
 void GUINodeConditions::updateNode(GUINode* node) const {
 	auto _conditionsMet = node->conditionsMet;
 	node->conditionsMet = node->checkConditions();
-	if (node->conditionsMet != _conditionsMet) return;
+	if (node->conditionsMet == _conditionsMet) return;
 	node->parentNode->layouted = false;
+	node->layouted = false;
 	auto parentNode = dynamic_cast<GUIParentNode*>(node);
 	if (parentNode != nullptr) {
 		for (auto i = 0; i < parentNode->subNodes.size(); i++) {
