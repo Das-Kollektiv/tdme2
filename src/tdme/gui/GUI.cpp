@@ -980,8 +980,7 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	}
 
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
-	screenNode->layout(screenNode);
-	screenNode->reshapeRequested = false;
+	screenNode->reshapeRequested = true;
 }
 
 void GUI::addMouseOutCandidateElementNode(GUINode* node) {

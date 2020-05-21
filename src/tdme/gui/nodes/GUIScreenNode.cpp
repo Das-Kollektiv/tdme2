@@ -94,7 +94,6 @@ GUIScreenNode::GUIScreenNode(
 	this->guiEffectOffsetX = 0;
 	this->guiEffectOffsetY = 0;
 	this->reshapeRequested = false;
-
 }
 
 GUIScreenNode::~GUIScreenNode() {
