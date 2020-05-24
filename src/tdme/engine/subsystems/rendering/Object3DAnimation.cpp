@@ -274,7 +274,7 @@ void Object3DAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& m
 	}
 }
 
-inline void Object3DAnimation::computeTransformationsMatrices(const map<string, Group*>& groups, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth)
+void Object3DAnimation::computeTransformationsMatrices(const map<string, Group*>& groups, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState, map<string, Matrix4x4*>& transformationsMatrices, int32_t depth)
 {
 	// iterate through groups
 	for (auto it: groups) {
