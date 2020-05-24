@@ -90,7 +90,7 @@ public:
 	/**
 	 * @return horizontal number of sprites in texture
 	 */
-	int32_t getTextureHorizontalSprites() {
+	inline int32_t getTextureHorizontalSprites() {
 		return textureHorizontalSprites;
 	}
 
@@ -98,14 +98,14 @@ public:
 	 * Set texture horizontal number of sprites
 	 * @param textureHorizontalSprites horizontal number of sprites
 	 */
-	void setTextureHorizontalSprites(int32_t textureHorizontalSprites) {
+	inline void setTextureHorizontalSprites(int32_t textureHorizontalSprites) {
 		this->textureHorizontalSprites = textureHorizontalSprites;
 	}
 
 	/**
 	 * @return vertical number of sprites in texture
 	 */
-	int32_t getTextureVerticalSprites() {
+	inline int32_t getTextureVerticalSprites() {
 		return textureVerticalSprites;
 	}
 
@@ -113,7 +113,7 @@ public:
 	 * Set texture vertical number of sprites
 	 * @param textureVerticalSprites vertical number of sprites
 	 */
-	void setTextureVerticalSprites(int32_t textureVerticalSprites) {
+	inline void setTextureVerticalSprites(int32_t textureVerticalSprites) {
 		this->textureVerticalSprites = textureVerticalSprites;
 	}
 

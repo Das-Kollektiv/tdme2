@@ -58,7 +58,7 @@ void LevelFileExport::doExport(const string& pathName, const string& fileName, L
 	auto entityLibrary = level->getEntityLibrary();
 	Document jDocument;
 	jDocument.SetObject();
-	rapidjson::Document::AllocatorType& jAllocator = jDocument.GetAllocator();
+	auto& jAllocator = jDocument.GetAllocator();
 	jDocument.AddMember("version", Value("1.99", jAllocator), jAllocator);
 	jDocument.AddMember("ro", Value(level->getRotationOrder()->getName(), jAllocator), jAllocator);
 	Value jLights;

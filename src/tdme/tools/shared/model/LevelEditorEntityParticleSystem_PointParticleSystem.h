@@ -42,7 +42,7 @@ public:
 	/** 
 	 * @return max points
 	 */
-	int32_t getMaxPoints() {
+	inline int32_t getMaxPoints() {
 		return maxPoints;
 	}
 
@@ -50,14 +50,14 @@ public:
 	 * Set max points
 	 * @param maxPoints max points
 	 */
-	void setMaxPoints(int32_t maxPoints) {
+	inline void setMaxPoints(int32_t maxPoints) {
 		this->maxPoints = maxPoints;
 	}
 
 	/** 
 	 * @return point size
 	 */
-	float getPointSize() {
+	inline float getPointSize() {
 		return pointSize;
 	}
 
@@ -65,28 +65,28 @@ public:
 	 * Set point size
 	 * @param pointSize point size
 	 */
-	void setPointSize(float pointSize) {
+	inline void setPointSize(float pointSize) {
 		this->pointSize = pointSize;
 	}
 
 	/**
 	 * @return texture
 	 */
-	Texture* getTexture() {
+	inline Texture* getTexture() {
 		return texture;
 	}
 
 	/**
 	 * @return texture file name
 	 */
-	const string& getTextureFileName() {
+	inline const string& getTextureFileName() {
 		return textureFileName;
 	}
 
 	/**
 	 * @return transparency texture file name
 	 */
-	const string& getTransparencyTextureFileName() {
+	inline const string& getTransparencyTextureFileName() {
 		return transparencyTextureFileName;
 	}
 
@@ -100,7 +100,7 @@ public:
 	/**
 	 * @return horizontal number of sprites in texture
 	 */
-	int32_t getTextureHorizontalSprites() {
+	inline int32_t getTextureHorizontalSprites() {
 		return textureHorizontalSprites;
 	}
 
@@ -108,14 +108,14 @@ public:
 	 * Set texture horizontal number of sprites
 	 * @param textureHorizontalSprites horizontal number of sprites
 	 */
-	void setTextureHorizontalSprites(int32_t textureHorizontalSprites) {
+	inline void setTextureHorizontalSprites(int32_t textureHorizontalSprites) {
 		this->textureHorizontalSprites = textureHorizontalSprites;
 	}
 
 	/**
 	 * @return vertical number of sprites in texture
 	 */
-	int32_t getTextureVerticalSprites() {
+	inline int32_t getTextureVerticalSprites() {
 		return textureVerticalSprites;
 	}
 
@@ -123,7 +123,7 @@ public:
 	 * Set texture vertical number of sprites
 	 * @param textureVerticalSprites vertical number of sprites
 	 */
-	void setTextureVerticalSprites(int32_t textureVerticalSprites) {
+	inline void setTextureVerticalSprites(int32_t textureVerticalSprites) {
 		this->textureVerticalSprites = textureVerticalSprites;
 	}
 
@@ -145,7 +145,7 @@ public:
 	/**
 	 * @return is auto emit
 	 */
-	bool isAutoEmit() {
+	inline bool isAutoEmit() {
 		return autoEmit;
 	}
 
@@ -153,7 +153,7 @@ public:
 	 * Set auto emit
 	 * @param autoEmit auto emit
 	 */
-	void setAutoEmit(bool autoEmit) {
+	inline void setAutoEmit(bool autoEmit) {
 		this->autoEmit = autoEmit;
 	}
 

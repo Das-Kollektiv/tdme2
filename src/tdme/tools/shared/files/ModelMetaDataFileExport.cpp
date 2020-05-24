@@ -111,7 +111,7 @@ void ModelMetaDataFileExport::doExport(const string& pathName, const string& fil
 }
 
 void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& jLodLevelRoot, LevelEditorEntityLODLevel* lodLevel) {
-	rapidjson::Document::AllocatorType& jAllocator = jDocument.GetAllocator();
+	auto& jAllocator = jDocument.GetAllocator();
 	jLodLevelRoot.SetObject();
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
 	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) {
@@ -138,7 +138,7 @@ void ModelMetaDataFileExport::exportLODLevelToJSON(Document& jDocument, Value& j
 
 void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRoot, LevelEditorEntity* entity)
 {
-	rapidjson::Document::AllocatorType& jAllocator = jDocument.GetAllocator();
+	auto& jAllocator = jDocument.GetAllocator();
 	if (entity->getType() == LevelEditorEntity_EntityType::MODEL && entity->getFileName().length() > 0) {
 		auto modelPathName = Tools::getPath(entity->getFileName());
 		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(entity->getFileName())) + ".tm";
@@ -274,9 +274,9 @@ void ModelMetaDataFileExport::exportToJSON(Document& jDocument, Value& jEntityRo
 					jFogParticleSystem.AddMember("ps", Value(particleSystem->getFogParticleSystem()->getPointSize()), jAllocator);
 					jFogParticleSystem.AddMember("t", Value(particleSystem->getFogParticleSystem()->getTextureFileName(), jAllocator), jAllocator);
 					jFogParticleSystem.AddMember("tt", Value(particleSystem->getFogParticleSystem()->getTransparencyTextureFileName(), jAllocator), jAllocator);
-					jFogParticleSystem.AddMember("ths", Value(particleSystem->getPointParticleSystem()->getTextureHorizontalSprites()), jAllocator);
-					jFogParticleSystem.AddMember("tvs", Value(particleSystem->getPointParticleSystem()->getTextureVerticalSprites()), jAllocator);
-					jFogParticleSystem.AddMember("fps", Value(particleSystem->getPointParticleSystem()->getTextureSpritesFPS()), jAllocator);
+					jFogParticleSystem.AddMember("ths", Value(particleSystem->getFogParticleSystem()->getTextureHorizontalSprites()), jAllocator);
+					jFogParticleSystem.AddMember("tvs", Value(particleSystem->getFogParticleSystem()->getTextureVerticalSprites()), jAllocator);
+					jFogParticleSystem.AddMember("fps", Value(particleSystem->getFogParticleSystem()->getTextureSpritesFPS()), jAllocator);
 					jParticleSystem.AddMember("fps", jFogParticleSystem, jAllocator);
 				} else {
 					Console::println(
