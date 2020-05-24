@@ -517,7 +517,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 	return success;
 }
 
-const FlowMap* PathFinding::createFlowMap(const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest) {
+FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest, FlowMap* flowMap) {
 	// set up custom test
 	this->customTest = customTest;
 
@@ -537,7 +537,7 @@ const FlowMap* PathFinding::createFlowMap(const Vector3& endPosition, const Vect
 	);
 	// set up transformations
 	Transformations actorTransformations;
-	actorTransformations.setTranslation(endPosition);
+	actorTransformations.setTranslation(endPositions[0]);
 	actorTransformations.update();
 	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
 
@@ -575,7 +575,7 @@ const FlowMap* PathFinding::createFlowMap(const Vector3& endPosition, const Vect
 	}
 
 	// set up end position in costs map
-	{
+	for (auto& endPosition: endPositions) {
 		auto endPositionGrid = Vector3(
 			Math::floor(endPosition.getX() / stepSize) * stepSize,
 			endPosition.getY(),
@@ -631,7 +631,7 @@ const FlowMap* PathFinding::createFlowMap(const Vector3& endPosition, const Vect
 	}
 
 	// generate flow map
-	auto flowMap = new FlowMap(stepSize);
+	if (flowMap == nullptr) flowMap = new FlowMap(stepSize);
 	for (auto z = -depth / 2; z < depth / 2; z+= stepSize)
 	for (auto x = -width / 2; x < width / 2; x+= stepSize) {
 		auto cellPosition = Vector3(

@@ -97,7 +97,8 @@ void FlowMapTest::display()
 			startPlayerCellDirection = Vector3();
 		}
 	} else {
-		if (endPlayerObject->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
+		if (endPlayerObject1->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f ||
+			endPlayerObject2->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
 			doPathFinding();
 		} else {
 			startPlayerObject->setTranslation(startPlayerObject->getTranslation() + startPlayerCellDirection * 2.0f / 60.0f);
@@ -138,16 +139,26 @@ void FlowMapTest::initialize()
 	startPlayerObject->setContributesShadows(playerModelEntity->isContributesShadows());
 	startPlayerObject->setReceivesShadows(playerModelEntity->isReceivesShadows());
 	engine->addEntity(startPlayerObject);
-	endPlayerObject = new Object3D("endPlayerObject", playerModelEntity->getModel());
-	endPlayerObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
-	endPlayerObject->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
-	endPlayerObject->update();
-	endPlayerObject->setAnimation("still");
-	endPlayerObject->setContributesShadows(playerModelEntity->isContributesShadows());
-	endPlayerObject->setReceivesShadows(playerModelEntity->isReceivesShadows());
-	endPlayerObject->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
-	endPlayerObject->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-	engine->addEntity(endPlayerObject);
+	endPlayerObject1 = new Object3D("endPlayerObject1", playerModelEntity->getModel());
+	endPlayerObject1->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+	endPlayerObject1->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+	endPlayerObject1->update();
+	endPlayerObject1->setAnimation("still");
+	endPlayerObject1->setContributesShadows(playerModelEntity->isContributesShadows());
+	endPlayerObject1->setReceivesShadows(playerModelEntity->isReceivesShadows());
+	endPlayerObject1->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
+	endPlayerObject1->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	engine->addEntity(endPlayerObject1);
+	endPlayerObject2 = new Object3D("endPlayerObject2", playerModelEntity->getModel());
+	endPlayerObject2->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
+	endPlayerObject2->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
+	endPlayerObject2->update();
+	endPlayerObject2->setAnimation("still");
+	endPlayerObject2->setContributesShadows(playerModelEntity->isContributesShadows());
+	endPlayerObject2->setReceivesShadows(playerModelEntity->isReceivesShadows());
+	endPlayerObject2->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
+	endPlayerObject2->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+	engine->addEntity(endPlayerObject2);
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, -4.5f));
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, 0.5f));
@@ -166,14 +177,24 @@ void FlowMapTest::doPathFinding() {
 		delete flowMap;
 		flowMap = nullptr;
 	}
-	startPlayerObject->setTranslation(endPlayerObject->getTransformations().getTranslation());
+	if (endPlayerObject1->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
+		startPlayerObject->setTranslation(endPlayerObject1->getTransformations().getTranslation());
+	} else
+	if (endPlayerObject2->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
+		startPlayerObject->setTranslation(endPlayerObject2->getTransformations().getTranslation());
+	}
 	startPlayerObject->update();
 	startPlayerCellPosition.set(startPlayerObject->getTranslation());
 	startPlayerCellDirection = Vector3();
-	endPlayerObject->setTranslation(pathPositions[(int)(Math::random() * pathPositions.size())]);
-	endPlayerObject->update();
+	endPlayerObject1->setTranslation(pathPositions[(int)(Math::random() * pathPositions.size())]);
+	endPlayerObject1->update();
+	endPlayerObject2->setTranslation(pathPositions[(int)(Math::random() * pathPositions.size())]);
+	endPlayerObject2->update();
 	flowMap = pathFinding->createFlowMap(
-		endPlayerObject->getTransformations().getTranslation(), 
+		{
+			endPlayerObject1->getTransformations().getTranslation(),
+			endPlayerObject2->getTransformations().getTranslation()
+		},
 		level.getBoundingBox()->getCenter(),
 		Math::ceil(level.getBoundingBox()->getDimensions().getZ()),
 		Math::ceil(level.getBoundingBox()->getDimensions().getX()),

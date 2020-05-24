@@ -117,8 +117,10 @@ public:
 	 * @param width flow map width
 	 * @param collisionTypeIds collision type ids
 	 * @param customTest custom test
+	 * @param flowMap flow map to add new cells
+	 * @return flow map
 	 */
-	const FlowMap* createFlowMap(const Vector3& endPosition, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest = nullptr);
+	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest = nullptr, FlowMap* flowMap = nullptr);
 
 private:
 	/**
