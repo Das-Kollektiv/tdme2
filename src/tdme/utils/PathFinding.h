@@ -198,8 +198,8 @@ private:
 	PathFindingStatus step();
 
 	// properties
-	World* world;
-	PathFindingCustomTest* customTest;
+	World* world { nullptr };
+	PathFindingCustomTest* customTest { nullptr };
 	bool sloping;
 	int stepsMax;
 	float actorHeight;
@@ -213,6 +213,6 @@ private:
 	stack<PathFindingNode*> successorNodes;
 	map<string, PathFindingNode*> openNodes;
 	map<string, PathFindingNode*> closedNodes;
-	BoundingVolume* actorBoundingVolume;
-	BoundingVolume* actorBoundingVolumeSlopeTest;
+	BoundingVolume* actorBoundingVolume { nullptr };
+	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
 };
