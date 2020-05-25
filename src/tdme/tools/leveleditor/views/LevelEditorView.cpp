@@ -239,7 +239,7 @@ LevelEditorView::LevelEditorView(PopUps* popUps): Gizmo(Engine::getInstance(), "
 				return
 						entity->getId() != "tdme.leveleditor.placeentity" &&
 						StringUtils::startsWith(entity->getId(), "tdme.leveleditor.paste.") == false &&
-						StringUtils::startsWith(entity->getId(), "tdme.leveleditor.gizmo.") == false;
+						StringUtils::startsWith(entity->getId(), "le.tdme.leveleditor.gizmo.") == false;
 			}
 
 			/**
@@ -350,8 +350,10 @@ void LevelEditorView::loadEntityFromLibrary(int32_t id)
 
 void LevelEditorView::handleInputEvents()
 {
-	keyControl = false;
-	keyShift = false;
+	#if !defined(GLFW3) && !defined(VUKAN)
+		keyControl = false;
+		keyShift = false;
+	#endif
 	auto keyControlX = false;
 	auto keyControlC = false;
 	auto keyControlV = false;
@@ -363,8 +365,13 @@ void LevelEditorView::handleInputEvents()
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent_Type::KEYBOARDEVENT_KEY_PRESSED;
-		keyControl = event.isControlDown();
-		keyShift = event.isShiftDown();
+		#if defined(GLFW3) || defined(VUKAN)
+			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_SHIFT) keyShift = isKeyDown;
+			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) keyControl = isKeyDown;
+		#else
+			keyControl = event.isControlDown();
+			keyShift = event.isShiftDown();
+		#endif
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) keyEscape = isKeyDown;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_LEFT) keyLeft = isKeyDown;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_RIGHT) keyRight = isKeyDown;
@@ -374,9 +381,9 @@ void LevelEditorView::handleInputEvents()
 		if (Character::toLowerCase(event.getKeyChar()) == 24) keyControlX = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 3) keyControlC = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 22) keyControlV = isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'x' && keyControl == true) keyControlX = !isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'c' && keyControl == true) keyControlC = !isKeyDown;
-		if (Character::toLowerCase(event.getKeyChar()) == 'v' && keyControl == true) keyControlV = !isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'x' && keyControl == true) keyControlX = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'c' && keyControl == true) keyControlC = isKeyDown;
+		if (Character::toLowerCase(event.getKeyChar()) == 'v' && keyControl == true) keyControlV = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 'a') keyA = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 'd') keyD = isKeyDown;
 		if (Character::toLowerCase(event.getKeyChar()) == 'w') keyW = isKeyDown;
