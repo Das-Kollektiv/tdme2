@@ -33,6 +33,7 @@ public:
 		return position;
 	}
 
+
 	/**
 	 * @return if cell is walkable
 	 */

@@ -72,9 +72,55 @@ void PathFinding::reset() {
 }
 
 bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
+	auto cacheId = toKey(x, y, z) + ";" + to_string(collisionTypeIds) + ";" + to_string(ignoreStepUpMax);
+	auto walkableCacheIt = walkableCache.find(cacheId);
+	if (walkableCacheIt != walkableCache.end()) {
+		height = walkableCacheIt->second;
+		return height > -10000.0f;
+	}
 	auto walkable = isWalkable(x, y, z, height, collisionTypeIds, ignoreStepUpMax);
 	if (walkable == false) return false;
+	walkableCache[cacheId] = walkable == false?-10000.0f:height;
 	return customTest == nullptr || customTest->isWalkable(this, x, height, z) == true;
+}
+
+bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, uint16_t collisionTypeIds) {
+	float slopeAngle = 0.0f;
+
+	// slope angle and center
+	auto toVector = Vector3(successorX, y, successorZ);
+	auto fromVector = Vector3(x, y, z);
+	auto axis = toVector.clone().sub(fromVector);
+	auto center = axis.clone().scale(0.5f).add(fromVector).setY(y + 0.1f);
+	axis.normalize();
+	slopeAngle = Vector3::computeAngle(
+		axis,
+		Vector3(0.0f, 0.0f, -1.0f),
+		Vector3(0.0f, 1.0f, 0.0f)
+	);
+
+	auto cacheId = toKey(x, y, z) + ";" + to_string(collisionTypeIds) + ";slope;" + to_string(slopeAngle);
+	auto walkableCacheIt = walkableCache.find(cacheId);
+	if (walkableCacheIt != walkableCache.end()) {
+		auto height = walkableCacheIt->second;
+		return height > -10000.0f;
+	}
+
+	// set up transformations
+	Transformations slopeTestTransformations;
+	slopeTestTransformations.setTranslation(center);
+	slopeTestTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), slopeAngle);
+	slopeTestTransformations.update();
+
+	// update rigid body
+	auto actorSlopeTestCollisionBody = world->getBody("tdme.pathfinding.actor.slopetest");
+	actorSlopeTestCollisionBody->fromTransformations(slopeTestTransformations);
+
+	// check if actor collides with world
+	vector<Body*> collidedRigidBodies;
+	auto walkable = world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorSlopeTestCollisionBody, collidedRigidBodies) == false;
+	walkableCache[cacheId] = walkable == false?-10000.0f:0.0f;
+	return walkable;
 }
 
 bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
@@ -168,37 +214,9 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		if ((z != 0 || x != 0) &&
 			(sloping == true ||
 			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
-			auto slopeWalkable = true;
 			float successorX = x * stepSize + node->x;
 			float successorZ = z * stepSize + node->z;
-			if (Math::abs(x) == 1 && Math::abs(z) == 1) {
-				float slopeAngle = 0.0f;
-
-				// slope angle and center
-				auto toVector = Vector3(successorX, node->y, successorZ);
-				auto fromVector = Vector3(node->x, node->y, node->z);
-				auto axis = toVector.clone().sub(fromVector);
-				auto center = axis.clone().scale(0.5f).add(fromVector).setY(node->y + 0.1f);
-				axis.normalize();
-				slopeAngle = Vector3::computeAngle(
-					axis,
-					Vector3(0.0f, 0.0f, -1.0f),
-					Vector3(0.0f, 1.0f, 0.0f)
-				);
-				// set up transformations
-				Transformations slopeTestTransformations;
-				slopeTestTransformations.setTranslation(center);
-				slopeTestTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), slopeAngle);
-				slopeTestTransformations.update();
-
-				// update rigid body
-				auto actorSlopeTestCollisionBody = world->getBody("tdme.pathfinding.actor.slopetest");
-				actorSlopeTestCollisionBody->fromTransformations(slopeTestTransformations);
-
-				// check if actor collides with world
-				vector<Body*> collidedRigidBodies;
-				slopeWalkable = world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorSlopeTestCollisionBody, collidedRigidBodies) == false;
-			}
+			auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node->x, node->y, node->z, successorX, node->y, successorZ):true;
 			//
 			float yHeight;
 			// first node or walkable?
@@ -517,7 +535,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 	return success;
 }
 
-FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest, FlowMap* flowMap) {
+FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, PathFindingCustomTest* customTest) {
 	// set up custom test
 	this->customTest = customTest;
 
@@ -541,10 +559,31 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	actorTransformations.update();
 	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
 
+	// init bounding volume for slope testcollision body
+	actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
+		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
+		OrientedBoundingBox::AABB_AXIS_X,
+		OrientedBoundingBox::AABB_AXIS_Y,
+		OrientedBoundingBox::AABB_AXIS_Z,
+		Vector3(stepSize * 1.5f, actorHeight / 2.0f, stepSize * 1.5f)
+	);
+	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
+
+	//
+	auto zMin = static_cast<int>(Math::ceil(-depth / 2.0f / stepSize));
+	auto zMax = static_cast<int>(Math::ceil(depth / 2.0f / stepSize));
+	auto xMin = static_cast<int>(Math::ceil(-width / 2.0f / stepSize));
+	auto xMax = static_cast<int>(Math::ceil(width / 2.0f / stepSize));
+	const vector<Vector3> emptyPath = { center };
+	const vector<Vector3>& pathToUse = path.empty() == false?path:emptyPath;
+	auto stepSize2 = stepSize + 0.01f;
+
 	// see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
 	// generate cost map via dijkstra
 	struct DijkstraCellStruct {
 		string id;
+		int x;
+		int z;
 		bool tested;
 		Vector3 position;
 		bool walkable;
@@ -552,42 +591,57 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	};
 	map<string, DijkstraCellStruct> dijkstraCellMap;
 	vector<DijkstraCellStruct*> dijkstraCellsToProcess;
-	for (auto z = -depth / 2; z < depth / 2; z+= stepSize) {
-		for (auto x = -width / 2; x < width / 2; x+= stepSize) {
-			auto cellPosition = Vector3(
-				Math::floor((x + center.getX()) / stepSize) * stepSize,
-				-10000.0f,
-				Math::floor((z + center.getZ()) / stepSize) * stepSize
-			);
-			auto cellKey = FlowMap::toKey(
-				cellPosition.getX(),
-				cellPosition.getZ()
-			);
-			dijkstraCellMap[cellKey] =
-				{
-					.id = cellKey,
-					.tested = false,
-					.position = cellPosition,
-					.walkable = false,
-					.costs = 0.0f
-				};
+	for (auto& centerPathNode: pathToUse) {
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), stepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), stepSize);
+		for (auto z = zMin; z <= zMax; z++) {
+			for (auto x = xMin; x <= xMax; x++) {
+				auto cellPosition = Vector3(
+					centerPathNode.getX() + static_cast<float>(x) * stepSize,
+					0.0f,
+					centerPathNode.getZ() + static_cast<float>(z) * stepSize
+				);
+				auto cellId = FlowMap::toKeyInt(
+					centerPathNodeX + x,
+					centerPathNodeZ + z
+				);
+				auto dijkstraCellIt = dijkstraCellMap.find(cellId);
+				if (dijkstraCellIt != dijkstraCellMap.end()) continue;
+				dijkstraCellMap[cellId] =
+					{
+						.id = cellId,
+						.x = centerPathNodeX + x,
+						.z = centerPathNodeZ + z,
+						.tested = false,
+						.position = cellPosition,
+						.walkable = false,
+						.costs = 0.0f
+					};
+				if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): added dijkstra cell: " + cellId);
+			}
 		}
 	}
 
 	// set up end position in costs map
+	if (endPositions.size() == 0) {
+		Console::println("PathFinding::createFlowMap(): no end positions given");
+	}
+
+	//
 	for (auto& endPosition: endPositions) {
 		auto endPositionGrid = Vector3(
-			Math::floor(endPosition.getX() / stepSize) * stepSize,
+			FlowMap::alignPositionComponent(endPosition.getX(), stepSize),
 			endPosition.getY(),
-			Math::floor(endPosition.getZ() / stepSize) * stepSize
+			FlowMap::alignPositionComponent(endPosition.getZ(), stepSize)
 		);
-		auto endPositionCellKey = FlowMap::toKey(
+		auto endPositionCellId = FlowMap::toKey(
 			endPositionGrid.getX(),
-			endPositionGrid.getZ()
+			endPositionGrid.getZ(),
+			stepSize
 		);
-		auto dijkstraCellEndPositionIt = dijkstraCellMap.find(endPositionCellKey);
+		auto dijkstraCellEndPositionIt = dijkstraCellMap.find(endPositionCellId);
 		if (dijkstraCellEndPositionIt == dijkstraCellMap.end()) {
-			Console::println("PathFinding::createFlowMap(): end position not in dijkstra cell map");
+			Console::println("PathFinding::createFlowMap(): end position not in dijkstra cell map: " + to_string(endPosition.getX()) + ", " + to_string(endPosition.getY()) + ", " + to_string(endPosition.getZ()) + ": " + endPositionCellId);
 			return nullptr;
 		} else {
 			auto& dijkstraCellEndPosition = dijkstraCellEndPositionIt->second;
@@ -607,108 +661,157 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		if (z != 0 || x != 0) {
 			float neighbourX = x * stepSize + dijkstraCell.position.getX();
 			float neighbourZ = z * stepSize + dijkstraCell.position.getZ();
-			auto neighbourCellKey = FlowMap::toKey(
-				Math::floor(neighbourX / stepSize) * stepSize,
-				Math::floor(neighbourZ / stepSize) * stepSize
+			auto neighbourCellId = FlowMap::toKeyInt(
+				dijkstraCell.x + x,
+				dijkstraCell.z + z
 			);
-			auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellKey);
+			auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellId);
 			if (dijkstraNeighbourCellIt == dijkstraCellMap.end()) {
 				continue;
 			}
 			auto& dijkstraNeighbourCell = dijkstraNeighbourCellIt->second;
 			if (dijkstraNeighbourCell.tested == true) continue;
 			float neighbourY;
+			//
 			auto walkable = isWalkableInternal(neighbourX, dijkstraCell.position.getY(), neighbourZ, neighbourY);
 			if (walkable == true) {
-				dijkstraNeighbourCell.id = neighbourCellKey;
 				dijkstraNeighbourCell.tested = true;
 				dijkstraNeighbourCell.walkable = walkable;
 				dijkstraNeighbourCell.position.setY(neighbourY);
 				dijkstraNeighbourCell.costs = dijkstraCell.costs + 1.0f;
 				dijkstraCellsToProcess.push_back(&dijkstraNeighbourCell);
+				if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): is walkable I: " + neighbourCellId + ": " + to_string(neighbourY));
+			} else {
+				if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): not walkable I: " + neighbourCellId + ": " + to_string(neighbourY));
 			}
 		}
 	}
 
 	// generate flow map
-	if (flowMap == nullptr) flowMap = new FlowMap(stepSize);
-	for (auto z = -depth / 2; z < depth / 2; z+= stepSize)
-	for (auto x = -width / 2; x < width / 2; x+= stepSize) {
-		auto cellPosition = Vector3(
-			Math::floor((x + center.getX()) / stepSize) * stepSize,
-			0.0f,
-			Math::floor((z + center.getZ()) / stepSize) * stepSize
-		);
-		auto cellKey = FlowMap::toKey(
-			cellPosition.getX(),
-			cellPosition.getZ()
-		);
+	auto flowMap = new FlowMap(stepSize);
+	for (auto& centerPathNode: pathToUse) {
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), stepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), stepSize);
+		for (auto z = zMin; z <= zMax; z++) {
+			for (auto x = xMin; x <= xMax; x++) {
+				auto cellPosition = Vector3(
+					centerPathNode.getX() + static_cast<float>(x) * stepSize,
+					0.0f,
+					centerPathNode.getZ() + static_cast<float>(z) * stepSize
+				);
+				auto cellId = FlowMap::toKeyInt(
+					centerPathNodeX + x,
+					centerPathNodeZ + z
+				);
 
-		// walkable?
-		auto dijkstraCellIt = dijkstraCellMap.find(cellKey);
-		if (dijkstraCellIt == dijkstraCellMap.end()) {
-			continue;
-		}
-		auto& dijkstraCell = dijkstraCellIt->second;
-		if (dijkstraCell.walkable == false) continue;
+				// do we already have this cell?
+				if (flowMap->hasCell(cellId) == true) continue;
+				// walkable?
+				auto dijkstraCellIt = dijkstraCellMap.find(cellId);
+				if (dijkstraCellIt == dijkstraCellMap.end()) {
+					continue;
+				}
+				auto& dijkstraCell = dijkstraCellIt->second;
+				if (dijkstraCell.walkable == false) continue;
 
-		// check neighbours around our current cell
-		DijkstraCellStruct* minDijkstraCell = nullptr;
-		auto minDijkstraCosts = Float::MAX_VALUE;
-		for (auto _z = -1; _z <= 1; _z++)
-		for (auto _x = -1; _x <= 1; _x++)
-		if (_z != 0 || _x != 0) {
-			//
-			float neighbourX = _x * stepSize + cellPosition.getX();
-			float neighbourZ = _z * stepSize + cellPosition.getZ();
-			auto neighbourCellKey = FlowMap::toKey(
-				Math::floor(neighbourX / stepSize) * stepSize,
-				Math::floor(neighbourZ / stepSize) * stepSize
-			);
-			auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellKey);
-			if (dijkstraNeighbourCellIt == dijkstraCellMap.end()) {
-				continue;
-			} else {
-				auto& dijkstraNeighbourCell = dijkstraNeighbourCellIt->second;
-				if (dijkstraNeighbourCell.walkable == true) {
-					auto dijkstraNeighbourCellCosts = dijkstraNeighbourCell.costs - dijkstraCell.costs;
-					if (minDijkstraCell == nullptr || dijkstraNeighbourCellCosts < minDijkstraCosts) {
-						minDijkstraCell = &dijkstraNeighbourCell;
-						minDijkstraCosts = dijkstraNeighbourCellCosts;
+				// check neighbours around our current cell
+				DijkstraCellStruct* minDijkstraCell = nullptr;
+				auto minDijkstraCosts = Float::MAX_VALUE;
+				for (auto _z = -1; _z <= 1; _z++)
+				for (auto _x = -1; _x <= 1; _x++)
+				if (_z != 0 || _x != 0) {
+					//
+					float neighbourX = cellPosition.getX() + static_cast<float>(_x) * stepSize;
+					float neighbourZ = cellPosition.getZ() + static_cast<float>(_z) * stepSize;
+					auto neighbourCellId = FlowMap::toKeyInt(
+						dijkstraCell.x + _x,
+						dijkstraCell.z + _z
+					);
+					auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellId);
+					if (dijkstraNeighbourCellIt == dijkstraCellMap.end()) {
+						continue;
+					} else {
+						auto& dijkstraNeighbourCell = dijkstraNeighbourCellIt->second;
+						if (dijkstraNeighbourCell.walkable == true /*
+							Math::abs(_x) == 1 && Math::abs(_z) == 1?isSlopeWalkableInternal(cellPosition.getX(), dijkstraCell.position.getY(), cellPosition.getZ(), neighbourX, dijkstraCell.position.getY(), neighbourZ):true*/) {
+							auto dijkstraNeighbourCellCosts = dijkstraNeighbourCell.costs - dijkstraCell.costs;
+							if (minDijkstraCell == nullptr || dijkstraNeighbourCellCosts < minDijkstraCosts) {
+								minDijkstraCell = &dijkstraNeighbourCell;
+								minDijkstraCosts = dijkstraNeighbourCellCosts;
+
+							}
+							if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): is walkable II: " + neighbourCellId);
+						} else {
+							if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): not walkable II: " + neighbourCellId);
+						}
 					}
 				}
+				if (minDijkstraCell != nullptr) {
+					auto direction = minDijkstraCell->position.clone().sub(dijkstraCell.position).setY(0.0f).normalize();
+					if (Float::isNaN(direction.getX()) || Float::isNaN(direction.getY()) || Float::isNaN(direction.getZ())) {
+						Console::println(
+							"PathFinding::createFlowMap(): NaN: " +
+							minDijkstraCell->id + "; " +
+							to_string(minDijkstraCell->position.getX()) + ", " +
+							to_string(minDijkstraCell->position.getY()) + ", " +
+							to_string(minDijkstraCell->position.getZ()) + " -> " +
+							dijkstraCell.id + "; " +
+							to_string(dijkstraCell.position.getX()) + ", " +
+							to_string(dijkstraCell.position.getY()) + ", " +
+							to_string(dijkstraCell.position.getZ()) + ": " +
+							to_string(minDijkstraCell == &dijkstraCell) + "; " +
+							to_string(cellPosition.getX()) + ", " +
+							to_string(cellPosition.getY()) + ", " +
+							to_string(cellPosition.getZ()) + "; " +
+							cellId
+						);
+					}
+					flowMap->addCell(
+						cellId,
+						cellPosition,
+						minDijkstraCell->walkable,
+						direction
+					);
+					if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): add cell: " + cellId);
+				}
 			}
-		}
-		if (minDijkstraCell != nullptr) {
-			auto direction = minDijkstraCell->position.clone().sub(dijkstraCell.position).setY(0.0f).normalize();
-			flowMap->addCell(
-				cellPosition, 
-				minDijkstraCell->walkable,
-				direction
-			);
 		}
 	}
 
 	// do some post adjustments
-	for (auto z = -depth / 2; z < depth / 2; z+= stepSize)
-	for (auto x = -width / 2; x < width / 2; x+= stepSize) {
-		auto cell = flowMap->getCell(x + center.getX(), z + center.getZ());
-		if (cell == nullptr) continue;
-		auto topCell = flowMap->getCell(x + center.getX(), -1 * stepSize + z + center.getZ());
-		if (topCell == nullptr && cell->getDirection().getZ() < 0.0f){
-			cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
-		}
-		auto bottomCell = flowMap->getCell(x + center.getX(), 1 * stepSize + z + center.getZ());
-		if (bottomCell == nullptr && cell->getDirection().getZ() > 0.0f){
-			cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
-		}
-		auto leftCell = flowMap->getCell(-1 * stepSize + x + center.getX(), z + center.getZ());
-		if (leftCell == nullptr && cell->getDirection().getX() < 0.0f){
-			cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
-		}
-		auto rightCell = flowMap->getCell(1 * stepSize + x + center.getX(), z + center.getZ());
-		if (rightCell == nullptr && cell->getDirection().getX() > 0.0f){
-			cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
+	for (auto& centerPathNode: pathToUse) {
+		auto centerPathNodeX = FlowMap::getIntegerPositionComponent(centerPathNode.getX(), stepSize);
+		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), stepSize);
+		for (auto z = zMin; z <= zMax; z++) {
+			for (auto x = xMin; x <= xMax; x++) {
+				auto cellPosition = Vector3(
+					centerPathNode.getX() + static_cast<float>(x) * stepSize,
+					0.0f,
+					centerPathNode.getZ() + static_cast<float>(z) * stepSize
+				);
+				auto cellId = FlowMap::toKeyInt(
+					centerPathNodeX + x,
+					centerPathNodeZ + z
+				);
+				auto cell = flowMap->getCell(cellId);
+				if (cell == nullptr) continue;
+				auto topCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x, centerPathNodeZ + z - 1));
+				if (topCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() < 0.0f){
+					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
+				}
+				auto bottomCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x, centerPathNodeZ + z + 1));
+				if (bottomCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() > 0.0f){
+					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
+				}
+				auto leftCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x - 1, centerPathNodeZ + z));
+				if (leftCell == nullptr && cell->getDirection().getX() < 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
+					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
+				}
+				auto rightCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x + 1, centerPathNodeZ + z));
+				if (rightCell == nullptr && cell->getDirection().getX() > 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
+					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
+				}
+			}
 		}
 	}
 

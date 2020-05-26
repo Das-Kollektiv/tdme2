@@ -66,6 +66,20 @@ public:
 	~PathFinding();
 
 	/**
+	 * @return step size
+	 */
+	inline float getStepSize() {
+		return stepSize;
+	}
+
+	/**
+	 * Clear caches
+	 */
+	inline void clearCaches() {
+		walkableCache.clear();
+	}
+
+	/**
 	 * Return string representation of given x,y,z for path finding key
 	 * @param x x
 	 * @param y y
@@ -117,10 +131,10 @@ public:
 	 * @param width flow map width
 	 * @param collisionTypeIds collision type ids
 	 * @param customTest custom test
-	 * @param flowMap flow map to add new cells
+	 * @param path path to test along
 	 * @return flow map
 	 */
-	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, PathFindingCustomTest* customTest = nullptr, FlowMap* flowMap = nullptr);
+	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path = vector<Vector3>(), PathFindingCustomTest* customTest = nullptr);
 
 private:
 	/**
@@ -187,6 +201,19 @@ private:
 	bool isWalkableInternal(float x, float y, float z, float& height, uint16_t collisionTypeIds = 0, bool ignoreStepUpMax = false);
 
 	/**
+	 * Checks if a cell is slope walkable
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param successorX x
+	 * @param successorY y
+	 * @param successorZ z
+	 * @param collisionTypeIds collision type ids or 0 for default
+	 * @return if cell is walkable
+	 */
+	bool isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, uint16_t collisionTypeIds = 0);
+
+	/**
 	 * Sets up the PathFinding, it needs to be called after constructing the object
 	 * @param startPosition start position
 	 * @param endPosition end position
@@ -217,4 +244,5 @@ private:
 	map<string, PathFindingNode*> closedNodes;
 	BoundingVolume* actorBoundingVolume { nullptr };
 	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
+	map<string, float> walkableCache;
 };

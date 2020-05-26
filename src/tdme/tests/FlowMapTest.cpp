@@ -84,14 +84,20 @@ void FlowMapTest::main(int argc, char** argv)
 
 void FlowMapTest::display()
 {
-	if (startPlayerCellPosition.clone().sub(startPlayerObject->getTranslation()).computeLength() < 0.1f){
+	if (startPlayerCellPosition.clone().sub(startPlayerObject->getTranslation()).computeLength() < 0.1f) {
 		auto cell = flowMap->getCell(startPlayerObject->getTranslation().getX(), startPlayerObject->getTranslation().getZ());
 		if (cell != nullptr) {
 			startPlayerCellDirection = cell->getDirection();
+			if ((Math::abs(startPlayerCellDirection.getX()) < Math::EPSILON || Math::abs(startPlayerCellDirection.getZ()) < Math::EPSILON) &&
+				startPlayerCellDirection == startPlayerCellDirectionLast.clone().scale(-1.0f)) {
+				//
+				startPlayerCellDirection.scale(-1.0f);
+			}
 			startPlayerCellPosition = startPlayerObject->getTranslation().clone().add(startPlayerCellDirection.clone().scale(flowMap->getStepSize()));
 			if (startPlayerObject->getAnimation() != "walk") startPlayerObject->setAnimation("walk");
 			auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
 			startPlayerObject->setRotationAngle(0, yRotationAngle);
+			startPlayerCellDirectionLast = startPlayerCellDirection;
 		} else {
 			startPlayerObject->setAnimation("still");
 			startPlayerCellDirection = Vector3();
@@ -163,7 +169,7 @@ void FlowMapTest::initialize()
 	pathPositions.push_back(Vector3(-2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, 0.5f));
 	pathPositions.push_back(Vector3(2.5f, 0.25f, -4.5f));
-	pathFinding = new PathFinding(world, false, 1000, 2.0f, 0.5f);
+	pathFinding = new PathFinding(world, false, 1000, 2.0f, 0.5f, 0.5f);
 	doPathFinding();
 }
 
@@ -173,32 +179,41 @@ void FlowMapTest::reshape(int32_t width, int32_t height)
 }
 
 void FlowMapTest::doPathFinding() {
+	startPlayerCellDirectionLast.set(0.0f, 0.0f, 0.0f);
 	if (flowMap != nullptr) {
 		delete flowMap;
 		flowMap = nullptr;
 	}
-	if (endPlayerObject1->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
-		startPlayerObject->setTranslation(endPlayerObject1->getTransformations().getTranslation());
-	} else
-	if (endPlayerObject2->getTranslation().clone().sub(startPlayerObject->getTranslation()).computeLength() < 1.0f) {
-		startPlayerObject->setTranslation(endPlayerObject2->getTransformations().getTranslation());
-	}
 	startPlayerObject->update();
-	startPlayerCellPosition.set(startPlayerObject->getTranslation());
-	startPlayerCellDirection = Vector3();
+	startPlayerCellPosition.set(pathPositions[(int)(Math::random() * pathPositions.size())]);
+	startPlayerObject->setTranslation(startPlayerCellPosition);
+	startPlayerObject->update();
+	startPlayerCellDirection.set(0.0f, 0.0f, 0.0f);
 	endPlayerObject1->setTranslation(pathPositions[(int)(Math::random() * pathPositions.size())]);
 	endPlayerObject1->update();
 	endPlayerObject2->setTranslation(pathPositions[(int)(Math::random() * pathPositions.size())]);
 	endPlayerObject2->update();
+	vector<Vector3> path;
+	pathFinding->findPath(
+		startPlayerObject->getTransformations().getTranslation(),
+		endPlayerObject1->getTransformations().getTranslation(),
+		Level::RIGIDBODY_TYPEID_STATIC,
+		path
+	);
+	Console::println("Found a path: steps: " + to_string(path.size()));
+	auto center = level.getBoundingBox()->getCenter();
+	auto depth = Math::ceil(level.getBoundingBox()->getDimensions().getZ());
+	auto width = Math::ceil(level.getBoundingBox()->getDimensions().getX());
 	flowMap = pathFinding->createFlowMap(
 		{
 			endPlayerObject1->getTransformations().getTranslation(),
-			endPlayerObject2->getTransformations().getTranslation()
+			endPlayerObject2->getTransformations().getTranslation(),
 		},
-		level.getBoundingBox()->getCenter(),
-		Math::ceil(level.getBoundingBox()->getDimensions().getZ()),
-		Math::ceil(level.getBoundingBox()->getDimensions().getX()),
-		Level::RIGIDBODY_TYPEID_STATIC
+		center,
+		width * 2.0f,
+		depth * 2.0f,
+		Level::RIGIDBODY_TYPEID_STATIC,
+		path
 	);
 	auto i = 0;
 	while(true == true) {
@@ -209,19 +224,15 @@ void FlowMapTest::doPathFinding() {
 	}
 	if (flowMap == nullptr) return;
 	i = 0;
-	auto stepSize = 0.5f;
-	auto center = level.getBoundingBox()->getCenter();
-	auto depth = Math::ceil(level.getBoundingBox()->getDimensions().getZ());
-	auto width = Math::ceil(level.getBoundingBox()->getDimensions().getX());
-	for (auto z = -depth / 2; z < depth / 2; z+= stepSize)
-	for (auto x = -width / 2; x < width / 2; x+= stepSize) {
+	for (auto z = -depth / 2; z <= depth / 2; z+= flowMap->getStepSize())
+	for (auto x = -width / 2; x <= width / 2; x+= flowMap->getStepSize()) {
 		auto cellPosition = Vector3(
 			x + center.getX(),
 			0.0f,
 			z + center.getZ()
 		);
 		auto cell = flowMap->getCell(cellPosition.getX(), cellPosition.getZ());
-		if (cell == nullptr || cell->isWalkable() == false) continue;
+		if (cell == nullptr) continue;
 		auto flowDirectionEntityId = "flowdirection." + to_string(i);
 		auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
 		auto cellObject = new Object3D(flowDirectionEntityId, emptyModel);
@@ -229,6 +240,7 @@ void FlowMapTest::doPathFinding() {
 		cellObject->setTranslation(cellPosition + Vector3(0.0f, 0.25f, 0.0f));
 		cellObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), yRotationAngle - 90.0f);
 		cellObject->setDisableDepthTest(true);
+		if (cell->isWalkable() == false) cellObject->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 		cellObject->update();
 		engine->addEntity(cellObject);
 		i++;

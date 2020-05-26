@@ -43,13 +43,13 @@ private:
 	LevelEditorEntity* playerModelEntity { nullptr };
 	Model* emptyModel { nullptr };
 	Object3D* startPlayerObject { nullptr };
+	Vector3 startPlayerCellDirectionLast;
 	Vector3 startPlayerCellDirection;
 	Vector3 startPlayerCellPosition;
 	Object3D* endPlayerObject1 { nullptr };
 	Object3D* endPlayerObject2 { nullptr };
 	PathFinding* pathFinding { nullptr };
 	vector<Vector3> pathPositions;
-	vector<Vector3> path;
 	int64_t timeLastUpdate;
 	FlowMap* flowMap { nullptr };
 
