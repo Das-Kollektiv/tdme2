@@ -204,4 +204,12 @@ public:
 		return &cellIt->second;
 	}
 
+	/**
+	 * Cell map getter
+	 * @returns cell map
+	 */
+	inline const map<string, FlowMapCell>& getCellMap() {
+		return cells;
+	}
+
 };
