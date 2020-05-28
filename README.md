@@ -115,15 +115,11 @@
         - rigid body simulator
         - ray tracing
         - for RP3D internals and additional features see ReactPhysics3D website
-    - path finding
+    - path finding/flow maps
         - uses A*
         - is paired with physics world to determine if a "cell" is walkable
         - optional custom walkable test
-    - path finding/flow maps
         - path finding utility supports generating flow maps
-        - uses fast dijkstra algorithm
-        - is paired with physics world to determine if a "cell" is walkable
-        - optional custom walkable test
     - 3d audio
         - decoder
           - ogg vorbis decoder

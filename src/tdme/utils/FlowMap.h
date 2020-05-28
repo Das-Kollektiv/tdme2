@@ -50,40 +50,30 @@ private:
 
 public:
 	/**
-	 * Return string representation of given x,z for path finding key
+	 * Return string representation of given x,z for flow map cell id
 	 * @param x x
 	 * @param z z
 	 * @return string representation
 	 */
-	inline string toKey(float x, float z) const {
-		return toKey(x, z, stepSize);
+	inline string toId(float x, float z) const {
+		return toId(x, z, stepSize);
 	}
 
 	/**
-	 * Return string representation of given x,z for path finding key
+	 * Return string representation of given x,z for flow map cell id
 	 * @param x x
 	 * @param z z
 	 * @param stepSize step size
 	 * @return string representation
 	 */
-	inline static string toKey(float x, float z, float stepSize) {
-		/*
+	inline static string toId(float x, float z, float stepSize) {
 		string result;
 		int32_t value = 0;
 		result.reserve(sizeof(value) * 2);
-		value = static_cast<int>(x * 10.0f);
-		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(z * 10.0f);
-		result.append((char*)&value, sizeof(value));
-		return result;
-		*/
-		string result;
-		int32_t value = 0;
 		value = static_cast<int>(Math::ceil(x / stepSize));
-		result+= to_string(value);
-		result+= ",";
+		result.append((char*)&value, sizeof(value));
 		value = static_cast<int>(Math::ceil(z / stepSize));
-		result+= to_string(value);
+		result.append((char*)&value, sizeof(value));
 		return result;
 	}
 
@@ -124,16 +114,17 @@ public:
 	}
 
 	/**
-	 * Return string representation of given x,z integer flow map position representation for path finding key
+	 * Return string representation of given x,z integer flow map position representation for flow map cell id
 	 * @param x x
 	 * @param z z
 	 * @return string representation
 	 */
-	inline static string toKeyInt(int x, int z) {
+	inline static string toIdInt(int x, int z) {
 		string result;
-		result+= to_string(x);
-		result+= ",";
-		result+= to_string(z);
+		int32_t value = 0;
+		result.reserve(sizeof(x) * 2);
+		result.append((char*)&x, sizeof(x));
+		result.append((char*)&z, sizeof(z));
 		return result;
 	}
 
@@ -179,7 +170,7 @@ public:
 	 * @return cell
 	 */
 	inline const FlowMapCell* getCell(float x, float z) const {
-		auto id = toKey(
+		auto id = toId(
 			alignPositionComponent(x),
 			alignPositionComponent(z)
 		);
@@ -195,7 +186,7 @@ public:
 	 * @return cell
 	 */
 	inline FlowMapCell* getCell(float x, float z) {
-		auto cellId = toKey(
+		auto cellId = toId(
 			alignPositionComponent(x),
 			alignPositionComponent(z)
 		);

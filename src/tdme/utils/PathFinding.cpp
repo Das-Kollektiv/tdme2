@@ -59,7 +59,7 @@ PathFinding::~PathFinding() {
 }
 
 bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
-	auto cacheId = toKey(x, y, z) + ";" + to_string(collisionTypeIds) + ";" + to_string(ignoreStepUpMax);
+	auto cacheId = toId(x, y, z) + ";" + to_string(collisionTypeIds) + ";" + to_string(ignoreStepUpMax);
 	auto walkableCacheIt = walkableCache.find(cacheId);
 	if (walkableCacheIt != walkableCache.end()) {
 		height = walkableCacheIt->second;
@@ -86,7 +86,7 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 		Vector3(0.0f, 1.0f, 0.0f)
 	);
 
-	auto cacheId = toKey(x, y, z) + ";" + to_string(collisionTypeIds) + ";slope;" + to_string(slopeAngle);
+	auto cacheId = toId(x, y, z) + ";" + to_string(collisionTypeIds) + ";slope;" + to_string(slopeAngle);
 	auto walkableCacheIt = walkableCache.find(cacheId);
 	if (walkableCacheIt != walkableCache.end()) {
 		auto height = walkableCacheIt->second;
@@ -155,7 +155,10 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 	start.costsAll = 0.0f;
 	start.costsReachPoint = 0.0f;
 	start.costsEstimated = 0.0f;
-	start.key = toKey(
+	start.x = getIntegerPositionComponent(start.position.getX());
+	start.y = 0;
+	start.z = getIntegerPositionComponent(start.position.getZ());
+	start.id = toId(
 		start.position.getX(),
 		start.position.getY(),
 		start.position.getZ()
@@ -166,7 +169,10 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 	end.costsAll = 0.0f;
 	end.costsReachPoint = 0.0f;
 	end.costsEstimated = 0.0f;
-	end.key = toKey(
+	end.x = getIntegerPositionComponent(end.position.getX());
+	end.y = 0;
+	end.z = getIntegerPositionComponent(end.position.getZ());
+	end.id = toId(
 		end.position.getX(),
 		end.position.getY(),
 		end.position.getZ()
@@ -177,16 +183,11 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 	start.costsAll = start.costsEstimated;
 
 	// put to open nodes
-	openNodes[start.key] = start;
+	openNodes[start.id] = start;
 }
 
-void PathFinding::step(const PathFindingNode& node) {
-	auto nodeKey = node.key;
-
-	//
-	auto nodeX = FlowMap::getIntegerPositionComponent(node.position.getX(), stepSize);
-	auto nodeY = FlowMap::getIntegerPositionComponent(node.position.getY(), stepSize);
-	auto nodeZ = FlowMap::getIntegerPositionComponent(node.position.getZ(), stepSize);
+void PathFinding::step(const PathFindingNode& node, const set<string>* nodesToTestPtr, bool zeroHeightInId) {
+	auto nodeId = node.id;
 
 	// Find valid successors
 	for (auto z = -1; z <= 1; z++)
@@ -194,8 +195,16 @@ void PathFinding::step(const PathFindingNode& node) {
 	if ((z != 0 || x != 0) &&
 		(sloping == true ||
 		(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
-		auto successorX = static_cast<float>(x) * stepSize + node.position.getX();
-		auto successorZ = static_cast<float>(z) * stepSize + node.position.getZ();
+		auto successorX = static_cast<float>(x) * stepSize + (nodesToTestPtr != nullptr?static_cast<float>(node.x) * stepSize:node.position.getX());
+		auto successorZ = static_cast<float>(z) * stepSize + (nodesToTestPtr != nullptr?static_cast<float>(node.z) * stepSize:node.position.getZ());
+		if (nodesToTestPtr != nullptr) {
+			auto successorNodeId = toIdInt(
+				node.x + x,
+				0,
+				node.z + z
+			);
+			if (nodesToTestPtr->find(successorNodeId) == nodesToTestPtr->end()) continue;
+		}
 		auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ):true;
 		//
 		float yHeight;
@@ -211,15 +220,18 @@ void PathFinding::step(const PathFindingNode& node) {
 			successorNode.costsAll = 0.0f;
 			successorNode.costsReachPoint = 0.0f;
 			successorNode.costsEstimated = 0.0f;
-			successorNode.key = toKeyInt(
-				nodeX + x,
-				FlowMap::getIntegerPositionComponent(successorNode.position.getY(), stepSize),
-				nodeZ + z
+			successorNode.x = node.x + x;
+			successorNode.y = zeroHeightInId == true?0:getIntegerPositionComponent(successorNode.position.getY());
+			successorNode.z = node.z + z;
+			successorNode.id = toIdInt(
+				successorNode.x,
+				successorNode.y,
+				successorNode.z
 			);
 			// this should never happen, but still I like to check for it
-			if (successorNode.key == nodeKey) {
-				continue;
-			}
+			//if (successorNode.id == nodeId) {
+			//	continue;
+			//}
 			successorNodes.push(successorNode);
 		}
 	}
@@ -233,7 +245,7 @@ void PathFinding::step(const PathFindingNode& node) {
 
 		// Find sucessor node in open nodes list
 		PathFindingNode* openListNode = nullptr;
-		auto openListNodeIt = openNodes.find(successorNode.key);
+		auto openListNodeIt = openNodes.find(successorNode.id);
 		if (openListNodeIt != openNodes.end()) {
 			openListNode = &openListNodeIt->second;
 		}
@@ -251,7 +263,7 @@ void PathFinding::step(const PathFindingNode& node) {
 
 		// Find successor node in closed nodes list
 		PathFindingNode* closedListNode = nullptr;
-		auto closedListNodeIt = closedNodes.find(successorNode.key);
+		auto closedListNodeIt = closedNodes.find(successorNode.id);
 		if (closedListNodeIt != closedNodes.end()) {
 			closedListNode = &closedListNodeIt->second;
 		}
@@ -268,7 +280,7 @@ void PathFinding::step(const PathFindingNode& node) {
 		}
 
 		// Sucessor node is the node with least cost to this point
-		successorNode.previousNodeKey = nodeKey;
+		successorNode.previousNodeId = nodeId;
 		successorNode.costsReachPoint = successorCostsReachPoint;
 		successorNode.costsEstimated = computeDistance(successorNode, end);
 		successorNode.costsAll = successorNode.costsReachPoint + successorNode.costsEstimated;
@@ -285,17 +297,17 @@ void PathFinding::step(const PathFindingNode& node) {
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
-		openNodes[successorNode.key] = successorNode;
+		openNodes[successorNode.id] = successorNode;
 
 		// remove it from stack
 		successorNodes.pop();
 	}
 
 	// add node to closed nodes list, as we checked its successors
-	closedNodes[nodeKey] = node;
+	closedNodes[nodeId] = node;
 
 	// Remove node from open nodes, as we checked its successors
-	openNodes.erase(nodeKey);
+	openNodes.erase(nodeId);
 }
 
 bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
@@ -444,11 +456,11 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 
 			//
 			if (equalsLastNode(node, end)) {
-				end.previousNodeKey = node.previousNodeKey;
+				end.previousNodeId = node.previousNodeId;
 				// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 				int nodesCount = 0;
 				map<string, PathFindingNode>::iterator nodeIt;
-				for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeKey)) != closedNodes.end()?&nodeIt->second:nullptr) {
+				for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeId)) != closedNodes.end()?&nodeIt->second:nullptr) {
 					nodesCount++;
 					// if (nodesCount > 0 && nodesCount % 100 == 0) {
 					//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
@@ -473,7 +485,7 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 				break;
 			} else {
 				// do a step
-				step(node);
+				step(node, nullptr, false);
 			}
 		}
 
@@ -562,19 +574,56 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	const vector<Vector3>& pathToUse = path.empty() == false?path:emptyPath;
 	auto stepSize2 = stepSize + 0.01f;
 
-	// see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
+	// based on path finding and
+	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
 	// generate cost map via dijkstra
-	struct DijkstraCellStruct {
-		string id;
-		int x;
-		int z;
-		bool tested;
-		Vector3 position;
-		bool walkable;
-		float costs;
-	};
-	map<string, DijkstraCellStruct> dijkstraCellMap;
-	vector<DijkstraCellStruct*> dijkstraCellsToProcess;
+
+	// set up end position in costs map
+	if (endPositions.size() == 0) {
+		Console::println("PathFinding::createFlowMap(): no end positions given");
+	}
+
+	// end node
+	auto endNodePosition = Vector3(
+		alignPositionComponent(endPositions[0].getX()),
+		endPositions[0].getY(),
+		alignPositionComponent(endPositions[0].getZ())
+	);
+	end.position = endNodePosition;
+	end.costsAll = 0.0f;
+	end.costsReachPoint = 0.0f;
+	end.costsEstimated = 0.0f;
+	end.x = getIntegerPositionComponent(end.position.getX());
+	end.y = 0;
+	end.z = getIntegerPositionComponent(end.position.getZ());
+	end.id = toIdInt(end.x, end.y, end.z);
+
+	// add to open nodes
+	auto startNodePosition = Vector3(
+		alignPositionComponent(pathToUse[0].getX()),
+		pathToUse[0].getY(),
+		alignPositionComponent(pathToUse[0].getZ())
+	);
+	float nodeYHeight;
+	isWalkableInternal(startNodePosition.getX(), startNodePosition.getY(), startNodePosition.getZ(), nodeYHeight);
+	PathFindingNode node;
+	node.position.set(startNodePosition).setY(nodeYHeight);
+	node.costsAll = 0.0f;
+	node.costsReachPoint = 0.0f;
+	node.costsEstimated = 0.0f;
+	node.x = getIntegerPositionComponent(startNodePosition.getX());
+	node.y = 0;
+	node.z = getIntegerPositionComponent(startNodePosition.getZ());
+	node.id = toIdInt(node.x, node.y, node.z);
+
+	// set up start node costs
+	node.costsEstimated = computeDistance(node, end);
+	node.costsAll = node.costsEstimated;
+
+	// put to open nodes
+	openNodes[node.id] = node;
+
+	// nodes to test
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
 			FlowMap::alignPositionComponent(_centerPathNode.getX(), stepSize),
@@ -585,96 +634,32 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		auto centerPathNodeZ = FlowMap::getIntegerPositionComponent(centerPathNode.getZ(), stepSize);
 		for (auto z = zMin; z <= zMax; z++) {
 			for (auto x = xMin; x <= xMax; x++) {
-				auto cellPosition = Vector3(
-					static_cast<float>(centerPathNodeX) * stepSize + static_cast<float>(x) * stepSize,
-					0.0f,
-					static_cast<float>(centerPathNodeZ) * stepSize + static_cast<float>(z) * stepSize
-				);
-				auto cellId = FlowMap::toKeyInt(
+				auto nodeId = toIdInt(
 					centerPathNodeX + x,
+					0,
 					centerPathNodeZ + z
 				);
-				auto dijkstraCellIt = dijkstraCellMap.find(cellId);
-				if (dijkstraCellIt != dijkstraCellMap.end()) continue;
-				dijkstraCellMap[cellId] =
-					{
-						.id = cellId,
-						.x = centerPathNodeX + x,
-						.z = centerPathNodeZ + z,
-						.tested = false,
-						.position = cellPosition,
-						.walkable = false,
-						.costs = 0.0f
-					};
-				if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): added dijkstra cell: " + cellId);
+				nodesToTest.insert(nodeId);
 			}
 		}
 	}
 
-	// set up end position in costs map
-	if (endPositions.size() == 0) {
-		Console::println("PathFinding::createFlowMap(): no end positions given");
+	// Do A* on open nodes
+	while (openNodes.size() > 0) {
+		// Choose node from open nodes thats least expensive to check its successors
+		PathFindingNode* nodePtr = nullptr;
+		for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
+			if (nodePtr == nullptr || nodeIt->second.costsAll < nodePtr->costsAll) nodePtr = &nodeIt->second;
+		}
+		if (nodePtr == nullptr) break;
+		const auto& node = *nodePtr;
+
+		// do a step
+		step(node, &nodesToTest, true);
 	}
 
-	//
-	for (auto& endPosition: endPositions) {
-		auto endPositionGrid = Vector3(
-			FlowMap::alignPositionComponent(endPosition.getX(), stepSize),
-			endPosition.getY(),
-			FlowMap::alignPositionComponent(endPosition.getZ(), stepSize)
-		);
-		auto endPositionCellId = FlowMap::toKey(
-			endPositionGrid.getX(),
-			endPositionGrid.getZ(),
-			stepSize
-		);
-		auto dijkstraCellEndPositionIt = dijkstraCellMap.find(endPositionCellId);
-		if (dijkstraCellEndPositionIt == dijkstraCellMap.end()) {
-			Console::println("PathFinding::createFlowMap(): end position not in dijkstra cell map: " + to_string(endPosition.getX()) + ", " + to_string(endPosition.getY()) + ", " + to_string(endPosition.getZ()) + ": " + endPositionCellId);
-			return nullptr;
-		} else {
-			auto& dijkstraCellEndPosition = dijkstraCellEndPositionIt->second;
-			dijkstraCellEndPosition.tested = true;
-			dijkstraCellEndPosition.position = endPositionGrid;
-			dijkstraCellEndPosition.walkable = true;
-			dijkstraCellEndPosition.costs = 0.0f;
-			dijkstraCellsToProcess.push_back(&dijkstraCellEndPosition);
-		}
-	}
-
-	// compute costs and put it into map
-	for (auto i = 0; i < dijkstraCellsToProcess.size(); i++) {
-		auto& dijkstraCell = *dijkstraCellsToProcess[i];
-		for (auto z = -1; z <= 1; z++)
-		for (auto x = -1; x <= 1; x++)
-		if (z != 0 || x != 0) {
-			float neighbourX = static_cast<float>(dijkstraCell.x) * stepSize + static_cast<float>(x) * stepSize;
-			float neighbourZ = static_cast<float>(dijkstraCell.z) * stepSize + static_cast<float>(z) * stepSize;
-			auto neighbourCellId = FlowMap::toKeyInt(
-				dijkstraCell.x + x,
-				dijkstraCell.z + z
-			);
-			auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellId);
-			if (dijkstraNeighbourCellIt == dijkstraCellMap.end()) {
-				continue;
-			}
-			auto& dijkstraNeighbourCell = dijkstraNeighbourCellIt->second;
-			if (dijkstraNeighbourCell.tested == true) continue;
-			float neighbourY;
-			//
-			auto walkable = isWalkableInternal(neighbourX, dijkstraCell.position.getY(), neighbourZ, neighbourY);
-			if (walkable == true) {
-				dijkstraNeighbourCell.tested = true;
-				dijkstraNeighbourCell.walkable = walkable;
-				dijkstraNeighbourCell.position.setY(neighbourY);
-				dijkstraNeighbourCell.costs = dijkstraCell.costs + 1.0f;
-				dijkstraCellsToProcess.push_back(&dijkstraNeighbourCell);
-				if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): is walkable I: " + neighbourCellId + ": " + to_string(neighbourY));
-			} else {
-				if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): not walkable I: " + neighbourCellId + ": " + to_string(neighbourY));
-			}
-		}
-	}
+	// clear nodes to test
+	nodesToTest.clear();
 
 	// generate flow map
 	auto flowMap = new FlowMap(stepSize);
@@ -693,82 +678,69 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 					0.0f,
 					static_cast<float>(centerPathNodeZ) * stepSize + static_cast<float>(z) * stepSize
 				);
-				auto cellId = FlowMap::toKeyInt(
+				auto cellId = FlowMap::toIdInt(
 					centerPathNodeX + x,
+					centerPathNodeZ + z
+				);
+				auto nodeId = toIdInt(
+					centerPathNodeX + x,
+					0,
 					centerPathNodeZ + z
 				);
 
 				// do we already have this cell?
 				if (flowMap->hasCell(cellId) == true) continue;
+
 				// walkable?
-				auto dijkstraCellIt = dijkstraCellMap.find(cellId);
-				if (dijkstraCellIt == dijkstraCellMap.end()) {
+				auto nodeIt = closedNodes.find(nodeId);
+				if (nodeIt == closedNodes.end()) {
 					continue;
 				}
-				auto& dijkstraCell = dijkstraCellIt->second;
-				if (dijkstraCell.walkable == false){
-					flowMap->addCell(
-						cellId,
-						cellPosition,
-						false,
-						Vector3()
-					);
-					continue;
-				}
+				auto& node = nodeIt->second;
 				// set y
-				cellPosition.setY(dijkstraCell.position.getY());
+				cellPosition.setY(node.position.getY());
 
 				// check neighbours around our current cell
-				DijkstraCellStruct* minDijkstraCell = nullptr;
-				auto minDijkstraCosts = Float::MAX_VALUE;
+				PathFindingNode* minCostsNode = nullptr;
+				auto minCosts = Float::MAX_VALUE;
 				for (auto _z = -1; _z <= 1; _z++)
 				for (auto _x = -1; _x <= 1; _x++)
 				if (_z != 0 || _x != 0) {
 					//
-					float neighbourX = cellPosition.getX() + static_cast<float>(_x) * stepSize;
-					float neighbourZ = cellPosition.getZ() + static_cast<float>(_z) * stepSize;
-					auto neighbourCellId = FlowMap::toKeyInt(
-						dijkstraCell.x + _x,
-						dijkstraCell.z + _z
+					auto neighbourNodeId = toIdInt(
+						centerPathNodeX + x + _x,
+						0,
+						centerPathNodeZ + z + _z
 					);
-					// same cell?
-					if (neighbourCellId == cellId) continue;
+					// same node?
+					if (neighbourNodeId == nodeId) continue;
 					// do we have this cell?
-					auto dijkstraNeighbourCellIt = dijkstraCellMap.find(neighbourCellId);
-					if (dijkstraNeighbourCellIt == dijkstraCellMap.end()) {
+					auto neighbourNodeIt = closedNodes.find(neighbourNodeId);
+					if (neighbourNodeIt == closedNodes.end()) {
 						// nope
 						continue;
 					} else {
 						// yes && walkable
-						auto& dijkstraNeighbourCell = dijkstraNeighbourCellIt->second;
-						if (dijkstraNeighbourCell.walkable == true /*
-							Math::abs(_x) == 1 && Math::abs(_z) == 1?isSlopeWalkableInternal(cellPosition.getX(), dijkstraCell.position.getY(), cellPosition.getZ(), neighbourX, dijkstraCell.position.getY(), neighbourZ):true*/) {
-							auto dijkstraNeighbourCellCosts = dijkstraNeighbourCell.costs - dijkstraCell.costs;
-							if (minDijkstraCell == nullptr || dijkstraNeighbourCellCosts < minDijkstraCosts) {
-								minDijkstraCell = &dijkstraNeighbourCell;
-								minDijkstraCosts = dijkstraNeighbourCellCosts;
-
-							}
-							if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): is walkable II: " + neighbourCellId);
-						} else {
-							if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): not walkable II: " + neighbourCellId);
+						auto& neighbourNode = neighbourNodeIt->second;
+						if (minCostsNode == nullptr || neighbourNode.costsAll < minCosts) {
+							minCostsNode = &neighbourNode;
+							minCosts = neighbourNode.costsAll;
 						}
 					}
 				}
-				if (minDijkstraCell != nullptr) {
-					auto direction = minDijkstraCell->position.clone().sub(dijkstraCell.position).setY(0.0f).normalize();
+				if (minCostsNode != nullptr) {
+					auto direction = minCostsNode->position.clone().sub(node.position).setY(0.0f).normalize();
 					if (Float::isNaN(direction.getX()) || Float::isNaN(direction.getY()) || Float::isNaN(direction.getZ())) {
 						Console::println(
-							"PathFinding::createFlowMap(): NaN: " +
-							minDijkstraCell->id + "; " +
-							to_string(minDijkstraCell->position.getX()) + ", " +
-							to_string(minDijkstraCell->position.getY()) + ", " +
-							to_string(minDijkstraCell->position.getZ()) + " -> " +
-							dijkstraCell.id + "; " +
-							to_string(dijkstraCell.position.getX()) + ", " +
-							to_string(dijkstraCell.position.getY()) + ", " +
-							to_string(dijkstraCell.position.getZ()) + ": " +
-							to_string(minDijkstraCell == &dijkstraCell) + "; " +
+							minCostsNode->id + "; " +
+							to_string(minCostsNode->position.getX()) + ", " +
+							to_string(minCostsNode->position.getY()) + ", " +
+							to_string(minCostsNode->position.getZ()) + " -> " +
+							node.id + "; " +
+							to_string(node.position.getX()) + ", " +
+							to_string(node.position.getY()) + ", " +
+							to_string(node.position.getZ()) + ": " +
+							to_string(minCostsNode == &node) + "; " +
 							to_string(cellPosition.getX()) + ", " +
 							to_string(cellPosition.getY()) + ", " +
 							to_string(cellPosition.getZ()) + "; " +
@@ -778,14 +750,17 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 					flowMap->addCell(
 						cellId,
 						cellPosition,
-						minDijkstraCell->walkable,
+						true,
 						direction
 					);
-					if (VERBOSE == true) Console::println("PathFinding::createFlowMap(): add cell: " + cellId);
 				}
 			}
 		}
 	}
+
+	// reset
+	openNodes.clear();
+	closedNodes.clear();
 
 	// do some post adjustments
 	for (auto& _centerPathNode: pathToUse) {
@@ -803,26 +778,26 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 					0.0f,
 					static_cast<float>(centerPathNodeZ) * stepSize + static_cast<float>(z) * stepSize
 				);
-				auto cellId = FlowMap::toKeyInt(
+				auto cellId = FlowMap::toIdInt(
 					centerPathNodeX + x,
 					centerPathNodeZ + z
 				);
 				auto cell = flowMap->getCell(cellId);
 				if (cell == nullptr) continue;
-				auto topCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x, centerPathNodeZ + z - 1));
-				if (topCell != nullptr && topCell->isWalkable() == false && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() < 0.0f){
+				auto topCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x, centerPathNodeZ + z - 1));
+				if (topCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() < 0.0f){
 					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
 				}
-				auto bottomCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x, centerPathNodeZ + z + 1));
-				if (bottomCell != nullptr && bottomCell->isWalkable() == false && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() > 0.0f){
+				auto bottomCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x, centerPathNodeZ + z + 1));
+				if (bottomCell == nullptr && Math::abs(cell->getDirection().getX()) > 0.0f && cell->getDirection().getZ() > 0.0f){
 					cell->setDirection(cell->getDirection().clone().setZ(0.0f).normalize());
 				}
-				auto leftCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x - 1, centerPathNodeZ + z));
-				if (leftCell != nullptr && leftCell->isWalkable() == false && cell->getDirection().getX() < 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
+				auto leftCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x - 1, centerPathNodeZ + z));
+				if (leftCell == nullptr && cell->getDirection().getX() < 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
 					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
 				}
-				auto rightCell = flowMap->getCell(FlowMap::toKeyInt(centerPathNodeX + x + 1, centerPathNodeZ + z));
-				if (rightCell != nullptr && rightCell->isWalkable() == false && cell->getDirection().getX() > 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
+				auto rightCell = flowMap->getCell(FlowMap::toIdInt(centerPathNodeX + x + 1, centerPathNodeZ + z));
+				if (rightCell == nullptr && cell->getDirection().getX() > 0.0f && Math::abs(cell->getDirection().getZ()) > 0.0f){
 					cell->setDirection(cell->getDirection().clone().setX(0.0f).normalize());
 				}
 			}

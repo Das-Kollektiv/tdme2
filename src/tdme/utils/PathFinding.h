@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include <stack>
 #include <string>
 #include <vector>
@@ -17,6 +18,7 @@
 #include <tdme/utils/PathFindingCustomTest.h>
 
 using std::map;
+using std::set;
 using std::stack;
 using std::string;
 using std::to_string;
@@ -76,100 +78,68 @@ public:
 	}
 
 	/**
-	 * Return string representation of given x,y,z for path finding key
+	 * Return string representation of given x,y,z for path finding id
 	 * @param x x
 	 * @param y y
 	 * @param z z
 	 * @param stepSize step size  
 	 * @return string representation
 	 */
-	inline string toKey(float x, float y, float z) {
-		return toKey(x, y, z, stepSize);
+	inline string toId(float x, float y, float z) {
+		return toId(x, y, z, stepSize);
 	}
 
 	/**
-	 * Return string representation of given x,y,z for path finding key
+	 * Return string representation of given x,y,z for path finding id
 	 * @param x x
 	 * @param y y
 	 * @param z z
 	 * @return string representation
 	 */
-	inline static string toKey(float x, float y, float z, float stepSize) {
-		/*
+	inline static string toId(float x, float y, float z, float stepSize) {
 		string result;
 		int32_t value = 0;
 		result.reserve(sizeof(value) * 3);
-		value = static_cast<int>(x * 10.0f);
-		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(y * 10.0f);
-		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(z * 10.0f);
-		result.append((char*)&value, sizeof(value));
-		return result;
-		*/
-		string result;
-		int32_t value = 0;
 		value = static_cast<int>(Math::ceil(x / stepSize));
-		result+= to_string(value);
-		result+= ",";
+		result.append((char*)&value, sizeof(value));
 		value = static_cast<int>(Math::ceil(y / stepSize));
-		result+= to_string(value);
-		result+= ",";
+		result.append((char*)&value, sizeof(value));
 		value = static_cast<int>(Math::ceil(z / stepSize));
-		result+= to_string(value);
+		result.append((char*)&value, sizeof(value));
 		return result;
 	}
 
 	/**
 	 * Align position component
 	 * @param value value which is usually a position vector 3 position component
-	 * @param stepSize step size
 	 */
-	inline static float alignPositionComponent(float value, float stepSize) {
+	inline float alignPositionComponent(float value) {
 		return Math::floor(value / stepSize) * stepSize;
 	}
 
 	/**
-	 * Align position component
-	 * @param value value which is usually a position vector 3 position component
-	 */
-	inline float alignPositionComponent(float value) const {
-		return alignPositionComponent(value, stepSize);
-	}
-
-	/**
-	 * Returns integer position component
-	 * @param value value
-	 * @return integer position component
-	 */
-	inline int getIntegerPositionComponent(float value) {
-		return static_cast<int>(alignPositionComponent(value, stepSize) / stepSize);
-	}
-
-	/**
 	 * Returns integer position component
 	 * @param value value
 	 * @param stepSize step size
 	 * @return integer position component
 	 */
-	inline static int getIntegerPositionComponent(float value, float stepSize) {
-		return static_cast<int>(alignPositionComponent(value, stepSize) / stepSize);
+	inline int getIntegerPositionComponent(float value) {
+		return static_cast<int>(alignPositionComponent(value) / stepSize);
 	}
 
 	/**
-	 * Return string representation of given x,z integer flow map position representation for path finding key
+	 * Return string representation of given x,z integer flow map position representation for path finding id
 	 * @param x x
 	 * @param y y
 	 * @param z z
 	 * @return string representation
 	 */
-	inline static string toKeyInt(int x, int y, int z) {
+	inline static string toIdInt(int x, int y, int z) {
 		string result;
-		result+= to_string(x);
-		result+= ",";
-		result+= to_string(y);
-		result+= ",";
-		result+= to_string(z);
+		result.reserve(sizeof(x) * 3);
+		result.append((char*)&x, sizeof(x));
+		result.append((char*)&y, sizeof(y));
+		result.append((char*)&z, sizeof(z));
 		return result;
 	}
 
@@ -217,9 +187,14 @@ private:
 	struct PathFindingNode final
 	{
 		/**
-		 * Node key
+		 * Node id
 		 */
-		string key;
+		string id;
+
+		/**
+		 * Previous node
+		 */
+		string previousNodeId;
 
 		/**
 		 * Position
@@ -242,10 +217,19 @@ private:
 		float costsEstimated;
 
 		/**
-		 * Previous node
+		 * Integer position along x axis
 		 */
-		string previousNodeKey;
+		int x;
 
+		/**
+		 * Integer position along y axis
+		 */
+		int y;
+
+		/**
+		 * Integer position along z axis
+		 */
+		int z;
 	};
 
 	/**
@@ -314,9 +298,12 @@ private:
 
 	/**
 	 * Processes one step in AStar path finding
+	 * @param node node
+	 * @param nodesToTest nodes to test or nullptr, applies to flow cost map generation
+	 * @param zeroHeightInId have no height stored in ids, applies to flow cost map generation
 	 * @return step status
 	 */
-	void step(const PathFindingNode& node);
+	void step(const PathFindingNode& node, const set<string>* nodesToTest, bool zeroHeightInId);
 
 	// properties
 	World* world { nullptr };
@@ -334,6 +321,7 @@ private:
 	stack<PathFindingNode> successorNodes;
 	map<string, PathFindingNode> openNodes;
 	map<string, PathFindingNode> closedNodes;
+	set<string> nodesToTest;
 	BoundingVolume* actorBoundingVolume { nullptr };
 	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
 	map<string, float> walkableCache;
