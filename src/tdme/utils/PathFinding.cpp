@@ -58,11 +58,6 @@ PathFinding::PathFinding(World* world, bool sloping, int stepsMax, float actorHe
 PathFinding::~PathFinding() {
 }
 
-void PathFinding::reset() {
-	openNodes.clear();
-	closedNodes.clear();
-}
-
 bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, uint16_t collisionTypeIds, bool ignoreStepUpMax) {
 	auto cacheId = toKey(x, y, z) + ";" + to_string(collisionTypeIds) + ";" + to_string(ignoreStepUpMax);
 	auto walkableCacheIt = walkableCache.find(cacheId);
@@ -491,7 +486,10 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 		}
 
 		// reset
-		reset();
+		openNodes.clear();
+		closedNodes.clear();
+
+		//
 		tries++;
 
 		//

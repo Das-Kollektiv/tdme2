@@ -73,7 +73,7 @@ public:
 	/**
 	 * Clear caches
 	 */
-	inline void clearCaches() {
+	inline void reset() {
 		walkableCache.clear();
 	}
 
@@ -171,11 +171,6 @@ private:
 		string previousNodeKey;
 
 	};
-
-	/**
-	 * Reset path finding
-	 */
-	void reset();
 
 	/**
 	 * Computes non square rooted distance between a and b
