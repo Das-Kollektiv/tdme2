@@ -50,23 +50,6 @@ private:
 
 public:
 	/**
-	 * Align position component
-	 * @param value value which is usually a position vector 3 position component
-	 * @param stepSize step size
-	 */
-	inline static float alignPositionComponent(float value, float stepSize) {
-		return Math::floor(value / stepSize) * stepSize;
-	}
-
-	/**
-	 * Align position component
-	 * @param value value which is usually a position vector 3 position component
-	 */
-	inline float alignPositionComponent(float value) const {
-		return alignPositionComponent(value, stepSize);
-	}
-
-	/**
 	 * Return string representation of given x,z for path finding key
 	 * @param x x
 	 * @param z z
@@ -102,6 +85,23 @@ public:
 		value = static_cast<int>(Math::ceil(z / stepSize));
 		result+= to_string(value);
 		return result;
+	}
+
+	/**
+	 * Align position component
+	 * @param value value which is usually a position vector 3 position component
+	 * @param stepSize step size
+	 */
+	inline static float alignPositionComponent(float value, float stepSize) {
+		return Math::floor(value / stepSize) * stepSize;
+	}
+
+	/**
+	 * Align position component
+	 * @param value value which is usually a position vector 3 position component
+	 */
+	inline float alignPositionComponent(float value) const {
+		return alignPositionComponent(value, stepSize);
 	}
 
 	/**

@@ -183,14 +183,19 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 void PathFinding::step(const PathFindingNode& node) {
 	auto nodeKey = node.key;
 
+	//
+	auto nodeX = FlowMap::getIntegerPositionComponent(node.position.getX(), stepSize);
+	auto nodeY = FlowMap::getIntegerPositionComponent(node.position.getY(), stepSize);
+	auto nodeZ = FlowMap::getIntegerPositionComponent(node.position.getZ(), stepSize);
+
 	// Find valid successors
 	for (auto z = -1; z <= 1; z++)
 	for (auto x = -1; x <= 1; x++)
 	if ((z != 0 || x != 0) &&
 		(sloping == true ||
 		(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
-		float successorX = x * stepSize + node.position.getX();
-		float successorZ = z * stepSize + node.position.getZ();
+		auto successorX = static_cast<float>(x) * stepSize + node.position.getX();
+		auto successorZ = static_cast<float>(z) * stepSize + node.position.getZ();
 		auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ):true;
 		//
 		float yHeight;
@@ -206,10 +211,10 @@ void PathFinding::step(const PathFindingNode& node) {
 			successorNode.costsAll = 0.0f;
 			successorNode.costsReachPoint = 0.0f;
 			successorNode.costsEstimated = 0.0f;
-			successorNode.key = toKey(
-				successorNode.position.getX(),
-				successorNode.position.getY(),
-				successorNode.position.getZ()
+			successorNode.key = toKeyInt(
+				nodeX + x,
+				FlowMap::getIntegerPositionComponent(successorNode.position.getY(), stepSize),
+				nodeZ + z
 			);
 			// this should never happen, but still I like to check for it
 			if (successorNode.key == nodeKey) {
