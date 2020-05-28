@@ -178,8 +178,11 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 		end.position.getZ()
 	);
 
+	// end positions
+	endPositions = { endPosition };
+
 	// set up start node costs
-	start.costsEstimated = computeDistance(start, end);
+	start.costsEstimated = computeDistanceToEnd(start);
 	start.costsAll = start.costsEstimated;
 
 	// put to open nodes
@@ -282,7 +285,7 @@ void PathFinding::step(const PathFindingNode& node, const set<string>* nodesToTe
 		// Sucessor node is the node with least cost to this point
 		successorNode.previousNodeId = nodeId;
 		successorNode.costsReachPoint = successorCostsReachPoint;
-		successorNode.costsEstimated = computeDistance(successorNode, end);
+		successorNode.costsEstimated = computeDistanceToEnd(successorNode);
 		successorNode.costsAll = successorNode.costsReachPoint + successorNode.costsEstimated;
 
 		// Remove found node from open nodes list, since it was less optimal
@@ -532,6 +535,8 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 }
 
 FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, PathFindingCustomTest* customTest) {
+	this->endPositions = endPositions;
+
 	// set up custom test
 	this->customTest = customTest;
 
@@ -583,21 +588,6 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		Console::println("PathFinding::createFlowMap(): no end positions given");
 	}
 
-	// end node
-	auto endNodePosition = Vector3(
-		alignPositionComponent(endPositions[0].getX()),
-		endPositions[0].getY(),
-		alignPositionComponent(endPositions[0].getZ())
-	);
-	end.position = endNodePosition;
-	end.costsAll = 0.0f;
-	end.costsReachPoint = 0.0f;
-	end.costsEstimated = 0.0f;
-	end.x = getIntegerPositionComponent(end.position.getX());
-	end.y = 0;
-	end.z = getIntegerPositionComponent(end.position.getZ());
-	end.id = toIdInt(end.x, end.y, end.z);
-
 	// add to open nodes
 	auto startNodePosition = Vector3(
 		alignPositionComponent(pathToUse[0].getX()),
@@ -616,8 +606,11 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	node.z = getIntegerPositionComponent(startNodePosition.getZ());
 	node.id = toIdInt(node.x, node.y, node.z);
 
+	// not in use in this case, this does not make sense, I still like it lol
+	end = PathFindingNode();
+
 	// set up start node costs
-	node.costsEstimated = computeDistance(node, end);
+	node.costsEstimated = computeDistanceToEnd(node);
 	node.costsAll = node.costsEstimated;
 
 	// put to open nodes

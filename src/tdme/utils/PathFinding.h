@@ -243,6 +243,20 @@ private:
 	}
 
 	/**
+	 * Computes minimal non square rooted distance between node and end points
+	 * @param node node
+	 * @return non square rooted distance
+	 */
+	inline float computeDistanceToEnd(const PathFindingNode& node) {
+		float distance = Float::MAX_VALUE;
+		for (auto& endPosition: endPositions) {
+			auto _distance = node.position.clone().sub(endPosition).computeLengthSquared();
+			if (_distance < distance) distance = _distance;
+		}
+		return distance;
+	}
+
+	/**
 	 * Returns if nodes are equals
 	 * @param a a
 	 * @param bX b x coordinate
@@ -318,6 +332,7 @@ private:
 	uint16_t collisionTypeIds;
 	int maxTries;
 	PathFindingNode end;
+	vector<Vector3> endPositions;
 	stack<PathFindingNode> successorNodes;
 	map<string, PathFindingNode> openNodes;
 	map<string, PathFindingNode> closedNodes;
