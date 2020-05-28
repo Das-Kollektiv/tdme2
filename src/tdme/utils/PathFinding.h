@@ -40,8 +40,6 @@ using tdme::utils::PathFindingCustomTest;
 class tdme::utils::PathFinding final
 {
 public:
-	enum PathFindingStatus {PATH_STEP, PATH_FOUND, PATH_NOWAY};
-
 	static constexpr bool VERBOSE { false };
 
 	/**
@@ -240,7 +238,7 @@ private:
 	 * Processes one step in AStar path finding
 	 * @return step status
 	 */
-	PathFindingStatus step();
+	void step(const PathFindingNode& node);
 
 	// properties
 	World* world { nullptr };

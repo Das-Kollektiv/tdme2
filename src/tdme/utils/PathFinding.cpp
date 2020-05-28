@@ -180,62 +180,42 @@ void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition
 	openNodes[start.key] = start;
 }
 
-PathFinding::PathFindingStatus PathFinding::step() {
-	// check if there are still open nodes available
-	if (openNodes.size() == 0) {
-		return PathFindingStatus::PATH_NOWAY;
-	}
-
-	// Choose node from open nodes thats least expensive to check its successors
-	PathFindingNode* nodePtr = nullptr;
-	for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
-		if (nodePtr == nullptr || nodeIt->second.costsAll < nodePtr->costsAll) nodePtr = &nodeIt->second;
-	}
-
-	//
-	if (nodePtr == nullptr) return PathFindingStatus::PATH_NOWAY;
-	const auto& node = *nodePtr;
+void PathFinding::step(const PathFindingNode& node) {
 	auto nodeKey = node.key;
 
-	//
-	if (equalsLastNode(node, end)) {
-		end.previousNodeKey = node.previousNodeKey;
-		return PathFindingStatus::PATH_FOUND;
-	} else {
-		// Find valid successors
-		for (auto z = -1; z <= 1; z++)
-		for (auto x = -1; x <= 1; x++)
-		if ((z != 0 || x != 0) &&
-			(sloping == true ||
-			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
-			float successorX = x * stepSize + node.position.getX();
-			float successorZ = z * stepSize + node.position.getZ();
-			auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ):true;
-			//
-			float yHeight;
-			// first node or walkable?
-			if (slopeWalkable == true && isWalkableInternal(successorX, node.position.getY(), successorZ, yHeight) == true) {
-				// check if successor node equals previous node / node
-				if (equals(node, successorX, yHeight, successorZ)) {
-					continue;
-				}
-				// Add the node to the available sucessorNodes
-				PathFindingNode successorNode;
-				successorNode.position = Vector3(successorX, yHeight, successorZ);
-				successorNode.costsAll = 0.0f;
-				successorNode.costsReachPoint = 0.0f;
-				successorNode.costsEstimated = 0.0f;
-				successorNode.key = toKey(
-					successorNode.position.getX(),
-					successorNode.position.getY(),
-					successorNode.position.getZ()
-				);
-				// this should never happen, but still I like to check for it
-				if (successorNode.key == nodeKey) {
-					continue;
-				}
-				successorNodes.push(successorNode);
+	// Find valid successors
+	for (auto z = -1; z <= 1; z++)
+	for (auto x = -1; x <= 1; x++)
+	if ((z != 0 || x != 0) &&
+		(sloping == true ||
+		(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
+		float successorX = x * stepSize + node.position.getX();
+		float successorZ = z * stepSize + node.position.getZ();
+		auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ):true;
+		//
+		float yHeight;
+		// first node or walkable?
+		if (slopeWalkable == true && isWalkableInternal(successorX, node.position.getY(), successorZ, yHeight) == true) {
+			// check if successor node equals previous node / node
+			if (equals(node, successorX, yHeight, successorZ)) {
+				continue;
 			}
+			// Add the node to the available sucessorNodes
+			PathFindingNode successorNode;
+			successorNode.position = Vector3(successorX, yHeight, successorZ);
+			successorNode.costsAll = 0.0f;
+			successorNode.costsReachPoint = 0.0f;
+			successorNode.costsEstimated = 0.0f;
+			successorNode.key = toKey(
+				successorNode.position.getX(),
+				successorNode.position.getY(),
+				successorNode.position.getZ()
+			);
+			// this should never happen, but still I like to check for it
+			if (successorNode.key == nodeKey) {
+				continue;
+			}
+			successorNodes.push(successorNode);
 		}
 	}
 
@@ -311,9 +291,6 @@ PathFinding::PathFindingStatus PathFinding::step() {
 
 	// Remove node from open nodes, as we checked its successors
 	openNodes.erase(nodeKey);
-
-	//
-	return PathFindingStatus::PATH_STEP;
 }
 
 bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosition, const uint16_t collisionTypeIds, vector<Vector3>& path, int alternativeEndSteps, PathFindingCustomTest* customTest) {
@@ -441,47 +418,57 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 		// do the steps
 		bool done = false;
 		for (auto stepIdx = 0; done == false && stepIdx < stepsMax; stepIdx++) {
-			PathFindingStatus status = step();
-			switch(status) {
-				case PATH_STEP:
-					{
-						break;
-					}
-				case PATH_NOWAY:
-					{
-						// Console::println("PathFinding::findPath(): path no way with steps: " + to_string(stepIdx));
+			// check if there are still open nodes available
+			if (openNodes.size() == 0) {
+				done = true;
+				break;
+			}
+
+			// Choose node from open nodes thats least expensive to check its successors
+			PathFindingNode* nodePtr = nullptr;
+			for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
+				if (nodePtr == nullptr || nodeIt->second.costsAll < nodePtr->costsAll) nodePtr = &nodeIt->second;
+			}
+
+			//
+			if (nodePtr == nullptr) {
+				done = true;
+				break;
+			}
+			const auto& node = *nodePtr;
+
+			//
+			if (equalsLastNode(node, end)) {
+				end.previousNodeKey = node.previousNodeKey;
+				// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
+				int nodesCount = 0;
+				map<string, PathFindingNode>::iterator nodeIt;
+				for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeKey)) != closedNodes.end()?&nodeIt->second:nullptr) {
+					nodesCount++;
+					// if (nodesCount > 0 && nodesCount % 100 == 0) {
+					//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
+					// }
+					if (Float::isNaN(nodePtr->position.getX()) ||
+						Float::isNaN(nodePtr->position.getY()) ||
+						Float::isNaN(nodePtr->position.getZ())) {
+						Console::println("PathFinding::findPath(): compute path: step: NaN");
 						done = true;
 						break;
 					}
-				case PATH_FOUND:
-					{
-						// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
-						int nodesCount = 0;
-						map<string, PathFindingNode>::iterator nodeIt;
-						for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeKey)) != closedNodes.end()?&nodeIt->second:nullptr) {
-							nodesCount++;
-							// if (nodesCount > 0 && nodesCount % 100 == 0) {
-							//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
-							// }
-							if (Float::isNaN(nodePtr->position.getX()) ||
-								Float::isNaN(nodePtr->position.getY()) ||
-								Float::isNaN(nodePtr->position.getZ())) {
-								Console::println("PathFinding::findPath(): compute path: step: NaN");
-								done = true;
-								break;
-							}
-							path.push_back(nodePtr->position);
-						}
-						reverse(path.begin(), path.end());
-						if (path.size() > 1) path.erase(path.begin());
-						if (path.size() == 0) {
-							// Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
-							path.push_back(endPositionComputed);
-						}
-						done = true;
-						success = true;
-						break;
-					}
+					path.push_back(nodePtr->position);
+				}
+				reverse(path.begin(), path.end());
+				if (path.size() > 1) path.erase(path.begin());
+				if (path.size() == 0) {
+					// Console::println("PathFinding::findPath(): path with 0 steps: Fixing!");
+					path.push_back(endPositionComputed);
+				}
+				done = true;
+				success = true;
+				break;
+			} else {
+				// do a step
+				step(node);
 			}
 		}
 
