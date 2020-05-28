@@ -9,7 +9,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::utils::FlowMapCell {
+class tdme::utils::FlowMapCell final {
 public:
 	/**
 	 * Default constructor

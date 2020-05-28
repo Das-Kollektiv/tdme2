@@ -14,7 +14,6 @@
 #include <tdme/utils/Console.h>
 #include <tdme/utils/FlowMap.h>
 #include <tdme/utils/FlowMapCell.h>
-#include <tdme/utils/PathFindingNode.h>
 #include <tdme/utils/PathFindingCustomTest.h>
 
 using std::map;
@@ -31,7 +30,6 @@ using tdme::math::Vector3;
 using tdme::utils::Console;
 using tdme::utils::FlowMap;
 using tdme::utils::FlowMapCell;
-using tdme::utils::PathFindingNode;
 using tdme::utils::PathFindingCustomTest;
 
 /**
@@ -138,21 +136,55 @@ public:
 
 private:
 	/**
+	 * Path finding node
+	 */
+	struct PathFindingNode final
+	{
+		/**
+		 * Node key
+		 */
+		string key;
+
+		/**
+		 * Position
+		 */
+		Vector3 position;
+
+		/**
+		 * Estimated costs to the end plus calculated costs from start to this node
+		 */
+		float costsAll;
+
+		/**
+		 * Calculated costs up to this point (from all previous nodes up to this node) to get to this coordinates from start
+		 */
+		float costsReachPoint;
+
+		/**
+		 * Estimated costs to get to the end
+		 */
+		float costsEstimated;
+
+		/**
+		 * Previous node
+		 */
+		string previousNodeKey;
+
+	};
+
+	/**
 	 * Reset path finding
 	 */
 	void reset();
 
 	/**
 	 * Computes non square rooted distance between a and b
-	 * @param a a
-	 * @param b b
+	 * @param a node a
+	 * @param b node b
 	 * @return non square rooted distance
 	 */
-	inline float computeDistance(PathFindingNode* a, PathFindingNode* b) {
-		float dx = a->x - b->x;
-		float dy = a->y - b->y;
-		float dz = a->z - b->z;
-		return (dx * dx) + (dy * dy) + (dz * dz);
+	inline float computeDistance(const PathFindingNode& a, const PathFindingNode& b) {
+		return a.position.clone().sub(b.position).computeLengthSquared();
 	}
 
 	/**
@@ -163,13 +195,8 @@ private:
 	 * @param bZ b z coordinate
 	 * @return if node a == node b
 	 */
-	inline bool equals(PathFindingNode* a, float bX, float bY, float bZ) {
-		return
-			(
-				Math::abs(a->x - bX) < 0.1f &&
-				Math::abs(a->y - bY) < 0.1f &&
-				Math::abs(a->z - bZ) < 0.1f
-			);
+	inline bool equals(const PathFindingNode& a, float bX, float bY, float bZ) {
+		return a.position.clone().sub(Vector3(bX, bY, bZ)).computeLengthSquared() < Math::square(0.1f);
 	}
 
 	/**
@@ -178,14 +205,8 @@ private:
 	 * @param lastNode b
 	 * @return if node a == node b
 	 */
-	inline bool equalsLastNode(PathFindingNode* a, PathFindingNode* lastNode) {
-		return
-			(a == lastNode) ||
-			(
-				Math::abs(a->x - lastNode->x) < stepSizeLast &&
-				Math::abs(a->y - lastNode->y) < stepSizeLast &&
-				Math::abs(a->z - lastNode->z) < stepSizeLast
-			);
+	inline bool equalsLastNode(const PathFindingNode& a, const PathFindingNode& b) {
+		return a.position.clone().sub(b.position).computeLengthSquared() < Math::square(stepSizeLast);
 	}
 
 	/**
@@ -239,9 +260,9 @@ private:
 	uint16_t collisionTypeIds;
 	int maxTries;
 	PathFindingNode end;
-	stack<PathFindingNode*> successorNodes;
-	map<string, PathFindingNode*> openNodes;
-	map<string, PathFindingNode*> closedNodes;
+	stack<PathFindingNode> successorNodes;
+	map<string, PathFindingNode> openNodes;
+	map<string, PathFindingNode> closedNodes;
 	BoundingVolume* actorBoundingVolume { nullptr };
 	BoundingVolume* actorBoundingVolumeSlopeTest { nullptr };
 	map<string, float> walkableCache;

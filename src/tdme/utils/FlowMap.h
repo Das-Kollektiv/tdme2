@@ -22,7 +22,7 @@ using tdme::utils::FlowMapCell;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::utils::FlowMap {
+class tdme::utils::FlowMap final {
 friend class PathFinding;
 private:
 	float stepSize;

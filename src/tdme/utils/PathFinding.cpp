@@ -15,7 +15,6 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
-#include <tdme/utils/PathFindingNode.h>
 #include <tdme/utils/PathFindingCustomTest.h>
 #include <tdme/utils/Time.h>
 
@@ -35,7 +34,6 @@ using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 using tdme::utils::Float;
-using tdme::utils::PathFindingNode;
 using tdme::utils::PathFindingCustomTest;
 using tdme::utils::Time;
 
@@ -61,13 +59,7 @@ PathFinding::~PathFinding() {
 }
 
 void PathFinding::reset() {
-	for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
-		delete nodeIt->second;
-	}
 	openNodes.clear();
-	for (auto nodeIt = closedNodes.begin(); nodeIt != closedNodes.end(); ++nodeIt) {
-		delete nodeIt->second;
-	}
 	closedNodes.clear();
 }
 
@@ -163,32 +155,34 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, uint16_t 
 
 void PathFinding::start(const Vector3& startPosition, const Vector3& endPosition) {
 	// start node
-	auto& startXYZ = startPosition.getArray();
-	auto start = new PathFindingNode();
-	start->x = startXYZ[0];
-	start->y = startXYZ[1];
-	start->z = startXYZ[2];
-	start->costsAll = 0.0f;
-	start->costsReachPoint = 0.0f;
-	start->costsEstimated = 0.0f;
-	start->key = toKey(start->x, start->y, start->z);
+	PathFindingNode start;
+	start.position = startPosition;
+	start.costsAll = 0.0f;
+	start.costsReachPoint = 0.0f;
+	start.costsEstimated = 0.0f;
+	start.key = toKey(
+		start.position.getX(),
+		start.position.getY(),
+		start.position.getZ()
+	);
 
 	// end node
-	auto& endXYZ = endPosition.getArray();
-	end.x = endXYZ[0];
-	end.y = endXYZ[1];
-	end.z = endXYZ[2];
+	end.position = endPosition;
 	end.costsAll = 0.0f;
 	end.costsReachPoint = 0.0f;
 	end.costsEstimated = 0.0f;
-	end.key = toKey(end.x, end.y, end.z);
+	end.key = toKey(
+		end.position.getX(),
+		end.position.getY(),
+		end.position.getZ()
+	);
 
 	// set up start node costs
-	start->costsEstimated = computeDistance(start, &end);
-	start->costsAll = start->costsEstimated;
+	start.costsEstimated = computeDistance(start, end);
+	start.costsAll = start.costsEstimated;
 
 	// put to open nodes
-	openNodes[start->key] = start;
+	openNodes[start.key] = start;
 }
 
 PathFinding::PathFindingStatus PathFinding::step() {
@@ -198,14 +192,19 @@ PathFinding::PathFindingStatus PathFinding::step() {
 	}
 
 	// Choose node from open nodes thats least expensive to check its successors
-	PathFindingNode* node = nullptr;
+	PathFindingNode* nodePtr = nullptr;
 	for (auto nodeIt = openNodes.begin(); nodeIt != openNodes.end(); ++nodeIt) {
-		if (node == nullptr || nodeIt->second->costsAll < node->costsAll) node = nodeIt->second;
+		if (nodePtr == nullptr || nodeIt->second.costsAll < nodePtr->costsAll) nodePtr = &nodeIt->second;
 	}
 
 	//
-	if (equalsLastNode(node, &end)) {
-		end.previousNodeKey = node->previousNodeKey;
+	if (nodePtr == nullptr) return PathFindingStatus::PATH_NOWAY;
+	const auto& node = *nodePtr;
+	auto nodeKey = node.key;
+
+	//
+	if (equalsLastNode(node, end)) {
+		end.previousNodeKey = node.previousNodeKey;
 		return PathFindingStatus::PATH_FOUND;
 	} else {
 		// Find valid successors
@@ -214,29 +213,30 @@ PathFinding::PathFindingStatus PathFinding::step() {
 		if ((z != 0 || x != 0) &&
 			(sloping == true ||
 			(Math::abs(x) == 1 && Math::abs(z) == 1) == false)) {
-			float successorX = x * stepSize + node->x;
-			float successorZ = z * stepSize + node->z;
-			auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node->x, node->y, node->z, successorX, node->y, successorZ):true;
+			float successorX = x * stepSize + node.position.getX();
+			float successorZ = z * stepSize + node.position.getZ();
+			auto slopeWalkable = Math::abs(x) == 1 && Math::abs(z) == 1?isSlopeWalkableInternal(node.position.getX(), node.position.getY(), node.position.getZ(), successorX, node.position.getY(), successorZ):true;
 			//
 			float yHeight;
 			// first node or walkable?
-			if (slopeWalkable == true && isWalkableInternal(successorX, node->y, successorZ, yHeight) == true) {
+			if (slopeWalkable == true && isWalkableInternal(successorX, node.position.getY(), successorZ, yHeight) == true) {
 				// check if successor node equals previous node / node
 				if (equals(node, successorX, yHeight, successorZ)) {
 					continue;
 				}
 				// Add the node to the available sucessorNodes
-				auto successorNode = new PathFindingNode();
-				successorNode->x = successorX;
-				successorNode->z = successorZ;
-				successorNode->y = yHeight;
-				successorNode->costsAll = 0.0f;
-				successorNode->costsReachPoint = 0.0f;
-				successorNode->costsEstimated = 0.0f;
-				successorNode->key = toKey(successorNode->x, successorNode->y, successorNode->z);
+				PathFindingNode successorNode;
+				successorNode.position = Vector3(successorX, yHeight, successorZ);
+				successorNode.costsAll = 0.0f;
+				successorNode.costsReachPoint = 0.0f;
+				successorNode.costsEstimated = 0.0f;
+				successorNode.key = toKey(
+					successorNode.position.getX(),
+					successorNode.position.getY(),
+					successorNode.position.getZ()
+				);
 				// this should never happen, but still I like to check for it
-				if (successorNode->key == node->key) {
-					delete successorNode;
+				if (successorNode.key == nodeKey) {
 					continue;
 				}
 				successorNodes.push(successorNode);
@@ -246,24 +246,24 @@ PathFinding::PathFindingStatus PathFinding::step() {
 
 	// Check successor nodes
 	while (successorNodes.empty() == false) {
-		PathFindingNode* successorNode = successorNodes.top();
-		successorNodes.pop();
+		auto& successorNode = successorNodes.top();
 
 		// Compute successor node's costs by costs to reach nodes point and the computed distance from node to successor node
-		float successorCostsReachPoint = node->costsReachPoint + computeDistance(successorNode, node);
+		float successorCostsReachPoint = node.costsReachPoint + computeDistance(successorNode, node);
 
 		// Find sucessor node in open nodes list
 		PathFindingNode* openListNode = nullptr;
-		auto openListNodeIt = openNodes.find(successorNode->key);
+		auto openListNodeIt = openNodes.find(successorNode.key);
 		if (openListNodeIt != openNodes.end()) {
-			openListNode = openListNodeIt->second;
+			openListNode = &openListNodeIt->second;
 		}
 
 		// found it in open nodes list
 		if (openListNode != nullptr) {
 			// is the node from open nodes less expensive, discard successor node
 			if (openListNode->costsReachPoint <= successorCostsReachPoint) {
-				delete successorNode;
+				// remove it from stack
+				successorNodes.pop();
 				// discard it
 				continue;
 			}
@@ -271,49 +271,51 @@ PathFinding::PathFindingStatus PathFinding::step() {
 
 		// Find successor node in closed nodes list
 		PathFindingNode* closedListNode = nullptr;
-		auto closedListNodeIt = closedNodes.find(successorNode->key);
+		auto closedListNodeIt = closedNodes.find(successorNode.key);
 		if (closedListNodeIt != closedNodes.end()) {
-			closedListNode = closedListNodeIt->second;
+			closedListNode = &closedListNodeIt->second;
 		}
 
 		// found it in closed nodes list
 		if (closedListNode != nullptr) {
 			// is the node from closed nodes list less expensive, discard successor node
 			if (closedListNode->costsReachPoint <= successorCostsReachPoint) {
-				delete successorNode;
+				// remove it from stack
+				successorNodes.pop();
 				// discard it
 				continue;
 			}
 		}
 
 		// Sucessor node is the node with least cost to this point
-		successorNode->previousNodeKey = node->key;
-		successorNode->costsReachPoint = successorCostsReachPoint;
-		successorNode->costsEstimated = computeDistance(successorNode, &end);
-		successorNode->costsAll = successorNode->costsReachPoint + successorNode->costsEstimated;
+		successorNode.previousNodeKey = nodeKey;
+		successorNode.costsReachPoint = successorCostsReachPoint;
+		successorNode.costsEstimated = computeDistance(successorNode, end);
+		successorNode.costsAll = successorNode.costsReachPoint + successorNode.costsEstimated;
 
 		// Remove found node from open nodes list, since it was less optimal
 		if (openListNode != nullptr) {
 			// remove open list node
 			openNodes.erase(openListNodeIt);
-			delete openListNode;
 		}
 
 		// Remove found node from closed nodes list, since it was less optimal
 		if (closedListNode != nullptr) {
 			closedNodes.erase(closedListNodeIt);
-			delete closedListNode;
 		}
 
 		// Add successor node to open nodes list, as we might want to check its successors to find a path to the end
-		openNodes[successorNode->key] = successorNode;
+		openNodes[successorNode.key] = successorNode;
+
+		// remove it from stack
+		successorNodes.pop();
 	}
 
-	// Remove node from open nodes, as we checked its successors
-	openNodes.erase(node->key);
-
 	// add node to closed nodes list, as we checked its successors
-	closedNodes[node->key] = node;
+	closedNodes[nodeKey] = node;
+
+	// Remove node from open nodes, as we checked its successors
+	openNodes.erase(nodeKey);
 
 	//
 	return PathFindingStatus::PATH_STEP;
@@ -460,28 +462,20 @@ bool PathFinding::findPath(const Vector3& startPosition, const Vector3& endPosit
 					{
 						// Console::println("PathFinding::findPath(): path found with steps: " + to_string(stepIdx));
 						int nodesCount = 0;
-						map<string, PathFindingNode*>::iterator nodeIt;
-						for (auto node = &end; node != nullptr; node = (nodeIt = closedNodes.find(node->previousNodeKey)) != closedNodes.end()?nodeIt->second:nullptr) {
+						map<string, PathFindingNode>::iterator nodeIt;
+						for (auto nodePtr = &end; nodePtr != nullptr; nodePtr = (nodeIt = closedNodes.find(nodePtr->previousNodeKey)) != closedNodes.end()?&nodeIt->second:nullptr) {
 							nodesCount++;
 							// if (nodesCount > 0 && nodesCount % 100 == 0) {
 							//	 Console::println("PathFinding::findPath(): compute path: steps: " + to_string(nodesCount) + " / " + to_string(path.size()) + ": " + to_string((uint64_t)node));
 							// }
-							Vector3 pathPosition(
-								node->x,
-								node->y,
-								node->z
-							);
-							if (Float::isNaN(pathPosition.getX()) ||
-								Float::isNaN(pathPosition.getY()) ||
-								Float::isNaN(pathPosition.getZ())) {
-								Console::println("PathFinding::findPath(): compute path: step: NAN");
+							if (Float::isNaN(nodePtr->position.getX()) ||
+								Float::isNaN(nodePtr->position.getY()) ||
+								Float::isNaN(nodePtr->position.getZ())) {
+								Console::println("PathFinding::findPath(): compute path: step: NaN");
 								done = true;
 								break;
 							}
-							path.
-								push_back(
-									pathPosition
-								);
+							path.push_back(nodePtr->position);
 						}
 						reverse(path.begin(), path.end());
 						if (path.size() > 1) path.erase(path.begin());
