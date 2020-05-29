@@ -1,0 +1,19 @@
+language: cpp
+compiler: gcc
+
+os: linux
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - make
+      - g++-9
+      - libglew-dev
+      - libopenal-dev
+      - libglfw3-dev
+
+script:
+  - export CC=gcc-9
+  - export CXX=g++-9
+  - make mains
