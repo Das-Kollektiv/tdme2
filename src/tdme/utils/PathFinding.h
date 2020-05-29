@@ -243,17 +243,12 @@ private:
 	}
 
 	/**
-	 * Computes minimal non square rooted distance between node and end points
+	 * Computes minimal non square rooted distance between node and end point
 	 * @param node node
 	 * @return non square rooted distance
 	 */
 	inline float computeDistanceToEnd(const PathFindingNode& node) {
-		float distance = Float::MAX_VALUE;
-		for (auto& endPosition: endPositions) {
-			auto _distance = node.position.clone().sub(endPosition).computeLengthSquared();
-			if (_distance < distance) distance = _distance;
-		}
-		return distance;
+		return node.position.clone().sub(end.position).computeLengthSquared();
 	}
 
 	/**
@@ -304,13 +299,6 @@ private:
 	bool isSlopeWalkableInternal(float x, float y, float z, float successorX, float successorY, float successorZ, uint16_t collisionTypeIds = 0);
 
 	/**
-	 * Sets up the PathFinding, it needs to be called after constructing the object
-	 * @param startPosition start position
-	 * @param endPosition end position
-	 */
-	void start(const Vector3& startPosition, const Vector3& endPosition);
-
-	/**
 	 * Processes one step in AStar path finding
 	 * @param node node
 	 * @param nodesToTest nodes to test or nullptr, applies to flow cost map generation
@@ -332,7 +320,6 @@ private:
 	uint16_t collisionTypeIds;
 	int maxTries;
 	PathFindingNode end;
-	vector<Vector3> endPositions;
 	stack<PathFindingNode> successorNodes;
 	map<string, PathFindingNode> openNodes;
 	map<string, PathFindingNode> closedNodes;
