@@ -1,6 +1,8 @@
 language: cpp
 compiler: gcc
-os: linux
+os: 
+  - linux
+  - osx
 dist: bionic
 addons:
   apt:
