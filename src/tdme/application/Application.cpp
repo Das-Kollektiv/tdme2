@@ -545,6 +545,7 @@ void Application::swapBuffers() {
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
 	this->title = title;
+	executableFileName = FileSystem::getInstance()->getFileName(argv[0]);
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN) || defined(GLFW3)
 		glfwSetErrorCallback(glfwErrorCallback);
@@ -665,7 +666,9 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 void Application::setIcon() {
 	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
 	#if defined(VULKAN) || defined(GLFW3)
-		auto texture = TextureReader::read("resources/logos", "app_logo_small.png", false, false);
+		auto logoFileName = StringUtils::replace(StringUtils::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
+		if (FileSystem::getInstance()->fileExists("resources/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
+		auto texture = TextureReader::read("resources/icons", logoFileName, false, false);
 		if (texture != nullptr) {
 			auto textureData = texture->getTextureData();
 			auto textureWidth = texture->getTextureWidth();

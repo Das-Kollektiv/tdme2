@@ -1,4 +1,4 @@
-IDI_ICON ICON "app.ico"
+IDI_ICON ICON "app{$APPNAME_LOWERCASE}-icon.ico"
 1 VERSIONINFO
 FILEVERSION     1,0,0,0
 PRODUCTVERSION  1,0,0,0
@@ -8,13 +8,13 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "drewke.net"
-      VALUE "FileDescription", "TDME2"
+      VALUE "FileDescription", "TDME2 Application"
       VALUE "FileVersion", "1.9.9"
-      VALUE "InternalName", "TDME2"
-      VALUE "LegalCopyright", "TDME2"
-      VALUE "OriginalFilename", "*.exe"
+      VALUE "InternalName", "TDME2-{$APPNAME}"
+      VALUE "LegalCopyright", "TDME2-{$APPNAME}"
+      VALUE "OriginalFilename", "{$APPNAME}.exe"
       VALUE "ProductName", "TDME2"
-      VALUE "ProductVersion", "1.0"
+      VALUE "ProductVersion", "2.0"
     END
   END
   BLOCK "VarFileInfo"

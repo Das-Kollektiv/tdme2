@@ -1,4 +1,4 @@
-![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/tdme_logo_full.png)
+![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/logos/github-logo.png)
 
 # 1. How to build TDME2?
 
