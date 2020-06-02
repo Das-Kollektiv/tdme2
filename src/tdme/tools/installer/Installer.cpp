@@ -686,6 +686,11 @@ void Installer::performScreenAction() {
 															FileSystem::getStandardFileSystem()->getPathName(generatedFileName),
 															FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh"
 														);
+														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
+														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
+														auto iconFileName = StringUtils::toLowerCase(executableFileName) + "-icon.png";
+														if (archiveFileSystem->fileExists("resources/icons/" + iconFileName) == false &&
+															FileSystem::getInstance()->fileExists(executablePathName + "/resources/icons/" + iconFileName) == false) iconFileName = "default-icon.png";
 														FileSystem::getStandardFileSystem()->setContentFromString(
 															installer->homeFolder + "/" + ".local/share/applications",
 															startMenuName + ".desktop",
@@ -695,7 +700,7 @@ void Installer::performScreenAction() {
 															"Exec=" + FileSystem::getStandardFileSystem()->getPathName(generatedFileName) + "/" + FileSystem::getStandardFileSystem()->getFileName(generatedFileName) + ".sh\n" +
 															"Terminal=false\n" +
 															"Type=Application\n" +
-															"Icon=" + installFolder + "/resources/logos/app_logo_small.png\n"
+															"Icon=" + installFolder + "/resources/icons/" + iconFileName + "\n"
 														);
 														log.push_back(generatedFileName + ".sh");
 														log.push_back(installer->homeFolder + "/" + ".local/share/applications/" + startMenuName + ".desktop");
