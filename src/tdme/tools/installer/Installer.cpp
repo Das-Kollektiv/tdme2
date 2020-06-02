@@ -720,16 +720,23 @@ void Installer::performScreenAction() {
 														auto startMenuFolder = string(installer->homeFolder) + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/" + installer->installerProperties.get("name", "TDME2 based application");
 														Installer::createPathRecursively(startMenuFolder);
 														auto linkFile = startMenuFolder + "/" + startMenuName + ".lnk";
+														auto executablePathName = FileSystem::getInstance()->getPathName(generatedFileName);
+														auto executableFileName = FileSystem::getInstance()->getFileName(generatedFileName);
+														auto iconFileName = StringUtils::replace(StringUtils::toLowerCase(executableFileName), ".exe", "") + "-icon.ico";
+														if (archiveFileSystem->fileExists("resources/win32/" + iconFileName) == false &&
+															FileSystem::getInstance()->fileExists(executablePathName + "/resources/win32/" + iconFileName) == false) iconFileName = "default-icon.ico";
 														Console::println(
 															StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 															"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
-															"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
+															"\"" + StringUtils::replace(linkFile, "/", "\\") + "\" " +
+															"\"resources\\win32\\" + iconFileName + "\" "
 														);
 														Console::println(
 															Application::execute(
 																StringUtils::replace(StringUtils::replace(installFolder, "/", "\\"), " ", "^ ") + "\\windows-create-shortcut.bat " +
 																"\"" + StringUtils::replace(generatedFileName, "/", "\\") + "\" " +
-																"\"" + StringUtils::replace(linkFile, "/", "\\") + "\""
+																"\"" + StringUtils::replace(linkFile, "/", "\\") + "\" " +
+																"\"resources\\win32\\" + iconFileName + "\" "
 															)
 														);
 														log.push_back(linkFile);
