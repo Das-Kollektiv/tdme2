@@ -979,6 +979,7 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $@.rc.o $< -l$(NAME) $(EXTRA_LIBS)
 else
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
+	@mkdir -p $(dir $@);
 	$(CXX) $(STACKFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
 endif
 
