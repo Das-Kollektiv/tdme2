@@ -572,10 +572,6 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	const vector<Vector3>& pathToUse = path.empty() == false?path:emptyPath;
 	auto stepSize2 = stepSize + 0.01f;
 
-	// based on path finding and
-	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
-	// generate cost map via dijkstra
-
 	// set up end position in costs map
 	if (endPositions.size() == 0) {
 		Console::println("PathFinding::createFlowMap(): no end positions given");
@@ -658,7 +654,8 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	// clear nodes to test
 	nodesToTest.clear();
 
-	// generate flow map
+	// generate flow map, which is based on
+	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
 	auto flowMap = new FlowMap(stepSize);
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
