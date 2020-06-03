@@ -656,9 +656,8 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 
 	// generate flow map, which is based on
 	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
-	auto flowMap = new FlowMap(stepSize);
+	auto flowMap = new FlowMap(pathToUse, endPositions, stepSize);
 	flowMap->acquireReference();
-	flowMap->setEndPositions(endPositions);
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(
 			FlowMap::alignPositionComponent(_centerPathNode.getX(), stepSize),

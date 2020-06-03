@@ -32,19 +32,12 @@ private:
 	float stepSize;
 	map<string, FlowMapCell> cells;
 	vector<Vector3> endPositions;
+	vector<Vector3> path;
 
 	/**
 	 * Private destructor
 	 */
 	inline ~FlowMap() {
-	}
-
-	/**
-	 * Set end positions
-	 * @param endPositions end positions
-	 */
-	inline void setEndPositions(const vector<Vector3>& endPositions) {
-		this->endPositions = endPositions;
 	}
 
 	/**
@@ -149,8 +142,11 @@ public:
 
 	/**
 	 * Constructor
+	 * @param path path
+	 * @param endPositions end positions
+	 * @param stepSize step size
 	 */
-	inline FlowMap(float stepSize): stepSize(stepSize) {
+	inline FlowMap(const vector<Vector3>& path, const vector<Vector3>& endPositions, float stepSize): path(path), endPositions(endPositions), stepSize(stepSize) {
 	}
 
 	/**
@@ -166,6 +162,14 @@ public:
 	 */
 	inline const vector<Vector3>& getEndPositions() {
 		return endPositions;
+	}
+
+	/**
+	 * Returns path flow map is generated on
+	 * @return path
+	 */
+	inline const vector<Vector3>& getPath() {
+		return path;
 	}
 
 	/**
