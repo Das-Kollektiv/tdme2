@@ -2,31 +2,50 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/FlowMapCell.h>
+#include <tdme/utils/ReferenceCounter.h>
 
 using std::map;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utils::Console;
 using tdme::utils::FlowMapCell;
+using tdme::utils::ReferenceCounter;
 
 /**
  * Flow map
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::utils::FlowMap final {
+class tdme::utils::FlowMap final: public ReferenceCounter {
 friend class PathFinding;
 private:
 	float stepSize;
 	map<string, FlowMapCell> cells;
+	vector<Vector3> endPositions;
+
+	/**
+	 * Private destructor
+	 */
+	inline ~FlowMap() {
+	}
+
+	/**
+	 * Set end positions
+	 * @param endPositions end positions
+	 */
+	inline void setEndPositions(const vector<Vector3>& endPositions) {
+		this->endPositions = endPositions;
+	}
 
 	/**
 	 * Adds a cell to flow map
@@ -139,7 +158,15 @@ public:
 	 */
 	inline float getStepSize() const {
 		return stepSize;
-	} 
+	}
+
+	/**
+	 * Returns end positions
+	 * @return end positions
+	 */
+	inline const vector<Vector3>& getEndPositions() {
+		return endPositions;
+	}
 
 	/**
 	 * Get cell by id
