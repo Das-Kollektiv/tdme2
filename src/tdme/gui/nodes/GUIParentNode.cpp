@@ -237,7 +237,6 @@ void GUIParentNode::layout()
 {
 	if (conditionsMet == false) {
 		layouted = false;
-		computedConstraints = GUINode_ComputedConstraints();
 		return;
 	}
 	GUINode::layout();
@@ -247,6 +246,10 @@ void GUIParentNode::layout()
 
 void GUIParentNode::layoutSubNodes()
 {
+	if (conditionsMet == false) {
+		layouted = false;
+		return;
+	}
 	for (auto i = 0; i < subNodes.size(); i++) {
 		subNodes[i]->layout();
 	}

@@ -947,6 +947,7 @@ void GUI::fakeKeyboardModifierEvent() {
 
 void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	// TODO: maybe move logic into GUIScreenNode
+	// FIXME: always keep aspect ratio
 	auto screenNodeWidthConstrained = width;
 	auto screenNodeHeightConstrained = height;
 
@@ -980,7 +981,7 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	}
 
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
-	screenNode->reshapeRequested = true;
+	screenNode->reshapeRequested = false;
 }
 
 void GUI::addMouseOutCandidateElementNode(GUINode* node) {
