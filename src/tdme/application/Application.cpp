@@ -1,14 +1,14 @@
 #if defined(VULKAN)
 	#define GLFW_INCLUDE_VULKAN
 	#include <GLFW/glfw3.h>
-#elif defined(GLFW3)
-	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
-		#define GLEW_NO_GLU
-		#include <GL/glew.h>
-		#if defined(_WIN32)
-			#include <GL/wglew.h>
-		#endif
+#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
+	#define GLEW_NO_GLU
+	#include <GL/glew.h>
+	#if defined(_WIN32)
+		#include <GL/wglew.h>
 	#endif
+#endif
+#if defined(GLFW3)
 	#define GLFW_INCLUDE_NONE
 	#include <GLFW/glfw3.h>
 #else
