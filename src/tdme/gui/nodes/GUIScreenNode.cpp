@@ -255,7 +255,7 @@ void GUIScreenNode::layout(GUINode* node)
 		parentNode->layouted = true;
 	} else {
 		_node->layout();
-		parentNode->getScreenNode()->layoutSubNodes();
+		_node->getScreenNode()->layoutSubNodes();
 		_node->computeContentAlignment();
 		auto controller = _node->getController();
 		if (controller != nullptr) controller->postLayout();
