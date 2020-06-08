@@ -29,6 +29,7 @@ using tdme::utils::ReferenceCounter;
 class tdme::utils::FlowMap final: public ReferenceCounter {
 friend class PathFinding;
 private:
+	bool complete;
 	float stepSize;
 	map<string, FlowMapCell> cells;
 	vector<Vector3> endPositions;
@@ -38,6 +39,14 @@ private:
 	 * Private destructor
 	 */
 	inline ~FlowMap() {
+	}
+
+	/**
+	 * Set flow map complete flag
+	 * @param complete complete
+	 */
+	inline void setComplete(bool complete) {
+		this->complete = complete;
 	}
 
 	/**
@@ -55,7 +64,7 @@ private:
 	 * Checks if a cell exists in flow map
 	 * @param id id
 	 */
-	inline bool hasCell(const string& id) {
+	inline bool hasCell(const string& id) const {
 		auto cellIt = cells.find(id);
 		return cellIt != cells.end();
 	}
@@ -111,7 +120,7 @@ public:
 	 * @param value value
 	 * @return integer position component
 	 */
-	inline int getIntegerPositionComponent(float value) {
+	inline int getIntegerPositionComponent(float value) const {
 		return static_cast<int>(alignPositionComponent(value, stepSize) / stepSize);
 	}
 
@@ -146,7 +155,14 @@ public:
 	 * @param endPositions end positions
 	 * @param stepSize step size
 	 */
-	inline FlowMap(const vector<Vector3>& path, const vector<Vector3>& endPositions, float stepSize): path(path), endPositions(endPositions), stepSize(stepSize) {
+	inline FlowMap(const vector<Vector3>& path, const vector<Vector3>& endPositions, float stepSize, bool complete = true): path(path), endPositions(endPositions), stepSize(stepSize), complete(complete) {
+	}
+
+	/**
+	 * @return if flow map is complete
+	 */
+	inline bool isComplete() const {
+		return complete;
 	}
 
 	/**
@@ -160,7 +176,7 @@ public:
 	 * Returns end positions
 	 * @return end positions
 	 */
-	inline const vector<Vector3>& getEndPositions() {
+	inline const vector<Vector3>& getEndPositions() const {
 		return endPositions;
 	}
 
@@ -168,7 +184,7 @@ public:
 	 * Returns path flow map is generated on
 	 * @return path
 	 */
-	inline const vector<Vector3>& getPath() {
+	inline const vector<Vector3>& getPath() const {
 		return path;
 	}
 
@@ -230,8 +246,25 @@ public:
 	 * Cell map getter
 	 * @returns cell map
 	 */
-	inline const map<string, FlowMapCell>& getCellMap() {
+	inline const map<string, FlowMapCell>& getCellMap() const {
 		return cells;
+	}
+
+	/**
+	 * Merge given flow map into this flow map, please note that given flow map step size needs to match this flow maps step size
+	 * This only applies to a series of flow maps created sequentially and in correct order along a path
+	 * @param flowMap flow map
+	 */
+	inline void merge(const FlowMap* flowMap) {
+		this->complete = flowMap->complete;
+		// add path
+		for (auto& pathNode: flowMap->path) {
+			path.push_back(pathNode);
+		}
+		// add cells
+		for (auto& cellIt: flowMap->cells) {
+			cells[cellIt.first] = cellIt.second;
+		}
 	}
 
 };

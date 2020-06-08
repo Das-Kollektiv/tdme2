@@ -558,7 +558,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	return success;
 }
 
-FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, PathFindingCustomTest* customTest) {
+FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path, bool complete, PathFindingCustomTest* customTest) {
 	// set up custom test
 	this->customTest = customTest;
 
@@ -684,7 +684,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 
 	// generate flow map, which is based on
 	//	see: https://howtorts.github.io/2014/01/04/basic-flow-fields.html
-	auto flowMap = new FlowMap(pathToUse, endPositions, flowMapStepSize);
+	auto flowMap = new FlowMap(pathToUse, endPositions, flowMapStepSize, complete);
 	flowMap->acquireReference();
 	for (auto& _centerPathNode: pathToUse) {
 		auto centerPathNode = Vector3(

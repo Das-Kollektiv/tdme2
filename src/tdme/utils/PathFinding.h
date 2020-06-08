@@ -234,16 +234,17 @@ public:
 
 	/**
 	 * Create flow map
-	 * @param endPosition end position
+	 * @param endPositions end positions
 	 * @param center flow map center
 	 * @param depth flow map depth
 	 * @param width flow map width
 	 * @param collisionTypeIds collision type ids
-	 * @param customTest custom test
 	 * @param path path to test along
+	 * @param complete complete
+	 * @param customTest custom test
 	 * @return flow map
 	 */
-	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path = vector<Vector3>(), PathFindingCustomTest* customTest = nullptr);
+	FlowMap* createFlowMap(const vector<Vector3>& endPositions, const Vector3& center, float depth, float width, const uint16_t collisionTypeIds, const vector<Vector3>& path = vector<Vector3>(), bool complete = true, PathFindingCustomTest* customTest = nullptr);
 
 private:
 	/**
