@@ -256,7 +256,8 @@ public:
 	 * @param flowMap flow map
 	 */
 	inline void merge(const FlowMap* flowMap) {
-		this->complete = flowMap->complete;
+		// complete
+		complete = flowMap->complete;
 		// add path
 		for (auto& pathNode: flowMap->path) {
 			path.push_back(pathNode);
@@ -265,6 +266,8 @@ public:
 		for (auto& cellIt: flowMap->cells) {
 			cells[cellIt.first] = cellIt.second;
 		}
+		// end positions
+		endPositions = flowMap->endPositions;
 	}
 
 };
