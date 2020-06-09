@@ -1733,8 +1733,9 @@ Entity* Engine::doRayCasting(
 	return selectedEntity;
 }
 
-void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
+bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
 {
+	Vector3 screenCoordinate3;
 	Vector4 screenCoordinate4;
 	// convert to normalized device coordinates
 	camera->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f), screenCoordinate4);
@@ -1742,6 +1743,7 @@ void Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordi
 	// convert to screen coordinate
 	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * width / 2.0f);
 	screenCoordinate.setY(height - ((screenCoordinate4[1] + 1.0f) * height / 2.0f));
+	return camera->getModelViewMatrix().multiply(worldCoordinate, screenCoordinate3).getZ() <= 0.0f;
 }
 
 void Engine::dispose()

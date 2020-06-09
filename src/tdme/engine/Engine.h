@@ -884,8 +884,9 @@ public:
 	 * Convert screen coordinate by world coordinate
 	 * @param worldCoordinate world woordinate
 	 * @param screenCoordinate screen coordinate
+	 * @returns if world coordinate is within frustum
 	 */
-	void computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
+	bool computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
 
 	/** 
 	 * Shutdown the engine
