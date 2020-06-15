@@ -37,6 +37,8 @@
   - https://howtorts.github.io/2014/01/04/basic-flow-fields.html
   - https://hub.jmonkeyengine.org/t/depth-only-ssao/37749
   - https://jayconrod.com/posts/34/water-simulation-in-glsl
+  - https://jogamp.org/joal-demos/www/
+  - https://jogamp.org/wiki/index.php/Jogl_Tutorial
   - https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
   - https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
   - https://stackoverflow.com/questions/12280472/stackwalk64-does-not-work-with-release-build
