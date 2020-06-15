@@ -282,7 +282,7 @@
 
 - External references
     - "ReactPhysics3D" physics library, [http://www.reactphysics3d.com](http://www.reactphysics3d.com) 
-    - the world wide web! thank you for sharing, see a detailed list of web resources I used at [README-WebReferences.md](./README-WebReferences.md)
+    - the world wide web! thank you for sharing, see [README-WebReferences.md](./README-WebReferences.md)
 
 - Other credits
     - Mathias Lenz
