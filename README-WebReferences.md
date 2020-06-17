@@ -20,6 +20,7 @@
   - http://www.gamedev.net/topic/567310-platform-game-collision-detection/
   - http://www.songho.ca/opengl/gl_matrix.html
   - http://www.songho.ca/opengl/gl_transform.html
+  - http://www.wazim.com/Collada_Tutorial_1.htm
   - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
   - https://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
