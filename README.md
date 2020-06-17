@@ -33,7 +33,7 @@
             - those have a ordinary API + operators, the latter is still a bit WIP
     - 3d engine
         - model parsing
-            - DAE parsing with skinned meshes and animations
+            - DAE
                 - group names/ids must not have whitespace characters
                 - requires baked matrices
                 - requires triangulated meshes for now
