@@ -32,7 +32,7 @@
         - Vector2, Vector3, Vector4, Matrix3x3, Matrix4x4 and Quaternion class
             - those have a ordinary API + operators, the latter is still a bit WIP
     - 3d engine
-        - model parsing
+        - model reader
             - DAE
                 - group names/ids must not have whitespace characters
                 - requires baked matrices
@@ -41,7 +41,7 @@
             - GLTF via tinygltf
             - TDME Model file format
                 - this is a much more efficient model file format for TDME
-                - can be read and written
+                - can also be written
         - objects/entity types
             - 3d model based objects with
                 - animations
