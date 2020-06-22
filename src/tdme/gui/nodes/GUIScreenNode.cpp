@@ -244,22 +244,20 @@ void GUIScreenNode::layout(GUINode* node)
 		parentNode->layout();
 		parentNode->layoutSubNodes();
 		parentNode->getScreenNode()->layoutSubNodes();
-		parentNode->getChildControllerNodes(childControllerNodes);
+		parentNode->layouted = true;
+		parentNode->getScreenNode()->getChildControllerNodes(childControllerNodes, true);
 		for (auto i = 0; i < childControllerNodes.size(); i++) {
 			auto childNode = childControllerNodes[i];
-			auto controller = childNode->getController();
-			if (controller != nullptr && childNode->layouted == true) controller->postLayout();
+			auto childController = childNode->getController();
+			if (childController != nullptr) childController->postLayout();
 		}
-		auto controller = parentNode->getController();
-		if (controller != nullptr) controller->postLayout();
-		parentNode->layouted = true;
 	} else {
 		_node->layout();
 		_node->getScreenNode()->layoutSubNodes();
 		_node->computeContentAlignment();
-		auto controller = _node->getController();
-		if (controller != nullptr) controller->postLayout();
 		_node->layouted = true;
+		auto nodeController = _node->getController();
+		if (nodeController != nullptr) nodeController->postLayout();
 	}
 }
 

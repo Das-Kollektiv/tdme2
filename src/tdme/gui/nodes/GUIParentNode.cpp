@@ -306,8 +306,9 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 	}
 }
 
-void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes)
+void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>& childControllerNodes, bool requireConditionsMet)
 {
+	if (requireConditionsMet == true && conditionsMet == false) return;
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto node = subNodes[i];
 		if (node->controller != nullptr) {
@@ -319,10 +320,10 @@ void GUIParentNode::getChildControllerNodesInternal(vector<GUINode*>& childContr
 	}
 }
 
-void GUIParentNode::getChildControllerNodes(vector<GUINode*>& childControllerNodes)
+void GUIParentNode::getChildControllerNodes(vector<GUINode*>& childControllerNodes, bool requireConditionsMet)
 {
 	childControllerNodes.clear();
-	getChildControllerNodesInternal(childControllerNodes);
+	getChildControllerNodesInternal(childControllerNodes, requireConditionsMet);
 }
 
 void GUIParentNode::dispose()
