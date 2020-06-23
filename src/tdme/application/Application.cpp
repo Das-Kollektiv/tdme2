@@ -560,6 +560,12 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 			}
 			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+		#elif defined(GLES2)
+			glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+			glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		#else
 				if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) {
 					glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
