@@ -2127,7 +2127,6 @@ bool Engine::renderSun() {
 	sunPosition2D.setX(sunPosition2D.getX() / (static_cast<float>(_width) / 2.0f) - 1.0f);
 	sunPosition2D.setY(1.0f - (sunPosition2D.getY() / (static_cast<float>(_height) / 2.0f)));
 	if (visible == true) {
-		Console::println(to_string(sunPosition2D.getX()) + " / " + to_string(sunPosition2D.getY()));
 		texture2DRenderShader->renderTexture(this, sunPosition2D, sunDimension2D, sunTextureId);
 	}
 	return visible;
