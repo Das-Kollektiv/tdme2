@@ -6,6 +6,7 @@
   - http://chilliant.blogspot.com/2012/08/srgb-approximations-for-hlsl.html
   - http://db-in.com/blog/2011/04/cameras-on-opengl-es-2-x/
   - http://devcry.heiho.net/html/2015/20150517-libpng.html
+  - http://fabiensanglard.net/lightScattering/index.php
   - http://fabiensanglard.net/shadowmapping/index.php
   - http://filmicworlds.com/blog/filmic-tonemapping-operators/
   - http://learnwebgl.brown37.net/10_surface_properties/texture_mapping_transforms.html

@@ -216,6 +216,8 @@
     - documentation
 
 - What is WIP or planned
+    - Light scattering effect / effects
+    - Simple script language
     - Shader parameters
     - PBR lighting shader for GL3/CORE+
     - Makefile generator for TDME2 based projects
