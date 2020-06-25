@@ -30,7 +30,7 @@ void main(void) {
 	float illuminationDecay = 1.0;
 	outColor = vec4(0.0, 0.0, 0.0, 0.0);
 	for(int i = 0; i < SAMPLES; i++) {
-		vec4 sample = texture2D(colorBufferTextureUnit, textureCoordinate);	
+		vec4 sample = texture(colorBufferTextureUnit, textureCoordinate);
 		sample*= illuminationDecay * WEIGHT;
 		outColor+= sample;
 		illuminationDecay *= DECAY;
