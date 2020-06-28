@@ -195,7 +195,7 @@ int32_t Engine::shadowMapRenderLookUps = 0;
 float Engine::shadowMaplightEyeDistanceScale = 1.0f;
 float Engine::transformationsComputingReduction1Distance = 25.0f;
 float Engine::transformationsComputingReduction2Distance = 50.0f;
-int32_t Engine::sunTextureId = 0;
+int32_t Engine::lightSourceTextureId = 0;
 map<string, Engine::Shader> Engine::shaders;
 
 vector<Engine::EngineThread*> Engine::engineThreads;
@@ -238,8 +238,10 @@ Engine::Engine() {
 	timing = new Timing();
 	camera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
-	sunSize = 0.25f;
-	sunPosition.set(0.0f, 25000.0f, -100000.0f);
+	lightSourceSize = 0.25f;
+	lightSourcePosition.set(0.0f, 25000.0f, -100000.0f);
+	fixedLightScatteringIntensity = false;
+	lightScatteringItensityValue = 1.0f;
 	frameBuffer = nullptr;
 	// shadow mapping
 	shadowMappingEnabled = false;
@@ -686,7 +688,7 @@ void Engine::initialize()
 	Console::println(string("TDME::initialized & ready: ") + to_string(initialized));
 
 	//
-	sunTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "sun.png"), renderer->getDefaultContext());
+	lightSourceTextureId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "sun.png"), renderer->getDefaultContext());
 }
 
 void Engine::reshape(int32_t width, int32_t height)
@@ -1034,7 +1036,6 @@ void Engine::display()
 	//
 	auto _width = scaledWidth != -1?scaledWidth:width;
 	auto _height = scaledHeight != -1?scaledHeight:height;
-	auto sunVisible = false;
 
 	// do post processing programs effect passes
 	array<bool, EFFECTPASS_COUNT - 1> effectPassFrameBuffersInUse;
@@ -1070,10 +1071,11 @@ void Engine::display()
 			// camera
 			camera->update(context, frameBufferWidth, frameBufferHeight);
 			//
-			if (effectPass.renderSun == true) {
-				sunVisible = renderSun();
+			auto lightSourceVisible = false;
+			if (effectPass.renderLightSource == true) {
+				lightSourceVisible = renderLightSource();
 			}
-			if (effectPass.skipOnSunNotVisible == true && sunVisible == false) {
+			if (effectPass.skipOnLightSourceNotVisible == true && lightSourceVisible == false) {
 				effectPassSkip[frameBufferIdx] = true;
 			} else {
 				// Do the effect render pass
@@ -1906,7 +1908,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 					target = postProcessingTemporaryFrameBuffer;
 					break;
 			}
-			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource);
+			FrameBuffer::doPostProcessing(target, source, shaderId, step.bindTemporary == true?postProcessingTemporaryFrameBuffer:nullptr, blendToSource, fixedLightScatteringIntensity, lightScatteringItensityValue);
 			switch(step.target) {
 				case PostProcessingProgram::FRAMEBUFFERTARGET_SCREEN:
 					postProcessingFrameBufferIdx = (postProcessingFrameBufferIdx + 1) % 2;
@@ -2118,16 +2120,16 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 	Engine::renderer->setEffectPass(0);
 }
 
-bool Engine::renderSun() {
+bool Engine::renderLightSource() {
 	int _width = scaledWidth != -1?scaledWidth:width;
 	int _height = scaledHeight != -1?scaledHeight:height;
-	Vector2 sunDimension2D = Vector2(static_cast<float>(sunSize) / static_cast<float>(_width), (static_cast<float>(sunSize) / static_cast<float>(_width)) * (static_cast<float>(height) / static_cast<float>(width)));
-	Vector2 sunPosition2D;
-	auto visible = computeScreenCoordinateByWorldCoordinate(sunPosition, sunPosition2D);
-	sunPosition2D.setX(sunPosition2D.getX() / (static_cast<float>(_width) / 2.0f) - 1.0f);
-	sunPosition2D.setY(1.0f - (sunPosition2D.getY() / (static_cast<float>(_height) / 2.0f)));
+	Vector2 lightSourceDimension2D = Vector2(static_cast<float>(lightSourceSize) / static_cast<float>(_width), (static_cast<float>(lightSourceSize) / static_cast<float>(_width)) * (static_cast<float>(height) / static_cast<float>(width)));
+	Vector2 lightSourcePosition2D;
+	auto visible = computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D);
+	lightSourcePosition2D.setX(lightSourcePosition2D.getX() / (static_cast<float>(_width) / 2.0f) - 1.0f);
+	lightSourcePosition2D.setY(1.0f - (lightSourcePosition2D.getY() / (static_cast<float>(_height) / 2.0f)));
 	if (visible == true) {
-		texture2DRenderShader->renderTexture(this, sunPosition2D, sunDimension2D, sunTextureId);
+		texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourcePosition2D, lightSourceTextureId);
 	}
 	return visible;
 }

@@ -37,5 +37,5 @@ void main(void) {
 		textureCoordinate -= deltaTextureCoordinate;
 	}
 	outColor*= EXPOSURE;
-	outColor.a = 0.5 * intensity;
+	outColor.a = intensity;
 }
