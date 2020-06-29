@@ -86,8 +86,8 @@ bool PathFinding::isWalkableInternal(float x, float y, float z, float& height, f
 		return height > -10000.0f;
 	}
 	auto walkable = isWalkable(x, y, z, height, stepSize, collisionTypeIds, ignoreStepUpMax);
+	//walkableCache[cacheId] = walkable == false?-10000.0f:height;
 	if (walkable == false) return false;
-	walkableCache[cacheId] = walkable == false?-10000.0f:height;
 	return customTest == nullptr || customTest->isWalkable(this, x, height, z) == true;
 }
 
@@ -116,7 +116,7 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 	auto walkableCacheIt = walkableCache.find(cacheId);
 	if (walkableCacheIt != walkableCache.end()) {
 		auto height = walkableCacheIt->second;
-		return height > -10000.0f;
+		return true;
 	}
 
 	// set up transformations
@@ -132,7 +132,7 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
 	auto walkable = world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorSlopeTestCollisionBody, collidedRigidBodies) == false;
-	walkableCache[cacheId] = walkable == false?-10000.0f:0.0f;
+	// walkableCache[cacheId] = walkable == false?-10000.0f:0.0f;
 	return walkable;
 }
 
@@ -141,9 +141,9 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 	float _z = z - stepSize / 2.0f;
 	height = -10000.0f;
 	Vector3 actorPosition;
-	for (auto i = 0; i < 4; i++) {
+	for (auto i = 0; i <= 4; i++) {
 		float _x = x - stepSize / 2.0f;
-		for (auto j = 0; j < 4; j++) {
+		for (auto j = 0; j <= 4; j++) {
 			Vector3 actorPositionCandidate;
 			auto body = world->determineHeight(
 				collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds,
@@ -151,13 +151,18 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 				actorPositionCandidate.set(_x, y, _z),
 				actorPosition
 			);
+			Console::println(
+				"PathFinding::isWalkable(): " +
+				to_string(x) + "; " + to_string(y) + "; " + to_string(z) + "|" +
+				to_string(_x) + "; " + to_string(actorPosition.getY()) + "; " + to_string(_z) + "|" +
+				(body != nullptr?body->getId():"no body") + " -----> " + to_string(height));
 			if (body == nullptr || ((body->getCollisionTypeId() & skipOnCollisionTypeIds) != 0)) {
 				return false;
 			}
 			if (actorPosition.getY() > height) height = actorPosition.getY();
-			_x+= stepSize / 2.0f;
+			_x+= stepSize / 4.0f;
 		}
-		_z+= stepSize / 2.0f;
+		_z+= stepSize / 4.0f;
 	}
 
 	// set up transformations
@@ -171,7 +176,14 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
-	return world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
+	auto success = world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
+	for (auto body: collidedRigidBodies) {
+		Console::println(
+			"PathFinding::isWalkable(): collisions: " +
+			body->getId()
+		);
+	}
+	return success;
 }
 
 void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTestPtr, bool zeroHeightInId) {
@@ -209,7 +221,7 @@ void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleA
 			successorNode.costsReachPoint = 0.0f;
 			successorNode.costsEstimated = 0.0f;
 			successorNode.x = node.x + x;
-			successorNode.y = zeroHeightInId == true?0:getIntegerPositionComponent(successorNode.position.getY());
+			successorNode.y = zeroHeightInId == true?0:getIntegerPositionComponent(successorNode.position.getY(), 0.1f);
 			successorNode.z = node.z + z;
 			successorNode.id = toIdInt(
 				successorNode.x,
