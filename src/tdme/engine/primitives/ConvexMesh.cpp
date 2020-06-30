@@ -11,6 +11,9 @@
 
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/models/WFObjWriter.h>
+#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/engine/model/ModelHelper_VertexOrder.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
@@ -37,6 +40,9 @@ using std::vector;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
+using tdme::engine::fileio::models::WFObjWriter;
+using tdme::engine::model::ModelHelper;
+using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
@@ -80,6 +86,8 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
 
+	WFObjWriter wfObj;
+
 	// check if local translation is given
 	// determine center/position transformed
 	collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
@@ -88,12 +96,6 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		collisionShapeLocalTranslation.add(vertex);
 	}
 	collisionShapeLocalTranslation.scale(1.0f / indices.size());
-	Console::println(
-		"collisionShapeLocalTranslation: " +
-		to_string(collisionShapeLocalTranslation.getX()) + "; " +
-		to_string(collisionShapeLocalTranslation.getY()) + "; " +
-		to_string(collisionShapeLocalTranslation.getZ())
-	);
 
 	// center
 	center.set(collisionShapeLocalTranslation).scale(scale);
@@ -115,6 +117,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		vertexTransformed.sub(center);
 		vertexTransformed.scale(scale);
 		verticesBuffer.put(vertexTransformed.getArray());
+		wfObj.addVertex(vertexTransformed);
 	}
 	for (auto& index: indices) {
 		indicesBuffer.put(index);
@@ -127,7 +130,17 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		face.indexBase = indexIdx;
 		faces.push_back(face);
 		indexIdx+= faceVerticesCount;
+		vector<int> faceVertexIndices;
+		for (auto i = 0; i < face.nbVertices; i++) {
+			faceVertexIndices.push_back(indices[face.indexBase + i]);
+		}
+		wfObj.addFace(faceVertexIndices);
 	}
+
+	// write our convex mesh as wavefront object
+	wfObj.write(".", "test.obj");
+
+	//
 	auto polygonVertexArray = new reactphysics3d::PolygonVertexArray(
 		vertices.size(),
 		verticesByteBuffer->getBuffer(),
@@ -209,6 +222,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 			}
 		}
 
+		// remove vertices that live on the line 2 other 2 vertices span
 		{
 			vector<int> polygonVerticesToRemove;
 			Vector3 c;
@@ -217,51 +231,13 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 					if (i == j) continue;
 					for (auto k = 0; k < polygonVertices.size(); k++) {
 						if (i == k || j == k) continue;
-						Console::println(to_string(i) + " / " + to_string(j) + " / " + to_string(k));
 						LineSegment::computeClosestPointOnLineSegment(
 							polygonVertices[i],
 							polygonVertices[j],
 							polygonVertices[k],
 							c
 						);
-						if (polygonVertices[k].equals(c, 0.01) == true) {
-							Console::println(
-								to_string(i) + " / " +
-								to_string(j) + " / " +
-								to_string(k) + ": ja hit: " +
-								to_string(polygonVertices[i].getX()) + ", " +
-								to_string(polygonVertices[i].getY()) + ", " +
-								to_string(polygonVertices[i].getZ()) + " ---> " +
-								to_string(polygonVertices[j].getX()) + ", " +
-								to_string(polygonVertices[j].getY()) + ", " +
-								to_string(polygonVertices[j].getZ()) + " | " +
-								to_string(polygonVertices[k].getX()) + ", " +
-								to_string(polygonVertices[k].getY()) + ", " +
-								to_string(polygonVertices[k].getZ()) + "; " +
-								to_string(c.getX()) + ", " +
-								to_string(c.getY()) + ", " +
-								to_string(polygonVertices[k].getZ()) + "; "
-							);
-							polygonVerticesToRemove.push_back(k);
-						} else{
-							Console::println(
-								to_string(i) + " / " +
-								to_string(j) + " / " +
-								to_string(k) + ": no hit: " +
-								to_string(polygonVertices[i].getX()) + ", " +
-								to_string(polygonVertices[i].getY()) + ", " +
-								to_string(polygonVertices[i].getZ()) + " ---> " +
-								to_string(polygonVertices[j].getX()) + ", " +
-								to_string(polygonVertices[j].getY()) + ", " +
-								to_string(polygonVertices[j].getZ()) + " | " +
-								to_string(polygonVertices[k].getX()) + ", " +
-								to_string(polygonVertices[k].getY()) + ", " +
-								to_string(polygonVertices[k].getZ()) + "; " +
-								to_string(c.getX()) + ", " +
-								to_string(c.getY()) + ", " +
-								to_string(c.getZ())
-							);
-						}
+						if (polygonVertices[k].equals(c) == true) polygonVerticesToRemove.push_back(k);
 					}
 				}
 			}
@@ -269,7 +245,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 			polygonVerticesToRemove.erase(unique(polygonVerticesToRemove.begin(), polygonVerticesToRemove.end()), polygonVerticesToRemove.end());
 			auto polygonVerticesToRemoved = 0;
 			for (auto i: polygonVerticesToRemove) {
-				Console::println("xxx: " + to_string(i) + " / " + to_string(polygonVerticesToRemoved));
 				polygonVertices.erase(polygonVertices.begin() + i - polygonVerticesToRemoved);
 				polygonVerticesToRemoved++;
 			}
@@ -291,8 +266,8 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 		Vector3 triangle1Edge1;
 		Vector3 triangle1Edge2;
 		Vector3 polygonNormal;
-		triangle1Edge1.set(polygonVertices[1]).sub(polygonVertices[0]);
-		triangle1Edge2.set(polygonVertices[2]).sub(polygonVertices[0]);
+		triangle1Edge1.set(polygonVertices[1]).sub(polygonVertices[0]).normalize();
+		triangle1Edge2.set(polygonVertices[2]).sub(polygonVertices[0]).normalize();
 		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
 		// then check vertex order if it matches
 		// if it matches we have the next vertex
@@ -342,11 +317,9 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 
 		// add face
 		facesVerticesCount.push_back(polygonVerticesOrdered.size());
-		Console::println("Face: Vertices: " + to_string(polygonVerticesOrdered.size()));
 		for (auto polygonVerticesOrderedIdx: polygonVerticesOrdered) {
 			// polygon vertex
 			auto& polygonVertex = polygonVertices[polygonVerticesOrderedIdx];
-			Console::println("	Vertex: " + to_string(polygonVertex.getX()) + "; " + to_string(polygonVertex.getY()) + "; " + to_string(polygonVertex.getZ()));
 
 			// check if to insert vertex
 			int vertexIdx = 0;
@@ -356,7 +329,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 				}
 				vertexIdx++;
 			}
-			Console::println("		@vertexIdx: " + to_string(vertexIdx));
 			if (vertexIdx == vertices.size()) {
 				vertices.push_back(polygonVertex);
 			}

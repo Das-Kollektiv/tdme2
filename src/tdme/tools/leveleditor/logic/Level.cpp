@@ -559,7 +559,6 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 			);
 		} else
 		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::STATIC_RIGIDBODY) {
-			Console::println("xxx: " + id);
 			return world->addStaticRigidBody(
 				id,
 				true,
