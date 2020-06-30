@@ -202,6 +202,7 @@ private:
 
 	array<Light, LIGHTS_MAX> lights;
 	Color4 sceneColor;
+	bool renderLightSourceEnabled;
 	float lightSourceSize;
 	Vector3 lightSourcePosition;
 	bool fixedLightScatteringIntensity;
@@ -723,6 +724,22 @@ public:
 	}
 
 	/**
+	 * Returns if rendering light source is enabled
+	 * @return rendering light source is enabled
+	 */
+	inline bool isRenderLightSource() const {
+		return renderLightSourceEnabled;
+	}
+
+	/**
+	 * Set rendering light source enabled/disabled
+	 * @param renderLightSource render light source enabled
+	 */
+	inline void setRenderLightSource(bool renderLightSourceEnabled) {
+		this->renderLightSourceEnabled = renderLightSourceEnabled;
+	}
+
+	/**
 	 * Returns light source size
 	 * TODO: this is a hack until we have shader properties
 	 * @return light source size (moon, sun)
@@ -1094,14 +1111,17 @@ private:
 	 * @param useEZR if to use early Z rejection
 	 * @param doShadowMapping if to apply shadow mapping
 	 * @param applyPostProcessing if to apply post processing
+	 * @param doRenderLightSource do render light source
 	 * @param renderTypes render types
 	 */
-	void render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, int32_t renderTypes);
+	void render(int32_t effectPass, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, int32_t renderTypes);
 
 	/**
 	 * Render light source
+	 * @param width render target width
+	 * @param height render target height
 	 * @return if light source is visible
 	 */
-	bool renderLightSource();
+	bool renderLightSource(int width, int height);
 
 };

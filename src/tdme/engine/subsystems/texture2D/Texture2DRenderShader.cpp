@@ -181,4 +181,5 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 	// enabe culling
 	renderer->enableCulling(context);
 	renderer->disableBlending();
+
 }
