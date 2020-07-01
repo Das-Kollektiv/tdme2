@@ -116,7 +116,7 @@ public:
 		result.reserve(sizeof(value) * 3);
 		value = static_cast<int>(Math::ceil(x / stepSize));
 		result.append((char*)&value, sizeof(value));
-		value = static_cast<int>(Math::ceil(y / stepSize));
+		value = static_cast<int>(Math::ceil(y / 0.1f));
 		result.append((char*)&value, sizeof(value));
 		value = static_cast<int>(Math::ceil(z / stepSize));
 		result.append((char*)&value, sizeof(value));

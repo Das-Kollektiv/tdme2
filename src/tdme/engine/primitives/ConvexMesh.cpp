@@ -11,13 +11,15 @@
 
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/engine/model/ModelHelper_VertexOrder.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
+#include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/IntBuffer.h>
@@ -26,19 +28,23 @@ using std::array;
 using std::find;
 using std::reverse;
 using std::map;
+using std::sort;
 using std::string;
 using std::to_string;
+using std::unique;
 using std::unordered_set;
 using std::vector;
 
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
+using tdme::engine::model::ModelHelper;
+using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::primitives::BoundingVolume;
+using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 using tdme::utils::Float;
 
 ConvexMesh::ConvexMesh()
@@ -54,7 +60,7 @@ ConvexMesh::~ConvexMesh()
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
 }
 
-bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex) {
+inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex) {
 	// see: http://www.ambrsoft.com/TrigoCalc/Plan3D/PointsCoplanar.htm
 	Vector3 v1;
 	Vector3 v2;
@@ -65,7 +71,7 @@ bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vert
 	v3.set(vertex).sub(triangle.getVertices()[0]);
 	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3, v2v3Cross));
 	// What is best threshold here?
-	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
+	return Math::abs(v1Dotv2v3Cross) < 0.01;
 }
 
 void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
@@ -117,7 +123,13 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		face.indexBase = indexIdx;
 		faces.push_back(face);
 		indexIdx+= faceVerticesCount;
+		vector<int> faceVertexIndices;
+		for (auto i = 0; i < face.nbVertices; i++) {
+			faceVertexIndices.push_back(indices[face.indexBase + i]);
+		}
 	}
+
+	//
 	auto polygonVertexArray = new reactphysics3d::PolygonVertexArray(
 		vertices.size(),
 		verticesByteBuffer->getBuffer(),
@@ -179,12 +191,21 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 
 	// iterate triangles that are coplanar and build a polygon
 	for (auto trianglesCoplanarIt: trianglesCoplanar) {
+		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
+
+		// plane normal
+		Vector3 triangle1Edge1;
+		Vector3 triangle1Edge2;
+		Vector3 polygonNormal;
+		triangle1Edge1.set(trianglesCoplanarVector[0]->getVertices()[1]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
+		triangle1Edge2.set(trianglesCoplanarVector[0]->getVertices()[2]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
+		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
+
 		// collect polygon vertices
 		vector<Vector3> polygonVertices;
 
 		// determine polygon vertices
-		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
-		for (auto triangle: trianglesCoplanarVector) {
+		for (auto& triangle: trianglesCoplanarVector) {
 			for (auto& triangleVertex: triangle->getVertices()) {
 				bool foundVertex = false;
 				for (auto& polygonVertex: polygonVertices) {
@@ -196,6 +217,34 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 				if (foundVertex == false) {
 					polygonVertices.push_back(triangleVertex);
 				}
+			}
+		}
+
+		// remove vertices that live on the line 2 other 2 vertices span
+		{
+			vector<int> polygonVerticesToRemove;
+			Vector3 c;
+			for (auto i = 0; i < polygonVertices.size(); i++) {
+				for (auto j = 0; j < polygonVertices.size(); j++) {
+					if (i == j) continue;
+					for (auto k = 0; k < polygonVertices.size(); k++) {
+						if (i == k || j == k) continue;
+						LineSegment::computeClosestPointOnLineSegment(
+							polygonVertices[i],
+							polygonVertices[j],
+							polygonVertices[k],
+							c
+						);
+						if (polygonVertices[k].equals(c) == true) polygonVerticesToRemove.push_back(k);
+					}
+				}
+			}
+			sort(polygonVerticesToRemove.begin(), polygonVerticesToRemove.end());
+			polygonVerticesToRemove.erase(unique(polygonVerticesToRemove.begin(), polygonVerticesToRemove.end()), polygonVerticesToRemove.end());
+			auto polygonVerticesToRemoved = 0;
+			for (auto i: polygonVerticesToRemove) {
+				polygonVertices.erase(polygonVertices.begin() + i - polygonVerticesToRemoved);
+				polygonVerticesToRemoved++;
 			}
 		}
 
@@ -211,13 +260,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 		// add first vertex
 		polygonVerticesOrdered.push_back(0);
 
-		// plane normal
-		Vector3 triangle1Edge1;
-		Vector3 triangle1Edge2;
-		Vector3 polygonNormal;
-		triangle1Edge1.set(polygonVertices[1]).sub(polygonVertices[0]);
-		triangle1Edge2.set(polygonVertices[2]).sub(polygonVertices[0]);
-		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
 		// then check vertex order if it matches
 		// if it matches we have the next vertex
 		Vector3 distanceVector;
@@ -244,24 +286,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 
 			// yep
 			polygonVerticesOrdered.push_back(hitVertexIdx);
-		}
-
-		{
-			// vertex order
-			// 	see: https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
-			auto& polygonVertexOrderedFirst = polygonVertices[polygonVerticesOrdered[0]];
-			auto& polygonVertexOrderedLast = polygonVertices[polygonVerticesOrdered[1]];
-			Vector3 ac;
-			Vector3 bc;
-			Vector3 acbcCross;
-			ac.set(polygonVertexOrderedFirst).sub(polygonCenter);
-			bc.set(polygonVertexOrderedLast).sub(polygonCenter);
-			Vector3::computeCrossProduct(ac, bc, acbcCross);
-			// counter clockwise???
-			if ((Vector3::computeDotProduct(polygonNormal, acbcCross) > 0.0f) == false) {
-				// yep, reverse
-				reverse(begin(polygonVerticesOrdered), end(polygonVerticesOrdered));
-			}
 		}
 
 		// add face
