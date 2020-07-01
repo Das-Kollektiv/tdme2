@@ -11,7 +11,6 @@
 
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Transformations.h>
-#include <tdme/engine/fileio/models/WFObjWriter.h>
 #include <tdme/engine/model/ModelHelper.h>
 #include <tdme/engine/model/ModelHelper_VertexOrder.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -21,7 +20,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/IntBuffer.h>
@@ -40,7 +38,6 @@ using std::vector;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::Object3DModel;
 using tdme::engine::Transformations;
-using tdme::engine::fileio::models::WFObjWriter;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::ModelHelper_VertexOrder;
 using tdme::engine::primitives::BoundingVolume;
@@ -48,7 +45,6 @@ using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 using tdme::utils::Float;
 
 ConvexMesh::ConvexMesh()
@@ -86,8 +82,6 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
 
-	WFObjWriter wfObj;
-
 	// check if local translation is given
 	// determine center/position transformed
 	collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
@@ -117,7 +111,6 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		vertexTransformed.sub(center);
 		vertexTransformed.scale(scale);
 		verticesBuffer.put(vertexTransformed.getArray());
-		wfObj.addVertex(vertexTransformed);
 	}
 	for (auto& index: indices) {
 		indicesBuffer.put(index);
@@ -134,11 +127,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		for (auto i = 0; i < face.nbVertices; i++) {
 			faceVertexIndices.push_back(indices[face.indexBase + i]);
 		}
-		wfObj.addFace(faceVertexIndices);
 	}
-
-	// write our convex mesh as wavefront object
-	wfObj.write(".", "test.obj");
 
 	//
 	auto polygonVertexArray = new reactphysics3d::PolygonVertexArray(
@@ -202,11 +191,20 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 
 	// iterate triangles that are coplanar and build a polygon
 	for (auto trianglesCoplanarIt: trianglesCoplanar) {
+		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
+
+		// plane normal
+		Vector3 triangle1Edge1;
+		Vector3 triangle1Edge2;
+		Vector3 polygonNormal;
+		triangle1Edge1.set(trianglesCoplanarVector[0]->getVertices()[1]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
+		triangle1Edge2.set(trianglesCoplanarVector[0]->getVertices()[2]).sub(trianglesCoplanarVector[0]->getVertices()[0]).normalize();
+		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
+
 		// collect polygon vertices
 		vector<Vector3> polygonVertices;
 
 		// determine polygon vertices
-		auto& trianglesCoplanarVector = trianglesCoplanarIt.second;
 		for (auto& triangle: trianglesCoplanarVector) {
 			for (auto& triangleVertex: triangle->getVertices()) {
 				bool foundVertex = false;
@@ -262,13 +260,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 		// add first vertex
 		polygonVerticesOrdered.push_back(0);
 
-		// plane normal
-		Vector3 triangle1Edge1;
-		Vector3 triangle1Edge2;
-		Vector3 polygonNormal;
-		triangle1Edge1.set(polygonVertices[1]).sub(polygonVertices[0]).normalize();
-		triangle1Edge2.set(polygonVertices[2]).sub(polygonVertices[0]).normalize();
-		Vector3::computeCrossProduct(triangle1Edge1, triangle1Edge2, polygonNormal).normalize();
 		// then check vertex order if it matches
 		// if it matches we have the next vertex
 		Vector3 distanceVector;
@@ -295,24 +286,6 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 
 			// yep
 			polygonVerticesOrdered.push_back(hitVertexIdx);
-		}
-
-		{
-			// vertex order
-			// 	see: https://stackoverflow.com/questions/14370636/sorting-a-list-of-3d-coplanar-points-to-be-clockwise-or-counterclockwise
-			auto& polygonVertexOrderedFirst = polygonVertices[polygonVerticesOrdered[0]];
-			auto& polygonVertexOrderedLast = polygonVertices[polygonVerticesOrdered[1]];
-			Vector3 ac;
-			Vector3 bc;
-			Vector3 acbcCross;
-			ac.set(polygonVertexOrderedFirst).sub(polygonCenter);
-			bc.set(polygonVertexOrderedLast).sub(polygonCenter);
-			Vector3::computeCrossProduct(ac, bc, acbcCross);
-			// counter clockwise???
-			if ((Vector3::computeDotProduct(polygonNormal, acbcCross) > 0.0f) == false) {
-				// yep, reverse
-				reverse(begin(polygonVerticesOrdered), end(polygonVerticesOrdered));
-			}
 		}
 
 		// add face

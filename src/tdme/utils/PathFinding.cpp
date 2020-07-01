@@ -151,11 +151,6 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 				actorPositionCandidate.set(_x, y, _z),
 				actorPosition
 			);
-			Console::println(
-				"PathFinding::isWalkable(): " +
-				to_string(x) + "; " + to_string(y) + "; " + to_string(z) + "|" +
-				to_string(_x) + "; " + to_string(actorPosition.getY()) + "; " + to_string(_z) + "|" +
-				(body != nullptr?body->getId():"no body") + " -----> " + to_string(height));
 			if (body == nullptr || ((body->getCollisionTypeId() & skipOnCollisionTypeIds) != 0)) {
 				return false;
 			}
@@ -176,14 +171,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
-	auto success = world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
-	for (auto body: collidedRigidBodies) {
-		Console::println(
-			"PathFinding::isWalkable(): collisions: " +
-			body->getId()
-		);
-	}
-	return success;
+	return world->doesCollideWith(collisionTypeIds == 0?this->collisionTypeIds:collisionTypeIds, actorCollisionBody, collidedRigidBodies) == false;
 }
 
 void PathFinding::step(const PathFindingNode& node, float stepSize, float scaleActorBoundingVolumes, const set<string>* nodesToTestPtr, bool zeroHeightInId) {
