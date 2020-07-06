@@ -78,7 +78,7 @@ inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector
 	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
 }
 
-bool ConvexMesh::isAdjacent(Triangle& triangle1, Triangle& triangle2) {
+inline bool ConvexMesh::areTrianglesAdjacent(Triangle& triangle1, Triangle& triangle2) {
 	auto equalVertices = 0;
 	for (auto& triangle1Vertex: triangle1.getVertices()) {
 		for (auto& triangle2Vertex: triangle2.getVertices()) {
@@ -189,7 +189,7 @@ ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
 						triangle2Idx++;
 						continue;
 					}
-					auto adjacent = isAdjacent(triangle1, triangle2);
+					auto adjacent = areTrianglesAdjacent(triangle1, triangle2);
 					auto triangle2OnTriangle1Plane =
 						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[0]) &&
 						isVertexOnTrianglePlane(triangle1, triangle2.getVertices()[1]) &&

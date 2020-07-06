@@ -66,7 +66,7 @@ private:
 	 * @param triangle2 triangle 2
 	 * @return if triangles are adjacent
 	 */
-	bool isAdjacent(Triangle& triangle1, Triangle& triangle2);
+	bool areTrianglesAdjacent(Triangle& triangle1, Triangle& triangle2);
 
 	/**
 	 * Create convex mesh
