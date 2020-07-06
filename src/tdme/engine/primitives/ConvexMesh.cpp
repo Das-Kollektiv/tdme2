@@ -20,7 +20,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
 #include <tdme/utils/FloatBuffer.h>
 #include <tdme/utils/IntBuffer.h>
@@ -46,7 +45,6 @@ using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
 using tdme::math::Vector3;
-using tdme::utils::Console;
 using tdme::utils::Float;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
