@@ -96,7 +96,7 @@
         - post processing
           - depth blur
           - SSAO
-          - Light scattering
+          - light scattering
         - object picking
         - camera control
           - set up look from, look at, up vector can be computed
