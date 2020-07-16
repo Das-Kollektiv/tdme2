@@ -841,10 +841,12 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 					// if front face changed just render in next step, this all makes only sense if culling is enabled
 					if (cullingMode == 1) {
-						if (hadFrontFaceSetup == false || frontFace == -1) {
+						if (hadFrontFaceSetup == false) {
 							hadFrontFaceSetup = true;
-							frontFace = objectFrontFace;
-							renderer->setFrontFace(context, frontFace);
+							if (objectFrontFace != frontFace) {
+								frontFace = objectFrontFace;
+								renderer->setFrontFace(context, frontFace);
+							}
 						} else
 						if (objectFrontFace != frontFace) {
 							object3DRenderContext.objectsNotRendered.push_back(object);
