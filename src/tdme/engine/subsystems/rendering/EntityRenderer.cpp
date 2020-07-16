@@ -670,6 +670,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 			// draw this faces entity for each object
 			object3DRenderContext.objectsToRender = objects;
 			do {
+				auto hadFrontFaceSetup = false;
 				auto hadShaderSetup = false;
 				Matrix4x4Negative matrix4x4Negative;
 
@@ -840,7 +841,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					auto objectFrontFace = matrix4x4Negative.isNegative(modelViewMatrix) == false ? renderer->FRONTFACE_CCW : renderer->FRONTFACE_CW;
 					// if front face changed just render in next step, this all makes only sense if culling is enabled
 					if (cullingMode == 1) {
-						if (frontFace == -1) {
+						if (hadFrontFaceSetup == false || frontFace == -1) {
+							hadFrontFaceSetup = true;
 							frontFace = objectFrontFace;
 							renderer->setFrontFace(context, frontFace);
 						} else
