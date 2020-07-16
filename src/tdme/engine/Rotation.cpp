@@ -72,9 +72,7 @@ float Rotation::interpolate(float rotationAngle, float targetRotationAngle, floa
 		Math::abs(targetRotationAngleC - rotationAngle) < Math::abs(targetRotationAngleB - rotationAngle)) {
 		targetRotationAngle = targetRotationAngleC;
 	}
-	// apply rotation
 	if (Math::abs(rotationAngle - targetRotationAngle) < 0.1f) {
-		//
 		return targetRotationAngle;
 	} else {
 		auto rotationAdd = timeSecondsPassed * rotationDeegreePerSeconds * Math::sign(targetRotationAngle - rotationAngle);
