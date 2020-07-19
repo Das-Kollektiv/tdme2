@@ -487,8 +487,8 @@ void Engine::initialize()
 			shadowMappingEnabled = true;
 			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(4);
-			skinningShaderEnabled = false;
-			animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
+			skinningShaderEnabled = true;
+			animationProcessingTarget = Engine::AnimationProcessingTarget::GPU;
 		}
 		// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
 		#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)

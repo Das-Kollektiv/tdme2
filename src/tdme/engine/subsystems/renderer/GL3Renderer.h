@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined (__APPLE__)
+	#include <OpenCL/opencl.h>
+#endif
+
 #include <array>
 #include <map>
 #include <vector>
@@ -36,6 +40,32 @@ private:
 	uint32_t engineVAO;
 	map<uint32_t, int32_t> vbosUsage;
 	int activeTextureUnit;
+	#if defined (__APPLE__)
+		cl_context clContext;
+		cl_program clSkinningKernelProgram;
+		cl_kernel clSkinningKernel;
+		cl_command_queue clCommandQueue;
+		dispatch_queue_t clDispatchQueue;
+		array<cl_mem, 8> clBoundGLBuffers;
+
+		/**
+		 * OpenCL bind GL buffer
+		 * @param clKernel OpenCL kernel
+		 * @param clKernelArgIdx OpenCL kernel argument index
+		 * @param bufferObjectId OpenGL buffer object id
+		 * @param write write
+		 */
+		void clBindGLBuffer(cl_kernel clKernel, int32_t clKernelArgIdx, int32_t bufferObjectId, bool write);
+
+		/**
+		 * OpenCL error callback
+		 * @param errorInfo error info
+		 * @param privateInfo private info
+		 * @param cb cb?
+		 * @param userData user data
+		 */
+		static void clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData);
+	#endif
 
 public:
 	void initialize() override;

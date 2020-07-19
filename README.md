@@ -49,7 +49,7 @@
                     - supports animation blending
                 - skinning via
                     - CPU on GL2, GL3+/CORE, GLES2
-                    - GPU via compute shaders with GL4.3+/CORE, Vulkan
+                    - GPU via compute shaders with GL4.3+/CORE, Vulkan, GL3+/CORE via OpenCL for MacOSX
                     - which also supports several instances of the same object to reduce compute and render calls
                 - both animations and skinning have some sort of configurable LOD functionality
                 - texture transformations/animations
@@ -268,7 +268,7 @@
         - Windows/MINGW(port completed)
         - Windows/MSC(port completed)
         - Linux(port completed)
-        - Mac Os X(port completed)
+        - MacOSX(port completed)
         - FreeBSD(port completed)
         - NetBSD(port completed)
         - OpenBSD(port is WIP)
