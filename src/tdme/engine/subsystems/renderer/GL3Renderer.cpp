@@ -97,9 +97,11 @@ bool GL3Renderer::isSupportingVertexArrays() {
 	return true;
 }
 
-void GL3Renderer::clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData) {
-	Console::println(string("GL3Renderer::clErrorCallback(): ") + errorInfo);
-}
+#if defined (__APPLE__)
+	void GL3Renderer::clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData) {
+		Console::println(string("GL3Renderer::clErrorCallback(): ") + errorInfo);
+	}
+#endif
 
 void GL3Renderer::initialize()
 {
@@ -972,13 +974,14 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 	#endif
 }
 
-inline void GL3Renderer::clBindGLBuffer(cl_kernel clKernel, int32_t clKernelArgIdx, int32_t bufferObjectId, bool write) {
-	cl_int clError;
-	auto clMemObject = clCreateFromGLBuffer(clContext, write == true?CL_MEM_WRITE_ONLY:CL_MEM_READ_ONLY, bufferObjectId, &clError);
-	clError = clSetKernelArg(clKernel, clKernelArgIdx, sizeof(cl_mem), &clMemObject);
-	clBoundGLBuffers[clKernelArgIdx] = clMemObject;
-}
-
+#if defined (__APPLE__)
+	inline void GL3Renderer::clBindGLBuffer(cl_kernel clKernel, int32_t clKernelArgIdx, int32_t bufferObjectId, bool write) {
+		cl_int clError;
+		auto clMemObject = clCreateFromGLBuffer(clContext, write == true?CL_MEM_WRITE_ONLY:CL_MEM_READ_ONLY, bufferObjectId, &clError);
+		clError = clSetKernelArg(clKernel, clKernelArgIdx, sizeof(cl_mem), &clMemObject);
+		clBoundGLBuffers[clKernelArgIdx] = clMemObject;
+	}
+#endif
 
 void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
