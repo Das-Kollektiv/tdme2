@@ -10,24 +10,23 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/math/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/utils/fwd-tdme.h>
 
 using std::array;
 using std::map;
 using std::vector;
 using std::string;
 
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
+using tdme::os::threading::Mutex;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
-using tdme::math::Matrix4x4;
 
 /** 
  * OpenGL 3 renderer
@@ -41,21 +40,32 @@ private:
 	map<uint32_t, int32_t> vbosUsage;
 	int activeTextureUnit;
 	#if defined (__APPLE__)
+		struct CLSkinningParameters {
+			array<int32_t, 8> boundGLBuffers { -1, -1, -1, -1, -1, -1, -1, -1 };
+			array<bool, 8> boundGLBuffersWrite { false, false, false, false, false, false, false, false };
+			int32_t matrixCount { 0 };
+			int32_t instanceCount { 0 };
+			int32_t vertexCount { 0 };
+			int32_t numGroupsX { 0 };
+			int32_t numGroupsY { 0 };
+		};
 		cl_context clContext;
 		cl_program clSkinningKernelProgram;
 		cl_kernel clSkinningKernel;
 		cl_command_queue clCommandQueue;
 		dispatch_queue_t clDispatchQueue;
-		array<cl_mem, 8> clBoundGLBuffers;
+		dispatch_semaphore_t clGlSemaphore;
+		Mutex clSkinningParametersMutex;
+		vector<CLSkinningParameters> clSkinningParametersQueue;
+		CLSkinningParameters clSkinningParameters;
 
 		/**
 		 * OpenCL bind GL buffer
-		 * @param clKernel OpenCL kernel
-		 * @param clKernelArgIdx OpenCL kernel argument index
+		 * @param idx argument index
 		 * @param bufferObjectId OpenGL buffer object id
 		 * @param write write
 		 */
-		void clBindGLBuffer(cl_kernel clKernel, int32_t clKernelArgIdx, int32_t bufferObjectId, bool write);
+		void clBindGLBuffer(int32_t idx, int32_t bufferObjectId, bool write);
 
 		/**
 		 * OpenCL error callback

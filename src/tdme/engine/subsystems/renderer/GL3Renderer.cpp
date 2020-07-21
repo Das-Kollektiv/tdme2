@@ -17,17 +17,18 @@
 #include <vector>
 #include <string>
 
-#include <tdme/utils/Buffer.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/IntBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Mutex.h>
+#include <tdme/utils/Buffer.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Console.h>
+#include <tdme/utils/FloatBuffer.h>
+#include <tdme/utils/IntBuffer.h>
+#include <tdme/utils/ShortBuffer.h>
 #include <tdme/utils/StringUtils.h>
 
 using std::array;
@@ -36,21 +37,22 @@ using std::vector;
 using std::string;
 using std::to_string;
 
-using tdme::engine::subsystems::renderer::GL3Renderer;
-using tdme::utils::Buffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::renderer::GL3Renderer;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::Mutex;
+using tdme::utils::Buffer;
+using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
+using tdme::utils::FloatBuffer;
+using tdme::utils::IntBuffer;
+using tdme::utils::ShortBuffer;
 using tdme::utils::StringUtils;
 
-GL3Renderer::GL3Renderer() 
+GL3Renderer::GL3Renderer(): clSkinningParametersMutex("gl3-spm")
 {
 	// setup GL3 consts
 	ID_NONE = 0;
@@ -65,9 +67,9 @@ GL3Renderer::GL3Renderer()
 	#if defined (__APPLE__)
 		SHADER_COMPUTE_SHADER = -1;
 		SHADER_GEOMETRY_SHADER = -1;
-		UNIFORM_CL_SKINNING_MATRIX_COUNT = -1001;
-		UNIFORM_CL_SKINNING_INSTANCE_COUNT = -1002;
-		UNIFORM_CL_SKINNING_VERTEX_COUNT = -1003;
+		UNIFORM_CL_SKINNING_VERTEX_COUNT = -1001;
+		UNIFORM_CL_SKINNING_MATRIX_COUNT = -1002;
+		UNIFORM_CL_SKINNING_INSTANCE_COUNT = -1003;
 	#else
 		SHADER_GEOMETRY_SHADER = GL_GEOMETRY_SHADER;
 		SHADER_COMPUTE_SHADER = GL_COMPUTE_SHADER;
@@ -142,6 +144,7 @@ void GL3Renderer::initialize()
 		auto clShareGroup = CGLGetShareGroup(clCurrentContext);
 		gcl_gl_set_sharegroup(clShareGroup);
 		clDispatchQueue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, nullptr);
+		clGlSemaphore = dispatch_semaphore_create(0);
 		clDeviceId = gcl_get_device_id_with_dispatch_queue(clDispatchQueue);
 
 		// device vendor + names
@@ -164,7 +167,6 @@ void GL3Renderer::initialize()
 		clError = clBuildProgram(clSkinningKernelProgram, 1, &clDeviceId, nullptr, nullptr, nullptr);
 		auto clBuildInfo = clGetProgramBuildInfo(clSkinningKernelProgram, clDeviceId, CL_PROGRAM_BUILD_STATUS, 0, nullptr, &clSize);
 		clSkinningKernel = clCreateKernel(clSkinningKernelProgram, "computeSkinning", &clError);
-		clBoundGLBuffers.fill(nullptr);
 	#endif
 }
 
@@ -344,14 +346,14 @@ int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& 
 void GL3Renderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
 {
 	#if defined (__APPLE__)
+		if (uniformId == UNIFORM_CL_SKINNING_VERTEX_COUNT) {
+			clSkinningParameters.vertexCount = value;
+		} else
 		if (uniformId == UNIFORM_CL_SKINNING_MATRIX_COUNT) {
-			clSetKernelArg(clSkinningKernel, 9, sizeof(cl_int), &value);
+			clSkinningParameters.matrixCount = value;
 		} else
 		if (uniformId == UNIFORM_CL_SKINNING_INSTANCE_COUNT) {
-			clSetKernelArg(clSkinningKernel, 10, sizeof(cl_int), &value);
-		} else
-		if (uniformId == UNIFORM_CL_SKINNING_VERTEX_COUNT) {
-			clSetKernelArg(clSkinningKernel, 8, sizeof(cl_int), &value);
+			clSkinningParameters.instanceCount = value;
 		} else {
 			glUniform1i(uniformId, value);
 		}
@@ -928,14 +930,40 @@ void GL3Renderer::checkGLError(int line)
 
 void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	#if defined (__APPLE__)
-		size_t local_size[] = {(size_t)16, (size_t)16};
-		size_t global_size[] = {(size_t)numGroupsX * local_size[0], (size_t)numGroupsY  * local_size[1]};
-		glFinish();
-		clEnqueueAcquireGLObjects(clCommandQueue, clBoundGLBuffers.size(), clBoundGLBuffers.data(), 0, nullptr, nullptr);
-		clEnqueueNDRangeKernel(clCommandQueue, clSkinningKernel, 2, nullptr, global_size, local_size, 0, nullptr, nullptr);
-		clEnqueueReleaseGLObjects(clCommandQueue, clBoundGLBuffers.size(), clBoundGLBuffers.data(), 0, nullptr, nullptr);
-		clFinish(clCommandQueue);
-		clBoundGLBuffers.fill(nullptr);
+		clSkinningParameters.numGroupsX = numGroupsX;
+		clSkinningParameters.numGroupsY = numGroupsY;
+		clSkinningParametersMutex.lock();
+		clSkinningParametersQueue.push_back(clSkinningParameters);
+		if (clSkinningParametersQueue.size() == 1) {
+			dispatch_async(
+				clDispatchQueue,
+				^{
+					clSkinningParametersMutex.lock();
+					for (auto& _clSkinningParameters: clSkinningParametersQueue) {
+						cl_int clError;
+						array<cl_mem, 8> boundCLMemObjects;
+						for (auto i = 0; i < _clSkinningParameters.boundGLBuffers.size(); i++) {
+							boundCLMemObjects[i] = clCreateFromGLBuffer(clContext, _clSkinningParameters.boundGLBuffersWrite[i] == true?CL_MEM_WRITE_ONLY:CL_MEM_READ_ONLY, _clSkinningParameters.boundGLBuffers[i], &clError);
+							clError = clSetKernelArg(clSkinningKernel, i, sizeof(cl_mem), &boundCLMemObjects[i]);
+						}
+						clSetKernelArg(clSkinningKernel, 8, sizeof(cl_int), &_clSkinningParameters.vertexCount);
+						clSetKernelArg(clSkinningKernel, 9, sizeof(cl_int), &_clSkinningParameters.matrixCount);
+						clSetKernelArg(clSkinningKernel, 10, sizeof(cl_int), &_clSkinningParameters.instanceCount);
+						size_t local_size[] = {(size_t)16, (size_t)16};
+						size_t global_size[] = {(size_t)_clSkinningParameters.numGroupsX * local_size[0], (size_t)_clSkinningParameters.numGroupsY  * local_size[1]};
+						clEnqueueAcquireGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
+						clEnqueueNDRangeKernel(clCommandQueue, clSkinningKernel, 2, nullptr, global_size, local_size, 0, nullptr, nullptr);
+						clEnqueueReleaseGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
+					}
+					clSkinningParametersQueue.clear();
+					clSkinningParametersMutex.unlock();
+					clFinish(clCommandQueue);
+					dispatch_semaphore_signal(clGlSemaphore);
+				}
+			);
+		}
+		clSkinningParameters = CLSkinningParameters();
+		clSkinningParametersMutex.unlock();
 	#else
 		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	#endif
@@ -975,17 +1003,15 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 }
 
 #if defined (__APPLE__)
-	inline void GL3Renderer::clBindGLBuffer(cl_kernel clKernel, int32_t clKernelArgIdx, int32_t bufferObjectId, bool write) {
-		cl_int clError;
-		auto clMemObject = clCreateFromGLBuffer(clContext, write == true?CL_MEM_WRITE_ONLY:CL_MEM_READ_ONLY, bufferObjectId, &clError);
-		clError = clSetKernelArg(clKernel, clKernelArgIdx, sizeof(cl_mem), &clMemObject);
-		clBoundGLBuffers[clKernelArgIdx] = clMemObject;
+	inline void GL3Renderer::clBindGLBuffer(int32_t idx, int32_t bufferObjectId, bool write) {
+		clSkinningParameters.boundGLBuffers[idx] = bufferObjectId;
+		clSkinningParameters.boundGLBuffersWrite[idx] = write;
 	}
 #endif
 
 void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 0, bufferObjectId, false);
+		clBindGLBuffer(0, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObjectId);
 	#endif
@@ -993,7 +1019,7 @@ void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t buffer
 
 void GL3Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 1, bufferObjectId, false);
+		clBindGLBuffer(1, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferObjectId);
 	#endif
@@ -1001,7 +1027,7 @@ void GL3Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferO
 
 void GL3Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 2, bufferObjectId, false);
+		clBindGLBuffer(2, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, bufferObjectId);
 	#endif
@@ -1009,7 +1035,7 @@ void GL3Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bu
 
 void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 3, bufferObjectId, false);
+		clBindGLBuffer(3, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bufferObjectId);
 	#endif
@@ -1017,7 +1043,7 @@ void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t
 
 void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 4, bufferObjectId, false);
+		clBindGLBuffer(4, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bufferObjectId);
 	#endif
@@ -1025,7 +1051,7 @@ void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int3
 
 void GL3Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 5, bufferObjectId, true);
+		clBindGLBuffer(5, bufferObjectId, true);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bufferObjectId);
 	#endif
@@ -1033,7 +1059,7 @@ void GL3Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t 
 
 void GL3Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 6, bufferObjectId, true);
+		clBindGLBuffer(6, bufferObjectId, true);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
 	#endif
@@ -1041,7 +1067,7 @@ void GL3Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t b
 
 void GL3Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
-		clBindGLBuffer(clSkinningKernel, 7, bufferObjectId, false);
+		clBindGLBuffer(7, bufferObjectId, false);
 	#else
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
 	#endif
