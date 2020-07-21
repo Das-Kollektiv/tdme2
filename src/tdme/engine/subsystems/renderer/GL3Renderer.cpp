@@ -22,7 +22,6 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/Buffer.h>
 #include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Console.h>
@@ -43,7 +42,6 @@ using tdme::engine::subsystems::renderer::GL3Renderer;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::os::threading::Mutex;
 using tdme::utils::Buffer;
 using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
@@ -52,7 +50,7 @@ using tdme::utils::IntBuffer;
 using tdme::utils::ShortBuffer;
 using tdme::utils::StringUtils;
 
-GL3Renderer::GL3Renderer(): clSkinningParametersMutex("gl3-spm")
+GL3Renderer::GL3Renderer()
 {
 	// setup GL3 consts
 	ID_NONE = 0;
@@ -143,8 +141,7 @@ void GL3Renderer::initialize()
 		auto clCurrentContext = CGLGetCurrentContext();
 		auto clShareGroup = CGLGetShareGroup(clCurrentContext);
 		gcl_gl_set_sharegroup(clShareGroup);
-		clDispatchQueue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, nullptr);
-		clGlSemaphore = dispatch_semaphore_create(0);
+		auto clDispatchQueue = gcl_create_dispatch_queue(CL_DEVICE_TYPE_GPU, nullptr);
 		clDeviceId = gcl_get_device_id_with_dispatch_queue(clDispatchQueue);
 
 		// device vendor + names
@@ -932,38 +929,24 @@ void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t num
 	#if defined (__APPLE__)
 		clSkinningParameters.numGroupsX = numGroupsX;
 		clSkinningParameters.numGroupsY = numGroupsY;
-		clSkinningParametersMutex.lock();
-		clSkinningParametersQueue.push_back(clSkinningParameters);
-		if (clSkinningParametersQueue.size() == 1) {
-			dispatch_async(
-				clDispatchQueue,
-				^{
-					clSkinningParametersMutex.lock();
-					for (auto& _clSkinningParameters: clSkinningParametersQueue) {
-						cl_int clError;
-						array<cl_mem, 8> boundCLMemObjects;
-						for (auto i = 0; i < _clSkinningParameters.boundGLBuffers.size(); i++) {
-							boundCLMemObjects[i] = clCreateFromGLBuffer(clContext, _clSkinningParameters.boundGLBuffersWrite[i] == true?CL_MEM_WRITE_ONLY:CL_MEM_READ_ONLY, _clSkinningParameters.boundGLBuffers[i], &clError);
-							clError = clSetKernelArg(clSkinningKernel, i, sizeof(cl_mem), &boundCLMemObjects[i]);
-						}
-						clSetKernelArg(clSkinningKernel, 8, sizeof(cl_int), &_clSkinningParameters.vertexCount);
-						clSetKernelArg(clSkinningKernel, 9, sizeof(cl_int), &_clSkinningParameters.matrixCount);
-						clSetKernelArg(clSkinningKernel, 10, sizeof(cl_int), &_clSkinningParameters.instanceCount);
-						size_t local_size[] = {(size_t)16, (size_t)16};
-						size_t global_size[] = {(size_t)_clSkinningParameters.numGroupsX * local_size[0], (size_t)_clSkinningParameters.numGroupsY  * local_size[1]};
-						clEnqueueAcquireGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
-						clEnqueueNDRangeKernel(clCommandQueue, clSkinningKernel, 2, nullptr, global_size, local_size, 0, nullptr, nullptr);
-						clEnqueueReleaseGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
-					}
-					clSkinningParametersQueue.clear();
-					clSkinningParametersMutex.unlock();
-					clFinish(clCommandQueue);
-					dispatch_semaphore_signal(clGlSemaphore);
-				}
-			);
+		glFinish();
+		auto& _clSkinningParameters = clSkinningParameters;
+		cl_int clError;
+		array<cl_mem, 8> boundCLMemObjects;
+		for (auto i = 0; i < _clSkinningParameters.boundGLBuffers.size(); i++) {
+			boundCLMemObjects[i] = clCreateFromGLBuffer(clContext, _clSkinningParameters.boundGLBuffersWrite[i] == true?CL_MEM_WRITE_ONLY:CL_MEM_READ_ONLY, _clSkinningParameters.boundGLBuffers[i], &clError);
+			clError = clSetKernelArg(clSkinningKernel, i, sizeof(cl_mem), &boundCLMemObjects[i]);
 		}
+		clSetKernelArg(clSkinningKernel, 8, sizeof(cl_int), &_clSkinningParameters.vertexCount);
+		clSetKernelArg(clSkinningKernel, 9, sizeof(cl_int), &_clSkinningParameters.matrixCount);
+		clSetKernelArg(clSkinningKernel, 10, sizeof(cl_int), &_clSkinningParameters.instanceCount);
+		size_t local_size[] = {(size_t)16, (size_t)16};
+		size_t global_size[] = {(size_t)_clSkinningParameters.numGroupsX * local_size[0], (size_t)_clSkinningParameters.numGroupsY  * local_size[1]};
+		clEnqueueAcquireGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
+		clEnqueueNDRangeKernel(clCommandQueue, clSkinningKernel, 2, nullptr, global_size, local_size, 0, nullptr, nullptr);
+		clEnqueueReleaseGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
+		clFinish(clCommandQueue);
 		clSkinningParameters = CLSkinningParameters();
-		clSkinningParametersMutex.unlock();
 	#else
 		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
 	#endif

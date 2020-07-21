@@ -12,7 +12,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
-#include <tdme/os/threading/Mutex.h>
 #include <tdme/utils/fwd-tdme.h>
 
 using std::array;
@@ -22,7 +21,6 @@ using std::string;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
-using tdme::os::threading::Mutex;
 using tdme::utils::ByteBuffer;
 using tdme::utils::FloatBuffer;
 using tdme::utils::IntBuffer;
@@ -53,10 +51,6 @@ private:
 		cl_program clSkinningKernelProgram;
 		cl_kernel clSkinningKernel;
 		cl_command_queue clCommandQueue;
-		dispatch_queue_t clDispatchQueue;
-		dispatch_semaphore_t clGlSemaphore;
-		Mutex clSkinningParametersMutex;
-		vector<CLSkinningParameters> clSkinningParametersQueue;
 		CLSkinningParameters clSkinningParameters;
 
 		/**
