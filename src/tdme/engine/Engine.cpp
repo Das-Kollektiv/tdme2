@@ -1706,16 +1706,18 @@ Entity* Engine::doRayCasting(
 	return selectedEntity;
 }
 
-bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate)
+bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate, int width, int height)
 {
 	Vector3 screenCoordinate3;
 	Vector4 screenCoordinate4;
+	auto _width = width != -1?width:(scaledWidth != -1?scaledWidth:this->width);
+	auto _height = height != -1?height:(scaledHeight != -1?scaledHeight:this->height);
 	// convert to normalized device coordinates
 	camera->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f), screenCoordinate4);
 	screenCoordinate4.scale(1.0f / screenCoordinate4.getW());
 	// convert to screen coordinate
-	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * width / 2.0f);
-	screenCoordinate.setY(height - ((screenCoordinate4[1] + 1.0f) * height / 2.0f));
+	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * _width / 2.0f);
+	screenCoordinate.setY(_height - ((screenCoordinate4[1] + 1.0f) * _height / 2.0f));
 	return camera->getModelViewMatrix().multiply(worldCoordinate, screenCoordinate3).getZ() <= 0.0f;
 }
 
@@ -2121,6 +2123,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 	if (doRenderLightSource == true) {
 		auto _width = scaledWidth != -1?scaledWidth:width;
 		auto _height = scaledHeight != -1?scaledHeight:height;
+		//
 		renderLightSource(_width, _height);
 	}
 
@@ -2133,10 +2136,10 @@ bool Engine::renderLightSource(int width, int height) {
 	auto lightSourcePixelSize = width < height?static_cast<float>(lightSourceSize) * static_cast<float>(width):static_cast<float>(lightSourceSize) * static_cast<float>(height);;
 	Vector2 lightSourceDimension2D = Vector2(lightSourcePixelSize, lightSourcePixelSize);
 	Vector2 lightSourcePosition2D;
-	auto visible = computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D);
+	auto visible = computeScreenCoordinateByWorldCoordinate(lightSourcePosition, lightSourcePosition2D, width, height);
 	lightSourcePosition2D.sub(lightSourceDimension2D.clone().scale(0.5f));
 	if (visible == true) {
-		texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourceDimension2D, lightSourceTextureId);
+		texture2DRenderShader->renderTexture(this, lightSourcePosition2D, lightSourceDimension2D, lightSourceTextureId, width, height);
 	}
 	return visible;
 }

@@ -985,9 +985,11 @@ public:
 	 * Convert screen coordinate by world coordinate
 	 * @param worldCoordinate world woordinate
 	 * @param screenCoordinate screen coordinate
+	 * @param width optional render target width
+	 * @param height optional render target height
 	 * @returns if world coordinate is within frustum
 	 */
-	bool computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate);
+	bool computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordinate, Vector2& screenCoordinate, int width = -1, int height = -1);
 
 	/**
 	 * Shutdown the engine
