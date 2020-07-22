@@ -67,8 +67,8 @@ private:
 	vector<LevelEditorEntityParticleSystem*> particleSystems;
 	LevelEditorEntityModel* modelSettings { nullptr };
 	bool renderGroups;
-	string shaderId;
-	string distanceShaderId;
+	string shaderId { "default"};
+	string distanceShaderId { "default"};
 	float distanceShaderDistance;
 	bool contributesShadows;
 	bool receivesShadows;

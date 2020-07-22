@@ -301,6 +301,7 @@ SRCS = \
 	src/tdme/engine/model/UpVector.cpp \
 	src/tdme/engine/model/RotationOrder.cpp \
 	src/tdme/engine/model/Skinning.cpp \
+	src/tdme/engine/model/ShaderModel.cpp \
 	src/tdme/engine/model/SpecularMaterialProperties.cpp \
 	src/tdme/engine/model/TextureCoordinate.cpp \
 	src/tdme/engine/physics/Body.cpp \

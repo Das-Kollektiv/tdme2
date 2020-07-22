@@ -135,12 +135,20 @@ bool GLES2Renderer::isNormalMappingAvailable()
 	return false;
 }
 
+bool GLES2Renderer::isInstancedRenderingAvailable() {
+	return false;
+}
+
 bool GLES2Renderer::isPBRAvailable()
 {
 	return false;
 }
 
-bool GLES2Renderer::isInstancedRenderingAvailable() {
+bool GL2Renderer::isComputeShaderAvailable() {
+	return false;
+}
+
+bool GL2Renderer::isGLCLAvailable() {
 	return false;
 }
 

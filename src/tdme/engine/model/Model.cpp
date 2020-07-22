@@ -11,6 +11,7 @@
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
 #include <tdme/math/Matrix4x4.h>
@@ -27,6 +28,7 @@ using tdme::engine::model::Group;
 using tdme::engine::model::Material;
 using tdme::engine::model::UpVector;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::ShaderModel;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DModelInternal;
 using tdme::math::Matrix4x4;
@@ -41,6 +43,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	this->name = name;
 	this->upVector = upVector;
 	this->rotationOrder = rotationOrder;
+	this->shaderModel = ShaderModel::SPECULAR;
 	skinning = false;
 	fps = FPS_DEFAULT;
 	importTransformationsMatrix.identity();

@@ -201,25 +201,33 @@ bool GL3Renderer::isNormalMappingAvailable()
 	return true;
 }
 
+bool GL3Renderer::isInstancedRenderingAvailable() {
+	return true;
+}
+
 bool GL3Renderer::isPBRAvailable()
 {
 	return true;
 }
 
-bool GL3Renderer::isInstancedRenderingAvailable() {
-	return true;
+bool GL3Renderer::isComputeShaderAvailable() {
+	int glMajorVersion;
+	int glMinorVersion;
+	glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
+	glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
+	return (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+}
+
+bool GL3Renderer::isGLCLAvailable() {
+	#if defined (__APPLE__)
+		return true;
+	#else
+		return false;
+	#endif
 }
 
 bool GL3Renderer::isUsingShortIndices() {
 	return false;
-}
-
-bool GL3Renderer::isGeometryShaderAvailable() {
-	#if defined (__APPLE__)
-		return false;
-	#else
-		return true;
-	#endif
 }
 
 int32_t GL3Renderer::getTextureUnits()
