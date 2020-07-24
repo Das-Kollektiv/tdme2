@@ -144,20 +144,16 @@ bool GLES2Renderer::isPBRAvailable()
 	return false;
 }
 
-bool GL2Renderer::isComputeShaderAvailable() {
+bool GLES2Renderer::isComputeShaderAvailable() {
 	return false;
 }
 
-bool GL2Renderer::isGLCLAvailable() {
+bool GLES2Renderer::isGLCLAvailable() {
 	return false;
 }
 
 bool GLES2Renderer::isUsingShortIndices() {
 	return true;
-}
-
-bool GLES2Renderer::isGeometryShaderAvailable() {
-	return false;
 }
 
 int32_t GLES2Renderer::getTextureUnits()
