@@ -80,6 +80,21 @@ private:
 	bool computeTransformationsMatrix(const map<string, Group*>& groups, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& groupId, Matrix4x4& transformationsMatrix);
 
 public:
+	/**
+	 * Public constructor
+	 * @param id id
+	 * @param name name
+	 * @param upVector up vector
+	 * @param rotationOrder rotation order
+	 * @param boundingBox bounding box
+	 * @param authoringTool authoring tool
+	 */
+	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool = AUTHORINGTOOL_UNKNOWN);
+
+	/**
+	 * Deconstructor
+	 */
+	~Model();
 
 	/**
 	 * @return authoring tool
@@ -284,21 +299,5 @@ public:
 	inline bool computeTransformationsMatrix(const string& groupId, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
 		return computeTransformationsMatrix(subGroups, importTransformationsMatrix, frame, groupId, transformationsMatrix);
 	}
-
-	/**
-	 * Public constructor
-	 * @param id id
-	 * @param name name
-	 * @param upVector up vector
-	 * @param rotationOrder rotation order
-	 * @param boundingBox bounding box
-	 * @param authoringTool authoring tool
-	 */
-	Model(const string& id, const string& name, UpVector* upVector, RotationOrder* rotationOrder, BoundingBox* boundingBox, AuthoringTool authoringTool = AUTHORINGTOOL_UNKNOWN);
-
-	/**
-	 * Deconstructor
-	 */
-	~Model();
 
 };
