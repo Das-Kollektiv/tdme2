@@ -110,6 +110,12 @@ LevelEditorEntity::~LevelEditorEntity() {
 	for (auto sound: sounds) delete sound;
 }
 
+void LevelEditorEntity::setModel(Model* model) {
+	if (this->model == model) return;
+	if (this->model != nullptr) delete this->model;
+	this->model = model;
+}
+
 bool LevelEditorEntity::addBoundingVolume(int32_t idx, LevelEditorEntityBoundingVolume* levelEditorEntityBoundingVolume)
 {
 	if (idx < 0)
