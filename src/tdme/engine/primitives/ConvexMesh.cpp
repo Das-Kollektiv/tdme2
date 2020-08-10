@@ -55,7 +55,6 @@ ConvexMesh::ConvexMesh()
 
 ConvexMesh::~ConvexMesh()
 {
-	if (collisionShape != nullptr) delete collisionShape;
 	if (polyhedronMesh != nullptr) delete polyhedronMesh;
 	if (polygonVertexArray != nullptr) delete polygonVertexArray;
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
@@ -140,7 +139,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	}
 
 	//
-	auto polygonVertexArray = new reactphysics3d::PolygonVertexArray(
+	polygonVertexArray = new reactphysics3d::PolygonVertexArray(
 		vertices.size(),
 		verticesByteBuffer->getBuffer(),
 		3 * sizeof(float),
@@ -151,7 +150,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 		reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
 		reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
 	);
-	auto polyhedronMesh = new reactphysics3d::PolyhedronMesh(polygonVertexArray);
+	polyhedronMesh = new reactphysics3d::PolyhedronMesh(polygonVertexArray);
 	// create convex mesh shape
 	auto convexMeshShape = new reactphysics3d::ConvexMeshShape(polyhedronMesh);
 	// set up new collision shape

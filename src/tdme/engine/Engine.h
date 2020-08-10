@@ -233,7 +233,7 @@ private:
 
 	vector<Object3D*> visibleEZRObjects;
 
-	EntityRenderer* object3DRenderer { nullptr };
+	EntityRenderer* entityRenderer { nullptr };
 
 	static bool skinningShaderEnabled;
 	bool shadowMappingEnabled;
@@ -361,7 +361,7 @@ private:
 	 * @return object 3d renderer
 	 */
 	inline EntityRenderer* getEntityRenderer() {
-		return object3DRenderer;
+		return entityRenderer;
 	}
 
 	/**

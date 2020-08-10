@@ -90,6 +90,11 @@ Group* Model::getSubGroupById(const string& id)
 
 AnimationSetup* Model::addAnimationSetup(const string& id, int32_t startFrame, int32_t endFrame, bool loop, float speed)
 {
+	auto animationSetupIt = animationSetups.find(id);
+	if (animationSetupIt != animationSetups.end()) {
+		delete animationSetupIt->second;
+		animationSetups.erase(animationSetupIt);
+	}
 	auto animationSetup = new AnimationSetup(this, id, startFrame, endFrame, loop, "", speed);
 	animationSetups[id] = animationSetup;
 	return animationSetup;

@@ -222,7 +222,7 @@ void Engine::EngineThread::run() {
 				break;
 			case STATE_RENDERING:
 				rendering.transparentRenderFacesPool->reset();
-				engine->object3DRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByShadersAndModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
+				engine->entityRenderer->renderFunction(threadCount, idx, rendering.parameters.objects, rendering.objectsByShadersAndModels, rendering.parameters.collectTransparentFaces, rendering.parameters.renderTypes, rendering.transparentRenderFacesPool);
 				rendering.objectsByShadersAndModels.clear();
 				state = STATE_SPINNING;
 				break;
@@ -273,7 +273,7 @@ Engine::~Engine() {
 	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
 	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
 	if (shadowMapping != nullptr) delete shadowMapping;
-	delete object3DRenderer;
+	delete entityRenderer;
 	if (instance == this) {
 		delete renderer;
 		delete textureManager;
@@ -316,8 +316,8 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	// create GUI
 	offScreenEngine->gui = new GUI(offScreenEngine, guiRenderer);
 	// create object 3d vbo renderer
-	offScreenEngine->object3DRenderer = new EntityRenderer(offScreenEngine, renderer);
-	offScreenEngine->object3DRenderer->initialize();
+	offScreenEngine->entityRenderer = new EntityRenderer(offScreenEngine, renderer);
+	offScreenEngine->entityRenderer->initialize();
 	// create framebuffers
 	offScreenEngine->frameBuffer = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
 	offScreenEngine->frameBuffer->initialize();
@@ -329,7 +329,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 		offScreenEngine->lights[i] = Light(renderer, i);
 	// create shadow mapping
 	if (instance->shadowMappingEnabled == true && enableShadowMapping == true) {
-		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->object3DRenderer);
+		offScreenEngine->shadowMapping = new ShadowMapping(offScreenEngine, renderer, offScreenEngine->entityRenderer);
 	}
 	//
 	offScreenEngine->reshape(width, height);
@@ -455,7 +455,7 @@ void Engine::reset()
 		removeEntity(entityKey);
 	}
 	partition->reset();
-	object3DRenderer->reset();
+	entityRenderer->reset();
 	if (skinningShaderEnabled == true) skinningShader->reset();
 }
 
@@ -552,8 +552,8 @@ void Engine::initialize()
 	renderer->initializeFrame();
 
 	// create object 3d renderer
-	object3DRenderer = new EntityRenderer(this, renderer);
-	object3DRenderer->initialize();
+	entityRenderer = new EntityRenderer(this, renderer);
+	entityRenderer->initialize();
 	GUIParser::initialize();
 
 	// create GUI
@@ -629,7 +629,7 @@ void Engine::initialize()
 		shadowMappingShaderPre->initialize();
 		shadowMappingShaderRender = new ShadowMappingShaderRender(renderer);
 		shadowMappingShaderRender->initialize();
-		shadowMapping = new ShadowMapping(this, renderer, object3DRenderer);
+		shadowMapping = new ShadowMapping(this, renderer, entityRenderer);
 	} else {
 		Console::println(string("TDME::Not using shadow mapping"));
 	}
@@ -1745,12 +1745,15 @@ void Engine::dispose()
 	gui->dispose();
 	if (this == Engine::instance) {
 		guiRenderer->dispose();
+		GUIParser::dispose();
 	}
 
 	// dispose object 3d VBO renderer
-	object3DRenderer->dispose();
-	if (instance == this) {
-		guiRenderer->dispose();
+	entityRenderer->dispose();
+
+	// dispose object buffer if main engine
+	if (this == Engine::instance) {
+		ObjectBuffer::dispose();
 	}
 
 	// set current engine
@@ -1972,7 +1975,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		if (linesShader != nullptr) linesShader->useProgram(context);
 
 		// render points based particle systems
-		object3DRenderer->render(visibleLinesObjects);
+		entityRenderer->render(visibleLinesObjects);
 
 		// unuse particle shader
 		if (linesShader != nullptr) linesShader->unUseProgram(context);
@@ -1985,7 +1988,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		// render
 		ezrShaderPre->useProgram(this);
 		// only draw opaque face entities of objects marked as EZR objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleEZRObjects,
 			false,
 			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
@@ -2003,7 +2006,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		if (lightingShader != nullptr) lightingShader->useProgram(this);
 
 		// render objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleObjects,
 			true,
 			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
@@ -2039,7 +2042,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		if (particlesShader != nullptr) particlesShader->useProgram(context);
 
 		// render points based particle systems
-		if (visiblePpses.size() > 0) object3DRenderer->render(visiblePpses);
+		if (visiblePpses.size() > 0) entityRenderer->render(visiblePpses);
 
 		// unuse particle shader
 		if (particlesShader != nullptr) particlesShader->unUseProgram(context);
@@ -2060,7 +2063,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		}
 
 		// render post processing objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleObjectsPostPostProcessing,
 			true,
 			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
@@ -2092,7 +2095,7 @@ void Engine::render(int32_t effectPass, const string& shaderPrefix, bool useEZR,
 		renderer->disableDepthBufferTest();
 
 		// render post processing objects
-		object3DRenderer->render(
+		entityRenderer->render(
 			visibleObjectsNoDepthTest,
 			true,
 			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |

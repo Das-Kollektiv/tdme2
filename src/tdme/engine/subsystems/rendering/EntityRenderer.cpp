@@ -151,6 +151,13 @@ EntityRenderer::EntityRenderer(Engine* engine, Renderer* renderer) {
 }
 
 EntityRenderer::~EntityRenderer() {
+	if (this->renderer->isInstancedRenderingAvailable() == true) {
+		for (auto& context: contexts) {
+			delete context.bbEffectColorMuls;
+			delete context.bbEffectColorAdds;
+			delete context.bbMvMatrices;
+		}
+	}
 	for (auto batchRenderer: trianglesBatchRenderers) {
 		delete batchRenderer;
 	}

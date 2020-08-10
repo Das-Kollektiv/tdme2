@@ -344,7 +344,7 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
-	actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
+	actorBoundingVolumeSlopeTest = new OrientedBoundingBox(
 		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
 		OrientedBoundingBox::AABB_AXIS_X,
 		OrientedBoundingBox::AABB_AXIS_Y,
@@ -548,10 +548,12 @@ bool PathFinding::findPathCustom(const Vector3& startPosition, const Vector3& en
 	*/
 
 	// unset actor bounding volume and remove rigid body
-	this->actorBoundingVolume = nullptr;
-	this->actorBoundingVolumeSlopeTest = nullptr;
 	world->removeBody("tdme.pathfinding.actor");
 	world->removeBody("tdme.pathfinding.actor.slopetest");
+	delete actorBoundingVolume;
+	actorBoundingVolume = nullptr;
+	delete actorBoundingVolumeSlopeTest;
+	actorBoundingVolumeSlopeTest = nullptr;
 
 	//
 	if (VERBOSE == true && tries > 1) Console::println("PathFinding::findPath(): time: " + to_string(Time::getCurrentMillis() - now) + "ms / " + to_string(tries) + " tries");
@@ -836,10 +838,12 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	}
 
 	// unset actor bounding volume and remove rigid body
-	this->actorBoundingVolume = nullptr;
-	this->actorBoundingVolumeSlopeTest = nullptr;
 	world->removeBody("tdme.pathfinding.actor");
 	world->removeBody("tdme.pathfinding.actor.slopetest");
+	delete actorBoundingVolume;
+	actorBoundingVolume = nullptr;
+	delete actorBoundingVolumeSlopeTest;
+	actorBoundingVolumeSlopeTest = nullptr;
 
 	// dispose custom test
 	if (this->customTest != nullptr) {
