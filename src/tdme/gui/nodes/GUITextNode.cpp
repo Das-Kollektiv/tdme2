@@ -90,7 +90,7 @@ void GUITextNode::dispose()
 
 void GUITextNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
 
 	GUINode::render(guiRenderer);
 	if (font != nullptr) {

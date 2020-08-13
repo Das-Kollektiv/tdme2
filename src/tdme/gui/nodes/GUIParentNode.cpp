@@ -354,7 +354,7 @@ void GUIParentNode::layoutOnDemand() {
 
 void GUIParentNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
 
 	auto renderAreaLeftCurrent = guiRenderer->getRenderAreaLeft();
 	auto renderAreaTopCurrent = guiRenderer->getRenderAreaTop();

@@ -77,7 +77,7 @@ void GUISpaceNode::dispose()
 
 void GUISpaceNode::render(GUIRenderer* guiRenderer)
 {
-	if (conditionsMet == false) return;
+	if (shouldRender() == false) return;
 
 	GUINode::render(guiRenderer);
 }

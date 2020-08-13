@@ -6,8 +6,6 @@
 #include <string>
 
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/effects/GUIEffect.h>
-#include <tdme/gui/events/Action.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
@@ -37,8 +35,6 @@ using std::to_string;
 
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
-using tdme::gui::effects::GUIEffect;
-using tdme::gui::events::Action;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
@@ -92,8 +88,6 @@ GUIScreenNode::GUIScreenNode(
 	this->parentNode = nullptr;
 	this->visible = true;
 	this->popUp = popUp;
-	this->guiEffectOffsetX = 0;
-	this->guiEffectOffsetY = 0;
 	this->reshapeRequested = false;
 }
 
@@ -106,15 +100,6 @@ GUIScreenNode::~GUIScreenNode() {
 
 	// dispose
 	GUINode::dispose();
-
-	// remove effects
-	vector<string> effectsToRemove;
-	for (auto effectIt: effects) {
-		effectsToRemove.push_back(effectIt.first);
-	}
-	for (auto effectToRemoveId: effectsToRemove) {
-		removeEffect(effectToRemoveId);
-	}
 }
 
 GUI* GUIScreenNode::getGUI()
@@ -143,26 +128,6 @@ void GUIScreenNode::setPopUp(bool popUp)
 const vector<GUINode*>& GUIScreenNode::getFloatingNodes()
 {
 	return floatingNodes;
-}
-
-int32_t GUIScreenNode::getGUIEffectOffsetX()
-{
-	return guiEffectOffsetX;
-}
-
-void GUIScreenNode::setGUIEffectOffsetX(int32_t guiEffectOffsetX)
-{
-	this->guiEffectOffsetX = guiEffectOffsetX;
-}
-
-int32_t GUIScreenNode::getGUIEffectOffsetY()
-{
-	return guiEffectOffsetY;
-}
-
-void GUIScreenNode::setGUIEffectOffsetY(int32_t guiEffectOffsetY)
-{
-	this->guiEffectOffsetY = guiEffectOffsetY;
 }
 
 bool GUIScreenNode::isContentNode()
@@ -336,15 +301,6 @@ bool GUIScreenNode::removeNode(GUINode* node)
 void GUIScreenNode::render(GUIRenderer* guiRenderer)
 {
 	guiRenderer->initScreen(this);
-	vector<Action*> actions;
-	for (const auto& i : effects) {
-		auto effect = i.second;
-		if (effect->isActive() == true) {
-			if (effect->update(guiRenderer) == true && effect->getAction() != nullptr) actions.push_back(effect->getAction());
-			effect->apply(guiRenderer);
-		}
-	}
-	for (auto action: actions) action->performAction();
 	GUIParentNode::layoutOnDemand();
 	GUIParentNode::render(guiRenderer);
 	guiRenderer->doneScreen();
@@ -353,10 +309,6 @@ void GUIScreenNode::render(GUIRenderer* guiRenderer)
 void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 {
 	guiRenderer->initScreen(this);
-	for (auto& i : effects) {
-		auto effect = i.second;
-		effect->apply(guiRenderer);
-	}
 	for (auto i = 0; i < floatingNodes.size(); i++) {
 		guiRenderer->setRenderAreaLeft(GUIRenderer::SCREEN_LEFT);
 		guiRenderer->setRenderAreaTop(GUIRenderer::SCREEN_TOP);
@@ -542,27 +494,6 @@ void GUIScreenNode::setValues(const map<string, MutableString>& values)
 			guiElementNodeController->setValue(newValueIt->second);
 		}
 	}
-}
-
-void GUIScreenNode::addEffect(const string& id, GUIEffect* effect)
-{
-	removeEffect(id);
-	effects[id] = effect;
-}
-
-GUIEffect* GUIScreenNode::getEffect(const string& id)
-{
-	auto effectIt = effects.find(id);
-	if (effectIt == effects.end()) return nullptr;
-	return effectIt->second;
-}
-
-void GUIScreenNode::removeEffect(const string& id)
-{
-	auto effectIt = effects.find(id);
-	if (effectIt == effects.end()) return;
-	delete effectIt->second;
-	effects.erase(effectIt);
 }
 
 GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight)

@@ -4,6 +4,8 @@
 #include <unordered_map>
 
 #include <tdme/gui/GUIParserException.h>
+#include <tdme/gui/effects/GUIColorEffect.h>
+#include <tdme/gui/effects/GUIPositionEffect.h>
 #include <tdme/gui/elements/GUIButton.h>
 #include <tdme/gui/elements/GUICheckbox.h>
 #include <tdme/gui/elements/GUIDropDown.h>
@@ -50,6 +52,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/tools/Tools.h>
 #include <tdme/utils/Float.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/MutableString.h>
 #include <tdme/utils/StringUtils.h>
 #include <tdme/utils/Console.h>
@@ -62,6 +65,8 @@ using std::unordered_map;
 
 using tdme::gui::GUIParser;
 using tdme::gui::GUIParserException;
+using tdme::gui::effects::GUIColorEffect;
+using tdme::gui::effects::GUIPositionEffect;
 using tdme::gui::elements::GUIButton;
 using tdme::gui::elements::GUICheckbox;
 using tdme::gui::elements::GUIDropDown;
@@ -106,6 +111,7 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::tools::Tools;
 using tdme::utils::Float;
+using tdme::utils::Integer;
 using tdme::utils::MutableString;
 using tdme::utils::StringUtils;
 using tdme::utils::Console;
@@ -238,6 +244,56 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 	for (auto *node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		{
 			string nodeTagName = string(node->Value());
+			if (nodeTagName == "effect-in") {
+				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
+				if (type == "color") {
+					auto effect = new GUIColorEffect();
+					effect->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
+					effect->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				} else
+				if (type == "position") {
+					auto effect = new GUIPositionEffect();
+					effect->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
+					effect->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
+					effect->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
+					effect->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				}
+			} else
+			if (nodeTagName == "effect-out") {
+				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
+				if (type == "color") {
+					auto effect = new GUIColorEffect();
+					effect->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
+					effect->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				} else
+				if (type == "position") {
+					auto effect = new GUIPositionEffect();
+					effect->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
+					effect->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
+					effect->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
+					effect->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					guiParentNode->addEffect(
+						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
+						effect
+					);
+				}
+			} else
 			if (nodeTagName == "panel") {
 				auto guiPanelNode = new GUIPanelNode(
 					guiParentNode->getScreenNode(),
