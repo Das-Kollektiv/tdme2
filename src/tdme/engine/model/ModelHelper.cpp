@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Face.h>
@@ -20,11 +21,13 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
+#include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/shared/files/ProgressCallback.h>
 #include <tdme/tools/shared/model/LevelEditorObject.h>
+#include <tdme/utils/ByteBuffer.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/StringUtils.h>
 
@@ -35,6 +38,7 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::ModelHelper;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
@@ -50,11 +54,13 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
+using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::tools::shared::files::ProgressCallback;
 using tdme::tools::shared::model::LevelEditorObject;
+using tdme::utils::ByteBuffer;
 using tdme::utils::Console;
 using tdme::utils::StringUtils;
 
@@ -284,16 +290,13 @@ Material* ModelHelper::cloneMaterial(const Material* material) {
 		clonedSpecularMaterialProperties->setEmissionColor(specularMaterialProperties->getEmissionColor());
 		clonedSpecularMaterialProperties->setSpecularColor(specularMaterialProperties->getSpecularColor());
 		clonedSpecularMaterialProperties->setShininess(specularMaterialProperties->getShininess());
-		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparency(specularMaterialProperties->hasDiffuseTextureTransparency());
-		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold());
-		if (specularMaterialProperties->getDiffuseTextureFileName().length() != 0) {
-			clonedSpecularMaterialProperties->setDiffuseTexture(
-				specularMaterialProperties->getDiffuseTexturePathName(),
-				specularMaterialProperties->getDiffuseTextureFileName(),
-				specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
-				specularMaterialProperties->getDiffuseTransparencyTextureFileName()
-			);
+		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
+			specularMaterialProperties->getDiffuseTexture()->acquireReference();
+			clonedSpecularMaterialProperties->setDiffuseTexture(specularMaterialProperties->getDiffuseTexture());
 		}
+		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparency(specularMaterialProperties->hasDiffuseTextureMaskedTransparency());
+		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold());
+		// TODO: a.drewke: clone textures like diffuse texture
 		if (specularMaterialProperties->getNormalTextureFileName().length() != 0) {
 			clonedSpecularMaterialProperties->setNormalTexture(
 				specularMaterialProperties->getNormalTexturePathName(),
@@ -312,6 +315,7 @@ Material* ModelHelper::cloneMaterial(const Material* material) {
 }
 
 void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup) {
+	Console::println("ModelHelper::cloneGroup(): " + sourceGroup->getId());
 	auto clonedGroup = new Group(targetModel, targetParentGroup, sourceGroup->getId(), sourceGroup->getName());
 	clonedGroup->setVertices(sourceGroup->getVertices());
 	clonedGroup->setNormals(sourceGroup->getNormals());
@@ -334,6 +338,11 @@ void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targ
 		facesEntity.setMaterial(material);
 	}
 	clonedGroup->setFacesEntities(facesEntities);
+	if (sourceGroup->getAnimation() != nullptr) {
+		auto clonedAnimation = new Animation();
+		clonedAnimation->setTransformationsMatrices(sourceGroup->getAnimation()->getTransformationsMatrices());
+		clonedGroup->setAnimation(clonedAnimation);
+	}
 	targetModel->getGroups()[clonedGroup->getId()] = clonedGroup;
 	if (targetParentGroup == nullptr) {
 		targetModel->getSubGroups()[clonedGroup->getId()] = clonedGroup;
@@ -760,4 +769,355 @@ void ModelHelper::prepareForFoliageTreeShader(Group* group, const Matrix4x4& par
 	for (auto groupIt: group->getSubGroups()) {
 		prepareForFoliageTreeShader(groupIt.second, transformationsMatrix, shader);
 	}
+}
+
+void ModelHelper::prepareForOptimization(Group* group, const Matrix4x4& parentTransformationsMatrix, map<string, int>& materialUseCount) {
+	// skip on joints as they do not have textures to display and no vertex data
+	if (group->isJoint() == true) return;
+
+	// track material usage
+	for (auto& facesEntity: group->getFacesEntities()) {
+		materialUseCount[facesEntity.getMaterial()->getId()]++;
+	}
+
+	// do not transform skinning vertices and such
+	if (group->getSkinning() != nullptr) return;
+
+	// static group, apply group transformations matrix
+	auto transformationsMatrix = group->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+	{
+		auto vertices = group->getVertices();
+		for (auto& vertex: vertices) {
+			transformationsMatrix.multiply(vertex, vertex);
+		}
+		group->setVertices(vertices);
+	}
+	{
+		auto normals = group->getNormals();
+		for (auto& normal: normals) {
+			transformationsMatrix.multiplyNoTranslation(normal, normal);
+			normal.normalize();
+		}
+		group->setNormals(normals);
+	}
+	{
+		auto tangents = group->getTangents();
+		for (auto& tangent: tangents) {
+			transformationsMatrix.multiplyNoTranslation(tangent, tangent);
+			tangent.normalize();
+		}
+		group->setTangents(tangents);
+	}
+	{
+		auto bitangents = group->getBitangents();
+		for (auto& bitangent: bitangents) {
+			transformationsMatrix.multiplyNoTranslation(bitangent, bitangent);
+			bitangent.normalize();
+		}
+		group->setBitangents(bitangents);
+	}
+	group->setTransformationsMatrix(Matrix4x4().identity());
+
+	//
+	for (auto groupIt: group->getSubGroups()) {
+		prepareForOptimization(groupIt.second, transformationsMatrix, materialUseCount);
+	}
+}
+
+void ModelHelper::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices) {
+	Console::println("ModelHelper::optimizeGroup(): " + sourceGroup->getId());
+	if (sourceGroup->getFacesEntities().size() > 0) {
+		auto& sourceVertices = sourceGroup->getVertices();
+		auto& sourceNormals = sourceGroup->getNormals();
+		auto& sourceTangents = sourceGroup->getTangents();
+		auto& sourceBitangents = sourceGroup->getBitangents();
+		auto& sourceTextureCoordinates = sourceGroup->getTextureCoordinates();
+		auto targetGroup = targetModel->getGroups()["group.optimized"];
+		auto targetVertices = targetGroup->getVertices();
+		auto targetNormals = targetGroup->getNormals();
+		auto targetTangents = targetGroup->getTangents();
+		auto targetBitangents = targetGroup->getBitangents();
+		auto targetTextureCoordinates = targetGroup->getTextureCoordinates();
+		auto targetOffset = targetVertices.size();
+		auto targetTextureCoordinatesOffset = targetTextureCoordinates.size();
+		for (auto& v: sourceVertices) targetVertices.push_back(v);
+		for (auto& v: sourceNormals) targetNormals.push_back(v);
+		for (auto& v: sourceTangents) targetTangents.push_back(v);
+		for (auto& v: sourceBitangents) targetBitangents.push_back(v);
+		targetGroup->setVertices(targetVertices);
+		targetGroup->setNormals(targetNormals);
+		targetGroup->setTangents(targetTangents);
+		targetGroup->setBitangents(targetBitangents);
+		auto sourceFacesEntities = targetGroup->getFacesEntities();
+		auto faces = sourceFacesEntities[0].getFaces();
+		for (auto& facesEntity: sourceGroup->getFacesEntities()) {
+			auto material = facesEntity.getMaterial();
+			auto diffuseTextureAtlasIndex = diffuseTextureAtlasIndices.find(material->getId())->second;
+			auto textureXOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex % diffuseTextureAtlasSize) / static_cast<float>(diffuseTextureAtlasSize);
+			auto textureYOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex / diffuseTextureAtlasSize) / static_cast<float>(diffuseTextureAtlasSize);
+			auto textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f / static_cast<float>(diffuseTextureAtlasSize);
+			auto textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f / static_cast<float>(diffuseTextureAtlasSize);
+			for (auto& face: facesEntity.getFaces()) {
+				auto sourceVertexIndices = face.getVertexIndices();
+				auto sourceNormalIndices = face.getNormalIndices();
+				auto sourceTangentIndices = face.getTangentIndices();
+				auto sourceBitangentIndices = face.getBitangentIndices();
+				auto sourceTextureCoordinateIndices = face.getTextureCoordinateIndices();
+				TextureCoordinate textureCoordinate0;
+				{
+					auto textureCoordinateArray = sourceTextureCoordinateIndices[0] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[0]].getArray();
+					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
+					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
+					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
+					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
+					textureCoordinateArray[0]*= textureXScale;
+					textureCoordinateArray[0]+= textureXOffset;
+					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
+					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
+					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
+					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
+					textureCoordinateArray[1]*= textureYScale;
+					textureCoordinateArray[1]+= textureYOffset;
+					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
+				}
+				TextureCoordinate textureCoordinate1;
+				{
+					auto textureCoordinateArray = sourceTextureCoordinateIndices[1] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[1]].getArray();
+					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
+					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
+					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
+					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
+					textureCoordinateArray[0]*= textureXScale;
+					textureCoordinateArray[0]+= textureXOffset;
+					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
+					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
+					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
+					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
+					textureCoordinateArray[1]*= textureYScale;
+					textureCoordinateArray[1]+= textureYOffset;
+					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
+				}
+				TextureCoordinate textureCoordinate2;
+				{
+					auto textureCoordinateArray = sourceTextureCoordinateIndices[2] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[2]].getArray();
+					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
+					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
+					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
+					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
+					textureCoordinateArray[0]*= textureXScale;
+					textureCoordinateArray[0]+= textureXOffset;
+					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
+					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
+					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
+					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
+					textureCoordinateArray[1]*= textureYScale;
+					textureCoordinateArray[1]+= textureYOffset;
+					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
+				}
+				faces.push_back(
+					Face(
+						targetGroup,
+						sourceVertexIndices[0] + targetOffset,
+						sourceVertexIndices[1] + targetOffset,
+						sourceVertexIndices[2] + targetOffset,
+						sourceNormalIndices[0] + targetOffset,
+						sourceNormalIndices[1] + targetOffset,
+						sourceNormalIndices[2] + targetOffset,
+						targetTextureCoordinatesOffset + 0,
+						targetTextureCoordinatesOffset + 1,
+						targetTextureCoordinatesOffset + 2
+					)
+				);
+				targetTextureCoordinatesOffset+= 3;
+			}
+		}
+		targetGroup->setTextureCoordinates(targetTextureCoordinates);
+		sourceFacesEntities[0].setMaterial(targetModel->getMaterials()["material.optimized"]);
+		sourceFacesEntities[0].setFaces(faces);
+		targetGroup->setFacesEntities(sourceFacesEntities);
+	}
+	for (auto& subGroupIt: sourceGroup->getSubGroups()) {
+		optimizeGroup(subGroupIt.second, targetModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices);
+	}
+}
+
+Model* ModelHelper::optimizeModel(Model* model) {
+	Console::println(model->getName());
+	Console::println("\tSource material count: " + to_string(model->getMaterials().size()));
+	Console::println("\tSource group count: " + to_string(model->getGroups().size()));
+
+	// TODO: 2 mas could have the same texture
+	// prepare for optimizations
+	map<string, int> materialUseCount;
+	for (auto& groupIt: model->getSubGroups()) {
+		prepareForOptimization(
+			groupIt.second,
+			Matrix4x4().identity(),
+			materialUseCount
+		);
+	}
+
+	// check materials and diffuse textures
+	auto diffuseTextureCount = 0;
+	map<string, int> diffuseTextureAtlasIndices;
+	map<int, Texture*> diffuseTextureAtlasTextures;
+	for (auto& materialUseCountIt: materialUseCount) {
+		auto material = model->getMaterials().find(materialUseCountIt.first)->second;
+		Console::println("\tMaterial usage: " + materialUseCountIt.first + ": " + to_string(materialUseCountIt.second));
+		Console::print("\t\tEmission: ");
+		for (auto colorComponent: material->getSpecularMaterialProperties()->getEmissionColor().getArray()) {
+			Console::print(to_string(colorComponent) + " ");
+		}
+		Console::println();
+		Console::print("\t\tAmbient: ");
+		for (auto colorComponent: material->getSpecularMaterialProperties()->getAmbientColor().getArray()) {
+			Console::print(to_string(colorComponent) + " ");
+		}
+		Console::println();
+		Console::print("\t\tDiffuse: ");
+		for (auto colorComponent: material->getSpecularMaterialProperties()->getDiffuseColor().getArray()) {
+			Console::print(to_string(colorComponent) + " ");
+		}
+		auto diffuseTexture = material->getSpecularMaterialProperties()->getDiffuseTexture();
+		if (diffuseTexture != nullptr) {
+			diffuseTextureAtlasIndices[material->getId()] = diffuseTextureCount;
+			diffuseTextureAtlasTextures[diffuseTextureCount] = diffuseTexture;
+			diffuseTextureCount++;
+		}
+		Console::print("\t\tDiffuse texture: " + (diffuseTexture == nullptr?"none":to_string(diffuseTexture->getTextureWidth()) + " x " + to_string(diffuseTexture->getTextureHeight())));
+		Console::println();
+		Console::print("\t\tSpecular: ");
+		for (auto colorComponent: material->getSpecularMaterialProperties()->getSpecularColor().getArray()) {
+			Console::print(to_string(colorComponent) + " ");
+		}
+		Console::println();
+		Console::print("\t\tShininess: ");
+		Console::print(to_string(material->getSpecularMaterialProperties()->getShininess()) + " ");
+		Console::println();
+	}
+
+	// create atlas
+	int diffuseTextureAtlasSize = static_cast<int>(Math::ceil(sqrt(diffuseTextureCount)));
+	Console::println("\tTexture atlas size: " + to_string(diffuseTextureAtlasSize) + " x " + to_string(diffuseTextureAtlasSize));
+	Texture* diffuseAtlasTexture = nullptr;
+	static auto diffuseAtlasTextureIdx = 0;
+	if (diffuseTextureAtlasSize > 0) {
+		#define ATLAS_TEXTURE_SIZE	512
+		auto textureWidth = diffuseTextureAtlasSize * ATLAS_TEXTURE_SIZE;
+		auto textureHeight = diffuseTextureAtlasSize * ATLAS_TEXTURE_SIZE;
+		auto textureByteBuffer = ByteBuffer::allocate(textureWidth * textureHeight * 4);
+		for (auto y = 0; y < textureHeight; y++)
+		for (auto x = 0; x < textureWidth; x++) {
+			auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
+			auto atlasTextureIdxY = y / ATLAS_TEXTURE_SIZE;
+			auto materialTextureX = x - (atlasTextureIdxX * ATLAS_TEXTURE_SIZE);
+			auto materialTextureY = y - (atlasTextureIdxY * ATLAS_TEXTURE_SIZE);
+			auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
+			auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
+			auto atlasTextureIdx = atlasTextureIdxY * diffuseTextureAtlasSize + atlasTextureIdxX;
+			auto materialTexture = diffuseTextureAtlasTextures[atlasTextureIdx];
+			if (materialTexture != nullptr) {
+				auto materialTextureWidth = materialTexture->getTextureWidth();
+				auto materialTextureHeight = materialTexture->getTextureHeight();
+				auto materialTextureBytesPerPixel = materialTexture->getDepth() / 8;
+				auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
+				auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
+				auto materialTexturePixelOffset =
+					materialTextureYInt * materialTextureWidth * materialTextureBytesPerPixel +
+					materialTextureXInt * materialTextureBytesPerPixel;
+				auto materialPixelR = materialTexture->getTextureData()->get(materialTexturePixelOffset + 0);
+				auto materialPixelG = materialTexture->getTextureData()->get(materialTexturePixelOffset + 1);
+				auto materialPixelB = materialTexture->getTextureData()->get(materialTexturePixelOffset + 2);
+				auto materialPixelA = materialTextureBytesPerPixel == 4?materialTexture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
+				textureByteBuffer->put(materialPixelR);
+				textureByteBuffer->put(materialPixelG);
+				textureByteBuffer->put(materialPixelB);
+				textureByteBuffer->put(materialPixelA);
+			} else {
+				auto materialPixelR = 0xff;
+				auto materialPixelG = 0x00;
+				auto materialPixelB = 0x00;
+				auto materialPixelA = 0xff;
+				textureByteBuffer->put(materialPixelR);
+				textureByteBuffer->put(materialPixelG);
+				textureByteBuffer->put(materialPixelB);
+				textureByteBuffer->put(materialPixelA);
+			}
+		}
+		diffuseAtlasTexture = new Texture(
+			"tdme.texture.atlas." + to_string(diffuseAtlasTextureIdx++),
+			32,
+			textureWidth, textureHeight,
+			textureWidth, textureHeight,
+			textureByteBuffer
+		);
+		diffuseAtlasTexture->acquireReference();
+	}
+
+	// create model with optimizations applied
+	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());
+	optimizedModel->setImportTransformationsMatrix(model->getImportTransformationsMatrix());
+	auto optimizedGroup = new Group(optimizedModel, nullptr, "group.optimized", "group.optimized");
+	optimizedGroup->setFacesEntities({FacesEntity(optimizedGroup, "facesentity.optimized")});
+	optimizedModel->getGroups()["group.optimized"] = optimizedGroup;
+	optimizedModel->getSubGroups()["group.optimized"] = optimizedGroup;
+	optimizedModel->getMaterials()["material.optimized"] = new Material("material.optimized");
+	if (diffuseAtlasTexture != nullptr) optimizedModel->getMaterials()["material.optimized"]->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
+	optimizedModel->getMaterials()["material.optimized"]->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
+	for (auto& subGroupIt: model->getSubGroups()) {
+		auto group = subGroupIt.second;
+		if ((model->hasSkinning() == true && group->getSkinning() != nullptr) ||
+			(model->hasSkinning() == false && group->isJoint() == false)) {
+			optimizeGroup(group, optimizedModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices);
+			if (model->hasSkinning() == true) {
+				auto skinning = group->getSkinning();
+				auto optimizedSkinning = new Skinning();
+				optimizedSkinning->setWeights(skinning->getWeights());
+				optimizedSkinning->setJoints(skinning->getJoints());
+				optimizedSkinning->setVerticesJointsWeights(skinning->getVerticesJointsWeights());
+				optimizedModel->getGroups()["group.optimized"]->setSkinning(optimizedSkinning);
+			}
+		} else {
+			cloneGroup(group, optimizedModel, nullptr);
+		}
+	}
+
+	// copy animation set up
+	for (auto animationSetupIt: model->getAnimationSetups()) {
+		auto animationSetup = animationSetupIt.second;
+		if (animationSetup->getOverlayFromGroupId().empty() == false) {
+			optimizedModel->addOverlayAnimationSetup(
+				animationSetup->getId(),
+				animationSetup->getOverlayFromGroupId(),
+				animationSetup->getStartFrame(),
+				animationSetup->getEndFrame(),
+				animationSetup->isLoop(),
+				animationSetup->getSpeed()
+			);
+		} else {
+			optimizedModel->addAnimationSetup(
+				animationSetup->getId(),
+				animationSetup->getStartFrame(),
+				animationSetup->getEndFrame(),
+				animationSetup->isLoop(),
+				animationSetup->getSpeed()
+			);
+		}
+	}
+
+	//
+	delete model;
+
+	Console::println();
+	Console::println(optimizedModel->getName());
+	Console::println("\tOptimized material count: " + to_string(optimizedModel->getMaterials().size()));
+	Console::println("\tOptimized group count: " + to_string(optimizedModel->getGroups().size()));
+
+	Console::println();
+
+	// prepare for indexed rendering
+	ModelHelper::prepareForIndexedRendering(optimizedModel);
+
+	// done
+	return optimizedModel;
 }

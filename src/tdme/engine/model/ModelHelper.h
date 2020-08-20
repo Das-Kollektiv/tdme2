@@ -266,6 +266,10 @@ public:
 	 */
 	static void prepareForShader(Model* model, const string& shader);
 
+	/**
+	 * Optimizes model in terms of material / group reduction
+	 */
+	static Model* optimizeModel(Model* model);
 private:
 
 	/**
@@ -281,5 +285,22 @@ private:
 	 * @param shader shader
 	 */
 	static void prepareForFoliageTreeShader(Group* group, const Matrix4x4& parentTransformationsMatrix, const string& shader);
+
+	/**
+	 * Prepare for optimization
+	 * @param group group
+	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param materialUseCount material use count
+	 */
+	static void prepareForOptimization(Group* group, const Matrix4x4& parentTransformationsMatrix, map<string, int>& materialUseCount);
+
+	/**
+	 * Prepare for optimization
+	 * @param sourceGroup source group
+	 * @param targetModel target model
+	 * @param diffuseTextureAtlasSize diffuse texture atlas size
+	 * @param diffuseTextureAtlasIndices diffuse texture atlas indices
+	 */
+	static void optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices);
 
 };

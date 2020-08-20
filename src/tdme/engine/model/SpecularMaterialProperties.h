@@ -155,6 +155,12 @@ public:
 	}
 
 	/**
+	 * Set up a diffuse texture by the texture itself
+	 * @param diffuseTexture diffuse texture
+	 */
+	void setDiffuseTexture(Texture* diffuseTexture);
+
+	/**
 	 * Set up a diffuse texture
 	 * @param pathName path name
 	 * @param fileName file name

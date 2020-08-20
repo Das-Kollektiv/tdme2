@@ -38,6 +38,16 @@ SpecularMaterialProperties::~SpecularMaterialProperties() {
 	if (normalTexture != nullptr) normalTexture->releaseReference();
 }
 
+void SpecularMaterialProperties::setDiffuseTexture(Texture* diffuseTexture) {
+	if (this->diffuseTexture != nullptr) this->diffuseTexture->releaseReference();
+	diffuseTexturePathName.clear();
+	diffuseTextureFileName = diffuseTexture->getId() + ".png";
+	diffuseTransparencyTexturePathName.clear();
+	diffuseTransparencyTextureFileName.clear();
+	this->diffuseTexture = diffuseTexture;
+	checkDiffuseTextureTransparency();
+}
+
 void SpecularMaterialProperties::setDiffuseTexture(const string& pathName, const string& fileName, const string& transparencyPathName, const string& transparencyFileName)
 {
 	if (diffuseTexture != nullptr) diffuseTexture->releaseReference();
