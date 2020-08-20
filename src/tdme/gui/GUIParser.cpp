@@ -30,6 +30,7 @@
 #include <tdme/gui/elements/GUITabs.h>
 #include <tdme/gui/elements/GUITabsContent.h>
 #include <tdme/gui/elements/GUITabsHeader.h>
+#include <tdme/gui/events/Action.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.h>
@@ -91,6 +92,7 @@ using tdme::gui::elements::GUITabContent;
 using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsContent;
 using tdme::gui::elements::GUITabsHeader;
+using tdme::gui::events::Action;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIHorizontalScrollbarInternalNode;
@@ -245,53 +247,88 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, TiXmlElement* xmlPare
 		{
 			string nodeTagName = string(node->Value());
 			if (nodeTagName == "effect-in") {
+				// TODO: Refactor this and next sub block into a method
+				GUIEffect* effect = nullptr;
 				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
 				if (type == "color") {
-					auto effect = new GUIColorEffect();
-					effect->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
-					effect->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
-					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					effect = new GUIColorEffect();
+					static_cast<GUIColorEffect*>(effect)->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
+					static_cast<GUIColorEffect*>(effect)->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
 						effect
 					);
 				} else
 				if (type == "position") {
-					auto effect = new GUIPositionEffect();
-					effect->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
-					effect->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
-					effect->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
-					effect->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
-					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					effect = new GUIPositionEffect();
+					static_cast<GUIPositionEffect*>(effect)->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.in." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
 						effect
 					);
 				}
+				auto action = string(AVOID_NULLPTR_STRING(node->Attribute("action")));
+				if (effect != nullptr && action.empty() == false) {
+					class EffectAction: public virtual Action
+					{
+					public:
+						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
+						}
+						void performAction() override {
+							GUIElementNode::executeExpression(guiScreenNode, expression);
+						}
+					private:
+						GUIScreenNode* guiScreenNode;
+						string expression;
+					};
+					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
+				}
 			} else
 			if (nodeTagName == "effect-out") {
+				GUIEffect* effect = nullptr;
 				auto type = string(AVOID_NULLPTR_STRING(node->Attribute("type")));
 				if (type == "color") {
-					auto effect = new GUIColorEffect();
-					effect->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
-					effect->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
-					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					effect = new GUIColorEffect();
+					static_cast<GUIColorEffect*>(effect)->setColorMulStart(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-start"))));
+					static_cast<GUIColorEffect*>(effect)->setColorMulEnd(GUIColor(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul-end"))));
+					static_cast<GUIColorEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
 						effect
 					);
 				} else
 				if (type == "position") {
-					auto effect = new GUIPositionEffect();
-					effect->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
-					effect->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
-					effect->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
-					effect->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
-					effect->setTimeTotal(Float::parseFloat(node->Attribute("time")));
+					effect = new GUIPositionEffect();
+					static_cast<GUIPositionEffect*>(effect)->setPositionXStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionXEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-x-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYStart(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-start"))));
+					static_cast<GUIPositionEffect*>(effect)->setPositionYEnd(Integer::parseInt(AVOID_NULLPTR_STRING(node->Attribute("effect-position-y-end"))));
+					static_cast<GUIPositionEffect*>(effect)->setTimeTotal(Float::parseFloat(node->Attribute("time")));
 					guiParentNode->addEffect(
 						string("tdme.xmleffect.out." + type + ".on.") + AVOID_NULLPTR_STRING(node->Attribute("on")),
 						effect
 					);
+				}
+				auto action = string(AVOID_NULLPTR_STRING(node->Attribute("action")));
+				if (effect != nullptr && action.empty() == false) {
+					class EffectAction: public virtual Action
+					{
+					public:
+						EffectAction(GUIScreenNode* guiScreenNode, const string& expression): guiScreenNode(guiScreenNode), expression(expression) {
+						}
+						void performAction() override {
+							GUIElementNode::executeExpression(guiScreenNode, expression);
+						}
+					private:
+						GUIScreenNode* guiScreenNode;
+						string expression;
+					};
+					effect->setAction(new EffectAction(guiParentNode->getScreenNode(), action));
 				}
 			} else
 			if (nodeTagName == "panel") {

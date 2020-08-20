@@ -80,6 +80,8 @@ private:
 
 	bool reshapeRequested;
 
+	map<int64_t, string> timedExpressions;
+
 public:
 
 	/**
@@ -411,4 +413,11 @@ public:
 	 * @param maxHeight max height
 	 */
 	static GUIScreenNode_SizeConstraints createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight);
+
+	/**
+	 * Add a timed expression
+	 * @param time time
+	 * @param expression expression
+	 */
+	void addTimedExpression(int64_t time, const string& expression);
 };

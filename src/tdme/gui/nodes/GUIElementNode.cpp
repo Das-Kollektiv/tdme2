@@ -1,6 +1,7 @@
 #include <tdme/gui/nodes/GUIElementNode.h>
 
 #include <set>
+#include <string>
 
 #include <tdme/gui/events/GUIMouseEvent_Type.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -22,10 +23,13 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/utils/Console.h>
 #include <tdme/utils/Float.h>
+#include <tdme/utils/Integer.h>
 #include <tdme/utils/StringTokenizer.h>
 #include <tdme/utils/StringUtils.h>
+#include <tdme/utils/Time.h>
 
 using std::set;
+using std::to_string;
 
 using tdme::gui::events::GUIMouseEvent_Type;
 using tdme::gui::events::GUIMouseEvent;
@@ -46,9 +50,11 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::utils::Console;
+using tdme::utils::Integer;
 using tdme::utils::Float;
 using tdme::utils::StringTokenizer;
 using tdme::utils::StringUtils;
+using tdme::utils::Time;
 
 GUIElementNode::GUIElementNode(
 	GUIScreenNode* screenNode,
@@ -287,7 +293,7 @@ const string& GUIElementNode::getOnChangeExpression() {
 	return onChangeExpression;
 }
 
-void GUIElementNode::executeExpression(const string& expression) {
+void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& expression) {
 	StringTokenizer t1;
 	StringTokenizer t2;
 	t1.tokenize(expression, ";");
@@ -406,6 +412,12 @@ void GUIElementNode::executeExpression(const string& expression) {
 			} else {
 				imageNode->setMaskMaxValue(Float::parseFloat(value));
 			}
+		} else
+		if (StringUtils::startsWith(command,"delay(") == true &&
+			StringUtils::endsWith(command,")") == true) {
+			int64_t delay = Integer::parseInt(StringUtils::substring(command, command.find('(') + 1, command.rfind(')')));
+			while(t1.hasMoreTokens() == true) value+= t1.nextToken() + ";";
+			screenNode->addTimedExpression(Time::getCurrentMillis() + delay, value);
 		} else {
 			Console::println("GUIElementController::executeExpression(): Unknown sub command in expression: " + subCommand);
 		}
@@ -413,7 +425,7 @@ void GUIElementNode::executeExpression(const string& expression) {
 }
 
 void GUIElementNode::executeOnChangeExpression() {
-	if (onChangeExpression.size() > 0) executeExpression(onChangeExpression);
+	if (onChangeExpression.size() > 0) executeExpression(getScreenNode(), onChangeExpression);
 }
 
 GUINodeConditions& GUIElementNode::getActiveConditions()

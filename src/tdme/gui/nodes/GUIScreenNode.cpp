@@ -447,6 +447,17 @@ void GUIScreenNode::removeTickNode(GUINode* node) {
 }
 
 void GUIScreenNode::tick() {
+	auto now = Time::getCurrentMillis();
+	vector<int64_t> timedExpressionsToRemove;
+	for (auto& timedExpressionIt: timedExpressions) {
+		if (now >= timedExpressionIt.first) {
+			timedExpressionsToRemove.push_back(timedExpressionIt.first);
+			GUIElementNode::executeExpression(this, timedExpressionIt.second);
+		}
+	}
+	for (auto& timedExpressionToRemove: timedExpressionsToRemove) {
+		timedExpressions.erase(timedExpressionToRemove);
+	}
 	auto _tickNodesById = tickNodesById;
 	for (auto tickNodesByIdIt: _tickNodesById) {
 		auto node = tickNodesByIdIt.second;
@@ -504,4 +515,8 @@ GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string&
 	constraints.maxWidth = maxWidth.empty() == true?-1:Integer::parseInt(maxWidth);
 	constraints.maxHeight = maxHeight.empty() == true?-1:Integer::parseInt(maxHeight);
 	return constraints;
+}
+
+void GUIScreenNode::addTimedExpression(int64_t time, const string& expression) {
+	timedExpressions[time]+= timedExpressions[time].empty() == false?";" + expression:expression;
 }

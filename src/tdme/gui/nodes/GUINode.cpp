@@ -1306,10 +1306,12 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 			}
 		}
 	} else {
+		auto issuedOutEffect = false;
 		for (auto& condition: conditions) {
 			{
 				auto effect = getEffect("tdme.xmleffect.out.color.on." + condition);
 				if (effect != nullptr && effect->isActive() == false) {
+					issuedOutEffect = true;
 					haveOutEffect = true;
 					effect->start();
 				}
@@ -1317,8 +1319,16 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 			{
 				auto effect = getEffect("tdme.xmleffect.out.position.on." + condition);
 				if (effect != nullptr && effect->isActive() == false) {
+					issuedOutEffect = true;
 					haveOutEffect = true;
 					effect->start();
+				}
+			}
+		}
+		if (issuedOutEffect == true) {
+			for (auto& effectIt: effects) {
+				if (StringUtils::startsWith(effectIt.first, "tdme.xmleffect.in.") == true) {
+					effectIt.second->stop();
 				}
 			}
 		}
