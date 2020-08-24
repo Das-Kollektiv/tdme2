@@ -1,0 +1,244 @@
+diff --git a/shader/gl3/lighting/specular/render_fragmentshader.frag b/shader/gl3/lighting/specular/render_fragmentshader.frag
+index bf4d3865..a4fdc581 100644
+--- a/shader/gl3/lighting/specular/render_fragmentshader.frag
++++ b/shader/gl3/lighting/specular/render_fragmentshader.frag
+@@ -153,6 +153,7 @@ vec4 fragColor;
+ #elif defined(HAVE_WATER_SHADER)
+ 	in float height;
+ #else
++	uniform int diffuseTextureAtlasSize;
+ 	uniform sampler2D diffuseTextureUnit;
+ 	uniform int diffuseTextureAvailable;
+ 	uniform int diffuseTextureMaskedTransparency;
+@@ -225,8 +226,27 @@ void main(void) {
+ 	#else
+ 		vec4 diffuseTextureColor;
+ 		if (diffuseTextureAvailable == 1) {
+-			// fetch from texture
+-			diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
++			if (diffuseTextureAtlasSize > 1) {
++				int diffuseTextureAtlaxXIdx = int(vsFragTextureUV.x / 1000.0);
++				int diffuseTextureAtlaxYIdx = int(vsFragTextureUV.y / 1000.0);
++				float diffuseTextureAtlaxXCoord = vsFragTextureUV.x - 500.0 - float(diffuseTextureAtlaxXIdx) * 1000.0;
++				float diffuseTextureAtlaxYCoord = vsFragTextureUV.y - 500.0 - float(diffuseTextureAtlaxYIdx) * 1000.0;
++
++				float diffuseTextureAtlaxXCoordAtlas = mod(diffuseTextureAtlaxXCoord, 1.0);
++				if (diffuseTextureAtlaxXCoordAtlas < 0.0) diffuseTextureAtlaxXCoordAtlas+= 1.0;
++				diffuseTextureAtlaxXCoordAtlas/= float(diffuseTextureAtlasSize);
++				diffuseTextureAtlaxXCoordAtlas+= float(diffuseTextureAtlaxXIdx) / float(diffuseTextureAtlasSize);
++
++				float diffuseTextureAtlaxYCoordAtlas = mod(diffuseTextureAtlaxYCoord, 1.0);
++				if (diffuseTextureAtlaxYCoordAtlas < 0.0) diffuseTextureAtlaxYCoordAtlas+= 1.0;
++				diffuseTextureAtlaxYCoordAtlas/= float(diffuseTextureAtlasSize);
++				diffuseTextureAtlaxYCoordAtlas+= float(diffuseTextureAtlaxYIdx) / float(diffuseTextureAtlasSize);
++
++				// fetch from texture
++				diffuseTextureColor = texture(diffuseTextureUnit, vec2(diffuseTextureAtlaxXCoordAtlas, diffuseTextureAtlaxYCoordAtlas));
++			} else {
++				diffuseTextureColor = texture(diffuseTextureUnit, vsFragTextureUV);
++			}
+ 			// check if to handle diffuse texture masked transparency
+ 			if (diffuseTextureMaskedTransparency == 1) {
+ 				// discard if beeing transparent
+diff --git a/src/tdme/engine/fileio/models/ModelReader.cpp b/src/tdme/engine/fileio/models/ModelReader.cpp
+index 8723b899..39ca17f7 100644
+--- a/src/tdme/engine/fileio/models/ModelReader.cpp
++++ b/src/tdme/engine/fileio/models/ModelReader.cpp
+@@ -8,6 +8,7 @@
+ #include <tdme/engine/fileio/models/TMReader.h>
+ #include <tdme/engine/fileio/models/ModelFileIOException.h>
+ #include <tdme/engine/model/Model.h>
++#include <tdme/engine/model/ModelHelper.h>
+ #include <tdme/os/filesystem/FileSystem.h>
+ #include <tdme/os/filesystem/FileSystemInterface.h>
+ #include <tdme/utils/Console.h>
+@@ -23,6 +24,7 @@ using tdme::engine::fileio::models::TMReader;
+ using tdme::engine::fileio::models::ModelFileIOException;
+ using tdme::engine::fileio::models::ModelReader;
+ using tdme::engine::model::Model;
++using tdme::engine::model::ModelHelper;
+ using tdme::os::filesystem::FileSystem;
+ using tdme::os::filesystem::FileSystemInterface;
+ using tdme::utils::StringUtils;
+@@ -39,13 +41,13 @@ Model* ModelReader::read(const string& pathName, const string& fileName)
+ {
+ 	try {
+ 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".dae") == true) {
+-			return DAEReader::read(pathName, fileName);
++			return ModelHelper::optimizeModel(DAEReader::read(pathName, fileName));
+ 		} else
+ 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".glb") == true) {
+-			return GLTFReader::read(pathName, fileName);
++			return ModelHelper::optimizeModel(GLTFReader::read(pathName, fileName));
+ 		} else
+ 		if (StringUtils::endsWith(StringUtils::toLowerCase(fileName), ".tm") == true) {
+-			return TMReader::read(pathName, fileName);
++			return ModelHelper::optimizeModel(TMReader::read(pathName, fileName));
+ 		} else {
+ 			throw ModelFileIOException(string("Unsupported mode file: ") + pathName + "/" + fileName);
+ 		}
+diff --git a/src/tdme/engine/model/ModelHelper.cpp b/src/tdme/engine/model/ModelHelper.cpp
+index 0fa8119e..40253753 100644
+--- a/src/tdme/engine/model/ModelHelper.cpp
++++ b/src/tdme/engine/model/ModelHelper.cpp
+@@ -866,63 +866,43 @@ void ModelHelper::optimizeGroup(Group* sourceGroup, Model* targetModel, int diff
+ 		for (auto& facesEntity: sourceGroup->getFacesEntities()) {
+ 			auto material = facesEntity.getMaterial();
+ 			auto diffuseTextureAtlasIndex = diffuseTextureAtlasIndices.find(material->getId())->second;
+-			auto textureXOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex % diffuseTextureAtlasSize) / static_cast<float>(diffuseTextureAtlasSize);
+-			auto textureYOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex / diffuseTextureAtlasSize) / static_cast<float>(diffuseTextureAtlasSize);
+-			auto textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f / static_cast<float>(diffuseTextureAtlasSize);
+-			auto textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f / static_cast<float>(diffuseTextureAtlasSize);
++			auto textureXOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex % diffuseTextureAtlasSize) * 1000.0f + 500.0f;
++			auto textureYOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex / diffuseTextureAtlasSize) * 1000.0f + 500.0f;
++			auto textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
++			auto textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
++			Console::println(
++				to_string(diffuseTextureAtlasIndex) + ": " +
++				to_string(textureXOffset) + ", " +
++				to_string(textureYOffset) + ", " +
++				to_string(textureXScale) + ", " +
++				to_string(textureYScale)
++			);
+ 			for (auto& face: facesEntity.getFaces()) {
+ 				auto sourceVertexIndices = face.getVertexIndices();
+ 				auto sourceNormalIndices = face.getNormalIndices();
+ 				auto sourceTangentIndices = face.getTangentIndices();
+ 				auto sourceBitangentIndices = face.getBitangentIndices();
+ 				auto sourceTextureCoordinateIndices = face.getTextureCoordinateIndices();
+-				TextureCoordinate textureCoordinate0;
+ 				{
+ 					auto textureCoordinateArray = sourceTextureCoordinateIndices[0] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[0]].getArray();
+-					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
+-					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
+-					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
+-					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
+ 					textureCoordinateArray[0]*= textureXScale;
+ 					textureCoordinateArray[0]+= textureXOffset;
+-					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
+-					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
+-					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
+-					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
+ 					textureCoordinateArray[1]*= textureYScale;
+ 					textureCoordinateArray[1]+= textureYOffset;
+ 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
+ 				}
+-				TextureCoordinate textureCoordinate1;
+ 				{
+ 					auto textureCoordinateArray = sourceTextureCoordinateIndices[1] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[1]].getArray();
+-					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
+-					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
+-					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
+-					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
+ 					textureCoordinateArray[0]*= textureXScale;
+ 					textureCoordinateArray[0]+= textureXOffset;
+-					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
+-					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
+-					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
+-					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
+ 					textureCoordinateArray[1]*= textureYScale;
+ 					textureCoordinateArray[1]+= textureYOffset;
+ 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
+ 				}
+-				TextureCoordinate textureCoordinate2;
+ 				{
+ 					auto textureCoordinateArray = sourceTextureCoordinateIndices[2] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[2]].getArray();
+-					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
+-					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
+-					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
+-					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
+ 					textureCoordinateArray[0]*= textureXScale;
+ 					textureCoordinateArray[0]+= textureXOffset;
+-					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
+-					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
+-					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
+-					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
+ 					textureCoordinateArray[1]*= textureYScale;
+ 					textureCoordinateArray[1]+= textureYOffset;
+ 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+index 50e8ce65..3174ec7c 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp
+@@ -54,6 +54,7 @@ void LightingShaderBaseImplementation::initialize()
+ 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureAvailable");
+ 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparency");
+ 	uniformDiffuseTextureMaskedTransparencyThreshold = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparencyThreshold");
++	uniformDiffuseTextureAtlasSize = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureAtlasSize");
+ 
+ 	// additional mapping
+ 	if (renderer->isSpecularMappingAvailable() == true) {
+@@ -195,6 +196,10 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void*
+ 	if (uniformDiffuseTextureMaskedTransparencyThreshold != -1) {
+ 		renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+ 	}
++	// diffuse texture atlas size
++	if (uniformDiffuseTextureAtlasSize != -1) {
++		renderer->setProgramUniformInteger(context, uniformDiffuseTextureAtlasSize, material.diffuseTextureAtlasSize);
++	}
+ }
+ 
+ void LightingShaderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)
+diff --git a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h
+index a2e6976a..0fea5216 100644
+--- a/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h
++++ b/src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.h
+@@ -35,6 +35,7 @@ protected:
+ 	int32_t uniformDiffuseTextureAvailable { -1 };
+ 	int32_t uniformDiffuseTextureMaskedTransparency { -1 };
+ 	int32_t uniformDiffuseTextureMaskedTransparencyThreshold { -1 };
++	int32_t uniformDiffuseTextureAtlasSize{ -1 };
+ 	int32_t uniformSpecularTextureUnit { -1 };
+ 	int32_t uniformSpecularTextureAvailable { -1 };
+ 	int32_t uniformNormalTextureUnit { -1 };
+diff --git a/src/tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h b/src/tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h
+index f8888ae4..2761310f 100644
+--- a/src/tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h
++++ b/src/tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h
+@@ -19,4 +19,5 @@ struct tdme::engine::subsystems::renderer::Renderer_SpecularMaterial
+ 	float shininess { 0.0f };
+ 	int diffuseTextureMaskedTransparency { 0 };
+ 	float diffuseTextureMaskedTransparencyThreshold { 0.0f };
++	int diffuseTextureAtlasSize { 1 };
+ };
+diff --git a/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp b/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
+index 3c50e000..989efb3d 100644
+--- a/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
++++ b/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
+@@ -15,6 +15,7 @@
+ #include <tdme/engine/LinesObject3D.h>
+ #include <tdme/engine/Object3D.h>
+ #include <tdme/engine/PointsParticleSystem.h>
++#include <tdme/engine/fileio/textures/Texture.h>
+ #include <tdme/engine/model/Color4.h>
+ #include <tdme/engine/model/Color4Base.h>
+ #include <tdme/engine/model/Face.h>
+@@ -81,6 +82,7 @@ using tdme::engine::FogParticleSystem;
+ using tdme::engine::LinesObject3D;
+ using tdme::engine::Object3D;
+ using tdme::engine::PointsParticleSystem;
++using tdme::engine::fileio::textures::Texture;
+ using tdme::engine::model::Color4;
+ using tdme::engine::model::Color4Base;
+ using tdme::engine::model::Face;
+@@ -1013,7 +1015,6 @@ void EntityRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup,
+ 			auto& rendererMaterial = renderer->getSpecularMaterial(context);
+ 			rendererMaterial.diffuseTextureMaskedTransparency = specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?1:0;
+ 			rendererMaterial.diffuseTextureMaskedTransparencyThreshold = specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold();
+-			renderer->onUpdateMaterial(context);
+ 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
+ 				specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
+ 				auto diffuseTextureId =
+@@ -1023,10 +1024,12 @@ void EntityRenderer::setupMaterial(void* context, Object3DGroup* object3DGroup,
+ 				materialKey+= ",";
+ 				materialKey.append((const char*)&diffuseTextureId, sizeof(diffuseTextureId));
+ 				if (updateOnly == false || currentMaterialKey.empty() == true) {
++					rendererMaterial.diffuseTextureAtlasSize = specularMaterialProperties->getDiffuseTexture() != nullptr?specularMaterialProperties->getDiffuseTexture()->getAtlasSize():1;
+ 					renderer->setTextureUnit(context, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+ 					renderer->bindTexture(context, diffuseTextureId);
+ 				}
+ 			}
++			renderer->onUpdateMaterial(context);
+ 		} else
+ 		if (renderer->getLighting(context) == renderer->LIGHTING_PBR) {
+ 			auto& rendererMaterial = renderer->getPBRMaterial(context);
