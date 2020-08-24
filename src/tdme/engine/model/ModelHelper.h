@@ -287,12 +287,19 @@ private:
 	static void prepareForFoliageTreeShader(Group* group, const Matrix4x4& parentTransformationsMatrix, const string& shader);
 
 	/**
+	 * Check for optimization
+	 * @param group group
+	 * @param materialUseCount material use count
+	 */
+	static void checkForOptimization(Group* group, map<string, int>& materialUseCount);
+
+	/**
 	 * Prepare for optimization
 	 * @param group group
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param materialUseCount material use count
 	 */
-	static void prepareForOptimization(Group* group, const Matrix4x4& parentTransformationsMatrix, map<string, int>& materialUseCount);
+	static void prepareForOptimization(Group* group, const Matrix4x4& parentTransformationsMatrix);
 
 	/**
 	 * Prepare for optimization

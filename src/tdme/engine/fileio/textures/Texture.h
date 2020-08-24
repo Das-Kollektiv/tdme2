@@ -46,7 +46,8 @@ public:
 		textureHeight(textureHeight),
 		textureData(textureData),
 		useMipMap(true),
-		repeat(true) {
+		repeat(true),
+		atlasSize(1) {
 		//
 	}
 
@@ -129,6 +130,21 @@ public:
 		this->repeat = repeat;
 	}
 
+	/**
+	 * @return atlas size
+	 */
+	inline int32_t getAtlasSize() const {
+		return atlasSize;
+	}
+
+	/**
+	 * Set atlas size
+	 * @param atlasSize atlas size
+	 */
+	inline void setAtlasSize(int32_t atlasSize) {
+		this->atlasSize = atlasSize;
+	}
+
 	// overriden methods
 	inline virtual void onDelete() override;
 
@@ -142,6 +158,7 @@ private:
 	ByteBuffer* textureData;
 	bool useMipMap;
 	bool repeat;
+	int32_t atlasSize;
 
 	/**
 	 * Destructor
