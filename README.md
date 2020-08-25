@@ -217,6 +217,7 @@
     - documentation
 
 - What is WIP or planned
+    - Optimizing models with specular lighting regarding render calls by reducing groups and materials to a minumum
     - GUI effects via XML definitions
     - Light scattering effect / effects
     - Simple script language
