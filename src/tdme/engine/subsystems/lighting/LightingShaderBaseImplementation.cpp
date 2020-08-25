@@ -50,6 +50,8 @@ void LightingShaderBaseImplementation::initialize()
 
 	// get uniforms
 	//	globals
+	uniformTextureAtlasSize = renderer->getProgramUniformLocation(renderLightingProgramId, "textureAtlasSize");
+	uniformTextureAtlasPixelDimension = renderer->getProgramUniformLocation(renderLightingProgramId, "textureAtlasPixelDimension");
 	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureUnit");
 	uniformDiffuseTextureAvailable = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureAvailable");
 	uniformDiffuseTextureMaskedTransparency = renderer->getProgramUniformLocation(renderLightingProgramId, "diffuseTextureMaskedTransparency");
@@ -194,6 +196,14 @@ void LightingShaderBaseImplementation::updateMaterial(Renderer* renderer, void* 
 	// diffuse texture masked transparency threshold
 	if (uniformDiffuseTextureMaskedTransparencyThreshold != -1) {
 		renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+	}
+	// texture atlas size
+	if (uniformTextureAtlasSize != -1) {
+		renderer->setProgramUniformInteger(context, uniformTextureAtlasSize, material.textureAtlasSize);
+	}
+	// texture atlas pixel dimension
+	if (uniformTextureAtlasPixelDimension != -1) {
+		renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 	}
 }
 

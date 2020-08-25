@@ -43,6 +43,7 @@ private:
 	string normalTextureFileName;
 	Texture* normalTexture;
 	Matrix2D3x3 textureMatrix;
+	int textureAtlasSize;
 
 	/**
 	 * Checks and set ups diffuse texture transparency
@@ -50,6 +51,15 @@ private:
 	void checkDiffuseTextureTransparency();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	SpecularMaterialProperties();
+
+	/**
+	 * Destructor
+	 */
+	~SpecularMaterialProperties();
 
 	/**
 	 * @return ambient color
@@ -124,6 +134,21 @@ public:
 	 */
 	inline void setShininess(float shininess) {
 		this->shininess = shininess;
+	}
+
+	/**
+	 * @return texture atlas size
+	 */
+	inline int32_t getTextureAtlasSize() const {
+		return textureAtlasSize;
+	}
+
+	/**
+	 * Set texture atlas size
+	 * @param textureAtlasSize texture atlas size
+	 */
+	inline void setTextureAtlasSize(int32_t textureAtlasSize) {
+		this->textureAtlasSize = textureAtlasSize;
 	}
 
 	/**
@@ -319,13 +344,4 @@ public:
 		this->textureMatrix = textureMatrix;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	SpecularMaterialProperties();
-
-	/**
-	 * Destructor
-	 */
-	~SpecularMaterialProperties();
 };

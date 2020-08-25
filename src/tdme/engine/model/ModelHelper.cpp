@@ -866,63 +866,36 @@ void ModelHelper::optimizeGroup(Group* sourceGroup, Model* targetModel, int diff
 		for (auto& facesEntity: sourceGroup->getFacesEntities()) {
 			auto material = facesEntity.getMaterial();
 			auto diffuseTextureAtlasIndex = diffuseTextureAtlasIndices.find(material->getId())->second;
-			auto textureXOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex % diffuseTextureAtlasSize) / static_cast<float>(diffuseTextureAtlasSize);
-			auto textureYOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex / diffuseTextureAtlasSize) / static_cast<float>(diffuseTextureAtlasSize);
-			auto textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f / static_cast<float>(diffuseTextureAtlasSize);
-			auto textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f / static_cast<float>(diffuseTextureAtlasSize);
+			auto textureXOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex % diffuseTextureAtlasSize) * 1000.0f + 500.0f;
+			auto textureYOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex / diffuseTextureAtlasSize) * 1000.0f + 500.0f;
+			auto textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
+			auto textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
 			for (auto& face: facesEntity.getFaces()) {
 				auto sourceVertexIndices = face.getVertexIndices();
 				auto sourceNormalIndices = face.getNormalIndices();
 				auto sourceTangentIndices = face.getTangentIndices();
 				auto sourceBitangentIndices = face.getBitangentIndices();
 				auto sourceTextureCoordinateIndices = face.getTextureCoordinateIndices();
-				TextureCoordinate textureCoordinate0;
 				{
 					auto textureCoordinateArray = sourceTextureCoordinateIndices[0] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[0]].getArray();
-					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
-					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
-					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
-					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
 					textureCoordinateArray[0]*= textureXScale;
 					textureCoordinateArray[0]+= textureXOffset;
-					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
-					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
-					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
-					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
 					textureCoordinateArray[1]*= textureYScale;
 					textureCoordinateArray[1]+= textureYOffset;
 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
 				}
-				TextureCoordinate textureCoordinate1;
 				{
 					auto textureCoordinateArray = sourceTextureCoordinateIndices[1] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[1]].getArray();
-					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
-					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
-					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
-					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
 					textureCoordinateArray[0]*= textureXScale;
 					textureCoordinateArray[0]+= textureXOffset;
-					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
-					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
-					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
-					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
 					textureCoordinateArray[1]*= textureYScale;
 					textureCoordinateArray[1]+= textureYOffset;
 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
 				}
-				TextureCoordinate textureCoordinate2;
 				{
 					auto textureCoordinateArray = sourceTextureCoordinateIndices[2] == -1 || sourceTextureCoordinates.size() == 0?array<float, 2>():sourceTextureCoordinates[sourceTextureCoordinateIndices[2]].getArray();
-					if (textureCoordinateArray[0] < 0.0f && textureCoordinateArray[0] > -0.9f) textureCoordinateArray[0] = 0.0f;
-					if (textureCoordinateArray[0] > 1.0f && textureCoordinateArray[0] < 1.1f) textureCoordinateArray[0] = 1.0f;
-					textureCoordinateArray[0] = Math::mod(textureCoordinateArray[0], 1.0f + Math::EPSILON);
-					if (textureCoordinateArray[0] < 0.0f) textureCoordinateArray[0]+= 1.0f;
 					textureCoordinateArray[0]*= textureXScale;
 					textureCoordinateArray[0]+= textureXOffset;
-					if (textureCoordinateArray[1] < 0.0f && textureCoordinateArray[1] > -0.9f) textureCoordinateArray[1] = 0.0f;
-					if (textureCoordinateArray[1] > 1.0f && textureCoordinateArray[1] < 1.1f) textureCoordinateArray[1] = 1.0f;
-					textureCoordinateArray[1] = Math::mod(textureCoordinateArray[1], 1.0f + Math::EPSILON);
-					if (textureCoordinateArray[1] < 0.0f) textureCoordinateArray[1]+= 1.0f;
 					textureCoordinateArray[1]*= textureYScale;
 					textureCoordinateArray[1]+= textureYOffset;
 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
@@ -1021,6 +994,7 @@ Model* ModelHelper::optimizeModel(Model* model) {
 	}
 
 	// create atlas
+	// TODO: looks like we need 2 groups, damn: one with masked transparency and one without for models that have both :(
 	int diffuseTextureAtlasSize = static_cast<int>(Math::ceil(sqrt(diffuseTextureCount)));
 	Console::println("\tTexture atlas size: " + to_string(diffuseTextureAtlasSize) + " x " + to_string(diffuseTextureAtlasSize));
 	Texture* diffuseAtlasTexture = nullptr;
@@ -1045,6 +1019,12 @@ Model* ModelHelper::optimizeModel(Model* model) {
 			auto materialTextureBytesPerPixel = materialTexture->getDepth() / 8;
 			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
 			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
+			if (materialTextureXInt < 8) materialTextureXInt = 0; else
+			if (materialTextureXInt > materialTextureWidth - 8) materialTextureXInt = materialTextureWidth - 1; else
+				materialTextureXInt = static_cast<int>((static_cast<float>(materialTextureXInt) - 8.0f) * (static_cast<float>(materialTextureWidth) + 16.0f) / static_cast<float>(materialTextureWidth));
+			if (materialTextureYInt < 8) materialTextureYInt = 0; else
+			if (materialTextureYInt > materialTextureHeight - 8) materialTextureYInt = materialTextureHeight - 1; else
+				materialTextureYInt = static_cast<int>((static_cast<float>(materialTextureYInt) - 8.0f) * (static_cast<float>(materialTextureHeight) + 16.0f) / static_cast<float>(materialTextureHeight));
 			auto materialTexturePixelOffset =
 				materialTextureYInt * materialTextureWidth * materialTextureBytesPerPixel +
 				materialTextureXInt * materialTextureBytesPerPixel;
@@ -1087,7 +1067,8 @@ Model* ModelHelper::optimizeModel(Model* model) {
 	{
 		auto optimizedMaterial = new Material("material.optimized");
 		optimizedModel->getMaterials()["material.optimized"] = optimizedMaterial;
-		if (diffuseAtlasTexture != nullptr) optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
+		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
+		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseTextureAtlasSize);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
 		Vector4 optimizedMaterialEmission(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialAmbient(0.0f, 0.0f, 0.0f, 0.0f);

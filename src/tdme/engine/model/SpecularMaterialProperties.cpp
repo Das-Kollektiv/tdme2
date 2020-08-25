@@ -30,6 +30,7 @@ SpecularMaterialProperties::SpecularMaterialProperties()
 	diffuseTextureMaskedTransparencyThreshold = 0.1f;
 	specularTexture = nullptr;
 	normalTexture = nullptr;
+	textureAtlasSize = 1;
 }
 
 SpecularMaterialProperties::~SpecularMaterialProperties() {
