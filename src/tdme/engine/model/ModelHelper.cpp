@@ -315,30 +315,32 @@ Material* ModelHelper::cloneMaterial(const Material* material, const string& id)
 	return clonedMaterial;
 }
 
-void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup) {
+void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup, bool cloneMesh) {
 	Console::println("ModelHelper::cloneGroup(): " + sourceGroup->getId());
 	auto clonedGroup = new Group(targetModel, targetParentGroup, sourceGroup->getId(), sourceGroup->getName());
-	clonedGroup->setVertices(sourceGroup->getVertices());
-	clonedGroup->setNormals(sourceGroup->getNormals());
-	clonedGroup->setTextureCoordinates(sourceGroup->getTextureCoordinates());
-	clonedGroup->setTangents(sourceGroup->getTangents());
-	clonedGroup->setBitangents(sourceGroup->getBitangents());
-	auto facesEntities = clonedGroup->getFacesEntities();
-	clonedGroup->setJoint(false);
 	clonedGroup->setTransformationsMatrix(sourceGroup->getTransformationsMatrix());
-	for (auto& facesEntity: facesEntities) {
-		if (facesEntity.getMaterial() == nullptr) continue;
-		Material* material = nullptr;
-		auto materialIt = targetModel->getMaterials().find(facesEntity.getMaterial()->getId());
-		if (materialIt == targetModel->getMaterials().end()) {
-			material = cloneMaterial(facesEntity.getMaterial());
-			targetModel->getMaterials()[material->getId()] = material;
-		} else {
-			material = materialIt->second;
+	clonedGroup->setJoint(sourceGroup->isJoint());
+	if (cloneMesh == true) {
+		clonedGroup->setVertices(sourceGroup->getVertices());
+		clonedGroup->setNormals(sourceGroup->getNormals());
+		clonedGroup->setTextureCoordinates(sourceGroup->getTextureCoordinates());
+		clonedGroup->setTangents(sourceGroup->getTangents());
+		clonedGroup->setBitangents(sourceGroup->getBitangents());
+		auto facesEntities = clonedGroup->getFacesEntities();
+		for (auto& facesEntity: facesEntities) {
+			if (facesEntity.getMaterial() == nullptr) continue;
+			Material* material = nullptr;
+			auto materialIt = targetModel->getMaterials().find(facesEntity.getMaterial()->getId());
+			if (materialIt == targetModel->getMaterials().end()) {
+				material = cloneMaterial(facesEntity.getMaterial());
+				targetModel->getMaterials()[material->getId()] = material;
+			} else {
+				material = materialIt->second;
+			}
+			facesEntity.setMaterial(material);
 		}
-		facesEntity.setMaterial(material);
+		clonedGroup->setFacesEntities(facesEntities);
 	}
-	clonedGroup->setFacesEntities(facesEntities);
 	if (sourceGroup->getAnimation() != nullptr) {
 		auto clonedAnimation = new Animation();
 		clonedAnimation->setTransformationsMatrices(sourceGroup->getAnimation()->getTransformationsMatrices());
@@ -352,7 +354,7 @@ void ModelHelper::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targ
 	}
 	for (auto sourceSubGroupIt: sourceGroup->getSubGroups()) {
 		auto subGroup = sourceSubGroupIt.second;
-		cloneGroup(subGroup, targetModel, clonedGroup);
+		cloneGroup(subGroup, targetModel, clonedGroup, cloneMesh);
 	}
 }
 
@@ -830,7 +832,9 @@ void ModelHelper::prepareForOptimization(Group* group, const Matrix4x4& parentTr
 		}
 		group->setBitangents(bitangents);
 	}
-	group->setTransformationsMatrix(Matrix4x4().identity());
+
+	// we do not set group transformations matrix as we need it later
+	// group->setTransformationsMatrix(Matrix4x4().identity());
 
 	//
 	for (auto groupIt: group->getSubGroups()) {
@@ -1214,9 +1218,8 @@ Model* ModelHelper::optimizeModel(Model* model) {
 				optimizedSkinning->setVerticesJointsWeights(skinning->getVerticesJointsWeights());
 				optimizedModel->getGroups()["group.optimized"]->setSkinning(optimizedSkinning);
 			}
-		} else {
-			cloneGroup(group, optimizedModel, nullptr);
 		}
+		cloneGroup(group, optimizedModel, nullptr, false);
 	}
 
 	// set up materials

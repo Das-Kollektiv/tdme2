@@ -176,8 +176,9 @@ public:
 	 * @param sourceGroup source group
 	 * @param targetModel target model
 	 * @param targetParentGroup target parent group
+	 * @param cloneMesh clone mesh
 	 */
-	static void cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup = nullptr);
+	static void cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup = nullptr, bool cloneMesh = true);
 
 private:
 
