@@ -780,6 +780,7 @@ void ModelHelper::checkForOptimization(Group* group, map<string, int>& materialU
 
 	// track material usage
 	for (auto& facesEntity: group->getFacesEntities()) {
+		if (facesEntity.getMaterial() == nullptr) continue;
 		materialUseCount[facesEntity.getMaterial()->getId()]++;
 	}
 
