@@ -223,6 +223,13 @@ public:
 	}
 
 	/**
+	 * Find faces entity by id
+	 * @param id id
+	 * @return faces entity
+	 */
+	FacesEntity* getFacesEntity(const string& id);
+
+	/**
 	 * Set up faces entities
 	 * @param facesEntities faces entity
 	 */

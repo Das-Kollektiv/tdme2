@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
@@ -22,6 +23,7 @@ using std::vector;
 using std::string;
 
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Group;
 using tdme::engine::model::Model;
 using tdme::engine::model::ModelHelper_VertexOrder;
@@ -164,9 +166,10 @@ public:
 	/**
 	 * Clone material
 	 * @param material material
+	 * @param id new id to use
 	 * @return material
 	 */
-	static Material* cloneMaterial(const Material* material);
+	static Material* cloneMaterial(const Material* material, const string& id = string());
 
 	/**
 	 * Create model from source sub groups into target sub groups
@@ -300,6 +303,12 @@ private:
 	 * @param materialUseCount material use count
 	 */
 	static void prepareForOptimization(Group* group, const Matrix4x4& parentTransformationsMatrix);
+
+	/**
+	 * Create atlas texture
+	 * @param textureAtlasTextures texture atlas textures
+	 */
+	static Texture* createAtlasTexture(map<int, Texture*>& textureAtlasTextures);
 
 	/**
 	 * Prepare for optimization

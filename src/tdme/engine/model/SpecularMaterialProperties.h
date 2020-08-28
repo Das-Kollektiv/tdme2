@@ -323,6 +323,14 @@ public:
 	}
 
 	/**
+	 * Set diffuse texture transparency
+	 * @param diffuseTextureTransparency diffuse texture has transparency
+	 */
+	inline void setDiffuseTextureTransparency(bool textureTransparency) {
+		diffuseTextureTransparency = textureTransparency;
+	}
+
+	/**
 	 * @return if texture has transparency with masked transparency disabled
 	 */
 	inline bool hasTextureTransparency() const {

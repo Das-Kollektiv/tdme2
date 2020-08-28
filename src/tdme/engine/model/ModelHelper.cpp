@@ -280,8 +280,8 @@ void ModelHelper::createDefaultAnimation(Model* model, int32_t frames)
 	}
 }
 
-Material* ModelHelper::cloneMaterial(const Material* material) {
-	auto clonedMaterial = new Material(material->getId());
+Material* ModelHelper::cloneMaterial(const Material* material, const string& id) {
+	auto clonedMaterial = new Material(id.empty()?material->getId():id);
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties != nullptr) {
 		auto clonedSpecularMaterialProperties = new SpecularMaterialProperties();
@@ -290,6 +290,7 @@ Material* ModelHelper::cloneMaterial(const Material* material) {
 		clonedSpecularMaterialProperties->setEmissionColor(specularMaterialProperties->getEmissionColor());
 		clonedSpecularMaterialProperties->setSpecularColor(specularMaterialProperties->getSpecularColor());
 		clonedSpecularMaterialProperties->setShininess(specularMaterialProperties->getShininess());
+		clonedSpecularMaterialProperties->setTextureAtlasSize(specularMaterialProperties->getTextureAtlasSize());
 		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
 			specularMaterialProperties->getDiffuseTexture()->acquireReference();
 			clonedSpecularMaterialProperties->setDiffuseTexture(specularMaterialProperties->getDiffuseTexture());
@@ -861,8 +862,11 @@ void ModelHelper::optimizeGroup(Group* sourceGroup, Model* targetModel, int diff
 		targetGroup->setNormals(targetNormals);
 		targetGroup->setTangents(targetTangents);
 		targetGroup->setBitangents(targetBitangents);
-		auto sourceFacesEntities = targetGroup->getFacesEntities();
-		auto faces = sourceFacesEntities[0].getFaces();
+		auto targetFacesEntities = targetGroup->getFacesEntities();
+		FacesEntity* tmpFacesEntity = nullptr;
+		auto targetFaces = (tmpFacesEntity = targetGroup->getFacesEntity("facesentity.optimized")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
+		auto targetFacesMaskedTransparency = (tmpFacesEntity = targetGroup->getFacesEntity("facesentity.optimized.maskedtransparency")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
+		auto targetFacesTransparency = (tmpFacesEntity = targetGroup->getFacesEntity("facesentity.optimized.transparency")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
 		for (auto& facesEntity: sourceGroup->getFacesEntities()) {
 			auto material = facesEntity.getMaterial();
 			auto diffuseTextureAtlasIndex = diffuseTextureAtlasIndices.find(material->getId())->second;
@@ -900,31 +904,157 @@ void ModelHelper::optimizeGroup(Group* sourceGroup, Model* targetModel, int diff
 					textureCoordinateArray[1]+= textureYOffset;
 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
 				}
-				faces.push_back(
-					Face(
-						targetGroup,
-						sourceVertexIndices[0] + targetOffset,
-						sourceVertexIndices[1] + targetOffset,
-						sourceVertexIndices[2] + targetOffset,
-						sourceNormalIndices[0] + targetOffset,
-						sourceNormalIndices[1] + targetOffset,
-						sourceNormalIndices[2] + targetOffset,
-						targetTextureCoordinatesOffset + 0,
-						targetTextureCoordinatesOffset + 1,
-						targetTextureCoordinatesOffset + 2
-					)
-				);
+				if (material->getSpecularMaterialProperties()->hasDiffuseTextureTransparency() == true) {
+					if (material->getSpecularMaterialProperties()->hasDiffuseTextureMaskedTransparency() == true) {
+						targetFacesMaskedTransparency.push_back(
+							Face(
+								targetGroup,
+								sourceVertexIndices[0] + targetOffset,
+								sourceVertexIndices[1] + targetOffset,
+								sourceVertexIndices[2] + targetOffset,
+								sourceNormalIndices[0] + targetOffset,
+								sourceNormalIndices[1] + targetOffset,
+								sourceNormalIndices[2] + targetOffset,
+								targetTextureCoordinatesOffset + 0,
+								targetTextureCoordinatesOffset + 1,
+								targetTextureCoordinatesOffset + 2
+							)
+						);
+					} else {
+						targetFacesTransparency.push_back(
+							Face(
+								targetGroup,
+								sourceVertexIndices[0] + targetOffset,
+								sourceVertexIndices[1] + targetOffset,
+								sourceVertexIndices[2] + targetOffset,
+								sourceNormalIndices[0] + targetOffset,
+								sourceNormalIndices[1] + targetOffset,
+								sourceNormalIndices[2] + targetOffset,
+								targetTextureCoordinatesOffset + 0,
+								targetTextureCoordinatesOffset + 1,
+								targetTextureCoordinatesOffset + 2
+							)
+						);
+					}
+				} else {
+					targetFaces.push_back(
+						Face(
+							targetGroup,
+							sourceVertexIndices[0] + targetOffset,
+							sourceVertexIndices[1] + targetOffset,
+							sourceVertexIndices[2] + targetOffset,
+							sourceNormalIndices[0] + targetOffset,
+							sourceNormalIndices[1] + targetOffset,
+							sourceNormalIndices[2] + targetOffset,
+							targetTextureCoordinatesOffset + 0,
+							targetTextureCoordinatesOffset + 1,
+							targetTextureCoordinatesOffset + 2
+						)
+					);
+				}
 				targetTextureCoordinatesOffset+= 3;
 			}
 		}
 		targetGroup->setTextureCoordinates(targetTextureCoordinates);
-		sourceFacesEntities[0].setMaterial(targetModel->getMaterials()["material.optimized"]);
-		sourceFacesEntities[0].setFaces(faces);
-		targetGroup->setFacesEntities(sourceFacesEntities);
+		Console::println(targetModel->getId() + ": a: " + to_string(targetFaces.size()));
+		Console::println(targetModel->getId() + ": b: " + to_string(targetFacesMaskedTransparency.size()));
+		Console::println(targetModel->getId() + ": c: " + to_string(targetFacesTransparency.size()));
+		if (targetFaces.size() > 0) {
+			auto facesEntity = targetGroup->getFacesEntity("facesentity.optimized");
+			if (targetGroup->getFacesEntity("facesentity.optimized") == nullptr) {
+				targetFacesEntities.push_back(FacesEntity(targetGroup, "facesentity.optimized"));
+				facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
+			}
+			facesEntity->setFaces(targetFaces);
+		}
+		if (targetFacesMaskedTransparency.size() > 0) {
+			auto facesEntity = targetGroup->getFacesEntity("facesentity.optimized.maskedtransparency");
+			if (targetGroup->getFacesEntity("facesentity.optimized.maskedtransparency") == nullptr) {
+				targetFacesEntities.push_back(FacesEntity(targetGroup, "facesentity.optimized.maskedtransparency"));
+				facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
+			}
+			facesEntity->setFaces(targetFacesMaskedTransparency);
+		}
+		if (targetFacesTransparency.size() > 0) {
+			auto facesEntity = targetGroup->getFacesEntity("facesentity.optimized.transparency");
+			if (targetGroup->getFacesEntity("facesentity.optimized.transparency") == nullptr) {
+				targetFacesEntities.push_back(FacesEntity(targetGroup, "facesentity.optimized.transparency"));
+				facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
+			}
+			facesEntity->setFaces(targetFacesMaskedTransparency);
+		}
+		targetGroup->setFacesEntities(targetFacesEntities);
 	}
 	for (auto& subGroupIt: sourceGroup->getSubGroups()) {
 		optimizeGroup(subGroupIt.second, targetModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices);
 	}
+}
+
+Texture* ModelHelper::createAtlasTexture(map<int, Texture*>& textureAtlasTextures) {
+	// create atlas
+	// TODO: looks like we need 2 groups, damn: one with masked transparency and one without for models that have both :(
+	int textureAtlasSize = static_cast<int>(Math::ceil(sqrt(textureAtlasTextures.size())));
+	Console::println("\tTexture atlas size: " + to_string(textureAtlasSize) + " x " + to_string(textureAtlasSize));
+	Texture* atlasTexture = nullptr;
+	static auto globalAtlasTextureIdx = 0;
+	#define ATLAS_TEXTURE_SIZE	512
+	auto textureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
+	auto textureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
+	auto textureByteBuffer = ByteBuffer::allocate(textureWidth * textureHeight * 4);
+	for (auto y = 0; y < textureHeight; y++)
+	for (auto x = 0; x < textureWidth; x++) {
+		auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
+		auto atlasTextureIdxY = y / ATLAS_TEXTURE_SIZE;
+		auto materialTextureX = x - (atlasTextureIdxX * ATLAS_TEXTURE_SIZE);
+		auto materialTextureY = y - (atlasTextureIdxY * ATLAS_TEXTURE_SIZE);
+		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
+		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
+		auto atlasTextureIdx = atlasTextureIdxY * textureAtlasSize + atlasTextureIdxX;
+		auto materialTexture = textureAtlasTextures[atlasTextureIdx];
+		if (materialTexture != nullptr) {
+			auto materialTextureWidth = materialTexture->getTextureWidth();
+			auto materialTextureHeight = materialTexture->getTextureHeight();
+			auto materialTextureBytesPerPixel = materialTexture->getDepth() / 8;
+			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
+			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
+			if (materialTextureXInt < 8) materialTextureXInt = 0; else
+			if (materialTextureXInt > materialTextureWidth - 8) materialTextureXInt = materialTextureWidth - 1; else
+				materialTextureXInt = static_cast<int>((static_cast<float>(materialTextureXInt) - 8.0f) * (static_cast<float>(materialTextureWidth) + 16.0f) / static_cast<float>(materialTextureWidth));
+			if (materialTextureYInt < 8) materialTextureYInt = 0; else
+			if (materialTextureYInt > materialTextureHeight - 8) materialTextureYInt = materialTextureHeight - 1; else
+				materialTextureYInt = static_cast<int>((static_cast<float>(materialTextureYInt) - 8.0f) * (static_cast<float>(materialTextureHeight) + 16.0f) / static_cast<float>(materialTextureHeight));
+			auto materialTexturePixelOffset =
+				materialTextureYInt * materialTextureWidth * materialTextureBytesPerPixel +
+				materialTextureXInt * materialTextureBytesPerPixel;
+			auto materialPixelR = materialTexture->getTextureData()->get(materialTexturePixelOffset + 0);
+			auto materialPixelG = materialTexture->getTextureData()->get(materialTexturePixelOffset + 1);
+			auto materialPixelB = materialTexture->getTextureData()->get(materialTexturePixelOffset + 2);
+			auto materialPixelA = materialTextureBytesPerPixel == 4?materialTexture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
+			textureByteBuffer->put(materialPixelR);
+			textureByteBuffer->put(materialPixelG);
+			textureByteBuffer->put(materialPixelB);
+			textureByteBuffer->put(materialPixelA);
+		} else {
+			auto materialPixelR = 0xff;
+			auto materialPixelG = 0x00;
+			auto materialPixelB = 0x00;
+			auto materialPixelA = 0xff;
+			textureByteBuffer->put(materialPixelR);
+			textureByteBuffer->put(materialPixelG);
+			textureByteBuffer->put(materialPixelB);
+			textureByteBuffer->put(materialPixelA);
+		}
+	}
+	atlasTexture = new Texture(
+		"tdme.texture.atlas." + to_string(globalAtlasTextureIdx++),
+		32,
+		textureWidth, textureHeight,
+		textureWidth, textureHeight,
+		textureByteBuffer
+	);
+	atlasTexture->setAtlasSize(textureAtlasSize);
+	atlasTexture->acquireReference();
+	return atlasTexture;
 }
 
 Model* ModelHelper::optimizeModel(Model* model) {
@@ -983,6 +1113,7 @@ Model* ModelHelper::optimizeModel(Model* model) {
 		Console::println();
 	}
 
+	// do we need to optimize?
 	if (diffuseTextureCount < 2) return model;
 
 	// prepare for optimizations
@@ -993,83 +1124,23 @@ Model* ModelHelper::optimizeModel(Model* model) {
 		);
 	}
 
-	// create atlas
-	// TODO: looks like we need 2 groups, damn: one with masked transparency and one without for models that have both :(
-	int diffuseTextureAtlasSize = static_cast<int>(Math::ceil(sqrt(diffuseTextureCount)));
-	Console::println("\tTexture atlas size: " + to_string(diffuseTextureAtlasSize) + " x " + to_string(diffuseTextureAtlasSize));
-	Texture* diffuseAtlasTexture = nullptr;
-	static auto diffuseAtlasTextureIdx = 0;
-	#define ATLAS_TEXTURE_SIZE	512
-	auto textureWidth = diffuseTextureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto textureHeight = diffuseTextureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto textureByteBuffer = ByteBuffer::allocate(textureWidth * textureHeight * 4);
-	for (auto y = 0; y < textureHeight; y++)
-	for (auto x = 0; x < textureWidth; x++) {
-		auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
-		auto atlasTextureIdxY = y / ATLAS_TEXTURE_SIZE;
-		auto materialTextureX = x - (atlasTextureIdxX * ATLAS_TEXTURE_SIZE);
-		auto materialTextureY = y - (atlasTextureIdxY * ATLAS_TEXTURE_SIZE);
-		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
-		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
-		auto atlasTextureIdx = atlasTextureIdxY * diffuseTextureAtlasSize + atlasTextureIdxX;
-		auto materialTexture = diffuseTextureAtlasTextures[atlasTextureIdx];
-		if (materialTexture != nullptr) {
-			auto materialTextureWidth = materialTexture->getTextureWidth();
-			auto materialTextureHeight = materialTexture->getTextureHeight();
-			auto materialTextureBytesPerPixel = materialTexture->getDepth() / 8;
-			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
-			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
-			if (materialTextureXInt < 8) materialTextureXInt = 0; else
-			if (materialTextureXInt > materialTextureWidth - 8) materialTextureXInt = materialTextureWidth - 1; else
-				materialTextureXInt = static_cast<int>((static_cast<float>(materialTextureXInt) - 8.0f) * (static_cast<float>(materialTextureWidth) + 16.0f) / static_cast<float>(materialTextureWidth));
-			if (materialTextureYInt < 8) materialTextureYInt = 0; else
-			if (materialTextureYInt > materialTextureHeight - 8) materialTextureYInt = materialTextureHeight - 1; else
-				materialTextureYInt = static_cast<int>((static_cast<float>(materialTextureYInt) - 8.0f) * (static_cast<float>(materialTextureHeight) + 16.0f) / static_cast<float>(materialTextureHeight));
-			auto materialTexturePixelOffset =
-				materialTextureYInt * materialTextureWidth * materialTextureBytesPerPixel +
-				materialTextureXInt * materialTextureBytesPerPixel;
-			auto materialPixelR = materialTexture->getTextureData()->get(materialTexturePixelOffset + 0);
-			auto materialPixelG = materialTexture->getTextureData()->get(materialTexturePixelOffset + 1);
-			auto materialPixelB = materialTexture->getTextureData()->get(materialTexturePixelOffset + 2);
-			auto materialPixelA = materialTextureBytesPerPixel == 4?materialTexture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
-			textureByteBuffer->put(materialPixelR);
-			textureByteBuffer->put(materialPixelG);
-			textureByteBuffer->put(materialPixelB);
-			textureByteBuffer->put(materialPixelA);
-		} else {
-			auto materialPixelR = 0xff;
-			auto materialPixelG = 0x00;
-			auto materialPixelB = 0x00;
-			auto materialPixelA = 0xff;
-			textureByteBuffer->put(materialPixelR);
-			textureByteBuffer->put(materialPixelG);
-			textureByteBuffer->put(materialPixelB);
-			textureByteBuffer->put(materialPixelA);
-		}
-	}
-	diffuseAtlasTexture = new Texture(
-		"tdme.texture.atlas." + to_string(diffuseAtlasTextureIdx++),
-		32,
-		textureWidth, textureHeight,
-		textureWidth, textureHeight,
-		textureByteBuffer
-	);
-	diffuseAtlasTexture->setAtlasSize(diffuseTextureAtlasSize);
-	diffuseAtlasTexture->acquireReference();
+	// create diffuse atlas texture
+	auto diffuseAtlasTexture = createAtlasTexture(diffuseTextureAtlasTextures);
 
 	// create model with optimizations applied
 	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());
 	optimizedModel->setImportTransformationsMatrix(model->getImportTransformationsMatrix());
 	auto optimizedGroup = new Group(optimizedModel, nullptr, "group.optimized", "group.optimized");
-	optimizedGroup->setFacesEntities({FacesEntity(optimizedGroup, "facesentity.optimized")});
 	optimizedModel->getGroups()["group.optimized"] = optimizedGroup;
 	optimizedModel->getSubGroups()["group.optimized"] = optimizedGroup;
+
+	// create optimized material
+	auto optimizedMaterial = new Material("material.optimized");
 	{
-		auto optimizedMaterial = new Material("material.optimized");
-		optimizedModel->getMaterials()["material.optimized"] = optimizedMaterial;
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
-		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseTextureAtlasSize);
-		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
+		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlasTexture->getAtlasSize());
+		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureTransparency(false);
+		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(false);
 		Vector4 optimizedMaterialEmission(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialAmbient(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 optimizedMaterialDiffuse(0.0f, 0.0f, 0.0f, 0.0f);
@@ -1120,11 +1191,21 @@ Model* ModelHelper::optimizeModel(Model* model) {
 		Console::print(to_string(optimizedMaterial->getSpecularMaterialProperties()->getShininess()) + " ");
 		Console::println();
 	}
+
+	// also have a material with masked transparency
+	auto optimizedMaterialMaskedTransparency = cloneMaterial(optimizedMaterial, "material.optimized.maskedtransparency");
+	optimizedMaterialMaskedTransparency->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
+
+	// also have a material with transparency
+	auto optimizedMaterialTransparency = cloneMaterial(optimizedMaterial, "material.optimized.transparency");
+	optimizedMaterialTransparency->getSpecularMaterialProperties()->setDiffuseTextureTransparency(true);
+
+	// now optimize into our optimized model
 	for (auto& subGroupIt: model->getSubGroups()) {
 		auto group = subGroupIt.second;
 		if ((model->hasSkinning() == true && group->getSkinning() != nullptr) ||
 			(model->hasSkinning() == false && group->isJoint() == false)) {
-			optimizeGroup(group, optimizedModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices);
+			optimizeGroup(group, optimizedModel, diffuseAtlasTexture->getAtlasSize(), diffuseTextureAtlasIndices);
 			if (model->hasSkinning() == true) {
 				auto skinning = group->getSkinning();
 				auto optimizedSkinning = new Skinning();
@@ -1135,6 +1216,35 @@ Model* ModelHelper::optimizeModel(Model* model) {
 			}
 		} else {
 			cloneGroup(group, optimizedModel, nullptr);
+		}
+	}
+
+	// set up materials
+	{
+		auto optimizedFacesEntity = optimizedModel->getGroups()["group.optimized"]->getFacesEntity("facesentity.optimized");
+		if (optimizedFacesEntity != nullptr) {
+			optimizedModel->getMaterials()[optimizedMaterial->getId()] = optimizedMaterial;
+			optimizedFacesEntity->setMaterial(optimizedMaterial);
+		} else {
+			delete optimizedMaterial;
+		}
+	}
+	{
+		auto optimizedFacesEntityMaskedTransparency = optimizedModel->getGroups()["group.optimized"]->getFacesEntity("facesentity.optimized.maskedtransparency");
+		if (optimizedFacesEntityMaskedTransparency != nullptr) {
+			optimizedModel->getMaterials()[optimizedMaterialMaskedTransparency->getId()] = optimizedMaterialMaskedTransparency;
+			optimizedFacesEntityMaskedTransparency->setMaterial(optimizedMaterialMaskedTransparency);
+		} else {
+			delete optimizedMaterialMaskedTransparency;
+		}
+	}
+	{
+		auto optimizedFacesEntityTransparency = optimizedModel->getGroups()["group.optimized"]->getFacesEntity("facesentity.optimized.transparency");
+		if (optimizedFacesEntityTransparency != nullptr) {
+			optimizedModel->getMaterials()[optimizedMaterialTransparency->getId()] = optimizedMaterialTransparency;
+			optimizedFacesEntityTransparency->setMaterial(optimizedMaterialTransparency);
+		} else {
+			delete optimizedMaterialTransparency;
 		}
 	}
 
