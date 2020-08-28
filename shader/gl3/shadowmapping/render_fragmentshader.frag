@@ -39,9 +39,10 @@ void main() {
 		// texture coordinate, also take atlas into account
 		vec2 fragTextureUV;
 		if (textureAtlasSize > 1) {
+			#define ATLAS_TEXTURE_BORDER	8
 			vec2 diffuseTextureAtlasIdx = floor(vsFragTextureUV / 1000.0);
 			vec2 diffuseTextureAtlasCoord = vsFragTextureUV - 500.0 - diffuseTextureAtlasIdx * 1000.0;
-			fragTextureUV = mod(diffuseTextureAtlasCoord, 1.0 - textureAtlasPixelDimension * 16.0 * float(textureAtlasSize)) / float(textureAtlasSize) + diffuseTextureAtlasIdx / float(textureAtlasSize) + textureAtlasPixelDimension * 8.0;
+			fragTextureUV = mod(diffuseTextureAtlasCoord, 1.0 - textureAtlasPixelDimension * float(ATLAS_TEXTURE_BORDER * 2) * float(textureAtlasSize)) / float(textureAtlasSize) + diffuseTextureAtlasIdx / float(textureAtlasSize) + textureAtlasPixelDimension * ATLAS_TEXTURE_BORDER;
 		} else {
 			fragTextureUV = vsFragTextureUV;
 		}

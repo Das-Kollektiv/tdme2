@@ -543,9 +543,10 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	if (texture->getAtlasSize() > 1) {
+		// TODO: seems like I have to generate bitmaps own my own, need to check
 		float maxLodBias;
 		glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()), 0.0f, maxLodBias));
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
 	}
 	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
 	if (texture->isRepeat() == true) {
