@@ -469,7 +469,6 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 			object3DRenderGroup->setShader(levelEditorEntity->getShader());
 			object3DRenderGroup->setDistanceShader(levelEditorEntity->getDistanceShader());
 			object3DRenderGroup->setDistanceShaderDistance(levelEditorEntity->getDistanceShaderDistance());
-			if (enableEarlyZRejection == true) object3DRenderGroup->setEnableEarlyZRejection(true);
 			auto objectIdx = -1;
 			for (auto transformation: itPartition.second) {
 				objectIdx++;
