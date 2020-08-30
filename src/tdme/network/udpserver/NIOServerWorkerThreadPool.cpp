@@ -1,9 +1,9 @@
 #include <tdme/network/udpserver/NIOServerWorkerThreadPool.h>
 
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::os::threading::Queue;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 using tdme::network::udpserver::NIOServerWorkerThreadPool;
 
 NIOServerWorkerThreadPool::NIOServerWorkerThreadPool(Barrier* startUpBarrier, const unsigned int workerCount, const unsigned int maxElements) :

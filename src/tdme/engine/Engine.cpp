@@ -86,10 +86,10 @@
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/VectorIteratorMultiple.h>
-#include <tdme/utils/Float.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/VectorIteratorMultiple.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/Console.h>
 
 #include <ext/libpng/png.h>
 
@@ -161,9 +161,9 @@ using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::ByteBuffer;
-using tdme::utils::Float;
-using tdme::utils::Console;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Float;
+using tdme::utilities::Console;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;

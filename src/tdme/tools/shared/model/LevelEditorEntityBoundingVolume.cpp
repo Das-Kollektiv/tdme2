@@ -21,9 +21,9 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::to_string;
@@ -44,9 +44,9 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
-using tdme::utils::Exception;
-using tdme::utils::Console;
-using tdme::utils::StringUtils;
+using tdme::utilities::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 volatile uint32_t LevelEditorEntityBoundingVolume::modelIdx = 0;
 

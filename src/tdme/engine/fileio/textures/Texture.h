@@ -3,14 +3,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/ReferenceCounter.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ReferenceCounter.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 
 using std::string;
 
-using tdme::utils::ByteBuffer;
-using tdme::utils::ReferenceCounter;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::ReferenceCounter;
 
 /** 
  * Texture entity

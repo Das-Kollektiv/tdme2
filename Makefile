@@ -295,8 +295,6 @@ SRCS = \
 	src/tdme/engine/model/JointWeight.cpp \
 	src/tdme/engine/model/Material.cpp \
 	src/tdme/engine/model/Model.cpp \
-	src/tdme/engine/model/ModelHelper.cpp \
-	src/tdme/engine/model/ModelHelper_VertexOrder.cpp \
 	src/tdme/engine/model/PBRMaterialProperties.cpp \
 	src/tdme/engine/model/UpVector.cpp \
 	src/tdme/engine/model/RotationOrder.cpp \
@@ -606,23 +604,24 @@ SRCS = \
 	src/tdme/tools/shared/views/SharedModelEditorView.cpp \
 	src/tdme/tools/shared/views/SharedParticleSystemView.cpp \
 	src/tdme/tools/modeleditor/TDMEModelEditor.cpp \
-	src/tdme/utils/Base64EncDec.cpp \
-	src/tdme/utils/Character.cpp \
-	src/tdme/utils/Enum.cpp \
-	src/tdme/utils/Float.cpp \
-	src/tdme/utils/HashLink.cpp \
-	src/tdme/utils/HexEncDec.cpp \
-	src/tdme/utils/Integer.cpp \
-	src/tdme/utils/IntEncDec.cpp \
-	src/tdme/utils/MutableString.cpp \
-	src/tdme/utils/PathFinding.cpp \
-	src/tdme/utils/Properties.cpp \
-	src/tdme/utils/ReferenceCounter.cpp \
-	src/tdme/utils/RTTI.cpp \
-	src/tdme/utils/StringUtils.cpp \
-	src/tdme/utils/StringTokenizer.cpp \
-	src/tdme/utils/ExceptionBase.cpp \
-	src/tdme/utils/Console.cpp \
+	src/tdme/utilities/Base64EncDec.cpp \
+	src/tdme/utilities/Character.cpp \
+	src/tdme/utilities/Enum.cpp \
+	src/tdme/utilities/Float.cpp \
+	src/tdme/utilities/HashLink.cpp \
+	src/tdme/utilities/HexEncDec.cpp \
+	src/tdme/utilities/Integer.cpp \
+	src/tdme/utilities/IntEncDec.cpp \
+	src/tdme/utilities/MutableString.cpp \
+	src/tdme/utilities/ModelTools.cpp \
+	src/tdme/utilities/PathFinding.cpp \
+	src/tdme/utilities/Properties.cpp \
+	src/tdme/utilities/ReferenceCounter.cpp \
+	src/tdme/utilities/RTTI.cpp \
+	src/tdme/utilities/StringTools.cpp \
+	src/tdme/utilities/StringTokenizer.cpp \
+	src/tdme/utilities/ExceptionBase.cpp \
+	src/tdme/utilities/Console.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_TINYXML_SRCS = \

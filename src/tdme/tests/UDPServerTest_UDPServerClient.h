@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/network/udpserver/NIOUDPServer.h>
 #include <tdme/network/udpserver/NIOUDPServerClient.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Exception.h>
 
 #include "UDPServerTest_UDPServer.h"
 
@@ -13,7 +13,7 @@ using std::stringstream;
 
 using tdme::network::udpserver::NIOUDPServer;
 using tdme::network::udpserver::NIOUDPServerClient;
-using tdme::utils::Exception;
+using tdme::utilities::Exception;
 
 class EchoUDPServerClient : public NIOUDPServerClient {
 	friend class EchoUDPServer;

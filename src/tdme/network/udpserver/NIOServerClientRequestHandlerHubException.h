@@ -3,9 +3,9 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/ExceptionBase.h>
 
-using tdme::utils::ExceptionBase;
+using tdme::utilities::ExceptionBase;
 
 namespace tdme {
 namespace network {

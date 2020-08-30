@@ -2,13 +2,13 @@
 
 #include <string>
 
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/ExceptionBase.h>
 
 using tdme::os::network::NIOException;
 
 using std::string;
 
-using tdme::utils::ExceptionBase;
+using tdme::utilities::ExceptionBase;
 
 NIOException::NIOException(const string &message) throw() : ExceptionBase(message) {
 }

@@ -4,11 +4,11 @@
 
 #include <string>
 
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Exception.h>
 
 using std::string;
 
-using tdme::utils::Exception;
+using tdme::utilities::Exception;
 
 namespace tdme {
 namespace network {

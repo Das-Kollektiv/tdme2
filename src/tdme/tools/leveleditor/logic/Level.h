@@ -10,7 +10,7 @@
 #include <tdme/tools/leveleditor/logic/fwd-tdme.h>
 #include <tdme/tools/shared/files/fwd-tdme.h>
 #include <tdme/tools/shared/model/fwd-tdme.h>
-#include <tdme/utils/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using tdme::audio::Audio;
 using tdme::engine::Engine;
@@ -25,7 +25,7 @@ using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
 using tdme::tools::shared::model::LevelEditorLevel;
 using tdme::tools::shared::model::LevelEditorObject;
-using tdme::utils::MutableString;
+using tdme::utilities::MutableString;
 
 /** 
  * Level Editor Level Logic

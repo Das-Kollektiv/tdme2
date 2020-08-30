@@ -8,7 +8,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::engine::Engine;
 using tdme::engine::Timing;
@@ -19,7 +19,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 ShadowMappingShaderPreBaseImplementation::ShadowMappingShaderPreBaseImplementation(Renderer* renderer)
 {

@@ -7,8 +7,8 @@
 #include <sstream>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ReferenceCounter.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ReferenceCounter.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/NIOServer.h>
 #include <tdme/network/udpserver/NIOServerRequest.h>
@@ -16,8 +16,8 @@
 using std::string;
 using std::stringstream;
 
-using tdme::utils::Exception;
-using tdme::utils::ReferenceCounter;
+using tdme::utilities::Exception;
+using tdme::utilities::ReferenceCounter;
 using tdme::network::udpserver::NIOServer;
 
 namespace tdme {

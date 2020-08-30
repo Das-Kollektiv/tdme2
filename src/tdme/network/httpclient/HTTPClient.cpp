@@ -10,13 +10,13 @@
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NIOTCPSocket.h>
 #include <tdme/os/network/NIOIOSocketClosedException.h>
-#include <tdme/utils/Base64EncDec.h>
-#include <tdme/utils/Character.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Base64EncDec.h>
+#include <tdme/utilities/Character.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::hex;
 using std::nouppercase;
@@ -33,13 +33,13 @@ using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
 using tdme::os::network::NIOIOSocketClosedException;
 using tdme::os::network::NIOTCPSocket;
-using tdme::utils::Base64EncDec;
-using tdme::utils::Character;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::Integer;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Base64EncDec;
+using tdme::utilities::Character;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 using tdme::network::httpclient::HTTPClient;
 
@@ -158,13 +158,13 @@ void HTTPClient::reset() {
 void HTTPClient::execute() {
 	NIOTCPSocket socket;
 	try {
-		if (StringUtils::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
-		auto relativeUrl = StringUtils::substring(url, string("http://").size());
+		if (StringTools::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
+		auto relativeUrl = StringTools::substring(url, string("http://").size());
 		if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
 		auto slashIdx = relativeUrl.find('/');
 		auto hostName = relativeUrl;
-		if (slashIdx != -1) hostName = StringUtils::substring(relativeUrl, 0, slashIdx);
-		relativeUrl = StringUtils::substring(relativeUrl, hostName.size());
+		if (slashIdx != -1) hostName = StringTools::substring(relativeUrl, 0, slashIdx);
+		relativeUrl = StringTools::substring(relativeUrl, hostName.size());
 
 		Console::println("HTTPClient::execute(): Hostname: " + hostName);
 		Console::println("HTTPClient::execute(): RelativeUrl: " + relativeUrl);

@@ -9,7 +9,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/math/Matrix4x4.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::to_string;
 using std::string;
@@ -22,7 +22,7 @@ using tdme::engine::subsystems::renderer::Renderer_Light;
 using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Matrix4x4;
-using tdme::utils::Console;
+using tdme::utilities::Console;
 
 LightingShaderBaseImplementation::LightingShaderBaseImplementation(Renderer* renderer)
 {

@@ -2,10 +2,10 @@
 #include <typeinfo>
 #include <string>
 
-#include <tdme/utils/fwd-tdme.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/RTTI.h>
+#include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/RTTI.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/NIOServerClient.h>
 #include <tdme/network/udpserver/NIOServerGroup.h>
@@ -15,9 +15,9 @@
 using std::string;
 using std::to_string;
 
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::RTTI;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::RTTI;
 using tdme::network::udpserver::NIOServerClient;
 using tdme::network::udpserver::NIOServerGroup;
 using tdme::network::udpserver::NIOServerWorkerThread;

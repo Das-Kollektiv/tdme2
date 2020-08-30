@@ -7,13 +7,13 @@
 #include <sstream>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ReferenceCounter.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ReferenceCounter.h>
 
 using std::string;
 
-using tdme::utils::Exception;
-using tdme::utils::ReferenceCounter;
+using tdme::utilities::Exception;
+using tdme::utilities::ReferenceCounter;
 
 namespace tdme {
 namespace network {

@@ -4,15 +4,15 @@
 
 #include <string>
 
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 
 using std::string;
 using std::to_string;
 using std::string;
 
-using tdme::utils::Console;
-using tdme::utils::Exception;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
 
 CRHShutdown::CRHShutdown() : NIOServerClientRequestHandler<NIOUDPServerClient,string>("/shutdown") {}
 

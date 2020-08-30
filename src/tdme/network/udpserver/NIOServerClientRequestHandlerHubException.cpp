@@ -2,12 +2,12 @@
 
 #include <string>
 
-#include <tdme/utils/ExceptionBase.h>
+#include <tdme/utilities/ExceptionBase.h>
 
 using std::string;
 
 using tdme::network::udpserver::NIOServerClientRequestHandlerHubException;
-using tdme::utils::ExceptionBase;
+using tdme::utilities::ExceptionBase;
 
 NIOServerClientRequestHandlerHubException::NIOServerClientRequestHandlerHubException(const string &message) throw() : ExceptionBase(message) {
 }

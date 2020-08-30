@@ -8,8 +8,8 @@
 #include <map>
 
 #include <tdme/tdme.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ReferenceCounter.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ReferenceCounter.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/network/NIOException.h>
 #include <tdme/network/udpserver/NIOServerClient.h>
@@ -19,7 +19,7 @@
 
 using std::map;
 
-using tdme::utils::Exception;
+using tdme::utilities::Exception;
 using tdme::network::udpserver::NIOUDPServer;
 using tdme::network::udpserver::NIOUDPServerIOThread;
 

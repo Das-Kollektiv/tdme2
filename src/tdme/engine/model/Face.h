@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
 
@@ -16,7 +17,7 @@ using tdme::engine::model::Group;
  */
 class tdme::engine::model::Face final
 {
-	friend class ModelHelper;
+	friend class tdme::utilities::ModelTools;
 
 private:
 	Group* group { nullptr };

@@ -12,8 +12,8 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
@@ -29,8 +29,8 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::utils::Console;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::Time;
 
 GUIElementController::GUIElementController(GUINode* node) 
 	: GUINodeController(node)

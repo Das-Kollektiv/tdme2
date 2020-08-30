@@ -17,10 +17,10 @@
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/IntEncDec.h>
-#include <tdme/utils/RTTI.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/IntEncDec.h>
+#include <tdme/utilities/RTTI.h>
+#include <tdme/utilities/Time.h>
 
 using std::ios_base;
 using std::string;
@@ -32,10 +32,10 @@ using tdme::network::udpserver::NIOUDPServerIOThread;
 using tdme::os::threading::Thread;
 using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;
-using tdme::utils::Console;
-using tdme::utils::IntEncDec;
-using tdme::utils::RTTI;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::IntEncDec;
+using tdme::utilities::RTTI;
+using tdme::utilities::Time;
 
 NIOUDPServer::NIOUDPServer(const std::string& name, const std::string& host, const unsigned int port, const unsigned int maxCCU) :
 	NIOServer<NIOUDPServerClient, NIOUDPServerGroup>(name, host, port, maxCCU),

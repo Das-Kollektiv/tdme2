@@ -13,13 +13,13 @@
 #include <tdme/os/network/NIOTCPSocket.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
-#include <tdme/utils/Base64EncDec.h>
-#include <tdme/utils/Character.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/StringTokenizer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Base64EncDec.h>
+#include <tdme/utilities/Character.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/StringTokenizer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::ifstream;
 using std::ios;
@@ -37,13 +37,13 @@ using tdme::os::network::NIOIOSocketClosedException;
 using tdme::os::network::NIOTCPSocket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
-using tdme::utils::Base64EncDec;
-using tdme::utils::Character;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::Integer;
-using tdme::utils::StringTokenizer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Base64EncDec;
+using tdme::utilities::Character;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::Integer;
+using tdme::utilities::StringTokenizer;
+using tdme::utilities::StringTools;
 
 using tdme::network::httpclient::HTTPDownloadClient;
 
@@ -127,13 +127,13 @@ void HTTPDownloadClient::start() {
 				downloadClient->progress = 0.0f;
 				NIOTCPSocket socket;
 				try {
-					if (StringUtils::startsWith(downloadClient->url, "http://") == false) throw HTTPClientException("Invalid protocol");
-					auto relativeUrl = StringUtils::substring(downloadClient->url, string("http://").size());
+					if (StringTools::startsWith(downloadClient->url, "http://") == false) throw HTTPClientException("Invalid protocol");
+					auto relativeUrl = StringTools::substring(downloadClient->url, string("http://").size());
 					if (relativeUrl.size() == 0) throw HTTPClientException("No URL given");
 					auto slashIdx = relativeUrl.find('/');
 					auto hostName = relativeUrl;
-					if (slashIdx != -1) hostName = StringUtils::substring(relativeUrl, 0, slashIdx);
-					relativeUrl = StringUtils::substring(relativeUrl, hostName.size());
+					if (slashIdx != -1) hostName = StringTools::substring(relativeUrl, 0, slashIdx);
+					relativeUrl = StringTools::substring(relativeUrl, hostName.size());
 
 					Console::println("HTTPDownloadClient::execute(): Hostname: " + hostName);
 					Console::println("HTTPDownloadClient::execute(): RelativeUrl: " + relativeUrl);
@@ -179,9 +179,9 @@ void HTTPDownloadClient::start() {
 									if ((downloadClient->headerSize = downloadClient->parseHTTPResponseHeaders(ifs, downloadClient->httpStatusCode, downloadClient->httpHeader)) > 0) {
 										downloadClient->haveHeaders = true;
 										for (auto header: downloadClient->httpHeader) {
-											if (StringUtils::startsWith(header, "Content-Length: ") == true) {
+											if (StringTools::startsWith(header, "Content-Length: ") == true) {
 												downloadClient->haveContentSize = true;
-												downloadClient->contentSize = Integer::parseInt(StringUtils::substring(header, string("Content-Length: ").size()));
+												downloadClient->contentSize = Integer::parseInt(StringTools::substring(header, string("Content-Length: ").size()));
 											}
 										}
 									}

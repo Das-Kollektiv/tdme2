@@ -6,7 +6,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Math.h>
-#include <tdme/utils/ByteBuffer.h>
+#include <tdme/utilities/ByteBuffer.h>
 
 using std::string;
 
@@ -15,7 +15,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::math::Math;
-using tdme::utils::ByteBuffer;
+using tdme::utilities::ByteBuffer;
 
 SpecularMaterialProperties::SpecularMaterialProperties()
 {

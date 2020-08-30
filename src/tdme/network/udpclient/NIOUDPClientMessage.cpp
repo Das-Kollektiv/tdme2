@@ -6,9 +6,9 @@
 #include <sstream>
 
 #include <tdme/network/udpclient/NIOUDPClient.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Time.h>
-#include <tdme/utils/IntEncDec.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Time.h>
+#include <tdme/utilities/IntEncDec.h>
 
 using tdme::network::udpclient::NIOUDPClientMessage;
 
@@ -18,9 +18,9 @@ using std::stringstream;
 using std::to_string;
 
 using tdme::network::udpclient::NIOUDPClient;
-using tdme::utils::Console;
-using tdme::utils::Time;
-using tdme::utils::IntEncDec;
+using tdme::utilities::Console;
+using tdme::utilities::Time;
+using tdme::utilities::IntEncDec;
 
 NIOUDPClientMessage* NIOUDPClientMessage::parse(const char message[512], const size_t bytes) {
 	// decode header

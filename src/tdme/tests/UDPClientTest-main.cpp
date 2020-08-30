@@ -7,7 +7,7 @@
 #include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
 
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/Console.h>
 
 using std::cin;
 using std::cout;
@@ -15,7 +15,7 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
-using tdme::utils::Console;
+using tdme::utilities::Console;
 using tdme::os::network::Network;
 using tdme::os::threading::Thread;
 using tdme::network::udpclient::NIOUDPClient;

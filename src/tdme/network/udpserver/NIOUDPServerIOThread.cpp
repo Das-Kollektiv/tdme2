@@ -9,10 +9,10 @@
 #include <tdme/os/network/NIOInterest.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Mutex.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/RTTI.h>
-#include <tdme/utils/Time.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/RTTI.h>
+#include <tdme/utilities/Time.h>
 #include <tdme/network/udpserver/NIOUDPServerIOThread.h>
 #include <tdme/network/udpserver/NIOServerRequest.h>
 
@@ -29,10 +29,10 @@ using tdme::os::network::NIO_INTEREST_READ;
 using tdme::os::network::NIO_INTEREST_WRITE;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
-using tdme::utils::Console;
-using tdme::utils::Exception;
-using tdme::utils::RTTI;
-using tdme::utils::Time;
+using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::RTTI;
+using tdme::utilities::Time;
 using tdme::network::udpserver::NIOUDPServerIOThread;
 using tdme::network::udpserver::NIOServerRequest;
 

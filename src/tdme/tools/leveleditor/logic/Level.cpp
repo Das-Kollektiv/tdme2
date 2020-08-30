@@ -29,7 +29,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/model/Model.h>
-#include <tdme/engine/model/ModelHelper.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/ConvexMesh.h>
@@ -72,9 +72,9 @@
 #include <tdme/tools/shared/model/ModelProperties.h>
 #include <tdme/tools/shared/model/PropertyModelClass.h>
 #include <tdme/tools/shared/tools/Tools.h>
-#include <tdme/utils/MutableString.h>
-#include <tdme/utils/StringUtils.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Console.h>
 
 using std::map;
 using std::vector;
@@ -103,7 +103,7 @@ using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::model::Model;
-using tdme::engine::model::ModelHelper;
+using tdme::utilities::ModelTools;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::ConvexMesh;
@@ -145,9 +145,9 @@ using tdme::tools::shared::model::LevelEditorObject;
 using tdme::tools::shared::model::ModelProperties;
 using tdme::tools::shared::model::PropertyModelClass;
 using tdme::tools::shared::tools::Tools;
-using tdme::utils::MutableString;
-using tdme::utils::StringUtils;
-using tdme::utils::Console;
+using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
+using tdme::utilities::Console;
 
 Model* Level::emptyModel = nullptr;
 float Level::renderGroupsPartitionWidth = 64.0f;

@@ -7,7 +7,7 @@
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::math::Math;
-using tdme::utils::FloatBuffer;
+using tdme::utilities::FloatBuffer;
 using tdme::engine::subsystems::renderer::Renderer_Light;
 using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
 using tdme::math::Matrix4x4;

@@ -22,9 +22,9 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/Integer.h>
-#include <tdme/utils/MutableString.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MutableString.h>
 
 using std::map;
 using std::remove;
@@ -50,9 +50,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::utils::Console;
-using tdme::utils::Integer;
-using tdme::utils::MutableString;
+using tdme::utilities::Console;
+using tdme::utilities::Integer;
+using tdme::utilities::MutableString;
 
 GUIScreenNode::GUIScreenNode(
 	const string& applicationRootPath,

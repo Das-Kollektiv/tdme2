@@ -12,15 +12,15 @@
 #include <tdme/network/udpserver/NIOServerGroupBase.h>
 
 #include <tdme/os/threading/ReadWriteLock.h>
-#include <tdme/utils/Exception.h>
-#include <tdme/utils/ReferenceCounter.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ReferenceCounter.h>
 
 using std::string;
 using std::ostringstream;;
 
 using tdme::os::threading::ReadWriteLock;
-using tdme::utils::Exception;
-using tdme::utils::ReferenceCounter;
+using tdme::utilities::Exception;
+using tdme::utilities::ReferenceCounter;
 
 namespace tdme {
 namespace network {

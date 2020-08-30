@@ -10,7 +10,7 @@
 #include <tdme/tools/shared/model/LevelEditorEntityModel.h>
 #include <tdme/tools/shared/model/LevelEditorEntityParticleSystem.h>
 #include <tdme/tools/shared/model/LevelEditorEntityPhysics.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::engine::model::Model;
@@ -21,7 +21,7 @@ using tdme::tools::shared::model::LevelEditorEntityAudio;
 using tdme::tools::shared::model::LevelEditorEntityBoundingVolume;
 using tdme::tools::shared::model::LevelEditorEntityModel;
 using tdme::tools::shared::model::LevelEditorEntityParticleSystem;
-using tdme::utils::StringUtils;
+using tdme::utilities::StringTools;
 
 constexpr int32_t LevelEditorEntity::ID_NONE;
 constexpr int32_t LevelEditorEntity::MODEL_BOUNDINGVOLUME_COUNT;
@@ -87,8 +87,8 @@ LevelEditorEntity::LevelEditorEntity(int32_t id, LevelEditorEntity_EntityType* e
 	} else
 	if (this->type == LevelEditorEntity_EntityType::MODEL) {
 		if (model->getShaderModel() == ShaderModel::PBR) {
-			shaderId = StringUtils::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
-			distanceShaderId = StringUtils::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
+			shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
+			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 		}
 		this->modelSettings = new LevelEditorEntityModel(this);
 		this->physics = new LevelEditorEntityPhysics();

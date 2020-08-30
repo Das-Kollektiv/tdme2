@@ -60,10 +60,10 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/os/threading/Semaphore.h>
 #include <tdme/os/threading/Thread.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/Pool.h>
-#include <tdme/utils/Console.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/Pool.h>
+#include <tdme/utilities/Console.h>
 
 using std::find;
 using std::map;
@@ -126,10 +126,10 @@ using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector3;
 using tdme::os::threading::Semaphore;
 using tdme::os::threading::Thread;
-using tdme::utils::ByteBuffer;
-using tdme::utils::FloatBuffer;
-using tdme::utils::Pool;
-using tdme::utils::Console;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::Pool;
+using tdme::utilities::Console;
 
 constexpr int32_t EntityRenderer::BATCHRENDERER_MAX;
 constexpr int32_t EntityRenderer::INSTANCEDRENDERING_OBJECTS_MAX;

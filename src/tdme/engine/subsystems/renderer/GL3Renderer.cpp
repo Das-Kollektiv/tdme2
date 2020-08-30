@@ -23,13 +23,13 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
-#include <tdme/utils/Buffer.h>
-#include <tdme/utils/ByteBuffer.h>
-#include <tdme/utils/Console.h>
-#include <tdme/utils/FloatBuffer.h>
-#include <tdme/utils/IntBuffer.h>
-#include <tdme/utils/ShortBuffer.h>
-#include <tdme/utils/StringUtils.h>
+#include <tdme/utilities/Buffer.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/ShortBuffer.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::array;
 using std::map;
@@ -44,13 +44,13 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::utils::Buffer;
-using tdme::utils::ByteBuffer;
-using tdme::utils::Console;
-using tdme::utils::FloatBuffer;
-using tdme::utils::IntBuffer;
-using tdme::utils::ShortBuffer;
-using tdme::utils::StringUtils;
+using tdme::utilities::Buffer;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
+using tdme::utilities::FloatBuffer;
+using tdme::utilities::IntBuffer;
+using tdme::utilities::ShortBuffer;
+using tdme::utilities::StringTools;
 
 GL3Renderer::GL3Renderer()
 {
@@ -245,8 +245,8 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 	if (handle == 0) return 0;
 
 	// shader source
-	auto shaderSource = StringUtils::replace(
-		StringUtils::replace(
+	auto shaderSource = StringTools::replace(
+		StringTools::replace(
 			FileSystem::getInstance()->getContentAsString(pathName, fileName),
 			"{$DEFINITIONS}",
 			definitions + "\n\n"

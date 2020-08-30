@@ -7,7 +7,7 @@
 #include <tdme/network/udpserver/NIOUDPServerClient.h>
 #include <tdme/network/udpserver/NIOServerClientRequestHandler.h>
 #include <tdme/network/udpserver/NIOServerClientRequestHandlerHub.h>
-#include <tdme/utils/Exception.h>
+#include <tdme/utilities/Exception.h>
 
 #include "UDPServerTest_UDPServerClient.h"
 
@@ -17,7 +17,7 @@ using tdme::network::udpserver::NIOUDPServer;
 using tdme::network::udpserver::NIOUDPServerClient;
 using tdme::network::udpserver::NIOServerClientRequestHandler;
 using tdme::network::udpserver::NIOServerClientRequestHandlerHub;
-using tdme::utils::Exception;
+using tdme::utilities::Exception;
 
 class CRHShutdown : public NIOServerClientRequestHandler<NIOUDPServerClient,string> {
 public:
