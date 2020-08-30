@@ -32,18 +32,9 @@ class tdme::engine::physics::CollisionResponse final
 
 private:
 	static constexpr int32_t HITPOINT_COUNT { 30 };
-	vector<CollisionResponse_Entity> entities {  };
-	CollisionResponse_Entity* selectedEntity {  };
+	vector<CollisionResponse_Entity> entities;
+	CollisionResponse_Entity* selectedEntity { nullptr };
 	vector<Vector3> fallbackHitPointsVector;
-
-	/**
-	 * Invert normals
-	 */
-	inline void invertNormals() {
-		for (auto i = 0; i < entities.size(); i++) {
-			entities[i].getNormal().scale(-1.0f);
-		}
-	}
 
 public:
 

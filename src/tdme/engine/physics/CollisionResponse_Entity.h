@@ -26,9 +26,9 @@ class tdme::engine::physics::CollisionResponse_Entity final
 	friend class CollisionResponse;
 
 private:
-	float distance {  };
-	Vector3 normal {  };
-	vector<Vector3> hitPoints {  };
+	float distance;
+	Vector3 normal;
+	vector<Vector3> hitPoints;
 
 public:
 
