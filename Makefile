@@ -481,31 +481,31 @@ SRCS = \
 	src/tdme/network/httpclient/HTTPClient.cpp \
 	src/tdme/network/httpclient/HTTPClientException.cpp \
 	src/tdme/network/httpclient/HTTPDownloadClient.cpp \
-	src/tdme/network/udpclient/NIOClientException.cpp \
-	src/tdme/network/udpclient/NIOUDPClient.cpp \
-	src/tdme/network/udpclient/NIOUDPClientMessage.cpp \
-	src/tdme/network/udpserver/NIONetworkServerException.cpp \
-	src/tdme/network/udpserver/NIOServerClient.cpp \
-	src/tdme/network/udpserver/NIOServerClientRequestHandlerHubException.cpp \
-	src/tdme/network/udpserver/NIOServerRequest.cpp \
-	src/tdme/network/udpserver/NIOServerWorkerThread.cpp \
-	src/tdme/network/udpserver/NIOServerWorkerThreadPool.cpp \
-	src/tdme/network/udpserver/NIOUDPServer.cpp \
-	src/tdme/network/udpserver/NIOUDPServerClient.cpp \
-	src/tdme/network/udpserver/NIOUDPServerIOThread.cpp \
+	src/tdme/network/udpclient/ClientException.cpp \
+	src/tdme/network/udpclient/UDPClient.cpp \
+	src/tdme/network/udpclient/UDPClientMessage.cpp \
+	src/tdme/network/udpserver/NetworkServerException.cpp \
+	src/tdme/network/udpserver/ServerClient.cpp \
+	src/tdme/network/udpserver/ServerClientRequestHandlerHubException.cpp \
+	src/tdme/network/udpserver/ServerRequest.cpp \
+	src/tdme/network/udpserver/ServerWorkerThread.cpp \
+	src/tdme/network/udpserver/ServerWorkerThreadPool.cpp \
+	src/tdme/network/udpserver/UDPServer.cpp \
+	src/tdme/network/udpserver/UDPServerClient.cpp \
+	src/tdme/network/udpserver/UDPServerIOThread.cpp \
 	src/tdme/os/filesystem/ArchiveFileSystem.cpp \
 	src/tdme/os/filesystem/FileSystem.cpp \
 	src/tdme/os/filesystem/FileSystemException.cpp \
 	src/tdme/os/filesystem/StandardFileSystem.cpp \
 	src/tdme/os/network/Network.cpp \
-	src/tdme/os/network/NIOException.cpp \
-	src/tdme/os/network/NIOIOException.cpp \
-	src/tdme/os/network/NIOIOSocketClosedException.cpp \
-	src/tdme/os/network/NIOKEMException.cpp \
-	src/tdme/os/network/NIONetworkSocket.cpp \
-	src/tdme/os/network/NIOSocketException.cpp \
-	src/tdme/os/network/NIOUDPSocket.cpp \
-	src/tdme/os/network/NIOTCPSocket.cpp \
+	src/tdme/os/network/NetworkException.cpp \
+	src/tdme/os/network/NetworkIOException.cpp \
+	src/tdme/os/network/SocketClosedException.cpp \
+	src/tdme/os/network/KEMException.cpp \
+	src/tdme/os/network/NetworkSocket.cpp \
+	src/tdme/os/network/SocketException.cpp \
+	src/tdme/os/network/UDPSocket.cpp \
+	src/tdme/os/network/TCPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \
 	src/tdme/os/threading/Condition.cpp \
 	src/tdme/os/threading/Mutex.cpp \

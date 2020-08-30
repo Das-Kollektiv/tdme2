@@ -14,7 +14,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
 EchoUDPServerClient::EchoUDPServerClient(const uint32_t clientId, const string& ip, const unsigned int port) :
-	NIOUDPServerClient(clientId, ip, port) {
+	UDPServerClient(clientId, ip, port) {
 }
 
 EchoUDPServerClient::~EchoUDPServerClient() {

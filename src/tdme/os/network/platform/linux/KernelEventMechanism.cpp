@@ -28,7 +28,7 @@ KernelEventMechanism::~KernelEventMechanism() {
 	delete static_cast<KernelEventMechanismPSD*>(_psd);
 }
 
-void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
+void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie) {
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
@@ -49,13 +49,13 @@ void KernelEventMechanism::setSocketInterest(const NIONetworkSocket& socket, con
 	//
 	if (epoll_ctl(
 		psd->ep,
-		lastInterest == NIO_INTEREST_NONE?EPOLL_CTL_ADD:EPOLL_CTL_MOD,
+		lastInterest == _INTEREST_NONE?EPOLL_CTL_ADD:EPOLL_CTL_MOD,
 		socket.descriptor,
 		&event) == -1) {
 		//
 		std::string msg = "Could not add epoll event: ";
 		msg+= strerror(errno);
-		throw NIOKEMException(msg);
+		throw KEMException(msg);
 	}
 }
 
@@ -73,7 +73,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 		delete [] psd->epEventList;
 		std::string msg = "Could not create epoll: ";
 		msg+= strerror(errno);
-		throw NIOKEMException(msg);
+		throw KEMException(msg);
 	}
 
 	//
@@ -107,7 +107,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 			} else {
 				std::string msg = "epoll_wait failed: ";
 				msg+= strerror(errno);
-				throw NIOKEMException(msg);
+				throw KEMException(msg);
 			}
 		} else {
 			//
@@ -116,7 +116,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 	}
 }
 
-void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
+void KernelEventMechanism::decodeKernelEvent(const unsigned int index, Interest &interest, void*& cookie)  {
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 

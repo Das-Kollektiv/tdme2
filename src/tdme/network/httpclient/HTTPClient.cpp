@@ -8,8 +8,8 @@
 
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/Network.h>
-#include <tdme/os/network/NIOTCPSocket.h>
-#include <tdme/os/network/NIOIOSocketClosedException.h>
+#include <tdme/os/network/TCPSocket.h>
+#include <tdme/os/network/SocketClosedException.h>
 #include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
@@ -31,8 +31,8 @@ using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
-using tdme::os::network::NIOIOSocketClosedException;
-using tdme::os::network::NIOTCPSocket;
+using tdme::os::network::SocketClosedException;
+using tdme::os::network::TCPSocket;
 using tdme::utilities::Base64EncDec;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
@@ -156,7 +156,7 @@ void HTTPClient::reset() {
 }
 
 void HTTPClient::execute() {
-	NIOTCPSocket socket;
+	TCPSocket socket;
 	try {
 		if (StringTools::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
 		auto relativeUrl = StringTools::substring(url, string("http://").size());
@@ -177,7 +177,7 @@ void HTTPClient::execute() {
 		}
 		Console::println(ip);
 
-		NIOTCPSocket::create(socket, NIOTCPSocket::determineIpVersion(ip));
+		TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 		socket.connect(ip, 80);
 		auto request = createHTTPRequestHeaders(hostName, method, relativeUrl, getParameters, postParameters, body);
 		socket.write((void*)request.data(), request.length());
@@ -189,7 +189,7 @@ void HTTPClient::execute() {
 				auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
 				rawResponse.write(rawResponseBuf, rawResponseBytesRead);
 			};
-		} catch (NIOIOSocketClosedException& sce) {
+		} catch (SocketClosedException& sce) {
 			// end of stream
 		}
 

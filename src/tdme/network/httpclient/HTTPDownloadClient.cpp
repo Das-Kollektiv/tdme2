@@ -9,8 +9,8 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/network/Network.h>
-#include <tdme/os/network/NIOIOSocketClosedException.h>
-#include <tdme/os/network/NIOTCPSocket.h>
+#include <tdme/os/network/SocketClosedException.h>
+#include <tdme/os/network/TCPSocket.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Base64EncDec.h>
@@ -33,8 +33,8 @@ using tdme::network::httpclient::HTTPClientException;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::network::Network;
-using tdme::os::network::NIOIOSocketClosedException;
-using tdme::os::network::NIOTCPSocket;
+using tdme::os::network::SocketClosedException;
+using tdme::os::network::TCPSocket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::utilities::Base64EncDec;
@@ -125,7 +125,7 @@ void HTTPDownloadClient::start() {
 			void run() {
 				downloadClient->finished = false;
 				downloadClient->progress = 0.0f;
-				NIOTCPSocket socket;
+				TCPSocket socket;
 				try {
 					if (StringTools::startsWith(downloadClient->url, "http://") == false) throw HTTPClientException("Invalid protocol");
 					auto relativeUrl = StringTools::substring(downloadClient->url, string("http://").size());
@@ -146,7 +146,7 @@ void HTTPDownloadClient::start() {
 					Console::println(ip);
 
 					// socket
-					NIOTCPSocket::create(socket, NIOTCPSocket::determineIpVersion(ip));
+					TCPSocket::create(socket, TCPSocket::determineIpVersion(ip));
 					socket.connect(ip, 80);
 					auto request = downloadClient->createHTTPRequestHeaders(hostName, relativeUrl);
 					socket.write((void*)request.data(), request.length());
@@ -192,7 +192,7 @@ void HTTPDownloadClient::start() {
 									downloadClient->progress = static_cast<float>(bytesRead - downloadClient->headerSize) / static_cast<float>(downloadClient->contentSize);
 								}
 							};
-						} catch (NIOIOSocketClosedException& sce) {
+						} catch (SocketClosedException& sce) {
 							// end of stream
 						}
 

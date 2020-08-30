@@ -14,14 +14,14 @@
 
 #include <string>
 
-#include <tdme/os/network/NIONetworkSocket.h>
+#include <tdme/os/network/NetworkSocket.h>
 #include <tdme/utilities/Console.h>
 
 using tdme::os::network::Network;
 
 using std::to_string;
 
-using tdme::os::network::NIONetworkSocket;
+using tdme::os::network::NetworkSocket;
 using tdme::utilities::Console;
 
 bool Network::initialize() {
