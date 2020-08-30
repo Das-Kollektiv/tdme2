@@ -116,7 +116,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 	}
 }
 
-void KernelEventMechanism::decodeKernelEvent(const unsigned int index, Interest &interest, void*& cookie)  {
+void KernelEventMechanism::decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie)  {
 	// platform specific data
 	auto psd = static_cast<KernelEventMechanismPSD*>(_psd);
 
