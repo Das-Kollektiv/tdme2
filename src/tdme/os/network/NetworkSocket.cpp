@@ -102,7 +102,7 @@ void NetworkSocket::setNonBlocked() {
 		if (ioctlsocket(descriptor, FIONBIO, &mode) != 0) {
 			std::string msg = "Could not set socket non blocked: ";
 			msg+= to_string(WSAGetLastError());
-			throw SocketException(msg);
+			throw NetworkSocketException(msg);
 		}
 	#else
 		// get the server socket file descriptor control settings
