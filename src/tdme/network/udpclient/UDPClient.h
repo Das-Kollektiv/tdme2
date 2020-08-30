@@ -11,7 +11,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/network/udpclient/fwd-tdme.h>
-#include <tdme/network/udpclient/ClientException.h>
+#include <tdme/network/udpclient/NetworkClientException.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
 
 #include <tdme/os/threading/Thread.h>
@@ -28,7 +28,7 @@ using tdme::os::threading::Mutex;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::UDPSocket;
 
-using tdme::network::udpclient::ClientException;
+using tdme::network::udpclient::NetworkClientException;
 using tdme::network::udpclient::UDPClientMessage;
 
 /**

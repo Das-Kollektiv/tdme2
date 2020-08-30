@@ -17,7 +17,7 @@
 #include <tdme/utilities/Time.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
-#include <tdme/network/udpclient/ClientException.h>
+#include <tdme/network/udpclient/NetworkClientException.h>
 
 using std::pair;
 using std::ios;
@@ -41,7 +41,7 @@ using tdme::utilities::RTTI;
 using tdme::utilities::Time;
 using tdme::network::udpclient::UDPClient;
 using tdme::network::udpclient::UDPClientMessage;
-using tdme::network::udpclient::ClientException;
+using tdme::network::udpclient::NetworkClientException;
 
 const uint64_t UDPClient::MESSAGEACK_RESENDTIMES[UDPClient::MESSAGEACK_RESENDTIMES_TRIES] = {125L, 250L, 500L, 750L, 1000L, 2000L, 5000L};
 
@@ -152,7 +152,7 @@ void UDPClient::run() {
 						UDPClientMessage* clientMessage = UDPClientMessage::parse(message, bytesReceived);
 						try {
 							if (clientMessage == nullptr) {
-								throw ClientException("invalid message");
+								throw NetworkClientException("invalid message");
 							}
 							switch(clientMessage->getMessageType()) {
 								case UDPClientMessage::MESSAGETYPE_ACKNOWLEDGEMENT:
@@ -195,7 +195,7 @@ void UDPClient::run() {
 										recvMessageQueueMutex.lock();
 										if (recvMessageQueue.size() > 1000) {
 											recvMessageQueueMutex.unlock();
-											throw ClientException("recv message queue overflow");
+											throw NetworkClientException("recv message queue overflow");
 										}
 										recvMessageQueue.push(clientMessage);
 										recvMessageQueueMutex.unlock();
@@ -322,12 +322,12 @@ void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 		if (it != messageMapAck.end()) {
  			// its on ack queue already, so unlock
 			messageMapAckMutex.unlock();
-			throw ClientException("message already on message queue ack");
+			throw NetworkClientException("message already on message queue ack");
 		}
 		//	check if message queue is full
 		if (messageMapAck.size() > 1000) {
 			messageMapAckMutex.unlock();
-			throw ClientException("message queue ack overflow");
+			throw NetworkClientException("message queue ack overflow");
 		}
 		// 	push to message queue ack
 		messageMapAck.insert(it, pair<uint32_t, Message>(message.messageId, messageAck));
@@ -340,7 +340,7 @@ void UDPClient::sendMessage(UDPClientMessage* clientMessage, bool safe) {
 	//	check if message queue is full
 	if (messageQueue.size() > 1000) {
 		messageQueueMutex.unlock();
-		throw ClientException("message queue overflow");
+		throw NetworkClientException("message queue overflow");
 	}
 	messageQueue.push(message);
 
@@ -378,7 +378,7 @@ void UDPClient::processAckReceived(const uint32_t messageId) {
 
 	// check if message ack was valid
 	if (messageAckValid == false) {
-		throw ClientException("message ack invalid");
+		throw NetworkClientException("message ack invalid");
 	}
 }
 

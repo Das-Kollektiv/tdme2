@@ -4,7 +4,7 @@
 namespace tdme {
 namespace network {
 namespace udpclient {
-	class ClientException;
+	class NetworkClientException;
 	class UDPClient;
 	class UDPClientMessage;
 } // namespace udpclient

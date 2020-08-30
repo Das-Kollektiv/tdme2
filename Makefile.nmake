@@ -302,7 +302,7 @@ SRCS = \
 	src/tdme/network/httpclient/HTTPClient.cpp \
 	src/tdme/network/httpclient/HTTPClientException.cpp \
 	src/tdme/network/httpclient/HTTPDownloadClient.cpp \
-	src/tdme/network/udpclient/ClientException.cpp \
+	src/tdme/network/udpclient/NetworkClientException.cpp \
 	src/tdme/network/udpclient/UDPClient.cpp \
 	src/tdme/network/udpclient/UDPClientMessage.cpp \
 	src/tdme/network/udpserver/NetworkServerException.cpp \
