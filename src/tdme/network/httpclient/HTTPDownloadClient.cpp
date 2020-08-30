@@ -250,9 +250,8 @@ void HTTPDownloadClient::start() {
 					downloadClient->progress = 1.0f;
 				} catch (Exception& exception) {
 					socket.shutdown();
+					downloadClient->finished = true;
 					Console::println(string("HTTPDownloadClient::execute(): performed HTTP request: FAILED: ") + exception.what());
-					// rethrow
-					throw;
 				}
 			}
 		private:

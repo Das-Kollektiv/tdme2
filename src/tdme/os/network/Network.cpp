@@ -14,6 +14,7 @@
 
 #include <string>
 
+#include <tdme/os/network/NetworkException.h>
 #include <tdme/os/network/NetworkSocket.h>
 #include <tdme/utilities/Console.h>
 
@@ -21,6 +22,7 @@ using tdme::os::network::Network;
 
 using std::to_string;
 
+using tdme::os::network::NetworkException;
 using tdme::os::network::NetworkSocket;
 using tdme::utilities::Console;
 
@@ -40,7 +42,9 @@ bool Network::initialize() {
 const string Network::getIpByHostName(const string& hostName) {
 	struct hostent* hostEnt = gethostbyname(hostName.c_str());
 
-	if (hostEnt == nullptr) return string();
+	if (hostEnt == nullptr) {
+		throw NetworkException("Could not resolve hostname");
+	}
 
 	switch (hostEnt->h_addrtype) {
 	case AF_INET:
@@ -56,8 +60,7 @@ const string Network::getIpByHostName(const string& hostName) {
 			return string(inet_ntop(AF_INET6, (in6_addr*)hostEnt->h_addr_list[i++], ipv6AddressString, INET6_ADDRSTRLEN) == NULL?"":ipv6AddressString);
 		}
 		break;
-	default:
-		break;
 	}
-	return string();
+
+	throw NetworkException("Could not resolve hostname");
 }
