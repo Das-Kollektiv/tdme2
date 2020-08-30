@@ -27,7 +27,7 @@ namespace network {
 namespace udpserver {
 
 /**
- * Base class for  server groups
+ * Base class for network server groups
  * @author Andreas Drewke
  */
 template <typename SERVER, typename CLIENT, typename GROUP>

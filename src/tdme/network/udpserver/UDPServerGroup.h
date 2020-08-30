@@ -10,7 +10,7 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
 
 /**
- *  UDP server group
+ * UDP server group class
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::UDPServerGroup : public ServerGroup<UDPServer, UDPServerClient, UDPServerGroup> {

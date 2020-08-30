@@ -12,7 +12,7 @@ namespace network {
 namespace udpserver {
 
 /**
- * Base exception class for  exceptions
+ * Network server client request handler hub exception
  * @author Andreas Drewke
  */
 class ServerClientRequestHandlerHubException: public ExceptionBase {

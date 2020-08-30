@@ -11,7 +11,7 @@ using std::string;
 using tdme::os::network::NetworkSocketException;
 
 /**
- * Class representing a nio socket
+ * Base class of network sockets
  * @author Andreas Drewke
  */
 class tdme::os::network::NetworkSocket {

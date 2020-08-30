@@ -18,7 +18,7 @@ namespace network {
 namespace udpserver {
 
 /**
- * @brief Server client request bean
+ * @brief Network server client request handler hub
  * @author Andreas Drewke
  */
 template <class CLIENT, class REQUEST>

@@ -20,7 +20,7 @@ using tdme::os::network::NetworkSocket;
 using tdme::os::network::NetworkSocketException;
 
 /**
- * Class representing a nio udp socket
+ * Class representing a UDP socket
  * @author Andreas Drewke
  */
 class tdme::os::network::UDPSocket : public NetworkSocket {

@@ -11,7 +11,7 @@
 using tdme::os::network::NetworkException;
 
 /**
- * Base exception class for  network server exceptions
+ * Base exception class for network server exceptions
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::NetworkServerException: public NetworkException {

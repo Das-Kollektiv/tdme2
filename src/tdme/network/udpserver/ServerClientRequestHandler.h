@@ -15,7 +15,7 @@ namespace network {
 namespace udpserver {
 
 /**
- * @brief Client request handler base class
+ * @brief Network client request handler base class
  * @author Andreas Drewke
  */
 template <class CLIENT, class REQUEST>

@@ -20,7 +20,7 @@ namespace network {
 namespace udpserver {
 
 /**
- * Base class for  server groups events
+ * Base class for network server group
  * @author Andreas Drewke
  */
 class ServerGroupBase : public ReferenceCounter {

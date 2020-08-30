@@ -29,7 +29,7 @@ class ServerRequest;
 };
 
 /**
- * Base class for  tcp server clients
+ * Base class for network server clients
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::ServerClient : public ReferenceCounter {

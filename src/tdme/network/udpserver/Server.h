@@ -18,7 +18,7 @@ namespace udpserver {
 class ServerWorkerThreadPool;
 
 /**
- * Base class for  servers
+ * Base class for network servers
  * @author Andreas Drewke
  */
 template <typename CLIENT, typename GROUP>

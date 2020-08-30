@@ -33,7 +33,7 @@ using tdme::network::udpserver::Server;
 using tdme::network::udpserver::ServerWorkerThreadPool;
 
 /**
- * Base class for  udp servers
+ * Base class for network UDP servers
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::UDPServer: public Thread, public Server<UDPServerClient, UDPServerGroup> {

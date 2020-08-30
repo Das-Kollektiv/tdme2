@@ -24,7 +24,7 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerIOThread;
 
 /**
- * Base class for  tcp server clients
+ * Base class for network UDP server clients
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::UDPServerClient : public ServerClient {

@@ -10,7 +10,7 @@ using std::string;
 using std::stringstream;
 
 /**
- *  UDP client message
+ * UDP client message
  * @author Andreas Drewke
  */
 class tdme::network::udpclient::UDPClientMessage {

@@ -8,7 +8,7 @@
 #include <tdme/os/network/NetworkSocketException.h>
 
 /**
- * Class representing a  TCP socket
+ * Class representing a TCP socket
  * @author Andreas Drewke
  */
 class tdme::os::network::TCPSocket : public NetworkSocket {

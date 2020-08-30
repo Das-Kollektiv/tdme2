@@ -28,7 +28,7 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
 
 /**
- *  network server udp IO thread
+ * UDP Network server IO thread
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::UDPServerIOThread : private Thread {

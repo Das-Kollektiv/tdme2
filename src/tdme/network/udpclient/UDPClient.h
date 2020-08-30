@@ -32,7 +32,7 @@ using tdme::network::udpclient::ClientException;
 using tdme::network::udpclient::UDPClientMessage;
 
 /**
- *  UDP client
+ * UDP client
  * @author Andreas Drewke
  */
 class tdme::network::udpclient::UDPClient : public Thread {
