@@ -75,7 +75,7 @@ private:
 	 * @param frame frame to be send
 	 * @param safe safe, requires ack and retransmission
 	 * @param deleteFrame delete frame
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
 	void sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame);
 
@@ -83,7 +83,7 @@ private:
 	 * @brief Processes an acknowlegdement reception
 	 * @param client client
 	 * @param messageId message id
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
 	void processAckReceived(UDPServerClient* client, const uint32_t messageId);
 

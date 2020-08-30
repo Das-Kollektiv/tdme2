@@ -205,7 +205,7 @@ public:
 	/**
 	 * Execute HTTP request
 	 * @throws tdme::network::httpclient::HTTPClientException
-	 * @throws tdme::os::network::Exception
+	 * @throws tdme::os::network::NetworkException
 	 */
 	void execute();
 

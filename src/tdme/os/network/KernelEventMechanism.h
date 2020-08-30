@@ -18,7 +18,7 @@ class tdme::os::network::KernelEventMechanism {
 public:
 	/**
 	 * @brief Public constructor
-	 * @throws tdme::os::network::KEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	KernelEventMechanism();
 
@@ -30,7 +30,7 @@ public:
 	/**
 	 * @brief initializes the kernel event mechanism
 	 * @param maxCCU supported max ccu
-	 * @throws tdme::os::network::KEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	void initKernelEventMechanism(const unsigned int maxCCU) ;
 
@@ -42,7 +42,7 @@ public:
 	/**
 	 * @brief do the kernel event mechanism
 	 * @return number of events
-	 * @throws tdme::os::network::KEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	int doKernelEventMechanism();
 
@@ -51,7 +51,7 @@ public:
 	 * @param index kernel event index
 	 * @param &interest kernel event io interest
 	 * @param cookie kernel event cookie
-	 * @throws tdme::os::network::KEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	void decodeKernelEvent(const unsigned int index, NIOInterest &interest, void*& cookie);
 
@@ -61,7 +61,7 @@ public:
 	 * @param lastInterest last nio interest
 	 * @param interest nio interest
 	 * @param cookie cookie
-	 * @throws tdme::os::network::KEMException
+	 * @throws tdme::os::network::NetworkKEMException
 	 */
 	void setSocketInterest(const NetworkSocket &socket, const NIOInterest lastInterest, const NIOInterest interest, const void* cookie);
 

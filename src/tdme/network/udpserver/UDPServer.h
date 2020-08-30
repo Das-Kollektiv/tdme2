@@ -80,7 +80,7 @@ protected:
 	 * @param connectionId connection id
 	 * @param messageId message id
 	 * @param retries retries
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 * @return client or NULL
 	 */
 	virtual void identify(stringstream* frame, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries);
@@ -88,14 +88,14 @@ protected:
 	/**
 	 * Validates a client message
 	 * @param frame frame
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
 	virtual void validate(stringstream* frame);
 
 	/**
 	 * Writes a empty header to message
 	 * @param frame frame
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
 	static void initializeHeader(stringstream* frame);
 
@@ -106,7 +106,7 @@ protected:
 	 * @param clientId client id
 	 * @param messageId message id
 	 * @param retries retries
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
 	virtual void writeHeader(stringstream* frame, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries);
 private:
@@ -124,21 +124,21 @@ private:
 	/**
 	 * @brief maps a new client to a given client id
 	 * @param client client
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn if id is already in use
+	 * @throws tdme::network::udpserver::NetworkServerException if id is already in use
 	 */
 	void addClient(UDPServerClient* client);
 
 	/**
 	 * @brief removes a client
 	 * @param client client
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn if id is not in use
+	 * @throws tdme::network::udpserver::NetworkServerException if id is not in use
 	 */
 	void removeClient(UDPServerClient* client);
 
 	/**
 	 * @brief Look ups a client by client id
 	 * @param clientId client id
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn if client does not exist
+	 * @throws tdme::network::udpserver::NetworkServerException if client does not exist
 	 * @return client
 	 */
 	UDPServerClient* lookupClient(const uint32_t clientId);
@@ -164,7 +164,7 @@ private:
 	 * @param deleteFrame delete frame
 	 * @param messageType message type
 	 * @param messageId message id (only for MESSAGETYPE_MESSAGE)
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
 	void sendMessage(const UDPServerClient* client, stringstream* frame, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId = MESSAGE_ID_NONE);
 
@@ -172,7 +172,7 @@ private:
 	 * @brief Processes an acknowlegdement reception
 	 * @param client client
 	 * @param messageId message id
-	 * @throws tdme::network::udpserver::NetworkServerExceptionn
+	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
 	void processAckReceived(UDPServerClient* client, const uint32_t messageId);
 
