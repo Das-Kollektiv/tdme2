@@ -66,7 +66,7 @@ ssize_t UDPSocket::read(string& from, unsigned int& port, void* buf, const size_
 			} else {
 				string msg = "error while reading from socket: ";
 				msg+= to_string(wsaError);
-				throw IOException(msg);
+				throw NetworkIOException(msg);
 			}
 		#else
 			// nope throw an exception
@@ -146,7 +146,7 @@ ssize_t UDPSocket::write(const string& to, const unsigned int port, void* buf, c
 			} else {
 				string msg = "error while writing to socket: ";
 				msg+= to_string(wsaError);
-				throw IOException(msg);
+				throw NetworkIOException(msg);
 			}
 		#else
 			// nope throw an exception
