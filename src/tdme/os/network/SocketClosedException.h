@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 
 /**
- * Socket closes exception
+ * Network socket closed exception
  * @author Andreas Drewke
  */
 class tdme::os::network::SocketClosedException: public NetworkIOException {

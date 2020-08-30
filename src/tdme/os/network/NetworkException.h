@@ -10,7 +10,7 @@
 using tdme::utilities::ExceptionBase;
 
 /**
- * Base exception class for  exceptions
+ * Base exception class for network exceptions
  * @author Andreas Drewke
  */
 class tdme::os::network::NetworkException: public ExceptionBase {

@@ -8,7 +8,7 @@
 using tdme::os::network::NetworkException;
 
 /**
- * Kernel event mechanism exception class
+ * Socket exception class
  * @author Andreas Drewke
  */
 class tdme::os::network::SocketException: public NetworkException {

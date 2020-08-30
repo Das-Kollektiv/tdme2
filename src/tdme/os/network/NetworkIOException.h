@@ -10,7 +10,7 @@ using std::string;
 using tdme::os::network::NetworkException;
 
 /**
- * Base exception class for  IO exceptions
+ * Base exception class for network IO exceptions
  * @author Andreas Drewke
  */
 class tdme::os::network::NetworkIOException: public NetworkException {
