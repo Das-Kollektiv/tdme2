@@ -4,11 +4,11 @@
 
 #include <tdme/tdme.h>
 #include <tdme/os/network/fwd-tdme.h>
-#include <tdme/os/network/SocketException.h>
+#include <tdme/os/network/NetworkSocketException.h>
 
 using std::string;
 
-using tdme::os::network::SocketException;
+using tdme::os::network::NetworkSocketException;
 
 /**
  * Class representing a nio socket

@@ -88,7 +88,7 @@ void NetworkSocket::bind(const std::string& ip, const unsigned int port) {
 		#else
 			msg+= strerror(errno);
 		#endif
-		throw SocketException(msg);
+		throw NetworkSocketException(msg);
 	}
 
 	// set address
@@ -110,14 +110,14 @@ void NetworkSocket::setNonBlocked() {
 		if (fdc == -1) {
 			std::string msg = "Could not get socket file descriptor settings: ";
 			msg+= strerror(errno);
-			throw SocketException(msg);
+			throw NetworkSocketException(msg);
 		}
 
 		// make the socket non blocked
 		if (fcntl(descriptor, F_SETFL, fdc | O_NONBLOCK) == -1) {
 			std::string msg = "Could not set socket non blocked: ";
 			msg+= strerror(errno);
-			throw SocketException(msg);
+			throw NetworkSocketException(msg);
 		}
 	#endif
 }

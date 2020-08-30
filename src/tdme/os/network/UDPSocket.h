@@ -11,13 +11,13 @@
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NetworkIOException.h>
 #include <tdme/os/network/NetworkSocket.h>
-#include <tdme/os/network/SocketException.h>
+#include <tdme/os/network/NetworkSocketException.h>
 
 using std::string;
 
 using tdme::os::network::NetworkIOException;
 using tdme::os::network::NetworkSocket;
-using tdme::os::network::SocketException;
+using tdme::os::network::NetworkSocketException;
 
 /**
  * Class representing a nio udp socket

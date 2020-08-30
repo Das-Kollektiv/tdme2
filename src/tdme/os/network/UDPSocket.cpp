@@ -170,14 +170,14 @@ void UDPSocket::create(UDPSocket& socket, IpVersion ipVersion) {
 	if (socket.descriptor == -1) {
 		string msg = "Could not create socket: ";
 		msg+= strerror(errno);
-		throw SocketException(msg);
+		throw NetworkSocketException(msg);
 	}
 	#ifdef __APPLE__
 		int flag = 1;
 		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
 			string msg = "Could not set no sig pipe on socket: ";
 			msg+= strerror(errno);
-			throw SocketException(msg);
+			throw NetworkSocketException(msg);
 		}
 	#endif
 }
@@ -195,13 +195,13 @@ void UDPSocket::createServerSocket(UDPSocket& socket, const string& ip, const un
 		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_REUSEOPTION, BUF_CAST(&flag), sizeof(flag)) == -1) {
 			string msg = "Could not set reuse port on socket: ";
 			msg+= strerror(errno);
-			throw SocketException(msg);
+			throw NetworkSocketException(msg);
 		}
 
 		// bind socket to host
 		socket.bind(ip, port);
 
-	} catch (SocketException &exception) {
+	} catch (NetworkSocketException &exception) {
 		socket.close();
 		throw exception;
 	}
@@ -214,7 +214,7 @@ void UDPSocket::createClientSocket(UDPSocket& socket, IpVersion ipVersion) {
 	try {
 		// set non blocked
 		socket.setNonBlocked();
-	} catch (SocketException &exception) {
+	} catch (NetworkSocketException &exception) {
 		socket.close();
 		throw exception;
 	}

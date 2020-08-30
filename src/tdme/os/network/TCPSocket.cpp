@@ -4,8 +4,8 @@
 
 #include <tdme/os/network/NetworkIOException.h>
 #include <tdme/os/network/NetworkSocket.h>
-#include <tdme/os/network/SocketException.h>
-#include <tdme/os/network/SocketClosedException.h>
+#include <tdme/os/network/NetworkSocketException.h>
+#include <tdme/os/network/NetworkSocketClosedException.h>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -33,8 +33,8 @@ using std::to_string;
 
 using tdme::os::network::NetworkIOException;
 using tdme::os::network::NetworkSocket;
-using tdme::os::network::SocketException;
-using tdme::os::network::SocketClosedException;
+using tdme::os::network::NetworkSocketException;
+using tdme::os::network::NetworkSocketClosedException;
 
 /**
  * @brief public destructor
@@ -50,7 +50,7 @@ size_t TCPSocket::read(void* buf, const size_t bytes) {
 		throw NetworkIOException(msg);
 	} else
 	if (bytesRead == 0) {
-		throw SocketClosedException("end of stream");
+		throw NetworkSocketClosedException("end of stream");
 	}
 	//
 	return (size_t)bytesRead;
@@ -66,7 +66,7 @@ size_t TCPSocket::write(void* buf, const size_t bytes) {
 		if (errno == ECONNRESET || errno == EPIPE) {
 			std::string msg = "end of stream: ";
 			msg+= strerror(errno);
-			throw SocketClosedException(msg);
+			throw NetworkSocketClosedException(msg);
 		} else {
 			std::string msg = "error while writing to socket: ";
 			msg+= strerror(errno);
@@ -83,14 +83,14 @@ void TCPSocket::create(TCPSocket& socket, IpVersion ipVersion) {
 	if (socket.descriptor == -1) {
 		std::string msg = "Could not create socket: ";
 		msg+= strerror(errno);
-		throw SocketException(msg);
+		throw NetworkSocketException(msg);
 	}
 	#if defined(__APPLE__)
 		int flag = 1;
 		if (setsockopt(socket.descriptor, SOL_SOCKET, SO_NOSIGPIPE, (void*)&flag, sizeof(flag)) == -1) {
 			std::string msg = "Could not set no sig pipe on socket: ";
 			msg+= strerror(errno);
-			throw SocketException(msg);
+			throw NetworkSocketException(msg);
 		}
 	#endif
 }
@@ -135,7 +135,7 @@ void TCPSocket::connect(const std::string& ip, const unsigned int port) {
 		#else
 			msg+= strerror(errno);
 		#endif
-		throw SocketException(msg);
+		throw NetworkSocketException(msg);
 	}
 
 	// set address
@@ -157,9 +157,9 @@ void TCPSocket::createServerSocket(TCPSocket& socket, const std::string& ip, con
 		if (listen(socket.descriptor, backlog) == -1) {
 			std::string msg = "Could not set socket to listen: ";
 			msg+= strerror(errno);
-			throw SocketException(msg);
+			throw NetworkSocketException(msg);
 		}
-	} catch (SocketException &exception) {
+	} catch (NetworkSocketException &exception) {
 		socket.close();
 		throw;
 	}
@@ -174,7 +174,7 @@ void TCPSocket::setTCPNoDelay() {
 	#endif
 		std::string msg = "Could not set tcp no delay: ";
 		msg+= strerror(errno);
-		throw SocketException(msg);
+		throw NetworkSocketException(msg);
 	}
 }
 
@@ -192,7 +192,7 @@ bool TCPSocket::accept(TCPSocket &_socket) {
 		}
 		std::string msg = "Could not accept socket: ";
 		msg+= strerror(errno);
-		throw SocketException(msg);
+		throw NetworkSocketException(msg);
 	}
 
 	// create client socket, return it

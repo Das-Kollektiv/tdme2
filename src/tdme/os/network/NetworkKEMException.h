@@ -3,19 +3,20 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NetworkException.h>
 
-using tdme::os::network::NetworkException;
+using std::string;
 
 /**
- * Socket exception class
+ * Kernel event mechanism exception class
  * @author Andreas Drewke
  */
-class tdme::os::network::SocketException: public NetworkException {
+class tdme::os::network::NetworkKEMException: public NetworkException {
 public:
 	/**
 	 * @brief public constructor
 	 * @param &message message exception message
 	 */
-	SocketException(const string &message) throw();
+	NetworkKEMException(const string &message) throw();
 };

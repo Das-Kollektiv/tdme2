@@ -500,10 +500,10 @@ SRCS = \
 	src/tdme/os/network/Network.cpp \
 	src/tdme/os/network/NetworkException.cpp \
 	src/tdme/os/network/NetworkIOException.cpp \
-	src/tdme/os/network/SocketClosedException.cpp \
-	src/tdme/os/network/KEMException.cpp \
+	src/tdme/os/network/NetworkSocketClosedException.cpp \
+	src/tdme/os/network/NetworkKEMException.cpp \
 	src/tdme/os/network/NetworkSocket.cpp \
-	src/tdme/os/network/SocketException.cpp \
+	src/tdme/os/network/NetworkSocketException.cpp \
 	src/tdme/os/network/UDPSocket.cpp \
 	src/tdme/os/network/TCPSocket.cpp \
 	src/tdme/os/threading/Barrier.cpp \

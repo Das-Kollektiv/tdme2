@@ -49,13 +49,13 @@ void KernelEventMechanism::setSocketInterest(const NetworkSocket& socket, const 
 	//
 	if (epoll_ctl(
 		psd->ep,
-		lastInterest == _INTEREST_NONE?EPOLL_CTL_ADD:EPOLL_CTL_MOD,
+		lastInterest == NIO_INTEREST_NONE?EPOLL_CTL_ADD:EPOLL_CTL_MOD,
 		socket.descriptor,
 		&event) == -1) {
 		//
 		std::string msg = "Could not add epoll event: ";
 		msg+= strerror(errno);
-		throw KEMException(msg);
+		throw NetworkKEMException(msg);
 	}
 }
 
@@ -73,7 +73,7 @@ void KernelEventMechanism::initKernelEventMechanism(const unsigned int maxCCU)  
 		delete [] psd->epEventList;
 		std::string msg = "Could not create epoll: ";
 		msg+= strerror(errno);
-		throw KEMException(msg);
+		throw NetworkKEMException(msg);
 	}
 
 	//
@@ -107,7 +107,7 @@ int KernelEventMechanism::doKernelEventMechanism()  {
 			} else {
 				std::string msg = "epoll_wait failed: ";
 				msg+= strerror(errno);
-				throw KEMException(msg);
+				throw NetworkKEMException(msg);
 			}
 		} else {
 			//

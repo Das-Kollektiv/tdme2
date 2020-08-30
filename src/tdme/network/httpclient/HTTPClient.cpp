@@ -9,7 +9,7 @@
 #include <tdme/network/httpclient/HTTPClientException.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/TCPSocket.h>
-#include <tdme/os/network/SocketClosedException.h>
+#include <tdme/os/network/NetworkSocketClosedException.h>
 #include <tdme/utilities/Base64EncDec.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
@@ -31,7 +31,7 @@ using std::vector;
 
 using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
-using tdme::os::network::SocketClosedException;
+using tdme::os::network::NetworkSocketClosedException;
 using tdme::os::network::TCPSocket;
 using tdme::utilities::Base64EncDec;
 using tdme::utilities::Character;
@@ -189,7 +189,7 @@ void HTTPClient::execute() {
 				auto rawResponseBytesRead = socket.read(rawResponseBuf, sizeof(rawResponseBuf));
 				rawResponse.write(rawResponseBuf, rawResponseBytesRead);
 			};
-		} catch (SocketClosedException& sce) {
+		} catch (NetworkSocketClosedException& sce) {
 			// end of stream
 		}
 

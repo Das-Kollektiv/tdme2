@@ -8,11 +8,11 @@ namespace network {
 	class Network;
 	class NetworkException;
 	class NetworkIOException;
-	class SocketClosedException;
-	class KEMException;
+	class NetworkKEMException;
+	class NetworkSocketClosedException;
 	class NetworkSocket;
 	class NetworkServerException;
-	class SocketException;
+	class NetworkSocketException;
 	class UDPSocket;
 	class TCPSocket;
 } // namespace network

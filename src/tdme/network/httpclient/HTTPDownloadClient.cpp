@@ -9,7 +9,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/network/Network.h>
-#include <tdme/os/network/SocketClosedException.h>
+#include <tdme/os/network/NetworkSocketClosedException.h>
 #include <tdme/os/network/TCPSocket.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
@@ -33,7 +33,7 @@ using tdme::network::httpclient::HTTPClientException;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::network::Network;
-using tdme::os::network::SocketClosedException;
+using tdme::os::network::NetworkSocketClosedException;
 using tdme::os::network::TCPSocket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
@@ -192,7 +192,7 @@ void HTTPDownloadClient::start() {
 									downloadClient->progress = static_cast<float>(bytesRead - downloadClient->headerSize) / static_cast<float>(downloadClient->contentSize);
 								}
 							};
-						} catch (SocketClosedException& sce) {
+						} catch (NetworkSocketClosedException& sce) {
 							// end of stream
 						}
 

@@ -5,7 +5,7 @@
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NetworkIOException.h>
 #include <tdme/os/network/NetworkSocket.h>
-#include <tdme/os/network/SocketException.h>
+#include <tdme/os/network/NetworkSocketException.h>
 
 /**
  * Class representing a  TCP socket

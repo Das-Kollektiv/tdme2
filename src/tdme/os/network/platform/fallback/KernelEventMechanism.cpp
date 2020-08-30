@@ -116,7 +116,7 @@ int KernelEventMechanism::doKernelEventMechanism() {
 	// run select
 	auto result = select(psd->maxFd + 1, &rfds, &wfds, NULL, &timeout);
 	if (result == -1) {
-		throw KEMException("select failed");
+		throw NetworkKEMException("select failed");
 	}
 
 	// compile list of events

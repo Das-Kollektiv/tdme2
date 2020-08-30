@@ -4,11 +4,11 @@
 #include <tdme/os/network/fwd-tdme.h>
 #include <tdme/os/network/NIOInterest.h>
 #include <tdme/os/network/NetworkSocket.h>
-#include <tdme/os/network/KEMException.h>
+#include <tdme/os/network/NetworkKEMException.h>
 
 using tdme::os::network::NIOInterest;
 using tdme::os::network::NetworkSocket;
-using tdme::os::network::KEMException;
+using tdme::os::network::NetworkKEMException;
 
 /**
  * Interface to kernel event mechanismns
