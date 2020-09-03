@@ -267,9 +267,10 @@ public:
 	 * @param id id
 	 * @param transformations transformations
 	 * @param collisionTypeId collision type id or 0 for default
+	 * @param index use a optional index or all bounding volumes
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0);
+	static Body* createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1);
 
 	/**
 	 * Create rigid body
@@ -277,9 +278,10 @@ public:
 	 * @param levelEditorObject level editor object
 	 * @param translation translation
 	 * @param collisionTypeId collision type id or 0 for default
+	 * @param index use a optional index or all bounding volumes
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0);
+	static Body* createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), uint16_t collisionTypeId = 0, int index = -1);
 
 	/**
 	 * Add level to physics world

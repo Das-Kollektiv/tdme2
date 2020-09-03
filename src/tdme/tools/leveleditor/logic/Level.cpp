@@ -487,14 +487,14 @@ void Level::addLevel(Engine* engine, LevelEditorLevel* level, bool addEmpties, b
 	}
 }
 
-Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId) {
+Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index) {
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::EMPTY) return nullptr;
 
 	if (levelEditorEntity->getType() == LevelEditorEntity_EntityType::TRIGGER) {
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
 			auto entityBv = levelEditorEntity->getBoundingVolumeAt(j);
-			boundingVolumes.push_back(entityBv->getBoundingVolume());
+			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
 		return world->addCollisionBody(
@@ -545,7 +545,7 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 		vector<BoundingVolume*> boundingVolumes;
 		for (auto j = 0; j < levelEditorEntity->getBoundingVolumeCount(); j++) {
 			auto entityBv = levelEditorEntity->getBoundingVolumeAt(j);
-			boundingVolumes.push_back(entityBv->getBoundingVolume());
+			if (index == -1 || index == j) boundingVolumes.push_back(entityBv->getBoundingVolume());
 		}
 		if (boundingVolumes.size() == 0) return nullptr;
 		if (levelEditorEntity->getPhysics()->getType() == LevelEditorEntityPhysics_BodyType::COLLISION_BODY) {
@@ -584,14 +584,14 @@ Body* Level::createBody(World* world, LevelEditorEntity* levelEditorEntity, cons
 	return nullptr;
 }
 
-Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId) {
+Body* Level::createBody(World* world, LevelEditorObject* levelEditorObject, const Vector3& translation, uint16_t collisionTypeId, int index) {
 	Transformations transformations;
 	transformations.fromTransformations(levelEditorObject->getTransformations());
 	if (translation.equals(Vector3()) == false) {
 		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
 		transformations.update();
 	}
-	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId);
+	return createBody(world, levelEditorObject->getEntity(), levelEditorObject->getId(), transformations, collisionTypeId, index);
 }
 
 void Level::addLevel(World* world, LevelEditorLevel* level, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
