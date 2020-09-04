@@ -136,7 +136,7 @@ private:
 	 * @param materialSymbols material symbols
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols); // TODO: std container: maybe use call by reference
+	static void readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols);
 
 	/** 
 	 * Reads a material

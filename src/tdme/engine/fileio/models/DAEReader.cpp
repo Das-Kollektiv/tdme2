@@ -433,7 +433,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 				string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 		}
 		// parse geometry
-		readGeometry(pathName, model, group, xmlRoot, xmlInstanceGeometryId, &materialSymbols);
+		readGeometry(pathName, model, group, xmlRoot, xmlInstanceGeometryId, materialSymbols);
 		return group;
 	}
 
@@ -467,7 +467,7 @@ Group* DAEReader::readNode(const string& pathName, Model* model, Group* parentGr
 						string(AVOID_NULLPTR_STRING(xmlInstanceMaterial->Attribute("target")));
 				}
 				// parse geometry
-				readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
+				readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
 			}
 		}
 	}
@@ -537,7 +537,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	auto skinning = new Skinning();
 
 	// parse geometry
-	readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, &materialSymbols);
+	readGeometry(pathName, model, group, xmlRoot, xmlGeometryId, materialSymbols);
 
 	// parse joints
 	string xmlJointsSource;
@@ -693,7 +693,7 @@ Group* DAEReader::readVisualSceneInstanceController(const string& pathName, Mode
 	return group;
 }
 
-void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>* materialSymbols)
+void DAEReader::readGeometry(const string& pathName, Model* model, Group* group, TiXmlElement* xmlRoot, const string& xmlNodeId, const map<string, string>& materialSymbols)
 {
 	vector<FacesEntity> facesEntities = group->getFacesEntities();
 	auto verticesOffset = group->getVertices().size();
@@ -747,8 +747,8 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Group* group,
 				auto xmlColorOffset = -1;
 				string xmlColorSource;
 				auto xmlMaterialId = string(AVOID_NULLPTR_STRING(xmlPolygons->Attribute("material")));
-				auto materialSymbolIt = materialSymbols->find(xmlMaterialId);
-				if (materialSymbolIt != materialSymbols->end()) {
+				auto materialSymbolIt = materialSymbols.find(xmlMaterialId);
+				if (materialSymbolIt != materialSymbols.end()) {
 					xmlMaterialId = materialSymbolIt->second;
 					xmlMaterialId = StringTools::substring(xmlMaterialId, 1);
 				}
