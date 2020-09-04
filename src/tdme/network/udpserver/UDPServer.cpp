@@ -1,10 +1,6 @@
 /**
  * @version $Id: baf35fe106f82d8bd3b13366cbf9d28daba32aed $
  */
-#if defined(_WIN32) && defined(_MSC_VER)
-	#include <windows.h>
-#endif
-
 #include <math.h>
 
 #include <sstream>
@@ -14,6 +10,7 @@
 
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>
@@ -29,6 +26,7 @@ using std::to_string;
 
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerIOThread;
+using tdme::os::threading::AtomicOperations;
 using tdme::os::threading::Thread;
 using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;
@@ -472,11 +470,7 @@ void UDPServer::sendMessage(const UDPServerClient* client, stringstream* frame, 
 	switch(messageType) {
 		case(MESSAGETYPE_CONNECT):
 		case(MESSAGETYPE_MESSAGE):
-			#if defined(_WIN32) && defined(_MSC_VER)
-				_messageId = InterlockedIncrement(&messageCount);
-			#else
-				_messageId = __sync_add_and_fetch(&messageCount, 1);
-			#endif
+			_messageId = AtomicOperations::increment(messageCount);
 			break;
 		case(MESSAGETYPE_ACKNOWLEDGEMENT):
 			_messageId = messageId;
@@ -497,10 +491,5 @@ void UDPServer::processAckReceived(UDPServerClient* client, const uint32_t messa
 }
 
 const uint32_t UDPServer::allocateClientId() {
-	#if defined(_WIN32) && defined(_MSC_VER)
-		uint32_t clientId = InterlockedIncrement(&clientCount);
-	#else
-		uint32_t clientId = __sync_add_and_fetch(&clientCount, 1);
-	#endif
-	return clientId;
+	return AtomicOperations::increment(clientCount);
 }

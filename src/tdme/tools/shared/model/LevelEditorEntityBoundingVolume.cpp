@@ -1,9 +1,5 @@
 #include <tdme/tools/shared/model/LevelEditorEntityBoundingVolume.h>
 
-#if defined(_WIN32) && defined(_MSC_VER)
-	#include <windows.h>
-#endif
-
 #include <string>
 
 #include <tdme/engine/Object3DModel.h>
@@ -19,6 +15,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/tools/shared/model/LevelEditorEntity_EntityType.h>
 #include <tdme/tools/shared/model/LevelEditorEntity.h>
 #include <tdme/utilities/Exception.h>
@@ -42,6 +39,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::AtomicOperations;
 using tdme::tools::shared::model::LevelEditorEntity_EntityType;
 using tdme::tools::shared::model::LevelEditorEntity;
 using tdme::utilities::Exception;
@@ -72,13 +70,7 @@ void LevelEditorEntityBoundingVolume::setupNone()
 }
 
 int32_t LevelEditorEntityBoundingVolume::allocateModelIdx() {
-	uint32_t currentModelIdx = 0;
-	#if defined(_WIN32) && defined(_MSC_VER)
-		currentModelIdx = InterlockedIncrement(&modelIdx);
-	#else
-		currentModelIdx = __sync_add_and_fetch(&modelIdx, 1);
-	#endif
-	return currentModelIdx;
+	return AtomicOperations::increment(modelIdx);
 }
 
 void LevelEditorEntityBoundingVolume::setupSphere(const Vector3& center, float radius)
