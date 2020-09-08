@@ -302,9 +302,10 @@ private:
 
 	/**
 	 * Create atlas texture
+	 * @param id id
 	 * @param textureAtlasTextures texture atlas textures
 	 */
-	static Texture* createAtlasTexture(map<int, Texture*>& textureAtlasTextures);
+	static Texture* createAtlasTexture(const string& id, map<int, Texture*>& textureAtlasTextures);
 
 	/**
 	 * Prepare for optimization

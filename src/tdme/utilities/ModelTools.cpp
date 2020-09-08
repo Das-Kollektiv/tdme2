@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <tdme/engine/Transformations.h>
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -37,6 +38,7 @@ using std::to_string;
 using std::vector;
 
 using tdme::engine::Transformations;
+using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
 using tdme::utilities::ModelTools;
 using tdme::engine::model::Animation;
@@ -982,15 +984,11 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 	}
 }
 
-Texture* ModelTools::createAtlasTexture(map<int, Texture*>& textureAtlasTextures) {
-	// create atlas
-	// TODO: looks like we need 2 groups, damn: one with masked transparency and one without for models that have both :(
-	int textureAtlasSize = static_cast<int>(Math::ceil(sqrt(textureAtlasTextures.size())));
+Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& textureAtlasTextures) {
+	auto textureAtlasSize = static_cast<int>(Math::ceil(sqrt(textureAtlasTextures.size())));
 	Console::println("\tTexture atlas size: " + to_string(textureAtlasSize) + " x " + to_string(textureAtlasSize));
-	Texture* atlasTexture = nullptr;
-	static auto globalAtlasTextureIdx = 0;
 	#define ATLAS_TEXTURE_SIZE	512
-	#define ATLAS_TEXTURE_BORDER	8
+	#define ATLAS_TEXTURE_BORDER	32
 	auto textureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
 	auto textureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
 	auto textureByteBuffer = ByteBuffer::allocate(textureWidth * textureHeight * 4);
@@ -1038,8 +1036,8 @@ Texture* ModelTools::createAtlasTexture(map<int, Texture*>& textureAtlasTextures
 			textureByteBuffer->put(materialPixelA);
 		}
 	}
-	atlasTexture = new Texture(
-		"tdme.texture.atlas." + to_string(globalAtlasTextureIdx++),
+	auto atlasTexture = new Texture(
+		id,
 		32,
 		textureWidth, textureHeight,
 		textureWidth, textureHeight,
@@ -1055,7 +1053,7 @@ Model* ModelTools::optimizeModel(Model* model) {
 	Console::println("\tSource material count: " + to_string(model->getMaterials().size()));
 	Console::println("\tSource group count: " + to_string(model->getGroups().size()));
 
-	// TODO: 2 mas could have the same texture
+	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
 	map<string, int> materialUseCount;
 	for (auto& groupIt: model->getSubGroups()) {
@@ -1118,7 +1116,9 @@ Model* ModelTools::optimizeModel(Model* model) {
 	}
 
 	// create diffuse atlas texture
-	auto diffuseAtlasTexture = createAtlasTexture(diffuseTextureAtlasTextures);
+	static int atlasTextureCounter = 0;
+	auto diffuseAtlasTexture = createAtlasTexture(model->getName() + ".diffuse.atlas." + to_string(atlasTextureCounter++), diffuseTextureAtlasTextures);
+	//PNGTextureWriter::write(diffuseAtlasTexture, ".", diffuseAtlasTexture->getId() + ".png", false);
 
 	// create model with optimizations applied
 	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());

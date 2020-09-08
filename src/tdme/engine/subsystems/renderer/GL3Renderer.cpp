@@ -537,25 +537,94 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height)
 	return colorBufferTextureGlId;
 }
 
+static Texture* generateMipMap(Texture* texture, int32_t level, int32_t borderSize) {
+	auto generatedWidth = texture->getTextureWidth() / 2;
+	auto generatedHeight = texture->getTextureHeight() / 2;
+	auto generatedByteBuffer = ByteBuffer::allocate(generatedWidth * generatedHeight * 4);
+	for (auto i = 0; i < generatedWidth * generatedHeight; i++) {
+		generatedByteBuffer->put(0xff);
+		generatedByteBuffer->put(0x00);
+		generatedByteBuffer->put(0x00);
+		generatedByteBuffer->put(0xff);
+	}
+	auto generatedTexture = new Texture(
+		texture->getId() + ".mipmap." + to_string(level),
+		32,
+		generatedWidth,
+		generatedHeight,
+		generatedWidth,
+		generatedHeight,
+		generatedByteBuffer
+	);
+	generatedTexture->acquireReference();
+	return generatedTexture;
+}
+
 void GL3Renderer::uploadTexture(void* context, Texture* texture)
 {
-	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		texture->getTextureWidth(),
+		texture->getTextureHeight(),
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
+		texture->getTextureData()->getBuffer()
+	);
+	// Console::println(texture->getId() + ": 0: " + to_string(texture->getTextureWidth()) + " x " + to_string(texture->getTextureHeight()));
 	if (texture->getAtlasSize() > 1) {
-		// TODO: seems like I have to generate bitmaps own my own, need to check
-		float maxLodBias;
-		glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
-	}
-	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
-	if (texture->isRepeat() == true) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	} else {
+		if (texture->isUseMipMap() == true) {
+			float maxLodBias;
+			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
+			auto generatedMipmapTexture = static_cast<Texture*>(nullptr);
+			auto mipmapTexture = texture;
+			auto borderSize = 32;
+			auto maxLevel = 0;
+			while (borderSize >= 8) {
+				maxLevel++;
+				borderSize/= 2;
+			}
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+			borderSize = 32;
+			auto level = 0;
+			while (borderSize >= 8) {
+				level++;
+				mipmapTexture = generateMipMap(mipmapTexture, level, borderSize);
+				if (generatedMipmapTexture != nullptr) generatedMipmapTexture->releaseReference();
+				generatedMipmapTexture = mipmapTexture;
+				// Console::println(texture->getId() + ": " + to_string(level) + ": " + to_string(mipmapTexture->getTextureWidth()) + " x " + to_string(mipmapTexture->getTextureHeight()));
+				glTexImage2D(
+					GL_TEXTURE_2D,
+					level,
+					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
+					mipmapTexture->getTextureWidth(),
+					mipmapTexture->getTextureHeight(),
+					0,
+					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
+					GL_UNSIGNED_BYTE,
+					mipmapTexture->getTextureData()->getBuffer()
+				);
+				borderSize/= 2;
+			}
+		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	} else {
+		if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
+		if (texture->isRepeat() == true) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		} else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
 	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
