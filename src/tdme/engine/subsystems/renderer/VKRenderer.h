@@ -396,6 +396,11 @@ private:
 	vector<context_type> contexts;
 	VmaAllocator allocator { VK_NULL_HANDLE };
 
+	/**
+	 * Public constructor
+	 */
+	VKRenderer();
+
 	VkBool32 checkLayers(uint32_t check_count, const char **check_names, uint32_t layer_count, VkLayerProperties *layers);
 	void setImageLayout(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, VkImageLayout old_image_layout, VkImageLayout new_image_layout, VkAccessFlagBits srcAccessMask, uint32_t baseLevel = 0, uint32_t levelCount = 1);
 	uint32_t getMipLevels(int32_t textureWidth, int32_t textureHeight);
@@ -597,10 +602,4 @@ public:
 	virtual float getMaskMaxValue(void* context) override;
 	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
 
-
-public:
-	/**
-	 * Public constructor
-	 */
-	VKRenderer();
 };

@@ -78,19 +78,19 @@ using tdme::utilities::Exception;
 using rapidjson::Document;
 using rapidjson::Value;
 
-LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName)
+LevelEditorEntity* ModelMetaDataFileImport::doImport(int32_t id, const string& pathName, const string& fileName, bool optimizeModel)
 {
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Document jEntityRoot;
 	jEntityRoot.Parse(jsonContent.c_str());
 
-	auto levelEditorEntity = doImportFromJSON(id, pathName, jEntityRoot);
+	auto levelEditorEntity = doImportFromJSON(id, pathName, jEntityRoot, optimizeModel);
 	levelEditorEntity->setEntityFileName(pathName + "/" + fileName);
 	return levelEditorEntity;
 }
 
-LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot)
+LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot, bool optimizeModel)
 {
 	LevelEditorEntity* levelEditorEntity;
 	// auto version = Float::parseFloat((jEntityRoot["version"].GetString()));
@@ -113,11 +113,12 @@ LevelEditorEntity* ModelMetaDataFileImport::doImportFromJSON(int32_t id, const s
 		modelPathName = getResourcePathName(pathName, modelFileName);
 		model = ModelReader::read(
 			modelPathName,
-			FileSystem::getInstance()->getFileName(modelFileName)
+			FileSystem::getInstance()->getFileName(modelFileName),
+			optimizeModel
 		);
 	} else
 	if (modelType == LevelEditorEntity_EntityType::EMPTY) {
-		model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae");
+		model = ModelReader::read("resources/engine/tools/leveleditor/models", "empty.dae", optimizeModel);
 	}
 
 	levelEditorEntity = new LevelEditorEntity(
@@ -325,7 +326,7 @@ LevelEditorEntityBoundingVolume* ModelMetaDataFileImport::parseBoundingVolume(in
 	return entityBoundingVolume;
 }
 
-LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName, Value& jLodLevel) {
+LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& pathName, Value& jLodLevel, bool optimizeModel) {
 	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].GetInt());
 	LevelEditorEntityLODLevel* lodLevel = new LevelEditorEntityLODLevel(
 		lodType,
@@ -339,7 +340,8 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 		lodLevel->setModel(
 			ModelReader::read(
 				modelPathName,
-				FileSystem::getInstance()->getFileName(modelFileName)
+				FileSystem::getInstance()->getFileName(modelFileName),
+				optimizeModel
 			)
 		);
 		lodLevel->setFileName(modelPathName + "/" + FileSystem::getInstance()->getFileName(modelFileName));
@@ -363,7 +365,7 @@ LevelEditorEntityLODLevel* ModelMetaDataFileImport::parseLODLevel(const string& 
 	return lodLevel;
 }
 
-void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {
+void ModelMetaDataFileImport::parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem, bool optimizeModel) {
 	particleSystem->setType(LevelEditorEntityParticleSystem_Type::valueOf((jParticleSystem["t"].GetString())));
 	{
 		auto v = particleSystem->getType();

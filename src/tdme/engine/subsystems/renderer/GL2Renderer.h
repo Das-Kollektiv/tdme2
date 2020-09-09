@@ -45,6 +45,11 @@ private:
 	bool checkBufferObjectsAvailable();
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GL2Renderer();
+
 	bool isDepthTextureAvailable() override;
 	void initialize() override;
 	void initializeFrame() override;
@@ -160,8 +165,4 @@ public:
 	void disposeVertexArrayObject(int32_t vertexArrayObjectId) override;
 	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
 
-	/**
-	 * Public constructor
-	 */
-	GL2Renderer();
 };

@@ -305,7 +305,6 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 }
 
 void ModelTools::cloneGroup(Group* sourceGroup, Model* targetModel, Group* targetParentGroup, bool cloneMesh) {
-	Console::println("ModelTools::cloneGroup(): " + sourceGroup->getId());
 	auto clonedGroup = new Group(targetModel, targetParentGroup, sourceGroup->getId(), sourceGroup->getName());
 	clonedGroup->setTransformationsMatrix(sourceGroup->getTransformationsMatrix());
 	clonedGroup->setJoint(sourceGroup->isJoint());
@@ -718,9 +717,6 @@ void ModelTools::prepareForDefaultShader(Group* group) {
 void ModelTools::prepareForFoliageTreeShader(Group* group, const Matrix4x4& parentTransformationsMatrix, const string& shader) {
 	vector<Vector3> objectOrigins;
 	objectOrigins.resize(group->getVertices().size());
-	Console::println("ModelTools::prepareForShader(): " + group->getModel()->getName() + ": " + group->getId() + ": applying import and group matrices");
-	if (group->getAnimation() != nullptr) Console::println("ModelTools::prepareForFoliageShader(): animation available, this is not yet supported!");
-	if (group->getSkinning() != nullptr) Console::println("ModelTools::prepareForFoliageShader(): skinning available, this is not yet supported!");
 	auto transformationsMatrix = group->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
 	{
 		auto vertices = group->getVertices();
@@ -833,7 +829,6 @@ void ModelTools::prepareForOptimization(Group* group, const Matrix4x4& parentTra
 }
 
 void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices) {
-	Console::println("ModelTools::optimizeGroup(): " + sourceGroup->getId());
 	if (sourceGroup->getFacesEntities().size() > 0) {
 		auto& sourceVertices = sourceGroup->getVertices();
 		auto& sourceNormals = sourceGroup->getNormals();
@@ -950,9 +945,6 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 			}
 		}
 		targetGroup->setTextureCoordinates(targetTextureCoordinates);
-		Console::println(targetModel->getId() + ": a: " + to_string(targetFaces.size()));
-		Console::println(targetModel->getId() + ": b: " + to_string(targetFacesMaskedTransparency.size()));
-		Console::println(targetModel->getId() + ": c: " + to_string(targetFacesTransparency.size()));
 		if (targetFaces.size() > 0) {
 			auto facesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized");
 			if (targetGroup->getFacesEntity("tdme.facesentity.optimized") == nullptr) {
@@ -986,7 +978,6 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 
 Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& textureAtlasTextures) {
 	auto textureAtlasSize = static_cast<int>(Math::ceil(sqrt(textureAtlasTextures.size())));
-	Console::println("\tTexture atlas size: " + to_string(textureAtlasSize) + " x " + to_string(textureAtlasSize));
 	#define ATLAS_TEXTURE_SIZE	512
 	#define ATLAS_TEXTURE_BORDER	32
 	auto textureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
@@ -1049,10 +1040,6 @@ Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& te
 }
 
 Model* ModelTools::optimizeModel(Model* model) {
-	Console::println(model->getName());
-	Console::println("\tSource material count: " + to_string(model->getMaterials().size()));
-	Console::println("\tSource group count: " + to_string(model->getGroups().size()));
-
 	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
 	map<string, int> materialUseCount;
@@ -1070,21 +1057,6 @@ Model* ModelTools::optimizeModel(Model* model) {
 	map<string, Material*> atlasMaterials;
 	for (auto& materialUseCountIt: materialUseCount) {
 		auto material = model->getMaterials().find(materialUseCountIt.first)->second;
-		Console::println("\tMaterial usage: " + materialUseCountIt.first + ": " + to_string(materialUseCountIt.second));
-		Console::print("\t\tEmission: ");
-		for (auto colorComponent: material->getSpecularMaterialProperties()->getEmissionColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
-		Console::println();
-		Console::print("\t\tAmbient: ");
-		for (auto colorComponent: material->getSpecularMaterialProperties()->getAmbientColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
-		Console::println();
-		Console::print("\t\tDiffuse: ");
-		for (auto colorComponent: material->getSpecularMaterialProperties()->getDiffuseColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
 		auto diffuseTexture = material->getSpecularMaterialProperties()->getDiffuseTexture();
 		if (diffuseTexture != nullptr) {
 			diffuseTextureAtlasIndices[material->getId()] = diffuseTextureCount;
@@ -1092,16 +1064,6 @@ Model* ModelTools::optimizeModel(Model* model) {
 			diffuseTextureCount++;
 			atlasMaterials[material->getId()] = material;
 		}
-		Console::print("\t\tDiffuse texture: " + (diffuseTexture == nullptr?"none":to_string(diffuseTexture->getTextureWidth()) + " x " + to_string(diffuseTexture->getTextureHeight())));
-		Console::println();
-		Console::print("\t\tSpecular: ");
-		for (auto colorComponent: material->getSpecularMaterialProperties()->getSpecularColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
-		Console::println();
-		Console::print("\t\tShininess: ");
-		Console::print(to_string(material->getSpecularMaterialProperties()->getShininess()) + " ");
-		Console::println();
 	}
 
 	// do we need to optimize?
@@ -1157,32 +1119,6 @@ Model* ModelTools::optimizeModel(Model* model) {
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseColor(Color4(optimizedMaterialDiffuse.getArray()));
 		optimizedMaterial->getSpecularMaterialProperties()->setSpecularColor(Color4(optimizedMaterialSpecular.getArray()));
 		optimizedMaterial->getSpecularMaterialProperties()->setShininess(optimizedMaterialShininess);
-		Console::println("\tOptimized Material");
-		Console::print("\t\tEmission: ");
-		for (auto colorComponent: optimizedMaterial->getSpecularMaterialProperties()->getEmissionColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
-		Console::println();
-		Console::print("\t\tAmbient: ");
-		for (auto colorComponent: optimizedMaterial->getSpecularMaterialProperties()->getAmbientColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
-		Console::println();
-		Console::print("\t\tDiffuse: ");
-		for (auto colorComponent: optimizedMaterial->getSpecularMaterialProperties()->getDiffuseColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
-		auto diffuseTexture = optimizedMaterial->getSpecularMaterialProperties()->getDiffuseTexture();
-		Console::print("\t\tDiffuse texture: " + (diffuseTexture == nullptr?"none":to_string(diffuseTexture->getTextureWidth()) + " x " + to_string(diffuseTexture->getTextureHeight())));
-		Console::println();
-		Console::print("\t\tSpecular: ");
-		for (auto colorComponent: optimizedMaterial->getSpecularMaterialProperties()->getSpecularColor().getArray()) {
-			Console::print(to_string(colorComponent) + " ");
-		}
-		Console::println();
-		Console::print("\t\tShininess: ");
-		Console::print(to_string(optimizedMaterial->getSpecularMaterialProperties()->getShininess()) + " ");
-		Console::println();
 	}
 
 	// also have a material with masked transparency
@@ -1265,13 +1201,6 @@ Model* ModelTools::optimizeModel(Model* model) {
 
 	//
 	delete model;
-
-	Console::println();
-	Console::println(optimizedModel->getName());
-	Console::println("\tOptimized material count: " + to_string(optimizedModel->getMaterials().size()));
-	Console::println("\tOptimized group count: " + to_string(optimizedModel->getGroups().size()));
-
-	Console::println();
 
 	// prepare for indexed rendering
 	ModelTools::prepareForIndexedRendering(optimizedModel);

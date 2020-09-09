@@ -84,6 +84,16 @@ private:
 	string shaderPrefix;
 public:
 	/**
+	 * Public constructor
+	 */
+	Renderer();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~Renderer();
+
+	/**
 	 * @return default context
 	 */
 	virtual void* getDefaultContext();
@@ -1082,12 +1092,12 @@ public:
 	virtual void doneGuiMode() = 0;
 
 	/**
-	 * Public constructor
+	 * Generate mip map for atlas texture currently
+	 * @param id id
+	 * @param texture texture
+	 * @param level level
+	 * @param atlasBorderSize atlasBorderSize
 	 */
-	Renderer();
+	Texture* generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize);
 
-	/**
-	 * Destructor
-	 */
-	virtual ~Renderer();
 };

@@ -1,16 +1,24 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 
+#include <string>
+
 #include <tdme/math/Math.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/renderer/Renderer_Light.h>
 #include <tdme/engine/subsystems/renderer/Renderer_SpecularMaterial.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/ByteBuffer.h>
+
+using std::string;
+using std::to_string;
 
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::math::Math;
-using tdme::utilities::FloatBuffer;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer_Light;
 using tdme::engine::subsystems::renderer::Renderer_SpecularMaterial;
+using tdme::math::Math;
 using tdme::math::Matrix4x4;
+using tdme::utilities::ByteBuffer;
 
 Renderer::Renderer()
 {
@@ -117,4 +125,51 @@ const string& Renderer::getShaderPrefix() {
 
 void Renderer::setShaderPrefix(const string& shaderPrefix) {
 	this->shaderPrefix = shaderPrefix;
+}
+
+Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {
+	// TODO: bilinear filtering
+	auto generatedTextureWidth = texture->getTextureWidth() / 2;
+	auto generatedTextureHeight = texture->getTextureHeight() / 2;
+	auto generatedTextureByteBuffer = ByteBuffer::allocate(generatedTextureWidth * generatedTextureHeight * 4);
+	auto atlasTextureSize = texture->getWidth() / texture->getAtlasSize();
+	auto materialTextureWidth = texture->getTextureWidth() / texture->getAtlasSize();
+	auto materialTextureHeight = texture->getTextureHeight() / texture->getAtlasSize();
+	auto materialTextureBytesPerPixel = texture->getDepth() / 8;
+	for (auto y = 0; y < generatedTextureHeight; y++)
+	for (auto x = 0; x < generatedTextureWidth; x++) {
+		auto atlasTextureIdxX = (x * 2) / atlasTextureSize;
+		auto atlasTextureIdxY = (y * 2) / atlasTextureSize;
+		auto materialTextureX = (x * 2) - (atlasTextureIdxX * atlasTextureSize);
+		auto materialTextureY = (y * 2) - (atlasTextureIdxY * atlasTextureSize);
+		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(atlasTextureSize);
+		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(atlasTextureSize);
+		{
+			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
+			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
+			auto materialTexturePixelOffset =
+				(atlasTextureIdxY * materialTextureHeight + materialTextureYInt) * texture->getTextureWidth() * materialTextureBytesPerPixel +
+				(atlasTextureIdxX * materialTextureWidth + materialTextureXInt) * materialTextureBytesPerPixel;
+			auto materialPixelR = texture->getTextureData()->get(materialTexturePixelOffset + 0);
+			auto materialPixelG = texture->getTextureData()->get(materialTexturePixelOffset + 1);
+			auto materialPixelB = texture->getTextureData()->get(materialTexturePixelOffset + 2);
+			auto materialPixelA = materialTextureBytesPerPixel == 4?texture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
+			generatedTextureByteBuffer->put(materialPixelR);
+			generatedTextureByteBuffer->put(materialPixelG);
+			generatedTextureByteBuffer->put(materialPixelB);
+			generatedTextureByteBuffer->put(materialPixelA);
+		}
+	}
+	auto generatedTexture = new Texture(
+		id + ".mipmap." + to_string(level),
+		32,
+		generatedTextureWidth,
+		generatedTextureHeight,
+		generatedTextureWidth,
+		generatedTextureHeight,
+		generatedTextureByteBuffer
+	);
+	generatedTexture->setAtlasSize(texture->getAtlasSize());
+	generatedTexture->acquireReference();
+	return generatedTexture;
 }

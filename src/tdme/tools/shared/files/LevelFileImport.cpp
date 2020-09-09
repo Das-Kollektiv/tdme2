@@ -73,12 +73,12 @@ using tdme::utilities::StringTools;
 using rapidjson::Document;
 using rapidjson::Value;
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback, bool optimizeModels)
 {
-	doImport(pathName, fileName, level, "", progressCallback);
+	doImport(pathName, fileName, level, "", progressCallback, optimizeModels);
 }
 
-void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback)
+void LevelFileImport::doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback, bool optimizeModels)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 
@@ -154,7 +154,8 @@ void LevelFileImport::doImport(const string& pathName, const string& fileName, L
 		LevelEditorEntity* levelEditorEntity = ModelMetaDataFileImport::doImportFromJSON(
 			jModel["id"].GetInt(),
 			pathName,
-			jModel["entity"]
+			jModel["entity"],
+			optimizeModels
 		);
 		if (levelEditorEntity == nullptr) {
 			Console::println("LevelFileImport::doImport(): Invalid entity = " + to_string(jModel["id"].GetInt()));

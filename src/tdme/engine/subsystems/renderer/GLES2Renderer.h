@@ -36,6 +36,11 @@ private:
 	int activeTextureUnit;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	GLES2Renderer();
+
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
 	bool isSupportingMultipleRenderQueues() override;
@@ -157,9 +162,4 @@ private:
 	 */
 	void checkGLError();
 
-public:
-	/**
-	 * Public constructor
-	 */
-	GLES2Renderer();
 };

@@ -19,6 +19,7 @@
 
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -28,6 +29,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -39,6 +41,7 @@ using std::to_string;
 
 using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::subsystems::renderer::GL3Renderer;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
@@ -537,29 +540,6 @@ int32_t GL3Renderer::createColorBufferTexture(int32_t width, int32_t height)
 	return colorBufferTextureGlId;
 }
 
-static Texture* generateMipMap(Texture* texture, int32_t level, int32_t borderSize) {
-	auto generatedWidth = texture->getTextureWidth() / 2;
-	auto generatedHeight = texture->getTextureHeight() / 2;
-	auto generatedByteBuffer = ByteBuffer::allocate(generatedWidth * generatedHeight * 4);
-	for (auto i = 0; i < generatedWidth * generatedHeight; i++) {
-		generatedByteBuffer->put(0xff);
-		generatedByteBuffer->put(0x00);
-		generatedByteBuffer->put(0x00);
-		generatedByteBuffer->put(0xff);
-	}
-	auto generatedTexture = new Texture(
-		texture->getId() + ".mipmap." + to_string(level),
-		32,
-		generatedWidth,
-		generatedHeight,
-		generatedWidth,
-		generatedHeight,
-		generatedByteBuffer
-	);
-	generatedTexture->acquireReference();
-	return generatedTexture;
-}
-
 void GL3Renderer::uploadTexture(void* context, Texture* texture)
 {
 	glTexImage2D(
@@ -573,7 +553,6 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 		GL_UNSIGNED_BYTE,
 		texture->getTextureData()->getBuffer()
 	);
-	// Console::println(texture->getId() + ": 0: " + to_string(texture->getTextureWidth()) + " x " + to_string(texture->getTextureHeight()));
 	if (texture->getAtlasSize() > 1) {
 		if (texture->isUseMipMap() == true) {
 			float maxLodBias;
@@ -588,15 +567,14 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 				borderSize/= 2;
 			}
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
 			borderSize = 32;
 			auto level = 0;
 			while (borderSize >= 8) {
 				level++;
-				mipmapTexture = generateMipMap(mipmapTexture, level, borderSize);
+				mipmapTexture = generateMipMap(texture->getId(), mipmapTexture, level, borderSize);
 				if (generatedMipmapTexture != nullptr) generatedMipmapTexture->releaseReference();
 				generatedMipmapTexture = mipmapTexture;
-				// Console::println(texture->getId() + ": " + to_string(level) + ": " + to_string(mipmapTexture->getTextureWidth()) + " x " + to_string(mipmapTexture->getTextureHeight()));
 				glTexImage2D(
 					GL_TEXTURE_2D,
 					level,
