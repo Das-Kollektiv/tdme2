@@ -41,7 +41,7 @@ public:
 	 * @return level editor entity
 	 */
 	inline static LevelEditorEntity* doImport(const string& pathName, const string& fileName, bool optimizeModel = false) {
-		return doImport(LevelEditorEntity::ID_NONE, pathName, fileName);
+		return doImport(LevelEditorEntity::ID_NONE, pathName, fileName, optimizeModel);
 	}
 
 	/**
