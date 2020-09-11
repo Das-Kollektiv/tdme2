@@ -762,13 +762,23 @@ void ModelTools::prepareForFoliageTreeShader(Group* group, const Matrix4x4& pare
 	}
 }
 
-void ModelTools::checkForOptimization(Group* group, map<string, int>& materialUseCount) {
+void ModelTools::checkForOptimization(Group* group, map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
 	// skip on joints as they do not have textures to display and no vertex data
 	if (group->isJoint() == true) return;
 
 	// track material usage
 	for (auto& facesEntity: group->getFacesEntities()) {
 		if (facesEntity.getMaterial() == nullptr) continue;
+		bool excludeDiffuseTexture = false;
+		for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
+			if (StringTools::startsWith(facesEntity.getMaterial()->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
+				excludeDiffuseTexture = true;
+				break;
+			}
+		}
+		if (excludeDiffuseTexture == true) {
+			continue;
+		}
 		materialUseCount[facesEntity.getMaterial()->getId()]++;
 	}
 
@@ -777,7 +787,7 @@ void ModelTools::checkForOptimization(Group* group, map<string, int>& materialUs
 
 	//
 	for (auto groupIt: group->getSubGroups()) {
-		checkForOptimization(groupIt.second, materialUseCount);
+		checkForOptimization(groupIt.second, materialUseCount, excludeDiffuseTextureFileNamePatterns);
 	}
 }
 
@@ -831,7 +841,7 @@ void ModelTools::prepareForOptimization(Group* group, const Matrix4x4& parentTra
 	}
 }
 
-void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices) {
+void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
 	if (sourceGroup->getFacesEntities().size() > 0) {
 		auto& sourceVertices = sourceGroup->getVertices();
 		auto& sourceNormals = sourceGroup->getNormals();
@@ -861,11 +871,32 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 		auto targetFacesTransparency = (tmpFacesEntity = targetGroup->getFacesEntity("tdme.facesentity.optimized.transparency")) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
 		for (auto& facesEntity: sourceGroup->getFacesEntities()) {
 			auto material = facesEntity.getMaterial();
-			auto diffuseTextureAtlasIndex = diffuseTextureAtlasIndices.find(material->getId())->second;
-			auto textureXOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex % diffuseTextureAtlasSize) * 1000.0f + 500.0f;
-			auto textureYOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex / diffuseTextureAtlasSize) * 1000.0f + 500.0f;
-			auto textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
-			auto textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
+
+			//
+			string keptMaterialId;
+			for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
+				if (StringTools::startsWith(facesEntity.getMaterial()->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
+					keptMaterialId = facesEntity.getMaterial()->getId();
+					break;
+				}
+			}
+			auto targetFacesKeptMaterial = (tmpFacesEntity = targetGroup->getFacesEntity("tdme.facesentity.kept." + keptMaterialId)) != nullptr?tmpFacesEntity->getFaces():vector<Face>();
+
+			auto diffuseTextureAtlasIndexIt = diffuseTextureAtlasIndices.find(material->getId());
+			auto diffuseTextureAtlasIndex = -1;
+			if (diffuseTextureAtlasIndexIt != diffuseTextureAtlasIndices.end()) {
+				diffuseTextureAtlasIndex = diffuseTextureAtlasIndices.find(material->getId())->second;
+			}
+			auto textureXOffset = 0.0f;
+			auto textureYOffset = 0.0f;
+			auto textureXScale = 1.0f;
+			auto textureYScale = 1.0f;
+			if (diffuseTextureAtlasIndex != -1) {
+				textureXOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex % diffuseTextureAtlasSize) * 1000.0f + 500.0f;
+				textureYOffset = diffuseTextureAtlasSize == 0?0.0f:static_cast<float>(diffuseTextureAtlasIndex / diffuseTextureAtlasSize) * 1000.0f + 500.0f;
+				textureXScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
+				textureYScale = diffuseTextureAtlasSize == 0?1.0f:1.0f;
+			}
 			for (auto& face: facesEntity.getFaces()) {
 				auto sourceVertexIndices = face.getVertexIndices();
 				auto sourceNormalIndices = face.getNormalIndices();
@@ -896,6 +927,22 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 					textureCoordinateArray[1]+= textureYOffset;
 					targetTextureCoordinates.push_back(TextureCoordinate(textureCoordinateArray));
 				}
+				if (keptMaterialId.empty() == false) {
+					targetFacesKeptMaterial.push_back(
+						Face(
+							targetGroup,
+							sourceVertexIndices[0] + targetOffset,
+							sourceVertexIndices[1] + targetOffset,
+							sourceVertexIndices[2] + targetOffset,
+							sourceNormalIndices[0] + targetOffset,
+							sourceNormalIndices[1] + targetOffset,
+							sourceNormalIndices[2] + targetOffset,
+							targetTextureCoordinatesOffset + 0,
+							targetTextureCoordinatesOffset + 1,
+							targetTextureCoordinatesOffset + 2
+						)
+					);
+				} else
 				if (material->getSpecularMaterialProperties()->hasDiffuseTextureTransparency() == true) {
 					if (material->getSpecularMaterialProperties()->hasDiffuseTextureMaskedTransparency() == true) {
 						targetFacesMaskedTransparency.push_back(
@@ -946,6 +993,15 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 				}
 				targetTextureCoordinatesOffset+= 3;
 			}
+			if (targetFacesKeptMaterial.size() > 0) {
+				auto facesEntity = targetGroup->getFacesEntity("tdme.facesentity.kept." + keptMaterialId);
+				if (targetGroup->getFacesEntity("tdme.facesentity.kept." + keptMaterialId) == nullptr) {
+					targetFacesEntities.push_back(FacesEntity(targetGroup, "tdme.facesentity.kept." + keptMaterialId));
+					facesEntity = &targetFacesEntities[targetFacesEntities.size() - 1];
+				}
+				facesEntity->setFaces(targetFacesKeptMaterial);
+				facesEntity->setMaterial(targetModel->getMaterials()[keptMaterialId]);
+			}
 		}
 		targetGroup->setTextureCoordinates(targetTextureCoordinates);
 		if (targetFaces.size() > 0) {
@@ -975,7 +1031,7 @@ void ModelTools::optimizeGroup(Group* sourceGroup, Model* targetModel, int diffu
 		targetGroup->setFacesEntities(targetFacesEntities);
 	}
 	for (auto& subGroupIt: sourceGroup->getSubGroups()) {
-		optimizeGroup(subGroupIt.second, targetModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices);
+		optimizeGroup(subGroupIt.second, targetModel, diffuseTextureAtlasSize, diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
 	}
 }
 
@@ -1042,14 +1098,15 @@ Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& te
 	return atlasTexture;
 }
 
-Model* ModelTools::optimizeModel(Model* model, const string& texturePathName) {
+Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, const vector<string>& excludeDiffuseTextureFileNamePatterns) {
 	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
 	map<string, int> materialUseCount;
 	for (auto& groupIt: model->getSubGroups()) {
 		checkForOptimization(
 			groupIt.second,
-			materialUseCount
+			materialUseCount,
+			excludeDiffuseTextureFileNamePatterns
 		);
 	}
 
@@ -1091,6 +1148,20 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName) {
 	auto optimizedGroup = new Group(optimizedModel, nullptr, "tdme.group.optimized", "tdme.group.optimized");
 	optimizedModel->getGroups()["tdme.group.optimized"] = optimizedGroup;
 	optimizedModel->getSubGroups()["tdme.group.optimized"] = optimizedGroup;
+
+	// clone materials with diffuse textures that we like to keep
+	for (auto& materialIt: model->getMaterials()) {
+		auto material = materialIt.second;
+		bool keepDiffuseTexture = false;
+		for (auto& excludeDiffuseTextureFileNamePattern: excludeDiffuseTextureFileNamePatterns) {
+			if (StringTools::startsWith(material->getSpecularMaterialProperties()->getDiffuseTextureFileName(), excludeDiffuseTextureFileNamePattern) == true) {
+				keepDiffuseTexture = true;
+				break;
+			}
+		}
+		if (keepDiffuseTexture == false) continue;
+		optimizedModel->getMaterials()[material->getId()] = cloneMaterial(material);
+	}
 
 	// create optimized material
 	auto optimizedMaterial = new Material("material.optimized");
@@ -1139,7 +1210,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName) {
 		auto group = subGroupIt.second;
 		if ((model->hasSkinning() == true && group->getSkinning() != nullptr) ||
 			(model->hasSkinning() == false && group->isJoint() == false)) {
-			optimizeGroup(group, optimizedModel, diffuseAtlasTexture->getAtlasSize(), diffuseTextureAtlasIndices);
+			optimizeGroup(group, optimizedModel, diffuseAtlasTexture->getAtlasSize(), diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
 			if (model->hasSkinning() == true) {
 				auto skinning = group->getSkinning();
 				auto optimizedSkinning = new Skinning();

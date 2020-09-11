@@ -269,8 +269,9 @@ public:
 	 * Optimizes model in terms of material / group reduction
 	 * @param model model
 	 * @param texturePathName texturePathName
+	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static Model* optimizeModel(Model* model, const string& texturePathName);
+	static Model* optimizeModel(Model* model, const string& texturePathName, const vector<string>& excludeDiffuseTextureFileNamePatterns = vector<string>());
 private:
 
 	/**
@@ -291,8 +292,9 @@ private:
 	 * Check for optimization
 	 * @param group group
 	 * @param materialUseCount material use count
+	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static void checkForOptimization(Group* group, map<string, int>& materialUseCount);
+	static void checkForOptimization(Group* group, map<string, int>& materialUseCount, const vector<string>& excludeDiffuseTextureFileNamePatterns);
 
 	/**
 	 * Prepare for optimization
@@ -315,7 +317,8 @@ private:
 	 * @param targetModel target model
 	 * @param diffuseTextureAtlasSize diffuse texture atlas size
 	 * @param diffuseTextureAtlasIndices diffuse texture atlas indices
+	 * @param excludeDiffuseTextureFileNamePatterns exclude diffuse texture file name patterns
 	 */
-	static void optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices);
+	static void optimizeGroup(Group* sourceGroup, Model* targetModel, int diffuseTextureAtlasSize, const map<string, int>& diffuseTextureAtlasIndices, const vector<string>& excludeDiffuseTextureFileNamePatterns);
 
 };
