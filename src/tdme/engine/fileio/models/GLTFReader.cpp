@@ -613,6 +613,7 @@ void GLTFReader::parseNodeChildren(const string& pathName, const tinygltf::Model
 } 
 
 bool GLTFReader::writePNG(const string& pathName, const string& fileName, int bitsPerPixel, int width, int height, const uint8_t* pixels) {
+	// TODO: Use engine/fileio/textures/PNGTextureWriter
 	// see: https://gist.github.com/niw/5963798
 	FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
 	if (!fp) {
