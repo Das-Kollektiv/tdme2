@@ -145,19 +145,31 @@ Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t le
 		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(atlasTextureSize);
 		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(atlasTextureSize);
 		{
+			auto materialSamples = 0;
 			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
 			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
-			auto materialTexturePixelOffset =
-				(atlasTextureIdxY * materialTextureHeight + materialTextureYInt) * texture->getTextureWidth() * materialTextureBytesPerPixel +
-				(atlasTextureIdxX * materialTextureWidth + materialTextureXInt) * materialTextureBytesPerPixel;
-			auto materialPixelR = texture->getTextureData()->get(materialTexturePixelOffset + 0);
-			auto materialPixelG = texture->getTextureData()->get(materialTexturePixelOffset + 1);
-			auto materialPixelB = texture->getTextureData()->get(materialTexturePixelOffset + 2);
-			auto materialPixelA = materialTextureBytesPerPixel == 4?texture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
-			generatedTextureByteBuffer->put(materialPixelR);
-			generatedTextureByteBuffer->put(materialPixelG);
-			generatedTextureByteBuffer->put(materialPixelB);
-			generatedTextureByteBuffer->put(materialPixelA);
+			auto materialPixelR = 0;
+			auto materialPixelG = 0;
+			auto materialPixelB = 0;
+			auto materialPixelA = 0;
+			for (auto y = -1; y <= 1; y++)
+			for (auto x = -1; x <= 1; x++)
+			if ((Math::abs(x) == 1 && Math::abs(y) == 1) == false &&
+				materialTextureXInt + x >= 0 && materialTextureXInt + x < materialTextureWidth &&
+				materialTextureYInt + y >= 0 && materialTextureYInt + y < materialTextureHeight) {
+				auto materialTexturePixelOffset =
+					(atlasTextureIdxY * materialTextureHeight + materialTextureYInt + y) * texture->getTextureWidth() * materialTextureBytesPerPixel +
+					(atlasTextureIdxX * materialTextureWidth + materialTextureXInt + x) * materialTextureBytesPerPixel;
+				materialPixelR+= texture->getTextureData()->get(materialTexturePixelOffset + 0);
+				materialPixelG+= texture->getTextureData()->get(materialTexturePixelOffset + 1);
+				materialPixelB+= texture->getTextureData()->get(materialTexturePixelOffset + 2);
+				materialPixelA+= materialTextureBytesPerPixel == 4?texture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
+				materialSamples++;
+			}
+			generatedTextureByteBuffer->put(materialPixelR / materialSamples);
+			generatedTextureByteBuffer->put(materialPixelG / materialSamples);
+			generatedTextureByteBuffer->put(materialPixelB / materialSamples);
+			generatedTextureByteBuffer->put(materialPixelA / materialSamples);
 		}
 	}
 	auto generatedTexture = new Texture(
