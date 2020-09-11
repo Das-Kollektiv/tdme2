@@ -1138,8 +1138,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	}
 
 	// create diffuse atlas texture
-	static int atlasTextureCounter = 0;
-	auto diffuseAtlasTexture = createAtlasTexture(model->getName() + ".diffuse.atlas." + to_string(atlasTextureCounter++), diffuseTextureAtlasTextures);
+	auto diffuseAtlasTexture = createAtlasTexture(model->getName() + ".diffuse.atlas.", diffuseTextureAtlasTextures);
 	//PNGTextureWriter::write(diffuseAtlasTexture, ".", diffuseAtlasTexture->getId() + ".png", false);
 
 	// create model with optimizations applied
