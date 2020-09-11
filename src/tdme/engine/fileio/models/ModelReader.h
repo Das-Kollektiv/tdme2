@@ -36,10 +36,9 @@ public:
 	 * Reads a model
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param optimizeModel optimize model
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return texture data instance or null
 	 */
-	static Model* read(const string& pathName, const string& fileName, bool optimizeModel = false);
+	static Model* read(const string& pathName, const string& fileName);
 };

@@ -35,13 +35,12 @@ public:
 	 * Imports a model meta data file from file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param optimizeModel optimize model
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	inline static LevelEditorEntity* doImport(const string& pathName, const string& fileName, bool optimizeModel = false) {
-		return doImport(LevelEditorEntity::ID_NONE, pathName, fileName, optimizeModel);
+	inline static LevelEditorEntity* doImport(const string& pathName, const string& fileName) {
+		return doImport(LevelEditorEntity::ID_NONE, pathName, fileName);
 	}
 
 	/**
@@ -49,24 +48,22 @@ public:
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @param optimizeModel optimize model
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName, bool optimizeModel = false);
+	static LevelEditorEntity* doImport(int32_t id, const string& pathName, const string& fileName);
 
 	/** 
 	 * Imports a model meta data file from JSON object
 	 * @param id id or LevelEditorEntity.ID_NONE
 	 * @param pathName path name or null
 	 * @param jEntityRoot JSON entity root
-	 * @param optimizeModel optimize model
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return level editor entity
 	 */
-	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot, bool optimizeModel = false);
+	static LevelEditorEntity* doImportFromJSON(int32_t id, const string& pathName, Value& jEntityRoot);
 
 	/**
 	 * Get resource path name
@@ -94,18 +91,16 @@ private:
 	 * Parse LOD level
 	 * @param pathName path name
 	 * @param jLodLevel JSON LOD level
-	 * @param optimizeModel optimize model
 	 * @return level editor lod level
 	 */
-	static LevelEditorEntityLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel, bool optimizeModel = false);
+	static LevelEditorEntityLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
 
 	/**
 	 * Parse particle system
 	 * @param particleSystem particle system to be parsed into
 	 * @param pathName path name
 	 * @param jParticleSystem JSON particle system object
-	 * @param optimizeModel optimize model
 	 */
-	static void parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem, bool optimizeModel = false);
+	static void parseParticleSystem(LevelEditorEntityParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem);
 
 };

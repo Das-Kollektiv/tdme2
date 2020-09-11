@@ -283,7 +283,10 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
 			specularMaterialProperties->getDiffuseTexture()->acquireReference();
 			clonedSpecularMaterialProperties->setDiffuseTexture(specularMaterialProperties->getDiffuseTexture());
+			clonedSpecularMaterialProperties->setDiffuseTexturePathName(specularMaterialProperties->getDiffuseTexturePathName());
+			clonedSpecularMaterialProperties->setDiffuseTextureFileName(specularMaterialProperties->getDiffuseTextureFileName());
 		}
+		clonedSpecularMaterialProperties->setDiffuseTextureTransparency(specularMaterialProperties->hasDiffuseTextureMaskedTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparency(specularMaterialProperties->hasDiffuseTextureMaskedTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold());
 		// TODO: a.drewke: clone textures like diffuse texture
@@ -1039,7 +1042,7 @@ Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& te
 	return atlasTexture;
 }
 
-Model* ModelTools::optimizeModel(Model* model) {
+Model* ModelTools::optimizeModel(Model* model, const string& texturePathName) {
 	// TODO: 2 mats could have the same texture
 	// prepare for optimizations
 	map<string, int> materialUseCount;
@@ -1093,6 +1096,8 @@ Model* ModelTools::optimizeModel(Model* model) {
 	auto optimizedMaterial = new Material("material.optimized");
 	{
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
+		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexturePathName(texturePathName);
+		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureFileName(diffuseAtlasTexture->getId() + ".png");
 		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlasTexture->getAtlasSize());
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureTransparency(false);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(false);

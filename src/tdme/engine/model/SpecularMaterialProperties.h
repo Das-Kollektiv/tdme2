@@ -159,10 +159,26 @@ public:
 	}
 
 	/**
+	 * Set diffuse texture path name
+	 * @param diffuseTexturePathName diffuse texture path name
+	 */
+	inline void setDiffuseTexturePathName(const string& diffuseTexturePathName) {
+		this->diffuseTexturePathName = diffuseTexturePathName;
+	}
+
+	/**
 	 * @return diffuse texture file name
 	 */
 	inline const string& getDiffuseTextureFileName() const {
 		return diffuseTextureFileName;
+	}
+
+	/**
+	 * Set diffuse texture file name
+	 * @return diffuse texture file name
+	 */
+	inline void setDiffuseTextureFileName(const string& diffuseTextureFileName) {
+		this->diffuseTextureFileName = diffuseTextureFileName;
 	}
 
 	/**

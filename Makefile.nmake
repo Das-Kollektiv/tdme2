@@ -639,6 +639,7 @@ all: \
 	generatelicenses \
 	levelfixmodelszup2yup \
 	fixdoxygen \
+	optimizemodel \
 	TDMELevelEditor \
 	TDMEModelEditor \
 	TDMEParticleSystem \
@@ -763,6 +764,9 @@ levelfixmodelszup2yup:
 
 fixdoxygen:
     cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+
+optimizemodel:
+	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 TDMELevelEditor:
 	cl /FeTDMELevelEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/leveleditor/TDMELevelEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

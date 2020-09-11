@@ -40,11 +40,10 @@ public:
 	 * @param fileName file name
 	 * @param level level
 	 * @param progressCallback progress callback
-	 * @param optimizeModels optimize models
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr, bool optimizeModels = false);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, ProgressCallback* progressCallback = nullptr);
 
 	/** 
 	 * Imports a level from a TDME level file to Level Editor
@@ -53,11 +52,10 @@ public:
 	 * @param level level
 	 * @param objectIdPrefix object id prefix
 	 * @param progressCallback progress callback
-	 * @param optimizeModels optimize models
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 */
-	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr, bool optimizeModels = false);
+	static void doImport(const string& pathName, const string& fileName, LevelEditorLevel* level, const string& objectIdPrefix, ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Imports a level from a model file to Level Editor

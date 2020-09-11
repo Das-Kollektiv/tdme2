@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <array>
 #include <map>
-#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -28,8 +27,6 @@ using std::find;
 using std::reverse;
 using std::map;
 using std::sort;
-using std::string;
-using std::to_string;
 using std::unique;
 using std::unordered_set;
 using std::vector;
@@ -43,6 +40,7 @@ using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
 using tdme::math::Math;
 using tdme::math::Vector3;
+using tdme::utilities::ByteBuffer;
 using tdme::utilities::Float;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;

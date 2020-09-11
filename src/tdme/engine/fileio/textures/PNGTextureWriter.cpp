@@ -20,7 +20,7 @@ using tdme::utilities::Console;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
 
-bool PNGTextureWriter::write(Texture* texture, const string& pathName, const string& fileName, bool removeAlphaChannel) {
+bool PNGTextureWriter::write(Texture* texture, const string& pathName, const string& fileName, bool removeAlphaChannel, bool flipY) {
 	// TODO: use tdme::os::filesystem
 	// see: https://gist.github.com/niw/5963798
 	FILE *fp = fopen((pathName + "/" + fileName).c_str(), "wb");
@@ -68,13 +68,18 @@ bool PNGTextureWriter::write(Texture* texture, const string& pathName, const str
 	);
 	png_write_info(png, info);
 
-	// Remove the alpha channel for PNG_COLOR_TYPE_RGB format
+	// remove the alpha channel for PNG_COLOR_TYPE_RGB format
 	if (removeAlphaChannel == true) {
 		png_set_filler(png, 0, PNG_FILLER_AFTER);
 	}
 
+	//
 	png_bytep* row_pointers = new png_bytep[height];
-	for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * bytesPerPixel * (height - 1 - y);
+	if (flipY == true) {
+		for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * bytesPerPixel * (height - 1 - y);
+	} else {
+		for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * bytesPerPixel * y;
+	}
 
 	png_write_image(png, row_pointers);
 	png_write_end(png, NULL);

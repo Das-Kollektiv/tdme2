@@ -26,8 +26,9 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param removeAlphaChannel remove alpha channel
+	 * @param flipY flip Y
 	 * @return texture data instance or null
 	 */
-	static bool write(Texture* texture, const string& pathName, const string& fileName, bool removeAlphaChannel = true);
+	static bool write(Texture* texture, const string& pathName, const string& fileName, bool removeAlphaChannel = true, bool flipY = true);
 
 };

@@ -62,13 +62,19 @@ void SpecularMaterialProperties::setDiffuseTexture(const string& pathName, const
 			diffuseTexturePathName,
 			diffuseTextureFileName,
 			diffuseTransparencyTexturePathName,
-			diffuseTransparencyTextureFileName
+			diffuseTransparencyTextureFileName,
+			true,
+			textureAtlasSize > 1?false:true
 		);
+		if (diffuseTexture != nullptr) diffuseTexture->setAtlasSize(textureAtlasSize);
 	} else {
 		diffuseTexture = TextureReader::read(
 			diffuseTexturePathName,
-			diffuseTextureFileName
+			diffuseTextureFileName,
+			true,
+			textureAtlasSize > 1?false:true
 		);
+		if (diffuseTexture != nullptr) diffuseTexture->setAtlasSize(textureAtlasSize);
 	}
 	checkDiffuseTextureTransparency();
 }

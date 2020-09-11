@@ -267,8 +267,10 @@ public:
 
 	/**
 	 * Optimizes model in terms of material / group reduction
+	 * @param model model
+	 * @param texturePathName texturePathName
 	 */
-	static Model* optimizeModel(Model* model);
+	static Model* optimizeModel(Model* model, const string& texturePathName);
 private:
 
 	/**

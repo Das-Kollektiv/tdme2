@@ -86,9 +86,10 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 		(version[0] != 1 || version[1] != 9 || version[2] != 11) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 12) &&
 		(version[0] != 1 || version[1] != 9 || version[2] != 13) &&
-		(version[0] != 1 || version[1] != 9 || version[2] != 14)) {
+		(version[0] != 1 || version[1] != 9 || version[2] != 14) &&
+		(version[0] != 1 || version[1] != 9 || version[2] != 15)) {
 		throw ModelFileIOException(
-			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13, 1.9.14 but is " +
+			"Version mismatch, should be 1.0.0, 1.9.9, 1.9.10, 1.9.11, 1.9.12, 1.9.13, 1.9.14, 1.9.15 but is " +
 			to_string(version[0]) +
 			"." +
 			to_string(version[1]) +
@@ -100,7 +101,8 @@ Model* TMReader::read(const string& pathName, const string& fileName)
 	auto upVector = UpVector::valueOf(is.readString());
 	auto rotationOrder = RotationOrder::valueOf(is.readString());
 	auto shaderModel = ShaderModel::SPECULAR;
-	if ((version[0] == 1 && version[1] == 9 && version[2] == 14)) {
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 14) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 15)) {
 		shaderModel = ShaderModel::valueOf(is.readString());
 	}
 	array<float, 3> boundingBoxMinXYZ;
@@ -165,6 +167,9 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 	is->readFloatArray(colorRGBAArray);
 	smp->setEmissionColor(Color4(colorRGBAArray));
 	smp->setShininess(is->readFloat());
+	if (version[0] == 1 && version[1] == 9 && version[2] == 15) {
+		smp->setTextureAtlasSize(is->readInt());
+	}
 	auto diffuseTexturePathName = is->readString();
 	auto diffuseTextureFileName = is->readString();
 	auto diffuseTransparencyTexturePathName = is->readString();
@@ -199,27 +204,33 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 		auto displacementTexturePathName = is->readString();
 		auto displacementTextureFileName = is->readString();
 	}
+	if ((version[0] == 1 && version[1] == 9 && version[2] == 15)) {
+		smp->setDiffuseTextureTransparency(is->readBoolean());
+	}
 	smp->setDiffuseTextureMaskedTransparency(is->readBoolean());
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 9) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 15))  {
 		smp->setDiffuseTextureMaskedTransparencyThreshold(is->readFloat());
 	}
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 10) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 11) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 15)) {
 		array<float, 9> textureMatrix;
 		is->readFloatArray(textureMatrix);
 		smp->setTextureMatrix(Matrix2D3x3(textureMatrix));
 	}
 	m->setSpecularMaterialProperties(smp);
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 13) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 15)) {
 		if (is->readBoolean() == true) {
 			auto pmp = new PBRMaterialProperties();
 			is->readFloatArray(colorRGBAArray);
@@ -261,7 +272,8 @@ void TMReader::readAnimationSetup(TMReaderInputStream* is, Model* model, const a
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 11) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 12) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 13) ||
-		(version[0] == 1 && version[1] == 9 && version[2] == 14)) {
+		(version[0] == 1 && version[1] == 9 && version[2] == 14) ||
+		(version[0] == 1 && version[1] == 9 && version[2] == 15)) {
 		speed = is->readFloat();
 	}
 	if (overlayFromGroupId.length() == 0) {
