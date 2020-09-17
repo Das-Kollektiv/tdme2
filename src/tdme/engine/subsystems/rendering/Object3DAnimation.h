@@ -82,7 +82,7 @@ protected:
 	bool hasAnimations;
 	vector<map<string, Matrix4x4*>> skinningGroupsMatrices;
 	vector<Group*> skinningGroups;
-	vector<vector<GroupSkinningJoint>> skinningGroupsGroupPairs;
+	vector<vector<GroupSkinningJoint>> skinningGroupsGroupSkinningJoints;
 	vector<AnimationState> baseAnimations;
 	int baseAnimationIdx;
 	map<string, AnimationState*> overlayAnimationsById;

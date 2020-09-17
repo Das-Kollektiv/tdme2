@@ -67,13 +67,13 @@ Object3DAnimation::Object3DAnimation(Model* model, Engine::AnimationProcessingTa
 	// skinning ...
 	if (hasSkinning == true) {
 		for (auto i = 0; i < skinningGroups.size(); i++) {
-			skinningGroupsGroupPairs.push_back(vector<GroupSkinningJoint>());
+			skinningGroupsGroupSkinningJoints.push_back(vector<GroupSkinningJoint>());
 			for (auto& skinningJoint: skinningGroups[i]->getSkinning()->getJoints()) {
 				auto transformationsMatrixIt = transformationsMatrices[0].find(skinningJoint.getGroupId());
 				if (transformationsMatrixIt == transformationsMatrices[0].end()) continue;
 				auto skinningGroupMatrixIt = skinningGroupsMatrices[i].find(skinningJoint.getGroupId());
 				if (skinningGroupMatrixIt == skinningGroupsMatrices[i].end()) continue;
-				skinningGroupsGroupPairs[i].push_back({
+				skinningGroupsGroupSkinningJoints[i].push_back({
 					.joint = &skinningJoint,
 					.groupTransformationsMatrix = transformationsMatrixIt->second,
 					.skinningGroupTransformationsMatrix = skinningGroupMatrixIt->second
@@ -411,9 +411,9 @@ void Object3DAnimation::computeTransformationsMatrices(vector<FlattenedGroup>& g
 }
 
 inline void Object3DAnimation::updateSkinningTransformationsMatrices() {
-	for (auto& skinningGroupGroupPairs: skinningGroupsGroupPairs)
-	for (auto& skinningGroupGroupPair: skinningGroupGroupPairs) {
-		skinningGroupGroupPair.skinningGroupTransformationsMatrix->set(skinningGroupGroupPair.joint->getBindMatrix()).multiply(*skinningGroupGroupPair.groupTransformationsMatrix);
+	for (auto& skinningGroupGroupSkinningJoints: skinningGroupsGroupSkinningJoints)
+	for (auto& skinningGroupGroupSkinningJoint: skinningGroupGroupSkinningJoints) {
+		skinningGroupGroupSkinningJoint.skinningGroupTransformationsMatrix->set(skinningGroupGroupSkinningJoint.joint->getBindMatrix()).multiply(*skinningGroupGroupSkinningJoint.groupTransformationsMatrix);
 	}
 }
 
