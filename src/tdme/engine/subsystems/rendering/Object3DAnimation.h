@@ -45,18 +45,18 @@ private:
 
 	/**
 	 * Determine skinned group count
-	 * @param map* groups
+	 * @param groups groups
 	 * @param count current count
 	 */
-	int32_t determineSkinnedGroupCount(const map<string, Group*>&, int32_t count);
+	int32_t determineSkinnedGroupCount(const map<string, Group*>& groups, int32_t count);
 
 	/**
 	 * Determine skinned groups
-	 * @param map* groups
+	 * @param groups groups
 	 * @param skinningGroups skinning groups
 	 * @param idx idx
 	 */
-	int32_t determineSkinnedGroups(const map<string, Group*>&, vector<Group*>& skinningGroups, int32_t idx);
+	int32_t determineSkinnedGroups(const map<string, Group*>& groups, vector<Group*>& skinningGroups, int32_t idx);
 
 protected:
 	struct FlattenedGroup {
