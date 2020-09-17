@@ -118,9 +118,7 @@ protected:
 	}
 
 	/**
-	 * Update group list
-	 * @param groups groups
-	 * @param groupList flattened group list
+	 * Update group lists
 	 */
 	inline void updateGroupLists() {
 		for (auto& groupList: groupLists) updateGroupList(groupList);
