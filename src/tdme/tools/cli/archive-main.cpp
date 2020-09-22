@@ -77,6 +77,8 @@ void scanPath(const string& path, vector<string>& totalFiles) {
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".png") == true) return true;
 				// fonts
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".fnt") == true) return true;
+				// wss
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".wss") == true) return true;
 				//
 				if (fileName.find(".") == string::npos) return true;
 				//
