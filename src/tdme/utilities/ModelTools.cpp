@@ -1211,6 +1211,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 
 	// also have a material with masked transparency
 	auto optimizedMaterialMaskedTransparency = cloneMaterial(optimizedMaterial, "tdme.material.optimized.maskedtransparency");
+	optimizedMaterialMaskedTransparency->getSpecularMaterialProperties()->setDiffuseTextureTransparency(true);
 	optimizedMaterialMaskedTransparency->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(true);
 
 	// also have a material with transparency
