@@ -1,0 +1,1087 @@
+diff --git a/shader/gl3/particles/render_fragmentshader.frag b/shader/gl3/particles/render_fragmentshader.frag
+index e7848165..2e0db623 100644
+--- a/shader/gl3/particles/render_fragmentshader.frag
++++ b/shader/gl3/particles/render_fragmentshader.frag
+@@ -1,12 +1,14 @@
+ #version 330
+ 
+-uniform sampler2D diffuseTextureUnit;
+-uniform vec4 effectColorMul;
+-uniform vec4 effectColorAdd;
+-uniform int spritesHorizontal;
+-uniform int spritesVertical;
++uniform sampler2D diffuseTextureUnits[48];
++
++flat in int vsTextureIndex;
+ flat in int vsSpriteIndex;
+-in vec4 vsFragColor;
++flat in vec4 vsColor;
++flat in ivec2 vsSpriteSheetDimension;
++flat in vec4 vsEffectColorMul;
++flat in vec4 vsEffectColorAdd;
++
+ out vec4 outColor;
+ 
+ #if defined(HAVE_DEPTH_FOG)
+@@ -19,8 +21,8 @@ out vec4 outColor;
+ #endif
+ 
+ void main(void) {
+-	vec2 spriteCoord = (gl_PointCoord / vec2(spritesHorizontal, spritesVertical)) + vec2((1.0 / spritesHorizontal) * int(vsSpriteIndex % 4), 1.0 - ((1.0 / spritesHorizontal) * int(vsSpriteIndex / 4)));
+-	outColor = clamp(effectColorAdd + texture(diffuseTextureUnit, spriteCoord) * vsFragColor * effectColorMul, 0.0, 1.0);
++	vec2 spriteCoord = gl_PointCoord / vsSpriteSheetDimension + vec2((1.0 / float(vsSpriteSheetDimension.x)) * int(vsSpriteIndex % 4), 1.0 - ((1.0 / float(vsSpriteSheetDimension.y)) * int(vsSpriteIndex / 4)));
++	outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[vsTextureIndex], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0);
+ 	#if defined(HAVE_DEPTH_FOG)
+ 		if (fragDepth > FOG_DISTANCE_NEAR) {
+ 			float fogStrength = (clamp(fragDepth, FOG_DISTANCE_NEAR, FOG_DISTANCE_MAX) - FOG_DISTANCE_NEAR) * 1.0 / (FOG_DISTANCE_MAX - FOG_DISTANCE_NEAR);
+diff --git a/shader/gl3/particles/render_vertexshader.vert b/shader/gl3/particles/render_vertexshader.vert
+index b89cbdf2..4dae7fa1 100644
+--- a/shader/gl3/particles/render_vertexshader.vert
++++ b/shader/gl3/particles/render_vertexshader.vert
+@@ -5,20 +5,28 @@ precision highp int;
+ 
+ // layout
+ layout (location = 0) in vec3 inVertex;
+-layout (location = 1) in int inSpriteIndex;
++layout (location = 1) in int inTextureIndex;
++layout (location = 2) in int inSpriteIndex;
+ layout (location = 3) in vec4 inColor;
++layout (location = 5) in float inPointSize;
++layout (location = 6) in ivec2 inSpriteSheetDimensions;
++layout (location = 10) in vec4 inEffectColorMul;
++layout (location = 11) in vec4 inEffectColorAdd;
+ 
+ // uniforms
+ uniform mat4 mvpMatrix;
+-uniform float pointSize;
+ uniform int viewPortWidth;
+ uniform int viewPortHeight;
+ uniform float projectionMatrixXx;
+ uniform float projectionMatrixYy;
+ 
+ // will be passed to fragment shader
++flat out int vsTextureIndex;
+ flat out int vsSpriteIndex;
+-out vec4 vsFragColor;
++flat out vec4 vsColor;
++flat out ivec2 vsSpriteSheetDimension;
++flat out vec4 vsEffectColorMul;
++flat out vec4 vsEffectColorAdd;
+ 
+ #if defined(HAVE_DEPTH_FOG)
+ 	out float fragDepth;
+@@ -26,14 +34,18 @@ out vec4 vsFragColor;
+ 
+ void main(void) {
+ 	//
+-	vsFragColor = inColor;
++	vsTextureIndex = inTextureIndex;
+ 	vsSpriteIndex = inSpriteIndex;
++	vsColor = inColor;
++	vsSpriteSheetDimension = inSpriteSheetDimensions;
++	vsEffectColorMul = inEffectColorMul;
++	vsEffectColorAdd = inEffectColorAdd;
+ 
+ 	// compute gl position
+ 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
+ 
+ 	// point size
+-	gl_PointSize = (viewPortWidth > viewPortHeight?viewPortWidth * projectionMatrixXx * pointSize:viewPortHeight * projectionMatrixYy * pointSize) / gl_Position.w;
++	gl_PointSize = (viewPortWidth > viewPortHeight?viewPortWidth * projectionMatrixXx * inPointSize:viewPortHeight * projectionMatrixYy * inPointSize) / gl_Position.w;
+ 
+ 	//
+ 	#if defined(HAVE_DEPTH_FOG)
+diff --git a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
+index 415275b2..97aee07d 100644
+--- a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
++++ b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp
+@@ -1,8 +1,13 @@
+ #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
+ 
++#include <string>
++
+ #include <tdme/engine/Engine.h>
+ #include <tdme/engine/subsystems/renderer/Renderer.h>
+ #include <tdme/math/Matrix4x4.h>
++#include <tdme/utilities/Console.h>
++
++using std::to_string;
+ 
+ using tdme::engine::subsystems::particlesystem::ParticlesShader;
+ using tdme::engine::Engine;
+@@ -10,6 +15,7 @@ using tdme::engine::fileio::textures::TextureReader;
+ using tdme::engine::subsystems::manager::TextureManager;
+ using tdme::engine::subsystems::renderer::Renderer;
+ using tdme::math::Matrix4x4;
++using tdme::utilities::Console;
+ 
+ ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer) 
+ {
+@@ -17,6 +23,7 @@ ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer)
+ 	this->renderer = renderer;
+ 	isRunning = false;
+ 	initialized = false;
++	boundTextureIds.fill(renderer->ID_NONE);
+ }
+ 
+ bool ParticlesShader::isInitialized()
+@@ -60,20 +67,10 @@ void ParticlesShader::initialize()
+ 	// get uniforms
+ 	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
+ 	if (uniformMVPMatrix == -1) return;
+-	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, "pointSize");
+-	if (uniformPointSize == -1) return;
+-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnit");
+-	if (uniformDiffuseTextureUnit == -1) return;
+-	uniformEffectColorMul = renderer->getProgramUniformLocation(renderProgramId, "effectColorMul");
+-	if (uniformEffectColorMul == -1) return;
+-	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, "effectColorAdd");
+-	if (uniformEffectColorAdd == -1) return;
+-	uniformSpritesHorizontal = renderer->getProgramUniformLocation(renderProgramId, "spritesHorizontal");
+-	if (uniformSpritesHorizontal == -1) return;
+-	uniformSpritesVertical = renderer->getProgramUniformLocation(renderProgramId, "spritesVertical");
+-	if (uniformSpritesVertical == -1) return;
+-	uniformViewPortWidth = renderer->getProgramUniformLocation(renderProgramId, "viewPortWidth");
+-	if (uniformViewPortWidth == -1) return;
++	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) {
++		uniformDiffuseTextureUnits[i] = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnits[" + to_string(i) + "]");
++		if (uniformDiffuseTextureUnits[i] == -1) return;
++	}
+ 	uniformViewPortHeight = renderer->getProgramUniformLocation(renderProgramId, "viewPortHeight");
+ 	if (uniformViewPortHeight == -1) return;
+ 	uniformProjectionMatrixXx = renderer->getProgramUniformLocation(renderProgramId, "projectionMatrixXx");
+@@ -88,22 +85,26 @@ void ParticlesShader::useProgram(void* context)
+ 	isRunning = true;
+ 	renderer->useProgram(context, renderProgramId);
+ 	renderer->setLighting(context, renderer->LIGHTING_NONE);
+-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
++	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnits[i], i);
+ }
+ 
+ void ParticlesShader::updateEffect(void* context)
+ {
+ 	// skip if not running
+ 	if (isRunning == false) return;
+-	// effect color
+-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->getEffectColorMul(context));
+-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->getEffectColorAdd(context));
+ }
+ 
+ void ParticlesShader::unUseProgram(void* context)
+ {
+ 	isRunning = false;
+-	renderer->bindTexture(context, renderer->ID_NONE);
++	for (auto i = 0; i < boundTextureIds.size(); i++) {
++		auto textureId = boundTextureIds[i];
++		if (textureId == 0) continue;
++		renderer->setTextureUnit(context, i);
++		renderer->bindTexture(context, renderer->ID_NONE);
++	}
++	renderer->setTextureUnit(context, 0);
++	boundTextureIds.fill(renderer->ID_NONE);
+ }
+ 
+ void ParticlesShader::updateMatrices(void* context)
+@@ -119,9 +120,19 @@ void ParticlesShader::updateMatrices(void* context)
+ 	renderer->setProgramUniformInteger(context, uniformViewPortHeight, renderer->getViewPortHeight());
+ }
+ 
+-void ParticlesShader::setParameters(void* context, int32_t textureId, int32_t textureSpritesHorizontal, int32_t textureSpritesVertical, float pointSize) {
+-	renderer->setProgramUniformFloat(context, uniformPointSize, pointSize);
+-	renderer->setProgramUniformInteger(context, uniformSpritesHorizontal, textureSpritesHorizontal);
+-	renderer->setProgramUniformInteger(context, uniformSpritesVertical, textureSpritesVertical);
+-	renderer->bindTexture(context, textureId);
+-}
++void ParticlesShader::setParameters(void* context, const array<int32_t, 48>& textureIds) {
++	for (auto i = 0; i < boundTextureIds.size(); i++) {
++		auto textureId = boundTextureIds[i];
++		if (textureId == renderer->ID_NONE) continue;
++		renderer->setTextureUnit(context, i);
++		renderer->bindTexture(context, renderer->ID_NONE);
++	}
++	for (auto i = 0; i < textureIds.size(); i++) {
++		auto textureId = textureIds[i];
++		if (textureId == renderer->ID_NONE) continue;
++		renderer->setTextureUnit(context, i);
++		renderer->bindTexture(context, textureId);
++	}
++	renderer->setTextureUnit(context, 0);
++	boundTextureIds = textureIds;
++}
+\ No newline at end of file
+diff --git a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.h b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.h
+index 64105b38..b02938a0 100644
+--- a/src/tdme/engine/subsystems/particlesystem/ParticlesShader.h
++++ b/src/tdme/engine/subsystems/particlesystem/ParticlesShader.h
+@@ -23,12 +23,7 @@ private:
+ 	int32_t renderFragmentShaderId { -1 };
+ 	int32_t renderVertexShaderId { -1 };
+ 	int32_t uniformMVPMatrix { -1 };
+-	int32_t uniformPointSize { -1 };
+-	int32_t uniformDiffuseTextureUnit { -1 };
+-	int32_t uniformEffectColorMul { -1 };
+-	int32_t uniformEffectColorAdd { -1 };
+-	int32_t uniformSpritesHorizontal { -1 };
+-	int32_t uniformSpritesVertical{ -1 };
++	array<int32_t, 48> uniformDiffuseTextureUnits;
+ 	int32_t uniformViewPortWidth { -1 };
+ 	int32_t uniformViewPortHeight { -1 };
+ 	int32_t uniformProjectionMatrixXx { -1 };
+@@ -38,6 +33,7 @@ private:
+ 	bool initialized;
+ 	Engine* engine { nullptr };
+ 	Renderer* renderer { nullptr };
++	array<int32_t, 48> boundTextureIds;
+ 
+ public:
+ 
+@@ -78,12 +74,9 @@ public:
+ 	/**
+ 	 * Set parameters
+ 	 * @param context context
+-	 * @param textureId texture id
+-	 * @param textureSpritesHorizontal horizontal sprites in texture
+-	 * @param textureSpritesVertical vertical sprites in texture
+-	 * @param pointSize point size
++	 * @param textureIds texture ids
+ 	 */
+-	void setParameters(void* context, int32_t textureId, int32_t textureSpritesHorizontal, int32_t textureSpritesVertical, float pointSize);
++	void setParameters(void* context, const array<int32_t, 48>& textureIds);
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp b/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+index 7934f300..dc977739 100644
+--- a/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+@@ -706,13 +706,6 @@ void GL2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
+ 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
+ }
+ 
+-void GL2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
+-{
+-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+-	glEnableVertexAttribArray(3);
+-	glVertexAttribPointer(1, 1, GL_UNSIGNED_SHORT, false, 0, 0LL);
+-}
+-
+ void GL2Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
+ {
+ 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+@@ -742,12 +735,37 @@ void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
+ 	Console::println(string("GL2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+ }
+ 
+-void GL2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
++void GL2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
+ 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+ 	glEnableVertexAttribArray(4);
+ 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
+ }
+ 
++void GL2Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(1);
++	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
++}
++
++void GL2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
++{
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(2);
++	glVertexAttribIPointer(2, 1, GL_UNSIGNED_SHORT, 0, 0LL);
++}
++
++void GL2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(5);
++	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
++}
++
++void GL2Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(6);
++	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
++}
++
+ void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
+ {
+ 	Console::println(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+diff --git a/src/tdme/engine/subsystems/renderer/GL2Renderer.h b/src/tdme/engine/subsystems/renderer/GL2Renderer.h
+index 99427e06..8b314c64 100644
+--- a/src/tdme/engine/subsystems/renderer/GL2Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GL2Renderer.h
+@@ -122,14 +122,17 @@ public:
+ 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindNormalsBufferObject(void* context, int32_t bufferObjectId) override;
+-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindColorsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindTangentsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) override;
+-	void bindOrigins(void* context, int32_t bufferObjectId) override;
++	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
+ 	void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
+ 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
+diff --git a/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp b/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+index fbc9ed7a..2d19928a 100644
+--- a/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+@@ -810,13 +810,6 @@ void GL3Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
+ 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
+ }
+ 
+-void GL3Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
+-{
+-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+-	glEnableVertexAttribArray(1);
+-	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+-}
+-
+ void GL3Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
+ {
+ 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+@@ -868,12 +861,38 @@ void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferO
+ 	glVertexAttribDivisor(11, 1);
+ }
+ 
+-void GL3Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
++void GL3Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
+ 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+ 	glEnableVertexAttribArray(12);
+ 	glVertexAttribPointer(12, 3, GL_FLOAT, false, 0, 0LL);
+ }
+ 
++void GL3Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(1);
++	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
++}
++
++void GL3Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
++{
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(2);
++	glVertexAttribIPointer(2, 1, GL_UNSIGNED_SHORT, 0, 0LL);
++}
++
++void GL3Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(5);
++	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
++}
++
++void GL3Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(6);
++	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
++	glVertexAttribDivisor(6, 0);
++}
++
+ void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
+ {
+ 	#define BUFFER_OFFSET(i) ((void*)(i))
+diff --git a/src/tdme/engine/subsystems/renderer/GL3Renderer.h b/src/tdme/engine/subsystems/renderer/GL3Renderer.h
+index d1496a01..a9984799 100644
+--- a/src/tdme/engine/subsystems/renderer/GL3Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GL3Renderer.h
+@@ -144,14 +144,17 @@ public:
+ 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindNormalsBufferObject(void* context, int32_t bufferObjectId) override;
+-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindColorsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindTangentsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) override;
+-	void bindOrigins(void* context, int32_t bufferObjectId) override;
++	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
+ 	void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
+ 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
+diff --git a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+index 7de08e97..3a0228df 100644
+--- a/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
++++ b/src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+@@ -694,12 +694,36 @@ void GLES2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t buffe
+ 	Console::println(string("GLES2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+ }
+ 
+-void GLES2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
++void GLES2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
+ 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+ 	glEnableVertexAttribArray(4);
+ 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
+ }
+ 
++void GLES2Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(1);
++	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
++}
++
++void GLES2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
++{
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(2);
++	glVertexAttribIPointer(2, 1, GL_UNSIGNED_SHORT, 0, 0LL);
++}
++
++void GLES2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(5);
++	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
++}
++
++void GLES2Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
++	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
++	glEnableVertexAttribArray(6);
++	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
++}
+ void GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
+ {
+ 	Console::println(string("GLES2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
+diff --git a/src/tdme/engine/subsystems/renderer/GLES2Renderer.h b/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
+index 1ccf9235..458df2bc 100644
+--- a/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/GLES2Renderer.h
+@@ -113,14 +113,17 @@ public:
+ 	void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindVerticesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindNormalsBufferObject(void* context, int32_t bufferObjectId) override;
+-	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindColorsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindTangentsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) override;
+-	void bindOrigins(void* context, int32_t bufferObjectId) override;
++	void bindOriginsBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) override;
++	void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) override;
+ 	void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
+ 	void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) override;
+ 	void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) override;
+diff --git a/src/tdme/engine/subsystems/renderer/Renderer.h b/src/tdme/engine/subsystems/renderer/Renderer.h
+index 22a41beb..54b45190 100644
+--- a/src/tdme/engine/subsystems/renderer/Renderer.h
++++ b/src/tdme/engine/subsystems/renderer/Renderer.h
+@@ -706,13 +706,6 @@ public:
+ 	 */
+ 	virtual void bindNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
+ 
+-	/**
+-	 * Bind sprite indices buffer object
+-	 * @param context context
+-	 * @param bufferObjectId buffer object id
+-	 */
+-	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
+-
+ 	/**
+ 	 * Bind colors buffer object
+ 	 * @param context context
+@@ -760,7 +753,35 @@ public:
+ 	 * @param context context
+ 	 * @param bufferObjectId buffer object id
+ 	 */
+-	virtual void bindOrigins(void* context, int32_t bufferObjectId) = 0;
++	virtual void bindOriginsBufferObject(void* context, int32_t bufferObjectId) = 0;
++
++	/**
++	 * Bind texture indices buffer object
++	 * @param context context
++	 * @param bufferObjectId buffer object id
++	 */
++	virtual void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
++
++	/**
++	 * Bind sprite indices buffer object
++	 * @param context context
++	 * @param bufferObjectId buffer object id
++	 */
++	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
++
++	/**
++	 * Bind point sizes buffer object
++	 * @param context context
++	 * @param bufferObjectId buffer object id
++	 */
++	virtual void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) = 0;
++
++	/**
++	 * Bind sprite sheet dimension buffer object
++	 * @param context context
++	 * @param bufferObjectId buffer object id
++	 */
++	virtual void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) = 0;
+ 
+ 	/**
+ 	 * Draw instanced indexed triangles from buffer objects
+diff --git a/src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp b/src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp
+index 476b0550..488e845c 100644
+--- a/src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp
++++ b/src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp
+@@ -36,15 +36,25 @@ BatchRendererPoints::BatchRendererPoints(Renderer* renderer, int32_t id)
+ 	this->renderer = renderer;
+ 	this->acquired = false;
+ 	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(POINT_COUNT * 3 * sizeof(float)))->asFloatBuffer();
+-	sbSpriteIndices = (sbSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(int32_t)))->asShortBuffer();
++	sbTextureIndices = (sbTexureIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(uint16_t)))->asShortBuffer();
++	sbSpriteIndices = (sbSpriteIndicesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(uint16_t)))->asShortBuffer();
+ 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
++	fbPointSizes = (fbPointSizesByteBuffer = ByteBuffer::allocate(POINT_COUNT * sizeof(float)))->asFloatBuffer();
++	sbSpriteSheetDimension = (sbSpriteSheetDimensionByteBuffer = ByteBuffer::allocate(POINT_COUNT * 2 * sizeof(uint16_t)))->asShortBuffer();
++	fbEffectColorMul = (fbEffectColorMulByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
++	fbEffectColorAdd = (fbEffectColorAddByteBuffer = ByteBuffer::allocate(POINT_COUNT * 4 * sizeof(float)))->asFloatBuffer();
+ }
+ 
+ BatchRendererPoints::~BatchRendererPoints()
+ {
+ 	delete fbVerticesByteBuffer;
++	delete sbTexureIndicesByteBuffer;
+ 	delete sbSpriteIndicesByteBuffer;
+ 	delete fbColorsByteBuffer;
++	delete fbPointSizesByteBuffer;
++	delete sbSpriteSheetDimensionByteBuffer;
++	delete fbEffectColorMulByteBuffer;
++	delete fbEffectColorAddByteBuffer;
+ }
+ 
+ void BatchRendererPoints::initialize()
+@@ -52,7 +62,7 @@ void BatchRendererPoints::initialize()
+ 	// initialize if not yet done
+ 	if (vboIds == nullptr) {
+ 		auto created = false;
+-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 3, false, false, created);
++		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.batchvborendererpoints." + to_string(id), 8, false, false, created);
+ 		vboIds = vboManaged->getVBOIds();
+ 	}
+ }
+@@ -60,23 +70,36 @@ void BatchRendererPoints::initialize()
+ void BatchRendererPoints::render(void* context)
+ {
+ 	// skip if no vertex data exists
+-	if (fbVertices.getPosition() == 0 || fbColors.getPosition() == 0)
++	if (fbVertices.getPosition() == 0)
+ 		return;
+ 
+ 	// determine point count
+-	auto points = fbVertices.getPosition() / 3 /* 3 components */;
+-	// upload vertices
++	auto points = fbVertices.getPosition() / 3;
++	// upload
+ 	renderer->uploadBufferObject(context, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+-	// upload sprite indices
+-	renderer->uploadBufferObject(context, (*vboIds)[1], sbSpriteIndices.getPosition() * sizeof(uint16_t), &sbSpriteIndices);
+-	// upload colors
+-	renderer->uploadBufferObject(context, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
++	renderer->uploadBufferObject(context, (*vboIds)[1], sbTextureIndices.getPosition() * sizeof(uint16_t), &sbTextureIndices);
++	renderer->uploadBufferObject(context, (*vboIds)[2], sbSpriteIndices.getPosition() * sizeof(uint16_t), &sbSpriteIndices);
++	renderer->uploadBufferObject(context, (*vboIds)[3], fbColors.getPosition() * sizeof(float), &fbColors);
++	renderer->uploadBufferObject(context, (*vboIds)[4], sbSpriteSheetDimension.getPosition() * sizeof(uint16_t), &sbSpriteSheetDimension);
++	renderer->uploadBufferObject(context, (*vboIds)[5], fbPointSizes.getPosition() * sizeof(float), &fbPointSizes);
++	renderer->uploadBufferObject(context, (*vboIds)[6], fbEffectColorMul.getPosition() * sizeof(float), &fbEffectColorMul);
++	renderer->uploadBufferObject(context, (*vboIds)[7], fbEffectColorAdd.getPosition() * sizeof(float), &fbEffectColorAdd);
+ 	// bind vertices
+ 	renderer->bindVerticesBufferObject(context, (*vboIds)[0]);
++	// bind texture indices
++	renderer->bindTextureIndicesBufferObject(context, (*vboIds)[1]);
+ 	// bind sprite indices
+-	renderer->bindSpriteIndicesBufferObject(context, (*vboIds)[1]);
++	renderer->bindSpriteIndicesBufferObject(context, (*vboIds)[2]);
+ 	// bind colors
+-	renderer->bindColorsBufferObject(context, (*vboIds)[2]);
++	renderer->bindColorsBufferObject(context, (*vboIds)[3]);
++	// bind sprite sheet dimension
++	renderer->bindSpriteSheetDimensionBufferObject(context, (*vboIds)[4]);
++	// bind point sizes
++	renderer->bindPointSizesBufferObject(context, (*vboIds)[5]);
++	// bind effect color mul
++	renderer->bindEffectColorMulsBufferObject(context, (*vboIds)[6]);
++	// bind effect color add
++	renderer->bindEffectColorAddsBufferObject(context, (*vboIds)[7]);
+ 	// draw
+ 	renderer->drawPointsFromBufferObjects(context, points, 0);
+ }
+@@ -92,6 +115,11 @@ void BatchRendererPoints::dispose()
+ void BatchRendererPoints::clear()
+ {
+ 	fbVertices.clear();
++	sbTextureIndices.clear();
+ 	sbSpriteIndices.clear();
+ 	fbColors.clear();
++	fbPointSizes.clear();
++	sbSpriteSheetDimension.clear();
++	fbEffectColorMul.clear();
++	fbEffectColorAdd.clear();
+ }
+diff --git a/src/tdme/engine/subsystems/rendering/BatchRendererPoints.h b/src/tdme/engine/subsystems/rendering/BatchRendererPoints.h
+index b2f54042..485743f6 100644
+--- a/src/tdme/engine/subsystems/rendering/BatchRendererPoints.h
++++ b/src/tdme/engine/subsystems/rendering/BatchRendererPoints.h
+@@ -3,6 +3,7 @@
+ #include <vector>
+ 
+ #include <tdme/tdme.h>
++#include <tdme/engine/model/Color4.h>
+ #include <tdme/utilities/fwd-tdme.h>
+ #include <tdme/utilities/FloatBuffer.h>
+ #include <tdme/utilities/ShortBuffer.h>
+@@ -12,6 +13,7 @@
+ using std::to_string;
+ using std::vector;
+ 
++using tdme::engine::model::Color4;
+ using tdme::utilities::ByteBuffer;
+ using tdme::utilities::FloatBuffer;
+ using tdme::utilities::ShortBuffer;
+@@ -35,10 +37,20 @@ private:
+ 	bool acquired;
+ 	ByteBuffer* fbVerticesByteBuffer { nullptr };
+ 	FloatBuffer fbVertices;
++	ByteBuffer* sbTexureIndicesByteBuffer { nullptr };
++	ShortBuffer sbTextureIndices;
+ 	ByteBuffer* sbSpriteIndicesByteBuffer { nullptr };
+ 	ShortBuffer sbSpriteIndices;
+ 	ByteBuffer* fbColorsByteBuffer { nullptr };
+ 	FloatBuffer fbColors;
++	ByteBuffer* fbPointSizesByteBuffer { nullptr };
++	FloatBuffer fbPointSizes;
++	ByteBuffer* sbSpriteSheetDimensionByteBuffer { nullptr };
++	ShortBuffer sbSpriteSheetDimension;
++	ByteBuffer* fbEffectColorMulByteBuffer { nullptr };
++	FloatBuffer fbEffectColorMul;
++	ByteBuffer* fbEffectColorAddByteBuffer { nullptr };
++	FloatBuffer fbEffectColorAdd;
+ 
+ 	/**
+ 	 * Render
+@@ -55,10 +67,16 @@ private:
+ 	 * Adds a transparent render point to this transparent render points
+ 	 * @param point transparent render point
+ 	 */
+-	inline void addPoint(const TransparentRenderPoint* point) {
++	inline void addPoint(const TransparentRenderPoint* point, int textureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
+ 		fbVertices.put(point->point.getArray());
++		sbTextureIndices.put(textureIndex);
+ 		sbSpriteIndices.put(point->spriteIndex);
+ 		fbColors.put(point->color.getArray());
++		fbPointSizes.put(pointSize);
++		sbSpriteSheetDimension.put(textureHorizontalSprites);
++		sbSpriteSheetDimension.put(textureVerticalSprites);
++		fbEffectColorMul.put(effectColorMul.getArray());
++		fbEffectColorAdd.put(effectColorAdd.getArray());
+ 	}
+ 
+ 	/**
+@@ -68,6 +86,10 @@ private:
+ 		return fbVertices.getPosition() > 0;
+ 	}
+ 
++	inline int getPointCount() {
++		return fbVertices.getPosition() / 3;
++	}
++
+ 	/**
+ 	 * Public constructor
+ 	 */
+diff --git a/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp b/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
+index c4600314..93bea17a 100644
+--- a/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
++++ b/src/tdme/engine/subsystems/rendering/EntityRenderer.cpp
+@@ -528,7 +528,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
+ 				// bind render group object origins
+ 				auto currentVBOOrigins = _object3DGroup->renderer->vboOrigins;
+ 				if (currentVBOOrigins != nullptr && currentVBOOrigins != boundVBOOrigins) {
+-					renderer->bindOrigins(context, (*currentVBOOrigins)[0]);
++					renderer->bindOriginsBufferObject(context, (*currentVBOOrigins)[0]);
+ 				}
+ 				// set up local -> world transformations matrix
+ 				renderer->getModelViewMatrix().set(
+@@ -827,7 +827,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
+ 					if (currentVBOOrigins != nullptr) {
+ 						// bind render group object origins if not yet done
+ 						if (boundVBOOrigins == nullptr) {
+-							renderer->bindOrigins(context, (*currentVBOOrigins)[0]);
++							renderer->bindOriginsBufferObject(context, (*currentVBOOrigins)[0]);
+ 							//
+ 							boundVBOOrigins = currentVBOOrigins;
+ 						} else
+@@ -1093,21 +1093,16 @@ void EntityRenderer::render(const vector<Entity*>& pses)
+ 	// TODO: Move me into own class
+ 	if (pses.size() == 0) return;
+ 
+-	// TODO: I could also transfer texture and point size per particle, lets see, this would speed up things a lot I guess
+-	// sort visible entities
+-	auto sortedVisiblePses = pses;
+-	std::sort(sortedVisiblePses.begin(), sortedVisiblePses.end(), compareParticleSystemEntities);
+-
+ 	//
+ 	struct PseParameters {
+ 		const Color4* effectColorAdd;
+ 		const Color4* effectColorMul;
++		int32_t textureIndex;
+ 		int32_t textureId;
+ 		int32_t textureHorizontalSprites;
+ 		int32_t textureVerticalSprites;
+ 		float pointSize;
+ 	};
+-	unordered_set<Entity*> rendererPses;
+ 	unordered_map<void*, PseParameters> rendererPseParameters;
+ 
+ 	// use default context
+@@ -1126,110 +1121,83 @@ void EntityRenderer::render(const vector<Entity*>& pses)
+ 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
+ 	renderer->setTextureUnit(context, 0);
+ 
++	// textures
++	unordered_map<int, int> textureIndices;
++
+ 	// find particle systems that are combined, merge thos pses, transform them into camera space and sort them
+ 	auto& cameraMatrix = renderer->getCameraMatrix();
+-	for (auto entityOuter: sortedVisiblePses) {
+-		auto particleSystemsCount = 0;
+-		if (rendererPses.find(entityOuter) != rendererPses.end()) continue;
+-		{
+-			auto ppse = dynamic_cast<PointsParticleSystem*>(entityOuter);
+-			if (ppse != nullptr) {
+-				rendererPseParameters[ppse] = {
+-					.effectColorAdd = &ppse->getEffectColorAdd(),
+-					.effectColorMul = &ppse->getEffectColorMul(),
+-					.textureId = ppse->getTextureId(),
+-					.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
+-					.textureVerticalSprites = ppse->getTextureVerticalSprites(),
+-					.pointSize = ppse->getPointSize()
++	for (auto entity: pses) {
++		auto ppse = dynamic_cast<PointsParticleSystem*>(entity);
++		if (ppse != nullptr) {
++			auto textureIndexIt = textureIndices.find(ppse->getTextureId());
++			int textureIndex = textureIndexIt == textureIndices.end()?-1:textureIndexIt->second;
++			if (textureIndex == -1) textureIndices[ppse->getTextureId()] = textureIndex = textureIndices.size();
++			rendererPseParameters[ppse] = {
++				.effectColorAdd = &ppse->getEffectColorAdd(),
++				.effectColorMul = &ppse->getEffectColorMul(),
++				.textureIndex = textureIndex,
++				.textureId = ppse->getTextureId(),
++				.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
++				.textureVerticalSprites = ppse->getTextureVerticalSprites(),
++				.pointSize = ppse->getPointSize()
++			};
++			renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
++		} else {
++			auto fpse = dynamic_cast<FogParticleSystem*>(entity);
++			if (fpse != nullptr) {
++				auto textureIndexIt = textureIndices.find(fpse->getTextureId());
++				int textureIndex = textureIndexIt == textureIndices.end()?-1:textureIndexIt->second;
++				if (textureIndex == -1) textureIndices[fpse->getTextureId()] = textureIndex = textureIndices.size();
++				rendererPseParameters[fpse] = {
++					.effectColorAdd = &fpse->getEffectColorAdd(),
++					.effectColorMul = &fpse->getEffectColorMul(),
++					.textureIndex = textureIndex,
++					.textureId = fpse->getTextureId(),
++					.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
++					.textureVerticalSprites = fpse->getTextureVerticalSprites(),
++					.pointSize = fpse->getPointSize()
+ 				};
+-				renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
+-			} else {
+-				auto fpse = dynamic_cast<FogParticleSystem*>(entityOuter);
+-				if (fpse != nullptr) {
+-					rendererPseParameters[fpse] = {
+-						.effectColorAdd = &fpse->getEffectColorAdd(),
+-						.effectColorMul = &fpse->getEffectColorMul(),
+-						.textureId = fpse->getTextureId(),
+-						.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
+-						.textureVerticalSprites = fpse->getTextureVerticalSprites(),
+-						.pointSize = fpse->getPointSize()
+-					};
+-					renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
+-				}
++				renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
+ 			}
+-			rendererPses.insert(entityOuter);
+-			particleSystemsCount++;
+ 		}
+-		for (auto entityInner: sortedVisiblePses) {
+-			if (entityOuter == entityInner || rendererPses.find(entityInner) != rendererPses.end()) continue;
+-			if (CollisionDetection::doCollideAABBvsAABBFast(entityOuter->getBoundingBoxTransformed(), entityInner->getBoundingBoxTransformed()) == true) {
+-				auto ppse = dynamic_cast<PointsParticleSystem*>(entityInner);
+-				if (ppse != nullptr) {
+-					rendererPseParameters[ppse] = {
+-						.effectColorAdd = &ppse->getEffectColorAdd(),
+-						.effectColorMul = &ppse->getEffectColorMul(),
+-						.textureId = ppse->getTextureId(),
+-						.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
+-						.textureVerticalSprites = ppse->getTextureVerticalSprites(),
+-						.pointSize = ppse->getPointSize()
+-					};
+-					renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
+-				} else {
+-					auto fpse = dynamic_cast<FogParticleSystem*>(entityInner);
+-					if (fpse != nullptr) {
+-						rendererPseParameters[fpse] = {
+-							.effectColorAdd = &fpse->getEffectColorAdd(),
+-							.effectColorMul = &fpse->getEffectColorMul(),
+-							.textureId = fpse->getTextureId(),
+-							.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
+-							.textureVerticalSprites = fpse->getTextureVerticalSprites(),
+-							.pointSize = fpse->getPointSize()
+-						};
+-						renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
+-					}
+-				}
+-				rendererPses.insert(entityInner);
+-				particleSystemsCount++;
+-			}
+-		}
+-		if (renderTransparentRenderPointsPool->getTransparentRenderPointsCount() > 0) {
+-			renderTransparentRenderPointsPool->sort();
+-			// render
+-			auto firstPoint = renderTransparentRenderPointsPool->getTransparentRenderPoints()[0];
+-			PseParameters* pseParameters = &rendererPseParameters.find(firstPoint->particleSystem)->second;
+-			auto currentPpse = static_cast<void*>(firstPoint->particleSystem);
+-			for (auto point: renderTransparentRenderPointsPool->getTransparentRenderPoints()) {
+-				if (point == nullptr || point->acquired == false || point->particleSystem != (void*)currentPpse) {
+-					// issue rendering
+-					renderer->getEffectColorAdd(context) = pseParameters->effectColorAdd->getArray();
+-					renderer->getEffectColorMul(context) = pseParameters->effectColorMul->getArray();
+-					renderer->onUpdateEffect(context);
+-					// TODO: maybe use onBindTexture() or onUpdatePointSize()
+-					engine->getParticlesShader()->setParameters(context, pseParameters->textureId, pseParameters->textureHorizontalSprites, pseParameters->textureVerticalSprites, pseParameters->pointSize);
+-					// render, clear
+-					psePointBatchRenderer->render(context);
+-					psePointBatchRenderer->clear();
+-					//
+-					if (point != nullptr && point->acquired == true) {
+-						pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
+-						currentPpse = point->particleSystem;
+-						psePointBatchRenderer->addPoint(point);
+-					} else {
+-						break;
+-					}
+-				} else {
+-					psePointBatchRenderer->addPoint(point);
+-				}
++	}
++	if (renderTransparentRenderPointsPool->getTransparentRenderPointsCount() > 0) {
++		renderTransparentRenderPointsPool->sort();
++		// render
++		auto points =  renderTransparentRenderPointsPool->getTransparentRenderPoints();
++		auto pseParameters = &rendererPseParameters.find(points[0]->particleSystem)->second;
++		auto currentPpse = static_cast<void*>(points[0]->particleSystem);
++		for (auto i = 0; i < renderTransparentRenderPointsPool->getTransparentRenderPointsCount(); i++) {
++			auto point = points[i];
++			if (point->particleSystem != (void*)currentPpse) {
++				pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
++				currentPpse = point->particleSystem;
+ 			}
+-			// done
+-			renderTransparentRenderPointsPool->reset();
+-			rendererPseParameters.clear();
++			psePointBatchRenderer->addPoint(
++				point,
++				pseParameters->textureIndex,
++				pseParameters->pointSize,
++				*pseParameters->effectColorMul,
++				*pseParameters->effectColorAdd,
++				pseParameters->textureHorizontalSprites,
++				pseParameters->textureVerticalSprites
++			);
+ 		}
++
++		//
++		array<int32_t, 48> textureIds;
++		textureIds.fill(0);
++		for (auto& textureIt: textureIndices) textureIds[textureIt.second] = textureIt.first;
++		engine->getParticlesShader()->setParameters(context, textureIds);
++
++		// render, clear
++		psePointBatchRenderer->render(context);
++		psePointBatchRenderer->clear();
++
++		// done
++		renderTransparentRenderPointsPool->reset();
+ 	}
+ 
+-	// unbind texture
+-	renderer->bindTexture(context, renderer->ID_NONE);
+-	// TODO: before render sort all pps by distance to camera and render them in correct order
+ 	// unset renderer state
+ 	renderer->disableBlending();
+ 	// restore renderer state
+diff --git a/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.cpp b/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.cpp
+index 7494634f..9016aba8 100644
+--- a/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.cpp
++++ b/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.cpp
+@@ -35,13 +35,13 @@ RenderTransparentRenderPointsPool::~RenderTransparentRenderPointsPool() {
+ 
+ void RenderTransparentRenderPointsPool::merge(TransparentRenderPointsPool* pool2, const Matrix4x4& cameraMatrix)
+ {
+-	for (auto point: pool2->transparentRenderPoints) {
+-		// skip if point is not in use
+-		if (point->acquired == false) break;
++	auto pool2Points = pool2->getTransparentRenderPoints();
++	for (auto i = 0; i < pool2->getTransparentRenderPointsCount(); i++) {
++		auto point = pool2Points[i];
+ 		// check for pool overflow
+ 		if (poolIdx >= transparentRenderPoints.size()) {
+ 			Console::println(string("RenderTransparentRenderPointsPool::merge(): Too many transparent render points"));
+-			break;
++			return;
+ 		}
+ 		//
+ 		cameraMatrix.multiply(point->point, point->point);
+diff --git a/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h b/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h
+index ad1d4846..41f38068 100644
+--- a/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h
++++ b/src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h
+@@ -50,7 +50,7 @@ public:
+ 		return poolIdx;
+ 	}
+ 
+-	/** 
++	/**
+ 	 * @return transparent render points vector
+ 	 */
+ 	inline const vector<TransparentRenderPoint*>& getTransparentRenderPoints() {
+diff --git a/src/tdme/engine/subsystems/rendering/TransparentRenderPoint.h b/src/tdme/engine/subsystems/rendering/TransparentRenderPoint.h
+index 709c9d01..5f13d766 100644
+--- a/src/tdme/engine/subsystems/rendering/TransparentRenderPoint.h
++++ b/src/tdme/engine/subsystems/rendering/TransparentRenderPoint.h
+@@ -17,7 +17,6 @@ using tdme::math::Vector3;
+  */
+ struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
+ {
+-	bool acquired;
+ 	uint16_t spriteIndex;
+ 	Vector3 point;
+ 	Color4 color;
+@@ -30,17 +29,7 @@ struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
+ 	 * @param point2 point 2
+ 	 */
+ 	inline static bool compare(TransparentRenderPoint* point1, TransparentRenderPoint* point2) {
+-		if (point1->acquired == false && point2->acquired == false) {
+-			return false;
+-		} else
+-		if (point1->acquired == false) {
+-			return false;
+-		} else
+-		if (point2->acquired == false) {
+-			return true;
+-		} else {
+-			return -point1->point.getZ() > -point2->point.getZ();
+-		}
++		return -point1->point.getZ() > -point2->point.getZ();
+ 	}
+ 
+ };
+diff --git a/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp b/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp
+index 09c4bbb6..bddc4cde 100644
+--- a/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp
++++ b/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp
+@@ -26,7 +26,6 @@ TransparentRenderPointsPool::TransparentRenderPointsPool(int32_t pointsMax)
+ 	transparentRenderPoints.resize(pointsMax);
+ 	for (auto i = 0; i < transparentRenderPoints.size(); i++) {
+ 		transparentRenderPoints[i] = new TransparentRenderPoint();
+-		transparentRenderPoints[i]->acquired = false;
+ 	}
+ }
+ 
+@@ -37,7 +36,6 @@ TransparentRenderPointsPool::~TransparentRenderPointsPool() {
+ void TransparentRenderPointsPool::reset()
+ {
+ 	poolIdx = 0;
+-	for (auto point: transparentRenderPoints) point->acquired = false;
+ }
+ 
+ void TransparentRenderPointsPool::sort()
+diff --git a/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h b/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h
+index f2609907..d44f41f3 100644
+--- a/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h
++++ b/src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h
+@@ -18,7 +18,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPoint;
+ using tdme::math::Vector3;
+ using tdme::utilities::Console;
+ 
+-/** 
++/**
+  * Transparent render points pool
+  * @author andreas.drewke
+  * @version $Id$
+@@ -33,7 +33,7 @@ private:
+ 
+ public:
+ 
+-	/** 
++	/**
+ 	 * Creates an transparent render point entity in pool
+ 	 * @param point point
+ 	 * @param spriteIndex sprite index
+@@ -49,7 +49,6 @@ public:
+ 		}
+ 		// create point in pool
+ 		auto transparentRenderPoint = transparentRenderPoints[poolIdx++];
+-		transparentRenderPoint->acquired = true;
+ 		transparentRenderPoint->point = point;
+ 		transparentRenderPoint->spriteIndex = spriteIndex;
+ 		transparentRenderPoint->color = color;
+@@ -57,19 +56,26 @@ public:
+ 		transparentRenderPoint->particleSystem = particleSystem;
+ 	}
+ 
+-	/** 
++	/**
+ 	 * Reset
+ 	 */
+ 	void reset();
+ 
+-	/** 
++	/**
++	 * @return transparent render points count
++	 */
++	inline int getTransparentRenderPointsCount() {
++		return poolIdx;
++	}
++
++	/**
+ 	 * @return transparent render points vector
+ 	 */
+ 	inline const vector<TransparentRenderPoint*>& getTransparentRenderPoints() {
+ 		return transparentRenderPoints;
+ 	}
+ 
+-	/** 
++	/**
+ 	 * Sort transparent render points
+ 	 */
+ 	void sort();
+diff --git a/src/tdme/gui/nodes/GUIScreenNode.cpp b/src/tdme/gui/nodes/GUIScreenNode.cpp
+index 5ae62d0e..c8f884c4 100644
+--- a/src/tdme/gui/nodes/GUIScreenNode.cpp
++++ b/src/tdme/gui/nodes/GUIScreenNode.cpp
+@@ -163,8 +163,6 @@ void GUIScreenNode::layout()
+ 
+ void GUIScreenNode::layout(GUINode* node)
+ {
+-	Console::println("GUIScreenNode::layout(): " + node->getId());
+-
+ 	// check if parent nodes have conditions met
+ 	{
+ 		auto _node = node;
