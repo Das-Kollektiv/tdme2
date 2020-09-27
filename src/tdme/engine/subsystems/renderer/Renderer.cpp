@@ -128,7 +128,6 @@ void Renderer::setShaderPrefix(const string& shaderPrefix) {
 }
 
 Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {
-	// TODO: bilinear filtering
 	auto generatedTextureWidth = texture->getTextureWidth() / 2;
 	auto generatedTextureHeight = texture->getTextureHeight() / 2;
 	auto generatedTextureByteBuffer = ByteBuffer::allocate(generatedTextureWidth * generatedTextureHeight * 4);

@@ -17,6 +17,7 @@ ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer)
 	this->renderer = renderer;
 	isRunning = false;
 	initialized = false;
+	boundTextureIds.fill(renderer->ID_NONE);
 }
 
 bool ParticlesShader::isInitialized()
@@ -60,18 +61,11 @@ void ParticlesShader::initialize()
 	// get uniforms
 	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
 	if (uniformMVPMatrix == -1) return;
-	uniformPointSize = renderer->getProgramUniformLocation(renderProgramId, "pointSize");
-	if (uniformPointSize == -1) return;
-	uniformDiffuseTextureUnit = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnit");
-	if (uniformDiffuseTextureUnit == -1) return;
-	uniformEffectColorMul = renderer->getProgramUniformLocation(renderProgramId, "effectColorMul");
-	if (uniformEffectColorMul == -1) return;
-	uniformEffectColorAdd = renderer->getProgramUniformLocation(renderProgramId, "effectColorAdd");
-	if (uniformEffectColorAdd == -1) return;
-	uniformSpritesHorizontal = renderer->getProgramUniformLocation(renderProgramId, "spritesHorizontal");
-	if (uniformSpritesHorizontal == -1) return;
-	uniformSpritesVertical = renderer->getProgramUniformLocation(renderProgramId, "spritesVertical");
-	if (uniformSpritesVertical == -1) return;
+	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) {
+		uniformDiffuseTextureUnits[i] = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnits[" + to_string(i) + "]");
+		if (uniformDiffuseTextureUnits[i] == -1) return;
+	}
+	// TODO: use ivec2 and vec2
 	uniformViewPortWidth = renderer->getProgramUniformLocation(renderProgramId, "viewPortWidth");
 	if (uniformViewPortWidth == -1) return;
 	uniformViewPortHeight = renderer->getProgramUniformLocation(renderProgramId, "viewPortHeight");
@@ -88,22 +82,26 @@ void ParticlesShader::useProgram(void* context)
 	isRunning = true;
 	renderer->useProgram(context, renderProgramId);
 	renderer->setLighting(context, renderer->LIGHTING_NONE);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
+	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnits[i], i);
 }
 
 void ParticlesShader::updateEffect(void* context)
 {
 	// skip if not running
 	if (isRunning == false) return;
-	// effect color
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->getEffectColorMul(context));
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->getEffectColorAdd(context));
 }
 
 void ParticlesShader::unUseProgram(void* context)
 {
 	isRunning = false;
-	renderer->bindTexture(context, renderer->ID_NONE);
+	for (auto i = 0; i < boundTextureIds.size(); i++) {
+		auto textureId = boundTextureIds[i];
+		if (textureId == 0) continue;
+		renderer->setTextureUnit(context, i);
+		renderer->bindTexture(context, renderer->ID_NONE);
+	}
+	renderer->setTextureUnit(context, 0);
+	boundTextureIds.fill(renderer->ID_NONE);
 }
 
 void ParticlesShader::updateMatrices(void* context)
@@ -119,9 +117,19 @@ void ParticlesShader::updateMatrices(void* context)
 	renderer->setProgramUniformInteger(context, uniformViewPortHeight, renderer->getViewPortHeight());
 }
 
-void ParticlesShader::setParameters(void* context, int32_t textureId, int32_t textureSpritesHorizontal, int32_t textureSpritesVertical, float pointSize) {
-	renderer->setProgramUniformFloat(context, uniformPointSize, pointSize);
-	renderer->setProgramUniformInteger(context, uniformSpritesHorizontal, textureSpritesHorizontal);
-	renderer->setProgramUniformInteger(context, uniformSpritesVertical, textureSpritesVertical);
-	renderer->bindTexture(context, textureId);
+void ParticlesShader::setParameters(void* context, const array<int32_t, 48>& textureIds) {
+	for (auto i = 0; i < boundTextureIds.size(); i++) {
+		auto textureId = boundTextureIds[i];
+		if (textureId == renderer->ID_NONE) continue;
+		renderer->setTextureUnit(context, i);
+		renderer->bindTexture(context, renderer->ID_NONE);
+	}
+	for (auto i = 0; i < textureIds.size(); i++) {
+		auto textureId = textureIds[i];
+		if (textureId == renderer->ID_NONE) continue;
+		renderer->setTextureUnit(context, i);
+		renderer->bindTexture(context, textureId);
+	}
+	renderer->setTextureUnit(context, 0);
+	boundTextureIds = textureIds;
 }

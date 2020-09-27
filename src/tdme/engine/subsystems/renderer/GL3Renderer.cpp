@@ -568,26 +568,7 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 			}
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
-			borderSize = 32;
-			auto level = 0;
-			while (borderSize >= 4) {
-				level++;
-				mipmapTexture = generateMipMap(texture->getId(), mipmapTexture, level, borderSize);
-				if (generatedMipmapTexture != nullptr) generatedMipmapTexture->releaseReference();
-				generatedMipmapTexture = mipmapTexture;
-				glTexImage2D(
-					GL_TEXTURE_2D,
-					level,
-					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
-					mipmapTexture->getTextureWidth(),
-					mipmapTexture->getTextureHeight(),
-					0,
-					mipmapTexture->getDepth() == 32?GL_RGBA:GL_RGB,
-					GL_UNSIGNED_BYTE,
-					mipmapTexture->getTextureData()->getBuffer()
-				);
-				borderSize/= 2;
-			}
+			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -810,13 +791,6 @@ void GL3Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(1);
-	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
-}
-
 void GL3Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
@@ -854,24 +828,50 @@ void GL3Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObj
 	glVertexAttribDivisor(9, 1);
 }
 
-void GL3Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(10);
 	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
-	glVertexAttribDivisor(10, 1);
+	glVertexAttribDivisor(10, divisor);
 }
 
-void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(11);
 	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
-	glVertexAttribDivisor(11, 1);
+	glVertexAttribDivisor(11, divisor);
 }
 
-void GL3Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(12);
 	glVertexAttribPointer(12, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+}
+
+void GL3Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(2);
+	glVertexAttribIPointer(2, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+}
+
+void GL3Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(6);
+	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
+	glVertexAttribDivisor(6, 0);
 }
 
 void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)

@@ -706,13 +706,6 @@ void GL2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(1, 1, GL_UNSIGNED_SHORT, false, 0, 0LL);
-}
-
 void GL2Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
@@ -734,18 +727,43 @@ void GL2Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObj
 	Console::println(string("GL2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
 	Console::println(string("GL2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
 	Console::println(string("GL2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::bindOrigins(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL2Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+}
+
+void GL2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(2);
+	glVertexAttribIPointer(2, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+}
+
+void GL2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL2Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(6);
+	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
 }
 
 void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)

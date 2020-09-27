@@ -528,7 +528,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 				// bind render group object origins
 				auto currentVBOOrigins = _object3DGroup->renderer->vboOrigins;
 				if (currentVBOOrigins != nullptr && currentVBOOrigins != boundVBOOrigins) {
-					renderer->bindOrigins(context, (*currentVBOOrigins)[0]);
+					renderer->bindOriginsBufferObject(context, (*currentVBOOrigins)[0]);
 				}
 				// set up local -> world transformations matrix
 				renderer->getModelViewMatrix().set(
@@ -827,7 +827,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					if (currentVBOOrigins != nullptr) {
 						// bind render group object origins if not yet done
 						if (boundVBOOrigins == nullptr) {
-							renderer->bindOrigins(context, (*currentVBOOrigins)[0]);
+							renderer->bindOriginsBufferObject(context, (*currentVBOOrigins)[0]);
 							//
 							boundVBOOrigins = currentVBOOrigins;
 						} else
@@ -886,9 +886,9 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					if ((renderTypes & RENDERTYPE_EFFECTCOLORS) == RENDERTYPE_EFFECTCOLORS) {
 						// upload effect color mul
 						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[1], fbEffectColorMuls.getPosition() * sizeof(float), &fbEffectColorMuls);
-						renderer->bindEffectColorMulsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[1]);
+						renderer->bindEffectColorMulsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[1], 1);
 						renderer->uploadBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[2], fbEffectColorAdds.getPosition() * sizeof(float), &fbEffectColorAdds);
-						renderer->bindEffectColorAddsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[2]);
+						renderer->bindEffectColorAddsBufferObject(context, (*object3DRenderContext.vboInstancedRenderingIds)[2], 1);
 					}
 
 					// set up texture matrix
@@ -1093,21 +1093,16 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 	// TODO: Move me into own class
 	if (pses.size() == 0) return;
 
-	// TODO: I could also transfer texture and point size per particle, lets see, this would speed up things a lot I guess
-	// sort visible entities
-	auto sortedVisiblePses = pses;
-	std::sort(sortedVisiblePses.begin(), sortedVisiblePses.end(), compareParticleSystemEntities);
-
 	//
 	struct PseParameters {
 		const Color4* effectColorAdd;
 		const Color4* effectColorMul;
+		int32_t textureIndex;
 		int32_t textureId;
 		int32_t textureHorizontalSprites;
 		int32_t textureVerticalSprites;
 		float pointSize;
 	};
-	unordered_set<Entity*> rendererPses;
 	unordered_map<void*, PseParameters> rendererPseParameters;
 
 	// use default context
@@ -1126,110 +1121,83 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
 	renderer->setTextureUnit(context, 0);
 
+	// textures
+	unordered_map<int, int> textureIndices;
+
 	// find particle systems that are combined, merge thos pses, transform them into camera space and sort them
 	auto& cameraMatrix = renderer->getCameraMatrix();
-	for (auto entityOuter: sortedVisiblePses) {
-		auto particleSystemsCount = 0;
-		if (rendererPses.find(entityOuter) != rendererPses.end()) continue;
-		{
-			auto ppse = dynamic_cast<PointsParticleSystem*>(entityOuter);
-			if (ppse != nullptr) {
-				rendererPseParameters[ppse] = {
-					.effectColorAdd = &ppse->getEffectColorAdd(),
-					.effectColorMul = &ppse->getEffectColorMul(),
-					.textureId = ppse->getTextureId(),
-					.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
-					.textureVerticalSprites = ppse->getTextureVerticalSprites(),
-					.pointSize = ppse->getPointSize()
+	for (auto entity: pses) {
+		auto ppse = dynamic_cast<PointsParticleSystem*>(entity);
+		if (ppse != nullptr) {
+			auto textureIndexIt = textureIndices.find(ppse->getTextureId());
+			int textureIndex = textureIndexIt == textureIndices.end()?-1:textureIndexIt->second;
+			if (textureIndex == -1) textureIndices[ppse->getTextureId()] = textureIndex = textureIndices.size();
+			rendererPseParameters[ppse] = {
+				.effectColorAdd = &ppse->getEffectColorAdd(),
+				.effectColorMul = &ppse->getEffectColorMul(),
+				.textureIndex = textureIndex,
+				.textureId = ppse->getTextureId(),
+				.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
+				.textureVerticalSprites = ppse->getTextureVerticalSprites(),
+				.pointSize = ppse->getPointSize()
+			};
+			renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
+		} else {
+			auto fpse = dynamic_cast<FogParticleSystem*>(entity);
+			if (fpse != nullptr) {
+				auto textureIndexIt = textureIndices.find(fpse->getTextureId());
+				int textureIndex = textureIndexIt == textureIndices.end()?-1:textureIndexIt->second;
+				if (textureIndex == -1) textureIndices[fpse->getTextureId()] = textureIndex = textureIndices.size();
+				rendererPseParameters[fpse] = {
+					.effectColorAdd = &fpse->getEffectColorAdd(),
+					.effectColorMul = &fpse->getEffectColorMul(),
+					.textureIndex = textureIndex,
+					.textureId = fpse->getTextureId(),
+					.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
+					.textureVerticalSprites = fpse->getTextureVerticalSprites(),
+					.pointSize = fpse->getPointSize()
 				};
-				renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
-			} else {
-				auto fpse = dynamic_cast<FogParticleSystem*>(entityOuter);
-				if (fpse != nullptr) {
-					rendererPseParameters[fpse] = {
-						.effectColorAdd = &fpse->getEffectColorAdd(),
-						.effectColorMul = &fpse->getEffectColorMul(),
-						.textureId = fpse->getTextureId(),
-						.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
-						.textureVerticalSprites = fpse->getTextureVerticalSprites(),
-						.pointSize = fpse->getPointSize()
-					};
-					renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
-				}
+				renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
 			}
-			rendererPses.insert(entityOuter);
-			particleSystemsCount++;
-		}
-		for (auto entityInner: sortedVisiblePses) {
-			if (entityOuter == entityInner || rendererPses.find(entityInner) != rendererPses.end()) continue;
-			if (CollisionDetection::doCollideAABBvsAABBFast(entityOuter->getBoundingBoxTransformed(), entityInner->getBoundingBoxTransformed()) == true) {
-				auto ppse = dynamic_cast<PointsParticleSystem*>(entityInner);
-				if (ppse != nullptr) {
-					rendererPseParameters[ppse] = {
-						.effectColorAdd = &ppse->getEffectColorAdd(),
-						.effectColorMul = &ppse->getEffectColorMul(),
-						.textureId = ppse->getTextureId(),
-						.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
-						.textureVerticalSprites = ppse->getTextureVerticalSprites(),
-						.pointSize = ppse->getPointSize()
-					};
-					renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
-				} else {
-					auto fpse = dynamic_cast<FogParticleSystem*>(entityInner);
-					if (fpse != nullptr) {
-						rendererPseParameters[fpse] = {
-							.effectColorAdd = &fpse->getEffectColorAdd(),
-							.effectColorMul = &fpse->getEffectColorMul(),
-							.textureId = fpse->getTextureId(),
-							.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
-							.textureVerticalSprites = fpse->getTextureVerticalSprites(),
-							.pointSize = fpse->getPointSize()
-						};
-						renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
-					}
-				}
-				rendererPses.insert(entityInner);
-				particleSystemsCount++;
-			}
-		}
-		if (renderTransparentRenderPointsPool->getTransparentRenderPointsCount() > 0) {
-			renderTransparentRenderPointsPool->sort();
-			// render
-			auto firstPoint = renderTransparentRenderPointsPool->getTransparentRenderPoints()[0];
-			PseParameters* pseParameters = &rendererPseParameters.find(firstPoint->particleSystem)->second;
-			auto currentPpse = static_cast<void*>(firstPoint->particleSystem);
-			for (auto point: renderTransparentRenderPointsPool->getTransparentRenderPoints()) {
-				if (point == nullptr || point->acquired == false || point->particleSystem != (void*)currentPpse) {
-					// issue rendering
-					renderer->getEffectColorAdd(context) = pseParameters->effectColorAdd->getArray();
-					renderer->getEffectColorMul(context) = pseParameters->effectColorMul->getArray();
-					renderer->onUpdateEffect(context);
-					// TODO: maybe use onBindTexture() or onUpdatePointSize()
-					engine->getParticlesShader()->setParameters(context, pseParameters->textureId, pseParameters->textureHorizontalSprites, pseParameters->textureVerticalSprites, pseParameters->pointSize);
-					// render, clear
-					psePointBatchRenderer->render(context);
-					psePointBatchRenderer->clear();
-					//
-					if (point != nullptr && point->acquired == true) {
-						pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
-						currentPpse = point->particleSystem;
-						psePointBatchRenderer->addPoint(point);
-					} else {
-						break;
-					}
-				} else {
-					psePointBatchRenderer->addPoint(point);
-				}
-			}
-			// done
-			renderTransparentRenderPointsPool->reset();
-			rendererPseParameters.clear();
 		}
 	}
+	if (renderTransparentRenderPointsPool->getTransparentRenderPointsCount() > 0) {
+		renderTransparentRenderPointsPool->sort();
+		// render
+		auto points =  renderTransparentRenderPointsPool->getTransparentRenderPoints();
+		auto pseParameters = &rendererPseParameters.find(points[0]->particleSystem)->second;
+		auto currentPpse = static_cast<void*>(points[0]->particleSystem);
+		for (auto i = 0; i < renderTransparentRenderPointsPool->getTransparentRenderPointsCount(); i++) {
+			auto point = points[i];
+			if (point->particleSystem != (void*)currentPpse) {
+				pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
+				currentPpse = point->particleSystem;
+			}
+			psePointBatchRenderer->addPoint(
+				point,
+				pseParameters->textureIndex,
+				pseParameters->pointSize,
+				*pseParameters->effectColorMul,
+				*pseParameters->effectColorAdd,
+				pseParameters->textureHorizontalSprites,
+				pseParameters->textureVerticalSprites
+			);
+		}
 
-	// unbind texture
-	renderer->bindTexture(context, renderer->ID_NONE);
-	// TODO: before render sort all pps by distance to camera and render them in correct order
+		//
+		array<int32_t, 48> textureIds;
+		textureIds.fill(0);
+		for (auto& textureIt: textureIndices) textureIds[textureIt.second] = textureIt.first;
+		engine->getParticlesShader()->setParameters(context, textureIds);
+
+		// render, clear
+		psePointBatchRenderer->render(context);
+		psePointBatchRenderer->clear();
+
+		// done
+		renderTransparentRenderPointsPool->reset();
+	}
+
 	// unset renderer state
 	renderer->disableBlending();
 	// restore renderer state

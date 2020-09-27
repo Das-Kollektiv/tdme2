@@ -707,13 +707,6 @@ public:
 	virtual void bindNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
-	 * Bind sprite indices buffer object
-	 * @param context context
-	 * @param bufferObjectId buffer object id
-	 */
-	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
-
-	/**
 	 * Bind colors buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
@@ -745,22 +738,52 @@ public:
 	 * Bind effect color muls buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
+	 * @param divisor divisor
 	 */
-	virtual void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) = 0;
 
 	/**
 	 * Bind effect color adds buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
+	 * @param divisor divisor
 	 */
-	virtual void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) = 0;
 
 	/**
 	 * Bind origins buffer object
 	 * @param context context
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindOrigins(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindOriginsBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind texture indices buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind sprite indices buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind point sizes buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind sprite sheet dimension buffer object
+	 * @param context context
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Draw instanced indexed triangles from buffer objects

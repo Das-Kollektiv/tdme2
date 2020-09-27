@@ -50,7 +50,7 @@ public:
 		return poolIdx;
 	}
 
-	/** 
+	/**
 	 * @return transparent render points vector
 	 */
 	inline const vector<TransparentRenderPoint*>& getTransparentRenderPoints() {

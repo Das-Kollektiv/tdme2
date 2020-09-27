@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
@@ -12,6 +13,7 @@
 using std::to_string;
 using std::vector;
 
+using tdme::engine::model::Color4;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
@@ -35,10 +37,20 @@ private:
 	bool acquired;
 	ByteBuffer* fbVerticesByteBuffer { nullptr };
 	FloatBuffer fbVertices;
+	ByteBuffer* sbTexureIndicesByteBuffer { nullptr };
+	ShortBuffer sbTextureIndices;
 	ByteBuffer* sbSpriteIndicesByteBuffer { nullptr };
 	ShortBuffer sbSpriteIndices;
 	ByteBuffer* fbColorsByteBuffer { nullptr };
 	FloatBuffer fbColors;
+	ByteBuffer* fbPointSizesByteBuffer { nullptr };
+	FloatBuffer fbPointSizes;
+	ByteBuffer* sbSpriteSheetDimensionByteBuffer { nullptr };
+	ShortBuffer sbSpriteSheetDimension;
+	ByteBuffer* fbEffectColorMulByteBuffer { nullptr };
+	FloatBuffer fbEffectColorMul;
+	ByteBuffer* fbEffectColorAddByteBuffer { nullptr };
+	FloatBuffer fbEffectColorAdd;
 
 	/**
 	 * Render
@@ -55,10 +67,16 @@ private:
 	 * Adds a transparent render point to this transparent render points
 	 * @param point transparent render point
 	 */
-	inline void addPoint(const TransparentRenderPoint* point) {
+	inline void addPoint(const TransparentRenderPoint* point, int textureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
 		fbVertices.put(point->point.getArray());
+		sbTextureIndices.put(textureIndex);
 		sbSpriteIndices.put(point->spriteIndex);
 		fbColors.put(point->color.getArray());
+		fbPointSizes.put(pointSize);
+		sbSpriteSheetDimension.put(textureHorizontalSprites);
+		sbSpriteSheetDimension.put(textureVerticalSprites);
+		fbEffectColorMul.put(effectColorMul.getArray());
+		fbEffectColorAdd.put(effectColorAdd.getArray());
 	}
 
 	/**
@@ -66,6 +84,10 @@ private:
 	 */
 	inline bool hasPoints() {
 		return fbVertices.getPosition() > 0;
+	}
+
+	inline int getPointCount() {
+		return fbVertices.getPosition() / 3;
 	}
 
 	/**
