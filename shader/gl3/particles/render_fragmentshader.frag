@@ -1,6 +1,6 @@
 #version 330
 
-uniform sampler2D diffuseTextureUnits[48];
+uniform sampler2D diffuseTextureUnits[16];
 
 flat in int vsTextureIndex;
 flat in int vsSpriteIndex;

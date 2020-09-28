@@ -126,7 +126,7 @@ void ParticlesShader::updateMatrices(void* context)
 	renderer->setProgramUniformInteger(context, uniformViewPortHeight, renderer->getViewPortHeight());
 }
 
-void ParticlesShader::setParameters(void* context, const array<int32_t, 48>& textureIds) {
+void ParticlesShader::setParameters(void* context, const array<int32_t, 16>& textureIds) {
 	for (auto i = 0; i < boundTextureIds.size(); i++) {
 		if (uniformDiffuseTextureUnits[i] == -1) break;
 		auto textureId = boundTextureIds[i];

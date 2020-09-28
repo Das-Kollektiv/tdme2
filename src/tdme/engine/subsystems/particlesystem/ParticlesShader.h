@@ -23,7 +23,7 @@ private:
 	int32_t renderFragmentShaderId { -1 };
 	int32_t renderVertexShaderId { -1 };
 	int32_t uniformMVPMatrix { -1 };
-	array<int32_t, 48> uniformDiffuseTextureUnits;
+	array<int32_t, 16> uniformDiffuseTextureUnits;
 	int32_t uniformViewPortWidth { -1 };
 	int32_t uniformViewPortHeight { -1 };
 	int32_t uniformProjectionMatrixXx { -1 };
@@ -33,7 +33,7 @@ private:
 	bool initialized;
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
-	array<int32_t, 48> boundTextureIds;
+	array<int32_t, 16> boundTextureIds;
 
 public:
 
@@ -76,7 +76,7 @@ public:
 	 * @param context context
 	 * @param textureIds texture ids
 	 */
-	void setParameters(void* context, const array<int32_t, 48>& textureIds);
+	void setParameters(void* context, const array<int32_t, 16>& textureIds);
 
 	/**
 	 * Public constructor

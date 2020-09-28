@@ -1204,9 +1204,12 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 		}
 
 		//
-		array<int32_t, 48> textureIds;
+		array<int32_t, 16> textureIds;
 		textureIds.fill(0);
-		for (auto& textureIt: textureIndices) textureIds[textureIt.second] = textureIt.first;
+		for (auto& textureIt: textureIndices) {
+			if (textureIt.second >= 16) continue;
+			textureIds[textureIt.second] = textureIt.first;
+		}
 		engine->getParticlesShader()->setParameters(context, textureIds);
 
 		// render, clear
