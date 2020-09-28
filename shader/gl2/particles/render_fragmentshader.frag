@@ -16,8 +16,8 @@ void main(void) {
 	vec2 spriteCoord =
 		gl_PointCoord / floor(vsSpriteSheetDimension) +
 		vec2(
-			(1.0 / floor(vsSpriteSheetDimension.x)) * mod(floor(vsSpriteIndex), floor(vsSpriteSheetDimension.x)),
-			1.0 - ((1.0 / floor(vsSpriteSheetDimension.y)) * (floor(vsSpriteIndex) / floor(vsSpriteSheetDimension.y)))
+			(1.0 / floor(vsSpriteSheetDimension.x)) * floor(mod(floor(vsSpriteIndex), floor(vsSpriteSheetDimension.x))),
+			1.0 - ((1.0 / floor(vsSpriteSheetDimension.y)) * floor(floor(vsSpriteIndex) / floor(vsSpriteSheetDimension.y)))
 		);
 	int textureIndex = int(vsTextureIndex);
 	if (textureIndex == 0)

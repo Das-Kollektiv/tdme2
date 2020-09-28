@@ -103,6 +103,7 @@ void ParticlesShader::unUseProgram(void* context)
 {
 	isRunning = false;
 	for (auto i = 0; i < boundTextureIds.size(); i++) {
+		if (uniformDiffuseTextureUnits[i] == -1) break;
 		auto textureId = boundTextureIds[i];
 		if (textureId == 0) continue;
 		renderer->setTextureUnit(context, i);
@@ -127,12 +128,14 @@ void ParticlesShader::updateMatrices(void* context)
 
 void ParticlesShader::setParameters(void* context, const array<int32_t, 48>& textureIds) {
 	for (auto i = 0; i < boundTextureIds.size(); i++) {
+		if (uniformDiffuseTextureUnits[i] == -1) break;
 		auto textureId = boundTextureIds[i];
 		if (textureId == renderer->ID_NONE) continue;
 		renderer->setTextureUnit(context, i);
 		renderer->bindTexture(context, renderer->ID_NONE);
 	}
 	for (auto i = 0; i < textureIds.size(); i++) {
+		if (uniformDiffuseTextureUnits[i] == -1) break;
 		auto textureId = textureIds[i];
 		if (textureId == renderer->ID_NONE) continue;
 		renderer->setTextureUnit(context, i);
