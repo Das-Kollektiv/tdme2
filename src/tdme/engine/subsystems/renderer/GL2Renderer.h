@@ -60,6 +60,7 @@ public:
 	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
+	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;
 	bool isNormalMappingAvailable() override;
 	bool isInstancedRenderingAvailable() override;

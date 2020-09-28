@@ -146,6 +146,10 @@ bool GL2Renderer::isUsingProgramAttributeLocation()
 	return true;
 }
 
+bool GL2Renderer::isSupportingIntegerProgramAttributes() {
+	return false;
+}
+
 bool GL2Renderer::isSpecularMappingAvailable()
 {
 	return false;
@@ -480,18 +484,48 @@ int32_t GL2Renderer::createColorBufferTexture(int32_t width, int32_t height)
 
 void GL2Renderer::uploadTexture(void* context, Texture* texture)
 {
-	glTexImage2D(GL_TEXTURE_2D, 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, texture->getTextureWidth(), texture->getTextureHeight(), 0, texture->getDepth() == 32 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, texture->getTextureData()->getBuffer());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
-	if (texture->isRepeat() == true) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	} else {
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		texture->getTextureWidth(),
+		texture->getTextureHeight(),
+		0,
+		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		GL_UNSIGNED_BYTE,
+		texture->getTextureData()->getBuffer()
+	);
+	if (texture->getAtlasSize() > 1) {
+		if (texture->isUseMipMap() == true) {
+			float maxLodBias;
+			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
+			auto generatedMipmapTexture = static_cast<Texture*>(nullptr);
+			auto mipmapTexture = texture;
+			auto borderSize = 32;
+			auto maxLevel = 0;
+			while (borderSize >= 4) {
+				maxLevel++;
+				borderSize/= 2;
+			}
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	} else {
+		if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
+		if (texture->isRepeat() == true) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		} else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		}
 	}
-}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture->isUseMipMap() == true?GL_LINEAR_MIPMAP_LINEAR:GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);}
 
 void GL2Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
 	glTexImage2D(
@@ -728,11 +762,15 @@ void GL2Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObj
 }
 
 void GL2Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
-	Console::println(string("GL2Renderer::bindEffectColorMulsBufferObject()::not implemented yet"));
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(10);
+	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
-	Console::println(string("GL2Renderer::bindEffectColorAddsBufferObject()::not implemented yet"));
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(11);
+	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
@@ -744,14 +782,14 @@ void GL2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId)
 void GL2Renderer::bindTextureIndicesBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
-	glVertexAttribIPointer(1, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+	glVertexAttribPointer(1, 1, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(2);
-	glVertexAttribIPointer(2, 1, GL_UNSIGNED_SHORT, 0, 0LL);
+	glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
@@ -763,7 +801,7 @@ void GL2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObject
 void GL2Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(6);
-	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
+	glVertexAttribPointer(6, 2, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)

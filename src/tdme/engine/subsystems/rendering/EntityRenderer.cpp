@@ -1167,21 +1167,40 @@ void EntityRenderer::render(const vector<Entity*>& pses)
 		auto points =  renderTransparentRenderPointsPool->getTransparentRenderPoints();
 		auto pseParameters = &rendererPseParameters.find(points[0]->particleSystem)->second;
 		auto currentPpse = static_cast<void*>(points[0]->particleSystem);
-		for (auto i = 0; i < renderTransparentRenderPointsPool->getTransparentRenderPointsCount(); i++) {
-			auto point = points[i];
-			if (point->particleSystem != (void*)currentPpse) {
-				pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
-				currentPpse = point->particleSystem;
+		if (renderer->isSupportingIntegerProgramAttributes() == true) {
+			for (auto i = 0; i < renderTransparentRenderPointsPool->getTransparentRenderPointsCount(); i++) {
+				auto point = points[i];
+				if (point->particleSystem != (void*)currentPpse) {
+					pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
+					currentPpse = point->particleSystem;
+				}
+				psePointBatchRenderer->addPoint(
+					point,
+					pseParameters->textureIndex,
+					pseParameters->pointSize,
+					*pseParameters->effectColorMul,
+					*pseParameters->effectColorAdd,
+					pseParameters->textureHorizontalSprites,
+					pseParameters->textureVerticalSprites
+				);
 			}
-			psePointBatchRenderer->addPoint(
-				point,
-				pseParameters->textureIndex,
-				pseParameters->pointSize,
-				*pseParameters->effectColorMul,
-				*pseParameters->effectColorAdd,
-				pseParameters->textureHorizontalSprites,
-				pseParameters->textureVerticalSprites
-			);
+		} else {
+			for (auto i = 0; i < renderTransparentRenderPointsPool->getTransparentRenderPointsCount(); i++) {
+				auto point = points[i];
+				if (point->particleSystem != (void*)currentPpse) {
+					pseParameters = &rendererPseParameters.find(point->particleSystem)->second;
+					currentPpse = point->particleSystem;
+				}
+				psePointBatchRenderer->addPointNoInteger(
+					point,
+					pseParameters->textureIndex,
+					pseParameters->pointSize,
+					*pseParameters->effectColorMul,
+					*pseParameters->effectColorAdd,
+					pseParameters->textureHorizontalSprites,
+					pseParameters->textureVerticalSprites
+				);
+			}
 		}
 
 		//

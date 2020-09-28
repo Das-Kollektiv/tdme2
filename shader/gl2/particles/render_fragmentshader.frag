@@ -1,17 +1,18 @@
 #version 100
 
-precision mediump float;
+precision highp float;
+precision highp sampler2D;
 
-uniform sampler2D diffuseTextureUnit;
-uniform vec4 effectColorMul;
-uniform vec4 effectColorAdd;
-uniform int spritesHorizontal;
-uniform int spritesVertical;
+uniform sampler2D diffuseTextureUnits[48];
 
+varying float vsTextureIndex;
 varying float vsSpriteIndex;
-varying vec4 vsFragColor;
+varying vec4 vsColor;
+varying vec2 vsSpriteSheetDimension;
+varying vec4 vsEffectColorMul;
+varying vec4 vsEffectColorAdd;
 
-void main (void) {
-	vec2 spriteCoord = (gl_PointCoord / vec2(spritesHorizontal, spritesVertical)) + vec2((1.0 / float(spritesHorizontal)) * mod(vsSpriteIndex, 4.0), 1.0 - ((1.0 / float(spritesHorizontal)) * floor(vsSpriteIndex / 4.0)));
-	gl_FragColor = clamp(effectColorAdd + texture2D(diffuseTextureUnit, spriteCoord) * vsFragColor * effectColorMul, 0.0, 1.0);
+void main(void) {
+	vec2 spriteCoord = gl_PointCoord / ivec2(vsSpriteSheetDimension) + vec2((1.0 / float(int(vsSpriteSheetDimension.x))) * float(mod(int(vsSpriteIndex), 4)), 1.0 - ((1.0 / float(int(vsSpriteSheetDimension.y))) * float(int(vsSpriteIndex) / 4)));
+	gl_FragColor = clamp(vsEffectColorAdd + texture2D(diffuseTextureUnits[int(vsTextureIndex)], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0);
 }

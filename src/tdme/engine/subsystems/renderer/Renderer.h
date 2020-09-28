@@ -162,6 +162,11 @@ public:
 	virtual bool isUsingProgramAttributeLocation() = 0;
 
 	/**
+	 * @return is supporting integer program attributes
+	 */
+	virtual bool isSupportingIntegerProgramAttributes() = 0;
+
+	/**
 	 * @return if specular mapping is supported
 	 */
 	virtual bool isSpecularMappingAvailable() = 0;

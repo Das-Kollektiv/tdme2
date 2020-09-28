@@ -52,6 +52,13 @@ private:
 	ByteBuffer* fbEffectColorAddByteBuffer { nullptr };
 	FloatBuffer fbEffectColorAdd;
 
+	ByteBuffer* fbTexureIndicesByteBuffer { nullptr };
+	FloatBuffer fbTextureIndices;
+	ByteBuffer* fbSpriteIndicesByteBuffer { nullptr };
+	FloatBuffer fbSpriteIndices;
+	ByteBuffer* fbSpriteSheetDimensionByteBuffer { nullptr };
+	FloatBuffer fbSpriteSheetDimension;
+
 	/**
 	 * Render
 	 * @param context context
@@ -75,6 +82,22 @@ private:
 		fbPointSizes.put(pointSize);
 		sbSpriteSheetDimension.put(textureHorizontalSprites);
 		sbSpriteSheetDimension.put(textureVerticalSprites);
+		fbEffectColorMul.put(effectColorMul.getArray());
+		fbEffectColorAdd.put(effectColorAdd.getArray());
+	}
+
+	/**
+	 * Adds a transparent render point to this transparent render points
+	 * @param point transparent render point
+	 */
+	inline void addPointNoInteger(const TransparentRenderPoint* point, int textureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
+		fbVertices.put(point->point.getArray());
+		fbTextureIndices.put(static_cast<float>(textureIndex + 0.1f));
+		fbSpriteIndices.put(static_cast<float>(point->spriteIndex + 0.1f));
+		fbColors.put(point->color.getArray());
+		fbPointSizes.put(pointSize);
+		fbSpriteSheetDimension.put(static_cast<float>(textureHorizontalSprites + 0.1f));
+		fbSpriteSheetDimension.put(static_cast<float>(textureVerticalSprites + 0.1f));
 		fbEffectColorMul.put(effectColorMul.getArray());
 		fbEffectColorAdd.put(effectColorAdd.getArray());
 	}

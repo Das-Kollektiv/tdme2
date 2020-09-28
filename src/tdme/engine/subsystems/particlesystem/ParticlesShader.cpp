@@ -52,8 +52,13 @@ void ParticlesShader::initialize()
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(renderProgramId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(renderProgramId, 1, "inSpriteIndex");
+		renderer->setProgramAttributeLocation(renderProgramId, 1, "inTextureIndex");
+		renderer->setProgramAttributeLocation(renderProgramId, 2, "inSpriteIndex");
 		renderer->setProgramAttributeLocation(renderProgramId, 3, "inColor");
+		renderer->setProgramAttributeLocation(renderProgramId, 5, "inPointSize");
+		renderer->setProgramAttributeLocation(renderProgramId, 6, "inSpriteSheetDimensions");
+		renderer->setProgramAttributeLocation(renderProgramId, 10, "inEffectColorMul");
+		renderer->setProgramAttributeLocation(renderProgramId, 11, "inEffectColorAdd");
 	}
 	// link program
 	if (renderer->linkProgram(renderProgramId) == false) return;
