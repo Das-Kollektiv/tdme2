@@ -248,6 +248,7 @@ void ModelEditorScreenController::initialize()
 		animationsAnimationApply = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_animations_animation_apply"));
 		statsOpaqueFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_opaque_faces"));
 		buttonToolsComputeNormals = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_computenormals"));
+		buttonToolsOptimizeModel = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("button_tools_optimizemodel"));
 		statsTransparentFaces = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_transparent_faces"));
 		statsMaterialCount = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("stats_material_count"));
 		viewPort = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("viewport"));
@@ -1471,14 +1472,20 @@ void ModelEditorScreenController::unsetStatistics()
 
 void ModelEditorScreenController::setTools() {
 	buttonToolsComputeNormals->getController()->setDisabled(false);
+	buttonToolsOptimizeModel->getController()->setDisabled(false);
 }
 
 void ModelEditorScreenController::unsetTools() {
 	buttonToolsComputeNormals->getController()->setDisabled(true);
+	buttonToolsOptimizeModel->getController()->setDisabled(true);
 }
 
 void ModelEditorScreenController::onToolsComputeNormal() {
 	view->computeNormals();
+}
+
+void ModelEditorScreenController::onToolsOptimizeModel() {
+	view->optimizeModel();
 }
 
 void ModelEditorScreenController::onQuit()
@@ -1813,6 +1820,9 @@ void ModelEditorScreenController::onActionPerformed(GUIActionListener_Type* type
 			} else
 			if (node->getId().compare("button_tools_computenormals") == 0) {
 				onToolsComputeNormal();
+			} else
+			if (node->getId().compare("button_tools_optimizemodel") == 0) {
+				onToolsOptimizeModel();
 			}
 		}
 	}

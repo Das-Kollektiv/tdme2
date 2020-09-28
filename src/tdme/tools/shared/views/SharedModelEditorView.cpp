@@ -266,7 +266,7 @@ void SharedModelEditorView::pivotApply(float x, float y, float z)
 }
 
 void SharedModelEditorView::computeNormals() {
-	if (entity == nullptr) return;
+	if (entity == nullptr || entity->getModel() == nullptr) return;
 	engine->removeEntity("model");
 	class ComputeNormalsProgressCallback: public ProgressCallback {
 	private:
@@ -281,6 +281,13 @@ void SharedModelEditorView::computeNormals() {
 	popUps->getProgressBarScreenController()->show();
 	ModelTools::computeNormals(entity->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
 	popUps->getProgressBarScreenController()->close();
+	resetEntity();
+}
+
+void SharedModelEditorView::optimizeModel() {
+	if (entity == nullptr || entity->getModel() == nullptr) return;
+	engine->removeEntity("model");
+	entity->setModel(ModelTools::optimizeModel(entity->getModel()));
 	resetEntity();
 }
 

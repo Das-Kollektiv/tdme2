@@ -1130,6 +1130,10 @@
 							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
 								<button id="button_tools_computenormals" name="button_tools_computenormals" text="Compute smooth normals" />
 							</layout>
+							<space height="10" />
+							<layout width="100%" height="auto" alignment="none" horizontal-align="center">
+								<button id="button_tools_optimizemodel" name="button_tools_optimizemodel" text="Optimize model" />
+							</layout>
 						</layout>
 					</tab-content> 
 				</tabs-content>

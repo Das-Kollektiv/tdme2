@@ -187,6 +187,11 @@ public:
 	 */
 	void computeNormals();
 
+	/**
+	 * Optimize model
+	 */
+	void optimizeModel();
+
 	// overriden methods
 	void handleInputEvents() override;
 

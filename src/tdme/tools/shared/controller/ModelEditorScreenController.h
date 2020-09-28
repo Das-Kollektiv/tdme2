@@ -130,6 +130,7 @@ private:
 	GUIElementNode* animationsAnimationName { nullptr };
 	GUIElementNode* animationsAnimationApply { nullptr };
 	GUIElementNode* buttonToolsComputeNormals { nullptr };
+	GUIElementNode* buttonToolsOptimizeModel { nullptr };
 	GUIElementNode* statsOpaqueFaces { nullptr };
 	GUIElementNode* statsTransparentFaces { nullptr };
 	GUIElementNode* statsMaterialCount { nullptr };
@@ -437,6 +438,11 @@ public:
 	 * On tools compute normals
 	 */
 	void onToolsComputeNormal();
+
+	/**
+	 * On tools optimize model
+	 */
+	void onToolsOptimizeModel();
 
 	/**
 	 * Save file
