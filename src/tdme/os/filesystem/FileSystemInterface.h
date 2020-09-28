@@ -23,7 +23,7 @@ using tdme::os::filesystem::FileSystemException;
 struct tdme::os::filesystem::FileSystemInterface
 {
 	/**
-	 * Destructor
+	 * Public destructor
 	 */
 	virtual ~FileSystemInterface() {}
 

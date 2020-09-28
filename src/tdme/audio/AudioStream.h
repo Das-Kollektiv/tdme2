@@ -34,6 +34,29 @@ private:
 	int32_t format;
 	bool playing { false };
 
+protected:
+	/**
+	 * Protected constructor
+	 * @param id id
+	 */
+	AudioStream(const string& id);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~AudioStream();
+
+	// overriden methods
+	virtual bool initialize() override;
+	virtual void update() override;
+	virtual void dispose() override;
+
+	/**
+	 * Fill buffer
+	 * @param data data
+	 */
+	virtual void fillBuffer(ByteBuffer* data) = 0;
+
 public:
 	/**
 	 * Set audio initialization parameters
@@ -61,26 +84,4 @@ private:
 	 */
 	void updateProperties();
 
-protected:
-	/**
-	 * Protected constructor
-	 * @param id id
-	 */
-	AudioStream(const string& id);
-
-	// overriden methods
-	virtual bool initialize() override;
-	virtual void update() override;
-	virtual void dispose() override;
-
-	/**
-	 * Fill buffer
-	 * @param data data
-	 */
-	virtual void fillBuffer(ByteBuffer* data) = 0;
-
-	/**
-	 * Destructor
-	 */
-	virtual ~AudioStream();
 };

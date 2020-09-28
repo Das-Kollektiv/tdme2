@@ -26,6 +26,52 @@ private:
 	array<float, 16> data {  };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline Matrix4x4() {
+		data.fill(0.0f);
+	}
+
+	/**
+	 * Public constructor
+	 * @param m matrix as float values
+	 */
+	inline Matrix4x4(const array<float, 16>& m) {
+		data = m;
+	}
+
+	/**
+	 * Public constructor
+	 * @param matrix matrix
+	 */
+	inline Matrix4x4(const Matrix4x4& matrix) {
+		data = matrix.data;
+	}
+
+	/**
+	 * Public constructor
+	 * @param r0c0 r0c0
+	 * @param r1c0 r1c0
+	 * @param r2c0 r2c0
+	 * @param r3c0 r3c0
+	 * @param r0c1 r0c1
+	 * @param r1c1 r1c1
+	 * @param r2c1 r2c1
+	 * @param r3c1 r3c1
+	 * @param r0c2 r0c2
+	 * @param r1c2 r1c2
+	 * @param r2c2 r2c2
+	 * @param r3c2 r3c2
+	 * @param r0c3 r0c3
+	 * @param r1c3 r1c3
+	 * @param r2c3 r2c3
+	 * @param r3c3 r3c3
+	 */
+	inline Matrix4x4(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3) {
+		set(r0c0, r1c0, r2c0, r3c0, r0c1, r1c1, r2c1, r3c1, r0c2, r1c2, r2c2, r3c2, r0c3, r1c3, r2c3, r3c3);
+	}
+
 	/** 
 	 * Set up matrix by values
 	 * @param r0c0 row 0, column 0
@@ -659,52 +705,6 @@ public:
 	 */
 	inline Matrix4x4 clone() const {
 		return Matrix4x4(data);
-	}
-
-	/**
-	 * Public constructor
-	 */
-	inline Matrix4x4() {
-		data.fill(0.0f);
-	}
-
-	/**
-	 * Public constructor
-	 * @param m matrix as float values
-	 */
-	inline Matrix4x4(const array<float, 16>& m) {
-		data = m;
-	}
-
-	/**
-	 * Public constructor
-	 * @param matrix matrix
-	 */
-	inline Matrix4x4(const Matrix4x4& matrix) {
-		data = matrix.data;
-	}
-
-	/**
-	 * Public constructor
-	 * @param r0c0 r0c0
-	 * @param r1c0 r1c0
-	 * @param r2c0 r2c0
-	 * @param r3c0 r3c0
-	 * @param r0c1 r0c1
-	 * @param r1c1 r1c1
-	 * @param r2c1 r2c1
-	 * @param r3c1 r3c1
-	 * @param r0c2 r0c2
-	 * @param r1c2 r1c2
-	 * @param r2c2 r2c2
-	 * @param r3c2 r3c2
-	 * @param r0c3 r0c3
-	 * @param r1c3 r1c3
-	 * @param r2c3 r2c3
-	 * @param r3c3 r3c3
-	 */
-	inline Matrix4x4(float r0c0, float r1c0, float r2c0, float r3c0, float r0c1, float r1c1, float r2c1, float r3c1, float r0c2, float r1c2, float r2c2, float r3c2, float r0c3, float r1c3, float r2c3, float r3c3) {
-		set(r0c0, r1c0, r2c0, r3c0, r0c1, r1c1, r2c1, r3c1, r0c2, r1c2, r2c2, r3c2, r0c3, r1c3, r2c3, r3c3);
 	}
 
 };

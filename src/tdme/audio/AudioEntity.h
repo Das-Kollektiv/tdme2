@@ -30,6 +30,32 @@ protected:
 	Vector3 sourceDirection;
 	Vector3 sourceVelocity;
 
+protected:
+	/**
+	 * Constructor
+	 */
+	AudioEntity(const string& id);
+
+	/**
+	 * Constructor
+	 */
+	virtual ~AudioEntity();
+
+	/** 
+	 * Initiates this OpenAL entity to OpenAl
+	 */
+	virtual bool initialize() = 0;
+
+	/** 
+	 * Commits properties to OpenAl
+	 */
+	virtual void update() = 0;
+
+	/** 
+	 * Dispose this entity from OpenAL
+	 */
+	virtual void dispose() = 0;
+
 public:
 
 	/** 
@@ -169,30 +195,4 @@ public:
 	 */
 	virtual void stop() = 0;
 
-protected:
-
-	/** 
-	 * Initiates this OpenAL entity to OpenAl
-	 */
-	virtual bool initialize() = 0;
-
-	/** 
-	 * Commits properties to OpenAl
-	 */
-	virtual void update() = 0;
-
-	/** 
-	 * Dispose this entity from OpenAL
-	 */
-	virtual void dispose() = 0;
-
-	/**
-	 * Constructor
-	 */
-	AudioEntity(const string& id);
-
-	/**
-	 * Constructor
-	 */
-	virtual ~AudioEntity();
 };

@@ -23,6 +23,38 @@ private:
 	array<float, 2> data {  };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline Vector2() {
+		data.fill(0.0f);
+	}
+
+	/**
+	 * Public constructor
+	 * @param x x
+	 * @param y y
+	 */
+	inline Vector2(float x, float y) {
+		data[0] = x;
+		data[1] = y;
+	}
+
+	/**
+	 * Public constructor
+	 * @param v float values
+	 */
+	inline Vector2(const array<float, 2>& v) {
+		data = v;
+	}
+
+	/**
+	 * Public constructor
+	 * @param v v
+	 */
+	inline Vector2(const Vector2& v) {
+		data = v.data;
+	}
 
 	/** 
 	 * Set up vector
@@ -330,36 +362,4 @@ public:
 			);
 	}
 
-	/**
-	 * Public constructor
-	 */
-	inline Vector2() {
-		data.fill(0.0f);
-	}
-
-	/**
-	 * Public constructor
-	 * @param x x
-	 * @param y y
-	 */
-	inline Vector2(float x, float y) {
-		data[0] = x;
-		data[1] = y;
-	}
-
-	/**
-	 * Public constructor
-	 * @param v float values
-	 */
-	inline Vector2(const array<float, 2>& v) {
-		data = v;
-	}
-
-	/**
-	 * Public constructor
-	 * @param v v
-	 */
-	inline Vector2(const Vector2& v) {
-		data = v.data;
-	}
 };

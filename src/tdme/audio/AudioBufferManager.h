@@ -25,6 +25,11 @@ class tdme::audio::AudioBufferManager final
 private:
 	map<string, AudioBufferManager_AudioBufferManaged*> audioBuffers;
 
+	/**
+	 * Private constructor
+	 */
+	AudioBufferManager();
+
 	/** 
 	 * Adds a audio buffer to manager / open al stack
 	 * @param id id
@@ -39,8 +44,4 @@ private:
 	 */
 	bool removeAudioBuffer(const string& id);
 
-	/**
-	 * Private constructor
-	 */
-	AudioBufferManager();
 };

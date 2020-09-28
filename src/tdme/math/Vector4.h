@@ -24,6 +24,48 @@ private:
 	array<float, 4> data {  };
 
 public:
+	/**
+	 * Public constructor
+	 * @param v vector
+	 */
+	inline Vector4(const Vector4& v) {
+		data = v.data;
+	}
+
+	/**
+	 * Public constructor
+	 * @param v vector
+	 * @param w w
+	 */
+	inline Vector4(const Vector3& v, float w) {
+		data[0] = v.data[0];
+		data[1] = v.data[1];
+		data[2] = v.data[2];
+		data[3] = w;
+	}
+
+	/**
+	 * Public constructor
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param w w
+	 */
+	inline Vector4(float x, float y, float z, float w) {
+		data[0] = x;
+		data[1] = y;
+		data[2] = z;
+		data[3] = w;
+	}
+
+	/**
+	 * Public constructor
+	 * @param v v
+	 */
+	inline Vector4(const array<float, 4>& v) {
+		data = v;
+	}
+
 	/** 
 	 * Set up vector
 	 * @param x x
@@ -397,48 +439,6 @@ public:
 	 */
 	inline Vector4() {
 		data.fill(0.0f);
-	}
-
-	/**
-	 * Public constructor
-	 * @param v vector
-	 */
-	inline Vector4(const Vector4& v) {
-		data = v.data;
-	}
-
-	/**
-	 * Public constructor
-	 * @param v vector
-	 * @param w w
-	 */
-	inline Vector4(const Vector3& v, float w) {
-		data[0] = v.data[0];
-		data[1] = v.data[1];
-		data[2] = v.data[2];
-		data[3] = w;
-	}
-
-	/**
-	 * Public constructor
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 * @param w w
-	 */
-	inline Vector4(float x, float y, float z, float w) {
-		data[0] = x;
-		data[1] = y;
-		data[2] = z;
-		data[3] = w;
-	}
-
-	/**
-	 * Public constructor
-	 * @param v v
-	 */
-	inline Vector4(const array<float, 4>& v) {
-		data = v;
 	}
 
 };

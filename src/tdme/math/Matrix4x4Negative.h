@@ -22,6 +22,11 @@ private:
 	Vector3 tmpAxis;
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline Matrix4x4Negative() {
+	}
 
 	/** 
 	 * Check if matrix is negative
@@ -39,9 +44,4 @@ public:
 		return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis, tmpAxis), zAxis) < 0.0f;
 	}
 
-	/**
-	 * Public constructor
-	 */
-	inline Matrix4x4Negative() {
-	}
 };

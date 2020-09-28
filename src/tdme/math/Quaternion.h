@@ -25,7 +25,39 @@ private:
 	array<float, 4> data {  };
 
 public:
+	/**
+	 * Public constructor
+	 * @param q quaternion
+	 */
+	inline Quaternion(const Quaternion& q) {
+		data = q.data;
+	}
 
+	/**
+	 * Public constructor
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 * @param w w
+	 */
+	inline Quaternion(float x, float y, float z, float w) {
+		data[0] = x;
+		data[1] = y;
+		data[2] = z;
+		data[3] = w;
+	}
+
+	/**
+	 * Public constructor
+	 * @param v vector
+	 * @param w w
+	 */
+	inline Quaternion(const Vector3& v, float w) {
+		data[0] = v.data[0];
+		data[1] = v.data[1];
+		data[2] = v.data[2];
+		data[3] = w;
+	}
 	/** 
 	 * Set up this quaternion by components
 	 * @param x x
@@ -483,37 +515,4 @@ public:
 		data.fill(0.0f);
 	}
 
-	/**
-	 * Public constructor
-	 * @param q quaternion
-	 */
-	inline Quaternion(const Quaternion& q) {
-		data = q.data;
-	}
-
-	/**
-	 * Public constructor
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 * @param w w
-	 */
-	inline Quaternion(float x, float y, float z, float w) {
-		data[0] = x;
-		data[1] = y;
-		data[2] = z;
-		data[3] = w;
-	}
-
-	/**
-	 * Public constructor
-	 * @param v vector
-	 * @param w w
-	 */
-	inline Quaternion(const Vector3& v, float w) {
-		data[0] = v.data[0];
-		data[1] = v.data[1];
-		data[2] = v.data[2];
-		data[3] = w;
-	}
 };

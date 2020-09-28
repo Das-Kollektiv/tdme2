@@ -28,6 +28,40 @@ private:
 	array<float, 3> data {  };
 
 public:
+	/**
+	 * Public constructor
+	 */
+	inline Vector3() {
+		data.fill(0.0f);
+	}
+
+	/**
+	 * Public constructor
+	 * @param x x
+	 * @param y y
+	 * @param z z
+	 */
+	inline Vector3(float x, float y, float z) {
+		data[0] = x;
+		data[1] = y;
+		data[2] = z;
+	}
+
+	/**
+	 * Public constructor
+	 * @param v values
+	 */
+	inline Vector3(const array<float,3>& v) {
+		data = v;
+	}
+
+	/**
+	 * Public constructor
+	 * @param v vector
+	 */
+	inline Vector3(const Vector3& v) {
+		data = v.data;
+	}
 
 	/** 
 	 * Set up vector
@@ -513,41 +547,6 @@ public:
 	 */
 	inline bool operator !=(const Vector3& v) const {
 		return this->equals(v) == false;
-	}
-
-	/**
-	 * Public constructor
-	 */
-	inline Vector3() {
-		data.fill(0.0f);
-	}
-
-	/**
-	 * Public constructor
-	 * @param x x
-	 * @param y y
-	 * @param z z
-	 */
-	inline Vector3(float x, float y, float z) {
-		data[0] = x;
-		data[1] = y;
-		data[2] = z;
-	}
-
-	/**
-	 * Public constructor
-	 * @param v values
-	 */
-	inline Vector3(const array<float,3>& v) {
-		data = v;
-	}
-
-	/**
-	 * Public constructor
-	 * @param v vector
-	 */
-	inline Vector3(const Vector3& v) {
-		data = v.data;
 	}
 
 };
