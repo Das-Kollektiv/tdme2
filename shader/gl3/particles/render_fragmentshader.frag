@@ -21,7 +21,12 @@ out vec4 outColor;
 #endif
 
 void main(void) {
-	vec2 spriteCoord = gl_PointCoord / vsSpriteSheetDimension + vec2((1.0 / float(vsSpriteSheetDimension.x)) * int(vsSpriteIndex % 4), 1.0 - ((1.0 / float(vsSpriteSheetDimension.y)) * int(vsSpriteIndex / 4)));
+	vec2 spriteCoord =
+		gl_PointCoord / vsSpriteSheetDimension +
+		vec2(
+			(1.0 / float(vsSpriteSheetDimension.x)) * int(vsSpriteIndex % vsSpriteSheetDimension.x), 
+			1.0 - ((1.0 / float(vsSpriteSheetDimension.y)) * int(vsSpriteIndex / vsSpriteSheetDimension.y))
+		);
 	outColor = clamp(vsEffectColorAdd + texture(diffuseTextureUnits[vsTextureIndex], spriteCoord) * vsColor * vsEffectColorMul, 0.0, 1.0);
 	#if defined(HAVE_DEPTH_FOG)
 		if (fragDepth > FOG_DISTANCE_NEAR) {

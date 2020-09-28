@@ -563,8 +563,6 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 			float maxLodBias;
 			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
-			auto generatedMipmapTexture = static_cast<Texture*>(nullptr);
-			auto mipmapTexture = texture;
 			auto borderSize = 32;
 			auto maxLevel = 0;
 			while (borderSize >= 4) {

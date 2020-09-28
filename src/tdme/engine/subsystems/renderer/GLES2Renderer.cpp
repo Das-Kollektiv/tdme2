@@ -458,19 +458,6 @@ void GLES2Renderer::uploadTexture(void* context, Texture* texture)
 	);
 	if (texture->getAtlasSize() > 1) {
 		if (texture->isUseMipMap() == true) {
-			float maxLodBias;
-			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
-			auto generatedMipmapTexture = static_cast<Texture*>(nullptr);
-			auto mipmapTexture = texture;
-			auto borderSize = 32;
-			auto maxLevel = 0;
-			while (borderSize >= 4) {
-				maxLevel++;
-				borderSize/= 2;
-			}
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -685,13 +672,6 @@ void GLES2Renderer::bindVerticesBufferObject(void* context, int32_t bufferObject
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
-}
-
-void GLES2Renderer::bindSpriteIndicesBufferObject(void* context, int32_t bufferObjectId)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 1, GL_UNSIGNED_SHORT, false, 0, 0LL);
 }
 
 void GLES2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)

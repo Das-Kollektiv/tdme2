@@ -68,7 +68,7 @@ void ParticlesShader::initialize()
 	if (uniformMVPMatrix == -1) return;
 	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) {
 		uniformDiffuseTextureUnits[i] = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnits[" + to_string(i) + "]");
-		if (uniformDiffuseTextureUnits[i] == -1) return;
+		if (i == 0 && uniformDiffuseTextureUnits[i] == -1) return;
 	}
 	// TODO: use ivec2 and vec2
 	uniformViewPortWidth = renderer->getProgramUniformLocation(renderProgramId, "viewPortWidth");
@@ -87,7 +87,10 @@ void ParticlesShader::useProgram(void* context)
 	isRunning = true;
 	renderer->useProgram(context, renderProgramId);
 	renderer->setLighting(context, renderer->LIGHTING_NONE);
-	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnits[i], i);
+	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) {
+		if (uniformDiffuseTextureUnits[i] == -1) break;
+		renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnits[i], i);
+	}
 }
 
 void ParticlesShader::updateEffect(void* context)

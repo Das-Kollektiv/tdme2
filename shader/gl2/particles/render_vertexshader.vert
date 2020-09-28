@@ -40,5 +40,5 @@ void main(void) {
 	gl_Position = mvpMatrix * vec4(inVertex, 1.0);
 
 	// point size
-	gl_PointSize = (viewPortWidth > viewPortHeight?viewPortWidth * projectionMatrixXx * inPointSize:viewPortHeight * projectionMatrixYy * inPointSize) / gl_Position.w;
+	gl_PointSize = (float(viewPortWidth) > float(viewPortHeight)?float(viewPortWidth) * projectionMatrixXx * inPointSize:float(viewPortHeight) * projectionMatrixYy * inPointSize) / gl_Position.w;
 }
