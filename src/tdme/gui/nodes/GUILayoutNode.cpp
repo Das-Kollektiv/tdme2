@@ -158,13 +158,14 @@ void GUILayoutNode::layoutSubNodes()
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				if (guiSubNode->requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					auto nodeStarHeight = (static_cast< float >(height) - static_cast< float >(nodesHeight)) / static_cast< float >(starCount);
-					auto nodeStarHeightInt = static_cast< int32_t >(nodeStarHeight);
+					auto nodeStarHeight = (static_cast<float>(height) - static_cast<float>(nodesHeight)) / static_cast<float>(starCount);
+					auto nodeStarHeightInt = static_cast<int32_t>(nodeStarHeight);
 					verticalStarPixelRest += nodeStarHeight - nodeStarHeightInt;
-					if (static_cast< int32_t >(verticalStarPixelRest) > 0) {
-						nodeStarHeightInt += static_cast< int32_t >(verticalStarPixelRest);
-						verticalStarPixelRest -= static_cast< int32_t >(verticalStarPixelRest);
+					if (static_cast<int32_t>(verticalStarPixelRest) > 0) {
+						nodeStarHeightInt += static_cast<int32_t>(verticalStarPixelRest);
+						verticalStarPixelRest -= static_cast<int32_t>(verticalStarPixelRest);
 					}
+					guiSubNode->requestedConstraints.height = nodeStarHeightInt;
 					guiSubNode->computedConstraints.height = nodeStarHeightInt;
 					if (guiSubNode->computedConstraints.height < 0) {
 						guiSubNode->computedConstraints.height = 0;
@@ -223,13 +224,14 @@ void GUILayoutNode::layoutSubNodes()
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				if (guiSubNode->requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::STAR) {
-					auto nodeStarWidth = (static_cast< float >(width) - static_cast< float >(nodesWidth)) / static_cast< float >(starCount);
-					auto nodeStarWidthInt = static_cast< int32_t >(nodeStarWidth);
+					auto nodeStarWidth = (static_cast<float>(width) - static_cast<float>(nodesWidth)) / static_cast<float>(starCount);
+					auto nodeStarWidthInt = static_cast<int32_t>(nodeStarWidth);
 					horizontalStarPixelRest += nodeStarWidth - nodeStarWidthInt;
-					if (static_cast< int32_t >(horizontalStarPixelRest) > 0) {
-						nodeStarWidthInt += static_cast< int32_t >(horizontalStarPixelRest);
-						horizontalStarPixelRest -= static_cast< int32_t >(horizontalStarPixelRest);
+					if (static_cast<int32_t>(horizontalStarPixelRest) > 0) {
+						nodeStarWidthInt += static_cast<int32_t>(horizontalStarPixelRest);
+						horizontalStarPixelRest -= static_cast<int32_t>(horizontalStarPixelRest);
 					}
+					guiSubNode->requestedConstraints.width = nodeStarWidthInt;
 					guiSubNode->computedConstraints.width = nodeStarWidthInt;
 					if (guiSubNode->computedConstraints.width < 0) {
 						guiSubNode->computedConstraints.width = 0;

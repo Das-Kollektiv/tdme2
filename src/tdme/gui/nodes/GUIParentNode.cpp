@@ -105,10 +105,6 @@ void GUIParentNode::clearSubNodes()
 
 void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 {
-	if (resetScrollOffsets == true) {
-		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
-		if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
-	}
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto subNode = subNodes[i];
 		screenNode->removeNode(subNode);
@@ -129,22 +125,27 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 	setConditionsMet();
 	screenNode->layout(this);
 
-	if (overflowX == GUIParentNode_Overflow::SCROLL) {
-		float elementWidth = computedConstraints.width;
-		float contentWidth = getContentWidth();
-		auto scrollableWidth = contentWidth - elementWidth;
-		if (scrollableWidth < 0.0f) scrollableWidth = 0.0;
-		if (childrenRenderOffsetX < 0.0f) childrenRenderOffsetX = 0.0f;
-		if (childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
-	}
+	if (layouted == false || resetScrollOffsets == true) {
+		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
+		if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
+	} else {
+		if (overflowX == GUIParentNode_Overflow::SCROLL) {
+			float elementWidth = computedConstraints.width;
+			float contentWidth = getContentWidth();
+			auto scrollableWidth = contentWidth - elementWidth;
+			if (scrollableWidth < 0.0f) scrollableWidth = 0.0;
+			if (childrenRenderOffsetX < 0.0f) childrenRenderOffsetX = 0.0f;
+			if (scrollableWidth > 0 && childrenRenderOffsetX > scrollableWidth) childrenRenderOffsetX = scrollableWidth;
+		}
 
-	if (overflowY == GUIParentNode_Overflow::SCROLL) {
-		float elementHeight = computedConstraints.height;
-		float contentHeight = getContentHeight();
-		auto scrollableHeight = contentHeight - elementHeight;
-		if (scrollableHeight < 0.0f) scrollableHeight = 0.0f;
-		if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
-		if (childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+		if (overflowY == GUIParentNode_Overflow::SCROLL) {
+			float elementHeight = computedConstraints.height;
+			float contentHeight = getContentHeight();
+			auto scrollableHeight = contentHeight - elementHeight;
+			if (scrollableHeight < 0.0f) scrollableHeight = 0.0f;
+			if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;
+			if (scrollableHeight > 0 && childrenRenderOffsetY > scrollableHeight) childrenRenderOffsetY = scrollableHeight;
+		}
 	}
 }
 
@@ -263,18 +264,21 @@ void GUIParentNode::computeHorizontalChildrenAlignment()
 		if (v == GUINode_AlignmentHorizontal::LEFT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = border.left + padding.left;
 			}
 		} else
 		if (v == GUINode_AlignmentHorizontal::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width) / 2;
 			}
 		} else
 		if (v == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = (computedConstraints.width - guiSubNode->computedConstraints.width - border.right - padding.right);
 			}
 		}
@@ -288,18 +292,21 @@ void GUIParentNode::computeVerticalChildrenAlignment()
 		if (v == GUINode_AlignmentVertical::TOP) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
 			}
 		} else
 		if (v == GUINode_AlignmentVertical::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height) / 2;
 			}
 		} else
 		if (v == GUINode_AlignmentVertical::BOTTOM) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
+				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = (computedConstraints.height - guiSubNode->computedConstraints.height - border.bottom - padding.bottom);
 			}
 		}

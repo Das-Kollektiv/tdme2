@@ -258,6 +258,9 @@ int32_t GUINode::layoutConstraintPixel(GUINode_RequestedConstraints_RequestedCon
 	} else
 	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::AUTO)) {
 		return autoValue;
+	} else
+	if (type->equals(GUINode_RequestedConstraints_RequestedConstraintsType::STAR)) {
+		return value;
 	}
 	return -1;
 }
@@ -1056,6 +1059,7 @@ void GUINode::scrollToNodeY()
 
 void GUINode::scrollToNodeY(GUIParentNode* toNode)
 {
+	if (layouted == false) return;
 	auto scrollYParentNode = this->parentNode;
 	while (true == true) {
 		if (scrollYParentNode == toNode || scrollYParentNode == nullptr) return;
@@ -1079,6 +1083,7 @@ void GUINode::scrollToNodeX()
 
 void GUINode::scrollToNodeX(GUIParentNode* toNode)
 {
+	if (layouted == false) return;
 	auto scrollXParentNode = this->parentNode;
 	while (true == true) {
 		if (scrollXParentNode == toNode || scrollXParentNode == nullptr)
