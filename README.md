@@ -242,13 +242,13 @@
         - physics or game mechanics can also run in a separate thread(s)
     - uses 3rd party libraries
     	- need to be installed 
-            - GLUT(for most platforms)
+            - GLUT(NetBSD, Haiku)
             - OpenGL
             - OpenAL
             - glew
             - pthreads
             - Vulkan(optional)
-            - GLFW3(default on FreeBSD, Windows/MINGW, Linux, required for Vulkan)
+            - GLFW3(Windows/MINGW, Linux, FreeBSD, OpenBSD, required for Vulkan)
         - included in TDME2 repository
             - FBXSDK
             - Hashlink
@@ -273,7 +273,7 @@
         - MacOSX(port completed)
         - FreeBSD(port completed)
         - NetBSD(port completed)
-        - OpenBSD(port is WIP)
+        - OpenBSD(port completed)
         - Haiku(port completed)
         - Android(port pending)
         - iOS(port pending)

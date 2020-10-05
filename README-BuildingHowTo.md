@@ -29,7 +29,7 @@ Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware t
 ```bash
 gmake clean && gmake -j HARDWARE_THREADS mains
 ```
-## 1.2. OpenBSD(tested on OpenBSD 6.8, WIP)
+## 1.2. OpenBSD(tested on OpenBSD 6.8)
 ### 1.2.1 Install packages
 
 ```bash
@@ -198,5 +198,5 @@ $ ./bin/tdme/tests/AngleTest
     - TDME2 Level Editor, see [README-LevelEditor.md](./README-LevelEditor.md)
     - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 
-- Build instructions will follow for NetBSD, OpenBSD, ...
+- Build instructions will follow for NetBSD if they get more recent graphics card support
  
